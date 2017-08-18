@@ -47,7 +47,7 @@ $ git remote add upstream https://github.com/ArcGIS/dynamic-situational-awarenes
 $ git remote -v
 
 origin	https://github.com/YOUR_USERNAME/dynamic-situational-awareness-qt.git (fetch)
-origin	https://github.com/YOUR_USERNAME/arcgis-runtime-samples-qt.git (push)
+origin	https://github.com/YOUR_USERNAME/dynamic-situational-awareness-qt.git (push)
 upstream https://github.com/ArcGIS/dynamic-situational-awareness-qt.git (fetch)
 upstream https://github.com/ArcGIS/dynamic-situational-awareness-qt.git (push)
 ```

@@ -10,8 +10,8 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef DSA_VEHICLE_H
-#define DSA_VEHICLE_H
+#ifndef HANDHELD_H
+#define HANDHELD_H
 
 namespace Esri
 {
@@ -28,13 +28,13 @@ namespace Solutions
 
 #include <QQuickItem>
 
-class DSA_Vehicle : public QQuickItem
+class Handheld : public QQuickItem
 {
   Q_OBJECT
 
 public:
-  DSA_Vehicle(QQuickItem* parent = nullptr);
-  ~DSA_Vehicle();
+  Handheld(QQuickItem* parent = nullptr);
+  ~Handheld();
 
   void componentComplete() override;
 
@@ -48,4 +48,4 @@ private:
   QString m_dataPath;
 };
 
-#endif // DSA_VEHICLE_H
+#endif // HANDHELD_H

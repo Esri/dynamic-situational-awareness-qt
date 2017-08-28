@@ -11,6 +11,7 @@
 #  See the Sample code usage restrictions document for further information.
 #-------------------------------------------------
 
+TARGET = DSA_Handheld_Qt
 TEMPLATE = app
 
 QT += core gui opengl network positioning sensors qml quick
@@ -21,11 +22,11 @@ include($$PWD/arcgisruntime.pri)
 
 HEADERS += \
     AppInfo.h \
-    DSA_Handheld.h
+    Handheld.h
 
 SOURCES += \
     main.cpp \
-    DSA_Handheld.cpp
+    Handheld.cpp
 
 RESOURCES += \
     qml/qml.qrc \

@@ -13,11 +13,11 @@
 
 import QtQuick 2.6
 import QtQuick.Controls 1.4
-import Esri.DSAVehicle 1.0
+import Esri.Vehicle 1.0
 import Esri.ArcGISExtras 1.1
 import Esri.ArcGISRuntime.Solutions 1.0
 
-DSA_Vehicle {
+Vehicle {
     width: 800
     height: 600
 

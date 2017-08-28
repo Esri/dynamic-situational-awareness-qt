@@ -60,12 +60,6 @@ void Vehicle::componentComplete()
   {
     const auto point = m_mapView->screenToLocation(mouseEvent.x(), mouseEvent.y());
     m_coordinateConversionController->setPointToConvert(point);
-
-    auto uiWindow = findChild<QObject*>("coordinateConversion");
-    if (uiWindow && QQmlProperty::read(uiWindow, "getFromMapMode").toBool())
-    {
-      m_coordinateConversionController->convertPoint();
-    }
   });
 
   connect(m_map, &Map::doneLoading, this, [this](Error)

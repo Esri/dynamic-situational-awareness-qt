@@ -17,8 +17,8 @@ namespace Esri
 {
 namespace ArcGISRuntime
 {
-  class Map;
-  class MapQuickView;
+class Map;
+class MapQuickView;
 }
 }
 
@@ -35,8 +35,8 @@ public:
   void componentComplete() override;
 
 private:
-  Esri::ArcGISRuntime::Map* m_map = nullptr;
-  Esri::ArcGISRuntime::MapQuickView* m_mapView = nullptr;
+  Esri::ArcGISRuntime::Map*             m_map = nullptr;
+  Esri::ArcGISRuntime::MapQuickView*    m_mapView = nullptr;
 
   QString m_dataPath;
 };

@@ -11,6 +11,7 @@
 #  See the Sample code usage restrictions document for further information.
 #-------------------------------------------------
 
+TARGET = DSA_Vehicle_Qt
 TEMPLATE = app
 
 QT += core gui opengl network positioning sensors qml quick
@@ -21,11 +22,11 @@ include($$PWD/arcgisruntime.pri)
 
 HEADERS += \
     AppInfo.h \
-    DSA_Vehicle.h
+    Vehicle.h
 
 SOURCES += \
     main.cpp \
-    DSA_Vehicle.cpp
+    Vehicle.cpp
 
 RESOURCES += \
     qml/qml.qrc \

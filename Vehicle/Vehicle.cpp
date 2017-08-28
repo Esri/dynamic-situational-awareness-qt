@@ -15,22 +15,22 @@
 #include "Basemap.h"
 #include "ArcGISTiledLayer.h"
 
-#include "DSA_Handheld.h"
+#include "Vehicle.h"
 
 #include <QQmlProperty>
 
 using namespace Esri::ArcGISRuntime;
 
-DSA_Handheld::DSA_Handheld(QQuickItem* parent /* = nullptr */):
+Vehicle::Vehicle(QQuickItem* parent /* = nullptr */):
   QQuickItem(parent)
 {
 }
 
-DSA_Handheld::~DSA_Handheld()
+Vehicle::~Vehicle()
 {
 }
 
-void DSA_Handheld::componentComplete()
+void Vehicle::componentComplete()
 {
   QQuickItem::componentComplete();
 

@@ -10,8 +10,8 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef DSA_HANDHELD_H
-#define DSA_HANDHELD_H
+#ifndef VEHICLE_H
+#define VEHICLE_H
 
 namespace Esri
 {
@@ -24,13 +24,13 @@ class MapQuickView;
 
 #include <QQuickItem>
 
-class DSA_Handheld : public QQuickItem
+class Vehicle : public QQuickItem
 {
   Q_OBJECT
 
 public:
-  DSA_Handheld(QQuickItem* parent = nullptr);
-  ~DSA_Handheld();
+  Vehicle(QQuickItem* parent = nullptr);
+  ~Vehicle();
 
   void componentComplete() override;
 
@@ -41,4 +41,4 @@ private:
   QString m_dataPath;
 };
 
-#endif // DSA_HANDHELD_H
+#endif // VEHICLE_H

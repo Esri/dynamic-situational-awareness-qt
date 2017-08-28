@@ -14,12 +14,16 @@
 #include "MapQuickView.h"
 #include "Basemap.h"
 #include "ArcGISTiledLayer.h"
+#include "CoordinateConversionController.h"
+#include "CoordinateConversionOptions.h"
 
 #include "DSA_Vehicle.h"
 
 #include <QQmlProperty>
 
 using namespace Esri::ArcGISRuntime;
+using namespace Esri::ArcGISRuntime::Solutions;
+using CCO = CoordinateConversionOptions;
 
 DSA_Vehicle::DSA_Vehicle(QQuickItem* parent /* = nullptr */):
   QQuickItem(parent)
@@ -37,6 +41,9 @@ void DSA_Vehicle::componentComplete()
   // read the local data path
   m_dataPath = QQmlProperty::read(this, "dataPath").toString();
 
+  // find QML Coordinate Conversion Controller object
+  m_coordinateConversionController = findChild<CoordinateConversionController*>("coordinateConversionController");
+
   // find QML MapView component
   m_mapView = findChild<MapQuickView*>("mapView");
   m_mapView->setWrapAroundMode(WrapAroundMode::Disabled);
@@ -45,9 +52,66 @@ void DSA_Vehicle::componentComplete()
   TileCache* tileCache = new TileCache(m_dataPath + QStringLiteral("/LightGreyCanvas.tpk"), this);
   m_map = new Map(new Basemap(new ArcGISTiledLayer(tileCache, this), this), this);
 
+  connect(m_mapView, &MapQuickView::mouseClicked, this, [this](QMouseEvent& mouseEvent)
+  {
+    const auto point = m_mapView->screenToLocation(mouseEvent.x(), mouseEvent.y());
+    m_coordinateConversionController->setPointToConvert(point);
+
+    auto uiWindow = findChild<QObject*>("coordinateConversion");
+    if (uiWindow && QQmlProperty::read(uiWindow, "getFromMapMode").toBool())
+    {
+      m_coordinateConversionController->convertPoint();
+    }
+  });
+
+  connect(m_map, &Map::doneLoading, this, [this](Error)
+  {
+    m_coordinateConversionController->setSpatialReference(m_map->spatialReference());
+  });
+
   // Set map to map view
   m_mapView->setMap(m_map);
 
   // Set viewpoint to Monterey, CA
   m_mapView->setViewpointCenter(Point(-121.9, 36.6, SpatialReference::wgs84()), 1e5);
+
+  // set the options for the coordinateConversionTool
+  setCoordinateConversionOptions();
+}
+
+void DSA_Vehicle::setCoordinateConversionOptions()
+{
+  if (!m_coordinateConversionController)
+    return;
+
+  CoordinateConversionOptions* option = new CoordinateConversionOptions(this);
+  option->setName("Coast Gaurd");
+  option->setOutputMode(CCO::CoordinateType::CoordinateTypeLatLon);
+  option->setLatLonFormat(CCO::LatitudeLongitudeFormat::LatitudeLongitudeFormatDegreesDecimalMinutes);
+
+  m_coordinateConversionController->addOption(option);
+
+  option = new CoordinateConversionOptions(this);
+  option->setName("Air Force");
+  option->setOutputMode(CCO::CoordinateType::CoordinateTypeUsng);
+  option->setPrecision(7);
+  option->setAddSpaces(true);
+
+  m_coordinateConversionController->addOption(option);
+
+  option = new CoordinateConversionOptions(this);
+  option->setName("Squad Alpha");
+  option->setOutputMode(CCO::CoordinateType::CoordinateTypeUtm);
+  option->setUtmConversionMode(CCO::UtmConversionMode::UtmConversionModeNorthSouthIndicators);
+  option->setAddSpaces(true);
+
+  m_coordinateConversionController->addOption(option);
+
+  option = new CoordinateConversionOptions(this);
+  option->setName("Division B");
+  option->setOutputMode(CCO::CoordinateType::CoordinateTypeLatLon);
+  option->setLatLonFormat(CCO::LatitudeLongitudeFormat::LatitudeLongitudeFormatDegreesMinutesSeconds);
+  option->setDecimalPlaces(12);
+
+  m_coordinateConversionController->addOption(option);
 }

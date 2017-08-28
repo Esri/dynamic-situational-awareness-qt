@@ -15,6 +15,7 @@ import QtQuick 2.6
 import QtQuick.Controls 1.4
 import Esri.DSAVehicle 1.0
 import Esri.ArcGISExtras 1.1
+import Esri.ArcGISRuntime.Solutions 1.0
 
 DSA_Vehicle {
     width: 800
@@ -29,5 +30,25 @@ DSA_Vehicle {
         objectName: "mapView"
         // set focus to enable keyboard navigation
         focus: true
+
+        Button {
+            id: coordConvButton
+            text: "Coordinate conversion"
+
+            onClicked: {
+                coordinateConversion.visible = true;
+            }
+        }
+
+        CoordinateConversion {
+            id: coordinateConversion
+            objectName: "coordinateConversion"
+            visible: false
+            height: parent.height / 3
+            width: parent.width
+            anchors {
+                bottom: parent.bottom
+            }
+        }
     }
 }

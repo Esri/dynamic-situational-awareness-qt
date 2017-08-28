@@ -17,8 +17,12 @@ namespace Esri
 {
 namespace ArcGISRuntime
 {
-class Map;
-class MapQuickView;
+  class Map;
+  class MapQuickView;
+namespace Solutions
+{
+  class CoordinateConversionController;
+}
 }
 }
 
@@ -35,8 +39,11 @@ public:
   void componentComplete() override;
 
 private:
-  Esri::ArcGISRuntime::Map*             m_map = nullptr;
-  Esri::ArcGISRuntime::MapQuickView*    m_mapView = nullptr;
+  void setCoordinateConversionOptions();
+
+  Esri::ArcGISRuntime::Map* m_map = nullptr;
+  Esri::ArcGISRuntime::MapQuickView* m_mapView = nullptr;
+  Esri::ArcGISRuntime::Solutions::CoordinateConversionController* m_coordinateConversionController = nullptr;
 
   QString m_dataPath;
 };

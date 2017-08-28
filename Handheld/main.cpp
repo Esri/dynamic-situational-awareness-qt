@@ -28,7 +28,7 @@
 #include "MapQuickView.h"
 
 #include "AppInfo.h"
-#include "DSA_Handheld.h"
+#include "Handheld.h"
 
 //------------------------------------------------------------------------------
 
@@ -91,10 +91,10 @@ int main(int argc, char *argv[])
   //  }
 
   // Register the map view for QML
-  qmlRegisterType<MapQuickView>("Esri.DSAHandheld", 1, 0, "MapView");
+  qmlRegisterType<MapQuickView>("Esri.Handheld", 1, 0, "MapView");
 
-  // Register the DSA_Handheld_Qt (QQuickItem) for QML
-  qmlRegisterType<DSA_Handheld>("Esri.DSAHandheld", 1, 0, "DSA_Handheld");
+  // Register the Handheld (QQuickItem) for QML
+  qmlRegisterType<Handheld>("Esri.Handheld", 1, 0, "Handheld");
 
   // Intialize application view
   QQuickView view;

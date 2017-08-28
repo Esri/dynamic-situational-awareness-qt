@@ -28,7 +28,7 @@
 #include "MapQuickView.h"
 
 #include "AppInfo.h"
-#include "DSA_Vehicle.h"
+#include "Vehicle.h"
 
 //------------------------------------------------------------------------------
 
@@ -91,10 +91,10 @@ int main(int argc, char *argv[])
   //  }
 
   // Register the map view for QML
-  qmlRegisterType<MapQuickView>("Esri.DSAVehicle", 1, 0, "MapView");
+  qmlRegisterType<MapQuickView>("Esri.Vehicle", 1, 0, "MapView");
 
-  // Register the DSA_Vehicle_Qt (QQuickItem) for QML
-  qmlRegisterType<DSA_Vehicle>("Esri.DSAVehicle", 1, 0, "DSA_Vehicle");
+  // Register the Vehicle (QQuickItem) for QML
+  qmlRegisterType<Vehicle>("Esri.Vehicle", 1, 0, "Vehicle");
 
   // Intialize application view
   QQuickView view;

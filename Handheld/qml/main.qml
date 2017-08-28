@@ -13,10 +13,10 @@
 
 import QtQuick 2.6
 import QtQuick.Controls 1.4
-import Esri.DSAHandheld 1.0
+import Esri.Handheld 1.0
 import Esri.ArcGISExtras 1.1
 
-DSA_Handheld {
+Handheld {
     width: 800
     height: 600
 

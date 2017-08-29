@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
   //    return 1;
   //  }
 
-  // register the solutions types
+  // register the toolkit types
   ArcGISRuntimeToolkit::registerToolkitTypes();
 
   // Register the map view for QML

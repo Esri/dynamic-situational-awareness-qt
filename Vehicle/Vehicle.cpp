@@ -58,15 +58,16 @@ void Vehicle::componentComplete()
 
   connect(m_mapView, &MapQuickView::mouseClicked, this, [this](QMouseEvent& mouseEvent)
   {
-    const auto point = m_mapView->screenToLocation(mouseEvent.x(), mouseEvent.y());
-    m_coordinateConversionController->setPointToConvert(point);
+    for (auto it = ToolManager::instance()->toolsBegin(); it != ToolManager::instance()->toolsEnd(); ++it)
+    {
+      it.value()->handleClick(m_mapView->screenToLocation(mouseEvent.x(), mouseEvent.y()));
+    }
   });
 
   connect(m_map, &Map::doneLoading, this, [this](Error)
   {
     m_coordinateConversionController->setSpatialReference(m_map->spatialReference());
   });
-
 
   // Set map to map view
   m_mapView->setMap(m_map);

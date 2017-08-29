@@ -24,7 +24,7 @@
 #endif
 
 #include "ArcGISRuntimeEnvironment.h"
-#include "ArcGISRuntimeSolutions.h"
+#include "ArcGISRuntimeToolkit.h"
 
 #include "MapQuickView.h"
 
@@ -52,7 +52,7 @@
 //------------------------------------------------------------------------------
 
 using namespace Esri::ArcGISRuntime;
-using namespace Esri::ArcGISRuntime::Solutions;
+using namespace Esri::ArcGISRuntime::Toolkit;
 
 int main(int argc, char *argv[])
 {
@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
   //  }
 
   // register the solutions types
-  ArcGISRuntimeSolutions::registerSolutionsTypes();
+  ArcGISRuntimeToolkit::registerToolkitTypes();
 
   // Register the map view for QML
   qmlRegisterType<MapQuickView>("Esri.Vehicle", 1, 0, "MapView");

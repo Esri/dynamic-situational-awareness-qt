@@ -27,6 +27,6 @@ priLocation = $$replace(cleanDirPath, '"', "")
   message("Error. Cannot locate ArcGIS Runtime PRI file")
 }
 
-!include($$priLocation/sdk/ideintegration/arcgis_runtime_solutions.pri) {
-  message("Error. Cannot locate ArcGIS Runtime Solutions PRI file")
+!include($$priLocation/sdk/ideintegration/arcgis_runtime_toolkit_cpp.pri) {
+  message("Error. Cannot locate ArcGIS Runtime Toolkit Cpp PRI file")
 }

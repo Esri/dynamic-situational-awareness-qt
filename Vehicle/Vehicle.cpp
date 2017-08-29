@@ -23,7 +23,7 @@
 #include <QQmlProperty>
 
 using namespace Esri::ArcGISRuntime;
-using namespace Esri::ArcGISRuntime::Solutions;
+using namespace Esri::ArcGISRuntime::Toolkit;
 using CCO = CoordinateConversionOptions;
 
 Vehicle::Vehicle(QQuickItem* parent /* = nullptr */):

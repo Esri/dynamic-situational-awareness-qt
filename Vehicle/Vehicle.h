@@ -21,7 +21,7 @@ class Map;
 class MapQuickView;
 class Map;
 class MapQuickView;
-namespace Solutions
+namespace Toolkit
 {
 class CoordinateConversionController;
 }
@@ -45,7 +45,7 @@ private:
 
   Esri::ArcGISRuntime::Map* m_map = nullptr;
   Esri::ArcGISRuntime::MapQuickView* m_mapView = nullptr;
-  Esri::ArcGISRuntime::Solutions::CoordinateConversionController* m_coordinateConversionController = nullptr;
+  Esri::ArcGISRuntime::Toolkit::CoordinateConversionController* m_coordinateConversionController = nullptr;
 
   QString m_dataPath;
 };

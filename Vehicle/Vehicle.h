@@ -17,6 +17,7 @@ namespace Esri
 {
 namespace ArcGISRuntime
 {
+class Error;
 class Scene;
 class SceneQuickView;
 }
@@ -33,6 +34,9 @@ public:
   ~Vehicle();
 
   void componentComplete() override;
+
+private slots:
+  void onError(const Esri::ArcGISRuntime::Error& error);
 
 private:
   Esri::ArcGISRuntime::Scene*             m_scene = nullptr;

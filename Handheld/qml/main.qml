@@ -24,4 +24,28 @@ Handheld {
         anchors.fill: parent
         objectName: "sceneView"
     }
+
+    BasemapPickerTool {
+        id: basemapsTool
+        anchors {
+            top: basemapsCheckBox.bottom
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
+        visible: basemapsCheckBox.checked
+
+        onBasemapSelected: {
+            basemapsCheckBox.checked = false;
+        }
+    }
+
+    Button {
+        id: basemapsCheckBox
+        anchors.top: parent.top
+        anchors.right: parent.right
+        checkable: true
+        checked: false
+        iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_light.png"
+    }
 }

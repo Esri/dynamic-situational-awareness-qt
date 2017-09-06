@@ -27,7 +27,7 @@
 
 #include "SceneQuickView.h"
 
-#include "../Shared/BasemapPickerController.h"
+#include "BasemapPickerController.h"
 
 #include "AppInfo.h"
 #include "Vehicle.h"

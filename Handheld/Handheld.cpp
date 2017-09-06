@@ -17,6 +17,7 @@
 #include "SceneQuickView.h"
 
 #include "DsaUtility.h"
+#include "BasemapPickerController.h"
 
 #include "Handheld.h"
 
@@ -44,7 +45,32 @@ void Handheld::componentComplete()
   TileCache* tileCache = new TileCache(m_dataPath + QStringLiteral("/LightGreyCanvas.tpk"), this);
   connect(tileCache, &TileCache::errorOccurred, this, &Handheld::onError);
 
-  m_scene = new Scene(new Basemap(new ArcGISTiledLayer(tileCache, this), this), this);
+  // placeholder until we have ToolManager
+  for (QObject* obj : DsaUtility::tools)
+  {
+    if (!obj)
+      continue;
+
+    // we would add basemapChanged signal to AbstractTool and then we do not require the concrete type here
+    BasemapPickerController* basemapPicker = qobject_cast<BasemapPickerController*>(obj);
+    if (!basemapPicker)
+      continue;
+
+    connect(basemapPicker, &BasemapPickerController::basemapChanged, this, [this](Basemap* basemap)
+    {
+      if (!basemap)
+        return;
+
+      basemap->setParent(this);
+      m_scene->setBasemap(basemap);
+
+      connect(basemap, &Basemap::errorOccurred, this, &Handheld::onError);
+
+      basemap->load();
+    });
+  }
+
+  m_scene = new Scene(this);
   connect(m_scene, &Scene::errorOccurred, this, &Handheld::onError);
 
   // set an elevation source

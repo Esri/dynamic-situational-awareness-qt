@@ -20,13 +20,17 @@ CONFIG += c++11
 ARCGIS_RUNTIME_VERSION = 100.2
 include($$PWD/arcgisruntime.pri)
 
+INCLUDEPATH += ../Shared/
+
 HEADERS += \
     AppInfo.h \
-    Vehicle.h
+    Vehicle.h \
+    ../Shared/DsaUtility.h
 
 SOURCES += \
     main.cpp \
-    Vehicle.cpp
+    Vehicle.cpp \
+    ../Shared/DsaUtility.cpp
 
 RESOURCES += \
     qml/qml.qrc \

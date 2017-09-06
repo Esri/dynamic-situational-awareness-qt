@@ -10,20 +10,22 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "Map.h"
-#include "MapQuickView.h"
-#include "Basemap.h"
+#include "ArcGISTiledElevationSource.h"
 #include "ArcGISTiledLayer.h"
+#include "Basemap.h"
+#include "Scene.h"
+#include "SceneQuickView.h"
+
+#include "DsaUtility.h"
 
 #include "Vehicle.h"
-
-#include <QQmlProperty>
 
 using namespace Esri::ArcGISRuntime;
 
 Vehicle::Vehicle(QQuickItem* parent /* = nullptr */):
   QQuickItem(parent)
 {
+  m_dataPath = DsaUtility::dataPath();
 }
 
 Vehicle::~Vehicle()
@@ -34,20 +36,32 @@ void Vehicle::componentComplete()
 {
   QQuickItem::componentComplete();
 
-  // read the local data path
-  m_dataPath = QQmlProperty::read(this, "dataPath").toString();
+  // find QML SceneView component
+  m_sceneView = findChild<SceneQuickView*>("sceneView");
+  connect(m_sceneView, &SceneQuickView::errorOccurred, this, &Vehicle::onError);
 
-  // find QML MapView component
-  m_mapView = findChild<MapQuickView*>("mapView");
-  m_mapView->setWrapAroundMode(WrapAroundMode::Disabled);
-
-  // Create a map using the light grey canvas tile package
+  // Create a scene using the light grey canvas tile package
   TileCache* tileCache = new TileCache(m_dataPath + QStringLiteral("/LightGreyCanvas.tpk"), this);
-  m_map = new Map(new Basemap(new ArcGISTiledLayer(tileCache, this), this), this);
+  connect(tileCache, &TileCache::errorOccurred, this, &Vehicle::onError);
 
-  // Set map to map view
-  m_mapView->setMap(m_map);
+  m_scene = new Scene(new Basemap(new ArcGISTiledLayer(tileCache, this), this), this);
+  connect(m_scene, &Scene::errorOccurred, this, &Vehicle::onError);
+
+  // set an elevation source
+  ArcGISTiledElevationSource* source = new ArcGISTiledElevationSource(QUrl(m_dataPath + "/elevation/CaDEM.tpk"), this);
+  connect(source, &ArcGISTiledElevationSource::errorOccurred, this, &Vehicle::onError);
+  m_scene->baseSurface()->elevationSources()->append(source);
+
+  // Set scene to scene view
+  m_sceneView->setArcGISScene(m_scene);
 
   // Set viewpoint to Monterey, CA
-  m_mapView->setViewpointCenter(Point(-121.9, 36.6, SpatialReference::wgs84()), 1e5);
+  // distance of 5000m, heading North, pitch at 75 degrees, roll of 0
+  Camera monterey(DsaUtility::montereyCA(), 5000, 0., 75., 0);
+  m_sceneView->setViewpointCamera(monterey);
+}
+
+void Vehicle::onError(const Error&)
+{
+
 }

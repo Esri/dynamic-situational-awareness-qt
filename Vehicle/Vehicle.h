@@ -17,8 +17,9 @@ namespace Esri
 {
 namespace ArcGISRuntime
 {
-class Map;
-class MapQuickView;
+class Error;
+class Scene;
+class SceneQuickView;
 }
 }
 
@@ -34,11 +35,14 @@ public:
 
   void componentComplete() override;
 
-private:
-  Esri::ArcGISRuntime::Map*             m_map = nullptr;
-  Esri::ArcGISRuntime::MapQuickView*    m_mapView = nullptr;
+private slots:
+  void onError(const Esri::ArcGISRuntime::Error& error);
 
-  QString m_dataPath;
+private:
+  Esri::ArcGISRuntime::Scene*             m_scene = nullptr;
+  Esri::ArcGISRuntime::SceneQuickView*    m_sceneView = nullptr;
+
+  QString                                 m_dataPath;
 };
 
 #endif // VEHICLE_H

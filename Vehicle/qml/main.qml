@@ -27,7 +27,12 @@ Vehicle {
 
     BasemapPickerTool {
         id: basemapsTool
-        anchors.fill: parent
+        anchors {
+            top: basemapsCheckBox.bottom
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
         visible: basemapsCheckBox.checked
 
         onBasemapSelected: {
@@ -35,11 +40,12 @@ Vehicle {
         }
     }
 
-    CheckBox {
+    Button {
         id: basemapsCheckBox
-        text: "basemaps"
         anchors.top: parent.top
         anchors.right: parent.right
+        checkable: true
         checked: false
+        iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_light.png"
     }
 }

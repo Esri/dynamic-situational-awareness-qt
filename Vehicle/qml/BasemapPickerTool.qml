@@ -16,8 +16,6 @@ import QtQuick.Controls 1.4
 import Esri.Vehicle 1.0
 
 Item {
-    anchors.fill: parent
-
     signal basemapSelected();
 
     BasemapPickerController {

@@ -22,11 +22,13 @@ include($$PWD/arcgisruntime.pri)
 
 HEADERS += \
     AppInfo.h \
-    Vehicle.h
+    Vehicle.h \
+    ../Shared/DsaUtility.h
 
 SOURCES += \
     main.cpp \
-    Vehicle.cpp
+    Vehicle.cpp \
+    ../Shared/DsaUtility.cpp
 
 RESOURCES += \
     qml/qml.qrc \

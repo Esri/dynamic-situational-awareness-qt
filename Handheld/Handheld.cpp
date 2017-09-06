@@ -15,15 +15,16 @@
 #include "Basemap.h"
 #include "ArcGISTiledLayer.h"
 
-#include "Handheld.h"
+#include "../Shared/DsaUtility.h"
 
-#include <QQmlProperty>
+#include "Handheld.h"
 
 using namespace Esri::ArcGISRuntime;
 
 Handheld::Handheld(QQuickItem* parent /* = nullptr */):
   QQuickItem(parent)
 {
+  m_dataPath = DsaUtility::dataPath();
 }
 
 Handheld::~Handheld()
@@ -33,9 +34,6 @@ Handheld::~Handheld()
 void Handheld::componentComplete()
 {
   QQuickItem::componentComplete();
-
-  // read the local data path
-  m_dataPath = QQmlProperty::read(this, "dataPath").toString();
 
   // find QML MapView component
   m_mapView = findChild<MapQuickView*>("mapView");

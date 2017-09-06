@@ -1,4 +1,3 @@
-
 // Copyright 2016 ESRI
 //
 // All rights reserved under the copyright laws of the United States
@@ -11,19 +10,16 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-import QtQuick 2.6
-import QtQuick.Controls 1.4
-import Esri.Handheld 1.0
+#ifndef UTILITY_H
+#define UTILITY_H
 
-Handheld {
-    width: 800
-    height: 600
+#include <QString>
 
-    // Create MapQuickView here, and create its Map etc. in C++ code
-    MapView {
-        anchors.fill: parent
-        objectName: "mapView"
-        // set focus to enable keyboard navigation
-        focus: true
-    }
-}
+class DsaUtility
+{
+public:
+
+  static QString dataPath();
+};
+
+#endif // UTILITY_H

@@ -35,6 +35,7 @@ public:
   void componentComplete() override;
 
 private:
+
   Esri::ArcGISRuntime::Map*             m_map = nullptr;
   Esri::ArcGISRuntime::MapQuickView*    m_mapView = nullptr;
 

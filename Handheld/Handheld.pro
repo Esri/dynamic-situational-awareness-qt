@@ -22,11 +22,13 @@ include($$PWD/arcgisruntime.pri)
 
 HEADERS += \
     AppInfo.h \
-    Handheld.h
+    Handheld.h \
+    ../Shared/DsaUtility.h
 
 SOURCES += \
     main.cpp \
-    Handheld.cpp
+    Handheld.cpp \
+    ../Shared/DsaUtility.cpp
 
 RESOURCES += \
     qml/qml.qrc \

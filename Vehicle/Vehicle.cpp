@@ -15,15 +15,16 @@
 #include "Basemap.h"
 #include "ArcGISTiledLayer.h"
 
-#include "Vehicle.h"
+#include "../Shared/DsaUtility.h"
 
-#include <QQmlProperty>
+#include "Vehicle.h"
 
 using namespace Esri::ArcGISRuntime;
 
 Vehicle::Vehicle(QQuickItem* parent /* = nullptr */):
   QQuickItem(parent)
 {
+  m_dataPath = DsaUtility::dataPath();
 }
 
 Vehicle::~Vehicle()
@@ -33,9 +34,6 @@ Vehicle::~Vehicle()
 void Vehicle::componentComplete()
 {
   QQuickItem::componentComplete();
-
-  // read the local data path
-  m_dataPath = QQmlProperty::read(this, "dataPath").toString();
 
   // find QML MapView component
   m_mapView = findChild<MapQuickView*>("mapView");

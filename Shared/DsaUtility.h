@@ -14,6 +14,8 @@
 #define UTILITY_H
 
 #include <QString>
+#include <QObject>
+#include <QList>
 
 #include "Point.h"
 
@@ -23,6 +25,7 @@ public:
 
   static QString dataPath();
   static Esri::ArcGISRuntime::Point montereyCA();
+  static QList<QObject*> tools; // placeholder until we have ToolManager
 };
 
 #endif // UTILITY_H

@@ -24,4 +24,22 @@ Vehicle {
         anchors.fill: parent
         objectName: "sceneView"
     }
+
+    BasemapPickerTool {
+        id: basemapsTool
+        anchors.fill: parent
+        visible: basemapsCheckBox.checked
+
+        onBasemapSelected: {
+            basemapsCheckBox.checked = false;
+        }
+    }
+
+    CheckBox {
+        id: basemapsCheckBox
+        text: "basemaps"
+        anchors.top: parent.top
+        anchors.right: parent.right
+        checked: false
+    }
 }

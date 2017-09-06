@@ -25,7 +25,7 @@
 
 #include "ArcGISRuntimeEnvironment.h"
 
-#include "MapQuickView.h"
+#include "SceneQuickView.h"
 
 #include "AppInfo.h"
 #include "Handheld.h"
@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
   //  }
 
   // Register the map view for QML
-  qmlRegisterType<MapQuickView>("Esri.Handheld", 1, 0, "MapView");
+  qmlRegisterType<SceneQuickView>("Esri.Handheld", 1, 0, "SceneView");
 
   // Register the Handheld (QQuickItem) for QML
   qmlRegisterType<Handheld>("Esri.Handheld", 1, 0, "Handheld");

@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "Map.h"
-#include "MapQuickView.h"
-#include "Basemap.h"
 #include "ArcGISTiledLayer.h"
+#include "Basemap.h"
+#include "Scene.h"
+#include "SceneQuickView.h"
 
 #include "../Shared/DsaUtility.h"
 
@@ -35,17 +35,18 @@ void Handheld::componentComplete()
 {
   QQuickItem::componentComplete();
 
-  // find QML MapView component
-  m_mapView = findChild<MapQuickView*>("mapView");
-  m_mapView->setWrapAroundMode(WrapAroundMode::Disabled);
+  // find QML SceneView component
+  m_sceneView = findChild<SceneQuickView*>("sceneView");
 
-  // Create a map using the light grey canvas tile package
+  // Create a scene using the light grey canvas tile package
   TileCache* tileCache = new TileCache(m_dataPath + QStringLiteral("/LightGreyCanvas.tpk"), this);
-  m_map = new Map(new Basemap(new ArcGISTiledLayer(tileCache, this), this), this);
+  m_scene = new Scene(new Basemap(new ArcGISTiledLayer(tileCache, this), this), this);
 
-  // Set map to map view
-  m_mapView->setMap(m_map);
+  // Set scene to scene view
+  m_sceneView->setArcGISScene(m_scene);
 
   // Set viewpoint to Monterey, CA
-  m_mapView->setViewpointCenter(Point(-121.9, 36.6, SpatialReference::wgs84()), 1e5);
+  // distance of 5000m, heading North, pitch at 30 degrees, roll of 0
+  Camera monterey(DsaUtility::montereyCA(), 5000, 0., 30., 0);
+  m_sceneView->setViewpointCamera(monterey);
 }

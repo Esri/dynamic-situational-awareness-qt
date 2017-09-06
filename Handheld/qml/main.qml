@@ -19,11 +19,9 @@ Handheld {
     width: 800
     height: 600
 
-    // Create MapQuickView here, and create its Map etc. in C++ code
-    MapView {
+    // Create SceneQuickView here, and create its Scene etc. in C++ code
+    SceneView {
         anchors.fill: parent
-        objectName: "mapView"
-        // set focus to enable keyboard navigation
-        focus: true
+        objectName: "sceneView"
     }
 }

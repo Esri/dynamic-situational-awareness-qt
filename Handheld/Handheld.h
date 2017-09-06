@@ -17,8 +17,8 @@ namespace Esri
 {
 namespace ArcGISRuntime
 {
-class Map;
-class MapQuickView;
+class Scene;
+class SceneQuickView;
 }
 }
 
@@ -36,8 +36,8 @@ public:
 
 private:
 
-  Esri::ArcGISRuntime::Map*             m_map = nullptr;
-  Esri::ArcGISRuntime::MapQuickView*    m_mapView = nullptr;
+  Esri::ArcGISRuntime::Scene*             m_scene = nullptr;
+  Esri::ArcGISRuntime::SceneQuickView*    m_sceneView = nullptr;
 
   QString m_dataPath;
 };

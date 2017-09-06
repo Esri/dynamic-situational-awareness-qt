@@ -16,6 +16,8 @@
 #include <QFileInfo>
 #include <QStandardPaths>
 
+using namespace Esri::ArcGISRuntime;
+
 QString DsaUtility::dataPath()
 {
   QDir dataDir;
@@ -33,4 +35,9 @@ QString DsaUtility::dataPath()
   dataDir.cd("DSA");
 
   return dataDir.exists() ? dataDir.absolutePath() : "";
+}
+
+Point DsaUtility::montereyCA()
+{
+  return Point(-121.9, 36.6, SpatialReference::wgs84());
 }

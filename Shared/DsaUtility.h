@@ -15,11 +15,14 @@
 
 #include <QString>
 
+#include "Point.h"
+
 class DsaUtility
 {
 public:
 
   static QString dataPath();
+  static Esri::ArcGISRuntime::Point montereyCA();
 };
 
 #endif // UTILITY_H

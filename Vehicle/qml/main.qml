@@ -20,10 +20,8 @@ Vehicle {
     height: 600
 
     // Create MapQuickView here, and create its Map etc. in C++ code
-    MapView {
+    SceneView {
         anchors.fill: parent
-        objectName: "mapView"
-        // set focus to enable keyboard navigation
-        focus: true
+        objectName: "sceneView"
     }
 }

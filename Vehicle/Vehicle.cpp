@@ -15,8 +15,8 @@
 #include "Scene.h"
 #include "SceneQuickView.h"
 
-#include "../Shared/DsaUtility.h"
-#include "../Shared/BasemapPickerController.h"
+#include "BasemapPickerController.h"
+#include "DsaUtility.h"
 
 #include "Vehicle.h"
 

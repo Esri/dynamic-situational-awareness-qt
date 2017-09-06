@@ -16,7 +16,7 @@
 #include "Scene.h"
 #include "SceneQuickView.h"
 
-#include "../Shared/DsaUtility.h"
+#include "DsaUtility.h"
 
 #include "Handheld.h"
 

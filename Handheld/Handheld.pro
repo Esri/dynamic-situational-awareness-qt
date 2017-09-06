@@ -20,6 +20,8 @@ CONFIG += c++11
 ARCGIS_RUNTIME_VERSION = 100.2
 include($$PWD/arcgisruntime.pri)
 
+INCLUDEPATH += ../Shared/
+
 HEADERS += \
     AppInfo.h \
     Handheld.h \

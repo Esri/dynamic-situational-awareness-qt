@@ -64,8 +64,6 @@ void Vehicle::componentComplete()
       m_scene->setBasemap(basemap);
 
       connect(basemap, &Basemap::errorOccurred, this, &Vehicle::onError);
-
-      basemap->load();
     });
   }
 

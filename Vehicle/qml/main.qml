@@ -25,7 +25,7 @@ Vehicle {
         objectName: "sceneView"
     }
 
-    BasemapPickerTool {
+    BasemapPicker {
         id: basemapsTool
         anchors {
             top: basemapsCheckBox.bottom

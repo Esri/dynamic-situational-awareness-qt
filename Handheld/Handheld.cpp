@@ -65,8 +65,6 @@ void Handheld::componentComplete()
       m_scene->setBasemap(basemap);
 
       connect(basemap, &Basemap::errorOccurred, this, &Handheld::onError);
-
-      basemap->load();
     });
   }
 

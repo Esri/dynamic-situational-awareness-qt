@@ -36,7 +36,8 @@ SOURCES += \
 
 RESOURCES += \
     qml/qml.qrc \
-    Resources/Resources.qrc
+    Resources/Resources.qrc \
+    Resources/application.qrc
 
 #-------------------------------------------------------------------------------
 

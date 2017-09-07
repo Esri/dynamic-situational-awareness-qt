@@ -24,7 +24,7 @@ QString DsaUtility::dataPath()
 {
   QDir dataDir;
 #ifdef Q_OS_ANDROID
-  dataDir = QDir(QStringLiteral"/sdcard"));
+  dataDir = QDir(QStringLiteral("/sdcard"));
 #elif defined Q_OS_IOS
   dataDir = QDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
 #else

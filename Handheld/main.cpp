@@ -27,6 +27,8 @@
 
 #include "SceneQuickView.h"
 
+#include "BasemapPickerController.h"
+
 #include "AppInfo.h"
 #include "Handheld.h"
 
@@ -95,6 +97,7 @@ int main(int argc, char *argv[])
 
   // Register the Handheld (QQuickItem) for QML
   qmlRegisterType<Handheld>("Esri.Handheld", 1, 0, "Handheld");
+  qmlRegisterType<BasemapPickerController>("Esri.Handheld", 1, 0, "BasemapPickerController");
 
   // Intialize application view
   QQuickView view;

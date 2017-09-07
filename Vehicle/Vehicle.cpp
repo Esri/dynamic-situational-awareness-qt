@@ -11,11 +11,11 @@
 //
 
 #include "ArcGISTiledElevationSource.h"
-#include "ArcGISTiledLayer.h"
 #include "Basemap.h"
 #include "Scene.h"
 #include "SceneQuickView.h"
 
+#include "BasemapPickerController.h"
 #include "DsaUtility.h"
 
 #include "Vehicle.h"
@@ -44,7 +44,30 @@ void Vehicle::componentComplete()
   TileCache* tileCache = new TileCache(m_dataPath + QStringLiteral("/LightGreyCanvas.tpk"), this);
   connect(tileCache, &TileCache::errorOccurred, this, &Vehicle::onError);
 
-  m_scene = new Scene(new Basemap(new ArcGISTiledLayer(tileCache, this), this), this);
+  // placeholder until we have ToolManager
+  for (QObject* obj : DsaUtility::tools)
+  {
+    if (!obj)
+      continue;
+
+    // we would add basemapChanged signal to AbstractTool and then we do not require the concrete type here
+    BasemapPickerController* basemapPicker = qobject_cast<BasemapPickerController*>(obj);
+    if (!basemapPicker)
+      continue;
+
+    connect(basemapPicker, &BasemapPickerController::basemapChanged, this, [this](Basemap* basemap)
+    {
+      if (!basemap)
+        return;
+
+      basemap->setParent(this);
+      m_scene->setBasemap(basemap);
+
+      connect(basemap, &Basemap::errorOccurred, this, &Vehicle::onError);
+    });
+  }
+
+  m_scene = new Scene(this);
   connect(m_scene, &Scene::errorOccurred, this, &Vehicle::onError);
 
   // set an elevation source

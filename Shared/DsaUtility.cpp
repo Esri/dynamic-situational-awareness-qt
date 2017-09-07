@@ -18,6 +18,8 @@
 
 using namespace Esri::ArcGISRuntime;
 
+QList<QObject*> DsaUtility::tools; // placeholder until we have ToolManager
+
 QString DsaUtility::dataPath()
 {
   QDir dataDir;

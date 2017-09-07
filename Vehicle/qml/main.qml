@@ -12,7 +12,8 @@
 //
 
 import QtQuick 2.6
-import QtQuick.Controls 1.4
+import QtQuick.Controls 2.1
+import QtQuick.Controls.Material 2.1
 import Esri.Vehicle 1.0
 
 Vehicle {
@@ -23,5 +24,36 @@ Vehicle {
     SceneView {
         anchors.fill: parent
         objectName: "sceneView"
+    }
+
+    BasemapPicker {
+        id: basemapsTool
+        anchors {
+            top: basemapsCheckBox.bottom
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
+        visible: basemapsCheckBox.checked
+
+        onBasemapSelected: {
+            basemapsCheckBox.checked = false;
+        }
+    }
+
+    Button {
+        id: basemapsCheckBox
+        anchors.top: parent.top
+        anchors.right: parent.right
+        checkable: true
+        checked: false
+        width: height
+        Image {
+            fillMode: Image.PreserveAspectFit
+            anchors.centerIn: parent
+            sourceSize.height: basemapsCheckBox.background.height - 6
+            height: sourceSize.height
+            source: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_light.png"
+        }
     }
 }

@@ -41,6 +41,17 @@ Vehicle {
         }
     }
 
+    LocationTool {
+        id: locationTool
+        anchors {
+            top: basemapsCheckBox.bottom
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
+        visible: locationCheckBox.checked
+    }
+
     Button {
         id: basemapsCheckBox
         anchors.top: parent.top
@@ -54,6 +65,22 @@ Vehicle {
             sourceSize.height: basemapsCheckBox.background.height - 6
             height: sourceSize.height
             source: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_light.png"
+        }
+    }
+
+    Button {
+        id: locationCheckBox
+        anchors.top: basemapsCheckBox.bottom
+        anchors.right: parent.right
+        checkable: true
+        checked: false
+        width: height
+        Image {
+            fillMode: Image.PreserveAspectFit
+            anchors.centerIn: parent
+            sourceSize.height: locationCheckBox.background.height - 6
+            height: sourceSize.height
+            source: "qrc:/Resources/icons/xhdpi/navigation.png"
         }
     }
 }

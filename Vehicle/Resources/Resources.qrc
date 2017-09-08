@@ -2,5 +2,6 @@
     <qresource prefix="/Resources">
         <file>AppIcon.png</file>
         <file>icons/xhdpi/ic_menu_choosebasemap_light.png</file>
+        <file>icons/xhdpi/navigation.png</file>
     </qresource>
 </RCC>

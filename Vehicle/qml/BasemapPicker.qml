@@ -19,6 +19,8 @@ import Esri.Vehicle 1.0
 Item {
     signal basemapSelected();
 
+    property real scaleFactor: 1.
+
     BasemapPickerController {
         id: toolController
     }
@@ -27,11 +29,11 @@ Item {
         id: basemapsList
 
         anchors{
-            margins: 32
+            margins: 32 * scaleFactor
             fill: parent
         }
 
-        spacing: 32
+        spacing: 32 * scaleFactor
 
         clip: true
         model: toolController.basemapsModel
@@ -39,12 +41,12 @@ Item {
         delegate: Item {
 
             width: basemapsList.width
-            height: 64
+            height: 64 * scaleFactor
 
             Button {
                 id: button
                 anchors {
-                    margins: 8
+                    margins: 8 * scaleFactor
                     horizontalCenter: parent.horizontalCenter
                 }
 
@@ -62,7 +64,7 @@ Item {
                 anchors.left: button.right
                 anchors.top: button.top
                 anchors.bottom: button.bottom
-                anchors.margins: 8
+                anchors.margins: 8 * scaleFactor
 
                 source: toolController.imageForBasemap(display)
                 fillMode: Image.PreserveAspectFit

@@ -10,6 +10,8 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include <QQuickWindow>
+
 #include "ArcGISTiledElevationSource.h"
 #include "ArcGISTiledLayer.h"
 #include "Basemap.h"
@@ -27,6 +29,20 @@ Handheld::Handheld(QQuickItem* parent /* = nullptr */):
   QQuickItem(parent)
 {
   m_dataPath = DsaUtility::dataPath();
+
+  QQuickWindow* appWindow = window();
+  if (appWindow)
+    connect(appWindow, &QQuickWindow::screenChanged, this, &Handheld::onScreenChanged);
+
+  connect(this, &Handheld::windowChanged, this, [this](QQuickWindow* newWindow)
+  {
+    if (!newWindow)
+      return;
+
+    connect(newWindow, &QQuickWindow::screenChanged, this, &Handheld::onScreenChanged);
+  });
+
+  onScreenChanged(appWindow ? appWindow->screen() : nullptr);
 }
 
 Handheld::~Handheld()
@@ -88,4 +104,15 @@ void Handheld::componentComplete()
 void Handheld::onError(const Esri::ArcGISRuntime::Error&)
 {
 
+}
+
+void Handheld::onScreenChanged(QScreen* screen)
+{
+  m_scaleFactor = DsaUtility::scaleFactor(screen);
+  emit appScaleFactorChanged();
+}
+
+double Handheld::appScaleFactor() const
+{
+  return m_scaleFactor;
 }

@@ -17,10 +17,10 @@ import QtQuick.Controls.Material 2.1
 import Esri.Vehicle 1.0
 
 Vehicle {
-    width: 800
-    height: 600
+    width: 800 * appScaleFactor
+    height: 600 * appScaleFactor
 
-    // Create MapQuickView here, and create its Map etc. in C++ code
+    // Create SceneQuickView here, and create its Scene etc. in C++ code
     SceneView {
         anchors.fill: parent
         objectName: "sceneView"
@@ -28,6 +28,8 @@ Vehicle {
 
     BasemapPicker {
         id: basemapsTool
+        scaleFactor: appScaleFactor
+
         anchors {
             top: basemapsCheckBox.bottom
             left: parent.left
@@ -51,7 +53,7 @@ Vehicle {
         Image {
             fillMode: Image.PreserveAspectFit
             anchors.centerIn: parent
-            sourceSize.height: basemapsCheckBox.background.height - 6
+            sourceSize.height: basemapsCheckBox.background.height - (6 * appScaleFactor)
             height: sourceSize.height
             source: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_light.png"
         }

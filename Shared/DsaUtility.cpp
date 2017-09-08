@@ -9,12 +9,18 @@
 //
 // See the Sample code usage restrictions document for further information.
 //
-
 #include "DsaUtility.h"
 
 #include <QDir>
 #include <QFileInfo>
+#include <QGuiApplication>
+#include <QScreen>
 #include <QStandardPaths>
+#include <QWindow>
+
+#ifdef Q_OS_WIN
+#include <Windows.h>
+#endif
 
 using namespace Esri::ArcGISRuntime;
 
@@ -42,4 +48,26 @@ QString DsaUtility::dataPath()
 Point DsaUtility::montereyCA()
 {
   return Point(-121.9, 36.6, SpatialReference::wgs84());
+}
+
+double DsaUtility::scaleFactor(QScreen* screen /*= nullptr*/)
+{
+  if (screen == nullptr)
+  {
+    QGuiApplication* app = qobject_cast<QGuiApplication*>(QGuiApplication::instance());
+    if (nullptr == app)
+      return 1.;
+
+    QWindow* focusWindow = app->focusWindow();
+    screen = focusWindow ? focusWindow->screen() : app->primaryScreen();
+  }
+
+  if( nullptr == screen)
+      return 1.;
+
+  #ifdef Q_OS_WIN
+    return scrn->logicalDotsPerInch() / USER_DEFAULT_SCREEN_DPI;
+  #endif
+
+  return screen->logicalDotsPerInch() / 72;
 }

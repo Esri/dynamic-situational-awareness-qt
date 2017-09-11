@@ -70,13 +70,15 @@ void Vehicle::componentComplete()
     }
     else if (qobject_cast<LocationController*>(obj))
     {
+      auto locationController = static_cast<LocationController*>(obj);
+
       auto overlay = new GraphicsOverlay(this);
       overlay->setSceneProperties(LayerSceneProperties(SurfacePlacement::Draped));
-      overlay->setRenderingMode(GraphicsRenderingMode::Static);
+      overlay->setRenderingMode(GraphicsRenderingMode::Dynamic);
       m_sceneView->graphicsOverlays()->append(overlay);
 
       PictureMarkerSymbol* symbol = new PictureMarkerSymbol(QUrl("qrc:/Resources/icons/xhdpi/navigation.png"), this);
-      constexpr float symbolSize = 22.0;
+      constexpr float symbolSize = 24.0;
       symbol->setHeight(symbolSize);
       symbol->setWidth(symbolSize);
       symbol->setRotationType(RotationType::Arithmetic);
@@ -86,13 +88,14 @@ void Vehicle::componentComplete()
 
       overlay->graphics()->append(m_positionGraphic);
 
-      auto locationController = static_cast<LocationController*>(obj);
+      locationController->setRelativeHeadingSceneView(m_sceneView);
+
       connect(locationController, &LocationController::positionChanged, this, [this](const Point& newPosition)
       {
         m_positionGraphic->setGeometry(newPosition);
       });
 
-      connect(locationController, &LocationController::headingChanged, this, [this, symbol](double newHeading)
+      connect(locationController, &LocationController::relativeHeadingChanged, this, [this, symbol](double newHeading)
       {
         symbol->setAngle(newHeading);
       });

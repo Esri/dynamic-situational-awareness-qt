@@ -17,6 +17,7 @@
 #include "GPXLocationSimulator.h"
 #include <QtDebug>
 #include "DsaUtility.h"
+#include "SceneQuickView.h"
 
 #include "Point.h"
 
@@ -32,8 +33,11 @@ LocationController::LocationController(QObject* parent) :
   connect(m_simulator, &GPXLocationSimulator::positionUpdateAvailable, this,
   [this](const Point& pos, double heading)
   {
+    m_lastKnownHeading = heading;
+
     emit positionChanged(pos);
-    emit headingChanged(heading);
+    emit headingChanged(m_lastKnownHeading);
+    emit relativeHeadingChanged(heading + m_lastViewHeading);
   });
 }
 
@@ -101,4 +105,21 @@ void LocationController::setGpxFilePath(const QUrl& gpxFilePath)
 QUrl LocationController::defaultFileSearchPath() const
 {
   return QUrl::fromLocalFile(DsaUtility::dataPath());
+}
+
+void LocationController::setRelativeHeadingSceneView(Esri::ArcGISRuntime::SceneQuickView* sceneView)
+{
+  connect(sceneView, &SceneQuickView::viewpointChanged, this,
+  [sceneView, this]()
+  {
+    const auto sceneViewHeading = sceneView->currentViewpointCamera().heading();
+    if (std::abs(m_lastViewHeading - sceneViewHeading) < 0.1)
+      return;
+
+    m_lastViewHeading = sceneViewHeading;
+
+    // keep the orientation correct if we're not doing any updates
+    if (!m_enabled)
+      emit relativeHeadingChanged(m_lastKnownHeading + m_lastViewHeading);
+  });
 }

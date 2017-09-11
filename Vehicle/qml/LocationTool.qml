@@ -29,6 +29,7 @@ Item {
     FileDialog {
         id: dialog
         folder: locationController.defaultFileSearchPath
+        nameFilters: [ "gpx files (*.gpx)" ]
         onAccepted: {
             locationController.gpxFilePath = fileUrl;
         }
@@ -65,5 +66,4 @@ Item {
             }
         }
     }
-
 }

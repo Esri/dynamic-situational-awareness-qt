@@ -20,6 +20,7 @@ namespace Esri {
 namespace ArcGISRuntime
 {
   class Point;
+  class SceneQuickView;
 }}
 
 class QGeoPositionInfoSource;
@@ -44,6 +45,7 @@ public:
 signals:
   void positionChanged(const Esri::ArcGISRuntime::Point& newPosition);
   void headingChanged(double newHeading);
+  void relativeHeadingChanged(double relativeHeading);
   void gpxFilePathChanged();
   void enabledChanged();
   void simulatedChanged();
@@ -58,6 +60,12 @@ public:
   QUrl gpxFilePath() const;
   void setGpxFilePath(const QUrl& gpxFilePath);
 
+  // if using GraphicsRenderingMode::Dynamic for rendering, then we need to massage
+  // the heading value to make sure it's correct when the scene is rotated.
+  // Set the sceneView here and connect to relativeHeadingChanged and that will
+  // be handled automatically
+  void setRelativeHeadingSceneView(Esri::ArcGISRuntime::SceneQuickView* sceneView);
+
   QUrl defaultFileSearchPath() const;
 
 private:
@@ -66,6 +74,8 @@ private:
   QCompass* m_compass = nullptr;
   bool m_enabled = false;
   bool m_simulated = false;
+  double m_lastViewHeading = 0.0;
+  double m_lastKnownHeading = 0.0;
   QUrl m_gpxFilePath;
 };
 

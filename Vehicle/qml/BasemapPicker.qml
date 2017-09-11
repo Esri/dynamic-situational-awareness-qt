@@ -20,7 +20,7 @@ import Esri.Vehicle 1.0
 Item {
     signal basemapSelected();
 
-    property real scaleFactor: Qt.platform.os === "ios" ? 1.0 : Screen.devicePixelRatio
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     BasemapPickerController {
         id: toolController

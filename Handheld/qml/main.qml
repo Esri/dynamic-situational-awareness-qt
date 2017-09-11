@@ -21,7 +21,7 @@ Handheld {
     width: 800
     height: 600
 
-    property real scaleFactor: Qt.platform.os === "ios" ? 1.0 : Screen.devicePixelRatio
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     // Create SceneQuickView here, and create its Scene etc. in C++ code
     SceneView {

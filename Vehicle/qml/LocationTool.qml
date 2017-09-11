@@ -56,6 +56,7 @@ Item {
 
             Row {
                 Button {
+                    visible: simCheckBox.checked
                     text: "Choose Gpx file"
                     onReleased: {
                         dialog.open();

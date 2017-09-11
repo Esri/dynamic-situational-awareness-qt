@@ -21,23 +21,28 @@ using namespace Esri::ArcGISRuntime;
 
 // Default ctor.  To use simulation user must set gpx file the update interval
 GPXLocationSimulator::GPXLocationSimulator(QObject* parent) :
-  QObject(parent),
+  QGeoPositionInfoSource(parent),
   m_gpxReader(new QXmlStreamReader()),
   m_timer(new QTimer(this)),
   m_angleOffset(-180.0, 0.0, 180.0, 0.0) // North-South line used to calculate all headings
 {
+  setUpdateInterval(20);
   connect(m_timer, SIGNAL(timeout()), this, SLOT(handleTimerEvent()));
+
+  // internally we emit errorInternal but we cannot emit error due to syntax
+  connect(this, &GPXLocationSimulator::errorInternal,
+          this, static_cast<void (QGeoPositionInfoSource::*)(QGeoPositionInfoSource::Error)>(&QGeoPositionInfoSource::error));
 }
 
 //
 // Populates the necessary components to run a gps simulation
 //
 GPXLocationSimulator::GPXLocationSimulator(const QString& gpxFileName, int updateInterval, QObject* parent) :
-  QObject(parent),
+  QGeoPositionInfoSource(parent),
   m_gpxReader(new QXmlStreamReader()),
-  m_timer(new QTimer(this)),
-  m_timerInterval(updateInterval)
+  m_timer(new QTimer(this))
 {
+  setUpdateInterval(updateInterval);
   connect(m_timer, SIGNAL(timeout()), this, SLOT(handleTimerEvent()));
 
   if (!setGpxFile(gpxFileName))
@@ -126,12 +131,12 @@ Point GPXLocationSimulator::getNextPoint(QTime& time)
 }
 
 //
-// startSimulation() Public Method:
+// startUpdates() Public Method:
 //   - Loads a GPX file into a stream reader
 //   - Fetches the first 3 coordinates
 //   - Starts a timer that performs interpolation and position updating
 //
-void GPXLocationSimulator::startSimulation()
+void GPXLocationSimulator::startUpdates()
 {
   // if the gpx file does not contain enough information to
   // interpolate on then cancel the simulation.
@@ -141,18 +146,19 @@ void GPXLocationSimulator::startSimulation()
   }
 
   // start the position update timer
-  m_timer->start(m_timerInterval);
+  m_timer->start(updateInterval());
   m_isStarted = true;
 }
 
-void GPXLocationSimulator::pauseSimulation()
+void GPXLocationSimulator::requestUpdate(int timeout)
 {
-  m_timer->stop();
+  Q_UNUSED(timeout)
+  Q_UNIMPLEMENTED();
 }
 
-void GPXLocationSimulator::resumeSimulation()
+void GPXLocationSimulator::stopUpdates()
 {
-  m_timer->start();
+  m_timer->stop();
 }
 
 bool GPXLocationSimulator::isActive()
@@ -163,6 +169,27 @@ bool GPXLocationSimulator::isActive()
 bool GPXLocationSimulator::isStarted()
 {
   return m_isStarted;
+}
+
+QGeoPositionInfo GPXLocationSimulator::lastKnownPosition(bool fromSatellitePositioningMethodsOnly) const
+{
+  Q_UNUSED(fromSatellitePositioningMethodsOnly)
+  return m_lastKnownPosition;
+}
+
+QGeoPositionInfoSource::PositioningMethods GPXLocationSimulator::supportedPositioningMethods() const
+{
+  return QGeoPositionInfoSource::PositioningMethod::NoPositioningMethods;
+}
+
+QGeoPositionInfoSource::Error GPXLocationSimulator::error() const
+{
+  return m_lastError;
+}
+
+int GPXLocationSimulator::minimumUpdateInterval() const
+{
+  return updateInterval();
 }
 
 //
@@ -197,9 +224,19 @@ void GPXLocationSimulator::handleTimerEvent()
   // get the interpolated position and orientation on the current
   // segment based on the normalized time.
   const Point currentPosition = normalizedTime <= 0.5 ? m_currentSegment.startPoint() : m_currentSegment.endPoint();
-  const double currentOrientation = getInterpolatedOrientation(currentPosition, normalizedTime);
+  const double currentHeading = getInterpolatedHeading(currentPosition, normalizedTime);
 
-  emit positionUpdateAvailable(currentPosition, currentOrientation);
+  emit positionUpdateAvailable(currentPosition, currentHeading);
+
+  QGeoPositionInfo qtPosition;
+  auto timeStamp = QDateTime::currentDateTime();
+  timeStamp.setTime(m_currentTime);
+  qtPosition.setTimestamp(timeStamp);
+
+  qtPosition.setCoordinate(QGeoCoordinate(currentPosition.y(), currentPosition.x()));
+
+  m_lastKnownPosition = qtPosition;
+  emit positionUpdated(qtPosition);
 } // end HandleTimerEvent
 
 //
@@ -235,7 +272,7 @@ bool GPXLocationSimulator::initializeInterpolationValues()
 // the smoothing is spread across the final 10% of the current segment
 // and the first 10% of the next segment.
 //
-double GPXLocationSimulator::getInterpolatedOrientation(const Point& currentPosition, double normalizedTime)
+double GPXLocationSimulator::getInterpolatedHeading(const Point& currentPosition, double normalizedTime)
 {
   LineSegment segment;
 
@@ -297,7 +334,11 @@ QString GPXLocationSimulator::gpxFile()
 bool GPXLocationSimulator::setGpxFile(const QString& fileName)
 {
   if (!QFile::exists(fileName))
+  {
+    m_lastError = QGeoPositionInfoSource::Error::AccessError;
+    emit this->errorInternal(m_lastError);
     return false;
+  }
 
   if (m_gpxFile.isOpen())
     m_gpxFile.close();
@@ -315,22 +356,6 @@ bool GPXLocationSimulator::setGpxFile(const QString& fileName)
   m_isStarted = false;
 
   return true;
-}
-
-//
-// getter for the simulation timers's polling interval
-//
-int GPXLocationSimulator::timerInterval()
-{
-  return m_timerInterval;
-}
-
-//
-// setter for the simulation timers's polling interval
-//
-void GPXLocationSimulator::setTimerInterval(int ms)
-{
-  m_timerInterval = ms;
 }
 
 //

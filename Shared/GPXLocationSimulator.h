@@ -24,7 +24,7 @@
 
 class QXmlStreamReader;
 class QTimer;
-class GPXLocationSimulator : public QObject
+class GPXLocationSimulator : public QGeoPositionInfoSource
 {
   Q_OBJECT
 
@@ -33,9 +33,9 @@ public:
   GPXLocationSimulator(const QString& gpxFileName, int updateInterval = 20, QObject* parent = nullptr);
   ~GPXLocationSimulator();
 
-  void startSimulation();
-  void pauseSimulation();
-  void resumeSimulation();
+  QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const override;
+  PositioningMethods supportedPositioningMethods() const override;
+  int minimumUpdateInterval() const override;
 
   bool isActive();
   bool isStarted();
@@ -49,24 +49,36 @@ public:
   int playbackMultiplier();
   void setPlaybackMultiplier(int multiplier);
 
+  QGeoPositionInfoSource::Error error() const override;
+
+public slots:
+  void startUpdates() override;
+  void stopUpdates() override;
+  void requestUpdate(int timeout = 0) override;
+
 signals:
   // Note: heading can be used directly with MarkerSymbol Arithmetic rotation
   void positionUpdateAvailable(const Esri::ArcGISRuntime::Point& pos, double heading);
 
+  // This is only used internally. Use QGeoPositionInfoSource::error signal instead.
+  void errorInternal(QGeoPositionInfoSource::Error);
+
 private:
+  void pauseSimulation();
+  void resumeSimulation();
+
   bool gotoNextPositionElement();
   Esri::ArcGISRuntime::Point getNextPoint(QTime& time);
   bool updateInterpolationParameters();
   bool initializeInterpolationValues();
   double heading(const Esri::ArcGISRuntime::LineSegment& segment) const;
 
-  double getInterpolatedOrientation(const Esri::ArcGISRuntime::Point& currentPosition, double normalizedTime);
+  double getInterpolatedHeading(const Esri::ArcGISRuntime::Point& currentPosition, double normalizedTime);
 
   QFile m_gpxFile;
   QByteArray m_gpxData;
   std::unique_ptr<QXmlStreamReader> m_gpxReader;
   QTimer* m_timer = nullptr;
-  int m_timerInterval = 20;
   int m_playbackMultiplier = 1;
   Esri::ArcGISRuntime::LineSegment m_currentSegment;
   Esri::ArcGISRuntime::LineSegment m_nextSegment;
@@ -79,6 +91,8 @@ private:
   QTime m_nextSegmentEndTime;
   bool m_isStarted = false;
   const QLineF m_angleOffset;
+  QGeoPositionInfo m_lastKnownPosition;
+  QGeoPositionInfoSource::Error m_lastError = QGeoPositionInfoSource::NoError;
 
 private slots:
   void handleTimerEvent();

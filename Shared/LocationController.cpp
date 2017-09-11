@@ -13,7 +13,6 @@
 #include "LocationController.h"
 
 #include <QDir>
-#include <QGeoPositionInfoSource>
 #include <QCompass>
 #include "GPXLocationSimulator.h"
 #include <QtDebug>
@@ -62,13 +61,9 @@ void LocationController::setEnabled(bool enabled)
     if (enabled)
     {
       if (!m_simulator->isStarted())
-        m_simulator->startSimulation();
+        m_simulator->startUpdates();
       else
-        m_simulator->resumeSimulation();
-    }
-    else
-    {
-      m_simulator->pauseSimulation();
+        m_simulator->stopUpdates();
     }
   }
 

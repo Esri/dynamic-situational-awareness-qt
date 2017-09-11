@@ -24,7 +24,7 @@ namespace ArcGISRuntime
 
 class QGeoPositionInfoSource;
 class QCompass;
-class GPSSimulator;
+class GPXLocationSimulator;
 
 class LocationController : public QObject
 {
@@ -61,7 +61,7 @@ public:
   QUrl defaultFileSearchPath() const;
 
 private:
-  GPSSimulator* m_simulator = nullptr;
+  GPXLocationSimulator* m_simulator = nullptr;
   QGeoPositionInfoSource* m_positionSource = nullptr;
   QCompass* m_compass = nullptr;
   bool m_enabled = false;

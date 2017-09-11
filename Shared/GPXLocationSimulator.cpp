@@ -10,7 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "GPSSimulator.h"
+#include "GPXLocationSimulator.h"
 #include <QDomDocument>
 #include <QXmlStreamReader>
 #include <QDomElement>
@@ -20,7 +20,7 @@
 using namespace Esri::ArcGISRuntime;
 
 // Default ctor.  To use simulation user must set gpx file the update interval
-GPSSimulator::GPSSimulator(QObject* parent) :
+GPXLocationSimulator::GPXLocationSimulator(QObject* parent) :
   QObject(parent),
   m_gpxReader(new QXmlStreamReader()),
   m_timer(new QTimer(this)),
@@ -32,7 +32,7 @@ GPSSimulator::GPSSimulator(QObject* parent) :
 //
 // Populates the necessary components to run a gps simulation
 //
-GPSSimulator::GPSSimulator(const QString& fileName, int updateInterval, QObject* parent) :
+GPXLocationSimulator::GPXLocationSimulator(const QString& gpxFileName, int updateInterval, QObject* parent) :
   QObject(parent),
   m_gpxReader(new QXmlStreamReader()),
   m_timer(new QTimer(this)),
@@ -40,7 +40,7 @@ GPSSimulator::GPSSimulator(const QString& fileName, int updateInterval, QObject*
 {
   connect(m_timer, SIGNAL(timeout()), this, SLOT(handleTimerEvent()));
 
-  if (!setGpxFile(fileName))
+  if (!setGpxFile(gpxFileName))
   {
     // raise error
     m_gpxFile.setFileName("");
@@ -50,11 +50,11 @@ GPSSimulator::GPSSimulator(const QString& fileName, int updateInterval, QObject*
 //
 // dtor
 //
-GPSSimulator::~GPSSimulator()
+GPXLocationSimulator::~GPXLocationSimulator()
 {
 }
 
-bool GPSSimulator::gotoNextPositionElement()
+bool GPXLocationSimulator::gotoNextPositionElement()
 {
   while (!m_gpxReader->atEnd() && !m_gpxReader->hasError())
   {
@@ -76,7 +76,7 @@ bool GPSSimulator::gotoNextPositionElement()
 // Point GetNextPoint(QTime&) private method
 //   - Convert the current gpx position to Point and QTime parmeters.
 //
-Point GPSSimulator::getNextPoint(QTime& time)
+Point GPXLocationSimulator::getNextPoint(QTime& time)
 {
   if (!gotoNextPositionElement())
   {
@@ -131,7 +131,7 @@ Point GPSSimulator::getNextPoint(QTime& time)
 //   - Fetches the first 3 coordinates
 //   - Starts a timer that performs interpolation and position updating
 //
-void GPSSimulator::startSimulation()
+void GPXLocationSimulator::startSimulation()
 {
   // if the gpx file does not contain enough information to
   // interpolate on then cancel the simulation.
@@ -145,22 +145,22 @@ void GPSSimulator::startSimulation()
   m_isStarted = true;
 }
 
-void GPSSimulator::pauseSimulation()
+void GPXLocationSimulator::pauseSimulation()
 {
   m_timer->stop();
 }
 
-void GPSSimulator::resumeSimulation()
+void GPXLocationSimulator::resumeSimulation()
 {
   m_timer->start();
 }
 
-bool GPSSimulator::isActive()
+bool GPXLocationSimulator::isActive()
 {
   return m_timer->isActive();
 }
 
-bool GPSSimulator::isStarted()
+bool GPXLocationSimulator::isStarted()
 {
   return m_isStarted;
 }
@@ -171,7 +171,7 @@ bool GPSSimulator::isStarted()
 //   - fetches new positions from the gpx file as necessary
 //   - calculates and sets the current position and orientation
 //
-void GPSSimulator::handleTimerEvent()
+void GPXLocationSimulator::handleTimerEvent()
 {
   // update the current time
   m_currentTime = m_currentTime.addMSecs(m_timer->interval() * m_playbackMultiplier);
@@ -205,7 +205,7 @@ void GPSSimulator::handleTimerEvent()
 //
 // Populates all the internal values necessary to start the simulation.
 //
-bool GPSSimulator::initializeInterpolationValues()
+bool GPXLocationSimulator::initializeInterpolationValues()
 {
   // fetch the first 3 points from the gpx feed to populate the
   // initial interpolation components.
@@ -235,7 +235,7 @@ bool GPSSimulator::initializeInterpolationValues()
 // the smoothing is spread across the final 10% of the current segment
 // and the first 10% of the next segment.
 //
-double GPSSimulator::getInterpolatedOrientation(const Point& currentPosition, double normalizedTime)
+double GPXLocationSimulator::getInterpolatedOrientation(const Point& currentPosition, double normalizedTime)
 {
   LineSegment segment;
 
@@ -260,7 +260,7 @@ double GPSSimulator::getInterpolatedOrientation(const Point& currentPosition, do
 // fetch the next coordinate in the gpx file and updates all the
 // internal interpolation vars
 //
-bool GPSSimulator::updateInterpolationParameters()
+bool GPXLocationSimulator::updateInterpolationParameters()
 {
   m_segmentStartTime = m_segmentEndTime;
   m_segmentEndTime = m_nextSegmentEndTime;
@@ -286,7 +286,7 @@ bool GPSSimulator::updateInterpolationParameters()
 //
 // getter for the gpx file location
 //
-QString GPSSimulator::gpxFile()
+QString GPXLocationSimulator::gpxFile()
 {
   return m_gpxFile.fileName();
 }
@@ -294,7 +294,7 @@ QString GPSSimulator::gpxFile()
 //
 // setter for the gpx file location
 //
-bool GPSSimulator::setGpxFile(const QString& fileName)
+bool GPXLocationSimulator::setGpxFile(const QString& fileName)
 {
   if (!QFile::exists(fileName))
     return false;
@@ -320,7 +320,7 @@ bool GPSSimulator::setGpxFile(const QString& fileName)
 //
 // getter for the simulation timers's polling interval
 //
-int GPSSimulator::timerInterval()
+int GPXLocationSimulator::timerInterval()
 {
   return m_timerInterval;
 }
@@ -328,7 +328,7 @@ int GPSSimulator::timerInterval()
 //
 // setter for the simulation timers's polling interval
 //
-void GPSSimulator::setTimerInterval(int ms)
+void GPXLocationSimulator::setTimerInterval(int ms)
 {
   m_timerInterval = ms;
 }
@@ -336,7 +336,7 @@ void GPSSimulator::setTimerInterval(int ms)
 //
 // getter for the playback multiplier
 //
-int GPSSimulator::playbackMultiplier()
+int GPXLocationSimulator::playbackMultiplier()
 {
   return m_playbackMultiplier;
 }
@@ -345,12 +345,12 @@ int GPSSimulator::playbackMultiplier()
 // setter for the playback modifier.  Used if
 // gpx timestamps are either too close or two far
 //
-void GPSSimulator::setPlaybackMultiplier(int val)
+void GPXLocationSimulator::setPlaybackMultiplier(int val)
 {
   m_playbackMultiplier = val;
 }
 
-double GPSSimulator::heading(const Esri::ArcGISRuntime::LineSegment& segment) const
+double GPXLocationSimulator::heading(const Esri::ArcGISRuntime::LineSegment& segment) const
 {
   const auto startPoint = segment.startPoint();
   const auto endPoint = segment.endPoint();

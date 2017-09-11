@@ -15,7 +15,7 @@
 #include <QDir>
 #include <QGeoPositionInfoSource>
 #include <QCompass>
-#include "GPSSimulator.h"
+#include "GPXLocationSimulator.h"
 #include <QtDebug>
 #include "DsaUtility.h"
 
@@ -25,12 +25,12 @@ using namespace Esri::ArcGISRuntime;
 
 LocationController::LocationController(QObject* parent) :
   QObject(parent),
-  m_simulator(new GPSSimulator(this))
+  m_simulator(new GPXLocationSimulator(this))
 {
   // placeholder until we have ToolManager
   DsaUtility::tools.append(this);
 
-  connect(m_simulator, &GPSSimulator::positionUpdateAvailable, this,
+  connect(m_simulator, &GPXLocationSimulator::positionUpdateAvailable, this,
   [this](const Point& pos, double heading)
   {
     emit positionChanged(pos);

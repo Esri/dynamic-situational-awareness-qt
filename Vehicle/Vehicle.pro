@@ -27,7 +27,7 @@ HEADERS += \
     Vehicle.h \
     ../Shared/DsaUtility.h \
     ../Shared/BasemapPickerController.h \
-    ../Shared/GPSSimulator.h \
+    ../Shared/GPXLocationSimulator.h \
     ../Shared/LocationController.h
 
 SOURCES += \
@@ -35,7 +35,7 @@ SOURCES += \
     Vehicle.cpp \
     ../Shared/DsaUtility.cpp \
     ../Shared/BasemapPickerController.cpp \
-    ../Shared/GPSSimulator.cpp \
+    ../Shared/GPXLocationSimulator.cpp \
     ../Shared/LocationController.cpp
 
 RESOURCES += \

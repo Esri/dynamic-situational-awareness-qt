@@ -24,14 +24,14 @@
 
 class QXmlStreamReader;
 class QTimer;
-class GPSSimulator : public QObject
+class GPXLocationSimulator : public QObject
 {
   Q_OBJECT
 
 public:
-  explicit GPSSimulator(QObject* parent = nullptr);
-  GPSSimulator(const QString& fileName, int updateInterval = 20, QObject* parent = nullptr);
-  ~GPSSimulator();
+  explicit GPXLocationSimulator(QObject* parent = nullptr);
+  GPXLocationSimulator(const QString& gpxFileName, int updateInterval = 20, QObject* parent = nullptr);
+  ~GPXLocationSimulator();
 
   void startSimulation();
   void pauseSimulation();

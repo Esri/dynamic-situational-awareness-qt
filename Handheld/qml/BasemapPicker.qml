@@ -34,7 +34,7 @@ Item {
         spacing: 32
 
         clip: true
-        model: toolController.basemapsModel
+        model: toolController.tileCacheModel
 
         delegate: Item {
 
@@ -50,10 +50,10 @@ Item {
 
                 height: parent.height
 
-                text: display
+                text: title
 
                 onClicked: {
-                    toolController.basemapNameSelected(display);
+                    toolController.basemapSelected(index);
                     basemapSelected();
                 }
             }
@@ -64,11 +64,11 @@ Item {
                 anchors.bottom: button.bottom
                 anchors.margins: 8
 
-                source: toolController.imageForBasemap(display)
+                source: thumbnailUrl
                 fillMode: Image.PreserveAspectFit
             }
         }
     }
 
-    Component.onCompleted: toolController.basemapNameSelected("LightGreyCanvas");
+    Component.onCompleted: toolController.selectInitialBasemap();
 }

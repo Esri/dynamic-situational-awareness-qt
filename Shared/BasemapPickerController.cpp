@@ -10,71 +10,69 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-//#include "BasemapListModel.h"
-#include <QStringListModel>
 #include <QDir>
 #include <QDebug>
 
 #include "ArcGISTiledLayer.h"
 #include "Basemap.h"
-#include "TileCache.h"
 
 #include "DsaUtility.h"
 #include "BasemapPickerController.h"
+#include "TileCacheListModel.h"
 
 using namespace Esri::ArcGISRuntime;
 
 BasemapPickerController::BasemapPickerController(QObject* parent /* = nullptr */):
   QObject(parent),
-  m_basemapsModel(new QStringListModel(this))
+  m_tileCacheModel(new TileCacheListModel(this))
 {
   // placeholder until we have ToolManager
   DsaUtility::tools.append(this);
 
-  m_basemapsDir = DsaUtility::dataPath();
-  QDir basemapsDir (m_basemapsDir);
+  QString basemapsPath = DsaUtility::dataPath();
+  QDir basemapsDir(basemapsPath);
   emit basemapsDirChanged();
 
   basemapsDir.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
   basemapsDir.setNameFilters(QStringList{"*.tpk"});
 
   QFileInfoList list = basemapsDir.entryInfoList();
-  QStringList tpkNames;
+  int index = -1;
   for (const QFileInfo& fInfo : list)
-    tpkNames.append(fInfo.completeBaseName());
+  {
+    if (m_tileCacheModel->append(fInfo.filePath()))
+      index++;
 
-  m_basemapsModel->setStringList(tpkNames);
-  emit basemapsModelChanged();
+    if(fInfo.completeBaseName().compare("lightgreycanvas", Qt::CaseInsensitive) == 0)
+      m_defaultBasemapIndex = index;
+  }
+
+  emit tileCacheModelChanged();
 }
 
 BasemapPickerController::~BasemapPickerController()
 {
 }
 
-QAbstractListModel* BasemapPickerController::basemapsModel() const
+QAbstractListModel* BasemapPickerController::tileCacheModel() const
 {
-  return m_basemapsModel;
+  return m_tileCacheModel;
 }
 
-void BasemapPickerController::basemapNameSelected(const QString &name)
+void BasemapPickerController::basemapSelected(int row)
 {
-  QFileInfo basemapFile = QFileInfo(QDir(m_basemapsDir), name + ".tpk");
-  if (!basemapFile.exists())
+  TileCache* tileCache = m_tileCacheModel->tileCacheAt(row);
+  if (!tileCache)
     return;
 
-  TileCache* tileCache = new TileCache(basemapFile.absoluteFilePath(), this);
   Basemap* selectedBasemap = new Basemap(new ArcGISTiledLayer(tileCache, this), this);
 
   emit basemapChanged(selectedBasemap);
 }
 
-QUrl BasemapPickerController::imageForBasemap(const QString &name)
+void BasemapPickerController::selectInitialBasemap()
 {
-  QFileInfo imageFile = QFileInfo(QDir(m_basemapsDir), name + ".png");
-  if (!imageFile.exists())
-    return QUrl();
-
-  return QUrl::fromLocalFile(imageFile.filePath());
+  basemapSelected(m_defaultBasemapIndex);
 }
 
 QString BasemapPickerController::toolName() const

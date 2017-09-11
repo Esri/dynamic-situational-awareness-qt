@@ -28,31 +28,33 @@ namespace ArcGISRuntime
 
 class QStringListModel;
 
+class TileCacheListModel;
+
 class BasemapPickerController : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(QAbstractListModel* basemapsModel READ basemapsModel NOTIFY basemapsModelChanged)
+  Q_PROPERTY(QAbstractListModel* tileCacheModel READ tileCacheModel NOTIFY tileCacheModelChanged)
 
 public:
   BasemapPickerController(QObject* parent = nullptr);
   ~BasemapPickerController();
 
-  QAbstractListModel* basemapsModel() const;
+  QAbstractListModel* tileCacheModel() const;
 
-  Q_INVOKABLE void basemapNameSelected(const QString& name);
-  Q_INVOKABLE QUrl imageForBasemap(const QString& name);
+  Q_INVOKABLE void basemapSelected(int row);
+  Q_INVOKABLE void selectInitialBasemap();
 
   QString toolName() const;
 
 signals:
-  void basemapsModelChanged();
+  void tileCacheModelChanged();
   void basemapsDirChanged();
   void basemapChanged(Esri::ArcGISRuntime::Basemap* basemap);
 
 private:
-  QStringListModel* m_basemapsModel;
-  QString           m_basemapsDir;
+  TileCacheListModel* m_tileCacheModel;
+  int                 m_defaultBasemapIndex = 0;
 };
 
 #endif // BASEMAPPICKERCONTROLLER_H

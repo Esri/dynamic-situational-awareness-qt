@@ -34,41 +34,46 @@ Item {
         spacing: 32
 
         clip: true
-        model: toolController.basemapsModel
+        model: toolController.tileCacheModel
 
         delegate: Item {
 
-            width: basemapsList.width
+            width:  Math.min(basemapsList.width, 412)
             height: 64
 
             Button {
                 id: button
                 anchors {
                     margins: 8
-                    horizontalCenter: parent.horizontalCenter
+                    left: parent.left
+                    right: parent.right
                 }
 
                 height: parent.height
 
-                text: display
+                text: title
 
                 onClicked: {
-                    toolController.basemapNameSelected(display);
+                    toolController.basemapSelected(index);
                     basemapSelected();
                 }
-            }
 
-            Image {
-                anchors.left: button.right
-                anchors.top: button.top
-                anchors.bottom: button.bottom
-                anchors.margins: 8
+                Image {
+                    id: thumbnail
+                    anchors {
+                        right: parent.right
+                        margins: 8
+                    }
 
-                source: toolController.imageForBasemap(display)
-                fillMode: Image.PreserveAspectFit
+                    height: parent.height
+                    width: height
+
+                    source: thumbnailUrl
+                    fillMode: Image.PreserveAspectFit
+                }
             }
         }
     }
 
-    Component.onCompleted: toolController.basemapNameSelected("LightGreyCanvas");
+    Component.onCompleted: toolController.selectInitialBasemap();
 }

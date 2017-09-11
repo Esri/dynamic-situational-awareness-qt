@@ -26,13 +26,15 @@ HEADERS += \
     AppInfo.h \
     Handheld.h \
     ../Shared/DsaUtility.h \
-    ../Shared/BasemapPickerController.h
+    ../Shared/BasemapPickerController.h \
+    ../Shared/TileCacheListModel.h
 
 SOURCES += \
     main.cpp \
     Handheld.cpp \
     ../Shared/DsaUtility.cpp \
-    ../Shared/BasemapPickerController.cpp
+    ../Shared/BasemapPickerController.cpp \
+    ../Shared/TileCacheListModel.cpp
 
 RESOURCES += \
     qml/qml.qrc \

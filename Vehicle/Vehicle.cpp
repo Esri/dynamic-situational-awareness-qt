@@ -10,8 +10,6 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include <QQuickWindow>
-
 #include "ArcGISTiledElevationSource.h"
 #include "Basemap.h"
 #include "Scene.h"
@@ -28,20 +26,6 @@ Vehicle::Vehicle(QQuickItem* parent /* = nullptr */):
   QQuickItem(parent)
 {
   m_dataPath = DsaUtility::dataPath();
-
-  QQuickWindow* appWindow = window();
-  if (appWindow)
-    connect(appWindow, &QQuickWindow::screenChanged, this, &Vehicle::onScreenChanged);
-
-  connect(this, &Vehicle::windowChanged, this, [this](QQuickWindow* newWindow)
-  {
-    if (!newWindow)
-      return;
-
-    connect(newWindow, &QQuickWindow::screenChanged, this, &Vehicle::onScreenChanged);
-  });
-
-  onScreenChanged(appWindow ? appWindow->screen() : nullptr);
 }
 
 Vehicle::~Vehicle()
@@ -103,15 +87,4 @@ void Vehicle::componentComplete()
 void Vehicle::onError(const Error&)
 {
 
-}
-
-double Vehicle::appScaleFactor() const
-{
-  return m_scaleFactor;
-}
-
-void Vehicle::onScreenChanged(QScreen* screen)
-{
-  m_scaleFactor = DsaUtility::scaleFactor(screen);
-  emit appScaleFactorChanged();
 }

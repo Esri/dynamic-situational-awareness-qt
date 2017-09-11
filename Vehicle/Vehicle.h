@@ -25,13 +25,9 @@ class SceneQuickView;
 
 #include <QQuickItem>
 
-class QScreen;
-
 class Vehicle : public QQuickItem
 {
   Q_OBJECT
-
-  Q_PROPERTY(double appScaleFactor READ appScaleFactor NOTIFY appScaleFactorChanged)
 
 public:
   Vehicle(QQuickItem* parent = nullptr);
@@ -39,21 +35,14 @@ public:
 
   void componentComplete() override;
 
-signals:
-  void appScaleFactorChanged();
-
 private slots:
   void onError(const Esri::ArcGISRuntime::Error& error);
-  void onScreenChanged(QScreen* screen);
 
 private:
-  double appScaleFactor() const;
-
   Esri::ArcGISRuntime::Scene*             m_scene = nullptr;
   Esri::ArcGISRuntime::SceneQuickView*    m_sceneView = nullptr;
 
   QString                                 m_dataPath;
-  double                                  m_scaleFactor = 1.;
 };
 
 #endif // VEHICLE_H

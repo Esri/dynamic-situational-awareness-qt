@@ -14,11 +14,14 @@
 import QtQuick 2.6
 import QtQuick.Controls 2.1
 import QtQuick.Controls.Material 2.1
+import QtQuick.Window 2.2
 import Esri.Handheld 1.0
 
 Handheld {
-    width: 800 * appScaleFactor
-    height: 600 * appScaleFactor
+    width: 800
+    height: 600
+
+    property real scaleFactor: Qt.platform.os === "ios" ? 1.0 : Screen.devicePixelRatio
 
     // Create SceneQuickView here, and create its Scene etc. in C++ code
     SceneView {
@@ -29,7 +32,6 @@ Handheld {
     BasemapPicker {
         id: basemapsTool
 
-        scaleFactor: appScaleFactor
         anchors {
             top: basemapsCheckBox.bottom
             left: parent.left
@@ -53,7 +55,7 @@ Handheld {
         Image {
             fillMode: Image.PreserveAspectFit
             anchors.centerIn: parent
-            sourceSize.height: basemapsCheckBox.background.height - (6 * appScaleFactor)
+            sourceSize.height: basemapsCheckBox.background.height - (6 * scaleFactor)
             height: sourceSize.height
             source: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_light.png"
         }

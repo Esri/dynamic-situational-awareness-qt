@@ -16,7 +16,6 @@
 #include <QString>
 #include <QObject>
 #include <QList>
-#include <QScreen>
 
 #include "Point.h"
 
@@ -27,7 +26,6 @@ public:
   static QString dataPath();
   static Esri::ArcGISRuntime::Point montereyCA();
   static QList<QObject*> tools; // placeholder until we have ToolManager
-  static double scaleFactor(QScreen* screen = nullptr);
 };
 
 #endif // UTILITY_H

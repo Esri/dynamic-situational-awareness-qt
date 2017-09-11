@@ -14,12 +14,13 @@
 import QtQuick 2.6
 import QtQuick.Controls 2.1
 import QtQuick.Controls.Material 2.1
+import QtQuick.Window 2.2
 import Esri.Handheld 1.0
 
 Item {
     signal basemapSelected();
 
-    property real scaleFactor: 1.
+    property real scaleFactor: Qt.platform.os === "ios" ? 1.0 : Screen.devicePixelRatio
 
     BasemapPickerController {
         id: toolController
@@ -29,11 +30,11 @@ Item {
         id: basemapsList
 
         anchors{
-            margins: 32 * scaleFactor
+            margins: 8 * scaleFactor
             fill: parent
         }
 
-        spacing: 32 * scaleFactor
+        spacing: 8 * scaleFactor
 
         clip: true
         model: toolController.basemapsModel
@@ -41,7 +42,7 @@ Item {
         delegate: Item {
 
             width: basemapsList.width
-            height: 64 * scaleFactor
+            height: 32 * scaleFactor
 
             Button {
                 id: button
@@ -64,7 +65,7 @@ Item {
                 anchors.left: button.right
                 anchors.top: button.top
                 anchors.bottom: button.bottom
-                anchors.margins: 8 * scaleFactor
+                anchors.margins: 4 * scaleFactor
 
                 source: toolController.imageForBasemap(display)
                 fillMode: Image.PreserveAspectFit

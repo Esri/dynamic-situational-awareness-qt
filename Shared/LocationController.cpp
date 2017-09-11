@@ -59,12 +59,9 @@ void LocationController::setEnabled(bool enabled)
   if (m_simulated)
   {
     if (enabled)
-    {
-      if (!m_simulator->isStarted())
-        m_simulator->startUpdates();
-      else
-        m_simulator->stopUpdates();
-    }
+      m_simulator->startUpdates();
+    else
+      m_simulator->stopUpdates();
   }
 
   m_enabled = enabled;

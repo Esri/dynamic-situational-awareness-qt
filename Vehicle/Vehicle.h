@@ -20,6 +20,7 @@ namespace ArcGISRuntime
 class Error;
 class Scene;
 class SceneQuickView;
+class Graphic;
 }
 }
 
@@ -41,6 +42,7 @@ private slots:
 private:
   Esri::ArcGISRuntime::Scene*             m_scene = nullptr;
   Esri::ArcGISRuntime::SceneQuickView*    m_sceneView = nullptr;
+  Esri::ArcGISRuntime::Graphic*           m_positionGraphic = nullptr;
 
   QString                                 m_dataPath;
 };

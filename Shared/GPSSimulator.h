@@ -17,7 +17,10 @@
 #include <QLineF>
 #include <QTime>
 #include <QPointF>
+#include <QGeoPositionInfoSource>
 #include <memory>
+#include "Point.h"
+#include "LineSegment.h"
 
 class QXmlStreamReader;
 class QTimer;
@@ -47,15 +50,17 @@ public:
   void setPlaybackMultiplier(int multiplier);
 
 signals:
-  void positionUpdateAvailable(const QPointF& pos, double orientation);
+  // Note: heading can be used directly with MarkerSymbol Arithmetic rotation
+  void positionUpdateAvailable(const Esri::ArcGISRuntime::Point& pos, double heading);
 
 private:
   bool gotoNextPositionElement();
-  void getNextPoint(QPointF& point, QTime& time);
+  Esri::ArcGISRuntime::Point getNextPoint(QTime& time);
   bool updateInterpolationParameters();
   bool initializeInterpolationValues();
+  double heading(const Esri::ArcGISRuntime::LineSegment& segment) const;
 
-  double getInterpolatedOrientation(const QPointF& currentPosition, double normalizedTime);
+  double getInterpolatedOrientation(const Esri::ArcGISRuntime::Point& currentPosition, double normalizedTime);
 
   QFile m_gpxFile;
   QByteArray m_gpxData;
@@ -63,16 +68,17 @@ private:
   QTimer* m_timer = nullptr;
   int m_timerInterval = 20;
   int m_playbackMultiplier = 1;
-  QLineF m_currentSegment;
-  QLineF m_nextSegment;
-  QPointF m_latestPoint;
-  double m_startOrientationDelta;
-  double m_endOrientationDelta;
+  Esri::ArcGISRuntime::LineSegment m_currentSegment;
+  Esri::ArcGISRuntime::LineSegment m_nextSegment;
+  Esri::ArcGISRuntime::Point m_latestPoint;
+  double m_startHeadingDelta;
+  double m_endHeadingDelta;
   QTime m_currentTime;
   QTime m_segmentStartTime;
   QTime m_segmentEndTime;
   QTime m_nextSegmentEndTime;
   bool m_isStarted = false;
+  const QLineF m_angleOffset;
 
 private slots:
   void handleTimerEvent();

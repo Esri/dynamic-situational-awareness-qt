@@ -17,11 +17,14 @@
 #include <QTimer>
 #include <QStringRef>
 
+using namespace Esri::ArcGISRuntime;
+
 // Default ctor.  To use simulation user must set gpx file the update interval
 GPSSimulator::GPSSimulator(QObject* parent) :
   QObject(parent),
   m_gpxReader(new QXmlStreamReader()),
-  m_timer(new QTimer(this))
+  m_timer(new QTimer(this)),
+  m_angleOffset(-180.0, 0.0, 180.0, 0.0) // North-South line used to calculate all headings
 {
   connect(m_timer, SIGNAL(timeout()), this, SLOT(handleTimerEvent()));
 }
@@ -70,28 +73,29 @@ bool GPSSimulator::gotoNextPositionElement()
 }
 
 //
-// GetNextPoint(QPointF&, QTime&) private method
-//   - Convert the current gpx position to QPointF and QTime parmeters.
+// Point GetNextPoint(QTime&) private method
+//   - Convert the current gpx position to Point and QTime parmeters.
 //
-void GPSSimulator::getNextPoint(QPointF& point, QTime& time)
+Point GPSSimulator::getNextPoint(QTime& time)
 {
   if (!gotoNextPositionElement())
   {
-    point.setX(0.0);
-    point.setY(0.0);
-    return;
+    return Point();
   }
 
   // fetch the lat and lon attributes from the trkpt element
   QXmlStreamAttributes attrs = m_gpxReader->attributes();
-  point.setY(attrs.value("lat").toString().toDouble());
-  point.setX(attrs.value("lon").toString().toDouble());
+  const double x = attrs.value("lon").toString().toDouble();
+  const double y = attrs.value("lat").toString().toDouble();
+
+  Point point;
+  point = Point(x, y, SpatialReference::wgs84());
 
   // if the new point is the same as the old point then trash it and try to get another.
   if (point == m_latestPoint)
   {
     m_gpxReader->readNext();
-    getNextPoint(point, time);
+    return getNextPoint(time);
   }
 
   // goto the start of the time child element
@@ -118,8 +122,7 @@ void GPSSimulator::getNextPoint(QPointF& point, QTime& time)
     m_gpxReader->readNext();
   }
 
-  m_latestPoint.setX(point.x());
-  m_latestPoint.setY(point.y());
+  return point;
 }
 
 //
@@ -187,14 +190,14 @@ void GPSSimulator::handleTimerEvent()
   }
 
   // normalize the time across the current segment
-  double val1 = static_cast<double>(m_segmentStartTime.msecsTo(m_currentTime));
-  double val2 = static_cast<double>(m_segmentStartTime.msecsTo(m_segmentEndTime));
-  double normalizedTime = val1 / val2;
+  const double val1 = static_cast<double>(m_segmentStartTime.msecsTo(m_currentTime));
+  const double val2 = static_cast<double>(m_segmentStartTime.msecsTo(m_segmentEndTime));
+  const double normalizedTime = val1 / val2;
 
   // get the interpolated position and orientation on the current
   // segment based on the normalized time.
-  QPointF currentPosition = m_currentSegment.pointAt(normalizedTime);
-  double currentOrientation = getInterpolatedOrientation(currentPosition, normalizedTime);
+  const Point currentPosition = normalizedTime <= 0.5 ? m_currentSegment.startPoint() : m_currentSegment.endPoint();
+  const double currentOrientation = getInterpolatedOrientation(currentPosition, normalizedTime);
 
   emit positionUpdateAvailable(currentPosition, currentOrientation);
 } // end HandleTimerEvent
@@ -206,29 +209,20 @@ bool GPSSimulator::initializeInterpolationValues()
 {
   // fetch the first 3 points from the gpx feed to populate the
   // initial interpolation components.
-  QPointF pt1;
-  QPointF pt2;
-  QPointF pt3;
-  getNextPoint(pt1, m_segmentStartTime);
-  getNextPoint(pt2, m_segmentEndTime);
-  getNextPoint(pt3, m_nextSegmentEndTime);
+  const Point pt1 = getNextPoint(m_segmentStartTime);
+  const Point pt2 = getNextPoint(m_segmentEndTime);
+  const Point pt3 = getNextPoint(m_nextSegmentEndTime);
 
-  if (pt1.isNull() || pt2.isNull() || pt3.isNull())
+  if (pt1.isEmpty() || pt2.isEmpty() || pt3.isEmpty())
   {
     return false;
   }
 
   // define the interpolation segments
-  m_currentSegment.setPoints(pt1, pt2);
-  m_nextSegment.setPoints(pt2, pt3);
-  m_startOrientationDelta = 0;
-  m_endOrientationDelta = m_currentSegment.angleTo(m_nextSegment);
-
-  // normalize the orientation delta to be between -180 and 180
-  if (m_endOrientationDelta > 180.0)
-  {
-    m_endOrientationDelta -= 360.0;
-  }
+  m_currentSegment = LineSegment(pt1, pt2, SpatialReference::wgs84());
+  m_nextSegment = LineSegment(pt2, pt3, SpatialReference::wgs84());
+  m_startHeadingDelta = 0;
+  m_endHeadingDelta = heading(m_currentSegment);
 
   // define the current time as the first timestamp extracted from the gpx file
   m_currentTime = m_segmentStartTime;
@@ -241,32 +235,25 @@ bool GPSSimulator::initializeInterpolationValues()
 // the smoothing is spread across the final 10% of the current segment
 // and the first 10% of the next segment.
 //
-double GPSSimulator::getInterpolatedOrientation(const QPointF& currentPosition, double normalizedTime)
+double GPSSimulator::getInterpolatedOrientation(const Point& currentPosition, double normalizedTime)
 {
-  QLineF segment;
-  double transitionAngle;
+  LineSegment segment;
 
   // interpolation of the first 10% of the segment
   if (normalizedTime < 0.1)
   {
-    segment.setPoints(m_currentSegment.p1(), currentPosition);
-    transitionAngle = ((m_startOrientationDelta / 2.0) * (((m_currentSegment.length() * 0.1) - segment.length()) / (m_currentSegment.length() * 0.1))) ;
-    return m_currentSegment.angle() - transitionAngle;
+    segment = LineSegment(m_currentSegment.startPoint(), currentPosition, SpatialReference::wgs84());
+    return heading(m_currentSegment);
   }
   // interpolation of the last 10% of the segment
   else if (normalizedTime > 0.9)
   {
-    QPointF tempPt = m_currentSegment.pointAt(0.9);
-    segment.setPoints(tempPt, currentPosition);
-    transitionAngle = ((m_endOrientationDelta / 2.0) * segment.length()) / (m_currentSegment.length() * 0.1);
+    segment = LineSegment(m_currentSegment.endPoint(), currentPosition, SpatialReference::wgs84());
+    return heading(m_currentSegment);
+  }
 
-    return m_currentSegment.angle() + transitionAngle;
-  }
   // no orientation interpolation needed, use the current segments angle
-  else
-  {
-    return m_currentSegment.angle();
-  }
+  return heading(m_currentSegment);
 }
 
 //
@@ -275,30 +262,23 @@ double GPSSimulator::getInterpolatedOrientation(const QPointF& currentPosition, 
 //
 bool GPSSimulator::updateInterpolationParameters()
 {
-  QPointF newPt;
   m_segmentStartTime = m_segmentEndTime;
   m_segmentEndTime = m_nextSegmentEndTime;
-  getNextPoint(newPt, m_nextSegmentEndTime);
+  Point newPt = getNextPoint(m_nextSegmentEndTime);
 
   // if there are no more points to get then notify simulation to start over
-  if (newPt.isNull())
+  if (newPt.isEmpty())
   {
     return false;
   }
 
   // discard the oldest segment and populate the newest segment.
   m_currentSegment = m_nextSegment;
-  m_nextSegment.setPoints(m_currentSegment.p2(), newPt);
+  m_nextSegment = LineSegment(m_currentSegment.endPoint(), newPt, SpatialReference::wgs84());
 
   // discard the oldest orientation delta and populate the newest
-  m_startOrientationDelta = m_endOrientationDelta;
-  m_endOrientationDelta = m_currentSegment.angleTo(m_nextSegment);
-
-  // normalize the new orientationDelta to be between -180 and 180
-  if (m_endOrientationDelta > 180.0)
-  {
-    m_endOrientationDelta -= 360.0;
-  }
+  m_startHeadingDelta = m_endHeadingDelta;
+  m_endHeadingDelta = heading(m_currentSegment);
 
   return true;
 }
@@ -368,4 +348,11 @@ int GPSSimulator::playbackMultiplier()
 void GPSSimulator::setPlaybackMultiplier(int val)
 {
   m_playbackMultiplier = val;
+}
+
+double GPSSimulator::heading(const Esri::ArcGISRuntime::LineSegment& segment) const
+{
+  const auto startPoint = segment.startPoint();
+  const auto endPoint = segment.endPoint();
+  return QLineF(startPoint.x(), startPoint.y(), endPoint.x(), endPoint.y()).angleTo(m_angleOffset);
 }

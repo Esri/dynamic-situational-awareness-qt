@@ -16,6 +16,7 @@
 #include <QGeoPositionInfoSource>
 #include <QCompass>
 #include "GPSSimulator.h"
+#include <QtDebug>
 #include "DsaUtility.h"
 
 #include "Point.h"
@@ -26,11 +27,14 @@ LocationController::LocationController(QObject* parent) :
   QObject(parent),
   m_simulator(new GPSSimulator(this))
 {
+  // placeholder until we have ToolManager
+  DsaUtility::tools.append(this);
+
   connect(m_simulator, &GPSSimulator::positionUpdateAvailable, this,
-  [this](const QPointF& pos, double orientation)
+  [this](const Point& pos, double heading)
   {
-    emit positionChanged(Point(pos.x(), pos.y(), SpatialReference::wgs84()));
-    emit headingChanged(orientation);
+    emit positionChanged(pos);
+    emit headingChanged(heading);
   });
 }
 

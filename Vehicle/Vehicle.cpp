@@ -16,7 +16,10 @@
 #include "SceneQuickView.h"
 
 #include "BasemapPickerController.h"
+#include "LocationController.h"
 #include "DsaUtility.h"
+#include "GraphicsOverlay.h"
+#include "PictureMarkerSymbol.h"
 
 #include "Vehicle.h"
 
@@ -51,20 +54,49 @@ void Vehicle::componentComplete()
       continue;
 
     // we would add basemapChanged signal to AbstractTool and then we do not require the concrete type here
-    BasemapPickerController* basemapPicker = qobject_cast<BasemapPickerController*>(obj);
-    if (!basemapPicker)
-      continue;
-
-    connect(basemapPicker, &BasemapPickerController::basemapChanged, this, [this](Basemap* basemap)
+    if (qobject_cast<BasemapPickerController*>(obj))
     {
-      if (!basemap)
-        return;
+      auto basemapPicker = static_cast<BasemapPickerController*>(obj);
+      connect(basemapPicker, &BasemapPickerController::basemapChanged, this, [this](Basemap* basemap)
+      {
+        if (!basemap)
+          return;
 
-      basemap->setParent(this);
-      m_scene->setBasemap(basemap);
+        basemap->setParent(this);
+        m_scene->setBasemap(basemap);
 
-      connect(basemap, &Basemap::errorOccurred, this, &Vehicle::onError);
-    });
+        connect(basemap, &Basemap::errorOccurred, this, &Vehicle::onError);
+      });
+    }
+    else if (qobject_cast<LocationController*>(obj))
+    {
+      auto overlay = new GraphicsOverlay(this);
+      overlay->setSceneProperties(LayerSceneProperties(SurfacePlacement::Draped));
+      overlay->setRenderingMode(GraphicsRenderingMode::Static);
+      m_sceneView->graphicsOverlays()->append(overlay);
+
+      PictureMarkerSymbol* symbol = new PictureMarkerSymbol(QUrl("qrc:/Resources/icons/xhdpi/navigation.png"), this);
+      constexpr float symbolSize = 22.0;
+      symbol->setHeight(symbolSize);
+      symbol->setWidth(symbolSize);
+      symbol->setRotationType(RotationType::Arithmetic);
+      symbol->load();
+      m_positionGraphic = new Graphic(this);
+      m_positionGraphic->setSymbol(symbol);
+
+      overlay->graphics()->append(m_positionGraphic);
+
+      auto locationController = static_cast<LocationController*>(obj);
+      connect(locationController, &LocationController::positionChanged, this, [this](const Point& newPosition)
+      {
+        m_positionGraphic->setGeometry(newPosition);
+      });
+
+      connect(locationController, &LocationController::headingChanged, this, [this, symbol](double newHeading)
+      {
+        symbol->setAngle(newHeading);
+      });
+    }
   }
 
   m_scene = new Scene(this);

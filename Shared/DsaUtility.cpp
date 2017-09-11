@@ -16,10 +16,6 @@
 #include <QStandardPaths>
 #include <QWindow>
 
-#ifdef Q_OS_WIN
-#include <Windows.h>
-#endif
-
 using namespace Esri::ArcGISRuntime;
 
 QList<QObject*> DsaUtility::tools; // placeholder until we have ToolManager

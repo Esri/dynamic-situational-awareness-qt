@@ -9,12 +9,12 @@
 //
 // See the Sample code usage restrictions document for further information.
 //
+
 #include "DsaUtility.h"
 
 #include <QDir>
 #include <QFileInfo>
 #include <QStandardPaths>
-#include <QWindow>
 
 using namespace Esri::ArcGISRuntime;
 

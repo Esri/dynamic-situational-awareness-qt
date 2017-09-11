@@ -43,7 +43,7 @@ BasemapPickerController::BasemapPickerController(QObject* parent /* = nullptr */
     if (m_tileCacheModel->append(fInfo.filePath()))
       index++;
 
-    if(fInfo.completeBaseName().compare("lightgreycanvas", Qt::CaseInsensitive) == 0)
+    if(fInfo.completeBaseName().compare("topographic", Qt::CaseInsensitive) == 0)
       m_defaultBasemapIndex = index;
   }
 

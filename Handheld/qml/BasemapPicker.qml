@@ -63,7 +63,7 @@ Rectangle {
 
             background: Rectangle {
                       anchors.fill: closeButton
-                      color: "teal"
+                      color: Material.primary
                   }
 
             Image {
@@ -98,7 +98,7 @@ Rectangle {
                 anchors.centerIn: tileCacheTitle
                 width: tileCacheTitle.width + (8 * scaleFactor)
                 height: tileCacheTitle.height + (8 * scaleFactor)
-                color: "teal"
+                color: Material.primary
                 opacity: 0.5
                 radius: 2 * scaleFactor
             }

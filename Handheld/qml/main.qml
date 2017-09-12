@@ -43,7 +43,7 @@ Handheld {
 
         background: Rectangle {
                   anchors.fill: basemapsCheckBox
-                  color: "teal"
+                  color: Material.primary
               }
 
         Image {

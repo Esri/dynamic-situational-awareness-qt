@@ -22,7 +22,6 @@ Vehicle {
     height: 600
 
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
-//    property alias attributionTop: sceneView.attributionTop
 
     // Create SceneQuickView here, and create its Scene etc. in C++ code
     SceneView {

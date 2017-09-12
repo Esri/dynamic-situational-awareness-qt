@@ -12,22 +12,48 @@
 //
 
 import QtQuick 2.6
-import QtQuick.Controls 1.4
+import QtQuick.Controls 2.1
+import QtQuick.Controls.Material 2.1
 import Esri.Handheld 1.0
-import Esri.ArcGISExtras 1.1
 
 Handheld {
     width: 800
     height: 600
 
-    // Local app data path
-    property string dataPath: System.resolvedPath(System.userHomePath) + "/ArcGIS/Runtime/Data/DSA";
-
-    // Create MapQuickView here, and create its Map etc. in C++ code
-    MapView {
+    // Create SceneQuickView here, and create its Scene etc. in C++ code
+    SceneView {
         anchors.fill: parent
-        objectName: "mapView"
-        // set focus to enable keyboard navigation
-        focus: true
+        objectName: "sceneView"
+    }
+
+    BasemapPicker {
+        id: basemapsTool
+        anchors {
+            top: basemapsCheckBox.bottom
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
+        visible: basemapsCheckBox.checked
+
+        onBasemapSelected: {
+            basemapsCheckBox.checked = false;
+        }
+    }
+
+    Button {
+        id: basemapsCheckBox
+        anchors.top: parent.top
+        anchors.right: parent.right
+        checkable: true
+        checked: false
+        width: height
+        Image {
+            fillMode: Image.PreserveAspectFit
+            anchors.centerIn: parent
+            sourceSize.height: basemapsCheckBox.background.height - 6
+            height: sourceSize.height
+            source: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_light.png"
+        }
     }
 }

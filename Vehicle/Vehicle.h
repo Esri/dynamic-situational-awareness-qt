@@ -17,10 +17,9 @@ namespace Esri
 {
 namespace ArcGISRuntime
 {
-class Map;
-class MapQuickView;
-class Map;
-class MapQuickView;
+class Error;
+class Scene;
+class SceneQuickView;
 namespace Toolkit
 {
 class CoordinateConversionController;
@@ -40,14 +39,15 @@ public:
 
   void componentComplete() override;
 
+private slots:
+  void onError(const Esri::ArcGISRuntime::Error& error);
+
 private:
   void setCoordinateConversionOptions();
-
-  Esri::ArcGISRuntime::Map* m_map = nullptr;
-  Esri::ArcGISRuntime::MapQuickView* m_mapView = nullptr;
   Esri::ArcGISRuntime::Toolkit::CoordinateConversionController* m_coordinateConversionController = nullptr;
-
-  QString m_dataPath;
+  Esri::ArcGISRuntime::Scene*             m_scene = nullptr;
+  Esri::ArcGISRuntime::SceneQuickView*    m_sceneView = nullptr;
+  QString                                 m_dataPath;
 };
 
 #endif // VEHICLE_H

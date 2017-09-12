@@ -12,7 +12,8 @@
 //
 
 import QtQuick 2.6
-import QtQuick.Controls 1.4
+import QtQuick.Controls 2.1
+import QtQuick.Controls.Material 2.1
 import Esri.Vehicle 1.0
 import Esri.ArcGISExtras 1.1
 import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.2
@@ -21,34 +22,67 @@ Vehicle {
     width: 800
     height: 600
 
-    // Local app data path
-    property string dataPath: System.resolvedPath(System.userHomePath) + "/ArcGIS/Runtime/Data/DSA";
-
     // Create MapQuickView here, and create its Map etc. in C++ code
-    MapView {
+    SceneView {
         anchors.fill: parent
-        objectName: "mapView"
-        // set focus to enable keyboard navigation
-        focus: true
+        objectName: "sceneView"
+    }
 
-        Button {
-            id: coordConvButton
-            text: "Coordinate conversion"
-
-            onClicked: {
-                coordinateConversion.visible = true;
-            }
+    BasemapPicker {
+        id: basemapsTool
+        anchors {
+            top: basemapsCheckBox.bottom
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
         }
+        visible: basemapsCheckBox.checked
 
-        CoordinateConversion {
-            id: coordinateConversion
-            objectName: "coordinateConversion"
-            visible: false
-            height: parent.height / 3
-            width: parent.width
-            anchors {
-                bottom: parent.bottom
-            }
+        onBasemapSelected: {
+            basemapsCheckBox.checked = false;
+        }
+    }
+
+    CoordinateConversion {
+        id: coordinateConversion
+        objectName: "coordinateConversion"
+        visible: coordConvCheckBox.checked
+        height: parent.height / 3
+        width: parent.width
+        anchors {
+            bottom: parent.bottom
+        }
+    }
+
+    Button {
+        id: basemapsCheckBox
+        anchors.top: parent.top
+        anchors.right: parent.right
+        checkable: true
+        checked: false
+        width: height
+        Image {
+            fillMode: Image.PreserveAspectFit
+            anchors.centerIn: parent
+            sourceSize.height: basemapsCheckBox.background.height - 6
+            height: sourceSize.height
+            source: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_light.png"
+        }
+    }
+
+    Button {
+        id: coordConvCheckBox
+        anchors.top: basemapsCheckBox.bottom
+        anchors.right: parent.right
+        checkable: true
+        checked: false
+        width: height
+        Image {
+            fillMode: Image.PreserveAspectFit
+            anchors.centerIn: parent
+            sourceSize.height: coordConvCheckBox.background.height - 6
+            height: sourceSize.height
+            source: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_light.png"
         }
     }
 }

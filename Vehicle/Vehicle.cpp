@@ -10,17 +10,19 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "Map.h"
-#include "MapQuickView.h"
+#include "ArcGISTiledElevationSource.h"
 #include "Basemap.h"
 #include "ArcGISTiledLayer.h"
 #include "CoordinateConversionController.h"
 #include "CoordinateConversionOptions.h"
 #include "ToolManager.h"
+#include "Scene.h"
+#include "SceneQuickView.h"
+
+#include "BasemapPickerController.h"
+#include "DsaUtility.h"
 
 #include "Vehicle.h"
-
-#include <QQmlProperty>
 
 using namespace Esri::ArcGISRuntime;
 using namespace Esri::ArcGISRuntime::Toolkit;
@@ -29,6 +31,7 @@ using CCO = CoordinateConversionOptions;
 Vehicle::Vehicle(QQuickItem* parent /* = nullptr */):
   QQuickItem(parent)
 {
+  m_dataPath = DsaUtility::dataPath();
 }
 
 Vehicle::~Vehicle()
@@ -39,41 +42,76 @@ void Vehicle::componentComplete()
 {
   QQuickItem::componentComplete();
 
-  // read the local data path
-  m_dataPath = QQmlProperty::read(this, "dataPath").toString();
+  // find QML SceneView component
+  m_sceneView = findChild<SceneQuickView*>("sceneView");
+  connect(m_sceneView, &SceneQuickView::errorOccurred, this, &Vehicle::onError);
 
   // find QML Coordinate Conversion Controller object
   m_coordinateConversionController = findChild<CoordinateConversionController*>("coordinateConversionController");
 
-  // add this tool to the tool manager since it was declared/create in Qml
+  // add this tool to the tool manager since it was declared/created in Qml
   ToolManager::instance()->addTool(m_coordinateConversionController);
-
-  // find QML MapView component
-  m_mapView = findChild<MapQuickView*>("mapView");
-  m_mapView->setWrapAroundMode(WrapAroundMode::Disabled);
 
   // Create a map using the light grey canvas tile package
   TileCache* tileCache = new TileCache(m_dataPath + QStringLiteral("/LightGreyCanvas.tpk"), this);
-  m_map = new Map(new Basemap(new ArcGISTiledLayer(tileCache, this), this), this);
+  connect(tileCache, &TileCache::errorOccurred, this, &Vehicle::onError);
 
-  connect(m_mapView, &MapQuickView::mouseClicked, this, [this](QMouseEvent& mouseEvent)
+  // placeholder until we have ToolManager
+  for (QObject* obj : DsaUtility::tools)
+  {
+    if (!obj)
+      continue;
+
+    // we would add basemapChanged signal to AbstractTool and then we do not require the concrete type here
+    BasemapPickerController* basemapPicker = qobject_cast<BasemapPickerController*>(obj);
+    if (!basemapPicker)
+      continue;
+
+    connect(basemapPicker, &BasemapPickerController::basemapChanged, this, [this](Basemap* basemap)
+    {
+      if (!basemap)
+        return;
+
+      basemap->setParent(this);
+      m_scene->setBasemap(basemap);
+      connect(basemap, &Basemap::errorOccurred, this, &Vehicle::onError);
+    });
+  }
+
+  connect(m_sceneView, &SceneQuickView::mouseClicked, this, [this](QMouseEvent& mouseEvent)
+  {
+    m_sceneView->screenToLocation(mouseEvent.x(), mouseEvent.y());
+  });
+
+  connect(m_sceneView, &SceneQuickView::screenToLocationCompleted, this, [this](QUuid, Point location)
   {
     for (auto it = ToolManager::instance()->toolsBegin(); it != ToolManager::instance()->toolsEnd(); ++it)
     {
-      it.value()->handleClick(m_mapView->screenToLocation(mouseEvent.x(), mouseEvent.y()));
+      it.value()->handleClick(location);
     }
   });
 
-  connect(m_map, &Map::doneLoading, this, [this](Error)
+  m_scene = new Scene(this);
+  connect(m_scene, &Scene::errorOccurred, this, &Vehicle::onError);
+
+  connect(m_scene, &Scene::doneLoading, this, [this](Error)
   {
-    m_coordinateConversionController->setSpatialReference(m_map->spatialReference());
+    if (m_coordinateConversionController)
+      m_coordinateConversionController->setSpatialReference(m_scene->spatialReference());
   });
 
-  // Set map to map view
-  m_mapView->setMap(m_map);
+  // set an elevation source
+  ArcGISTiledElevationSource* source = new ArcGISTiledElevationSource(QUrl(m_dataPath + "/elevation/CaDEM.tpk"), this);
+  connect(source, &ArcGISTiledElevationSource::errorOccurred, this, &Vehicle::onError);
+  m_scene->baseSurface()->elevationSources()->append(source);
+
+  // Set scene to scene view
+  m_sceneView->setArcGISScene(m_scene);
 
   // Set viewpoint to Monterey, CA
-  m_mapView->setViewpointCenter(Point(-121.9, 36.6, SpatialReference::wgs84()), 1e5);
+  // distance of 5000m, heading North, pitch at 75 degrees, roll of 0
+  Camera monterey(DsaUtility::montereyCA(), 5000, 0., 75., 0);
+  m_sceneView->setViewpointCamera(monterey);
 
   // set the options for the coordinateConversionTool
   setCoordinateConversionOptions();
@@ -114,4 +152,8 @@ void Vehicle::setCoordinateConversionOptions()
   option->setDecimalPlaces(12);
 
   m_coordinateConversionController->addOption(option);
+}
+
+void Vehicle::onError(const Error&)
+{
 }

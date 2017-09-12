@@ -26,7 +26,9 @@
 #include "ArcGISRuntimeEnvironment.h"
 #include "ArcGISRuntimeToolkit.h"
 
-#include "MapQuickView.h"
+#include "SceneQuickView.h"
+
+#include "BasemapPickerController.h"
 
 #include "AppInfo.h"
 #include "Vehicle.h"
@@ -96,10 +98,11 @@ int main(int argc, char *argv[])
   ArcGISRuntimeToolkit::registerToolkitTypes();
 
   // Register the map view for QML
-  qmlRegisterType<MapQuickView>("Esri.Vehicle", 1, 0, "MapView");
+  qmlRegisterType<SceneQuickView>("Esri.Vehicle", 1, 0, "SceneView");
 
   // Register the Vehicle (QQuickItem) for QML
   qmlRegisterType<Vehicle>("Esri.Vehicle", 1, 0, "Vehicle");
+  qmlRegisterType<BasemapPickerController>("Esri.Vehicle", 1, 0, "BasemapPickerController");
 
   // Intialize application view
   QQuickView view;

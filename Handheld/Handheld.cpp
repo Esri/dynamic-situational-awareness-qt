@@ -10,20 +10,23 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "Map.h"
-#include "MapQuickView.h"
-#include "Basemap.h"
+#include "ArcGISTiledElevationSource.h"
 #include "ArcGISTiledLayer.h"
+#include "Basemap.h"
+#include "Scene.h"
+#include "SceneQuickView.h"
+
+#include "DsaUtility.h"
+#include "BasemapPickerController.h"
 
 #include "Handheld.h"
-
-#include <QQmlProperty>
 
 using namespace Esri::ArcGISRuntime;
 
 Handheld::Handheld(QQuickItem* parent /* = nullptr */):
   QQuickItem(parent)
 {
+  m_dataPath = DsaUtility::dataPath();
 }
 
 Handheld::~Handheld()
@@ -34,20 +37,55 @@ void Handheld::componentComplete()
 {
   QQuickItem::componentComplete();
 
-  // read the local data path
-  m_dataPath = QQmlProperty::read(this, "dataPath").toString();
+  // find QML SceneView component
+  m_sceneView = findChild<SceneQuickView*>("sceneView");
+  connect(m_sceneView, &SceneQuickView::errorOccurred, this, &Handheld::onError);
 
-  // find QML MapView component
-  m_mapView = findChild<MapQuickView*>("mapView");
-  m_mapView->setWrapAroundMode(WrapAroundMode::Disabled);
-
-  // Create a map using the light grey canvas tile package
+  // Create a scene using the light grey canvas tile package
   TileCache* tileCache = new TileCache(m_dataPath + QStringLiteral("/LightGreyCanvas.tpk"), this);
-  m_map = new Map(new Basemap(new ArcGISTiledLayer(tileCache, this), this), this);
+  connect(tileCache, &TileCache::errorOccurred, this, &Handheld::onError);
 
-  // Set map to map view
-  m_mapView->setMap(m_map);
+  // placeholder until we have ToolManager
+  for (QObject* obj : DsaUtility::tools)
+  {
+    if (!obj)
+      continue;
+
+    // we would add basemapChanged signal to AbstractTool and then we do not require the concrete type here
+    BasemapPickerController* basemapPicker = qobject_cast<BasemapPickerController*>(obj);
+    if (!basemapPicker)
+      continue;
+
+    connect(basemapPicker, &BasemapPickerController::basemapChanged, this, [this](Basemap* basemap)
+    {
+      if (!basemap)
+        return;
+
+      basemap->setParent(this);
+      m_scene->setBasemap(basemap);
+
+      connect(basemap, &Basemap::errorOccurred, this, &Handheld::onError);
+    });
+  }
+
+  m_scene = new Scene(this);
+  connect(m_scene, &Scene::errorOccurred, this, &Handheld::onError);
+
+  // set an elevation source
+  ArcGISTiledElevationSource* source = new ArcGISTiledElevationSource(QUrl(m_dataPath + "/elevation/CaDEM.tpk"), this);
+  connect(source, &ArcGISTiledElevationSource::errorOccurred, this, &Handheld::onError);
+  m_scene->baseSurface()->elevationSources()->append(source);
+
+  // Set scene to scene view
+  m_sceneView->setArcGISScene(m_scene);
 
   // Set viewpoint to Monterey, CA
-  m_mapView->setViewpointCenter(Point(-121.9, 36.6, SpatialReference::wgs84()), 1e5);
+  // distance of 5000m, heading North, pitch at 75 degrees, roll of 0
+  Camera monterey(DsaUtility::montereyCA(), 5000, 0., 75., 0);
+  m_sceneView->setViewpointCamera(monterey);
+}
+
+void Handheld::onError(const Esri::ArcGISRuntime::Error&)
+{
+
 }

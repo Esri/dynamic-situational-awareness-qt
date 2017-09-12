@@ -20,17 +20,26 @@ CONFIG += c++11
 ARCGIS_RUNTIME_VERSION = 100.2
 include($$PWD/arcgisruntime.pri)
 
+INCLUDEPATH += ../Shared/
+
 HEADERS += \
     AppInfo.h \
-    Vehicle.h
+    Vehicle.h \
+    ../Shared/DsaUtility.h \
+    ../Shared/BasemapPickerController.h \
+    ../Shared/TileCacheListModel.h
 
 SOURCES += \
     main.cpp \
-    Vehicle.cpp
+    Vehicle.cpp \
+    ../Shared/DsaUtility.cpp \
+    ../Shared/BasemapPickerController.cpp \
+    ../Shared/TileCacheListModel.cpp
 
 RESOURCES += \
     qml/qml.qrc \
-    Resources/Resources.qrc
+    Resources/Resources.qrc \
+    Resources/application.qrc
 
 #-------------------------------------------------------------------------------
 
@@ -50,3 +59,6 @@ ios {
 android {
     include (Android/Android.pri)
 }
+
+DISTFILES += \
+    Resources/qtquickcontrols2.conf

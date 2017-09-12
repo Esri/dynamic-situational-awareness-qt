@@ -31,11 +31,15 @@ Handheld {
 
     Button {
         id: basemapsCheckBox
-        anchors.top: parent.top
-        anchors.right: parent.right
+        anchors{
+            margins: 2 * scaleFactor
+            top: parent.top
+            right: parent.right
+        }
         checkable: true
         checked: false
-        width: height
+        width: 32 * scaleFactor
+        height: 32 * scaleFactor
 
         background: Rectangle {
                   anchors.fill: basemapsCheckBox

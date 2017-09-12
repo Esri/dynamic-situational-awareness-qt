@@ -63,7 +63,9 @@ public:
   // if using GraphicsRenderingMode::Dynamic for rendering, then we need to massage
   // the heading value to make sure it's correct when the scene is rotated.
   // Set the sceneView here and connect to relativeHeadingChanged and that will
-  // be handled automatically
+  // be handled automatically.
+  // Note: this is only needed for PictureMarkerSymbol. ModelSceneSybol already
+  // takes this into account
   void setRelativeHeadingSceneView(Esri::ArcGISRuntime::SceneQuickView* sceneView);
 
   QUrl defaultFileSearchPath() const;

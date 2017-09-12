@@ -24,7 +24,7 @@ GPXLocationSimulator::GPXLocationSimulator(QObject* parent) :
   QGeoPositionInfoSource(parent),
   m_gpxReader(new QXmlStreamReader()),
   m_timer(new QTimer(this)),
-  m_angleOffset(-180.0, 0.0, 180.0, 0.0) // North-South line used to calculate all headings
+  m_angleOffset(0.0, -90.0, 0.0, 90.0)
 {
   setUpdateInterval(20);
   connect(m_timer, SIGNAL(timeout()), this, SLOT(handleTimerEvent()));
@@ -379,5 +379,5 @@ double GPXLocationSimulator::heading(const Esri::ArcGISRuntime::LineSegment& seg
 {
   const auto startPoint = segment.startPoint();
   const auto endPoint = segment.endPoint();
-  return QLineF(startPoint.x(), startPoint.y(), endPoint.x(), endPoint.y()).angleTo(m_angleOffset);
+  return m_angleOffset.angleTo(QLineF(startPoint.x(), startPoint.y(), endPoint.x(), endPoint.y()));
 }

@@ -36,8 +36,8 @@ LocationController::LocationController(QObject* parent) :
     m_lastKnownHeading = heading;
 
     emit positionChanged(pos);
-    emit headingChanged(m_lastKnownHeading);
-    emit relativeHeadingChanged(heading + m_lastViewHeading);
+    emit headingChanged(heading);
+    emit relativeHeadingChanged(heading - m_lastViewHeading);
   });
 }
 

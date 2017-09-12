@@ -81,7 +81,7 @@ void Vehicle::componentComplete()
       constexpr float symbolSize = 24.0;
       symbol->setHeight(symbolSize);
       symbol->setWidth(symbolSize);
-      symbol->setRotationType(RotationType::Arithmetic);
+      symbol->setRotationType(RotationType::Geographic);
       symbol->load();
       m_positionGraphic = new Graphic(this);
       m_positionGraphic->setSymbol(symbol);

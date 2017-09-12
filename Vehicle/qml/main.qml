@@ -27,6 +27,21 @@ Vehicle {
     SceneView {
         anchors.fill: parent
         objectName: "sceneView"
+        id: sceneView
+
+        BasemapPicker {
+            id: basemapsTool
+
+            anchors {
+                left: parent.left
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            visible: basemapsCheckBox.checked
+
+            onBasemapSelected: basemapsCheckBox.checked = false;
+            onClosed: basemapsCheckBox.checked = false;
+        }
     }
 
     Button {
@@ -56,17 +71,5 @@ Vehicle {
         }
     }
 
-    BasemapPicker {
-        id: basemapsTool
 
-        anchors {
-            left: parent.left
-            top: parent.top
-            bottom: parent.bottom
-        }
-        visible: basemapsCheckBox.checked
-
-        onBasemapSelected: basemapsCheckBox.checked = false;
-        onClosed: basemapsCheckBox.checked = false;
-    }
 }

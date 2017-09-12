@@ -39,11 +39,10 @@ private slots:
   void onError(const Esri::ArcGISRuntime::Error& error);
 
 private:
-
   Esri::ArcGISRuntime::Scene*             m_scene = nullptr;
   Esri::ArcGISRuntime::SceneQuickView*    m_sceneView = nullptr;
 
-  QString m_dataPath;
+  QString                                 m_dataPath;
 };
 
 #endif // HANDHELD_H

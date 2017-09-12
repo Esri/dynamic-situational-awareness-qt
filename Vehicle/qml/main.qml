@@ -14,46 +14,59 @@
 import QtQuick 2.6
 import QtQuick.Controls 2.1
 import QtQuick.Controls.Material 2.1
+import QtQuick.Window 2.2
 import Esri.Vehicle 1.0
 
 Vehicle {
     width: 800
     height: 600
 
-    // Create MapQuickView here, and create its Map etc. in C++ code
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+
+    // Create SceneQuickView here, and create its Scene etc. in C++ code
     SceneView {
         anchors.fill: parent
         objectName: "sceneView"
     }
 
+    Button {
+        id: basemapsCheckBox
+        anchors{
+            margins: 2 * scaleFactor
+            top: parent.top
+            right: parent.right
+        }
+        checkable: true
+        checked: false
+        width: 32 * scaleFactor
+        height: 32 * scaleFactor
+
+
+        background: Rectangle {
+                  anchors.fill: basemapsCheckBox
+                  color: Material.primary
+              }
+
+        Image {
+            fillMode: Image.PreserveAspectFit
+            anchors.centerIn: parent
+            sourceSize.height: basemapsCheckBox.background.height - (6 * scaleFactor)
+            height: sourceSize.height
+            source: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_dark.png"
+        }
+    }
+
     BasemapPicker {
         id: basemapsTool
+
         anchors {
-            top: basemapsCheckBox.bottom
             left: parent.left
-            right: parent.right
+            top: parent.top
             bottom: parent.bottom
         }
         visible: basemapsCheckBox.checked
 
-        onBasemapSelected: {
-            basemapsCheckBox.checked = false;
-        }
-    }
-
-    Button {
-        id: basemapsCheckBox
-        anchors.top: parent.top
-        anchors.right: parent.right
-        checkable: true
-        checked: false
-        width: height
-        Image {
-            fillMode: Image.PreserveAspectFit
-            anchors.centerIn: parent
-            sourceSize.height: basemapsCheckBox.background.height - 6
-            height: sourceSize.height
-            source: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_light.png"
-        }
+        onBasemapSelected: basemapsCheckBox.checked = false;
+        onClosed: basemapsCheckBox.checked = false;
     }
 }

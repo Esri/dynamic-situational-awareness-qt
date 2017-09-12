@@ -107,7 +107,11 @@ Rectangle {
                 id: tileCacheTitle
                 text: title;
                 anchors.centerIn: parent
+                width: parent.width - (16 * scaleFactor)
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
 
+                wrapMode: Text.WrapAnywhere
                 font.bold: true
             }
 

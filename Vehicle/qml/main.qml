@@ -29,22 +29,6 @@ Vehicle {
         objectName: "sceneView"
     }
 
-    BasemapPicker {
-        id: basemapsTool
-
-        anchors {
-            top: basemapsCheckBox.bottom
-            left: parent.left
-            right: parent.right
-            bottom: parent.bottom
-        }
-        visible: basemapsCheckBox.checked
-
-        onBasemapSelected: {
-            basemapsCheckBox.checked = false;
-        }
-    }
-
     Button {
         id: basemapsCheckBox
         anchors.top: parent.top
@@ -52,12 +36,33 @@ Vehicle {
         checkable: true
         checked: false
         width: height
+
+
+        background: Rectangle {
+                  anchors.fill: basemapsCheckBox
+                  color: "teal"
+              }
+
         Image {
             fillMode: Image.PreserveAspectFit
             anchors.centerIn: parent
             sourceSize.height: basemapsCheckBox.background.height - (6 * scaleFactor)
             height: sourceSize.height
-            source: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_light.png"
+            source: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_dark.png"
         }
+    }
+
+    BasemapPicker {
+        id: basemapsTool
+
+        anchors {
+            left: parent.left
+            top: parent.top
+            bottom: parent.bottom
+        }
+        visible: basemapsCheckBox.checked
+
+        onBasemapSelected: basemapsCheckBox.checked = false;
+        onClosed: basemapsCheckBox.checked = false;
     }
 }

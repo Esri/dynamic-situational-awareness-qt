@@ -17,34 +17,94 @@ import QtQuick.Controls.Material 2.1
 import QtQuick.Window 2.2
 import Esri.Vehicle 1.0
 
-Item {
+Rectangle {
     signal basemapSelected();
+    signal closed();
 
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
-    anchors {
-        margins: 32
-        left: parent.left
-        right: parent.right
-    }
+    width: Math.min(parent.width, ((basemapsList.cellWidth * 2) + (16 * scaleFactor)))
+    color: Material.background
 
     BasemapPickerController {
         id: toolController
     }
 
+    Rectangle {
+        id: titleBar
+        anchors{
+            top: parent.top
+            left: parent.left
+            right: parent.right
+        }
+        color: Material.primary
+        height: 32 * scaleFactor
+
+        Text {
+            id: titleText
+            anchors.centerIn: parent
+            text: qsTr("Basemaps")
+            color: Material.foreground
+            font.bold: true
+        }
+
+        Button {
+            id: closeButton
+
+            anchors {
+                right: parent.right
+                top: parent.top
+                bottom: parent.bottom
+                margins: 2 * scaleFactor
+            }
+
+
+            width: height
+
+            background: Rectangle {
+                      anchors.fill: closeButton
+                      color: "teal"
+                  }
+
+            Image {
+                anchors.fill: parent
+                source: "qrc:/Resources/icons/xhdpi/ic_menu_closeclear_dark.png"
+                fillMode: Image.PreserveAspectFit
+            }
+
+            onClicked: closed();
+        }
+    }
+
     Component {
         id: tileCacheDelegate
-        Item {
+        Rectangle {
             width: basemapsList.cellWidth;
             height: basemapsList.cellHeight
 
+            border.color: index === basemapsList.currentIndex ? Material.accent : Material.primary
+            border.width: index === basemapsList.currentIndex ? 2 * scaleFactor : 0.5 * scaleFactor
+
             Image {
                 source: thumbnailUrl;
-                fillMode: Image.PreserveAspectFit
-                anchors.centerIn: parent
+                fillMode: Image.PreserveAspectCrop
+                anchors{
+                    fill: parent
+                    margins: 4 * scaleFactor
+                }
             }
+
+            Rectangle{
+                anchors.centerIn: tileCacheTitle
+                width: tileCacheTitle.width + (8 * scaleFactor)
+                height: tileCacheTitle.height + (8 * scaleFactor)
+                color: "teal"
+                opacity: 0.5
+                radius: 2 * scaleFactor
+            }
+
             Label {
-                id: button
+                id: tileCacheTitle
                 text: title;
                 anchors.centerIn: parent
 
@@ -53,10 +113,18 @@ Item {
 
             MouseArea {
                 anchors.fill: parent
+                hoverEnabled: true
                 onClicked: {
                     toolController.basemapSelected(index);
                     basemapSelected();
                 }
+                onHoveredChanged: {
+                    if (containsMouse) {
+                        basemapsList.currentIndex = index
+                        basemapsList.currentPath = path
+                    }
+                }
+
             }
         }
     }
@@ -64,17 +132,46 @@ Item {
     GridView {
         id: basemapsList
 
+        property string currentPath: ""
+
         anchors{
-            fill: parent
-            margins: 32
+            top: titleBar.bottom
+            left: parent.left
+            right: parent.right
+            bottom: footerBar.top
+            margins: 8 * scaleFactor
         }
 
         clip: true
         model: toolController.tileCacheModel
 
-        cellWidth: 256; cellHeight: 256
+        cellWidth: 128 * scaleFactor
+        cellHeight: 128 * scaleFactor
 
         delegate: tileCacheDelegate
+    }
+
+
+    Rectangle {
+        id: footerBar
+        anchors{
+            bottom: parent.bottom
+            left: parent.left
+            right: parent.right
+        }
+        color: Material.primary
+
+        height: 32 * scaleFactor
+
+        Label {
+            id: pathText
+            anchors.fill: parent
+            text: basemapsList.currentPath
+            wrapMode: Text.WrapAnywhere
+            elide: Text.ElideRight
+            font.pixelSize: 12 * scaleFactor
+
+        }
     }
 
     Component.onCompleted: toolController.selectInitialBasemap();

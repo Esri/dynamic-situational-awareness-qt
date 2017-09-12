@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/Resources">
         <file>AppIcon.png</file>
-        <file>icons/xhdpi/ic_menu_choosebasemap_light.png</file>
+        <file>icons/xhdpi/ic_menu_closeclear_dark.png</file>
+        <file>icons/xhdpi/ic_menu_choosebasemap_dark.png</file>
     </qresource>
 </RCC>

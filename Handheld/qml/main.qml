@@ -18,8 +18,8 @@ import QtQuick.Window 2.2
 import Esri.Handheld 1.0
 
 Handheld {
-    width: 800
-    height: 600
+    width: 320
+    height: 480
 
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
@@ -29,22 +29,6 @@ Handheld {
         objectName: "sceneView"
     }
 
-    BasemapPicker {
-        id: basemapsTool
-
-        anchors {
-            top: basemapsCheckBox.bottom
-            left: parent.left
-            right: parent.right
-            bottom: parent.bottom
-        }
-        visible: basemapsCheckBox.checked
-
-        onBasemapSelected: {
-            basemapsCheckBox.checked = false;
-        }
-    }
-
     Button {
         id: basemapsCheckBox
         anchors.top: parent.top
@@ -52,12 +36,28 @@ Handheld {
         checkable: true
         checked: false
         width: height
+
+        background: Rectangle {
+                  anchors.fill: basemapsCheckBox
+                  color: "teal"
+              }
+
         Image {
             fillMode: Image.PreserveAspectFit
             anchors.centerIn: parent
             sourceSize.height: basemapsCheckBox.background.height - (6 * scaleFactor)
             height: sourceSize.height
-            source: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_light.png"
+            source: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_dark.png"
         }
+    }
+
+    BasemapPicker {
+        id: basemapsTool
+
+        anchors.fill: parent
+        visible: basemapsCheckBox.checked
+
+        onBasemapSelected: basemapsCheckBox.checked = false;
+        onClosed: basemapsCheckBox.checked = false;
     }
 }

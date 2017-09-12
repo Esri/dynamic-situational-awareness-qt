@@ -22,59 +22,59 @@ Item {
 
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
+    anchors {
+        margins: 32
+        left: parent.left
+        right: parent.right
+    }
+
     BasemapPickerController {
         id: toolController
     }
 
-    ListView {
-        id: basemapsList
+    Component {
+        id: tileCacheDelegate
+        Item {
+            width: basemapsList.cellWidth;
+            height: basemapsList.cellHeight
 
-        anchors{
-            margins: 8 * scaleFactor
-            fill: parent
-        }
-
-        spacing: 8 * scaleFactor
-
-        clip: true
-        model: toolController.tileCacheModel
-
-        delegate: Item {
-
-            width:  Math.min(basemapsList.width, 412)
-            height: 64 * scaleFactor
-
-            Button {
+            Image {
+                source: thumbnailUrl;
+                fillMode: Image.PreserveAspectFit
+                anchors.centerIn: parent
+            }
+            Label {
                 id: button
-                anchors {
-                    margins: 4 * scaleFactor
-                    horizontalCenter: parent.horizontalCenter
-                }
+                text: title;
+                anchors.centerIn: parent
 
-                height: parent.height
+                font.bold: true
+            }
 
-                text: title
-
+            MouseArea {
+                anchors.fill: parent
                 onClicked: {
                     toolController.basemapSelected(index);
                     basemapSelected();
                 }
-
-                Image {
-                    id: thumbnail
-                    anchors {
-                        right: parent.right
-                        margins: 8 * scaleFactor
-                    }
-
-                    height: parent.height
-                    width: height
-
-                    source: thumbnailUrl
-                    fillMode: Image.PreserveAspectFit
-                }
             }
         }
+    }
+
+    GridView {
+        id: basemapsList
+
+        anchors{
+            fill: parent
+            margins: 32
+        }
+
+        clip: true
+        model: toolController.tileCacheModel
+
+        cellWidth: 256; cellHeight: 256
+
+        delegate: tileCacheDelegate
     }
 
     Component.onCompleted: toolController.selectInitialBasemap();

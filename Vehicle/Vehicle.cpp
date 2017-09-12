@@ -88,13 +88,12 @@ void Vehicle::componentComplete()
 
       overlay->graphics()->append(m_positionGraphic);
 
-      locationController->setRelativeHeadingSceneView(m_sceneView);
-
       connect(locationController, &LocationController::positionChanged, this, [this](const Point& newPosition)
       {
         m_positionGraphic->setGeometry(newPosition);
       });
 
+      locationController->setRelativeHeadingSceneView(m_sceneView);
       connect(locationController, &LocationController::relativeHeadingChanged, this, [this, symbol](double newHeading)
       {
         symbol->setAngle(newHeading);

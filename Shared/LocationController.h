@@ -71,6 +71,8 @@ public:
   QUrl defaultFileSearchPath() const;
 
 private:
+  void initPositionInfoSource(bool simulated);
+
   GPXLocationSimulator* m_simulator = nullptr;
   QGeoPositionInfoSource* m_positionSource = nullptr;
   QCompass* m_compass = nullptr;

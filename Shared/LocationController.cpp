@@ -14,12 +14,12 @@
 
 #include <QDir>
 #include <QCompass>
+#include <QGeoPositionInfoSource>
 #include "GPXLocationSimulator.h"
-#include <QtDebug>
 #include "DsaUtility.h"
 #include "SceneQuickView.h"
 #include "Point.h"
-#include <QGeoPositionInfoSource>
+#include <cmath>
 
 using namespace Esri::ArcGISRuntime;
 

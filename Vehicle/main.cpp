@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
 
   // Register the Vehicle (QQuickItem) for QML
   qmlRegisterType<Vehicle>("Esri.Vehicle", 1, 0, "Vehicle");
-  qmlRegisterType<BasemapPickerController>("Esri.Vehicle", 1, 0, "BasemapPickerController");
+  qmlRegisterType<BasemapPickerController>("Esri.DSA", 1, 0, "BasemapPickerController");
 
   // Intialize application view
   QQuickView view;

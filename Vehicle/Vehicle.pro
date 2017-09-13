@@ -27,19 +27,22 @@ HEADERS += \
     Vehicle.h \
     ../Shared/DsaUtility.h \
     ../Shared/BasemapPickerController.h \
-    ../Shared/TileCacheListModel.h
+    ../Shared/TileCacheListModel.h \
+    ../Shared/DsaController.h
 
 SOURCES += \
     main.cpp \
     Vehicle.cpp \
     ../Shared/DsaUtility.cpp \
     ../Shared/BasemapPickerController.cpp \
-    ../Shared/TileCacheListModel.cpp
+    ../Shared/TileCacheListModel.cpp \
+    ../Shared/DsaController.cpp
 
 RESOURCES += \
     qml/qml.qrc \
     Resources/Resources.qrc \
-    Resources/application.qrc
+    Resources/application.qrc \
+    ../Shared/qml/shared_qml.qrc
 
 #-------------------------------------------------------------------------------
 

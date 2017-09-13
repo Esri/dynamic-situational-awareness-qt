@@ -10,34 +10,42 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef HANDHELD_H
-#define HANDHELD_H
+#ifndef DSACONTROLLER_H
+#define DSACONTROLLER_H
+
+#include <QObject>
+
+#include <QAbstractListModel>
+#include <QUrl>
 
 namespace Esri
 {
 namespace ArcGISRuntime
 {
-class SceneQuickView;
+  class Error;
+  class Scene;
 }
 }
 
-#include <QQuickItem>
-
-class DsaController;
-
-class Handheld : public QQuickItem
+class DsaController : public QObject
 {
   Q_OBJECT
 
 public:
-  Handheld(QQuickItem* parent = nullptr);
-  ~Handheld();
+  DsaController(QObject* parent = nullptr);
+  ~DsaController();
 
-  void componentComplete() override;
+  Esri::ArcGISRuntime::Scene* scene() const;
+
+  void init();
+
+public slots:
+  void onError(const Esri::ArcGISRuntime::Error& error);
 
 private:
-  Esri::ArcGISRuntime::SceneQuickView*    m_sceneView = nullptr;
-  DsaController*                          m_controller = nullptr;
+  Esri::ArcGISRuntime::Scene* m_scene = nullptr;
+
+  QString                     m_dataPath;
 };
 
-#endif // HANDHELD_H
+#endif // DSACONTROLLER_H

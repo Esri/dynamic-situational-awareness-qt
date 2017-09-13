@@ -13,8 +13,6 @@
 #include "SceneQuickView.h"
 
 #include "DsaController.h"
-#include "DsaUtility.h"
-
 #include "Vehicle.h"
 
 using namespace Esri::ArcGISRuntime;
@@ -42,9 +40,4 @@ void Vehicle::componentComplete()
 
   // Set scene to scene view
   m_sceneView->setArcGISScene(m_controller->scene());
-
-  // Set viewpoint to Monterey, CA
-  // distance of 5000m, heading North, pitch at 75 degrees, roll of 0
-  Camera monterey(DsaUtility::montereyCA(), 5000, 0., 75., 0);
-  m_sceneView->setViewpointCamera(monterey);
 }

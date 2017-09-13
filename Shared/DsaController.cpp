@@ -26,6 +26,12 @@ DsaController::DsaController(QObject* parent):
   m_scene(new Scene(this)),
   m_dataPath(DsaUtility::dataPath())
 {
+  // Set viewpoint to Monterey, CA
+  // distance of 5000m, heading North, pitch at 75 degrees, roll of 0
+  Camera monterey(DsaUtility::montereyCA(), 5000, 0., 75., 0);
+  Viewpoint initViewpoint(DsaUtility::montereyCA(), monterey);
+  m_scene->setInitialViewpoint(initViewpoint);
+
   connect(m_scene, &Scene::errorOccurred, this, &DsaController::onError);
 
   // set an elevation source

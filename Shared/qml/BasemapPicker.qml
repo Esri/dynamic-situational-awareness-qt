@@ -15,7 +15,7 @@ import QtQuick 2.6
 import QtQuick.Controls 2.1
 import QtQuick.Controls.Material 2.1
 import QtQuick.Window 2.2
-import Esri.Handheld 1.0
+import Esri.DSA 1.0
 
 Rectangle {
     signal basemapSelected();
@@ -140,10 +140,9 @@ Rectangle {
 
         anchors{
             top: titleBar.bottom
-            left: parent.left
-            right: parent.right
+            horizontalCenter: parent.horizontalCenter
             bottom: footerBar.top
-            margins: 32 * scaleFactor
+            margins: 8 * scaleFactor
         }
 
         clip: true
@@ -151,6 +150,7 @@ Rectangle {
 
         cellWidth: 128 * scaleFactor
         cellHeight: 128 * scaleFactor
+        width: 2 * cellWidth
 
         delegate: tileCacheDelegate
     }

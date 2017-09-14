@@ -12,11 +12,14 @@
 
 #include "ArcGISTiledElevationSource.h"
 #include "Scene.h"
+#include "Basemap.h"
+#include "Layer.h"
 
 #include "DsaUtility.h"
 #include "DsaController.h"
 
 #include "BasemapPickerController.h"
+#include "AddLocalDataController.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -61,23 +64,37 @@ void DsaController::init()
 
     // we would add basemapChanged signal to AbstractTool and then we do not require the concrete type here
     BasemapPickerController* basemapPicker = qobject_cast<BasemapPickerController*>(obj);
-    if (!basemapPicker)
-      continue;
-
-    connect(basemapPicker, &BasemapPickerController::basemapChanged, this, [this](Basemap* basemap)
+    if (basemapPicker)
     {
-      if (!basemap)
-        return;
+      connect(basemapPicker, &BasemapPickerController::basemapChanged, this, [this](Basemap* basemap)
+      {
+        if (!basemap)
+          return;
 
-      basemap->setParent(this);
-      m_scene->setBasemap(basemap);
+        basemap->setParent(this);
+        m_scene->setBasemap(basemap);
 
-      connect(basemap, &Basemap::errorOccurred, this, &DsaController::onError);
-    });
+        connect(basemap, &Basemap::errorOccurred, this, &DsaController::onError);
+      });
+    }
+
+    AddLocalDataController* localDataController = qobject_cast<AddLocalDataController*>(obj);
+    if (localDataController)
+    {
+      connect(localDataController, &AddLocalDataController::layerSelected, this, [this](Layer* lyr)
+      {
+        if (!lyr)
+          return;
+
+        m_scene->operationalLayers()->append(lyr);
+
+        connect(lyr, &Layer::errorOccurred, this, &DsaController::onError);
+      });
+    }
   }
 }
 
-void DsaController::onError(const Esri::ArcGISRuntime::Error&)
+void DsaController::onError(const Esri::ArcGISRuntime::Error& e)
 {
-
+  qDebug() << "Error" << e.message() << e.additionalMessage();
 }

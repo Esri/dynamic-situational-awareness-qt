@@ -28,6 +28,9 @@ HEADERS += \
     ../Shared/DsaUtility.h \
     ../Shared/BasemapPickerController.h \
     ../Shared/TileCacheListModel.h \
+    ../Shared/AddLocalDataController.h \
+    ../Shared/DataItem.h \
+    ../Shared/DataItemListModel.h \
     ../Shared/DsaController.h
 
 SOURCES += \
@@ -36,6 +39,9 @@ SOURCES += \
     ../Shared/DsaUtility.cpp \
     ../Shared/BasemapPickerController.cpp \
     ../Shared/TileCacheListModel.cpp \
+    ../Shared/AddLocalDataController.cpp \
+    ../Shared/DataItem.cpp \
+    ../Shared/DataItemListModel.cpp \
     ../Shared/DsaController.cpp
 
 RESOURCES += \

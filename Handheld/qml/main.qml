@@ -30,29 +30,54 @@ Handheld {
         objectName: "sceneView"
     }
 
-    Button {
-        id: basemapsCheckBox
+    Column {
         anchors{
             margins: 2 * scaleFactor
             top: parent.top
             right: parent.right
         }
-        checkable: true
-        checked: false
-        width: 32 * scaleFactor
-        height: 32 * scaleFactor
+        spacing: 5 * scaleFactor
 
-        background: Rectangle {
-                  anchors.fill: basemapsCheckBox
-                  color: Material.primary
-              }
+        Button {
+            id: basemapsCheckBox
+            checkable: true
+            checked: false
+            width: 32 * scaleFactor
+            height: 32 * scaleFactor
 
-        Image {
-            fillMode: Image.PreserveAspectFit
-            anchors.centerIn: parent
-            sourceSize.height: basemapsCheckBox.background.height - (6 * scaleFactor)
-            height: sourceSize.height
-            source: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_dark.png"
+            background: Rectangle {
+                anchors.fill: basemapsCheckBox
+                color: Material.primary
+            }
+
+            Image {
+                fillMode: Image.PreserveAspectFit
+                anchors.centerIn: parent
+                sourceSize.height: basemapsCheckBox.background.height - (6 * scaleFactor)
+                height: sourceSize.height
+                source: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_dark.png"
+            }
+        }
+
+        Button {
+            id: addLocalDataCheckBox
+            checkable: true
+            checked: false
+            width: 32 * scaleFactor
+            height: 32 * scaleFactor
+
+            background: Rectangle {
+                anchors.fill: addLocalDataCheckBox
+                color: Material.primary
+            }
+
+            Image {
+                fillMode: Image.PreserveAspectFit
+                anchors.centerIn: parent
+                sourceSize.height: addLocalDataCheckBox.background.height - (6 * scaleFactor)
+                height: sourceSize.height
+                source: "qrc:/Resources/icons/xhdpi/ic_menu_layervisibilitypopover_dark_d.png"
+            }
         }
     }
 
@@ -64,5 +89,14 @@ Handheld {
 
         onBasemapSelected: basemapsCheckBox.checked = false;
         onClosed: basemapsCheckBox.checked = false;
+    }
+
+    AddLocalData {
+        id: addLocalDataTool
+
+        anchors.fill: parent
+        visible: addLocalDataCheckBox.checked
+        showDataConnectionPane: false
+        onClosed: addLocalDataCheckBox.checked = false;
     }
 }

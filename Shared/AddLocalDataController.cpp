@@ -40,8 +40,12 @@ AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
   // add the base path to the string list
   addPathToDirectoryList(DsaUtility::dataPath());
 
-  // refresh local data model
-  refreshLocalDataModel();
+  // create file filter list
+  m_fileFilterList = QStringList{m_allData, m_rasterData, m_geodatabaseData,
+                                 /*m_shapefileData, m_kmlData,*/ m_geopackageData,
+                                 m_sceneLayerData, m_vectorTilePackageData,
+                                 m_tilePackageData};
+  emit fileFilterListChanged();
 }
 
 AddLocalDataController::~AddLocalDataController()
@@ -61,15 +65,17 @@ void AddLocalDataController::addPathToDirectoryList(const QString& path)
 void AddLocalDataController::refreshLocalDataModel(const QString& fileType)
 {
   QStringList fileFilters = determineFileFilters(fileType);
-  foreach (const QString& path, m_dataPaths)
+  m_localDataModel->clear();
+  emit localDataModelChanged();
+
+  for (const QString& path : m_dataPaths)
   {
-    // NOTE - NEED TO DELETE PREVIOUS DATA ITEMS FROM LIST MODEL
     QDir localDir(path);
+
     if (fileFilters.length() > 0)
-    {
       localDir.setNameFilters(fileFilters);
-    }
-    foreach (const QString& file, localDir.entryList(QDir::Files, QDir::Name))
+
+    for (const QString& file : localDir.entryList(QDir::Files, QDir::Name))
     {
       QFileInfo fileInfo(localDir, file);
       DataItem* dataItem = new DataItem(fileInfo.absoluteFilePath());
@@ -84,28 +90,26 @@ QStringList AddLocalDataController::determineFileFilters(const QString& fileType
   QStringList fileFilter;
   QStringList rasterExtensions{"*.img", "*.tif", "*.tiff", "*.I1", "*.dt0", "*.dt1", "*.dt2", "*.tc2", "*.geotiff", "*.hr1", "*.jpg", "*.jpeg", "*.jp2", "*.ntf", "*.png", "*.i21"};
 
-  if (fileType == "*.geodatabase")
+  if (fileType == m_geodatabaseData)
     fileFilter << "*.geodatabase";
-  else if (fileType == "*.tpk")
+  else if (fileType == m_tilePackageData)
     fileFilter << "*.tpk";
-  else if (fileType == "*.shp")
+  else if (fileType == m_shapefileData)
     fileFilter << "*.shp";
-  else if (fileType == "*.mmpk")
-    fileFilter << "*.mmpk";
-  else if (fileType == "*.gpkg")
+  else if (fileType == m_geopackageData)
     fileFilter << "*.gpkg";
-  else if (fileType == "*.kml")
+  else if (fileType == m_kmlData)
     fileFilter << "*.kml";
-  else if (fileType == "*.slpk")
+  else if (fileType == m_sceneLayerData)
     fileFilter << "*.slpk";
-  else if (fileType == "*.vtpk")
+  else if (fileType == m_vectorTilePackageData)
     fileFilter << "*.vtpk";
-  else if (fileType == "Raster")
+  else if (fileType == m_rasterData)
     fileFilter = rasterExtensions;
-  else if (fileType == "All")
+  else if (fileType == m_allData)
   {
     fileFilter = rasterExtensions;
-    fileFilter << "*.geodatabase" << "*.tpk" << "*.shp" << "*.mmpk" << "*.gpkg" << "*.kml" << "*.slpk" << "*.vtpk";
+    fileFilter << "*.geodatabase" << "*.tpk" << "*.shp" << "*.gpkg" << "*.kml" << "*.slpk" << "*.vtpk";
   }
 
   return fileFilter;
@@ -117,30 +121,35 @@ void AddLocalDataController::selectItem(int index)
 
   switch (dataItem->dataType()) {
   case DataItem::DataType::Geodatabase:
+    qDebug() << "gdb";
     createFeatureLayerGeodatabase(dataItem->fullPath());
     break;
   case DataItem::DataType::GeoPackage:
+    qDebug() << "gpkg";
     createLayerGeoPackage(dataItem->fullPath());
     break;
   case DataItem::DataType::KML:
+    qDebug() << "kml";
     createKmlLayer(dataItem->fullPath());
     break;
-  case DataItem::DataType::MobileMapPackage:
-    qDebug() << "not supported yet";
-    break;
   case DataItem::DataType::Raster:
+    qDebug() << "raster";
     createRasterLayer(dataItem->fullPath());
     break;
   case DataItem::DataType::SceneLayerPackage:
+    qDebug() << "slpk";
     createSceneLayer(dataItem->fullPath());
     break;
   case DataItem::DataType::Shapefile:
+    qDebug() << "shp";
     createFeatureLayerShapefile(dataItem->fullPath());
     break;
   case DataItem::DataType::TilePackage:
+    qDebug() << "tpk";
     createTiledLayer(dataItem->fullPath());
     break;
   case DataItem::DataType::VectorTilePackage:
+    qDebug() << "vtpk";
     createVectorTiledLayer(dataItem->fullPath());
     break;
   default:
@@ -156,7 +165,7 @@ void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path)
   {
     if (!e.isEmpty())
       return;
-    foreach (FeatureTable* featureTable, gdb->geodatabaseFeatureTables())
+    for (FeatureTable* featureTable : gdb->geodatabaseFeatureTables())
     {
       FeatureLayer* featureLayer = new FeatureLayer(featureTable, this);
       emit layerSelected(featureLayer);

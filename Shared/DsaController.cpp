@@ -56,6 +56,7 @@ Esri::ArcGISRuntime::Scene* DsaController::scene() const
 
 void DsaController::init()
 {
+
   // placeholder until we have ToolManager
   for (QObject* obj : DsaUtility::tools)
   {
@@ -76,6 +77,8 @@ void DsaController::init()
 
         connect(basemap, &Basemap::errorOccurred, this, &DsaController::onError);
       });
+
+      return;
     }
 
     AddLocalDataController* localDataController = qobject_cast<AddLocalDataController*>(obj);
@@ -85,11 +88,14 @@ void DsaController::init()
       {
         if (!lyr)
           return;
+        qDebug() << "adding lyr" << lyr->name();
 
         m_scene->operationalLayers()->append(lyr);
 
         connect(lyr, &Layer::errorOccurred, this, &DsaController::onError);
       });
+
+      return;
     }
   }
 }

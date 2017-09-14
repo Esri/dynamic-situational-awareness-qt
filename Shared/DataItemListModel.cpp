@@ -75,3 +75,14 @@ QHash<int, QByteArray> DataItemListModel::roleNames() const
 {
   return m_roles;
 }
+
+void DataItemListModel::clear()
+{
+  for (DataItem* dataItem : m_dataItems)
+  {
+    dataItem->deleteLater();
+  }
+  beginResetModel();
+  m_dataItems.clear();
+  endResetModel();
+}

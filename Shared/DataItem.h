@@ -33,7 +33,6 @@ public:
     Geodatabase,
     TilePackage,
     VectorTilePackage,
-    MobileMapPackage,
     SceneLayerPackage,
     Shapefile,
     GeoPackage,

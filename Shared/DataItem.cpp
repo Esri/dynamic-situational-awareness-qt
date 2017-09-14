@@ -43,8 +43,6 @@ DataItem::DataType DataItem::determineDataType()
     return DataType::TilePackage;
   else if (fileExtension.toLower() == "shp")
     return DataType::Shapefile;
-  else if (fileExtension.toLower() == "mmpk")
-    return DataType::MobileMapPackage;
   else if (fileExtension.toLower() == "gpkg")
     return DataType::GeoPackage;
   else if (fileExtension.toLower() == "kml")
@@ -80,9 +78,6 @@ QString DataItem::dataTypeAsString()
     break;
   case DataType::KML:
     return "KML";
-    break;
-  case DataType::MobileMapPackage:
-    return "Mobile Map Package";
     break;
   case DataType::Raster:
     return "Raster";

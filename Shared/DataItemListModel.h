@@ -43,6 +43,7 @@ public:
   QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
   int size() const { return m_dataItems.size(); }
   void setupRoles();
+  void clear();
 
 signals:
   void sizeChanged();

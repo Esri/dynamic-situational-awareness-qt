@@ -145,7 +145,7 @@ Rectangle {
             top: titleBar.bottom
             left: parent.left
             right: parent.right
-            bottom: parent.bottom
+            bottom: filterColumn.top
             margins: 8 * scaleFactor
         }
 
@@ -153,5 +153,26 @@ Rectangle {
         model: toolController.localDataModel
         width: parent.width
         delegate: localDataDelegate
+    }
+
+    Column {
+        id: filterColumn
+        anchors {
+            left: parent.left
+            bottom: parent.bottom
+            margins: 20 * scaleFactor
+        }
+        spacing: 1 * scaleFactor
+
+        Text {
+            text: "Filter:"
+            font.pixelSize: 10 * scaleFactor
+        }
+
+        ComboBox {
+            model: toolController.fileFilterList
+            width: 250 * scaleFactor
+            onCurrentTextChanged: toolController.refreshLocalDataModel(currentText)
+        }
     }
 }

@@ -9,3 +9,8 @@ CONFIG += ordered
 SUBDIRS += \
     Handheld \
     Vehicle
+
+!android:!ios {
+SUBDIRS += \
+    MessageSimulator
+}

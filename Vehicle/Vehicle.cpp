@@ -11,25 +11,16 @@
 //
 
 #include "SceneQuickView.h"
-#include "LocationController.h"
-#include "BasemapPickerController.h"
-#include "ArcGISTiledElevationSource.h"
-#include "Basemap.h"
-#include "Scene.h"
-#include "DsaUtility.h"
-#include "GraphicsOverlay.h"
-#include "ModelSceneSymbol.h"
-#include "DistanceCompositeSceneSymbol.h"
-#include "SimpleRenderer.h"
-
+#include "DsaController.h"
 #include "Vehicle.h"
 
 using namespace Esri::ArcGISRuntime;
 
 Vehicle::Vehicle(QQuickItem* parent /* = nullptr */):
-  QQuickItem(parent)
+  QQuickItem(parent),
+  m_controller(new DsaController(this))
 {
-  m_dataPath = DsaUtility::dataPath();
+
 }
 
 Vehicle::~Vehicle()
@@ -40,113 +31,13 @@ void Vehicle::componentComplete()
 {
   QQuickItem::componentComplete();
 
+  m_controller->init();
+
   // find QML SceneView component
   m_sceneView = findChild<SceneQuickView*>("sceneView");
-  connect(m_sceneView, &SceneQuickView::errorOccurred, this, &Vehicle::onError);
 
-  // Create a scene using the light grey canvas tile package
-  TileCache* tileCache = new TileCache(m_dataPath + QStringLiteral("/LightGreyCanvas.tpk"), this);
-  connect(tileCache, &TileCache::errorOccurred, this, &Vehicle::onError);
-
-  // placeholder until we have ToolManager
-  for (QObject* obj : DsaUtility::tools)
-  {
-    if (!obj)
-      continue;
-
-    // we would add basemapChanged signal to AbstractTool and then we do not require the concrete type here
-    if (qobject_cast<BasemapPickerController*>(obj))
-    {
-      auto basemapPicker = static_cast<BasemapPickerController*>(obj);
-      connect(basemapPicker, &BasemapPickerController::basemapChanged, this, [this](Basemap* basemap)
-      {
-        if (!basemap)
-          return;
-
-        basemap->setParent(this);
-        m_scene->setBasemap(basemap);
-
-        connect(basemap, &Basemap::errorOccurred, this, &Vehicle::onError);
-      });
-    }
-    else if (qobject_cast<LocationController*>(obj))
-    {
-      setupLocationTool(static_cast<LocationController*>(obj));
-    }
-  }
-
-  m_scene = new Scene(this);
-  connect(m_scene, &Scene::errorOccurred, this, &Vehicle::onError);
-
-  // set an elevation source
-  ArcGISTiledElevationSource* source = new ArcGISTiledElevationSource(QUrl(m_dataPath + "/elevation/CaDEM.tpk"), this);
-  connect(source, &ArcGISTiledElevationSource::errorOccurred, this, &Vehicle::onError);
-  m_scene->baseSurface()->elevationSources()->append(source);
+  connect(m_sceneView, &SceneQuickView::errorOccurred, m_controller, &DsaController::onError);
 
   // Set scene to scene view
-  m_sceneView->setArcGISScene(m_scene);
-
-  // Set viewpoint to Monterey, CA
-  // distance of 5000m, heading North, pitch at 75 degrees, roll of 0
-  Camera monterey(DsaUtility::montereyCA(), 5000, 0., 75., 0);
-  m_sceneView->setViewpointCamera(monterey);
-}
-
-void Vehicle::setupLocationTool(LocationController* locationController)
-{
-  constexpr float symbolSize = 45.0;
-  constexpr double rangeMultiplier = 1.04; // the closer to 1.0, the smoother the transitions
-  constexpr double maxRange = 10000000.0;
-
-  ModelSceneSymbol* modelSceneSymbol = new ModelSceneSymbol(QUrl::fromLocalFile(DsaUtility::dataPath() + "/LocationDisplay.dae"), this);
-  modelSceneSymbol->setWidth(symbolSize);
-  modelSceneSymbol->setDepth(symbolSize);
-
-  DistanceCompositeSceneSymbol* distanceCompSymbol = new DistanceCompositeSceneSymbol(this);
-  distanceCompSymbol->ranges()->append(new DistanceSymbolRange(modelSceneSymbol, 0.0, 1000.0, this));
-
-  float rangeSize = symbolSize;
-  double i = 1000.0;
-  for (; i < maxRange; i *= rangeMultiplier)
-  {
-    ModelSceneSymbol* rangeSym = new ModelSceneSymbol(QUrl::fromLocalFile(DsaUtility::dataPath() + "/LocationDisplay.dae"), this);
-    rangeSize *= static_cast<float>(rangeMultiplier);
-    rangeSym->setWidth(rangeSize);
-    rangeSym->setDepth(rangeSize);
-
-    if (i * rangeMultiplier >= maxRange)
-      distanceCompSymbol->ranges()->append(new DistanceSymbolRange(rangeSym, i, 0.0, this));
-    else
-      distanceCompSymbol->ranges()->append(new DistanceSymbolRange(rangeSym, i, i * rangeMultiplier, this));
-  }
-
-  SimpleRenderer* renderer = new SimpleRenderer(distanceCompSymbol, this);
-  RendererSceneProperties renderProperties = renderer->sceneProperties();
-  renderProperties.setHeadingExpression(QString("[heading]"));
-  renderer->setSceneProperties(renderProperties);
-
-  auto overlay = new GraphicsOverlay(this);
-  overlay->setSceneProperties(LayerSceneProperties(SurfacePlacement::Relative));
-  overlay->setRenderingMode(GraphicsRenderingMode::Dynamic);
-  overlay->setRenderer(renderer);
-  m_sceneView->graphicsOverlays()->append(overlay);
-
-  m_positionGraphic = new Graphic(this);
-  m_positionGraphic->attributes()->insertAttribute("heading", 0.0);
-  overlay->graphics()->append(m_positionGraphic);
-
-  connect(locationController, &LocationController::positionChanged, this, [this](const Point& newPosition)
-  {
-    constexpr double z = 10.0;
-    m_positionGraphic->setGeometry(Point(newPosition.x(), newPosition.y(), z));
-  });
-
-  connect(locationController, &LocationController::headingChanged, this, [this](double newHeading)
-  {
-    m_positionGraphic->attributes()->replaceAttribute("heading", newHeading);
-  });
-}
-
-void Vehicle::onError(const Error&)
-{
+  m_sceneView->setArcGISScene(m_controller->scene());
 }

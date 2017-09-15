@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>LoggingPage.qml</file>
+        <file>main.qml</file>
+        <file>MessagesPage.qml</file>
+        <file>SettingsPage.qml</file>
+        <file>XmlLoader.qml</file>
+    </qresource>
+</RCC>

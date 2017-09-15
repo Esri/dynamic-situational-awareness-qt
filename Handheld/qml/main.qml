@@ -14,11 +14,15 @@
 import QtQuick 2.6
 import QtQuick.Controls 2.1
 import QtQuick.Controls.Material 2.1
+import QtQuick.Window 2.2
+import Esri.DSA 1.0
 import Esri.Handheld 1.0
 
 Handheld {
-    width: 800
-    height: 600
+    width: 320
+    height: 480
+
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     // Create SceneQuickView here, and create its Scene etc. in C++ code
     SceneView {
@@ -26,34 +30,39 @@ Handheld {
         objectName: "sceneView"
     }
 
-    BasemapPicker {
-        id: basemapsTool
-        anchors {
-            top: basemapsCheckBox.bottom
-            left: parent.left
-            right: parent.right
-            bottom: parent.bottom
-        }
-        visible: basemapsCheckBox.checked
-
-        onBasemapSelected: {
-            basemapsCheckBox.checked = false;
-        }
-    }
-
     Button {
         id: basemapsCheckBox
-        anchors.top: parent.top
-        anchors.right: parent.right
+        anchors{
+            margins: 2 * scaleFactor
+            top: parent.top
+            right: parent.right
+        }
         checkable: true
         checked: false
-        width: height
+        width: 32 * scaleFactor
+        height: 32 * scaleFactor
+
+        background: Rectangle {
+                  anchors.fill: basemapsCheckBox
+                  color: Material.primary
+              }
+
         Image {
             fillMode: Image.PreserveAspectFit
             anchors.centerIn: parent
-            sourceSize.height: basemapsCheckBox.background.height - 6
+            sourceSize.height: basemapsCheckBox.background.height - (6 * scaleFactor)
             height: sourceSize.height
-            source: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_light.png"
+            source: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_dark.png"
         }
+    }
+
+    BasemapPicker {
+        id: basemapsTool
+
+        anchors.fill: parent
+        visible: basemapsCheckBox.checked
+
+        onBasemapSelected: basemapsCheckBox.checked = false;
+        onClosed: basemapsCheckBox.checked = false;
     }
 }

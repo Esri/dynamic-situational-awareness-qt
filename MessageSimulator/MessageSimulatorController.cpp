@@ -39,7 +39,7 @@ MessageSimulatorController::MessageSimulatorController(QObject* parent) :
       {
         // if no messages have been sent and we've reached the end of the parser
         // then the simulation contains no messages
-        emit errorOccurred("Simulation file contains no messages");
+        emit errorOccurred(tr("Simulation file contains no messages"));
         stopSimulation();
         return;
       }
@@ -54,13 +54,13 @@ MessageSimulatorController::MessageSimulatorController(QObject* parent) :
     const auto messageBytes = m_messageParser->nextMessage();
     if (messageBytes.isEmpty())
     {
-      emit errorOccurred("Message is empty");
+      emit errorOccurred(tr("Message is empty"));
       return;
     }
 
     if (m_messageSender->sendMessage(messageBytes) == -1)
     {
-      emit errorOccurred("Failed to send message");
+      emit errorOccurred(tr("Failed to send message"));
       return;
     }
 
@@ -73,7 +73,7 @@ MessageSimulatorController::MessageSimulatorController(QObject* parent) :
     SimulatedMessage* cotMessage = SimulatedMessage::createFromCoTMessage(message, this);
     if (!cotMessage)
     {
-      emit errorOccurred("Failed to create simulated CoT message");
+      emit errorOccurred(tr("Failed to create simulated CoT message"));
       return;
     }
 

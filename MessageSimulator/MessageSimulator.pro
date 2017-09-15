@@ -17,8 +17,6 @@ TEMPLATE = app
 QT += qml quick
 CONFIG += c++11
 
-INCLUDEPATH += ../Shared/
-
 HEADERS += \
     MessageSimulatorController.h \
     AbstractMessageParser.h \

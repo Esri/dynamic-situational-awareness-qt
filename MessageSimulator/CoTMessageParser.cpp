@@ -34,7 +34,7 @@ QByteArray CoTMessageParser::nextMessage()
     m_device.setFileName(filePath());
     if (!m_device.open(QFile::ReadOnly | QFile::Text))
     {
-      emit errorOccurred("Could not open " + filePath() + " for reading");
+      emit errorOccurred(tr("Could not open ") + filePath() + tr(" for reading"));
       return QByteArray();
     }
 
@@ -45,7 +45,7 @@ QByteArray CoTMessageParser::nextMessage()
 
   if (atEnd())
   {
-    emit errorOccurred("Finished parsing messages to end of file");
+    emit errorOccurred(tr("Finished parsing messages to end of file"));
     return QByteArray();
   }
 

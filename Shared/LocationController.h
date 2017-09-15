@@ -36,6 +36,7 @@ class LocationController : public QObject
   Q_PROPERTY(bool enabled READ enabled WRITE setEnabled NOTIFY enabledChanged)
   Q_PROPERTY(bool simulated READ simulated WRITE setSimulated NOTIFY simulatedChanged)
   Q_PROPERTY(QUrl gpxFilePath READ gpxFilePath WRITE setGpxFilePath NOTIFY gpxFilePathChanged)
+  Q_PROPERTY(QString gpxFilePathAsString READ gpxFilePathAsString NOTIFY gpxFilePathChanged)
   Q_PROPERTY(QUrl defaultFileSearchPath READ defaultFileSearchPath CONSTANT)
 
 public:
@@ -56,6 +57,9 @@ public:
 
   QUrl gpxFilePath() const;
   void setGpxFilePath(const QUrl& gpxFilePath);
+
+  // removes any file:// scheme if present
+  QString gpxFilePathAsString() const;
 
   // if using GraphicsRenderingMode::Dynamic for rendering, then we need to massage
   // the heading value to make sure it's correct when the scene is rotated.

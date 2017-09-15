@@ -165,6 +165,11 @@ QUrl LocationController::gpxFilePath() const
   return m_gpxFilePath;
 }
 
+QString LocationController::gpxFilePathAsString() const
+{
+  return m_gpxFilePath.toLocalFile();
+}
+
 void LocationController::setGpxFilePath(const QUrl& gpxFilePath)
 {
   if (m_gpxFilePath == gpxFilePath)
@@ -214,7 +219,9 @@ void LocationController::initOverlay()
   constexpr double rangeMultiplier = 1.04; // the closer to 1.0, the smoother the transitions
   constexpr double maxRange = 10000000.0;
 
-  ModelSceneSymbol* modelSceneSymbol = new ModelSceneSymbol(QUrl::fromLocalFile(DsaUtility::dataPath() + "/LocationDisplay.dae"), this);
+  const QUrl modelPath = QUrl::fromLocalFile(DsaUtility::dataPath() + "/LocationDisplay.dae");
+
+  ModelSceneSymbol* modelSceneSymbol = new ModelSceneSymbol(modelPath, this);
   modelSceneSymbol->setWidth(symbolSize);
   modelSceneSymbol->setDepth(symbolSize);
 
@@ -225,7 +232,7 @@ void LocationController::initOverlay()
   double i = 1000.0;
   for (; i < maxRange; i *= rangeMultiplier)
   {
-    ModelSceneSymbol* rangeSym = new ModelSceneSymbol(QUrl::fromLocalFile(DsaUtility::dataPath() + "/LocationDisplay.dae"), this);
+    ModelSceneSymbol* rangeSym = new ModelSceneSymbol(modelPath, this);
     rangeSize *= static_cast<float>(rangeMultiplier);
     rangeSym->setWidth(rangeSize);
     rangeSym->setDepth(rangeSize);

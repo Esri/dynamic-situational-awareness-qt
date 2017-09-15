@@ -92,7 +92,14 @@ Vehicle {
         }
         checkable: true
         checked: false
-        width: image.width
+        width: basemapsCheckBox.width
+        height: basemapsCheckBox.height
+
+        background: Rectangle {
+                  anchors.fill: locationCheckBox
+                  color: Material.primary
+              }
+
         Image {
             id: image
             fillMode: Image.PreserveAspectFit

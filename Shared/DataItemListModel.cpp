@@ -37,7 +37,7 @@ void DataItemListModel::addDataItem(DataItem* dataItem)
   beginInsertRows(QModelIndex(), rowCount(), rowCount());
   m_dataItems << dataItem;
   endInsertRows();
-  emit sizeChanged();
+//  emit sizeChanged();
 }
 int DataItemListModel::rowCount(const QModelIndex& parent) const
 {
@@ -51,7 +51,11 @@ QVariant DataItemListModel::data(const QModelIndex& index, int role) const
     return QVariant();
 
   DataItem* dataItem = m_dataItems[index.row()];
+
   QVariant retVal;  
+
+  if (!dataItem)
+    return retVal;
 
   switch (role)
   {

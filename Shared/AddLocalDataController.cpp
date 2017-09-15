@@ -46,6 +46,7 @@ AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
                                  m_sceneLayerData, m_vectorTilePackageData,
                                  m_tilePackageData};
   emit fileFilterListChanged();
+  emit localDataModelChanged();
 }
 
 AddLocalDataController::~AddLocalDataController()
@@ -66,7 +67,6 @@ void AddLocalDataController::refreshLocalDataModel(const QString& fileType)
 {
   QStringList fileFilters = determineFileFilters(fileType);
   m_localDataModel->clear();
-  emit localDataModelChanged();
 
   for (const QString& path : m_dataPaths)
   {
@@ -78,9 +78,8 @@ void AddLocalDataController::refreshLocalDataModel(const QString& fileType)
     for (const QString& file : localDir.entryList(QDir::Files, QDir::Name))
     {
       QFileInfo fileInfo(localDir, file);
-      DataItem* dataItem = new DataItem(fileInfo.absoluteFilePath());
+      DataItem* dataItem = new DataItem(fileInfo.absoluteFilePath(), this);
       m_localDataModel->addDataItem(dataItem);
-      emit localDataModelChanged();
     }
   }
 }
@@ -167,7 +166,7 @@ void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path)
       return;
     for (FeatureTable* featureTable : gdb->geodatabaseFeatureTables())
     {
-      FeatureLayer* featureLayer = new FeatureLayer(featureTable, this);
+      FeatureLayer* featureLayer = new FeatureLayer(featureTable);
       emit layerSelected(featureLayer);
     }
   });
@@ -189,7 +188,7 @@ void AddLocalDataController::createFeatureLayerShapefile(const QString& path)
 void AddLocalDataController::createRasterLayer(const QString& path)
 {
   Raster* raster = new Raster(path, this);
-  RasterLayer* rasterLayer = new RasterLayer(raster, this);
+  RasterLayer* rasterLayer = new RasterLayer(raster);
   emit layerSelected(rasterLayer);
 }
 
@@ -201,19 +200,19 @@ void AddLocalDataController::createKmlLayer(const QString& path)
 
 void AddLocalDataController::createSceneLayer(const QString& path)
 {
-  ArcGISSceneLayer* sceneLayer = new ArcGISSceneLayer(QUrl(path), this);
+  ArcGISSceneLayer* sceneLayer = new ArcGISSceneLayer(QUrl(path));
   emit layerSelected(sceneLayer);
 }
 
 void AddLocalDataController::createTiledLayer(const QString& path)
 {
-  ArcGISTiledLayer* tiledLayer = new ArcGISTiledLayer(QUrl(path), this);
+  ArcGISTiledLayer* tiledLayer = new ArcGISTiledLayer(QUrl(path));
   emit layerSelected(tiledLayer);
 }
 
 void AddLocalDataController::createVectorTiledLayer(const QString& path)
 {
-  ArcGISVectorTiledLayer* vectorTiledLayer = new ArcGISVectorTiledLayer(QUrl(path), this);
+  ArcGISVectorTiledLayer* vectorTiledLayer = new ArcGISVectorTiledLayer(QUrl(path));
   emit layerSelected(vectorTiledLayer);
 }
 

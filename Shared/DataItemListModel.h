@@ -25,8 +25,6 @@ class DataItemListModel : public QAbstractListModel
   Q_OBJECT
 
 public:
-  //Q_PROPERTY(int size READ size NOTIFY sizeChanged)
-
   enum DataItemRoles
   {
     FullPathRole = Qt::UserRole + 1,
@@ -39,17 +37,16 @@ public:
 
   Q_INVOKABLE DataItem* get(int index) const { return m_dataItems.at(index); }
   void addDataItem(DataItem* dataItem);
-  int rowCount(const QModelIndex& parent = QModelIndex()) const;
-  QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
   int size() const { return m_dataItems.size(); }
   void setupRoles();
   void clear();
 
-signals:
-  void sizeChanged();
+  // QAbstractItemModel interface
+  int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+  QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 
 protected:
-  QHash<int, QByteArray> roleNames() const;
+  QHash<int, QByteArray> roleNames() const override;
 
 private:
   QHash<int, QByteArray> m_roles;

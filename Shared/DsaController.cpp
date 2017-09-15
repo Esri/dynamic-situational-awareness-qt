@@ -78,7 +78,7 @@ void DsaController::init()
         connect(basemap, &Basemap::errorOccurred, this, &DsaController::onError);
       });
 
-      return;
+      continue;
     }
 
     AddLocalDataController* localDataController = qobject_cast<AddLocalDataController*>(obj);
@@ -88,14 +88,14 @@ void DsaController::init()
       {
         if (!lyr)
           return;
-        qDebug() << "adding lyr" << lyr->name();
 
+        lyr->setParent(this);
         m_scene->operationalLayers()->append(lyr);
 
         connect(lyr, &Layer::errorOccurred, this, &DsaController::onError);
       });
 
-      return;
+      continue;
     }
   }
 }

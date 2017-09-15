@@ -34,6 +34,20 @@ class AddLocalDataController : public QObject
   Q_PROPERTY(QAbstractListModel* localDataModel READ localDataModel NOTIFY localDataModelChanged)
   Q_PROPERTY(QStringList fileFilterList READ fileFilterList NOTIFY fileFilterListChanged)
 
+  enum class DataType
+  {
+    Raster,
+    Geodatabase,
+    TilePackage,
+    VectorTilePackage,
+    SceneLayerPackage,
+    Shapefile,
+    GeoPackage,
+    KML,
+    All,
+    Unknown
+  };
+
 public:
   AddLocalDataController(QObject* parent = nullptr);
   ~AddLocalDataController();

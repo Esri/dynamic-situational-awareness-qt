@@ -17,6 +17,7 @@
 #include "DsaController.h"
 
 #include "BasemapPickerController.h"
+#include "LocationController.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -38,12 +39,10 @@ DsaController::DsaController(QObject* parent):
   ArcGISTiledElevationSource* source = new ArcGISTiledElevationSource(QUrl(m_dataPath + "/elevation/CaDEM.tpk"), this);
   connect(source, &ArcGISTiledElevationSource::errorOccurred, this, &DsaController::onError);
   m_scene->baseSurface()->elevationSources()->append(source);
-
 }
 
 DsaController::~DsaController()
 {
-
 }
 
 Esri::ArcGISRuntime::Scene* DsaController::scene() const
@@ -60,24 +59,33 @@ void DsaController::init()
       continue;
 
     // we would add basemapChanged signal to AbstractTool and then we do not require the concrete type here
-    BasemapPickerController* basemapPicker = qobject_cast<BasemapPickerController*>(obj);
-    if (!basemapPicker)
-      continue;
-
-    connect(basemapPicker, &BasemapPickerController::basemapChanged, this, [this](Basemap* basemap)
+    if (qobject_cast<BasemapPickerController*>(obj))
     {
-      if (!basemap)
-        return;
+      BasemapPickerController* basemapPicker = static_cast<BasemapPickerController*>(obj);
+      connect(basemapPicker, &BasemapPickerController::basemapChanged, this, [this](Basemap* basemap)
+      {
+        if (!basemap)
+          return;
 
-      basemap->setParent(this);
-      m_scene->setBasemap(basemap);
+        basemap->setParent(this);
+        m_scene->setBasemap(basemap);
 
-      connect(basemap, &Basemap::errorOccurred, this, &DsaController::onError);
-    });
+        connect(basemap, &Basemap::errorOccurred, this, &DsaController::onError);
+      });
+    }
+    else if (qobject_cast<LocationController*>(obj))
+    {
+      LocationController* locationController = static_cast<LocationController*>(obj);
+      m_overlays.append(locationController->locationOverlay());
+    }
   }
+}
+
+QList<GraphicsOverlay*> DsaController::overlays() const
+{
+  return m_overlays;
 }
 
 void DsaController::onError(const Esri::ArcGISRuntime::Error&)
 {
-
 }

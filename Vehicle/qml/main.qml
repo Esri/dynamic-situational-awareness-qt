@@ -43,17 +43,17 @@ Vehicle {
             onBasemapSelected: basemapsCheckBox.checked = false;
             onClosed: basemapsCheckBox.checked = false;
         }
-    }
 
-    LocationTool {
-        id: locationTool
-        anchors {
-            top: basemapsCheckBox.bottom
-            left: parent.left
-            right: parent.right
-            bottom: parent.bottom
+        LocationTool {
+            id: locationTool
+            anchors {
+                left: parent.left
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            visible: locationCheckBox.checked
+            onClosed: locationCheckBox.checked = false;
         }
-        visible: locationCheckBox.checked
     }
 
     Button {
@@ -85,15 +85,19 @@ Vehicle {
 
     Button {
         id: locationCheckBox
-        anchors.top: basemapsCheckBox.bottom
-        anchors.right: parent.right
+        anchors{
+            margins: 2 * scaleFactor
+            top: basemapsCheckBox.bottom
+            right: parent.right
+        }
         checkable: true
         checked: false
-        width: height
+        width: image.width
         Image {
+            id: image
             fillMode: Image.PreserveAspectFit
             anchors.centerIn: parent
-            sourceSize.height: locationCheckBox.background.height - 6
+            sourceSize.height: locationCheckBox.background.height - (6 * scaleFactor)
             height: sourceSize.height
             source: "qrc:/Resources/icons/xhdpi/navigation.png"
         }

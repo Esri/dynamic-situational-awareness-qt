@@ -20,7 +20,6 @@ Vehicle::Vehicle(QQuickItem* parent /* = nullptr */):
   QQuickItem(parent),
   m_controller(new DsaController(this))
 {
-
 }
 
 Vehicle::~Vehicle()
@@ -35,6 +34,9 @@ void Vehicle::componentComplete()
 
   // find QML SceneView component
   m_sceneView = findChild<SceneQuickView*>("sceneView");
+
+  for (const auto& overlay : m_controller->overlays())
+    m_sceneView->graphicsOverlays()->append(overlay);
 
   connect(m_sceneView, &SceneQuickView::errorOccurred, m_controller, &DsaController::onError);
 

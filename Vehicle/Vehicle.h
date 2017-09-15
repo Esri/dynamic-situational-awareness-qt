@@ -36,8 +36,6 @@ public:
   void componentComplete() override;
 
 private:
-  void setupLocationTool(LocationController* locationController);
-
   Esri::ArcGISRuntime::SceneQuickView*    m_sceneView = nullptr;
   DsaController*                          m_controller = nullptr;
 };

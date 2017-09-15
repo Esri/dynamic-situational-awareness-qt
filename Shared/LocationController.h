@@ -21,6 +21,8 @@ namespace ArcGISRuntime
 {
   class Point;
   class SceneQuickView;
+  class Graphic;
+  class GraphicsOverlay;
 }}
 
 class QGeoPositionInfoSource;
@@ -42,15 +44,10 @@ public:
 
   QString toolName() const /*override*/;
 
-signals:
-  void positionChanged(const Esri::ArcGISRuntime::Point& newPosition);
-  void headingChanged(double newHeading);
-  void relativeHeadingChanged(double relativeHeading);
-  void gpxFilePathChanged();
-  void enabledChanged();
-  void simulatedChanged();
+  // if you want this tool to handle everything, add this overlay
+  // to your Map/Scene
+  Esri::ArcGISRuntime::GraphicsOverlay* locationOverlay();
 
-public:
   bool enabled() const;
   void setEnabled(bool enabled);
 
@@ -70,9 +67,20 @@ public:
 
   QUrl defaultFileSearchPath() const;
 
+signals:
+  void positionChanged(const Esri::ArcGISRuntime::Point& newPosition);
+  void headingChanged(double newHeading);
+  void relativeHeadingChanged(double relativeHeading);
+  void gpxFilePathChanged();
+  void enabledChanged();
+  void simulatedChanged();
+
 private:
   void initPositionInfoSource(bool simulated);
+  void initOverlay();
 
+  Esri::ArcGISRuntime::GraphicsOverlay* m_locationOverlay = nullptr;
+  Esri::ArcGISRuntime::Graphic* m_positionGraphic = nullptr;
   GPXLocationSimulator* m_simulator = nullptr;
   QGeoPositionInfoSource* m_positionSource = nullptr;
   QCompass* m_compass = nullptr;

@@ -19,6 +19,10 @@
 #include "DsaUtility.h"
 #include "SceneQuickView.h"
 #include "Point.h"
+#include "GraphicsOverlay.h"
+#include "ModelSceneSymbol.h"
+#include "DistanceCompositeSceneSymbol.h"
+#include "SimpleRenderer.h"
 #include <cmath>
 
 using namespace Esri::ArcGISRuntime;
@@ -39,6 +43,8 @@ void LocationController::initPositionInfoSource(bool simulated)
   if (simulated && !m_simulator)
   {
     m_simulator = new GPXLocationSimulator(this);
+
+    setGpxFilePath(QUrl::fromLocalFile(DsaUtility::dataPath() + "/MontereyMounted.gpx"));
 
     connect(m_simulator, &GPXLocationSimulator::positionUpdateAvailable, this,
     [this](const Point& pos, double heading)
@@ -147,6 +153,9 @@ void LocationController::setSimulated(bool simulated)
   if (m_simulated == simulated)
     return;
 
+  if (simulated)
+    initPositionInfoSource(simulated);
+
   m_simulated = simulated;
   emit simulatedChanged();
 }
@@ -188,5 +197,67 @@ void LocationController::setRelativeHeadingSceneView(Esri::ArcGISRuntime::SceneQ
     // keep the orientation correct if we're not doing any updates
     if (!m_enabled)
       emit relativeHeadingChanged(m_lastKnownHeading + m_lastViewHeading);
+  });
+}
+
+GraphicsOverlay* LocationController::locationOverlay()
+{
+  if (!m_locationOverlay)
+    initOverlay();
+
+  return m_locationOverlay;
+}
+
+void LocationController::initOverlay()
+{
+  constexpr float symbolSize = 45.0;
+  constexpr double rangeMultiplier = 1.04; // the closer to 1.0, the smoother the transitions
+  constexpr double maxRange = 10000000.0;
+
+  ModelSceneSymbol* modelSceneSymbol = new ModelSceneSymbol(QUrl::fromLocalFile(DsaUtility::dataPath() + "/LocationDisplay.dae"), this);
+  modelSceneSymbol->setWidth(symbolSize);
+  modelSceneSymbol->setDepth(symbolSize);
+
+  DistanceCompositeSceneSymbol* distanceCompSymbol = new DistanceCompositeSceneSymbol(this);
+  distanceCompSymbol->ranges()->append(new DistanceSymbolRange(modelSceneSymbol, 0.0, 1000.0, this));
+
+  float rangeSize = symbolSize;
+  double i = 1000.0;
+  for (; i < maxRange; i *= rangeMultiplier)
+  {
+    ModelSceneSymbol* rangeSym = new ModelSceneSymbol(QUrl::fromLocalFile(DsaUtility::dataPath() + "/LocationDisplay.dae"), this);
+    rangeSize *= static_cast<float>(rangeMultiplier);
+    rangeSym->setWidth(rangeSize);
+    rangeSym->setDepth(rangeSize);
+
+    if (i * rangeMultiplier >= maxRange)
+      distanceCompSymbol->ranges()->append(new DistanceSymbolRange(rangeSym, i, 0.0, this));
+    else
+      distanceCompSymbol->ranges()->append(new DistanceSymbolRange(rangeSym, i, i * rangeMultiplier, this));
+  }
+
+  SimpleRenderer* renderer = new SimpleRenderer(distanceCompSymbol, this);
+  RendererSceneProperties renderProperties = renderer->sceneProperties();
+  renderProperties.setHeadingExpression(QString("[heading]"));
+  renderer->setSceneProperties(renderProperties);
+
+  m_locationOverlay = new GraphicsOverlay(this);
+  m_locationOverlay->setSceneProperties(LayerSceneProperties(SurfacePlacement::Relative));
+  m_locationOverlay->setRenderingMode(GraphicsRenderingMode::Dynamic);
+  m_locationOverlay->setRenderer(renderer);
+
+  m_positionGraphic = new Graphic(this);
+  m_positionGraphic->attributes()->insertAttribute("heading", 0.0);
+  m_locationOverlay->graphics()->append(m_positionGraphic);
+
+  connect(this, &LocationController::positionChanged, this, [this](const Point& newPosition)
+  {
+    constexpr double z = 10.0;
+    m_positionGraphic->setGeometry(Point(newPosition.x(), newPosition.y(), z));
+  });
+
+  connect(this, &LocationController::headingChanged, this, [this](double newHeading)
+  {
+    m_positionGraphic->attributes()->replaceAttribute("heading", newHeading);
   });
 }

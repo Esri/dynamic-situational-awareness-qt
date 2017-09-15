@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/qml">
         <file>BasemapPicker.qml</file>
+        <file>LocationTool.qml</file>
     </qresource>
 </RCC>

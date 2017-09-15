@@ -24,6 +24,7 @@ namespace ArcGISRuntime
 {
   class Error;
   class Scene;
+  class GraphicsOverlay;
 }
 }
 
@@ -37,6 +38,8 @@ public:
 
   Esri::ArcGISRuntime::Scene* scene() const;
 
+  QList<Esri::ArcGISRuntime::GraphicsOverlay*> overlays() const;
+
   void init();
 
 public slots:
@@ -44,6 +47,7 @@ public slots:
 
 private:
   Esri::ArcGISRuntime::Scene* m_scene = nullptr;
+  QList<Esri::ArcGISRuntime::GraphicsOverlay*> m_overlays;
 
   QString                     m_dataPath;
 };

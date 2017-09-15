@@ -13,12 +13,25 @@
 #ifndef DATAITEMLISTMODEL_H
 #define DATAITEMLISTMODEL_H
 
-class DataItem;
-
 #include <QAbstractListModel>
 #include <QByteArray>
 #include <QHash>
 #include <QList>
+#include <QFileInfo>
+
+enum class DataType
+{
+  Raster,
+  Geodatabase,
+  TilePackage,
+  VectorTilePackage,
+  SceneLayerPackage,
+  Shapefile,
+  GeoPackage,
+  KML,
+  All,
+  Unknown
+};
 
 class DataItemListModel : public QAbstractListModel
 {
@@ -28,18 +41,17 @@ public:
   enum DataItemRoles
   {
     FullPathRole = Qt::UserRole + 1,
-    FileNameRole,
-    DataTypeRole
+    FileNameRole
   };
 
   explicit DataItemListModel(QObject* parent = nullptr);
   ~DataItemListModel() = default;
 
-  Q_INVOKABLE DataItem* get(int index) const { return m_dataItems.at(index); }
-  void addDataItem(DataItem* dataItem);
-  int size() const { return m_dataItems.size(); }
-  void setupRoles();
+  DataType getDataItemType(int index);
+  QString getDataItemPath(int index) const;
+  void addDataItem(const QString& fullPath);
   void clear();
+  void setupRoles();
 
   // QAbstractItemModel interface
   int rowCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -49,8 +61,20 @@ protected:
   QHash<int, QByteArray> roleNames() const override;
 
 private:
+  // DataItem struct to keep track of the name, path, and type
+  struct DataItem
+  {
+  public:
+    DataItem(const QString& fullPath);
+    ~DataItem() = default;
+
+    QString fullPath;
+    QString fileName;
+    DataType dataType;
+  };
+
   QHash<int, QByteArray> m_roles;
-  QList<DataItem*> m_dataItems;
+  QList<DataItem> m_dataItems;
 };
 
 #endif // DATAITEMLISTMODEL_H

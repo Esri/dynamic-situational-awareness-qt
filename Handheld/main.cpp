@@ -29,7 +29,6 @@
 
 #include "BasemapPickerController.h"
 #include "AddLocalDataController.h"
-#include "DataItem.h"
 
 #include "AppInfo.h"
 #include "Handheld.h"

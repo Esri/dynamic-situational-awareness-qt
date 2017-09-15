@@ -25,10 +25,19 @@
 
 #include "DsaUtility.h"
 #include "AddLocalDataController.h"
-#include "DataItem.h"
 #include "DataItemListModel.h"
 
 using namespace Esri::ArcGISRuntime;
+
+const QString AddLocalDataController::s_allData = QStringLiteral("All Data (*.geodatabase *tpk *shp *gpkg *mmpk *kml *slpk *vtpk *.img *.tif *.tiff *.I1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr)");
+const QString AddLocalDataController::s_rasterData = QStringLiteral("Raster Files (*.img *.tif *.tiff *.I1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr)");
+const QString AddLocalDataController::s_geodatabaseData = QStringLiteral("Geodatabase (*.geodatabase)");
+const QString AddLocalDataController::s_shapefileData = QStringLiteral("Shapefile (*.shp)");
+const QString AddLocalDataController::s_kmlData = QStringLiteral("KML (*.kml)");
+const QString AddLocalDataController::s_geopackageData = QStringLiteral("GeoPackage (*.gpkg)");
+const QString AddLocalDataController::s_sceneLayerData = QStringLiteral("Scene Layer Package (*.slpk)");
+const QString AddLocalDataController::s_vectorTilePackageData = QStringLiteral("Vector Tile Package (*.vtpk)");
+const QString AddLocalDataController::s_tilePackageData = QStringLiteral("Tile Package (*.tpk)");
 
 AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
   QObject(parent),
@@ -41,10 +50,10 @@ AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
   addPathToDirectoryList(DsaUtility::dataPath());
 
   // create file filter list
-  m_fileFilterList = QStringList{m_allData, m_rasterData, m_geodatabaseData,
-                                 /*m_shapefileData, m_kmlData,*/ m_geopackageData,
-                                 m_sceneLayerData, m_vectorTilePackageData,
-                                 m_tilePackageData};
+  m_fileFilterList = QStringList{allData(), rasterData(), geodatabaseData(),
+                                 /*shapefileData(), kmlData(), geopackageData(),*/
+                                 sceneLayerData(), /*vectorTilePackageData(),*/
+                                 tilePackageData()};
   emit fileFilterListChanged();
   emit localDataModelChanged();
 }
@@ -78,8 +87,7 @@ void AddLocalDataController::refreshLocalDataModel(const QString& fileType)
     for (const QString& file : localDir.entryList(QDir::Files, QDir::Name))
     {
       QFileInfo fileInfo(localDir, file);
-      DataItem* dataItem = new DataItem(fileInfo.absoluteFilePath(), this);
-      m_localDataModel->addDataItem(dataItem);
+      m_localDataModel->addDataItem(fileInfo.absoluteFilePath());
     }
   }
 }
@@ -89,23 +97,23 @@ QStringList AddLocalDataController::determineFileFilters(const QString& fileType
   QStringList fileFilter;
   QStringList rasterExtensions{"*.img", "*.tif", "*.tiff", "*.I1", "*.dt0", "*.dt1", "*.dt2", "*.tc2", "*.geotiff", "*.hr1", "*.jpg", "*.jpeg", "*.jp2", "*.ntf", "*.png", "*.i21"};
 
-  if (fileType == m_geodatabaseData)
+  if (fileType == geodatabaseData())
     fileFilter << "*.geodatabase";
-  else if (fileType == m_tilePackageData)
+  else if (fileType == tilePackageData())
     fileFilter << "*.tpk";
-  else if (fileType == m_shapefileData)
+  else if (fileType == shapefileData())
     fileFilter << "*.shp";
-  else if (fileType == m_geopackageData)
+  else if (fileType == geopackageData())
     fileFilter << "*.gpkg";
-  else if (fileType == m_kmlData)
+  else if (fileType == kmlData())
     fileFilter << "*.kml";
-  else if (fileType == m_sceneLayerData)
+  else if (fileType == sceneLayerData())
     fileFilter << "*.slpk";
-  else if (fileType == m_vectorTilePackageData)
+  else if (fileType == vectorTilePackageData())
     fileFilter << "*.vtpk";
-  else if (fileType == m_rasterData)
+  else if (fileType == rasterData())
     fileFilter = rasterExtensions;
-  else if (fileType == m_allData)
+  else if (fileType == allData())
   {
     fileFilter = rasterExtensions;
     fileFilter << "*.geodatabase" << "*.tpk" << "*.shp" << "*.gpkg" << "*.kml" << "*.slpk" << "*.vtpk";
@@ -116,40 +124,41 @@ QStringList AddLocalDataController::determineFileFilters(const QString& fileType
 
 void AddLocalDataController::selectItem(int index)
 {
-  DataItem* dataItem = m_localDataModel->get(index);
+  DataType dataItemType = m_localDataModel->getDataItemType(index);
+  QString dataItemPath = m_localDataModel->getDataItemPath(index);
 
-  switch (dataItem->dataType()) {
-  case DataItem::DataType::Geodatabase:
+  switch (dataItemType) {
+  case DataType::Geodatabase:
     qDebug() << "gdb";
-    createFeatureLayerGeodatabase(dataItem->fullPath());
+    createFeatureLayerGeodatabase(dataItemPath);
     break;
-  case DataItem::DataType::GeoPackage:
+  case DataType::GeoPackage:
     qDebug() << "gpkg";
-    createLayerGeoPackage(dataItem->fullPath());
+    createLayerGeoPackage(dataItemPath);
     break;
-  case DataItem::DataType::KML:
+  case DataType::KML:
     qDebug() << "kml";
-    createKmlLayer(dataItem->fullPath());
+    createKmlLayer(dataItemPath);
     break;
-  case DataItem::DataType::Raster:
+  case DataType::Raster:
     qDebug() << "raster";
-    createRasterLayer(dataItem->fullPath());
+    createRasterLayer(dataItemPath);
     break;
-  case DataItem::DataType::SceneLayerPackage:
+  case DataType::SceneLayerPackage:
     qDebug() << "slpk";
-    createSceneLayer(dataItem->fullPath());
+    createSceneLayer(dataItemPath);
     break;
-  case DataItem::DataType::Shapefile:
+  case DataType::Shapefile:
     qDebug() << "shp";
-    createFeatureLayerShapefile(dataItem->fullPath());
+    createFeatureLayerShapefile(dataItemPath);
     break;
-  case DataItem::DataType::TilePackage:
+  case DataType::TilePackage:
     qDebug() << "tpk";
-    createTiledLayer(dataItem->fullPath());
+    createTiledLayer(dataItemPath);
     break;
-  case DataItem::DataType::VectorTilePackage:
+  case DataType::VectorTilePackage:
     qDebug() << "vtpk";
-    createVectorTiledLayer(dataItem->fullPath());
+    createVectorTiledLayer(dataItemPath);
     break;
   default:
     qDebug() << "unknown layer";

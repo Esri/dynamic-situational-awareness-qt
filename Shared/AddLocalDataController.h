@@ -34,20 +34,6 @@ class AddLocalDataController : public QObject
   Q_PROPERTY(QAbstractListModel* localDataModel READ localDataModel NOTIFY localDataModelChanged)
   Q_PROPERTY(QStringList fileFilterList READ fileFilterList NOTIFY fileFilterListChanged)
 
-  enum class DataType
-  {
-    Raster,
-    Geodatabase,
-    TilePackage,
-    VectorTilePackage,
-    SceneLayerPackage,
-    Shapefile,
-    GeoPackage,
-    KML,
-    All,
-    Unknown
-  };
-
 public:
   AddLocalDataController(QObject* parent = nullptr);
   ~AddLocalDataController();
@@ -74,21 +60,31 @@ signals:
   void fileFilterListChanged();
 
 private:
+  QStringList determineFileFilters(const QString& fileType);
+  QStringList fileFilterList() const { return m_fileFilterList; }
+  static const QString allData() { return s_allData; }
+  static const QString rasterData() { return s_rasterData; }
+  static const QString geodatabaseData() { return s_geodatabaseData; }
+  static const QString shapefileData() { return s_shapefileData; }
+  static const QString kmlData() { return s_kmlData; }
+  static const QString geopackageData() { return s_geopackageData; }
+  static const QString sceneLayerData() { return s_sceneLayerData; }
+  static const QString vectorTilePackageData() { return s_vectorTilePackageData; }
+  static const QString tilePackageData() { return s_tilePackageData; }
+
+private:
   DataItemListModel* m_localDataModel;
   QStringList m_dataPaths;
   QStringList m_fileFilterList;
-  QString m_allData = "All Data (*.geodatabase *tpk *shp *gpkg *mmpk *kml *slpk *vtpk *.img *.tif *.tiff *.I1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr)";
-  QString m_rasterData = "Raster Files (*.img *.tif *.tiff *.I1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr)";
-  QString m_geodatabaseData = "Geodatabase (*.geodatabase)";
-  QString m_shapefileData = "Shapefile (*.shp)";
-  QString m_kmlData = "KML (*.kml)";
-  QString m_geopackageData = "GeoPackage (*.gpkg)";
-  QString m_sceneLayerData = "Scene Layer Package (*.slpk)";
-  QString m_vectorTilePackageData = "Vector Tile Package (*.vtpk)";
-  QString m_tilePackageData = "Tile Package (*.tpk)";
-
-  QStringList determineFileFilters(const QString& fileType);
-  QStringList fileFilterList() const { return m_fileFilterList; }
+  static const QString s_allData;
+  static const QString s_rasterData;
+  static const QString s_geodatabaseData;
+  static const QString s_shapefileData;
+  static const QString s_kmlData;
+  static const QString s_geopackageData;
+  static const QString s_sceneLayerData;
+  static const QString s_vectorTilePackageData;
+  static const QString s_tilePackageData;
 };
 
 #endif // ADDLOCALDATACONTROLLER_H

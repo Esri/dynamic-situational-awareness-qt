@@ -19,7 +19,7 @@
 #include "LocationController.h"
 #include "DsaUtility.h"
 #include "GraphicsOverlay.h"
-#include "PictureMarkerSymbol.h"
+#include "ModelSceneSymbol.h"
 
 #include "Vehicle.h"
 
@@ -73,15 +73,14 @@ void Vehicle::componentComplete()
       auto locationController = static_cast<LocationController*>(obj);
 
       auto overlay = new GraphicsOverlay(this);
-      overlay->setSceneProperties(LayerSceneProperties(SurfacePlacement::Draped));
+      overlay->setSceneProperties(LayerSceneProperties(SurfacePlacement::Relative));
       overlay->setRenderingMode(GraphicsRenderingMode::Dynamic);
       m_sceneView->graphicsOverlays()->append(overlay);
 
-      PictureMarkerSymbol* symbol = new PictureMarkerSymbol(QUrl("qrc:/Resources/icons/xhdpi/navigation.png"), this);
+      ModelSceneSymbol* symbol = new ModelSceneSymbol(QUrl::fromLocalFile(DsaUtility::dataPath() + "/LocationDisplay.dae"), this);
       constexpr float symbolSize = 24.0;
-      symbol->setHeight(symbolSize);
       symbol->setWidth(symbolSize);
-      symbol->setRotationType(RotationType::Geographic);
+      symbol->setDepth(symbolSize);
       symbol->load();
       m_positionGraphic = new Graphic(this);
       m_positionGraphic->setSymbol(symbol);
@@ -90,13 +89,12 @@ void Vehicle::componentComplete()
 
       connect(locationController, &LocationController::positionChanged, this, [this](const Point& newPosition)
       {
-        m_positionGraphic->setGeometry(newPosition);
+        m_positionGraphic->setGeometry(Point(newPosition.x(), newPosition.y(), 10.0));
       });
 
-      locationController->setRelativeHeadingSceneView(m_sceneView);
-      connect(locationController, &LocationController::relativeHeadingChanged, this, [this, symbol](double newHeading)
+      connect(locationController, &LocationController::headingChanged, this, [this, symbol](double newHeading)
       {
-        symbol->setAngle(newHeading);
+        symbol->setHeading(newHeading);
       });
     }
   }

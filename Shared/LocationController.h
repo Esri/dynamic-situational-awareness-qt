@@ -74,10 +74,12 @@ public:
 signals:
   void positionChanged(const Esri::ArcGISRuntime::Point& newPosition);
   void headingChanged(double newHeading);
-  void relativeHeadingChanged(double relativeHeading);
   void gpxFilePathChanged();
   void enabledChanged();
   void simulatedChanged();
+
+  // see setRelativeHeadingSceneView
+  void relativeHeadingChanged(double relativeHeading);
 
 private:
   void initPositionInfoSource(bool simulated);

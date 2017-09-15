@@ -118,6 +118,9 @@ void LocationController::setEnabled(bool enabled)
 
   initPositionInfoSource(m_simulated);
 
+  if (m_locationOverlay)
+    m_locationOverlay->setVisible(enabled);
+
   if (m_simulated)
   {
     if (enabled)
@@ -229,8 +232,7 @@ void LocationController::initOverlay()
   distanceCompSymbol->ranges()->append(new DistanceSymbolRange(modelSceneSymbol, 0.0, 1000.0, this));
 
   float rangeSize = symbolSize;
-  double i = 1000.0;
-  for (; i < maxRange; i *= rangeMultiplier)
+  for (double i = 1000.0; i < maxRange; i *= rangeMultiplier)
   {
     ModelSceneSymbol* rangeSym = new ModelSceneSymbol(modelPath, this);
     rangeSize *= static_cast<float>(rangeMultiplier);

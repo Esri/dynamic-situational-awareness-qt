@@ -89,12 +89,11 @@ Point GPXLocationSimulator::getNextPoint(QTime& time)
   }
 
   // fetch the lat and lon attributes from the trkpt element
-  QXmlStreamAttributes attrs = m_gpxReader->attributes();
+  const QXmlStreamAttributes attrs = m_gpxReader->attributes();
   const double x = attrs.value("lon").toString().toDouble();
   const double y = attrs.value("lat").toString().toDouble();
 
-  Point point;
-  point = Point(x, y, SpatialReference::wgs84());
+  const Point point(x, y, SpatialReference::wgs84());
 
   // if the new point is the same as the old point then trash it and try to get another.
   if (point == m_latestPoint)
@@ -116,10 +115,10 @@ Point GPXLocationSimulator::getNextPoint(QTime& time)
       }
       else if (m_gpxReader->name().compare(QString("time"), Qt::CaseInsensitive) == 0)
       {
-        QString timeString = m_gpxReader->readElementText();
-        int hours = timeString.section(":", 0, 0).right(2).toInt();
-        int minutes = timeString.section(":", 1, 1).toInt();
-        int seconds = timeString.section(":", 2, 2).left(2).toInt();
+        const QString timeString = m_gpxReader->readElementText();
+        const int hours = timeString.section(":", 0, 0).right(2).toInt();
+        const int minutes = timeString.section(":", 1, 1).toInt();
+        const int seconds = timeString.section(":", 2, 2).left(2).toInt();
         time.setHMS(hours ,minutes, seconds, 0);
       }
     }

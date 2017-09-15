@@ -26,6 +26,8 @@ class Graphic;
 
 #include <QQuickItem>
 
+class LocationController;
+
 class Vehicle : public QQuickItem
 {
   Q_OBJECT
@@ -40,6 +42,8 @@ private slots:
   void onError(const Esri::ArcGISRuntime::Error& error);
 
 private:
+  void setupLocationTool(LocationController* locationController);
+
   Esri::ArcGISRuntime::Scene*             m_scene = nullptr;
   Esri::ArcGISRuntime::SceneQuickView*    m_sceneView = nullptr;
   Esri::ArcGISRuntime::Graphic*           m_positionGraphic = nullptr;

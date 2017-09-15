@@ -11,7 +11,6 @@
 //
 
 #include <QDir>
-#include <QDebug>
 
 #include "ArcGISTiledLayer.h"
 #include "Basemap.h"

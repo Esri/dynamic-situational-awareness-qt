@@ -20,7 +20,7 @@ class SimulatedMessage : public QObject
   Q_OBJECT
 
 public:
-  enum MessageFormat
+  enum class MessageFormat
   {
     CoT = 0,
     Unknown = -1

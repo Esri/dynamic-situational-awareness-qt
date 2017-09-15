@@ -60,7 +60,7 @@ QByteArray CoTMessageParser::nextMessage()
     if (m_reader.isEndElement())
     {
       streamWriter.writeEndElement();
-      if (m_reader.name().compare(s_cotElementName) == 0)
+      if (m_reader.name().compare(s_cotElementName, Qt::CaseInsensitive) == 0)
       {
         // finished reading single CoT element
         readingMessage = false;
@@ -72,7 +72,7 @@ QByteArray CoTMessageParser::nextMessage()
     {
       const QString elementName = m_reader.name().toString();
 
-      if (!readingMessage && elementName.compare(s_cotElementName) != 0)
+      if (!readingMessage && elementName.compare(s_cotElementName, Qt::CaseInsensitive) != 0)
       {
         // begin reading single CoT element
         m_reader.readNext();
@@ -91,7 +91,7 @@ QByteArray CoTMessageParser::nextMessage()
         streamWriter.writeStartElement(m_reader.prefix().toString()+ ":" + elementName);
       }
 
-      if (m_reader.attributes().size() > 0)
+      if (!m_reader.attributes().isEmpty())
       {
         streamWriter.writeAttributes(m_reader.attributes());
       }

@@ -48,7 +48,7 @@ SimulatedMessage* SimulatedMessage::createFromCoTMessage(const QByteArray& messa
     if (reader.isStartElement())
     {
       // CoT event
-      if (QStringRef::compare(reader.name(), s_cotElementName) == 0)
+      if (QStringRef::compare(reader.name(), s_cotElementName, Qt::CaseInsensitive) == 0)
       {
         const auto attrs = reader.attributes();
         symbolId = attrs.value(s_cotTypeName).toString();
@@ -79,7 +79,7 @@ QString SimulatedMessage::messageFormatString() const
 {
   switch (m_messageFormat)
   {
-  case CoT:
+  case MessageFormat::CoT:
     return "CoT";
   default:
     return QString();

@@ -20,7 +20,7 @@ ApplicationWindow {
             loggingPage.loggingText += "\n" + (simulationStarted ? qsTr("Started ") : qsTr("Stopped ")) + new Date().toLocaleString();
             if (simulationStarted) {
                 loggingPage.loggingText += "\n" + qsTr("UDP broadcast port: ") + port;
-                loggingPage.loggingText += "\n" + qsTr("Sending ") + messageFrequency + qsTr(" message per ") + timeUnit;
+                loggingPage.loggingText += "\n" + qsTr("Sending ") + messageFrequency + qsTr(" message per ") + messageSimulatorController.fromTimeUnit(timeUnit);
             }
         }
 

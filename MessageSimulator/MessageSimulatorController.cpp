@@ -95,6 +95,16 @@ QUrl MessageSimulatorController::simulationFile() const
   return m_simulationFile;
 }
 
+void MessageSimulatorController::setSimulationFile(const QUrl& simulationFile)
+{
+  if (m_simulationFile == simulationFile)
+    return;
+
+  m_simulationFile = simulationFile;
+
+  emit simulationFileChanged();
+}
+
 void MessageSimulatorController::setPort(int port)
 {
   if (m_port == port)
@@ -110,7 +120,7 @@ int MessageSimulatorController::port() const
   return m_port;
 }
 
-void MessageSimulatorController::setMessageFrequency(int messageFrequency)
+void MessageSimulatorController::setMessageFrequency(float messageFrequency)
 {
   const auto previousMessageFrequency = m_messageFrequency;
 
@@ -122,8 +132,8 @@ void MessageSimulatorController::setMessageFrequency(int messageFrequency)
 
     if (m_simulationStarted && !m_simulationPaused)
     {
-      float messageFrequencyInSeconds = (timeUnitToSeconds(m_timeUnit) / static_cast<float>(messageFrequency));
-      m_timer.start(messageFrequencyInSeconds * 1000); // in ms
+      float messageFrequencyInSeconds = (timeUnitToSeconds(m_timeUnit) / messageFrequency);
+      m_timer.start(messageFrequencyInSeconds * 1000.0f); // in ms
     }
 
     if (previousMessageFrequency != m_messageFrequency)
@@ -131,7 +141,7 @@ void MessageSimulatorController::setMessageFrequency(int messageFrequency)
   }
 }
 
-int MessageSimulatorController::messageFrequency() const
+float MessageSimulatorController::messageFrequency() const
 {
   return m_messageFrequency;
 }
@@ -161,12 +171,12 @@ void MessageSimulatorController::setSimulationLooped(bool simulationLooped)
   emit simulationLoopedChanged();
 }
 
-QString MessageSimulatorController::timeUnit() const
+MessageSimulatorController::TimeUnit MessageSimulatorController::timeUnit() const
 {
   return m_timeUnit;
 }
 
-void MessageSimulatorController::setTimeUnit(const QString& timeUnit)
+void MessageSimulatorController::setTimeUnit(TimeUnit timeUnit)
 {
   if (m_timeUnit == timeUnit)
     return;
@@ -269,33 +279,60 @@ void MessageSimulatorController::saveSettings()
   settings.setValue("simulationFile", m_simulationFile);
   settings.setValue("port", m_port);
   settings.setValue("messageFrequency", m_messageFrequency);
-  settings.setValue("timeUnit", m_timeUnit);
+  settings.setValue("timeUnit", fromTimeUnit(m_timeUnit));
   settings.setValue("loop", m_simulationLooped);
 }
 
 void MessageSimulatorController::loadSettings()
 {
   QSettings settings;
-  m_simulationFile = settings.value("simulationFile", QUrl()).toUrl();
-  m_port = settings.value("port", -1).toInt();
-  m_messageFrequency = settings.value("messageFrequency", 1).toInt();
-  m_timeUnit = settings.value("timeUnit", "second").toString();
-  m_simulationLooped = settings.value("loop", true).toBool();
+  setSimulationFile(settings.value("simulationFile", QUrl()).toUrl());
+  setPort(settings.value("port", -1).toInt());
+  setMessageFrequency(settings.value("messageFrequency", 1.0f).toFloat());
+  setTimeUnit(toTimeUnit(settings.value("timeUnit", "seconds").toString()));
+  setSimulationLooped(settings.value("loop", true).toBool());
 }
 
-float MessageSimulatorController::timeUnitToSeconds(const QString& timeUnit)
+QString MessageSimulatorController::fromTimeUnit(TimeUnit timeUnit)
 {
-  if (timeUnit.compare("minute") == 0)
+  switch (timeUnit)
   {
-    return 60.0f;
+  case TimeUnit::Seconds:
+    return "second";
+  case TimeUnit::Minutes:
+    return "minute";
+  case TimeUnit::Hours:
+    return "hour";
+  default: break;
   }
-  else if (timeUnit.compare("hour") == 0)
+
+  return QString();
+}
+
+MessageSimulatorController::TimeUnit MessageSimulatorController::toTimeUnit(const QString& timeUnit)
+{
+  if (timeUnit.compare("second", Qt::CaseInsensitive) == 0)
+    return TimeUnit::Seconds;
+  if (timeUnit.compare("minute", Qt::CaseInsensitive) == 0)
+    return TimeUnit::Minutes;
+  if (timeUnit.compare("hour", Qt::CaseInsensitive) == 0)
+    return TimeUnit::Hours;
+
+  return TimeUnit::Seconds; // default to seconds
+}
+
+float MessageSimulatorController::timeUnitToSeconds(TimeUnit timeUnit)
+{
+  switch (timeUnit)
   {
-    return 60.0f * 60.0f;
-  }
-  else
-  {
-    //Default: seconds
+  case TimeUnit::Seconds:
     return 1.0f;
+  case TimeUnit::Minutes:
+    return 60.0f;
+  case TimeUnit::Hours:
+    return 60.0f * 60.0f;
+  default: break;
   }
+
+  return 1.0f; // default to seconds
 }

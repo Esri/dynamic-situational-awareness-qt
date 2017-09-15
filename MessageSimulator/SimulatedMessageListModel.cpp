@@ -33,6 +33,9 @@ void SimulatedMessageListModel::setupRoles()
 
 void SimulatedMessageListModel::append(SimulatedMessage* message)
 {
+  if (!message)
+    return;
+
   beginInsertRows(QModelIndex(), rowCount(), rowCount());
 
   m_messages.append(message);

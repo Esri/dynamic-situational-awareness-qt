@@ -14,8 +14,9 @@
 #define MESSAGESENDER_H
 
 #include <QObject>
-#include <QIODevice>
 #include <QPointer>
+
+class QIODevice;
 
 class MessageSender : public QObject
 {

@@ -32,21 +32,31 @@ class MessageSimulatorController : public QObject
   Q_PROPERTY(bool simulationPaused READ isSimulationPaused NOTIFY simulationPausedChanged)
   Q_PROPERTY(int port READ port WRITE setPort NOTIFY portChanged)
   Q_PROPERTY(bool simulationLooped READ isSimulationLooped WRITE setSimulationLooped NOTIFY simulationLoopedChanged)
-  Q_PROPERTY(int messageFrequency READ messageFrequency WRITE setMessageFrequency NOTIFY messageFrequencyChanged)
-  Q_PROPERTY(QString timeUnit READ timeUnit WRITE setTimeUnit NOTIFY timeUnitChanged)
+  Q_PROPERTY(float messageFrequency READ messageFrequency WRITE setMessageFrequency NOTIFY messageFrequencyChanged)
+  Q_PROPERTY(TimeUnit timeUnit READ timeUnit WRITE setTimeUnit NOTIFY timeUnitChanged)
   Q_PROPERTY(QAbstractListModel* messages READ messages NOTIFY messagesChanged)
 
 public:
+  enum class TimeUnit
+  {
+    Seconds = 0,
+    Minutes = 1,
+    Hours = 2
+  };
+
+  Q_ENUM(TimeUnit)
+
   explicit MessageSimulatorController(QObject* parent = nullptr);
   ~MessageSimulatorController();
 
   QUrl simulationFile() const;
+  void setSimulationFile(const QUrl& simulationFile);
 
   void setPort(int port);
   int port() const;
 
-  void setMessageFrequency(int messageFrequency);
-  int messageFrequency() const;
+  void setMessageFrequency(float messageFrequency);
+  float messageFrequency() const;
 
   bool isSimulationStarted() const;
   bool isSimulationPaused() const;
@@ -54,8 +64,8 @@ public:
   bool isSimulationLooped() const;
   void setSimulationLooped(bool simulationLooped);
 
-  QString timeUnit() const;
-  void setTimeUnit(const QString& timeUnit);
+  TimeUnit timeUnit() const;
+  void setTimeUnit(TimeUnit timeUnit);
 
   QAbstractListModel* messages() const;
 
@@ -65,6 +75,9 @@ public:
   Q_INVOKABLE void stopSimulation();
 
   Q_INVOKABLE void sendMessage(const QString& message);
+
+  Q_INVOKABLE static QString fromTimeUnit(TimeUnit timeUnit);
+  Q_INVOKABLE static TimeUnit toTimeUnit(const QString& timeUnit);
 
 signals:
   void simulationFileChanged();
@@ -83,7 +96,7 @@ private:
   void saveSettings();
   void loadSettings();
 
-  static float timeUnitToSeconds(const QString& timeUnit);
+  static float timeUnitToSeconds(TimeUnit timeUnit);
 
   MessageSender* m_messageSender = nullptr;
   AbstractMessageParser* m_messageParser = nullptr;
@@ -95,14 +108,14 @@ private:
   QUrl m_simulationFile;
 
   int m_port = -1;
-  int m_messageFrequency = 1;
+  float m_messageFrequency = 1;
   qint64 m_messagesSent = 0;
 
   bool m_simulationLooped = true;
   bool m_simulationStarted = false;
   bool m_simulationPaused = false;
 
-  QString m_timeUnit = "second";
+  TimeUnit m_timeUnit = TimeUnit::Seconds;
 };
 
 #endif // MESSAGESIMULATORCONTROLLER_H

@@ -12,8 +12,8 @@ void printHelp()
   out << "Parameters available only in console mode:" << endl;
   out << "  -p <port number>       Port number: Required" << endl;
   out << "  -f <filename>          Simulation file: Required" << endl;
-  out << "  -q <frequency>         Frequency (messages per time unit); default is 1" << endl;
-  out << "  -t <time unit>         Time unit for frequency; valid values are second," << endl <<
+  out << "  -q <frequency>         Frequency (messages per time unit); default is 1.0" << endl;
+  out << "  -t <time unit>         Time unit for frequency; valid values are seconds," << endl <<
          "                         minute, and hour; default is second" << endl;
   out << "  -l                     Simulation loops through simulation file" << endl;
   out << "  -s                     Silent mode; no verbose output" << endl;
@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
   bool isGui = true;
   QString simulationFile;
   int port = -1;
-  int frequency = 1;
+  float frequency = 1.0f;
   QString timeUnit = "second";
   bool isLoop = false;
   bool isVerbose = true;
@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
     {
       if ((i + 1) < argc)
       {
-        frequency = atoi(argv[++i]);
+        frequency = atof(argv[++i]);
       }
     }
     else if (!strcmp(argv[i], "-t"))
@@ -104,16 +104,17 @@ int main(int argc, char *argv[])
     }
 
     controller.setMessageFrequency(frequency);
-    controller.setTimeUnit(timeUnit);
+    controller.setTimeUnit(MessageSimulatorController::toTimeUnit(timeUnit));
     controller.setPort(port);
     controller.setSimulationLooped(isLoop);
     controller.startSimulation(QUrl::fromLocalFile(simulationFile));
 
     if (isVerbose)
     {
-      qDebug() << "Simulation started with file: " << simulationFile;
-      qDebug() << "UDP port: " << port;
-      qDebug() << "Sending " << frequency << " message per " << timeUnit;
+      qDebug() << "Simulation started with file: " << controller.simulationFile().toString();
+      qDebug() << "UDP port: " << controller.port();
+      qDebug() << "Sending " << controller.messageFrequency() << " message per " <<
+                  MessageSimulatorController::fromTimeUnit(controller.timeUnit());
       if (isLoop)
         qDebug() << "Simulation loop mode enabled";
     }
@@ -125,6 +126,7 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     qmlRegisterType<MessageSimulatorController>("Esri.MessageSimulator", 1, 0, "MessageSimulatorController");
+    qRegisterMetaType<MessageSimulatorController::TimeUnit>("MessageSimulatorController::TimeUnit");
 
     QQmlApplicationEngine engine;
     engine.load(QUrl(QLatin1String("qrc:/main.qml")));

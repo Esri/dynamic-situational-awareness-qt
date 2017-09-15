@@ -3,6 +3,7 @@ import QtQuick.Controls.Material 2.1
 import QtQuick.Dialogs 1.0
 import QtQuick 2.7
 import QtQuick.Window 2.3
+import Esri.MessageSimulator 1.0
 
 Rectangle {
     id: settingsPage
@@ -157,10 +158,30 @@ Rectangle {
                 width: 100 * scaleFactor
                 enabled: !messageSimulatorController.simulationStarted
 
-                model: [qsTr("second"), qsTr("minute"), qsTr("hour")]
-
                 onCurrentTextChanged: {
-                    messageSimulatorController.timeUnit = currentText;
+                    var timeUnit = messageSimulatorController.toTimeUnit(currentText);
+                    messageSimulatorController.timeUnit = timeUnit;
+                }
+
+                Component.onCompleted: {
+                    var timeUnit = messageSimulatorController.timeUnit;
+                    model = [qsTr("second"), qsTr("minute"), qsTr("hour")];
+
+                    switch(timeUnit)
+                    {
+                    case MessageSimulatorController.Seconds:
+                        currentIndex = 0;
+                        break;
+                    case MessageSimulatorController.Minutes:
+                        currentIndex = 1;
+                        break;
+                    case MessageSimulatorController.Hours:
+                        currentIndex = 2;
+                        break;
+                    default:
+                        currentIndex = 0;
+                        break;
+                    }
                 }
             }
         }

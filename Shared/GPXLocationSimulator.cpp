@@ -11,11 +11,8 @@
 //
 
 #include "GPXLocationSimulator.h"
-#include <QDomDocument>
 #include <QXmlStreamReader>
-#include <QDomElement>
 #include <QTimer>
-#include <QStringRef>
 
 using namespace Esri::ArcGISRuntime;
 

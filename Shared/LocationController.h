@@ -37,7 +37,6 @@ class LocationController : public QObject
   Q_PROPERTY(bool simulated READ simulated WRITE setSimulated NOTIFY simulatedChanged)
   Q_PROPERTY(QUrl gpxFilePath READ gpxFilePath WRITE setGpxFilePath NOTIFY gpxFilePathChanged)
   Q_PROPERTY(QString gpxFilePathAsString READ gpxFilePathAsString NOTIFY gpxFilePathChanged)
-  Q_PROPERTY(QUrl defaultFileSearchPath READ defaultFileSearchPath CONSTANT)
 
 public:
   LocationController(QObject* parent = nullptr);
@@ -68,8 +67,6 @@ public:
   // Note: this is only needed for PictureMarkerSymbol. ModelSceneSybol already
   // takes this into account
   void setRelativeHeadingSceneView(Esri::ArcGISRuntime::SceneQuickView* sceneView);
-
-  QUrl defaultFileSearchPath() const;
 
 signals:
   void positionChanged(const Esri::ArcGISRuntime::Point& newPosition);

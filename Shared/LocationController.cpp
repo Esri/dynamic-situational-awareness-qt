@@ -12,7 +12,6 @@
 
 #include "LocationController.h"
 
-#include <QDir>
 #include <QCompass>
 #include <QGeoPositionInfoSource>
 #include "GPXLocationSimulator.h"
@@ -184,11 +183,6 @@ void LocationController::setGpxFilePath(const QUrl& gpxFilePath)
 
   m_gpxFilePath = gpxFilePath;
   emit gpxFilePathChanged();
-}
-
-QUrl LocationController::defaultFileSearchPath() const
-{
-  return QUrl::fromLocalFile(DsaUtility::dataPath());
 }
 
 void LocationController::setRelativeHeadingSceneView(Esri::ArcGISRuntime::SceneQuickView* sceneView)

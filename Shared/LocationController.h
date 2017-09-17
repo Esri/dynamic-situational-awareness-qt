@@ -81,6 +81,7 @@ signals:
 private:
   void initPositionInfoSource(bool simulated);
   void initOverlay();
+  QUrl modelSymbolPath() const;
 
   Esri::ArcGISRuntime::GraphicsOverlay* m_locationOverlay = nullptr;
   Esri::ArcGISRuntime::Graphic* m_positionGraphic = nullptr;

@@ -14,6 +14,7 @@
 
 #include <QCompass>
 #include <QGeoPositionInfoSource>
+#include <QDir>
 #include "GPXLocationSimulator.h"
 #include "DsaUtility.h"
 #include "SceneQuickView.h"
@@ -216,7 +217,7 @@ void LocationController::initOverlay()
   constexpr double rangeMultiplier = 1.04; // the closer to 1.0, the smoother the transitions
   constexpr double maxRange = 10000000.0;
 
-  const QUrl modelPath = QUrl::fromLocalFile(DsaUtility::dataPath() + "/LocationDisplay.dae");
+  const QUrl modelPath = modelSymbolPath();
 
   ModelSceneSymbol* modelSceneSymbol = new ModelSceneSymbol(modelPath, this);
   modelSceneSymbol->setWidth(symbolSize);
@@ -263,4 +264,46 @@ void LocationController::initOverlay()
   {
     m_positionGraphic->attributes()->replaceAttribute("heading", newHeading);
   });
+}
+
+QUrl LocationController::modelSymbolPath() const
+{
+  // both files are needed: LocationDisplay.dae
+  // and navigation.png and both must be local (not resources)
+  const QString dataPath = DsaUtility::dataPath();
+  QString modelPath = dataPath + "/LocationDisplay.dae";
+  QString imagePath = dataPath + "/navigation.png";
+
+  if (QFile::exists(modelPath) && QFile::exists(imagePath))
+    return QUrl::fromLocalFile(modelPath);
+
+  const QString tempPath = QDir::tempPath();
+  modelPath = tempPath + "/LocationDisplay.dae";
+  imagePath = tempPath + "/navigation.png";
+
+  // check if we've already copied them to temp
+  if (QFile::exists(modelPath) && QFile::exists(imagePath))
+    return QUrl::fromLocalFile(modelPath);
+
+  // if they're not both available, save both from resources to temp
+  // and access from there
+  QFile modelResource(":Resources/LocationDisplay.dae");
+  QFile imageResource(":Resources/icons/xhdpi/navigation.png");
+
+  modelResource.open(QIODevice::ReadOnly);
+  imageResource.open(QIODevice::ReadOnly);
+
+  QFile modelFileTemp(modelPath);
+  QFile imageFileTemp(imagePath);
+
+  modelFileTemp.open(QIODevice::WriteOnly);
+  imageFileTemp.open(QIODevice::WriteOnly);
+
+  modelFileTemp.write(modelResource.readAll());
+  imageFileTemp.write(imageResource.readAll());
+
+  for (QFile* file : { &modelResource, &imageResource, &modelFileTemp, &imageFileTemp})
+    file->close();
+
+  return QUrl::fromLocalFile(modelPath);
 }

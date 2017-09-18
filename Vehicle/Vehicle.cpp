@@ -11,6 +11,7 @@
 //
 
 #include "SceneQuickView.h"
+
 #include "DsaController.h"
 #include "Vehicle.h"
 
@@ -30,16 +31,6 @@ void Vehicle::componentComplete()
 {
   QQuickItem::componentComplete();
 
-  m_controller->init();
-
-  // find QML SceneView component
-  m_sceneView = findChild<SceneQuickView*>("sceneView");
-
-  for (const auto& overlay : m_controller->overlays())
-    m_sceneView->graphicsOverlays()->append(overlay);
-
-  connect(m_sceneView, &SceneQuickView::errorOccurred, m_controller, &DsaController::onError);
-
-  // Set scene to scene view
-  m_sceneView->setArcGISScene(m_controller->scene());
+  // find QML SceneView component and apply to controller
+  m_controller->init(findChild<SceneQuickView*>("sceneView"));
 }

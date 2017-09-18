@@ -13,18 +13,10 @@
 #ifndef VEHICLE_H
 #define VEHICLE_H
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
-class SceneQuickView;
-class Graphic;
-}
-}
-
 #include <QQuickItem>
 
 class DsaController;
+
 class Vehicle : public QQuickItem
 {
   Q_OBJECT
@@ -36,7 +28,6 @@ public:
   void componentComplete() override;
 
 private:
-  Esri::ArcGISRuntime::SceneQuickView*    m_sceneView = nullptr;
   DsaController*                          m_controller = nullptr;
 };
 

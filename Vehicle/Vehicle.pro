@@ -30,8 +30,10 @@ HEADERS += \
     ../Shared/TileCacheListModel.h \
     ../Shared/DsaController.h \
     ../Shared/GPXLocationSimulator.h \
-    ../Shared/LocationController.h
-
+    ../Shared/LocationController.h \
+    ../Shared/Message.h \
+    ../Shared/MessageListener.h \
+    ../Shared/MessagesOverlay.h
 
 SOURCES += \
     main.cpp \
@@ -41,8 +43,10 @@ SOURCES += \
     ../Shared/TileCacheListModel.cpp \
     ../Shared/DsaController.cpp \
     ../Shared/GPXLocationSimulator.cpp \
-    ../Shared/LocationController.cpp
-
+    ../Shared/LocationController.cpp \
+    ../Shared/Message.cpp \
+    ../Shared/MessageListener.cpp \
+    ../Shared/MessagesOverlay.cpp
 
 RESOURCES += \
     qml/qml.qrc \

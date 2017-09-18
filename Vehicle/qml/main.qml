@@ -68,7 +68,6 @@ Vehicle {
         width: 32 * scaleFactor
         height: 32 * scaleFactor
 
-
         background: Rectangle {
                   anchors.fill: basemapsCheckBox
                   color: Material.primary
@@ -109,4 +108,6 @@ Vehicle {
             source: "qrc:/Resources/icons/xhdpi/navigation.png"
         }
     }
+
+
 }

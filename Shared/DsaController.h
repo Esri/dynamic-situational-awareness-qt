@@ -24,9 +24,13 @@ namespace ArcGISRuntime
 {
   class Error;
   class Scene;
-  class GraphicsOverlay;
+  class SceneQuickView;
 }
 }
+
+class QUdpSocket;
+class MessageListener;
+class MessagesOverlay;
 
 class DsaController : public QObject
 {
@@ -38,18 +42,21 @@ public:
 
   Esri::ArcGISRuntime::Scene* scene() const;
 
-  QList<Esri::ArcGISRuntime::GraphicsOverlay*> overlays() const;
-
-  void init();
+  void init(Esri::ArcGISRuntime::SceneQuickView* sceneView);
 
 public slots:
   void onError(const Esri::ArcGISRuntime::Error& error);
 
 private:
+  Esri::ArcGISRuntime::SceneQuickView*    m_sceneView = nullptr;
   Esri::ArcGISRuntime::Scene* m_scene = nullptr;
-  QList<Esri::ArcGISRuntime::GraphicsOverlay*> m_overlays;
+
+  QUdpSocket*                 m_udpSocket = nullptr;
+  MessageListener*            m_messageListener = nullptr;
+  MessagesOverlay*            m_messagesOverlay = nullptr;
 
   QString                     m_dataPath;
+  int                         m_broadcastPort = 45678;
 };
 
 #endif // DSACONTROLLER_H

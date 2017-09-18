@@ -28,7 +28,11 @@ HEADERS += \
     ../Shared/DsaUtility.h \
     ../Shared/BasemapPickerController.h \
     ../Shared/TileCacheListModel.h \
-    ../Shared/DsaController.h
+    ../Shared/DsaController.h \
+    ../Shared/Message.h \
+    ../Shared/MessageListener.h \
+    ../Shared/MessagesOverlay.h \
+    ../Shared/Message_p.h
 
 SOURCES += \
     main.cpp \
@@ -36,7 +40,10 @@ SOURCES += \
     ../Shared/DsaUtility.cpp \
     ../Shared/BasemapPickerController.cpp \
     ../Shared/TileCacheListModel.cpp \
-    ../Shared/DsaController.cpp
+    ../Shared/DsaController.cpp \
+    ../Shared/Message.cpp \
+    ../Shared/MessageListener.cpp \
+    ../Shared/MessagesOverlay.cpp
 
 RESOURCES += \
     qml/qml.qrc \

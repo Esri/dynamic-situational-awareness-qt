@@ -260,9 +260,10 @@ void LocationController::initOverlay()
     m_positionGraphic->setGeometry(Point(newPosition.x(), newPosition.y(), z));
   });
 
-  connect(this, &LocationController::headingChanged, this, [this](double newHeading)
+  auto attributes = m_positionGraphic->attributes();
+  connect(this, &LocationController::headingChanged, this, [this, attributes](double newHeading)
   {
-    m_positionGraphic->attributes()->replaceAttribute("heading", newHeading);
+    attributes->replaceAttribute("heading", newHeading);
   });
 }
 

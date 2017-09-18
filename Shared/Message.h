@@ -47,18 +47,25 @@ public:
   bool isEmpty() const;
 
   MessageAction messageAction() const;
+  void setAction(MessageAction messageAction);
 
   QVariantMap attributes() const;
+  void setAttributes(const QVariantMap& attributes);
 
   Esri::ArcGISRuntime::Geometry geometry() const;
+  void setGeometry(const Esri::ArcGISRuntime::Geometry& geometry);
 
   QString messageId() const;
+  void setMessageId(const QString& messageId);
 
   QString messageName() const;
+  void setMessageName(const QString& messageName);
 
   QString messageType() const;
+  void setMessageType(const QString& messageType);
 
   QString symbolId() const;
+  void setSymbolId(const QString& symbolId);
 
 private:
   QSharedDataPointer<MessageData> d;

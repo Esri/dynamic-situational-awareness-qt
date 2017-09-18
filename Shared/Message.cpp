@@ -192,9 +192,19 @@ Message::MessageAction Message::messageAction() const
   return d->messageAction;
 }
 
+void Message::setAction(MessageAction messageAction)
+{
+  d->messageAction = messageAction;
+}
+
 QVariantMap Message::attributes() const
 {
   return d->attributes;
+}
+
+void Message::setAttributes(const QVariantMap& attributes)
+{
+  d->attributes = attributes;
 }
 
 Geometry Message::geometry() const
@@ -202,9 +212,19 @@ Geometry Message::geometry() const
   return d->geometry;
 }
 
+void Message::setGeometry(const Geometry& geometry)
+{
+  d->geometry = geometry;
+}
+
 QString Message::messageId() const
 {
   return d->messageId;
+}
+
+void Message::setMessageId(const QString& messageId)
+{
+  d->messageId = messageId;
 }
 
 QString Message::messageName() const
@@ -212,14 +232,29 @@ QString Message::messageName() const
   return d->messageName;
 }
 
+void Message::setMessageName(const QString& messageName)
+{
+  d->messageName = messageName;
+}
+
 QString Message::messageType() const
 {
   return d->messageType;
 }
 
+void Message::setMessageType(const QString& messageType)
+{
+  d->messageType = messageType;
+}
+
 QString Message::symbolId() const
 {
   return d->symbolId;
+}
+
+void Message::setSymbolId(const QString& symbolId)
+{
+  d->symbolId = symbolId;
 }
 
 MessageData::MessageData()

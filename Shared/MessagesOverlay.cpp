@@ -79,8 +79,7 @@ bool MessagesOverlay::addMessage(const Message& message)
   }
 
   // add new graphic
-  std::unique_ptr<Graphic> graphic(new Graphic(geometry, message.attributes(), this));
-  Graphic* graphicPtr = nullptr;
+  Graphic* graphic = new Graphic(geometry, message.attributes(), this);
 
   switch (geometry.geometryType())
   {
@@ -90,6 +89,7 @@ bool MessagesOverlay::addMessage(const Message& message)
     {
       if (!m_dictionarySymbolStyle || !m_geoView)
       {
+        delete graphic;
         return false;
       }
 
@@ -104,8 +104,7 @@ bool MessagesOverlay::addMessage(const Message& message)
       emit graphicsOverlaysChanged();
     }
 
-    graphicPtr = graphic.release();
-    m_pointGraphicsOverlay->graphics()->append(graphicPtr);
+    m_pointGraphicsOverlay->graphics()->append(graphic);
     break;
   case GeometryType::Envelope:
   case GeometryType::Polygon:
@@ -114,6 +113,7 @@ bool MessagesOverlay::addMessage(const Message& message)
     {
       if (!m_dictionarySymbolStyle || !m_geoView)
       {
+        delete graphic;
         return false;
       }
 
@@ -127,15 +127,14 @@ bool MessagesOverlay::addMessage(const Message& message)
       emit graphicsOverlaysChanged();
     }
 
-    graphicPtr = graphic.release();
-    m_linePolygonGraphicsOverlay->graphics()->append(graphicPtr);
+    m_linePolygonGraphicsOverlay->graphics()->append(graphic);
     break;
   default:
+    delete graphic;
     return false;
   }
 
-  if (graphicPtr)
-    m_existingGraphics.insert(messageId, graphicPtr);
+  m_existingGraphics.insert(messageId, graphic);
 
   return true;
 }

@@ -16,14 +16,14 @@
 
 #include <QXmlStreamReader>
 
-static const QString s_cotElementName{"event"};
-static const QString s_cotTypeName{"type"};
-static const QString s_cotUidName{"uid"};
-static const QString s_cotPointName{"point"};
-static const QString s_cotPointLatName{"lat"};
-static const QString s_cotPointLonName{"lat"};
-static const QString s_cotPointHaieName{"lat"};
-static const QString s_sidcName{"sidc"};
+static const QString s_cotElementName{QStringLiteral("event")};
+static const QString s_cotTypeName{QStringLiteral("type")};
+static const QString s_cotUidName{QStringLiteral("uid")};
+static const QString s_cotPointName{QStringLiteral("point")};
+static const QString s_cotPointLatName{QStringLiteral("lat")};
+static const QString s_cotPointLonName{QStringLiteral("lon")};
+static const QString s_cotPointHaeName{QStringLiteral("hae")};
+static const QString s_sidcName{QStringLiteral("sidc")};
 
 using namespace Esri::ArcGISRuntime;
 
@@ -111,7 +111,7 @@ Message Message::createFromCoTMessage(const QByteArray& message)
         if (!lonOk || !latOk)
           return Message();
 
-        const auto hae = attrs.value(s_cotPointHaieName).toDouble();
+        const auto hae = attrs.value(s_cotPointHaeName).toDouble();
 
         cotMessage.d->geometry = Point(lon, lat, hae, SpatialReference::wgs84());
       }
@@ -134,11 +134,11 @@ QString Message::cotTypeToSidc(const QString& cotType)
 
   // recognized affiliation types for converted between CoT type
   // and sidc symbols
-  const QString recognizedAffiliations("fhupansjku");
+  const QString recognizedAffiliations(QStringLiteral("fhupansjku"));
 
   // recognized battle space types for converting between CoT type
   // and sidc symbols
-  const QString recognizedBattleSpaces("PAGSUF");
+  const QString recognizedBattleSpaces(QStringLiteral("PAGSUF"));
 
   if (cotType.mid(0, 1) != "a")
     return QString();

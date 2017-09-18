@@ -20,11 +20,11 @@
 using namespace Esri::ArcGISRuntime;
 
 MessagesOverlay::MessagesOverlay(GeoView* geoView, QObject* parent) :
-  MessagesOverlay(nullptr, geoView, parent)
+  MessagesOverlay(geoView, nullptr, parent)
 {
 }
 
-MessagesOverlay::MessagesOverlay(DictionarySymbolStyle* dictionarySymbolStyle, GeoView* geoView, QObject* parent) :
+MessagesOverlay::MessagesOverlay(GeoView* geoView, DictionarySymbolStyle* dictionarySymbolStyle, QObject* parent) :
   QObject(parent),
   m_geoView(geoView),
   m_dictionarySymbolStyle(dictionarySymbolStyle)
@@ -79,7 +79,8 @@ bool MessagesOverlay::addMessage(const Message& message)
   }
 
   // add new graphic
-  Graphic* graphic = new Graphic(geometry, message.attributes(), this);
+  std::unique_ptr<Graphic> graphic(new Graphic(geometry, message.attributes(), this));
+  Graphic* graphicPtr = nullptr;
 
   switch (geometry.geometryType())
   {
@@ -89,7 +90,6 @@ bool MessagesOverlay::addMessage(const Message& message)
     {
       if (!m_dictionarySymbolStyle || !m_geoView)
       {
-        delete graphic;
         return false;
       }
 
@@ -104,7 +104,8 @@ bool MessagesOverlay::addMessage(const Message& message)
       emit graphicsOverlaysChanged();
     }
 
-    m_pointGraphicsOverlay->graphics()->append(graphic);
+    graphicPtr = graphic.release();
+    m_pointGraphicsOverlay->graphics()->append(graphicPtr);
     break;
   case GeometryType::Envelope:
   case GeometryType::Polygon:
@@ -113,7 +114,6 @@ bool MessagesOverlay::addMessage(const Message& message)
     {
       if (!m_dictionarySymbolStyle || !m_geoView)
       {
-        delete graphic;
         return false;
       }
 
@@ -127,13 +127,15 @@ bool MessagesOverlay::addMessage(const Message& message)
       emit graphicsOverlaysChanged();
     }
 
-    m_linePolygonGraphicsOverlay->graphics()->append(graphic);
+    graphicPtr = graphic.release();
+    m_linePolygonGraphicsOverlay->graphics()->append(graphicPtr);
     break;
   default:
-    delete graphic;
     return false;
   }
 
-  m_existingGraphics.insert(messageId, graphic);
+  if (graphicPtr)
+    m_existingGraphics.insert(messageId, graphicPtr);
+
   return true;
 }

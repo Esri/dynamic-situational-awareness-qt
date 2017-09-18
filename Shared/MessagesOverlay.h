@@ -35,7 +35,7 @@ class MessagesOverlay : public QObject
 
 public:
   explicit MessagesOverlay(Esri::ArcGISRuntime::GeoView* geoView, QObject* parent = nullptr);
-  MessagesOverlay(Esri::ArcGISRuntime::DictionarySymbolStyle* dictionarySymbolStyle, Esri::ArcGISRuntime::GeoView* geoView, QObject* parent = nullptr);
+  MessagesOverlay(Esri::ArcGISRuntime::GeoView* geoView, Esri::ArcGISRuntime::DictionarySymbolStyle* dictionarySymbolStyle, QObject* parent = nullptr);
   ~MessagesOverlay();
 
   Esri::ArcGISRuntime::DictionarySymbolStyle* dictionarySymbolStyle() const;

@@ -69,7 +69,7 @@ void DsaController::init(SceneQuickView* sceneView)
 
   // set up the messages overlay with a Mil2525c_b2 dictionary style
   DictionarySymbolStyle* dictionarySymbolStyle = new DictionarySymbolStyle("mil2525c_b2", m_dataPath + "/styles/mil2525c_b2.stylx", this);
-  m_messagesOverlay = new MessagesOverlay(dictionarySymbolStyle, m_sceneView, this);
+  m_messagesOverlay = new MessagesOverlay(m_sceneView, dictionarySymbolStyle, this);
 
   // create the messaging socket connection and hook up message receiving
   m_udpSocket->bind(m_broadcastPort, QUdpSocket::DontShareAddress | QUdpSocket::ReuseAddressHint);

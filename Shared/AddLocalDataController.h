@@ -22,6 +22,7 @@ namespace Esri
 namespace ArcGISRuntime
 {
   class Layer;
+  class ElevationSource;
 }
 }
 
@@ -36,11 +37,12 @@ class AddLocalDataController : public QObject
 
 public:
   AddLocalDataController(QObject* parent = nullptr);
-  ~AddLocalDataController();
+  ~AddLocalDataController() = default;
 
   Q_INVOKABLE void addPathToDirectoryList(const QString& path);
   Q_INVOKABLE void refreshLocalDataModel(const QString& fileType = "All");
-  Q_INVOKABLE void selectItem(int index);
+  Q_INVOKABLE void addItemAsLayer(const QList<int>& index);
+  Q_INVOKABLE void addItemAsElevationSource(const QList<int>& indices);
   QAbstractListModel* localDataModel() const;
   QString toolName() const;
 
@@ -57,6 +59,7 @@ public:
 signals:
   void localDataModelChanged();
   void layerSelected(Esri::ArcGISRuntime::Layer* layer);
+  void elevationSourceSelected(Esri::ArcGISRuntime::ElevationSource* source);
   void fileFilterListChanged();
 
 private:

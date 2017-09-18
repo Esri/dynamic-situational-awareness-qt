@@ -13,6 +13,7 @@
 #include "ArcGISTiledElevationSource.h"
 #include "Scene.h"
 #include "Basemap.h"
+#include "ElevationSource.h"
 #include "Layer.h"
 
 #include "DsaUtility.h"
@@ -72,10 +73,10 @@ void DsaController::init()
         if (!basemap)
           return;
 
+        connect(basemap, &Basemap::errorOccurred, this, &DsaController::onError);
+
         basemap->setParent(this);
         m_scene->setBasemap(basemap);
-
-        connect(basemap, &Basemap::errorOccurred, this, &DsaController::onError);
       });
 
       continue;
@@ -89,10 +90,22 @@ void DsaController::init()
         if (!lyr)
           return;
 
+        connect(lyr, &Layer::errorOccurred, this, &DsaController::onError);
+
         lyr->setParent(this);
         m_scene->operationalLayers()->append(lyr);
 
-        connect(lyr, &Layer::errorOccurred, this, &DsaController::onError);
+      });
+
+      connect(localDataController, &AddLocalDataController::elevationSourceSelected, this, [this](ElevationSource* source)
+      {
+        if (!source)
+          return;
+
+        connect(source, &ElevationSource::errorOccurred, this, &DsaController::onError);
+
+        source->setParent(this);
+        m_scene->baseSurface()->elevationSources()->append(source);
       });
 
       continue;

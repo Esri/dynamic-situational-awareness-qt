@@ -4,5 +4,6 @@
         <file>icons/xhdpi/ic_menu_closeclear_dark.png</file>
         <file>icons/xhdpi/ic_menu_choosebasemap_dark.png</file>
         <file>icons/xhdpi/ic_menu_layervisibilitypopover_dark_d.png</file>
+        <file>icons/xhdpi/ic_menu_add_dark_d.png</file>
     </qresource>
 </RCC>

@@ -22,6 +22,9 @@
 #include "ArcGISVectorTiledLayer.h"
 #include "ArcGISSceneLayer.h"
 #include "Geodatabase.h"
+#include "ElevationSource.h"
+#include "RasterElevationSource.h"
+#include "ArcGISTiledElevationSource.h"
 
 #include "DsaUtility.h"
 #include "AddLocalDataController.h"
@@ -51,15 +54,10 @@ AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
 
   // create file filter list
   m_fileFilterList = QStringList{allData(), rasterData(), geodatabaseData(),
-                                 /*shapefileData(), kmlData(), geopackageData(),*/
-                                 sceneLayerData(), /*vectorTilePackageData(),*/
-                                 tilePackageData()};
+      sceneLayerData(), tilePackageData()/*, shapefileData(), kmlData(),
+      geopackageData(), vectorTilePackageData()*/}; // uncomment these as new formats are supported
   emit fileFilterListChanged();
   emit localDataModelChanged();
-}
-
-AddLocalDataController::~AddLocalDataController()
-{
 }
 
 QAbstractListModel* AddLocalDataController::localDataModel() const
@@ -67,11 +65,13 @@ QAbstractListModel* AddLocalDataController::localDataModel() const
   return m_localDataModel;
 }
 
+// The model will contain data items from all of the paths in the list
 void AddLocalDataController::addPathToDirectoryList(const QString& path)
 {
   m_dataPaths << path;
 }
 
+// clear and re-fetch files in list of data paths
 void AddLocalDataController::refreshLocalDataModel(const QString& fileType)
 {
   QStringList fileFilters = determineFileFilters(fileType);
@@ -92,6 +92,7 @@ void AddLocalDataController::refreshLocalDataModel(const QString& fileType)
   }
 }
 
+// get the file filter string list for filtering data from the QDir entrylist
 QStringList AddLocalDataController::determineFileFilters(const QString& fileType)
 {
   QStringList fileFilter;
@@ -122,50 +123,87 @@ QStringList AddLocalDataController::determineFileFilters(const QString& fileType
   return fileFilter;
 }
 
-void AddLocalDataController::selectItem(int index)
+// Q_INVOKABLE function that takes the indices passed in, gets the path and data type
+// for the file at the given index, and adds the file as an elevation source
+void AddLocalDataController::addItemAsElevationSource(const QList<int>& indices)
 {
-  DataType dataItemType = m_localDataModel->getDataItemType(index);
-  QString dataItemPath = m_localDataModel->getDataItemPath(index);
+  QStringList dataPaths;
 
-  switch (dataItemType) {
-  case DataType::Geodatabase:
-    qDebug() << "gdb";
-    createFeatureLayerGeodatabase(dataItemPath);
-    break;
-  case DataType::GeoPackage:
-    qDebug() << "gpkg";
-    createLayerGeoPackage(dataItemPath);
-    break;
-  case DataType::KML:
-    qDebug() << "kml";
-    createKmlLayer(dataItemPath);
-    break;
-  case DataType::Raster:
-    qDebug() << "raster";
-    createRasterLayer(dataItemPath);
-    break;
-  case DataType::SceneLayerPackage:
-    qDebug() << "slpk";
-    createSceneLayer(dataItemPath);
-    break;
-  case DataType::Shapefile:
-    qDebug() << "shp";
-    createFeatureLayerShapefile(dataItemPath);
-    break;
-  case DataType::TilePackage:
-    qDebug() << "tpk";
-    createTiledLayer(dataItemPath);
-    break;
-  case DataType::VectorTilePackage:
-    qDebug() << "vtpk";
-    createVectorTiledLayer(dataItemPath);
-    break;
-  default:
-    qDebug() << "unknown layer";
-    break;
+  for (int index : indices)
+  {
+    DataType dataItemType = m_localDataModel->getDataItemType(index);
+    QString dataItemPath = m_localDataModel->getDataItemPath(index);
+
+    if (dataItemType == DataType::TilePackage)
+    {
+      TileCache* tileCache = new TileCache(dataItemPath, this);
+      TileImageFormat format = tileCache->tileInfo().format();
+
+      // Check if the tiles are LERC encoded
+      if (format == TileImageFormat::LERC || format == TileImageFormat::Unknown) // remove the Unknown clause once API bug is fixed
+      {
+        // create the source from the tiled source
+        emit elevationSourceSelected(new ArcGISTiledElevationSource(tileCache));
+      }
+      else
+        continue;
+    }
+    else if (dataItemType == DataType::Raster)
+    {
+      // add the path to a string list
+      dataPaths << dataItemPath;
+    }
+    else
+      continue;
+  }
+
+  if (dataPaths.length() == 0)
+    return;
+
+  emit elevationSourceSelected(new RasterElevationSource(dataPaths));
+}
+
+// Q_INVOKABLE function that takes the indices passed in, gets the path and data type
+// for the file at the given index, and adds the file as a layer
+void AddLocalDataController::addItemAsLayer(const QList<int>& indices)
+{
+  for (int index : indices)
+  {
+    DataType dataItemType = m_localDataModel->getDataItemType(index);
+    QString dataItemPath = m_localDataModel->getDataItemPath(index);
+
+    switch (dataItemType) {
+    case DataType::Geodatabase:
+      createFeatureLayerGeodatabase(dataItemPath);
+      break;
+    case DataType::GeoPackage:
+      createLayerGeoPackage(dataItemPath);
+      break;
+    case DataType::KML:
+      createKmlLayer(dataItemPath);
+      break;
+    case DataType::Raster:
+      createRasterLayer(dataItemPath);
+      break;
+    case DataType::SceneLayerPackage:
+      createSceneLayer(dataItemPath);
+      break;
+    case DataType::Shapefile:
+      createFeatureLayerShapefile(dataItemPath);
+      break;
+    case DataType::TilePackage:
+      createTiledLayer(dataItemPath);
+      break;
+    case DataType::VectorTilePackage:
+      createVectorTiledLayer(dataItemPath);
+      break;
+    default:
+      break;
+    }
   }
 }
 
+// Helper that creates a FeatureLayer for each table in the Geodatabase
 void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path)
 {
   Geodatabase* gdb = new Geodatabase(path, this);
@@ -182,18 +220,21 @@ void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path)
   gdb->load();
 }
 
+// Helper that creates a Layer for each table and raster in the GeoPackage
 void AddLocalDataController::createLayerGeoPackage(const QString& path)
 {
-  qDebug() << "Geopackage not yet supported";
+  qDebug() << "TODO. Geopackage not yet supported";
   Q_UNUSED(path);
 }
 
+// Helper that creates a FeatureLayer from the Shapefile FeatureTable
 void AddLocalDataController::createFeatureLayerShapefile(const QString& path)
 {
-  qDebug() << "Shapefile not yet supported";
+  qDebug() << "TODO. Shapefile not yet supported";
   Q_UNUSED(path);
 }
 
+// Helper that creates a RasterLayer from a raster file path
 void AddLocalDataController::createRasterLayer(const QString& path)
 {
   Raster* raster = new Raster(path, this);
@@ -201,24 +242,28 @@ void AddLocalDataController::createRasterLayer(const QString& path)
   emit layerSelected(rasterLayer);
 }
 
+// Helper that creates a KMLLayer from a file path
 void AddLocalDataController::createKmlLayer(const QString& path)
 {
-  qDebug() << "KML not yet supported";
+  qDebug() << "TODO. KML not yet supported";
   Q_UNUSED(path);
 }
 
+// Helper that creates an ArcGISSceneLayer from a slpk path
 void AddLocalDataController::createSceneLayer(const QString& path)
 {
   ArcGISSceneLayer* sceneLayer = new ArcGISSceneLayer(QUrl(path));
   emit layerSelected(sceneLayer);
 }
 
+// Helper that creates an ArcGISTiledLayer from a tpk path
 void AddLocalDataController::createTiledLayer(const QString& path)
 {
   ArcGISTiledLayer* tiledLayer = new ArcGISTiledLayer(QUrl(path));
   emit layerSelected(tiledLayer);
 }
 
+// Helper that creates an ArcGISVectorTiledLayer from a vtpk path
 void AddLocalDataController::createVectorTiledLayer(const QString& path)
 {
   ArcGISVectorTiledLayer* vectorTiledLayer = new ArcGISVectorTiledLayer(QUrl(path));

@@ -17,121 +17,33 @@ import QtQuick.Controls.Material 2.1
 import QtQuick.Window 2.2
 import Esri.DSA 1.0
 
-Rectangle {    
-    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+DsaToolBase {
+    id: localDataRoot
     property bool showDataConnectionPane: true
-    signal closed();
+    property var selectedItems: []
+    title: "Add Local Data"
 
     AddLocalDataController {
         id: toolController
     }
 
-    Column {
-        id: titleBar
-        anchors{
-            top: parent.top
-            left: parent.left
-            right: parent.right
-        }
-        Rectangle {
-            color: Material.primary
-            height: 32 * scaleFactor
-            width: parent.width
-
-            Text {
-                id: titleText
-                anchors.centerIn: parent
-                text: qsTr("Add Local Data")
-                color: Material.foreground
-                font.bold: true
+    Rectangle {
+        //color: Material.primary
+        height: 32 * scaleFactor
+        width: parent.width
+        visible: showDataConnectionPane
+        Row {
+            anchors {
+                fill: parent
+                margins: 10 * scaleFactor
             }
 
-            Button {
-                id: closeButton
-
-                anchors {
-                    right: parent.right
-                    top: parent.top
-                    bottom: parent.bottom
-                    margins: 2 * scaleFactor
-                }
-
-
-                width: height
-
-                background: Rectangle {
-                    anchors.fill: closeButton
-                    color: Material.primary
-                }
-
-                Image {
-                    anchors.fill: parent
-                    source: "qrc:/Resources/icons/xhdpi/ic_menu_closeclear_dark.png"
-                    fillMode: Image.PreserveAspectFit
-                }
-
-                onClicked: closed();
-            }
-        }
-        Rectangle {
-            //color: Material.primary
-            height: 32 * scaleFactor
-            width: parent.width
-            visible: showDataConnectionPane
-            Row {
-                anchors {
-                    fill: parent
-                    margins: 10 * scaleFactor
-                }
-
-                ComboBox {
-                    width: parent.width * 0.75
-                }
-
-                RoundButton {
-
-                }
-            }
-        }
-    }
-
-    Component {
-        id: localDataDelegate
-        Rectangle {
-            id: rect
-            width: parent.width
-            height: 35 * scaleFactor
-
-            Rectangle {
-                anchors {
-                    top: parent.top;
-                    left: parent.left;
-                    right: parent.right;
-                    topMargin: -8 * scaleFactor
-                    leftMargin: 20 * scaleFactor
-                    rightMargin: 20 * scaleFactor
-                }
-                color: "darkgrey"
-                height: 1 * scaleFactor
+            ComboBox {
+                width: parent.width * 0.75
             }
 
-            Text {
-                text: fileName
-                anchors {
-                    fill: parent
-                    leftMargin: 5 * scaleFactor
-                }
-                elide: Text.ElideRight
-                font.pixelSize: 14 * scaleFactor
-            }
+            RoundButton {
 
-            MouseArea {
-                anchors.fill: parent
-                hoverEnabled: true
-                onClicked: {
-                    toolController.selectItem(index);
-                    closed();
-                }
             }
         }
     }
@@ -142,7 +54,7 @@ Rectangle {
         property string currentPath: ""
 
         anchors{
-            top: titleBar.bottom
+            top: parent.titleBar.bottom
             left: parent.left
             right: parent.right
             bottom: filterColumn.top
@@ -152,27 +64,119 @@ Rectangle {
         clip: true
         model: toolController.localDataModel
         width: parent.width
-        delegate: localDataDelegate
+        delegate:  CheckDelegate {
+            id: control
+            text: fileName
+            width: localDataList.width
+
+            contentItem: Label {
+                rightPadding: control.indicator.width + control.spacing
+                text: control.text
+                font: control.font
+                opacity: enabled ? 1.0 : 0.3
+                color: Material.primary
+                elide: Text.ElideRight
+                horizontalAlignment: Text.AlignLeft
+                verticalAlignment: Text.AlignVCenter
+            }
+
+            background: Rectangle {
+                id: delegateBackground
+                implicitWidth: localDataList.width
+                implicitHeight: 40 * scaleFactor
+
+                Rectangle {
+                    anchors {
+                        horizontalCenter: parent.horizontalCenter
+                        bottom: parent.bottom
+                    }
+                    width: parent.width * 0.75
+                    height: 1 * scaleFactor
+                    color: Material.primary
+                }
+            }
+
+            onClicked: selectedItems.push(index)
+        }
     }
+
+    RoundButton {
+        id: addButton
+        anchors {
+            right: parent.right
+            verticalCenter: localDataList.bottom
+            margins: 10 * scaleFactor
+        }
+
+        background: Rectangle {
+            implicitWidth: 40 * scaleFactor
+            implicitHeight: 40 * scaleFactor
+            opacity: enabled ? 1 : 0.3
+            radius: addButton.radius
+            color: Material.accent
+
+            Image {
+                anchors.centerIn: parent
+                width: 24 * scaleFactor
+                height: width
+                source: "qrc:/Resources/icons/xhdpi/ic_menu_add_dark_d.png"
+            }
+        }
+        onClicked: {
+            if (elevationCheckbox.checked && elevationCheckbox.visible)
+                toolController.addItemAsElevationSource(selectedItems);
+            else
+                toolController.addItemAsLayer(selectedItems);
+            toolController.refreshLocalDataModel(filter.currentText);
+            closed();
+        }
+    }
+
 
     Column {
         id: filterColumn
         anchors {
             left: parent.left
+            right: parent.right
             bottom: parent.bottom
             margins: 20 * scaleFactor
         }
         spacing: 1 * scaleFactor
 
-        Text {
+        Label {
             text: "Filter:"
-            font.pixelSize: 10 * scaleFactor
+            font.pixelSize: 12 * scaleFactor
+            color: Material.primary
         }
 
         ComboBox {
+            id: filter
             model: toolController.fileFilterList
-            width: 250 * scaleFactor
-            onCurrentTextChanged: toolController.refreshLocalDataModel(currentText)
+            width: parent.width
+            onCurrentTextChanged: {
+                selectedItems = [];
+                toolController.refreshLocalDataModel(currentText);
+            }
         }
+
+        CheckBox {
+            id: elevationCheckbox
+            text: "Add raster as elevation source"
+            checked: false
+            visible: filter.currentText.indexOf("Raster") !== -1 || filter.currentText.indexOf("All")  !== -1 || filter.currentText.indexOf("tpk") !== -1
+            contentItem: Label {
+                text: elevationCheckbox.text
+                font: elevationCheckbox.font
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                color: Material.primary
+                leftPadding: elevationCheckbox.indicator.width + elevationCheckbox.spacing
+            }
+        }
+    }
+
+    function resetView() {
+        selectedItems = [];
+        toolController.refreshLocalDataModel(filter.currentText);
     }
 }

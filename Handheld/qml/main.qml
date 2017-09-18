@@ -40,8 +40,6 @@ Handheld {
 
         Button {
             id: basemapsCheckBox
-            checkable: true
-            checked: false
             width: 32 * scaleFactor
             height: 32 * scaleFactor
 
@@ -57,12 +55,12 @@ Handheld {
                 height: sourceSize.height
                 source: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_dark.png"
             }
-        }
+
+            onClicked: basemapsTool.slideVertical(basemapsTool.height, 0);
+        }        
 
         Button {
             id: addLocalDataCheckBox
-            checkable: true
-            checked: false
             width: 32 * scaleFactor
             height: 32 * scaleFactor
 
@@ -78,25 +76,32 @@ Handheld {
                 height: sourceSize.height
                 source: "qrc:/Resources/icons/xhdpi/ic_menu_layervisibilitypopover_dark_d.png"
             }
+
+            onClicked: addLocalDataTool.slideVertical(addLocalDataTool.height, 0);
         }
     }
 
     BasemapPicker {
         id: basemapsTool
-
-        anchors.fill: parent
-        visible: basemapsCheckBox.checked
-
-        onBasemapSelected: basemapsCheckBox.checked = false;
-        onClosed: basemapsCheckBox.checked = false;
+        anchors {
+            left: parent.left
+            right: parent.right
+        }
+        height: parent.height
+        y: height
+        onBasemapSelected: closed()
+        onClosed: slideVertical(0, height)
     }
 
     AddLocalData {
         id: addLocalDataTool
-
-        anchors.fill: parent
-        visible: addLocalDataCheckBox.checked
+        anchors {
+            left: parent.left
+            right: parent.right
+        }
+        y: height
+        height: parent.height
         showDataConnectionPane: false
-        onClosed: addLocalDataCheckBox.checked = false;
+        onClosed: slideVertical(0, height)
     }
 }

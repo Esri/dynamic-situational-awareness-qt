@@ -16,6 +16,15 @@
 
 #include <QXmlStreamReader>
 
+static const QString s_cotElementName{"event"};
+static const QString s_cotTypeName{"type"};
+static const QString s_cotUidName{"uid"};
+static const QString s_cotPointName{"point"};
+static const QString s_cotPointLatName{"lat"};
+static const QString s_cotPointLonName{"lat"};
+static const QString s_cotPointHaieName{"lat"};
+static const QString s_sidcName{"sidc"};
+
 using namespace Esri::ArcGISRuntime;
 
 Message::Message() :
@@ -59,6 +68,8 @@ Message& Message::operator=(Message&& other)
 
 Message Message::createFromCoTMessage(const QByteArray& message)
 {
+  // parse CoT XML bytes and build up a Message object from the
+  // supplied information
   Message cotMessage;
   QVariantMap cotAttributes;
 
@@ -69,32 +80,38 @@ Message Message::createFromCoTMessage(const QByteArray& message)
     if (reader.isStartElement())
     {
       // CoT event
-      if (QStringRef::compare(reader.name(), "event") == 0)
+      if (QStringRef::compare(reader.name(), s_cotElementName) == 0)
       {
         const auto attrs = reader.attributes();
-        const auto type = attrs.value("type").toString();
+        const auto type = attrs.value(s_cotTypeName).toString();
+        // convert the CoT type to a sidc symbol code
         const auto sidc = cotTypeToSidc(type);
         if (sidc.isEmpty())
           return Message();
 
+        // CoT is always an update action
         cotMessage.d->messageAction = MessageAction::Update;
 
-        cotAttributes.insert("sidc", sidc);
+        // store the sidc symbol id code as an attribute of
+        // the Message as well as the symbol Id variable
+        cotAttributes.insert(s_sidcName, sidc);
         cotMessage.d->symbolId = sidc;
 
-        cotMessage.d->messageId = attrs.value("uid").toString();
+        // assign the unique message id
+        cotMessage.d->messageId = attrs.value(s_cotUidName).toString();
       }
-      else if (QStringRef::compare(reader.name(), "point") == 0)
+      else if (QStringRef::compare(reader.name(), s_cotPointName) == 0)
       {
+        // parse the CoT point to populate the Message's geometry
         auto attrs = reader.attributes();
         bool lonOk = false;
         bool latOk = false;
-        const auto lon = attrs.value("lon").toDouble(&lonOk);
-        const auto lat = attrs.value("lat").toDouble(&latOk);
+        const auto lon = attrs.value(s_cotPointLonName).toDouble(&lonOk);
+        const auto lat = attrs.value(s_cotPointLatName).toDouble(&latOk);
         if (!lonOk || !latOk)
           return Message();
 
-        const auto hae = attrs.value("hae").toDouble();
+        const auto hae = attrs.value(s_cotPointHaieName).toDouble();
 
         cotMessage.d->geometry = Point(lon, lat, hae, SpatialReference::wgs84());
       }
@@ -103,6 +120,7 @@ Message Message::createFromCoTMessage(const QByteArray& message)
     reader.readNext();
   }
 
+  // assign the Message attributes
   cotMessage.d->attributes = cotAttributes;
 
   return cotMessage;
@@ -110,9 +128,16 @@ Message Message::createFromCoTMessage(const QByteArray& message)
 
 QString Message::cotTypeToSidc(const QString& cotType)
 {
+  // converts a CoT type to a sidc symbol id code
+  // For example: CoT type: a-f-S-C-A to sidc: SFSPCA---------
   QString retVal;
 
+  // recognized affiliation types for converted between CoT type
+  // and sidc symbols
   const QString recognizedAffiliations("fhupansjku");
+
+  // recognized battle space types for converting between CoT type
+  // and sidc symbols
   const QString recognizedBattleSpaces("PAGSUF");
 
   if (cotType.mid(0, 1) != "a")

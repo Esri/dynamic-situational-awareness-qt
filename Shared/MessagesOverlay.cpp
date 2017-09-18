@@ -67,7 +67,8 @@ bool MessagesOverlay::addMessage(const Message& message)
 
   if (m_existingGraphics.contains(messageId))
   {
-    // update existing graphic
+    // update existing graphic attributes and geometry
+    // if the graphic already exists in the hash
     Graphic* graphic = m_existingGraphics[messageId];
     if (graphic->geometry().geometryType() != geometry.geometryType())
       return false;
@@ -92,6 +93,7 @@ bool MessagesOverlay::addMessage(const Message& message)
         return false;
       }
 
+      // add point/multipoint geometry types to a dynamically-rendered graphics overlay
       m_pointGraphicsOverlay = new GraphicsOverlay(this);
       m_pointGraphicsOverlay->setRenderingMode(GraphicsRenderingMode::Dynamic);
       m_pointGraphicsOverlay->setSceneProperties(LayerSceneProperties(SurfacePlacement::Relative));
@@ -115,6 +117,7 @@ bool MessagesOverlay::addMessage(const Message& message)
         return false;
       }
 
+      // add polygon/polyline geometry types to a statically-rendered graphics overlay
       m_linePolygonGraphicsOverlay = new GraphicsOverlay(this);
       m_linePolygonGraphicsOverlay->setRenderingMode(GraphicsRenderingMode::Static);
       m_linePolygonGraphicsOverlay->setRenderer(new DictionaryRenderer(m_dictionarySymbolStyle.data(), this));

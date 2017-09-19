@@ -66,6 +66,7 @@ DsaToolBase {
                 id: delegateBackground
                 implicitWidth: localDataList.width
                 implicitHeight: 40 * scaleFactor
+                visible: false
 
                 Rectangle {
                     anchors {
@@ -98,7 +99,6 @@ DsaToolBase {
             opacity: enabled ? 1 : 0.3
             radius: addButton.radius
             color: Material.accent
-            visible: false
 
             Image {
                 anchors.centerIn: parent

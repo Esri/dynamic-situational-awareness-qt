@@ -66,7 +66,6 @@ DsaToolBase {
                 id: delegateBackground
                 implicitWidth: localDataList.width
                 implicitHeight: 40 * scaleFactor
-                visible: false
 
                 Rectangle {
                     anchors {

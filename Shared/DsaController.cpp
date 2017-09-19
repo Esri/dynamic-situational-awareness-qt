@@ -59,17 +59,11 @@ Esri::ArcGISRuntime::Scene* DsaController::scene() const
   return m_scene;
 }
 
-void DsaController::init(SceneQuickView* sceneView)
+void DsaController::init(GeoView* geoView)
 {
-  m_sceneView = sceneView;
-  connect(m_sceneView, &SceneQuickView::errorOccurred, this, &DsaController::onError);
-
-  // Set scene to scene view
-  m_sceneView->setArcGISScene(m_scene);
-
   // set up the messages overlay with a Mil2525c_b2 dictionary style
   DictionarySymbolStyle* dictionarySymbolStyle = new DictionarySymbolStyle("mil2525c_b2", m_dataPath + "/styles/mil2525c_b2.stylx", this);
-  m_messagesOverlay = new MessagesOverlay(m_sceneView, dictionarySymbolStyle, this);
+  m_messagesOverlay = new MessagesOverlay(geoView, dictionarySymbolStyle, this);
 
   // create the messaging socket connection and hook up message receiving
   m_udpSocket->bind(m_broadcastPort, QUdpSocket::DontShareAddress | QUdpSocket::ReuseAddressHint);

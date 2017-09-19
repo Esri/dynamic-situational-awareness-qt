@@ -13,7 +13,6 @@
 #include "LocationController.h"
 
 #include <QCompass>
-#include <QGeoPositionInfoSource>
 #include <QDir>
 #include "GPXLocationSimulator.h"
 #include "DsaUtility.h"
@@ -23,7 +22,6 @@
 #include "ModelSceneSymbol.h"
 #include "DistanceCompositeSceneSymbol.h"
 #include "SimpleRenderer.h"
-#include <cmath>
 
 using namespace Esri::ArcGISRuntime;
 

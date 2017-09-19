@@ -99,6 +99,7 @@ DsaToolBase {
             opacity: enabled ? 1 : 0.3
             radius: addButton.radius
             color: Material.accent
+            visible: false
 
             Image {
                 anchors.centerIn: parent
@@ -106,6 +107,7 @@ DsaToolBase {
                 height: width
                 source: "qrc:/Resources/icons/xhdpi/ic_menu_add_dark_d.png"
             }
+
         }
 
         onClicked: {

@@ -64,7 +64,7 @@ Handheld {
                     drawer.open();
                 }
             }
-        }        
+        }
 
         Button {
             id: addLocalDataCheckBox
@@ -100,6 +100,7 @@ Handheld {
         width: parent.width
         height: parent.height
         edge: Qt.BottomEdge
+        interactive: false
 
         Rectangle {
             id: toolRect

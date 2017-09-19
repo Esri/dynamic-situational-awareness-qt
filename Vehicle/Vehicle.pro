@@ -54,6 +54,8 @@ RESOURCES += \
     Resources/application.qrc \
     ../Shared/qml/shared_qml.qrc
 
+QML_IMPORT_PATH += $$PWD/../Shared/qml
+
 #-------------------------------------------------------------------------------
 
 win32 {

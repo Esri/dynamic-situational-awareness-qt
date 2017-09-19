@@ -57,7 +57,7 @@ RESOURCES += \
 
 #-------------------------------------------------------------------------------
 
-QML_IMPORT_PATH += ../Shared/qml
+QML_IMPORT_PATH += $$PWD/../Shared/qml
 
 win32 {
     include (Win/Win.pri)

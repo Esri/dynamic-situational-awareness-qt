@@ -103,20 +103,20 @@ DataItemListModel::DataItem::DataItem(const QString& fullPath):
 
   // determine the layer type
   QString fileExtension = fileInfo.completeSuffix();
-  QStringList rasterExtensions{"img", "tif", "tiff", "I1", "dt0", "dt1", "dt2", "tc2", "geotiff", "hr1", "jpg", "jpeg", "jp2", "ntf", "png", "i21"};
+  QStringList rasterExtensions{"img", "tif", "tiff", "i1", "dt0", "dt1", "dt2", "tc2", "geotiff", "hr1", "jpg", "jpeg", "jp2", "ntf", "png", "i21"};
   if (fileExtension == "geodatabase")
     dataType = DataType::Geodatabase;
-  else if (fileExtension.toLower() == "tpk")
+  else if (fileExtension.compare("tpk", Qt::CaseInsensitive) == 0)
     dataType = DataType::TilePackage;
-  else if (fileExtension.toLower() == "shp")
+  else if (fileExtension.compare("shp", Qt::CaseInsensitive) == 0)
     dataType = DataType::Shapefile;
-  else if (fileExtension.toLower() == "gpkg")
+  else if (fileExtension.compare("gpkg", Qt::CaseInsensitive) == 0)
     dataType = DataType::GeoPackage;
-  else if (fileExtension.toLower() == "kml")
+  else if (fileExtension.compare("kml", Qt::CaseInsensitive) == 0)
     dataType = DataType::KML;
-  else if (fileExtension.toLower() == "slpk")
+  else if (fileExtension.compare("slpk", Qt::CaseInsensitive) == 0)
     dataType = DataType::SceneLayerPackage;
-  else if (fileExtension.toLower() == "vtpk")
+  else if (fileExtension.compare("vtpk", Qt::CaseInsensitive) == 0)
     dataType = DataType::VectorTilePackage;
   else if (rasterExtensions.contains(fileExtension.toLower()))
     dataType = DataType::Raster;

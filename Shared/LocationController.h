@@ -33,8 +33,8 @@ class LocationController : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(bool enabled READ enabled WRITE setEnabled NOTIFY enabledChanged)
-  Q_PROPERTY(bool simulated READ simulated WRITE setSimulated NOTIFY simulatedChanged)
+  Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled NOTIFY enabledChanged)
+  Q_PROPERTY(bool simulated READ isSimulated WRITE setSimulated NOTIFY simulatedChanged)
   Q_PROPERTY(QUrl gpxFilePath READ gpxFilePath WRITE setGpxFilePath NOTIFY gpxFilePathChanged)
   Q_PROPERTY(QString gpxFilePathAsString READ gpxFilePathAsString NOTIFY gpxFilePathChanged)
 
@@ -48,11 +48,11 @@ public:
   // to your view
   Esri::ArcGISRuntime::GraphicsOverlay* locationOverlay();
 
-  bool enabled() const;
-  void setEnabled(bool enabled);
+  bool isEnabled() const;
+  void setEnabled(bool isEnabled);
 
-  bool simulated() const;
-  void setSimulated(bool simulated);
+  bool isSimulated() const;
+  void setSimulated(bool isSimulated);
 
   QUrl gpxFilePath() const;
   void setGpxFilePath(const QUrl& gpxFilePath);
@@ -79,7 +79,7 @@ signals:
   void relativeHeadingChanged(double relativeHeading);
 
 private:
-  void initPositionInfoSource(bool simulated);
+  void initPositionInfoSource(bool isSimulated);
   void initOverlay();
   QUrl modelSymbolPath() const;
 

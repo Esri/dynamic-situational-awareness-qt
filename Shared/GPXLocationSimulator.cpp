@@ -65,7 +65,7 @@ bool GPXLocationSimulator::gotoNextPositionElement()
   {
     if (m_gpxReader->isStartElement())
     {
-      if (m_gpxReader->name().compare(QString("trkpt")) == 0)
+      if (m_gpxReader->name().compare(QString("trkpt"), Qt::CaseInsensitive) == 0)
       {
         return true;
       }

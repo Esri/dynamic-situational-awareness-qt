@@ -102,7 +102,7 @@ QString LocationController::toolName() const
   return QStringLiteral("location");
 }
 
-bool LocationController::enabled() const
+bool LocationController::isEnabled() const
 {
   return m_enabled;
 }
@@ -142,7 +142,7 @@ void LocationController::setEnabled(bool enabled)
   emit enabledChanged();
 }
 
-bool LocationController::simulated() const
+bool LocationController::isSimulated() const
 {
   return m_simulated;
 }

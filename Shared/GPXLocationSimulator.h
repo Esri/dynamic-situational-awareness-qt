@@ -10,8 +10,8 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef GPSSIMULATOR_H
-#define GPSSIMULATOR_H
+#ifndef GPXLOCATIONSIMULATOR_H
+#define GPXLOCATIONSIMULATOR_H
 
 #include <QFile>
 #include <QLineF>
@@ -97,4 +97,4 @@ private slots:
   void handleTimerEvent();
 };
 
-#endif // GPSSIMULATOR_H
+#endif // GPXLOCATIONSIMULATOR_H

@@ -74,23 +74,14 @@ Handheld {
               }
 
         Image {
-            id: navImageEnabled
-            visible: locationCheckBox.checked
             fillMode: Image.PreserveAspectFit
             anchors.centerIn: parent
             sourceSize.height: parent.height * 0.85
             height: sourceSize.height
-            source: "qrc:/Resources/icons/xhdpi/navigation.png"
-        }
+            source: locationCheckBox.checked ?
+                        "qrc:/Resources/icons/xhdpi/navigation.png" :
+                        "qrc:/Resources/icons/xhdpi/navigation_disabled.png"
 
-        Image {
-            id: navImageDisabled
-            visible: !navImageEnabled.visible
-            fillMode: Image.PreserveAspectFit
-            anchors.centerIn: parent
-            sourceSize.height: parent.height * 0.85
-            height: sourceSize.height
-            source: "qrc:/Resources/icons/xhdpi/navigation_disabled.png"
         }
     }
 

@@ -51,8 +51,8 @@ SOURCES += \
 
 RESOURCES += \
     qml/qml.qrc \
-    Resources/Resources.qrc \
-    Resources/application.qrc \
+    ../Shared/Resources/Resources.qrc \
+    ../Shared/Resources/application.qrc \
     ../Shared/qml/shared_qml.qrc
 
 #-------------------------------------------------------------------------------

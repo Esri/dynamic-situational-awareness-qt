@@ -5,7 +5,6 @@ import QtQuick.Controls.Material 2.1
 
 ToolBar {
     property alias toolbarLabelText: toolbarLabel.text
-    signal menubuttonClicked();
 
     RowLayout {
         anchors.fill: parent

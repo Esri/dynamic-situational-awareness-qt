@@ -23,12 +23,8 @@ GPXLocationSimulator::GPXLocationSimulator(QObject* parent) :
   m_timer(new QTimer(this)),
   m_angleOffset(0.0, -90.0, 0.0, 90.0)
 {
+  connectSignals();
   setUpdateInterval(20);
-  connect(m_timer, SIGNAL(timeout()), this, SLOT(handleTimerEvent()));
-
-  // internally we emit errorInternal but we cannot emit error due to syntax
-  connect(this, &GPXLocationSimulator::errorInternal,
-          this, static_cast<void (QGeoPositionInfoSource::*)(QGeoPositionInfoSource::Error)>(&QGeoPositionInfoSource::error));
 }
 
 //
@@ -39,8 +35,8 @@ GPXLocationSimulator::GPXLocationSimulator(const QString& gpxFileName, int updat
   m_gpxReader(new QXmlStreamReader()),
   m_timer(new QTimer(this))
 {
+  connectSignals();
   setUpdateInterval(updateInterval);
-  connect(m_timer, SIGNAL(timeout()), this, SLOT(handleTimerEvent()));
 
   if (!setGpxFile(gpxFileName))
   {
@@ -54,6 +50,17 @@ GPXLocationSimulator::GPXLocationSimulator(const QString& gpxFileName, int updat
 //
 GPXLocationSimulator::~GPXLocationSimulator()
 {
+}
+
+//
+// internal
+//
+void GPXLocationSimulator::connectSignals()
+{
+  connect(m_timer, SIGNAL(timeout()), this, SLOT(handleTimerEvent()));
+  // internally we emit errorInternal but we cannot emit error due to syntax
+  connect(this, &GPXLocationSimulator::errorInternal,
+          this, static_cast<void (QGeoPositionInfoSource::*)(QGeoPositionInfoSource::Error)>(&QGeoPositionInfoSource::error));
 }
 
 //

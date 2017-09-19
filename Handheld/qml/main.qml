@@ -152,7 +152,6 @@ Handheld {
                 id: basemapsTool
                 anchors.fill: parent
                 height: parent.height
-                y: height
                 onBasemapSelected: closed()
                 onClosed: drawer.close();
             }
@@ -160,7 +159,6 @@ Handheld {
             AddLocalData {
                 id: addLocalDataTool
                 anchors.fill: parent
-                y: height
                 height: parent.height
                 showDataConnectionPane: false
                 onClosed: drawer.close();

@@ -72,19 +72,4 @@ Rectangle {
             }
         }
     }
-
-    NumberAnimation {
-        id: animateVertical
-        target: dsaToolRoot
-        properties: "y"
-        duration: 200
-        easing.type: Easing.OutQuad
-    }
-
-    function slideVertical(fromY, toY) {
-        visible = true;
-        animateVertical.from = fromY;
-        animateVertical.to = toY;
-        animateVertical.start();
-    }
 }

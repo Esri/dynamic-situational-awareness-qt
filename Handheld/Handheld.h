@@ -13,6 +13,14 @@
 #ifndef HANDHELD_H
 #define HANDHELD_H
 
+namespace Esri
+{
+namespace ArcGISRuntime
+{
+class SceneQuickView;
+}
+}
+
 #include <QQuickItem>
 
 class DsaController;
@@ -28,6 +36,7 @@ public:
   void componentComplete() override;
 
 private:
+  Esri::ArcGISRuntime::SceneQuickView*    m_sceneView = nullptr;
   DsaController*                          m_controller = nullptr;
 };
 

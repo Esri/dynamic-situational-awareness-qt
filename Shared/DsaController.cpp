@@ -14,11 +14,10 @@
 #include "Scene.h"
 #include "SceneQuickView.h"
 #include "DictionarySymbolStyle.h"
-
 #include "DsaUtility.h"
 #include "DsaController.h"
-
 #include "BasemapPickerController.h"
+#include "LocationController.h"
 #include "MessageListener.h"
 #include "Message.h"
 #include "MessagesOverlay.h"
@@ -51,7 +50,6 @@ DsaController::DsaController(QObject* parent):
 
 DsaController::~DsaController()
 {
-
 }
 
 Esri::ArcGISRuntime::Scene* DsaController::scene() const
@@ -59,17 +57,11 @@ Esri::ArcGISRuntime::Scene* DsaController::scene() const
   return m_scene;
 }
 
-void DsaController::init(SceneQuickView* sceneView)
+void DsaController::init(GeoView* geoView)
 {
-  m_sceneView = sceneView;
-  connect(m_sceneView, &SceneQuickView::errorOccurred, this, &DsaController::onError);
-
-  // Set scene to scene view
-  m_sceneView->setArcGISScene(m_scene);
-
   // set up the messages overlay with a Mil2525c_b2 dictionary style
   DictionarySymbolStyle* dictionarySymbolStyle = new DictionarySymbolStyle("mil2525c_b2", m_dataPath + "/styles/mil2525c_b2.stylx", this);
-  m_messagesOverlay = new MessagesOverlay(m_sceneView, dictionarySymbolStyle, this);
+  m_messagesOverlay = new MessagesOverlay(geoView, dictionarySymbolStyle, this);
 
   // create the messaging socket connection and hook up message receiving
   m_udpSocket->bind(m_broadcastPort, QUdpSocket::DontShareAddress | QUdpSocket::ReuseAddressHint);
@@ -90,24 +82,29 @@ void DsaController::init(SceneQuickView* sceneView)
       continue;
 
     // we would add basemapChanged signal to AbstractTool and then we do not require the concrete type here
-    BasemapPickerController* basemapPicker = qobject_cast<BasemapPickerController*>(obj);
-    if (!basemapPicker)
-      continue;
-
-    connect(basemapPicker, &BasemapPickerController::basemapChanged, this, [this](Basemap* basemap)
+    if (qobject_cast<BasemapPickerController*>(obj))
     {
-      if (!basemap)
-        return;
+      BasemapPickerController* basemapPicker = static_cast<BasemapPickerController*>(obj);
+      connect(basemapPicker, &BasemapPickerController::basemapChanged, this, [this](Basemap* basemap)
+      {
+        if (!basemap)
+          return;
 
-      basemap->setParent(this);
-      m_scene->setBasemap(basemap);
+        basemap->setParent(this);
+        m_scene->setBasemap(basemap);
 
-      connect(basemap, &Basemap::errorOccurred, this, &DsaController::onError);
-    });
+        connect(basemap, &Basemap::errorOccurred, this, &DsaController::onError);
+      });
+    }
+    else if (qobject_cast<LocationController*>(obj))
+    {
+      LocationController* locationController = static_cast<LocationController*>(obj);
+      locationController->setGpxFilePath(QUrl::fromLocalFile(m_dataPath + "/MontereyMounted.gpx"));
+      geoView->graphicsOverlays()->append(locationController->locationOverlay());
+    }
   }
 }
 
 void DsaController::onError(const Esri::ArcGISRuntime::Error&)
 {
-
 }

@@ -24,6 +24,12 @@ Vehicle {
 
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
+    LocationController {
+        id: locationController
+        simulated: true
+        enabled: locationCheckBox.checked
+    }
+
     // Create SceneQuickView here, and create its Scene etc. in C++ code
     SceneView {
         anchors.fill: parent
@@ -57,7 +63,6 @@ Vehicle {
         width: 32 * scaleFactor
         height: 32 * scaleFactor
 
-
         background: Rectangle {
                   anchors.fill: basemapsCheckBox
                   color: Material.primary
@@ -72,5 +77,32 @@ Vehicle {
         }
     }
 
+    Button {
+        id: locationCheckBox
+        anchors{
+            margins: 2 * scaleFactor
+            top: basemapsCheckBox.bottom
+            right: parent.right
+        }
+        checkable: true
+        checked: false
+        width: 32 * scaleFactor
+        height: 32 * scaleFactor
 
+        background: Rectangle {
+                  anchors.fill: locationCheckBox
+                  color: Material.primary
+              }
+
+        Image {
+            fillMode: Image.PreserveAspectFit
+            anchors.centerIn: parent
+            sourceSize.height: parent.height * 0.85
+            height: sourceSize.height
+            source: locationCheckBox.checked ?
+                        "qrc:/Resources/icons/xhdpi/navigation.png" :
+                        "qrc:/Resources/icons/xhdpi/navigation_disabled.png"
+
+        }
+    }
 }

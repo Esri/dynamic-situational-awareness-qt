@@ -21,7 +21,6 @@ Vehicle::Vehicle(QQuickItem* parent /* = nullptr */):
   QQuickItem(parent),
   m_controller(new DsaController(this))
 {
-
 }
 
 Vehicle::~Vehicle()
@@ -32,6 +31,12 @@ void Vehicle::componentComplete()
 {
   QQuickItem::componentComplete();
 
-  // find QML SceneView component and apply to controller
-  m_controller->init(findChild<SceneQuickView*>("sceneView"));
+  // find QML SceneView component
+  m_sceneView = findChild<SceneQuickView*>("sceneView");
+  connect(m_sceneView, &SceneQuickView::errorOccurred, m_controller, &DsaController::onError);
+
+  m_controller->init(m_sceneView);
+
+  // Set scene to scene view
+  m_sceneView->setArcGISScene(m_controller->scene());
 }

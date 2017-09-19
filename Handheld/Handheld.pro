@@ -69,3 +69,6 @@ ios {
 android {
     include (Android/Android.pri)
 }
+
+DISTFILES += \
+    ../Shared/qml/GenericToolbar.qml

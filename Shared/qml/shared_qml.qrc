@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/qml">
         <file>BasemapPicker.qml</file>
+        <file>GenericToolbar.qml</file>
     </qresource>
+    <qresource prefix="/"/>
 </RCC>

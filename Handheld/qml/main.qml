@@ -24,9 +24,29 @@ Handheld {
 
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
+    GenericToolbar {
+        id: toolbar
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+        }
+        height: 42 * scaleFactor
+        toolbarLabelText: "DSA - Handheld"
+//        onToolButtonClicked: {
+//            console.log("Tool button was clicked");
+//        }
+    }
+
     // Create SceneQuickView here, and create its Scene etc. in C++ code
     SceneView {
-        anchors.fill: parent
+        anchors {
+            top: toolbar.bottom
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
+
         objectName: "sceneView"
     }
 
@@ -34,7 +54,7 @@ Handheld {
         id: basemapsCheckBox
         anchors{
             margins: 2 * scaleFactor
-            top: parent.top
+            top: toolbar.bottom
             right: parent.right
         }
         checkable: true

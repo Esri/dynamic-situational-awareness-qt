@@ -32,6 +32,7 @@ Handheld {
                 right: parent.right
             }
             height: 42 * scaleFactor
+            fontSize: 20 * scaleFactor
             toolbarLabelText: "DSA - Handheld"
 
             onMenuClicked: {

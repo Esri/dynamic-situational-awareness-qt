@@ -5,6 +5,7 @@ import QtQuick.Controls.Material 2.1
 
 ToolBar {
     property alias toolbarLabelText: toolbarLabel.text
+    property int fontSize: 24
     signal menuClicked();
     signal drawerClicked();
 
@@ -31,11 +32,15 @@ ToolBar {
         }
 
         Label {
-            id: toolbarLabel            
+            id: toolbarLabel
             anchors {
                 horizontalCenter: parent.horizontalCenter
                 verticalCenter: parent.verticalCenter
             }
+            font {
+                pixelSize: fontSize
+            }
+            color: "white"
         }
 
         Image {

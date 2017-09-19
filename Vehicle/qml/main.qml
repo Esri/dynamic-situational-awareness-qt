@@ -38,6 +38,7 @@ Vehicle {
             right: parent.right
         }
         height: 42 * scaleFactor
+        fontSize: 24 * scaleFactor
         toolbarLabelText: "DSA - Vehicle"
 
         onMenuClicked: {

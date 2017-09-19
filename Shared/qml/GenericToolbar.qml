@@ -31,11 +31,11 @@ ToolBar {
         }
 
         Label {
-            id: toolbarLabel
-            elide: Label.ElideRight
-            horizontalAlignment: Qt.AlignHCenter
-            verticalAlignment: Qt.AlignVCenter
-            Layout.fillWidth: true
+            id: toolbarLabel            
+            anchors {
+                horizontalCenter: parent.horizontalCenter
+                verticalCenter: parent.verticalCenter
+            }
         }
 
         Image {

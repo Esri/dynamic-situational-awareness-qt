@@ -57,7 +57,6 @@ public slots:
   void requestUpdate(int timeout = 0) override;
 
 signals:
-  // Note: heading can be used directly with MarkerSymbol Arithmetic rotation
   void positionUpdateAvailable(const Esri::ArcGISRuntime::Point& pos, double heading);
 
   // This is only used internally. Use QGeoPositionInfoSource::error signal instead.

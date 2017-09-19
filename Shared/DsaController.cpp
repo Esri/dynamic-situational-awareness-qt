@@ -99,7 +99,8 @@ void DsaController::init(GeoView* geoView)
     else if (qobject_cast<LocationController*>(obj))
     {
       LocationController* locationController = static_cast<LocationController*>(obj);
-      m_sceneView->graphicsOverlays()->append(locationController->locationOverlay());
+      locationController->setGpxFilePath(QUrl::fromLocalFile(m_dataPath + "/MontereyMounted.gpx"));
+      geoView->graphicsOverlays()->append(locationController->locationOverlay());
     }
   }
 }

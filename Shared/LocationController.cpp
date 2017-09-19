@@ -44,8 +44,6 @@ void LocationController::initPositionInfoSource(bool simulated)
   {
     m_simulator = new GPXLocationSimulator(this);
 
-    setGpxFilePath(QUrl::fromLocalFile(DsaUtility::dataPath() + "/MontereyMounted.gpx"));
-
     connect(m_simulator, &GPXLocationSimulator::positionUpdateAvailable, this,
     [this](const Point& pos, double heading)
     {
@@ -303,7 +301,7 @@ QUrl LocationController::modelSymbolPath() const
   modelFileTemp.write(modelResource.readAll());
   imageFileTemp.write(imageResource.readAll());
 
-  for (QFile* file : { &modelResource, &imageResource, &modelFileTemp, &imageFileTemp})
+  for (QFile* file : { &modelResource, &imageResource, &modelFileTemp, &imageFileTemp })
     file->close();
 
   return QUrl::fromLocalFile(modelPath);

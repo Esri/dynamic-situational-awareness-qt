@@ -56,6 +56,9 @@ GPXLocationSimulator::~GPXLocationSimulator()
 {
 }
 
+//
+// internal
+//
 bool GPXLocationSimulator::gotoNextPositionElement()
 {
   while (!m_gpxReader->atEnd() && !m_gpxReader->hasError())

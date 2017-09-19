@@ -22,39 +22,21 @@ DsaToolBase {
     property bool showDataConnectionPane: true
     property var selectedItems: []
     title: "Add Local Data"
+    width: 272 * scaleFactor
 
+    // Create the controller
     AddLocalDataController {
         id: toolController
     }
 
-    Rectangle {
-        //color: Material.primary
-        height: 32 * scaleFactor
-        width: parent.width
-        visible: showDataConnectionPane
-        Row {
-            anchors {
-                fill: parent
-                margins: 10 * scaleFactor
-            }
-
-            ComboBox {
-                width: parent.width * 0.75
-            }
-
-            RoundButton {
-
-            }
-        }
-    }
-
+    // Declare the ListView, which will display the list of files
     ListView {
         id: localDataList
 
         property string currentPath: ""
 
-        anchors{
-            top: parent.titleBar.bottom
+        anchors {
+            top: localDataRoot.titleBar.bottom
             left: parent.left
             right: parent.right
             bottom: filterColumn.top
@@ -84,6 +66,7 @@ DsaToolBase {
                 id: delegateBackground
                 implicitWidth: localDataList.width
                 implicitHeight: 40 * scaleFactor
+                visible: false
 
                 Rectangle {
                     anchors {
@@ -100,6 +83,7 @@ DsaToolBase {
         }
     }
 
+    // When this button is clicked, all checked items will be added as layers/elevation sources
     RoundButton {
         id: addButton
         anchors {
@@ -107,6 +91,7 @@ DsaToolBase {
             verticalCenter: localDataList.bottom
             margins: 10 * scaleFactor
         }
+        opacity: 0.95
 
         background: Rectangle {
             implicitWidth: 40 * scaleFactor
@@ -117,11 +102,12 @@ DsaToolBase {
 
             Image {
                 anchors.centerIn: parent
-                width: 24 * scaleFactor
+                width: 26 * scaleFactor
                 height: width
                 source: "qrc:/Resources/icons/xhdpi/ic_menu_add_dark_d.png"
             }
         }
+
         onClicked: {
             if (elevationCheckbox.checked && elevationCheckbox.visible)
                 toolController.addItemAsElevationSource(selectedItems);
@@ -132,7 +118,7 @@ DsaToolBase {
         }
     }
 
-
+    // filter the files by file type
     Column {
         id: filterColumn
         anchors {

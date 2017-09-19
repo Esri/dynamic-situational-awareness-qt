@@ -22,6 +22,7 @@ Rectangle {
     property string title: ""
     property alias titleBar: titleBar
     signal closed()
+    property string iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_closeclear_dark.png"
 
     Column {
         id: titleBar
@@ -30,9 +31,10 @@ Rectangle {
             left: parent.left
             right: parent.right
         }
+
         Rectangle {
             color: Material.primary
-            height: 32 * scaleFactor
+            height: 40 * scaleFactor
             width: parent.width
 
             Text {
@@ -40,12 +42,11 @@ Rectangle {
                 anchors.centerIn: parent
                 text: qsTr(title)
                 color: Material.foreground
-                font.bold: true
+                font.pixelSize: 20 * scaleFactor
             }
 
             Button {
                 id: closeButton
-
                 anchors {
                     right: parent.right
                     top: parent.top
@@ -63,7 +64,7 @@ Rectangle {
 
                 Image {
                     anchors.fill: parent
-                    source: "qrc:/Resources/icons/xhdpi/ic_menu_closeclear_dark.png"
+                    source: iconSource
                     fillMode: Image.PreserveAspectFit
                 }
 

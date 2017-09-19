@@ -28,6 +28,7 @@
 #include "SceneQuickView.h"
 
 #include "BasemapPickerController.h"
+#include "AddLocalDataController.h"
 
 #include "AppInfo.h"
 #include "Vehicle.h"
@@ -98,6 +99,7 @@ int main(int argc, char *argv[])
   // Register the Vehicle (QQuickItem) for QML
   qmlRegisterType<Vehicle>("Esri.Vehicle", 1, 0, "Vehicle");
   qmlRegisterType<BasemapPickerController>("Esri.DSA", 1, 0, "BasemapPickerController");
+  qmlRegisterType<AddLocalDataController>("Esri.DSA", 1, 0, "AddLocalDataController");
 
   // Intialize application view
   QQuickView view;

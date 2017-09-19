@@ -56,7 +56,14 @@ Handheld {
                 source: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_dark.png"
             }
 
-            onClicked: basemapsTool.slideVertical(basemapsTool.height, 0);
+            onClicked: {
+                if (drawer.visible)
+                    drawer.close();
+                else {
+                    toolRect.state = "basemap";
+                    drawer.open();
+                }
+            }
         }        
 
         Button {
@@ -77,31 +84,61 @@ Handheld {
                 source: "qrc:/Resources/icons/xhdpi/ic_menu_layervisibilitypopover_dark_d.png"
             }
 
-            onClicked: addLocalDataTool.slideVertical(addLocalDataTool.height, 0);
+            onClicked: {
+                if (drawer.visible)
+                    drawer.close();
+                else {
+                    toolRect.state = "data";
+                    drawer.open();
+                }
+            }
         }
     }
 
-    BasemapPicker {
-        id: basemapsTool
-        anchors {
-            left: parent.left
-            right: parent.right
-        }
+    Drawer {
+        id: drawer
+        width: parent.width
         height: parent.height
-        y: height
-        onBasemapSelected: closed()
-        onClosed: slideVertical(0, height)
-    }
+        edge: Qt.BottomEdge
 
-    AddLocalData {
-        id: addLocalDataTool
-        anchors {
-            left: parent.left
-            right: parent.right
+        Rectangle {
+            id: toolRect
+            anchors.fill: parent
+
+            states: [
+                State {
+                    name: "basemap"
+                    PropertyChanges {
+                        target: basemapsTool
+                        visible: true
+                    }
+                },
+                State {
+                    name: "data"
+                    PropertyChanges {
+                        target: addLocalDataTool
+                        visible: true
+                    }
+                }
+            ]
+
+            BasemapPicker {
+                id: basemapsTool
+                anchors.fill: parent
+                height: parent.height
+                y: height
+                onBasemapSelected: closed()
+                onClosed: drawer.close();
+            }
+
+            AddLocalData {
+                id: addLocalDataTool
+                anchors.fill: parent
+                y: height
+                height: parent.height
+                showDataConnectionPane: false
+                onClosed: drawer.close();
+            }
         }
-        y: height
-        height: parent.height
-        showDataConnectionPane: false
-        onClosed: slideVertical(0, height)
     }
 }

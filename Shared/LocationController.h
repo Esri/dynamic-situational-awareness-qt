@@ -45,7 +45,7 @@ public:
   QString toolName() const /*override*/;
 
   // if you want this tool to handle everything, add this overlay
-  // to your Map/Scene
+  // to your view
   Esri::ArcGISRuntime::GraphicsOverlay* locationOverlay();
 
   bool enabled() const;

@@ -56,6 +56,44 @@ Handheld {
         }
     }
 
+    Button {
+        id: locationCheckBox
+        anchors{
+            margins: 2 * scaleFactor
+            top: basemapsCheckBox.bottom
+            right: parent.right
+        }
+        checkable: true
+        checked: false
+        width: 32 * scaleFactor
+        height: 32 * scaleFactor
+
+        background: Rectangle {
+                  anchors.fill: locationCheckBox
+                  color: Material.primary
+              }
+
+        Image {
+            id: navImageEnabled
+            visible: locationCheckBox.checked
+            fillMode: Image.PreserveAspectFit
+            anchors.centerIn: parent
+            sourceSize.height: parent.height * 0.85
+            height: sourceSize.height
+            source: "qrc:/Resources/icons/xhdpi/navigation.png"
+        }
+
+        Image {
+            id: navImageDisabled
+            visible: !navImageEnabled.visible
+            fillMode: Image.PreserveAspectFit
+            anchors.centerIn: parent
+            sourceSize.height: parent.height * 0.85
+            height: sourceSize.height
+            source: "qrc:/Resources/icons/xhdpi/navigation_disabled.png"
+        }
+    }
+
     BasemapPicker {
         id: basemapsTool
 
@@ -64,5 +102,11 @@ Handheld {
 
         onBasemapSelected: basemapsCheckBox.checked = false;
         onClosed: basemapsCheckBox.checked = false;
+    }
+
+    LocationController {
+        id: locationController
+        simulated: true
+        enabled: locationCheckBox.checked
     }
 }

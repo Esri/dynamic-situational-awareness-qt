@@ -30,7 +30,7 @@ class GPXLocationSimulator : public QGeoPositionInfoSource
 
 public:
   explicit GPXLocationSimulator(QObject* parent = nullptr);
-  GPXLocationSimulator(const QString& gpxFileName, int updateInterval = 20, QObject* parent = nullptr);
+  explicit GPXLocationSimulator(const QString& gpxFileName, int updateInterval = 20, QObject* parent = nullptr);
   ~GPXLocationSimulator();
 
   QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const override;

@@ -3,5 +3,4 @@
         <file>BasemapPicker.qml</file>
         <file>GenericToolbar.qml</file>
     </qresource>
-    <qresource prefix="/"/>
 </RCC>

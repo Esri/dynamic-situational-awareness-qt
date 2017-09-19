@@ -33,9 +33,14 @@ Handheld {
         }
         height: 42 * scaleFactor
         toolbarLabelText: "DSA - Handheld"
-//        onToolButtonClicked: {
-//            console.log("Tool button was clicked");
-//        }
+
+        onMenuClicked: {
+            console.log("Menu button was clicked");
+        }
+
+        onDrawerClicked: {
+            console.log("Drawer was clicked");
+        }
     }
 
     // Create SceneQuickView here, and create its Scene etc. in C++ code

@@ -5,6 +5,8 @@ import QtQuick.Controls.Material 2.1
 
 ToolBar {
     property alias toolbarLabelText: toolbarLabel.text
+    signal menuClicked();
+    signal drawerClicked();
 
     RowLayout {
         anchors.fill: parent
@@ -23,6 +25,7 @@ ToolBar {
                 anchors.fill: parent
                 onClicked: {
                     // emit clicked
+                    drawerClicked();
                 }
             }
         }
@@ -49,6 +52,7 @@ ToolBar {
                 anchors.fill: parent
                 onClicked: {
                     // emit clicked
+                    menuClicked();
                 }
             }
         }

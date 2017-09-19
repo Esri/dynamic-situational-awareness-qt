@@ -129,10 +129,10 @@ void AddLocalDataController::addItemAsElevationSource(const QList<int>& indices)
 {
   QStringList dataPaths;
 
-  for (int index : indices)
+  for (const int index : indices)
   {
-    DataType dataItemType = m_localDataModel->getDataItemType(index);
-    QString dataItemPath = m_localDataModel->getDataItemPath(index);
+    const DataType dataItemType = m_localDataModel->getDataItemType(index);
+    const QString dataItemPath = m_localDataModel->getDataItemPath(index);
 
     if (dataItemType == DataType::TilePackage)
     {
@@ -167,7 +167,7 @@ void AddLocalDataController::addItemAsElevationSource(const QList<int>& indices)
 // for the file at the given index, and adds the file as a layer
 void AddLocalDataController::addItemAsLayer(const QList<int>& indices)
 {
-  for (int index : indices)
+  for (const int index : indices)
   {
     DataType dataItemType = m_localDataModel->getDataItemType(index);
     QString dataItemPath = m_localDataModel->getDataItemPath(index);
@@ -211,6 +211,7 @@ void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path)
   {
     if (!e.isEmpty())
       return;
+
     for (FeatureTable* featureTable : gdb->geodatabaseFeatureTables())
     {
       FeatureLayer* featureLayer = new FeatureLayer(featureTable);

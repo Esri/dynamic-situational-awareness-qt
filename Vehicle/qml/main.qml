@@ -24,6 +24,12 @@ Vehicle {
 
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
+    LocationController {
+        id: locationController
+        simulated: true
+        enabled: locationCheckBox.checked
+    }
+
     // Create SceneQuickView here, and create its Scene etc. in C++ code
     SceneView {
         anchors.fill: parent
@@ -42,17 +48,6 @@ Vehicle {
 
             onBasemapSelected: basemapsCheckBox.checked = false;
             onClosed: basemapsCheckBox.checked = false;
-        }
-
-        LocationTool {
-            id: locationTool
-            anchors {
-                left: parent.left
-                top: parent.top
-                bottom: sceneView.attributionTop
-            }
-            visible: locationCheckBox.checked
-            onClosed: locationCheckBox.checked = false;
         }
     }
 
@@ -91,8 +86,8 @@ Vehicle {
         }
         checkable: true
         checked: false
-        width: basemapsCheckBox.width
-        height: basemapsCheckBox.height
+        width: 32 * scaleFactor
+        height: 32 * scaleFactor
 
         background: Rectangle {
                   anchors.fill: locationCheckBox
@@ -100,14 +95,23 @@ Vehicle {
               }
 
         Image {
-            id: image
+            id: navImageEnabled
+            visible: locationCheckBox.checked
             fillMode: Image.PreserveAspectFit
             anchors.centerIn: parent
-            sourceSize.height: locationCheckBox.background.height - (6 * scaleFactor)
+            sourceSize.height: parent.height * 0.85
             height: sourceSize.height
             source: "qrc:/Resources/icons/xhdpi/navigation.png"
         }
+
+        Image {
+            id: navImageDisabled
+            visible: !navImageEnabled.visible
+            fillMode: Image.PreserveAspectFit
+            anchors.centerIn: parent
+            sourceSize.height: parent.height * 0.85
+            height: sourceSize.height
+            source: "qrc:/Resources/icons/xhdpi/navigation_disabled.png"
+        }
     }
-
-
 }

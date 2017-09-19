@@ -14,7 +14,7 @@
 TARGET = DSA_Vehicle_Qt
 TEMPLATE = app
 
-QT += core gui opengl network positioning sensors qml quick
+QT += core gui opengl network positioning sensors qml quick xml
 CONFIG += c++11
 
 ARCGIS_RUNTIME_VERSION = 100.2
@@ -29,6 +29,8 @@ HEADERS += \
     ../Shared/BasemapPickerController.h \
     ../Shared/TileCacheListModel.h \
     ../Shared/DsaController.h \
+    ../Shared/GPXLocationSimulator.h \
+    ../Shared/LocationController.h \
     ../Shared/Message.h \
     ../Shared/MessageListener.h \
     ../Shared/MessagesOverlay.h
@@ -40,14 +42,16 @@ SOURCES += \
     ../Shared/BasemapPickerController.cpp \
     ../Shared/TileCacheListModel.cpp \
     ../Shared/DsaController.cpp \
+    ../Shared/GPXLocationSimulator.cpp \
+    ../Shared/LocationController.cpp \
     ../Shared/Message.cpp \
     ../Shared/MessageListener.cpp \
     ../Shared/MessagesOverlay.cpp
 
 RESOURCES += \
     qml/qml.qrc \
-    Resources/Resources.qrc \
-    Resources/application.qrc \
+    ../Shared/Resources/Resources.qrc \
+    ../Shared/Resources/application.qrc \
     ../Shared/qml/shared_qml.qrc
 
 #-------------------------------------------------------------------------------

@@ -24,7 +24,7 @@ namespace ArcGISRuntime
 {
   class Error;
   class Scene;
-  class SceneQuickView;
+  class GeoView;
 }
 }
 
@@ -42,21 +42,20 @@ public:
 
   Esri::ArcGISRuntime::Scene* scene() const;
 
-  void init(Esri::ArcGISRuntime::SceneQuickView* sceneView);
+  void init(Esri::ArcGISRuntime::GeoView* geoView);
 
 public slots:
   void onError(const Esri::ArcGISRuntime::Error& error);
 
 private:
-  Esri::ArcGISRuntime::SceneQuickView*    m_sceneView = nullptr;
-  Esri::ArcGISRuntime::Scene* m_scene = nullptr;
+  Esri::ArcGISRuntime::Scene*   m_scene = nullptr;
 
-  QUdpSocket*                 m_udpSocket = nullptr;
-  MessageListener*            m_messageListener = nullptr;
-  MessagesOverlay*            m_messagesOverlay = nullptr;
+  QUdpSocket*                   m_udpSocket = nullptr;
+  MessageListener*              m_messageListener = nullptr;
+  MessagesOverlay*              m_messagesOverlay = nullptr;
 
-  QString                     m_dataPath;
-  int                         m_broadcastPort = 45678;
+  QString                       m_dataPath;
+  int                           m_broadcastPort = 45678;
 };
 
 #endif // DSACONTROLLER_H

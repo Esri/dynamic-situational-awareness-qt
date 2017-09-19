@@ -29,6 +29,7 @@
 
 #include "BasemapPickerController.h"
 #include "AddLocalDataController.h"
+#include "LocationController.h"
 
 #include "AppInfo.h"
 #include "Handheld.h"
@@ -100,6 +101,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<Handheld>("Esri.Handheld", 1, 0, "Handheld");
   qmlRegisterType<BasemapPickerController>("Esri.DSA", 1, 0, "BasemapPickerController");
   qmlRegisterType<AddLocalDataController>("Esri.DSA", 1, 0, "AddLocalDataController");
+  qmlRegisterType<LocationController>("Esri.DSA", 1, 0, "LocationController");
 
   // Intialize application view
   QQuickView view;

@@ -11,6 +11,7 @@
 //
 #include <QFileInfo>
 #include <QTemporaryFile>
+#include <QUrl>
 
 #include "TileCache.h"
 

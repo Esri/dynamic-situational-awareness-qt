@@ -1,6 +1,9 @@
 <RCC>
     <qresource prefix="/Resources">
+        <file>LocationDisplay.dae</file>
         <file>AppIcon.png</file>
+        <file>icons/xhdpi/navigation.png</file>
+        <file>icons/xhdpi/navigation_disabled.png</file>
         <file>icons/xhdpi/ic_menu_closeclear_dark.png</file>
         <file>icons/xhdpi/ic_menu_choosebasemap_dark.png</file>
         <file>icons/xhdpi/ic_menu_layervisibilitypopover_dark_d.png</file>

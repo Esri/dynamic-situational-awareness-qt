@@ -14,6 +14,8 @@
 
 #include <QCompass>
 #include <QDir>
+#include <cmath>
+
 #include "GPXLocationSimulator.h"
 #include "DsaUtility.h"
 #include "SceneQuickView.h"

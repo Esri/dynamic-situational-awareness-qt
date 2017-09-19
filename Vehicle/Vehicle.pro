@@ -30,7 +30,10 @@ HEADERS += \
     ../Shared/TileCacheListModel.h \
     ../Shared/AddLocalDataController.h \
     ../Shared/DataItemListModel.h \
-    ../Shared/DsaController.h
+    ../Shared/DsaController.h \
+    ../Shared/Message.h \
+    ../Shared/MessageListener.h \
+    ../Shared/MessagesOverlay.h
 
 SOURCES += \
     main.cpp \
@@ -40,7 +43,10 @@ SOURCES += \
     ../Shared/TileCacheListModel.cpp \
     ../Shared/AddLocalDataController.cpp \
     ../Shared/DataItemListModel.cpp \
-    ../Shared/DsaController.cpp
+    ../Shared/DsaController.cpp \
+    ../Shared/Message.cpp \
+    ../Shared/MessageListener.cpp \
+    ../Shared/MessagesOverlay.cpp
 
 RESOURCES += \
     qml/qml.qrc \

@@ -1,4 +1,4 @@
-// Copyright 2016 ESRI
+// Copyright 2017 ESRI
 //
 // All rights reserved under the copyright laws of the United States
 // and applicable international laws, treaties, and conventions.
@@ -10,25 +10,19 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef VEHICLE_H
-#define VEHICLE_H
+#include "AbstractMessageParser.h"
 
-#include <QQuickItem>
-
-class DsaController;
-
-class Vehicle : public QQuickItem
+AbstractMessageParser::AbstractMessageParser(const QString& filePath, QObject* parent) :
+  QObject(parent),
+  m_filePath(filePath)
 {
-  Q_OBJECT
+}
 
-public:
-  Vehicle(QQuickItem* parent = nullptr);
-  ~Vehicle();
+AbstractMessageParser::~AbstractMessageParser()
+{
+}
 
-  void componentComplete() override;
-
-private:
-  DsaController*                          m_controller = nullptr;
-};
-
-#endif // VEHICLE_H
+QString AbstractMessageParser::filePath() const
+{
+  return m_filePath;
+}

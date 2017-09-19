@@ -43,9 +43,6 @@ public:
   QString gpxFile();
   bool setGpxFile(const QString& fileName);
 
-  int timerInterval();
-  void setTimerInterval(int milliseconds);
-
   int playbackMultiplier();
   void setPlaybackMultiplier(int multiplier);
 
@@ -73,6 +70,8 @@ private:
   double heading(const Esri::ArcGISRuntime::LineSegment& segment) const;
 
   double getInterpolatedHeading(const Esri::ArcGISRuntime::Point& currentPosition, double normalizedTime);
+
+  void connectSignals();
 
   QFile m_gpxFile;
   QByteArray m_gpxData;

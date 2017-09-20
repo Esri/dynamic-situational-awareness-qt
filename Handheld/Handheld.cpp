@@ -11,6 +11,7 @@
 //
 
 #include "SceneQuickView.h"
+#include "ArcGISCompassController.h"
 
 #include "DsaController.h"
 #include "Handheld.h"
@@ -40,4 +41,7 @@ void Handheld::componentComplete()
 
   // Set scene to scene view
   m_sceneView->setArcGISScene(m_controller->scene());
+
+  // Add Compass to scene view
+  m_controller->setCompassController(findChild<Toolkit::ArcGISCompassController*>("arcGISCompassController"), m_sceneView);
 }

@@ -16,6 +16,7 @@
 #include "ElevationSource.h"
 #include "Layer.h"
 #include "SceneQuickView.h"
+#include "MapQuickView.h"
 #include "DictionarySymbolStyle.h"
 #include "DsaUtility.h"
 #include "DsaController.h"
@@ -25,6 +26,7 @@
 #include "MessageListener.h"
 #include "Message.h"
 #include "MessagesOverlay.h"
+#include "ArcGISCompassController.h"
 
 #include <QUdpSocket>
 
@@ -132,6 +134,23 @@ void DsaController::init(GeoView* geoView)
       });
     }
   }
+}
+
+void DsaController::setCompassController(Toolkit::ArcGISCompassController *controller, Esri::ArcGISRuntime::GeoView* geoView)
+{
+  if (!controller || !geoView)
+    return;
+
+  m_compassController = controller;
+
+  if (geoView->geoViewType() == GeoViewType::SceneView)
+    m_compassController->setView(static_cast<SceneQuickView*>(geoView));
+  else if (geoView->geoViewType() == GeoViewType::MapView)
+    m_compassController->setView(static_cast<MapQuickView*>(geoView));
+  else
+    return;
+
+  DsaUtility::tools.append(m_compassController);
 }
 
 void DsaController::onError(const Esri::ArcGISRuntime::Error& e)

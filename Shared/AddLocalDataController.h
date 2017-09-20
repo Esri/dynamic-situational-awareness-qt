@@ -55,6 +55,7 @@ public:
   void createSceneLayer(const QString& path);
   void createTiledLayer(const QString& path);
   void createVectorTiledLayer(const QString& path);
+  QStringList dataPaths() const {return m_dataPaths; }
 
 signals:
   void localDataModelChanged();

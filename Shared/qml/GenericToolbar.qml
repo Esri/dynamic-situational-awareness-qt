@@ -12,24 +12,24 @@ ToolBar {
     RowLayout {
         anchors.fill: parent
 
-        Image {
-            anchors {
-                left: parent.left
-                verticalCenter: parent.verticalCenter
-                margins: 5
-            }
-            source: "qrc:/Resources/icons/xhdpi/drawer_large.png"
-            width: 36
-            height: width
+//        Image {
+//            anchors {
+//                left: parent.left
+//                verticalCenter: parent.verticalCenter
+//                margins: 5
+//            }
+//            source: "qrc:/Resources/icons/xhdpi/drawer_large.png"
+//            width: 36
+//            height: width
 
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    // emit clicked
-                    drawerClicked();
-                }
-            }
-        }
+//            MouseArea {
+//                anchors.fill: parent
+//                onClicked: {
+//                    // emit clicked
+//                    drawerClicked();
+//                }
+//            }
+//        }
 
         Label {
             id: toolbarLabel

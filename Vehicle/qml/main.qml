@@ -44,10 +44,6 @@ Vehicle {
         onMenuClicked: {
             console.log("Menu button was clicked");
         }
-
-        onDrawerClicked: {
-            console.log("Drawer was clicked");
-        }
     }
 
     // Create SceneQuickView here, and create its Scene etc. in C++ code
@@ -60,7 +56,6 @@ Vehicle {
         }
 
         id: sceneView
-        anchors.fill: parent
         objectName: "sceneView"
 
         Drawer {
@@ -108,31 +103,31 @@ Vehicle {
             }
         }
 
-    Button {
-        id: basemapsCheckBox
-        anchors{
-            margins: 2 * scaleFactor
-            top: toolbar.bottom
-            right: parent.right
-        }
-        checkable: true
-        checked: false
-        width: 32 * scaleFactor
-        height: 32 * scaleFactor
+//    Button {
+//        id: basemapsCheckBox
+//        anchors{
+//            margins: 2 * scaleFactor
+//            top: toolbar.bottom
+//            right: parent.right
+//        }
+//        checkable: true
+//        checked: false
+//        width: 32 * scaleFactor
+//        height: 32 * scaleFactor
 
-        background: Rectangle {
-                  anchors.fill: basemapsCheckBox
-                  color: Material.primary
-              }
+//        background: Rectangle {
+//                  anchors.fill: basemapsCheckBox
+//                  color: Material.primary
+//              }
 
-        Image {
-            fillMode: Image.PreserveAspectFit
-            anchors.centerIn: parent
-            sourceSize.height: basemapsCheckBox.background.height - (6 * scaleFactor)
-            height: sourceSize.height
-            source: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_dark.png"
-        }
-    }
+//        Image {
+//            fillMode: Image.PreserveAspectFit
+//            anchors.centerIn: parent
+//            sourceSize.height: basemapsCheckBox.background.height - (6 * scaleFactor)
+//            height: sourceSize.height
+//            source: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_dark.png"
+//        }
+//    }
         Column {
             anchors{
                 margins: 2 * scaleFactor

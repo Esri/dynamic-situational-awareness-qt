@@ -12,11 +12,15 @@
 
 #include "ArcGISTiledElevationSource.h"
 #include "Scene.h"
+#include "Basemap.h"
+#include "ElevationSource.h"
+#include "Layer.h"
 #include "SceneQuickView.h"
 #include "DictionarySymbolStyle.h"
 #include "DsaUtility.h"
 #include "DsaController.h"
 #include "BasemapPickerController.h"
+#include "AddLocalDataController.h"
 #include "LocationController.h"
 #include "MessageListener.h"
 #include "Message.h"
@@ -25,7 +29,6 @@
 #include <QUdpSocket>
 
 using namespace Esri::ArcGISRuntime;
-
 
 DsaController::DsaController(QObject* parent):
   QObject(parent),
@@ -75,13 +78,13 @@ void DsaController::init(GeoView* geoView)
     m_messagesOverlay->addMessage(cotMessage);
   });
 
+
   // placeholder until we have ToolManager
   for (QObject* obj : DsaUtility::tools)
   {
     if (!obj)
       continue;
 
-    // we would add basemapChanged signal to AbstractTool and then we do not require the concrete type here
     if (qobject_cast<BasemapPickerController*>(obj))
     {
       BasemapPickerController* basemapPicker = static_cast<BasemapPickerController*>(obj);
@@ -101,10 +104,37 @@ void DsaController::init(GeoView* geoView)
       LocationController* locationController = static_cast<LocationController*>(obj);
       locationController->setGpxFilePath(QUrl::fromLocalFile(m_dataPath + "/MontereyMounted.gpx"));
       geoView->graphicsOverlays()->append(locationController->locationOverlay());
+
+    }
+    else if (qobject_cast<AddLocalDataController*>(obj))
+    {
+      AddLocalDataController* localDataController = static_cast<AddLocalDataController*>(obj);
+      connect(localDataController, &AddLocalDataController::layerSelected, this, [this](Layer* lyr)
+      {
+        if (!lyr)
+          return;
+
+        connect(lyr, &Layer::errorOccurred, this, &DsaController::onError);
+
+        lyr->setParent(this);
+        m_scene->operationalLayers()->append(lyr);
+      });
+
+      connect(localDataController, &AddLocalDataController::elevationSourceSelected, this, [this](ElevationSource* source)
+      {
+        if (!source)
+          return;
+
+        connect(source, &ElevationSource::errorOccurred, this, &DsaController::onError);
+
+        source->setParent(this);
+        m_scene->baseSurface()->elevationSources()->append(source);
+      });
     }
   }
 }
 
-void DsaController::onError(const Esri::ArcGISRuntime::Error&)
+void DsaController::onError(const Esri::ArcGISRuntime::Error& e)
 {
+  qDebug() << "Error" << e.message() << e.additionalMessage();
 }

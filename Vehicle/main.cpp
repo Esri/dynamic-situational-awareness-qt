@@ -28,6 +28,7 @@
 #include "SceneQuickView.h"
 
 #include "BasemapPickerController.h"
+#include "AddLocalDataController.h"
 #include "LocationController.h"
 
 #include "AppInfo.h"
@@ -57,7 +58,7 @@ using namespace Esri::ArcGISRuntime;
 
 int main(int argc, char *argv[])
 {
-
+  QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
   QGuiApplication app(argc, argv);
 
   QCoreApplication::setApplicationName(kApplicationName);
@@ -99,6 +100,7 @@ int main(int argc, char *argv[])
   // Register the Vehicle (QQuickItem) for QML
   qmlRegisterType<Vehicle>("Esri.Vehicle", 1, 0, "Vehicle");
   qmlRegisterType<BasemapPickerController>("Esri.DSA", 1, 0, "BasemapPickerController");
+  qmlRegisterType<AddLocalDataController>("Esri.DSA", 1, 0, "AddLocalDataController");
   qmlRegisterType<LocationController>("Esri.DSA", 1, 0, "LocationController");
 
   // Intialize application view

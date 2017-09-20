@@ -56,69 +56,140 @@ Handheld {
         objectName: "sceneView"
     }
 
-    Button {
-        id: basemapsCheckBox
+    Column {
         anchors{
             margins: 2 * scaleFactor
             top: toolbar.bottom
             right: parent.right
         }
-        checkable: true
-        checked: false
-        width: 32 * scaleFactor
-        height: 32 * scaleFactor
+        spacing: 5 * scaleFactor
 
-        background: Rectangle {
-                  anchors.fill: basemapsCheckBox
-                  color: Material.primary
-              }
+        Button {
+            id: basemapsCheckBox
+            width: 32 * scaleFactor
+            height: 32 * scaleFactor
 
-        Image {
-            fillMode: Image.PreserveAspectFit
-            anchors.centerIn: parent
-            sourceSize.height: basemapsCheckBox.background.height - (6 * scaleFactor)
-            height: sourceSize.height
-            source: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_dark.png"
+            background: Rectangle {
+                anchors.fill: basemapsCheckBox
+                color: Material.primary
+            }
+
+            Image {
+                fillMode: Image.PreserveAspectFit
+                anchors.centerIn: parent
+                sourceSize.height: basemapsCheckBox.background.height - (6 * scaleFactor)
+                height: sourceSize.height
+                source: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_dark.png"
+            }
+
+            onClicked: {
+                if (drawer.visible)
+                    drawer.close();
+                else {
+                    toolRect.state = "basemap";
+                    drawer.open();
+                }
+            }
+        }
+
+        Button {
+            id: addLocalDataCheckBox
+            width: 32 * scaleFactor
+            height: 32 * scaleFactor
+
+            background: Rectangle {
+                anchors.fill: addLocalDataCheckBox
+                color: Material.primary
+            }
+
+            Image {
+                fillMode: Image.PreserveAspectFit
+                anchors.centerIn: parent
+                sourceSize.height: addLocalDataCheckBox.background.height - (6 * scaleFactor)
+                height: sourceSize.height
+                source: "qrc:/Resources/icons/xhdpi/ic_menu_layervisibilitypopover_dark_d.png"
+            }
+
+            onClicked: {
+                if (drawer.visible)
+                    drawer.close();
+                else {
+                    toolRect.state = "data";
+                    drawer.open();
+                }
+            }
+        }
+
+        Button {
+            id: locationCheckBox
+            checkable: true
+            checked: false
+            width: 32 * scaleFactor
+            height: 32 * scaleFactor
+
+            background: Rectangle {
+                anchors.fill: locationCheckBox
+                color: Material.primary
+            }
+
+            Image {
+                fillMode: Image.PreserveAspectFit
+                anchors.centerIn: parent
+                sourceSize.height: parent.height * 0.85
+                height: sourceSize.height
+                source: locationCheckBox.checked ?
+                            "qrc:/Resources/icons/xhdpi/navigation.png" :
+                            "qrc:/Resources/icons/xhdpi/navigation_disabled.png"
+
+            }
         }
     }
 
-    Button {
-        id: locationCheckBox
-        anchors{
-            margins: 2 * scaleFactor
-            top: basemapsCheckBox.bottom
-            right: parent.right
+
+    Drawer {
+        id: drawer
+        width: parent.width
+        height: parent.height
+        edge: Qt.BottomEdge
+        interactive: false
+
+        Rectangle {
+            id: toolRect
+            anchors.fill: parent
+
+            states: [
+                State {
+                    name: "basemap"
+                    PropertyChanges {
+                        target: basemapsTool
+                        visible: true
+                    }
+                },
+                State {
+                    name: "data"
+                    PropertyChanges {
+                        target: addLocalDataTool
+                        visible: true
+                    }
+                }
+            ]
+
+            BasemapPicker {
+                id: basemapsTool
+                anchors.fill: parent
+                height: parent.height
+                onBasemapSelected: closed()
+                onClosed: drawer.close();
+            }
+
+            AddLocalData {
+                id: addLocalDataTool
+                anchors.fill: parent
+                height: parent.height
+                showDataConnectionPane: false
+                onClosed: drawer.close();
+            }
         }
-        checkable: true
-        checked: false
-        width: 32 * scaleFactor
-        height: 32 * scaleFactor
-
-        background: Rectangle {
-                  anchors.fill: locationCheckBox
-                  color: Material.primary
-              }
-
-        Image {
-            fillMode: Image.PreserveAspectFit
-            anchors.centerIn: parent
-            sourceSize.height: parent.height * 0.85
-            height: sourceSize.height
-            source: locationCheckBox.checked ?
-                        "qrc:/Resources/icons/xhdpi/navigation.png" :
-                        "qrc:/Resources/icons/xhdpi/navigation_disabled.png"
-
-        }
-    }
-
-    BasemapPicker {
-        id: basemapsTool
-
-        anchors.fill: parent
-        visible: basemapsCheckBox.checked
-
-        onBasemapSelected: basemapsCheckBox.checked = false;
-        onClosed: basemapsCheckBox.checked = false;
     }
 
     LocationController {

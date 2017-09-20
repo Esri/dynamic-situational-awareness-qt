@@ -28,6 +28,8 @@ HEADERS += \
     ../Shared/DsaUtility.h \
     ../Shared/BasemapPickerController.h \
     ../Shared/TileCacheListModel.h \
+    ../Shared/AddLocalDataController.h \
+    ../Shared/DataItemListModel.h \
     ../Shared/DsaController.h \
     ../Shared/GPXLocationSimulator.h \
     ../Shared/LocationController.h \
@@ -41,6 +43,8 @@ SOURCES += \
     ../Shared/DsaUtility.cpp \
     ../Shared/BasemapPickerController.cpp \
     ../Shared/TileCacheListModel.cpp \
+    ../Shared/AddLocalDataController.cpp \
+    ../Shared/DataItemListModel.cpp \
     ../Shared/DsaController.cpp \
     ../Shared/GPXLocationSimulator.cpp \
     ../Shared/LocationController.cpp \
@@ -53,6 +57,8 @@ RESOURCES += \
     ../Shared/Resources/Resources.qrc \
     ../Shared/Resources/application.qrc \
     ../Shared/qml/shared_qml.qrc
+
+QML_IMPORT_PATH += $$PWD/../Shared/qml
 
 #-------------------------------------------------------------------------------
 

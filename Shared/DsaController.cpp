@@ -16,6 +16,7 @@
 #include "ElevationSource.h"
 #include "Layer.h"
 #include "SceneQuickView.h"
+#include "MapQuickView.h"
 #include "DictionarySymbolStyle.h"
 #include "DsaUtility.h"
 #include "DsaController.h"
@@ -25,6 +26,7 @@
 #include "MessageListener.h"
 #include "Message.h"
 #include "MessagesOverlay.h"
+#include "ArcGISCompassController.h"
 
 #include <QUdpSocket>
 
@@ -78,6 +80,23 @@ void DsaController::init(GeoView* geoView)
     m_messagesOverlay->addMessage(cotMessage);
   });
 
+  Toolkit::ArcGISCompassController* compassController = nullptr;
+
+  if (geoView->geoViewType() == GeoViewType::SceneView)
+  {
+    SceneQuickView* sceneQuickView = static_cast<SceneQuickView*>(geoView);
+    compassController = sceneQuickView->findChild<Toolkit::ArcGISCompassController*>("arcGISCompassController");
+    compassController->setView(sceneQuickView);
+  }
+  else if(geoView->geoViewType() == GeoViewType::MapView)
+  {
+    MapQuickView* mapQuickView = static_cast<MapQuickView*>(geoView);
+    compassController = mapQuickView->findChild<Toolkit::ArcGISCompassController*>("arcGISCompassController");
+    compassController->setView(mapQuickView);
+  }
+
+  if (compassController)
+    DsaUtility::tools.append(compassController);
 
   // placeholder until we have ToolManager
   for (QObject* obj : DsaUtility::tools)

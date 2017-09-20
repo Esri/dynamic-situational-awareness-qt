@@ -17,6 +17,7 @@ import QtQuick.Controls.Material 2.1
 import QtQuick.Window 2.2
 import Esri.DSA 1.0
 import Esri.Vehicle 1.0
+import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.2
 
 Vehicle {
     width: 800
@@ -168,6 +169,16 @@ Vehicle {
                                 "qrc:/Resources/icons/xhdpi/navigation_disabled.png"
 
                 }
+            }
+        }
+
+        ArcGISCompass {
+            id: compass
+            anchors {
+                right: parent.right
+                bottom: parent.bottom
+                rightMargin: 2 * scaleFactor
+                bottomMargin: 22 * scaleFactor
             }
         }
     }

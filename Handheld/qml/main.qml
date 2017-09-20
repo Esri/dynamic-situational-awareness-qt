@@ -17,6 +17,7 @@ import QtQuick.Controls.Material 2.1
 import QtQuick.Window 2.2
 import Esri.DSA 1.0
 import Esri.Handheld 1.0
+import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.2
 
 Handheld {
     width: 320
@@ -28,6 +29,16 @@ Handheld {
     SceneView {
         anchors.fill: parent
         objectName: "sceneView"
+
+        ArcGISCompass {
+            id: compass
+            anchors {
+                right: parent.right
+                bottom: parent.bottom
+                bottomMargin: 22 * scaleFactor
+                rightMargin: 2 * scaleFactor
+            }
+        }
     }
 
     Column {

@@ -95,7 +95,7 @@ void DsaController::init(GeoView* geoView)
     compassController->setView(mapQuickView);
   }
 
-  if (!compassController)
+  if (compassController)
     DsaUtility::tools.append(compassController);
 
   // placeholder until we have ToolManager

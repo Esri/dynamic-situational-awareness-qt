@@ -29,6 +29,16 @@ Handheld {
     SceneView {
         anchors.fill: parent
         objectName: "sceneView"
+
+        ArcGISCompass {
+            id: compass
+            anchors {
+                right: parent.right
+                bottom: parent.bottom
+                bottomMargin: 22 * scaleFactor
+                rightMargin: 2 * scaleFactor
+            }
+        }
     }
 
     Column {
@@ -171,15 +181,5 @@ Handheld {
         id: locationController
         simulated: true
         enabled: locationCheckBox.checked
-    }
-
-    ArcGISCompass {
-        id: compass
-        anchors {
-            right: parent.right
-            bottom: parent.bottom
-            bottomMargin: 22 * scaleFactor
-            rightMargin: 2 * scaleFactor
-        }
     }
 }

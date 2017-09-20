@@ -80,6 +80,23 @@ void DsaController::init(GeoView* geoView)
     m_messagesOverlay->addMessage(cotMessage);
   });
 
+  Toolkit::ArcGISCompassController* compassController = nullptr;
+
+  if (geoView->geoViewType() == GeoViewType::SceneView)
+  {
+    SceneQuickView* sceneQuickView = static_cast<SceneQuickView*>(geoView);
+    compassController = sceneQuickView->findChild<Toolkit::ArcGISCompassController*>("arcGISCompassController");
+    compassController->setView(sceneQuickView);
+  }
+  else if(geoView->geoViewType() == GeoViewType::MapView)
+  {
+    MapQuickView* mapQuickView = static_cast<MapQuickView*>(geoView);
+    compassController = mapQuickView->findChild<Toolkit::ArcGISCompassController*>("arcGISCompassController");
+    compassController->setView(mapQuickView);
+  }
+
+  if (!compassController)
+    DsaUtility::tools.append(compassController);
 
   // placeholder until we have ToolManager
   for (QObject* obj : DsaUtility::tools)
@@ -134,23 +151,6 @@ void DsaController::init(GeoView* geoView)
       });
     }
   }
-}
-
-void DsaController::setCompassController(Toolkit::ArcGISCompassController *controller, Esri::ArcGISRuntime::GeoView* geoView)
-{
-  if (!controller || !geoView)
-    return;
-
-  m_compassController = controller;
-
-  if (geoView->geoViewType() == GeoViewType::SceneView)
-    m_compassController->setView(static_cast<SceneQuickView*>(geoView));
-  else if (geoView->geoViewType() == GeoViewType::MapView)
-    m_compassController->setView(static_cast<MapQuickView*>(geoView));
-  else
-    return;
-
-  DsaUtility::tools.append(m_compassController);
 }
 
 void DsaController::onError(const Esri::ArcGISRuntime::Error& e)

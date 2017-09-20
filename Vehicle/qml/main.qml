@@ -171,15 +171,15 @@ Vehicle {
                 }
             }
         }
-    }
 
-    ArcGISCompass {
-        id: compass
-        anchors {
-            right: parent.right
-            bottom: parent.bottom
-            rightMargin: 2 * scaleFactor
-            bottomMargin: 22 * scaleFactor
+        ArcGISCompass {
+            id: compass
+            anchors {
+                right: parent.right
+                bottom: parent.bottom
+                rightMargin: 2 * scaleFactor
+                bottomMargin: 22 * scaleFactor
+            }
         }
     }
 }

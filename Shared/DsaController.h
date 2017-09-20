@@ -47,14 +47,12 @@ public:
   Esri::ArcGISRuntime::Scene* scene() const;
 
   void init(Esri::ArcGISRuntime::GeoView* geoView);
-  void setCompassController(Esri::ArcGISRuntime::Toolkit::ArcGISCompassController* controller, Esri::ArcGISRuntime::GeoView* geoView);
 
 public slots:
   void onError(const Esri::ArcGISRuntime::Error& error);
 
 private:
   Esri::ArcGISRuntime::Scene* m_scene = nullptr;
-  Esri::ArcGISRuntime::Toolkit::ArcGISCompassController* m_compassController = nullptr;
 
   QUdpSocket* m_udpSocket = nullptr;
   MessageListener* m_messageListener = nullptr;

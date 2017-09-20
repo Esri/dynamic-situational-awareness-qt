@@ -40,7 +40,4 @@ void Vehicle::componentComplete()
 
   // Set scene to scene view
   m_sceneView->setArcGISScene(m_controller->scene());
-
-  // Add a Compass to scene view
-  m_controller->setCompassController(findChild<Toolkit::ArcGISCompassController*>("arcGISCompassController"), m_sceneView);
 }

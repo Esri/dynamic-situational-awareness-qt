@@ -27,6 +27,8 @@ HEADERS += \
     Handheld.h \
     ../Shared/DsaUtility.h \
     ../Shared/BasemapPickerController.h \
+    ../Shared/AddLocalDataController.h \
+    ../Shared/DataItemListModel.h \
     ../Shared/TileCacheListModel.h \
     ../Shared/DsaController.h \
     ../Shared/GPXLocationSimulator.h \
@@ -41,6 +43,8 @@ SOURCES += \
     Handheld.cpp \
     ../Shared/DsaUtility.cpp \
     ../Shared/BasemapPickerController.cpp \
+    ../Shared/AddLocalDataController.cpp \    
+    ../Shared/DataItemListModel.cpp \
     ../Shared/TileCacheListModel.cpp \
     ../Shared/DsaController.cpp \
     ../Shared/GPXLocationSimulator.cpp \
@@ -56,6 +60,8 @@ RESOURCES += \
     ../Shared/qml/shared_qml.qrc
 
 #-------------------------------------------------------------------------------
+
+QML_IMPORT_PATH += $$PWD/../Shared/qml
 
 win32 {
     include (Win/Win.pri)

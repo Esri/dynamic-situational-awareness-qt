@@ -36,7 +36,7 @@ class AddLocalDataController : public QObject
   Q_PROPERTY(QStringList fileFilterList READ fileFilterList NOTIFY fileFilterListChanged)
 
 public:
-  AddLocalDataController(QObject* parent = nullptr);
+  explicit AddLocalDataController(QObject* parent = nullptr);
   ~AddLocalDataController() = default;
 
   Q_INVOKABLE void addPathToDirectoryList(const QString& path);

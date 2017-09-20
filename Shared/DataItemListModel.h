@@ -30,7 +30,7 @@ enum class DataType
   GeoPackage,
   KML,
   All,
-  Unknown
+  Unknown = -1
 };
 
 class DataItemListModel : public QAbstractListModel

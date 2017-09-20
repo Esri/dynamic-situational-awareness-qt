@@ -31,6 +31,9 @@
 #include "AddLocalDataController.h"
 #include "LocationController.h"
 
+#include "ArcGISRuntimeToolkit.h"
+#include "ArcGISCompassController.h"
+
 #include "AppInfo.h"
 #include "Handheld.h"
 
@@ -102,6 +105,9 @@ int main(int argc, char *argv[])
   qmlRegisterType<BasemapPickerController>("Esri.DSA", 1, 0, "BasemapPickerController");
   qmlRegisterType<AddLocalDataController>("Esri.DSA", 1, 0, "AddLocalDataController");
   qmlRegisterType<LocationController>("Esri.DSA", 1, 0, "LocationController");
+
+  // Register Toolkit Component Types
+  Toolkit::ArcGISRuntimeToolkit::registerToolkitTypes();
 
   // Intialize application view
   QQuickView view;

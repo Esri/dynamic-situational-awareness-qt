@@ -27,7 +27,7 @@ public:
   Esri::ArcGISRuntime::Geometry geometry;
   QString messageId;
   QString messageName;
-  QString messageType;
+  Message::MessageType messageType = Message::MessageType::Unknown;
   QString symbolId;
 };
 

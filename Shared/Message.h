@@ -33,6 +33,14 @@ public:
     Unknown = -1
   };
 
+  enum class MessageType
+  {
+    Track = 0,
+    Report,
+    Sketch,
+    Unknown = -1
+  };
+
   Message();
   Message(const Message& other);
   Message(Message&& other);
@@ -61,8 +69,8 @@ public:
   QString messageName() const;
   void setMessageName(const QString& messageName);
 
-  QString messageType() const;
-  void setMessageType(const QString& messageType);
+  MessageType messageType() const;
+  void setMessageType(MessageType messageType);
 
   QString symbolId() const;
   void setSymbolId(const QString& symbolId);
@@ -70,5 +78,7 @@ public:
 private:
   QSharedDataPointer<MessageData> d;
 };
+
+Q_DECLARE_METATYPE(Message::MessageType)
 
 #endif // MESSAGE_H

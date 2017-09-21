@@ -22,19 +22,13 @@
 #include "BasemapPickerController.h"
 #include "AddLocalDataController.h"
 #include "LocationController.h"
-#include "MessageListener.h"
-#include "Message.h"
-#include "MessagesOverlay.h"
-
-#include <QUdpSocket>
+#include "MessageFeedsController.h"
 
 using namespace Esri::ArcGISRuntime;
 
 DsaController::DsaController(QObject* parent):
   QObject(parent),
   m_scene(new Scene(this)),
-  m_udpSocket(new QUdpSocket(this)),
-  m_messageListener(new MessageListener(this)),
   m_dataPath(DsaUtility::dataPath())
 {
   // Set viewpoint to Monterey, CA
@@ -62,23 +56,6 @@ Esri::ArcGISRuntime::Scene* DsaController::scene() const
 
 void DsaController::init(GeoView* geoView)
 {
-  // set up the messages overlay with a Mil2525c_b2 dictionary style
-  DictionarySymbolStyle* dictionarySymbolStyle = new DictionarySymbolStyle("mil2525c_b2", m_dataPath + "/styles/mil2525c_b2.stylx", this);
-  m_messagesOverlay = new MessagesOverlay(geoView, dictionarySymbolStyle, this);
-
-  // create the messaging socket connection and hook up message receiving
-  m_udpSocket->bind(m_broadcastPort, QUdpSocket::DontShareAddress | QUdpSocket::ReuseAddressHint);
-  m_messageListener->setDevice(m_udpSocket);
-  connect(m_messageListener, &MessageListener::messageReceived, this, [this](const QByteArray& message)
-  {
-    Message cotMessage = Message::createFromCoTMessage(message);
-    if (message.isEmpty())
-      return;
-
-    m_messagesOverlay->addMessage(cotMessage);
-  });
-
-
   // placeholder until we have ToolManager
   for (QObject* obj : DsaUtility::tools)
   {
@@ -130,6 +107,11 @@ void DsaController::init(GeoView* geoView)
         source->setParent(this);
         m_scene->baseSurface()->elevationSources()->append(source);
       });
+    }
+    else if (qobject_cast<MessageFeedsController*>(obj))
+    {
+      MessageFeedsController* messageFeedsController = static_cast<MessageFeedsController*>(obj);
+      messageFeedsController->init(geoView);
     }
   }
 }

@@ -47,6 +47,9 @@ public:
 
   bool addMessage(const Message& message);
 
+  bool isVisible() const;
+  void setVisible(bool visible);
+
 signals:
   void graphicsOverlaysChanged();
 

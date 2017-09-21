@@ -29,16 +29,24 @@ public:
   void setDevice(QIODevice* device);
   QIODevice* device() const;
 
+  bool isEnabled() const;
+  void setEnabled(bool enabled);
+
 signals:
   void messageReceived(const QByteArray& message);
 
 private:
   Q_DISABLE_COPY(MessageListener)
 
-  void initDevice();
+  void connectDevice();
+  void disconnectDevice();
+
+  bool processUdpDatagrams();
 
   QPointer<QIODevice> m_device;
   QMetaObject::Connection m_deviceConn;
+
+  bool m_enabled = true;
 };
 
 #endif // MESSAGELISTENER_H

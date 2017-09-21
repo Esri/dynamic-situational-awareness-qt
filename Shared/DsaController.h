@@ -25,10 +25,6 @@ namespace ArcGISRuntime
   class Error;
   class Scene;
   class GeoView;
-namespace Toolkit
-{
-  class ArcGISCompassController;
-}
 }
 }
 

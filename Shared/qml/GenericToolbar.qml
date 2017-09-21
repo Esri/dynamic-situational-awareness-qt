@@ -54,6 +54,7 @@ ToolBar {
             anchors {
                 left: parent.left
                 leftMargin: marginWidth * 2
+                verticalCenter: parent.verticalCenter
             }
 
             font {

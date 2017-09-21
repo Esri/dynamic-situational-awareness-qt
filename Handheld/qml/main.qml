@@ -25,9 +25,34 @@ Handheld {
 
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
+    GenericToolbar {
+            id: toolbar
+            anchors {
+                top: parent.top
+                left: parent.left
+                right: parent.right
+            }
+            fontSize: 20 * scaleFactor
+            toolbarLabelText: "DSA - Handheld"
+
+            onMenuClicked: {
+                console.log("Menu button was clicked");
+            }
+
+            onDrawerClicked: {
+                console.log("Drawer was clicked");
+            }
+    }
+
     // Create SceneQuickView here, and create its Scene etc. in C++ code
     SceneView {
-        anchors.fill: parent
+        anchors {
+            top: toolbar.bottom
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
+
         objectName: "sceneView"
 
         ArcGISCompass {
@@ -44,7 +69,7 @@ Handheld {
     Column {
         anchors{
             margins: 2 * scaleFactor
-            top: parent.top
+            top: toolbar.bottom
             right: parent.right
         }
         spacing: 5 * scaleFactor
@@ -129,7 +154,6 @@ Handheld {
             }
         }
     }
-
 
     Drawer {
         id: drawer

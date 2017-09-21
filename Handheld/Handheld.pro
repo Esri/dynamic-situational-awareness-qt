@@ -17,8 +17,11 @@ TEMPLATE = app
 QT += core gui opengl network positioning sensors qml quick xml
 CONFIG += c++11
 
+# uncomment this line to use a local toolkit build
+#CONFIG += local_toolkit_build
+
 ARCGIS_RUNTIME_VERSION = 100.2
-include($$PWD/arcgisruntime.pri)
+include($$PWD/../Shared/arcgisruntime.pri)
 
 INCLUDEPATH += ../Shared/
 

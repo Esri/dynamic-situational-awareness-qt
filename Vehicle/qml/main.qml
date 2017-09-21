@@ -37,7 +37,6 @@ Vehicle {
             left: parent.left
             right: parent.right
         }
-        height: 42 * scaleFactor
         fontSize: 24 * scaleFactor
         toolbarLabelText: "DSA - Vehicle"
 
@@ -103,31 +102,6 @@ Vehicle {
             }
         }
 
-//    Button {
-//        id: basemapsCheckBox
-//        anchors{
-//            margins: 2 * scaleFactor
-//            top: toolbar.bottom
-//            right: parent.right
-//        }
-//        checkable: true
-//        checked: false
-//        width: 32 * scaleFactor
-//        height: 32 * scaleFactor
-
-//        background: Rectangle {
-//                  anchors.fill: basemapsCheckBox
-//                  color: Material.primary
-//              }
-
-//        Image {
-//            fillMode: Image.PreserveAspectFit
-//            anchors.centerIn: parent
-//            sourceSize.height: basemapsCheckBox.background.height - (6 * scaleFactor)
-//            height: sourceSize.height
-//            source: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_dark.png"
-//        }
-//    }
         Column {
             anchors{
                 margins: 2 * scaleFactor

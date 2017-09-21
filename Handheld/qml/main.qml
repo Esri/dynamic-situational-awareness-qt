@@ -31,7 +31,6 @@ Handheld {
                 left: parent.left
                 right: parent.right
             }
-            height: 42 * scaleFactor
             fontSize: 20 * scaleFactor
             toolbarLabelText: "DSA - Handheld"
 
@@ -144,7 +143,6 @@ Handheld {
             }
         }
     }
-
 
     Drawer {
         id: drawer

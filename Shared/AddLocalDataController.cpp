@@ -26,6 +26,8 @@
 #include "RasterElevationSource.h"
 #include "ArcGISTiledElevationSource.h"
 
+#include "ToolManager.h"
+
 #include "DsaUtility.h"
 #include "AddLocalDataController.h"
 #include "DataItemListModel.h"
@@ -43,11 +45,10 @@ const QString AddLocalDataController::s_vectorTilePackageData = QStringLiteral("
 const QString AddLocalDataController::s_tilePackageData = QStringLiteral("Tile Package (*.tpk)");
 
 AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
-  QObject(parent),
+  AbstractTool(parent),
   m_localDataModel(new DataItemListModel(this))
 {
-  // placeholder until we have ToolManager
-  DsaUtility::tools.append(this);
+  Toolkit::ToolManager::instance()->addTool(this);
 
   // add the base path to the string list
   addPathToDirectoryList(DsaUtility::dataPath());

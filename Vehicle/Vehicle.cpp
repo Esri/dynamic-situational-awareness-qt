@@ -11,7 +11,6 @@
 //
 
 #include "SceneQuickView.h"
-#include "ArcGISCompassController.h"
 
 #include "DsaController.h"
 #include "Vehicle.h"

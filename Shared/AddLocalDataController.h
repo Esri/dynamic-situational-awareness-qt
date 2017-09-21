@@ -13,9 +13,10 @@
 #ifndef ADDLOCALDATACONTROLLER_H
 #define ADDLOCALDATACONTROLLER_H
 
-#include <QObject>
 #include <QAbstractListModel>
 #include <QStringList>
+
+#include "AbstractTool.h"
 
 namespace Esri
 {
@@ -28,7 +29,7 @@ namespace ArcGISRuntime
 
 class DataItemListModel;
 
-class AddLocalDataController : public QObject
+class AddLocalDataController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
   Q_OBJECT
 
@@ -44,7 +45,8 @@ public:
   Q_INVOKABLE void addItemAsLayer(const QList<int>& index);
   Q_INVOKABLE void addItemAsElevationSource(const QList<int>& indices);
   QAbstractListModel* localDataModel() const;
-  QString toolName() const;
+
+  QString toolName() const override;
 
   // helpers for creating the layers for a given string
   void createFeatureLayerGeodatabase(const QString& path);

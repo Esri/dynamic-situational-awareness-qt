@@ -10,6 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// API
 #include "ArcGISTiledElevationSource.h"
 #include "Scene.h"
 #include "Basemap.h"
@@ -18,6 +19,13 @@
 #include "SceneQuickView.h"
 #include "MapQuickView.h"
 #include "DictionarySymbolStyle.h"
+
+// Toolkit
+//#include "ArcGISCompassController.h"
+#include "CoordinateConversionController.h"
+#include "ToolManager.h"
+
+// Dsa apps
 #include "DsaUtility.h"
 #include "DsaController.h"
 #include "BasemapPickerController.h"
@@ -26,7 +34,6 @@
 #include "MessageListener.h"
 #include "Message.h"
 #include "MessagesOverlay.h"
-#include "ArcGISCompassController.h"
 
 #include <QUdpSocket>
 
@@ -80,33 +87,26 @@ void DsaController::init(GeoView* geoView)
     m_messagesOverlay->addMessage(cotMessage);
   });
 
-  Toolkit::ArcGISCompassController* compassController = nullptr;
+  qDebug() << "hello";
 
-  if (geoView->geoViewType() == GeoViewType::SceneView)
+  auto toolsIt = Toolkit::ToolManager::instance()->toolsBegin();
+  auto toolsEnd = Toolkit::ToolManager::instance()->toolsEnd();
+  for( ; toolsIt != toolsEnd; ++toolsIt)
   {
-    SceneQuickView* sceneQuickView = static_cast<SceneQuickView*>(geoView);
-    compassController = sceneQuickView->findChild<Toolkit::ArcGISCompassController*>("arcGISCompassController");
-    compassController->setView(sceneQuickView);
-  }
-  else if(geoView->geoViewType() == GeoViewType::MapView)
-  {
-    MapQuickView* mapQuickView = static_cast<MapQuickView*>(geoView);
-    compassController = mapQuickView->findChild<Toolkit::ArcGISCompassController*>("arcGISCompassController");
-    compassController->setView(mapQuickView);
-  }
-
-  if (compassController)
-    DsaUtility::tools.append(compassController);
-
-  // placeholder until we have ToolManager
-  for (QObject* obj : DsaUtility::tools)
-  {
-    if (!obj)
+    Toolkit::AbstractTool* abstractTool = *toolsIt;
+    if (!abstractTool)
       continue;
 
-    if (qobject_cast<BasemapPickerController*>(obj))
+    Toolkit::ArcGISCompassController* compassController = qobject_cast<Toolkit::ArcGISCompassController*>(abstractTool);
+    if (compassController)
     {
-      BasemapPickerController* basemapPicker = static_cast<BasemapPickerController*>(obj);
+      compassController->setView(geoView);
+      continue;
+    }
+
+    BasemapPickerController* basemapPicker = qobject_cast<BasemapPickerController*>(abstractTool);
+    if (basemapPicker)
+    {
       connect(basemapPicker, &BasemapPickerController::basemapChanged, this, [this](Basemap* basemap)
       {
         if (!basemap)
@@ -117,17 +117,13 @@ void DsaController::init(GeoView* geoView)
 
         connect(basemap, &Basemap::errorOccurred, this, &DsaController::onError);
       });
-    }
-    else if (qobject_cast<LocationController*>(obj))
-    {
-      LocationController* locationController = static_cast<LocationController*>(obj);
-      locationController->setGpxFilePath(QUrl::fromLocalFile(m_dataPath + "/MontereyMounted.gpx"));
-      geoView->graphicsOverlays()->append(locationController->locationOverlay());
 
+      continue;
     }
-    else if (qobject_cast<AddLocalDataController*>(obj))
+
+    AddLocalDataController* localDataController = qobject_cast<AddLocalDataController*>(abstractTool);
+    if (localDataController)
     {
-      AddLocalDataController* localDataController = static_cast<AddLocalDataController*>(obj);
       connect(localDataController, &AddLocalDataController::layerSelected, this, [this](Layer* lyr)
       {
         if (!lyr)
@@ -149,6 +145,17 @@ void DsaController::init(GeoView* geoView)
         source->setParent(this);
         m_scene->baseSurface()->elevationSources()->append(source);
       });
+
+      continue;
+    }
+
+    LocationController* locationController = qobject_cast<LocationController*>(abstractTool);
+    if (locationController)
+    {
+      locationController->setGpxFilePath(QUrl::fromLocalFile(m_dataPath + "/MontereyMounted.gpx"));
+      geoView->graphicsOverlays()->append(locationController->locationOverlay());
+
+      continue;
     }
   }
 }

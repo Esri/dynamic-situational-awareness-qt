@@ -58,7 +58,7 @@ ToolBar {
             font {
                 pixelSize: fontSize
             }
-            color: Material.foreground
+            color: "white"
         }
 
         Image {

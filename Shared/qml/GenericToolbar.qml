@@ -52,8 +52,7 @@ ToolBar {
         Label {
             id: toolbarLabel
             anchors {
-                horizontalCenter: parent.horizontalCenter
-                verticalCenter: parent.verticalCenter
+                centerIn: parent
             }
             font {
                 pixelSize: fontSize

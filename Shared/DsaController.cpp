@@ -87,8 +87,6 @@ void DsaController::init(GeoView* geoView)
     m_messagesOverlay->addMessage(cotMessage);
   });
 
-  qDebug() << "hello";
-
   auto toolsIt = Toolkit::ToolManager::instance()->toolsBegin();
   auto toolsEnd = Toolkit::ToolManager::instance()->toolsEnd();
   for( ; toolsIt != toolsEnd; ++toolsIt)

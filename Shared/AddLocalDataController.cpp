@@ -45,7 +45,7 @@ const QString AddLocalDataController::s_vectorTilePackageData = QStringLiteral("
 const QString AddLocalDataController::s_tilePackageData = QStringLiteral("Tile Package (*.tpk)");
 
 AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
-  AbstractTool(parent),
+  Toolkit::AbstractTool(parent),
   m_localDataModel(new DataItemListModel(this))
 {
   Toolkit::ToolManager::instance()->addTool(this);

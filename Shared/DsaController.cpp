@@ -21,7 +21,7 @@
 #include "DictionarySymbolStyle.h"
 
 // Toolkit
-//#include "ArcGISCompassController.h"
+#include "ArcGISCompassController.h"
 #include "CoordinateConversionController.h"
 #include "ToolManager.h"
 

@@ -31,7 +31,7 @@
 using namespace Esri::ArcGISRuntime;
 
 LocationController::LocationController(QObject* parent) :
-  AbstractTool(parent)
+  Toolkit::AbstractTool(parent)
 {
   Toolkit::ToolManager::instance()->addTool(this);
 }

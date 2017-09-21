@@ -18,8 +18,6 @@
 #include <QAbstractListModel>
 #include <QUrl>
 
-#include "ArcGISCompassController.h"
-
 namespace Esri
 {
 namespace ArcGISRuntime
@@ -27,10 +25,6 @@ namespace ArcGISRuntime
   class Error;
   class Scene;
   class GeoView;
-namespace Toolkit
-{
-//  class ArcGISCompassController;
-}
 }
 }
 

@@ -71,8 +71,14 @@ void MessageFeed::setFeedEnabled(bool feedEnabled)
 
   m_feedEnabled = feedEnabled;
 
-  m_messagesOverlay->setVisible(m_feedEnabled);
-  m_messageListener->setEnabled(m_feedEnabled);
+  // update the visibility of the messages overlay
+  // that corresponds to this message feed
+  if (m_messagesOverlay)
+    m_messagesOverlay->setVisible(m_feedEnabled);
+
+  // enable or disable the message listener appropriately
+  if (m_messageListener)
+    m_messageListener->setEnabled(m_feedEnabled);
 }
 
 MessagesOverlay* MessageFeed::messagesOverlay() const

@@ -49,7 +49,7 @@ void MessageFeedsController::init(GeoView* geoView)
   //TODO: the following configuration should be read from the app configuration file
   //and the message feeds are built up on the fly rather than hardcoded
 
-  const int broadcastPort = 45678;
+  constexpr int broadcastPort{45678};
 
   // set up the messages overlay with a Mil2525c_b2 dictionary style
   DictionarySymbolStyle* dictionarySymbolStyle = new DictionarySymbolStyle("mil2525c_b2", dataPath + "/styles/mil2525c_b2.stylx", this);

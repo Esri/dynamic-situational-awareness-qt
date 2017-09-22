@@ -33,6 +33,8 @@ MessageListener::~MessageListener()
 
 void MessageListener::setDevice(QIODevice* device)
 {
+  disconnectDevice();
+
   m_device = device;
   connectDevice();
 }

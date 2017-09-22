@@ -54,7 +54,7 @@ QString MessageFeed::feedMessageFormat() const
   return m_feedMessageFormat;
 }
 
-void MessageFeed::setFeedFormat(const QString& feedMessageFormat)
+void MessageFeed::setFeedMessageFormat(const QString& feedMessageFormat)
 {
   m_feedMessageFormat = feedMessageFormat;
 }

@@ -154,7 +154,7 @@ bool MessagesOverlay::isVisible() const
 void MessagesOverlay::setVisible(bool visible)
 {
   if (m_pointGraphicsOverlay)
-    return m_pointGraphicsOverlay->setVisible(visible);
+    m_pointGraphicsOverlay->setVisible(visible);
 
   if (m_linePolygonGraphicsOverlay)
     m_linePolygonGraphicsOverlay->setVisible(visible);

@@ -36,7 +36,7 @@ public:
   void setFeedMessageType(Message::MessageType feedMessageType);
 
   QString feedMessageFormat() const;
-  void setFeedFormat(const QString& feedMessageFormat);
+  void setFeedMessageFormat(const QString& feedMessageFormat);
 
   bool isFeedEnabled() const;
   void setFeedEnabled(bool feedEnabled);

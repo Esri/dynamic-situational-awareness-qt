@@ -16,8 +16,6 @@
 #include <QDir>
 #include <cmath>
 
-#include "GPXLocationSimulator.h"
-#include "DsaUtility.h"
 #include "SceneQuickView.h"
 #include "Point.h"
 #include "GraphicsOverlay.h"
@@ -25,13 +23,17 @@
 #include "DistanceCompositeSceneSymbol.h"
 #include "SimpleRenderer.h"
 
+#include "ToolManager.h"
+
+#include "GPXLocationSimulator.h"
+#include "DsaUtility.h"
+
 using namespace Esri::ArcGISRuntime;
 
 LocationController::LocationController(QObject* parent) :
-  QObject(parent)
+  Toolkit::AbstractTool(parent)
 {
-  // placeholder until we have ToolManager
-  DsaUtility::tools.append(this);
+  Toolkit::ToolManager::instance()->addTool(this);
 }
 
 LocationController::~LocationController()

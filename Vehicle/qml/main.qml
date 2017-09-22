@@ -17,6 +17,7 @@ import QtQuick.Controls.Material 2.1
 import QtQuick.Window 2.2
 import Esri.DSA 1.0
 import Esri.Vehicle 1.0
+import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.2
 
 Vehicle {
     width: 800
@@ -30,10 +31,31 @@ Vehicle {
         enabled: locationCheckBox.checked
     }
 
+    GenericToolbar {
+        id: toolbar
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+        }
+        fontSize: 24 * scaleFactor
+        toolbarLabelText: "DSA - Vehicle"
+
+        onMenuClicked: {
+            console.log("Menu button was clicked");
+        }
+    }
+
     // Create SceneQuickView here, and create its Scene etc. in C++ code
     SceneView {
+        anchors {
+            top: toolbar.bottom
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
+
         id: sceneView
-        anchors.fill: parent
         objectName: "sceneView"
 
         Drawer {
@@ -209,6 +231,16 @@ Vehicle {
                                 "qrc:/Resources/icons/xhdpi/navigation_disabled.png"
 
                 }
+            }
+        }
+
+        ArcGISCompass {
+            id: compass
+            anchors {
+                right: parent.right
+                bottom: parent.bottom
+                rightMargin: 2 * scaleFactor
+                bottomMargin: 22 * scaleFactor
             }
         }
     }

@@ -18,6 +18,8 @@
 #include "MessageFeedListModel.h"
 #include "MessageFeed.h"
 
+#include "ToolManager.h"
+
 #include "DictionarySymbolStyle.h"
 
 #include <QUdpSocket>
@@ -25,11 +27,10 @@
 using namespace Esri::ArcGISRuntime;
 
 MessageFeedsController::MessageFeedsController(QObject* parent) :
-  QObject(parent),
+  Toolkit::AbstractTool(parent),
   m_messageFeeds(new MessageFeedListModel(this))
 {
-  // placeholder until we have ToolManager
-  DsaUtility::tools.append(this);
+  Toolkit::ToolManager::instance()->addTool(this);
 }
 
 MessageFeedsController::~MessageFeedsController()
@@ -75,4 +76,9 @@ void MessageFeedsController::init(GeoView* geoView)
 QAbstractListModel* MessageFeedsController::messageFeeds() const
 {
   return m_messageFeeds;
+}
+
+QString MessageFeedsController::toolName() const
+{
+  return QStringLiteral("messages");
 }

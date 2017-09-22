@@ -90,9 +90,6 @@ bool MessageListener::processUdpDatagrams()
   QUdpSocket* udpSocket = qobject_cast<QUdpSocket*>(m_device);
   if (udpSocket)
   {
-    if (!udpSocket->isOpen())
-      udpSocket->open(QIODevice::ReadOnly);
-
     // there is currently a Qt limitation that the listener needs to call
     // the QUdpSocket datagram methods instead of being able to use
     // QIODevice's readAll() method directly.

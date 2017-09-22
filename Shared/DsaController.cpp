@@ -10,13 +10,21 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// API
 #include "ArcGISTiledElevationSource.h"
 #include "Scene.h"
 #include "Basemap.h"
 #include "ElevationSource.h"
 #include "Layer.h"
-#include "SceneQuickView.h"
+#include "GeoView.h"
 #include "DictionarySymbolStyle.h"
+
+// Toolkit
+#include "ArcGISCompassController.h"
+#include "CoordinateConversionController.h"
+#include "ToolManager.h"
+
+// Dsa apps
 #include "DsaUtility.h"
 #include "DsaController.h"
 #include "BasemapPickerController.h"
@@ -56,15 +64,24 @@ Esri::ArcGISRuntime::Scene* DsaController::scene() const
 
 void DsaController::init(GeoView* geoView)
 {
-  // placeholder until we have ToolManager
-  for (QObject* obj : DsaUtility::tools)
+  auto toolsIt = Toolkit::ToolManager::instance()->toolsBegin();
+  auto toolsEnd = Toolkit::ToolManager::instance()->toolsEnd();
+  for( ; toolsIt != toolsEnd; ++toolsIt)
   {
-    if (!obj)
+    Toolkit::AbstractTool* abstractTool = *toolsIt;
+    if (!abstractTool)
       continue;
 
-    if (qobject_cast<BasemapPickerController*>(obj))
+    Toolkit::ArcGISCompassController* compassController = qobject_cast<Toolkit::ArcGISCompassController*>(abstractTool);
+    if (compassController)
     {
-      BasemapPickerController* basemapPicker = static_cast<BasemapPickerController*>(obj);
+      compassController->setView(geoView);
+      continue;
+    }
+
+    BasemapPickerController* basemapPicker = qobject_cast<BasemapPickerController*>(abstractTool);
+    if (basemapPicker)
+    {
       connect(basemapPicker, &BasemapPickerController::basemapChanged, this, [this](Basemap* basemap)
       {
         if (!basemap)
@@ -75,17 +92,13 @@ void DsaController::init(GeoView* geoView)
 
         connect(basemap, &Basemap::errorOccurred, this, &DsaController::onError);
       });
-    }
-    else if (qobject_cast<LocationController*>(obj))
-    {
-      LocationController* locationController = static_cast<LocationController*>(obj);
-      locationController->setGpxFilePath(QUrl::fromLocalFile(m_dataPath + "/MontereyMounted.gpx"));
-      geoView->graphicsOverlays()->append(locationController->locationOverlay());
 
+      continue;
     }
-    else if (qobject_cast<AddLocalDataController*>(obj))
+
+    AddLocalDataController* localDataController = qobject_cast<AddLocalDataController*>(abstractTool);
+    if (localDataController)
     {
-      AddLocalDataController* localDataController = static_cast<AddLocalDataController*>(obj);
       connect(localDataController, &AddLocalDataController::layerSelected, this, [this](Layer* lyr)
       {
         if (!lyr)
@@ -107,11 +120,25 @@ void DsaController::init(GeoView* geoView)
         source->setParent(this);
         m_scene->baseSurface()->elevationSources()->append(source);
       });
+
+      continue;
     }
-    else if (qobject_cast<MessageFeedsController*>(obj))
+
+    LocationController* locationController = qobject_cast<LocationController*>(abstractTool);
+    if (locationController)
     {
-      MessageFeedsController* messageFeedsController = static_cast<MessageFeedsController*>(obj);
+      locationController->setGpxFilePath(QUrl::fromLocalFile(m_dataPath + "/MontereyMounted.gpx"));
+      geoView->graphicsOverlays()->append(locationController->locationOverlay());
+
+      continue;
+    }
+
+    MessageFeedsController* messageFeedsController = qobject_cast<MessageFeedsController*>(abstractTool);
+    if (messageFeedsController)
+    {
       messageFeedsController->init(geoView);
+
+      continue;
     }
   }
 }

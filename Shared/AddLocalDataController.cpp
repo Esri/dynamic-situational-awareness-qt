@@ -26,6 +26,8 @@
 #include "RasterElevationSource.h"
 #include "ArcGISTiledElevationSource.h"
 
+#include "ToolManager.h"
+
 #include "DsaUtility.h"
 #include "AddLocalDataController.h"
 #include "DataItemListModel.h"
@@ -43,11 +45,10 @@ const QString AddLocalDataController::s_vectorTilePackageData = QStringLiteral("
 const QString AddLocalDataController::s_tilePackageData = QStringLiteral("Tile Package (*.tpk)");
 
 AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
-  QObject(parent),
+  Toolkit::AbstractTool(parent),
   m_localDataModel(new DataItemListModel(this))
 {
-  // placeholder until we have ToolManager
-  DsaUtility::tools.append(this);
+  Toolkit::ToolManager::instance()->addTool(this);
 
   // add the base path to the string list
   addPathToDirectoryList(DsaUtility::dataPath());
@@ -143,7 +144,7 @@ void AddLocalDataController::addItemAsElevationSource(const QList<int>& indices)
       if (format == TileImageFormat::LERC || format == TileImageFormat::Unknown) // remove the Unknown clause once API bug is fixed
       {
         // create the source from the tiled source
-        emit elevationSourceSelected(new ArcGISTiledElevationSource(tileCache));
+        emit elevationSourceSelected(new ArcGISTiledElevationSource(tileCache, this));
       }
       else
         continue;
@@ -214,7 +215,7 @@ void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path)
 
     for (FeatureTable* featureTable : gdb->geodatabaseFeatureTables())
     {
-      FeatureLayer* featureLayer = new FeatureLayer(featureTable);
+      FeatureLayer* featureLayer = new FeatureLayer(featureTable, this);
       emit layerSelected(featureLayer);
     }
   });
@@ -239,7 +240,7 @@ void AddLocalDataController::createFeatureLayerShapefile(const QString& path)
 void AddLocalDataController::createRasterLayer(const QString& path)
 {
   Raster* raster = new Raster(path, this);
-  RasterLayer* rasterLayer = new RasterLayer(raster);
+  RasterLayer* rasterLayer = new RasterLayer(raster, this);
   emit layerSelected(rasterLayer);
 }
 
@@ -253,21 +254,21 @@ void AddLocalDataController::createKmlLayer(const QString& path)
 // Helper that creates an ArcGISSceneLayer from a slpk path
 void AddLocalDataController::createSceneLayer(const QString& path)
 {
-  ArcGISSceneLayer* sceneLayer = new ArcGISSceneLayer(QUrl(path));
+  ArcGISSceneLayer* sceneLayer = new ArcGISSceneLayer(QUrl(path), this);
   emit layerSelected(sceneLayer);
 }
 
 // Helper that creates an ArcGISTiledLayer from a tpk path
 void AddLocalDataController::createTiledLayer(const QString& path)
 {
-  ArcGISTiledLayer* tiledLayer = new ArcGISTiledLayer(QUrl(path));
+  ArcGISTiledLayer* tiledLayer = new ArcGISTiledLayer(QUrl(path), this);
   emit layerSelected(tiledLayer);
 }
 
 // Helper that creates an ArcGISVectorTiledLayer from a vtpk path
 void AddLocalDataController::createVectorTiledLayer(const QString& path)
 {
-  ArcGISVectorTiledLayer* vectorTiledLayer = new ArcGISVectorTiledLayer(QUrl(path));
+  ArcGISVectorTiledLayer* vectorTiledLayer = new ArcGISVectorTiledLayer(QUrl(path), this);
   emit layerSelected(vectorTiledLayer);
 }
 

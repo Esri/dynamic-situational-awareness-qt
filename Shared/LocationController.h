@@ -13,8 +13,9 @@
 #ifndef LOCATIONCONTROLLER_H
 #define LOCATIONCONTROLLER_H
 
-#include <QObject>
 #include <QUrl>
+
+#include "AbstractTool.h"
 
 namespace Esri {
 namespace ArcGISRuntime
@@ -29,7 +30,7 @@ class QGeoPositionInfoSource;
 class QCompass;
 class GPXLocationSimulator;
 
-class LocationController : public QObject
+class LocationController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
   Q_OBJECT
 
@@ -42,7 +43,7 @@ public:
   LocationController(QObject* parent = nullptr);
   ~LocationController();
 
-  QString toolName() const /*override*/;
+  QString toolName() const override;
 
   // if you want this tool to handle everything, add this overlay
   // to your view

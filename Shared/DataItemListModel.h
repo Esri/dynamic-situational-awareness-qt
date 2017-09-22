@@ -52,6 +52,7 @@ public:
   void addDataItem(const QString& fullPath);
   void clear();
   void setupRoles();
+  int size() { return m_dataItems.size(); }
 
   // QAbstractItemModel interface
   int rowCount(const QModelIndex& parent = QModelIndex()) const override;

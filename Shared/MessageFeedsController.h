@@ -13,7 +13,8 @@
 #ifndef MESSAGEFEEDSCONTROLLER_H
 #define MESSAGEFEEDSCONTROLLER_H
 
-#include <QObject>
+#include "AbstractTool.h"
+
 #include <QAbstractListModel>
 
 namespace Esri {
@@ -24,7 +25,7 @@ namespace Esri {
 
 class MessageFeedListModel;
 
-class MessageFeedsController : public QObject
+class MessageFeedsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
   Q_OBJECT
 
@@ -37,6 +38,8 @@ public:
   void init(Esri::ArcGISRuntime::GeoView* geoView);
 
   QAbstractListModel* messageFeeds() const;
+
+  QString toolName() const override;
 
 private:
   Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;

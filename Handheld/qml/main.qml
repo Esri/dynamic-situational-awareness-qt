@@ -131,6 +131,34 @@ Handheld {
         }
 
         Button {
+            id: messageFeedsCheckBox
+            width: 32 * scaleFactor
+            height: 32 * scaleFactor
+
+            background: Rectangle {
+                anchors.fill: messageFeedsCheckBox
+                color: Material.primary
+            }
+
+            Image {
+                fillMode: Image.PreserveAspectFit
+                anchors.centerIn: parent
+                sourceSize.height: messageFeedsCheckBox.background.height - (6 * scaleFactor)
+                height: sourceSize.height
+                source: "qrc:/Resources/icons/xhdpi/ic_menu_messages_dark.png"
+            }
+
+            onClicked: {
+                if (drawer.visible)
+                    drawer.close();
+                else {
+                    toolRect.state = "message";
+                    drawer.open();
+                }
+            }
+        }
+
+        Button {
             id: locationCheckBox
             checkable: true
             checked: false
@@ -180,6 +208,13 @@ Handheld {
                         target: addLocalDataTool
                         visible: true
                     }
+                },
+                State {
+                    name: "message"
+                    PropertyChanges {
+                        target: messageFeedsTool
+                        visible: true
+                    }
                 }
             ]
 
@@ -196,6 +231,13 @@ Handheld {
                 anchors.fill: parent
                 height: parent.height
                 showDataConnectionPane: false
+                onClosed: drawer.close();
+            }
+
+            MessageFeeds {
+                id: messageFeedsTool
+                anchors.fill: parent
+                visible: false
                 onClosed: drawer.close();
             }
         }

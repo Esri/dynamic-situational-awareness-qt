@@ -81,6 +81,13 @@ Vehicle {
                             target: addLocalDataTool
                             visible: true
                         }
+                    },
+                    State {
+                        name: "message"
+                        PropertyChanges {
+                            target: messageFeedsTool
+                            visible: true
+                        }
                     }
                 ]
 
@@ -97,8 +104,14 @@ Vehicle {
                     anchors.fill: parent
                     showDataConnectionPane: true
                     visible: false
-                    onClosed: {drawer.close();
-                    }
+                    onClosed: drawer.close();
+                }
+
+                MessageFeeds {
+                    id: messageFeedsTool
+                    anchors.fill: parent
+                    visible: false
+                    onClosed: drawer.close();
                 }
             }
         }
@@ -163,6 +176,34 @@ Vehicle {
                         drawer.close();
                     else {
                         toolRect.state = "data";
+                        drawer.open();
+                    }
+                }
+            }
+
+            Button {
+                id: messageFeedsCheckBox
+                width: 32 * scaleFactor
+                height: 32 * scaleFactor
+
+                background: Rectangle {
+                    anchors.fill: messageFeedsCheckBox
+                    color: Material.primary
+                }
+
+                Image {
+                    fillMode: Image.PreserveAspectFit
+                    anchors.centerIn: parent
+                    sourceSize.height: messageFeedsCheckBox.background.height - (6 * scaleFactor)
+                    height: sourceSize.height
+                    source: "qrc:/Resources/icons/xhdpi/ic_menu_messages_dark.png"
+                }
+
+                onClicked: {
+                    if (drawer.visible)
+                        drawer.close();
+                    else {
+                        toolRect.state = "message";
                         drawer.open();
                     }
                 }

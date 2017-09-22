@@ -28,10 +28,6 @@ namespace ArcGISRuntime
 }
 }
 
-class QUdpSocket;
-class MessageListener;
-class MessagesOverlay;
-
 class DsaController : public QObject
 {
   Q_OBJECT
@@ -50,12 +46,7 @@ public slots:
 private:
   Esri::ArcGISRuntime::Scene* m_scene = nullptr;
 
-  QUdpSocket* m_udpSocket = nullptr;
-  MessageListener* m_messageListener = nullptr;
-  MessagesOverlay* m_messagesOverlay = nullptr;
-
   QString m_dataPath;
-  int m_broadcastPort = 45678;
 };
 
 #endif // DSACONTROLLER_H

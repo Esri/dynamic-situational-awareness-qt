@@ -39,7 +39,7 @@ class BasemapPickerController : public Esri::ArcGISRuntime::Toolkit::AbstractToo
   Q_PROPERTY(QAbstractListModel* tileCacheModel READ tileCacheModel NOTIFY tileCacheModelChanged)
 
 public:
-  BasemapPickerController(QObject* parent = nullptr);
+  explicit BasemapPickerController(QObject* parent = nullptr);
   ~BasemapPickerController();
 
   QAbstractListModel* tileCacheModel() const;

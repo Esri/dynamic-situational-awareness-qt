@@ -138,3 +138,24 @@ bool MessagesOverlay::addMessage(const Message& message)
 
   return true;
 }
+
+bool MessagesOverlay::isVisible() const
+{
+  // at this time, only one graphics overlay per message overlay
+  // this could change later...
+  if (m_pointGraphicsOverlay)
+    return m_pointGraphicsOverlay->isVisible();
+  else if (m_linePolygonGraphicsOverlay)
+    return m_linePolygonGraphicsOverlay->isVisible();
+
+  return false;
+}
+
+void MessagesOverlay::setVisible(bool visible)
+{
+  if (m_pointGraphicsOverlay)
+    m_pointGraphicsOverlay->setVisible(visible);
+
+  if (m_linePolygonGraphicsOverlay)
+    m_linePolygonGraphicsOverlay->setVisible(visible);
+}

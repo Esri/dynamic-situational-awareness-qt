@@ -62,23 +62,6 @@ DsaToolBase {
                 verticalAlignment: Text.AlignVCenter
             }
 
-            background: Rectangle {
-                id: delegateBackground
-                implicitWidth: localDataList.width
-                implicitHeight: 40 * scaleFactor
-                visible: false
-
-                Rectangle {
-                    anchors {
-                        horizontalCenter: parent.horizontalCenter
-                        bottom: parent.bottom
-                    }
-                    width: parent.width * 0.75
-                    height: 1 * scaleFactor
-                    color: Material.primary
-                }
-            }
-
             onClicked: selectedItems.push(index)
         }
     }

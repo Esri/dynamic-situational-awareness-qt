@@ -50,6 +50,8 @@ public:
 private:
   Q_DISABLE_COPY(MessageFeed)
 
+  void updateOverlayandListener();
+
   QString m_feedName;
   Message::MessageType m_feedMessageType = Message::MessageType::Unknown;
   QString m_feedMessageFormat;

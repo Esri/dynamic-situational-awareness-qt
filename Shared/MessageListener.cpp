@@ -66,6 +66,9 @@ void MessageListener::connectDevice()
 {
   disconnectDevice();
 
+  if (!m_device)
+    return;
+
   m_deviceConn = connect(m_device.data(), &QIODevice::readyRead, this, [this]
   {
     if (!processUdpDatagrams())

@@ -58,8 +58,25 @@ GeoView* MessagesOverlay::geoView() const
 bool MessagesOverlay::addMessage(const Message& message)
 {
   const auto messageId = message.messageId();
+  if (messageId.isEmpty())
+  {
+    emit errorOccurred(QStringLiteral("Failed to add message - message ID is empty"));
+    return false;
+  }
+
   const auto symbolId = message.symbolId();
+  if (symbolId.isEmpty())
+  {
+    emit errorOccurred(QStringLiteral("Failed to add message - symbol ID is empty"));
+    return false;
+  }
+
   const auto geometry = message.geometry();
+  if (geometry.isEmpty())
+  {
+    emit errorOccurred(QStringLiteral("Failed to add message - geometry is empty"));
+    return false;
+  }
 
   if (geometry.isEmpty() || messageId.isEmpty() ||
       symbolId.isEmpty())
@@ -102,6 +119,7 @@ bool MessagesOverlay::addMessage(const Message& message)
       m_geoView->graphicsOverlays()->append(m_pointGraphicsOverlay);
 
       emit graphicsOverlaysChanged();
+      emit visibleChanged();
     }
 
     m_pointGraphicsOverlay->graphics()->append(graphic);
@@ -125,6 +143,7 @@ bool MessagesOverlay::addMessage(const Message& message)
       m_geoView->graphicsOverlays()->append(m_linePolygonGraphicsOverlay);
 
       emit graphicsOverlaysChanged();
+      emit visibleChanged();
     }
 
     m_linePolygonGraphicsOverlay->graphics()->append(graphic);

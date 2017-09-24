@@ -52,6 +52,8 @@ public:
 
 signals:
   void graphicsOverlaysChanged();
+  void visibleChanged();
+  void errorOccurred(const QString& error);
 
 private:
   Q_DISABLE_COPY(MessagesOverlay)

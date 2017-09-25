@@ -131,7 +131,7 @@ DsaToolBase {
 
         CheckBox {
             id: elevationCheckbox
-            text: "Add raster as elevation source"
+            text: "Add as elevation source"
             checked: false
             visible: filter.currentText.indexOf("Raster") !== -1 || filter.currentText.indexOf("All")  !== -1 || filter.currentText.indexOf("tpk") !== -1
             contentItem: Label {

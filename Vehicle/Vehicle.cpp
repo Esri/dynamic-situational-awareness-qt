@@ -19,9 +19,7 @@
 #include "Scene.h"
 #include "SceneQuickView.h"
 
-#include "BasemapPickerController.h"
-#include "DsaUtility.h"
-
+#include "DsaController.h"
 #include "Vehicle.h"
 
 using namespace Esri::ArcGISRuntime;
@@ -29,9 +27,9 @@ using namespace Esri::ArcGISRuntime::Toolkit;
 using CCO = CoordinateConversionOptions;
 
 Vehicle::Vehicle(QQuickItem* parent /* = nullptr */):
-  QQuickItem(parent)
+  QQuickItem(parent),
+  m_controller(new DsaController(this))
 {
-  m_dataPath = DsaUtility::dataPath();
 }
 
 Vehicle::~Vehicle()
@@ -44,6 +42,7 @@ void Vehicle::componentComplete()
 
   // find QML SceneView component
   m_sceneView = findChild<SceneQuickView*>("sceneView");
+
   connect(m_sceneView, &SceneQuickView::errorOccurred, this, &Vehicle::onError);
 
   // find QML Coordinate Conversion Controller object
@@ -156,4 +155,10 @@ void Vehicle::setCoordinateConversionOptions()
 
 void Vehicle::onError(const Error&)
 {
+  connect(m_sceneView, &SceneQuickView::errorOccurred, m_controller, &DsaController::onError);
+
+  m_controller->init(m_sceneView);
+
+  // Set scene to scene view
+  m_sceneView->setArcGISScene(m_controller->scene());
 }

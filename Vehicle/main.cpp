@@ -29,6 +29,13 @@
 #include "SceneQuickView.h"
 
 #include "BasemapPickerController.h"
+#include "AddLocalDataController.h"
+#include "FollowPositionController.h"
+#include "LocationController.h"
+#include "MessageFeedsController.h"
+
+#include "ArcGISRuntimeToolkit.h"
+#include "ArcGISCompassController.h"
 
 #include "AppInfo.h"
 #include "Vehicle.h"
@@ -58,6 +65,9 @@ using namespace Esri::ArcGISRuntime::Toolkit;
 
 int main(int argc, char *argv[])
 {
+#ifndef Q_OS_WIN
+  QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#endif
 
   QGuiApplication app(argc, argv);
 
@@ -102,7 +112,14 @@ int main(int argc, char *argv[])
 
   // Register the Vehicle (QQuickItem) for QML
   qmlRegisterType<Vehicle>("Esri.Vehicle", 1, 0, "Vehicle");
-  qmlRegisterType<BasemapPickerController>("Esri.Vehicle", 1, 0, "BasemapPickerController");
+  qmlRegisterType<BasemapPickerController>("Esri.DSA", 1, 0, "BasemapPickerController");
+  qmlRegisterType<AddLocalDataController>("Esri.DSA", 1, 0, "AddLocalDataController");
+  qmlRegisterType<LocationController>("Esri.DSA", 1, 0, "LocationController");
+  qmlRegisterType<MessageFeedsController>("Esri.DSA", 1, 0, "MessageFeedsController");
+  qmlRegisterType<FollowPositionController>("Esri.DSA", 1, 0, "FollowPositionController");
+
+  // Register Toolkit Component Types
+  Toolkit::ArcGISRuntimeToolkit::registerToolkitTypes();
 
   // Intialize application view
   QQuickView view;

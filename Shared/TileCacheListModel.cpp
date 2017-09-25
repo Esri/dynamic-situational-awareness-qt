@@ -11,6 +11,7 @@
 //
 #include <QFileInfo>
 #include <QTemporaryFile>
+#include <QUrl>
 
 #include "TileCache.h"
 
@@ -118,14 +119,9 @@ QVariant TileCacheListModel::data(const QModelIndex& index, int role) const
   case TileCacheThumbnaulUrlRole:
   {
     if (tileCache->loadStatus() == LoadStatus::NotLoaded)
-    {
       tileCache->load();
-      return QUrl();
-    }
-    else if (tileCache->loadStatus() == LoadStatus::Loaded)
-    {
-      return m_thumbnailUrls.value(tileCache->path(), QUrl());
-    }
+
+    return m_thumbnailUrls.value(tileCache->path(), QUrl());
   }
   default:
     break;

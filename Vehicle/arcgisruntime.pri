@@ -23,10 +23,6 @@ dirPath = $$find(iniLine, "InstallDir")
 cleanDirPath = $$replace(dirPath, "InstallDir=", "")
 priLocation = $$replace(cleanDirPath, '"', "")
 
-!include($$priLocation/sdk/ideintegration/arcgis_runtime_qml_cpp.pri) {
-  message("Error. Cannot locate ArcGIS Runtime PRI file")
-}
-
 !include($$priLocation/sdk/ideintegration/arcgis_runtime_toolkit_cpp.pri) {
-  message("Error. Cannot locate ArcGIS Runtime Toolkit Cpp PRI file")
+  message("Error. Cannot location ArcGIS Runtime C++ Toolkit PRI file")
 }

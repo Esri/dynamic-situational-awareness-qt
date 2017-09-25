@@ -111,7 +111,10 @@ bool FollowPositionController::handleFollowInScene()
     OrbitGeoElementCameraController* followController = new OrbitGeoElementCameraController(locationGraphic, 2000., this);
 
     if (m_northUp)
+    {
       followController->setAutoHeadingEnabled(false);
+      followController->setCameraHeadingOffsetInteractive(false);
+    }
 
     sceneView->setCameraController(followController);
   }

@@ -46,39 +46,11 @@ void FollowPositionController::setFollow(bool follow)
     return;
 
   m_following = follow;
-  emit followChanged();
 
-  MapView* mapView = dynamic_cast<MapView*>(m_geoView);
-  if (mapView)
-  {
-    mapView->locationDisplay()->setAutoPanMode(m_following ?
-                                                 LocationDisplayAutoPanMode::Navigation : LocationDisplayAutoPanMode::Off);
-    return;
-  }
-
-  SceneView* sceneView = dynamic_cast<SceneView*>(m_geoView);
-  if (sceneView)
-  {
-    if (!m_following)
-    {
-      sceneView->setCameraController(new GlobeCameraController(this));
-
-      return;
-    }
-
-    GraphicListModel* graphics = locationGraphicsModel();
-    if (!graphics || graphics->rowCount() != 1)
-      return;
-
-    Graphic* locationGraphic = graphics->at(0);
-    if (!locationGraphic)
-      return;
-
-    OrbitGeoElementCameraController* followController = new OrbitGeoElementCameraController(locationGraphic, 2000., this);
-    sceneView->setCameraController(followController);
-
-    return;
-  }
+  if (handleFollowInMap())
+    emit followChanged();
+  else if (handleFollowInScene())
+    emit followChanged();
 }
 
 bool FollowPositionController::isFollow() const
@@ -91,7 +63,45 @@ QString FollowPositionController::toolName() const
   return QStringLiteral("follow position");
 }
 
-GraphicListModel *FollowPositionController::locationGraphicsModel() const
+bool FollowPositionController::handleFollowInMap()
+{
+  MapView* mapView = dynamic_cast<MapView*>(m_geoView);
+  if (!mapView)
+    return false;
+
+  mapView->locationDisplay()->setAutoPanMode(m_following ?
+                                               LocationDisplayAutoPanMode::Navigation : LocationDisplayAutoPanMode::Off);
+  return true;
+}
+
+bool FollowPositionController::handleFollowInScene()
+{
+  SceneView* sceneView = dynamic_cast<SceneView*>(m_geoView);
+  if (!sceneView)
+    return false;
+
+  if (!m_following)
+  {
+    sceneView->setCameraController(new GlobeCameraController(this));
+  }
+  else
+  {
+    GraphicListModel* graphics = locationGraphicsModel();
+    if (!graphics || graphics->rowCount() != 1)
+      return true;
+
+    Graphic* locationGraphic = graphics->at(0);
+    if (!locationGraphic)
+      return true;
+
+    OrbitGeoElementCameraController* followController = new OrbitGeoElementCameraController(locationGraphic, 2000., this);
+    sceneView->setCameraController(followController);
+  }
+
+  return true;
+}
+
+GraphicListModel* FollowPositionController::locationGraphicsModel() const
 {
   if (!m_geoView)
     return nullptr;

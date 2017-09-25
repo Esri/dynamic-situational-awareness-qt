@@ -48,6 +48,8 @@ signals:
   void followChanged();
 
 private:
+  bool handleFollowInMap();
+  bool handleFollowInScene();
   Esri::ArcGISRuntime::GraphicListModel* locationGraphicsModel() const;
 
   bool m_following = false;

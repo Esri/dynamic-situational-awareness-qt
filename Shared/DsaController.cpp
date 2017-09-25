@@ -27,8 +27,9 @@
 // Dsa apps
 #include "DsaUtility.h"
 #include "DsaController.h"
-#include "BasemapPickerController.h"
 #include "AddLocalDataController.h"
+#include "BasemapPickerController.h"
+#include "FollowPositionController.h"
 #include "LocationController.h"
 #include "MessageFeedsController.h"
 
@@ -137,6 +138,14 @@ void DsaController::init(GeoView* geoView)
     if (messageFeedsController)
     {
       messageFeedsController->init(geoView);
+
+      continue;
+    }
+
+    FollowPositionController* followController = qobject_cast<FollowPositionController*>(abstractTool);
+    if (followController)
+    {
+      followController->init(geoView);
 
       continue;
     }

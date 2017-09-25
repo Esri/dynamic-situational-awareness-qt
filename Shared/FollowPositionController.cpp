@@ -53,9 +53,23 @@ void FollowPositionController::setFollow(bool follow)
     emit followChanged();
 }
 
+void FollowPositionController::setNorthUp(bool northUp)
+{
+  if (m_northUp == northUp)
+    return;
+
+  m_northUp = northUp;
+  emit northUpChanged();
+}
+
 bool FollowPositionController::isFollow() const
 {
   return m_following;
+}
+
+bool FollowPositionController::isNorthUp() const
+{
+  return m_northUp;
 }
 
 QString FollowPositionController::toolName() const
@@ -95,6 +109,10 @@ bool FollowPositionController::handleFollowInScene()
       return true;
 
     OrbitGeoElementCameraController* followController = new OrbitGeoElementCameraController(locationGraphic, 2000., this);
+
+    if (m_northUp)
+      followController->setAutoHeadingEnabled(false);
+
     sceneView->setCameraController(followController);
   }
 

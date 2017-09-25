@@ -30,6 +30,7 @@ class FollowPositionController : public Esri::ArcGISRuntime::Toolkit::AbstractTo
   Q_OBJECT
 
   Q_PROPERTY(bool follow READ isFollow WRITE setFollow NOTIFY followChanged)
+  Q_PROPERTY(bool northUp READ isNorthUp WRITE setNorthUp NOTIFY northUpChanged)
 
 public:
   FollowPositionController(QObject* parent = nullptr);
@@ -37,15 +38,18 @@ public:
 
   void init(Esri::ArcGISRuntime::GeoView* geoView);
 
-  Q_INVOKABLE void setFollow(bool follow);
+  void setFollow(bool follow);
+  void setNorthUp(bool northUp);
 
   bool isFollow() const;
+  bool isNorthUp() const;
 
   // AbstractTool interface
   QString toolName() const override;
 
 signals:
   void followChanged();
+  void northUpChanged();
 
 private:
   bool handleFollowInMap();
@@ -53,6 +57,7 @@ private:
   Esri::ArcGISRuntime::GraphicListModel* locationGraphicsModel() const;
 
   bool m_following = false;
+  bool m_northUp = false;
   Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
 };
 

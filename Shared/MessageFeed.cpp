@@ -27,6 +27,7 @@ MessageFeed::MessageFeed(const QString& name, Message::MessageType type, const Q
   m_messagesOverlay(overlay),
   m_messageListener(listener)
 {
+  updateOverlayandListener();
 }
 
 QString MessageFeed::feedName() const
@@ -71,14 +72,7 @@ void MessageFeed::setFeedEnabled(bool feedEnabled)
 
   m_feedEnabled = feedEnabled;
 
-  // update the visibility of the messages overlay
-  // that corresponds to this message feed
-  if (m_messagesOverlay)
-    m_messagesOverlay->setVisible(m_feedEnabled);
-
-  // enable or disable the message listener appropriately
-  if (m_messageListener)
-    m_messageListener->setEnabled(m_feedEnabled);
+  updateOverlayandListener();
 }
 
 MessagesOverlay* MessageFeed::messagesOverlay() const
@@ -89,6 +83,8 @@ MessagesOverlay* MessageFeed::messagesOverlay() const
 void MessageFeed::setMessagesOverlay(MessagesOverlay* messagesOverlay)
 {
   m_messagesOverlay = messagesOverlay;
+
+  updateOverlayandListener();
 }
 
 MessageListener* MessageFeed::messageListener() const
@@ -99,4 +95,18 @@ MessageListener* MessageFeed::messageListener() const
 void MessageFeed::setMessageListener(MessageListener* messageListener)
 {
   m_messageListener = messageListener;
+
+  updateOverlayandListener();
+}
+
+void MessageFeed::updateOverlayandListener()
+{
+  // update the visibility of the messages overlay
+  // that corresponds to this message feed
+  if (m_messagesOverlay)
+    m_messagesOverlay->setVisible(m_feedEnabled);
+
+  // enable or disable the message listener appropriately
+  if (m_messageListener)
+    m_messageListener->setEnabled(m_feedEnabled);
 }

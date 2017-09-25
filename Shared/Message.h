@@ -42,6 +42,7 @@ public:
   };
 
   Message();
+  Message(MessageAction messageAction, const Esri::ArcGISRuntime::Geometry& geometry);
   Message(const Message& other);
   Message(Message&& other);
   ~Message();
@@ -49,13 +50,15 @@ public:
   Message& operator=(const Message& other);
   Message& operator=(Message&& other);
 
+  bool operator==(const Message& other) const;
+
   static Message createFromCoTMessage(const QByteArray& message);
   static QString cotTypeToSidc(const QString& cotType);
 
   bool isEmpty() const;
 
   MessageAction messageAction() const;
-  void setAction(MessageAction messageAction);
+  void setMessageAction(MessageAction messageAction);
 
   QVariantMap attributes() const;
   void setAttributes(const QVariantMap& attributes);

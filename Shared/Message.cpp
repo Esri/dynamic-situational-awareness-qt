@@ -32,6 +32,11 @@ Message::Message() :
 {
 }
 
+Message::Message(MessageAction messageAction, const Geometry& geometry) :
+  d(new MessageData(messageAction, geometry))
+{
+}
+
 Message::Message(const Message& other) :
   d(other.d)
 {
@@ -64,6 +69,17 @@ Message& Message::operator=(Message&& other)
   }
 
   return *this;
+}
+
+bool Message::operator==(const Message& other) const
+{
+  return messageAction() == other.messageAction() &&
+      attributes() == other.attributes() &&
+      geometry() == other.geometry() &&
+      messageId() == other.messageId() &&
+      messageName() == other.messageName() &&
+      messageType() == other.messageType() &&
+      symbolId() == other.symbolId();
 }
 
 Message Message::createFromCoTMessage(const QByteArray& message)
@@ -192,7 +208,7 @@ Message::MessageAction Message::messageAction() const
   return d->messageAction;
 }
 
-void Message::setAction(MessageAction messageAction)
+void Message::setMessageAction(MessageAction messageAction)
 {
   d->messageAction = messageAction;
 }
@@ -258,6 +274,12 @@ void Message::setSymbolId(const QString& symbolId)
 }
 
 MessageData::MessageData()
+{
+}
+
+MessageData::MessageData(Message::MessageAction messageAction, const Geometry& geometry) :
+  messageAction(messageAction),
+  geometry(geometry)
 {
 }
 

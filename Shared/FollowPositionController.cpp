@@ -53,6 +53,11 @@ void FollowPositionController::setFollow(bool follow)
     emit followChanged();
 }
 
+bool FollowPositionController::isFollow() const
+{
+  return m_following;
+}
+
 void FollowPositionController::setNorthUp(bool northUp)
 {
   if (m_northUp == northUp)
@@ -60,11 +65,6 @@ void FollowPositionController::setNorthUp(bool northUp)
 
   m_northUp = northUp;
   emit northUpChanged();
-}
-
-bool FollowPositionController::isFollow() const
-{
-  return m_following;
 }
 
 bool FollowPositionController::isNorthUp() const

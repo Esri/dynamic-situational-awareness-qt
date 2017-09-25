@@ -39,9 +39,9 @@ public:
   void init(Esri::ArcGISRuntime::GeoView* geoView);
 
   void setFollow(bool follow);
-  void setNorthUp(bool northUp);
-
   bool isFollow() const;
+
+  void setNorthUp(bool northUp);
   bool isNorthUp() const;
 
   // AbstractTool interface
@@ -57,7 +57,7 @@ private:
   Esri::ArcGISRuntime::GraphicListModel* locationGraphicsModel() const;
 
   bool m_following = false;
-  bool m_northUp = false;
+  bool m_northUp = true;
   Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
 };
 

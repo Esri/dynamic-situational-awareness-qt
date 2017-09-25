@@ -1,0 +1,57 @@
+// Copyright 2017 ESRI
+//
+// All rights reserved under the copyright laws of the United States
+// and applicable international laws, treaties, and conventions.
+//
+// You may freely redistribute and use this sample code, with or
+// without modification, provided you include the original copyright
+// notice and use restrictions.
+//
+// See the Sample code usage restrictions document for further information.
+//
+
+#ifndef FOLLOWPOSITIONCONTROLLER_H
+#define FOLLOWPOSITIONCONTROLLER_H
+
+#include <QUrl>
+
+#include "AbstractTool.h"
+
+namespace Esri {
+namespace ArcGISRuntime
+{
+  class CameraController;
+  class GeoView;
+  class GraphicListModel;
+}}
+
+class FollowPositionController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+{
+  Q_OBJECT
+
+  Q_PROPERTY(bool follow READ isFollow WRITE setFollow NOTIFY followChanged)
+
+public:
+  FollowPositionController(QObject* parent = nullptr);
+  ~FollowPositionController();
+
+  void init(Esri::ArcGISRuntime::GeoView* geoView);
+
+  Q_INVOKABLE void setFollow(bool follow);
+
+  bool isFollow() const;
+
+  // AbstractTool interface
+  QString toolName() const override;
+
+signals:
+  void followChanged();
+
+private:
+  Esri::ArcGISRuntime::GraphicListModel* locationGraphicsModel() const;
+
+  bool m_following = false;
+  Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
+};
+
+#endif // FOLLOWPOSITIONCONTROLLER_H

@@ -246,6 +246,7 @@ void LocationController::initOverlay()
   renderer->setSceneProperties(renderProperties);
 
   m_locationOverlay = new GraphicsOverlay(this);
+  m_locationOverlay->setOverlayId(QStringLiteral("SCENEVIEWLOCATIONOVERLAY"));
   m_locationOverlay->setSceneProperties(LayerSceneProperties(SurfacePlacement::Relative));
   m_locationOverlay->setRenderingMode(GraphicsRenderingMode::Dynamic);
   m_locationOverlay->setRenderer(renderer);

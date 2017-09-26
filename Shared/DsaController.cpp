@@ -80,6 +80,13 @@ void DsaController::init(GeoView* geoView)
       continue;
     }
 
+    Toolkit::CoordinateConversionController* coordinateConversionController = qobject_cast<Toolkit::CoordinateConversionController*>(abstractTool);
+    if (coordinateConversionController)
+    {
+//      coordinateConversionController->init(geoView);
+      continue;
+    }
+
     BasemapPickerController* basemapPicker = qobject_cast<BasemapPickerController*>(abstractTool);
     if (basemapPicker)
     {

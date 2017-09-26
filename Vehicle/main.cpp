@@ -33,6 +33,9 @@
 #include "FollowPositionController.h"
 #include "LocationController.h"
 #include "MessageFeedsController.h"
+#include "CoordinateConversionController.h"
+#include "CoordinateConversionOptions.h"
+#include "CoordinateConversionResults.h"
 
 #include "ArcGISRuntimeToolkit.h"
 #include "ArcGISCompassController.h"
@@ -117,6 +120,9 @@ int main(int argc, char *argv[])
   qmlRegisterType<LocationController>("Esri.DSA", 1, 0, "LocationController");
   qmlRegisterType<MessageFeedsController>("Esri.DSA", 1, 0, "MessageFeedsController");
   qmlRegisterType<FollowPositionController>("Esri.DSA", 1, 0, "FollowPositionController");
+  qmlRegisterType<FollowPositionController>("Esri.DSA", 1, 0, "CoordinateConversionController");
+  qmlRegisterType<FollowPositionController>("Esri.DSA", 1, 0, "CoordinateConversionOptions");
+  qmlRegisterType<FollowPositionController>("Esri.DSA", 1, 0, "CoordinateConversionResults");
 
   // Register Toolkit Component Types
   Toolkit::ArcGISRuntimeToolkit::registerToolkitTypes();

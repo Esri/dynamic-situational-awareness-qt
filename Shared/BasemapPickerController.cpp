@@ -11,10 +11,11 @@
 //
 
 #include <QDir>
-#include <QDebug>
 
 #include "ArcGISTiledLayer.h"
 #include "Basemap.h"
+
+#include "ToolManager.h"
 
 #include "DsaUtility.h"
 #include "BasemapPickerController.h"
@@ -23,11 +24,10 @@
 using namespace Esri::ArcGISRuntime;
 
 BasemapPickerController::BasemapPickerController(QObject* parent /* = nullptr */):
-  QObject(parent),
+  Toolkit::AbstractTool(parent),
   m_tileCacheModel(new TileCacheListModel(this))
 {
-  // placeholder until we have ToolManager
-  DsaUtility::tools.append(this);
+  Toolkit::ToolManager::instance()->addTool(this);
 
   QString basemapsPath = DsaUtility::dataPath();
   QDir basemapsDir(basemapsPath);

@@ -17,9 +17,9 @@ namespace Esri
 {
 namespace ArcGISRuntime
 {
-class Error;
-class Scene;
 class SceneQuickView;
+class Scene;
+class Error;
 namespace Toolkit
 {
 class CoordinateConversionController;
@@ -28,6 +28,8 @@ class CoordinateConversionController;
 }
 
 #include <QQuickItem>
+
+class DsaController;
 
 class Vehicle : public QQuickItem
 {
@@ -38,7 +40,6 @@ public:
   ~Vehicle();
 
   void componentComplete() override;
-
 private slots:
   void onError(const Esri::ArcGISRuntime::Error& error);
 
@@ -48,6 +49,7 @@ private:
   Esri::ArcGISRuntime::Scene*             m_scene = nullptr;
   Esri::ArcGISRuntime::SceneQuickView*    m_sceneView = nullptr;
   QString                                 m_dataPath;
+  DsaController*                          m_controller = nullptr;
 };
 
 #endif // VEHICLE_H

@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/qml">
+        <file>BasemapPicker.qml</file>
+        <file>GenericToolbar.qml</file>
+        <file>AddLocalData.qml</file>
+        <file>DsaToolBase.qml</file>
+        <file>MessageFeeds.qml</file>
+    </qresource>
+</RCC>

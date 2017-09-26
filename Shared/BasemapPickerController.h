@@ -18,6 +18,8 @@
 #include <QAbstractListModel>
 #include <QUrl>
 
+#include "AbstractTool.h"
+
 namespace Esri
 {
 namespace ArcGISRuntime
@@ -30,14 +32,14 @@ class QStringListModel;
 
 class TileCacheListModel;
 
-class BasemapPickerController : public QObject
+class BasemapPickerController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
   Q_OBJECT
 
   Q_PROPERTY(QAbstractListModel* tileCacheModel READ tileCacheModel NOTIFY tileCacheModelChanged)
 
 public:
-  BasemapPickerController(QObject* parent = nullptr);
+  explicit BasemapPickerController(QObject* parent = nullptr);
   ~BasemapPickerController();
 
   QAbstractListModel* tileCacheModel() const;
@@ -45,7 +47,7 @@ public:
   Q_INVOKABLE void basemapSelected(int row);
   Q_INVOKABLE void selectInitialBasemap();
 
-  QString toolName() const;
+  QString toolName() const override;
 
 signals:
   void tileCacheModelChanged();

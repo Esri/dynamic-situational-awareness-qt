@@ -60,8 +60,10 @@ void FollowPositionController::nextMode()
 
 void FollowPositionController::setDisabled()
 {
-  m_mode = Mode::Disabled;
+  if (m_mode == Mode::Disabled)
+    return;
 
+  m_mode = Mode::Disabled;
   handleNewMode();
 }
 

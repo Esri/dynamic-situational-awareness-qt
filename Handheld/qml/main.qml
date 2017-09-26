@@ -255,6 +255,7 @@ Handheld {
                 id: basemapsTool
                 anchors.fill: parent
                 height: parent.height
+                visible: false
                 onBasemapSelected: closed()
                 onClosed: drawer.close();
             }
@@ -263,6 +264,7 @@ Handheld {
                 id: addLocalDataTool
                 anchors.fill: parent
                 height: parent.height
+                visible: false
                 showDataConnectionPane: false
                 onClosed: drawer.close();
             }

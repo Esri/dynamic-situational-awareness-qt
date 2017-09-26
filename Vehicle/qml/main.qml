@@ -33,8 +33,6 @@ Vehicle {
 
     FollowPositionController {
         id: followPositionController
-
-        follow: followCheckBox.enabled && followCheckBox.checked
     }
 
     GenericToolbar {
@@ -63,6 +61,8 @@ Vehicle {
 
         id: sceneView
         objectName: "sceneView"
+
+        onMousePressed: followPositionController.setDisabled();
 
         Drawer {
             id: drawer
@@ -233,8 +233,8 @@ Vehicle {
                     sourceSize.height: parent.height * 0.85
                     height: sourceSize.height
                     source: locationCheckBox.checked ?
-                                "qrc:/Resources/icons/xhdpi/navigation.png" :
-                                "qrc:/Resources/icons/xhdpi/navigation_disabled.png"
+                                "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark.png" :
+                                "qrc:/Resources/icons/xhdpi/ic_menu_gpsondontfollow_dark.png"
 
                 }
             }
@@ -242,8 +242,7 @@ Vehicle {
             Button {
                 id: followCheckBox
                 enabled: locationCheckBox.checked
-                checkable: true
-                checked: false
+                visible: enabled
                 width: 32 * scaleFactor
                 height: 32 * scaleFactor
 
@@ -257,10 +256,17 @@ Vehicle {
                     anchors.centerIn: parent
                     sourceSize.height: parent.height * 0.85
                     height: sourceSize.height
-                    source: followCheckBox.checked && followCheckBox.enabled?
-                                "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark.png" :
-                                "qrc:/Resources/icons/xhdpi/ic_menu_gpsondontfollow_dark.png"
+                    source: followPositionController.trackUp ?
+                                "qrc:/Resources/icons/xhdpi/navigation.png" :
+                                followPositionController.northUp ?
+                                    "qrc:/Resources/icons/xhdpi/navigation_north.png" :
+                                    "qrc:/Resources/icons/xhdpi/navigation_disabled.png"
+                }
 
+                onClicked: followPositionController.nextMode();
+                onEnabledChanged: {
+                    if (!enabled)
+                        followPositionController.setDisabled();
                 }
             }
         }

@@ -34,47 +34,62 @@ FollowPositionController::~FollowPositionController()
 void FollowPositionController::init(GeoView* geoView)
 {
   m_geoView = geoView;
+
+  handleNewMode();
 }
 
-
-void FollowPositionController::setFollow(bool follow)
+void FollowPositionController::nextMode()
 {
-  if (m_following == follow)
-    return;
+  switch (m_mode) {
+  case Mode::Disabled:
+    m_mode = Mode::TrackUp;
+    break;
+  case Mode::TrackUp:
+    m_mode = Mode::NorthUp;
+    break;
+  case Mode::NorthUp:
+    m_mode = Mode::Disabled;
+    break;
+  default:
+    m_mode = Mode::Disabled;
+    break;
+  }
 
-  if (!m_geoView)
-    return;
-
-  m_following = follow;
-
-  if (handleFollowInMap())
-    emit followChanged();
-  else if (handleFollowInScene())
-    emit followChanged();
+  handleNewMode();
 }
 
-bool FollowPositionController::isFollow() const
+void FollowPositionController::setDisabled()
 {
-  return m_following;
+  m_mode = Mode::Disabled;
+
+  handleNewMode();
 }
 
-void FollowPositionController::setNorthUp(bool northUp)
+bool FollowPositionController::isTrackUp() const
 {
-  if (m_northUp == northUp)
-    return;
-
-  m_northUp = northUp;
-  emit northUpChanged();
+  return m_mode == Mode::TrackUp;
 }
+
 
 bool FollowPositionController::isNorthUp() const
 {
-  return m_northUp;
+  return m_mode == Mode::NorthUp;
 }
 
 QString FollowPositionController::toolName() const
 {
   return QStringLiteral("follow position");
+}
+
+void FollowPositionController::handleNewMode()
+{
+  if (!m_geoView)
+    return;
+
+  if (handleFollowInMap())
+    emit modeChanged();
+  else if (handleFollowInScene())
+    emit modeChanged();
 }
 
 bool FollowPositionController::handleFollowInMap()
@@ -83,7 +98,7 @@ bool FollowPositionController::handleFollowInMap()
   if (!mapView)
     return false;
 
-  mapView->locationDisplay()->setAutoPanMode(m_following ?
+  mapView->locationDisplay()->setAutoPanMode((isTrackUp() || isNorthUp()) ?
                                                LocationDisplayAutoPanMode::Navigation : LocationDisplayAutoPanMode::Off);
   return true;
 }
@@ -94,7 +109,7 @@ bool FollowPositionController::handleFollowInScene()
   if (!sceneView)
     return false;
 
-  if (!m_following)
+  if (m_mode == Mode::Disabled)
   {
     sceneView->setCameraController(new GlobeCameraController(this));
   }
@@ -110,10 +125,10 @@ bool FollowPositionController::handleFollowInScene()
 
     OrbitGeoElementCameraController* followController = new OrbitGeoElementCameraController(locationGraphic, 2000., this);
 
-    if (m_northUp)
+    if (isNorthUp())
     {
       followController->setAutoHeadingEnabled(false);
-      followController->setCameraHeadingOffsetInteractive(false);
+      followController->setCameraPitchOffset(0.);
     }
 
     sceneView->setCameraController(followController);

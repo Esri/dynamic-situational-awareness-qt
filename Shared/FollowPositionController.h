@@ -29,8 +29,8 @@ class FollowPositionController : public Esri::ArcGISRuntime::Toolkit::AbstractTo
 {
   Q_OBJECT
 
-  Q_PROPERTY(bool follow READ isFollow WRITE setFollow NOTIFY followChanged)
-  Q_PROPERTY(bool northUp READ isNorthUp WRITE setNorthUp NOTIFY northUpChanged)
+  Q_PROPERTY(bool trackUp READ isTrackUp NOTIFY modeChanged)
+  Q_PROPERTY(bool northUp READ isNorthUp NOTIFY modeChanged)
 
 public:
   FollowPositionController(QObject* parent = nullptr);
@@ -38,26 +38,33 @@ public:
 
   void init(Esri::ArcGISRuntime::GeoView* geoView);
 
-  void setFollow(bool follow);
-  bool isFollow() const;
+  Q_INVOKABLE void nextMode();
+  Q_INVOKABLE void setDisabled();
 
-  void setNorthUp(bool northUp);
+  bool isTrackUp() const;
   bool isNorthUp() const;
 
   // AbstractTool interface
   QString toolName() const override;
 
 signals:
-  void followChanged();
-  void northUpChanged();
+  void modeChanged();
 
 private:
+
+  enum class Mode
+  {
+    Disabled = 0,
+    TrackUp = 1,
+    NorthUp = 2
+  };
+
+  void handleNewMode();
   bool handleFollowInMap();
   bool handleFollowInScene();
   Esri::ArcGISRuntime::GraphicListModel* locationGraphicsModel() const;
 
-  bool m_following = false;
-  bool m_northUp = true;
+  Mode m_mode = Mode::Disabled;
   Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
 };
 

@@ -293,7 +293,7 @@ Vehicle {
                     anchors.centerIn: parent
                     sourceSize.height: parent.height * 0.85
                     height: sourceSize.height
-                    source: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_dark.png"
+                    source: "qrc:/Resources/icons/xhdpi/ic_menu_actionarrowb_dark_d.png"
                 }
             }
         }

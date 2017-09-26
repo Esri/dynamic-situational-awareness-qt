@@ -55,6 +55,8 @@ Handheld {
 
         objectName: "sceneView"
 
+        onMousePressed: followPositionController.setDisabled();
+
         ArcGISCompass {
             id: compass
             anchors {
@@ -176,9 +178,40 @@ Handheld {
                 sourceSize.height: parent.height * 0.85
                 height: sourceSize.height
                 source: locationCheckBox.checked ?
-                            "qrc:/Resources/icons/xhdpi/navigation.png" :
-                            "qrc:/Resources/icons/xhdpi/navigation_disabled.png"
+                            "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark.png" :
+                            "qrc:/Resources/icons/xhdpi/ic_menu_gpsondontfollow_dark.png"
 
+            }
+        }
+
+        Button {
+            id: followCheckBox
+            enabled: locationCheckBox.checked
+            visible: enabled
+            width: 32 * scaleFactor
+            height: 32 * scaleFactor
+
+            background: Rectangle {
+                anchors.fill: followCheckBox
+                color: Material.primary
+            }
+
+            Image {
+                fillMode: Image.PreserveAspectFit
+                anchors.centerIn: parent
+                sourceSize.height: parent.height * 0.85
+                height: sourceSize.height
+                source: followPositionController.trackUp ?
+                            "qrc:/Resources/icons/xhdpi/navigation.png" :
+                            followPositionController.northUp ?
+                                "qrc:/Resources/icons/xhdpi/navigation_north.png" :
+                                "qrc:/Resources/icons/xhdpi/navigation_disabled.png"
+            }
+
+            onClicked: followPositionController.nextMode();
+            onEnabledChanged: {
+                if (!enabled)
+                    followPositionController.setDisabled();
             }
         }
     }
@@ -247,5 +280,9 @@ Handheld {
         id: locationController
         simulated: true
         enabled: locationCheckBox.checked
+    }
+
+    FollowPositionController {
+        id: followPositionController
     }
 }

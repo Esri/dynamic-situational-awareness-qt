@@ -35,10 +35,10 @@ Row {
     onEnabledChanged: followPositionController.setDisabled();
 
     Button {
-        id: dontFollow
+        anchors.verticalCenter: parent.verticalCenter
         checkable: true
         checked: !followPositionController.northUp && !followPositionController.trackUp
-        width: checked? 36 * scaleFactor : 32 * scaleFactor
+        width: checked? 48 * scaleFactor : 36 * scaleFactor
         height: width
 
         background: Rectangle {
@@ -58,10 +58,11 @@ Row {
 
     Button {
         id: trackUpButton
+        anchors.verticalCenter: parent.verticalCenter
         checkable: true
         checked: followPositionController.trackUp
         visible: enabled
-        width: checked? 36 * scaleFactor : 32 * scaleFactor
+        width: checked? 48 * scaleFactor : 36 * scaleFactor
         height: width
 
         background: Rectangle {
@@ -81,11 +82,11 @@ Row {
 
     Button {
         id: northUpButton
-        enabled: locationCheckBox.checked
+        anchors.verticalCenter: parent.verticalCenter
         checkable: true
         checked: followPositionController.northUp
         visible: enabled
-        width: checked? 36 * scaleFactor : 32 * scaleFactor
+        width: checked? 48 * scaleFactor : 36 * scaleFactor
         height: width
 
         background: Rectangle {

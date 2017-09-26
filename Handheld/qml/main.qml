@@ -46,6 +46,8 @@ Handheld {
 
     // Create SceneQuickView here, and create its Scene etc. in C++ code
     SceneView {
+        id: sceneView
+
         anchors {
             top: toolbar.bottom
             left: parent.left
@@ -55,7 +57,7 @@ Handheld {
 
         objectName: "sceneView"
 
-        onMousePressed: followPositionController.setDisabled();
+        onMousePressed: followHud.stopFollowing();
 
         ArcGISCompass {
             id: compass
@@ -65,6 +67,17 @@ Handheld {
                 bottomMargin: 22 * scaleFactor
                 rightMargin: 2 * scaleFactor
             }
+        }
+
+        FollowHUD {
+            id: followHud
+            anchors {
+                bottom: sceneView.attributionTop
+                horizontalCenter: parent.horizontalCenter
+                margins: 8 * scaleFactor
+            }
+
+            enabled: locationCheckBox.checked
         }
     }
 
@@ -183,37 +196,6 @@ Handheld {
 
             }
         }
-
-        Button {
-            id: followCheckBox
-            enabled: locationCheckBox.checked
-            visible: enabled
-            width: 32 * scaleFactor
-            height: 32 * scaleFactor
-
-            background: Rectangle {
-                anchors.fill: followCheckBox
-                color: Material.primary
-            }
-
-            Image {
-                fillMode: Image.PreserveAspectFit
-                anchors.centerIn: parent
-                sourceSize.height: parent.height * 0.85
-                height: sourceSize.height
-                source: followPositionController.trackUp ?
-                            "qrc:/Resources/icons/xhdpi/navigation.png" :
-                            followPositionController.northUp ?
-                                "qrc:/Resources/icons/xhdpi/navigation_north.png" :
-                                "qrc:/Resources/icons/xhdpi/navigation_disabled.png"
-            }
-
-            onClicked: followPositionController.nextMode();
-            onEnabledChanged: {
-                if (!enabled)
-                    followPositionController.setDisabled();
-            }
-        }
     }
 
     Drawer {
@@ -282,9 +264,5 @@ Handheld {
         id: locationController
         simulated: true
         enabled: locationCheckBox.checked
-    }
-
-    FollowPositionController {
-        id: followPositionController
     }
 }

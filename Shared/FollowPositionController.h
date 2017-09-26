@@ -38,11 +38,13 @@ public:
 
   void init(Esri::ArcGISRuntime::GeoView* geoView);
 
-  Q_INVOKABLE void nextMode();
   Q_INVOKABLE void setDisabled();
 
   bool isTrackUp() const;
+  Q_INVOKABLE void setTrackUp();
+
   bool isNorthUp() const;
+  Q_INVOKABLE void setNorthUp();
 
   // AbstractTool interface
   QString toolName() const override;

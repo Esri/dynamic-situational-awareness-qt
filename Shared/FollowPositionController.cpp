@@ -38,26 +38,6 @@ void FollowPositionController::init(GeoView* geoView)
   handleNewMode();
 }
 
-void FollowPositionController::nextMode()
-{
-  switch (m_mode) {
-  case Mode::Disabled:
-    m_mode = Mode::TrackUp;
-    break;
-  case Mode::TrackUp:
-    m_mode = Mode::NorthUp;
-    break;
-  case Mode::NorthUp:
-    m_mode = Mode::Disabled;
-    break;
-  default:
-    m_mode = Mode::Disabled;
-    break;
-  }
-
-  handleNewMode();
-}
-
 void FollowPositionController::setDisabled()
 {
   if (m_mode == Mode::Disabled)
@@ -72,10 +52,28 @@ bool FollowPositionController::isTrackUp() const
   return m_mode == Mode::TrackUp;
 }
 
+void FollowPositionController::setTrackUp()
+{
+  if (isTrackUp())
+    return;
+
+  m_mode = Mode::TrackUp;
+  handleNewMode();
+}
+
 
 bool FollowPositionController::isNorthUp() const
 {
   return m_mode == Mode::NorthUp;
+}
+
+void FollowPositionController::setNorthUp()
+{
+  if (isNorthUp())
+    return;
+
+  m_mode = Mode::NorthUp;
+  handleNewMode();
 }
 
 QString FollowPositionController::toolName() const

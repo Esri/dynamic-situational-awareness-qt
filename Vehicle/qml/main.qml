@@ -31,10 +31,6 @@ Vehicle {
         enabled: locationCheckBox.checked
     }
 
-    FollowPositionController {
-        id: followPositionController
-    }
-
     GenericToolbar {
         id: toolbar
         anchors {
@@ -62,7 +58,7 @@ Vehicle {
         id: sceneView
         objectName: "sceneView"
 
-        onMousePressed: followPositionController.setDisabled();
+        onMousePressed: followHud.stopFollowing();
 
         Drawer {
             id: drawer
@@ -123,6 +119,7 @@ Vehicle {
         }
 
         Column {
+            id: toolsCol
             anchors{
                 margins: 2 * scaleFactor
                 top: parent.top
@@ -238,37 +235,17 @@ Vehicle {
 
                 }
             }
+        }
 
-            Button {
-                id: followCheckBox
-                enabled: locationCheckBox.checked
-                visible: enabled
-                width: 32 * scaleFactor
-                height: 32 * scaleFactor
-
-                background: Rectangle {
-                    anchors.fill: followCheckBox
-                    color: Material.primary
-                }
-
-                Image {
-                    fillMode: Image.PreserveAspectFit
-                    anchors.centerIn: parent
-                    sourceSize.height: parent.height * 0.85
-                    height: sourceSize.height
-                    source: followPositionController.trackUp ?
-                                "qrc:/Resources/icons/xhdpi/navigation.png" :
-                                followPositionController.northUp ?
-                                    "qrc:/Resources/icons/xhdpi/navigation_north.png" :
-                                    "qrc:/Resources/icons/xhdpi/navigation_disabled.png"
-                }
-
-                onClicked: followPositionController.nextMode();
-                onEnabledChanged: {
-                    if (!enabled)
-                        followPositionController.setDisabled();
-                }
+        FollowHUD {
+            id: followHud
+            anchors {
+                bottom: sceneView.attributionTop
+                horizontalCenter: parent.horizontalCenter
+                margins: 8 * scaleFactor
             }
+
+            enabled: locationCheckBox.checked
         }
 
         ArcGISCompass {

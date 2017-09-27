@@ -13,7 +13,6 @@
 // API
 #include "ArcGISTiledElevationSource.h"
 #include "Scene.h"
-#include "Basemap.h"
 #include "ElevationSource.h"
 #include "Layer.h"
 #include "GeoView.h"
@@ -23,12 +22,12 @@
 #include "ArcGISCompassController.h"
 #include "CoordinateConversionController.h"
 #include "ToolManager.h"
+#include "ObjectPool.h"
 
 // Dsa apps
 #include "DsaUtility.h"
 #include "DsaController.h"
 #include "AddLocalDataController.h"
-#include "BasemapPickerController.h"
 #include "FollowPositionController.h"
 #include "LocationController.h"
 #include "MessageFeedsController.h"
@@ -65,6 +64,9 @@ Esri::ArcGISRuntime::Scene* DsaController::scene() const
 
 void DsaController::init(GeoView* geoView)
 {
+  Toolkit::ToolManager::instance()->objectPool()->registerScene(m_scene);
+  Toolkit::ToolManager::instance()->objectPool()->registerGeoView(geoView);
+
   auto toolsIt = Toolkit::ToolManager::instance()->toolsBegin();
   auto toolsEnd = Toolkit::ToolManager::instance()->toolsEnd();
   for( ; toolsIt != toolsEnd; ++toolsIt)
@@ -73,55 +75,12 @@ void DsaController::init(GeoView* geoView)
     if (!abstractTool)
       continue;
 
+    connect(abstractTool, &Toolkit::AbstractTool::errorOccurred, this, &DsaController::onError);
+
     Toolkit::ArcGISCompassController* compassController = qobject_cast<Toolkit::ArcGISCompassController*>(abstractTool);
     if (compassController)
     {
       compassController->setView(geoView);
-      continue;
-    }
-
-    BasemapPickerController* basemapPicker = qobject_cast<BasemapPickerController*>(abstractTool);
-    if (basemapPicker)
-    {
-      connect(basemapPicker, &BasemapPickerController::basemapChanged, this, [this](Basemap* basemap)
-      {
-        if (!basemap)
-          return;
-
-        basemap->setParent(this);
-        m_scene->setBasemap(basemap);
-
-        connect(basemap, &Basemap::errorOccurred, this, &DsaController::onError);
-      });
-
-      continue;
-    }
-
-    AddLocalDataController* localDataController = qobject_cast<AddLocalDataController*>(abstractTool);
-    if (localDataController)
-    {
-      connect(localDataController, &AddLocalDataController::layerSelected, this, [this](Layer* lyr)
-      {
-        if (!lyr)
-          return;
-
-        connect(lyr, &Layer::errorOccurred, this, &DsaController::onError);
-
-        lyr->setParent(this);
-        m_scene->operationalLayers()->append(lyr);
-      });
-
-      connect(localDataController, &AddLocalDataController::elevationSourceSelected, this, [this](ElevationSource* source)
-      {
-        if (!source)
-          return;
-
-        connect(source, &ElevationSource::errorOccurred, this, &DsaController::onError);
-
-        source->setParent(this);
-        m_scene->baseSurface()->elevationSources()->append(source);
-      });
-
       continue;
     }
 

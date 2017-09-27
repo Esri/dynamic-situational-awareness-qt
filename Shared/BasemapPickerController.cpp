@@ -16,6 +16,7 @@
 #include "Basemap.h"
 
 #include "ToolManager.h"
+#include "ObjectPool.h"
 
 #include "DsaUtility.h"
 #include "BasemapPickerController.h"
@@ -66,6 +67,9 @@ void BasemapPickerController::basemapSelected(int row)
     return;
 
   Basemap* selectedBasemap = new Basemap(new ArcGISTiledLayer(tileCache, this), this);
+  connect(selectedBasemap, &Basemap::errorOccurred, this, &BasemapPickerController::errorOccurred);
+
+  Toolkit::ToolManager::instance()->objectPool()->setBasemap(selectedBasemap);
 
   emit basemapChanged(selectedBasemap);
 }

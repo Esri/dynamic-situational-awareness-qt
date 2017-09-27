@@ -25,7 +25,10 @@
 #include "ElevationSource.h"
 #include "RasterElevationSource.h"
 #include "ArcGISTiledElevationSource.h"
+#include "LayerListModel.h"
+#include "Scene.h"
 
+#include "ObjectPool.h"
 #include "ToolManager.h"
 
 #include "DsaUtility.h"
@@ -144,7 +147,14 @@ void AddLocalDataController::addItemAsElevationSource(const QList<int>& indices)
       if (format == TileImageFormat::LERC || format == TileImageFormat::Unknown) // remove the Unknown clause once API bug is fixed
       {
         // create the source from the tiled source
-        emit elevationSourceSelected(new ArcGISTiledElevationSource(tileCache, this));
+        ArcGISTiledElevationSource* source = new ArcGISTiledElevationSource(tileCache, this);
+
+        connect(source, &ArcGISTiledElevationSource::errorOccurred, this, &AddLocalDataController::onError);
+
+        source->setParent(this);
+        Toolkit::ToolManager::instance()->objectPool()->scene()->baseSurface()->elevationSources()->append(source);
+
+        emit elevationSourceSelected(source);
       }
       else
         continue;
@@ -161,7 +171,14 @@ void AddLocalDataController::addItemAsElevationSource(const QList<int>& indices)
   if (dataPaths.length() == 0)
     return;
 
-  emit elevationSourceSelected(new RasterElevationSource(dataPaths));
+  RasterElevationSource* source = new RasterElevationSource(dataPaths, this);
+
+  connect(source, &RasterElevationSource::errorOccurred, this, &AddLocalDataController::onError);
+
+  source->setParent(this);
+  Toolkit::ToolManager::instance()->objectPool()->scene()->baseSurface()->elevationSources()->append(source);
+
+  emit elevationSourceSelected(new RasterElevationSource(source));
 }
 
 // Q_INVOKABLE function that takes the indices passed in, gets the path and data type
@@ -216,6 +233,10 @@ void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path)
     for (FeatureTable* featureTable : gdb->geodatabaseFeatureTables())
     {
       FeatureLayer* featureLayer = new FeatureLayer(featureTable, this);
+
+      connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+      Toolkit::ToolManager::instance()->objectPool()->operationalLayers()->append(featureLayer);
+
       emit layerSelected(featureLayer);
     }
   });
@@ -241,6 +262,10 @@ void AddLocalDataController::createRasterLayer(const QString& path)
 {
   Raster* raster = new Raster(path, this);
   RasterLayer* rasterLayer = new RasterLayer(raster, this);
+
+  connect(rasterLayer, &RasterLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+  Toolkit::ToolManager::instance()->objectPool()->operationalLayers()->append(rasterLayer);
+
   emit layerSelected(rasterLayer);
 }
 
@@ -255,6 +280,10 @@ void AddLocalDataController::createKmlLayer(const QString& path)
 void AddLocalDataController::createSceneLayer(const QString& path)
 {
   ArcGISSceneLayer* sceneLayer = new ArcGISSceneLayer(QUrl(path), this);
+
+  connect(sceneLayer, &ArcGISSceneLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+  Toolkit::ToolManager::instance()->objectPool()->operationalLayers()->append(sceneLayer);
+
   emit layerSelected(sceneLayer);
 }
 
@@ -262,6 +291,10 @@ void AddLocalDataController::createSceneLayer(const QString& path)
 void AddLocalDataController::createTiledLayer(const QString& path)
 {
   ArcGISTiledLayer* tiledLayer = new ArcGISTiledLayer(QUrl(path), this);
+
+  connect(tiledLayer, &ArcGISTiledLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+  Toolkit::ToolManager::instance()->objectPool()->operationalLayers()->append(tiledLayer);
+
   emit layerSelected(tiledLayer);
 }
 
@@ -269,6 +302,10 @@ void AddLocalDataController::createTiledLayer(const QString& path)
 void AddLocalDataController::createVectorTiledLayer(const QString& path)
 {
   ArcGISVectorTiledLayer* vectorTiledLayer = new ArcGISVectorTiledLayer(QUrl(path), this);
+
+  connect(vectorTiledLayer, &ArcGISVectorTiledLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+  Toolkit::ToolManager::instance()->objectPool()->operationalLayers()->append(vectorTiledLayer);
+
   emit layerSelected(vectorTiledLayer);
 }
 

@@ -21,7 +21,7 @@
 // Toolkit
 #include "AbstractTool.h"
 #include "ToolManager.h"
-#include "ObjectPool.h"
+#include "ToolResourceProvider.h"
 
 // Dsa apps
 #include "DsaUtility.h"
@@ -59,8 +59,8 @@ Esri::ArcGISRuntime::Scene* DsaController::scene() const
 
 void DsaController::init(GeoView* geoView)
 {
-  Toolkit::ToolManager::instance()->objectPool()->registerScene(m_scene);
-  Toolkit::ToolManager::instance()->objectPool()->registerGeoView(geoView);
+  Toolkit::ToolManager::instance()->resourceProvider()->registerScene(m_scene);
+  Toolkit::ToolManager::instance()->resourceProvider()->registerGeoView(geoView);
 
   auto toolsIt = Toolkit::ToolManager::instance()->toolsBegin();
   auto toolsEnd = Toolkit::ToolManager::instance()->toolsEnd();

@@ -24,7 +24,7 @@
 #include "SimpleRenderer.h"
 
 #include "ToolManager.h"
-#include "ObjectPool.h"
+#include "ToolResourceProvider.h"
 
 #include "GPXLocationSimulator.h"
 #include "DsaUtility.h"
@@ -38,9 +38,9 @@ LocationController::LocationController(QObject* parent) :
 
   setGpxFilePath(QUrl::fromLocalFile(DsaUtility::dataPath() + "/MontereyMounted.gpx"));
 
-  connect(Toolkit::ToolManager::instance()->objectPool(), &Toolkit::ObjectPool::geoViewChanged, this, [this]()
+  connect(Toolkit::ToolManager::instance()->resourceProvider(), &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]()
   {
-    GeoView* geoView = Toolkit::ToolManager::instance()->objectPool()->geoView();
+    GeoView* geoView = Toolkit::ToolManager::instance()->resourceProvider()->geoView();
     if (geoView)
       geoView->graphicsOverlays()->append(locationOverlay());
   });

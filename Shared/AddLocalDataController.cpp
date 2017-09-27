@@ -75,7 +75,7 @@ void AddLocalDataController::addPathToDirectoryList(const QString& path)
 
 // clear and re-fetch files in list of data paths
 void AddLocalDataController::refreshLocalDataModel(const QString& fileType)
-{  
+{
   QStringList fileFilters = determineFileFilters(fileType);
   m_localDataModel->clear();
 

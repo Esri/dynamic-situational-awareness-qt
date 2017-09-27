@@ -237,7 +237,7 @@ Vehicle {
             }
         }
 
-        FollowHUD {
+        FollowHud {
             id: followHud
             anchors {
                 bottom: sceneView.attributionTop

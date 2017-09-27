@@ -25,6 +25,7 @@
 #include "ElevationSource.h"
 #include "RasterElevationSource.h"
 #include "ArcGISTiledElevationSource.h"
+#include "ShapefileFeatureTable.h"
 
 #include "ToolManager.h"
 
@@ -55,7 +56,7 @@ AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
 
   // create file filter list
   m_fileFilterList = QStringList{allData(), rasterData(), geodatabaseData(),
-      sceneLayerData(), tilePackageData()/*, shapefileData(), kmlData(),
+      sceneLayerData(), tilePackageData(), shapefileData() /*, kmlData(),
       geopackageData(), vectorTilePackageData()*/}; // uncomment these as new formats are supported
   emit fileFilterListChanged();
   emit localDataModelChanged();
@@ -74,7 +75,7 @@ void AddLocalDataController::addPathToDirectoryList(const QString& path)
 
 // clear and re-fetch files in list of data paths
 void AddLocalDataController::refreshLocalDataModel(const QString& fileType)
-{
+{  
   QStringList fileFilters = determineFileFilters(fileType);
   m_localDataModel->clear();
 
@@ -115,7 +116,7 @@ QStringList AddLocalDataController::determineFileFilters(const QString& fileType
     fileFilter << "*.vtpk";
   else if (fileType == rasterData())
     fileFilter = rasterExtensions;
-  else if (fileType == allData())
+  else
   {
     fileFilter = rasterExtensions;
     fileFilter << "*.geodatabase" << "*.tpk" << "*.shp" << "*.gpkg" << "*.kml" << "*.slpk" << "*.vtpk";
@@ -232,8 +233,9 @@ void AddLocalDataController::createLayerGeoPackage(const QString& path)
 // Helper that creates a FeatureLayer from the Shapefile FeatureTable
 void AddLocalDataController::createFeatureLayerShapefile(const QString& path)
 {
-  qDebug() << "TODO. Shapefile not yet supported";
-  Q_UNUSED(path);
+  ShapefileFeatureTable* shpFt = new ShapefileFeatureTable(path, this);
+  FeatureLayer* featureLayer = new FeatureLayer(shpFt, this);
+  emit layerSelected(featureLayer);
 }
 
 // Helper that creates a RasterLayer from a raster file path

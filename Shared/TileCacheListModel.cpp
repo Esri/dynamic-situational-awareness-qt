@@ -134,3 +134,11 @@ QHash<int, QByteArray> TileCacheListModel::roleNames() const
 {
   return m_roles;
 }
+
+QString TileCacheListModel::tileCacheNameAt(int row) const
+{
+  if (m_tileCacheData.size() <= row)
+    return "";
+
+  return QFileInfo(m_tileCacheData.at(row)->path()).completeBaseName();
+}

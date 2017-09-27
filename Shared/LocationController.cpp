@@ -268,13 +268,17 @@ void LocationController::initOverlay()
   });
 }
 
+void LocationController::setIconDataPath(const QString& dataPath)
+{
+  m_iconDataPath = dataPath;
+}
+
 QUrl LocationController::modelSymbolPath() const
 {
   // both files are needed: LocationDisplay.dae
-  // and navigation.png and both must be local (not resources)
-  const QString dataPath = DsaUtility::dataPath();
-  QString modelPath = dataPath + "/LocationDisplay.dae";
-  QString imagePath = dataPath + "/navigation.png";
+  // and navigation.png and both must be local (not resources)  
+  QString modelPath = m_iconDataPath + "/LocationDisplay.dae";
+  QString imagePath = m_iconDataPath + "/navigation.png";
 
   if (QFile::exists(modelPath) && QFile::exists(imagePath))
     return QUrl::fromLocalFile(modelPath);

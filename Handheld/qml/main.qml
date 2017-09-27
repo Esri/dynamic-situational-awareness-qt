@@ -246,8 +246,7 @@ Handheld {
     }
 
     LocationController {
-        id: locationController
-        simulated: true
+        id: locationController        
         enabled: locationCheckBox.checked
     }
 }

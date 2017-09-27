@@ -31,11 +31,11 @@ MessageFeedsController::MessageFeedsController(QObject* parent) :
   Toolkit::AbstractTool(parent),
   m_messageFeeds(new MessageFeedListModel(this))
 {
-  Toolkit::ToolManager::instance()->addTool(this);
+  Toolkit::ToolManager::instance().addTool(this);
 
-  connect(Toolkit::ToolManager::instance()->resourceProvider(), &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]()
+  connect(Toolkit::ToolManager::instance().resourceProvider(), &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]()
   {
-    GeoView* geoView = Toolkit::ToolManager::instance()->resourceProvider()->geoView();
+    GeoView* geoView = Toolkit::ToolManager::instance().resourceProvider()->geoView();
     if (geoView)
       init(geoView);
   });

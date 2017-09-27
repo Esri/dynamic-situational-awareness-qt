@@ -25,11 +25,11 @@ using namespace Esri::ArcGISRuntime;
 FollowPositionController::FollowPositionController(QObject* parent) :
   Toolkit::AbstractTool(parent)
 {
-  Toolkit::ToolManager::instance()->addTool(this);
+  Toolkit::ToolManager::instance().addTool(this);
 
-  connect(Toolkit::ToolManager::instance()->resourceProvider(), &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]()
+  connect(Toolkit::ToolManager::instance().resourceProvider(), &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]()
   {
-    GeoView* geoView = Toolkit::ToolManager::instance()->resourceProvider()->geoView();
+    GeoView* geoView = Toolkit::ToolManager::instance().resourceProvider()->geoView();
     if (geoView)
       init(geoView);
   });

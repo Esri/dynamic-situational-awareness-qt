@@ -59,14 +59,11 @@ Esri::ArcGISRuntime::Scene* DsaController::scene() const
 
 void DsaController::init(GeoView* geoView)
 {
-  Toolkit::ToolManager::instance()->resourceProvider()->registerScene(m_scene);
-  Toolkit::ToolManager::instance()->resourceProvider()->registerGeoView(geoView);
+  Toolkit::ToolManager::instance().resourceProvider()->registerScene(m_scene);
+  Toolkit::ToolManager::instance().resourceProvider()->registerGeoView(geoView);
 
-  auto toolsIt = Toolkit::ToolManager::instance()->toolsBegin();
-  auto toolsEnd = Toolkit::ToolManager::instance()->toolsEnd();
-  for( ; toolsIt != toolsEnd; ++toolsIt)
+  for(const Toolkit::AbstractTool* abstractTool : Toolkit::ToolManager::instance())
   {
-    Toolkit::AbstractTool* abstractTool = *toolsIt;
     if (!abstractTool)
       continue;
 

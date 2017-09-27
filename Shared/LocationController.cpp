@@ -34,13 +34,13 @@ using namespace Esri::ArcGISRuntime;
 LocationController::LocationController(QObject* parent) :
   Toolkit::AbstractTool(parent)
 {
-  Toolkit::ToolManager::instance()->addTool(this);
+  Toolkit::ToolManager::instance().addTool(this);
 
   setGpxFilePath(QUrl::fromLocalFile(DsaUtility::dataPath() + "/MontereyMounted.gpx"));
 
-  connect(Toolkit::ToolManager::instance()->resourceProvider(), &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]()
+  connect(Toolkit::ToolManager::instance().resourceProvider(), &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]()
   {
-    GeoView* geoView = Toolkit::ToolManager::instance()->resourceProvider()->geoView();
+    GeoView* geoView = Toolkit::ToolManager::instance().resourceProvider()->geoView();
     if (geoView)
       geoView->graphicsOverlays()->append(locationOverlay());
   });

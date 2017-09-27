@@ -28,7 +28,7 @@ BasemapPickerController::BasemapPickerController(QObject* parent /* = nullptr */
   Toolkit::AbstractTool(parent),
   m_tileCacheModel(new TileCacheListModel(this))
 {
-  Toolkit::ToolManager::instance()->addTool(this);
+  Toolkit::ToolManager::instance().addTool(this);
 
   QString basemapsPath = DsaUtility::dataPath();
   QDir basemapsDir(basemapsPath);
@@ -69,7 +69,7 @@ void BasemapPickerController::basemapSelected(int row)
   Basemap* selectedBasemap = new Basemap(new ArcGISTiledLayer(tileCache, this), this);
   connect(selectedBasemap, &Basemap::errorOccurred, this, &BasemapPickerController::errorOccurred);
 
-  Toolkit::ToolManager::instance()->resourceProvider()->setBasemap(selectedBasemap);
+  Toolkit::ToolManager::instance().resourceProvider()->setBasemap(selectedBasemap);
 
   emit basemapChanged(selectedBasemap);
 }

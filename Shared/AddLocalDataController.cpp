@@ -152,7 +152,9 @@ void AddLocalDataController::addItemAsElevationSource(const QList<int>& indices)
         connect(source, &ArcGISTiledElevationSource::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
         source->setParent(this);
-        Toolkit::ToolManager::instance().resourceProvider()->scene()->baseSurface()->elevationSources()->append(source);
+        auto scene = Toolkit::ToolManager::instance().resourceProvider()->scene();
+        if (scene)
+          scene->baseSurface()->elevationSources()->append(source);
 
         emit elevationSourceSelected(source);
       }
@@ -176,7 +178,9 @@ void AddLocalDataController::addItemAsElevationSource(const QList<int>& indices)
   connect(source, &RasterElevationSource::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
   source->setParent(this);
-  Toolkit::ToolManager::instance().resourceProvider()->scene()->baseSurface()->elevationSources()->append(source);
+  auto scene = Toolkit::ToolManager::instance().resourceProvider()->scene();
+  if (scene)
+    scene->baseSurface()->elevationSources()->append(source);
 
   emit elevationSourceSelected(source);
 }
@@ -235,7 +239,10 @@ void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path)
       FeatureLayer* featureLayer = new FeatureLayer(featureTable, this);
 
       connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
-      Toolkit::ToolManager::instance().resourceProvider()->operationalLayers()->append(featureLayer);
+
+      auto operationalLayers = Toolkit::ToolManager::instance().resourceProvider()->operationalLayers();
+      if (operationalLayers)
+        operationalLayers->append(featureLayer);
 
       emit layerSelected(featureLayer);
     }
@@ -264,7 +271,9 @@ void AddLocalDataController::createRasterLayer(const QString& path)
   RasterLayer* rasterLayer = new RasterLayer(raster, this);
 
   connect(rasterLayer, &RasterLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
-  Toolkit::ToolManager::instance().resourceProvider()->operationalLayers()->append(rasterLayer);
+  auto operationalLayers = Toolkit::ToolManager::instance().resourceProvider()->operationalLayers();
+  if (operationalLayers)
+    operationalLayers->append(rasterLayer);
 
   emit layerSelected(rasterLayer);
 }
@@ -282,7 +291,9 @@ void AddLocalDataController::createSceneLayer(const QString& path)
   ArcGISSceneLayer* sceneLayer = new ArcGISSceneLayer(QUrl(path), this);
 
   connect(sceneLayer, &ArcGISSceneLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
-  Toolkit::ToolManager::instance().resourceProvider()->operationalLayers()->append(sceneLayer);
+  auto operationalLayers = Toolkit::ToolManager::instance().resourceProvider()->operationalLayers();
+  if (operationalLayers)
+    operationalLayers->append(sceneLayer);
 
   emit layerSelected(sceneLayer);
 }
@@ -293,7 +304,9 @@ void AddLocalDataController::createTiledLayer(const QString& path)
   ArcGISTiledLayer* tiledLayer = new ArcGISTiledLayer(QUrl(path), this);
 
   connect(tiledLayer, &ArcGISTiledLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
-  Toolkit::ToolManager::instance().resourceProvider()->operationalLayers()->append(tiledLayer);
+  auto operationalLayers = Toolkit::ToolManager::instance().resourceProvider()->operationalLayers();
+  if (operationalLayers)
+    operationalLayers->append(tiledLayer);
 
   emit layerSelected(tiledLayer);
 }
@@ -304,7 +317,9 @@ void AddLocalDataController::createVectorTiledLayer(const QString& path)
   ArcGISVectorTiledLayer* vectorTiledLayer = new ArcGISVectorTiledLayer(QUrl(path), this);
 
   connect(vectorTiledLayer, &ArcGISVectorTiledLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
-  Toolkit::ToolManager::instance().resourceProvider()->operationalLayers()->append(vectorTiledLayer);
+  auto operationalLayers = Toolkit::ToolManager::instance().resourceProvider()->operationalLayers();
+  if (operationalLayers)
+    operationalLayers->append(vectorTiledLayer);
 
   emit layerSelected(vectorTiledLayer);
 }

@@ -26,8 +26,7 @@ Vehicle {
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     LocationController {
-        id: locationController
-        simulated: true
+        id: locationController        
         enabled: locationCheckBox.checked
     }
 

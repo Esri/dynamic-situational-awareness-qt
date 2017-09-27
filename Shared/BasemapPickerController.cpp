@@ -23,15 +23,35 @@
 
 using namespace Esri::ArcGISRuntime;
 
+// Default c'tor
+// User must call setBasemapDataPath to populate the basemap list
 BasemapPickerController::BasemapPickerController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent),
   m_tileCacheModel(new TileCacheListModel(this))
 {
   Toolkit::ToolManager::instance()->addTool(this);
 
-  QString basemapsPath = DsaUtility::dataPath();
-  QDir basemapsDir(basemapsPath);
-  emit basemapsDirChanged();
+  connect(this, &BasemapPickerController::basemapsDataPathChanged, this, &BasemapPickerController::onBasemapDataPathChanged);
+}
+
+BasemapPickerController::~BasemapPickerController()
+{
+}
+
+void BasemapPickerController::setBasemapDataPath(const QString& dataPath)
+{
+  m_basemapDataPath = dataPath;
+  emit basemapsDataPathChanged();
+}
+
+void BasemapPickerController::setDefaultBasemap(const QString& defaultBasemap)
+{
+  m_defaultBasemap = defaultBasemap;
+}
+
+void BasemapPickerController::onBasemapDataPathChanged()
+{
+  QDir basemapsDir(m_basemapDataPath);
 
   basemapsDir.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
   basemapsDir.setNameFilters(QStringList{"*.tpk"});
@@ -43,15 +63,11 @@ BasemapPickerController::BasemapPickerController(QObject* parent /* = nullptr */
     if (m_tileCacheModel->append(fInfo.filePath()))
       index++;
 
-    if(fInfo.completeBaseName().compare("topographic", Qt::CaseInsensitive) == 0)
+    if(fInfo.completeBaseName().compare(m_defaultBasemap, Qt::CaseInsensitive) == 0)
       m_defaultBasemapIndex = index;
   }
 
   emit tileCacheModelChanged();
-}
-
-BasemapPickerController::~BasemapPickerController()
-{
 }
 
 QAbstractListModel* BasemapPickerController::tileCacheModel() const
@@ -67,7 +83,9 @@ void BasemapPickerController::basemapSelected(int row)
 
   Basemap* selectedBasemap = new Basemap(new ArcGISTiledLayer(tileCache, this), this);
 
-  emit basemapChanged(selectedBasemap);
+  const QString basemapName = m_tileCacheModel->tileCacheNameAt(row);
+
+  emit basemapChanged(selectedBasemap, basemapName);
 }
 
 void BasemapPickerController::selectInitialBasemap()

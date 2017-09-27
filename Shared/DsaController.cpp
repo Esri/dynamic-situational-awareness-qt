@@ -19,18 +19,13 @@
 #include "DictionarySymbolStyle.h"
 
 // Toolkit
-#include "ArcGISCompassController.h"
-#include "CoordinateConversionController.h"
+#include "AbstractTool.h"
 #include "ToolManager.h"
 #include "ObjectPool.h"
 
 // Dsa apps
 #include "DsaUtility.h"
 #include "DsaController.h"
-#include "AddLocalDataController.h"
-#include "FollowPositionController.h"
-#include "LocationController.h"
-#include "MessageFeedsController.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -76,38 +71,6 @@ void DsaController::init(GeoView* geoView)
       continue;
 
     connect(abstractTool, &Toolkit::AbstractTool::errorOccurred, this, &DsaController::onError);
-
-    Toolkit::ArcGISCompassController* compassController = qobject_cast<Toolkit::ArcGISCompassController*>(abstractTool);
-    if (compassController)
-    {
-      compassController->setView(geoView);
-      continue;
-    }
-
-    LocationController* locationController = qobject_cast<LocationController*>(abstractTool);
-    if (locationController)
-    {
-      locationController->setGpxFilePath(QUrl::fromLocalFile(m_dataPath + "/MontereyMounted.gpx"));
-      geoView->graphicsOverlays()->append(locationController->locationOverlay());
-
-      continue;
-    }
-
-    MessageFeedsController* messageFeedsController = qobject_cast<MessageFeedsController*>(abstractTool);
-    if (messageFeedsController)
-    {
-      messageFeedsController->init(geoView);
-
-      continue;
-    }
-
-    FollowPositionController* followController = qobject_cast<FollowPositionController*>(abstractTool);
-    if (followController)
-    {
-      followController->init(geoView);
-
-      continue;
-    }
   }
 }
 

@@ -18,6 +18,7 @@
 #include "MessageFeedListModel.h"
 #include "MessageFeed.h"
 
+#include "ObjectPool.h"
 #include "ToolManager.h"
 
 #include "DictionarySymbolStyle.h"
@@ -31,6 +32,13 @@ MessageFeedsController::MessageFeedsController(QObject* parent) :
   m_messageFeeds(new MessageFeedListModel(this))
 {
   Toolkit::ToolManager::instance()->addTool(this);
+
+  connect(Toolkit::ToolManager::instance()->objectPool(), &Toolkit::ObjectPool::geoViewChanged, this, [this]()
+  {
+    GeoView* geoView = Toolkit::ToolManager::instance()->objectPool()->geoView();
+    if (geoView)
+      init(geoView);
+  });
 }
 
 MessageFeedsController::~MessageFeedsController()

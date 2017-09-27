@@ -17,6 +17,7 @@
 
 #include "FollowPositionController.h"
 
+#include "ObjectPool.h"
 #include "ToolManager.h"
 
 using namespace Esri::ArcGISRuntime;
@@ -25,6 +26,13 @@ FollowPositionController::FollowPositionController(QObject* parent) :
   Toolkit::AbstractTool(parent)
 {
   Toolkit::ToolManager::instance()->addTool(this);
+
+  connect(Toolkit::ToolManager::instance()->objectPool(), &Toolkit::ObjectPool::geoViewChanged, this, [this]()
+  {
+    GeoView* geoView = Toolkit::ToolManager::instance()->objectPool()->geoView();
+    if (geoView)
+      init(geoView);
+  });
 }
 
 FollowPositionController::~FollowPositionController()

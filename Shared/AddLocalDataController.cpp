@@ -149,7 +149,7 @@ void AddLocalDataController::addItemAsElevationSource(const QList<int>& indices)
         // create the source from the tiled source
         ArcGISTiledElevationSource* source = new ArcGISTiledElevationSource(tileCache, this);
 
-        connect(source, &ArcGISTiledElevationSource::errorOccurred, this, &AddLocalDataController::onError);
+        connect(source, &ArcGISTiledElevationSource::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
         source->setParent(this);
         Toolkit::ToolManager::instance()->objectPool()->scene()->baseSurface()->elevationSources()->append(source);
@@ -168,17 +168,17 @@ void AddLocalDataController::addItemAsElevationSource(const QList<int>& indices)
       continue;
   }
 
-  if (dataPaths.length() == 0)
+  if (dataPaths.isEmpty())
     return;
 
   RasterElevationSource* source = new RasterElevationSource(dataPaths, this);
 
-  connect(source, &RasterElevationSource::errorOccurred, this, &AddLocalDataController::onError);
+  connect(source, &RasterElevationSource::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
   source->setParent(this);
   Toolkit::ToolManager::instance()->objectPool()->scene()->baseSurface()->elevationSources()->append(source);
 
-  emit elevationSourceSelected(new RasterElevationSource(source));
+  emit elevationSourceSelected(source);
 }
 
 // Q_INVOKABLE function that takes the indices passed in, gets the path and data type

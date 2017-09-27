@@ -3,6 +3,10 @@
 
 #include "MessageSimulatorController.h"
 
+#ifdef Q_OS_WIN
+#include <Windows.h>
+#endif
+
 void printHelp()
 {
   QTextStream out(stdout);
@@ -37,9 +41,22 @@ int main(int argc, char *argv[])
   {
     if (!strcmp(argv[i], "-h"))
     {
-      // Print help and exit
+#ifdef Q_OS_WIN
+      AllocConsole() ;
+      AttachConsole(GetCurrentProcessId());
+      freopen("CON", "w", stdout);
+
+      QCoreApplication app(argc, argv);
+#endif
+
+      // Print help
       printHelp();
+
+#ifdef Q_OS_WIN
+      return app.exec();
+#else
       return 0;
+#endif
     }
     else if (!strcmp(argv[i], "-c"))
     {
@@ -85,6 +102,12 @@ int main(int argc, char *argv[])
 
   if (!isGui)
   {
+#ifdef Q_OS_WIN
+    AllocConsole() ;
+    AttachConsole(GetCurrentProcessId());
+    freopen("CON", "w", stdout);
+#endif
+
     if (simulationFile.isEmpty() || port == -1)
     {
       printHelp();
@@ -111,12 +134,13 @@ int main(int argc, char *argv[])
 
     if (isVerbose)
     {
-      qDebug() << "Simulation started with file: " << controller.simulationFile().toString();
-      qDebug() << "UDP port: " << controller.port();
-      qDebug() << "Sending " << controller.messageFrequency() << " message per " <<
-                  MessageSimulatorController::fromTimeUnit(controller.timeUnit());
+      QTextStream out(stdout);
+      out << "Simulation started with file: " << controller.simulationFile().toString() << "\n";
+      out << "UDP port: " << controller.port() << "\n";
+      out << "Sending " << controller.messageFrequency() << " message per " <<
+                  MessageSimulatorController::fromTimeUnit(controller.timeUnit()) << "\n";
       if (isLoop)
-        qDebug() << "Simulation loop mode enabled";
+        out << "Simulation loop mode enabled\n";
     }
 
     return app.exec();

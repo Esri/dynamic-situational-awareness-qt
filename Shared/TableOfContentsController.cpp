@@ -10,8 +10,11 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include <QFileInfo>
+
 #include "GeoView.h"
 #include "LayerListModel.h"
+#include "RasterLayer.h"
 
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
@@ -89,6 +92,36 @@ void TableOfContentsController::moveDown(int layerIndex)
     return;
 
   m_layerListModel->move(layerIndex, layerIndex + 1);
+}
+
+QString TableOfContentsController::getAlternateName(int layerIndex)
+{
+  const QString unknownName("????");
+  if (!m_layerListModel)
+    return QString(unknownName);
+
+  if (layerIndex >= m_layerListModel->rowCount())
+    return QString(unknownName);
+
+  Layer* layer = m_layerListModel->at(layerIndex);
+  if (!layer)
+    return QString(unknownName);
+
+  QString layerName = layer->name();
+  if (!layerName.isEmpty())
+    return layerName;
+
+  RasterLayer* rasterLayer = qobject_cast<RasterLayer*>(layer);
+  if (!rasterLayer)
+    return QString(unknownName);
+
+  Raster* raster = rasterLayer->raster();
+  if (!raster || raster->path().isEmpty())
+    return QString(unknownName);
+
+  QFileInfo rasterFile(raster->path());
+
+  return rasterFile.baseName();
 }
 
 QString TableOfContentsController::toolName() const

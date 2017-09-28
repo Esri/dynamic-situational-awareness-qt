@@ -45,6 +45,8 @@ public:
   Q_INVOKABLE void moveUp(int layerIndex);
   Q_INVOKABLE void moveDown(int layerIndex);
 
+  Q_INVOKABLE QString getAlternateName(int layerIndex);
+
   QString toolName() const override;
 
 signals:

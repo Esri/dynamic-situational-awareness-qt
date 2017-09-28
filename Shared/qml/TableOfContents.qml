@@ -20,7 +20,7 @@ import Esri.DSA 1.0
 DsaToolBase {
     id: tocRoot
 
-    title: "Add Local Data"
+    title: "Table of contents"
     width: 272 * scaleFactor
 
     // Create the controller
@@ -47,7 +47,7 @@ DsaToolBase {
             anchors.margins: 4 * scaleFactor
             width: layersList.width
             height: 32 * scaleFactor
-            spacing: 8 * scaleFactor
+            spacing: 2 * scaleFactor
 
             CheckBox {
                 height: parent.height
@@ -58,9 +58,13 @@ DsaToolBase {
             Text {
                 anchors.verticalCenter: parent.verticalCenter
                 verticalAlignment: Text.AlignVCenter
+                elide: Text.ElideRight
+                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 height: parent.height
-                width: 64 * scaleFactor
-                text: name
+                width: 92 * scaleFactor
+                text: name && name.length === 0 ?
+                          toolController.getAlternateName(index) :
+                          name
             }
 
             Image {

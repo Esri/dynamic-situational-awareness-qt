@@ -31,6 +31,6 @@ priLocation = $$replace(cleanDirPath, '"', "")
 
 ios: {
   !include($$priLocation/sdk/toolkit/Plugin/ArcGISRuntimeToolkitPlugin.pri) {
-    message("Error. Cannot locate PRI file to import toolkit as a plugin")
+    message("Error. Cannot locate PRI file to import Toolkit as a plugin")
   }
 }

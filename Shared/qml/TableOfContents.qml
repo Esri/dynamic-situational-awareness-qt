@@ -57,7 +57,9 @@ DsaToolBase {
 
             Text {
                 anchors.verticalCenter: parent.verticalCenter
+                verticalAlignment: Text.AlignVCenter
                 height: parent.height
+                width: 64 * scaleFactor
                 text: name
             }
 
@@ -75,6 +77,47 @@ DsaToolBase {
                 }
             }
 
+
+            Image {
+                fillMode: Image.PreserveAspectFit
+                anchors.verticalCenter: parent.verticalCenter
+                sourceSize.height: parent.height - (6 * scaleFactor)
+                height: sourceSize.height
+                width: 32 * scaleFactor
+                source: index > 0 ?
+                            "qrc:/Resources/icons/xhdpi/ic_menu_spinneractive_light.png" :
+                            ""
+
+                MouseArea {
+                    anchors.fill: parent
+
+                    onClicked: {
+                        if (index > 0)
+                            toolController.moveUp(index);
+                    }
+                }
+            }
+
+            Image {
+                fillMode: Image.PreserveAspectFit
+                anchors.verticalCenter: parent.verticalCenter
+                sourceSize.height: parent.height - (6 * scaleFactor)
+                height: sourceSize.height
+                width: 32 * scaleFactor
+                source: index < (layersList.count -1) ?
+                            "qrc:/Resources/icons/xhdpi/ic_menu_spinneridle_light.png" :
+                            ""
+
+                MouseArea {
+                    anchors.fill: parent
+
+                    onClicked: {
+                        if (index < (layersList.count -1))
+                            toolController.moveDown(index);
+                    }
+                }
+            }
+
             Image {
                 fillMode: Image.PreserveAspectFit
                 anchors.verticalCenter: parent.verticalCenter
@@ -88,11 +131,7 @@ DsaToolBase {
                     onClicked: toolController.removeAt(index);
                 }
             }
-
-
         }
-
-
     }
 }
 

@@ -42,6 +42,8 @@ public:
 
   Q_INVOKABLE void zoomTo(int layerIndex);
   Q_INVOKABLE void removeAt(int layerIndex);
+  Q_INVOKABLE void moveUp(int layerIndex);
+  Q_INVOKABLE void moveDown(int layerIndex);
 
   QString toolName() const override;
 

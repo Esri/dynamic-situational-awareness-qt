@@ -69,6 +69,28 @@ void TableOfContentsController::removeAt(int layerIndex)
   m_layerListModel->removeAt(layerIndex);
 }
 
+void TableOfContentsController::moveUp(int layerIndex)
+{
+  if (!m_layerListModel)
+    return;
+
+  if (layerIndex <= 0)
+    return;
+
+  m_layerListModel->move(layerIndex, layerIndex - 1);
+}
+
+void TableOfContentsController::moveDown(int layerIndex)
+{
+  if (!m_layerListModel)
+    return;
+
+  if (layerIndex >= m_layerListModel->rowCount())
+    return;
+
+  m_layerListModel->move(layerIndex, layerIndex + 1);
+}
+
 QString TableOfContentsController::toolName() const
 {
   return QStringLiteral("table of contents");

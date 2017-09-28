@@ -51,6 +51,9 @@ signals:
   void followChanged();
   void northUpChanged();
 
+private slots:
+  void updateGeoView();
+
 private:
   bool handleFollowInMap();
   bool handleFollowInScene();

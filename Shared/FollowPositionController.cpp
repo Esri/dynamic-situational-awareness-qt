@@ -27,12 +27,10 @@ FollowPositionController::FollowPositionController(QObject* parent) :
 {
   Toolkit::ToolManager::instance().addTool(this);
 
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]()
-  {
-    GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
-    if (geoView)
-      init(geoView);
-  });
+  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this,
+          &FollowPositionController::updateGeoView);
+
+  updateGeoView();
 }
 
 FollowPositionController::~FollowPositionController()
@@ -83,6 +81,13 @@ bool FollowPositionController::isNorthUp() const
 QString FollowPositionController::toolName() const
 {
   return QStringLiteral("follow position");
+}
+
+void FollowPositionController::updateGeoView()
+{
+  GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
+  if (geoView)
+    init(geoView);
 }
 
 bool FollowPositionController::handleFollowInMap()

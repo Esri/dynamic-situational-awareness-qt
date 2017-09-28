@@ -41,6 +41,9 @@ public:
 
   QString toolName() const override;
 
+private slots:
+  void updateGeoView();
+
 private:
   Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
 

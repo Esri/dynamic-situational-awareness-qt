@@ -38,12 +38,9 @@ LocationController::LocationController(QObject* parent) :
 
   setGpxFilePath(QUrl::fromLocalFile(DsaUtility::dataPath() + "/MontereyMounted.gpx"));
 
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]()
-  {
-    GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
-    if (geoView)
-      geoView->graphicsOverlays()->append(locationOverlay());
-  });
+  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, &LocationController::updateGeoView);
+
+  updateGeoView();
 }
 
 LocationController::~LocationController()
@@ -211,6 +208,13 @@ void LocationController::setRelativeHeadingSceneView(Esri::ArcGISRuntime::SceneQ
     if (!m_enabled)
       emit relativeHeadingChanged(m_lastKnownHeading + m_lastViewHeading);
   });
+}
+
+void LocationController::updateGeoView()
+{
+  GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
+  if (geoView)
+    geoView->graphicsOverlays()->append(locationOverlay());
 }
 
 GraphicsOverlay* LocationController::locationOverlay()

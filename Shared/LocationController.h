@@ -82,6 +82,9 @@ signals:
   // see setRelativeHeadingSceneView
   void relativeHeadingChanged(double relativeHeading);
 
+private slots:
+  void updateGeoView();
+
 private:
   void initPositionInfoSource(bool isSimulated);
   void initOverlay();

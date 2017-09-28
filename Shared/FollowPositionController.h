@@ -56,6 +56,9 @@ public:
 signals:
   void followModeChanged();
 
+private slots:
+  void updateGeoView();
+
 private:
 
   void handleNewMode();

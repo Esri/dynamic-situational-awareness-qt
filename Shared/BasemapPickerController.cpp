@@ -16,8 +16,8 @@
 #include "Basemap.h"
 
 #include "ToolManager.h"
+#include "ToolResourceProvider.h"
 
-#include "DsaUtility.h"
 #include "BasemapPickerController.h"
 #include "TileCacheListModel.h"
 
@@ -29,7 +29,7 @@ BasemapPickerController::BasemapPickerController(QObject* parent /* = nullptr */
   Toolkit::AbstractTool(parent),
   m_tileCacheModel(new TileCacheListModel(this))
 {
-  Toolkit::ToolManager::instance()->addTool(this);
+  Toolkit::ToolManager::instance().addTool(this);
 
   connect(this, &BasemapPickerController::basemapsDataPathChanged, this, &BasemapPickerController::onBasemapDataPathChanged);
 }
@@ -82,6 +82,9 @@ void BasemapPickerController::basemapSelected(int row)
     return;
 
   Basemap* selectedBasemap = new Basemap(new ArcGISTiledLayer(tileCache, this), this);
+  connect(selectedBasemap, &Basemap::errorOccurred, this, &BasemapPickerController::errorOccurred);
+
+  Toolkit::ToolResourceProvider::instance()->setBasemap(selectedBasemap);
 
   const QString basemapName = m_tileCacheModel->tileCacheNameAt(row);
 

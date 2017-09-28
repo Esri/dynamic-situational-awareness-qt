@@ -18,6 +18,7 @@
 #include "MessageFeedListModel.h"
 #include "MessageFeed.h"
 
+#include "ToolResourceProvider.h"
 #include "ToolManager.h"
 
 #include "DictionarySymbolStyle.h"
@@ -30,7 +31,11 @@ MessageFeedsController::MessageFeedsController(QObject* parent) :
   Toolkit::AbstractTool(parent),
   m_messageFeeds(new MessageFeedListModel(this))
 {
-  Toolkit::ToolManager::instance()->addTool(this);
+  Toolkit::ToolManager::instance().addTool(this);
+
+  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, &MessageFeedsController::updateGeoView);
+
+  updateGeoView();
 }
 
 MessageFeedsController::~MessageFeedsController()
@@ -79,6 +84,13 @@ QAbstractListModel* MessageFeedsController::messageFeeds() const
 QString MessageFeedsController::toolName() const
 {
   return QStringLiteral("messages");
+}
+
+void MessageFeedsController::updateGeoView()
+{
+  GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
+  if (geoView)
+    init(geoView);
 }
 
 void MessageFeedsController::setDataPath(const QString& dataPath)

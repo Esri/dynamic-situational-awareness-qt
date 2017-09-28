@@ -44,6 +44,9 @@ public:
   QString dataPath() const { return m_dataPath; }
   void setDataPath(const QString& dataPath);
 
+private slots:
+  void updateGeoView();
+
 private:
   Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
 

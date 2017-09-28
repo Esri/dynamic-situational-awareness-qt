@@ -17,6 +17,7 @@
 
 #include "FollowPositionController.h"
 
+#include "ToolResourceProvider.h"
 #include "ToolManager.h"
 
 using namespace Esri::ArcGISRuntime;
@@ -24,7 +25,12 @@ using namespace Esri::ArcGISRuntime;
 FollowPositionController::FollowPositionController(QObject* parent) :
   Toolkit::AbstractTool(parent)
 {
-  Toolkit::ToolManager::instance()->addTool(this);
+  Toolkit::ToolManager::instance().addTool(this);
+
+  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this,
+          &FollowPositionController::updateGeoView);
+
+  updateGeoView();
 }
 
 FollowPositionController::~FollowPositionController()
@@ -66,6 +72,13 @@ void FollowPositionController::handleNewMode()
     emit followModeChanged();
   else if (handleFollowInScene())
     emit followModeChanged();
+}
+
+void FollowPositionController::updateGeoView()
+{
+  GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
+  if (geoView)
+    init(geoView);
 }
 
 bool FollowPositionController::handleFollowInMap()

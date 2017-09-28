@@ -13,23 +13,22 @@
 // API
 #include "ArcGISTiledElevationSource.h"
 #include "Scene.h"
-#include "Basemap.h"
 #include "ElevationSource.h"
 #include "Layer.h"
 #include "GeoView.h"
 #include "DictionarySymbolStyle.h"
 
 // Toolkit
-#include "ArcGISCompassController.h"
-#include "CoordinateConversionController.h"
+#include "AbstractTool.h"
 #include "ToolManager.h"
+#include "ToolResourceProvider.h"
 
 // Dsa apps
 #include "DsaUtility.h"
 #include "DsaController.h"
+
 #include "AddLocalDataController.h"
 #include "BasemapPickerController.h"
-#include "FollowPositionController.h"
 #include "LocationController.h"
 #include "MessageFeedsController.h"
 
@@ -75,38 +74,21 @@ Esri::ArcGISRuntime::Scene* DsaController::scene() const
 
 void DsaController::init(GeoView* geoView)
 {
-  auto toolsIt = Toolkit::ToolManager::instance()->toolsBegin();
-  auto toolsEnd = Toolkit::ToolManager::instance()->toolsEnd();
-  for( ; toolsIt != toolsEnd; ++toolsIt)
+  Toolkit::ToolResourceProvider::instance()->setScene(m_scene);
+  Toolkit::ToolResourceProvider::instance()->setGeoView(geoView);
+
+  for(Toolkit::AbstractTool* abstractTool : Toolkit::ToolManager::instance())
   {
-    Toolkit::AbstractTool* abstractTool = *toolsIt;
     if (!abstractTool)
       continue;
 
-    Toolkit::ArcGISCompassController* compassController = qobject_cast<Toolkit::ArcGISCompassController*>(abstractTool);
-    if (compassController)
-    {
-      compassController->setView(geoView);
-      continue;
-    }
+    connect(abstractTool, &Toolkit::AbstractTool::errorOccurred, this, &DsaController::onError);
 
     BasemapPickerController* basemapPicker = qobject_cast<BasemapPickerController*>(abstractTool);
     if (basemapPicker)
     {
       basemapPicker->setDefaultBasemap(m_dsaSettings["DefaultBasemap"].toString());
       basemapPicker->setBasemapDataPath(m_dsaSettings["BasemapDirectory"].toString());
-      connect(basemapPicker, &BasemapPickerController::basemapChanged, this, [this](Basemap* basemap, QString name)
-      {
-        if (!basemap)
-          return;
-
-        m_dsaSettings["DefaultBasemap"] = name;
-
-        basemap->setParent(this);
-        m_scene->setBasemap(basemap);
-
-        connect(basemap, &Basemap::errorOccurred, this, &DsaController::onError);
-      });
 
       continue;
     }
@@ -115,32 +97,9 @@ void DsaController::init(GeoView* geoView)
     if (localDataController)
     {
       for (const QString& filePath : m_dsaSettings["LocalDataPaths"].toStringList())
-      {
         localDataController->addPathToDirectoryList(filePath);
-      }
+
       localDataController->refreshLocalDataModel();
-
-      connect(localDataController, &AddLocalDataController::layerSelected, this, [this](Layer* lyr)
-      {
-        if (!lyr)
-          return;
-
-        connect(lyr, &Layer::errorOccurred, this, &DsaController::onError);
-
-        lyr->setParent(this);
-        m_scene->operationalLayers()->append(lyr);
-      });
-
-      connect(localDataController, &AddLocalDataController::elevationSourceSelected, this, [this](ElevationSource* source)
-      {
-        if (!source)
-          return;
-
-        connect(source, &ElevationSource::errorOccurred, this, &DsaController::onError);
-
-        source->setParent(this);
-        m_scene->baseSurface()->elevationSources()->append(source);
-      });
 
       continue;
     }
@@ -153,8 +112,6 @@ void DsaController::init(GeoView* geoView)
       locationController->setGpxFilePath(QUrl::fromLocalFile(m_dsaSettings["GpxFile"].toString()));
       locationController->setIconDataPath(m_dsaSettings["ResourceDirectory"].toString());
 
-      geoView->graphicsOverlays()->append(locationController->locationOverlay());
-
       continue;
     }
 
@@ -162,15 +119,6 @@ void DsaController::init(GeoView* geoView)
     if (messageFeedsController)
     {
       messageFeedsController->setDataPath(m_dsaSettings["ResourceDirectory"].toString());
-      messageFeedsController->init(geoView);
-
-      continue;
-    }
-
-    FollowPositionController* followController = qobject_cast<FollowPositionController*>(abstractTool);
-    if (followController)
-    {
-      followController->init(geoView);
 
       continue;
     }

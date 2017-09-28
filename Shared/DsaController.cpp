@@ -27,6 +27,11 @@
 #include "DsaUtility.h"
 #include "DsaController.h"
 
+#include "AddLocalDataController.h"
+#include "BasemapPickerController.h"
+#include "LocationController.h"
+#include "MessageFeedsController.h"
+
 // Qt
 #include <QSettings>
 #include <QDir>
@@ -72,7 +77,7 @@ void DsaController::init(GeoView* geoView)
   Toolkit::ToolResourceProvider::instance()->setScene(m_scene);
   Toolkit::ToolResourceProvider::instance()->setGeoView(geoView);
 
-  for(const Toolkit::AbstractTool* abstractTool : Toolkit::ToolManager::instance())
+  for(Toolkit::AbstractTool* abstractTool : Toolkit::ToolManager::instance())
   {
     if (!abstractTool)
       continue;

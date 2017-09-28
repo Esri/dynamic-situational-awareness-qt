@@ -18,7 +18,6 @@
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
-#include "DsaUtility.h"
 #include "BasemapPickerController.h"
 #include "TileCacheListModel.h"
 

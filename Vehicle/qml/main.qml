@@ -94,6 +94,13 @@ Vehicle {
                             target: messageFeedsTool
                             visible: true
                         }
+                    },
+                    State {
+                        name: "table of contents"
+                        PropertyChanges {
+                            target: tableOfContentsTool
+                            visible: true
+                        }
                     }
                 ]
 
@@ -115,6 +122,13 @@ Vehicle {
 
                 MessageFeeds {
                     id: messageFeedsTool
+                    anchors.fill: parent
+                    visible: false
+                    onClosed: drawer.close();
+                }
+
+                TableOfContents {
+                    id: tableOfContentsTool
                     anchors.fill: parent
                     visible: false
                     onClosed: drawer.close();
@@ -210,6 +224,28 @@ Vehicle {
                         drawer.close();
                     else {
                         toolRect.state = "message";
+                        drawer.open();
+                    }
+                }
+            }
+
+            Button {
+                id: tocCheckBox
+                width: 32 * scaleFactor
+                height: 32 * scaleFactor
+                text: "TOC"
+
+                background: Rectangle {
+                    anchors.fill: tocCheckBox
+                    color: Material.primary
+                }
+
+
+                onClicked: {
+                    if (drawer.visible)
+                        drawer.close();
+                    else {
+                        toolRect.state = "table of contents";
                         drawer.open();
                     }
                 }

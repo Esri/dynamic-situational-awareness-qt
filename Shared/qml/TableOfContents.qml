@@ -75,6 +75,20 @@ DsaToolBase {
                 }
             }
 
+            Image {
+                fillMode: Image.PreserveAspectFit
+                anchors.verticalCenter: parent.verticalCenter
+                sourceSize.height: parent.height - (6 * scaleFactor)
+                height: sourceSize.height
+                source: "qrc:/Resources/icons/xhdpi/ic_menu_trash_light.png"
+
+                MouseArea {
+                    anchors.fill: parent
+
+                    onClicked: toolController.removeAt(index);
+                }
+            }
+
 
         }
 

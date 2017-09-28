@@ -61,6 +61,14 @@ void TableOfContentsController::zoomTo(int layerIndex)
   geoView->setViewpoint(Viewpoint(layer->fullExtent()));
 }
 
+void TableOfContentsController::removeAt(int layerIndex)
+{
+  if (!m_layerListModel)
+    return;
+
+  m_layerListModel->removeAt(layerIndex);
+}
+
 QString TableOfContentsController::toolName() const
 {
   return QStringLiteral("table of contents");

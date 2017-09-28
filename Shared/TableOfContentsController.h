@@ -41,6 +41,7 @@ public:
   QAbstractListModel* layerListModel() const;
 
   Q_INVOKABLE void zoomTo(int layerIndex);
+  Q_INVOKABLE void removeAt(int layerIndex);
 
   QString toolName() const override;
 

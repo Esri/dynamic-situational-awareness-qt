@@ -46,6 +46,8 @@ Handheld {
 
     // Create SceneQuickView here, and create its Scene etc. in C++ code
     SceneView {
+        id: sceneView
+
         anchors {
             top: toolbar.bottom
             left: parent.left
@@ -55,6 +57,8 @@ Handheld {
 
         objectName: "sceneView"
 
+        onMousePressed: followHud.stopFollowing();
+
         ArcGISCompass {
             id: compass
             anchors {
@@ -63,6 +67,17 @@ Handheld {
                 bottomMargin: 22 * scaleFactor
                 rightMargin: 2 * scaleFactor
             }
+        }
+
+        FollowHud {
+            id: followHud
+            anchors {
+                bottom: sceneView.attributionTop
+                horizontalCenter: parent.horizontalCenter
+                margins: 8 * scaleFactor
+            }
+
+            enabled: locationCheckBox.checked
         }
     }
 
@@ -176,8 +191,8 @@ Handheld {
                 sourceSize.height: parent.height * 0.85
                 height: sourceSize.height
                 source: locationCheckBox.checked ?
-                            "qrc:/Resources/icons/xhdpi/navigation.png" :
-                            "qrc:/Resources/icons/xhdpi/navigation_disabled.png"
+                            "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark.png" :
+                            "qrc:/Resources/icons/xhdpi/ic_menu_gpsondontfollow_dark.png"
 
             }
         }
@@ -246,8 +261,7 @@ Handheld {
     }
 
     LocationController {
-        id: locationController
-        simulated: true
+        id: locationController        
         enabled: locationCheckBox.checked
     }
 }

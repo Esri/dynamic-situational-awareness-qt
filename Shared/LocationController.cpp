@@ -38,12 +38,9 @@ LocationController::LocationController(QObject* parent) :
 
   setGpxFilePath(QUrl::fromLocalFile(DsaUtility::dataPath() + "/MontereyMounted.gpx"));
 
-  connect(Toolkit::ToolManager::instance().resourceProvider(), &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]()
-  {
-    GeoView* geoView = Toolkit::ToolManager::instance().resourceProvider()->geoView();
-    if (geoView)
-      geoView->graphicsOverlays()->append(locationOverlay());
-  });
+  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, &LocationController::updateGeoView);
+
+  updateGeoView();
 }
 
 LocationController::~LocationController()
@@ -213,6 +210,13 @@ void LocationController::setRelativeHeadingSceneView(Esri::ArcGISRuntime::SceneQ
   });
 }
 
+void LocationController::updateGeoView()
+{
+  GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
+  if (geoView)
+    geoView->graphicsOverlays()->append(locationOverlay());
+}
+
 GraphicsOverlay* LocationController::locationOverlay()
 {
   if (!m_locationOverlay)
@@ -278,13 +282,17 @@ void LocationController::initOverlay()
   });
 }
 
+void LocationController::setIconDataPath(const QString& dataPath)
+{
+  m_iconDataPath = dataPath;
+}
+
 QUrl LocationController::modelSymbolPath() const
 {
   // both files are needed: LocationDisplay.dae
-  // and navigation.png and both must be local (not resources)
-  const QString dataPath = DsaUtility::dataPath();
-  QString modelPath = dataPath + "/LocationDisplay.dae";
-  QString imagePath = dataPath + "/navigation.png";
+  // and navigation.png and both must be local (not resources)  
+  QString modelPath = m_iconDataPath + "/LocationDisplay.dae";
+  QString imagePath = m_iconDataPath + "/navigation.png";
 
   if (QFile::exists(modelPath) && QFile::exists(imagePath))
     return QUrl::fromLocalFile(modelPath);

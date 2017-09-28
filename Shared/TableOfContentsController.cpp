@@ -26,9 +26,9 @@ TableOfContentsController::TableOfContentsController(QObject* parent /* = nullpt
 {
   Toolkit::ToolManager::instance().addTool(this);
 
-  connect(Toolkit::ToolManager::instance().resourceProvider(), &Toolkit::ToolResourceProvider::mapChanged,
+  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mapChanged,
           this, &TableOfContentsController::updateLayerListModel);
-  connect(Toolkit::ToolManager::instance().resourceProvider(), &Toolkit::ToolResourceProvider::sceneChanged,
+  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::sceneChanged,
           this, &TableOfContentsController::updateLayerListModel);
   updateLayerListModel();
 }
@@ -54,7 +54,7 @@ void TableOfContentsController::zoomTo(int layerIndex)
   if (!layer)
     return;
 
-  GeoView* geoView = Toolkit::ToolManager::instance().resourceProvider()->geoView();
+  GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
   if (!geoView)
     return;
 
@@ -68,7 +68,7 @@ QString TableOfContentsController::toolName() const
 
 void TableOfContentsController::updateLayerListModel()
 {
-  auto operationalLayers = Toolkit::ToolManager::instance().resourceProvider()->operationalLayers();
+  auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
   if (operationalLayers)
   {
     m_layerListModel = operationalLayers;

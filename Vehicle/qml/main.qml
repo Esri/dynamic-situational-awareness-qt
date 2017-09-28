@@ -26,15 +26,8 @@ Vehicle {
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     LocationController {
-        id: locationController
-        simulated: true
+        id: locationController        
         enabled: locationCheckBox.checked
-    }
-
-    FollowPositionController {
-        id: followPositionController
-
-        follow: followCheckBox.enabled && followCheckBox.checked
     }
 
     GenericToolbar {
@@ -63,6 +56,8 @@ Vehicle {
 
         id: sceneView
         objectName: "sceneView"
+
+        onMousePressed: followHud.stopFollowing();
 
         Drawer {
             id: drawer
@@ -137,6 +132,7 @@ Vehicle {
         }
 
         Column {
+            id: toolsCol
             anchors{
                 margins: 2 * scaleFactor
                 top: parent.top
@@ -269,36 +265,22 @@ Vehicle {
                     sourceSize.height: parent.height * 0.85
                     height: sourceSize.height
                     source: locationCheckBox.checked ?
-                                "qrc:/Resources/icons/xhdpi/navigation.png" :
-                                "qrc:/Resources/icons/xhdpi/navigation_disabled.png"
-
-                }
-            }
-
-            Button {
-                id: followCheckBox
-                enabled: locationCheckBox.checked
-                checkable: true
-                checked: false
-                width: 32 * scaleFactor
-                height: 32 * scaleFactor
-
-                background: Rectangle {
-                    anchors.fill: followCheckBox
-                    color: Material.primary
-                }
-
-                Image {
-                    fillMode: Image.PreserveAspectFit
-                    anchors.centerIn: parent
-                    sourceSize.height: parent.height * 0.85
-                    height: sourceSize.height
-                    source: followCheckBox.checked && followCheckBox.enabled?
                                 "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark.png" :
                                 "qrc:/Resources/icons/xhdpi/ic_menu_gpsondontfollow_dark.png"
 
                 }
             }
+        }
+
+        FollowHud {
+            id: followHud
+            anchors {
+                bottom: sceneView.attributionTop
+                horizontalCenter: parent.horizontalCenter
+                margins: 8 * scaleFactor
+            }
+
+            enabled: locationCheckBox.checked
         }
 
         ArcGISCompass {

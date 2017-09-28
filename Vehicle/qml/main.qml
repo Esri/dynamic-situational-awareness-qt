@@ -229,13 +229,19 @@ Vehicle {
                 id: tocCheckBox
                 width: 32 * scaleFactor
                 height: 32 * scaleFactor
-                text: "TOC"
 
                 background: Rectangle {
                     anchors.fill: tocCheckBox
                     color: Material.primary
                 }
 
+                Image {
+                    fillMode: Image.PreserveAspectFit
+                    anchors.centerIn: parent
+                    sourceSize.height: tocCheckBox.background.height - (6 * scaleFactor)
+                    height: sourceSize.height
+                    source: "qrc:/Resources/icons/xhdpi/ic_menu_openlistview_dark.png"
+                }
 
                 onClicked: {
                     if (drawer.visible)

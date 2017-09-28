@@ -26,5 +26,11 @@ priLocation = $$replace(cleanDirPath, '"', "")
   message("Error. Cannot locate ArcGIS Runtime PRI file")
 }
 !include($$priLocation/sdk/ideintegration/arcgis_runtime_toolkit_cpp.pri) {
-  message("Error. Cannot location ArcGIS Runtime C++ Toolkit PRI file")
+  message("Error. Cannot locate ArcGIS Runtime C++ Toolkit PRI file")
+}
+
+ios: {
+  !include($$priLocation/sdk/toolkit/Plugin/ArcGISRuntimeToolkitPlugin.pri) {
+    message("Error. Cannot locate PRI file to import Toolkit as a plugin")
+  }
 }

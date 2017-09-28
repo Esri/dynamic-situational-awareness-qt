@@ -69,7 +69,7 @@ void BasemapPickerController::basemapSelected(int row)
   Basemap* selectedBasemap = new Basemap(new ArcGISTiledLayer(tileCache, this), this);
   connect(selectedBasemap, &Basemap::errorOccurred, this, &BasemapPickerController::errorOccurred);
 
-  Toolkit::ToolManager::instance().resourceProvider()->setBasemap(selectedBasemap);
+  Toolkit::ToolResourceProvider::instance()->setBasemap(selectedBasemap);
 
   emit basemapChanged(selectedBasemap);
 }

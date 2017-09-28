@@ -33,9 +33,9 @@ MessageFeedsController::MessageFeedsController(QObject* parent) :
 {
   Toolkit::ToolManager::instance().addTool(this);
 
-  connect(Toolkit::ToolManager::instance().resourceProvider(), &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]()
+  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]()
   {
-    GeoView* geoView = Toolkit::ToolManager::instance().resourceProvider()->geoView();
+    GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
     if (geoView)
       init(geoView);
   });

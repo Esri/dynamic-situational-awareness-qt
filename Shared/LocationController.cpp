@@ -38,9 +38,9 @@ LocationController::LocationController(QObject* parent) :
 
   setGpxFilePath(QUrl::fromLocalFile(DsaUtility::dataPath() + "/MontereyMounted.gpx"));
 
-  connect(Toolkit::ToolManager::instance().resourceProvider(), &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]()
+  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]()
   {
-    GeoView* geoView = Toolkit::ToolManager::instance().resourceProvider()->geoView();
+    GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
     if (geoView)
       geoView->graphicsOverlays()->append(locationOverlay());
   });

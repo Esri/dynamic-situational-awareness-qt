@@ -152,7 +152,7 @@ void AddLocalDataController::addItemAsElevationSource(const QList<int>& indices)
         connect(source, &ArcGISTiledElevationSource::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
         source->setParent(this);
-        auto scene = Toolkit::ToolManager::instance().resourceProvider()->scene();
+        auto scene = Toolkit::ToolResourceProvider::instance()->scene();
         if (scene)
           scene->baseSurface()->elevationSources()->append(source);
 
@@ -178,7 +178,7 @@ void AddLocalDataController::addItemAsElevationSource(const QList<int>& indices)
   connect(source, &RasterElevationSource::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
   source->setParent(this);
-  auto scene = Toolkit::ToolManager::instance().resourceProvider()->scene();
+  auto scene = Toolkit::ToolResourceProvider::instance()->scene();
   if (scene)
     scene->baseSurface()->elevationSources()->append(source);
 
@@ -240,7 +240,7 @@ void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path)
 
       connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
-      auto operationalLayers = Toolkit::ToolManager::instance().resourceProvider()->operationalLayers();
+      auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
       if (operationalLayers)
         operationalLayers->append(featureLayer);
 
@@ -271,7 +271,7 @@ void AddLocalDataController::createRasterLayer(const QString& path)
   RasterLayer* rasterLayer = new RasterLayer(raster, this);
 
   connect(rasterLayer, &RasterLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
-  auto operationalLayers = Toolkit::ToolManager::instance().resourceProvider()->operationalLayers();
+  auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
   if (operationalLayers)
     operationalLayers->append(rasterLayer);
 
@@ -291,7 +291,7 @@ void AddLocalDataController::createSceneLayer(const QString& path)
   ArcGISSceneLayer* sceneLayer = new ArcGISSceneLayer(QUrl(path), this);
 
   connect(sceneLayer, &ArcGISSceneLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
-  auto operationalLayers = Toolkit::ToolManager::instance().resourceProvider()->operationalLayers();
+  auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
   if (operationalLayers)
     operationalLayers->append(sceneLayer);
 
@@ -304,7 +304,7 @@ void AddLocalDataController::createTiledLayer(const QString& path)
   ArcGISTiledLayer* tiledLayer = new ArcGISTiledLayer(QUrl(path), this);
 
   connect(tiledLayer, &ArcGISTiledLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
-  auto operationalLayers = Toolkit::ToolManager::instance().resourceProvider()->operationalLayers();
+  auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
   if (operationalLayers)
     operationalLayers->append(tiledLayer);
 
@@ -317,7 +317,7 @@ void AddLocalDataController::createVectorTiledLayer(const QString& path)
   ArcGISVectorTiledLayer* vectorTiledLayer = new ArcGISVectorTiledLayer(QUrl(path), this);
 
   connect(vectorTiledLayer, &ArcGISVectorTiledLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
-  auto operationalLayers = Toolkit::ToolManager::instance().resourceProvider()->operationalLayers();
+  auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
   if (operationalLayers)
     operationalLayers->append(vectorTiledLayer);
 

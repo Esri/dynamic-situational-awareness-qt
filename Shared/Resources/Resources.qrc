@@ -16,5 +16,6 @@
         <file>icons/xhdpi/navigation_north.png</file>
         <file>icons/xhdpi/ic_menu_zoomtomapextent_light.png</file>
         <file>icons/xhdpi/ic_menu_openlistview_dark.png</file>
+        <file>icons/xhdpi/ic_menu_trash_light.png</file>
     </qresource>
 </RCC>

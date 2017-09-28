@@ -41,6 +41,9 @@ public:
 
   QString toolName() const override;
 
+  QString dataPath() const { return m_dataPath; }
+  void setDataPath(const QString& dataPath);
+
 private slots:
   void updateGeoView();
 
@@ -48,6 +51,7 @@ private:
   Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
 
   MessageFeedListModel* m_messageFeeds = nullptr;
+  QString m_dataPath;
 };
 
 #endif // MESSAGEFEEDSCONTROLLER_H

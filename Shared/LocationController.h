@@ -58,6 +58,9 @@ public:
   QUrl gpxFilePath() const;
   void setGpxFilePath(const QUrl& gpxFilePath);
 
+  QString iconDataPath() const { return m_iconDataPath; }
+  void setIconDataPath(const QString& dataPath);
+
   // removes any file:// scheme if present
   QString gpxFilePathAsString() const;
 
@@ -97,6 +100,7 @@ private:
   double m_lastViewHeading = 0.0;
   double m_lastKnownHeading = 0.0;
   QUrl m_gpxFilePath;
+  QString m_iconDataPath;
 };
 
 #endif // LOCATIONCONTROLLER_H

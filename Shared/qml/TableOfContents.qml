@@ -22,7 +22,6 @@ DsaToolBase {
     id: tocRoot
 
     title: "Table of contents"
-//    width: 272 * scaleFactor
     clip: true
 
     // Create the controller
@@ -76,18 +75,18 @@ DsaToolBase {
             }
 
             onReleased: {
+                var xDelta = Math.abs(startX - mouse.x);
+                var removing = drag.axis === Drag.XAxis;
                 held = false
                 startX = -1;
                 startY= -1;
-                var removing = drag.axis === Drag.XAxis;
                 drag.axis = Drag.XAndYAxis;
 
                 if (draggedIndex === -1)
                     return;
 
                 if (removing) {
-                    var xDelta = Math.abs(startX - mouse.x);
-                    if (xDelta > 64 * scaleFactor)
+                    if (xDelta > (64 * scaleFactor))
                         toolController.removeAt(draggedIndex);
                 }
                 else {
@@ -108,13 +107,13 @@ DsaToolBase {
                 anchors {
                     horizontalCenter: parent.horizontalCenter
                     verticalCenter: parent.verticalCenter
+                    margins: 8 * scaleFactor
                 }
-                width: dragArea.width; height: 32 * scaleFactor
+                width: dragArea.width
+                height: 64 * scaleFactor
 
-                border.width: 1
-                border.color: "lightsteelblue"
-
-                color: dragArea.held ? "lightsteelblue" : "white"
+                color: dragArea.held ? Material.accent : Material.foreground
+                opacity: dragArea.held ? 0.5 : 1
                 Behavior on color { ColorAnimation { duration: 100 } }
 
                 radius: 2
@@ -133,36 +132,52 @@ DsaToolBase {
                     }
                 }
 
-                Row {
-                    height: parent.height
-                    anchors.verticalCenter: parent.verticalCenter
+                CheckBox {
+                    id: visibleCheckBox
+                    anchors{
+                        left: parent.left
+                        verticalCenter: parent.verticalCenter
+                    }
+                    checked: layerVisible
+                    onClicked: layerVisible = checked;
+                }
 
-                    Text {
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 128 * scaleFactor
-                        elide: Text.ElideRight
-                        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                        text: name && name !== "" ?
-                                  name :
-                                  toolController.getAlternateName(index)
-                        verticalAlignment: Text.AlignVCenter
-                        color: Material.primary
+                Text {
+                    anchors{
+                        left: visibleCheckBox.right
+                        right: zoomToImage.left
+                        verticalCenter: parent.verticalCenter
                     }
 
-                    Image {
-                        fillMode: Image.PreserveAspectFit
-                        anchors.verticalCenter: parent.verticalCenter
-                        sourceSize.height: 32 * scaleFactor
-                        height: sourceSize.height
-                        source: "qrc:/Resources/icons/xhdpi/ic_menu_zoomtofeature_light.png"
+                    elide: Text.ElideRight
+                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                    text: name && name !== "" ?
+                              name :
+                              toolController.getAlternateName(index)
+                    verticalAlignment: Text.AlignVCenter
+                    color: Material.primary
+                    font.pixelSize: 14
+                    font.bold: true
+                }
 
-                        MouseArea {
-                            anchors.fill: parent
+                Image {
+                    id: zoomToImage
+                    fillMode: Image.PreserveAspectFit
+                    anchors{
+                        right: parent.right
+                        verticalCenter: parent.verticalCenter
+                    }
+                    sourceSize.height: 32 * scaleFactor
+                    height: sourceSize.height
+                    source: "qrc:/Resources/icons/xhdpi/ic_menu_zoomtofeature_light.png"
 
-                            onClicked: toolController.zoomTo(index);
-                        }
+                    MouseArea {
+                        anchors.fill: parent
+
+                        onClicked: toolController.zoomTo(index);
                     }
                 }
+
             }
 
             DropArea {

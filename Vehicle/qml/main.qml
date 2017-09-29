@@ -68,8 +68,6 @@ Vehicle {
         id: sceneView
         objectName: "sceneView"
 
-        onMousePressed: followHud.stopFollowing();
-
         Drawer {
             id: drawer
             width: 272 * scaleFactor
@@ -288,51 +286,51 @@ Vehicle {
 
                 }
             }
-        }
 
-        Button {
-            id: followCheckBox
-            enabled: locationCheckBox.checked
-            checkable: true
-            checked: false
-            width: 32 * scaleFactor
-            height: 32 * scaleFactor
+            Button {
+                id: followCheckBox
+                enabled: locationCheckBox.checked
+                checkable: true
+                checked: false
+                width: 32 * scaleFactor
+                height: 32 * scaleFactor
 
-            background: Rectangle {
-                anchors.fill: followCheckBox
-                color: Material.primary
+                background: Rectangle {
+                    anchors.fill: followCheckBox
+                    color: Material.primary
+                }
+
+                Image {
+                    fillMode: Image.PreserveAspectFit
+                    anchors.centerIn: parent
+                    sourceSize.height: parent.height * 0.85
+                    height: sourceSize.height
+                    source: followCheckBox.checked && followCheckBox.enabled?
+                                "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark.png" :
+                                "qrc:/Resources/icons/xhdpi/ic_menu_gpsondontfollow_dark.png"
+
+                }
             }
 
-            Image {
-                fillMode: Image.PreserveAspectFit
-                anchors.centerIn: parent
-                sourceSize.height: parent.height * 0.85
-                height: sourceSize.height
-                source: followCheckBox.checked && followCheckBox.enabled?
-                            "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark.png" :
-                            "qrc:/Resources/icons/xhdpi/ic_menu_gpsondontfollow_dark.png"
+            Button {
+                id: coordConvCheckBox
+                checkable: true
+                checked: false
+                width: 32 * scaleFactor
+                height: 32 * scaleFactor
 
-            }
-        }
+                background: Rectangle {
+                    anchors.fill: coordConvCheckBox
+                    color: Material.primary
+                }
 
-        Button {
-            id: coordConvCheckBox
-            checkable: true
-            checked: false
-            width: 32 * scaleFactor
-            height: 32 * scaleFactor
-
-            background: Rectangle {
-                anchors.fill: coordConvCheckBox
-                color: Material.primary
-            }
-
-            Image {
-                fillMode: Image.PreserveAspectFit
-                anchors.centerIn: parent
-                sourceSize.height: parent.height * 0.85
-                height: sourceSize.height
-                source: "qrc:/Resources/icons/xhdpi/icon-64-coorconv-white.png"
+                Image {
+                    fillMode: Image.PreserveAspectFit
+                    anchors.centerIn: parent
+                    sourceSize.height: parent.height * 0.85
+                    height: sourceSize.height
+                    source: "qrc:/Resources/icons/xhdpi/icon-64-coorconv-white.png"
+                }
             }
         }
 

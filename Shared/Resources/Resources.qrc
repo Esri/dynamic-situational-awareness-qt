@@ -17,5 +17,7 @@
         <file>icons/xhdpi/ic_menu_zoomtomapextent_light.png</file>
         <file>icons/xhdpi/ic_menu_openlistview_dark.png</file>
         <file>icons/xhdpi/ic_menu_zoomtofeature_light.png</file>
+        <file>icons/xhdpi/ic_menu_actionarrowb_dark_d.png</file>
+        <file>icons/xhdpi/icon-64-coorconv-white.png</file>
     </qresource>
 </RCC>

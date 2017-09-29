@@ -38,6 +38,8 @@
 
 using namespace Esri::ArcGISRuntime;
 
+const QString AddLocalDataController::LOCAL_DATAPATHS_PROPERTYNAME = "LocalDataPaths";
+
 const QString AddLocalDataController::s_allData = QStringLiteral("All Data (*.geodatabase *tpk *shp *gpkg *mmpk *kml *slpk *vtpk *.img *.tif *.tiff *.i1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr)");
 const QString AddLocalDataController::s_rasterData = QStringLiteral("Raster Files (*.img *.tif *.tiff *.I1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr)");
 const QString AddLocalDataController::s_geodatabaseData = QStringLiteral("Geodatabase (*.geodatabase)");
@@ -73,7 +75,11 @@ QAbstractListModel* AddLocalDataController::localDataModel() const
 // The model will contain data items from all of the paths in the list
 void AddLocalDataController::addPathToDirectoryList(const QString& path)
 {
+  if (m_dataPaths.contains(path))
+    return;
+
   m_dataPaths << path;
+  emit propertyUpdated(LOCAL_DATAPATHS_PROPERTYNAME, m_dataPaths);
 }
 
 // clear and re-fetch files in list of data paths
@@ -329,4 +335,16 @@ void AddLocalDataController::createVectorTiledLayer(const QString& path)
 QString AddLocalDataController::toolName() const
 {
   return QStringLiteral("add local data");
+}
+
+void AddLocalDataController::setProperties(const QVariantMap& properties)
+{
+  const QStringList filePaths = properties[LOCAL_DATAPATHS_PROPERTYNAME].toStringList();
+  if (filePaths.empty())
+    return;
+
+  for (const QString& filePath : filePaths)
+    addPathToDirectoryList(filePath);
+
+  refreshLocalDataModel();
 }

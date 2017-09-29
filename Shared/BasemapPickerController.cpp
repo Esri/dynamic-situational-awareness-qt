@@ -23,6 +23,9 @@
 
 using namespace Esri::ArcGISRuntime;
 
+const QString BasemapPickerController::DEFAULT_BASEMAP_PROPERTYNAME = "DefaultBasemap";
+const QString BasemapPickerController::BASEMAP_DIRECTORY_PROPERTYNAME = "BasemapDirectory";
+
 // Default c'tor
 // User must call setBasemapDataPath to populate the basemap list
 BasemapPickerController::BasemapPickerController(QObject* parent /* = nullptr */):
@@ -40,13 +43,21 @@ BasemapPickerController::~BasemapPickerController()
 
 void BasemapPickerController::setBasemapDataPath(const QString& dataPath)
 {
+  if (dataPath == m_basemapDataPath)
+    return;
+
   m_basemapDataPath = dataPath;
   emit basemapsDataPathChanged();
+  emit propertyUpdated(BASEMAP_DIRECTORY_PROPERTYNAME, m_basemapDataPath);
 }
 
 void BasemapPickerController::setDefaultBasemap(const QString& defaultBasemap)
 {
+  if (defaultBasemap == m_defaultBasemap)
+    return;
+
   m_defaultBasemap = defaultBasemap;
+  emit propertyUpdated(DEFAULT_BASEMAP_PROPERTYNAME, m_defaultBasemap);
 }
 
 void BasemapPickerController::onBasemapDataPathChanged()
@@ -88,6 +99,7 @@ void BasemapPickerController::basemapSelected(int row)
 
   const QString basemapName = m_tileCacheModel->tileCacheNameAt(row);
 
+  setDefaultBasemap(basemapName);
   emit basemapChanged(selectedBasemap, basemapName);
 }
 
@@ -99,4 +111,20 @@ void BasemapPickerController::selectInitialBasemap()
 QString BasemapPickerController::toolName() const
 {
   return QStringLiteral("basemap picker");
+}
+
+void BasemapPickerController::setProperties(const QVariantMap& properties)
+{
+  const QString newDefaultBasemap = properties.value(DEFAULT_BASEMAP_PROPERTYNAME).toString();
+  const bool basemapChanged = !newDefaultBasemap.isEmpty() && newDefaultBasemap != m_defaultBasemap;
+  if (basemapChanged)
+    setDefaultBasemap(newDefaultBasemap);
+
+  const QString newBasemapDataPath = properties.value(BASEMAP_DIRECTORY_PROPERTYNAME).toString();
+  const bool dataPathChanged = !newBasemapDataPath.isEmpty() && newBasemapDataPath != m_basemapDataPath;
+  if (dataPathChanged)
+    setBasemapDataPath(newBasemapDataPath);
+
+  if (dataPathChanged || basemapChanged)
+    selectInitialBasemap();
 }

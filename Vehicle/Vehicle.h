@@ -18,12 +18,6 @@ namespace Esri
 namespace ArcGISRuntime
 {
 class SceneQuickView;
-class Scene;
-class Error;
-namespace Toolkit
-{
-class CoordinateConversionController;
-}
 }
 }
 
@@ -40,15 +34,9 @@ public:
   ~Vehicle();
 
   void componentComplete() override;
-private slots:
-  void onError(const Esri::ArcGISRuntime::Error& error);
 
 private:
-  void setCoordinateConversionOptions();
-  Esri::ArcGISRuntime::Toolkit::CoordinateConversionController* m_coordinateConversionController = nullptr;
-  Esri::ArcGISRuntime::Scene*             m_scene = nullptr;
   Esri::ArcGISRuntime::SceneQuickView*    m_sceneView = nullptr;
-  QString                                 m_dataPath;
   DsaController*                          m_controller = nullptr;
 };
 

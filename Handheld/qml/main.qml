@@ -26,26 +26,28 @@ Handheld {
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     GenericToolbar {
-            id: toolbar
-            anchors {
-                top: parent.top
-                left: parent.left
-                right: parent.right
-            }
-            fontSize: 20 * scaleFactor
-            toolbarLabelText: "DSA - Handheld"
+        id: toolbar
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+        }
+        fontSize: 20 * scaleFactor
+        toolbarLabelText: "DSA - Handheld"
 
-            onMenuClicked: {
-                console.log("Menu button was clicked");
-            }
+        onMenuClicked: {
+            console.log("Menu button was clicked");
+        }
 
-            onDrawerClicked: {
-                console.log("Drawer was clicked");
-            }
+        onDrawerClicked: {
+            console.log("Drawer was clicked");
+        }
     }
 
     // Create SceneQuickView here, and create its Scene etc. in C++ code
     SceneView {
+        id: sceneView
+
         anchors {
             top: toolbar.bottom
             left: parent.left
@@ -55,6 +57,8 @@ Handheld {
 
         objectName: "sceneView"
 
+        onMousePressed: followHud.stopFollowing();
+
         ArcGISCompass {
             id: compass
             anchors {
@@ -63,6 +67,17 @@ Handheld {
                 bottomMargin: 22 * scaleFactor
                 rightMargin: 2 * scaleFactor
             }
+        }
+
+        FollowHud {
+            id: followHud
+            anchors {
+                bottom: sceneView.attributionTop
+                horizontalCenter: parent.horizontalCenter
+                margins: 8 * scaleFactor
+            }
+
+            enabled: locationCheckBox.checked
         }
     }
 
@@ -159,6 +174,34 @@ Handheld {
         }
 
         Button {
+            id: tocCheckBox
+            width: 32 * scaleFactor
+            height: 32 * scaleFactor
+
+            background: Rectangle {
+                anchors.fill: tocCheckBox
+                color: Material.primary
+            }
+
+            Image {
+                fillMode: Image.PreserveAspectFit
+                anchors.centerIn: parent
+                sourceSize.height: tocCheckBox.background.height - (6 * scaleFactor)
+                height: sourceSize.height
+                source: "qrc:/Resources/icons/xhdpi/ic_menu_openlistview_dark.png"
+            }
+
+            onClicked: {
+                if (drawer.visible)
+                    drawer.close();
+                else {
+                    toolRect.state = "table of contents";
+                    drawer.open();
+                }
+            }
+        }
+
+        Button {
             id: locationCheckBox
             checkable: true
             checked: false
@@ -176,8 +219,8 @@ Handheld {
                 sourceSize.height: parent.height * 0.85
                 height: sourceSize.height
                 source: locationCheckBox.checked ?
-                            "qrc:/Resources/icons/xhdpi/navigation.png" :
-                            "qrc:/Resources/icons/xhdpi/navigation_disabled.png"
+                            "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark.png" :
+                            "qrc:/Resources/icons/xhdpi/ic_menu_gpsondontfollow_dark.png"
 
             }
         }
@@ -215,6 +258,13 @@ Handheld {
                         target: messageFeedsTool
                         visible: true
                     }
+                },
+                State {
+                    name: "table of contents"
+                    PropertyChanges {
+                        target: tableOfContentsTool
+                        visible: true
+                    }
                 }
             ]
 
@@ -222,6 +272,7 @@ Handheld {
                 id: basemapsTool
                 anchors.fill: parent
                 height: parent.height
+                visible: false
                 onBasemapSelected: closed()
                 onClosed: drawer.close();
             }
@@ -230,6 +281,7 @@ Handheld {
                 id: addLocalDataTool
                 anchors.fill: parent
                 height: parent.height
+                visible: false
                 showDataConnectionPane: false
                 onClosed: drawer.close();
             }
@@ -240,12 +292,18 @@ Handheld {
                 visible: false
                 onClosed: drawer.close();
             }
+
+            TableOfContents {
+                id: tableOfContentsTool
+                anchors.fill: parent
+                visible: false
+                onClosed: drawer.close();
+            }
         }
     }
 
     LocationController {
         id: locationController
-        simulated: true
         enabled: locationCheckBox.checked
     }
 }

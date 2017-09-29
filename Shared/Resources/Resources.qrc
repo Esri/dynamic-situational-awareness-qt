@@ -13,6 +13,9 @@
         <file>icons/xhdpi/ic_menu_messages_dark.png</file>
         <file>icons/xhdpi/ic_menu_gpson_dark.png</file>
         <file>icons/xhdpi/ic_menu_gpsondontfollow_dark.png</file>
-        <file>icons/xhdpi/ic_menu_actionarrowb_dark_d.png</file>
+        <file>icons/xhdpi/navigation_north.png</file>
+        <file>icons/xhdpi/ic_menu_zoomtomapextent_light.png</file>
+        <file>icons/xhdpi/ic_menu_openlistview_dark.png</file>
+        <file>icons/xhdpi/ic_menu_zoomtofeature_light.png</file>
     </qresource>
 </RCC>

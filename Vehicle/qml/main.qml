@@ -17,7 +17,6 @@ import QtQuick.Controls.Material 2.1
 import QtQuick.Window 2.2
 import Esri.DSA 1.0
 import Esri.Vehicle 1.0
-import Esri.ArcGISExtras 1.1
 import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.2
 
 Vehicle {
@@ -28,14 +27,7 @@ Vehicle {
 
     LocationController {
         id: locationController
-        simulated: true
         enabled: locationCheckBox.checked
-    }
-
-    FollowPositionController {
-        id: followPositionController
-
-        follow: followCheckBox.enabled && followCheckBox.checked
     }
 
     GenericToolbar {
@@ -53,33 +45,36 @@ Vehicle {
         }
     }
 
+    CoordinateConversion {
+        id: coordinateConversion
+        objectName: "coordinateConversion"
+        visible: coordConvCheckBox.checked
+        height: parent.height / 2
+        width: parent.width
+        anchors {
+            bottom: parent.bottom
+        }
+    }
+
     // Create SceneQuickView here, and create its Scene etc. in C++ code
     SceneView {
         anchors {
             top: toolbar.bottom
             left: parent.left
             right: parent.right
-            bottom: parent.bottom
+            bottom: coordConvCheckBox.checked ? coordinateConversion.top : parent.bottom
         }
 
         id: sceneView
         objectName: "sceneView"
 
-        CoordinateConversion {
-            id: coordinateConversion
-            objectName: "coordinateConversion"
-            visible: coordConvCheckBox.checked
-            height: parent.height / 3
-            width: parent.width
-            anchors {
-                bottom: parent.bottom
-            }
-        }
+        onMousePressed: followHud.stopFollowing();
 
         Drawer {
             id: drawer
             width: 272 * scaleFactor
             height: parent.height
+            interactive: !tableOfContentsTool.visible
 
             Rectangle {
                 id: toolRect
@@ -104,6 +99,13 @@ Vehicle {
                         name: "message"
                         PropertyChanges {
                             target: messageFeedsTool
+                            visible: true
+                        }
+                    },
+                    State {
+                        name: "table of contents"
+                        PropertyChanges {
+                            target: tableOfContentsTool
                             visible: true
                         }
                     }
@@ -131,10 +133,18 @@ Vehicle {
                     visible: false
                     onClosed: drawer.close();
                 }
+
+                TableOfContents {
+                    id: tableOfContentsTool
+                    anchors.fill: parent
+                    visible: false
+                    onClosed: drawer.close();
+                }
             }
         }
 
         Column {
+            id: toolsCol
             anchors{
                 margins: 2 * scaleFactor
                 top: parent.top
@@ -228,6 +238,34 @@ Vehicle {
             }
 
             Button {
+                id: tocCheckBox
+                width: 32 * scaleFactor
+                height: 32 * scaleFactor
+
+                background: Rectangle {
+                    anchors.fill: tocCheckBox
+                    color: Material.primary
+                }
+
+                Image {
+                    fillMode: Image.PreserveAspectFit
+                    anchors.centerIn: parent
+                    sourceSize.height: tocCheckBox.background.height - (6 * scaleFactor)
+                    height: sourceSize.height
+                    source: "qrc:/Resources/icons/xhdpi/ic_menu_openlistview_dark.png"
+                }
+
+                onClicked: {
+                    if (drawer.visible)
+                        drawer.close();
+                    else {
+                        toolRect.state = "table of contents";
+                        drawer.open();
+                    }
+                }
+            }
+
+            Button {
                 id: locationCheckBox
                 checkable: true
                 checked: false
@@ -245,56 +283,56 @@ Vehicle {
                     sourceSize.height: parent.height * 0.85
                     height: sourceSize.height
                     source: locationCheckBox.checked ?
-                                "qrc:/Resources/icons/xhdpi/navigation.png" :
-                                "qrc:/Resources/icons/xhdpi/navigation_disabled.png"
-
-                }
-            }
-
-            Button {
-                id: followCheckBox
-                enabled: locationCheckBox.checked
-                checkable: true
-                checked: false
-                width: 32 * scaleFactor
-                height: 32 * scaleFactor
-
-                background: Rectangle {
-                    anchors.fill: followCheckBox
-                    color: Material.primary
-                }
-
-                Image {
-                    fillMode: Image.PreserveAspectFit
-                    anchors.centerIn: parent
-                    sourceSize.height: parent.height * 0.85
-                    height: sourceSize.height
-                    source: followCheckBox.checked && followCheckBox.enabled?
                                 "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark.png" :
                                 "qrc:/Resources/icons/xhdpi/ic_menu_gpsondontfollow_dark.png"
 
                 }
             }
+        }
 
-            Button {
-                id: coordConvCheckBox
-                checkable: true
-                checked: false
-                width: 32 * scaleFactor
-                height: 32 * scaleFactor
+        Button {
+            id: followCheckBox
+            enabled: locationCheckBox.checked
+            checkable: true
+            checked: false
+            width: 32 * scaleFactor
+            height: 32 * scaleFactor
 
-                background: Rectangle {
-                    anchors.fill: coordConvCheckBox
-                    color: Material.primary
-                }
+            background: Rectangle {
+                anchors.fill: followCheckBox
+                color: Material.primary
+            }
 
-                Image {
-                    fillMode: Image.PreserveAspectFit
-                    anchors.centerIn: parent
-                    sourceSize.height: parent.height * 0.85
-                    height: sourceSize.height
-                    source: "qrc:/Resources/icons/xhdpi/ic_menu_actionarrowb_dark_d.png"
-                }
+            Image {
+                fillMode: Image.PreserveAspectFit
+                anchors.centerIn: parent
+                sourceSize.height: parent.height * 0.85
+                height: sourceSize.height
+                source: followCheckBox.checked && followCheckBox.enabled?
+                            "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark.png" :
+                            "qrc:/Resources/icons/xhdpi/ic_menu_gpsondontfollow_dark.png"
+
+            }
+        }
+
+        Button {
+            id: coordConvCheckBox
+            checkable: true
+            checked: false
+            width: 32 * scaleFactor
+            height: 32 * scaleFactor
+
+            background: Rectangle {
+                anchors.fill: coordConvCheckBox
+                color: Material.primary
+            }
+
+            Image {
+                fillMode: Image.PreserveAspectFit
+                anchors.centerIn: parent
+                sourceSize.height: parent.height * 0.85
+                height: sourceSize.height
+                source: "qrc:/Resources/icons/xhdpi/icon-64-coorconv-white.png"
             }
         }
 

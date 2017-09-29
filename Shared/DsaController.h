@@ -17,6 +17,8 @@
 
 #include <QAbstractListModel>
 #include <QUrl>
+#include <QVariantMap>
+#include <QFile>
 
 namespace Esri
 {
@@ -43,10 +45,20 @@ public:
 public slots:
   void onError(const Esri::ArcGISRuntime::Error& error);
 
+private slots:
+  void onPropertyChanged(const QString& propertyName, const QVariant& propertyValue);
+
+private:
+  void setupConfig();
+  void createDefaultSettings();
+  void saveSettings(QFile& configFile);
+
 private:
   Esri::ArcGISRuntime::Scene* m_scene = nullptr;
 
   QString m_dataPath;
+  QVariantMap m_dsaSettings;
+  QString m_configFilePath;
 };
 
 #endif // DSACONTROLLER_H

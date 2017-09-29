@@ -16,22 +16,53 @@
 #include "Basemap.h"
 
 #include "ToolManager.h"
+#include "ToolResourceProvider.h"
 
-#include "DsaUtility.h"
 #include "BasemapPickerController.h"
 #include "TileCacheListModel.h"
 
 using namespace Esri::ArcGISRuntime;
 
+const QString BasemapPickerController::DEFAULT_BASEMAP_PROPERTYNAME = "DefaultBasemap";
+const QString BasemapPickerController::BASEMAP_DIRECTORY_PROPERTYNAME = "BasemapDirectory";
+
+// Default c'tor
+// User must call setBasemapDataPath to populate the basemap list
 BasemapPickerController::BasemapPickerController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent),
   m_tileCacheModel(new TileCacheListModel(this))
 {
-  Toolkit::ToolManager::instance()->addTool(this);
+  Toolkit::ToolManager::instance().addTool(this);
 
-  QString basemapsPath = DsaUtility::dataPath();
-  QDir basemapsDir(basemapsPath);
-  emit basemapsDirChanged();
+  connect(this, &BasemapPickerController::basemapsDataPathChanged, this, &BasemapPickerController::onBasemapDataPathChanged);
+}
+
+BasemapPickerController::~BasemapPickerController()
+{
+}
+
+void BasemapPickerController::setBasemapDataPath(const QString& dataPath)
+{
+  if (dataPath == m_basemapDataPath)
+    return;
+
+  m_basemapDataPath = dataPath;
+  emit basemapsDataPathChanged();
+  emit propertyChanged(BASEMAP_DIRECTORY_PROPERTYNAME, m_basemapDataPath);
+}
+
+void BasemapPickerController::setDefaultBasemap(const QString& defaultBasemap)
+{
+  if (defaultBasemap == m_defaultBasemap)
+    return;
+
+  m_defaultBasemap = defaultBasemap;
+  emit propertyChanged(DEFAULT_BASEMAP_PROPERTYNAME, m_defaultBasemap);
+}
+
+void BasemapPickerController::onBasemapDataPathChanged()
+{
+  QDir basemapsDir(m_basemapDataPath);
 
   basemapsDir.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
   basemapsDir.setNameFilters(QStringList{"*.tpk"});
@@ -43,15 +74,11 @@ BasemapPickerController::BasemapPickerController(QObject* parent /* = nullptr */
     if (m_tileCacheModel->append(fInfo.filePath()))
       index++;
 
-    if(fInfo.completeBaseName().compare("topographic", Qt::CaseInsensitive) == 0)
+    if(fInfo.completeBaseName().compare(m_defaultBasemap, Qt::CaseInsensitive) == 0)
       m_defaultBasemapIndex = index;
   }
 
   emit tileCacheModelChanged();
-}
-
-BasemapPickerController::~BasemapPickerController()
-{
 }
 
 QAbstractListModel* BasemapPickerController::tileCacheModel() const
@@ -66,8 +93,14 @@ void BasemapPickerController::basemapSelected(int row)
     return;
 
   Basemap* selectedBasemap = new Basemap(new ArcGISTiledLayer(tileCache, this), this);
+  connect(selectedBasemap, &Basemap::errorOccurred, this, &BasemapPickerController::errorOccurred);
 
-  emit basemapChanged(selectedBasemap);
+  Toolkit::ToolResourceProvider::instance()->setBasemap(selectedBasemap);
+
+  const QString basemapName = m_tileCacheModel->tileCacheNameAt(row);
+
+  setDefaultBasemap(basemapName);
+  emit basemapChanged(selectedBasemap, basemapName);
 }
 
 void BasemapPickerController::selectInitialBasemap()
@@ -78,4 +111,20 @@ void BasemapPickerController::selectInitialBasemap()
 QString BasemapPickerController::toolName() const
 {
   return QStringLiteral("basemap picker");
+}
+
+void BasemapPickerController::setProperties(const QVariantMap& properties)
+{
+  const QString newDefaultBasemap = properties.value(DEFAULT_BASEMAP_PROPERTYNAME).toString();
+  const bool basemapChanged = !newDefaultBasemap.isEmpty() && newDefaultBasemap != m_defaultBasemap;
+  if (basemapChanged)
+    setDefaultBasemap(newDefaultBasemap);
+
+  const QString newBasemapDataPath = properties.value(BASEMAP_DIRECTORY_PROPERTYNAME).toString();
+  const bool dataPathChanged = !newBasemapDataPath.isEmpty() && newBasemapDataPath != m_basemapDataPath;
+  if (dataPathChanged)
+    setBasemapDataPath(newBasemapDataPath);
+
+  if (dataPathChanged || basemapChanged)
+    selectInitialBasemap();
 }

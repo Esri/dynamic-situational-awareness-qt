@@ -11,13 +11,13 @@
 //
 
 #include "MessageFeedsController.h"
-#include "DsaUtility.h"
 #include "Message.h"
 #include "MessagesOverlay.h"
 #include "MessageListener.h"
 #include "MessageFeedListModel.h"
 #include "MessageFeed.h"
 
+#include "ToolResourceProvider.h"
 #include "ToolManager.h"
 
 #include "DictionarySymbolStyle.h"
@@ -26,11 +26,17 @@
 
 using namespace Esri::ArcGISRuntime;
 
+const QString MessageFeedsController::RESOURCE_DIRECTORY_PROPERTYNAME = "ResourceDirectory";
+
 MessageFeedsController::MessageFeedsController(QObject* parent) :
   Toolkit::AbstractTool(parent),
   m_messageFeeds(new MessageFeedListModel(this))
 {
-  Toolkit::ToolManager::instance()->addTool(this);
+  Toolkit::ToolManager::instance().addTool(this);
+
+  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, &MessageFeedsController::updateGeoView);
+
+  updateGeoView();
 }
 
 MessageFeedsController::~MessageFeedsController()
@@ -44,15 +50,13 @@ void MessageFeedsController::init(GeoView* geoView)
 {
   m_geoView = geoView;
 
-  QString dataPath = DsaUtility::dataPath();
-
   //TODO: the following configuration should be read from the app configuration file
   //and the message feeds are built up on the fly rather than hardcoded
 
   constexpr int broadcastPort{45678};
 
   // set up the messages overlay with a Mil2525c_b2 dictionary style
-  DictionarySymbolStyle* dictionarySymbolStyle = new DictionarySymbolStyle("mil2525c_b2", dataPath + "/styles/mil2525c_b2.stylx", this);
+  DictionarySymbolStyle* dictionarySymbolStyle = new DictionarySymbolStyle("mil2525c_b2", m_dataPath + "/styles/mil2525c_b2.stylx", this);
   MessagesOverlay* messagesOverlay = new MessagesOverlay(geoView, dictionarySymbolStyle, this);
 
   // create the messaging socket connection and hook up message receiving
@@ -81,4 +85,25 @@ QAbstractListModel* MessageFeedsController::messageFeeds() const
 QString MessageFeedsController::toolName() const
 {
   return QStringLiteral("messages");
+}
+
+void MessageFeedsController::setProperties(const QVariantMap &properties)
+{
+  setDataPath(properties["ResourceDirectory"].toString());
+}
+
+void MessageFeedsController::updateGeoView()
+{
+  GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
+  if (geoView)
+    init(geoView);
+}
+
+void MessageFeedsController::setDataPath(const QString& dataPath)
+{
+  if (dataPath == m_dataPath)
+    return;
+
+  m_dataPath = dataPath;
+  emit propertyChanged(RESOURCE_DIRECTORY_PROPERTYNAME, dataPath);
 }

@@ -36,6 +36,7 @@
 #include "CoordinateConversionController.h"
 #include "CoordinateConversionOptions.h"
 #include "CoordinateConversionResults.h"
+#include "TableOfContentsController.h"
 
 #include "ArcGISRuntimeToolkit.h"
 #include "ArcGISCompassController.h"
@@ -123,6 +124,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<FollowPositionController>("Esri.DSA", 1, 0, "CoordinateConversionController");
   qmlRegisterType<FollowPositionController>("Esri.DSA", 1, 0, "CoordinateConversionOptions");
   qmlRegisterType<FollowPositionController>("Esri.DSA", 1, 0, "CoordinateConversionResults");
+  qmlRegisterType<TableOfContentsController>("Esri.DSA", 1, 0, "TableOfContentsController");
 
   // Register Toolkit Component Types
   Toolkit::ArcGISRuntimeToolkit::registerToolkitTypes();

@@ -91,8 +91,6 @@ void DsaController::onError(const Esri::ArcGISRuntime::Error& e)
 
 void DsaController::onPropertyUpdated(const QString &propertyName, const QVariant &propertyValue)
 {
-  qDebug() << propertyName << propertyValue;
-
   m_dsaSettings.insert(propertyName, propertyValue);
   // save the settings
   QFile configFile(m_configFilePath);

@@ -105,5 +105,5 @@ void MessageFeedsController::setDataPath(const QString& dataPath)
     return;
 
   m_dataPath = dataPath;
-  emit propertyUpdated(RESOURCE_DIRECTORY_PROPERTYNAME, dataPath);
+  emit propertyChanged(RESOURCE_DIRECTORY_PROPERTYNAME, dataPath);
 }

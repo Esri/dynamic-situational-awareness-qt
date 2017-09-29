@@ -48,7 +48,7 @@ void BasemapPickerController::setBasemapDataPath(const QString& dataPath)
 
   m_basemapDataPath = dataPath;
   emit basemapsDataPathChanged();
-  emit propertyUpdated(BASEMAP_DIRECTORY_PROPERTYNAME, m_basemapDataPath);
+  emit propertyChanged(BASEMAP_DIRECTORY_PROPERTYNAME, m_basemapDataPath);
 }
 
 void BasemapPickerController::setDefaultBasemap(const QString& defaultBasemap)
@@ -57,7 +57,7 @@ void BasemapPickerController::setDefaultBasemap(const QString& defaultBasemap)
     return;
 
   m_defaultBasemap = defaultBasemap;
-  emit propertyUpdated(DEFAULT_BASEMAP_PROPERTYNAME, m_defaultBasemap);
+  emit propertyChanged(DEFAULT_BASEMAP_PROPERTYNAME, m_defaultBasemap);
 }
 
 void BasemapPickerController::onBasemapDataPathChanged()

@@ -79,7 +79,7 @@ void AddLocalDataController::addPathToDirectoryList(const QString& path)
     return;
 
   m_dataPaths << path;
-  emit propertyUpdated(LOCAL_DATAPATHS_PROPERTYNAME, m_dataPaths);
+  emit propertyChanged(LOCAL_DATAPATHS_PROPERTYNAME, m_dataPaths);
 }
 
 // clear and re-fetch files in list of data paths

@@ -177,7 +177,7 @@ void LocationController::setSimulated(bool simulated)
 
   m_simulated = simulated;
   emit simulatedChanged();
-  emit propertyUpdated(SIMULATE_LOCATION_PROPERTYNAME, m_simulated);
+  emit propertyChanged(SIMULATE_LOCATION_PROPERTYNAME, m_simulated);
 }
 
 QUrl LocationController::gpxFilePath() const
@@ -201,7 +201,7 @@ void LocationController::setGpxFilePath(const QUrl& gpxFilePath)
 
   m_gpxFilePath = gpxFilePath;
   emit gpxFilePathChanged();
-  emit propertyUpdated(GPX_FILE_PROPERTYNAME, m_gpxFilePath);
+  emit propertyChanged(GPX_FILE_PROPERTYNAME, m_gpxFilePath);
 }
 
 void LocationController::setRelativeHeadingSceneView(Esri::ArcGISRuntime::SceneQuickView* sceneView)
@@ -299,7 +299,7 @@ void LocationController::setIconDataPath(const QString& dataPath)
     return;
 
   m_iconDataPath = dataPath;
-  emit propertyUpdated(RESOURCE_DIRECTORY_PROPERTYNAME, m_iconDataPath);
+  emit propertyChanged(RESOURCE_DIRECTORY_PROPERTYNAME, m_iconDataPath);
 }
 
 QUrl LocationController::modelSymbolPath() const

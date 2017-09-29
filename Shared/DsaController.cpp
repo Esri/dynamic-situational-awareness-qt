@@ -80,7 +80,7 @@ void DsaController::init(GeoView* geoView)
     abstractTool->setProperties(m_dsaSettings);
 
     connect(abstractTool, &Toolkit::AbstractTool::errorOccurred, this, &DsaController::onError);
-    connect(abstractTool, &Toolkit::AbstractTool::propertyUpdated, this, &DsaController::onPropertyUpdated);
+    connect(abstractTool, &Toolkit::AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
   }
 }
 
@@ -89,7 +89,7 @@ void DsaController::onError(const Esri::ArcGISRuntime::Error& e)
   qDebug() << "Error" << e.message() << e.additionalMessage();
 }
 
-void DsaController::onPropertyUpdated(const QString &propertyName, const QVariant &propertyValue)
+void DsaController::onPropertyChanged(const QString &propertyName, const QVariant &propertyValue)
 {
   m_dsaSettings.insert(propertyName, propertyValue);
   // save the settings

@@ -14,5 +14,6 @@
         <file>icons/xhdpi/ic_menu_gpson_dark.png</file>
         <file>icons/xhdpi/ic_menu_gpsondontfollow_dark.png</file>
         <file>icons/xhdpi/ic_menu_actionarrowb_dark_d.png</file>
+        <file>icons/xhdpi/icon-64-coorconv-white.png</file>
     </qresource>
 </RCC>

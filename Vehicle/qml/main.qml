@@ -53,28 +53,28 @@ Vehicle {
         }
     }
 
+    CoordinateConversion {
+        id: coordinateConversion
+        objectName: "coordinateConversion"
+        visible: coordConvCheckBox.checked
+        height: parent.height / 2
+        width: parent.width
+        anchors {
+            bottom: parent.bottom
+        }
+    }
+
     // Create SceneQuickView here, and create its Scene etc. in C++ code
     SceneView {
         anchors {
             top: toolbar.bottom
             left: parent.left
             right: parent.right
-            bottom: parent.bottom
+            bottom: coordConvCheckBox.checked ? coordinateConversion.top : parent.bottom
         }
 
         id: sceneView
         objectName: "sceneView"
-
-        CoordinateConversion {
-            id: coordinateConversion
-            objectName: "coordinateConversion"
-            visible: coordConvCheckBox.checked
-            height: parent.height / 3
-            width: parent.width
-            anchors {
-                bottom: parent.bottom
-            }
-        }
 
         Drawer {
             id: drawer
@@ -293,7 +293,7 @@ Vehicle {
                     anchors.centerIn: parent
                     sourceSize.height: parent.height * 0.85
                     height: sourceSize.height
-                    source: "qrc:/Resources/icons/xhdpi/ic_menu_actionarrowb_dark_d.png"
+                    source: "qrc:/Resources/icons/xhdpi/icon-64-coorconv-white.png"
                 }
             }
         }

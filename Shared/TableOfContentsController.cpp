@@ -102,7 +102,7 @@ void TableOfContentsController::moveFromTo(int fromIndex, int toIndex)
   m_layerListModel->move(fromIndex, toIndex);
 }
 
-QString TableOfContentsController::getAlternateName(int layerIndex)
+QString TableOfContentsController::alternateName(int layerIndex)
 {
   const QString unknownName("????");
   if (!m_layerListModel)

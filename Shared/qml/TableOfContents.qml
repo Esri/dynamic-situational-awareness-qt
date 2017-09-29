@@ -156,10 +156,10 @@ DsaToolBase {
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                     text: name && name !== "" ?
                               name :
-                              toolController.getAlternateName(index)
+                              toolController.alternateName(index)
                     verticalAlignment: Text.AlignVCenter
                     color: Material.primary
-                    font.pixelSize: 14
+                    font.pixelSize: 14 * scaleFactor
                     font.bold: true
                 }
 
@@ -184,7 +184,10 @@ DsaToolBase {
             }
 
             DropArea {
-                anchors { fill: parent; margins: 10 }
+                anchors {
+                    fill: parent
+                    margins: 10 * scaleFactor
+                }
 
                 onEntered: {
                     droppedIndex = dragArea.DelegateModel.itemsIndex;

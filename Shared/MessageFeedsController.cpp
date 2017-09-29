@@ -11,7 +11,6 @@
 //
 
 #include "MessageFeedsController.h"
-#include "DsaUtility.h"
 #include "Message.h"
 #include "MessagesOverlay.h"
 #include "MessageListener.h"
@@ -26,6 +25,8 @@
 #include <QUdpSocket>
 
 using namespace Esri::ArcGISRuntime;
+
+const QString MessageFeedsController::RESOURCE_DIRECTORY_PROPERTYNAME = "ResourceDirectory";
 
 MessageFeedsController::MessageFeedsController(QObject* parent) :
   Toolkit::AbstractTool(parent),
@@ -86,6 +87,11 @@ QString MessageFeedsController::toolName() const
   return QStringLiteral("messages");
 }
 
+void MessageFeedsController::setProperties(const QVariantMap &properties)
+{
+  setDataPath(properties["ResourceDirectory"].toString());
+}
+
 void MessageFeedsController::updateGeoView()
 {
   GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
@@ -95,5 +101,9 @@ void MessageFeedsController::updateGeoView()
 
 void MessageFeedsController::setDataPath(const QString& dataPath)
 {
+  if (dataPath == m_dataPath)
+    return;
+
   m_dataPath = dataPath;
+  emit propertyChanged(RESOURCE_DIRECTORY_PROPERTYNAME, dataPath);
 }

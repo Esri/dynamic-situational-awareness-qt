@@ -45,6 +45,9 @@ public:
 public slots:
   void onError(const Esri::ArcGISRuntime::Error& error);
 
+private slots:
+  void onPropertyChanged(const QString& propertyName, const QVariant& propertyValue);
+
 private:
   void setupConfig();
   void createDefaultSettings();

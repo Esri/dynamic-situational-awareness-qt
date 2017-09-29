@@ -26,22 +26,22 @@ Handheld {
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     GenericToolbar {
-            id: toolbar
-            anchors {
-                top: parent.top
-                left: parent.left
-                right: parent.right
-            }
-            fontSize: 20 * scaleFactor
-            toolbarLabelText: "DSA - Handheld"
+        id: toolbar
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+        }
+        fontSize: 20 * scaleFactor
+        toolbarLabelText: "DSA - Handheld"
 
-            onMenuClicked: {
-                console.log("Menu button was clicked");
-            }
+        onMenuClicked: {
+            console.log("Menu button was clicked");
+        }
 
-            onDrawerClicked: {
-                console.log("Drawer was clicked");
-            }
+        onDrawerClicked: {
+            console.log("Drawer was clicked");
+        }
     }
 
     // Create SceneQuickView here, and create its Scene etc. in C++ code
@@ -174,6 +174,34 @@ Handheld {
         }
 
         Button {
+            id: tocCheckBox
+            width: 32 * scaleFactor
+            height: 32 * scaleFactor
+
+            background: Rectangle {
+                anchors.fill: tocCheckBox
+                color: Material.primary
+            }
+
+            Image {
+                fillMode: Image.PreserveAspectFit
+                anchors.centerIn: parent
+                sourceSize.height: tocCheckBox.background.height - (6 * scaleFactor)
+                height: sourceSize.height
+                source: "qrc:/Resources/icons/xhdpi/ic_menu_openlistview_dark.png"
+            }
+
+            onClicked: {
+                if (drawer.visible)
+                    drawer.close();
+                else {
+                    toolRect.state = "table of contents";
+                    drawer.open();
+                }
+            }
+        }
+
+        Button {
             id: locationCheckBox
             checkable: true
             checked: false
@@ -230,6 +258,13 @@ Handheld {
                         target: messageFeedsTool
                         visible: true
                     }
+                },
+                State {
+                    name: "table of contents"
+                    PropertyChanges {
+                        target: tableOfContentsTool
+                        visible: true
+                    }
                 }
             ]
 
@@ -257,11 +292,18 @@ Handheld {
                 visible: false
                 onClosed: drawer.close();
             }
+
+            TableOfContents {
+                id: tableOfContentsTool
+                anchors.fill: parent
+                visible: false
+                onClosed: drawer.close();
+            }
         }
     }
 
     LocationController {
-        id: locationController        
+        id: locationController
         enabled: locationCheckBox.checked
     }
 }

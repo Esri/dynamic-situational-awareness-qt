@@ -42,7 +42,8 @@ HEADERS += \
     ../Shared/MessageFeedsController.h \
     ../Shared/MessageFeedListModel.h \
     ../Shared/MessageFeed.h \
-    ../Shared/FollowPositionController.h
+    ../Shared/FollowPositionController.h \
+    ../Shared/TableOfContentsController.h
 
 SOURCES += \
     main.cpp \
@@ -61,7 +62,8 @@ SOURCES += \
     ../Shared/MessageFeedsController.cpp \
     ../Shared/MessageFeedListModel.cpp \
     ../Shared/MessageFeed.cpp \
-    ../Shared/FollowPositionController.cpp
+    ../Shared/FollowPositionController.cpp \
+    ../Shared/TableOfContentsController.cpp
 
 RESOURCES += \
     qml/qml.qrc \

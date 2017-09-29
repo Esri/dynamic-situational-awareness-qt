@@ -18,10 +18,12 @@ else {
   userHome = $$system(echo $HOME)
   iniPath = $${userHome}/.config/EsriRuntimeQt/ArcGIS Runtime SDK for Qt $${ARCGIS_RUNTIME_VERSION}.ini
 }
+
 iniLine = $$cat($${iniPath}, "lines")
 dirPath = $$find(iniLine, "InstallDir")
 cleanDirPath = $$replace(dirPath, "InstallDir=", "")
 priLocation = $$replace(cleanDirPath, '"', "")
+
 !include($$priLocation/sdk/ideintegration/arcgis_runtime_qml_cpp.pri) {
   message("Error. Cannot locate ArcGIS Runtime PRI file")
 }
@@ -36,6 +38,7 @@ else {
   !include($$PWD/../../../sdk/toolkit/Plugin/CppApi/ArcGISRuntimeToolkit.pri) {
     message("Error. Cannot locate local build ArcGIS Runtime C++ Toolkit PRI file.")
     message("You may need to adjust the include path to your local build area.")
+  }
 }
 
 ios: {

@@ -6,5 +6,6 @@
         <file>DsaToolBase.qml</file>
         <file>MessageFeeds.qml</file>
         <file>FollowHud.qml</file>
+        <file>TableOfContents.qml</file>
     </qresource>
 </RCC>

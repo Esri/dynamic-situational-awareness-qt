@@ -32,6 +32,11 @@ Message::Message() :
 {
 }
 
+Message::Message(MessageAction messageAction, const Geometry& geometry) :
+  d(new MessageData(messageAction, geometry))
+{
+}
+
 Message::Message(const Message& other) :
   d(other.d)
 {
@@ -66,6 +71,17 @@ Message& Message::operator=(Message&& other)
   return *this;
 }
 
+bool Message::operator==(const Message& other) const
+{
+  return messageAction() == other.messageAction() &&
+      attributes() == other.attributes() &&
+      geometry() == other.geometry() &&
+      messageId() == other.messageId() &&
+      messageName() == other.messageName() &&
+      messageType() == other.messageType() &&
+      symbolId() == other.symbolId();
+}
+
 Message Message::createFromCoTMessage(const QByteArray& message)
 {
   // parse CoT XML bytes and build up a Message object from the
@@ -80,7 +96,7 @@ Message Message::createFromCoTMessage(const QByteArray& message)
     if (reader.isStartElement())
     {
       // CoT event
-      if (QStringRef::compare(reader.name(), s_cotElementName) == 0)
+      if (QStringRef::compare(reader.name(), s_cotElementName, Qt::CaseInsensitive) == 0)
       {
         const auto attrs = reader.attributes();
         const auto type = attrs.value(s_cotTypeName).toString();
@@ -100,7 +116,7 @@ Message Message::createFromCoTMessage(const QByteArray& message)
         // assign the unique message id
         cotMessage.d->messageId = attrs.value(s_cotUidName).toString();
       }
-      else if (QStringRef::compare(reader.name(), s_cotPointName) == 0)
+      else if (QStringRef::compare(reader.name(), s_cotPointName, Qt::CaseInsensitive) == 0)
       {
         // parse the CoT point to populate the Message's geometry
         auto attrs = reader.attributes();
@@ -183,7 +199,7 @@ bool Message::isEmpty() const
 {
   return d->attributes.isEmpty() && d->geometry.isEmpty() &&
       d->messageId.isEmpty() && d->messageName.isEmpty() &&
-      d->messageType.isEmpty() && d->symbolId.isEmpty() &&
+      d->messageType == MessageType::Unknown && d->symbolId.isEmpty() &&
       d->messageAction == MessageAction::Unknown;
 }
 
@@ -192,7 +208,7 @@ Message::MessageAction Message::messageAction() const
   return d->messageAction;
 }
 
-void Message::setAction(MessageAction messageAction)
+void Message::setMessageAction(MessageAction messageAction)
 {
   d->messageAction = messageAction;
 }
@@ -237,12 +253,12 @@ void Message::setMessageName(const QString& messageName)
   d->messageName = messageName;
 }
 
-QString Message::messageType() const
+Message::MessageType Message::messageType() const
 {
   return d->messageType;
 }
 
-void Message::setMessageType(const QString& messageType)
+void Message::setMessageType(MessageType messageType)
 {
   d->messageType = messageType;
 }
@@ -258,6 +274,12 @@ void Message::setSymbolId(const QString& symbolId)
 }
 
 MessageData::MessageData()
+{
+}
+
+MessageData::MessageData(Message::MessageAction messageAction, const Geometry& geometry) :
+  messageAction(messageAction),
+  geometry(geometry)
 {
 }
 

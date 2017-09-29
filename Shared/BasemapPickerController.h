@@ -39,7 +39,7 @@ class BasemapPickerController : public Esri::ArcGISRuntime::Toolkit::AbstractToo
   Q_PROPERTY(QAbstractListModel* tileCacheModel READ tileCacheModel NOTIFY tileCacheModelChanged)
 
 public:
-  BasemapPickerController(QObject* parent = nullptr);
+  explicit BasemapPickerController(QObject* parent = nullptr);
   ~BasemapPickerController();
 
   QAbstractListModel* tileCacheModel() const;
@@ -48,15 +48,27 @@ public:
   Q_INVOKABLE void selectInitialBasemap();
 
   QString toolName() const override;
+  QString basemapDataPath() const { return m_basemapDataPath; }
+  void setBasemapDataPath(const QString& dataPath);
+  QString defaultBasemap() const { return m_defaultBasemap; }
+  void setDefaultBasemap(const QString& defaultBasemap);
+
+public slots:
+  void onBasemapDataPathChanged();
 
 signals:
   void tileCacheModelChanged();
-  void basemapsDirChanged();
-  void basemapChanged(Esri::ArcGISRuntime::Basemap* basemap);
+  void basemapsDataPathChanged();
+  void basemapChanged(Esri::ArcGISRuntime::Basemap* basemap, QString name = "");
 
 private:
   TileCacheListModel* m_tileCacheModel;
   int                 m_defaultBasemapIndex = 0;
+  QString             m_basemapDataPath;
+  QString             m_defaultBasemap = "topographic";
+
+private:
+  void findBasemaps();
 };
 
 #endif // BASEMAPPICKERCONTROLLER_H

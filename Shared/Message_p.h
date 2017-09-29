@@ -19,6 +19,7 @@ class MessageData : public QSharedData
 {
 public:
   MessageData();
+  MessageData(Message::MessageAction messageAction, const Esri::ArcGISRuntime::Geometry& geometry);
   MessageData(const MessageData& other);
   ~MessageData();
 
@@ -27,7 +28,7 @@ public:
   Esri::ArcGISRuntime::Geometry geometry;
   QString messageId;
   QString messageName;
-  QString messageType;
+  Message::MessageType messageType = Message::MessageType::Unknown;
   QString symbolId;
 };
 

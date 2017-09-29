@@ -62,23 +62,6 @@ DsaToolBase {
                 verticalAlignment: Text.AlignVCenter
             }
 
-            background: Rectangle {
-                id: delegateBackground
-                implicitWidth: localDataList.width
-                implicitHeight: 40 * scaleFactor
-                visible: false
-
-                Rectangle {
-                    anchors {
-                        horizontalCenter: parent.horizontalCenter
-                        bottom: parent.bottom
-                    }
-                    width: parent.width * 0.75
-                    height: 1 * scaleFactor
-                    color: Material.primary
-                }
-            }
-
             onClicked: selectedItems.push(index)
         }
     }
@@ -114,6 +97,7 @@ DsaToolBase {
                 toolController.addItemAsElevationSource(selectedItems);
             else
                 toolController.addItemAsLayer(selectedItems);
+            selectedItems = []; // clear so we don't add again next time
             toolController.refreshLocalDataModel(filter.currentText);
             closed();
         }
@@ -148,7 +132,7 @@ DsaToolBase {
 
         CheckBox {
             id: elevationCheckbox
-            text: "Add raster as elevation source"
+            text: "Add as elevation source"
             checked: false
             visible: filter.currentText.indexOf("Raster") !== -1 || filter.currentText.indexOf("All")  !== -1 || filter.currentText.indexOf("tpk") !== -1
             contentItem: Label {

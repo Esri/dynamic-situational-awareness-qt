@@ -26,16 +26,38 @@ Vehicle {
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     LocationController {
-        id: locationController
-        simulated: true
+        id: locationController        
         enabled: locationCheckBox.checked
+    }
+
+    GenericToolbar {
+        id: toolbar
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+        }
+        fontSize: 24 * scaleFactor
+        toolbarLabelText: "DSA - Vehicle"
+
+        onMenuClicked: {
+            console.log("Menu button was clicked");
+        }
     }
 
     // Create SceneQuickView here, and create its Scene etc. in C++ code
     SceneView {
+        anchors {
+            top: toolbar.bottom
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
+
         id: sceneView
-        anchors.fill: parent
         objectName: "sceneView"
+
+        onMousePressed: followHud.stopFollowing();
 
         Drawer {
             id: drawer
@@ -60,6 +82,13 @@ Vehicle {
                             target: addLocalDataTool
                             visible: true
                         }
+                    },
+                    State {
+                        name: "message"
+                        PropertyChanges {
+                            target: messageFeedsTool
+                            visible: true
+                        }
                     }
                 ]
 
@@ -76,13 +105,20 @@ Vehicle {
                     anchors.fill: parent
                     showDataConnectionPane: true
                     visible: false
-                    onClosed: {drawer.close();
-                    }
+                    onClosed: drawer.close();
+                }
+
+                MessageFeeds {
+                    id: messageFeedsTool
+                    anchors.fill: parent
+                    visible: false
+                    onClosed: drawer.close();
                 }
             }
         }
 
         Column {
+            id: toolsCol
             anchors{
                 margins: 2 * scaleFactor
                 top: parent.top
@@ -148,6 +184,34 @@ Vehicle {
             }
 
             Button {
+                id: messageFeedsCheckBox
+                width: 32 * scaleFactor
+                height: 32 * scaleFactor
+
+                background: Rectangle {
+                    anchors.fill: messageFeedsCheckBox
+                    color: Material.primary
+                }
+
+                Image {
+                    fillMode: Image.PreserveAspectFit
+                    anchors.centerIn: parent
+                    sourceSize.height: messageFeedsCheckBox.background.height - (6 * scaleFactor)
+                    height: sourceSize.height
+                    source: "qrc:/Resources/icons/xhdpi/ic_menu_messages_dark.png"
+                }
+
+                onClicked: {
+                    if (drawer.visible)
+                        drawer.close();
+                    else {
+                        toolRect.state = "message";
+                        drawer.open();
+                    }
+                }
+            }
+
+            Button {
                 id: locationCheckBox
                 checkable: true
                 checked: false
@@ -165,11 +229,22 @@ Vehicle {
                     sourceSize.height: parent.height * 0.85
                     height: sourceSize.height
                     source: locationCheckBox.checked ?
-                                "qrc:/Resources/icons/xhdpi/navigation.png" :
-                                "qrc:/Resources/icons/xhdpi/navigation_disabled.png"
+                                "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark.png" :
+                                "qrc:/Resources/icons/xhdpi/ic_menu_gpsondontfollow_dark.png"
 
                 }
             }
+        }
+
+        FollowHud {
+            id: followHud
+            anchors {
+                bottom: sceneView.attributionTop
+                horizontalCenter: parent.horizontalCenter
+                margins: 8 * scaleFactor
+            }
+
+            enabled: locationCheckBox.checked
         }
 
         ArcGISCompass {

@@ -25,7 +25,11 @@
 #include "ElevationSource.h"
 #include "RasterElevationSource.h"
 #include "ArcGISTiledElevationSource.h"
+#include "LayerListModel.h"
+#include "Scene.h"
+#include "ShapefileFeatureTable.h"
 
+#include "ToolResourceProvider.h"
 #include "ToolManager.h"
 
 #include "DsaUtility.h"
@@ -48,14 +52,14 @@ AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent),
   m_localDataModel(new DataItemListModel(this))
 {
-  Toolkit::ToolManager::instance()->addTool(this);
+  Toolkit::ToolManager::instance().addTool(this);
 
   // add the base path to the string list
   addPathToDirectoryList(DsaUtility::dataPath());
 
   // create file filter list
   m_fileFilterList = QStringList{allData(), rasterData(), geodatabaseData(),
-      sceneLayerData(), tilePackageData()/*, shapefileData(), kmlData(),
+      sceneLayerData(), tilePackageData(), shapefileData() /*, kmlData(),
       geopackageData(), vectorTilePackageData()*/}; // uncomment these as new formats are supported
   emit fileFilterListChanged();
   emit localDataModelChanged();
@@ -115,7 +119,7 @@ QStringList AddLocalDataController::determineFileFilters(const QString& fileType
     fileFilter << "*.vtpk";
   else if (fileType == rasterData())
     fileFilter = rasterExtensions;
-  else if (fileType == allData())
+  else
   {
     fileFilter = rasterExtensions;
     fileFilter << "*.geodatabase" << "*.tpk" << "*.shp" << "*.gpkg" << "*.kml" << "*.slpk" << "*.vtpk";
@@ -144,7 +148,16 @@ void AddLocalDataController::addItemAsElevationSource(const QList<int>& indices)
       if (format == TileImageFormat::LERC || format == TileImageFormat::Unknown) // remove the Unknown clause once API bug is fixed
       {
         // create the source from the tiled source
-        emit elevationSourceSelected(new ArcGISTiledElevationSource(tileCache, this));
+        ArcGISTiledElevationSource* source = new ArcGISTiledElevationSource(tileCache, this);
+
+        connect(source, &ArcGISTiledElevationSource::errorOccurred, this, &AddLocalDataController::errorOccurred);
+
+        source->setParent(this);
+        auto scene = Toolkit::ToolResourceProvider::instance()->scene();
+        if (scene)
+          scene->baseSurface()->elevationSources()->append(source);
+
+        emit elevationSourceSelected(source);
       }
       else
         continue;
@@ -158,10 +171,19 @@ void AddLocalDataController::addItemAsElevationSource(const QList<int>& indices)
       continue;
   }
 
-  if (dataPaths.length() == 0)
+  if (dataPaths.isEmpty())
     return;
 
-  emit elevationSourceSelected(new RasterElevationSource(dataPaths));
+  RasterElevationSource* source = new RasterElevationSource(dataPaths, this);
+
+  connect(source, &RasterElevationSource::errorOccurred, this, &AddLocalDataController::errorOccurred);
+
+  source->setParent(this);
+  auto scene = Toolkit::ToolResourceProvider::instance()->scene();
+  if (scene)
+    scene->baseSurface()->elevationSources()->append(source);
+
+  emit elevationSourceSelected(source);
 }
 
 // Q_INVOKABLE function that takes the indices passed in, gets the path and data type
@@ -216,6 +238,13 @@ void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path)
     for (FeatureTable* featureTable : gdb->geodatabaseFeatureTables())
     {
       FeatureLayer* featureLayer = new FeatureLayer(featureTable, this);
+
+      connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+
+      auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+      if (operationalLayers)
+        operationalLayers->append(featureLayer);
+
       emit layerSelected(featureLayer);
     }
   });
@@ -232,8 +261,9 @@ void AddLocalDataController::createLayerGeoPackage(const QString& path)
 // Helper that creates a FeatureLayer from the Shapefile FeatureTable
 void AddLocalDataController::createFeatureLayerShapefile(const QString& path)
 {
-  qDebug() << "TODO. Shapefile not yet supported";
-  Q_UNUSED(path);
+  ShapefileFeatureTable* shpFt = new ShapefileFeatureTable(path, this);
+  FeatureLayer* featureLayer = new FeatureLayer(shpFt, this);
+  emit layerSelected(featureLayer);
 }
 
 // Helper that creates a RasterLayer from a raster file path
@@ -241,6 +271,12 @@ void AddLocalDataController::createRasterLayer(const QString& path)
 {
   Raster* raster = new Raster(path, this);
   RasterLayer* rasterLayer = new RasterLayer(raster, this);
+
+  connect(rasterLayer, &RasterLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+  auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+  if (operationalLayers)
+    operationalLayers->append(rasterLayer);
+
   emit layerSelected(rasterLayer);
 }
 
@@ -255,6 +291,12 @@ void AddLocalDataController::createKmlLayer(const QString& path)
 void AddLocalDataController::createSceneLayer(const QString& path)
 {
   ArcGISSceneLayer* sceneLayer = new ArcGISSceneLayer(QUrl(path), this);
+
+  connect(sceneLayer, &ArcGISSceneLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+  auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+  if (operationalLayers)
+    operationalLayers->append(sceneLayer);
+
   emit layerSelected(sceneLayer);
 }
 
@@ -262,6 +304,12 @@ void AddLocalDataController::createSceneLayer(const QString& path)
 void AddLocalDataController::createTiledLayer(const QString& path)
 {
   ArcGISTiledLayer* tiledLayer = new ArcGISTiledLayer(QUrl(path), this);
+
+  connect(tiledLayer, &ArcGISTiledLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+  auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+  if (operationalLayers)
+    operationalLayers->append(tiledLayer);
+
   emit layerSelected(tiledLayer);
 }
 
@@ -269,6 +317,12 @@ void AddLocalDataController::createTiledLayer(const QString& path)
 void AddLocalDataController::createVectorTiledLayer(const QString& path)
 {
   ArcGISVectorTiledLayer* vectorTiledLayer = new ArcGISVectorTiledLayer(QUrl(path), this);
+
+  connect(vectorTiledLayer, &ArcGISVectorTiledLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+  auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+  if (operationalLayers)
+    operationalLayers->append(vectorTiledLayer);
+
   emit layerSelected(vectorTiledLayer);
 }
 

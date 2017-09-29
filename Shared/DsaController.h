@@ -17,6 +17,8 @@
 
 #include <QAbstractListModel>
 #include <QUrl>
+#include <QVariantMap>
+#include <QFile>
 
 namespace Esri
 {
@@ -27,10 +29,6 @@ namespace ArcGISRuntime
   class GeoView;
 }
 }
-
-class QUdpSocket;
-class MessageListener;
-class MessagesOverlay;
 
 class DsaController : public QObject
 {
@@ -48,14 +46,16 @@ public slots:
   void onError(const Esri::ArcGISRuntime::Error& error);
 
 private:
+  void setupConfig();
+  void createDefaultSettings();
+  void saveSettings(QFile& configFile);
+
+private:
   Esri::ArcGISRuntime::Scene* m_scene = nullptr;
 
-  QUdpSocket* m_udpSocket = nullptr;
-  MessageListener* m_messageListener = nullptr;
-  MessagesOverlay* m_messagesOverlay = nullptr;
-
   QString m_dataPath;
-  int m_broadcastPort = 45678;
+  QVariantMap m_dsaSettings;
+  QString m_configFilePath;
 };
 
 #endif // DSACONTROLLER_H

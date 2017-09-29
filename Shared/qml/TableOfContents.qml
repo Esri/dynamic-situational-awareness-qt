@@ -87,7 +87,10 @@ DsaToolBase {
 
                 if (removing) {
                     if (xDelta > (64 * scaleFactor))
+                    {
                         toolController.removeAt(draggedIndex);
+                        visualModel.model = toolController.layerListModel;
+                    }
                 }
                 else {
                     if (droppedIndex === -1)
@@ -217,115 +220,5 @@ DsaToolBase {
         width: parent.width
 
     }
-
-
-
-    //    SwipeDelegate {
-    //    id: delegate
-    //    clip: false
-    //    width: parent.width
-    //    height: 32 * scaleFactor
-
-    //    contentItem: Row {
-    //        height: parent.height
-    //        anchors.verticalCenter: parent.verticalCenter
-
-    //        CheckBox {
-    //            anchors.verticalCenter: parent.verticalCenter
-    //            checked: layerVisible
-    //            onClicked: layerVisible = checked;
-    //        }
-
-    //        Text {
-    //            anchors.verticalCenter: parent.verticalCenter
-    //            width: 128 * scaleFactor
-    //            elide: Text.ElideRight
-    //            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-    //            text: name && name !== "" ?
-    //                      name :
-    //                      toolController.getAlternateName(index)
-    //            verticalAlignment: Text.AlignVCenter
-    //            color: Material.primary
-    //        }
-
-    //        Image {
-    //            fillMode: Image.PreserveAspectFit
-    //            anchors.verticalCenter: parent.verticalCenter
-    //            sourceSize.height: 32 * scaleFactor
-    //            height: sourceSize.height
-    //            source: "qrc:/Resources/icons/xhdpi/ic_menu_zoomtofeature_light.png"
-
-    //            MouseArea {
-    //                anchors.fill: parent
-
-    //                onClicked: toolController.zoomTo(index);
-    //            }
-    //        }
-    //    }
-
-    //    background: Rectangle {
-    //        color: Material.foreground
-    //    }
-
-    //    swipe.right: Rectangle {
-    //        anchors.fill: parent
-    //        color: Material.background
-    //    }
-
-    //    swipe.left: Rectangle {
-    //        anchors.fill: parent
-    //        color: Material.background
-    //    }
-
-    //    swipe.onCompleted: toolController.removeAt(index);
-
-    ////            MouseArea {
-    ////                id: dragArea
-
-    ////                property bool held: false
-
-    ////                anchors { left: delegate.left; right: delegate.right }
-    ////                height: delegate.height
-
-    ////                drag.target: held ? content : undefined
-    ////                drag.axis: Drag.YAxis
-
-    ////                onPressAndHold: {
-    ////                    draggedIndex = index;
-    ////                    held = true;
-    ////                }
-    ////                onReleased: {
-    //////                    draggedIndex = -1;
-    ////                    held = false
-    ////                }
-
-    ////                Rectangle {
-    ////                    id: content
-    ////                    color: Material.accent
-    ////                    opacity: 0.5
-    ////                    height: dragArea.held ? delegate.height : 0
-    ////                    width: dragArea.held ? delegate.width : 0
-    ////                    Drag.active: dragArea.held
-    ////                    Drag.source: dragArea
-    ////                    Drag.hotSpot.x: width / 2
-    ////                    Drag.hotSpot.y: height / 2
-    ////                }
-    ////                DropArea {
-    ////                    anchors { fill: parent; margins: 10 }
-
-    ////                    onEntered: {
-    ////                        console.log(draggedIndex, index);
-
-    ////                        console.log(
-    ////                                    drag.source.DelegateModel.itemsIndex,
-    ////                                    dragArea.DelegateModel.itemsIndex)
-    ////                    }
-
-
-    ////                }
-    ////            }
-
-    //}
-
 }
 

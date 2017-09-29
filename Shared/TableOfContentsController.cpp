@@ -94,6 +94,14 @@ void TableOfContentsController::moveDown(int layerIndex)
   m_layerListModel->move(layerIndex, layerIndex + 1);
 }
 
+void TableOfContentsController::moveFromTo(int fromIndex, int toIndex)
+{
+  if (!m_layerListModel)
+    return;
+
+  m_layerListModel->move(fromIndex, toIndex);
+}
+
 QString TableOfContentsController::getAlternateName(int layerIndex)
 {
   const QString unknownName("????");

@@ -12,6 +12,7 @@
 //
 
 import QtQuick 2.6
+import QtQml.Models 2.2
 import QtQuick.Controls 2.1
 import QtQuick.Controls.Material 2.1
 import QtQuick.Window 2.2
@@ -21,16 +22,173 @@ DsaToolBase {
     id: tocRoot
 
     title: "Table of contents"
-    width: 272 * scaleFactor
+//    width: 272 * scaleFactor
+    clip: true
 
     // Create the controller
     TableOfContentsController {
         id: toolController
     }
 
+    property int draggedIndex: -1
+    property int droppedIndex: -1
+
+    Component {
+        id: dragDelegate
+
+        MouseArea {
+            id: dragArea
+
+            property bool held: false
+            property int startX: -1
+            property int startY: -1
+
+            anchors { left: parent.left; right: parent.right }
+            height: content.height
+
+            drag.target: held ? content : undefined
+            drag.axis: Drag.XAndYAxis
+
+            onPressAndHold: {
+                draggedIndex = index;
+                startX = mouse.x;
+                startY = mouse.y;
+                held = true;
+            }
+
+            onPositionChanged: {
+                if (!held)
+                    return;
+
+                if (drag.axis !== Drag.XAndYAxis)
+                    return;
+
+                var xDelta = Math.abs(startX - mouse.x);
+                var yDelta = Math.abs(startY - mouse.y);
+
+                if (xDelta < drag.threshold && yDelta < drag.threshold)
+                    return;
+
+                if (xDelta > yDelta)
+                    drag.axis = Drag.XAxis;
+                else if (yDelta > xDelta)
+                    drag.axis = Drag.YAxis;
+            }
+
+            onReleased: {
+                held = false
+                startX = -1;
+                startY= -1;
+                var removing = drag.axis === Drag.XAxis;
+                drag.axis = Drag.XAndYAxis;
+
+                if (draggedIndex === -1)
+                    return;
+
+                if (removing) {
+                    var xDelta = Math.abs(startX - mouse.x);
+                    if (xDelta > 64 * scaleFactor)
+                        toolController.removeAt(draggedIndex);
+                }
+                else {
+                    if (droppedIndex === -1)
+                        return;
+
+                    if (draggedIndex === dragArea.DelegateModel.itemsIndex)
+                        return;
+
+                    toolController.moveFromTo(draggedIndex,
+                                              dragArea.DelegateModel.itemsIndex);
+                }
+            }
+
+            Rectangle {
+                id: content
+
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                    verticalCenter: parent.verticalCenter
+                }
+                width: dragArea.width; height: 32 * scaleFactor
+
+                border.width: 1
+                border.color: "lightsteelblue"
+
+                color: dragArea.held ? "lightsteelblue" : "white"
+                Behavior on color { ColorAnimation { duration: 100 } }
+
+                radius: 2
+                Drag.active: dragArea.held
+                Drag.source: dragArea
+                Drag.hotSpot.x: width / 2
+                Drag.hotSpot.y: height / 2
+
+                states: State {
+                    when: dragArea.held
+
+                    ParentChange { target: content; parent: tocRoot }
+                    AnchorChanges {
+                        target: content
+                        anchors { horizontalCenter: undefined; verticalCenter: undefined }
+                    }
+                }
+
+                Row {
+                    height: parent.height
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 128 * scaleFactor
+                        elide: Text.ElideRight
+                        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                        text: name && name !== "" ?
+                                  name :
+                                  toolController.getAlternateName(index)
+                        verticalAlignment: Text.AlignVCenter
+                        color: Material.primary
+                    }
+
+                    Image {
+                        fillMode: Image.PreserveAspectFit
+                        anchors.verticalCenter: parent.verticalCenter
+                        sourceSize.height: 32 * scaleFactor
+                        height: sourceSize.height
+                        source: "qrc:/Resources/icons/xhdpi/ic_menu_zoomtofeature_light.png"
+
+                        MouseArea {
+                            anchors.fill: parent
+
+                            onClicked: toolController.zoomTo(index);
+                        }
+                    }
+                }
+            }
+
+            DropArea {
+                anchors { fill: parent; margins: 10 }
+
+                onEntered: {
+                    droppedIndex = dragArea.DelegateModel.itemsIndex;
+
+                    visualModel.items.move(drag.source.DelegateModel.itemsIndex, droppedIndex);
+                }
+            }
+        }
+    }
+
+    DelegateModel {
+        id: visualModel
+
+        model: toolController.layerListModel
+        delegate: dragDelegate
+    }
+
     // Declare the ListView, which will display the list of files
     ListView {
         id: layersList
+        interactive: false
+        clip: true
 
         anchors {
             top: tocRoot.titleBar.bottom
@@ -40,102 +198,119 @@ DsaToolBase {
             margins: 8 * scaleFactor
         }
 
-        clip: true
-        model: toolController.layerListModel
+        model: visualModel
         width: parent.width
-        delegate: Row {
-            anchors.margins: 4 * scaleFactor
-            width: layersList.width
-            height: 32 * scaleFactor
-            spacing: 2 * scaleFactor
 
-            CheckBox {
-                height: parent.height
-                checked: layerVisible
-                onClicked: layerVisible = checked;
-            }
-
-            Text {
-                anchors.verticalCenter: parent.verticalCenter
-                verticalAlignment: Text.AlignVCenter
-                elide: Text.ElideRight
-                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                height: parent.height
-                width: 92 * scaleFactor
-                text: name && name.length === 0 ?
-                          toolController.getAlternateName(index) :
-                          name
-            }
-
-            Image {
-                fillMode: Image.PreserveAspectFit
-                anchors.verticalCenter: parent.verticalCenter
-                sourceSize.height: parent.height - (6 * scaleFactor)
-                height: sourceSize.height
-                source: "qrc:/Resources/icons/xhdpi/ic_menu_zoomtomapextent_light.png"
-
-                MouseArea {
-                    anchors.fill: parent
-
-                    onClicked: toolController.zoomTo(index);
-                }
-            }
-
-
-            Image {
-                fillMode: Image.PreserveAspectFit
-                anchors.verticalCenter: parent.verticalCenter
-                sourceSize.height: parent.height - (6 * scaleFactor)
-                height: sourceSize.height
-                width: 32 * scaleFactor
-                source: index > 0 ?
-                            "qrc:/Resources/icons/xhdpi/ic_menu_spinneractive_light.png" :
-                            ""
-
-                MouseArea {
-                    anchors.fill: parent
-
-                    onClicked: {
-                        if (index > 0)
-                            toolController.moveUp(index);
-                    }
-                }
-            }
-
-            Image {
-                fillMode: Image.PreserveAspectFit
-                anchors.verticalCenter: parent.verticalCenter
-                sourceSize.height: parent.height - (6 * scaleFactor)
-                height: sourceSize.height
-                width: 32 * scaleFactor
-                source: index < (layersList.count -1) ?
-                            "qrc:/Resources/icons/xhdpi/ic_menu_spinneridle_light.png" :
-                            ""
-
-                MouseArea {
-                    anchors.fill: parent
-
-                    onClicked: {
-                        if (index < (layersList.count -1))
-                            toolController.moveDown(index);
-                    }
-                }
-            }
-
-            Image {
-                fillMode: Image.PreserveAspectFit
-                anchors.verticalCenter: parent.verticalCenter
-                sourceSize.height: parent.height - (6 * scaleFactor)
-                height: sourceSize.height
-                source: "qrc:/Resources/icons/xhdpi/ic_menu_trash_light.png"
-
-                MouseArea {
-                    anchors.fill: parent
-
-                    onClicked: toolController.removeAt(index);
-                }
-            }
-        }
     }
+
+
+
+    //    SwipeDelegate {
+    //    id: delegate
+    //    clip: false
+    //    width: parent.width
+    //    height: 32 * scaleFactor
+
+    //    contentItem: Row {
+    //        height: parent.height
+    //        anchors.verticalCenter: parent.verticalCenter
+
+    //        CheckBox {
+    //            anchors.verticalCenter: parent.verticalCenter
+    //            checked: layerVisible
+    //            onClicked: layerVisible = checked;
+    //        }
+
+    //        Text {
+    //            anchors.verticalCenter: parent.verticalCenter
+    //            width: 128 * scaleFactor
+    //            elide: Text.ElideRight
+    //            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+    //            text: name && name !== "" ?
+    //                      name :
+    //                      toolController.getAlternateName(index)
+    //            verticalAlignment: Text.AlignVCenter
+    //            color: Material.primary
+    //        }
+
+    //        Image {
+    //            fillMode: Image.PreserveAspectFit
+    //            anchors.verticalCenter: parent.verticalCenter
+    //            sourceSize.height: 32 * scaleFactor
+    //            height: sourceSize.height
+    //            source: "qrc:/Resources/icons/xhdpi/ic_menu_zoomtofeature_light.png"
+
+    //            MouseArea {
+    //                anchors.fill: parent
+
+    //                onClicked: toolController.zoomTo(index);
+    //            }
+    //        }
+    //    }
+
+    //    background: Rectangle {
+    //        color: Material.foreground
+    //    }
+
+    //    swipe.right: Rectangle {
+    //        anchors.fill: parent
+    //        color: Material.background
+    //    }
+
+    //    swipe.left: Rectangle {
+    //        anchors.fill: parent
+    //        color: Material.background
+    //    }
+
+    //    swipe.onCompleted: toolController.removeAt(index);
+
+    ////            MouseArea {
+    ////                id: dragArea
+
+    ////                property bool held: false
+
+    ////                anchors { left: delegate.left; right: delegate.right }
+    ////                height: delegate.height
+
+    ////                drag.target: held ? content : undefined
+    ////                drag.axis: Drag.YAxis
+
+    ////                onPressAndHold: {
+    ////                    draggedIndex = index;
+    ////                    held = true;
+    ////                }
+    ////                onReleased: {
+    //////                    draggedIndex = -1;
+    ////                    held = false
+    ////                }
+
+    ////                Rectangle {
+    ////                    id: content
+    ////                    color: Material.accent
+    ////                    opacity: 0.5
+    ////                    height: dragArea.held ? delegate.height : 0
+    ////                    width: dragArea.held ? delegate.width : 0
+    ////                    Drag.active: dragArea.held
+    ////                    Drag.source: dragArea
+    ////                    Drag.hotSpot.x: width / 2
+    ////                    Drag.hotSpot.y: height / 2
+    ////                }
+    ////                DropArea {
+    ////                    anchors { fill: parent; margins: 10 }
+
+    ////                    onEntered: {
+    ////                        console.log(draggedIndex, index);
+
+    ////                        console.log(
+    ////                                    drag.source.DelegateModel.itemsIndex,
+    ////                                    dragArea.DelegateModel.itemsIndex)
+    ////                    }
+
+
+    ////                }
+    ////            }
+
+    //}
+
 }
 

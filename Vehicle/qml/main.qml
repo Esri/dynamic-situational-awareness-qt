@@ -26,7 +26,7 @@ Vehicle {
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     LocationController {
-        id: locationController        
+        id: locationController
         enabled: locationCheckBox.checked
     }
 
@@ -63,6 +63,7 @@ Vehicle {
             id: drawer
             width: 272 * scaleFactor
             height: parent.height
+            interactive: !tableOfContentsTool.visible
 
             Rectangle {
                 id: toolRect

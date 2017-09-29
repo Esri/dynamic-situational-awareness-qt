@@ -44,6 +44,7 @@ public:
   Q_INVOKABLE void removeAt(int layerIndex);
   Q_INVOKABLE void moveUp(int layerIndex);
   Q_INVOKABLE void moveDown(int layerIndex);
+  Q_INVOKABLE void moveFromTo(int fromIndex, int toIndex);
 
   Q_INVOKABLE QString getAlternateName(int layerIndex);
 

@@ -19,5 +19,6 @@
         <file>icons/xhdpi/ic_menu_trash_light.png</file>
         <file>icons/xhdpi/ic_menu_spinneractive_light.png</file>
         <file>icons/xhdpi/ic_menu_spinneridle_light.png</file>
+        <file>icons/xhdpi/ic_menu_zoomtofeature_light.png</file>
     </qresource>
 </RCC>

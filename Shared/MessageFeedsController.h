@@ -32,6 +32,8 @@ class MessageFeedsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
   Q_PROPERTY(QAbstractListModel* messageFeeds READ messageFeeds CONSTANT)
 
 public:
+  static const QString RESOURCE_DIRECTORY_PROPERTYNAME;
+
   explicit MessageFeedsController(QObject* parent = nullptr);
   ~MessageFeedsController();
 
@@ -40,6 +42,7 @@ public:
   QAbstractListModel* messageFeeds() const;
 
   QString toolName() const override;
+  void setProperties(const QVariantMap& properties) override;
 
   QString dataPath() const { return m_dataPath; }
   void setDataPath(const QString& dataPath);

@@ -40,10 +40,15 @@ class LocationController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
   Q_PROPERTY(QString gpxFilePathAsString READ gpxFilePathAsString NOTIFY gpxFilePathChanged)
 
 public:
-  LocationController(QObject* parent = nullptr);
+  static const QString SIMULATE_LOCATION_PROPERTYNAME;
+  static const QString GPX_FILE_PROPERTYNAME;
+  static const QString RESOURCE_DIRECTORY_PROPERTYNAME;
+
+  explicit LocationController(QObject* parent = nullptr);
   ~LocationController();
 
   QString toolName() const override;
+  void setProperties(const QVariantMap& properties) override;
 
   // if you want this tool to handle everything, add this overlay
   // to your view

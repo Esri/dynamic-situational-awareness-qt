@@ -39,6 +39,9 @@ class BasemapPickerController : public Esri::ArcGISRuntime::Toolkit::AbstractToo
   Q_PROPERTY(QAbstractListModel* tileCacheModel READ tileCacheModel NOTIFY tileCacheModelChanged)
 
 public:
+  static const QString DEFAULT_BASEMAP_PROPERTYNAME;
+  static const QString BASEMAP_DIRECTORY_PROPERTYNAME;
+
   explicit BasemapPickerController(QObject* parent = nullptr);
   ~BasemapPickerController();
 
@@ -48,6 +51,8 @@ public:
   Q_INVOKABLE void selectInitialBasemap();
 
   QString toolName() const override;
+  void setProperties(const QVariantMap& properties) override;
+
   QString basemapDataPath() const { return m_basemapDataPath; }
   void setBasemapDataPath(const QString& dataPath);
   QString defaultBasemap() const { return m_defaultBasemap; }

@@ -27,11 +27,6 @@
 #include "DsaUtility.h"
 #include "DsaController.h"
 
-#include "AddLocalDataController.h"
-#include "BasemapPickerController.h"
-#include "LocationController.h"
-#include "MessageFeedsController.h"
-
 // Qt
 #include <QSettings>
 #include <QDir>
@@ -82,52 +77,24 @@ void DsaController::init(GeoView* geoView)
     if (!abstractTool)
       continue;
 
+    abstractTool->setProperties(m_dsaSettings);
+
     connect(abstractTool, &Toolkit::AbstractTool::errorOccurred, this, &DsaController::onError);
-
-    BasemapPickerController* basemapPicker = qobject_cast<BasemapPickerController*>(abstractTool);
-    if (basemapPicker)
-    {
-      basemapPicker->setDefaultBasemap(m_dsaSettings["DefaultBasemap"].toString());
-      basemapPicker->setBasemapDataPath(m_dsaSettings["BasemapDirectory"].toString());
-
-      continue;
-    }
-
-    AddLocalDataController* localDataController = qobject_cast<AddLocalDataController*>(abstractTool);
-    if (localDataController)
-    {
-      for (const QString& filePath : m_dsaSettings["LocalDataPaths"].toStringList())
-        localDataController->addPathToDirectoryList(filePath);
-
-      localDataController->refreshLocalDataModel();
-
-      continue;
-    }
-
-    LocationController* locationController = qobject_cast<LocationController*>(abstractTool);
-    if (locationController)
-    {
-      bool simulate = QString::compare(m_dsaSettings["SimulateLocation"].toString(), QString("true"), Qt::CaseInsensitive) == 0;
-      locationController->setSimulated(simulate);
-      locationController->setGpxFilePath(QUrl::fromLocalFile(m_dsaSettings["GpxFile"].toString()));
-      locationController->setIconDataPath(m_dsaSettings["ResourceDirectory"].toString());
-
-      continue;
-    }
-
-    MessageFeedsController* messageFeedsController = qobject_cast<MessageFeedsController*>(abstractTool);
-    if (messageFeedsController)
-    {
-      messageFeedsController->setDataPath(m_dsaSettings["ResourceDirectory"].toString());
-
-      continue;
-    }
+    connect(abstractTool, &Toolkit::AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
   }
 }
 
 void DsaController::onError(const Esri::ArcGISRuntime::Error& e)
 {
   qDebug() << "Error" << e.message() << e.additionalMessage();
+}
+
+void DsaController::onPropertyChanged(const QString &propertyName, const QVariant &propertyValue)
+{
+  m_dsaSettings.insert(propertyName, propertyValue);
+  // save the settings
+  QFile configFile(m_configFilePath);
+  saveSettings(configFile);
 }
 
 void DsaController::setupConfig()

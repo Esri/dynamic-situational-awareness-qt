@@ -28,7 +28,7 @@ priLocation = $$replace(cleanDirPath, '"', "")
   message("Error. Cannot locate ArcGIS Runtime PRI file")
 }
 
-!CONFIG(local_toolkit_build) {
+!CONFIG(LocalToolkitBuild) {
   !include($$priLocation/sdk/ideintegration/arcgis_runtime_toolkit_cpp.pri) {
     message("Error. Cannot locate ArcGIS Runtime C++ Toolkit PRI file")
   }

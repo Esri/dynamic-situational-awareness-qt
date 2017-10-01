@@ -69,7 +69,7 @@ void MessageFeedsController::init(GeoView* geoView)
     messagesOverlay->addMessage(cotMessage);
   });
 
-  MessageFeed* messageFeed = new MessageFeed("CoT friendly tracks", Message::MessageType::Track, "CoT", messagesOverlay, messageListener, this);
+  MessageFeed* messageFeed = new MessageFeed("CoT tracks", Message::MessageType::Track, "CoT", messagesOverlay, messageListener, this);
   m_messageFeeds->append(messageFeed);
 }
 

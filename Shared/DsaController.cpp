@@ -32,6 +32,7 @@
 #include "FollowPositionController.h"
 #include "LocationController.h"
 #include "MessageFeedsController.h"
+#include "AnalysisController.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -146,6 +147,14 @@ void DsaController::init(GeoView* geoView)
     if (followController)
     {
       followController->init(geoView);
+
+      continue;
+    }
+
+    AnalysisController* analysisController = qobject_cast<AnalysisController*>(abstractTool);
+    if (analysisController)
+    {
+      analysisController->init(geoView);
 
       continue;
     }

@@ -35,6 +35,17 @@ class TableOfContentsController : public Esri::ArcGISRuntime::Toolkit::AbstractT
   Q_PROPERTY(QAbstractListModel* layerListModel READ layerListModel NOTIFY layerListModelChanged)
 
 public:
+
+  enum class LayerGeometryType
+  {
+    Unknown = -1,
+    Points = 0,
+    Lines = 1,
+    Areas = 2,
+    Raster = 3
+  };
+  Q_ENUM(LayerGeometryType)
+
   explicit TableOfContentsController(QObject* parent = nullptr);
   ~TableOfContentsController();
 
@@ -47,6 +58,7 @@ public:
   Q_INVOKABLE void moveFromTo(int fromIndex, int toIndex);
 
   Q_INVOKABLE QString alternateName(int layerIndex);
+  Q_INVOKABLE LayerGeometryType layerGeometryType(int layerIndex);
 
   QString toolName() const override;
 

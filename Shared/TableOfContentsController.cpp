@@ -13,6 +13,7 @@
 #include <QFileInfo>
 
 #include "GeoView.h"
+#include "FeatureLayer.h"
 #include "LayerListModel.h"
 #include "RasterLayer.h"
 
@@ -130,6 +131,54 @@ QString TableOfContentsController::alternateName(int layerIndex)
   QFileInfo rasterFile(raster->path());
 
   return rasterFile.baseName();
+}
+
+TableOfContentsController::LayerGeometryType TableOfContentsController::layerGeometryType(int layerIndex)
+{
+  if (!m_layerListModel)
+    return LayerGeometryType::Unknown;
+
+  if (layerIndex >= m_layerListModel->rowCount())
+    return LayerGeometryType::Unknown;
+
+  Layer* layer = m_layerListModel->at(layerIndex);
+  if (!layer)
+    return LayerGeometryType::Unknown;
+
+  if (layer->loadStatus() != LoadStatus::Loaded)
+    connect(layer, &Layer::loadStatusChanged, this, &TableOfContentsController::layerListModelChanged);
+
+  switch (layer->layerType())
+  {
+  case LayerType::FeatureLayer:
+  {
+    FeatureLayer* featureLayer = qobject_cast<FeatureLayer*>(layer);
+    if (!featureLayer)
+      return LayerGeometryType::Unknown;
+
+    FeatureTable* featTable = featureLayer->featureTable();
+    if (!featTable)
+      return LayerGeometryType::Unknown;
+
+    switch(featTable->geometryType())
+    {
+    case GeometryType::Point:
+    case GeometryType::Multipoint:
+      return LayerGeometryType::Points;
+    case GeometryType::Polyline:
+      return LayerGeometryType::Lines;
+    case GeometryType::Polygon:
+      return LayerGeometryType::Areas;
+    case GeometryType::Unknown:
+    default:
+      return LayerGeometryType::Unknown;
+    }
+  }
+  case LayerType::RasterLayer:
+    return LayerGeometryType::Raster;
+  default:
+    return LayerGeometryType::Unknown;
+  }
 }
 
 QString TableOfContentsController::toolName() const

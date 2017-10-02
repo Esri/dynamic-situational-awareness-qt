@@ -169,7 +169,7 @@ DsaToolBase {
                         case TableOfContentsController.Areas:
                             return "qrc:/Resources/icons/xhdpi/ic_menu_polygonlayer_light.png";
                         case TableOfContentsController.Raster:
-                            return "qrc:/Resources/icons/xhdpi/ic_menu_mapservicelayer_light.png";
+                            return "qrc:/Resources/icons/xhdpi/raster_layer.png";
                         }
                     }
                 }

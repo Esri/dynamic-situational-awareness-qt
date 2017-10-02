@@ -126,5 +126,8 @@ void BasemapPickerController::setProperties(const QVariantMap& properties)
     setBasemapDataPath(newBasemapDataPath);
 
   if (dataPathChanged || basemapChanged)
+  {
+    onBasemapDataPathChanged();
     selectInitialBasemap();
+  }
 }

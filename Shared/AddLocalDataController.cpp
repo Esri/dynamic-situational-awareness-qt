@@ -269,6 +269,11 @@ void AddLocalDataController::createFeatureLayerShapefile(const QString& path)
 {
   ShapefileFeatureTable* shpFt = new ShapefileFeatureTable(path, this);
   FeatureLayer* featureLayer = new FeatureLayer(shpFt, this);
+
+  auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+  if (operationalLayers)
+    operationalLayers->append(featureLayer);
+
   emit layerSelected(featureLayer);
 }
 

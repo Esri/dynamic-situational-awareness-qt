@@ -145,9 +145,38 @@ DsaToolBase {
                     onClicked: layerVisible = checked;
                 }
 
-                Text {
+                Image {
+                    id: layerTypeImage
+
+                    property var lyrGeomType: toolController.layerGeometryType(index)
+                    fillMode: Image.PreserveAspectFit
                     anchors{
                         left: visibleCheckBox.right
+                        verticalCenter: parent.verticalCenter
+                    }
+                    sourceSize.height: 32 * scaleFactor
+                    height: sourceSize.height
+                    source: imageSourceForGeomType(lyrGeomType)
+
+                    function imageSourceForGeomType(geomType){
+                        switch (geomType) {
+                        case TableOfContentsController.Unknown:
+                            return "";
+                        case TableOfContentsController.Points:
+                            return "qrc:/Resources/icons/xhdpi/ic_menu_pointlayer_light.png";
+                        case TableOfContentsController.Polylines:
+                            return "qrc:/Resources/icons/xhdpi/ic_menu_linelayer_light.png";
+                        case TableOfContentsController.Polygons:
+                            return "qrc:/Resources/icons/xhdpi/ic_menu_polygonlayer_light.png";
+                        case TableOfContentsController.Raster:
+                            return "qrc:/Resources/icons/xhdpi/raster_layer.png";
+                        }
+                    }
+                }
+
+                Text {
+                    anchors{
+                        left: layerTypeImage.right
                         right: zoomToImage.left
                         verticalCenter: parent.verticalCenter
                     }

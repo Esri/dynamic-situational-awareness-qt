@@ -47,6 +47,7 @@ Vehicle {
 
     // Create SceneQuickView here, and create its Scene etc. in C++ code
     SceneView {
+        id: sceneView
         anchors {
             top: toolbar.bottom
             left: parent.left
@@ -54,16 +55,27 @@ Vehicle {
             bottom: parent.bottom
         }
 
-        id: sceneView
         objectName: "sceneView"
 
         onMousePressed: followHud.stopFollowing();
+
+        TableOfContents {
+            id: tableOfContentsTool
+            anchors {
+                left: parent.left
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+
+            onClosed: visible = false;
+        }
 
         Drawer {
             id: drawer
             width: 272 * scaleFactor
             height: parent.height
-            interactive: !tableOfContentsTool.visible
 
             Rectangle {
                 id: toolRect
@@ -90,13 +102,6 @@ Vehicle {
                             target: messageFeedsTool
                             visible: true
                         }
-                    },
-                    State {
-                        name: "table of contents"
-                        PropertyChanges {
-                            target: tableOfContentsTool
-                            visible: true
-                        }
                     }
                 ]
 
@@ -118,13 +123,6 @@ Vehicle {
 
                 MessageFeeds {
                     id: messageFeedsTool
-                    anchors.fill: parent
-                    visible: false
-                    onClosed: drawer.close();
-                }
-
-                TableOfContents {
-                    id: tableOfContentsTool
                     anchors.fill: parent
                     visible: false
                     onClosed: drawer.close();
@@ -245,12 +243,7 @@ Vehicle {
                 }
 
                 onClicked: {
-                    if (drawer.visible)
-                        drawer.close();
-                    else {
-                        toolRect.state = "table of contents";
-                        drawer.open();
-                    }
+                    tableOfContentsTool.visible = !tableOfContentsTool.visible;
                 }
             }
 

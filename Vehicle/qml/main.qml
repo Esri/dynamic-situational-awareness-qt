@@ -288,31 +288,6 @@ Vehicle {
             }
 
             Button {
-                id: followCheckBox
-                enabled: locationCheckBox.checked
-                checkable: true
-                checked: false
-                width: 32 * scaleFactor
-                height: 32 * scaleFactor
-
-                background: Rectangle {
-                    anchors.fill: followCheckBox
-                    color: Material.primary
-                }
-
-                Image {
-                    fillMode: Image.PreserveAspectFit
-                    anchors.centerIn: parent
-                    sourceSize.height: parent.height * 0.85
-                    height: sourceSize.height
-                    source: followCheckBox.checked && followCheckBox.enabled?
-                                "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark.png" :
-                                "qrc:/Resources/icons/xhdpi/ic_menu_gpsondontfollow_dark.png"
-
-                }
-            }
-
-            Button {
                 id: coordConvCheckBox
                 checkable: true
                 checked: false
@@ -332,6 +307,17 @@ Vehicle {
                     source: "qrc:/Resources/icons/xhdpi/icon-64-coorconv-white.png"
                 }
             }
+        }
+
+        FollowHud {
+            id: followHud
+            anchors {
+                bottom: sceneView.attributionTop
+                horizontalCenter: parent.horizontalCenter
+                margins: 8 * scaleFactor
+            }
+
+            enabled: locationCheckBox.checked
         }
 
         ArcGISCompass {

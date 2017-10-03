@@ -68,6 +68,8 @@ Vehicle {
         id: sceneView
         objectName: "sceneView"
 
+        onMousePressed: followHud.stopFollowing();
+
         Drawer {
             id: drawer
             width: 272 * scaleFactor

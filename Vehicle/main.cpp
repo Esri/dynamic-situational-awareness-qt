@@ -33,9 +33,6 @@
 #include "FollowPositionController.h"
 #include "LocationController.h"
 #include "MessageFeedsController.h"
-#include "CoordinateConversionController.h"
-#include "CoordinateConversionOptions.h"
-#include "CoordinateConversionResults.h"
 #include "TableOfContentsController.h"
 
 #include "ArcGISRuntimeToolkit.h"

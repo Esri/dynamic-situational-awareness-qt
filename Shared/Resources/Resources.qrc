@@ -19,5 +19,9 @@
         <file>icons/xhdpi/ic_menu_zoomtofeature_light.png</file>
         <file>icons/xhdpi/ic_menu_actionarrowb_dark_d.png</file>
         <file>icons/xhdpi/icon-64-coorconv-white.png</file>
+        <file>icons/xhdpi/ic_menu_linelayer_light.png</file>
+        <file>icons/xhdpi/ic_menu_pointlayer_light.png</file>
+        <file>icons/xhdpi/ic_menu_polygonlayer_light.png</file>
+        <file>icons/xhdpi/raster_layer.png</file>
     </qresource>
 </RCC>

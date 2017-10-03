@@ -166,9 +166,9 @@ TableOfContentsController::LayerGeometryType TableOfContentsController::layerGeo
     case GeometryType::Multipoint:
       return LayerGeometryType::Points;
     case GeometryType::Polyline:
-      return LayerGeometryType::Lines;
+      return LayerGeometryType::Polylines;
     case GeometryType::Polygon:
-      return LayerGeometryType::Areas;
+      return LayerGeometryType::Polygons;
     case GeometryType::Unknown:
     default:
       return LayerGeometryType::Unknown;

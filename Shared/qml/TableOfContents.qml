@@ -161,12 +161,12 @@ DsaToolBase {
                     function imageSourceForGeomType(geomType){
                         switch (geomType) {
                         case TableOfContentsController.Unknown:
-                            return "qrc:/Resources/icons/xhdpi/ic_menu_gpsondontfollow_dark.png";
+                            return "";
                         case TableOfContentsController.Points:
                             return "qrc:/Resources/icons/xhdpi/ic_menu_pointlayer_light.png";
-                        case TableOfContentsController.Lines:
+                        case TableOfContentsController.Polylines:
                             return "qrc:/Resources/icons/xhdpi/ic_menu_linelayer_light.png";
-                        case TableOfContentsController.Areas:
+                        case TableOfContentsController.Polygons:
                             return "qrc:/Resources/icons/xhdpi/ic_menu_polygonlayer_light.png";
                         case TableOfContentsController.Raster:
                             return "qrc:/Resources/icons/xhdpi/raster_layer.png";

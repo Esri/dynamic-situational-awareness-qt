@@ -40,8 +40,8 @@ public:
   {
     Unknown = -1,
     Points = 0,
-    Lines = 1,
-    Areas = 2,
+    Polylines = 1,
+    Polygons = 2,
     Raster = 3
   };
   Q_ENUM(LayerGeometryType)

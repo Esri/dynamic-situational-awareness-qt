@@ -24,6 +24,7 @@
 #endif
 
 #include "ArcGISRuntimeEnvironment.h"
+#include "ArcGISRuntimeToolkit.h"
 
 #include "SceneQuickView.h"
 
@@ -61,6 +62,7 @@
 //------------------------------------------------------------------------------
 
 using namespace Esri::ArcGISRuntime;
+using namespace Esri::ArcGISRuntime::Toolkit;
 
 int main(int argc, char *argv[])
 {
@@ -102,6 +104,9 @@ int main(int argc, char *argv[])
   //    application.quit();
   //    return 1;
   //  }
+
+  // register the toolkit types
+  ArcGISRuntimeToolkit::registerToolkitTypes();
 
   // Register the map view for QML
   qmlRegisterType<SceneQuickView>("Esri.Vehicle", 1, 0, "SceneView");

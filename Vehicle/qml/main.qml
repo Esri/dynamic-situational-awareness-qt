@@ -45,6 +45,17 @@ Vehicle {
         }
     }
 
+    CoordinateConversion {
+        id: coordinateConversion
+        objectName: "coordinateConversion"
+        visible: coordConvCheckBox.checked
+        height: parent.height / 2
+        width: parent.width
+        anchors {
+            bottom: parent.bottom
+        }
+    }
+
     // Create SceneQuickView here, and create its Scene etc. in C++ code
     SceneView {
         id: sceneView
@@ -52,7 +63,7 @@ Vehicle {
             top: toolbar.bottom
             left: parent.left
             right: parent.right
-            bottom: parent.bottom
+            bottom: coordConvCheckBox.checked ? coordinateConversion.top : parent.bottom
         }
 
         objectName: "sceneView"
@@ -268,6 +279,27 @@ Vehicle {
                                 "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark.png" :
                                 "qrc:/Resources/icons/xhdpi/ic_menu_gpsondontfollow_dark.png"
 
+                }
+            }
+
+            Button {
+                id: coordConvCheckBox
+                checkable: true
+                checked: false
+                width: 32 * scaleFactor
+                height: 32 * scaleFactor
+
+                background: Rectangle {
+                    anchors.fill: coordConvCheckBox
+                    color: Material.primary
+                }
+
+                Image {
+                    fillMode: Image.PreserveAspectFit
+                    anchors.centerIn: parent
+                    sourceSize.height: parent.height * 0.85
+                    height: sourceSize.height
+                    source: "qrc:/Resources/icons/xhdpi/icon-64-coorconv-white.png"
                 }
             }
         }

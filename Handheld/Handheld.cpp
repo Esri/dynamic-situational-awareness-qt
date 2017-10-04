@@ -44,10 +44,8 @@ void Handheld::componentComplete()
   connect(m_sceneView, &SceneQuickView::spatialReferenceChanged,
           ToolResourceProvider::instance(), &ToolResourceProvider::spatialReferenceChanged);
 
-  connect(m_sceneView, &SceneQuickView::mouseClicked, this, [this](QMouseEvent& event)
-  {
-    emit ToolResourceProvider::instance()->mouseClicked(m_sceneView->screenToBaseSurface(event.x(), event.y()));
-  });
+  connect(m_sceneView, &SceneQuickView::mouseClicked,
+          ToolResourceProvider::instance(), &ToolResourceProvider::onMouseClicked);
 
   // Set scene to scene view
   m_sceneView->setArcGISScene(m_controller->scene());

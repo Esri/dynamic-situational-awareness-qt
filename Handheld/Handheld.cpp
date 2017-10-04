@@ -12,17 +12,18 @@
 
 #include "SceneQuickView.h"
 #include "ArcGISCompassController.h"
+#include "ToolResourceProvider.h"
 
 #include "DsaController.h"
 #include "Handheld.h"
 
 using namespace Esri::ArcGISRuntime;
+using namespace Esri::ArcGISRuntime::Toolkit;
 
 Handheld::Handheld(QQuickItem* parent /* = nullptr */):
   QQuickItem(parent),
   m_controller(new DsaController(this))
 {
-
 }
 
 Handheld::~Handheld()
@@ -38,6 +39,15 @@ void Handheld::componentComplete()
   connect(m_sceneView, &SceneQuickView::errorOccurred, m_controller, &DsaController::onError);
 
   m_controller->init(m_sceneView);
+
+  // setup the connections from the view to the resource provider
+  connect(m_sceneView, &SceneQuickView::spatialReferenceChanged,
+          ToolResourceProvider::instance(), &ToolResourceProvider::spatialReferenceChanged);
+
+  connect(m_sceneView, &SceneQuickView::mouseClicked, this, [this](QMouseEvent& event)
+  {
+    emit ToolResourceProvider::instance()->mouseClicked(m_sceneView->screenToBaseSurface(event.x(), event.y()));
+  });
 
   // Set scene to scene view
   m_sceneView->setArcGISScene(m_controller->scene());

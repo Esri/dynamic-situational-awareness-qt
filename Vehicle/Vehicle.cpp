@@ -14,6 +14,7 @@
 
 #include "DsaController.h"
 #include "Vehicle.h"
+#include "ToolResourceProvider.h"
 #include "CoordinateConversionController.h"
 
 using namespace Esri::ArcGISRuntime;
@@ -39,6 +40,15 @@ void Vehicle::componentComplete()
   connect(m_sceneView, &SceneQuickView::errorOccurred, m_controller, &DsaController::onError);
 
   m_controller->init(m_sceneView);
+
+  // setup the connections from the view to the resource provider
+  connect(m_sceneView, &SceneQuickView::spatialReferenceChanged,
+          ToolResourceProvider::instance(), &ToolResourceProvider::spatialReferenceChanged);
+
+  connect(m_sceneView, &SceneQuickView::mouseClicked, this, [this](QMouseEvent& event)
+  {
+    emit ToolResourceProvider::instance()->mouseClicked(m_sceneView->screenToBaseSurface(event.x(), event.y()));
+  });
 
   // Set scene to scene view
   m_sceneView->setArcGISScene(m_controller->scene());

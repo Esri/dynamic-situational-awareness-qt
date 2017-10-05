@@ -105,9 +105,6 @@ int main(int argc, char *argv[])
   //    return 1;
   //  }
 
-  // register the toolkit types
-  ArcGISRuntimeToolkit::registerToolkitTypes();
-
   // Register the map view for QML
   qmlRegisterType<SceneQuickView>("Esri.Vehicle", 1, 0, "SceneView");
 
@@ -121,7 +118,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<TableOfContentsController>("Esri.DSA", 1, 0, "TableOfContentsController");
 
   // Register Toolkit Component Types
-  Toolkit::ArcGISRuntimeToolkit::registerToolkitTypes();
+  ArcGISRuntimeToolkit::registerToolkitTypes();
 
   // Intialize application view
   QQuickView view;

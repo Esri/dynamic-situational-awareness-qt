@@ -61,6 +61,7 @@
 //------------------------------------------------------------------------------
 
 using namespace Esri::ArcGISRuntime;
+using namespace Esri::ArcGISRuntime::Toolkit;
 
 int main(int argc, char *argv[])
 {
@@ -116,7 +117,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<TableOfContentsController>("Esri.DSA", 1, 0, "TableOfContentsController");
 
   // Register Toolkit Component Types
-  Toolkit::ArcGISRuntimeToolkit::registerToolkitTypes();
+  ArcGISRuntimeToolkit::registerToolkitTypes();
 
   // Intialize application view
   QQuickView view;

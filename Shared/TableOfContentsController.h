@@ -69,7 +69,7 @@ private slots:
   void updateLayerListModel();
 
 private:
-  Esri::ArcGISRuntime::LayerListModel* m_layerListModel;
+  Esri::ArcGISRuntime::LayerListModel* m_layerListModel = nullptr;
 };
 
 #endif // TABLEOFCONTENTSCONTROLLER_H

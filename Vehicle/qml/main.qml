@@ -302,6 +302,27 @@ Vehicle {
                     source: "qrc:/Resources/icons/xhdpi/icon-64-coorconv-white.png"
                 }
             }
+
+            Button {
+                id: navCheckBox
+                checkable: true
+                checked: false
+                width: 32 * scaleFactor
+                height: 32 * scaleFactor
+
+                background: Rectangle {
+                    anchors.fill: navCheckBox
+                    color: Material.primary
+                }
+
+                Image {
+                    fillMode: Image.PreserveAspectFit
+                    anchors.centerIn: parent
+                    sourceSize.height: parent.height * 0.85
+                    height: sourceSize.height
+                    source: "qrc:/Resources/icons/xhdpi/icon-64-coorconv-white.png"
+                }
+            }
         }
 
         FollowHud {
@@ -323,6 +344,18 @@ Vehicle {
                 rightMargin: 2 * scaleFactor
                 bottomMargin: 22 * scaleFactor
             }
+        }
+
+        NavigationTool {
+            id: navTool
+            anchors {
+                left: parent.left
+                bottom: parent.bottom
+                leftMargin: 2 * scaleFactor
+                bottomMargin: 50 * scaleFactor
+            }
+            visible: navCheckBox.checked
+            buttonColor: Material.accent
         }
     }
 }

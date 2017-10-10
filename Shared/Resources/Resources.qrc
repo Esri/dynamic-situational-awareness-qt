@@ -26,9 +26,6 @@
         <file>icons/xhdpi/ic_menu_subtract_dark_d.png</file>
         <file>icons/xhdpi/2D.png</file>
         <file>icons/xhdpi/3D.png</file>
-        <file>icons/xhdpi/ic_menu_subtract_dark_d.png</file>
-        <file>icons/xhdpi/2D.png</file>
-        <file>icons/xhdpi/3D.png</file>
         <file>icons/xhdpi/ic_menu_gpson_dark_d.png</file>
     </qresource>
 </RCC>

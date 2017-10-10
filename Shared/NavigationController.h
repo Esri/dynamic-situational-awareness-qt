@@ -44,6 +44,10 @@ public:
 
   QString toolName() const override;
 
+  bool isVertical();
+  double zoomFactor();
+  void setZoomFactor(double value);
+
 signals:
   void verticalChanged();
   void zoomFactorChanged();
@@ -59,9 +63,6 @@ private:
     Pan
   };
 
-  bool isVertical() { return m_isCameraVertical; }
-  double zoomFactor() { return m_zoomFactor; }
-  void setZoomFactor(double value);
   void zoom();
   void setRotationInternal();
 

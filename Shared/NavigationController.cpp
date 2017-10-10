@@ -78,12 +78,18 @@ void NavigationController::updateGeoView()
 
 void NavigationController::zoomIn()
 {
+  if (!m_sceneView)
+    return;
+
   m_currentMode = Mode::Zoom;
   m_sceneView->screenToLocation(m_sceneView->sceneWidth() * 0.5, m_sceneView->sceneHeight() * 0.5);
 }
 
 void NavigationController::zoomOut()
 {
+  if (!m_sceneView)
+    return;
+
   m_currentMode = Mode::Zoom;
   m_sceneView->screenToLocation(m_sceneView->sceneWidth() * 0.5, m_sceneView->sceneHeight() * 0.5);
 }
@@ -114,12 +120,18 @@ void NavigationController::zoomOut()
 
 void NavigationController::pan()
 {
+  if (!m_sceneView)
+    return;
+
   GlobeCameraController* globeCameraController = new GlobeCameraController(this);
   m_sceneView->setCameraController(globeCameraController);
 }
 
 void NavigationController::setRotation()
 {
+  if (!m_sceneView)
+    return;
+
   m_currentMode = Mode::Rotate;
   m_sceneView->screenToLocation(m_sceneView->sceneWidth() * 0.5, m_sceneView->sceneHeight() * 0.5);
 }
@@ -138,8 +150,24 @@ void NavigationController::zoom()
   m_sceneView->setViewpointCamera(newCamera, 0.5);
 }
 
+// getter for vertical
+bool NavigationController::isVertical()
+{
+  return m_isCameraVertical;
+}
+
+// getter for zoom factor
+double NavigationController::zoomFactor()
+{
+  return m_zoomFactor;
+}
+
+// setter for zooom factor
 void NavigationController::setZoomFactor(double value)
 {
+  if (value == m_zoomFactor)
+    return;
+
   m_zoomFactor = value;
   emit zoomFactorChanged();
 }

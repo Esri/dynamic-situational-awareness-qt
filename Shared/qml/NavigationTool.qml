@@ -99,7 +99,9 @@ Item {
             }
         }
     }
-        // The following buttons have been commented out until we figure out how to get the distance of the camera from the scene view.
+        // The following buttons have been commented out until we have public API to
+        // to use an existing distance from the camera.
+
         /*
         Button {
             id: pan

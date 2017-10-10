@@ -138,8 +138,24 @@ void NavigationController::zoom()
   m_sceneView->setViewpointCamera(newCamera, 0.5);
 }
 
+// getter for vertical
+bool NavigationController::isVertical()
+{
+  return m_isCameraVertical;
+}
+
+// getter for zoom factor
+double NavigationController::zoomFactor()
+{
+  return m_zoomFactor;
+}
+
+// setter for zooom factor
 void NavigationController::setZoomFactor(double value)
 {
+  if (value == m_zoomFactor)
+    return;
+
   m_zoomFactor = value;
   emit zoomFactorChanged();
 }
@@ -155,16 +171,4 @@ void NavigationController::setRotationInternal()
   orbitController->setCameraPitchOffset(currentCamera.pitch());
   orbitController->setCameraHeadingOffset(currentCamera.heading());
   m_sceneView->setCameraController(orbitController);
-}
-
-// getter for vertical
-bool NavigationController::isVertical()
-{
-  return m_isCameraVertical;
-}
-
-// getter for zoom factor
-double NavigationController::zoomFactor()
-{
-  return m_zoomFactor;
 }

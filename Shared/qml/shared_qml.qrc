@@ -7,5 +7,6 @@
         <file>MessageFeeds.qml</file>
         <file>FollowHud.qml</file>
         <file>TableOfContents.qml</file>
+        <file>NavigationTool.qml</file>
     </qresource>
 </RCC>

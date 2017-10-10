@@ -43,113 +43,14 @@ Vehicle {
         onMenuClicked: {
             console.log("Menu button was clicked");
         }
-    }
 
-    CoordinateConversion {
-        id: coordinateConversion
-        objectName: "coordinateConversion"
-        visible: coordConvCheckBox.checked
-        height: parent.height / 2
-        width: parent.width
-        anchors {
-            bottom: parent.bottom
-        }
-    }
-
-    // Create SceneQuickView here, and create its Scene etc. in C++ code
-    SceneView {
-        id: sceneView
-        anchors {
-            top: toolbar.bottom
-            left: parent.left
-            right: parent.right
-            bottom: coordConvCheckBox.checked ? coordinateConversion.top : parent.bottom
-        }
-
-        objectName: "sceneView"
-
-        onMousePressed: followHud.stopFollowing();
-
-        TableOfContents {
-            id: tableOfContentsTool
+        Row {
+            spacing: 7 * scaleFactor
             anchors {
-                left: parent.left
-                top: parent.top
-                bottom: sceneView.attributionTop
-            }
-            width: drawer.width
-            visible: false
-
-            onClosed: visible = false;
-        }
-
-        Drawer {
-            id: drawer
-            width: 272 * scaleFactor
-            height: parent.height
-
-            Rectangle {
-                id: toolRect
-                anchors.fill: parent
-
-                states: [
-                    State {
-                        name: "basemap"
-                        PropertyChanges {
-                            target: basemapsTool
-                            visible: true
-                        }
-                    },
-                    State {
-                        name: "data"
-                        PropertyChanges {
-                            target: addLocalDataTool
-                            visible: true
-                        }
-                    },
-                    State {
-                        name: "message"
-                        PropertyChanges {
-                            target: messageFeedsTool
-                            visible: true
-                        }
-                    }
-                ]
-
-                BasemapPicker {
-                    id: basemapsTool
-                    anchors.fill: parent
-                    onBasemapSelected: closed();
-                    visible: false
-                    onClosed: drawer.close();
-                }
-
-                AddLocalData {
-                    id: addLocalDataTool
-                    anchors.fill: parent
-                    showDataConnectionPane: true
-                    visible: false
-                    onClosed: drawer.close();
-                }
-
-                MessageFeeds {
-                    id: messageFeedsTool
-                    anchors.fill: parent
-                    visible: false
-                    onClosed: drawer.close();
-                }
-            }
-        }
-
-        Column {
-            id: toolsCol
-            anchors{
-                margins: 2 * scaleFactor
-                top: parent.top
                 right: parent.right
+                margins: 2 * scaleFactor
+                verticalCenter: parent.verticalCenter
             }
-            spacing: 5 * scaleFactor
-
 
             Button {
                 id: basemapsCheckBox
@@ -259,30 +160,6 @@ Vehicle {
             }
 
             Button {
-                id: locationCheckBox
-                checkable: true
-                checked: false
-                width: 32 * scaleFactor
-                height: 32 * scaleFactor
-
-                background: Rectangle {
-                    anchors.fill: locationCheckBox
-                    color: Material.primary
-                }
-
-                Image {
-                    fillMode: Image.PreserveAspectFit
-                    anchors.centerIn: parent
-                    sourceSize.height: parent.height * 0.85
-                    height: sourceSize.height
-                    source: locationCheckBox.checked ?
-                                "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark.png" :
-                                "qrc:/Resources/icons/xhdpi/ic_menu_gpsondontfollow_dark.png"
-
-                }
-            }
-
-            Button {
                 id: coordConvCheckBox
                 checkable: true
                 checked: false
@@ -302,6 +179,124 @@ Vehicle {
                     source: "qrc:/Resources/icons/xhdpi/icon-64-coorconv-white.png"
                 }
             }
+
+            Button {
+                id: navCheckBox
+                checkable: true
+                checked: true
+                width: 32 * scaleFactor
+                height: 32 * scaleFactor
+
+                background: Rectangle {
+                    anchors.fill: navCheckBox
+                    color: Material.primary
+                }
+
+                Image {
+                    fillMode: Image.PreserveAspectFit
+                    anchors.centerIn: parent
+                    sourceSize.height: parent.height * 0.85
+                    height: sourceSize.height
+                    source: navCheckBox.checked ? "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark.png" : "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark_d.png"
+                }
+            }
+        }
+    }
+
+    CoordinateConversion {
+        id: coordinateConversion
+        objectName: "coordinateConversion"
+        visible: coordConvCheckBox.checked
+        height: parent.height / 2
+        width: parent.width
+        anchors {
+            bottom: parent.bottom
+        }
+    }
+
+    // Create SceneQuickView here, and create its Scene etc. in C++ code
+    SceneView {
+        id: sceneView
+        anchors {
+            top: toolbar.bottom
+            left: parent.left
+            right: parent.right
+            bottom: coordConvCheckBox.checked ? coordinateConversion.top : parent.bottom
+        }
+
+        objectName: "sceneView"
+
+        onMousePressed: followHud.stopFollowing();
+
+        TableOfContents {
+            id: tableOfContentsTool
+            anchors {
+                left: parent.left
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+
+            onClosed: visible = false;
+        }
+
+        Drawer {
+            id: drawer
+            width: 272 * scaleFactor
+            height: parent.height
+
+            Rectangle {
+                id: toolRect
+                anchors.fill: parent
+
+                states: [
+                    State {
+                        name: "basemap"
+                        PropertyChanges {
+                            target: basemapsTool
+                            visible: true
+                        }
+                    },
+                    State {
+                        name: "data"
+                        PropertyChanges {
+                            target: addLocalDataTool
+                            visible: true
+                        }
+                    },
+                    State {
+                        name: "message"
+                        PropertyChanges {
+                            target: messageFeedsTool
+                            visible: true
+                        }
+                    }
+                ]
+
+                BasemapPicker {
+                    id: basemapsTool
+                    anchors.fill: parent
+                    onBasemapSelected: closed();
+                    visible: false
+                    onClosed: drawer.close();
+                }
+
+                AddLocalData {
+                    id: addLocalDataTool
+                    anchors.fill: parent
+                    showDataConnectionPane: true
+                    visible: false
+                    onClosed: drawer.close();
+                }
+
+                MessageFeeds {
+                    id: messageFeedsTool
+                    anchors.fill: parent
+                    visible: false
+                    onClosed: drawer.close();
+                }
+            }
         }
 
         FollowHud {
@@ -315,13 +310,56 @@ Vehicle {
             enabled: locationCheckBox.checked
         }
 
-        ArcGISCompass {
-            id: compass
+        Column {
+            id: navToolsColumn
+            visible: navCheckBox.checked
+            spacing: 1 * scaleFactor
+
             anchors {
-                right: parent.right
-                bottom: parent.bottom
-                rightMargin: 2 * scaleFactor
-                bottomMargin: 22 * scaleFactor
+                margins: 8 * scaleFactor
+                bottom: sceneView.attributionTop
+                right: sceneView.right
+            }
+
+            NavigationTool {
+                id: navTool
+
+                visible: compass.visible && navCheckBox.checked
+                buttonColor: "black"
+            }
+
+
+            Button {
+                id: locationCheckBox
+                checkable: true
+                checked: false
+                width: 32 * scaleFactor
+                height: 32 * scaleFactor
+                opacity: 0.75
+
+
+                background: Rectangle {
+                    anchors.fill: locationCheckBox
+                    color: "black"
+                    radius: 5 * scaleFactor
+                }
+
+                Image {
+                    fillMode: Image.PreserveAspectFit
+                    anchors.centerIn: parent
+                    sourceSize.height: parent.height * 0.85
+                    height: sourceSize.height
+                    source: locationCheckBox.checked ?
+                                "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark.png" :
+                                "qrc:/Resources/icons/xhdpi/ic_menu_gpsondontfollow_dark.png"
+
+                }
+            }
+
+            ArcGISCompass {
+                id: compass
+
+                autoHideCompass: false
             }
         }
     }

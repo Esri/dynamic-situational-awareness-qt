@@ -33,6 +33,7 @@
 #include "MessageFeedsController.h"
 #include "FollowPositionController.h"
 #include "TableOfContentsController.h"
+#include "NavigationController.h"
 
 #include "ArcGISRuntimeToolkit.h"
 #include "ArcGISCompassController.h"
@@ -115,6 +116,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<MessageFeedsController>("Esri.DSA", 1, 0, "MessageFeedsController");
   qmlRegisterType<FollowPositionController>("Esri.DSA", 1, 0, "FollowPositionController");
   qmlRegisterType<TableOfContentsController>("Esri.DSA", 1, 0, "TableOfContentsController");
+  qmlRegisterType<NavigationController>("Esri.DSA", 1, 0, "NavigationController");
 
   // Register Toolkit Component Types
   ArcGISRuntimeToolkit::registerToolkitTypes();

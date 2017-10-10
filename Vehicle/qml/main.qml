@@ -159,7 +159,6 @@ Vehicle {
                 }
             }
 
-
             Button {
                 id: coordConvCheckBox
                 checkable: true
@@ -201,7 +200,6 @@ Vehicle {
                     source: navCheckBox.checked ? "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark.png" : "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark_d.png"
                 }
             }
-
         }
     }
 
@@ -301,168 +299,6 @@ Vehicle {
             }
         }
 
-        /*
-        Column {
-            id: toolsCol
-            anchors{
-                margins: 2 * scaleFactor
-                top: parent.top
-                right: parent.right
-            }
-            spacing: 5 * scaleFactor
-
-            Button {
-                id: basemapsCheckBox
-                width: 32 * scaleFactor
-                height: 32 * scaleFactor
-
-                background: Rectangle {
-                    anchors.fill: basemapsCheckBox
-                    color: Material.primary
-                }
-
-                Image {
-                    fillMode: Image.PreserveAspectFit
-                    anchors.centerIn: parent
-                    sourceSize.height: basemapsCheckBox.background.height - (6 * scaleFactor)
-                    height: sourceSize.height
-                    source: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_dark.png"
-                }
-
-                onClicked: {
-                    if (drawer.visible)
-                        drawer.close();
-                    else {
-                        toolRect.state = "basemap";
-                        drawer.open();
-                    }
-                }
-            }
-
-            Button {
-                id: addLocalDataCheckBox
-                width: 32 * scaleFactor
-                height: 32 * scaleFactor
-
-                background: Rectangle {
-                    anchors.fill: addLocalDataCheckBox
-                    color: Material.primary
-                }
-
-                Image {
-                    fillMode: Image.PreserveAspectFit
-                    anchors.centerIn: parent
-                    sourceSize.height: addLocalDataCheckBox.background.height - (6 * scaleFactor)
-                    height: sourceSize.height
-                    source: "qrc:/Resources/icons/xhdpi/ic_menu_layervisibilitypopover_dark_d.png"
-                }
-
-                onClicked: {
-                    if (drawer.visible)
-                        drawer.close();
-                    else {
-                        toolRect.state = "data";
-                        drawer.open();
-                    }
-                }
-            }
-
-            Button {
-                id: messageFeedsCheckBox
-                width: 32 * scaleFactor
-                height: 32 * scaleFactor
-
-                background: Rectangle {
-                    anchors.fill: messageFeedsCheckBox
-                    color: Material.primary
-                }
-
-                Image {
-                    fillMode: Image.PreserveAspectFit
-                    anchors.centerIn: parent
-                    sourceSize.height: messageFeedsCheckBox.background.height - (6 * scaleFactor)
-                    height: sourceSize.height
-                    source: "qrc:/Resources/icons/xhdpi/ic_menu_messages_dark.png"
-                }
-
-                onClicked: {
-                    if (drawer.visible)
-                        drawer.close();
-                    else {
-                        toolRect.state = "message";
-                        drawer.open();
-                    }
-                }
-            }
-
-            Button {
-                id: tocCheckBox
-                width: 32 * scaleFactor
-                height: 32 * scaleFactor
-
-                background: Rectangle {
-                    anchors.fill: tocCheckBox
-                    color: Material.primary
-                }
-
-                Image {
-                    fillMode: Image.PreserveAspectFit
-                    anchors.centerIn: parent
-                    sourceSize.height: tocCheckBox.background.height - (6 * scaleFactor)
-                    height: sourceSize.height
-                    source: "qrc:/Resources/icons/xhdpi/ic_menu_openlistview_dark.png"
-                }
-
-                onClicked: {
-                    tableOfContentsTool.visible = !tableOfContentsTool.visible;
-                }
-            }
-
-
-            Button {
-                id: coordConvCheckBox
-                checkable: true
-                checked: false
-                width: 32 * scaleFactor
-                height: 32 * scaleFactor
-
-                background: Rectangle {
-                    anchors.fill: coordConvCheckBox
-                    color: Material.primary
-                }
-
-                Image {
-                    fillMode: Image.PreserveAspectFit
-                    anchors.centerIn: parent
-                    sourceSize.height: parent.height * 0.85
-                    height: sourceSize.height
-                    source: "qrc:/Resources/icons/xhdpi/icon-64-coorconv-white.png"
-                }
-            }
-
-            Button {
-                id: navCheckBox
-                checkable: true
-                checked: true
-                width: 32 * scaleFactor
-                height: 32 * scaleFactor
-
-                background: Rectangle {
-                    anchors.fill: navCheckBox
-                    color: Material.primary
-                }
-
-                Image {
-                    fillMode: Image.PreserveAspectFit
-                    anchors.centerIn: parent
-                    sourceSize.height: parent.height * 0.85
-                    height: sourceSize.height
-                    source: navCheckBox.checked ? "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark.png" : "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark_d.png"
-                }
-            }
-
-        }
-*/
         FollowHud {
             id: followHud
             anchors {

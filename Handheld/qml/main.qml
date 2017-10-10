@@ -232,7 +232,7 @@ Handheld {
 
                 background: Rectangle {
                     anchors.fill: locationCheckBox
-                    color: "black"//Material.primary
+                    color: "black"
                     radius: 5 * scaleFactor
                 }
 

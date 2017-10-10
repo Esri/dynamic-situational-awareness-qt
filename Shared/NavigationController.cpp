@@ -41,12 +41,7 @@ NavigationController::~NavigationController()
 
 QString NavigationController::toolName() const
 {
-  return QStringLiteral("nav");
-}
-
-void NavigationController::setProperties(const QVariantMap& properties)
-{
-  Q_UNUSED(properties);
+  return QStringLiteral("NavigationController");
 }
 
 void NavigationController::updateGeoView()
@@ -63,31 +58,33 @@ void NavigationController::updateGeoView()
       {
         m_currentCenter = location;
 
-        if (m_currentMode == Mode::ZOOM)
+        if (m_currentMode == Mode::Zoom)
         {
           zoom();
         }
-        else if (m_currentMode == Mode::ROTATE)
+        else if (m_currentMode == Mode::Rotate)
         {
           setRotationInternal();
         }
       });
     }
     else
+    {
       // set a mapView here when we have it.
       m_is3d = false;
+    }
   }
 }
 
 void NavigationController::zoomIn()
 {
-  m_currentMode = Mode::ZOOM;
+  m_currentMode = Mode::Zoom;
   m_sceneView->screenToLocation(m_sceneView->sceneWidth() * 0.5, m_sceneView->sceneHeight() * 0.5);
 }
 
 void NavigationController::zoomOut()
 {
-  m_currentMode = Mode::ZOOM;
+  m_currentMode = Mode::Zoom;
   m_sceneView->screenToLocation(m_sceneView->sceneWidth() * 0.5, m_sceneView->sceneHeight() * 0.5);
 }
 
@@ -123,7 +120,7 @@ void NavigationController::pan()
 
 void NavigationController::setRotation()
 {
-  m_currentMode = Mode::ROTATE;
+  m_currentMode = Mode::Rotate;
   m_sceneView->screenToLocation(m_sceneView->sceneWidth() * 0.5, m_sceneView->sceneHeight() * 0.5);
 }
 
@@ -151,13 +148,8 @@ void NavigationController::setRotationInternal()
 {
   // get the current camera
   Camera currentCamera = m_sceneView->currentViewpointCamera();
-//  GeodeticDistanceResult result = GeometryEngine::distanceGeodetic(GeometryEngine::project(currentCamera.location(), sr), GeometryEngine::project(m_currentCenter, sr), LinearUnit::meters(), AngularUnit::degrees(), GeodeticCurveType::ShapePreserving);
   GeodeticDistanceResult result = GeometryEngine::distanceGeodetic(currentCamera.location(), m_currentCenter, LinearUnit::meters(), m_geoView->spatialReference().unit(), GeodeticCurveType::Geodesic);
   double distance = result.distance();
-
-  qDebug() << "Camera:" << currentCamera.location().toJson();
-  qDebug() << "Center:" << m_currentCenter.toJson();
-  qDebug() << distance;
 
   OrbitLocationCameraController* orbitController = new OrbitLocationCameraController(m_currentCenter, distance, this);
   orbitController->setCameraPitchOffset(currentCamera.pitch());

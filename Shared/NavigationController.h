@@ -25,13 +25,6 @@ namespace ArcGISRuntime
   class GeoView;
 }}
 
-enum class Mode
-{
-  ZOOM,
-  ROTATE,
-  PAN
-};
-
 class NavigationController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
   Q_OBJECT
@@ -50,7 +43,6 @@ public:
   Q_INVOKABLE void setRotation();
 
   QString toolName() const override;
-  void setProperties(const QVariantMap& properties) override;
 
 signals:
   void verticalChanged();
@@ -60,6 +52,13 @@ private slots:
   void updateGeoView();
 
 private:
+  enum class Mode
+  {
+    Zoom,
+    Rotate,
+    Pan
+  };
+
   bool isVertical() { return m_isCameraVertical; }
   double zoomFactor() { return m_zoomFactor; }
   void setZoomFactor(double value);

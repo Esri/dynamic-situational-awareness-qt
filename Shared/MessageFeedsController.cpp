@@ -105,5 +105,6 @@ void MessageFeedsController::setDataPath(const QString& dataPath)
     return;
 
   m_dataPath = dataPath;
+  updateGeoView();
   emit propertyChanged(RESOURCE_DIRECTORY_PROPERTYNAME, dataPath);
 }

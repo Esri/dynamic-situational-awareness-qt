@@ -156,3 +156,15 @@ void NavigationController::setRotationInternal()
   orbitController->setCameraHeadingOffset(currentCamera.heading());
   m_sceneView->setCameraController(orbitController);
 }
+
+// getter for vertical
+bool NavigationController::isVertical()
+{
+  return m_isCameraVertical;
+}
+
+// getter for zoom factor
+double NavigationController::zoomFactor()
+{
+  return m_zoomFactor;
+}

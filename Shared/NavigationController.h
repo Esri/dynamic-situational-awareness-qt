@@ -44,8 +44,8 @@ public:
 
   QString toolName() const override;
 
-  bool isVertical() { return m_isCameraVertical; }
-  double zoomFactor() { return m_zoomFactor; }
+  bool isVertical();
+  double zoomFactor();
   void setZoomFactor(double value);
 
 signals:

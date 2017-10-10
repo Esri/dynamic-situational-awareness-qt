@@ -18,9 +18,10 @@ import QtQuick.Window 2.2
 import QtQuick.Controls.Material 2.1
 import Esri.DSA 1.0
 
-Rectangle {
+Item {
     property int fontSize: 24 * scaleFactor
     property color buttonColor
+    property real buttonOpacity: 0.75
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     NavigationController {
@@ -28,42 +29,25 @@ Rectangle {
         objectName: "navigationController"
     }
 
-    RowLayout {
-        anchors.fill: parent
+    ButtonGroup { id: zoomButtonGroup }
+//    ButtonGroup { id: panButtonGroup3D }
 
-        Button {
-            id: zoomOutButton
-            width: 32 * scaleFactor
-            height: 32 * scaleFactor
+    height: controlsColumn.height
+    width: 32 * scaleFactor
+    opacity: buttonOpacity
 
-            background: Rectangle {
-                implicitHeight: 40 * scaleFactor
-                implicitWidth: 40 * scaleFactor
-                anchors.fill: zoomOutButton
-                radius: 5 * scaleFactor
-                color: buttonColor
-            }
-
-            Image {
-                anchors.centerIn: parent
-                width: 26 * scaleFactor
-                height: width
-                source: "qrc:/Resources/icons/xhdpi/ic_menu_subtract_dark_d.png"
-            }
-
-            onClicked: {
-                navController.zoomOut();
-            }
-        }
+    Column {
+        id: controlsColumn
 
         Button {
             id: zoomInButton
             width: 32 * scaleFactor
             height: 32 * scaleFactor
+            checkable: true
+            checked: false
+            ButtonGroup.group: zoomButtonGroup
 
             background: Rectangle {
-                implicitHeight: 40 * scaleFactor
-                implicitWidth: 40 * scaleFactor
                 anchors.fill: zoomInButton
                 radius: 5 * scaleFactor
                 color: buttonColor
@@ -71,25 +55,65 @@ Rectangle {
 
             Image {
                 anchors.centerIn: parent
-                width: 26 * scaleFactor
-                height: width
+                sourceSize.height: 0.85 * zoomInButton.height
+                width: sourceSize.height
                 source: "qrc:/Resources/icons/xhdpi/ic_menu_add_dark_d.png"
             }
 
             onClicked: {
+                navController.zoomFactor = 2.0;
                 navController.zoomIn();
             }
         }
 
+        Rectangle {
+            width: 32 * scaleFactor
+            height: 1 * scaleFactor
+            color: "white"
+        }
+
         Button {
-            id: birdsEyeButton
+            id: zoomOutButton
             width: 32 * scaleFactor
             height: 32 * scaleFactor
+            checkable: true
+            checked: false
+            ButtonGroup.group: zoomButtonGroup
+
+            background: Rectangle {
+                anchors.fill: zoomOutButton
+                radius: 5 * scaleFactor
+                color: buttonColor
+            }
+
+            Image {
+                anchors.centerIn: parent
+                sourceSize.height: 0.85 * zoomOutButton.height
+                width: sourceSize.height
+                source: "qrc:/Resources/icons/xhdpi/ic_menu_subtract_dark_d.png"
+            }
+
+            onClicked: {
+                navController.zoomFactor = 0.5;
+                navController.zoomOut();
+            }
+        }
+    }
+        // The following buttons have been commented out until we figure out how to get the distance of the camera from the scene view.
+        /*
+        Button {
+            id: pan
+            width: 32 * scaleFactor
+            height: 32 * scaleFactor
+            checkable: true
+            checked: false
+            ButtonGroup.group: panButtonGroup3D
+            text: "Pan"
 
             background: Rectangle {
                 implicitHeight: 40 * scaleFactor
                 implicitWidth: 40 * scaleFactor
-                anchors.fill: birdsEyeButton
+                anchors.fill: pan
                 radius: 5 * scaleFactor
                 color: buttonColor
             }
@@ -98,13 +122,41 @@ Rectangle {
                 anchors.centerIn: parent
                 width: 26 * scaleFactor
                 height: width
-                source: navController.vertical ? "qrc:/Resources/icons/xhdpi/3D.png" : "qrc:/Resources/icons/xhdpi/2D.png"
+//                source: navController.vertical ? "qrc:/Resources/icons/xhdpi/3D.png" : "qrc:/Resources/icons/xhdpi/2D.png"
             }
 
             onClicked: {
-                navController.tilt();
+                navController.pan();
             }
         }
-    }
+
+        Button {
+            id: rotate
+            width: 32 * scaleFactor
+            height: 32 * scaleFactor
+            checkable: true
+            checked: false
+            ButtonGroup.group: panButtonGroup3D
+            text: "Rotate"
+
+            background: Rectangle {
+                implicitHeight: 40 * scaleFactor
+                implicitWidth: 40 * scaleFactor
+                anchors.fill: rotate
+                radius: 5 * scaleFactor
+                color: buttonColor
+            }
+
+            Image {
+                anchors.centerIn: parent
+                width: 26 * scaleFactor
+                height: width
+//                source: navController.vertical ? "qrc:/Resources/icons/xhdpi/3D.png" : "qrc:/Resources/icons/xhdpi/2D.png"
+            }
+
+            onClicked: {
+                navController.setRotation();
+            }
+        } */
 }
 

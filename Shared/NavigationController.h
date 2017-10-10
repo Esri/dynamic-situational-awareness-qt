@@ -16,19 +16,28 @@
 #include <QUrl>
 
 #include "AbstractTool.h"
+#include "Point.h"
 
 namespace Esri {
 namespace ArcGISRuntime
 {
-  class SceneView;
+  class SceneQuickView;
   class GeoView;
 }}
+
+enum class Mode
+{
+  ZOOM,
+  ROTATE,
+  PAN
+};
 
 class NavigationController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
   Q_OBJECT
 
   Q_PROPERTY(bool vertical READ isVertical NOTIFY verticalChanged)
+  Q_PROPERTY(double zoomFactor READ zoomFactor WRITE setZoomFactor NOTIFY zoomFactorChanged)
 
 public:
 
@@ -37,25 +46,35 @@ public:
 
   Q_INVOKABLE void zoomOut();
   Q_INVOKABLE void zoomIn();
-  Q_INVOKABLE void tilt();
+  Q_INVOKABLE void pan();
+  Q_INVOKABLE void setRotation();
 
   QString toolName() const override;
   void setProperties(const QVariantMap& properties) override;
 
 signals:
   void verticalChanged();
+  void zoomFactorChanged();
 
 private slots:
   void updateGeoView();
 
 private:
   bool isVertical() { return m_isCameraVertical; }
-  void zoom(double zoomFactor);
+  double zoomFactor() { return m_zoomFactor; }
+  void setZoomFactor(double value);
+  void zoom();
+  void setRotationInternal();
 
   Esri::ArcGISRuntime::GeoView* m_geoView   = nullptr;
-  Esri::ArcGISRuntime::SceneView* m_sceneView = nullptr;
+  Esri::ArcGISRuntime::SceneQuickView* m_sceneView = nullptr;
   bool m_is3d                               = false;
   bool m_isCameraVertical                   = false;
+  double m_zoomFactor                       = 1.0;
+  Esri::ArcGISRuntime::Point m_currentCenter;
+  Mode m_currentMode;
 };
+
+
 
 #endif // NAVIGATIONCONTROLLER_H

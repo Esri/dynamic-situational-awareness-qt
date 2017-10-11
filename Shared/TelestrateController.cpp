@@ -80,7 +80,7 @@ void TelestrateController::deleteSelectedGraphics()
     m_sketchOverlay->graphics()->removeOne(graphic);
   }
 
-  // on 3D, reset the GraphicsOverlay because of Dynamic Rendering issues
+  // in 3D, reset the GraphicsOverlay because of Dynamic Rendering issues
   if (m_is3d)
     refreshSketchLayer();
 }
@@ -96,7 +96,7 @@ void TelestrateController::deleteAllGraphics()
   // clear GeometryBuilder
   clear();
 
-  // on 3D, reset the GraphicsOverlay because of Dynamic Rendering issues
+  // in 3D, reset the GraphicsOverlay because of Dynamic Rendering issues
   if(m_is3d)
     refreshSketchLayer();
 }
@@ -160,8 +160,8 @@ void TelestrateController::init(SceneQuickView* sceneView)
     sceneView->setCursor(QCursor(Qt::PointingHandCursor));
     m_isDrawing = true;
 
-    Point heldPoint(sceneView->screenToBaseSurface(mouseEvent.x(), mouseEvent.y()));
-    insertPointinPart(m_currentPartIndex, -1, heldPoint);
+    Point pressedPoint(sceneView->screenToBaseSurface(mouseEvent.x(), mouseEvent.y()));
+    insertPointinPart(m_currentPartIndex, -1, pressedPoint);
 
     // for touch screen operation
     mouseEvent.ignore();

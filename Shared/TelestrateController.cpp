@@ -146,7 +146,7 @@ void TelestrateController::init(SceneQuickView* sceneView)
     if (!m_active || !m_drawModeEnabled)
       return;
 
-    // Accept mouseEvent when using a mouse device to disable panning.
+    // accept mouseEvent when using a mouse device to disable panning.
     if (mouseEvent.button() == Qt::MouseButton::LeftButton)
       mouseEvent.accept();
 
@@ -229,7 +229,7 @@ void TelestrateController::init(MapQuickView* mapView)
     if (!m_active || !m_drawModeEnabled)
       return;
 
-    // Accept mouseEvent when using a mouse device to disable panning.
+    // accept mouseEvent when using a mouse device to disable panning.
     if (mouseEvent.button() == Qt::MouseButton::LeftButton)
       mouseEvent.accept();
 
@@ -294,7 +294,7 @@ void TelestrateController::refreshSketchLayer()
   }
 }
 
-// to be called whenever the GeometryBuilder is modified. It will update the Geometries of the sketched Graphic
+// to be called whenever the GeometryBuilder is modified. It will update the Geometry of the Graphic being sketched
 void TelestrateController::updateSketch()
 {
   MultipartBuilder* multipartBuilder = static_cast<MultipartBuilder*>(m_geometryBuilder);

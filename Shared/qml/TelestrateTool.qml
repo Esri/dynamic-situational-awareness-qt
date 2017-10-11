@@ -1,3 +1,15 @@
+// Copyright 2017 ESRI
+//
+// All rights reserved under the copyright laws of the United States
+// and applicable international laws, treaties, and conventions.
+//
+// You may freely redistribute and use this sample code, with or
+// without modification, provided you include the original copyright
+// notice and use restrictions.
+//
+// See the Sample code usage restrictions document for further information.
+//
+
 import QtQuick 2.6
 import QtQuick.Controls 2.1
 import QtQuick.Controls.Material 2.1
@@ -11,13 +23,19 @@ DsaToolBase {
     title: qsTr("Telestrate")
 
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
-    signal graphicsDeleted()
 
     // Modifying this array will change the initial available colors
     property var drawColors: ["#000000", "#ffffff", "#F44336", "#03a9f4", "#fff176"]
 
+    // whether to make the tool immediately active on startup (it becomes visible)
+    property bool activeOnVisible: true
+
+    // to be emitted for UI purposes
+    signal graphicsDeleted()
+
     TelestrateController {
         id: telestrateController
+        drawModeEnabled: activeOnVisible
     }
 
     Column {
@@ -72,11 +90,10 @@ DsaToolBase {
                     orientation: ListView.Horizontal
                     model: colorModel
                     height: 30 * scaleFactor
-                    width: parent.width/ 1.50
+                    width: 150 * scaleFactor
                     spacing: 5 * scaleFactor
                     currentIndex: 0
                     snapMode: ListView.SnapOneItem
-                    boundsBehavior: Flickable.DragOverBounds
 
                     delegate: Component {
 
@@ -194,7 +211,7 @@ DsaToolBase {
                     SwitchDelegate{
                         id: layerAppendedSwitch
                         text: qsTr("Layer Appended")
-                        checked: true
+                        checked: telestrateController.active
                         width: parent.width
 
                         contentItem: Text {
@@ -209,16 +226,16 @@ DsaToolBase {
                         }
 
                         onCheckedChanged: {
-                            telestrateController.setActive(checked)
+                            telestrateController.active = checked;
                             if (!checked)
-                                drawModeSwitch.checked = false;
+                                drawModeSwitch.checked = checked;
                         }
                     }
 
                     SwitchDelegate {
                         id: drawModeSwitch
                         text: qsTr("Drawing Enabled")
-                        checked: true
+                        checked: telestrateController.drawModeEnabled
                         width: parent.width
 
                         contentItem: Text {
@@ -233,12 +250,9 @@ DsaToolBase {
                         }
 
                         onCheckedChanged: {
-                            if (checked) {
-                                telestrateController.setDrawMode(true);
+                            telestrateController.drawModeEnabled = checked;
+                            if (checked)
                                 layerAppendedSwitch.checked = checked;
-                            }
-                            else
-                                telestrateController.setDrawMode(false)
                         }
                     }
 
@@ -352,8 +366,8 @@ DsaToolBase {
     }
 
     onVisibleChanged: {
-        if (visible)
-            telestrateController.setActive(true);
+        if (visible && activeOnVisible)
+            telestrateController.active = true;
     }
 
     // initialize the ListModel with the initial draw colors

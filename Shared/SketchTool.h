@@ -38,11 +38,12 @@ public:
   int addPart();
   void selectPartByIndex(int partIndex);
   void insertPointinPart(int partIndex, int pointIndex, Esri::ArcGISRuntime::Point drawPoint);
-  Esri::ArcGISRuntime::Point normalizedPoint(double x, double y) const;
+  Esri::ArcGISRuntime::Point normalizedPoint(double x, double y);
   virtual void updateSketch() = 0;
 
-  // Function that should be from the SketchEditor
+  // Functions that should be from the SketchEditor
   void setSketchSymbol(Esri::ArcGISRuntime::Symbol* symbol);
+  Esri::ArcGISRuntime::Symbol* sketchSymbol();
 
 protected:
   QList<Esri::ArcGISRuntime::Graphic*> m_partOutlineGraphics;

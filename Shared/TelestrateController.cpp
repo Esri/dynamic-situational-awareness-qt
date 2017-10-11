@@ -16,14 +16,16 @@
 
 #include "GeoView.h"
 #include "SceneQuickView.h"
+#include "Scene.h"
 #include "MapQuickView.h"
+#include "Map.h"
 #include "GraphicsOverlay.h"
 #include "Graphic.h"
+#include "MultipartBuilder.h"
 #include "PolylineBuilder.h"
 #include "PartCollection.h"
+#include "Symbol.h"
 #include "SimpleLineSymbol.h"
-#include "MultipartBuilder.h"
-#include "Scene.h"
 #include "GeometryTypes.h"
 
 #include <QCursor>
@@ -34,7 +36,9 @@ TelestrateController::TelestrateController(QObject* parent):
   SketchTool(parent)
 {
   Toolkit::ToolManager::instance().addTool(this);
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, &TelestrateController::updateGeoView);;
+  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, &TelestrateController::updateGeoView);
+
+  updateGeoView();
 }
 
 TelestrateController::~TelestrateController()
@@ -43,7 +47,7 @@ TelestrateController::~TelestrateController()
 
 void TelestrateController::setActive(bool active)
 {
-  if (m_active == active)
+  if (m_active == active || !m_geoView)
     return;
 
   m_active = active;
@@ -51,6 +55,7 @@ void TelestrateController::setActive(bool active)
   active ? graphicsOverlays->append(m_sketchOverlay) : graphicsOverlays->removeOne(m_sketchOverlay);
 }
 
+// creates a new LineSymbol rather than updating the current one so previously drawn sketches stay the same color
 void TelestrateController::setColor(QColor color)
 {
   m_sketchSymbol = new SimpleLineSymbol(SimpleLineSymbolStyle::Solid, color, 8, this);
@@ -81,21 +86,25 @@ void TelestrateController::deleteSelectedGraphics()
 
 void TelestrateController::deleteAllGraphics()
 {
+  // remove graphics from view
   m_sketchOverlay->graphics()->clear();
+
+  // clear stored Graphics
+  m_partOutlineGraphics.clear();
+
+  // clear Geometry Builder
+  clear();
 
   if(m_is3d)
     refreshSketchLayer();
 }
 
-void TelestrateController::setDrawMode(bool enabled)
+void TelestrateController::setDrawModeEnabled(bool enabled)
 {
-  if (m_drawingModeOn == enabled)
+  if (m_drawModeEnabled == enabled)
     return;
 
-  if (enabled)
-    setActive(enabled);
-
-  m_drawingModeOn = enabled;
+  m_drawModeEnabled = enabled;
 }
 
 void TelestrateController::init(SceneQuickView* sceneView)
@@ -132,7 +141,7 @@ void TelestrateController::init(SceneQuickView* sceneView)
       return;
 
     // do nothing if Tool is not active
-    if (!m_active || !m_drawingModeOn)
+    if (!m_active || !m_drawModeEnabled)
       return;
 
     // Accept mouseEvent when using a mouse device to disable panning.
@@ -215,7 +224,7 @@ void TelestrateController::init(MapQuickView* mapView)
       return;
 
     // do nothing if Tool is not active
-    if (!m_active || !m_drawingModeOn)
+    if (!m_active || !m_drawModeEnabled)
       return;
 
     // Accept mouseEvent when using a mouse device to disable panning.
@@ -268,6 +277,9 @@ void TelestrateController::init(MapQuickView* mapView)
 // workaround for issue where deleted Graphics don't get cleared from View
 void TelestrateController::refreshSketchLayer()
 {
+  if (!m_geoView)
+    return;
+
   if (m_geoView->graphicsOverlays()->contains(m_sketchOverlay))
   {
     m_geoView->graphicsOverlays()->removeOne(m_sketchOverlay);
@@ -310,9 +322,14 @@ bool TelestrateController::is3d() const
   return m_is3d;
 }
 
+bool TelestrateController::drawModeEnabled() const
+{
+  return m_drawModeEnabled;
+}
+
 QString TelestrateController::toolName() const
 {
-  return "Teletrate Tool";
+  return "Telestrate Tool";
 }
 
 GeometryType TelestrateController::geometryType() const

@@ -60,7 +60,10 @@ void SketchTool::initGeometryBuilder()
 
 Geometry SketchTool::builderGeometry() const
 {
-  return m_geometryBuilder->toGeometry();
+  if (m_geometryBuilder)
+    return m_geometryBuilder->toGeometry();
+  else
+    return Geometry();
 }
 
 void SketchTool::setSketchSymbol(Symbol* symbol)
@@ -68,12 +71,17 @@ void SketchTool::setSketchSymbol(Symbol* symbol)
   m_sketchSymbol = symbol;
 }
 
+Symbol *SketchTool::sketchSymbol()
+{
+  return m_sketchSymbol;
+}
+
 void SketchTool::clear()
 {
   if (!m_geometryBuilder)
     return;
 
-  // only going to be using Polyline for freehand sketching
+  // only going to use PolylineBuilder for freehand sketching
   auto type = geometryType();
   if (type == GeometryType::Polyline || type == GeometryType::Polygon)
   {
@@ -90,19 +98,20 @@ void SketchTool::clear()
     MultipointBuilder* multipointBuilder = static_cast<MultipointBuilder*>(m_geometryBuilder);
     Q_UNUSED(multipointBuilder);
   }
-
-  updateSketch();
 }
 
-// returns Point from screen to map (2d) or to the base surface of the scene (3d)
-Point SketchTool::normalizedPoint(double x, double y) const
+// returns Point from screen to map (2d) or to the base surface of scene (3d)
+Point SketchTool::normalizedPoint(double x, double y)
 {
+  if (!m_geoView)
+    return Point(x, y);
+
   if (m_geoView->geoViewType() == GeoViewType::MapView)
     return static_cast<MapQuickView*>(m_geoView)->screenToLocation(x, y);
   else if (m_geoView->geoViewType() == GeoViewType::SceneView)
     return static_cast<SceneQuickView*>(m_geoView)->screenToBaseSurface(x, y);
   else
-    return Point();
+    return Point(x, y);
 }
 
 void SketchTool::selectPartByIndex(int partIndex)
@@ -119,6 +128,7 @@ void SketchTool::selectPartByIndex(int partIndex)
     return;
 
   m_selectedPartIndex = partIndex;
+
   if (partIndex < m_partOutlineGraphics.size())
     m_partOutlineGraphics.at(partIndex)->setSelected(true);
 }
@@ -132,6 +142,9 @@ void SketchTool::replaceGeometry(Geometry geometry)
 // checks whether the builder inherits from MultipartBuilder
 bool SketchTool::isMultiPart()
 {
+  if (!m_geometryBuilder)
+    return false;
+
   GeometryBuilderType type = m_geometryBuilder->geometryBuilderType();
   return (type == GeometryBuilderType::PolygonBuilder || type == GeometryBuilderType::PolylineBuilder);
 }

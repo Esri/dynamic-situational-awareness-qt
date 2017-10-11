@@ -385,6 +385,7 @@ Handheld {
                 visible: false
                 onClosed: drawer.close();
                 onGraphicsDeleted: drawer.close();
+                onColorSelected: drawer.close();
             }
         }
     }

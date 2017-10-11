@@ -32,6 +32,7 @@ DsaToolBase {
 
     // to be emitted for UI purposes
     signal graphicsDeleted()
+    signal colorSelected()
 
     TelestrateController {
         id: telestrateController
@@ -121,6 +122,9 @@ DsaToolBase {
                                     selectColor(parent);
                                     parent.ListView.view.currentIndex = index;
                                     selected = true;
+
+                                    if (telestrateController.drawModeEnabled)
+                                        colorSelected();
                                 }
                             }
                         }

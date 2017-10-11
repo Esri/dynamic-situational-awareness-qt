@@ -143,6 +143,7 @@ DsaToolBase {
                         right: parent.right
                         bottom: parent.bottom
                     }
+                    visible: Qt.platform.os !== "android" // ColorDialog does not scale properly on Android
                     height: 20 * scaleFactor
                     width: height
                     opacity: 0.95

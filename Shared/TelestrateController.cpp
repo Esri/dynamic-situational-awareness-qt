@@ -80,6 +80,7 @@ void TelestrateController::deleteSelectedGraphics()
     m_sketchOverlay->graphics()->removeOne(graphic);
   }
 
+  // on 3D, reset the GraphicsOverlay because of Dynamic Rendering issues
   if (m_is3d)
     refreshSketchLayer();
 }
@@ -92,9 +93,10 @@ void TelestrateController::deleteAllGraphics()
   // clear stored Graphics
   m_partOutlineGraphics.clear();
 
-  // clear Geometry Builder
+  // clear GeometryBuilder
   clear();
 
+  // on 3D, reset the GraphicsOverlay because of Dynamic Rendering issues
   if(m_is3d)
     refreshSketchLayer();
 }
@@ -274,7 +276,7 @@ void TelestrateController::init(MapQuickView* mapView)
   });
 }
 
-// workaround for issue where deleted Graphics don't get cleared from View
+// workaround for issue where deleted Graphics don't get cleared from View. Removes and reappends the GraphicsOverlay
 void TelestrateController::refreshSketchLayer()
 {
   if (!m_geoView)
@@ -292,6 +294,7 @@ void TelestrateController::refreshSketchLayer()
   }
 }
 
+// to be called whenever the GeometryBuilder is modified. It will update the Geometries of the sketched Graphic
 void TelestrateController::updateSketch()
 {
   MultipartBuilder* multipartBuilder = static_cast<MultipartBuilder*>(m_geometryBuilder);
@@ -311,7 +314,7 @@ void TelestrateController::updateGeoView()
 
   m_geoView = geoView;
 
-  if(geoView->geoViewType() == GeoViewType::SceneView)
+  if (geoView->geoViewType() == GeoViewType::SceneView)
     init(static_cast<SceneQuickView*>(geoView));
   else if (geoView->geoViewType() == GeoViewType::MapView)
     init(static_cast<MapQuickView*>(geoView));

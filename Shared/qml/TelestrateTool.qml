@@ -1,0 +1,367 @@
+import QtQuick 2.6
+import QtQuick.Controls 2.1
+import QtQuick.Controls.Material 2.1
+import QtGraphicalEffects 1.0
+import QtQuick.Window 2.2
+import QtQuick.Dialogs 1.2
+import Esri.DSA 1.0
+
+DsaToolBase {
+    id: telestrateRoot
+    title: qsTr("Telestrate")
+
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+    signal graphicsDeleted()
+
+    // Modifying this array will change the initial available colors
+    property var drawColors: ["#000000", "#ffffff", "#F44336", "#03a9f4", "#fff176"]
+
+    TelestrateController {
+        id: telestrateController
+    }
+
+    Column {
+        id: menuColumn
+        spacing: 15 * scaleFactor
+        anchors {
+            top: titleBar.bottom
+            horizontalCenter: parent.horizontalCenter
+        }
+        topPadding: 15 * scaleFactor
+        width: parent.width / 1.1
+
+        // color selection
+        Item {
+            width : parent.width
+            height: 75 * scaleFactor
+
+            DropShadow {
+                anchors.fill: colorRect
+                horizontalOffset: -1
+                verticalOffset: 1
+                radius: 8
+                smooth: true
+                samples: 16
+                color: "#80000000"
+                source: colorRect
+            }
+
+            Rectangle {
+                id: colorRect
+                anchors.fill: parent
+                color: "white"
+
+                Text {
+                    id: colorTitle
+                    anchors {
+                        top: parent.top
+                        left: parent.left
+                        margins: 2 * scaleFactor
+                    }
+                    text: qsTr("Draw Color")
+                    color: Material.primary
+                }
+
+                ListView {
+                    id: colorView
+                    anchors {
+                        top: colorTitle.bottom
+                        horizontalCenter: parent.horizontalCenter
+                        margins: 2 * scaleFactor
+                    }
+                    orientation: ListView.Horizontal
+                    model: colorModel
+                    height: 30 * scaleFactor
+                    width: parent.width/ 1.50
+                    spacing: 5 * scaleFactor
+                    currentIndex: 0
+                    snapMode: ListView.SnapOneItem
+                    boundsBehavior: Flickable.DragOverBounds
+
+                    delegate: Component {
+
+                        Rectangle {
+                            height: 30 * scaleFactor
+                            width: height
+                            radius: 100
+                            color: drawColors[index]
+                            border {
+                                color: Material.accent
+                                width: 0.50 * scaleFactor
+                            }
+
+                            Image {
+                                anchors.centerIn: parent
+                                height: parent.height
+                                width: height
+                                source: "qrc:/Resources/icons/xhdpi/ic_menu_completedone_dark.png"
+                                visible: selected
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    selectColor(parent);
+                                    parent.ListView.view.currentIndex = index;
+                                    selected = true;
+                                }
+                            }
+                        }
+                    }
+
+                    ListModel {
+                        id: colorModel
+                    }
+                }
+
+                // button for adding new colors
+                RoundButton {
+                    id: addButton
+                    anchors {
+                        margins: 2 * scaleFactor
+                        right: parent.right
+                        bottom: parent.bottom
+                    }
+                    height: 20 * scaleFactor
+                    width: height
+                    opacity: 0.95
+
+                    background: Rectangle {
+                        implicitWidth: parent.width
+                        implicitHeight: implicitWidth
+                        opacity: enabled ? 1 : 0.3
+                        radius: addButton.radius
+                        color: Material.accent
+
+                        Image {
+                            anchors.centerIn: parent
+                            width: 16 * scaleFactor
+                            height: width
+                            source: "qrc:/Resources/icons/xhdpi/ic_menu_add_dark_d.png"
+                        }
+                    }
+
+                    onClicked: {
+                        if (!newColorDialog.visible)
+                            newColorDialog.open();
+                    }
+                }
+            }
+        }
+
+        // draw and layer options
+        Item {
+            width : parent.width
+            height: toolOptionsTitle.height + togglesColumn.height + 20 * scaleFactor
+
+            DropShadow {
+                anchors.fill: toggleRect
+                horizontalOffset: -1
+                verticalOffset: 1
+                radius: 8
+                smooth: true
+                samples: 16
+                color: "#80000000"
+                source: toggleRect
+            }
+
+            Rectangle {
+                id: toggleRect
+                anchors.fill: parent
+                color: "white"
+
+                Text {
+                    id: toolOptionsTitle
+                    text: "Tool Options"
+                    color: Material.primary
+                    anchors {
+                        top: parent.top
+                        left: parent.left
+                        margins: 5 * scaleFactor
+                    }
+                }
+
+                Column {
+                    id: togglesColumn
+                    anchors {
+                        top: toolOptionsTitle.bottom
+                        horizontalCenter: parent.horizontalCenter
+                        margins: 2 * scaleFactor
+                    }
+                    width: parent.width
+                    spacing: 1 * scaleFactor
+
+                    SwitchDelegate{
+                        id: layerAppendedSwitch
+                        text: qsTr("Layer Appended")
+                        checked: true
+                        width: parent.width
+
+                        contentItem: Text {
+                            rightPadding: layerAppendedSwitch.indicator.width + layerAppendedSwitch.spacing
+                            text: layerAppendedSwitch.text
+                            font: layerAppendedSwitch.font
+                            opacity: enabled ? 1.0 : 0.3
+                            color: Material.primary
+                            elide: Text.ElideRight
+                            horizontalAlignment: Text.AlignLeft
+                            verticalAlignment: Text.AlignVCenter
+                        }
+
+                        onCheckedChanged: {
+                            telestrateController.setActive(checked)
+                            if (!checked)
+                                drawModeSwitch.checked = false;
+                        }
+                    }
+
+                    SwitchDelegate {
+                        id: drawModeSwitch
+                        text: qsTr("Drawing Enabled")
+                        checked: true
+                        width: parent.width
+
+                        contentItem: Text {
+                            rightPadding: drawModeSwitch.indicator.width + drawModeSwitch.spacing
+                            text: drawModeSwitch.text
+                            font: drawModeSwitch.font
+                            opacity: enabled ? 1.0 : 0.3
+                            color: Material.primary
+                            elide: Text.ElideRight
+                            horizontalAlignment: Text.AlignLeft
+                            verticalAlignment: Text.AlignVCenter
+                        }
+
+                        onCheckedChanged: {
+                            if (checked) {
+                                telestrateController.setDrawMode(true);
+                                layerAppendedSwitch.checked = checked;
+                            }
+                            else
+                                telestrateController.setDrawMode(false)
+                        }
+                    }
+
+                    Label {
+                        text: "Surface Placement"
+                        leftPadding: 5 * scaleFactor
+                        color: Material.primary
+                        visible: telestrateController.is3d
+                    }
+
+                    ComboBox {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        model: ["Draped", "Relative"]
+                        currentIndex: 0
+                        width: parent.width / 1.5
+                        visible: telestrateController.is3d
+
+                        onCurrentIndexChanged: {
+                            // Draped
+                            if (currentIndex === 0)
+                                telestrateController.setSurfacePlacement(currentIndex);
+                            // The corresponding Enum value for Relative placement is 2
+                            else if (currentIndex === 1)
+                                telestrateController.setSurfacePlacement(currentIndex + 1);
+                        }
+                    }
+                }
+            }
+        }
+
+        Item {
+            width : parent.width
+            height: graphicsRemoveTitle.height + removeGraphicsColumn.height + 10 * scaleFactor
+
+            DropShadow {
+                anchors.fill: graphicDeleteRect
+                horizontalOffset: -1
+                verticalOffset: 1
+                radius: 8
+                smooth: true
+                samples: 16
+                color: "#80000000"
+                source: graphicDeleteRect
+            }
+
+            Rectangle {
+                id: graphicDeleteRect
+                anchors.fill: parent
+                color: "white"
+
+                Text {
+                    id: graphicsRemoveTitle
+                    text: "Remove Graphics"
+                    color: Material.primary
+                    anchors {
+                        top: parent.top
+                        left: parent.left
+                        margins: 5 * scaleFactor
+                    }
+                }
+
+                Column {
+                    id: removeGraphicsColumn
+                    anchors{
+                        top: graphicsRemoveTitle.bottom
+                        horizontalCenter: parent.horizontalCenter
+                        margins: 2 * scaleFactor
+                    }
+                    width: parent.width
+                    spacing: 2 * scaleFactor
+
+                    Button {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        text: "Selected Graphics"
+                        width: parent.width / 1.50
+                        onClicked: {
+                            graphicsDeleted()
+                            telestrateController.deleteSelectedGraphics()
+                        }
+                    }
+
+                    Button {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        text: "All Graphics"
+                        width: parent.width / 1.50
+                        onClicked: {
+                            graphicsDeleted()
+                            telestrateController.deleteAllGraphics()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    ColorDialog {
+        id: newColorDialog
+        title: "Choose a Draw Color"
+
+        onAccepted: {
+            drawColors.push(color);
+            colorModel.append({"selected": false});
+            colorView.positionViewAtEnd();
+        }
+    }
+
+    // calls into C++ to create a new SimpleLineSymbol with the desired color
+    function selectColor(colorRectangle) {
+        colorModel.setProperty(colorView.currentIndex, "selected", false);
+        telestrateController.setColor(colorRectangle.color);
+    }
+
+    onVisibleChanged: {
+        if (visible)
+            telestrateController.setActive(true);
+    }
+
+    // initialize the ListModel with the initial draw colors
+    Component.onCompleted: {
+        for (var i = 0; i < drawColors.length; i++)
+            colorModel.append({"drawColor": drawColors[i], "selected": false});
+
+        telestrateController.setColor(drawColors[0]);
+        colorModel.setProperty(colorView.currentIndex, "selected", true);
+    }
+}

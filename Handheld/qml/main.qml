@@ -184,6 +184,37 @@ Handheld {
                     source: navCheckBox.checked ? "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark.png" : "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark_d.png"
                 }
             }
+
+            Button {
+                id: telestrateCheckBox
+                checkable: true
+                checked: false
+                width: 32 * scaleFactor
+                height: 32 * scaleFactor
+
+                background: Rectangle {
+                    anchors.fill: telestrateCheckBox
+                    color: Material.primary
+                }
+
+                Image {
+                    fillMode: Image.PreserveAspectFit
+                    anchors.centerIn: parent
+                    sourceSize.height: parent.height * 0.85
+                    height: sourceSize.height
+                    source: telestrateTool.visible ? "qrc:/Resources/icons/xhdpi/ic_menu_freehandsketchon_dark.png" :
+                                                     "qrc:/Resources/icons/xhdpi/ic_menu_freehandsketchoff_dark.png"
+                }
+
+                onClicked: {
+                    if (drawer.visible)
+                        drawer.close();
+                    else {
+                        toolRect.state = "telestrate";
+                        drawer.open();
+                    }
+                }
+            }
         }
     }
 
@@ -306,6 +337,13 @@ Handheld {
                         target: tableOfContentsTool
                         visible: true
                     }
+                },
+                State {
+                    name: "telestrate"
+                    PropertyChanges {
+                        target: telestrateTool
+                        visible: true
+                    }
                 }
             ]
 
@@ -339,6 +377,14 @@ Handheld {
                 anchors.fill: parent
                 visible: false
                 onClosed: drawer.close();
+            }
+
+            TelestrateTool {
+                id: telestrateTool
+                anchors.fill: parent
+                visible: false
+                onClosed: drawer.close();
+                onGraphicsDeleted: drawer.close();
             }
         }
     }

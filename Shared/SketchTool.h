@@ -25,19 +25,19 @@ class SketchTool : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 
 public:
   explicit SketchTool(QObject* parent = nullptr);
-  virtual ~SketchTool();
+  ~SketchTool();
 
   void initGeometryBuilder();
   void replaceGeometry(Esri::ArcGISRuntime::Geometry geometry);
   Esri::ArcGISRuntime::Geometry builderGeometry() const;
 
-  bool isMultiPart();
+  bool isMultiPart() const;
   virtual Esri::ArcGISRuntime::GeometryType geometryType() const = 0;
 
   void clear();
   int addPart();
   void selectPartByIndex(int partIndex);
-  void insertPointinPart(int partIndex, int pointIndex, Esri::ArcGISRuntime::Point drawPoint);
+  void insertPointInPart(int partIndex, int pointIndex, Esri::ArcGISRuntime::Point drawPoint);
   Esri::ArcGISRuntime::Point normalizedPoint(double x, double y);
   virtual void updateSketch() = 0;
 

@@ -63,7 +63,7 @@ void TelestrateController::setColor(QColor color)
 
 void TelestrateController::setSurfacePlacement(int placementEnum)
 {
-  m_sketchOverlay->setSceneProperties(LayerSceneProperties(SurfacePlacement(placementEnum)));
+  m_sketchOverlay->setSceneProperties(LayerSceneProperties(static_cast<SurfacePlacement>(placementEnum)));
 }
 
 void TelestrateController::deleteSelectedGraphics()
@@ -97,7 +97,7 @@ void TelestrateController::deleteAllGraphics()
   clear();
 
   // in 3D, reset the GraphicsOverlay because of Dynamic Rendering issues
-  if(m_is3d)
+  if (m_is3d)
     refreshSketchLayer();
 }
 
@@ -109,23 +109,14 @@ void TelestrateController::setDrawModeEnabled(bool enabled)
   m_drawModeEnabled = enabled;
 }
 
-void TelestrateController::init(SceneQuickView* sceneView)
+void TelestrateController::init()
 {
   initGeometryBuilder();
-  m_sketchOverlay->setSceneProperties(LayerSceneProperties(SurfacePlacement::Draped));
-  m_is3d = true;
-  emit is3dChanged();
 
-  connect(sceneView, &SceneQuickView::mouseClicked, this, [this, sceneView](QMouseEvent& mouseEvent)
-  {
-    if (!m_active)
-      return;
+  if (m_is3d)
+    m_sketchOverlay->setSceneProperties(LayerSceneProperties(SurfacePlacement::Draped));
 
-    if (!m_isDrawing)
-      sceneView->identifyGraphicsOverlay(m_sketchOverlay, mouseEvent.x(), mouseEvent.y(), 100, false, 1);
-  });
-
-  connect(sceneView, &SceneQuickView::identifyGraphicsOverlayCompleted, this, [this](QUuid, IdentifyGraphicsOverlayResult* identifyResult)
+  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::identifyGraphicsOverlayCompleted, this, [this](QUuid, IdentifyGraphicsOverlayResult* identifyResult)
   {
     if (!m_active)
       return;
@@ -136,7 +127,16 @@ void TelestrateController::init(SceneQuickView* sceneView)
       m_sketchOverlay->unselectGraphics(m_sketchOverlay->selectedGraphics());
   });
 
-  connect(sceneView, &SceneQuickView::mousePressed, this, [this, sceneView](QMouseEvent& mouseEvent)
+  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mouseClicked, this, [this](QMouseEvent& mouseEvent)
+  {
+    if (!m_active)
+      return;
+
+    if (!m_isDrawing)
+      m_geoView->identifyGraphicsOverlay(m_sketchOverlay, mouseEvent.x(), mouseEvent.y(), m_is3d ? 100 : 20, false, 1);
+  });
+
+  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mousePressed, this, [this](QMouseEvent& mouseEvent)
   {
     // ignore right clicks
     if (mouseEvent.button() == Qt::MouseButton::RightButton)
@@ -157,121 +157,46 @@ void TelestrateController::init(SceneQuickView* sceneView)
     m_partOutlineGraphics.append(partGraphic);
     m_sketchOverlay->graphics()->append(partGraphic);
 
-    sceneView->setCursor(QCursor(Qt::PointingHandCursor));
-    m_isDrawing = true;
-
-    Point pressedPoint(sceneView->screenToBaseSurface(mouseEvent.x(), mouseEvent.y()));
-    insertPointinPart(m_currentPartIndex, -1, pressedPoint);
-
-    // for touch screen operation
-    mouseEvent.ignore();
-  });
-
-  connect(sceneView, &SceneQuickView::mouseMoved, this, [this, sceneView](QMouseEvent& mouseEvent)
-  {
-    if (!m_active || !m_isDrawing)
-      return;
-
-    mouseEvent.accept();
-
-    Point movedPoint(sceneView->screenToBaseSurface(mouseEvent.x(), mouseEvent.y()));
-    insertPointinPart(m_currentPartIndex, -1, movedPoint);
-  });
-
-  connect(sceneView, &SceneQuickView::mouseReleased, this, [this, sceneView](QMouseEvent& mouseEvent)
-  {
-    if (!m_active || !m_isDrawing)
-      return;
-
-    mouseEvent.accept();
-
-    Point releasedPoint(sceneView->screenToBaseSurface(mouseEvent.x(), mouseEvent.y()));
-    insertPointinPart(m_currentPartIndex, -1, releasedPoint);
-
-    sceneView->setCursor(QCursor(Qt::ArrowCursor));
-    m_isDrawing = false;
-  });
-}
-
-void TelestrateController::init(MapQuickView* mapView)
-{
-  initGeometryBuilder();
-  m_is3d = false;
-  emit is3dChanged();
-
-  connect(mapView, &MapQuickView::mouseClicked, this, [this, mapView](QMouseEvent& mouseEvent)
-  {
-    if (!m_active)
-      return;
-
-    if (!m_isDrawing)
-      mapView->identifyGraphicsOverlay(m_sketchOverlay, mouseEvent.x(), mouseEvent.y(), 20, false, 1);
-  });
-
-  connect(mapView, &MapQuickView::identifyGraphicsOverlayCompleted, this, [this](QUuid, IdentifyGraphicsOverlayResult* identifyResult)
-  {
-    if (!m_active)
-      return;
-
-    if (identifyResult->graphics().size() > 0)
-      identifyResult->graphicsOverlay()->selectGraphics(identifyResult->graphics());
+    if (m_is3d)
+      static_cast<SceneQuickView*>(m_geoView)->setCursor(QCursor(Qt::PointingHandCursor));
     else
-      m_sketchOverlay->unselectGraphics(m_sketchOverlay->selectedGraphics());
-  });
-
-  connect(mapView, &MapQuickView::mousePressed, this, [this, mapView](QMouseEvent& mouseEvent)
-  {
-    // ignore right clicks
-    if (mouseEvent.button() == Qt::MouseButton::RightButton)
-      return;
-
-    // do nothing if Tool is not active
-    if (!m_active || !m_drawModeEnabled)
-      return;
-
-    // accept mouseEvent when using a mouse device to disable panning.
-    if (mouseEvent.button() == Qt::MouseButton::LeftButton)
-      mouseEvent.accept();
-
-    // create a new graphic that corresponds to a part of the GeometryBuilder
-    m_currentPartIndex = addPart();
-    Graphic* partGraphic = new Graphic(this);
-    partGraphic->setSymbol(m_sketchSymbol);
-    m_partOutlineGraphics.append(partGraphic);
-    m_sketchOverlay->graphics()->append(partGraphic);
+      static_cast<MapQuickView*>(m_geoView)->setCursor(QCursor(Qt::PointingHandCursor));
 
     m_isDrawing = true;
-    mapView->setCursor(QCursor(Qt::PointingHandCursor));
 
-    Point pressedPoint(mapView->screenToLocation(mouseEvent.x(), mouseEvent.y()));
-    insertPointinPart(m_currentPartIndex, -1, pressedPoint);
+    Point pressedPoint(normalizedPoint(mouseEvent.x(), mouseEvent.y()));
+    insertPointInPart(m_currentPartIndex, -1, pressedPoint);
 
     // for touch screen operation
     mouseEvent.ignore();
   });
 
-  connect(mapView, &MapQuickView::mouseMoved, this, [this, mapView](QMouseEvent& mouseEvent)
+  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mouseMoved, this, [this](QMouseEvent& mouseEvent)
   {
     if (!m_active || !m_isDrawing)
       return;
 
     mouseEvent.accept();
 
-    Point movedPoint(mapView->screenToLocation(mouseEvent.x(), mouseEvent.y()));
-    insertPointinPart(m_currentPartIndex, -1, movedPoint);
+    Point movedPoint(normalizedPoint(mouseEvent.x(), mouseEvent.y()));
+    insertPointInPart(m_currentPartIndex, -1, movedPoint);
   });
 
-  connect(mapView, &MapQuickView::mouseReleased, this, [this, mapView](QMouseEvent& mouseEvent)
+  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mouseReleased, this, [this](QMouseEvent& mouseEvent)
   {
     if (!m_active || !m_isDrawing)
       return;
 
     mouseEvent.accept();
 
-    Point releasedPoint(mapView->screenToLocation(mouseEvent.x(), mouseEvent.y()));
-    insertPointinPart(m_currentPartIndex, -1, releasedPoint);
+    Point releasedPoint(normalizedPoint(mouseEvent.x(), mouseEvent.y()));
+    insertPointInPart(m_currentPartIndex, -1, releasedPoint);
 
-    mapView->setCursor(QCursor(Qt::ArrowCursor));
+    if (m_is3d)
+      static_cast<SceneQuickView*>(m_geoView)->setCursor(QCursor(Qt::ArrowCursor));
+    else
+      static_cast<MapQuickView*>(m_geoView)->setCursor(QCursor(Qt::ArrowCursor));
+
     m_isDrawing = false;
   });
 }
@@ -312,12 +237,15 @@ void TelestrateController::updateGeoView()
   if (!geoView)
     return;
 
+  if (geoView->geoViewType() == GeoViewType::Unknown)
+    return;
+
   m_geoView = geoView;
 
-  if (geoView->geoViewType() == GeoViewType::SceneView)
-    init(static_cast<SceneQuickView*>(geoView));
-  else if (geoView->geoViewType() == GeoViewType::MapView)
-    init(static_cast<MapQuickView*>(geoView));
+  m_is3d = geoView->geoViewType() == GeoViewType::SceneView;
+  emit is3dChanged();
+
+  init();
 }
 
 bool TelestrateController::is3d() const

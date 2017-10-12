@@ -42,16 +42,14 @@ public:
   QString toolName() const override;
   Esri::ArcGISRuntime::GeometryType geometryType() const override;
 
-  void updateGeoView();
-  void init(Esri::ArcGISRuntime::SceneQuickView* sceneView);
-  void init(Esri::ArcGISRuntime::MapQuickView* mapView);
-
 signals:
   void is3dChanged();
   void drawModeEnabledChanged();
   void activeChanged();
 
 private:
+  void updateGeoView();
+  void init();
   void refreshSketchLayer();
   void updateSketch() override;
 

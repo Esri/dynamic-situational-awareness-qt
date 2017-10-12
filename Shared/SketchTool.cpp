@@ -41,20 +41,12 @@ void SketchTool::initGeometryBuilder()
   if (!m_geoView)
     return;
 
-  auto type = geometryType();
-  if (type == GeometryType::Polyline)
-    m_geometryBuilder = new PolylineBuilder(m_geoView->spatialReference(), this);
-  else if(type == GeometryType::Polygon)
-    m_geometryBuilder = new PolygonBuilder(m_geoView->spatialReference(), this);
-  else if(type == GeometryType::Point)
+  // for now, only a PolylineBuilder is necessary
+  switch (geometryType())
   {
-    PointBuilder* pointBuilder = static_cast<PointBuilder*>(m_geometryBuilder);
-    Q_UNUSED(pointBuilder);
-  }
-  else if (type == GeometryType::Multipoint)
-  {
-    MultipointBuilder* multipointBuilder = static_cast<MultipointBuilder*>(m_geometryBuilder);
-    Q_UNUSED(multipointBuilder);
+    case GeometryType::Polyline:
+      m_geometryBuilder = new PolylineBuilder(m_geoView->spatialReference(), this);
+      break;
   }
 }
 
@@ -62,8 +54,8 @@ Geometry SketchTool::builderGeometry() const
 {
   if (m_geometryBuilder)
     return m_geometryBuilder->toGeometry();
-  else
-    return Geometry();
+
+  return Geometry();
 }
 
 void SketchTool::setSketchSymbol(Symbol* symbol)
@@ -81,22 +73,14 @@ void SketchTool::clear()
   if (!m_geometryBuilder)
     return;
 
-  // only going to use PolylineBuilder for freehand sketching
-  auto type = geometryType();
-  if (type == GeometryType::Polyline || type == GeometryType::Polygon)
+  // will add other cases when need arises
+  switch (geometryType())
   {
-    MultipartBuilder* multipartBuilder = static_cast<MultipartBuilder*>(m_geometryBuilder);
-    multipartBuilder->parts()->removeAll();
-  }
-  else if(type == GeometryType::Point)
-  {
-    PointBuilder* pointBuilder = static_cast<PointBuilder*>(m_geometryBuilder);
-    Q_UNUSED(pointBuilder);
-  }
-  else if (type == GeometryType::Multipoint)
-  {
-    MultipointBuilder* multipointBuilder = static_cast<MultipointBuilder*>(m_geometryBuilder);
-    Q_UNUSED(multipointBuilder);
+    case GeometryType::Polyline:
+    case GeometryType::Polygon:
+      MultipartBuilder* multipartBuilder = static_cast<MultipartBuilder*>(m_geometryBuilder);
+      multipartBuilder->parts()->removeAll();
+      break;
   }
 }
 
@@ -110,8 +94,8 @@ Point SketchTool::normalizedPoint(double x, double y)
     return static_cast<MapQuickView*>(m_geoView)->screenToLocation(x, y);
   else if (m_geoView->geoViewType() == GeoViewType::SceneView)
     return static_cast<SceneQuickView*>(m_geoView)->screenToBaseSurface(x, y);
-  else
-    return Point(x, y);
+
+  return Point(x, y);
 }
 
 void SketchTool::selectPartByIndex(int partIndex)
@@ -140,7 +124,7 @@ void SketchTool::replaceGeometry(Geometry geometry)
 }
 
 // checks whether the builder inherits from MultipartBuilder
-bool SketchTool::isMultiPart()
+bool SketchTool::isMultiPart() const
 {
   if (!m_geometryBuilder)
     return false;
@@ -149,7 +133,7 @@ bool SketchTool::isMultiPart()
   return (type == GeometryBuilderType::PolygonBuilder || type == GeometryBuilderType::PolylineBuilder);
 }
 
-// Adds a new Part to the Builder. Returns the index of the added Part.
+// Adds a new Part to the Builder. Returns the index of the added Part or -1 if invalid operation
 int SketchTool::addPart()
 {
   if (!m_geometryBuilder || !isMultiPart())
@@ -161,35 +145,29 @@ int SketchTool::addPart()
   return multipartBuilder->parts()->size() - 1;
 }
 
-void SketchTool::insertPointinPart(int partIndex, int pointIndex, Point drawPoint)
+void SketchTool::insertPointInPart(int partIndex, int pointIndex, Point drawPoint)
 {
   if (!m_geometryBuilder)
     return;
 
-  auto type = geometryType();
-  if (type == GeometryType::Polyline || type == GeometryType::Polygon)
+  // Only MultipartBuilder types need to be handled for telestrating
+  switch (geometryType())
   {
-    MultipartBuilder* multipartBuilder = static_cast<MultipartBuilder*>(m_geometryBuilder);
-    if (partIndex >= 0 && partIndex < multipartBuilder->parts()->size())
-    {
-      Part* part = multipartBuilder->parts()->part(partIndex);
+    case GeometryType::Polyline:
+    case GeometryType::Polygon:
+      MultipartBuilder* multipartBuilder = static_cast<MultipartBuilder*>(m_geometryBuilder);
+      if (partIndex >= 0 && partIndex < multipartBuilder->parts()->size())
+      {
+        Part* part = multipartBuilder->parts()->part(partIndex);
 
-      // for purposes of the freehand sketch, points will always be added to the end of the Part
-      if(pointIndex >= 0 && pointIndex < part->pointCount())
-        part->insertPoint(pointIndex, drawPoint);
-      else
-        part->addPoint(drawPoint);
-    }
-  }
-  else if(type == GeometryType::Point)
-  {
-    PointBuilder* pointBuilder = static_cast<PointBuilder*>(m_geometryBuilder);
-    Q_UNUSED(pointBuilder);
-  }
-  else if (type == GeometryType::Multipoint)
-  {
-    MultipointBuilder* multipointBuilder = static_cast<MultipointBuilder*>(m_geometryBuilder);
-    Q_UNUSED(multipointBuilder);
+        // for purposes of the freehand sketch, points will always be added to the end of the Part
+        if (pointIndex >= 0 && pointIndex < part->pointCount())
+          part->insertPoint(pointIndex, drawPoint);
+        else
+          part->addPoint(drawPoint);
+      }
+
+      break;
   }
 
   updateSketch();

@@ -292,7 +292,7 @@ Message Message::createFromGeoMessage(const QByteArray& message)
 
   if (!controlPointsText.isEmpty())
   {
-    SpatialReference sr = wkidText.isEmpty() ? SpatialReference::wgs84() : SpatialReference(wkidText.toInt());
+    const SpatialReference sr = wkidText.isEmpty() ? SpatialReference::wgs84() : SpatialReference(wkidText.toInt());
 
     const QStringList controlPoints = controlPointsText.split(";");
     bool isMultipart = controlPoints.size() > 1;

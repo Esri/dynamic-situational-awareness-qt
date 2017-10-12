@@ -100,7 +100,7 @@ void SketchTool::clear()
   }
 }
 
-// returns Point from screen to map (2d) or to the base surface of scene (3d)
+// converts screen coordinates from screen to a Point in coordinates of the map (2D) or base surface (3D)
 Point SketchTool::normalizedPoint(double x, double y)
 {
   if (!m_geoView)

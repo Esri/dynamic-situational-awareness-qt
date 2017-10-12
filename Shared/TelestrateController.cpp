@@ -325,6 +325,11 @@ bool TelestrateController::is3d() const
   return m_is3d;
 }
 
+int TelestrateController::sketchCount() const
+{
+  return m_partOutlineGraphics.size();
+}
+
 bool TelestrateController::drawModeEnabled() const
 {
   return m_drawModeEnabled;

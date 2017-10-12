@@ -20,10 +20,12 @@
 namespace Esri {
   namespace ArcGISRuntime {
     class GeoView;
+    class Renderer;
   }
 }
 
 class MessageFeedListModel;
+class MessageListener;
 
 class MessageFeedsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -33,13 +35,19 @@ class MessageFeedsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 
 public:
   static const QString RESOURCE_DIRECTORY_PROPERTYNAME;
+  static const QString MESSAGE_FEED_UDP_PORTS_PROPERTYNAME;
+  static const QString MESSAGE_FEEDS_PROPERTYNAME;
 
   explicit MessageFeedsController(QObject* parent = nullptr);
   ~MessageFeedsController();
 
-  void init(Esri::ArcGISRuntime::GeoView* geoView);
+  void setGeoView(Esri::ArcGISRuntime::GeoView* geoView);
 
   QAbstractListModel* messageFeeds() const;
+
+  QList<MessageListener*> messageListeners() const;
+  void addMessageListener(MessageListener* messageListener);
+  void removeMessageListener(MessageListener* messageListener);
 
   QString toolName() const override;
   void setProperties(const QVariantMap& properties) override;
@@ -47,13 +55,13 @@ public:
   QString dataPath() const { return m_dataPath; }
   void setDataPath(const QString& dataPath);
 
-private slots:
-  void updateGeoView();
-
 private:
+  Esri::ArcGISRuntime::Renderer* createRenderer(const QString& rendererInfo, QObject* parent = nullptr) const;
+
   Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
 
   MessageFeedListModel* m_messageFeeds = nullptr;
+  QList<MessageListener*> m_messageListeners;
   QString m_dataPath;
 };
 

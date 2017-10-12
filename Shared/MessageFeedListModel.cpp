@@ -23,7 +23,6 @@ void MessageFeedListModel::setupRoles()
 {
   m_roles[MessageFeedNameRole] = "feedName";
   m_roles[MessageFeedTypeRole] = "feedMessageType";
-  m_roles[MessageFeedFormatRole] = "feedMessageFormat";
   m_roles[MessageFeedEnabledRole] = "feedEnabled";
 }
 
@@ -38,6 +37,7 @@ void MessageFeedListModel::append(MessageFeed* messageFeed)
     return;
 
   beginInsertRows(QModelIndex(), rowCount(), rowCount());
+  m_messageTypes.append(messageFeed->feedMessageType());
   m_messageFeeds.append(messageFeed);
   endInsertRows();
 }
@@ -50,9 +50,19 @@ MessageFeed* MessageFeedListModel::at(int index) const
   return m_messageFeeds.at(index);
 }
 
+MessageFeed* MessageFeedListModel::messageFeedByType(const QString& type) const
+{
+  int index = m_messageTypes.indexOf(type);
+  if (index == -1)
+    return nullptr;
+
+  return m_messageFeeds[index];
+}
+
 void MessageFeedListModel::clear()
 {
   beginResetModel();
+  m_messageTypes.clear();
   m_messageFeeds.clear();
   endResetModel();
 }
@@ -80,10 +90,7 @@ QVariant MessageFeedListModel::data(const QModelIndex& index, int role) const
     retVal = messageFeed->feedName();
     break;
   case MessageFeedTypeRole:
-    retVal.setValue<Message::MessageType>(messageFeed->feedMessageType());
-    break;
-  case MessageFeedFormatRole:
-    retVal = messageFeed->feedMessageFormat();
+    retVal = messageFeed->feedMessageType();
     break;
   case MessageFeedEnabledRole:
     retVal = messageFeed->isFeedEnabled();
@@ -120,21 +127,10 @@ bool MessageFeedListModel::setData(const QModelIndex& index, const QVariant& val
   }
   case MessageFeedTypeRole:
   {
-    const auto val = value.value<Message::MessageType>();
+    const auto val = value.toString();
     if (messageFeed->feedMessageType() != val)
     {
       messageFeed->setFeedMessageType(val);
-
-      isDataChanged = true;
-    }
-    break;
-  }
-  case MessageFeedFormatRole:
-  {
-    const auto val = value.toString();
-    if (messageFeed->feedMessageFormat() != val)
-    {
-      messageFeed->setFeedMessageFormat(val);
 
       isDataChanged = true;
     }

@@ -18,7 +18,6 @@
 #include "Message.h"
 
 class MessagesOverlay;
-class MessageListener;
 
 class MessageFeed : public QObject
 {
@@ -26,17 +25,14 @@ class MessageFeed : public QObject
 
 public:
   explicit MessageFeed(QObject* parent = nullptr);
-  MessageFeed(const QString& name, Message::MessageType type, const QString& format, MessagesOverlay* overlay, MessageListener* listener, QObject* parent = nullptr);
+  MessageFeed(const QString& name, const QString& type, MessagesOverlay* overlay, QObject* parent = nullptr);
   ~MessageFeed() = default;
 
   QString feedName() const;
   void setFeedName(const QString& feedName);
 
-  Message::MessageType feedMessageType() const;
-  void setFeedMessageType(Message::MessageType feedMessageType);
-
-  QString feedMessageFormat() const;
-  void setFeedMessageFormat(const QString& feedMessageFormat);
+  QString feedMessageType() const;
+  void setFeedMessageType(const QString& feedMessageType);
 
   bool isFeedEnabled() const;
   void setFeedEnabled(bool feedEnabled);
@@ -44,20 +40,15 @@ public:
   MessagesOverlay* messagesOverlay() const;
   void setMessagesOverlay(MessagesOverlay* messagesOverlay);
 
-  MessageListener* messageListener() const;
-  void setMessageListener(MessageListener* messageListener);
-
 private:
   Q_DISABLE_COPY(MessageFeed)
 
-  void updateOverlayandListener();
+  void updateOverlay();
 
   QString m_feedName;
-  Message::MessageType m_feedMessageType = Message::MessageType::Unknown;
-  QString m_feedMessageFormat;
+  QString m_feedMessageType;
   bool m_feedEnabled = true;
   MessagesOverlay* m_messagesOverlay = nullptr;
-  MessageListener* m_messageListener = nullptr;
 };
 
 #endif // MESSAGEFEED_H

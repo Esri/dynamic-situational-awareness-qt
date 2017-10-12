@@ -21,7 +21,7 @@ namespace Esri
   namespace ArcGISRuntime
   {
     class GeoView;
-    class DictionarySymbolStyle;
+    class Renderer;
     class GraphicsOverlay;
     class Graphic;
   }
@@ -35,11 +35,11 @@ class MessagesOverlay : public QObject
 
 public:
   explicit MessagesOverlay(Esri::ArcGISRuntime::GeoView* geoView, QObject* parent = nullptr);
-  MessagesOverlay(Esri::ArcGISRuntime::GeoView* geoView, Esri::ArcGISRuntime::DictionarySymbolStyle* dictionarySymbolStyle, QObject* parent = nullptr);
+  MessagesOverlay(Esri::ArcGISRuntime::GeoView* geoView, Esri::ArcGISRuntime::Renderer* renderer, QObject* parent = nullptr);
   ~MessagesOverlay();
 
-  Esri::ArcGISRuntime::DictionarySymbolStyle* dictionarySymbolStyle() const;
-  void setDictionarySymbolStyle(Esri::ArcGISRuntime::DictionarySymbolStyle* dictionarySymbolStyle);
+  Esri::ArcGISRuntime::Renderer* renderer() const;
+  void setRenderer(Esri::ArcGISRuntime::Renderer* renderer);
 
   QList<Esri::ArcGISRuntime::GraphicsOverlay*> graphicsOverlays() const;
 
@@ -59,7 +59,7 @@ private:
   Q_DISABLE_COPY(MessagesOverlay)
 
   Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
-  QPointer<Esri::ArcGISRuntime::DictionarySymbolStyle> m_dictionarySymbolStyle;
+  QPointer<Esri::ArcGISRuntime::Renderer> m_renderer;
   QList<Esri::ArcGISRuntime::GraphicsOverlay*> m_graphicsOverlays;
 
   Esri::ArcGISRuntime::GraphicsOverlay* m_pointGraphicsOverlay = nullptr;

@@ -25,8 +25,7 @@ class Message
 public:
   enum class MessageAction
   {
-    Create = 0,
-    Update,
+    Update = 0,
     Remove,
     Select,
     Unselect,
@@ -52,8 +51,12 @@ public:
 
   bool operator==(const Message& other) const;
 
+  static Message create(const QByteArray& message);
   static Message createFromCoTMessage(const QByteArray& message);
+  static Message createFromGeoMessage(const QByteArray& message);
+
   static QString cotTypeToSidc(const QString& cotType);
+  static MessageAction toMessageAction(const QString& action);
 
   bool isEmpty() const;
 
@@ -72,8 +75,8 @@ public:
   QString messageName() const;
   void setMessageName(const QString& messageName);
 
-  MessageType messageType() const;
-  void setMessageType(MessageType messageType);
+  QString messageType() const;
+  void setMessageType(const QString& messageType);
 
   QString symbolId() const;
   void setSymbolId(const QString& symbolId);
@@ -82,6 +85,7 @@ private:
   QSharedDataPointer<MessageData> d;
 };
 
+Q_DECLARE_METATYPE(Message::MessageAction)
 Q_DECLARE_METATYPE(Message::MessageType)
 
 #endif // MESSAGE_H

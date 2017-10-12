@@ -69,17 +69,21 @@ bool MessagesOverlay::addMessage(const Message& message)
   }
 
   const auto symbolId = message.symbolId();
-  if (m_renderer && m_renderer->rendererType() == RendererType::DictionaryRenderer && symbolId.isEmpty())
-  {
-    emit errorOccurred(QStringLiteral("Failed to add message - symbol ID is empty"));
-    return false;
-  }
-
   const auto geometry = message.geometry();
-  if (geometry.isEmpty())
+
+  if (message.messageAction() == Message::MessageAction::Update)
   {
-    emit errorOccurred(QStringLiteral("Failed to add message - geometry is empty"));
-    return false;
+    if (m_renderer && m_renderer->rendererType() == RendererType::DictionaryRenderer && symbolId.isEmpty())
+    {
+      emit errorOccurred(QStringLiteral("Failed to add message - symbol ID is empty"));
+      return false;
+    }
+
+    if (geometry.isEmpty())
+    {
+      emit errorOccurred(QStringLiteral("Failed to add message - geometry is empty"));
+      return false;
+    }
   }
 
   if (m_existingGraphics.contains(messageId))
@@ -87,12 +91,61 @@ bool MessagesOverlay::addMessage(const Message& message)
     // update existing graphic attributes and geometry
     // if the graphic already exists in the hash
     Graphic* graphic = m_existingGraphics[messageId];
-    if (graphic->geometry().geometryType() != geometry.geometryType())
-      return false;
 
-    graphic->setGeometry(geometry);
-    graphic->attributes()->setAttributesMap(message.attributes());
+    if (message.messageAction() == Message::MessageAction::Update)
+    {
+      if (graphic->geometry().geometryType() != geometry.geometryType())
+        return false;
+
+      graphic->setGeometry(geometry);
+      graphic->attributes()->setAttributesMap(message.attributes());
+    }
+    else if (message.messageAction() == Message::MessageAction::Remove)
+    {
+      switch (geometry.geometryType())
+      {
+        case GeometryType::Point:
+        case GeometryType::Multipoint:
+        {
+          if (m_pointGraphicsOverlay)
+          {
+            m_pointGraphicsOverlay->graphics()->removeOne(graphic);
+          }
+          break;
+        }
+        case GeometryType::Envelope:
+        case GeometryType::Polygon:
+        case GeometryType::Polyline:
+        {
+          if (m_linePolygonGraphicsOverlay)
+          {
+            m_linePolygonGraphicsOverlay->graphics()->removeOne(graphic);
+          }
+          break;
+        }
+      }
+    }
+    else if (message.messageAction() == Message::MessageAction::Select)
+    {
+      graphic->setSelected(true);
+    }
+    else if (message.messageAction() == Message::MessageAction::Unselect)
+    {
+      graphic->setSelected(false);
+    }
+    else
+    {
+      emit errorOccurred(QStringLiteral("Unknown message action"));
+      return false;
+    }
+
     return true;
+  }
+
+  if (message.messageAction() != Message::MessageAction::Update)
+  {
+    emit errorOccurred(QStringLiteral("Message action must be Update to add new message"));
+    return false;
   }
 
   // add new graphic

@@ -32,14 +32,6 @@ public:
     Unknown = -1
   };
 
-  enum class MessageType
-  {
-    Track = 0,
-    Report,
-    Sketch,
-    Unknown = -1
-  };
-
   Message();
   Message(MessageAction messageAction, const Esri::ArcGISRuntime::Geometry& geometry);
   Message(const Message& other);
@@ -86,6 +78,5 @@ private:
 };
 
 Q_DECLARE_METATYPE(Message::MessageAction)
-Q_DECLARE_METATYPE(Message::MessageType)
 
 #endif // MESSAGE_H

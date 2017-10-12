@@ -12,10 +12,9 @@
 
 #include "MessagesOverlay.h"
 #include "GeoView.h"
-#include "DictionarySymbolStyle.h"
+#include "Renderer.h"
 #include "GraphicsOverlay.h"
 #include "Message.h"
-#include "DictionaryRenderer.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -24,10 +23,10 @@ MessagesOverlay::MessagesOverlay(GeoView* geoView, QObject* parent) :
 {
 }
 
-MessagesOverlay::MessagesOverlay(GeoView* geoView, DictionarySymbolStyle* dictionarySymbolStyle, QObject* parent) :
+MessagesOverlay::MessagesOverlay(GeoView* geoView, Renderer* renderer, QObject* parent) :
   QObject(parent),
   m_geoView(geoView),
-  m_dictionarySymbolStyle(dictionarySymbolStyle)
+  m_renderer(renderer)
 {
 }
 
@@ -35,14 +34,19 @@ MessagesOverlay::~MessagesOverlay()
 {
 }
 
-DictionarySymbolStyle* MessagesOverlay::dictionarySymbolStyle() const
+Renderer* MessagesOverlay::renderer() const
 {
-  return m_dictionarySymbolStyle.data();
+  return m_renderer.data();
 }
 
-void MessagesOverlay::setDictionarySymbolStyle(DictionarySymbolStyle* dictionarySymbolStyle)
+void MessagesOverlay::setRenderer(Renderer* renderer)
 {
-  m_dictionarySymbolStyle = dictionarySymbolStyle;
+  m_renderer = renderer;
+
+  for (GraphicsOverlay* go : m_graphicsOverlays)
+  {
+    go->setRenderer(m_renderer);
+  }
 }
 
 QList<GraphicsOverlay*> MessagesOverlay::graphicsOverlays() const
@@ -65,34 +69,83 @@ bool MessagesOverlay::addMessage(const Message& message)
   }
 
   const auto symbolId = message.symbolId();
-  if (symbolId.isEmpty())
-  {
-    emit errorOccurred(QStringLiteral("Failed to add message - symbol ID is empty"));
-    return false;
-  }
-
   const auto geometry = message.geometry();
-  if (geometry.isEmpty())
-  {
-    emit errorOccurred(QStringLiteral("Failed to add message - geometry is empty"));
-    return false;
-  }
 
-  if (geometry.isEmpty() || messageId.isEmpty() ||
-      symbolId.isEmpty())
-    return false;
+  if (message.messageAction() == Message::MessageAction::Update)
+  {
+    if (m_renderer && m_renderer->rendererType() == RendererType::DictionaryRenderer && symbolId.isEmpty())
+    {
+      emit errorOccurred(QStringLiteral("Failed to add message - symbol ID is empty"));
+      return false;
+    }
+
+    if (geometry.isEmpty())
+    {
+      emit errorOccurred(QStringLiteral("Failed to add message - geometry is empty"));
+      return false;
+    }
+  }
 
   if (m_existingGraphics.contains(messageId))
   {
     // update existing graphic attributes and geometry
     // if the graphic already exists in the hash
     Graphic* graphic = m_existingGraphics[messageId];
-    if (graphic->geometry().geometryType() != geometry.geometryType())
-      return false;
 
-    graphic->setGeometry(geometry);
-    graphic->attributes()->setAttributesMap(message.attributes());
+    if (message.messageAction() == Message::MessageAction::Update)
+    {
+      if (graphic->geometry().geometryType() != geometry.geometryType())
+        return false;
+
+      graphic->setGeometry(geometry);
+      graphic->attributes()->setAttributesMap(message.attributes());
+    }
+    else if (message.messageAction() == Message::MessageAction::Remove)
+    {
+      switch (geometry.geometryType())
+      {
+        case GeometryType::Point:
+        case GeometryType::Multipoint:
+        {
+          if (m_pointGraphicsOverlay)
+          {
+            m_pointGraphicsOverlay->graphics()->removeOne(graphic);
+          }
+          break;
+        }
+        case GeometryType::Envelope:
+        case GeometryType::Polygon:
+        case GeometryType::Polyline:
+        {
+          if (m_linePolygonGraphicsOverlay)
+          {
+            m_linePolygonGraphicsOverlay->graphics()->removeOne(graphic);
+          }
+          break;
+        }
+      }
+    }
+    else if (message.messageAction() == Message::MessageAction::Select)
+    {
+      graphic->setSelected(true);
+    }
+    else if (message.messageAction() == Message::MessageAction::Unselect)
+    {
+      graphic->setSelected(false);
+    }
+    else
+    {
+      emit errorOccurred(QStringLiteral("Unknown message action"));
+      return false;
+    }
+
     return true;
+  }
+
+  if (message.messageAction() != Message::MessageAction::Update)
+  {
+    emit errorOccurred(QStringLiteral("Message action must be Update to add new message"));
+    return false;
   }
 
   // add new graphic
@@ -104,7 +157,7 @@ bool MessagesOverlay::addMessage(const Message& message)
   case GeometryType::Multipoint:
     if (!m_pointGraphicsOverlay)
     {
-      if (!m_dictionarySymbolStyle || !m_geoView)
+      if (!m_renderer || !m_geoView)
       {
         delete graphic;
         return false;
@@ -114,7 +167,7 @@ bool MessagesOverlay::addMessage(const Message& message)
       m_pointGraphicsOverlay = new GraphicsOverlay(this);
       m_pointGraphicsOverlay->setRenderingMode(GraphicsRenderingMode::Dynamic);
       m_pointGraphicsOverlay->setSceneProperties(LayerSceneProperties(SurfacePlacement::Relative));
-      m_pointGraphicsOverlay->setRenderer(new DictionaryRenderer(m_dictionarySymbolStyle.data(), this));
+      m_pointGraphicsOverlay->setRenderer(m_renderer);
       m_graphicsOverlays.append(m_pointGraphicsOverlay);
       m_geoView->graphicsOverlays()->append(m_pointGraphicsOverlay);
 
@@ -129,7 +182,7 @@ bool MessagesOverlay::addMessage(const Message& message)
   case GeometryType::Polyline:
     if (!m_linePolygonGraphicsOverlay)
     {
-      if (!m_dictionarySymbolStyle || !m_geoView)
+      if (!m_renderer || !m_geoView)
       {
         delete graphic;
         return false;
@@ -138,7 +191,7 @@ bool MessagesOverlay::addMessage(const Message& message)
       // add polygon/polyline geometry types to a statically-rendered graphics overlay
       m_linePolygonGraphicsOverlay = new GraphicsOverlay(this);
       m_linePolygonGraphicsOverlay->setRenderingMode(GraphicsRenderingMode::Static);
-      m_linePolygonGraphicsOverlay->setRenderer(new DictionaryRenderer(m_dictionarySymbolStyle.data(), this));
+      m_linePolygonGraphicsOverlay->setRenderer(m_renderer);
       m_graphicsOverlays.append(m_linePolygonGraphicsOverlay);
       m_geoView->graphicsOverlays()->append(m_linePolygonGraphicsOverlay);
 

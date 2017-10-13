@@ -15,6 +15,8 @@ import QtQuick 2.6
 import QtQuick.Controls 2.1
 import QtQuick.Controls.Material 2.1
 import QtQuick.Window 2.2
+import QtQml.Models 2.2
+import QtGraphicalEffects 1.0
 import QtQuick.Dialogs 1.2
 import Esri.DSA 1.0
 import Esri.Handheld 1.0
@@ -387,6 +389,13 @@ Handheld {
                 onClosed: drawer.close();
                 onGraphicsDeleted: drawer.close();
                 onColorSelected: drawer.close();
+
+                onColorDialogVisibleChanged: {
+                    if (dialogVisible)
+                        drawer.close();
+                    else
+                        drawer.open();
+                }
             }
         }
     }

@@ -46,7 +46,7 @@ HEADERS += \
     ../Shared/FollowPositionController.h \
     ../Shared/TableOfContentsController.h \
     ../Shared/NavigationController.h \
-    ../Shared/SketchTool.h \
+    ../Shared/AbstractSketchTool.h \
     ../Shared/TelestrateController.h
 
 SOURCES += \
@@ -69,7 +69,7 @@ SOURCES += \
     ../Shared/FollowPositionController.cpp \
     ../Shared/TableOfContentsController.cpp \
     ../Shared/NavigationController.cpp \
-    ../Shared/SketchTool.cpp \
+    ../Shared/AbstractSketchTool.cpp \
     ../Shared/TelestrateController.cpp
 
 RESOURCES += \

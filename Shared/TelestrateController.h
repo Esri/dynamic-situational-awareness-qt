@@ -2,26 +2,20 @@
 #define TELESTRATECONTROLLER_H
 
 #include "AbstractTool.h"
-#include "SketchTool.h"
+#include "AbstractSketchTool.h"
 
 #include <QColor>
 
 #include "GeometryTypes.h"
 
-namespace Esri {
-  namespace ArcGISRuntime {
-    class MapQuickView;
-    class SceneQuickView;
-  }
-}
-
-class TelestrateController : public SketchTool
+class TelestrateController : public AbstractSketchTool
 {
   Q_OBJECT
 
   Q_PROPERTY(bool is3d READ is3d NOTIFY is3dChanged)
   Q_PROPERTY(bool drawModeEnabled READ drawModeEnabled WRITE setDrawModeEnabled NOTIFY drawModeEnabledChanged)
   Q_PROPERTY(bool active READ isActive WRITE setActive NOTIFY activeChanged)
+  Q_PROPERTY(double drawingAltitude READ drawingAltitude WRITE setDrawingAltitude NOTIFY drawingAltitudeChanged)
 
 public:
   explicit TelestrateController(QObject* parent = nullptr);
@@ -33,6 +27,9 @@ public:
   Q_INVOKABLE void deleteAllGraphics();
 
   void setActive(bool active) override;
+
+  void setDrawingAltitude(double altitude);
+  double drawingAltitude() const;
 
   bool drawModeEnabled() const;
   void setDrawModeEnabled(bool enabled);
@@ -46,6 +43,7 @@ signals:
   void is3dChanged();
   void drawModeEnabledChanged();
   void activeChanged();
+  void drawingAltitudeChanged();
 
 private:
   void updateGeoView();
@@ -54,6 +52,7 @@ private:
   void updateSketch() override;
 
   int m_currentPartIndex = 0;
+  double m_drawingAltitude = 10.0;
   bool m_isDrawing = false;
   bool m_drawModeEnabled = true;
   bool m_is3d = false;

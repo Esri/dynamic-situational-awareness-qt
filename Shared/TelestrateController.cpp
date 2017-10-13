@@ -33,7 +33,7 @@
 using namespace Esri::ArcGISRuntime;
 
 TelestrateController::TelestrateController(QObject* parent):
-  SketchTool(parent)
+  AbstractSketchTool(parent)
 {
   Toolkit::ToolManager::instance().addTool(this);
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, &TelestrateController::updateGeoView);
@@ -53,6 +53,19 @@ void TelestrateController::setActive(bool active)
   m_active = active;
   GraphicsOverlayListModel* graphicsOverlays = m_geoView->graphicsOverlays();
   active ? graphicsOverlays->append(m_sketchOverlay) : graphicsOverlays->removeOne(m_sketchOverlay);
+}
+
+void TelestrateController::setDrawingAltitude(double altitude)
+{
+  if (m_drawingAltitude == altitude)
+    return;
+
+  m_drawingAltitude = altitude;
+}
+
+double TelestrateController::drawingAltitude() const
+{
+  return m_drawingAltitude;
 }
 
 // creates a new LineSymbol rather than updating the current one so previously drawn sketches stay the same color
@@ -157,14 +170,13 @@ void TelestrateController::init()
     m_partOutlineGraphics.append(partGraphic);
     m_sketchOverlay->graphics()->append(partGraphic);
 
-    if (m_is3d)
-      static_cast<SceneQuickView*>(m_geoView)->setCursor(QCursor(Qt::PointingHandCursor));
-    else
-      static_cast<MapQuickView*>(m_geoView)->setCursor(QCursor(Qt::PointingHandCursor));
-
+    Toolkit::ToolResourceProvider::instance()->setMouseCursor(QCursor(Qt::PointingHandCursor));
     m_isDrawing = true;
 
     Point pressedPoint(normalizedPoint(mouseEvent.x(), mouseEvent.y()));
+    if (m_sketchOverlay->sceneProperties().surfacePlacement() == SurfacePlacement::Relative)
+      pressedPoint = Point(pressedPoint.x(), pressedPoint.y(), m_drawingAltitude);
+
     insertPointInPart(m_currentPartIndex, -1, pressedPoint);
 
     // for touch screen operation
@@ -179,6 +191,9 @@ void TelestrateController::init()
     mouseEvent.accept();
 
     Point movedPoint(normalizedPoint(mouseEvent.x(), mouseEvent.y()));
+    if (m_sketchOverlay->sceneProperties().surfacePlacement() == SurfacePlacement::Relative)
+      movedPoint = Point(movedPoint.x(), movedPoint.y(), m_drawingAltitude);
+
     insertPointInPart(m_currentPartIndex, -1, movedPoint);
   });
 
@@ -190,13 +205,12 @@ void TelestrateController::init()
     mouseEvent.accept();
 
     Point releasedPoint(normalizedPoint(mouseEvent.x(), mouseEvent.y()));
+    if (m_sketchOverlay->sceneProperties().surfacePlacement() == SurfacePlacement::Relative)
+      releasedPoint = Point(releasedPoint.x(), releasedPoint.y(), m_drawingAltitude);
+
     insertPointInPart(m_currentPartIndex, -1, releasedPoint);
 
-    if (m_is3d)
-      static_cast<SceneQuickView*>(m_geoView)->setCursor(QCursor(Qt::ArrowCursor));
-    else
-      static_cast<MapQuickView*>(m_geoView)->setCursor(QCursor(Qt::ArrowCursor));
-
+    Toolkit::ToolResourceProvider::instance()->setMouseCursor(QCursor(Qt::ArrowCursor));
     m_isDrawing = false;
   });
 }

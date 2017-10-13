@@ -59,6 +59,11 @@ void Handheld::componentComplete()
   connect(m_sceneView, &SceneQuickView::identifyGraphicsOverlayCompleted,
           ToolResourceProvider::instance(), &ToolResourceProvider::onIdentifyGraphicsOverlayCompleted);
 
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::setMouseCursorRequested, this, [this](QCursor mouseCursor)
+  {
+    m_sceneView->setCursor(mouseCursor);
+  });
+
   // Set scene to scene view
   m_sceneView->setArcGISScene(m_controller->scene());
 }

@@ -33,6 +33,7 @@ DsaToolBase {
     // to be emitted for UI purposes
     signal graphicsDeleted()
     signal colorSelected()
+    signal colorDialogVisibleChanged(bool dialogVisible)
 
     TelestrateController {
         id: telestrateController
@@ -164,8 +165,10 @@ DsaToolBase {
                     }
 
                     onClicked: {
-                        if (!newColorDialog.visible)
+                        if (!newColorDialog.visible) {
+                            colorDialogVisibleChanged(true);
                             newColorDialog.open();
+                        }
                     }
                 }
             }
@@ -215,9 +218,10 @@ DsaToolBase {
 
                     SwitchDelegate{
                         id: layerAppendedSwitch
-                        text: qsTr("Layer Appended")
+                        text: qsTr("Visible")
                         checked: telestrateController.active
                         width: parent.width
+                        font.pixelSize: 15 * scaleFactor
 
                         contentItem: Text {
                             rightPadding: layerAppendedSwitch.indicator.width + layerAppendedSwitch.spacing
@@ -239,9 +243,10 @@ DsaToolBase {
 
                     SwitchDelegate {
                         id: drawModeSwitch
-                        text: qsTr("Drawing Enabled")
+                        text: qsTr("Drawing Mode Enabled")
                         checked: telestrateController.drawModeEnabled
                         width: parent.width
+                        font.pixelSize: 15 * scaleFactor
 
                         contentItem: Text {
                             rightPadding: drawModeSwitch.indicator.width + drawModeSwitch.spacing
@@ -268,20 +273,50 @@ DsaToolBase {
                         visible: telestrateController.is3d
                     }
 
-                    ComboBox {
+                    Row {
                         anchors.horizontalCenter: parent.horizontalCenter
-                        model: ["Draped", "Relative"]
-                        currentIndex: 0
-                        width: parent.width / 1.5
-                        visible: telestrateController.is3d
+                        width: parent.width
+                        padding: 5 * scaleFactor
+                        spacing: 5 * scaleFactor
 
-                        onCurrentIndexChanged: {
-                            // Draped
-                            if (currentIndex === 0)
-                                telestrateController.setSurfacePlacement(currentIndex);
-                            // The corresponding Enum value for Relative placement is 2
-                            else if (currentIndex === 1)
-                                telestrateController.setSurfacePlacement(currentIndex + 1);
+                        ComboBox {
+                            id: surfacePlacementComboBox
+                            model: ["Draped", "Relative"]
+                            currentIndex: 0
+                            width: currentIndex === 0 ? parent.width * 0.95 : parent.width / 2
+                            visible: telestrateController.is3d
+
+                            onCurrentIndexChanged: {
+                                // Draped
+                                if (currentIndex === 0)
+                                    telestrateController.setSurfacePlacement(currentIndex);
+                                // The corresponding Enum value for Relative placement is 2
+                                else if (currentIndex === 1)
+                                    telestrateController.setSurfacePlacement(currentIndex + 1);
+                            }
+
+                            Behavior on width {
+                                SpringAnimation {
+                                    spring: 3
+                                    damping: .4
+                                }
+                            }
+                        }
+
+                        TextField {
+                            id: altitudeInput
+                            anchors.verticalCenter: parent.verticalCenter
+                            visible: surfacePlacementComboBox.currentIndex === 1
+                            placeholderText: "Alt. (m)"
+                            width: parent.width / 3
+                            color: "black"
+                            font.pixelSize: 12 * scaleFactor
+                            inputMethodHints: Qt.ImhFormattedNumbersOnly
+
+
+                            onTextChanged: {
+                                telestrateController.drawingAltitude = Number(text)
+                            }
                         }
                     }
                 }
@@ -358,6 +393,7 @@ DsaToolBase {
         title: "Choose a Draw Color"
 
         onAccepted: {
+            colorDialogVisibleChanged(false);
             drawColors.push(color);
             colorModel.append({"selected": false});
             colorView.positionViewAtEnd();

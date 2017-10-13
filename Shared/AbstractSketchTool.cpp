@@ -10,14 +10,14 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "SketchTool.h"
+#include "AbstractSketchTool.h"
 
 #include "GeoView.h"
-#include "SceneQuickView.h"
+#include "MapView.h"
+#include "SceneView.h"
 #include "GeometryBuilder.h"
 #include "GeometryTypes.h"
 #include "MultipartBuilder.h"
-#include "MapQuickView.h"
 #include "PolylineBuilder.h"
 #include "Graphic.h"
 #include "PointBuilder.h"
@@ -26,17 +26,17 @@
 
 using namespace Esri::ArcGISRuntime;
 
-SketchTool::SketchTool(QObject* parent) :
+AbstractSketchTool::AbstractSketchTool(QObject* parent) :
   AbstractTool(parent),
   m_sketchOverlay(new GraphicsOverlay(this))
 {
 }
 
-SketchTool::~SketchTool()
+AbstractSketchTool::~AbstractSketchTool()
 {
 }
 
-void SketchTool::initGeometryBuilder()
+void AbstractSketchTool::initGeometryBuilder()
 {
   if (!m_geoView)
     return;
@@ -45,7 +45,7 @@ void SketchTool::initGeometryBuilder()
     m_geometryBuilder = new PolylineBuilder(m_geoView->spatialReference(), this);
 }
 
-Geometry SketchTool::builderGeometry() const
+Geometry AbstractSketchTool::builderGeometry() const
 {
   if (m_geometryBuilder)
     return m_geometryBuilder->toGeometry();
@@ -53,23 +53,22 @@ Geometry SketchTool::builderGeometry() const
   return Geometry();
 }
 
-void SketchTool::setSketchSymbol(Symbol* symbol)
+void AbstractSketchTool::setSketchSymbol(Symbol* symbol)
 {
   m_sketchSymbol = symbol;
 }
 
-Symbol *SketchTool::sketchSymbol()
+Symbol* AbstractSketchTool::sketchSymbol()
 {
   return m_sketchSymbol;
 }
 
-void SketchTool::clear()
+void AbstractSketchTool::clear()
 {
   if (!m_geometryBuilder)
     return;
 
-  const auto type = geometryType();
-  if (type == GeometryType::Polyline || type == GeometryType::Polygon)
+  if (isMultiPartBuilder())
   {
     MultipartBuilder* multipartBuilder = static_cast<MultipartBuilder*>(m_geometryBuilder);
     multipartBuilder->parts()->removeAll();
@@ -77,26 +76,26 @@ void SketchTool::clear()
 }
 
 // converts screen coordinates from screen to a Point in coordinates of the map (2D) or base surface (3D)
-Point SketchTool::normalizedPoint(double x, double y)
+Point AbstractSketchTool::normalizedPoint(double x, double y)
 {
   if (!m_geoView)
     return Point(x, y);
 
   if (m_geoView->geoViewType() == GeoViewType::MapView)
-    return static_cast<MapQuickView*>(m_geoView)->screenToLocation(x, y);
+    return static_cast<MapView*>(m_geoView)->screenToLocation(x, y);
   else if (m_geoView->geoViewType() == GeoViewType::SceneView)
-    return static_cast<SceneQuickView*>(m_geoView)->screenToBaseSurface(x, y);
+    return static_cast<SceneView*>(m_geoView)->screenToBaseSurface(x, y);
 
   return Point(x, y);
 }
 
-void SketchTool::selectPartByIndex(int partIndex)
+void AbstractSketchTool::selectPartByIndex(int partIndex)
 {
   // clear selection
   m_sketchOverlay->clearSelection();
   m_selectedPartIndex = -1;
 
-  if (!isMultiPart())
+  if (!isMultiPartBuilder())
     return;
 
   MultipartBuilder* multipartBuilder = static_cast<MultipartBuilder*>(m_geometryBuilder);
@@ -109,26 +108,26 @@ void SketchTool::selectPartByIndex(int partIndex)
     m_partOutlineGraphics.at(partIndex)->setSelected(true);
 }
 
-void SketchTool::replaceGeometry(Geometry geometry)
+void AbstractSketchTool::replaceGeometry(Geometry geometry)
 {
   m_geometryBuilder->replaceGeometry(geometry);
   updateSketch();
 }
 
 // checks whether the builder inherits from MultipartBuilder
-bool SketchTool::isMultiPart() const
+bool AbstractSketchTool::isMultiPartBuilder() const
 {
   if (!m_geometryBuilder)
     return false;
 
-  GeometryBuilderType type = m_geometryBuilder->geometryBuilderType();
+  const GeometryBuilderType type = m_geometryBuilder->geometryBuilderType();
   return (type == GeometryBuilderType::PolygonBuilder || type == GeometryBuilderType::PolylineBuilder);
 }
 
 // Adds a new Part to the Builder. Returns the index of the added Part or -1 if invalid operation
-int SketchTool::addPart()
+int AbstractSketchTool::addPart()
 {
-  if (!m_geometryBuilder || !isMultiPart())
+  if (!m_geometryBuilder || !isMultiPartBuilder())
     return -1;
 
   MultipartBuilder* multipartBuilder = static_cast<MultipartBuilder*>(m_geometryBuilder);
@@ -137,13 +136,12 @@ int SketchTool::addPart()
   return multipartBuilder->parts()->size() - 1;
 }
 
-void SketchTool::insertPointInPart(int partIndex, int pointIndex, Point drawPoint)
+void AbstractSketchTool::insertPointInPart(int partIndex, int pointIndex, const Point& drawPoint)
 {
   if (!m_geometryBuilder)
     return;
 
-  const auto type = geometryType();
-  if (type == GeometryType::Polyline || type == GeometryType::Polygon)
+  if (isMultiPartBuilder())
   {
     MultipartBuilder* multipartBuilder = static_cast<MultipartBuilder*>(m_geometryBuilder);
     if (partIndex >= 0 && partIndex < multipartBuilder->parts()->size())

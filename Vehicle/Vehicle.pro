@@ -45,8 +45,8 @@ HEADERS += \
     ../Shared/FollowPositionController.h \
     ../Shared/TableOfContentsController.h \
     ../Shared/NavigationController.h \
-    ../Shared/SketchTool.h \
-    ../Shared/TelestrateController.h
+    ../Shared/TelestrateController.h \
+    ../Shared/AbstractSketchTool.h
 
 SOURCES += \
     main.cpp \
@@ -68,8 +68,8 @@ SOURCES += \
     ../Shared/FollowPositionController.cpp \
     ../Shared/TableOfContentsController.cpp \
     ../Shared/NavigationController.cpp \
-    ../Shared/SketchTool.cpp \
-    ../Shared/TelestrateController.cpp
+    ../Shared/TelestrateController.cpp \
+    ../Shared/AbstractSketchTool.cpp
 
 RESOURCES += \
     qml/qml.qrc \

@@ -41,13 +41,8 @@ void SketchTool::initGeometryBuilder()
   if (!m_geoView)
     return;
 
-  // for now, only a PolylineBuilder is necessary
-  switch (geometryType())
-  {
-    case GeometryType::Polyline:
-      m_geometryBuilder = new PolylineBuilder(m_geoView->spatialReference(), this);
-      break;
-  }
+  if (geometryType() == GeometryType::Polyline)
+    m_geometryBuilder = new PolylineBuilder(m_geoView->spatialReference(), this);
 }
 
 Geometry SketchTool::builderGeometry() const
@@ -73,14 +68,11 @@ void SketchTool::clear()
   if (!m_geometryBuilder)
     return;
 
-  // will add other cases when need arises
-  switch (geometryType())
+  const auto type = geometryType();
+  if (type == GeometryType::Polyline || type == GeometryType::Polygon)
   {
-    case GeometryType::Polyline:
-    case GeometryType::Polygon:
-      MultipartBuilder* multipartBuilder = static_cast<MultipartBuilder*>(m_geometryBuilder);
-      multipartBuilder->parts()->removeAll();
-      break;
+    MultipartBuilder* multipartBuilder = static_cast<MultipartBuilder*>(m_geometryBuilder);
+    multipartBuilder->parts()->removeAll();
   }
 }
 
@@ -150,24 +142,20 @@ void SketchTool::insertPointInPart(int partIndex, int pointIndex, Point drawPoin
   if (!m_geometryBuilder)
     return;
 
-  // Only MultipartBuilder types need to be handled for telestrating
-  switch (geometryType())
+  const auto type = geometryType();
+  if (type == GeometryType::Polyline || type == GeometryType::Polygon)
   {
-    case GeometryType::Polyline:
-    case GeometryType::Polygon:
-      MultipartBuilder* multipartBuilder = static_cast<MultipartBuilder*>(m_geometryBuilder);
-      if (partIndex >= 0 && partIndex < multipartBuilder->parts()->size())
-      {
-        Part* part = multipartBuilder->parts()->part(partIndex);
+    MultipartBuilder* multipartBuilder = static_cast<MultipartBuilder*>(m_geometryBuilder);
+    if (partIndex >= 0 && partIndex < multipartBuilder->parts()->size())
+    {
+      Part* part = multipartBuilder->parts()->part(partIndex);
 
-        // for purposes of the freehand sketch, points will always be added to the end of the Part
-        if (pointIndex >= 0 && pointIndex < part->pointCount())
-          part->insertPoint(pointIndex, drawPoint);
-        else
-          part->addPoint(drawPoint);
-      }
-
-      break;
+      // for purposes of the freehand sketch, points will always be added to the end of the Part
+      if (pointIndex >= 0 && pointIndex < part->pointCount())
+        part->insertPoint(pointIndex, drawPoint);
+      else
+        part->addPoint(drawPoint);
+    }
   }
 
   updateSketch();

@@ -127,8 +127,8 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
     const auto rendererInfo = messageFeedConfig[2];
 
     MessagesOverlay* overlay = new MessagesOverlay(m_geoView, createRenderer(rendererInfo, this));
-    MessageFeed* messageFeed = new MessageFeed(feedName, feedType, overlay, this);
-    m_messageFeeds->append(messageFeed);
+    MessageFeed* feed = new MessageFeed(feedName, feedType, overlay, this);
+    m_messageFeeds->append(feed);
   }
 }
 

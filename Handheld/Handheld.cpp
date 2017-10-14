@@ -59,7 +59,7 @@ void Handheld::componentComplete()
   connect(m_sceneView, &SceneQuickView::identifyGraphicsOverlayCompleted,
           ToolResourceProvider::instance(), &ToolResourceProvider::onIdentifyGraphicsOverlayCompleted);
 
-  connect(ToolResourceProvider::instance(), &ToolResourceProvider::setMouseCursorRequested, this, [this](QCursor mouseCursor)
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::setMouseCursorRequested, this, [this](const QCursor& mouseCursor)
   {
     m_sceneView->setCursor(mouseCursor);
   });

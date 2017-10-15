@@ -8,5 +8,6 @@
         <file>FollowHud.qml</file>
         <file>TableOfContents.qml</file>
         <file>NavigationTool.qml</file>
+        <file>TelestrateTool.qml</file>
     </qresource>
 </RCC>

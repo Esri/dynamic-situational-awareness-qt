@@ -31,5 +31,8 @@
         <file>icons/xhdpi/message/eod1600.png</file>
         <file>icons/xhdpi/message/sensorobs1600.png</file>
         <file>icons/xhdpi/message/sitrep1600.png</file>
+        <file>icons/xhdpi/ic_menu_completedone_dark.png</file>
+        <file>icons/xhdpi/ic_menu_freehandsketchoff_dark.png</file>
+        <file>icons/xhdpi/ic_menu_freehandsketchon_dark.png</file>
     </qresource>
 </RCC>

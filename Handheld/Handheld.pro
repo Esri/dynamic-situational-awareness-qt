@@ -45,7 +45,9 @@ HEADERS += \
     ../Shared/MessageFeed.h \
     ../Shared/FollowPositionController.h \
     ../Shared/TableOfContentsController.h \
-    ../Shared/NavigationController.h
+    ../Shared/NavigationController.h \
+    ../Shared/AbstractSketchTool.h \
+    ../Shared/TelestrateController.h
 
 SOURCES += \
     main.cpp \
@@ -66,7 +68,9 @@ SOURCES += \
     ../Shared/MessageFeed.cpp \
     ../Shared/FollowPositionController.cpp \
     ../Shared/TableOfContentsController.cpp \
-    ../Shared/NavigationController.cpp
+    ../Shared/NavigationController.cpp \
+    ../Shared/AbstractSketchTool.cpp \
+    ../Shared/TelestrateController.cpp
 
 RESOURCES += \
     qml/qml.qrc \

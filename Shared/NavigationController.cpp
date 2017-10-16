@@ -12,7 +12,6 @@
 
 #include "NavigationController.h"
 
-#include "SceneQuickView.h"
 #include "SceneView.h"
 #include "Scene.h"
 #include "GlobeCameraController.h"
@@ -22,6 +21,7 @@
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 #include "GeometryEngine.h"
+#include "DsaUtility.h"
 
 #include <QScreen>
 #include <QDebug>
@@ -29,19 +29,13 @@
 
 using namespace Esri::ArcGISRuntime;
 
-#ifdef Q_OS_WIN
-#define kReferenceDotsPerInch               96
-#else
-#define kReferenceDotsPerInch               72
-#endif
-
 NavigationController::NavigationController(QObject* parent) :
   Toolkit::AbstractTool(parent)
 {
   Toolkit::ToolManager::instance().addTool(this);
 
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, &NavigationController::updateGeoView);
-//  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::screenToLocationCompleted, this, &NavigationController::screenToLocationCompleted);
+  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::screenToLocationCompleted, this, &NavigationController::screenToLocationCompleted);
 
   updateGeoView();
 }
@@ -60,12 +54,12 @@ void NavigationController::updateGeoView()
   m_geoView = Toolkit::ToolResourceProvider::instance()->geoView();
   if (m_geoView)
   {
-    m_sceneView = dynamic_cast<SceneQuickView*>(m_geoView);
+    m_sceneView = dynamic_cast<SceneView*>(m_geoView);
     if (m_sceneView)
     {
       m_is3d = true;
 
-      connect(m_sceneView, &SceneQuickView::screenToLocationCompleted, this, [this](QUuid, Point location)
+      connect(this, &NavigationController::screenToLocationCompleted, this, [this](QUuid, Point location)
       {
         m_currentCenter = location;
 
@@ -150,7 +144,6 @@ void NavigationController::zoom()
     Camera newCamera = currentCamera.zoomToward(m_currentCenter, m_zoomFactor);
     // set the sceneview to the new camera
     m_sceneView->setViewpointCamera(newCamera, 0.5);
-
   }
 }
 
@@ -212,7 +205,7 @@ void NavigationController::getCenter()
   if (!m_sceneView)
     return;
 
-  double factor = getDipsToPixels();
+  double factor = DsaUtility::getDipsToPixels();
   m_sceneView->screenToLocation(static_cast<int>(m_sceneView->sceneWidth() / factor) * 0.5, static_cast<int>(m_sceneView->sceneHeight() / factor) * 0.5);
 }
 
@@ -223,28 +216,4 @@ double NavigationController::getCurrentCameraDistance(Camera currentCamera)
 
   GeodeticDistanceResult result = GeometryEngine::distanceGeodetic(currentCamera.location(), m_currentCenter, LinearUnit::meters(), m_geoView->spatialReference().unit(), GeodeticCurveType::Geodesic);
   return result.distance();
-}
-
-qreal NavigationController::screenScale(QScreen *screen)
-{
-  screen = QGuiApplication::primaryScreen();
-    if (screen)
-    {
-      return screen->devicePixelRatio();
-    }
-    return 1.0; // default to 1.0
-}
-
-qreal NavigationController::getDipsToPixels(QScreen* screen)
-{
-#ifdef Q_OS_MAC
-  return screenScale(screen);
-#else
-  screen = QGuiApplication::primaryScreen();
-  if (screen)
-  {
-    return (screen->logicalDotsPerInch() * screen->devicePixelRatio()) / kReferenceDotsPerInch;
-  }
-  return 1.0; // default to 1.0
-#endif
 }

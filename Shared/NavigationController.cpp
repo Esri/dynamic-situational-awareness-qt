@@ -17,6 +17,7 @@
 #include "Scene.h"
 #include "GlobeCameraController.h"
 #include "OrbitLocationCameraController.h"
+#include "OrbitGeoElementCameraController.h"
 
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
@@ -133,14 +134,15 @@ void NavigationController::zoom()
   if (currentCamera.isEmpty())
     return;
 
+  // check if there is camera controller set
   if (m_sceneView->cameraController()->cameraControllerType() == CameraControllerType::OrbitGeoElementCameraController)
   {
-//    double distance = getCurrentCameraDistance(currentCamera);
-
-//    OrbitLocationCameraController* controller = static_cast<OrbitLocationCameraController*>(m_sceneView->cameraController());
-//    controller->setCameraDistance(distance / m_zoomFactor);
-//    controller->setCameraDistanceInteractive(true);
-//    m_sceneView->setCameraController(controller);
+    // get the controller
+    OrbitGeoElementCameraController* controller = static_cast<OrbitGeoElementCameraController*>(m_sceneView->cameraController());
+    // get the distance
+    double distance = controller->cameraDistance();
+    // set the camera distance based on the zoom factor
+    controller->setCameraDistance(distance / m_zoomFactor);
   }
   else
   {
@@ -210,8 +212,8 @@ void NavigationController::getCenter()
   if (!m_sceneView)
     return;
 
-  double scale = screenScale();
-  m_sceneView->screenToLocation(static_cast<int>(scale * m_sceneView->sceneWidth() * 0.5), static_cast<int>(scale * m_sceneView->sceneHeight() * 0.5));
+  double factor = getDipsToPixels();
+  m_sceneView->screenToLocation(static_cast<int>(m_sceneView->sceneWidth() / factor) * 0.5, static_cast<int>(m_sceneView->sceneHeight() / factor) * 0.5);
 }
 
 double NavigationController::getCurrentCameraDistance(Camera currentCamera)
@@ -233,7 +235,7 @@ qreal NavigationController::screenScale(QScreen *screen)
     return 1.0; // default to 1.0
 }
 
-qreal NavigationController::getDipsToPixels(QScreen* screen /*= nullptr*/)
+qreal NavigationController::getDipsToPixels(QScreen* screen)
 {
 #ifdef Q_OS_MAC
   return screenScale(screen);

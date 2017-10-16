@@ -127,6 +127,7 @@ int main(int argc, char *argv[])
   QQuickView view;
   view.setResizeMode(QQuickView::SizeRootObjectToView);
 
+#ifndef DEPLOYMENT_BUILD
   // Add the import Path
   view.engine()->addImportPath(QDir(QCoreApplication::applicationDirPath()).filePath("qml"));
   QString arcGISRuntimeImportPath = QUOTE(ARCGIS_RUNTIME_IMPORT_PATH);
@@ -144,6 +145,7 @@ int main(int argc, char *argv[])
   view.engine()->addImportPath(arcGISRuntimeImportPath);
   // Add the Toolkit path
   view.engine()->addImportPath(arcGISToolkitImportPath);
+#endif // DEPLOYMENT_BUILD
 
   // Set the source
   view.setSource(QUrl(kApplicationSourceUrl));

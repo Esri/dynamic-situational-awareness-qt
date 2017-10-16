@@ -30,7 +30,7 @@ Item {
     }
 
     ButtonGroup { id: zoomButtonGroup }
-//    ButtonGroup { id: panButtonGroup3D }
+    ButtonGroup { id: panButtonGroup3D }
 
     height: controlsColumn.height
     width: 32 * scaleFactor
@@ -98,6 +98,40 @@ Item {
                 navController.zoomOut();
             }
         }
+
+        Rectangle {
+            width: 32 * scaleFactor
+            height: 1 * scaleFactor
+            color: "white"
+        }
+
+        Button {
+            id: set2DButton
+            width: 32 * scaleFactor
+            height: 32 * scaleFactor
+            checkable: true
+            checked: false
+            ButtonGroup.group: panButtonGroup3D
+
+            background: Rectangle {
+                anchors.fill: set2DButton
+                radius: 5 * scaleFactor
+                color: buttonColor
+            }
+
+            Image {
+                anchors.centerIn: parent
+                sourceSize.height: 0.85 * set2DButton.height
+                width: sourceSize.height
+                source: "qrc:/Resources/icons/xhdpi/2D.png"
+            }
+
+            onClicked: {
+                navController.set2D();
+            }
+        }
+
+
     }
         // The following buttons have been commented out until we have public API to
         // to use an existing distance from the camera.

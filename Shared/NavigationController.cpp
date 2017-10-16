@@ -31,6 +31,7 @@ NavigationController::NavigationController(QObject* parent) :
   Toolkit::ToolManager::instance().addTool(this);
 
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, &NavigationController::updateGeoView);
+//  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::screenToLocationCompleted, this, &NavigationController::screenToLocationCompleted);
 
   updateGeoView();
 }
@@ -66,6 +67,10 @@ void NavigationController::updateGeoView()
         {
           setRotationInternal();
         }
+        else if(m_currentMode == Mode::Tilt)
+        {
+          set2DInternal();
+        }
       });
     }
     else
@@ -78,45 +83,22 @@ void NavigationController::updateGeoView()
 
 void NavigationController::zoomIn()
 {
-  if (!m_sceneView)
-    return;
-
   m_currentMode = Mode::Zoom;
-  m_sceneView->screenToLocation(m_sceneView->sceneWidth() * 0.5, m_sceneView->sceneHeight() * 0.5);
+  getCenter();
 }
 
 void NavigationController::zoomOut()
 {
-  if (!m_sceneView)
-    return;
-
   m_currentMode = Mode::Zoom;
-  m_sceneView->screenToLocation(m_sceneView->sceneWidth() * 0.5, m_sceneView->sceneHeight() * 0.5);
+  getCenter();
 }
 
-//void NavigationController::tilt()
-//{
-//  if (m_is3d)
-//  {
-//    // get the current extent
-//    Envelope extent = m_sceneView->currentViewpoint(ViewpointType::CenterAndScale).targetGeometry().extent();
-//    // get the current camera
-//    Camera currentCamera = m_sceneView->currentViewpointCamera();
+void NavigationController::set2D()
+{
+  m_currentMode = Mode::Tilt;
+  getCenter();
+}
 
-//    if (currentCamera.isEmpty())
-//      return;
-
-//    // set the delta pitch.
-//    double deltaPitch = m_isCameraVertical ? 70.0 : -currentCamera.pitch();
-//    // rotate the camera using the delta pitch value
-//    Camera newCamera = currentCamera.rotateAround(extent.center(), 0, deltaPitch, 0);
-//    // set the sceneview to the new camera
-//    m_sceneView->setViewpointCamera(newCamera, 2.0);
-//    // switch the bool for next time
-//    m_isCameraVertical = !m_isCameraVertical;
-//    emit verticalChanged();
-//  }
-//}
 
 void NavigationController::pan()
 {
@@ -129,12 +111,10 @@ void NavigationController::pan()
 
 void NavigationController::setRotation()
 {
-  if (!m_sceneView)
-    return;
-
   m_currentMode = Mode::Rotate;
-  m_sceneView->screenToLocation(m_sceneView->sceneWidth() * 0.5, m_sceneView->sceneHeight() * 0.5);
+  getCenter();
 }
+
 
 void NavigationController::zoom()
 {
@@ -144,10 +124,23 @@ void NavigationController::zoom()
   if (currentCamera.isEmpty())
     return;
 
-  // zoom in/out using the zoom factor
-  Camera newCamera = currentCamera.zoomToward(m_currentCenter, m_zoomFactor);
-  // set the sceneview to the new camera
-  m_sceneView->setViewpointCamera(newCamera, 0.5);
+  if (m_sceneView->cameraController()->cameraControllerType() == CameraControllerType::OrbitGeoElementCameraController)
+  {
+//    double distance = getCurrentCameraDistance(currentCamera);
+
+//    OrbitLocationCameraController* controller = static_cast<OrbitLocationCameraController*>(m_sceneView->cameraController());
+//    controller->setCameraDistance(distance / m_zoomFactor);
+//    controller->setCameraDistanceInteractive(true);
+//    m_sceneView->setCameraController(controller);
+  }
+  else
+  {
+    // zoom in/out using the zoom factor
+    Camera newCamera = currentCamera.zoomToward(m_currentCenter, m_zoomFactor);
+    // set the sceneview to the new camera
+    m_sceneView->setViewpointCamera(newCamera, 0.5);
+
+  }
 }
 
 // getter for vertical
@@ -176,11 +169,46 @@ void NavigationController::setRotationInternal()
 {
   // get the current camera
   Camera currentCamera = m_sceneView->currentViewpointCamera();
-  GeodeticDistanceResult result = GeometryEngine::distanceGeodetic(currentCamera.location(), m_currentCenter, LinearUnit::meters(), m_geoView->spatialReference().unit(), GeodeticCurveType::Geodesic);
-  double distance = result.distance();
+  double distance = getCurrentCameraDistance(currentCamera);
 
   OrbitLocationCameraController* orbitController = new OrbitLocationCameraController(m_currentCenter, distance, this);
   orbitController->setCameraPitchOffset(currentCamera.pitch());
   orbitController->setCameraHeadingOffset(currentCamera.heading());
   m_sceneView->setCameraController(orbitController);
+}
+
+void NavigationController::set2DInternal()
+{
+  if (m_is3d)
+  {
+    // get the current camera
+    Camera currentCamera = m_sceneView->currentViewpointCamera();
+
+    if (currentCamera.isEmpty() || currentCamera.pitch() == 0.0)
+      return;
+
+    // set the delta pitch.
+    double deltaPitch = -currentCamera.pitch();
+    // rotate the camera using the delta pitch value
+    Camera newCamera = currentCamera.rotateAround(m_currentCenter, 0, deltaPitch, 0);
+    // set the sceneview to the new camera
+    m_sceneView->setViewpointCamera(newCamera, 2.0);
+  }
+}
+
+void NavigationController::getCenter()
+{
+  if (!m_sceneView)
+    return;
+
+  m_sceneView->screenToLocation(m_sceneView->sceneWidth() * 0.5, m_sceneView->sceneHeight() * 0.5);
+}
+
+double NavigationController::getCurrentCameraDistance(Camera currentCamera)
+{
+  if (currentCamera.isEmpty())
+    return 0.0;
+
+  GeodeticDistanceResult result = GeometryEngine::distanceGeodetic(currentCamera.location(), m_currentCenter, LinearUnit::meters(), m_geoView->spatialReference().unit(), GeodeticCurveType::Geodesic);
+  return result.distance();
 }

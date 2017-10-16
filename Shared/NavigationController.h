@@ -17,6 +17,7 @@
 
 #include "AbstractTool.h"
 #include "Point.h"
+#include "Camera.h"
 
 namespace Esri {
 namespace ArcGISRuntime
@@ -41,6 +42,7 @@ public:
   Q_INVOKABLE void zoomIn();
   Q_INVOKABLE void pan();
   Q_INVOKABLE void setRotation();
+  Q_INVOKABLE void set2D();
 
   QString toolName() const override;
 
@@ -60,11 +62,15 @@ private:
   {
     Zoom,
     Rotate,
-    Pan
+    Pan,
+    Tilt
   };
 
+  void getCenter();
   void zoom();
   void setRotationInternal();
+  void set2DInternal();
+  double getCurrentCameraDistance(Esri::ArcGISRuntime::Camera currentCamera);
 
   Esri::ArcGISRuntime::GeoView* m_geoView   = nullptr;
   Esri::ArcGISRuntime::SceneQuickView* m_sceneView = nullptr;

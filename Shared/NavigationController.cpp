@@ -61,19 +61,24 @@ void NavigationController::updateGeoView()
 
       connect(this, &NavigationController::screenToLocationCompleted, this, [this](QUuid, Point location)
       {
-        m_currentCenter = location;
+        if (m_enabled)
+        {
+          m_currentCenter = location;
 
-        if (m_currentMode == Mode::Zoom)
-        {
-          zoom();
-        }
-        else if (m_currentMode == Mode::Rotate)
-        {
-          setRotationInternal();
-        }
-        else if(m_currentMode == Mode::Tilt)
-        {
-          set2DInternal();
+          if (m_currentMode == Mode::Zoom)
+          {
+            zoom();
+          }
+          else if (m_currentMode == Mode::Rotate)
+          {
+            setRotationInternal();
+          }
+          else if(m_currentMode == Mode::Tilt)
+          {
+            set2DInternal();
+          }
+
+          m_enabled = false;
         }
       });
     }
@@ -205,6 +210,7 @@ void NavigationController::getCenter()
   if (!m_sceneView)
     return;
 
+  m_enabled = true;
   double factor = DsaUtility::getDipsToPixels();
   m_sceneView->screenToLocation(static_cast<int>(m_sceneView->sceneWidth() / factor) * 0.5, static_cast<int>(m_sceneView->sceneHeight() / factor) * 0.5);
 }

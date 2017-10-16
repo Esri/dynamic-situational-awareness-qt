@@ -82,6 +82,7 @@ private:
   double m_zoomFactor                       = 1.0;
   Esri::ArcGISRuntime::Point m_currentCenter;
   Mode m_currentMode;
+  bool m_enabled = false;
 };
 
 

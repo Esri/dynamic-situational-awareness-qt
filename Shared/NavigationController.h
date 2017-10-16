@@ -14,6 +14,7 @@
 #define NAVIGATIONCONTROLLER_H
 
 #include <QUrl>
+#include <QScreen>
 
 #include "AbstractTool.h"
 #include "Point.h"
@@ -71,6 +72,8 @@ private:
   void setRotationInternal();
   void set2DInternal();
   double getCurrentCameraDistance(Esri::ArcGISRuntime::Camera currentCamera);
+  qreal screenScale(QScreen* screen = nullptr);
+  qreal getDipsToPixels(QScreen* screen = nullptr);
 
   Esri::ArcGISRuntime::GeoView* m_geoView   = nullptr;
   Esri::ArcGISRuntime::SceneQuickView* m_sceneView = nullptr;

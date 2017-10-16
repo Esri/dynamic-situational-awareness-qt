@@ -21,9 +21,18 @@
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 #include "GeometryEngine.h"
+
+#include <QScreen>
 #include <QDebug>
+#include <QGuiApplication>
 
 using namespace Esri::ArcGISRuntime;
+
+#ifdef Q_OS_WIN
+#define kReferenceDotsPerInch               96
+#else
+#define kReferenceDotsPerInch               72
+#endif
 
 NavigationController::NavigationController(QObject* parent) :
   Toolkit::AbstractTool(parent)
@@ -201,7 +210,8 @@ void NavigationController::getCenter()
   if (!m_sceneView)
     return;
 
-  m_sceneView->screenToLocation(m_sceneView->sceneWidth() * 0.5, m_sceneView->sceneHeight() * 0.5);
+  double scale = screenScale();
+  m_sceneView->screenToLocation(static_cast<int>(scale * m_sceneView->sceneWidth() * 0.5), static_cast<int>(scale * m_sceneView->sceneHeight() * 0.5));
 }
 
 double NavigationController::getCurrentCameraDistance(Camera currentCamera)
@@ -211,4 +221,28 @@ double NavigationController::getCurrentCameraDistance(Camera currentCamera)
 
   GeodeticDistanceResult result = GeometryEngine::distanceGeodetic(currentCamera.location(), m_currentCenter, LinearUnit::meters(), m_geoView->spatialReference().unit(), GeodeticCurveType::Geodesic);
   return result.distance();
+}
+
+qreal NavigationController::screenScale(QScreen *screen)
+{
+  screen = QGuiApplication::primaryScreen();
+    if (screen)
+    {
+      return screen->devicePixelRatio();
+    }
+    return 1.0; // default to 1.0
+}
+
+qreal NavigationController::getDipsToPixels(QScreen* screen /*= nullptr*/)
+{
+#ifdef Q_OS_MAC
+  return screenScale(screen);
+#else
+  screen = QGuiApplication::primaryScreen();
+  if (screen)
+  {
+    return (screen->logicalDotsPerInch() * screen->devicePixelRatio()) / kReferenceDotsPerInch;
+  }
+  return 1.0; // default to 1.0
+#endif
 }

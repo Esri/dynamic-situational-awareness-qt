@@ -9,5 +9,6 @@
         <file>TableOfContents.qml</file>
         <file>NavigationTool.qml</file>
         <file>TelestrateTool.qml</file>
+        <file>Imports.qml</file>
     </qresource>
 </RCC>

@@ -10,5 +10,6 @@
         <file>NavigationTool.qml</file>
         <file>TelestrateTool.qml</file>
         <file>Imports.qml</file>
+        <file>Analysis.qml</file>
     </qresource>
 </RCC>

@@ -46,7 +46,8 @@ HEADERS += \
     ../Shared/TableOfContentsController.h \
     ../Shared/NavigationController.h \
     ../Shared/TelestrateController.h \
-    ../Shared/AbstractSketchTool.h
+    ../Shared/AbstractSketchTool.h \
+    ../Shared/AnalysisController.h
 
 SOURCES += \
     main.cpp \
@@ -69,7 +70,8 @@ SOURCES += \
     ../Shared/TableOfContentsController.cpp \
     ../Shared/NavigationController.cpp \
     ../Shared/TelestrateController.cpp \
-    ../Shared/AbstractSketchTool.cpp
+    ../Shared/AbstractSketchTool.cpp \
+    ../Shared/AnalysisController.cpp
 
 RESOURCES += \
     qml/qml.qrc \

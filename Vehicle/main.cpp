@@ -36,6 +36,7 @@
 #include "TableOfContentsController.h"
 #include "NavigationController.h"
 #include "TelestrateController.h"
+#include "AnalysisController.h"
 
 #include "ArcGISRuntimeToolkit.h"
 #include "ArcGISCompassController.h"
@@ -120,6 +121,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<TableOfContentsController>("Esri.DSA", 1, 0, "TableOfContentsController");
   qmlRegisterType<NavigationController>("Esri.DSA", 1, 0, "NavigationController");
   qmlRegisterType<TelestrateController>("Esri.DSA", 1, 0, "TelestrateController");
+  qmlRegisterType<AnalysisController>("Esri.DSA", 1, 0, "AnalysisController");
 
   // Register Toolkit Component Types
   ArcGISRuntimeToolkit::registerToolkitTypes();

@@ -82,7 +82,7 @@ void NavigationController::zoomIn()
     return;
 
   m_currentMode = Mode::Zoom;
-  m_sceneView->screenToLocation((m_sceneView->width()) * 0.5, (m_sceneView->height()) * 0.5);
+  m_sceneView->screenToLocation(m_sceneView->sceneWidth() * 0.5, m_sceneView->sceneHeight() * 0.5);
 }
 
 void NavigationController::zoomOut()
@@ -91,7 +91,7 @@ void NavigationController::zoomOut()
     return;
 
   m_currentMode = Mode::Zoom;
-  m_sceneView->screenToLocation(m_sceneView->width() * 0.5, m_sceneView->height() * 0.5);
+  m_sceneView->screenToLocation(m_sceneView->sceneWidth() * 0.5, m_sceneView->sceneHeight() * 0.5);
 }
 
 //void NavigationController::tilt()
@@ -133,7 +133,7 @@ void NavigationController::setRotation()
     return;
 
   m_currentMode = Mode::Rotate;
-  m_sceneView->screenToLocation(m_sceneView->width() * 0.5, m_sceneView->height() * 0.5);
+  m_sceneView->screenToLocation(m_sceneView->sceneWidth() * 0.5, m_sceneView->sceneHeight() * 0.5);
 }
 
 void NavigationController::zoom()

@@ -418,7 +418,7 @@ Handheld {
                 visible: false
                 onClosed: drawer.close();
             }
-			
+
             TelestrateTool {
                 id: telestrateTool
                 anchors.fill: parent

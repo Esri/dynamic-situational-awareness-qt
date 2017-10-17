@@ -13,188 +13,309 @@
 
 #include "AnalysisController.h"
 #include "ToolManager.h"
+#include "ToolResourceProvider.h"
 #include "SceneQuickView.h"
 #include "LocationViewshed.h"
+#include "SimpleMarkerSceneSymbol.h"
 
 using namespace Esri::ArcGISRuntime;
 
 AnalysisController::AnalysisController(QObject *parent) :
   Toolkit::AbstractTool(parent)
 {
-  Toolkit::ToolManager::instance()->addTool(this);
+  Toolkit::ToolManager::instance().addTool(this);
 
-  Camera camera(Point(-121.9, 36.6, 1000, SpatialReference::wgs84()), 1000, 90, 90, 0);
-  m_locationViewshed = new LocationViewshed(camera, 100, 1000, this);
+  connectMouseSignals();
 }
 
 AnalysisController::~AnalysisController()
 {
 }
 
-void AnalysisController::init(GeoView* geoView)
+void AnalysisController::connectMouseSignals()
 {
-  //TODO:mt hard-coded for now
-  m_sceneView = static_cast<SceneQuickView*>(geoView);
-  connect(m_sceneView, &SceneQuickView::mouseClicked, this, [this](QMouseEvent& event)
+  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mouseClicked, this, [this](QMouseEvent& event)
   {
-    if (!m_analysisVisible)
+    if (!m_viewshedEnabled)
       return;
 
-    if (m_viewshedActive)
+    SceneView* sceneView = dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView());
+    if (!sceneView)
+      return;
+
+    if (!m_analysisOverlay && !m_graphicsOverlay)
     {
-      m_viewshedActive = false;
+      m_analysisOverlay = new AnalysisOverlay(this);
+      sceneView->analysisOverlays()->append(m_analysisOverlay);
+
+      m_graphicsOverlay = new GraphicsOverlay(this);
+      sceneView->graphicsOverlays()->append(m_graphicsOverlay);
+
       return;
     }
 
-    if (m_sceneView->analysisOverlays()->size() == 0)
+    if (!m_locationViewshed && !m_locationViewshedGraphic)
     {
-      AnalysisOverlay* analysisOverlay = new AnalysisOverlay(this);
-      m_sceneView->analysisOverlays()->append(analysisOverlay);
+      const Point pt = sceneView->screenToBaseSurface(event.x(), event.y());
 
-      const Point pt = m_sceneView->screenToBaseSurface(event.x(), event.y());
-      Point elevatedPt(pt.x(), pt.y(), pt.z() + 50, pt.spatialReference());
-      m_locationViewshed->setLocation(elevatedPt);
+      m_locationViewshed = new LocationViewshed(pt, m_headingDefault, m_pitchDefault, m_horizontalAngleDefault, m_veriticalAngleDefault, m_minDistanceDefault, m_maxDistanceDefault, SurfacePlacement::Absolute, this);
+      m_locationViewshed->setVisible(m_viewshedVisibleDefault);
+      m_analysisOverlay->analyses()->append(m_locationViewshed);
 
-      analysisOverlay->analyses()->append(m_locationViewshed);
+      SimpleMarkerSceneSymbol* smss = SimpleMarkerSceneSymbol::cone(QColor("red"), 0.5, 70, this);
+      smss->setWidth(12);
+      m_locationViewshedGraphic = new Graphic(m_locationViewshed->location(), smss, this);
+      m_graphicsOverlay->graphics()->append(m_locationViewshedGraphic);
+
+      smss->setHeading(m_locationViewshed->heading()-180);
+      smss->setPitch(qAbs(m_locationViewshed->pitch()-180));
+
       return;
     }
 
-    const Point pt = m_sceneView->screenToBaseSurface(event.x(), event.y());
-    Point elevatedPt(pt.x(), pt.y(), pt.z() + 50, pt.spatialReference());
-    m_locationViewshed->setLocation(elevatedPt);
-  });
-
-  connect(m_sceneView, &SceneQuickView::mousePressed, this, [this](QMouseEvent& event)
-  {
-    if (!m_analysisVisible)
-      return;
-
-    m_currentMouseButton = event.button();
-  });
-
-  connect(m_sceneView, &SceneQuickView::mousePressedAndHeld, this, [this](QMouseEvent& event)
-  {
-    if (!m_analysisVisible)
-      return;
-
-    m_viewshedActive = true;
-
-    m_pressedPoint = event.pos();
-  });
-
-  connect(m_sceneView, &SceneQuickView::mouseMoved, this, [this](QMouseEvent& event)
-  {
-    if (!m_analysisVisible || !m_viewshedActive)
-      return;
-
-
-    if (m_currentMouseButton == Qt::LeftButton)
-    {
-      const Point pt = m_sceneView->screenToBaseSurface(event.x(), event.y());
-      Point elevatedPt(pt.x(), pt.y(), pt.z() + 50, pt.spatialReference());
-      m_locationViewshed->setLocation(elevatedPt);
-    }
-    else if (m_currentMouseButton == Qt::RightButton)
-    {
-      const QPoint curPoint = event.pos();
-      if (m_pressedPoint.x() < curPoint.x())
-        m_locationViewshed->setHeading(m_locationViewshed->heading() + 3);
-      else
-        m_locationViewshed->setHeading(m_locationViewshed->heading() - 3);
-
-      m_pressedPoint = curPoint;
-    }
+    const Point pt = sceneView->screenToBaseSurface(event.x(), event.y());
+    m_locationViewshed->setLocation(pt);
+    m_locationViewshedGraphic->setGeometry(pt);
   });
 }
 
-bool AnalysisController::isAnalysisVisible() const
+void AnalysisController::removeViewshed()
 {
-  return m_analysisVisible;
+  if (m_locationViewshed && m_locationViewshedGraphic)
+  {
+    m_analysisOverlay->analyses()->removeOne(m_locationViewshed);
+    delete m_locationViewshed;
+    m_locationViewshed = nullptr;
+
+    m_graphicsOverlay->graphics()->removeOne(m_locationViewshedGraphic);
+    delete m_locationViewshedGraphic;
+    m_locationViewshedGraphic = nullptr;
+  }
 }
 
-void AnalysisController::setAnalysisVisible(bool analysisVisible)
+bool AnalysisController::isViewshedEnabled() const
 {
-  if (m_analysisVisible == analysisVisible)
+  return m_viewshedEnabled;
+}
+
+void AnalysisController::setViewshedEnabled(bool viewshedEnabled)
+{
+  if (m_viewshedEnabled == viewshedEnabled)
     return;
 
-  m_analysisVisible = analysisVisible;
+  m_viewshedEnabled = viewshedEnabled;
 
-  emit analysisVisibleChanged();
+  emit viewshedEnabledChanged();
+}
+
+bool AnalysisController::isViewshedVisible() const
+{
+  return m_locationViewshed ? m_locationViewshed->isVisible() : m_viewshedVisibleDefault;
+}
+
+void AnalysisController::setViewshedVisible(bool viewshedVisible)
+{
+  if (!m_viewshedEnabled)
+    return;
+
+  if (m_locationViewshed && m_locationViewshedGraphic)
+  {
+    if (m_locationViewshed->isVisible() == viewshedVisible)
+      return;
+
+    m_viewshedVisibleDefault = viewshedVisible;
+    m_locationViewshed->setVisible(viewshedVisible);
+    m_locationViewshedGraphic->setVisible(viewshedVisible);
+  }
+  else
+  {
+    if (m_viewshedVisibleDefault == viewshedVisible)
+      return;
+
+    m_viewshedVisibleDefault = viewshedVisible;
+  }
+
+  emit viewshedVisibleChanged();
 }
 
 double AnalysisController::minDistance() const
 {
-  return m_locationViewshed->minDistance();
+  return m_locationViewshed ? m_locationViewshed->minDistance() : m_minDistanceDefault;
 }
 
 void AnalysisController::setMinDistance(double minDistance)
 {
-  if (m_locationViewshed->minDistance() == minDistance)
+  if (!m_viewshedEnabled)
     return;
 
-  m_locationViewshed->setMinDistance(minDistance);
+  if (m_locationViewshed)
+  {
+    if (m_locationViewshed->minDistance() == minDistance)
+      return;
+
+    m_minDistanceDefault = minDistance;
+    m_locationViewshed->setMinDistance(minDistance);
+  }
+  else
+  {
+    if (m_minDistanceDefault == minDistance)
+      return;
+
+    m_minDistanceDefault = minDistance;
+  }
 
   emit minDistanceChanged();
 }
 
 double AnalysisController::maxDistance() const
 {
-  return m_locationViewshed->maxDistance();
+  return m_locationViewshed ? m_locationViewshed->maxDistance() : m_maxDistanceDefault;
 }
 
 void AnalysisController::setMaxDistance(double maxDistance)
 {
-  if (m_locationViewshed->maxDistance() == maxDistance)
+  if (!m_viewshedEnabled)
     return;
 
-  m_locationViewshed->setMaxDistance(maxDistance);
+  if (m_locationViewshed)
+  {
+    if (m_locationViewshed->maxDistance() == maxDistance)
+      return;
+
+    m_maxDistanceDefault = maxDistance;
+    m_locationViewshed->setMaxDistance(maxDistance);
+  }
+  else
+  {
+    if (m_maxDistanceDefault == maxDistance)
+      return;
+
+    m_maxDistanceDefault = maxDistance;
+  }
 
   emit maxDistanceChanged();
 }
 
 double AnalysisController::horizontalAngle() const
 {
-  return m_locationViewshed->horizontalAngle();
+  return m_locationViewshed ? m_locationViewshed->horizontalAngle() : m_horizontalAngleDefault;
 }
 
 void AnalysisController::setHorizontalAngle(double horizontalAngle)
 {
-  if (m_locationViewshed->horizontalAngle() == horizontalAngle)
+  if (!m_viewshedEnabled)
     return;
 
-  m_locationViewshed->setHorizontalAngle(horizontalAngle);
+  if (m_locationViewshed)
+  {
+    if (m_locationViewshed->horizontalAngle() == horizontalAngle)
+      return;
+
+    m_horizontalAngleDefault = horizontalAngle;
+    m_locationViewshed->setHorizontalAngle(horizontalAngle);
+  }
+  else
+  {
+    if (m_horizontalAngleDefault == horizontalAngle)
+      return;
+
+    m_horizontalAngleDefault = horizontalAngle;
+  }
 
   emit horizontalAngleChanged();
 }
 
 double AnalysisController::verticalAngle() const
 {
-  return m_locationViewshed->verticalAngle();
+  return m_locationViewshed ? m_locationViewshed->verticalAngle() : m_veriticalAngleDefault;
 }
 
 void AnalysisController::setVerticalAngle(double verticalAngle)
 {
-  if (m_locationViewshed->verticalAngle() == verticalAngle)
+  if (!m_viewshedEnabled)
     return;
 
-  m_locationViewshed->setVerticalAngle(verticalAngle);
+  if (m_locationViewshed)
+  {
+    if (m_locationViewshed->verticalAngle() == verticalAngle)
+      return;
+
+    m_veriticalAngleDefault = verticalAngle;
+    m_locationViewshed->setVerticalAngle(verticalAngle);
+  }
+  else
+  {
+    if (m_veriticalAngleDefault == verticalAngle)
+      return;
+
+    m_veriticalAngleDefault = verticalAngle;
+  }
 
   emit verticalAngleChanged();
 }
 
 double AnalysisController::heading() const
 {
-  return m_locationViewshed->heading();
+  return m_locationViewshed ? m_locationViewshed->heading() : m_headingDefault;
 }
 
 void AnalysisController::setHeading(double heading)
 {
-  if (m_locationViewshed->heading() == heading)
+  if (!m_viewshedEnabled)
     return;
 
-  m_locationViewshed->setHeading(heading);
+  if (m_locationViewshed && m_locationViewshedGraphic)
+  {
+    if (m_locationViewshed->heading() == heading)
+      return;
+
+    m_headingDefault = heading;
+    m_locationViewshed->setHeading(heading);
+
+    SimpleMarkerSceneSymbol* smss = static_cast<SimpleMarkerSceneSymbol*>(m_locationViewshedGraphic->symbol());
+    smss->setHeading(m_locationViewshed->heading()-180);
+  }
+  else
+  {
+    if (m_headingDefault == heading)
+      return;
+
+    m_headingDefault = heading;
+  }
 
   emit headingChanged();
+}
+
+double AnalysisController::pitch() const
+{
+  return m_locationViewshed ? m_locationViewshed->pitch() : m_pitchDefault;
+}
+
+void AnalysisController::setPitch(double pitch)
+{
+  if (!m_viewshedEnabled)
+    return;
+
+  if (m_locationViewshed)
+  {
+    if (m_locationViewshed->pitch() == pitch)
+      return;
+
+    m_pitchDefault = pitch;
+    m_locationViewshed->setPitch(pitch);
+
+    SimpleMarkerSceneSymbol* smss = static_cast<SimpleMarkerSceneSymbol*>(m_locationViewshedGraphic->symbol());
+    smss->setPitch(qAbs(m_locationViewshed->pitch()-180));
+  }
+  else
+  {
+    if (m_pitchDefault == pitch)
+      return;
+
+    m_pitchDefault = pitch;
+  }
+
+  emit pitchChanged();
 }
 
 QString AnalysisController::toolName() const

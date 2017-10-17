@@ -24,6 +24,7 @@
 #endif
 
 #include "ArcGISRuntimeEnvironment.h"
+#include "ArcGISRuntimeToolkit.h"
 
 #include "SceneQuickView.h"
 
@@ -32,6 +33,8 @@
 #include "FollowPositionController.h"
 #include "LocationController.h"
 #include "MessageFeedsController.h"
+#include "TableOfContentsController.h"
+#include "NavigationController.h"
 #include "AnalysisController.h"
 
 #include "ArcGISRuntimeToolkit.h"
@@ -61,6 +64,7 @@
 //------------------------------------------------------------------------------
 
 using namespace Esri::ArcGISRuntime;
+using namespace Esri::ArcGISRuntime::Toolkit;
 
 int main(int argc, char *argv[])
 {
@@ -113,10 +117,12 @@ int main(int argc, char *argv[])
   qmlRegisterType<LocationController>("Esri.DSA", 1, 0, "LocationController");
   qmlRegisterType<MessageFeedsController>("Esri.DSA", 1, 0, "MessageFeedsController");
   qmlRegisterType<FollowPositionController>("Esri.DSA", 1, 0, "FollowPositionController");
+  qmlRegisterType<TableOfContentsController>("Esri.DSA", 1, 0, "TableOfContentsController");
+  qmlRegisterType<NavigationController>("Esri.DSA", 1, 0, "NavigationController");
   qmlRegisterType<AnalysisController>("Esri.DSA", 1, 0, "AnalysisController");
 
   // Register Toolkit Component Types
-  Toolkit::ArcGISRuntimeToolkit::registerToolkitTypes();
+  ArcGISRuntimeToolkit::registerToolkitTypes();
 
   // Intialize application view
   QQuickView view;

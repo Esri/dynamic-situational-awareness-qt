@@ -40,10 +40,15 @@ class LocationController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
   Q_PROPERTY(QString gpxFilePathAsString READ gpxFilePathAsString NOTIFY gpxFilePathChanged)
 
 public:
-  LocationController(QObject* parent = nullptr);
+  static const QString SIMULATE_LOCATION_PROPERTYNAME;
+  static const QString GPX_FILE_PROPERTYNAME;
+  static const QString RESOURCE_DIRECTORY_PROPERTYNAME;
+
+  explicit LocationController(QObject* parent = nullptr);
   ~LocationController();
 
   QString toolName() const override;
+  void setProperties(const QVariantMap& properties) override;
 
   // if you want this tool to handle everything, add this overlay
   // to your view
@@ -57,6 +62,9 @@ public:
 
   QUrl gpxFilePath() const;
   void setGpxFilePath(const QUrl& gpxFilePath);
+
+  QString iconDataPath() const { return m_iconDataPath; }
+  void setIconDataPath(const QString& dataPath);
 
   // removes any file:// scheme if present
   QString gpxFilePathAsString() const;
@@ -79,6 +87,9 @@ signals:
   // see setRelativeHeadingSceneView
   void relativeHeadingChanged(double relativeHeading);
 
+private slots:
+  void updateGeoView();
+
 private:
   void initPositionInfoSource(bool isSimulated);
   void initOverlay();
@@ -94,6 +105,7 @@ private:
   double m_lastViewHeading = 0.0;
   double m_lastKnownHeading = 0.0;
   QUrl m_gpxFilePath;
+  QString m_iconDataPath;
 };
 
 #endif // LOCATIONCONTROLLER_H

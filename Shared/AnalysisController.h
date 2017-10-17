@@ -19,9 +19,10 @@
 
 namespace Esri {
   namespace ArcGISRuntime {
-    class GeoView;
+    class AnalysisOverlay;
     class LocationViewshed;
-    class SceneQuickView;
+    class GraphicsOverlay;
+    class Graphic;
   }
 }
 
@@ -29,29 +30,36 @@ class AnalysisController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
   Q_OBJECT
 
-  Q_PROPERTY(bool analysisVisible READ isAnalysisVisible WRITE setAnalysisVisible NOTIFY analysisVisibleChanged)
+  Q_PROPERTY(bool viewshedEnabled READ isViewshedEnabled WRITE setViewshedEnabled NOTIFY viewshedEnabledChanged)
+  Q_PROPERTY(bool viewshedVisible READ isViewshedVisible WRITE setViewshedVisible NOTIFY viewshedVisibleChanged)
   Q_PROPERTY(double minDistance READ minDistance WRITE setMinDistance NOTIFY minDistanceChanged)
   Q_PROPERTY(double maxDistance READ maxDistance WRITE setMaxDistance NOTIFY maxDistanceChanged)
   Q_PROPERTY(double horizontalAngle READ horizontalAngle WRITE setHorizontalAngle NOTIFY horizontalAngleChanged)
   Q_PROPERTY(double verticalAngle READ verticalAngle WRITE setVerticalAngle NOTIFY verticalAngleChanged)
   Q_PROPERTY(double heading READ heading WRITE setHeading NOTIFY headingChanged)
+  Q_PROPERTY(double pitch READ pitch WRITE setPitch NOTIFY pitchChanged)
 
 signals:
-  void analysisVisibleChanged();
+  void viewshedEnabledChanged();
+  void viewshedVisibleChanged();
   void minDistanceChanged();
   void maxDistanceChanged();
   void horizontalAngleChanged();
   void verticalAngleChanged();
   void headingChanged();
+  void pitchChanged();
 
 public:
   explicit AnalysisController(QObject* parent = nullptr);
   ~AnalysisController();
 
-  void init(Esri::ArcGISRuntime::GeoView* geoView);
+  Q_INVOKABLE void removeViewshed();
 
-  bool isAnalysisVisible() const;
-  void setAnalysisVisible(bool analysisVisible);
+  bool isViewshedEnabled() const;
+  void setViewshedEnabled(bool viewshedEnabled);
+
+  bool isViewshedVisible() const;
+  void setViewshedVisible(bool viewshedVisible);
 
   double minDistance() const;
   void setMinDistance(double minDistance);
@@ -68,17 +76,28 @@ public:
   double heading() const;
   void setHeading(double heading);
 
+  double pitch() const;
+  void setPitch(double pitch);
+
   QString toolName() const override;
 
 private:
-  bool m_viewshedActive = false;
-  bool m_analysisVisible = false;
+  void connectMouseSignals();
 
-  Esri::ArcGISRuntime::SceneQuickView* m_sceneView = nullptr;
+  bool m_viewshedEnabled = false;
+
+  Esri::ArcGISRuntime::AnalysisOverlay* m_analysisOverlay = nullptr;
   Esri::ArcGISRuntime::LocationViewshed* m_locationViewshed = nullptr;
+  Esri::ArcGISRuntime::GraphicsOverlay* m_graphicsOverlay = nullptr;
+  Esri::ArcGISRuntime::Graphic* m_locationViewshedGraphic = nullptr;
 
-  Qt::MouseButton m_currentMouseButton = Qt::NoButton;
-  QPoint m_pressedPoint;
+  bool m_viewshedVisibleDefault = true;
+  double m_minDistanceDefault = 50;
+  double m_maxDistanceDefault = 1000;
+  double m_horizontalAngleDefault = 45;
+  double m_veriticalAngleDefault = 90;
+  double m_headingDefault = 0;
+  double m_pitchDefault = 90;
 };
 
 #endif // ANALYSISCONTROLLER_H

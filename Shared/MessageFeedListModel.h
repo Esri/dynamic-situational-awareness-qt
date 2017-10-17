@@ -27,7 +27,6 @@ public:
   {
     MessageFeedNameRole = Qt::DisplayRole,
     MessageFeedTypeRole = Qt::UserRole + 1,
-    MessageFeedFormatRole,
     MessageFeedEnabledRole
   };
 
@@ -39,6 +38,8 @@ public:
   void append(MessageFeed* messageFeed);
 
   MessageFeed* at(int index) const;
+
+  MessageFeed* messageFeedByType(const QString& type) const;
 
   void clear();
 
@@ -56,6 +57,7 @@ private:
   void setupRoles();
 
   QHash<int, QByteArray> m_roles;
+  QStringList m_messageTypes;
   QList<MessageFeed*> m_messageFeeds;
 };
 

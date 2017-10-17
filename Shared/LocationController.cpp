@@ -24,16 +24,24 @@
 #include "SimpleRenderer.h"
 
 #include "ToolManager.h"
+#include "ToolResourceProvider.h"
 
 #include "GPXLocationSimulator.h"
-#include "DsaUtility.h"
 
 using namespace Esri::ArcGISRuntime;
+
+const QString LocationController::SIMULATE_LOCATION_PROPERTYNAME = "SimulateLocation";
+const QString LocationController::GPX_FILE_PROPERTYNAME = "GpxFile";
+const QString LocationController::RESOURCE_DIRECTORY_PROPERTYNAME = "ResourceDirectory";
 
 LocationController::LocationController(QObject* parent) :
   Toolkit::AbstractTool(parent)
 {
-  Toolkit::ToolManager::instance()->addTool(this);
+  Toolkit::ToolManager::instance().addTool(this);
+
+  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, &LocationController::updateGeoView);
+
+  updateGeoView();
 }
 
 LocationController::~LocationController()
@@ -106,6 +114,14 @@ QString LocationController::toolName() const
   return QStringLiteral("location");
 }
 
+void LocationController::setProperties(const QVariantMap& properties)
+{
+  bool simulate = QString::compare(properties[SIMULATE_LOCATION_PROPERTYNAME].toString(), QString("true"), Qt::CaseInsensitive) == 0;
+  setSimulated(simulate);
+  setGpxFilePath(QUrl::fromLocalFile(properties[GPX_FILE_PROPERTYNAME].toString()));
+  setIconDataPath(properties[RESOURCE_DIRECTORY_PROPERTYNAME].toString());
+}
+
 bool LocationController::isEnabled() const
 {
   return m_enabled;
@@ -161,6 +177,7 @@ void LocationController::setSimulated(bool simulated)
 
   m_simulated = simulated;
   emit simulatedChanged();
+  emit propertyChanged(SIMULATE_LOCATION_PROPERTYNAME, m_simulated);
 }
 
 QUrl LocationController::gpxFilePath() const
@@ -184,6 +201,7 @@ void LocationController::setGpxFilePath(const QUrl& gpxFilePath)
 
   m_gpxFilePath = gpxFilePath;
   emit gpxFilePathChanged();
+  emit propertyChanged(GPX_FILE_PROPERTYNAME, m_gpxFilePath);
 }
 
 void LocationController::setRelativeHeadingSceneView(Esri::ArcGISRuntime::SceneQuickView* sceneView)
@@ -201,6 +219,13 @@ void LocationController::setRelativeHeadingSceneView(Esri::ArcGISRuntime::SceneQ
     if (!m_enabled)
       emit relativeHeadingChanged(m_lastKnownHeading + m_lastViewHeading);
   });
+}
+
+void LocationController::updateGeoView()
+{
+  GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
+  if (geoView)
+    geoView->graphicsOverlays()->append(locationOverlay());
 }
 
 GraphicsOverlay* LocationController::locationOverlay()
@@ -268,13 +293,21 @@ void LocationController::initOverlay()
   });
 }
 
+void LocationController::setIconDataPath(const QString& dataPath)
+{
+  if (dataPath == m_iconDataPath)
+    return;
+
+  m_iconDataPath = dataPath;
+  emit propertyChanged(RESOURCE_DIRECTORY_PROPERTYNAME, m_iconDataPath);
+}
+
 QUrl LocationController::modelSymbolPath() const
 {
   // both files are needed: LocationDisplay.dae
-  // and navigation.png and both must be local (not resources)
-  const QString dataPath = DsaUtility::dataPath();
-  QString modelPath = dataPath + "/LocationDisplay.dae";
-  QString imagePath = dataPath + "/navigation.png";
+  // and navigation.png and both must be local (not resources)  
+  QString modelPath = m_iconDataPath + "/LocationDisplay.dae";
+  QString imagePath = m_iconDataPath + "/navigation.png";
 
   if (QFile::exists(modelPath) && QFile::exists(imagePath))
     return QUrl::fromLocalFile(modelPath);

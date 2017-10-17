@@ -36,6 +36,8 @@ public:
   void componentComplete() override;
 
 private:
+  void setCoordinateConversionOptions();
+
   Esri::ArcGISRuntime::SceneQuickView*    m_sceneView = nullptr;
   DsaController*                          m_controller = nullptr;
 };

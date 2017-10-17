@@ -37,6 +37,8 @@ class AddLocalDataController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
   Q_PROPERTY(QStringList fileFilterList READ fileFilterList NOTIFY fileFilterListChanged)
 
 public:
+  static const QString LOCAL_DATAPATHS_PROPERTYNAME;
+
   explicit AddLocalDataController(QObject* parent = nullptr);
   ~AddLocalDataController() = default;
 
@@ -47,6 +49,7 @@ public:
   QAbstractListModel* localDataModel() const;
 
   QString toolName() const override;
+  void setProperties(const QVariantMap& properties) override;
 
   // helpers for creating the layers for a given string
   void createFeatureLayerGeodatabase(const QString& path);

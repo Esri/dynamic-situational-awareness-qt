@@ -19,15 +19,13 @@ MessageFeed::MessageFeed(QObject* parent) :
 {
 }
 
-MessageFeed::MessageFeed(const QString& name, Message::MessageType type, const QString& format, MessagesOverlay* overlay, MessageListener* listener, QObject* parent) :
+MessageFeed::MessageFeed(const QString& name, const QString& type, MessagesOverlay* overlay, QObject* parent) :
   QObject(parent),
   m_feedName(name),
   m_feedMessageType(type),
-  m_feedMessageFormat(format),
-  m_messagesOverlay(overlay),
-  m_messageListener(listener)
+  m_messagesOverlay(overlay)
 {
-  updateOverlayandListener();
+  updateOverlay();
 }
 
 QString MessageFeed::feedName() const
@@ -40,24 +38,14 @@ void MessageFeed::setFeedName(const QString& feedName)
   m_feedName = feedName;
 }
 
-Message::MessageType MessageFeed::feedMessageType() const
+QString MessageFeed::feedMessageType() const
 {
   return m_feedMessageType;
 }
 
-void MessageFeed::setFeedMessageType(Message::MessageType feedMessageType)
+void MessageFeed::setFeedMessageType(const QString& feedMessageType)
 {
   m_feedMessageType = feedMessageType;
-}
-
-QString MessageFeed::feedMessageFormat() const
-{
-  return m_feedMessageFormat;
-}
-
-void MessageFeed::setFeedMessageFormat(const QString& feedMessageFormat)
-{
-  m_feedMessageFormat = feedMessageFormat;
 }
 
 bool MessageFeed::isFeedEnabled() const
@@ -72,7 +60,7 @@ void MessageFeed::setFeedEnabled(bool feedEnabled)
 
   m_feedEnabled = feedEnabled;
 
-  updateOverlayandListener();
+  updateOverlay();
 }
 
 MessagesOverlay* MessageFeed::messagesOverlay() const
@@ -84,29 +72,13 @@ void MessageFeed::setMessagesOverlay(MessagesOverlay* messagesOverlay)
 {
   m_messagesOverlay = messagesOverlay;
 
-  updateOverlayandListener();
+  updateOverlay();
 }
 
-MessageListener* MessageFeed::messageListener() const
-{
-  return m_messageListener;
-}
-
-void MessageFeed::setMessageListener(MessageListener* messageListener)
-{
-  m_messageListener = messageListener;
-
-  updateOverlayandListener();
-}
-
-void MessageFeed::updateOverlayandListener()
+void MessageFeed::updateOverlay()
 {
   // update the visibility of the messages overlay
   // that corresponds to this message feed
   if (m_messagesOverlay)
     m_messagesOverlay->setVisible(m_feedEnabled);
-
-  // enable or disable the message listener appropriately
-  if (m_messageListener)
-    m_messageListener->setEnabled(m_feedEnabled);
 }

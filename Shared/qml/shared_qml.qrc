@@ -5,6 +5,9 @@
         <file>AddLocalData.qml</file>
         <file>DsaToolBase.qml</file>
         <file>MessageFeeds.qml</file>
+        <file>FollowHud.qml</file>
+        <file>TableOfContents.qml</file>
+        <file>NavigationTool.qml</file>
         <file>Analysis.qml</file>
     </qresource>
 </RCC>

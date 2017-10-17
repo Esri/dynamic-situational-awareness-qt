@@ -97,6 +97,7 @@ DsaToolBase {
                 toolController.addItemAsElevationSource(selectedItems);
             else
                 toolController.addItemAsLayer(selectedItems);
+            selectedItems = []; // clear so we don't add again next time
             toolController.refreshLocalDataModel(filter.currentText);
             closed();
         }

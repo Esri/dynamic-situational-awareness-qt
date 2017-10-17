@@ -14,14 +14,17 @@
 #define NAVIGATIONCONTROLLER_H
 
 #include <QUrl>
+#include <QScreen>
+#include <QUuid>
 
 #include "AbstractTool.h"
 #include "Point.h"
+#include "Camera.h"
 
 namespace Esri {
 namespace ArcGISRuntime
 {
-  class SceneQuickView;
+  class SceneView;
   class GeoView;
 }}
 
@@ -41,6 +44,7 @@ public:
   Q_INVOKABLE void zoomIn();
   Q_INVOKABLE void pan();
   Q_INVOKABLE void setRotation();
+  Q_INVOKABLE void set2D();
 
   QString toolName() const override;
 
@@ -51,6 +55,7 @@ public:
 signals:
   void verticalChanged();
   void zoomFactorChanged();
+  void screenToLocationCompleted(QUuid taskId, Esri::ArcGISRuntime::Point location);
 
 private slots:
   void updateGeoView();
@@ -60,19 +65,24 @@ private:
   {
     Zoom,
     Rotate,
-    Pan
+    Pan,
+    Tilt
   };
 
+  void center();
   void zoom();
   void setRotationInternal();
+  void set2DInternal();
+  double currentCameraDistance(const Esri::ArcGISRuntime::Camera &currentCamera);
 
   Esri::ArcGISRuntime::GeoView* m_geoView   = nullptr;
-  Esri::ArcGISRuntime::SceneQuickView* m_sceneView = nullptr;
+  Esri::ArcGISRuntime::SceneView* m_sceneView = nullptr;
   bool m_is3d                               = false;
   bool m_isCameraVertical                   = false;
   double m_zoomFactor                       = 1.0;
   Esri::ArcGISRuntime::Point m_currentCenter;
   Mode m_currentMode;
+  bool m_enabled = false;
 };
 
 

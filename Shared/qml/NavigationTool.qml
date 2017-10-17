@@ -19,10 +19,12 @@ import QtQuick.Controls.Material 2.1
 import Esri.DSA 1.0
 
 Item {
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+
     property int fontSize: 24 * scaleFactor
+    property int buttonSize: 32 * scaleFactor
     property color buttonColor
     property real buttonOpacity: 0.75
-    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     NavigationController {
         id: navController
@@ -30,10 +32,10 @@ Item {
     }
 
     ButtonGroup { id: zoomButtonGroup }
-//    ButtonGroup { id: panButtonGroup3D }
+    ButtonGroup { id: panButtonGroup3D }
 
     height: controlsColumn.height
-    width: 32 * scaleFactor
+    width: buttonSize
     opacity: buttonOpacity
 
     Column {
@@ -41,8 +43,8 @@ Item {
 
         Button {
             id: zoomInButton
-            width: 32 * scaleFactor
-            height: 32 * scaleFactor
+            width: buttonSize
+            height: buttonSize
             checkable: true
             checked: false
             ButtonGroup.group: zoomButtonGroup
@@ -67,15 +69,15 @@ Item {
         }
 
         Rectangle {
-            width: 32 * scaleFactor
+            width: buttonSize
             height: 1 * scaleFactor
             color: "white"
         }
 
         Button {
             id: zoomOutButton
-            width: 32 * scaleFactor
-            height: 32 * scaleFactor
+            width: buttonSize
+            height: buttonSize
             checkable: true
             checked: false
             ButtonGroup.group: zoomButtonGroup
@@ -98,6 +100,40 @@ Item {
                 navController.zoomOut();
             }
         }
+
+        Rectangle {
+            width: buttonSize
+            height: 1 * scaleFactor
+            color: "white"
+        }
+
+        Button {
+            id: set2DButton
+            width: buttonSize
+            height: buttonSize
+            checkable: true
+            checked: false
+            ButtonGroup.group: panButtonGroup3D
+
+            background: Rectangle {
+                anchors.fill: set2DButton
+                radius: 5 * scaleFactor
+                color: buttonColor
+            }
+
+            Image {
+                anchors.centerIn: parent
+                sourceSize.height: 0.85 * set2DButton.height
+                width: sourceSize.height
+                source: "qrc:/Resources/icons/xhdpi/2D.png"
+            }
+
+            onClicked: {
+                navController.set2D();
+            }
+        }
+
+
     }
         // The following buttons have been commented out until we have public API to
         // to use an existing distance from the camera.

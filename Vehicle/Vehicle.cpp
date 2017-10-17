@@ -48,6 +48,23 @@ void Vehicle::componentComplete()
   connect(m_sceneView, &SceneQuickView::mouseClicked,
           ToolResourceProvider::instance(), &ToolResourceProvider::onMouseClicked);
 
+  connect(m_sceneView, &SceneQuickView::mousePressed,
+          ToolResourceProvider::instance(), &ToolResourceProvider::onMousePressed);
+
+  connect(m_sceneView, &SceneQuickView::mouseMoved,
+          ToolResourceProvider::instance(), &ToolResourceProvider::onMouseMoved);
+
+  connect(m_sceneView, &SceneQuickView::mouseReleased,
+          ToolResourceProvider::instance(), &ToolResourceProvider::onMouseReleased);
+
+  connect(m_sceneView, &SceneQuickView::identifyGraphicsOverlayCompleted,
+          ToolResourceProvider::instance(), &ToolResourceProvider::onIdentifyGraphicsOverlayCompleted);
+
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::setMouseCursorRequested, this, [this](const QCursor& mouseCursor)
+  {
+    m_sceneView->setCursor(mouseCursor);
+  });
+
   // Set scene to scene view
   m_sceneView->setArcGISScene(m_controller->scene());
 

@@ -24,6 +24,8 @@ dirPath = $$find(iniLine, "InstallDir")
 cleanDirPath = $$replace(dirPath, "InstallDir=", "")
 priLocation = $$replace(cleanDirPath, '"', "")
 
+CONFIG(deployment): DEFINES += DEPLOYMENT_BUILD
+
 !include($$priLocation/sdk/ideintegration/arcgis_runtime_qml_cpp.pri) {
   message("Error. Cannot locate ArcGIS Runtime PRI file")
 }

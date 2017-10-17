@@ -28,6 +28,9 @@
 #include "LayerListModel.h"
 #include "Scene.h"
 #include "ShapefileFeatureTable.h"
+#include "GeoPackage.h"
+#include "GeoPackageRaster.h"
+#include "GeoPackageFeatureTable.h"
 
 #include "ToolResourceProvider.h"
 #include "ToolManager.h"
@@ -260,8 +263,26 @@ void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path)
 // Helper that creates a Layer for each table and raster in the GeoPackage
 void AddLocalDataController::createLayerGeoPackage(const QString& path)
 {
-  qDebug() << "TODO. Geopackage not yet supported";
-  Q_UNUSED(path);
+  GeoPackage* geoPackage = new GeoPackage(path, this);
+
+  connect(geoPackage, &GeoPackage::doneLoading, this, [this, geoPackage](Error e)
+  {
+    if (!e.isEmpty())
+      return;
+
+    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+    for (auto& table : geoPackage->geoPackageFeatureTables())
+    {
+      operationalLayers->append(new FeatureLayer(table, this));
+    }
+
+    for (auto& raster : geoPackage->geoPackageRasters())
+    {
+      operationalLayers->append(new RasterLayer(raster, this));
+    }
+  });
+
+  geoPackage->load();
 }
 
 // Helper that creates a FeatureLayer from the Shapefile FeatureTable

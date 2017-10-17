@@ -51,22 +51,23 @@ Point DsaUtility::montereyCA()
 }
 
 
-qreal DsaUtility::screenScale(QScreen *screen)
+qreal DsaUtility::screenScale()
 {
-  screen = QGuiApplication::primaryScreen();
-    if (screen)
-    {
-      return screen->devicePixelRatio();
-    }
-    return 1.0; // default to 1.0
+  QScreen* screen = QGuiApplication::primaryScreen();
+
+  if (screen)
+  {
+    return screen->devicePixelRatio();
+  }
+  return 1.0; // default to 1.0
 }
 
-qreal DsaUtility::getDipsToPixels(QScreen* screen)
+qreal DsaUtility::dipsToPixels()
 {
 #ifdef Q_OS_MAC
-  return screenScale(screen);
+  return screenScale();
 #else
-  screen = QGuiApplication::primaryScreen();
+  QScreen* screen = QGuiApplication::primaryScreen();
   if (screen)
   {
     return (screen->logicalDotsPerInch() * screen->devicePixelRatio()) / kReferenceDotsPerInch;

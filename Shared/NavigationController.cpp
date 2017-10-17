@@ -61,30 +61,33 @@ void NavigationController::updateGeoView()
 
       connect(this, &NavigationController::screenToLocationCompleted, this, [this](QUuid, Point location)
       {
-        if (m_enabled)
+        // check if called from the navigation controls
+        if (!m_enabled)
+          return;
+
+        // cache the center
+        m_currentCenter = location;
+
+        if (m_currentMode == Mode::Zoom)
         {
-          m_currentCenter = location;
-
-          if (m_currentMode == Mode::Zoom)
-          {
-            zoom();
-          }
-          else if (m_currentMode == Mode::Rotate)
-          {
-            setRotationInternal();
-          }
-          else if(m_currentMode == Mode::Tilt)
-          {
-            set2DInternal();
-          }
-
-          m_enabled = false;
+          zoom();
         }
+        else if (m_currentMode == Mode::Rotate)
+        {
+          setRotationInternal();
+        }
+        else if(m_currentMode == Mode::Tilt)
+        {
+          set2DInternal();
+        }
+
+        // reset
+        m_enabled = false;
       });
     }
     else
     {
-      // set a mapView here when we have it.
+      // set the mapView here
       m_is3d = false;
     }
   }
@@ -93,19 +96,19 @@ void NavigationController::updateGeoView()
 void NavigationController::zoomIn()
 {
   m_currentMode = Mode::Zoom;
-  getCenter();
+  center();
 }
 
 void NavigationController::zoomOut()
 {
   m_currentMode = Mode::Zoom;
-  getCenter();
+  center();
 }
 
 void NavigationController::set2D()
 {
   m_currentMode = Mode::Tilt;
-  getCenter();
+  center();
 }
 
 
@@ -121,7 +124,7 @@ void NavigationController::pan()
 void NavigationController::setRotation()
 {
   m_currentMode = Mode::Rotate;
-  getCenter();
+  center();
 }
 
 
@@ -139,7 +142,7 @@ void NavigationController::zoom()
     // get the controller
     OrbitGeoElementCameraController* controller = static_cast<OrbitGeoElementCameraController*>(m_sceneView->cameraController());
     // get the distance
-    double distance = controller->cameraDistance();
+    const double distance = controller->cameraDistance();
     // set the camera distance based on the zoom factor
     controller->setCameraDistance(distance / m_zoomFactor);
   }
@@ -178,7 +181,7 @@ void NavigationController::setRotationInternal()
 {
   // get the current camera
   Camera currentCamera = m_sceneView->currentViewpointCamera();
-  double distance = getCurrentCameraDistance(currentCamera);
+  double distance = currentCameraDistance(currentCamera);
 
   OrbitLocationCameraController* orbitController = new OrbitLocationCameraController(m_currentCenter, distance, this);
   orbitController->setCameraPitchOffset(currentCamera.pitch());
@@ -191,35 +194,33 @@ void NavigationController::set2DInternal()
   if (m_is3d)
   {
     // get the current camera
-    Camera currentCamera = m_sceneView->currentViewpointCamera();
+    const Camera currentCamera = m_sceneView->currentViewpointCamera();
 
     if (currentCamera.isEmpty() || currentCamera.pitch() == 0.0)
       return;
 
-    // set the delta pitch.
-    double deltaPitch = -currentCamera.pitch();
     // rotate the camera using the delta pitch value
-    Camera newCamera = currentCamera.rotateAround(m_currentCenter, 0, deltaPitch, 0);
+    const Camera newCamera = currentCamera.rotateAround(m_currentCenter, 0., -currentCamera.pitch(), 0.);
     // set the sceneview to the new camera
     m_sceneView->setViewpointCamera(newCamera, 2.0);
   }
 }
 
-void NavigationController::getCenter()
+void NavigationController::center()
 {
   if (!m_sceneView)
     return;
 
   m_enabled = true;
-  double factor = DsaUtility::getDipsToPixels();
+  const double factor = DsaUtility::dipsToPixels();
   m_sceneView->screenToLocation(static_cast<int>(m_sceneView->sceneWidth() / factor) * 0.5, static_cast<int>(m_sceneView->sceneHeight() / factor) * 0.5);
 }
 
-double NavigationController::getCurrentCameraDistance(Camera currentCamera)
+double NavigationController::currentCameraDistance(const Camera &currentCamera)
 {
   if (currentCamera.isEmpty())
     return 0.0;
 
-  GeodeticDistanceResult result = GeometryEngine::distanceGeodetic(currentCamera.location(), m_currentCenter, LinearUnit::meters(), m_geoView->spatialReference().unit(), GeodeticCurveType::Geodesic);
+  const GeodeticDistanceResult result = GeometryEngine::distanceGeodetic(currentCamera.location(), m_currentCenter, LinearUnit::meters(), m_geoView->spatialReference().unit(), GeodeticCurveType::Geodesic);
   return result.distance();
 }

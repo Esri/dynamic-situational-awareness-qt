@@ -27,8 +27,8 @@ public:
   static Esri::ArcGISRuntime::Point montereyCA();
 
   // dpi
-  static qreal screenScale(QScreen* screen = nullptr);
-  static qreal getDipsToPixels(QScreen* screen = nullptr);
+  static qreal screenScale();
+  static qreal dipsToPixels();
 };
 
 #endif // UTILITY_H

@@ -69,11 +69,11 @@ private:
     Tilt
   };
 
-  void getCenter();
+  void center();
   void zoom();
   void setRotationInternal();
   void set2DInternal();
-  double getCurrentCameraDistance(Esri::ArcGISRuntime::Camera currentCamera);
+  double currentCameraDistance(const Esri::ArcGISRuntime::Camera &currentCamera);
 
   Esri::ArcGISRuntime::GeoView* m_geoView   = nullptr;
   Esri::ArcGISRuntime::SceneView* m_sceneView = nullptr;

@@ -19,10 +19,12 @@ import QtQuick.Controls.Material 2.1
 import Esri.DSA 1.0
 
 Item {
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+
     property int fontSize: 24 * scaleFactor
+    property int buttonSize: 32 * scaleFactor
     property color buttonColor
     property real buttonOpacity: 0.75
-    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     NavigationController {
         id: navController
@@ -33,7 +35,7 @@ Item {
     ButtonGroup { id: panButtonGroup3D }
 
     height: controlsColumn.height
-    width: 32 * scaleFactor
+    width: buttonSize
     opacity: buttonOpacity
 
     Column {
@@ -41,8 +43,8 @@ Item {
 
         Button {
             id: zoomInButton
-            width: 32 * scaleFactor
-            height: 32 * scaleFactor
+            width: buttonSize
+            height: buttonSize
             checkable: true
             checked: false
             ButtonGroup.group: zoomButtonGroup
@@ -67,15 +69,15 @@ Item {
         }
 
         Rectangle {
-            width: 32 * scaleFactor
+            width: buttonSize
             height: 1 * scaleFactor
             color: "white"
         }
 
         Button {
             id: zoomOutButton
-            width: 32 * scaleFactor
-            height: 32 * scaleFactor
+            width: buttonSize
+            height: buttonSize
             checkable: true
             checked: false
             ButtonGroup.group: zoomButtonGroup
@@ -100,15 +102,15 @@ Item {
         }
 
         Rectangle {
-            width: 32 * scaleFactor
+            width: buttonSize
             height: 1 * scaleFactor
             color: "white"
         }
 
         Button {
             id: set2DButton
-            width: 32 * scaleFactor
-            height: 32 * scaleFactor
+            width: buttonSize
+            height: buttonSize
             checkable: true
             checked: false
             ButtonGroup.group: panButtonGroup3D

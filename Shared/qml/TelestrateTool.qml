@@ -69,17 +69,17 @@ DsaToolBase {
             Rectangle {
                 id: colorRect
                 anchors.fill: parent
-                color: "white"
+                color: Material.background
 
                 Text {
                     id: colorTitle
                     anchors {
                         top: parent.top
                         left: parent.left
-                        margins: 2 * scaleFactor
+                        margins: 5 * scaleFactor
                     }
                     text: qsTr("Draw Color")
-                    color: Material.primary
+                    color: Material.foreground
                 }
 
                 ListView {
@@ -140,7 +140,7 @@ DsaToolBase {
                 RoundButton {
                     id: addButton
                     anchors {
-                        margins: 2 * scaleFactor
+                        margins: 5 * scaleFactor
                         right: parent.right
                         bottom: parent.bottom
                     }
@@ -193,12 +193,12 @@ DsaToolBase {
             Rectangle {
                 id: toggleRect
                 anchors.fill: parent
-                color: "white"
+                color: Material.background
 
                 Text {
                     id: toolOptionsTitle
                     text: "Tool Options"
-                    color: Material.primary
+                    color: Material.foreground
                     anchors {
                         top: parent.top
                         left: parent.left
@@ -228,7 +228,7 @@ DsaToolBase {
                             text: layerAppendedSwitch.text
                             font: layerAppendedSwitch.font
                             opacity: enabled ? 1.0 : 0.3
-                            color: Material.primary
+                            color: Material.foreground
                             elide: Text.ElideRight
                             horizontalAlignment: Text.AlignLeft
                             verticalAlignment: Text.AlignVCenter
@@ -253,7 +253,7 @@ DsaToolBase {
                             text: drawModeSwitch.text
                             font: drawModeSwitch.font
                             opacity: enabled ? 1.0 : 0.3
-                            color: Material.primary
+                            color: Material.foreground
                             elide: Text.ElideRight
                             horizontalAlignment: Text.AlignLeft
                             verticalAlignment: Text.AlignVCenter
@@ -269,7 +269,7 @@ DsaToolBase {
                     Label {
                         text: "Surface Placement"
                         leftPadding: 5 * scaleFactor
-                        color: Material.primary
+                        color: Material.foreground
                         visible: telestrateController.is3d
                     }
 
@@ -309,7 +309,7 @@ DsaToolBase {
                             visible: surfacePlacementComboBox.currentIndex === 1
                             placeholderText: "Alt. (m)"
                             width: parent.width / 3
-                            color: "black"
+                            color: Material.foreground
                             font.pixelSize: 12 * scaleFactor
                             inputMethodHints: Qt.ImhFormattedNumbersOnly
 
@@ -341,12 +341,12 @@ DsaToolBase {
             Rectangle {
                 id: graphicDeleteRect
                 anchors.fill: parent
-                color: "white"
+                color: Material.background
 
                 Text {
                     id: graphicsRemoveTitle
                     text: "Remove Graphics"
-                    color: Material.primary
+                    color: Material.foreground
                     anchors {
                         top: parent.top
                         left: parent.left

@@ -52,7 +52,7 @@ DsaToolBase {
                 text: control.text
                 font: control.font
                 opacity: enabled ? 1.0 : 0.3
-                color: Material.primary
+                color: Material.foreground
                 elide: Text.ElideRight
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignVCenter

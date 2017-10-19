@@ -34,22 +34,23 @@ DsaToolBase {
             bottom: parent.bottom
             margins: 8 * scaleFactor
         }
-        spacing: 10 * scaleFactor
+        spacing: 20 * scaleFactor
 
-        Rectangle {
+        Row {
             width: parent.width
             height: 25 * scaleFactor
+            spacing: 5 * scaleFactor
 
             Text {
-                anchors.left: parent.left
-                width: 105 * scaleFactor
+                anchors.verticalCenter: parent.verticalCenter
+                width: parent.width * 0.5
                 text: qsTr("Viewshed Enabled")
-                color: Material.primary
+                color: Material.foreground
                 font.pixelSize: 14 * scaleFactor
             }
 
             Switch {
-                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
                 width: 150 * scaleFactor
                 checked: toolController.viewshedEnabled
 
@@ -59,20 +60,21 @@ DsaToolBase {
             }
         }
 
-        Rectangle {
+        Row {
             width: parent.width
             height: 25 * scaleFactor
+            spacing: 5 * scaleFactor
 
             Text {
-                anchors.left: parent.left
-                width: parent.width * 0.3
+                anchors.verticalCenter: parent.verticalCenter
+                width: parent.width * 0.5
                 text: qsTr("Viewshed Visible")
-                color: Material.primary
+                color: Material.foreground
                 font.pixelSize: 14 * scaleFactor
             }
 
             Switch {
-                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
                 width: 150 * scaleFactor
                 checked: toolController.viewshedVisible
 
@@ -82,236 +84,247 @@ DsaToolBase {
             }
         }
 
-        Rectangle {
+        Column {
             width: parent.width
             height: 25 * scaleFactor
+            visible: toolController.viewshedEnabled
 
             Text {
                 id: distanceRangeLabel
-                anchors.left: parent.left
                 width: 80 * scaleFactor
                 text: qsTr("Distance (m)")
-                color: Material.primary
+                color: Material.foreground
                 font.pixelSize: 14 * scaleFactor
             }
 
-            RangeSlider {
-                anchors {
-                    left: distanceRangeLabel.right
-                    right: distanceRangeText.left
-                    margins: 3 * scaleFactor
-                }
-                enabled: toolController.viewshedEnabled
-                orientation: Qt.Horizontal
-                from: 1
-                to: 2000
-                first.value: toolController.minDistance
-                second.value: toolController.maxDistance
-                stepSize: 10
-                snapMode: Slider.SnapAlways
+            Row {
+                width: parent.width
+                height: 25 * scaleFactor
+                spacing: 5 * scaleFactor
 
-                first.onValueChanged: {
-                    toolController.minDistance = first.value;
+                RangeSlider {
+                    anchors.verticalCenter: parent.verticalCenter
+                    enabled: toolController.viewshedEnabled
+                    orientation: Qt.Horizontal
+                    from: 1
+                    to: 2000
+                    first.value: toolController.minDistance
+                    second.value: toolController.maxDistance
+                    stepSize: 10
+                    snapMode: Slider.SnapAlways
+                    width: parent.width * 0.66
+
+                    first.onValueChanged: {
+                        toolController.minDistance = first.value;
+                    }
+
+                    second.onValueChanged: {
+                        toolController.maxDistance = second.value;
+                    }
                 }
 
-                second.onValueChanged: {
-                    toolController.maxDistance = second.value;
+                Text {
+                    id: distanceRangeText
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 70 * scaleFactor
+                    horizontalAlignment: Text.AlignRight
+                    text: Math.round(toolController.minDistance) + " - " + Math.round(toolController.maxDistance)
+                    color: Material.foreground
+                    font.pixelSize: 14 * scaleFactor
                 }
-            }
-
-            Text {
-                id: distanceRangeText
-                width: 70 * scaleFactor
-                anchors.right: parent.right
-                horizontalAlignment: Text.AlignRight
-                text: Math.round(toolController.minDistance) + " - " + Math.round(toolController.maxDistance)
-                color: Material.primary
-                font.pixelSize: 14 * scaleFactor
             }
         }
 
-        Rectangle {
+        Column {
             width: parent.width
             height: 25 * scaleFactor
+            visible: toolController.viewshedEnabled
 
             Text {
                 id: horizintalAngleLabel
-                anchors.left: parent.left
                 width: 105 * scaleFactor
                 text: qsTr("Horizontal Angle")
-                color: Material.primary
+                color: Material.foreground
                 font.pixelSize: 14 * scaleFactor
             }
 
-            Slider {
-                anchors {
-                    left: horizintalAngleLabel.right
-                    right: horizontalAngleText.left
-                    margins: 3 * scaleFactor
-                }
-                enabled: toolController.viewshedEnabled
-                orientation: Qt.Horizontal
-                from: 0
-                to: 180
-                value: toolController.horizontalAngle
-                stepSize: 1
-                snapMode: Slider.SnapAlways
+            Row {
+                width: parent.width
+                height: 25 * scaleFactor
+                spacing: 5 * scaleFactor
 
-                onValueChanged: {
-                    toolController.horizontalAngle = value;
-                }
-            }
+                Slider {
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: parent.width * 0.66
+                    enabled: toolController.viewshedEnabled
+                    orientation: Qt.Horizontal
+                    from: 0
+                    to: 180
+                    value: toolController.horizontalAngle
+                    stepSize: 1
+                    snapMode: Slider.SnapAlways
 
-            Text {
-                id: horizontalAngleText
-                width: 25 * scaleFactor
-                anchors.right: parent.right
-                horizontalAlignment: Text.AlignRight
-                text: Math.round(toolController.horizontalAngle) + "°"
-                color: Material.primary
-                font.pixelSize: 14 * scaleFactor
+                    onValueChanged: {
+                        toolController.horizontalAngle = value;
+                    }
+                }
+
+                Text {
+                    id: horizontalAngleText
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 25 * scaleFactor
+                    horizontalAlignment: Text.AlignRight
+                    text: Math.round(toolController.horizontalAngle) + "°"
+                    color: Material.foreground
+                    font.pixelSize: 14 * scaleFactor
+                }
             }
         }
 
-        Rectangle {
+        Column {
             width: parent.width
             height: 25 * scaleFactor
+            visible: toolController.viewshedEnabled
 
             Text {
                 id: verticalAngleLabel
-                anchors.left: parent.left
                 width: 105 * scaleFactor
                 text: qsTr("Vertical Angle")
-                color: Material.primary
+                color: Material.foreground
                 font.pixelSize: 14 * scaleFactor
             }
 
-            Slider {
-                anchors {
-                    left: verticalAngleLabel.right
-                    right: veriticalAngleText.left
-                    margins: 3 * scaleFactor
-                }
-                enabled: toolController.viewshedEnabled
-                orientation: Qt.Horizontal
-                from: 0
-                to: 180
-                value: toolController.verticalAngle
-                stepSize: 1
-                snapMode: Slider.SnapAlways
+            Row {
+                width: parent.width
+                height: 25 * scaleFactor
+                spacing: 5 * scaleFactor
 
-                onValueChanged: {
-                    toolController.verticalAngle = value;
-                }
-            }
+                Slider {
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: parent.width * 0.66
+                    enabled: toolController.viewshedEnabled
+                    orientation: Qt.Horizontal
+                    from: 0
+                    to: 180
+                    value: toolController.verticalAngle
+                    stepSize: 1
+                    snapMode: Slider.SnapAlways
 
-            Text {
-                id: veriticalAngleText
-                width: 25 * scaleFactor
-                anchors.right: parent.right
-                horizontalAlignment: Text.AlignRight
-                text: Math.round(toolController.verticalAngle) + "°"
-                color: Material.primary
-                font.pixelSize: 14 * scaleFactor
+                    onValueChanged: {
+                        toolController.verticalAngle = value;
+                    }
+                }
+
+                Text {
+                    id: veriticalAngleText
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 25 * scaleFactor
+                    horizontalAlignment: Text.AlignRight
+                    text: Math.round(toolController.verticalAngle) + "°"
+                    color: Material.foreground
+                    font.pixelSize: 14 * scaleFactor
+                }
             }
         }
 
-        Rectangle {
+        Column {
             width: parent.width
             height: 25 * scaleFactor
+            visible: toolController.viewshedEnabled
 
             Text {
                 id: headingLabel
-                anchors.left: parent.left
                 width: 105 * scaleFactor
                 text: qsTr("Heading")
-                color: Material.primary
+                color: Material.foreground
                 font.pixelSize: 14 * scaleFactor
             }
 
-            Slider {
-                anchors {
-                    left: headingLabel.right
-                    right: headingText.left
-                    margins: 3 * scaleFactor
-                }
-                enabled: toolController.viewshedEnabled
-                orientation: Qt.Horizontal
-                from: 0
-                to: 359
-                value: toolController.heading
-                stepSize: 2
-                snapMode: Slider.SnapAlways
+            Row {
+                width: parent.width
+                height: 25 * scaleFactor
+                spacing: 5 * scaleFactor
 
-                onValueChanged: {
-                    live = true;
-                    toolController.heading = value;
-                }
-            }
+                Slider {
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: parent.width * 0.66
+                    enabled: toolController.viewshedEnabled
+                    orientation: Qt.Horizontal
+                    from: 0
+                    to: 359
+                    value: toolController.heading
+                    stepSize: 2
+                    snapMode: Slider.SnapAlways
 
-            Text {
-                id: headingText
-                width: 25 * scaleFactor
-                anchors.right: parent.right
-                horizontalAlignment: Text.AlignRight
-                text: Math.round(toolController.heading) + "°"
-                color: Material.primary
-                font.pixelSize: 14 * scaleFactor
+                    onValueChanged: {
+                        live = true;
+                        toolController.heading = value;
+                    }
+                }
+
+                Text {
+                    id: headingText
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 25 * scaleFactor
+                    horizontalAlignment: Text.AlignRight
+                    text: Math.round(toolController.heading) + "°"
+                    color: Material.foreground
+                    font.pixelSize: 14 * scaleFactor
+                }
             }
         }
 
-        Rectangle {
+        Column {
             width: parent.width
             height: 25 * scaleFactor
+            visible: toolController.viewshedEnabled
 
             Text {
                 id: pitchLabel
-                anchors.left: parent.left
                 width: 105 * scaleFactor
                 text: qsTr("Pitch")
-                color: Material.primary
+                color: Material.foreground
                 font.pixelSize: 14 * scaleFactor
             }
 
-            Slider {
-                anchors {
-                    left: pitchLabel.right
-                    right: pitchText.left
-                    margins: 3 * scaleFactor
-                }
-                enabled: toolController.viewshedEnabled
-                orientation: Qt.Horizontal
-                from: 0
-                to: 179
-                value: toolController.pitch
-                stepSize: 2
-                snapMode: Slider.SnapAlways
+            Row {
+                width: parent.width
+                height: 25 * scaleFactor
+                spacing: 5 * scaleFactor
 
-                onValueChanged: {
-                    toolController.pitch = value;
-                }
-            }
+                Slider {
+                    anchors.verticalCenter: parent.verticalCenter
+                    width:  parent.width * 0.66
+                    enabled: toolController.viewshedEnabled
+                    orientation: Qt.Horizontal
+                    from: 0
+                    to: 179
+                    value: toolController.pitch
+                    stepSize: 2
+                    snapMode: Slider.SnapAlways
 
-            Text {
-                id: pitchText
-                width: 25 * scaleFactor
-                anchors.right: parent.right
-                horizontalAlignment: Text.AlignRight
-                text: Math.round(toolController.pitch) + "°"
-                color: Material.primary
-                font.pixelSize: 14 * scaleFactor
+                    onValueChanged: {
+                        toolController.pitch = value;
+                    }
+                }
+
+                Text {
+                    id: pitchText
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 25 * scaleFactor
+                    horizontalAlignment: Text.AlignRight
+                    text: Math.round(toolController.pitch) + "°"
+                    color: Material.foreground
+                    font.pixelSize: 14 * scaleFactor
+                }
             }
         }
 
-        Rectangle {
-            width: parent.width
-            height: 25 * scaleFactor
-
-            Button {
-                text: qsTr("Remove Viewshed")
-                font.pixelSize: 14 * scaleFactor
-                onClicked: toolController.removeViewshed()
-            }
+        Button {
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: qsTr("Remove Viewshed")
+            font.pixelSize: 14 * scaleFactor
+            onClicked: toolController.removeViewshed()
         }
     }
 }

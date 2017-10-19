@@ -64,8 +64,8 @@ AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
 
   // create file filter list
   m_fileFilterList = QStringList{allData(), rasterData(), geodatabaseData(),
-      sceneLayerData(), tilePackageData(), shapefileData() /*, kmlData(),
-      geopackageData(), vectorTilePackageData()*/}; // uncomment these as new formats are supported
+      sceneLayerData(), tilePackageData(), shapefileData(), geopackageData()
+        /*, kmlData(), vectorTilePackageData()*/}; // uncomment these as new formats are supported
   emit fileFilterListChanged();
   emit localDataModelChanged();
 }

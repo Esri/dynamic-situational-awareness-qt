@@ -281,9 +281,7 @@ Handheld {
                 id: navTool
 
                 visible: compass.visible && navCheckBox.checked
-                buttonColor: "black"
             }
-
 
             Button {
                 id: locationCheckBox
@@ -291,12 +289,11 @@ Handheld {
                 checked: false
                 width: 32 * scaleFactor
                 height: 32 * scaleFactor
-                opacity: 0.75
-
+                opacity: 0.9
 
                 background: Rectangle {
                     anchors.fill: locationCheckBox
-                    color: "black"
+                    color: Material.primary
                     radius: 5 * scaleFactor
                 }
 

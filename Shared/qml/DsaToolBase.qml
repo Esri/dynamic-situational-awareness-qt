@@ -23,6 +23,7 @@ Rectangle {
     property alias titleBar: titleBar
     signal closed()
     property string iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_closeclear_dark.png"
+    color: Material.primary
 
     Column {
         id: titleBar
@@ -34,7 +35,7 @@ Rectangle {
 
         Rectangle {
             color: Material.primary
-            height: 40 * scaleFactor
+            height: 30 * scaleFactor
             width: parent.width
 
             Text {
@@ -43,6 +44,7 @@ Rectangle {
                 text: qsTr(title)
                 color: Material.foreground
                 font.pixelSize: 20 * scaleFactor
+                font.underline: true
             }
 
             Button {
@@ -53,7 +55,6 @@ Rectangle {
                     bottom: parent.bottom
                     margins: 2 * scaleFactor
                 }
-
 
                 width: height
 

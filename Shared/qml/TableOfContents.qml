@@ -115,7 +115,7 @@ DsaToolBase {
                 width: dragArea.width
                 height: 64 * scaleFactor
 
-                color: dragArea.held ? Material.accent : Material.foreground
+                color: dragArea.held ? Material.accent : Material.background
                 opacity: dragArea.held ? 0.5 : 1
                 Behavior on color { ColorAnimation { duration: 100 } }
 
@@ -145,31 +145,39 @@ DsaToolBase {
                     onClicked: layerVisible = checked;
                 }
 
-                Image {
+                Rectangle {
                     id: layerTypeImage
-
-                    property var lyrGeomType: toolController.layerGeometryType(index)
-                    fillMode: Image.PreserveAspectFit
                     anchors{
                         left: visibleCheckBox.right
                         verticalCenter: parent.verticalCenter
                     }
-                    sourceSize.height: 32 * scaleFactor
-                    height: sourceSize.height
-                    source: imageSourceForGeomType(lyrGeomType)
+                    radius: 50
+                    width: 24 * scaleFactor
+                    height: width
+                    color: Material.foreground
 
-                    function imageSourceForGeomType(geomType){
-                        switch (geomType) {
-                        case TableOfContentsController.Unknown:
-                            return "";
-                        case TableOfContentsController.Points:
-                            return "qrc:/Resources/icons/xhdpi/ic_menu_pointlayer_light.png";
-                        case TableOfContentsController.Polylines:
-                            return "qrc:/Resources/icons/xhdpi/ic_menu_linelayer_light.png";
-                        case TableOfContentsController.Polygons:
-                            return "qrc:/Resources/icons/xhdpi/ic_menu_polygonlayer_light.png";
-                        case TableOfContentsController.Raster:
-                            return "qrc:/Resources/icons/xhdpi/raster_layer.png";
+                    Image {
+                        anchors {
+                            fill: parent
+                            margins: 2 * scaleFactor
+                        }
+
+                        property var lyrGeomType: toolController.layerGeometryType(index)
+                        source: imageSourceForGeomType(lyrGeomType)
+
+                        function imageSourceForGeomType(geomType){
+                            switch (geomType) {
+                            case TableOfContentsController.Unknown:
+                                return "";
+                            case TableOfContentsController.Points:
+                                return "qrc:/Resources/icons/xhdpi/ic_menu_pointlayer_light.png";
+                            case TableOfContentsController.Polylines:
+                                return "qrc:/Resources/icons/xhdpi/ic_menu_linelayer_light.png";
+                            case TableOfContentsController.Polygons:
+                                return "qrc:/Resources/icons/xhdpi/ic_menu_polygonlayer_light.png";
+                            case TableOfContentsController.Raster:
+                                return "qrc:/Resources/icons/xhdpi/raster_layer.png";
+                            }
                         }
                     }
                 }
@@ -179,6 +187,7 @@ DsaToolBase {
                         left: layerTypeImage.right
                         right: zoomToImage.left
                         verticalCenter: parent.verticalCenter
+                        leftMargin: 5 * scaleFactor
                     }
 
                     elide: Text.ElideRight
@@ -187,7 +196,7 @@ DsaToolBase {
                               name :
                               toolController.alternateName(index)
                     verticalAlignment: Text.AlignVCenter
-                    color: Material.primary
+                    color: Material.foreground
                     font.pixelSize: 14 * scaleFactor
                     font.bold: true
                 }
@@ -250,7 +259,7 @@ DsaToolBase {
 
         model: visualModel
         width: parent.width
-
+        spacing: 5 * scaleFactor
     }
 }
 

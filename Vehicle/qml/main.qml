@@ -29,7 +29,7 @@ Vehicle {
     LocationController {
         id: locationController
         enabled: locationCheckBox.checked
-    }
+    }        
 
     GenericToolbar {
         id: toolbar
@@ -269,6 +269,8 @@ Vehicle {
         anchors {
             bottom: parent.bottom
         }
+        color: Material.primary
+        textColor: Material.foreground
     }
 
     // Create SceneQuickView here, and create its Scene etc. in C++ code
@@ -409,9 +411,7 @@ Vehicle {
                 id: navTool
 
                 visible: compass.visible && navCheckBox.checked
-                buttonColor: "black"
             }
-
 
             Button {
                 id: locationCheckBox
@@ -419,12 +419,11 @@ Vehicle {
                 checked: false
                 width: 32 * scaleFactor
                 height: 32 * scaleFactor
-                opacity: 0.75
-
+                opacity: 0.9
 
                 background: Rectangle {
                     anchors.fill: locationCheckBox
-                    color: "black"
+                    color: Material.primary
                     radius: 5 * scaleFactor
                 }
 

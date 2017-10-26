@@ -92,10 +92,6 @@ void TelestrateController::deleteSelectedGraphics()
     multipartBuilder->parts()->removePart(index);
     m_sketchOverlay->graphics()->removeOne(graphic);
   }
-
-  // in 3D, reset the GraphicsOverlay because of Dynamic Rendering issues
-  if (m_is3d)
-    refreshSketchLayer();
 }
 
 void TelestrateController::deleteAllGraphics()
@@ -108,10 +104,6 @@ void TelestrateController::deleteAllGraphics()
 
   // clear GeometryBuilder
   clear();
-
-  // in 3D, reset the GraphicsOverlay because of Dynamic Rendering issues
-  if (m_is3d)
-    refreshSketchLayer();
 }
 
 void TelestrateController::setDrawModeEnabled(bool enabled)
@@ -213,24 +205,6 @@ void TelestrateController::init()
     Toolkit::ToolResourceProvider::instance()->setMouseCursor(QCursor(Qt::ArrowCursor));
     m_isDrawing = false;
   });
-}
-
-// workaround for issue where deleted Graphics don't get cleared from View. Removes and reappends the GraphicsOverlay
-void TelestrateController::refreshSketchLayer()
-{
-  if (!m_geoView)
-    return;
-
-  if (m_geoView->graphicsOverlays()->contains(m_sketchOverlay))
-  {
-    m_geoView->graphicsOverlays()->removeOne(m_sketchOverlay);
-    m_geoView->graphicsOverlays()->append(m_sketchOverlay);
-  }
-  else
-  {
-    m_geoView->graphicsOverlays()->append(m_sketchOverlay);
-    m_geoView->graphicsOverlays()->removeOne(m_sketchOverlay);
-  }
 }
 
 // to be called whenever the GeometryBuilder is modified. It will update the Geometry of the Graphic being sketched

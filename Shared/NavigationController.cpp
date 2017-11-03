@@ -140,7 +140,6 @@ void NavigationController::zoom()
   // get the current camera
   Camera currentCamera = m_sceneView->currentViewpointCamera();
 
-  qDebug() << m_currentCenter.toJson();
   if (currentCamera.isEmpty())
     return;
 

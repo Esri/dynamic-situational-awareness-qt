@@ -65,8 +65,7 @@ void NavigationController::updateGeoView()
         if (!m_enabled)
           return;
 
-        // cache the center
-        m_currentCenter = location;
+          m_currentCenter = location;
 
         if (m_currentMode == Mode::Zoom)
         {
@@ -133,6 +132,7 @@ void NavigationController::zoom()
   // get the current camera
   Camera currentCamera = m_sceneView->currentViewpointCamera();
 
+  qDebug() << m_currentCenter.toJson();
   if (currentCamera.isEmpty())
     return;
 
@@ -148,10 +148,19 @@ void NavigationController::zoom()
   }
   else
   {
-    // zoom in/out using the zoom factor
-    Camera newCamera = currentCamera.zoomToward(m_currentCenter, m_zoomFactor);
-    // set the sceneview to the new camera
-    m_sceneView->setViewpointCamera(newCamera, 0.5);
+    if (m_currentCenter.x() == 0 && m_currentCenter.y() == 0 && m_currentCenter.z() == 0)
+    {
+      qDebug() << "Did not find a location";
+      Camera newCam = currentCamera.moveForward(5000);
+      m_sceneView->setViewpointCamera(newCam);
+    }
+    else
+    {
+      // zoom in/out using the zoom factor
+      Camera newCamera = currentCamera.zoomToward(m_currentCenter, m_zoomFactor);
+      // set the sceneview to the new camera
+      m_sceneView->setViewpointCamera(newCamera, 0.5);
+    }
   }
 }
 

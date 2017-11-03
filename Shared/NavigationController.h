@@ -34,6 +34,7 @@ class NavigationController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 
   Q_PROPERTY(bool vertical READ isVertical NOTIFY verticalChanged)
   Q_PROPERTY(double zoomFactor READ zoomFactor WRITE setZoomFactor NOTIFY zoomFactorChanged)
+  Q_PROPERTY(double cameraMoveDistance READ cameraMoveDistance WRITE setCameraMoveDistance NOTIFY cameraMoveDistanceChanged)
 
 public:
 
@@ -51,11 +52,14 @@ public:
   bool isVertical();
   double zoomFactor();
   void setZoomFactor(double value);
+  double cameraMoveDistance();
+  void setCameraMoveDistance(double value);
 
 signals:
   void verticalChanged();
   void zoomFactorChanged();
   void screenToLocationCompleted(QUuid taskId, Esri::ArcGISRuntime::Point location);
+  void cameraMoveDistanceChanged();
 
 private slots:
   void updateGeoView();
@@ -83,6 +87,8 @@ private:
   Esri::ArcGISRuntime::Point m_currentCenter;
   Mode m_currentMode;
   bool m_enabled = false;
+  bool m_isZoomIn = false;
+  double m_cameraMoveDistance = 1000.;
 };
 
 

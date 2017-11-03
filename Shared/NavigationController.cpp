@@ -95,12 +95,20 @@ void NavigationController::updateGeoView()
 void NavigationController::zoomIn()
 {
   m_currentMode = Mode::Zoom;
+
+  if (m_cameraMoveDistance < 0.)
+    m_cameraMoveDistance = -m_cameraMoveDistance;
+
   center();
 }
 
 void NavigationController::zoomOut()
 {
   m_currentMode = Mode::Zoom;
+
+  if (m_cameraMoveDistance > 0.)
+    m_cameraMoveDistance = -m_cameraMoveDistance;
+
   center();
 }
 
@@ -150,8 +158,7 @@ void NavigationController::zoom()
   {
     if (m_currentCenter.x() == 0 && m_currentCenter.y() == 0 && m_currentCenter.z() == 0)
     {
-      qDebug() << "Did not find a location";
-      Camera newCam = currentCamera.moveForward(5000);
+      Camera newCam = currentCamera.moveForward(m_cameraMoveDistance);
       m_sceneView->setViewpointCamera(newCam);
     }
     else
@@ -184,6 +191,22 @@ void NavigationController::setZoomFactor(double value)
 
   m_zoomFactor = value;
   emit zoomFactorChanged();
+}
+
+// getter for zoom factor
+double NavigationController::cameraMoveDistance()
+{
+  return m_cameraMoveDistance;
+}
+
+// setter for zooom factor
+void NavigationController::setCameraMoveDistance(double value)
+{
+  if (value == m_cameraMoveDistance)
+    return;
+
+  m_cameraMoveDistance = value;
+  emit cameraMoveDistanceChanged();
 }
 
 void NavigationController::setRotationInternal()

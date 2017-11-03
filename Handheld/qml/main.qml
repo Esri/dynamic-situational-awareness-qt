@@ -168,6 +168,36 @@ Handheld {
             }
 
             Button {
+                id: analysisCheckBox
+                checkable: true
+                checked: false
+                width: 32 * scaleFactor
+                height: 32 * scaleFactor
+
+                background: Rectangle {
+                    anchors.fill: analysisCheckBox
+                    color: Material.primary
+                }
+
+                Image {
+                    fillMode: Image.PreserveAspectFit
+                    anchors.centerIn: parent
+                    sourceSize.height: parent.height * 0.85
+                    height: sourceSize.height
+                    source: "qrc:/Resources/icons/xhdpi/ic_menu_video_dark_d.png"
+                }
+
+                onClicked: {
+                    if (drawer.visible)
+                        drawer.close();
+                    else {
+                        toolRect.state = "analysis";
+                        drawer.open();
+                    }
+                }
+            }
+
+            Button {
                 id: navCheckBox
                 checkable: true
                 checked: true
@@ -251,9 +281,7 @@ Handheld {
                 id: navTool
 
                 visible: compass.visible && navCheckBox.checked
-                buttonColor: "black"
             }
-
 
             Button {
                 id: locationCheckBox
@@ -261,12 +289,11 @@ Handheld {
                 checked: false
                 width: 32 * scaleFactor
                 height: 32 * scaleFactor
-                opacity: 0.75
-
+                opacity: 0.9
 
                 background: Rectangle {
                     anchors.fill: locationCheckBox
-                    color: "black"
+                    color: Material.primary
                     radius: 5 * scaleFactor
                 }
 
@@ -347,6 +374,13 @@ Handheld {
                         target: telestrateTool
                         visible: true
                     }
+                },
+                State {
+                    name: "analysis"
+                    PropertyChanges {
+                        target: analysisTool
+                        visible: true
+                    }
                 }
             ]
 
@@ -396,6 +430,13 @@ Handheld {
                     else
                         drawer.open();
                 }
+            }
+
+            Analysis {
+                id: analysisTool
+                anchors.fill: parent
+                visible: false
+                onClosed: drawer.close();
             }
         }
     }

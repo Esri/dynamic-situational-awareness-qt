@@ -21,7 +21,6 @@ DsaToolBase {
     signal basemapSelected();    
 
     width: Math.min(parent.width, ((basemapsList.cellWidth * 2) + (16 * scaleFactor)))
-    color: Material.background
     title: qsTr("Basemaps")
 
     BasemapPickerController {
@@ -30,12 +29,16 @@ DsaToolBase {
 
     Component {
         id: tileCacheDelegate
-        Rectangle {
-            width: basemapsList.cellWidth;
-            height: basemapsList.cellHeight
 
-            border.color: index === basemapsList.currentIndex ? Material.accent : Material.primary
-            border.width: index === basemapsList.currentIndex ? 2 * scaleFactor : 0.5 * scaleFactor
+        Rectangle {
+            id: basemapCard
+            width: basemapsList.cellWidth - 10 * scaleFactor
+            height: basemapsList.cellHeight - 10 * scaleFactor
+
+            border.color: index === basemapsList.currentIndex ? Material.accent : Material.background
+            border.width: index === basemapsList.currentIndex ? 2 * scaleFactor : 1 * scaleFactor
+            color: Material.background
+            radius: 2
 
             Image {
                 source: thumbnailUrl;
@@ -46,7 +49,7 @@ DsaToolBase {
                 }
             }
 
-            Rectangle{
+            Rectangle {
                 anchors.centerIn: tileCacheTitle
                 width: tileCacheTitle.width + (8 * scaleFactor)
                 height: tileCacheTitle.height + (8 * scaleFactor)
@@ -65,6 +68,7 @@ DsaToolBase {
 
                 wrapMode: Text.WrapAnywhere
                 font.bold: true
+                color: Material.foreground
             }
 
             MouseArea {

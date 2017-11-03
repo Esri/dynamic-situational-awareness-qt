@@ -56,7 +56,7 @@ DsaToolBase {
                 text: control.text
                 font: control.font
                 opacity: enabled ? 1.0 : 0.3
-                color: Material.primary
+                color: Material.foreground
                 elide: Text.ElideRight
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignVCenter
@@ -117,7 +117,7 @@ DsaToolBase {
         Label {
             text: "Filter:"
             font.pixelSize: 12 * scaleFactor
-            color: Material.primary
+            color: Material.foreground
         }
 
         ComboBox {
@@ -140,7 +140,7 @@ DsaToolBase {
                 font: elevationCheckbox.font
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignHCenter
-                color: Material.primary
+                color: Material.foreground
                 leftPadding: elevationCheckbox.indicator.width + elevationCheckbox.spacing
             }
         }

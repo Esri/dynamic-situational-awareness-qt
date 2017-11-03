@@ -23,8 +23,8 @@ Item {
 
     property int fontSize: 24 * scaleFactor
     property int buttonSize: 32 * scaleFactor
-    property color buttonColor
-    property real buttonOpacity: 0.75
+    property color buttonColor: Material.primary
+    property real buttonOpacity: 0.9
 
     NavigationController {
         id: navController
@@ -40,6 +40,7 @@ Item {
 
     Column {
         id: controlsColumn
+        spacing: 2 * scaleFactor
 
         Button {
             id: zoomInButton
@@ -68,12 +69,6 @@ Item {
             }
         }
 
-        Rectangle {
-            width: buttonSize
-            height: 1 * scaleFactor
-            color: "white"
-        }
-
         Button {
             id: zoomOutButton
             width: buttonSize
@@ -99,12 +94,6 @@ Item {
                 navController.zoomFactor = 0.5;
                 navController.zoomOut();
             }
-        }
-
-        Rectangle {
-            width: buttonSize
-            height: 1 * scaleFactor
-            color: "white"
         }
 
         Button {

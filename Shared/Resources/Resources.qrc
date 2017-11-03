@@ -34,5 +34,6 @@
         <file>icons/xhdpi/ic_menu_completedone_dark.png</file>
         <file>icons/xhdpi/ic_menu_freehandsketchoff_dark.png</file>
         <file>icons/xhdpi/ic_menu_freehandsketchon_dark.png</file>
+        <file>icons/xhdpi/ic_menu_video_dark_d.png</file>
     </qresource>
 </RCC>

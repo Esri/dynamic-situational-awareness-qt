@@ -48,7 +48,6 @@ signals:
 private:
   void updateGeoView();
   void init();
-  void refreshSketchLayer();
   void updateSketch() override;
 
   int m_currentPartIndex = 0;

@@ -88,7 +88,7 @@ private:
   Mode m_currentMode;
   bool m_enabled = false;
   bool m_isZoomIn = false;
-  double m_cameraMoveDistance = 1000.;
+  double m_cameraMoveDistance = 1000.0;
 };
 
 

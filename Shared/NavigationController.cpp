@@ -65,7 +65,7 @@ void NavigationController::updateGeoView()
         if (!m_enabled)
           return;
 
-          m_currentCenter = location;
+        m_currentCenter = location;
 
         if (m_currentMode == Mode::Zoom)
         {
@@ -96,7 +96,7 @@ void NavigationController::zoomIn()
 {
   m_currentMode = Mode::Zoom;
 
-  if (m_cameraMoveDistance < 0.)
+  if (m_cameraMoveDistance < 0.0)
     m_cameraMoveDistance = -m_cameraMoveDistance;
 
   center();
@@ -106,7 +106,7 @@ void NavigationController::zoomOut()
 {
   m_currentMode = Mode::Zoom;
 
-  if (m_cameraMoveDistance > 0.)
+  if (m_cameraMoveDistance > 0.0)
     m_cameraMoveDistance = -m_cameraMoveDistance;
 
   center();

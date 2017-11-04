@@ -65,7 +65,6 @@ void NavigationController::updateGeoView()
         if (!m_enabled)
           return;
 
-        // cache the center
         m_currentCenter = location;
 
         if (m_currentMode == Mode::Zoom)
@@ -96,12 +95,20 @@ void NavigationController::updateGeoView()
 void NavigationController::zoomIn()
 {
   m_currentMode = Mode::Zoom;
+
+  if (m_cameraMoveDistance < 0.0)
+    m_cameraMoveDistance = -m_cameraMoveDistance;
+
   center();
 }
 
 void NavigationController::zoomOut()
 {
   m_currentMode = Mode::Zoom;
+
+  if (m_cameraMoveDistance > 0.0)
+    m_cameraMoveDistance = -m_cameraMoveDistance;
+
   center();
 }
 
@@ -148,10 +155,18 @@ void NavigationController::zoom()
   }
   else
   {
-    // zoom in/out using the zoom factor
-    Camera newCamera = currentCamera.zoomToward(m_currentCenter, m_zoomFactor);
-    // set the sceneview to the new camera
-    m_sceneView->setViewpointCamera(newCamera, 0.5);
+    if (m_currentCenter.x() == 0 && m_currentCenter.y() == 0 && m_currentCenter.z() == 0)
+    {
+      Camera newCam = currentCamera.moveForward(m_cameraMoveDistance);
+      m_sceneView->setViewpointCamera(newCam);
+    }
+    else
+    {
+      // zoom in/out using the zoom factor
+      Camera newCamera = currentCamera.zoomToward(m_currentCenter, m_zoomFactor);
+      // set the sceneview to the new camera
+      m_sceneView->setViewpointCamera(newCamera, 0.5);
+    }
   }
 }
 
@@ -175,6 +190,22 @@ void NavigationController::setZoomFactor(double value)
 
   m_zoomFactor = value;
   emit zoomFactorChanged();
+}
+
+// getter for zoom factor
+double NavigationController::cameraMoveDistance()
+{
+  return m_cameraMoveDistance;
+}
+
+// setter for zooom factor
+void NavigationController::setCameraMoveDistance(double value)
+{
+  if (value == m_cameraMoveDistance)
+    return;
+
+  m_cameraMoveDistance = value;
+  emit cameraMoveDistanceChanged();
 }
 
 void NavigationController::setRotationInternal()

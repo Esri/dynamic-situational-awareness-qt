@@ -58,7 +58,7 @@ void AnalysisController::connectMouseSignals()
     {
       const Point pt = sceneView->screenToBaseSurface(event.x(), event.y());
 
-      m_locationViewshed = new LocationViewshed(pt, m_headingDefault, m_pitchDefault, m_horizontalAngleDefault, m_veriticalAngleDefault, m_minDistanceDefault, m_maxDistanceDefault, SurfacePlacement::Absolute, this);
+      m_locationViewshed = new LocationViewshed(pt, m_headingDefault, m_pitchDefault, m_horizontalAngleDefault, m_verticalAngleDefault, m_minDistanceDefault, m_maxDistanceDefault, this);
       m_locationViewshed->setVisible(m_viewshedVisibleDefault);
       m_analysisOverlay->analyses()->append(m_locationViewshed);
 
@@ -227,7 +227,7 @@ void AnalysisController::setHorizontalAngle(double horizontalAngle)
 
 double AnalysisController::verticalAngle() const
 {
-  return m_locationViewshed ? m_locationViewshed->verticalAngle() : m_veriticalAngleDefault;
+  return m_locationViewshed ? m_locationViewshed->verticalAngle() : m_verticalAngleDefault;
 }
 
 void AnalysisController::setVerticalAngle(double verticalAngle)
@@ -240,15 +240,15 @@ void AnalysisController::setVerticalAngle(double verticalAngle)
     if (m_locationViewshed->verticalAngle() == verticalAngle)
       return;
 
-    m_veriticalAngleDefault = verticalAngle;
+    m_verticalAngleDefault = verticalAngle;
     m_locationViewshed->setVerticalAngle(verticalAngle);
   }
   else
   {
-    if (m_veriticalAngleDefault == verticalAngle)
+    if (m_verticalAngleDefault == verticalAngle)
       return;
 
-    m_veriticalAngleDefault = verticalAngle;
+    m_verticalAngleDefault = verticalAngle;
   }
 
   emit verticalAngleChanged();

@@ -95,7 +95,7 @@ private:
   double m_minDistanceDefault = 50;
   double m_maxDistanceDefault = 1000;
   double m_horizontalAngleDefault = 45;
-  double m_veriticalAngleDefault = 90;
+  double m_verticalAngleDefault = 90;
   double m_headingDefault = 0;
   double m_pitchDefault = 90;
 };

@@ -44,5 +44,4 @@ win32 {
 
 macx {
     include (Mac/Mac.pri)
-    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.11
 }

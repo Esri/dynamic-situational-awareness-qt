@@ -62,7 +62,15 @@ DsaToolBase {
                 verticalAlignment: Text.AlignVCenter
             }
 
-            onClicked: selectedItems.push(index)
+            onClicked: {
+                if (checkState === Qt.Checked) {
+                    // add the selected item index to the array
+                    selectedItems.push(index);
+                } else if (checkState === Qt.Unchecked) {
+                    // remove the selected item index in the array
+                    selectedItems.splice(selectedItems.indexOf(index), 1);
+                }
+            }
         }
     }
 

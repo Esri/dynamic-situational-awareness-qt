@@ -17,6 +17,9 @@
 #include "Layer.h"
 #include "GeoView.h"
 #include "DictionarySymbolStyle.h"
+#include "Point.h"
+#include "Viewpoint.h"
+#include "Camera.h"
 
 // Toolkit
 #include "AbstractTool.h"
@@ -41,10 +44,21 @@ DsaController::DsaController(QObject* parent):
   setupConfig();
   m_dataPath = m_dsaSettings["RootDataDirectory"].toString();
 
-  // Set viewpoint to Monterey, CA
+  // Set initial viewpoint
   // distance of 5000m, heading North, pitch at 75 degrees, roll of 0
-  Camera monterey(DsaUtility::montereyCA(), 5000, 0., 75., 0);
-  Viewpoint initViewpoint(DsaUtility::montereyCA(), monterey);
+  Point initPoint;
+  if (m_dsaSettings["InitialLocation"].toStringList().length() > 0)
+  {
+    const double x = QString(m_dsaSettings["InitialLocation"].toStringList().at(0)).toDouble();
+    const double y = QString(m_dsaSettings["InitialLocation"].toStringList().at(1)).toDouble();
+    initPoint = Point(x, y, SpatialReference::wgs84());
+  }
+  else
+  {
+    initPoint = DsaUtility::montereyCA();
+  }
+  const Camera initCamera(initPoint, 5000, 0., 75., 0);
+  const Viewpoint initViewpoint(initPoint, initCamera);
   m_scene->setInitialViewpoint(initViewpoint);
 
   connect(m_scene, &Scene::errorOccurred, this, &DsaController::onError);
@@ -148,6 +162,7 @@ void DsaController::createDefaultSettings()
       QString("Friendly Tracks:position_report:mil2525c"), QString("Contact Reports:spotrep:enemycontact1600.png"),
       QString("Situation Reports:sitrep:sitrep1600.png"), QString("EOD Reports:eod:eod1600.png"),
       QString("Sensor Observations:sensor_obs:sensorobs1600.png") };
+  m_dsaSettings["InitialLocation"] = QStringList { QString::number(DsaUtility::montereyCA().x()), QString::number(DsaUtility::montereyCA().y()) };
 }
 
 void DsaController::saveSettings(QFile& configFile)

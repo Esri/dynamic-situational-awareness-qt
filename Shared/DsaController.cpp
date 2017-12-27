@@ -45,21 +45,26 @@ DsaController::DsaController(QObject* parent):
   m_dataPath = m_dsaSettings["RootDataDirectory"].toString();
 
   // Set initial viewpoint
-  // distance of 5000m, heading North, pitch at 75 degrees, roll of 0
-  Point initPoint;
+  Viewpoint initViewpoint;
   const QStringList initialLocation = m_dsaSettings["InitialLocation"].toStringList();
-  if (initialLocation.length() > 1)
+  if (initialLocation.length() > 5)
   {
     const double x = QString(initialLocation.at(0)).toDouble();
     const double y = QString(initialLocation.at(1)).toDouble();
-    initPoint = Point(x, y, SpatialReference::wgs84());
+    const double distance = QString(initialLocation.at(2)).toDouble();
+    const double heading = QString(initialLocation.at(3)).toDouble();
+    const double pitch = QString(initialLocation.at(4)).toDouble();
+    const double roll = QString(initialLocation.at(5)).toDouble();
+    const Point initPoint = Point(x, y, SpatialReference::wgs84());
+    const Camera initCamera(initPoint, distance, heading, pitch, roll);
+    initViewpoint = Viewpoint(initPoint, initCamera);
   }
   else
   {
-    initPoint = DsaUtility::montereyCA();
+    const Point initPoint = DsaUtility::montereyCA();
+    const Camera initCamera(initPoint, 5000.0, 0.0, 75.0, 0.0);
+    initViewpoint = Viewpoint(initPoint, initCamera);
   }
-  const Camera initCamera(initPoint, 5000, 0., 75., 0);
-  const Viewpoint initViewpoint(initPoint, initCamera);
   m_scene->setInitialViewpoint(initViewpoint);
 
   connect(m_scene, &Scene::errorOccurred, this, &DsaController::onError);
@@ -163,7 +168,9 @@ void DsaController::createDefaultSettings()
       QString("Friendly Tracks:position_report:mil2525c"), QString("Contact Reports:spotrep:enemycontact1600.png"),
       QString("Situation Reports:sitrep:sitrep1600.png"), QString("EOD Reports:eod:eod1600.png"),
       QString("Sensor Observations:sensor_obs:sensorobs1600.png") };
-  m_dsaSettings["InitialLocation"] = QStringList { QString::number(DsaUtility::montereyCA().x()), QString::number(DsaUtility::montereyCA().y()) };
+  m_dsaSettings["InitialLocation"] = QStringList { QString::number(DsaUtility::montereyCA().x()),
+      QString::number(DsaUtility::montereyCA().y()), QString("5000.0"), QString("0.0"),
+      QString("75.0"), QString("0.0") };
 }
 
 void DsaController::saveSettings(QFile& configFile)

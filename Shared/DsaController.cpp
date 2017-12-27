@@ -47,10 +47,11 @@ DsaController::DsaController(QObject* parent):
   // Set initial viewpoint
   // distance of 5000m, heading North, pitch at 75 degrees, roll of 0
   Point initPoint;
-  if (m_dsaSettings["InitialLocation"].toStringList().length() > 0)
+  const QStringList initialLocation = m_dsaSettings["InitialLocation"].toStringList();
+  if (initialLocation.length() > 1)
   {
-    const double x = QString(m_dsaSettings["InitialLocation"].toStringList().at(0)).toDouble();
-    const double y = QString(m_dsaSettings["InitialLocation"].toStringList().at(1)).toDouble();
+    const double x = QString(initialLocation.at(0)).toDouble();
+    const double y = QString(initialLocation.at(1)).toDouble();
     initPoint = Point(x, y, SpatialReference::wgs84());
   }
   else

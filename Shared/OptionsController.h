@@ -18,6 +18,7 @@ private:
   bool m_locationControllerReady = false;
   bool m_simulateLocation;
   LocationController* m_locationController = nullptr;
+  void getUpdatedTools();
 
 signals:
   void locationControllerReadyChanged();
@@ -28,8 +29,8 @@ public:
   ~OptionsController();
 
   QString toolName() const override;
-  bool locationControllerReady() { return m_locationControllerReady; }
-  bool simulateLocation() {return m_simulateLocation; }
+  bool locationControllerReady();
+  bool simulateLocation();
   void setSimulateLocation(bool simulate);
 };
 

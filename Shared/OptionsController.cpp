@@ -24,6 +24,23 @@ OptionsController::OptionsController(QObject* parent):
 {
   Toolkit::ToolManager::instance().addTool(this);
 
+  // get access to the various tool controllers
+  getUpdatedTools();
+
+  // get additional tools in the case that additional tools are added
+  connect(&Toolkit::ToolManager::instance(),
+          &Toolkit::ToolManager::toolListChanged, this, [this]()
+  {
+    getUpdatedTools();
+  });
+}
+
+OptionsController::~OptionsController()
+{
+}
+
+void OptionsController::getUpdatedTools()
+{
   for (auto it = Toolkit::ToolManager::instance().begin(); it!=Toolkit::ToolManager::instance().end(); ++it)
   {
     if (!it.value())
@@ -44,18 +61,25 @@ OptionsController::OptionsController(QObject* parent):
         emit simulateLocationChanged();
       });
 
-      return;
+      break;
     }
   }
-
-  //  connect(Toolkit::ToolManager::instance(),
-  //          &Toolkit::ToolManager::instance().toolListChanged, [this]
-  //  {
-  //  });
 }
 
-OptionsController::~OptionsController()
+bool OptionsController::locationControllerReady()
 {
+  if (m_locationController != nullptr)
+    return true;
+  else
+    return false;
+}
+
+bool OptionsController::simulateLocation()
+{
+  if (m_locationController)
+    return m_locationController->isSimulated();
+  else
+    return false;
 }
 
 QString OptionsController::toolName() const
@@ -65,5 +89,11 @@ QString OptionsController::toolName() const
 
 void OptionsController::setSimulateLocation(bool simulate)
 {
-  m_locationController->setSimulated(simulate);
+  if (!m_locationController)
+    return;
+
+ if (m_locationController->isSimulated() == simulate)
+    return;
+
+ m_locationController->setSimulated(simulate);
 }

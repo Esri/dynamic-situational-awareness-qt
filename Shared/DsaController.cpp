@@ -104,9 +104,10 @@ void DsaController::init(GeoView* geoView)
   }
 }
 
-void DsaController::onError(const Esri::ArcGISRuntime::Error& e)
+void DsaController::onError(const Error& e)
 {
   qDebug() << "Error" << e.message() << e.additionalMessage();
+  emit errorOccurred(e.message(), e.additionalMessage());
 }
 
 void DsaController::onPropertyChanged(const QString &propertyName, const QVariant &propertyValue)

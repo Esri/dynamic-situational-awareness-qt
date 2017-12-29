@@ -447,7 +447,7 @@ Vehicle {
         }
     }
 
-    onShowErrorMessage: {
+    onErrorOccurred: {
         msgDialog.informativeText = message;
         msgDialog.detailedText = additionalMessage;
         msgDialog.open();

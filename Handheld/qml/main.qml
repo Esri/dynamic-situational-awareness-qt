@@ -446,7 +446,7 @@ Handheld {
         enabled: locationCheckBox.checked
     }
 
-    onShowErrorMessage: {
+    onErrorOccurred: {
         msgDialog.informativeText = message;
         msgDialog.detailedText = additionalMessage;
         msgDialog.open();

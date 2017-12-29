@@ -41,10 +41,10 @@ void Handheld::componentComplete()
   m_controller->init(m_sceneView);
 
   // connect to the DSA controller errors
-  connect(m_controller, &DsaController::showErrorMessage, this, [this]
+  connect(m_controller, &DsaController::errorOccurred, this, [this]
           (const QString& message, const QString& additionalMessage)
   {
-    emit showErrorMessage(message, additionalMessage);
+    emit errorOccurred(message, additionalMessage);
   });
 
 

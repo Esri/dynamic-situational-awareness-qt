@@ -446,4 +446,15 @@ Vehicle {
             }
         }
     }
+
+    onShowErrorMessage: {
+        msgDialog.informativeText = message;
+        msgDialog.detailedText = additionalMessage;
+        msgDialog.open();
+    }
+
+    MessageDialog {
+        id: msgDialog
+        text: "Error"
+    }
 }

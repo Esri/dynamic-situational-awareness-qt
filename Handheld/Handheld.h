@@ -35,6 +35,9 @@ public:
 
   void componentComplete() override;
 
+signals:
+  void showErrorMessage(const QString& message, const QString& additionalMessage);
+
 private:
   Esri::ArcGISRuntime::SceneQuickView*    m_sceneView = nullptr;
   DsaController*                          m_controller = nullptr;

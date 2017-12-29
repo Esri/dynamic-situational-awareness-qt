@@ -48,6 +48,9 @@ public slots:
 private slots:
   void onPropertyChanged(const QString& propertyName, const QVariant& propertyValue);
 
+signals:
+  void showErrorMessage(const QString& message, const QString& additionalMessage);
+
 private:
   void setupConfig();
   void createDefaultSettings();

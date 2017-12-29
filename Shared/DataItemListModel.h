@@ -28,7 +28,6 @@ enum class DataType
   SceneLayerPackage,
   Shapefile,
   GeoPackage,
-  KML,
   All,
   Unknown = -1
 };

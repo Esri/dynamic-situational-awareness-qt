@@ -43,11 +43,10 @@ using namespace Esri::ArcGISRuntime;
 
 const QString AddLocalDataController::LOCAL_DATAPATHS_PROPERTYNAME = "LocalDataPaths";
 
-const QString AddLocalDataController::s_allData = QStringLiteral("All Data (*.geodatabase *tpk *shp *gpkg *mmpk *kml *slpk *vtpk *.img *.tif *.tiff *.i1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr)");
+const QString AddLocalDataController::s_allData = QStringLiteral("All Data (*.geodatabase *tpk *shp *gpkg *mmpk *slpk *vtpk *.img *.tif *.tiff *.i1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr)");
 const QString AddLocalDataController::s_rasterData = QStringLiteral("Raster Files (*.img *.tif *.tiff *.I1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr)");
 const QString AddLocalDataController::s_geodatabaseData = QStringLiteral("Geodatabase (*.geodatabase)");
 const QString AddLocalDataController::s_shapefileData = QStringLiteral("Shapefile (*.shp)");
-const QString AddLocalDataController::s_kmlData = QStringLiteral("KML (*.kml)");
 const QString AddLocalDataController::s_geopackageData = QStringLiteral("GeoPackage (*.gpkg)");
 const QString AddLocalDataController::s_sceneLayerData = QStringLiteral("Scene Layer Package (*.slpk)");
 const QString AddLocalDataController::s_vectorTilePackageData = QStringLiteral("Vector Tile Package (*.vtpk)");
@@ -65,7 +64,7 @@ AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
   // create file filter list
   m_fileFilterList = QStringList{allData(), rasterData(), geodatabaseData(),
       sceneLayerData(), tilePackageData(), shapefileData(), geopackageData()
-        /*, kmlData(), vectorTilePackageData()*/}; // uncomment these as new formats are supported
+        /*, vectorTilePackageData()*/}; // VTPK is not supported in 3D
   emit fileFilterListChanged();
   emit localDataModelChanged();
 }
@@ -120,8 +119,6 @@ QStringList AddLocalDataController::determineFileFilters(const QString& fileType
     fileFilter << "*.shp";
   else if (fileType == geopackageData())
     fileFilter << "*.gpkg";
-  else if (fileType == kmlData())
-    fileFilter << "*.kml";
   else if (fileType == sceneLayerData())
     fileFilter << "*.slpk";
   else if (fileType == vectorTilePackageData())
@@ -131,7 +128,7 @@ QStringList AddLocalDataController::determineFileFilters(const QString& fileType
   else
   {
     fileFilter = rasterExtensions;
-    fileFilter << "*.geodatabase" << "*.tpk" << "*.shp" << "*.gpkg" << "*.kml" << "*.slpk" << "*.vtpk";
+    fileFilter << "*.geodatabase" << "*.tpk" << "*.shp" << "*.gpkg" << "*.slpk"/* << "*.vtpk"*/; // VTPK is not supported in 3D
   }
 
   return fileFilter;
@@ -210,9 +207,6 @@ void AddLocalDataController::addItemAsLayer(const QList<int>& indices)
       break;
     case DataType::GeoPackage:
       createLayerGeoPackage(dataItemPath);
-      break;
-    case DataType::KML:
-      createKmlLayer(dataItemPath);
       break;
     case DataType::Raster:
       createRasterLayer(dataItemPath);
@@ -310,13 +304,6 @@ void AddLocalDataController::createRasterLayer(const QString& path)
     operationalLayers->append(rasterLayer);
 
   emit layerSelected(rasterLayer);
-}
-
-// Helper that creates a KMLLayer from a file path
-void AddLocalDataController::createKmlLayer(const QString& path)
-{
-  qDebug() << "TODO. KML not yet supported";
-  Q_UNUSED(path);
 }
 
 // Helper that creates an ArcGISSceneLayer from a slpk path

@@ -56,7 +56,6 @@ public:
   void createLayerGeoPackage(const QString& path);
   void createFeatureLayerShapefile(const QString& path);
   void createRasterLayer(const QString& path);
-  void createKmlLayer(const QString& path);
   void createSceneLayer(const QString& path);
   void createTiledLayer(const QString& path);
   void createVectorTiledLayer(const QString& path);
@@ -75,7 +74,6 @@ private:
   static const QString rasterData() { return s_rasterData; }
   static const QString geodatabaseData() { return s_geodatabaseData; }
   static const QString shapefileData() { return s_shapefileData; }
-  static const QString kmlData() { return s_kmlData; }
   static const QString geopackageData() { return s_geopackageData; }
   static const QString sceneLayerData() { return s_sceneLayerData; }
   static const QString vectorTilePackageData() { return s_vectorTilePackageData; }
@@ -89,7 +87,6 @@ private:
   static const QString s_rasterData;
   static const QString s_geodatabaseData;
   static const QString s_shapefileData;
-  static const QString s_kmlData;
   static const QString s_geopackageData;
   static const QString s_sceneLayerData;
   static const QString s_vectorTilePackageData;

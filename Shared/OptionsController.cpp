@@ -49,15 +49,11 @@ void OptionsController::getUpdatedTools()
     m_locationController = dynamic_cast<LocationController*>(it.value());
     if (m_locationController)
     {
-      m_simulateLocation = m_locationController->isSimulated();
       emit simulateLocationChanged();
-
-      m_locationControllerReady = true;
       emit locationControllerReadyChanged();
 
       connect(m_locationController, &LocationController::simulatedChanged, [this]
       {
-        m_simulateLocation = m_locationController->isSimulated();
         emit simulateLocationChanged();
       });
 
@@ -97,3 +93,24 @@ void OptionsController::setSimulateLocation(bool simulate)
 
  m_locationController->setSimulated(simulate);
 }
+
+QString OptionsController::simulationFile() const
+{
+  if (m_locationController)
+    return m_locationController->gpxFilePathAsString();
+  else
+    return "";
+}
+
+void OptionsController::setSimulationFile(const QString& file)
+{
+  if (!m_locationController)
+    return;
+
+  if (m_locationController->gpxFilePathAsString() == file)
+    return;
+
+  m_locationController->setGpxFilePath(QUrl(file));
+}
+
+

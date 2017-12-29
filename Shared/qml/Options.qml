@@ -45,30 +45,7 @@ DsaToolBase {
             Row {
                 height: 40 * scaleFactor
                 width: parent.width
-                Label {
-                    width: parent.width * 0.8
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: "Enable Track Labels"
-                    color: Material.foreground
-                    elide: Text.ElideRight
-                }
-                CheckBox {
-                    anchors.verticalCenter: parent.verticalCenter
-                    checked: true
-                    enabled: optionsController.locationControllerReady
-                    onCheckedChanged: {
-                        if (checked) {
 
-                        } else {
-
-                        }
-                    }
-                }
-            }
-
-            Row {
-                height: 40 * scaleFactor
-                width: parent.width
                 Label {
                     width: parent.width * 0.8
                     anchors.verticalCenter: parent.verticalCenter
@@ -76,6 +53,7 @@ DsaToolBase {
                     color: Material.foreground
                     elide: Text.ElideRight
                 }
+
                 CheckBox {
                     id: simulateCheckbox
                     anchors.verticalCenter: parent.verticalCenter
@@ -90,14 +68,17 @@ DsaToolBase {
                 width: parent.width
                 spacing: 10 * scaleFactor
                 visible: simulateCheckbox.checked
+
                 Label {
                     anchors.verticalCenter: parent.verticalCenter
                     text: "Simulation File"
                     color: Material.foreground
                     elide: Text.ElideRight
                 }
+
                 TextField {
                     anchors.verticalCenter: parent.verticalCenter
+                    text: optionsController.simulationFile
                 }
             }
         }

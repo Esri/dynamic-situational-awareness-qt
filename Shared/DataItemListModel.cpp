@@ -112,8 +112,6 @@ DataItemListModel::DataItem::DataItem(const QString& fullPath):
     dataType = DataType::Shapefile;
   else if (fileExtension.compare("gpkg", Qt::CaseInsensitive) == 0)
     dataType = DataType::GeoPackage;
-  else if (fileExtension.compare("kml", Qt::CaseInsensitive) == 0)
-    dataType = DataType::KML;
   else if (fileExtension.compare("slpk", Qt::CaseInsensitive) == 0)
     dataType = DataType::SceneLayerPackage;
   else if (fileExtension.compare("vtpk", Qt::CaseInsensitive) == 0)

@@ -148,25 +148,30 @@ void AddLocalDataController::addItemAsElevationSource(const QList<int>& indices)
     if (dataItemType == DataType::TilePackage)
     {
       TileCache* tileCache = new TileCache(dataItemPath, this);
-      TileImageFormat format = tileCache->tileInfo().format();
 
-      // Check if the tiles are LERC encoded
-      if (format == TileImageFormat::LERC || format == TileImageFormat::Unknown) // remove the Unknown clause once API bug is fixed
+      connect(tileCache, &TileCache::doneLoading, this, [this, tileCache](Error error)
       {
-        // create the source from the tiled source
-        ArcGISTiledElevationSource* source = new ArcGISTiledElevationSource(tileCache, this);
+        if (!error.isEmpty())
+          return;
 
-        connect(source, &ArcGISTiledElevationSource::errorOccurred, this, &AddLocalDataController::errorOccurred);
+        // Check if the tiles are LERC encoded
+        if (tileCache->tileInfo().format() == TileImageFormat::LERC)
+        {
+          // create the source from the tiled source
+          ArcGISTiledElevationSource* source = new ArcGISTiledElevationSource(tileCache, this);
 
-        source->setParent(this);
-        auto scene = Toolkit::ToolResourceProvider::instance()->scene();
-        if (scene)
-          scene->baseSurface()->elevationSources()->append(source);
+          connect(source, &ArcGISTiledElevationSource::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
-        emit elevationSourceSelected(source);
-      }
-      else
-        continue;
+          source->setParent(this);
+          auto scene = Toolkit::ToolResourceProvider::instance()->scene();
+          if (scene)
+            scene->baseSurface()->elevationSources()->append(source);
+
+          emit elevationSourceSelected(source);
+        }
+      });
+
+      tileCache->load();
     }
     else if (dataItemType == DataType::Raster)
     {

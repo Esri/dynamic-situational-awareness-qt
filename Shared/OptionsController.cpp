@@ -36,71 +36,17 @@ void OptionsController::getUpdatedTools()
     if (!it.value())
       continue;
 
-//    m_locationController = dynamic_cast<LocationController*>(it.value());
-//    if (m_locationController)
-//    {
-//      emit simulateLocationChanged();
-//      emit locationControllerReadyChanged();
-
-//      connect(m_locationController, &LocationController::simulatedChanged, [this]
-//      {
-//        emit simulateLocationChanged();
-//      });
-
-//      break;
-//    }
+    /*
+     * // 1) cast each to the type you need, and store as a member
+     * e.g. m_locationController = dynamic_cast<LocationController*>(it.value());
+     *      if (m_locationController) ...
+     * // 2) wrap properties and expose as Q_PROPERTY in the options tool
+     * e.g. emit simulateLocationChanged(); // bool that returns m_locationController->isSimulated();. This is exposed as a checkbox in QML
+    */
   }
 }
-
-//bool OptionsController::locationControllerReady()
-//{
-//  if (m_locationController != nullptr)
-//    return true;
-//  else
-//    return false;
-//}
-
-//bool OptionsController::simulateLocation()
-//{
-//  if (m_locationController)
-//    return m_locationController->isSimulated();
-//  else
-//    return false;
-//}
 
 QString OptionsController::toolName() const
 {
   return "Options Tool";
 }
-
-//void OptionsController::setSimulateLocation(bool simulate)
-//{
-//  if (!m_locationController)
-//    return;
-
-// if (m_locationController->isSimulated() == simulate)
-//    return;
-
-// m_locationController->setSimulated(simulate);
-//}
-
-//QString OptionsController::simulationFile() const
-//{
-//  if (m_locationController)
-//    return m_locationController->gpxFilePathAsString();
-//  else
-//    return "";
-//}
-
-//void OptionsController::setSimulationFile(const QString& file)
-//{
-//  if (!m_locationController)
-//    return;
-
-//  if (m_locationController->gpxFilePathAsString() == file)
-//    return;
-
-//  m_locationController->setGpxFilePath(QUrl(file));
-//}
-
-

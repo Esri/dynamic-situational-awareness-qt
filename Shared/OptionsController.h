@@ -1,36 +1,37 @@
+// Copyright 2017 ESRI
+//
+// All rights reserved under the copyright laws of the United States
+// and applicable international laws, treaties, and conventions.
+//
+// You may freely redistribute and use this sample code, with or
+// without modification, provided you include the original copyright
+// notice and use restrictions.
+//
+// See the Sample code usage restrictions document for further information.
+//
+
 #ifndef OPTIONSCONTROLLER_H
 #define OPTIONSCONTROLLER_H
 
 class ArcGISCompassController;
 
 #include "AbstractTool.h"
-#include "ArcGISCompassController.h"
 #include <QObject>
 
 class OptionsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
   Q_OBJECT
 
-//  Q_PROPERTY(bool compassControllerReady READ compassControllerReady NOTIFY compassControllerReadyChanged)
-//  Q_PROPERTY(bool compassVisible READ compassVisible WRITE setCompassVisible NOTIFY compassVisibleChanged)
-
 public:
   explicit OptionsController(QObject* parent = nullptr);
   ~OptionsController();
 
   QString toolName() const override;
-//  bool compassControllerReady();
-//  bool compassVisible();
-//  void setCompassVisible(bool visible);
 
 signals:
-//  void compassControllerReady();
-//  void compassVisible();
 
 private:
   void getUpdatedTools();
-
-  //Esri::ArcGISRuntime::Toolkit::ArcGISCompassController* m_compassController = nullptr;
 };
 
 #endif // OPTIONSCONTROLLER_H

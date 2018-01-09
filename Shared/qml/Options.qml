@@ -42,45 +42,14 @@ DsaToolBase {
             width: parent.width
             spacing: 5 * scaleFactor
 
+            /*
+            // Add options that hook into the OptionsController
+            // Each option can have a row like below
             Row {
                 height: 40 * scaleFactor
                 width: parent.width
-
-                Label {
-                    width: parent.width * 0.8
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: "Simulate Location"
-                    color: Material.foreground
-                    elide: Text.ElideRight
-                }
-
-                CheckBox {
-                    id: simulateCheckbox
-                    anchors.verticalCenter: parent.verticalCenter
-                    enabled: optionsController.locationControllerReady
-                    checked: optionsController.simulateLocation
-                    onCheckedChanged: optionsController.simulateLocation = checked
-                }
             }
-
-            Row {
-                height: 40 * scaleFactor
-                width: parent.width
-                spacing: 10 * scaleFactor
-                visible: simulateCheckbox.checked
-
-                Label {
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: "Simulation File"
-                    color: Material.foreground
-                    elide: Text.ElideRight
-                }
-
-                TextField {
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: optionsController.simulationFile
-                }
-            }
+            */
         }
     }
 

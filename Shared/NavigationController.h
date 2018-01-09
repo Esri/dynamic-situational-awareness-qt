@@ -37,10 +37,12 @@ class NavigationController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
   Q_PROPERTY(double cameraMoveDistance READ cameraMoveDistance WRITE setCameraMoveDistance NOTIFY cameraMoveDistanceChanged)
 
 public:
+  static const QString INITIAL_LOCATION_PROPERTYNAME;
 
   explicit NavigationController(QObject* parent = nullptr);
   ~NavigationController();
 
+  Q_INVOKABLE void zoomToInitialLocation();
   Q_INVOKABLE void zoomOut();
   Q_INVOKABLE void zoomIn();
   Q_INVOKABLE void pan();
@@ -48,11 +50,12 @@ public:
   Q_INVOKABLE void set2D();
 
   QString toolName() const override;
+  void setProperties(const QVariantMap& properties) override;
 
-  bool isVertical();
-  double zoomFactor();
+  bool isVertical() const;
+  double zoomFactor() const;
   void setZoomFactor(double value);
-  double cameraMoveDistance();
+  double cameraMoveDistance() const;
   void setCameraMoveDistance(double value);
 
 signals:
@@ -63,6 +66,7 @@ signals:
 
 private slots:
   void updateGeoView();
+  void setInitialLocation();
 
 private:
   enum class Mode
@@ -79,11 +83,16 @@ private:
   void set2DInternal();
   double currentCameraDistance(const Esri::ArcGISRuntime::Camera &currentCamera);
 
-  Esri::ArcGISRuntime::GeoView* m_geoView   = nullptr;
+  Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
   Esri::ArcGISRuntime::SceneView* m_sceneView = nullptr;
-  bool m_is3d                               = false;
-  bool m_isCameraVertical                   = false;
-  double m_zoomFactor                       = 1.0;
+  Esri::ArcGISRuntime::Point m_initialLocation;
+  double m_initialDistance = 5000.0;
+  double m_initialHeading = 0.0;
+  double m_initialPitch = 75.0;
+  double m_initialRoll = 0.0;
+  bool m_is3d = false;
+  bool m_isCameraVertical = false;
+  double m_zoomFactor = 1.0;
   Esri::ArcGISRuntime::Point m_currentCenter;
   Mode m_currentMode;
   bool m_enabled = false;

@@ -12,6 +12,7 @@
 
 #include "NavigationController.h"
 
+#include "Map.h"
 #include "SceneView.h"
 #include "Scene.h"
 #include "GlobeCameraController.h"
@@ -29,15 +30,21 @@
 
 using namespace Esri::ArcGISRuntime;
 
+const QString NavigationController::INITIAL_LOCATION_PROPERTYNAME = "InitialLocation";
+
 NavigationController::NavigationController(QObject* parent) :
-  Toolkit::AbstractTool(parent)
+  Toolkit::AbstractTool(parent),
+  m_initialLocation(DsaUtility::montereyCA())
 {
   Toolkit::ToolManager::instance().addTool(this);
 
+  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::sceneChanged, this, &NavigationController::setInitialLocation);
+  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mapChanged, this, &NavigationController::setInitialLocation);
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, &NavigationController::updateGeoView);
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::screenToLocationCompleted, this, &NavigationController::screenToLocationCompleted);
 
   updateGeoView();
+  setInitialLocation();
 }
 
 NavigationController::~NavigationController()
@@ -49,47 +56,100 @@ QString NavigationController::toolName() const
   return QStringLiteral("NavigationController");
 }
 
+void NavigationController::setProperties(const QVariantMap &properties)
+{
+  const QStringList initialLocation = properties.value(NavigationController::INITIAL_LOCATION_PROPERTYNAME).toStringList();
+  if (initialLocation.length() <= 5)
+    return;
+
+  const double x = QString(initialLocation.at(0)).toDouble();
+  const double y = QString(initialLocation.at(1)).toDouble();
+  m_initialLocation = Point(x, y, SpatialReference::wgs84());
+  m_initialDistance = QString(initialLocation.at(2)).toDouble();
+  m_initialHeading = QString(initialLocation.at(3)).toDouble();
+  m_initialPitch = QString(initialLocation.at(4)).toDouble();
+  m_initialRoll = QString(initialLocation.at(5)).toDouble();
+
+  setInitialLocation();
+}
+
 void NavigationController::updateGeoView()
 {
   m_geoView = Toolkit::ToolResourceProvider::instance()->geoView();
-  if (m_geoView)
+  if (!m_geoView)
+    return;
+
+  m_sceneView = dynamic_cast<SceneView*>(m_geoView);
+  if (m_sceneView)
   {
-    m_sceneView = dynamic_cast<SceneView*>(m_geoView);
-    if (m_sceneView)
-    {
-      m_is3d = true;
+    m_is3d = true;
 
-      connect(this, &NavigationController::screenToLocationCompleted, this, [this](QUuid, Point location)
+    connect(this, &NavigationController::screenToLocationCompleted, this, [this](QUuid, Point location)
+    {
+      // check if called from the navigation controls
+      if (!m_enabled)
+        return;
+
+      m_currentCenter = location;
+
+      if (m_currentMode == Mode::Zoom)
       {
-        // check if called from the navigation controls
-        if (!m_enabled)
-          return;
+        zoom();
+      }
+      else if (m_currentMode == Mode::Rotate)
+      {
+        setRotationInternal();
+      }
+      else if(m_currentMode == Mode::Tilt)
+      {
+        set2DInternal();
+      }
 
-        m_currentCenter = location;
-
-        if (m_currentMode == Mode::Zoom)
-        {
-          zoom();
-        }
-        else if (m_currentMode == Mode::Rotate)
-        {
-          setRotationInternal();
-        }
-        else if(m_currentMode == Mode::Tilt)
-        {
-          set2DInternal();
-        }
-
-        // reset
-        m_enabled = false;
-      });
-    }
-    else
-    {
-      // set the mapView here
-      m_is3d = false;
-    }
+      // reset
+      m_enabled = false;
+    });
   }
+  else
+  {
+    // set the mapView here
+    m_is3d = false;
+  }
+}
+
+void NavigationController::setInitialLocation()
+{
+  Scene* scene = Toolkit::ToolResourceProvider::instance()->scene();
+  if (scene)
+  {
+    const Camera initCamera(m_initialLocation, m_initialDistance, m_initialHeading, m_initialPitch, m_initialRoll);
+    Viewpoint initViewpoint(m_initialLocation, initCamera);
+    scene->setInitialViewpoint(initViewpoint);
+
+    return;
+  }
+
+  Map* map = Toolkit::ToolResourceProvider::instance()->map();
+  if (!map)
+    return;
+
+  Viewpoint initViewpoint(m_initialLocation, 1000.0);
+  map->setInitialViewpoint(initViewpoint);
+}
+
+void NavigationController::zoomToInitialLocation()
+{
+  Viewpoint initViewpoint;
+  if (m_is3d)
+  {
+    const Camera initCamera(m_initialLocation, m_initialDistance, m_initialHeading, m_initialPitch, m_initialRoll);
+    initViewpoint = Viewpoint(m_initialLocation, initCamera);
+  }
+  else
+  {
+    initViewpoint = Viewpoint(m_initialLocation, 1000.0);
+  }
+
+  m_geoView->setViewpoint(initViewpoint, 1.f);
 }
 
 void NavigationController::zoomIn()
@@ -171,13 +231,13 @@ void NavigationController::zoom()
 }
 
 // getter for vertical
-bool NavigationController::isVertical()
+bool NavigationController::isVertical() const
 {
   return m_isCameraVertical;
 }
 
 // getter for zoom factor
-double NavigationController::zoomFactor()
+double NavigationController::zoomFactor() const
 {
   return m_zoomFactor;
 }
@@ -193,7 +253,7 @@ void NavigationController::setZoomFactor(double value)
 }
 
 // getter for zoom factor
-double NavigationController::cameraMoveDistance()
+double NavigationController::cameraMoveDistance() const
 {
   return m_cameraMoveDistance;
 }

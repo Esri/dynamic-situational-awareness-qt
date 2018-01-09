@@ -34,7 +34,7 @@ const QString NavigationController::INITIAL_LOCATION_PROPERTYNAME = "InitialLoca
 
 NavigationController::NavigationController(QObject* parent) :
   Toolkit::AbstractTool(parent),
-  m_initialLocation(DsaUtility::montereyCA())
+  m_initialCenter(DsaUtility::montereyCA())
 {
   Toolkit::ToolManager::instance().addTool(this);
 
@@ -64,7 +64,7 @@ void NavigationController::setProperties(const QVariantMap &properties)
 
   const double x = QString(initialLocation.at(0)).toDouble();
   const double y = QString(initialLocation.at(1)).toDouble();
-  m_initialLocation = Point(x, y, SpatialReference::wgs84());
+  m_initialCenter = Point(x, y, SpatialReference::wgs84());
   m_initialDistance = QString(initialLocation.at(2)).toDouble();
   m_initialHeading = QString(initialLocation.at(3)).toDouble();
   m_initialPitch = QString(initialLocation.at(4)).toDouble();
@@ -121,8 +121,8 @@ void NavigationController::setInitialLocation()
   Scene* scene = Toolkit::ToolResourceProvider::instance()->scene();
   if (scene)
   {
-    const Camera initCamera(m_initialLocation, m_initialDistance, m_initialHeading, m_initialPitch, m_initialRoll);
-    Viewpoint initViewpoint(m_initialLocation, initCamera);
+    const Camera initCamera(m_initialCenter, m_initialDistance, m_initialHeading, m_initialPitch, m_initialRoll);
+    Viewpoint initViewpoint(m_initialCenter, initCamera);
     scene->setInitialViewpoint(initViewpoint);
 
     return;
@@ -132,7 +132,7 @@ void NavigationController::setInitialLocation()
   if (!map)
     return;
 
-  Viewpoint initViewpoint(m_initialLocation, 1000.0);
+  Viewpoint initViewpoint(m_initialCenter, 1000.0);
   map->setInitialViewpoint(initViewpoint);
 }
 
@@ -141,12 +141,12 @@ void NavigationController::zoomToInitialLocation()
   Viewpoint initViewpoint;
   if (m_is3d)
   {
-    const Camera initCamera(m_initialLocation, m_initialDistance, m_initialHeading, m_initialPitch, m_initialRoll);
-    initViewpoint = Viewpoint(m_initialLocation, initCamera);
+    const Camera initCamera(m_initialCenter, m_initialDistance, m_initialHeading, m_initialPitch, m_initialRoll);
+    initViewpoint = Viewpoint(m_initialCenter, initCamera);
   }
   else
   {
-    initViewpoint = Viewpoint(m_initialLocation, 1000.0);
+    initViewpoint = Viewpoint(m_initialCenter, 1000.0);
   }
 
   m_geoView->setViewpoint(initViewpoint, 1.f);
@@ -314,4 +314,59 @@ double NavigationController::currentCameraDistance(const Camera &currentCamera)
 
   const GeodeticDistanceResult result = GeometryEngine::distanceGeodetic(currentCamera.location(), m_currentCenter, LinearUnit::meters(), m_geoView->spatialReference().unit(), GeodeticCurveType::Geodesic);
   return result.distance();
+}
+
+double NavigationController::initialRoll() const
+{
+  return m_initialRoll;
+}
+
+void NavigationController::setInitialRoll(double initialRoll)
+{
+  m_initialRoll = initialRoll;
+  setInitialLocation();
+}
+
+double NavigationController::initialPitch() const
+{
+  return m_initialPitch;
+}
+
+void NavigationController::setInitialPitch(double initialPitch)
+{
+  m_initialPitch = initialPitch;
+  setInitialLocation();
+}
+
+double NavigationController::initialHeading() const
+{
+  return m_initialHeading;
+}
+
+void NavigationController::setInitialHeading(double initialHeading)
+{
+  m_initialHeading = initialHeading;
+  setInitialLocation();
+}
+
+double NavigationController::initialDistance() const
+{
+  return m_initialDistance;
+}
+
+void NavigationController::setInitialDistance(double initialDistance)
+{
+  m_initialDistance = initialDistance;
+  setInitialLocation();
+}
+
+void NavigationController::setInitialCenter(const Esri::ArcGISRuntime::Point &initialCenter)
+{
+  m_initialCenter = initialCenter;
+  setInitialLocation();
+}
+
+Esri::ArcGISRuntime::Point NavigationController::initialCenter() const
+{
+  return m_initialCenter;
 }

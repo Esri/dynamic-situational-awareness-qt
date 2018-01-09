@@ -57,6 +57,16 @@ public:
   void setZoomFactor(double value);
   double cameraMoveDistance() const;
   void setCameraMoveDistance(double value);
+  Esri::ArcGISRuntime::Point initialCenter() const;
+  void setInitialCenter(const Esri::ArcGISRuntime::Point &initialCenter);
+  double initialDistance() const;
+  void setInitialDistance(double initialDistance);
+  double initialHeading() const;
+  void setInitialHeading(double initialHeading);
+  double initialPitch() const;
+  void setInitialPitch(double initialPitch);
+  double initialRoll() const;
+  void setInitialRoll(double initialRoll);
 
 signals:
   void verticalChanged();
@@ -85,7 +95,7 @@ private:
 
   Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
   Esri::ArcGISRuntime::SceneView* m_sceneView = nullptr;
-  Esri::ArcGISRuntime::Point m_initialLocation;
+  Esri::ArcGISRuntime::Point m_initialCenter;
   double m_initialDistance = 5000.0;
   double m_initialHeading = 0.0;
   double m_initialPitch = 75.0;

@@ -13,26 +13,16 @@
 #include "OptionsController.h"
 #include "ToolResourceProvider.h"
 #include "ToolManager.h"
-#include "LocationController.h"
-
-#include <QDebug>
 
 using namespace Esri::ArcGISRuntime;
 
-OptionsController::OptionsController(QObject* parent):
+OptionsController::OptionsController(QObject* parent) :
   Toolkit::AbstractTool(parent)
 {
   Toolkit::ToolManager::instance().addTool(this);
 
   // get access to the various tool controllers
   getUpdatedTools();
-
-  // get additional tools in the case that additional tools are added
-  connect(&Toolkit::ToolManager::instance(),
-          &Toolkit::ToolManager::toolListChanged, this, [this]()
-  {
-    getUpdatedTools();
-  });
 }
 
 OptionsController::~OptionsController()
@@ -41,76 +31,76 @@ OptionsController::~OptionsController()
 
 void OptionsController::getUpdatedTools()
 {
-  for (auto it = Toolkit::ToolManager::instance().begin(); it!=Toolkit::ToolManager::instance().end(); ++it)
+  for (auto it = Toolkit::ToolManager::instance().begin(); it != Toolkit::ToolManager::instance().end(); ++it)
   {
     if (!it.value())
       continue;
 
-    m_locationController = dynamic_cast<LocationController*>(it.value());
-    if (m_locationController)
-    {
-      emit simulateLocationChanged();
-      emit locationControllerReadyChanged();
+//    m_locationController = dynamic_cast<LocationController*>(it.value());
+//    if (m_locationController)
+//    {
+//      emit simulateLocationChanged();
+//      emit locationControllerReadyChanged();
 
-      connect(m_locationController, &LocationController::simulatedChanged, [this]
-      {
-        emit simulateLocationChanged();
-      });
+//      connect(m_locationController, &LocationController::simulatedChanged, [this]
+//      {
+//        emit simulateLocationChanged();
+//      });
 
-      break;
-    }
+//      break;
+//    }
   }
 }
 
-bool OptionsController::locationControllerReady()
-{
-  if (m_locationController != nullptr)
-    return true;
-  else
-    return false;
-}
+//bool OptionsController::locationControllerReady()
+//{
+//  if (m_locationController != nullptr)
+//    return true;
+//  else
+//    return false;
+//}
 
-bool OptionsController::simulateLocation()
-{
-  if (m_locationController)
-    return m_locationController->isSimulated();
-  else
-    return false;
-}
+//bool OptionsController::simulateLocation()
+//{
+//  if (m_locationController)
+//    return m_locationController->isSimulated();
+//  else
+//    return false;
+//}
 
 QString OptionsController::toolName() const
 {
   return "Options Tool";
 }
 
-void OptionsController::setSimulateLocation(bool simulate)
-{
-  if (!m_locationController)
-    return;
+//void OptionsController::setSimulateLocation(bool simulate)
+//{
+//  if (!m_locationController)
+//    return;
 
- if (m_locationController->isSimulated() == simulate)
-    return;
+// if (m_locationController->isSimulated() == simulate)
+//    return;
 
- m_locationController->setSimulated(simulate);
-}
+// m_locationController->setSimulated(simulate);
+//}
 
-QString OptionsController::simulationFile() const
-{
-  if (m_locationController)
-    return m_locationController->gpxFilePathAsString();
-  else
-    return "";
-}
+//QString OptionsController::simulationFile() const
+//{
+//  if (m_locationController)
+//    return m_locationController->gpxFilePathAsString();
+//  else
+//    return "";
+//}
 
-void OptionsController::setSimulationFile(const QString& file)
-{
-  if (!m_locationController)
-    return;
+//void OptionsController::setSimulationFile(const QString& file)
+//{
+//  if (!m_locationController)
+//    return;
 
-  if (m_locationController->gpxFilePathAsString() == file)
-    return;
+//  if (m_locationController->gpxFilePathAsString() == file)
+//    return;
 
-  m_locationController->setGpxFilePath(QUrl(file));
-}
+//  m_locationController->setGpxFilePath(QUrl(file));
+//}
 
 

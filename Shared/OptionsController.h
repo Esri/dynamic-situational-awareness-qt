@@ -1,40 +1,36 @@
 #ifndef OPTIONSCONTROLLER_H
 #define OPTIONSCONTROLLER_H
 
-class LocationController;
+class ArcGISCompassController;
 
 #include "AbstractTool.h"
+#include "ArcGISCompassController.h"
+#include <QObject>
 
-using namespace Esri::ArcGISRuntime;
-
-class OptionsController : public Toolkit::AbstractTool
+class OptionsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
   Q_OBJECT
 
+//  Q_PROPERTY(bool compassControllerReady READ compassControllerReady NOTIFY compassControllerReadyChanged)
+//  Q_PROPERTY(bool compassVisible READ compassVisible WRITE setCompassVisible NOTIFY compassVisibleChanged)
+
+public:
   explicit OptionsController(QObject* parent = nullptr);
   ~OptionsController();
 
-  Q_PROPERTY(bool locationControllerReady READ locationControllerReady NOTIFY locationControllerReadyChanged)
-  Q_PROPERTY(bool simulateLocation READ simulateLocation WRITE setSimulateLocation NOTIFY simulateLocationChanged)
-  Q_PROPERTY(QString simulationFile READ simulationFile WRITE setSimulationFile NOTIFY simulationFileChanged)
-
-public:
   QString toolName() const override;
-  bool locationControllerReady();
-  bool simulateLocation();
-  void setSimulateLocation(bool simulate);
-  QString simulationFile() const;
-  void setSimulationFile(const QString& file);
+//  bool compassControllerReady();
+//  bool compassVisible();
+//  void setCompassVisible(bool visible);
 
 signals:
-  void locationControllerReadyChanged();
-  void simulateLocationChanged();
-  void simulationFileChanged();
+//  void compassControllerReady();
+//  void compassVisible();
 
 private:
   void getUpdatedTools();
 
-  LocationController* m_locationController = nullptr;
+  //Esri::ArcGISRuntime::Toolkit::ArcGISCompassController* m_compassController = nullptr;
 };
 
 #endif // OPTIONSCONTROLLER_H

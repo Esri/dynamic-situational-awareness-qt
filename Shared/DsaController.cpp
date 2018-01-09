@@ -14,12 +14,7 @@
 #include "ArcGISTiledElevationSource.h"
 #include "Scene.h"
 #include "ElevationSource.h"
-#include "Layer.h"
 #include "GeoView.h"
-#include "DictionarySymbolStyle.h"
-#include "Point.h"
-#include "Viewpoint.h"
-#include "Camera.h"
 
 // Toolkit
 #include "AbstractTool.h"
@@ -43,29 +38,6 @@ DsaController::DsaController(QObject* parent):
   // setup config settings
   setupConfig();
   m_dataPath = m_dsaSettings["RootDataDirectory"].toString();
-
-  // Set initial viewpoint
-  Viewpoint initViewpoint;
-  const QStringList initialLocation = m_dsaSettings["InitialLocation"].toStringList();
-  if (initialLocation.length() > 5)
-  {
-    const double x = QString(initialLocation.at(0)).toDouble();
-    const double y = QString(initialLocation.at(1)).toDouble();
-    const double distance = QString(initialLocation.at(2)).toDouble();
-    const double heading = QString(initialLocation.at(3)).toDouble();
-    const double pitch = QString(initialLocation.at(4)).toDouble();
-    const double roll = QString(initialLocation.at(5)).toDouble();
-    const Point initPoint = Point(x, y, SpatialReference::wgs84());
-    const Camera initCamera(initPoint, distance, heading, pitch, roll);
-    initViewpoint = Viewpoint(initPoint, initCamera);
-  }
-  else
-  {
-    const Point initPoint = DsaUtility::montereyCA();
-    const Camera initCamera(initPoint, 5000.0, 0.0, 75.0, 0.0);
-    initViewpoint = Viewpoint(initPoint, initCamera);
-  }
-  m_scene->setInitialViewpoint(initViewpoint);
 
   connect(m_scene, &Scene::errorOccurred, this, &DsaController::onError);
 

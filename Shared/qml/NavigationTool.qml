@@ -43,6 +43,29 @@ Item {
         spacing: 2 * scaleFactor
 
         Button {
+            id: homeButton
+            width: buttonSize
+            height: buttonSize
+
+            background: Rectangle {
+                anchors.fill: homeButton
+                radius: 5 * scaleFactor
+                color: buttonColor
+            }
+
+            Image {
+                anchors.centerIn: parent
+                sourceSize.height: 0.85 * zoomInButton.height
+                width: sourceSize.height
+                source: "qrc:/Resources/icons/xhdpi/ic_menu_home_dark.png"
+            }
+
+            onClicked: {
+                navController.zoomToInitialLocation();
+            }
+        }
+
+        Button {
             id: zoomInButton
             width: buttonSize
             height: buttonSize

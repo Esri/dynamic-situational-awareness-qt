@@ -360,13 +360,13 @@ void NavigationController::setInitialDistance(double initialDistance)
   setInitialLocation();
 }
 
-void NavigationController::setInitialCenter(const Esri::ArcGISRuntime::Point &initialCenter)
+void NavigationController::setInitialCenter(const Point& initialCenter)
 {
   m_initialCenter = initialCenter;
   setInitialLocation();
 }
 
-Esri::ArcGISRuntime::Point NavigationController::initialCenter() const
+Point NavigationController::initialCenter() const
 {
   return m_initialCenter;
 }

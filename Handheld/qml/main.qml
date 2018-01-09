@@ -445,4 +445,15 @@ Handheld {
         id: locationController
         enabled: locationCheckBox.checked
     }
+
+    onErrorOccurred: {
+        msgDialog.informativeText = message;
+        msgDialog.detailedText = additionalMessage;
+        msgDialog.open();
+    }
+
+    MessageDialog {
+        id: msgDialog
+        text: "Error"
+    }
 }

@@ -11,6 +11,7 @@
 //
 
 #include <QFileInfo>
+#include <QSortFilterProxyModel>
 
 #include "GeoView.h"
 #include "FeatureLayer.h"
@@ -21,6 +22,7 @@
 #include "ToolResourceProvider.h"
 
 #include "DsaUtility.h"
+#include "DrawOrderLayerListModel.h"
 #include "TableOfContentsController.h"
 
 using namespace Esri::ArcGISRuntime;
@@ -41,9 +43,9 @@ TableOfContentsController::~TableOfContentsController()
 {
 }
 
-QAbstractListModel* TableOfContentsController::layerListModel() const
+QAbstractItemModel* TableOfContentsController::layerListModel() const
 {
-  return m_layerListModel;
+  return m_drawOrderModel;
 }
 
 void TableOfContentsController::zoomTo(int layerIndex)
@@ -51,10 +53,12 @@ void TableOfContentsController::zoomTo(int layerIndex)
   if (!m_layerListModel)
     return;
 
-  if (layerIndex >= m_layerListModel->rowCount())
+  const int modelIndex = mappedIndex(layerIndex);
+
+  if (modelIndex >= m_layerListModel->rowCount())
     return;
 
-  Layer* layer = m_layerListModel->at(layerIndex);
+  Layer* layer = m_layerListModel->at(modelIndex);
   if (!layer)
     return;
 
@@ -70,7 +74,9 @@ void TableOfContentsController::removeAt(int layerIndex)
   if (!m_layerListModel)
     return;
 
-  m_layerListModel->removeAt(layerIndex);
+  const int modelIndex = mappedIndex(layerIndex);
+
+  m_layerListModel->removeAt(modelIndex);
 }
 
 void TableOfContentsController::moveUp(int layerIndex)
@@ -78,10 +84,12 @@ void TableOfContentsController::moveUp(int layerIndex)
   if (!m_layerListModel)
     return;
 
-  if (layerIndex <= 0)
+  const int modelIndex = mappedIndex(layerIndex);
+
+  if (modelIndex <= 0)
     return;
 
-  m_layerListModel->move(layerIndex, layerIndex - 1);
+  m_layerListModel->move(modelIndex, modelIndex - 1);
 }
 
 void TableOfContentsController::moveDown(int layerIndex)
@@ -89,10 +97,12 @@ void TableOfContentsController::moveDown(int layerIndex)
   if (!m_layerListModel)
     return;
 
-  if (layerIndex >= m_layerListModel->rowCount())
+  const int modelIndex = mappedIndex(layerIndex);
+
+  if (modelIndex >= m_layerListModel->rowCount())
     return;
 
-  m_layerListModel->move(layerIndex, layerIndex + 1);
+  m_layerListModel->move(modelIndex, modelIndex + 1);
 }
 
 void TableOfContentsController::moveFromTo(int fromIndex, int toIndex)
@@ -100,7 +110,10 @@ void TableOfContentsController::moveFromTo(int fromIndex, int toIndex)
   if (!m_layerListModel)
     return;
 
-  m_layerListModel->move(fromIndex, toIndex);
+  const int modelFromIndex = mappedIndex(fromIndex);
+  const int modelToIndex = mappedIndex(toIndex);
+
+  m_layerListModel->move(modelFromIndex, modelToIndex);
 }
 
 QString TableOfContentsController::alternateName(int layerIndex)
@@ -109,10 +122,12 @@ QString TableOfContentsController::alternateName(int layerIndex)
   if (!m_layerListModel)
     return QString(unknownName);
 
-  if (layerIndex >= m_layerListModel->rowCount())
+  const int modelIndex = mappedIndex(layerIndex);
+
+  if (modelIndex >= m_layerListModel->rowCount())
     return QString(unknownName);
 
-  Layer* layer = m_layerListModel->at(layerIndex);
+  Layer* layer = m_layerListModel->at(modelIndex);
   if (!layer)
     return QString(unknownName);
 
@@ -138,10 +153,12 @@ TableOfContentsController::LayerGeometryType TableOfContentsController::layerGeo
   if (!m_layerListModel)
     return LayerGeometryType::Unknown;
 
-  if (layerIndex >= m_layerListModel->rowCount())
+  const int modelIndex = mappedIndex(layerIndex);
+
+  if (modelIndex >= m_layerListModel->rowCount())
     return LayerGeometryType::Unknown;
 
-  Layer* layer = m_layerListModel->at(layerIndex);
+  Layer* layer = m_layerListModel->at(modelIndex);
   if (!layer)
     return LayerGeometryType::Unknown;
 
@@ -203,6 +220,17 @@ void TableOfContentsController::updateLayerListModel()
   if (operationalLayers)
   {
     m_layerListModel = operationalLayers;
+    m_drawOrderModel = new DrawOrderLayerListModel(this);
+    m_drawOrderModel->setSourceModel(m_layerListModel);
     emit layerListModelChanged();
   }
+}
+
+int TableOfContentsController::mappedIndex(int index) const
+{
+  if (!m_layerListModel || !m_drawOrderModel)
+    return -1;
+
+  const QModelIndex sourceIndex = m_drawOrderModel->mapToSource(m_drawOrderModel->index(index, 0));
+  return sourceIndex.row();
 }

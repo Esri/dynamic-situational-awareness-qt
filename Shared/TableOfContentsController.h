@@ -16,6 +16,7 @@
 #include <QObject>
 
 #include <QAbstractListModel>
+#include <QHash>
 #include <QUrl>
 
 #include "AbstractTool.h"
@@ -24,6 +25,7 @@ namespace Esri
 {
 namespace ArcGISRuntime
 {
+  class Layer;
   class LayerListModel;
 }
 }
@@ -70,6 +72,7 @@ private slots:
 
 private:
   Esri::ArcGISRuntime::LayerListModel* m_layerListModel = nullptr;
+  QHash<Esri::ArcGISRuntime::Layer*, QMetaObject::Connection> m_layerConnections;
 };
 
 #endif // TABLEOFCONTENTSCONTROLLER_H

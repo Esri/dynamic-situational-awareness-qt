@@ -146,7 +146,10 @@ TableOfContentsController::LayerGeometryType TableOfContentsController::layerGeo
     return LayerGeometryType::Unknown;
 
   if (layer->loadStatus() != LoadStatus::Loaded)
-    connect(layer, &Layer::loadStatusChanged, this, &TableOfContentsController::layerListModelChanged);
+  {
+    if (!m_layerConnections.contains(layer))
+      m_layerConnections.insert(layer, connect(layer, &Layer::doneLoading, this, &TableOfContentsController::layerListModelChanged));
+  }
 
   switch (layer->layerType())
   {

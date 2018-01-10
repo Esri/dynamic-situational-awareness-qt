@@ -28,52 +28,12 @@ INCLUDEPATH += ../Shared/
 HEADERS += \
     AppInfo.h \
     Vehicle.h \
-    ../Shared/DsaUtility.h \
-    ../Shared/BasemapPickerController.h \
-    ../Shared/TileCacheListModel.h \
-    ../Shared/AddLocalDataController.h \
-    ../Shared/DataItemListModel.h \
-    ../Shared/DsaController.h \
-    ../Shared/GPXLocationSimulator.h \
-    ../Shared/LocationController.h \
-    ../Shared/Message.h \
-    ../Shared/MessageListener.h \
-    ../Shared/MessagesOverlay.h \
-    ../Shared/MessageFeedsController.h \
-    ../Shared/MessageFeedListModel.h \
-    ../Shared/MessageFeed.h \
-    ../Shared/FollowPositionController.h \
-    ../Shared/TableOfContentsController.h \
-    ../Shared/NavigationController.h \
-    ../Shared/TelestrateController.h \
-    ../Shared/AbstractSketchTool.h \
-    ../Shared/AnalysisController.h \
-    ../Shared/DrawOrderLayerListModel.h
+    ../Shared/*.h
 
 SOURCES += \
     main.cpp \
     Vehicle.cpp \
-    ../Shared/DsaUtility.cpp \
-    ../Shared/BasemapPickerController.cpp \
-    ../Shared/TileCacheListModel.cpp \
-    ../Shared/AddLocalDataController.cpp \
-    ../Shared/DataItemListModel.cpp \
-    ../Shared/DsaController.cpp \
-    ../Shared/GPXLocationSimulator.cpp \
-    ../Shared/LocationController.cpp \
-    ../Shared/Message.cpp \
-    ../Shared/MessageListener.cpp \
-    ../Shared/MessagesOverlay.cpp \
-    ../Shared/MessageFeedsController.cpp \
-    ../Shared/MessageFeedListModel.cpp \
-    ../Shared/MessageFeed.cpp \
-    ../Shared/FollowPositionController.cpp \
-    ../Shared/TableOfContentsController.cpp \
-    ../Shared/NavigationController.cpp \
-    ../Shared/TelestrateController.cpp \
-    ../Shared/AbstractSketchTool.cpp \
-    ../Shared/AnalysisController.cpp \
-    ../Shared/DrawOrderLayerListModel.cpp
+    ../Shared/*.cpp
 
 RESOURCES += \
     qml/qml.qrc \

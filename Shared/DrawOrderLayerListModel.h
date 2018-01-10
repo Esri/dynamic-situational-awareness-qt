@@ -24,7 +24,7 @@ public:
   ~DrawOrderLayerListModel();
 
 protected:
-  bool lessThan(const QModelIndex &source_left, const QModelIndex &source_right) const override;
+  bool lessThan(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const override;
 };
 
 #endif // DRAWORDERLAYERLISTMODEL_H

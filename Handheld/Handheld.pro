@@ -23,58 +23,17 @@ CONFIG += c++11
 ARCGIS_RUNTIME_VERSION = 100.2
 include($$PWD/../Shared/arcgisruntime.pri)
 
-INCLUDEPATH += ../Shared/
+INCLUDEPATH += $$PWD/../Shared/
 
 HEADERS += \
     AppInfo.h \
     Handheld.h \
-    ../Shared/DsaUtility.h \
-    ../Shared/BasemapPickerController.h \
-    ../Shared/AddLocalDataController.h \
-    ../Shared/DataItemListModel.h \
-    ../Shared/TileCacheListModel.h \
-    ../Shared/DsaController.h \
-    ../Shared/GPXLocationSimulator.h \
-    ../Shared/LocationController.h \
-    ../Shared/Message.h \
-    ../Shared/MessageListener.h \
-    ../Shared/MessagesOverlay.h \
-    ../Shared/Message_p.h \
-    ../Shared/MessageFeedsController.h \
-    ../Shared/MessageFeedListModel.h \
-    ../Shared/MessageFeed.h \
-    ../Shared/FollowPositionController.h \
-    ../Shared/TableOfContentsController.h \
-    ../Shared/NavigationController.h \
-    ../Shared/AbstractSketchTool.h \
-    ../Shared/TelestrateController.h \
-    ../Shared/AnalysisController.h \
-    ../Shared/OptionsController.h
+    $$PWD/../Shared/*.h
 
 SOURCES += \
     main.cpp \
     Handheld.cpp \
-    ../Shared/DsaUtility.cpp \
-    ../Shared/BasemapPickerController.cpp \
-    ../Shared/AddLocalDataController.cpp \    
-    ../Shared/DataItemListModel.cpp \
-    ../Shared/TileCacheListModel.cpp \
-    ../Shared/DsaController.cpp \
-    ../Shared/GPXLocationSimulator.cpp \
-    ../Shared/LocationController.cpp \
-    ../Shared/Message.cpp \
-    ../Shared/MessageListener.cpp \
-    ../Shared/MessagesOverlay.cpp \
-    ../Shared/MessageFeedsController.cpp \
-    ../Shared/MessageFeedListModel.cpp \
-    ../Shared/MessageFeed.cpp \
-    ../Shared/FollowPositionController.cpp \
-    ../Shared/TableOfContentsController.cpp \
-    ../Shared/NavigationController.cpp \
-    ../Shared/AbstractSketchTool.cpp \
-    ../Shared/TelestrateController.cpp \
-    ../Shared/AnalysisController.cpp \
-    ../Shared/OptionsController.cpp
+    $$PWD/../Shared/*.cpp
 
 RESOURCES += \
     qml/qml.qrc \

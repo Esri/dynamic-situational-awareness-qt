@@ -15,7 +15,8 @@
 
 #include <QObject>
 
-#include <QAbstractListModel>
+#include <QAbstractItemModel>
+#include <QHash>
 #include <QUrl>
 
 #include "AbstractTool.h"
@@ -24,15 +25,18 @@ namespace Esri
 {
 namespace ArcGISRuntime
 {
+  class Layer;
   class LayerListModel;
 }
 }
+
+class DrawOrderLayerListModel;
 
 class TableOfContentsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
   Q_OBJECT
 
-  Q_PROPERTY(QAbstractListModel* layerListModel READ layerListModel NOTIFY layerListModelChanged)
+  Q_PROPERTY(QAbstractItemModel* layerListModel READ layerListModel NOTIFY layerListModelChanged)
 
 public:
 
@@ -49,7 +53,7 @@ public:
   explicit TableOfContentsController(QObject* parent = nullptr);
   ~TableOfContentsController();
 
-  QAbstractListModel* layerListModel() const;
+  QAbstractItemModel* layerListModel() const;
 
   Q_INVOKABLE void zoomTo(int layerIndex);
   Q_INVOKABLE void removeAt(int layerIndex);
@@ -69,7 +73,11 @@ private slots:
   void updateLayerListModel();
 
 private:
+  int mappedIndex(int index) const;
+
   Esri::ArcGISRuntime::LayerListModel* m_layerListModel = nullptr;
+  QHash<Esri::ArcGISRuntime::Layer*, QMetaObject::Connection> m_layerConnections;
+  DrawOrderLayerListModel* m_drawOrderModel = nullptr;
 };
 
 #endif // TABLEOFCONTENTSCONTROLLER_H

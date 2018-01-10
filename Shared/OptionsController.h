@@ -28,8 +28,6 @@ public:
 
   QString toolName() const override;
 
-signals:
-
 private:
   void getUpdatedTools();
 };

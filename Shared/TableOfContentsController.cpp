@@ -145,8 +145,19 @@ TableOfContentsController::LayerGeometryType TableOfContentsController::layerGeo
   if (!layer)
     return LayerGeometryType::Unknown;
 
-  if (layer->loadStatus() != LoadStatus::Loaded)
-    connect(layer, &Layer::loadStatusChanged, this, &TableOfContentsController::layerListModelChanged);
+  if (layer->loadStatus() != LoadStatus::Loaded && layer->loadStatus() != LoadStatus::FailedToLoad)
+  {
+    if (!m_layerConnections.contains(layer))
+      m_layerConnections.insert(layer, connect(layer, &Layer::doneLoading, this, [this, layer](const Error& loadError)
+      {
+        m_layerConnections.remove(layer);
+
+        if (!loadError.isEmpty())
+          emit errorOccurred(loadError);
+        else
+          emit layerListModelChanged();
+      }));
+  }
 
   switch (layer->layerType())
   {

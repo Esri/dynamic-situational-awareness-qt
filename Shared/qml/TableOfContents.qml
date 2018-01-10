@@ -87,10 +87,7 @@ DsaToolBase {
 
                 if (removing) {
                     if (xDelta > (64 * scaleFactor))
-                    {
                         toolController.removeAt(draggedIndex);
-                        visualModel.model = toolController.layerListModel;
-                    }
                 }
                 else {
                     if (droppedIndex === -1)

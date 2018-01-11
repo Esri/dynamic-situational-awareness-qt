@@ -24,10 +24,6 @@
 #include "GeometryEngine.h"
 #include "DsaUtility.h"
 
-#include <QScreen>
-#include <QDebug>
-#include <QGuiApplication>
-
 using namespace Esri::ArcGISRuntime;
 
 const QString NavigationController::INITIAL_LOCATION_PROPERTYNAME = "InitialLocation";
@@ -81,39 +77,9 @@ void NavigationController::updateGeoView()
 
   m_sceneView = dynamic_cast<SceneView*>(m_geoView);
   if (m_sceneView)
-  {
     m_is3d = true;
-
-    connect(this, &NavigationController::screenToLocationCompleted, this, [this](QUuid, Point location)
-    {
-      // check if called from the navigation controls
-      if (!m_enabled)
-        return;
-
-      m_currentCenter = location;
-
-      if (m_currentMode == Mode::Zoom)
-      {
-        zoom();
-      }
-      else if (m_currentMode == Mode::Rotate)
-      {
-        setRotationInternal();
-      }
-      else if(m_currentMode == Mode::Tilt)
-      {
-        set2DInternal();
-      }
-
-      // reset
-      m_enabled = false;
-    });
-  }
-  else
-  {
-    // set the mapView here
+  else // set the mapView here
     m_is3d = false;
-  }
 }
 
 void NavigationController::setInitialLocation()
@@ -160,6 +126,7 @@ void NavigationController::zoomIn()
     m_cameraMoveDistance = -m_cameraMoveDistance;
 
   center();
+  zoom();
 }
 
 void NavigationController::zoomOut()
@@ -170,12 +137,14 @@ void NavigationController::zoomOut()
     m_cameraMoveDistance = -m_cameraMoveDistance;
 
   center();
+  zoom();
 }
 
 void NavigationController::set2D()
 {
   m_currentMode = Mode::Tilt;
   center();
+  set2DInternal();
 }
 
 
@@ -192,11 +161,15 @@ void NavigationController::setRotation()
 {
   m_currentMode = Mode::Rotate;
   center();
+  setRotationInternal();
 }
 
 
 void NavigationController::zoom()
 {
+  if (!m_sceneView)
+    return;
+
   // get the current camera
   Camera currentCamera = m_sceneView->currentViewpointCamera();
 
@@ -270,6 +243,9 @@ void NavigationController::setCameraMoveDistance(double value)
 
 void NavigationController::setRotationInternal()
 {
+  if (!m_sceneView)
+    return;
+
   // get the current camera
   Camera currentCamera = m_sceneView->currentViewpointCamera();
   double distance = currentCameraDistance(currentCamera);
@@ -284,6 +260,9 @@ void NavigationController::set2DInternal()
 {
   if (m_is3d)
   {
+    if (!m_sceneView)
+      return;
+
     // get the current camera
     const Camera currentCamera = m_sceneView->currentViewpointCamera();
 
@@ -303,8 +282,7 @@ void NavigationController::center()
     return;
 
   m_enabled = true;
-  const double factor = DsaUtility::dipsToPixels();
-  m_sceneView->screenToLocation(static_cast<int>(m_sceneView->sceneWidth() / factor) * 0.5, static_cast<int>(m_sceneView->sceneHeight() / factor) * 0.5);
+  m_currentCenter = m_sceneView->currentViewpoint(ViewpointType::CenterAndScale).targetGeometry().extent().center();
 }
 
 double NavigationController::currentCameraDistance(const Camera &currentCamera)

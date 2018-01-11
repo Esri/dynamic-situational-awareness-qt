@@ -20,7 +20,7 @@ CONFIG += c++11
 # uncomment this line to use a local toolkit build
 #CONFIG += LocalToolkitBuild ToolkitBuildUsePrefix
 
-ARCGIS_RUNTIME_VERSION = 100.2
+ARCGIS_RUNTIME_VERSION = 100.2.1
 include($$PWD/../Shared/arcgisruntime.pri)
 
 INCLUDEPATH += ../Shared/

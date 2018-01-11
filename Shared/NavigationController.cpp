@@ -167,6 +167,9 @@ void NavigationController::setRotation()
 
 void NavigationController::zoom()
 {
+  if (!m_sceneView)
+    return;
+
   // get the current camera
   Camera currentCamera = m_sceneView->currentViewpointCamera();
 
@@ -240,6 +243,9 @@ void NavigationController::setCameraMoveDistance(double value)
 
 void NavigationController::setRotationInternal()
 {
+  if (!m_sceneView)
+    return;
+
   // get the current camera
   Camera currentCamera = m_sceneView->currentViewpointCamera();
   double distance = currentCameraDistance(currentCamera);
@@ -254,6 +260,9 @@ void NavigationController::set2DInternal()
 {
   if (m_is3d)
   {
+    if (!m_sceneView)
+      return;
+
     // get the current camera
     const Camera currentCamera = m_sceneView->currentViewpointCamera();
 

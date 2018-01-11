@@ -11,5 +11,6 @@
         <file>TelestrateTool.qml</file>
         <file>Imports.qml</file>
         <file>Analysis.qml</file>
+        <file>Options.qml</file>
     </qresource>
 </RCC>

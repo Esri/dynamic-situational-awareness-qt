@@ -248,6 +248,36 @@ Handheld {
                     }
                 }
             }
+
+            Button {
+                id: optionsCheckBox
+                checkable: true
+                checked: false
+                width: 32 * scaleFactor
+                height: 32 * scaleFactor
+
+                background: Rectangle {
+                    anchors.fill: optionsCheckBox
+                    color: Material.primary
+                }
+
+                Image {
+                    fillMode: Image.PreserveAspectFit
+                    anchors.centerIn: parent
+                    sourceSize.height: parent.height * 0.85
+                    height: sourceSize.height
+                    source: "qrc:/Resources/icons/xhdpi/ic_menu_settings_dark_d.png"
+                }
+
+                onClicked: {
+                    if (drawer.visible)
+                        drawer.close();
+                    else {
+                        toolRect.state = "options";
+                        drawer.open();
+                    }
+                }
+            }
         }
     }
 
@@ -381,6 +411,13 @@ Handheld {
                         target: analysisTool
                         visible: true
                     }
+                },
+                State {
+                    name: "options"
+                    PropertyChanges {
+                        target: optionsTool
+                        visible: true
+                    }
                 }
             ]
 
@@ -434,6 +471,13 @@ Handheld {
 
             Analysis {
                 id: analysisTool
+                anchors.fill: parent
+                visible: false
+                onClosed: drawer.close();
+            }
+
+            Options {
+                id: optionsTool
                 anchors.fill: parent
                 visible: false
                 onClosed: drawer.close();

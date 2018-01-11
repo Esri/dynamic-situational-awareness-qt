@@ -37,6 +37,7 @@
 #include "NavigationController.h"
 #include "TelestrateController.h"
 #include "AnalysisController.h"
+#include "OptionsController.h"
 
 #include "ArcGISRuntimeToolkit.h"
 #include "ArcGISCompassController.h"
@@ -122,6 +123,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<NavigationController>("Esri.DSA", 1, 0, "NavigationController");
   qmlRegisterType<TelestrateController>("Esri.DSA", 1, 0, "TelestrateController");
   qmlRegisterType<AnalysisController>("Esri.DSA", 1, 0, "AnalysisController");
+  qmlRegisterType<OptionsController>("Esri.DSA", 1, 0, "OptionsController");
 
   // Register Toolkit Component Types
   ArcGISRuntimeToolkit::registerToolkitTypes();

@@ -24,8 +24,6 @@
 #include "GeometryEngine.h"
 #include "DsaUtility.h"
 
-#include <QDebug>
-
 using namespace Esri::ArcGISRuntime;
 
 const QString NavigationController::INITIAL_LOCATION_PROPERTYNAME = "InitialLocation";

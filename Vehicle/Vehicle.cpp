@@ -10,9 +10,14 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "Graphic.h"
+#include "GraphicsOverlay.h"
 #include "SceneQuickView.h"
+#include "SimpleMarkerSceneSymbol.h"
 
 #include "DsaController.h"
+#include "DsaUtility.h"
+#include "DummyAlert.h"
 #include "Vehicle.h"
 #include "ToolResourceProvider.h"
 #include "CoordinateConversionController.h"
@@ -80,6 +85,19 @@ void Vehicle::componentComplete()
 
   // set the options for the coordinateConversionTool
   setCoordinateConversionOptions();
+
+  // Alerts: Proof of concept
+  GraphicsOverlay* alertsOverlay = new GraphicsOverlay(this);
+  SimpleMarkerSceneSymbol* dummySymbol = new SimpleMarkerSceneSymbol(SimpleMarkerSceneSymbolStyle::Sphere, Qt::red, 50., 50., 50., SceneSymbolAnchorPosition::Center, this);
+  Graphic* dummyAlertGraphic = new Graphic(DsaUtility::montereyCA(), dummySymbol, this);
+  DummyAlert* dummyAlert = new DummyAlert(dummyAlertGraphic, this);
+  dummyAlert->setMessage("Dummy Alert");
+  dummyAlert->setStatus(AlertStatus::Medium);
+  dummyAlert->registerAlert();
+  qDebug() << dummyAlert->id();
+  alertsOverlay->graphics()->append(dummyAlertGraphic);
+
+  m_sceneView->graphicsOverlays()->append(alertsOverlay);
 }
 
 void Vehicle::setCoordinateConversionOptions()

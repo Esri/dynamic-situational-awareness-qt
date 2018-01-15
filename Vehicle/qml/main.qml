@@ -287,6 +287,36 @@ Vehicle {
                     }
                 }
             }
+
+            Button {
+                id: alertsCheckBox
+                checkable: true
+                checked: false
+                width: 32 * scaleFactor
+                height: 32 * scaleFactor
+
+                background: Rectangle {
+                    anchors.fill: alertsCheckBox
+                    color: Material.primary
+                }
+
+                Image {
+                    fillMode: Image.PreserveAspectFit
+                    anchors.centerIn: parent
+                    sourceSize.height: parent.height * 0.85
+                    height: sourceSize.height
+                    source: "qrc:/Resources/icons/xhdpi/ic_menu_settings_dark_d.png"
+                }
+
+                onClicked: {
+                    if (drawer.visible)
+                        drawer.close();
+                    else {
+                        toolRect.state = "alerts";
+                        drawer.open();
+                    }
+                }
+            }
         }
     }
 
@@ -387,6 +417,13 @@ Vehicle {
                             target: optionsTool
                             visible: true
                         }
+                    },
+                    State {
+                        name: "alerts"
+                        PropertyChanges {
+                            target: alertsTool
+                            visible: true
+                        }
                     }
                 ]
 
@@ -422,6 +459,13 @@ Vehicle {
 
                 Options {
                     id: optionsTool
+                    anchors.fill: parent
+                    visible: false
+                    onClosed: drawer.close();
+                }
+
+                AlertList {
+                    id: alertsTool
                     anchors.fill: parent
                     visible: false
                     onClosed: drawer.close();

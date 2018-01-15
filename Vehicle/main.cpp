@@ -28,6 +28,7 @@
 
 #include "SceneQuickView.h"
 
+#include "AlertToolController.h"
 #include "BasemapPickerController.h"
 #include "AddLocalDataController.h"
 #include "FollowPositionController.h"
@@ -124,6 +125,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<TelestrateController>("Esri.DSA", 1, 0, "TelestrateController");
   qmlRegisterType<AnalysisController>("Esri.DSA", 1, 0, "AnalysisController");
   qmlRegisterType<OptionsController>("Esri.DSA", 1, 0, "OptionsController");
+  qmlRegisterType<AlertToolController>("Esri.DSA", 1, 0, "AlertToolController");
 
   // Register Toolkit Component Types
   ArcGISRuntimeToolkit::registerToolkitTypes();

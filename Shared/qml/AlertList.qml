@@ -60,6 +60,7 @@ DsaToolBase {
                 anchors.fill: parent
 
                 onClicked: toolController.highlight(index);
+                onDoubleClicked: toolController.zoomTo(index);
             }
         }
    }

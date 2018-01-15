@@ -14,9 +14,15 @@
 #include "AlertToolController.h"
 #include "AlertListModel.h"
 #include "AlertListProxyModel.h"
+#include "DsaUtility.h"
 #include "StatusAlertRule.h"
 
 #include "ToolManager.h"
+#include "ToolResourceProvider.h"
+
+#include "GeoView.h"
+
+#include <QDebug>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -51,6 +57,24 @@ void AlertToolController::highlight(int rowIndex)
     return;
 
   alert->highlight();
+}
+
+void AlertToolController::zoomTo(int rowIndex)
+{
+  QModelIndex sourceIndex = m_alertsProxyModel->mapToSource(m_alertsProxyModel->index(rowIndex, 0));
+  AbstractAlert* alert = AlertListModel::instance()->alertAt(sourceIndex.row());
+  if (!alert)
+    return;
+
+  GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
+  if (!geoView)
+    return;
+
+  const Point pos = alert->position().extent().center();
+  const Viewpoint currVP = geoView->currentViewpoint(ViewpointType::CenterAndScale);
+  const Viewpoint newViewPoint(pos, currVP.targetScale());
+
+  geoView->setViewpoint(newViewPoint, 1.);
 }
 
 void AlertToolController::setMinStatus(int status)

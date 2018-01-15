@@ -50,6 +50,7 @@ DsaToolBase {
             margins: 8 * scaleFactor
         }
         model: toolController.alertListModel
+        clip: true
 
         delegate: Text {
             text: alertId + "\n" + message

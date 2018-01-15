@@ -305,7 +305,7 @@ Vehicle {
                     anchors.centerIn: parent
                     sourceSize.height: parent.height * 0.85
                     height: sourceSize.height
-                    source: "qrc:/Resources/icons/xhdpi/ic_menu_settings_dark_d.png"
+                    source: "qrc:/Resources/icons/xhdpi/ic_menu_failedlayer.png"
                 }
 
                 onClicked: {

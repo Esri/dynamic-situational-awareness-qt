@@ -15,6 +15,7 @@
 #include "AlertListModel.h"
 #include "AlertListProxyModel.h"
 #include "DsaUtility.h"
+#include "IdsAlertRule.h"
 #include "StatusAlertRule.h"
 
 #include "ToolManager.h"
@@ -27,9 +28,12 @@ using namespace Esri::ArcGISRuntime;
 AlertToolController::AlertToolController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent),
   m_alertsProxyModel(new AlertListProxyModel(this)),
-  m_statusAlertRule(new StatusAlertRule(this))
+  m_statusAlertRule(new StatusAlertRule(this)),
+  m_idsAlertRule(new IdsAlertRule(this))
 {
   Toolkit::ToolManager::instance().addTool(this);
+  m_rules.append(m_statusAlertRule);
+  m_rules.append(m_idsAlertRule);
 }
 
 AlertToolController::~AlertToolController()
@@ -85,6 +89,17 @@ void AlertToolController::setViewed(int rowIndex)
   model->setData(sourceIndex, QVariant::fromValue(true), AlertListModel::AlertListRoles::Viewed);
 }
 
+void AlertToolController::dismiss(int rowIndex)
+{
+  QModelIndex sourceIndex = m_alertsProxyModel->mapToSource(m_alertsProxyModel->index(rowIndex, 0));
+  AbstractAlert* alert = AlertListModel::instance()->alertAt(sourceIndex.row());
+  if (!alert)
+    return;
+
+  m_idsAlertRule->addId(alert->id());
+  m_alertsProxyModel->applyFilter(m_rules);
+}
+
 void AlertToolController::setMinStatus(int status)
 {
   AlertStatus alertStatus = static_cast<AlertStatus>(status);
@@ -95,7 +110,7 @@ void AlertToolController::setMinStatus(int status)
   case AlertStatus::Critical:
   case AlertStatus::Inactive:
     m_statusAlertRule->setMinStatus(alertStatus);
-    m_alertsProxyModel->applyFilter(QList<AbstractAlertRule*>{m_statusAlertRule});
+    m_alertsProxyModel->applyFilter(m_rules);
     break;
   default:
     break;

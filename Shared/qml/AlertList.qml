@@ -21,26 +21,27 @@ DsaToolBase {
     id: alertsRoot
     width: 272 * scaleFactor
     title: qsTr("Alerts")
+    clip: true
 
     AlertToolController {
         id: toolController
     }
 
-   ComboBox {
-       id: statusFilter
-       anchors {
-           top: alertsRoot.titleBar.bottom
-           left: parent.left
-           right: parent.right
-           margins: 8 * scaleFactor
-       }
+    ComboBox {
+        id: statusFilter
+        anchors {
+            top: alertsRoot.titleBar.bottom
+            left: parent.left
+            right: parent.right
+            margins: 8 * scaleFactor
+        }
 
-       model: ["Inactive", "Low", "Medium", "High", "Critical"]
-       currentIndex: 0
-       onCurrentIndexChanged: toolController.setMinStatus(currentIndex);
-   }
+        model: ["Inactive", "Low", "Medium", "High", "Critical"]
+        currentIndex: 0
+        onCurrentIndexChanged: toolController.setMinStatus(currentIndex);
+    }
 
-   ListView {
+    ListView {
         id: alertsView
         anchors {
             top: statusFilter.bottom
@@ -52,29 +53,48 @@ DsaToolBase {
         model: toolController.alertListModel
         clip: true
 
-        delegate: Text {
-            text: alertId + "\n" + message + ": " + (status === 0 ?
-                      "inactive" : (status === 1 ?
-                                        "low" : (status === 2 ?
-                                                     "medium" : (status === 3 ?
-                                                                     "high" : (status === 4 ?
-                                                                                   "critical" : "???")))))
-            color: "white"
+        delegate: SwipeDelegate {
+            width: parent.width
+            Text {
+                text: message + ": " + (status === 0 ?
+                                            "inactive" : (status === 1 ?
+                                                              "low" : (status === 2 ?
+                                                                           "medium" : (status === 3 ?
+                                                                                           "high" : (status === 4 ?
+                                                                                                         "critical" : "???")))))
+                color: "white"
 
-            MouseArea {
-                anchors.fill: parent
+                MouseArea {
+                    anchors.fill: parent
 
-                onClicked: toolController.highlight(index);
-                onDoubleClicked: toolController.zoomTo(index);
+                    onClicked: toolController.highlight(index);
+                    onDoubleClicked: toolController.zoomTo(index);
+                }
+            }
+
+            swipe.right: Label {
+                id: deleteLabel
+                text: qsTr("Dismiss")
+                color: "red"
+                verticalAlignment: Label.AlignVCenter
+                padding: 12
+                height: parent.height
+                anchors.right: parent.right
+
+                SwipeDelegate.onClicked: toolController.dismiss(index);
+
+                background: Rectangle {
+                    color: deleteLabel.SwipeDelegate.pressed ? Qt.darker("tomato", 1.1) : "tomato"
+                }
             }
         }
-   }
+    }
 
-   onVisibleChanged: {
-    if (!visible)
-        return;
+    onVisibleChanged: {
+        if (!visible)
+            return;
 
-    for (var i = 0; i < alertsView.count; ++i)
-        toolController.setViewed(i);
-   }
+        for (var i = 0; i < alertsView.count; ++i)
+            toolController.setViewed(i);
+    }
 }

@@ -309,12 +309,7 @@ Vehicle {
                 }
 
                 onClicked: {
-                    if (drawer.visible)
-                        drawer.close();
-                    else {
-                        toolRect.state = "alerts";
-                        drawer.open();
-                    }
+                    alertsTool.visible = !alertsTool.visible;
                 }
 
                 ViewedAlerts {
@@ -356,6 +351,19 @@ Vehicle {
 
         TableOfContents {
             id: tableOfContentsTool
+            anchors {
+                left: parent.left
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+
+            onClosed: visible = false;
+        }
+
+        AlertList {
+            id: alertsTool
             anchors {
                 left: parent.left
                 top: parent.top
@@ -424,13 +432,6 @@ Vehicle {
                             target: optionsTool
                             visible: true
                         }
-                    },
-                    State {
-                        name: "alerts"
-                        PropertyChanges {
-                            target: alertsTool
-                            visible: true
-                        }
                     }
                 ]
 
@@ -466,13 +467,6 @@ Vehicle {
 
                 Options {
                     id: optionsTool
-                    anchors.fill: parent
-                    visible: false
-                    onClosed: drawer.close();
-                }
-
-                AlertList {
-                    id: alertsTool
                     anchors.fill: parent
                     visible: false
                     onClosed: drawer.close();

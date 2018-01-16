@@ -19,7 +19,9 @@
 
 #include "AbstractTool.h"
 
+class AbstractAlertRule;
 class AlertListProxyModel;
+class IdsAlertRule;
 class StatusAlertRule;
 
 class AlertToolController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
@@ -40,6 +42,7 @@ public:
   Q_INVOKABLE void highlight(int rowIndex);
   Q_INVOKABLE void zoomTo(int rowIndex);
   Q_INVOKABLE void setViewed(int rowIndex);
+  Q_INVOKABLE void dismiss(int rowIndex);
   Q_INVOKABLE void setMinStatus(int status);
 
 signals:
@@ -48,6 +51,8 @@ signals:
 private:
   AlertListProxyModel* m_alertsProxyModel;
   StatusAlertRule* m_statusAlertRule;
+  IdsAlertRule* m_idsAlertRule;
+  QList<AbstractAlertRule*> m_rules;
 };
 
 #endif // ALERTTOOLCONTROLLER_H

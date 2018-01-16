@@ -140,6 +140,7 @@ void Vehicle::componentComplete()
       geofenceAlert->setStatus(AlertStatus::Critical);
       geofenceAlert->setMessage("Location in geofence");
       geofenceAlert->registerAlert();
+      geofenceAlert->setViewed(false);
 
       connect(locationTool, &LocationController::positionChanged, geofenceAlert, &GraphicPairAlert::onPositionChanged);
     }

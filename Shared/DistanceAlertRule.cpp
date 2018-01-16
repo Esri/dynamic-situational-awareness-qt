@@ -49,7 +49,6 @@ bool DistanceAlertRule::matchesRule(AbstractAlert* alert) const
     if (!pairAlert->active())
     {
       pairAlert->setActive(true);
-      pairAlert->setViewed(false);
     }
 
     return true;

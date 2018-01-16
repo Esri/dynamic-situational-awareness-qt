@@ -54,8 +54,15 @@ DsaToolBase {
         clip: true
 
         delegate: SwipeDelegate {
+            id: swipeDelegate
             width: parent.width
             Text {
+                anchors {
+                    left: parent.left
+                    right: highlightButton.left
+                    verticalCenter: parent.verticalCenter
+                }
+
                 text: message + ": " + (status === 0 ?
                                             "inactive" : (status === 1 ?
                                                               "low" : (status === 2 ?
@@ -63,19 +70,34 @@ DsaToolBase {
                                                                                            "high" : (status === 4 ?
                                                                                                          "critical" : "???")))))
                 color: "white"
+            }
 
-                MouseArea {
-                    anchors.fill: parent
-
-                    onClicked: toolController.highlight(index);
-                    onDoubleClicked: toolController.zoomTo(index);
+            Button {
+                id: highlightButton
+                text: "flash";
+                visible: swipeDelegate.swipe.position === 0
+                anchors {
+                    right: zoomButton.left
+                    verticalCenter: parent.verticalCenter
                 }
+                onClicked: toolController.highlight(index);
+            }
+
+            Button {
+                id: zoomButton
+                visible: swipeDelegate.swipe.position === 0
+                text: "zoom";
+                anchors {
+                    right: parent.right
+                    verticalCenter: parent.verticalCenter
+                }
+                onClicked: toolController.zoomTo(index);
             }
 
             swipe.right: Label {
                 id: deleteLabel
                 text: qsTr("Dismiss")
-                color: "red"
+                color: "white"
                 verticalAlignment: Label.AlignVCenter
                 padding: 12
                 height: parent.height

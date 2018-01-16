@@ -87,6 +87,11 @@ DsaToolBase {
                     color: deleteLabel.SwipeDelegate.pressed ? Qt.darker("tomato", 1.1) : "tomato"
                 }
             }
+
+            Component.onCompleted: {
+                if (visible)
+                    toolController.setViewed(index);
+            }
         }
     }
 

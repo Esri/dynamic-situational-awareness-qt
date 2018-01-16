@@ -49,22 +49,23 @@ bool AlertListModel::addAlert(AbstractAlert* alert)
     return false;
 
   const int size = m_alerts.size();
+  const int insertIdx = size == 0 ? 0 : size -1;
   const QUuid id = QUuid::createUuid();
   alert->setId(id);
 
-  connect(alert, &AbstractAlert::viewedChanged, this, [this, size]
+  connect(alert, &AbstractAlert::viewedChanged, this, [this, insertIdx]
   {
-    const QModelIndex changedIndex = index(size, 0);
+    const QModelIndex changedIndex = index(insertIdx, 0);
     emit dataChanged(changedIndex, changedIndex);
   });
 
-  connect(alert, &AbstractAlert::positionChanged, this, [this, size]
+  connect(alert, &AbstractAlert::positionChanged, this, [this, insertIdx]
   {
-    const QModelIndex changedIndex = index(size, 0);
+    const QModelIndex changedIndex = index(insertIdx, 0);
     emit dataChanged(changedIndex, changedIndex);
   });
 
-  beginInsertRows(QModelIndex(), size, size);
+  beginInsertRows(QModelIndex(), insertIdx, insertIdx);
   m_alerts.append(alert);
   endInsertRows();
 
@@ -83,7 +84,7 @@ int AlertListModel::rowCount(const QModelIndex&) const
 
 QVariant AlertListModel::data(const QModelIndex& index, int role) const
 {
-  if (index.row() < 0 || index.row() >= rowCount(index))
+  if (index.row() < 0 || index.row() > rowCount())
     return QVariant();
 
   AbstractAlert* alert = m_alerts.at(index.row());

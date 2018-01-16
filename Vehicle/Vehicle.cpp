@@ -17,6 +17,7 @@
 #include "SimpleMarkerSceneSymbol.h"
 #include "SimpleLineSymbol.h"
 
+#include "AlertListModel.h"
 #include "DsaController.h"
 #include "DsaUtility.h"
 #include "DummyAlert.h"
@@ -94,11 +95,10 @@ void Vehicle::componentComplete()
   // Alerts: Proof of concept
   GraphicsOverlay* alertsOverlay = new GraphicsOverlay(this);
   SimpleMarkerSceneSymbol* dummySymbol = new SimpleMarkerSceneSymbol(SimpleMarkerSceneSymbolStyle::Sphere, Qt::red, 50., 50., 50., SceneSymbolAnchorPosition::Center, this);
-  int alertCount = 0;
-  connect(m_sceneView, &SceneQuickView::mousePressedAndHeld, this, [this, alertsOverlay, dummySymbol, &alertCount](QMouseEvent& mouseEvent)
+  connect(m_sceneView, &SceneQuickView::mousePressedAndHeld, this, [this, alertsOverlay, dummySymbol](QMouseEvent& mouseEvent)
   {
-    alertCount++;
     const Point alertPos = m_sceneView->screenToBaseSurface(mouseEvent.x(), mouseEvent.y());
+    const int alertCount = AlertListModel::instance()->rowCount();
 
     qsrand(qrand());
     const int maxStatus = static_cast<int>(AlertStatus::Critical);
@@ -108,9 +108,10 @@ void Vehicle::componentComplete()
     DummyAlert* dummyAlert = new DummyAlert(dummyAlertGraphic, this);
     dummyAlert->setMessage(QString("Dummy Alert %1").arg(alertCount));
     dummyAlert->setStatus(randomStatus);
-    dummyAlert->registerAlert();
     dummyAlert->setViewed(false);
+    dummyAlert->setActive(true);
     alertsOverlay->graphics()->append(dummyAlertGraphic);
+    dummyAlert->registerAlert();
 
     m_sceneView->graphicsOverlays()->append(alertsOverlay);
   });

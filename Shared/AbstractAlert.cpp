@@ -89,10 +89,10 @@ void AbstractAlert::onPositionChanged()
 
 void AbstractAlert::setActive(bool active)
 {
-    m_active = active;
+  m_active = active;
 }
 
 bool AbstractAlert::active() const
 {
-    return m_active;
+  return m_active;
 }

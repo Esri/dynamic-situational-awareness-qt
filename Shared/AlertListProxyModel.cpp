@@ -23,7 +23,12 @@ AlertListProxyModel::AlertListProxyModel(QObject* parent):
     setSourceModel(sourceModel);
     connect(sourceModel, &AlertListModel::dataChanged, this, [this]()
     {
-      invalidateFilter();
+      invalidate();
+    });
+
+    connect(sourceModel, &AlertListModel::rowsInserted, this, [this]()
+    {
+      invalidate();
     });
   }
 }

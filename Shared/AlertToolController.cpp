@@ -22,8 +22,6 @@
 
 #include "GeoView.h"
 
-#include <QDebug>
-
 using namespace Esri::ArcGISRuntime;
 
 AlertToolController::AlertToolController(QObject* parent /* = nullptr */):
@@ -75,6 +73,16 @@ void AlertToolController::zoomTo(int rowIndex)
   const Viewpoint newViewPoint(pos, currVP.targetScale());
 
   geoView->setViewpoint(newViewPoint, 1.);
+}
+
+void AlertToolController::setViewed(int rowIndex)
+{
+  QModelIndex sourceIndex = m_alertsProxyModel->mapToSource(m_alertsProxyModel->index(rowIndex, 0));
+  AlertListModel* model = AlertListModel::instance();
+  if (!model)
+    return;
+
+  model->setData(sourceIndex, QVariant::fromValue(true), AlertListModel::AlertListRoles::Viewed);
 }
 
 void AlertToolController::setMinStatus(int status)

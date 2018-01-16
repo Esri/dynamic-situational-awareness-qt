@@ -39,6 +39,7 @@ public:
 
   Q_INVOKABLE void highlight(int rowIndex);
   Q_INVOKABLE void zoomTo(int rowIndex);
+  Q_INVOKABLE void setViewed(int rowIndex);
   Q_INVOKABLE void setMinStatus(int status);
 
 signals:

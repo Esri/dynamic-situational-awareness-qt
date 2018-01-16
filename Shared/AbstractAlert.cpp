@@ -67,3 +67,17 @@ void AbstractAlert::setId(const QUuid& id)
 {
   m_id = id;
 }
+
+bool AbstractAlert::viewed() const
+{
+  return m_viewed;
+}
+
+void AbstractAlert::setViewed(bool viewed)
+{
+  if (viewed == m_viewed)
+    return;
+
+  m_viewed = viewed;
+  emit viewedChanged();
+}

@@ -53,13 +53,18 @@ public:
   QUuid id() const;
   void setId(const QUuid& id);
 
+  bool viewed() const;
+  void setViewed(bool viewed);
+
 signals:
   void statusChanged();
+  void viewedChanged();
 
 private:
   AlertStatus m_status = AlertStatus::Inactive;
   QString m_message;
   QUuid m_id;
+  bool m_viewed = true;
 };
 
 #endif // ABSTRACTALERT_H

@@ -64,4 +64,12 @@ DsaToolBase {
             }
         }
    }
+
+   onVisibleChanged: {
+    if (!visible)
+        return;
+
+    for (var i = 0; i < alertsView.count; ++i)
+        toolController.setViewed(i);
+   }
 }

@@ -94,10 +94,19 @@ void Vehicle::componentComplete()
   dummyAlert->setMessage("Dummy Alert");
   dummyAlert->setStatus(AlertStatus::Medium);
   dummyAlert->registerAlert();
-  qDebug() << dummyAlert->id();
+  dummyAlert->setViewed(false);
   alertsOverlay->graphics()->append(dummyAlertGraphic);
 
   m_sceneView->graphicsOverlays()->append(alertsOverlay);
+
+  // create a GeoElementPairAlert
+  // create a ProximityAlertRule
+  // add a rectangle graphic
+  // spin over the GraphicsOverlays in the MessageFeeds, every time a graphic is created,
+  // create a new GeoElementPairAlert between
+  // this and the rectangle...
+  // will need to react to changes in the geo elements... trigger a re-filter
+  // design wiki is saved to Documents
 }
 
 void Vehicle::setCoordinateConversionOptions()

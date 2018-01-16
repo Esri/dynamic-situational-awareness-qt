@@ -31,6 +31,7 @@ AlertListModel::AlertListModel(QObject* parent):
   m_roles[AlertListRoles::Message] = "message";
   m_roles[AlertListRoles::Status] = "status";
   m_roles[AlertListRoles::Position] = "position";
+  m_roles[AlertListRoles::Viewed] = "viewed";
 }
 
 AlertListModel::~AlertListModel()
@@ -43,9 +44,18 @@ bool AlertListModel::addAlert(AbstractAlert* alert)
   if (!alert)
     return false;
 
+  if (!alert->id().isNull())
+    return false;
+
   const int size = m_alerts.size();
   const QUuid id = QUuid::createUuid();
   alert->setId(id);
+
+  connect(alert, &AbstractAlert::viewedChanged, this, [this, size]
+  {
+    const QModelIndex changedIndex = index(size, 0);
+    emit dataChanged(changedIndex, changedIndex);
+  });
 
   beginInsertRows(QModelIndex(), size, size);
   m_alerts.append(alert);
@@ -91,11 +101,56 @@ QVariant AlertListModel::data(const QModelIndex& index, int role) const
     return QVariant::fromValue(alert->position());
     break;
   }
+  case AlertListRoles::Viewed:
+  {
+    return alert->viewed();
+    break;
+  }
   default:
     break;
   }
 
   return QVariant();
+}
+
+bool AlertListModel::setData(const QModelIndex& index, const QVariant& value, int role)
+{
+  if (!index.isValid() || value.isNull())
+    return false;
+
+  AbstractAlert* alert = alertAt(index.row());
+  if (!alert)
+    return false;
+
+  bool valueSet = false;
+  switch (role)
+  {
+  case AlertListRoles::AlertId:
+    break;
+  case AlertListRoles::Status:
+    break;
+  case AlertListRoles::Message:
+    break;
+  case AlertListRoles::Position:
+    break;
+  case AlertListRoles::Viewed:
+  {
+    const bool newViewed = value.toBool();
+    if (alert->viewed() != newViewed)
+    {
+      alert->setViewed(newViewed);
+      valueSet = true;
+    }
+    break;
+  }
+  default:
+    break;
+  }
+
+  if (valueSet)
+    dataChanged(index, index);
+
+  return valueSet;
 }
 
 QHash<int, QByteArray> AlertListModel::roleNames() const

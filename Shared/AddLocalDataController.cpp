@@ -11,7 +11,6 @@
 //
 
 #include <QDir>
-#include <QDebug>
 #include <QFileInfo>
 
 #include "ArcGISTiledLayer.h"

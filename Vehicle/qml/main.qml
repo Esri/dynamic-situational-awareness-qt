@@ -316,6 +316,13 @@ Vehicle {
                         drawer.open();
                     }
                 }
+
+                ViewedAlerts {
+                    anchors {
+                        left: alertsCheckBox.horizontalCenter
+                        bottom: alertsCheckBox.verticalCenter
+                    }
+                }
             }
         }
     }

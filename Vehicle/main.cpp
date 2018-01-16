@@ -39,6 +39,7 @@
 #include "TelestrateController.h"
 #include "AnalysisController.h"
 #include "OptionsController.h"
+#include "ViewedAlertsController.h"
 
 #include "ArcGISRuntimeToolkit.h"
 #include "ArcGISCompassController.h"
@@ -126,6 +127,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<AnalysisController>("Esri.DSA", 1, 0, "AnalysisController");
   qmlRegisterType<OptionsController>("Esri.DSA", 1, 0, "OptionsController");
   qmlRegisterType<AlertToolController>("Esri.DSA", 1, 0, "AlertToolController");
+  qmlRegisterType<ViewedAlertsController>("Esri.DSA", 1, 0, "ViewedAlertsController");
 
   // Register Toolkit Component Types
   ArcGISRuntimeToolkit::registerToolkitTypes();

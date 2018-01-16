@@ -14,6 +14,7 @@
 #include "AlertToolController.h"
 #include "AlertListModel.h"
 #include "AlertListProxyModel.h"
+#include "DistanceAlertRule.h"
 #include "DsaUtility.h"
 #include "IdsAlertRule.h"
 #include "StatusAlertRule.h"
@@ -28,12 +29,16 @@ using namespace Esri::ArcGISRuntime;
 AlertToolController::AlertToolController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent),
   m_alertsProxyModel(new AlertListProxyModel(this)),
+  m_distanceAlertRule(new DistanceAlertRule(this)),
   m_statusAlertRule(new StatusAlertRule(this)),
   m_idsAlertRule(new IdsAlertRule(this))
 {
   Toolkit::ToolManager::instance().addTool(this);
+  m_rules.append(m_distanceAlertRule);
   m_rules.append(m_statusAlertRule);
   m_rules.append(m_idsAlertRule);
+
+  m_alertsProxyModel->applyFilter(m_rules);
 }
 
 AlertToolController::~AlertToolController()

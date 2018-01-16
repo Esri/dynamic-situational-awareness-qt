@@ -21,6 +21,7 @@
 
 class AbstractAlertRule;
 class AlertListProxyModel;
+class DistanceAlertRule;
 class IdsAlertRule;
 class StatusAlertRule;
 
@@ -50,6 +51,7 @@ signals:
 
 private:
   AlertListProxyModel* m_alertsProxyModel;
+  DistanceAlertRule* m_distanceAlertRule;
   StatusAlertRule* m_statusAlertRule;
   IdsAlertRule* m_idsAlertRule;
   QList<AbstractAlertRule*> m_rules;

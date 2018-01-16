@@ -19,7 +19,13 @@ AlertListProxyModel::AlertListProxyModel(QObject* parent):
 {
   AlertListModel* sourceModel = AlertListModel::instance();
   if (sourceModel)
+  {
     setSourceModel(sourceModel);
+    connect(sourceModel, &AlertListModel::dataChanged, this, [this]()
+    {
+      invalidateFilter();
+    });
+  }
 }
 
 AlertListProxyModel::~AlertListProxyModel()

@@ -56,15 +56,23 @@ public:
   bool viewed() const;
   void setViewed(bool viewed);
 
+  bool active() const;
+  void setActive(bool active);
+
+public slots:
+  void onPositionChanged();
+
 signals:
   void statusChanged();
   void viewedChanged();
+  void positionChanged();
 
 private:
   AlertStatus m_status = AlertStatus::Inactive;
   QString m_message;
   QUuid m_id;
   bool m_viewed = true;
+  bool m_active = false;
 };
 
 #endif // ABSTRACTALERT_H

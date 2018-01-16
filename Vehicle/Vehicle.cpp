@@ -12,14 +12,19 @@
 
 #include "Graphic.h"
 #include "GraphicsOverlay.h"
+#include "PolygonBuilder.h"
 #include "SceneQuickView.h"
 #include "SimpleMarkerSceneSymbol.h"
+#include "SimpleLineSymbol.h"
 
 #include "DsaController.h"
 #include "DsaUtility.h"
 #include "DummyAlert.h"
+#include "GraphicPairAlert.h"
+#include "LocationController.h"
 #include "Vehicle.h"
 #include "ToolResourceProvider.h"
+#include "ToolManager.h"
 #include "CoordinateConversionController.h"
 
 using namespace Esri::ArcGISRuntime;
@@ -97,7 +102,7 @@ void Vehicle::componentComplete()
 
     qsrand(qrand());
     const int maxStatus = static_cast<int>(AlertStatus::Critical);
-    const AlertStatus randomStatus = static_cast<AlertStatus>(qrand() % ( maxStatus + 1));
+    const AlertStatus randomStatus = static_cast<AlertStatus>((qrand() % ( maxStatus + 1) - 1) + 1);
 
     Graphic* dummyAlertGraphic = new Graphic(alertPos, dummySymbol, this);
     DummyAlert* dummyAlert = new DummyAlert(dummyAlertGraphic, this);
@@ -110,16 +115,32 @@ void Vehicle::componentComplete()
     m_sceneView->graphicsOverlays()->append(alertsOverlay);
   });
 
+  GraphicsOverlay* geofenceOverlay = new GraphicsOverlay(this);
+  SimpleLineSymbol* geofenceSymbol = new SimpleLineSymbol(SimpleLineSymbolStyle::Dash, Qt::green, 5, this);
+  PolygonBuilder pb(SpatialReference::wgs84());
+  pb.addPoint(-121.91, 36.605);
+  pb.addPoint(-121.91, 36.61);
+  pb.addPoint(-121.92, 36.61);
+  pb.addPoint(-121.92, 36.605);
 
+  Graphic* geofenceGraphic = new Graphic(pb.toPolygon(), geofenceSymbol, this);
+  geofenceOverlay->graphics()->append(geofenceGraphic);
+  m_sceneView->graphicsOverlays()->append(geofenceOverlay);
 
-  // create a GeoElementPairAlert
-  // create a ProximityAlertRule
-  // add a rectangle graphic
-  // spin over the GraphicsOverlays in the MessageFeeds, every time a graphic is created,
-  // create a new GeoElementPairAlert between
-  // this and the rectangle...
-  // will need to react to changes in the geo elements... trigger a re-filter
-  // design wiki is saved to Documents
+  LocationController* locationTool = Toolkit::ToolManager::instance().tool<LocationController>();
+  if (locationTool)
+  {
+    Graphic* locationGraphic = locationTool->positionGraphic();
+    if (locationGraphic)
+    {
+      GraphicPairAlert* geofenceAlert = new GraphicPairAlert(locationGraphic, geofenceGraphic, 0., this);
+      geofenceAlert->setStatus(AlertStatus::Critical);
+      geofenceAlert->setMessage("Location in geofence");
+      geofenceAlert->registerAlert();
+
+      connect(locationTool, &LocationController::positionChanged, geofenceAlert, &GraphicPairAlert::onPositionChanged);
+    }
+  }
 }
 
 void Vehicle::setCoordinateConversionOptions()

@@ -13,6 +13,7 @@
 #include "AbstractAlert.h"
 #include "AlertListModel.h"
 
+#include <QDebug>
 #include <QUuid>
 
 using namespace Esri::ArcGISRuntime;
@@ -52,6 +53,12 @@ bool AlertListModel::addAlert(AbstractAlert* alert)
   alert->setId(id);
 
   connect(alert, &AbstractAlert::viewedChanged, this, [this, size]
+  {
+    const QModelIndex changedIndex = index(size, 0);
+    emit dataChanged(changedIndex, changedIndex);
+  });
+
+  connect(alert, &AbstractAlert::positionChanged, this, [this, size]
   {
     const QModelIndex changedIndex = index(size, 0);
     emit dataChanged(changedIndex, changedIndex);

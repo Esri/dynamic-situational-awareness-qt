@@ -81,3 +81,18 @@ void AbstractAlert::setViewed(bool viewed)
   m_viewed = viewed;
   emit viewedChanged();
 }
+
+void AbstractAlert::onPositionChanged()
+{
+  emit positionChanged();
+}
+
+void AbstractAlert::setActive(bool active)
+{
+    m_active = active;
+}
+
+bool AbstractAlert::active() const
+{
+    return m_active;
+}

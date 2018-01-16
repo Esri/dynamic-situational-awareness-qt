@@ -28,12 +28,14 @@ INCLUDEPATH += $$PWD/../Shared/
 HEADERS += \
     AppInfo.h \
     Vehicle.h \
-    $$PWD/../Shared/*.h
+    $$PWD/../Shared/*.h \
+    ../Shared/DistanceAlertRule.h
 
 SOURCES += \
     main.cpp \
     Vehicle.cpp \
-    $$PWD/../Shared/*.cpp
+    $$PWD/../Shared/*.cpp \
+    ../Shared/DistanceAlertRule.cpp
 
 RESOURCES += \
     qml/qml.qrc \

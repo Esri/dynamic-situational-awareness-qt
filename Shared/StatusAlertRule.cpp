@@ -13,8 +13,6 @@
 #include "AbstractAlertRule.h"
 #include "StatusAlertRule.h"
 
-#include <QDebug>
-
 StatusAlertRule::StatusAlertRule(QObject* parent):
   AbstractAlertRule(parent)
 {

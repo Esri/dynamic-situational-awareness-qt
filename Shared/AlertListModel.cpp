@@ -1,4 +1,4 @@
-// Copyright 2016 ESRI
+// Copyright 2017 ESRI
 //
 // All rights reserved under the copyright laws of the United States
 // and applicable international laws, treaties, and conventions.
@@ -13,7 +13,6 @@
 #include "AbstractAlert.h"
 #include "AlertListModel.h"
 
-#include <QDebug>
 #include <QUuid>
 
 using namespace Esri::ArcGISRuntime;
@@ -95,24 +94,19 @@ QVariant AlertListModel::data(const QModelIndex& index, int role) const
   {
   case AlertListRoles::AlertId:
     return alert->id();
-    break;
   case AlertListRoles::Status:
     return static_cast<int>(alert->status());
-    break;
   case AlertListRoles::Message:
   {
     return alert->message();
-    break;
   }
   case AlertListRoles::Position:
   {
     return QVariant::fromValue(alert->position());
-    break;
   }
   case AlertListRoles::Viewed:
   {
     return alert->viewed();
-    break;
   }
   default:
     break;

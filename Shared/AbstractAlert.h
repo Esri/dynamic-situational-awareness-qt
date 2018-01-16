@@ -28,7 +28,7 @@ enum class AlertStatus : unsigned int
   Critical
 };
 
-Q_DECLARE_METATYPE(AlertStatus)
+Q_DECLARE_METATYPE(AlertStatus);
 
 class AbstractAlert : public QObject
 {

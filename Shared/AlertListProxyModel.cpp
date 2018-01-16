@@ -1,4 +1,4 @@
-// Copyright 2016 ESRI
+// Copyright 2017 ESRI
 //
 // All rights reserved under the copyright laws of the United States
 // and applicable international laws, treaties, and conventions.
@@ -14,8 +14,6 @@
 #include "AbstractAlertRule.h"
 #include "AlertListModel.h"
 #include "AlertListProxyModel.h"
-
-#include <QDebug>
 
 AlertListProxyModel::AlertListProxyModel(QObject* parent):
   QSortFilterProxyModel(parent)

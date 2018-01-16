@@ -1,5 +1,5 @@
 
-// Copyright 2016 ESRI
+// Copyright 2017 ESRI
 //
 // All rights reserved under the copyright laws of the United States
 // and applicable international laws, treaties, and conventions.
@@ -63,12 +63,11 @@ DsaToolBase {
                     verticalCenter: parent.verticalCenter
                 }
 
-                text: message + ": " + (status === 0 ?
-                                            "inactive" : (status === 1 ?
-                                                              "low" : (status === 2 ?
-                                                                           "medium" : (status === 3 ?
-                                                                                           "high" : (status === 4 ?
-                                                                                                         "critical" : "???")))))
+                text: message + ": " + (status === 0 ? "inactive" :
+                                       (status === 1 ? "low" :
+                                       (status === 2 ? "medium" :
+                                       (status === 3 ? "high" :
+                                       (status === 4 ? "critical" : "???")))))
                 color: "white"
             }
 

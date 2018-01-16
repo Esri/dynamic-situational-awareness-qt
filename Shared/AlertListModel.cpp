@@ -89,7 +89,7 @@ QVariant AlertListModel::data(const QModelIndex& index, int role) const
     return alert->id();
     break;
   case AlertListRoles::Status:
-    return QVariant::fromValue(alert->status());
+    return static_cast<int>(alert->status());
     break;
   case AlertListRoles::Message:
   {

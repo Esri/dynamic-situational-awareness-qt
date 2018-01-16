@@ -53,7 +53,12 @@ DsaToolBase {
         clip: true
 
         delegate: Text {
-            text: alertId + "\n" + message
+            text: alertId + "\n" + message + ": " + (status === 0 ?
+                      "inactive" : (status === 1 ?
+                                        "low" : (status === 2 ?
+                                                     "medium" : (status === 3 ?
+                                                                     "high" : (status === 4 ?
+                                                                                   "critical" : "???")))))
             color: "white"
 
             MouseArea {

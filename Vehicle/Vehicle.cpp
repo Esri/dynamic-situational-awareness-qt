@@ -89,15 +89,28 @@ void Vehicle::componentComplete()
   // Alerts: Proof of concept
   GraphicsOverlay* alertsOverlay = new GraphicsOverlay(this);
   SimpleMarkerSceneSymbol* dummySymbol = new SimpleMarkerSceneSymbol(SimpleMarkerSceneSymbolStyle::Sphere, Qt::red, 50., 50., 50., SceneSymbolAnchorPosition::Center, this);
-  Graphic* dummyAlertGraphic = new Graphic(DsaUtility::montereyCA(), dummySymbol, this);
-  DummyAlert* dummyAlert = new DummyAlert(dummyAlertGraphic, this);
-  dummyAlert->setMessage("Dummy Alert");
-  dummyAlert->setStatus(AlertStatus::Medium);
-  dummyAlert->registerAlert();
-  dummyAlert->setViewed(false);
-  alertsOverlay->graphics()->append(dummyAlertGraphic);
+  int alertCount = 0;
+  connect(m_sceneView, &SceneQuickView::mousePressedAndHeld, this, [this, alertsOverlay, dummySymbol, &alertCount](QMouseEvent& mouseEvent)
+  {
+    alertCount++;
+    const Point alertPos = m_sceneView->screenToBaseSurface(mouseEvent.x(), mouseEvent.y());
 
-  m_sceneView->graphicsOverlays()->append(alertsOverlay);
+    qsrand(qrand());
+    const int maxStatus = static_cast<int>(AlertStatus::Critical);
+    const AlertStatus randomStatus = static_cast<AlertStatus>(qrand() % ( maxStatus + 1));
+
+    Graphic* dummyAlertGraphic = new Graphic(alertPos, dummySymbol, this);
+    DummyAlert* dummyAlert = new DummyAlert(dummyAlertGraphic, this);
+    dummyAlert->setMessage(QString("Dummy Alert %1").arg(alertCount));
+    dummyAlert->setStatus(randomStatus);
+    dummyAlert->registerAlert();
+    dummyAlert->setViewed(false);
+    alertsOverlay->graphics()->append(dummyAlertGraphic);
+
+    m_sceneView->graphicsOverlays()->append(alertsOverlay);
+  });
+
+
 
   // create a GeoElementPairAlert
   // create a ProximityAlertRule

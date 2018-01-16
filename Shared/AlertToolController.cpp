@@ -23,6 +23,7 @@
 #include "ToolResourceProvider.h"
 
 #include "GeoView.h"
+#include "SceneView.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -78,10 +79,23 @@ void AlertToolController::zoomTo(int rowIndex)
     return;
 
   const Point pos = alert->position().extent().center();
-  const Viewpoint currVP = geoView->currentViewpoint(ViewpointType::CenterAndScale);
-  const Viewpoint newViewPoint(pos, currVP.targetScale());
 
-  geoView->setViewpoint(newViewPoint, 1.);
+  SceneView* sceneView = dynamic_cast<SceneView*>(geoView);
+
+  if (sceneView)
+  {
+    const Camera currentCam = sceneView->currentViewpointCamera();
+    Camera newCam = currentCam.zoomToward(pos, 10.);
+
+    sceneView->setViewpointCamera(newCam, 1.);
+  }
+  else
+  {
+    const Viewpoint currVP = geoView->currentViewpoint(ViewpointType::CenterAndScale);
+    const Viewpoint newViewPoint(pos, currVP.targetScale());
+
+    geoView->setViewpoint(newViewPoint, 1.);
+  }
 }
 
 void AlertToolController::setViewed(int rowIndex)

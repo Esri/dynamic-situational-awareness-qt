@@ -14,8 +14,8 @@
 #define ALERT_LISTMODEL_H
 
 #include <QAbstractListModel>
+#include <QHash>
 #include <QList>
-#include <QMap>
 
 class AbstractAlert;
 

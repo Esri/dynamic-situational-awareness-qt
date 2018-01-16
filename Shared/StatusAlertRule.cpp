@@ -10,7 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "AbstractAlertRule.h"
 #include "StatusAlertRule.h"
+
+#include <QDebug>
 
 StatusAlertRule::StatusAlertRule(QObject* parent):
   AbstractAlertRule(parent)

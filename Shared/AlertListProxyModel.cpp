@@ -10,9 +10,12 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "AbstractAlert.h"
 #include "AbstractAlertRule.h"
 #include "AlertListModel.h"
 #include "AlertListProxyModel.h"
+
+#include <QDebug>
 
 AlertListProxyModel::AlertListProxyModel(QObject* parent):
   QSortFilterProxyModel(parent)

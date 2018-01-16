@@ -113,7 +113,6 @@ void AlertToolController::setMinStatus(int status)
   case AlertStatus::Medium:
   case AlertStatus::High:
   case AlertStatus::Critical:
-  case AlertStatus::Inactive:
     m_statusAlertRule->setMinStatus(alertStatus);
     m_alertsProxyModel->applyFilter(m_rules);
     break;

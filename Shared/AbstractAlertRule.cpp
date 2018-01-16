@@ -15,7 +15,6 @@
 
 using namespace Esri::ArcGISRuntime;
 
-
 AbstractAlertRule::AbstractAlertRule(QObject* parent):
   QObject(parent)
 {
@@ -29,10 +28,10 @@ AbstractAlertRule::~AbstractAlertRule()
 
 bool AbstractAlertRule::active() const
 {
-return m_active;
+  return m_active;
 }
 
 void AbstractAlertRule::setActive(bool active)
 {
-m_active = active;
+  m_active = active;
 }

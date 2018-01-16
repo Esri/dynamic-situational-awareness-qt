@@ -13,8 +13,10 @@
 #ifndef STATUSALERTRULE_H
 #define STATUSALERTRULE_H
 
-#include "AbstractAlertRule.h"
 #include "AbstractAlert.h"
+#include "AbstractAlertRule.h"
+
+class AbstractAlert;
 
 class StatusAlertRule : public AbstractAlertRule
 {

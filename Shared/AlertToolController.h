@@ -13,8 +13,6 @@
 #ifndef ALERTTOOLCONTROLLER_H
 #define ALERTTOOLCONTROLLER_H
 
-#include <QObject>
-
 #include <QAbstractListModel>
 
 #include "AbstractTool.h"

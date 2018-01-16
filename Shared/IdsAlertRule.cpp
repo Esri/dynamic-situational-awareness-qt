@@ -10,6 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "AbstractAlert.h"
 #include "IdsAlertRule.h"
 
 IdsAlertRule::IdsAlertRule(QObject* parent):

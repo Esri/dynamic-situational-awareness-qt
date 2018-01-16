@@ -14,7 +14,8 @@
 #define DISTANCEALERTRULE_H
 
 #include "AbstractAlertRule.h"
-#include "AbstractAlert.h"
+
+class AbstractAlert;
 
 class DistanceAlertRule : public AbstractAlertRule
 {

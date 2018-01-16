@@ -14,10 +14,11 @@
 #define IDSALERTRULE_H
 
 #include "AbstractAlertRule.h"
-#include "AbstractAlert.h"
 
 #include <QSet>
 #include <QUuid>
+
+class AbstractAlert;
 
 class IdsAlertRule : public AbstractAlertRule
 {

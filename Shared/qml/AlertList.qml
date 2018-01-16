@@ -38,7 +38,7 @@ DsaToolBase {
 
         model: ["Low", "Medium", "High", "Critical"]
         currentIndex: 0
-        onCurrentIndexChanged: toolController.setMinStatus(currentIndex-1);
+        onCurrentIndexChanged: toolController.setMinStatus(currentIndex+1);
     }
 
     ListView {

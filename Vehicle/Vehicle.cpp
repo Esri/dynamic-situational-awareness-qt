@@ -102,7 +102,9 @@ void Vehicle::componentComplete()
 
     qsrand(qrand());
     const int maxStatus = static_cast<int>(AlertStatus::Critical);
-    const AlertStatus randomStatus = static_cast<AlertStatus>((qrand() % ( maxStatus + 1) - 1) + 1);
+    AlertStatus randomStatus = static_cast<AlertStatus>((qrand() % ( maxStatus + 1) - 1) + 1);
+    if (randomStatus == AlertStatus::Inactive)
+      randomStatus = AlertStatus::Low;
 
     Graphic* dummyAlertGraphic = new Graphic(alertPos, dummySymbol, this);
     DummyAlert* dummyAlert = new DummyAlert(dummyAlertGraphic, this);

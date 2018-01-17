@@ -22,6 +22,21 @@
 
 using namespace Esri::ArcGISRuntime;
 
+struct ResultsManager {
+
+  QList<IdentifyLayerResult*>& m_results;
+
+  ResultsManager(QList<IdentifyLayerResult*>& results):
+    m_results(results)
+  {
+  }
+
+  ~ResultsManager()
+  {
+    qDeleteAll(m_results);
+  }
+};
+
 IdentifyFeaturesController::IdentifyFeaturesController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent)
 {
@@ -97,13 +112,15 @@ void IdentifyFeaturesController::onMouseClicked(QMouseEvent& event)
   event.accept();
 }
 
-void IdentifyFeaturesController::onIdentifyLayersCompleted(const QUuid&, const QList<IdentifyLayerResult*>& identifyResults)
+void IdentifyFeaturesController::onIdentifyLayersCompleted(const QUuid&, QList<IdentifyLayerResult*> identifyResults)
 {
+  ResultsManager resultsManager(identifyResults);
+
   emit busyChanged();
   m_taskWatcher = TaskWatcher();
 
-  auto it = identifyResults.begin();
-  auto itEnd = identifyResults.end();
+  auto it = resultsManager.m_results.begin();
+  auto itEnd = resultsManager.m_results.end();
   for (; it != itEnd; ++it)
   {
     IdentifyLayerResult* res = *it;

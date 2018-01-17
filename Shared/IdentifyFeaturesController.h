@@ -51,7 +51,7 @@ public:
 
 private slots:
   void onMouseClicked(QMouseEvent& event);
-  void onIdentifyLayersCompleted(const QUuid& taskId, const QList<Esri::ArcGISRuntime::IdentifyLayerResult*>& identifyResults);
+  void onIdentifyLayersCompleted(const QUuid& taskId, QList<Esri::ArcGISRuntime::IdentifyLayerResult*> identifyResults);
 
 signals:
   void activeChanged();

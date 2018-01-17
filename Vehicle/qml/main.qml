@@ -18,6 +18,7 @@ import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 import Esri.DSA 1.0
 import Esri.Vehicle 1.0
+import Esri.ArcGISRuntime.Toolkit.Controls 100.2
 import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.2
 
 Vehicle {
@@ -259,6 +260,46 @@ Vehicle {
             }
 
             Button {
+                IdentifyFeaturesController {
+                    id: identifyController
+                    active: identifyFeaturesCheckBox.checked
+
+                    onActiveChanged: {
+                        if (!active)
+                            identifyResults.dismiss();
+                    }
+
+                    onPopupManagersChanged: {
+                        identifyResults.dismiss();
+                        identifyResults.popupManagers = popupManagers;
+
+                        if (popupManagers.length > 0)
+                            identifyResults.show();
+                    }
+
+                }
+
+                id: identifyFeaturesCheckBox
+                checkable: true
+                checked: false
+                width: 32 * scaleFactor
+                height: 32 * scaleFactor
+
+                background: Rectangle {
+                    anchors.fill: identifyFeaturesCheckBox
+                    color: Material.primary
+                }
+
+                Image {
+                    fillMode: Image.PreserveAspectFit
+                    anchors.centerIn: parent
+                    sourceSize.height: parent.height * 0.85
+                    height: sourceSize.height
+                    source: "qrc:/Resources/icons/xhdpi/ic_menu_aboutmap_dark.png"
+                }
+            }
+
+            Button {
                 id: optionsCheckBox
                 checkable: true
                 checked: false
@@ -489,6 +530,15 @@ Vehicle {
                 autoHideCompass: false
             }
         }
+
+        PopupStackView {
+            id: identifyResults
+            anchors {
+                left: sceneView.left
+                top: sceneView.top
+                bottom: sceneView.attributionTop
+            }
+        }
     }
 
     onErrorOccurred: {
@@ -500,5 +550,10 @@ Vehicle {
     MessageDialog {
         id: msgDialog
         text: "Error"
+    }
+
+    BusyIndicator {
+        anchors.centerIn: parent
+        visible: identifyController.busy
     }
 }

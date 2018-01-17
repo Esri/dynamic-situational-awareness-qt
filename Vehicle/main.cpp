@@ -26,6 +26,7 @@
 #include "ArcGISRuntimeEnvironment.h"
 #include "ArcGISRuntimeToolkit.h"
 
+#include "PopupManager.h"
 #include "SceneQuickView.h"
 
 #include "BasemapPickerController.h"
@@ -38,6 +39,7 @@
 #include "TelestrateController.h"
 #include "AnalysisController.h"
 #include "OptionsController.h"
+#include "IdentifyFeaturesController.h"
 
 #include "ArcGISRuntimeToolkit.h"
 #include "ArcGISCompassController.h"
@@ -111,6 +113,7 @@ int main(int argc, char *argv[])
 
   // Register the map view for QML
   qmlRegisterType<SceneQuickView>("Esri.Vehicle", 1, 0, "SceneView");
+  qRegisterMetaType<PopupManager*>("PopupManager*");
 
   // Register the Vehicle (QQuickItem) for QML
   qmlRegisterType<Vehicle>("Esri.Vehicle", 1, 0, "Vehicle");
@@ -124,6 +127,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<TelestrateController>("Esri.DSA", 1, 0, "TelestrateController");
   qmlRegisterType<AnalysisController>("Esri.DSA", 1, 0, "AnalysisController");
   qmlRegisterType<OptionsController>("Esri.DSA", 1, 0, "OptionsController");
+  qmlRegisterType<IdentifyFeaturesController>("Esri.DSA", 1, 0, "IdentifyFeaturesController");
 
   // Register Toolkit Component Types
   ArcGISRuntimeToolkit::registerToolkitTypes();

@@ -11,17 +11,15 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-import QtQuick 2.0
+import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
 import QtQuick.Window 2.2
-import QtQuick.Controls.Material 2.1
+import QtQuick.Controls.Material 2.2
 import Esri.DSA 1.0
 
 Item {
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
-
-    property int fontSize: 24 * scaleFactor
     property int buttonSize: 32 * scaleFactor
     property color buttonColor: Material.primary
     property real buttonOpacity: 0.9

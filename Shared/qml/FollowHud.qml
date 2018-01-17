@@ -12,8 +12,8 @@
 //
 
 import QtQuick 2.6
-import QtQuick.Controls 2.1
-import QtQuick.Controls.Material 2.1
+import QtQuick.Controls 2.2
+import QtQuick.Controls.Material 2.2
 import QtQuick.Window 2.2
 import Esri.DSA 1.0
 
@@ -62,7 +62,7 @@ Row {
         checkable: true
         checked: followPositionController.followMode === FollowPositionController.TrackUp
         visible: enabled
-        width: checked? 48 * scaleFactor : 36 * scaleFactor
+        width: checked ? 48 * scaleFactor : 36 * scaleFactor
         height: width
 
         background: Rectangle {

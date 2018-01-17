@@ -12,8 +12,8 @@
 //
 
 import QtQuick 2.6
-import QtQuick.Controls 2.1
-import QtQuick.Controls.Material 2.1
+import QtQuick.Controls 2.2
+import QtQuick.Controls.Material 2.2
 import QtQuick.Window 2.2
 import QtQml.Models 2.2
 import QtGraphicalEffects 1.0
@@ -28,8 +28,8 @@ Handheld {
 
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
-    GenericToolbar {
-        id: toolbar
+    PrimaryToolbar {
+        id: topToolbar
         anchors {
             top: parent.top
             left: parent.left
@@ -286,7 +286,7 @@ Handheld {
         id: sceneView
 
         anchors {
-            top: toolbar.bottom
+            top: topToolbar.bottom
             left: parent.left
             right: parent.right
             bottom: parent.bottom

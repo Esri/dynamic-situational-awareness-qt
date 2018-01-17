@@ -48,3 +48,6 @@ ios: {
     message("Error. Cannot locate PRI file to import Toolkit as a plugin")
   }
 }
+
+DISTFILES += \
+    $$PWD/CategoryIcon.qml

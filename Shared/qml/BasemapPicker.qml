@@ -12,12 +12,12 @@
 //
 
 import QtQuick 2.6
-import QtQuick.Controls 2.1
-import QtQuick.Controls.Material 2.1
+import QtQuick.Controls 2.2
+import QtQuick.Controls.Material 2.2
 import QtQuick.Window 2.2
 import Esri.DSA 1.0
 
-DsaToolBase {
+DsaPanel {
     signal basemapSelected();    
 
     width: Math.min(parent.width, ((basemapsList.cellWidth * 2) + (16 * scaleFactor)))

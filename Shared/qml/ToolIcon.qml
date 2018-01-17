@@ -57,6 +57,6 @@ Item {
 
     MouseArea {
         anchors.fill: parent
-        onClicked: toolSelected()
+        onClicked: toolSelected();
     }
 }

@@ -37,6 +37,7 @@
 #include "TelestrateController.h"
 #include "AnalysisController.h"
 #include "OptionsController.h"
+#include "DsaStyles.h"
 
 #include "ArcGISRuntimeToolkit.h"
 #include "ArcGISCompassController.h"
@@ -66,6 +67,8 @@
 
 using namespace Esri::ArcGISRuntime;
 using namespace Esri::ArcGISRuntime::Toolkit;
+
+QObject* dsaStylesProvider(QQmlEngine* engine, QJSEngine* scriptEngine);
 
 int main(int argc, char *argv[])
 {
@@ -123,6 +126,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<TelestrateController>("Esri.DSA", 1, 0, "TelestrateController");
   qmlRegisterType<AnalysisController>("Esri.DSA", 1, 0, "AnalysisController");
   qmlRegisterType<OptionsController>("Esri.DSA", 1, 0, "OptionsController");
+  qmlRegisterSingletonType<DsaStyles>("Esri.DSA", 1, 0, "DsaStyles", &dsaStylesProvider);
 
   // Register Toolkit Component Types
   ArcGISRuntimeToolkit::registerToolkitTypes();
@@ -199,3 +203,10 @@ int main(int argc, char *argv[])
 }
 
 //------------------------------------------------------------------------------
+
+// qml dsa styles provider
+QObject* dsaStylesProvider(QQmlEngine* engine, QJSEngine*)
+{
+  static DsaStyles* dsaStyles = new DsaStyles(engine);
+  return dsaStyles;
+}

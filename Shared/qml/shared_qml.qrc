@@ -14,7 +14,6 @@
         <file>Options.qml</file>
         <file>CategoryIcon.qml</file>
         <file>CategoryToolbar.qml</file>
-        <file>MapToolRow.qml</file>
         <file>ToolIcon.qml</file>
     </qresource>
 </RCC>

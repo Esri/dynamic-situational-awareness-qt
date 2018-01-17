@@ -156,17 +156,13 @@ Item {
             categoryName: "markup"
             onCategorySelected: categoryToolbar.state = categoryName
         }
-    }
 
-    CategoryIcon {
-        id: optionsIcon
-        anchors {
-            bottom: parent.bottom
-            horizontalCenter: parent.horizontalCenter
+        CategoryIcon {
+            id: optionsIcon
+            iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_settings_dark_d.png"
+            categoryName: "options"
+            onCategorySelected: categoryToolbar.state = categoryName
         }
-
-        iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_settings_dark_d.png"
-        categoryName: "options"
-        onCategorySelected: categoryToolbar.state = categoryName
     }
+
 }

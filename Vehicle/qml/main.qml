@@ -20,6 +20,7 @@ import Esri.Vehicle 1.0
 import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.2
 
 Vehicle {
+    id: vehicleRoot
     width: 800 * scaleFactor
     height: 600 * scaleFactor
 
@@ -40,150 +41,184 @@ Vehicle {
         toolbarLabelText: categoryToolbar.titleText
 
 
-        MapToolRow {
+        Row {
+            id: mapToolRow
             anchors {
-                fill: parent
-                rightMargin: 5 * scaleFactor
+                verticalCenter: parent.verticalCenter
+                right: parent.right
+                rightMargin: 10 * scaleFactor
             }
+            spacing: 10 * scaleFactor
             visible: categoryToolbar.state === "map"
+
+            states: [
+                State {
+                    name: coordinateConversionIcon.toolName
+                    PropertyChanges {
+                        target: coordinateConversionIcon
+                        selected: true
+                    }
+                    PropertyChanges {
+                        target: tocIcon
+                        selected: selected
+                    }
+                },
+                State {
+                    name: messageFeedsIcon.toolName
+                    PropertyChanges {
+                        target: messageFeedsIcon
+                        selected: true
+                    }
+                    PropertyChanges {
+                        target: tocIcon
+                        selected: selected
+                    }
+                },
+                State {
+                    name: addLocalDataIcon.toolName
+                    PropertyChanges {
+                        target: addLocalDataIcon
+                        selected: true
+                    }
+                    PropertyChanges {
+                        target: tocIcon
+                        selected: selected
+                    }
+                },
+                State {
+                    name: tocIcon.toolName
+                    PropertyChanges {
+                        target: tocIcon
+                        selected: true
+                    }
+                },
+                State {
+                    name: basemapIcon.toolName
+                    PropertyChanges {
+                        target: basemapIcon
+                        selected: true
+                    }
+                    PropertyChanges {
+                        target: tocIcon
+                        selected: selected
+                    }
+                },
+                State {
+                    name: "clear"
+                    PropertyChanges {
+                        target: coordinateConversionIcon
+                        selected: false
+                    }
+                    PropertyChanges {
+                        target: messageFeedsIcon
+                        selected: false
+                    }
+                    PropertyChanges {
+                        target: addLocalDataIcon
+                        selected: false
+                    }
+                    PropertyChanges {
+                        target: basemapIcon
+                        selected: false
+                    }
+                    PropertyChanges {
+                        target: tocIcon
+                        selected: selected
+                    }
+                }
+            ]
+
+            // Coordinate Conversion Tool
+            ToolIcon {
+                id: coordinateConversionIcon
+                iconSource: "qrc:/Resources/icons/xhdpi/icon-64-coorconv-white.png"
+                toolName: "Convert"
+                onToolSelected: {
+                    if (selected)
+                        mapToolRow.state = "clear"
+                    else
+                        mapToolRow.state = toolName;
+
+                    if (tableOfContentsTool.visible) {
+                        tableOfContentsTool.visible = false;
+                        mapToolRow.state = "clear";
+                        selected = false;
+                    } /*else {
+                        //coord.visible = true;
+                    }*/
+                }
+            }
+
+            // Add Local Data Tool
+            ToolIcon {
+                id: messageFeedsIcon
+                iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_messages_dark.png"
+                toolName: "Feeds"
+                onToolSelected: {
+                    if (drawer.visible)
+                        drawer.close();
+                    else {
+                        mapToolRow.state = toolName;
+                        toolRect.state = "message";
+                        drawer.open();
+                    }
+                }
+            }
+
+            // Add Local Data Tool
+            ToolIcon {
+                id: addLocalDataIcon
+                iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_layervisibilitypopover_dark_d.png"
+                toolName: "Add Data"
+                onToolSelected: {
+                    if (drawer.visible)
+                        drawer.close();
+                    else {
+                        mapToolRow.state = toolName;
+                        toolRect.state = "data";
+                        drawer.open();
+                    }
+                }
+            }
+
+            // Table of Contents
+            ToolIcon {
+                id: tocIcon
+                iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_layergroup_dark_d.png"
+                toolName: "Layers"
+                onToolSelected: {
+                    if (selected)
+                        mapToolRow.state = "clear"
+                    else
+                        mapToolRow.state = toolName;
+
+                    if (tableOfContentsTool.visible) {
+                        tableOfContentsTool.visible = false;
+                        mapToolRow.state = "clear";
+                        selected = false;
+                    } else {
+                        tableOfContentsTool.visible = true;
+                    }
+                }
+            }
+
+            // Basemap Tool
+            ToolIcon {
+                id: basemapIcon
+                iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_dark.png"
+                toolName: "Basemap"
+                onToolSelected: {
+                    if (drawer.visible)
+                        drawer.close();
+                    else {
+                        toolRect.state = "basemap";
+                        mapToolRow.state = toolName;
+                        drawer.open();
+                    }
+                }
+            }
         }
     }
-
-    //        Row {
-    //            spacing: 7 * scaleFactor
-    //            anchors {
-    //                right: parent.right
-    //                margins: 2 * scaleFactor
-    //                verticalCenter: parent.verticalCenter
-    //            }
-
-    //            Button {
-    //                id: basemapsCheckBox
-    //                width: 32 * scaleFactor
-    //                height: 32 * scaleFactor
-
-    //                background: Rectangle {
-    //                    anchors.fill: basemapsCheckBox
-    //                    color: Material.primary
-    //                }
-
-    //                Image {
-    //                    fillMode: Image.PreserveAspectFit
-    //                    anchors.centerIn: parent
-    //                    sourceSize.height: basemapsCheckBox.background.height - (6 * scaleFactor)
-    //                    height: sourceSize.height
-    //                    source: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_dark.png"
-    //                }
-
-    //                onClicked: {
-    //                    if (drawer.visible)
-    //                        drawer.close();
-    //                    else {
-    //                        toolRect.state = "basemap";
-    //                        drawer.open();
-    //                    }
-    //                }
-    //            }
-
-    //            Button {
-    //                id: addLocalDataCheckBox
-    //                width: 32 * scaleFactor
-    //                height: 32 * scaleFactor
-
-    //                background: Rectangle {
-    //                    anchors.fill: addLocalDataCheckBox
-    //                    color: Material.primary
-    //                }
-
-    //                Image {
-    //                    fillMode: Image.PreserveAspectFit
-    //                    anchors.centerIn: parent
-    //                    sourceSize.height: addLocalDataCheckBox.background.height - (6 * scaleFactor)
-    //                    height: sourceSize.height
-    //                    source: "qrc:/Resources/icons/xhdpi/ic_menu_layervisibilitypopover_dark_d.png"
-    //                }
-
-    //                onClicked: {
-    //                    if (drawer.visible)
-    //                        drawer.close();
-    //                    else {
-    //                        toolRect.state = "data";
-    //                        drawer.open();
-    //                    }
-    //                }
-    //            }
-
-    //            Button {
-    //                id: messageFeedsCheckBox
-    //                width: 32 * scaleFactor
-    //                height: 32 * scaleFactor
-
-    //                background: Rectangle {
-    //                    anchors.fill: messageFeedsCheckBox
-    //                    color: Material.primary
-    //                }
-
-    //                Image {
-    //                    fillMode: Image.PreserveAspectFit
-    //                    anchors.centerIn: parent
-    //                    sourceSize.height: messageFeedsCheckBox.background.height - (6 * scaleFactor)
-    //                    height: sourceSize.height
-    //                    source: "qrc:/Resources/icons/xhdpi/ic_menu_messages_dark.png"
-    //                }
-
-    //                onClicked: {
-    //                    if (drawer.visible)
-    //                        drawer.close();
-    //                    else {
-    //                        toolRect.state = "message";
-    //                        drawer.open();
-    //                    }
-    //                }
-    //            }
-
-    //            Button {
-    //                id: tocCheckBox
-    //                width: 32 * scaleFactor
-    //                height: 32 * scaleFactor
-
-    //                background: Rectangle {
-    //                    anchors.fill: tocCheckBox
-    //                    color: Material.primary
-    //                }
-
-    //                Image {
-    //                    fillMode: Image.PreserveAspectFit
-    //                    anchors.centerIn: parent
-    //                    sourceSize.height: tocCheckBox.background.height - (6 * scaleFactor)
-    //                    height: sourceSize.height
-    //                    source: "qrc:/Resources/icons/xhdpi/ic_menu_openlistview_dark.png"
-    //                }
-
-    //                onClicked: {
-    //                    tableOfContentsTool.visible = !tableOfContentsTool.visible;
-    //                }
-    //            }
-
-    //            Button {
-    //                id: coordConvCheckBox
-    //                checkable: true
-    //                checked: false
-    //                width: 32 * scaleFactor
-    //                height: 32 * scaleFactor
-
-    //                background: Rectangle {
-    //                    anchors.fill: coordConvCheckBox
-    //                    color: Material.primary
-    //                }
-
-    //                Image {
-    //                    fillMode: Image.PreserveAspectFit
-    //                    anchors.centerIn: parent
-    //                    sourceSize.height: parent.height * 0.85
-    //                    height: sourceSize.height
-    //                    source: "qrc:/Resources/icons/xhdpi/icon-64-coorconv-white.png"
-    //                }
-    //            }
 
     //            Button {
     //                id: analysisCheckBox
@@ -294,19 +329,6 @@ Vehicle {
     //        }
     // }
 
-    //    CoordinateConversion {
-    //        id: coordinateConversion
-    //        objectName: "coordinateConversion"
-    //        visible: coordConvCheckBox.checked
-    //        height: parent.height / 2
-    //        width: parent.width
-    //        anchors {
-    //            bottom: parent.bottom
-    //        }
-    //        color: Material.primary
-    //        textColor: Material.foreground
-    //    }
-
     // Create SceneQuickView here, and create its Scene etc. in C++ code
     SceneView {
         id: sceneView
@@ -314,13 +336,82 @@ Vehicle {
             top: topToolbar.bottom
             left: parent.left
             right: parent.right
-            bottom: parent.bottom
-            //bottom: coordConvCheckBox.checked ? coordinateConversion.top : parent.bottom
+            bottom: coordinateConversion.visible ? coordinateConversion.top : parent.bottom
         }
-
         objectName: "sceneView"
 
         onMousePressed: followHud.stopFollowing();
+
+        FollowHud {
+            id: followHud
+            anchors {
+                bottom: sceneView.attributionTop
+                horizontalCenter: parent.horizontalCenter
+                margins: 8 * scaleFactor
+            }
+
+            enabled: locationCheckBox.checked
+        }
+
+        Column {
+            id: navToolsColumn
+            //visible: navCheckBox.checked
+            spacing: 1 * scaleFactor
+
+            anchors {
+                margins: 8 * scaleFactor
+                bottom: sceneView.attributionTop
+                right: sceneView.right
+            }
+
+            NavigationTool {
+                id: navTool
+
+                //visible: compass.visible && navCheckBox.checked
+            }
+
+            Button {
+                id: locationCheckBox
+                checkable: true
+                checked: false
+                width: 32 * scaleFactor
+                height: 32 * scaleFactor
+                opacity: 0.9
+
+                background: Rectangle {
+                    anchors.fill: locationCheckBox
+                    color: Material.primary
+                    radius: 5 * scaleFactor
+                }
+
+                Image {
+                    fillMode: Image.PreserveAspectFit
+                    anchors.centerIn: parent
+                    sourceSize.height: parent.height * 0.85
+                    height: sourceSize.height
+                    source: locationCheckBox.checked ?
+                                "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark.png" :
+                                "qrc:/Resources/icons/xhdpi/ic_menu_gpsondontfollow_dark.png"
+
+                }
+            }
+
+            ArcGISCompass {
+                id: compass
+
+                autoHideCompass: false
+            }
+        }
+
+        CategoryToolbar {
+            id: categoryToolbar
+            anchors {
+                top: parent.top
+                left: parent.left
+                bottom: sceneView.attributionTop
+            }
+            width: 56 * scaleFactor
+        }
 
         TableOfContents {
             id: tableOfContentsTool
@@ -332,7 +423,10 @@ Vehicle {
             width: drawer.width
             visible: false
 
-            onClosed: visible = false;
+            onClosed: {
+                tocIcon.selected = false;
+                visible = false;
+            }
         }
 
         TelestrateTool {
@@ -352,6 +446,11 @@ Vehicle {
             id: drawer
             width: 272 * scaleFactor
             height: parent.height
+
+            onClosed: {
+                // update toggle selected state for the map tool row
+                mapToolRow.state = "clear";
+            }
 
             Rectangle {
                 id: toolRect
@@ -433,77 +532,17 @@ Vehicle {
                 }
             }
         }
+    }
 
-        FollowHud {
-            id: followHud
-            anchors {
-                bottom: sceneView.attributionTop
-                horizontalCenter: parent.horizontalCenter
-                margins: 8 * scaleFactor
-            }
-
-            enabled: locationCheckBox.checked
-        }
-
-        Column {
-            id: navToolsColumn
-            //visible: navCheckBox.checked
-            spacing: 1 * scaleFactor
-
-            anchors {
-                margins: 8 * scaleFactor
-                bottom: sceneView.attributionTop
-                right: sceneView.right
-            }
-
-            NavigationTool {
-                id: navTool
-
-                //visible: compass.visible && navCheckBox.checked
-            }
-
-            Button {
-                id: locationCheckBox
-                checkable: true
-                checked: false
-                width: 32 * scaleFactor
-                height: 32 * scaleFactor
-                opacity: 0.9
-
-                background: Rectangle {
-                    anchors.fill: locationCheckBox
-                    color: Material.primary
-                    radius: 5 * scaleFactor
-                }
-
-                Image {
-                    fillMode: Image.PreserveAspectFit
-                    anchors.centerIn: parent
-                    sourceSize.height: parent.height * 0.85
-                    height: sourceSize.height
-                    source: locationCheckBox.checked ?
-                                "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark.png" :
-                                "qrc:/Resources/icons/xhdpi/ic_menu_gpsondontfollow_dark.png"
-
-                }
-            }
-
-            ArcGISCompass {
-                id: compass
-
-                autoHideCompass: false
-            }
-        }
-
-        CategoryToolbar {
-            id: categoryToolbar
-            anchors {
-                top: parent.top
-                left: parent.left
-                bottom: sceneView.attributionTop
-            }
-            width: 56 * scaleFactor
-        }
+    CoordinateConversion {
+        id: coordinateConversion
+        anchors.bottom: parent.bottom
+        objectName: "coordinateConversion"
+        visible: coordinateConversionIcon.selected
+        height: parent.height / 2
+        width: parent.width
+        color: Material.primary
+        textColor: Material.foreground
     }
 
     onErrorOccurred: {

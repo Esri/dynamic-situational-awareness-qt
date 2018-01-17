@@ -18,6 +18,7 @@
 #include <QDir>
 #include <QMessageBox>
 #include <QQmlEngine>
+#include <QObject>
 
 #ifdef Q_OS_WIN
 #include <Windows.h>
@@ -155,6 +156,10 @@ int main(int argc, char *argv[])
   // Add the Toolkit path
   view.engine()->addImportPath(arcGISToolkitImportPath);
 #endif // DEPLOYMENT_BUILD
+
+  // To quit via Qt.quit() from QML, you must connect the QQmlEngine::quit()
+  // signal to the QCoreApplication::quit() slot
+  QObject::connect(view.engine(), &QQmlEngine::quit, &QCoreApplication::quit);
 
   // Set the source
   view.setSource(QUrl(kApplicationSourceUrl));

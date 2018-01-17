@@ -50,6 +50,7 @@ Vehicle {
         }
 
         ReportToolRow {
+            id: reportToolRow
             anchors {
                 verticalCenter: parent.verticalCenter
                 right: parent.right
@@ -58,6 +59,7 @@ Vehicle {
         }
 
         AnalysisToolRow {
+            id: analysisToolRow
             anchors {
                 verticalCenter: parent.verticalCenter
                 right: parent.right
@@ -66,6 +68,7 @@ Vehicle {
         }
 
         AlertToolRow {
+            id: alertToolRow
             anchors {
                 verticalCenter: parent.verticalCenter
                 right: parent.right
@@ -74,6 +77,16 @@ Vehicle {
         }
 
         MarkupToolRow {
+            id: markupToolRow
+            anchors {
+                verticalCenter: parent.verticalCenter
+                right: parent.right
+                rightMargin: 10 * scaleFactor
+            }
+        }
+
+        OptionsToolRow {
+            id: optionsToolRow
             anchors {
                 verticalCenter: parent.verticalCenter
                 right: parent.right
@@ -81,38 +94,6 @@ Vehicle {
             }
         }
     }
-
-    //            Button {
-    //                id: optionsCheckBox
-    //                checkable: true
-    //                checked: false
-    //                width: 32 * scaleFactor
-    //                height: 32 * scaleFactor
-
-    //                background: Rectangle {
-    //                    anchors.fill: optionsCheckBox
-    //                    color: Material.primary
-    //                }
-
-    //                Image {
-    //                    fillMode: Image.PreserveAspectFit
-    //                    anchors.centerIn: parent
-    //                    sourceSize.height: parent.height * 0.85
-    //                    height: sourceSize.height
-    //                    source: "qrc:/Resources/icons/xhdpi/ic_menu_settings_dark_d.png"
-    //                }
-
-    //                onClicked: {
-    //                    if (drawer.visible)
-    //                        drawer.close();
-    //                    else {
-    //                        toolRect.state = "options";
-    //                        drawer.open();
-    //                    }
-    //                }
-    //            }
-    //        }
-    // }
 
     // Create SceneQuickView here, and create its Scene etc. in C++ code
     SceneView {
@@ -127,65 +108,46 @@ Vehicle {
 
         onMousePressed: followHud.stopFollowing();
 
+        Rectangle {
+            anchors {
+                fill: followHud
+                margins: -5 * scaleFactor
+            }
+            visible: followHud.enabled
+            color: Material.primary
+            radius: 5 * scaleFactor
+            opacity: 0.5
+        }
+
         FollowHud {
             id: followHud
             anchors {
                 bottom: sceneView.attributionTop
                 horizontalCenter: parent.horizontalCenter
-                margins: 8 * scaleFactor
+                margins: 10 * scaleFactor
             }
-
-            enabled: locationCheckBox.checked
+            enabled: false
         }
 
-        Column {
-            id: navToolsColumn
-            //visible: navCheckBox.checked
-            spacing: 1 * scaleFactor
-
+        NavigationTool {
+            id: navTool
             anchors {
-                margins: 8 * scaleFactor
-                bottom: sceneView.attributionTop
+                margins: 10 * scaleFactor
+                verticalCenter: parent.verticalCenter
                 right: sceneView.right
             }
+        }
 
-            NavigationTool {
-                id: navTool
-
-                //visible: compass.visible && navCheckBox.checked
+        ArcGISCompass {
+            id: compass
+            anchors {
+                horizontalCenter: navTool.horizontalCenter
+                bottom: sceneView.attributionTop
+                margins: 10 * scaleFactor
             }
-
-            Button {
-                id: locationCheckBox
-                checkable: true
-                checked: false
-                width: 32 * scaleFactor
-                height: 32 * scaleFactor
-                opacity: 0.9
-
-                background: Rectangle {
-                    anchors.fill: locationCheckBox
-                    color: Material.primary
-                    radius: 5 * scaleFactor
-                }
-
-                Image {
-                    fillMode: Image.PreserveAspectFit
-                    anchors.centerIn: parent
-                    sourceSize.height: parent.height * 0.85
-                    height: sourceSize.height
-                    source: locationCheckBox.checked ?
-                                "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark.png" :
-                                "qrc:/Resources/icons/xhdpi/ic_menu_gpsondontfollow_dark.png"
-
-                }
-            }
-
-            ArcGISCompass {
-                id: compass
-
-                autoHideCompass: false
-            }
+            autoHideCompass: false
+            width: DsaStyles.primaryIconSize
+            height: width
         }
 
         CategoryToolbar {
@@ -233,8 +195,12 @@ Vehicle {
             height: parent.height
 
             onClosed: {
-                // update toggle selected state for the map tool row
+                // update state for each category
                 mapToolRow.state = "clear";
+                alertToolRow.state = "clear";
+                analysisTool.state = "clear";
+                reportToolRow.state = "clear";
+                markupToolRow.state = "clear";
             }
 
             Rectangle {
@@ -308,13 +274,6 @@ Vehicle {
                     visible: false
                     onClosed: drawer.close();
                 }
-
-                Options {
-                    id: optionsTool
-                    anchors.fill: parent
-                    visible: false
-                    onClosed: drawer.close();
-                }
             }
         }
     }
@@ -328,6 +287,12 @@ Vehicle {
         width: parent.width
         color: Material.primary
         textColor: Material.foreground
+    }
+
+    Options {
+        id: optionsTool
+        anchors.fill: sceneView
+        visible: false
     }
 
     onErrorOccurred: {

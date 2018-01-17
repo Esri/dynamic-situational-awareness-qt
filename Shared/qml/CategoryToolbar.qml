@@ -48,7 +48,7 @@ Item {
             }
             PropertyChanges {
                 target: categoryToolbar
-                titleText: "Manage Map"
+                titleText: "Map"
             }
         },
         State {
@@ -103,7 +103,7 @@ Item {
             }
             PropertyChanges {
                 target: categoryToolbar
-                titleText: "Settings"
+                titleText: "Options"
             }
         }
 

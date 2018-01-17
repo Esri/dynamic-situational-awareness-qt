@@ -18,89 +18,77 @@ import QtQuick.Window 2.2
 import Esri.DSA 1.0
 
 Row {
-
+    id: followHudRoot
     function stopFollowing() {
         followPositionController.followMode = FollowPositionController.Disabled;
     }
-
-    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     FollowPositionController {
         id: followPositionController
     }
 
-    spacing: 8 * scaleFactor
+    states: [
+        State {
+            name: disableLocation.name
+            PropertyChanges {
+                target: disableLocation
+                selected: true
+            }
+        },
+        State {
+            name: followLocation.name
+            PropertyChanges {
+                target: followLocation
+                selected: true
+            }
+        },
+        State {
+            name: northUpLocation.name
+            PropertyChanges {
+                target: northUpLocation
+                selected: true
+            }
+        }
+    ]
+
+    spacing: 10 * scaleFactor
     visible: enabled
 
     onEnabledChanged: stopFollowing();
 
-    Button {
+    OverlayButton {
+        id: disableLocation
         anchors.verticalCenter: parent.verticalCenter
-        checkable: true
-        checked: followPositionController.followMode === FollowPositionController.Disabled
-        width: checked? 48 * scaleFactor : 36 * scaleFactor
-        height: width
-
-        background: Rectangle {
-            opacity: 0
+        iconUrl: "qrc:/Resources/icons/xhdpi/navigation_disabled.png"
+        color: "transparent"
+        name: "Off"
+        onClicked: {
+            followHudRoot.state = name;
+            followPositionController.followMode = FollowPositionController.Disabled;
         }
-
-        Image {
-            fillMode: Image.PreserveAspectFit
-            anchors.centerIn: parent
-            sourceSize.height: parent.height * 0.85
-            height: sourceSize.height
-            source: "qrc:/Resources/icons/xhdpi/navigation_disabled.png"
-        }
-
-        onClicked: followPositionController.followMode = FollowPositionController.Disabled;
     }
 
-    Button {
-        id: trackUpButton
+    OverlayButton {
+        id: followLocation
         anchors.verticalCenter: parent.verticalCenter
-        checkable: true
-        checked: followPositionController.followMode === FollowPositionController.TrackUp
-        visible: enabled
-        width: checked ? 48 * scaleFactor : 36 * scaleFactor
-        height: width
-
-        background: Rectangle {
-            opacity: 0
+        iconUrl: "qrc:/Resources/icons/xhdpi/navigation.png"
+        color: "transparent"
+        name: "Follow"
+        onClicked: {
+            followHudRoot.state = name;
+            followPositionController.followMode = FollowPositionController.TrackUp;
         }
-
-        Image {
-            fillMode: Image.PreserveAspectFit
-            anchors.centerIn: parent
-            sourceSize.height: parent.height * 0.85
-            height: sourceSize.height
-            source: "qrc:/Resources/icons/xhdpi/navigation.png"
-        }
-
-        onClicked: followPositionController.followMode = FollowPositionController.TrackUp;
     }
 
-    Button {
-        id: northUpButton
+    OverlayButton {
+        id: northUpLocation
         anchors.verticalCenter: parent.verticalCenter
-        checkable: true
-        checked: followPositionController.followMode === FollowPositionController.NorthUp
-        visible: enabled
-        width: checked? 48 * scaleFactor : 36 * scaleFactor
-        height: width
-
-        background: Rectangle {
-            opacity: 0
+        iconUrl: "qrc:/Resources/icons/xhdpi/navigation_north.png"
+        color: "transparent"
+        name: "North Up"
+        onClicked: {
+            followHudRoot.state = name;
+            followPositionController.followMode = FollowPositionController.NorthUp;
         }
-
-        Image {
-            fillMode: Image.PreserveAspectFit
-            anchors.centerIn: parent
-            sourceSize.height: parent.height * 0.85
-            height: sourceSize.height
-            source: "qrc:/Resources/icons/xhdpi/navigation_north.png"
-        }
-
-        onClicked: followPositionController.followMode = FollowPositionController.NorthUp;
     }
 }

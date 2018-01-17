@@ -112,7 +112,7 @@ Row {
     // Clear
     ToolIcon {
         id: clearIcon
-        iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_video_dark_d.png"
+        iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_trash_dark_d.png"
         toolName: "Clear"
         onToolSelected: {
             // TODO - clear graphics overlay

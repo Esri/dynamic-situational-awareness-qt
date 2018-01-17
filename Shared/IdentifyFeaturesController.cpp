@@ -78,6 +78,9 @@ void IdentifyFeaturesController::onMouseClicked(QMouseEvent& event)
   if (!isActive())
     return;
 
+  if (event.button() != Qt::MouseButton::LeftButton)
+    return;
+
   if (m_taskWatcher.isValid() && !m_taskWatcher.isDone())
     return;
 

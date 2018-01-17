@@ -44,5 +44,6 @@
         <file>icons/xhdpi/ic_menu_edit_dark_d.png</file>
         <file>icons/xhdpi/ic_menu_help_dark_d.png</file>
         <file>icons/xhdpi/ic_menu_mapview_dark_d.png</file>
+        <file>icons/xhdpi/ic_menu_sendmap_dark_d.png</file>
     </qresource>
 </RCC>

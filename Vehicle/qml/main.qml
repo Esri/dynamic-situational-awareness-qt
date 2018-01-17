@@ -10,7 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-import QtQuick 2.6
+import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
 import QtQuick.Window 2.2
@@ -40,262 +40,47 @@ Vehicle {
         }
         toolbarLabelText: categoryToolbar.titleText
 
-
-        Row {
+        MapToolRow {
             id: mapToolRow
             anchors {
                 verticalCenter: parent.verticalCenter
                 right: parent.right
                 rightMargin: 10 * scaleFactor
             }
-            spacing: 10 * scaleFactor
-            visible: categoryToolbar.state === "map"
+        }
 
-            states: [
-                State {
-                    name: coordinateConversionIcon.toolName
-                    PropertyChanges {
-                        target: coordinateConversionIcon
-                        selected: true
-                    }
-                    PropertyChanges {
-                        target: tocIcon
-                        selected: selected
-                    }
-                },
-                State {
-                    name: messageFeedsIcon.toolName
-                    PropertyChanges {
-                        target: messageFeedsIcon
-                        selected: true
-                    }
-                    PropertyChanges {
-                        target: tocIcon
-                        selected: selected
-                    }
-                },
-                State {
-                    name: addLocalDataIcon.toolName
-                    PropertyChanges {
-                        target: addLocalDataIcon
-                        selected: true
-                    }
-                    PropertyChanges {
-                        target: tocIcon
-                        selected: selected
-                    }
-                },
-                State {
-                    name: tocIcon.toolName
-                    PropertyChanges {
-                        target: tocIcon
-                        selected: true
-                    }
-                },
-                State {
-                    name: basemapIcon.toolName
-                    PropertyChanges {
-                        target: basemapIcon
-                        selected: true
-                    }
-                    PropertyChanges {
-                        target: tocIcon
-                        selected: selected
-                    }
-                },
-                State {
-                    name: "clear"
-                    PropertyChanges {
-                        target: coordinateConversionIcon
-                        selected: false
-                    }
-                    PropertyChanges {
-                        target: messageFeedsIcon
-                        selected: false
-                    }
-                    PropertyChanges {
-                        target: addLocalDataIcon
-                        selected: false
-                    }
-                    PropertyChanges {
-                        target: basemapIcon
-                        selected: false
-                    }
-                    PropertyChanges {
-                        target: tocIcon
-                        selected: selected
-                    }
-                }
-            ]
-
-            // Coordinate Conversion Tool
-            ToolIcon {
-                id: coordinateConversionIcon
-                iconSource: "qrc:/Resources/icons/xhdpi/icon-64-coorconv-white.png"
-                toolName: "Convert"
-                onToolSelected: {
-                    if (selected)
-                        mapToolRow.state = "clear"
-                    else
-                        mapToolRow.state = toolName;
-
-                    if (tableOfContentsTool.visible) {
-                        tableOfContentsTool.visible = false;
-                        mapToolRow.state = "clear";
-                        selected = false;
-                    } /*else {
-                        //coord.visible = true;
-                    }*/
-                }
+        ReportToolRow {
+            anchors {
+                verticalCenter: parent.verticalCenter
+                right: parent.right
+                rightMargin: 10 * scaleFactor
             }
+        }
 
-            // Add Local Data Tool
-            ToolIcon {
-                id: messageFeedsIcon
-                iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_messages_dark.png"
-                toolName: "Feeds"
-                onToolSelected: {
-                    if (drawer.visible)
-                        drawer.close();
-                    else {
-                        mapToolRow.state = toolName;
-                        toolRect.state = "message";
-                        drawer.open();
-                    }
-                }
+        AnalysisToolRow {
+            anchors {
+                verticalCenter: parent.verticalCenter
+                right: parent.right
+                rightMargin: 10 * scaleFactor
             }
+        }
 
-            // Add Local Data Tool
-            ToolIcon {
-                id: addLocalDataIcon
-                iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_layervisibilitypopover_dark_d.png"
-                toolName: "Add Data"
-                onToolSelected: {
-                    if (drawer.visible)
-                        drawer.close();
-                    else {
-                        mapToolRow.state = toolName;
-                        toolRect.state = "data";
-                        drawer.open();
-                    }
-                }
+        AlertToolRow {
+            anchors {
+                verticalCenter: parent.verticalCenter
+                right: parent.right
+                rightMargin: 10 * scaleFactor
             }
+        }
 
-            // Table of Contents
-            ToolIcon {
-                id: tocIcon
-                iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_layergroup_dark_d.png"
-                toolName: "Layers"
-                onToolSelected: {
-                    if (selected)
-                        mapToolRow.state = "clear"
-                    else
-                        mapToolRow.state = toolName;
-
-                    if (tableOfContentsTool.visible) {
-                        tableOfContentsTool.visible = false;
-                        mapToolRow.state = "clear";
-                        selected = false;
-                    } else {
-                        tableOfContentsTool.visible = true;
-                    }
-                }
-            }
-
-            // Basemap Tool
-            ToolIcon {
-                id: basemapIcon
-                iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_dark.png"
-                toolName: "Basemap"
-                onToolSelected: {
-                    if (drawer.visible)
-                        drawer.close();
-                    else {
-                        toolRect.state = "basemap";
-                        mapToolRow.state = toolName;
-                        drawer.open();
-                    }
-                }
+        MarkupToolRow {
+            anchors {
+                verticalCenter: parent.verticalCenter
+                right: parent.right
+                rightMargin: 10 * scaleFactor
             }
         }
     }
-
-    //            Button {
-    //                id: analysisCheckBox
-    //                checkable: true
-    //                checked: false
-    //                width: 32 * scaleFactor
-    //                height: 32 * scaleFactor
-
-    //                background: Rectangle {
-    //                    anchors.fill: analysisCheckBox
-    //                    color: Material.primary
-    //                }
-
-    //                Image {
-    //                    fillMode: Image.PreserveAspectFit
-    //                    anchors.centerIn: parent
-    //                    sourceSize.height: parent.height * 0.85
-    //                    height: sourceSize.height
-    //                    source: "qrc:/Resources/icons/xhdpi/ic_menu_video_dark_d.png"
-    //                }
-
-    //                onClicked: {
-    //                    if (drawer.visible)
-    //                        drawer.close();
-    //                    else {
-    //                        toolRect.state = "analysis";
-    //                        drawer.open();
-    //                    }
-    //                }
-    //            }
-
-    //            Button {
-    //                id: navCheckBox
-    //                checkable: true
-    //                checked: true
-    //                width: 32 * scaleFactor
-    //                height: 32 * scaleFactor
-
-    //                background: Rectangle {
-    //                    anchors.fill: navCheckBox
-    //                    color: Material.primary
-    //                }
-
-    //                Image {
-    //                    fillMode: Image.PreserveAspectFit
-    //                    anchors.centerIn: parent
-    //                    sourceSize.height: parent.height * 0.85
-    //                    height: sourceSize.height
-    //                    source: navCheckBox.checked ? "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark.png" : "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark_d.png"
-    //                }
-    //            }
-
-    //            Button {
-    //                id: telestrateCheckBox
-    //                checkable: true
-    //                checked: false
-    //                width: 32 * scaleFactor
-    //                height: 32 * scaleFactor
-
-    //                background: Rectangle {
-    //                    anchors.fill: telestrateCheckBox
-    //                    color: Material.primary
-    //                }
-
-    //                Image {
-    //                    fillMode: Image.PreserveAspectFit
-    //                    anchors.centerIn: parent
-    //                    sourceSize.height: parent.height * 0.85
-    //                    height: sourceSize.height
-    //                    source: telestrateTool.visible ? "qrc:/Resources/icons/xhdpi/ic_menu_freehandsketchon_dark.png" :
-    //                                                     "qrc:/Resources/icons/xhdpi/ic_menu_freehandsketchoff_dark.png"
-    //                }
-
-    //                onClicked: {
-    //                    telestrateTool.visible = !telestrateTool.visible;
-    //                }
-    //            }
 
     //            Button {
     //                id: optionsCheckBox
@@ -424,7 +209,7 @@ Vehicle {
             visible: false
 
             onClosed: {
-                tocIcon.selected = false;
+                mapToolRow.tocIconSelected = false;
                 visible = false;
             }
         }
@@ -538,7 +323,7 @@ Vehicle {
         id: coordinateConversion
         anchors.bottom: parent.bottom
         objectName: "coordinateConversion"
-        visible: coordinateConversionIcon.selected
+        visible: false
         height: parent.height / 2
         width: parent.width
         color: Material.primary

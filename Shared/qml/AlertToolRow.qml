@@ -1,4 +1,4 @@
-// Copyright 2017 ESRI
+// Copyright 2016 ESRI
 //
 // All rights reserved under the copyright laws of the United States
 // and applicable international laws, treaties, and conventions.
@@ -11,15 +11,20 @@
 //
 
 import QtQuick 2.9
-import QtQml.Models 2.2
-import QtQuick.Controls 1.4
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
-import QtQuick.Layouts 1.1
-import QtQuick.Window 2.0
-import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.2
+import QtQuick.Window 2.2
+import QtQuick.Dialogs 1.2
 import Esri.DSA 1.0
+import Esri.Vehicle 1.0
+import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.2
 
-Item {
+Row {
+    id: alertToolRow
+    spacing: 10 * scaleFactor
+    visible: categoryToolbar.state === "alerts"
+    onVisibleChanged: state = "clear"
 
+
+    // TODO
 }

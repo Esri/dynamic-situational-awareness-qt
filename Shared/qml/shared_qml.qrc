@@ -15,5 +15,10 @@
         <file>CategoryIcon.qml</file>
         <file>CategoryToolbar.qml</file>
         <file>ToolIcon.qml</file>
+        <file>MapToolRow.qml</file>
+        <file>ReportToolRow.qml</file>
+        <file>AnalysisToolRow.qml</file>
+        <file>AlertToolRow.qml</file>
+        <file>MarkupToolRow.qml</file>
     </qresource>
 </RCC>

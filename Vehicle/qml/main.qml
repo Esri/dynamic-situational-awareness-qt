@@ -1,5 +1,5 @@
 
-// Copyright 2016 ESRI
+// Copyright 2017 ESRI
 //
 // All rights reserved under the copyright laws of the United States
 // and applicable international laws, treaties, and conventions.
@@ -328,6 +328,38 @@ Vehicle {
                     }
                 }
             }
+
+            Button {
+                id: alertsCheckBox
+                checkable: true
+                checked: false
+                width: 32 * scaleFactor
+                height: 32 * scaleFactor
+
+                background: Rectangle {
+                    anchors.fill: alertsCheckBox
+                    color: Material.primary
+                }
+
+                Image {
+                    fillMode: Image.PreserveAspectFit
+                    anchors.centerIn: parent
+                    sourceSize.height: parent.height * 0.85
+                    height: sourceSize.height
+                    source: "qrc:/Resources/icons/xhdpi/ic_menu_failedlayer.png"
+                }
+
+                onClicked: {
+                    alertsTool.visible = !alertsTool.visible;
+                }
+
+                ViewedAlerts {
+                    anchors {
+                        left: alertsCheckBox.horizontalCenter
+                        bottom: alertsCheckBox.verticalCenter
+                    }
+                }
+            }
         }
     }
 
@@ -360,6 +392,19 @@ Vehicle {
 
         TableOfContents {
             id: tableOfContentsTool
+            anchors {
+                left: parent.left
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+
+            onClosed: visible = false;
+        }
+
+        AlertList {
+            id: alertsTool
             anchors {
                 left: parent.left
                 top: parent.top

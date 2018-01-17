@@ -1,4 +1,4 @@
-// Copyright 2016 ESRI
+// Copyright 2017 ESRI
 //
 // All rights reserved under the copyright laws of the United States
 // and applicable international laws, treaties, and conventions.
@@ -44,6 +44,7 @@ public:
   bool append(const QString& pathToTileCache);
   Esri::ArcGISRuntime::TileCache* tileCacheAt(int row) const;
   QString tileCacheNameAt(int row) const;
+  void clear();
 
   // QAbstractItemModel interface
   int rowCount(const QModelIndex& parent) const override;

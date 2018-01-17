@@ -77,6 +77,8 @@ public:
   // takes this into account
   void setRelativeHeadingSceneView(Esri::ArcGISRuntime::SceneQuickView* sceneView);
 
+  Esri::ArcGISRuntime::Graphic* positionGraphic() const;
+
 signals:
   void positionChanged(const Esri::ArcGISRuntime::Point& newPosition);
   void headingChanged(double newHeading);

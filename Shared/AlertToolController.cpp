@@ -85,16 +85,16 @@ void AlertToolController::zoomTo(int rowIndex)
   if (sceneView)
   {
     const Camera currentCam = sceneView->currentViewpointCamera();
-    Camera newCam = currentCam.zoomToward(pos, 10.);
+    Camera newCam = currentCam.zoomToward(pos, 10.0);
 
-    sceneView->setViewpointCamera(newCam, 1.);
+    sceneView->setViewpointCamera(newCam, 1.0);
   }
   else
   {
     const Viewpoint currVP = geoView->currentViewpoint(ViewpointType::CenterAndScale);
     const Viewpoint newViewPoint(pos, currVP.targetScale());
 
-    geoView->setViewpoint(newViewPoint, 1.);
+    geoView->setViewpoint(newViewPoint, 1.0);
   }
 }
 

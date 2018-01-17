@@ -44,6 +44,7 @@ public:
   bool append(const QString& pathToTileCache);
   Esri::ArcGISRuntime::TileCache* tileCacheAt(int row) const;
   QString tileCacheNameAt(int row) const;
+  void clear();
 
   // QAbstractItemModel interface
   int rowCount(const QModelIndex& parent) const override;

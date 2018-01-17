@@ -142,3 +142,11 @@ QString TileCacheListModel::tileCacheNameAt(int row) const
 
   return QFileInfo(m_tileCacheData.at(row)->path()).completeBaseName();
 }
+
+void TileCacheListModel::clear()
+{
+  beginResetModel();
+  m_thumbnailUrls.clear();
+  m_tileCacheData.clear();
+  endResetModel();
+}

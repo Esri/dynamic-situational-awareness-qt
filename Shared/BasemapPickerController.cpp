@@ -62,6 +62,8 @@ void BasemapPickerController::setDefaultBasemap(const QString& defaultBasemap)
 
 void BasemapPickerController::onBasemapDataPathChanged()
 {
+  m_tileCacheModel->clear();
+
   QDir basemapsDir(m_basemapDataPath);
 
   basemapsDir.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);

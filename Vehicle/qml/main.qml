@@ -260,6 +260,8 @@ Vehicle {
             }
 
             Button {
+                id: identifyFeaturesCheckBox
+
                 IdentifyFeaturesController {
                     id: identifyController
                     active: identifyFeaturesCheckBox.checked
@@ -279,7 +281,6 @@ Vehicle {
 
                 }
 
-                id: identifyFeaturesCheckBox
                 checkable: true
                 checked: false
                 width: 32 * scaleFactor

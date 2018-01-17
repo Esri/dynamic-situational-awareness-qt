@@ -20,12 +20,6 @@
 
 using namespace Esri::ArcGISRuntime;
 
-#ifdef Q_OS_WIN
-#define kReferenceDotsPerInch               96
-#else
-#define kReferenceDotsPerInch               72
-#endif
-
 QString DsaUtility::dataPath()
 {
   QDir dataDir;
@@ -49,30 +43,3 @@ Point DsaUtility::montereyCA()
 {
   return Point(-121.9, 36.6, SpatialReference::wgs84());
 }
-
-
-qreal DsaUtility::screenScale()
-{
-  QScreen* screen = QGuiApplication::primaryScreen();
-
-  if (screen)
-  {
-    return screen->devicePixelRatio();
-  }
-  return 1.0; // default to 1.0
-}
-
-qreal DsaUtility::dipsToPixels()
-{
-#ifdef Q_OS_MAC
-  return screenScale();
-#else
-  QScreen* screen = QGuiApplication::primaryScreen();
-  if (screen)
-  {
-    return (screen->logicalDotsPerInch() * screen->devicePixelRatio()) / kReferenceDotsPerInch;
-  }
-  return 1.0; // default to 1.0
-#endif
-}
-

@@ -78,6 +78,15 @@ void Vehicle::componentComplete()
   connect(m_sceneView, &SceneQuickView::identifyGraphicsOverlayCompleted,
           ToolResourceProvider::instance(), &ToolResourceProvider::onIdentifyGraphicsOverlayCompleted);
 
+  connect(m_sceneView, &SceneQuickView::identifyGraphicsOverlaysCompleted,
+          ToolResourceProvider::instance(), &ToolResourceProvider::onIdentifyGraphicsOverlaysCompleted);
+
+  connect(m_sceneView, &SceneQuickView::identifyLayerCompleted,
+          ToolResourceProvider::instance(), &ToolResourceProvider::onIdentifyLayerCompleted);
+
+  connect(m_sceneView, &SceneQuickView::identifyLayersCompleted,
+          ToolResourceProvider::instance(), &ToolResourceProvider::onIdentifyLayersCompleted);
+
   connect(m_sceneView, &SceneQuickView::screenToLocationCompleted,
           ToolResourceProvider::instance(), &ToolResourceProvider::onScreenToLocationCompleted);
 

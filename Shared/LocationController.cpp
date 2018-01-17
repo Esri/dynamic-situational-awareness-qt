@@ -342,3 +342,8 @@ QUrl LocationController::modelSymbolPath() const
 
   return QUrl::fromLocalFile(modelPath);
 }
+
+Esri::ArcGISRuntime::Graphic* LocationController::positionGraphic() const
+{
+  return m_positionGraphic;
+}

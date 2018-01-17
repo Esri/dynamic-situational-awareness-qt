@@ -11,5 +11,8 @@
         <file>TelestrateTool.qml</file>
         <file>Imports.qml</file>
         <file>Analysis.qml</file>
+        <file>Options.qml</file>
+        <file>AlertList.qml</file>
+        <file>ViewedAlerts.qml</file>
     </qresource>
 </RCC>

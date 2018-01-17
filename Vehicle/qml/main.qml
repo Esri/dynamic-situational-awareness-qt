@@ -1,5 +1,5 @@
 
-// Copyright 2016 ESRI
+// Copyright 2017 ESRI
 //
 // All rights reserved under the copyright laws of the United States
 // and applicable international laws, treaties, and conventions.
@@ -18,6 +18,7 @@ import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 import Esri.DSA 1.0
 import Esri.Vehicle 1.0
+import Esri.ArcGISRuntime.Toolkit.Controls 100.2
 import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.2
 
 Vehicle {
@@ -257,6 +258,109 @@ Vehicle {
                     telestrateTool.visible = !telestrateTool.visible;
                 }
             }
+
+            Button {
+                id: identifyFeaturesCheckBox
+
+                IdentifyFeaturesController {
+                    id: identifyController
+                    active: identifyFeaturesCheckBox.checked
+
+                    onActiveChanged: {
+                        if (!active)
+                            identifyResults.dismiss();
+                    }
+
+                    onPopupManagersChanged: {
+                        identifyResults.dismiss();
+                        identifyResults.popupManagers = popupManagers;
+
+                        if (popupManagers.length > 0)
+                            identifyResults.show();
+                    }
+
+                }
+
+                checkable: true
+                checked: false
+                width: 32 * scaleFactor
+                height: 32 * scaleFactor
+
+                background: Rectangle {
+                    anchors.fill: identifyFeaturesCheckBox
+                    color: Material.primary
+                }
+
+                Image {
+                    fillMode: Image.PreserveAspectFit
+                    anchors.centerIn: parent
+                    sourceSize.height: parent.height * 0.85
+                    height: sourceSize.height
+                    source: "qrc:/Resources/icons/xhdpi/ic_menu_aboutmap_dark.png"
+                }
+            }
+
+            Button {
+                id: optionsCheckBox
+                checkable: true
+                checked: false
+                width: 32 * scaleFactor
+                height: 32 * scaleFactor
+
+                background: Rectangle {
+                    anchors.fill: optionsCheckBox
+                    color: Material.primary
+                }
+
+                Image {
+                    fillMode: Image.PreserveAspectFit
+                    anchors.centerIn: parent
+                    sourceSize.height: parent.height * 0.85
+                    height: sourceSize.height
+                    source: "qrc:/Resources/icons/xhdpi/ic_menu_settings_dark_d.png"
+                }
+
+                onClicked: {
+                    if (drawer.visible)
+                        drawer.close();
+                    else {
+                        toolRect.state = "options";
+                        drawer.open();
+                    }
+                }
+            }
+
+            Button {
+                id: alertsCheckBox
+                checkable: true
+                checked: false
+                width: 32 * scaleFactor
+                height: 32 * scaleFactor
+
+                background: Rectangle {
+                    anchors.fill: alertsCheckBox
+                    color: Material.primary
+                }
+
+                Image {
+                    fillMode: Image.PreserveAspectFit
+                    anchors.centerIn: parent
+                    sourceSize.height: parent.height * 0.85
+                    height: sourceSize.height
+                    source: "qrc:/Resources/icons/xhdpi/ic_menu_failedlayer.png"
+                }
+
+                onClicked: {
+                    alertsTool.visible = !alertsTool.visible;
+                }
+
+                ViewedAlerts {
+                    anchors {
+                        left: alertsCheckBox.horizontalCenter
+                        bottom: alertsCheckBox.verticalCenter
+                    }
+                }
+            }
         }
     }
 
@@ -289,6 +393,19 @@ Vehicle {
 
         TableOfContents {
             id: tableOfContentsTool
+            anchors {
+                left: parent.left
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+
+            onClosed: visible = false;
+        }
+
+        AlertList {
+            id: alertsTool
             anchors {
                 left: parent.left
                 top: parent.top
@@ -350,6 +467,13 @@ Vehicle {
                             target: analysisTool
                             visible: true
                         }
+                    },
+                    State {
+                        name: "options"
+                        PropertyChanges {
+                            target: optionsTool
+                            visible: true
+                        }
                     }
                 ]
 
@@ -378,6 +502,13 @@ Vehicle {
 				
                 Analysis {
                     id: analysisTool
+                    anchors.fill: parent
+                    visible: false
+                    onClosed: drawer.close();
+                }
+
+                Options {
+                    id: optionsTool
                     anchors.fill: parent
                     visible: false
                     onClosed: drawer.close();
@@ -445,6 +576,15 @@ Vehicle {
                 autoHideCompass: false
             }
         }
+
+        PopupStackView {
+            id: identifyResults
+            anchors {
+                left: sceneView.left
+                top: sceneView.top
+                bottom: sceneView.attributionTop
+            }
+        }
     }
 
     onErrorOccurred: {
@@ -456,5 +596,10 @@ Vehicle {
     MessageDialog {
         id: msgDialog
         text: "Error"
+    }
+
+    BusyIndicator {
+        anchors.centerIn: parent
+        visible: identifyController.busy
     }
 }

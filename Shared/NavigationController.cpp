@@ -25,7 +25,6 @@
 #include "DsaUtility.h"
 
 #include <QScreen>
-#include <QDebug>
 #include <QGuiApplication>
 
 using namespace Esri::ArcGISRuntime;

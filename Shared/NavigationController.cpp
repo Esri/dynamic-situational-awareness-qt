@@ -303,8 +303,8 @@ void NavigationController::center()
     return;
 
   m_enabled = true;
-  const double factor = DsaUtility::dipsToPixels();
-  m_sceneView->screenToLocation(static_cast<int>(m_sceneView->sceneWidth() / factor) * 0.5, static_cast<int>(m_sceneView->sceneHeight() / factor) * 0.5);
+
+  m_sceneView->screenToLocation(m_sceneView->widthInPixels() * 0.5, m_sceneView->heightInPixels() * 0.5);
 }
 
 double NavigationController::currentCameraDistance(const Camera &currentCamera)

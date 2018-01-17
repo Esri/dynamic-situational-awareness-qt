@@ -25,10 +25,6 @@ public:
 
   static QString dataPath();
   static Esri::ArcGISRuntime::Point montereyCA();
-
-  // dpi
-  static qreal screenScale();
-  static qreal dipsToPixels();
 };
 
 #endif // UTILITY_H

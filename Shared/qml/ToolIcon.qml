@@ -17,7 +17,7 @@ import QtQuick.Controls.Material 2.2
 
 Item {
     anchors.verticalCenter: parent.verticalCenter
-    width: DsaStyles.primaryIconSize
+    width: DsaStyles.primaryIconSize * scaleFactor
     height: width
     property alias iconSource: image.source
     property alias toolName: toolText.text
@@ -42,7 +42,7 @@ Item {
             color: Material.foreground
             font {
                 family: DsaStyles.fontFamily
-                pixelSize: DsaStyles.toolFontPixelSize
+                pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
             }
         }
 

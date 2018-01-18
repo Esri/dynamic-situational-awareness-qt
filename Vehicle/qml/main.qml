@@ -148,7 +148,7 @@ Vehicle {
                 margins: 10 * scaleFactor
             }
             autoHideCompass: false
-            width: DsaStyles.primaryIconSize
+            width: DsaStyles.primaryIconSize * scaleFactor
             height: width
         }
 

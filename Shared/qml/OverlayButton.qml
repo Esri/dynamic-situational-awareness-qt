@@ -22,7 +22,7 @@ Rectangle {
     property string name: ""
     signal clicked()
 
-    width: DsaStyles.secondaryIconSize
+    width: DsaStyles.secondaryIconSize * scaleFactor
     height: width
     color: Material.primary
     radius: 5 * scaleFactor

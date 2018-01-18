@@ -17,7 +17,7 @@ import QtQuick.Controls.Material 2.2
 
 Item {
     anchors.horizontalCenter: parent.horizontalCenter
-    width: DsaStyles.secondaryIconSize
+    width: DsaStyles.secondaryIconSize * scaleFactor
     height: width
     property alias iconSource: image.source
     property string categoryName

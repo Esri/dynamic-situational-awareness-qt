@@ -17,7 +17,7 @@ import QtQuick.Controls.Material 2.1
 import QtQuick.Window 2.2
 import Esri.DSA 1.0
 
-DsaToolBase {
+DsaPanel {
     id: alertsRoot
     width: 272 * scaleFactor
     title: qsTr("Alerts")

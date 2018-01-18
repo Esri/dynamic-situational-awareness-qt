@@ -28,6 +28,13 @@ Row {
 
     states: [
         State {
+            name: identifyIcon.toolName
+            PropertyChanges {
+                target: identifyIcon
+                selected: true
+            }
+        },
+        State {
             name: coordinateConversionIcon.toolName
             PropertyChanges {
                 target: coordinateConversionIcon
@@ -35,6 +42,10 @@ Row {
             }
             PropertyChanges {
                 target: tocIcon
+                selected: selected
+            }
+            PropertyChanges {
+                target: identifyIcon
                 selected: selected
             }
         },
@@ -52,6 +63,10 @@ Row {
                 target: coordinateConversionIcon
                 selected: selected
             }
+            PropertyChanges {
+                target: identifyIcon
+                selected: selected
+            }
         },
         State {
             name: addLocalDataIcon.toolName
@@ -67,6 +82,10 @@ Row {
                 target: coordinateConversionIcon
                 selected: selected
             }
+            PropertyChanges {
+                target: identifyIcon
+                selected: selected
+            }
         },
         State {
             name: tocIcon.toolName
@@ -76,6 +95,10 @@ Row {
             }
             PropertyChanges {
                 target: coordinateConversionIcon
+                selected: selected
+            }
+            PropertyChanges {
+                target: identifyIcon
                 selected: selected
             }
         },
@@ -93,9 +116,17 @@ Row {
                 target: coordinateConversionIcon
                 selected: selected
             }
+            PropertyChanges {
+                target: identifyIcon
+                selected: selected
+            }
         },
         State {
             name: "clear"
+            PropertyChanges {
+                target: identifyIcon
+                selected: selected
+            }
             PropertyChanges {
                 target: coordinateConversionIcon
                 selected: selected
@@ -118,6 +149,44 @@ Row {
             }
         }
     ]
+
+    // Identify Tool
+    ToolIcon {
+        id: identifyIcon
+        iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_aboutmap_dark.png"
+        toolName: "Identify"
+        onToolSelected: {
+            if (selected) {
+                selected = false;
+                mapToolRow.state = "clear";
+            } else
+                mapToolRow.state = toolName;
+
+            if (identifyResults.visible) {
+                identifyResults.visible = false;
+                mapToolRow.state = "clear";
+                selected = false;
+            }
+        }
+
+        IdentifyFeaturesController {
+            id: identifyController
+            active: mapToolRow.state === identifyIcon.toolName
+
+            onActiveChanged: {
+                if (!active)
+                    identifyResults.dismiss();
+            }
+
+            onPopupManagersChanged: {
+                identifyResults.dismiss();
+                identifyResults.popupManagers = popupManagers;
+
+                if (popupManagers.length > 0)
+                    identifyResults.show();
+            }
+        }
+    }
 
     // Coordinate Conversion Tool
     ToolIcon {

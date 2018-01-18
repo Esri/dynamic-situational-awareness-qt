@@ -13,11 +13,12 @@
 #ifndef UTILITY_H
 #define UTILITY_H
 
-#include <QString>
+#include "Point.h"
+
 #include <QObject>
 #include <QList>
-
-#include "Point.h"
+#include <QString>
+#include <QVector3D>
 
 class DsaUtility
 {
@@ -25,6 +26,8 @@ public:
 
   static QString dataPath();
   static Esri::ArcGISRuntime::Point montereyCA();
+  static double distance3D(const Esri::ArcGISRuntime::Point& from, const Esri::ArcGISRuntime::Point& to);
+  static QVector3D toCartesianPoint(const Esri::ArcGISRuntime::Point& point);
 };
 
 #endif // UTILITY_H

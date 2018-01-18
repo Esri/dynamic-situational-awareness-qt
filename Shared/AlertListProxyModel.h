@@ -15,6 +15,7 @@
 
 #include <QSortFilterProxyModel>
 #include <QList>
+#include <QSet>
 
 class AbstractAlertRule;
 
@@ -34,7 +35,10 @@ protected:
   bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const override;
 
 private:
+  bool passesAllRules(int sourceRow) const;
+
   QList<AbstractAlertRule*> m_rules;
+  mutable QSet<int> m_currentSourceRows;
 };
 
 #endif // ALERTLISTPROXYMODEL_H

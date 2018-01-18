@@ -145,9 +145,16 @@ Item {
 
         CategoryIcon {
             id: alertIcon
-            iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_help_dark_d.png"
+            iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_failedlayer.png"
             categoryName: "alerts"
             onCategorySelected: categoryToolbar.state = categoryName
+
+            ViewedAlerts {
+                anchors {
+                    right: parent.right
+                    top: parent.top
+                }
+            }
         }
 
         CategoryIcon {
@@ -155,7 +162,7 @@ Item {
             iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_edit_dark_d.png"
             categoryName: "markup"
             onCategorySelected: categoryToolbar.state = categoryName
-        }        
+        }
     }
 
     CategoryIcon {

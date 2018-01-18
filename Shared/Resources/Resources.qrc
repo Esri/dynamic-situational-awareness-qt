@@ -50,5 +50,7 @@
         <file>icons/xhdpi/ic_menu_about_dark_d.png</file>
         <file>icons/xhdpi/ic_menu_multiply_dark_d.png</file>
         <file>icons/xhdpi/ic_menu_aboutmap_dark.png</file>
+        <file>icons/xhdpi/ic_menu_drag_dark.png</file>
+        <file>icons/xhdpi/ic_menu_refresh_dark.png</file>
     </qresource>
 </RCC>

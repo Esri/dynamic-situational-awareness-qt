@@ -25,6 +25,36 @@ Row {
     visible: categoryToolbar.state === "alerts"
     onVisibleChanged: state = "clear"
 
+    states: [
+        State {
+            name: viewAlertIcon.toolName
+            PropertyChanges {
+                target: viewAlertIcon
+                selected: true
+            }
+        },
+        State {
+            name: "clear"
+            PropertyChanges {
+                target: viewAlertIcon
+                selected: false
+            }
+        }
+    ]
 
-    // TODO
+    // View Alert Tool
+    ToolIcon {
+        id: viewAlertIcon
+        iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_openlistview_dark.png"
+        toolName: "View"
+        onToolSelected: {
+            if (alertToolRow.state === toolName) {
+                alertToolRow.state = "clear";
+                alertsTool.visible = false;
+            } else {
+                alertToolRow.state = toolName;
+                alertsTool.visible = true;
+            }
+        }
+    }
 }

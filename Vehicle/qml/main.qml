@@ -98,80 +98,6 @@ Vehicle {
         }
     }
 
-//    Button {
-//        id: identifyFeaturesCheckBox
-
-//        IdentifyFeaturesController {
-//            id: identifyController
-//            active: identifyFeaturesCheckBox.checked
-
-//            onActiveChanged: {
-//                if (!active)
-//                    identifyResults.dismiss();
-//            }
-
-//            onPopupManagersChanged: {
-//                identifyResults.dismiss();
-//                identifyResults.popupManagers = popupManagers;
-
-//                if (popupManagers.length > 0)
-//                    identifyResults.show();
-//            }
-
-//        }
-
-//        checkable: true
-//        checked: false
-//        width: 32 * scaleFactor
-//        height: 32 * scaleFactor
-
-//        background: Rectangle {
-//            anchors.fill: identifyFeaturesCheckBox
-//            color: Material.primary
-//        }
-
-//        Image {
-//            fillMode: Image.PreserveAspectFit
-//            anchors.centerIn: parent
-//            sourceSize.height: parent.height * 0.85
-//            height: sourceSize.height
-//            source: "qrc:/Resources/icons/xhdpi/ic_menu_aboutmap_dark.png"
-//        }
-//    }
-
-
-//    Button {
-//        id: alertsCheckBox
-//        checkable: true
-//        checked: false
-//        width: 32 * scaleFactor
-//        height: 32 * scaleFactor
-
-//        background: Rectangle {
-//            anchors.fill: alertsCheckBox
-//            color: Material.primary
-//        }
-
-//        Image {
-//            fillMode: Image.PreserveAspectFit
-//            anchors.centerIn: parent
-//            sourceSize.height: parent.height * 0.85
-//            height: sourceSize.height
-//            source: "qrc:/Resources/icons/xhdpi/ic_menu_failedlayer.png"
-//        }
-
-//        onClicked: {
-//            alertsTool.visible = !alertsTool.visible;
-//        }
-
-//        ViewedAlerts {
-//            anchors {
-//                left: alertsCheckBox.horizontalCenter
-//                bottom: alertsCheckBox.verticalCenter
-//            }
-//        }
-//    }
-
     // Create SceneQuickView here, and create its Scene etc. in C++ code
     SceneView {
         id: sceneView
@@ -253,18 +179,18 @@ Vehicle {
             }
         }
 
-//        AlertList {
-//            id: alertsTool
-//            anchors {
-//                left: parent.left
-//                top: parent.top
-//                bottom: sceneView.attributionTop
-//            }
-//            width: drawer.width
-//            visible: false
+        AlertList {
+            id: alertsTool
+            anchors {
+                left: parent.left
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
 
-//            onClosed: visible = false;
-//        }
+            onClosed: visible = false;
+        }
 
         TelestrateTool {
             id: telestrateTool
@@ -277,6 +203,15 @@ Vehicle {
             visible: false
 
             onClosed: visible = false;
+        }
+
+        PopupStackView {
+            id: identifyResults
+            anchors {
+                left: sceneView.left
+                top: sceneView.top
+                bottom: sceneView.attributionTop
+            }
         }
 
         Drawer {
@@ -388,15 +323,6 @@ Vehicle {
                 optionsToolRow.state = "clear";
         }
     }
-
-//    PopupStackView {
-//        id: identifyResults
-//        anchors {
-//            left: sceneView.left
-//            top: sceneView.top
-//            bottom: sceneView.attributionTop
-//        }
-//    }
 
     onErrorOccurred: {
         msgDialog.informativeText = message;

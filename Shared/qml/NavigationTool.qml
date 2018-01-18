@@ -76,67 +76,16 @@ Item {
                 locationController.enabled = selected;
             }
         }
-    }
-        // The following buttons have been commented out until we have public API to
-        // to use an existing distance from the camera.
 
-        /*
-        Button {
-            id: pan
-            width: 32 * scaleFactor
-            height: 32 * scaleFactor
-            checkable: true
-            checked: false
-            ButtonGroup.group: panButtonGroup3D
-            text: "Pan"
-
-            background: Rectangle {
-                implicitHeight: 40 * scaleFactor
-                implicitWidth: 40 * scaleFactor
-                anchors.fill: pan
-                radius: 5 * scaleFactor
-                color: buttonColor
-            }
-
-            Image {
-                anchors.centerIn: parent
-                width: 26 * scaleFactor
-                height: width
-//                source: navController.vertical ? "qrc:/Resources/icons/xhdpi/3D.png" : "qrc:/Resources/icons/xhdpi/2D.png"
-            }
-
+        OverlayButton {
+            iconUrl: "qrc:/Resources/icons/xhdpi/ic_menu_refresh_dark.png"
             onClicked: {
-                navController.pan();
+                selected = !selected;
+                if (selected)
+                    navController.setRotation();
+                else
+                    navController.pan();
             }
         }
-
-        Button {
-            id: rotate
-            width: 32 * scaleFactor
-            height: 32 * scaleFactor
-            checkable: true
-            checked: false
-            ButtonGroup.group: panButtonGroup3D
-            text: "Rotate"
-
-            background: Rectangle {
-                implicitHeight: 40 * scaleFactor
-                implicitWidth: 40 * scaleFactor
-                anchors.fill: rotate
-                radius: 5 * scaleFactor
-                color: buttonColor
-            }
-
-            Image {
-                anchors.centerIn: parent
-                width: 26 * scaleFactor
-                height: width
-//                source: navController.vertical ? "qrc:/Resources/icons/xhdpi/3D.png" : "qrc:/Resources/icons/xhdpi/2D.png"
-            }
-
-            onClicked: {
-                navController.setRotation();
-            }
-        } */
+    }
 }
-

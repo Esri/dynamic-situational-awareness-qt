@@ -20,7 +20,6 @@ namespace Esri
 namespace ArcGISRuntime
 {
   class Graphic;
-  class GraphicsOverlay;
 }
 }
 
@@ -29,7 +28,7 @@ class DummyAlert : public AbstractAlert
   Q_OBJECT
 
 public:
-  explicit DummyAlert(Esri::ArcGISRuntime::Graphic* graphic, Esri::ArcGISRuntime::GraphicsOverlay* overlay, QObject* parent = nullptr);
+  explicit DummyAlert(Esri::ArcGISRuntime::Graphic* graphic, QObject* parent = nullptr);
   ~DummyAlert();
 
   Esri::ArcGISRuntime::Geometry position() const override;

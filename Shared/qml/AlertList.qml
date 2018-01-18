@@ -126,7 +126,7 @@ DsaToolBase {
 
     Timer {
         id: flashTimer
-        interval: 10
+        interval: 500
 
         property bool highlightOn: true
         running: alertsView.count > 0

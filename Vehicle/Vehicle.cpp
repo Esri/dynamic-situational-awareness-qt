@@ -16,7 +16,6 @@
 #include "GraphicsOverlay.h"
 #include "PolygonBuilder.h"
 #include "SceneQuickView.h"
-#include "SimpleMarkerSceneSymbol.h"
 #include "SimpleLineSymbol.h"
 
 #include "AlertListModel.h"
@@ -108,10 +107,7 @@ void Vehicle::componentComplete()
   DictionaryRenderer* renderer = new DictionaryRenderer(dictionarySymbolStyle, this);
 
   GraphicsOverlay* alertsOverlay = new GraphicsOverlay(this);
-  alertsOverlay->setRenderer(renderer);
-    alertsOverlay->setSceneProperties(LayerSceneProperties(SurfacePlacement::Absolute));
-//  SimpleMarkerSceneSymbol* dummySymbol = new SimpleMarkerSceneSymbol(SimpleMarkerSceneSymbolStyle::Sphere, Qt::red, 50., 50., 50., SceneSymbolAnchorPosition::Center, this);
-  connect(m_sceneView, &SceneQuickView::mousePressedAndHeld, this, [this, alertsOverlay](QMouseEvent& mouseEvent)
+  alertsOverlay->setRenderer(renderer);  connect(m_sceneView, &SceneQuickView::mousePressedAndHeld, this, [this, alertsOverlay](QMouseEvent& mouseEvent)
   {
     const Point alertPos = m_sceneView->screenToBaseSurface(mouseEvent.x(), mouseEvent.y());
     const int alertCount = AlertListModel::instance()->rowCount();

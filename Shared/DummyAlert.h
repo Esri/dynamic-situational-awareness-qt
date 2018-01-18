@@ -36,8 +36,6 @@ public:
 
 private:
   Esri::ArcGISRuntime::Graphic* m_graphic;
-  bool m_expanding = true;
-  Esri::ArcGISRuntime::GraphicsOverlay* m_overlay;
 };
 
 #endif // DUMMYALERT_H

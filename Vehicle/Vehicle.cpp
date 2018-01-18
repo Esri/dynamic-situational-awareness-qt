@@ -120,7 +120,7 @@ void Vehicle::componentComplete()
 
     Graphic* dummyAlertGraphic = new Graphic(alertPos, this);
     dummyAlertGraphic->attributes()->insertAttribute("sic", "GFGPOAO-------X");
-    DummyAlert* dummyAlert = new DummyAlert(dummyAlertGraphic, alertsOverlay, this);
+    DummyAlert* dummyAlert = new DummyAlert(dummyAlertGraphic, this);
     dummyAlert->setMessage(QString("Dummy Alert %1").arg(alertCount));
     dummyAlert->setStatus(randomStatus);
     dummyAlert->setViewed(false);

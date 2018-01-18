@@ -19,8 +19,7 @@ using namespace Esri::ArcGISRuntime;
 
 DummyAlert::DummyAlert(Graphic* graphic, QObject* parent):
   AbstractAlert(parent),
-  m_graphic(graphic),
-  m_overlay(overlay)
+  m_graphic(graphic)
 {
   m_graphic->setSelected(true);
 }

@@ -10,6 +10,8 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "DictionaryRenderer.h"
+#include "DictionarySymbolStyle.h"
 #include "Graphic.h"
 #include "GraphicsOverlay.h"
 #include "PolygonBuilder.h"
@@ -102,9 +104,14 @@ void Vehicle::componentComplete()
   setCoordinateConversionOptions();
 
   // Alerts: Proof of concept
+  DictionarySymbolStyle* dictionarySymbolStyle = new DictionarySymbolStyle("mil2525d", this);
+  DictionaryRenderer* renderer = new DictionaryRenderer(dictionarySymbolStyle, this);
+
   GraphicsOverlay* alertsOverlay = new GraphicsOverlay(this);
-  SimpleMarkerSceneSymbol* dummySymbol = new SimpleMarkerSceneSymbol(SimpleMarkerSceneSymbolStyle::Sphere, Qt::red, 50., 50., 50., SceneSymbolAnchorPosition::Center, this);
-  connect(m_sceneView, &SceneQuickView::mousePressedAndHeld, this, [this, alertsOverlay, dummySymbol](QMouseEvent& mouseEvent)
+  alertsOverlay->setRenderer(renderer);
+    alertsOverlay->setSceneProperties(LayerSceneProperties(SurfacePlacement::Absolute));
+//  SimpleMarkerSceneSymbol* dummySymbol = new SimpleMarkerSceneSymbol(SimpleMarkerSceneSymbolStyle::Sphere, Qt::red, 50., 50., 50., SceneSymbolAnchorPosition::Center, this);
+  connect(m_sceneView, &SceneQuickView::mousePressedAndHeld, this, [this, alertsOverlay](QMouseEvent& mouseEvent)
   {
     const Point alertPos = m_sceneView->screenToBaseSurface(mouseEvent.x(), mouseEvent.y());
     const int alertCount = AlertListModel::instance()->rowCount();
@@ -115,8 +122,9 @@ void Vehicle::componentComplete()
     if (randomStatus == AlertStatus::Inactive)
       randomStatus = AlertStatus::Low;
 
-    Graphic* dummyAlertGraphic = new Graphic(alertPos, dummySymbol, this);
-    DummyAlert* dummyAlert = new DummyAlert(dummyAlertGraphic, this);
+    Graphic* dummyAlertGraphic = new Graphic(alertPos, this);
+    dummyAlertGraphic->attributes()->insertAttribute("sic", "GFGPOAO-------X");
+    DummyAlert* dummyAlert = new DummyAlert(dummyAlertGraphic, alertsOverlay, this);
     dummyAlert->setMessage(QString("Dummy Alert %1").arg(alertCount));
     dummyAlert->setStatus(randomStatus);
     dummyAlert->setViewed(false);

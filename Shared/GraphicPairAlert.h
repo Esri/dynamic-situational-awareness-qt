@@ -35,7 +35,7 @@ public:
   ~GraphicPairAlert();
 
   Esri::ArcGISRuntime::Geometry position() const override;
-  void highlight() override;
+  void highlight(bool on) override;
 
   Esri::ArcGISRuntime::Geometry position2() const;
 

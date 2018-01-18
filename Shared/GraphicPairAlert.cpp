@@ -36,10 +36,10 @@ Geometry GraphicPairAlert::position() const
   return m_graphic1 ? m_graphic1->geometry() : Point();
 }
 
-void GraphicPairAlert::highlight()
+void GraphicPairAlert::highlight(bool on)
 {
   if (m_graphic1)
-    m_graphic1->setSelected(true);
+    m_graphic1->setSelected(on);
 }
 
 Geometry GraphicPairAlert::position2() const

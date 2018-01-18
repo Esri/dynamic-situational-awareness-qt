@@ -20,6 +20,7 @@ namespace Esri
 namespace ArcGISRuntime
 {
   class Graphic;
+  class GraphicsOverlay;
 }
 }
 
@@ -28,14 +29,16 @@ class DummyAlert : public AbstractAlert
   Q_OBJECT
 
 public:
-  explicit DummyAlert(Esri::ArcGISRuntime::Graphic* graphic, QObject* parent = nullptr);
+  explicit DummyAlert(Esri::ArcGISRuntime::Graphic* graphic, Esri::ArcGISRuntime::GraphicsOverlay* overlay, QObject* parent = nullptr);
   ~DummyAlert();
 
   Esri::ArcGISRuntime::Geometry position() const override;
-  void highlight() override;
+  void highlight(bool on) override;
 
 private:
   Esri::ArcGISRuntime::Graphic* m_graphic;
+  bool m_expanding = true;
+  Esri::ArcGISRuntime::GraphicsOverlay* m_overlay;
 };
 
 #endif // DUMMYALERT_H

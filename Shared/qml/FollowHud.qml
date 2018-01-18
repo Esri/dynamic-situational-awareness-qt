@@ -27,6 +27,7 @@ Row {
         id: followPositionController
     }
 
+    state: disableLocation.name
     states: [
         State {
             name: disableLocation.name

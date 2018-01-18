@@ -44,7 +44,7 @@ Rectangle {
                 anchors.centerIn: parent
                 text: qsTr(title)
                 color: Material.foreground
-                font.pixelSize: DsaStyles.titleFontPixelSize
+                font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
             }
 
             Button {

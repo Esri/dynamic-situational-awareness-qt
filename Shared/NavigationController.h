@@ -19,11 +19,11 @@
 
 #include "AbstractTool.h"
 #include "Point.h"
-#include "Camera.h"
 
 namespace Esri {
 namespace ArcGISRuntime
 {
+  class Camera;
   class SceneView;
   class GeoView;
 }}

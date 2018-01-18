@@ -145,12 +145,6 @@ Item {
             }
         }
 
-
-    }
-        // The following buttons have been commented out until we have public API to
-        // to use an existing distance from the camera.
-
-        /*
         Button {
             id: pan
             width: 32 * scaleFactor
@@ -166,13 +160,6 @@ Item {
                 anchors.fill: pan
                 radius: 5 * scaleFactor
                 color: buttonColor
-            }
-
-            Image {
-                anchors.centerIn: parent
-                width: 26 * scaleFactor
-                height: width
-//                source: navController.vertical ? "qrc:/Resources/icons/xhdpi/3D.png" : "qrc:/Resources/icons/xhdpi/2D.png"
             }
 
             onClicked: {
@@ -197,16 +184,10 @@ Item {
                 color: buttonColor
             }
 
-            Image {
-                anchors.centerIn: parent
-                width: 26 * scaleFactor
-                height: width
-//                source: navController.vertical ? "qrc:/Resources/icons/xhdpi/3D.png" : "qrc:/Resources/icons/xhdpi/2D.png"
-            }
-
             onClicked: {
                 navController.setRotation();
             }
-        } */
+        }
+    }
 }
 

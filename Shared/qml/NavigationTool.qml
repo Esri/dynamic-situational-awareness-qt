@@ -32,7 +32,6 @@ Item {
     }
 
     ButtonGroup { id: zoomButtonGroup }
-    ButtonGroup { id: panButtonGroup3D }
 
     height: controlsColumn.height
     width: buttonSize
@@ -125,7 +124,6 @@ Item {
             height: buttonSize
             checkable: true
             checked: false
-            ButtonGroup.group: panButtonGroup3D
 
             background: Rectangle {
                 anchors.fill: set2DButton
@@ -151,8 +149,7 @@ Item {
             height: 32 * scaleFactor
             checkable: true
             checked: false
-            ButtonGroup.group: panButtonGroup3D
-            text: "Pan"
+            text: checked ? "Rotate" : "Pan"
 
             background: Rectangle {
                 implicitHeight: 40 * scaleFactor
@@ -162,30 +159,11 @@ Item {
                 color: buttonColor
             }
 
-            onClicked: {
-                navController.pan();
-            }
-        }
-
-        Button {
-            id: rotate
-            width: 32 * scaleFactor
-            height: 32 * scaleFactor
-            checkable: true
-            checked: false
-            ButtonGroup.group: panButtonGroup3D
-            text: "Rotate"
-
-            background: Rectangle {
-                implicitHeight: 40 * scaleFactor
-                implicitWidth: 40 * scaleFactor
-                anchors.fill: rotate
-                radius: 5 * scaleFactor
-                color: buttonColor
-            }
-
-            onClicked: {
-                navController.setRotation();
+            onCheckedChanged: {
+                if (checked)
+                    navController.setRotation();
+                else
+                    navController.pan();
             }
         }
     }

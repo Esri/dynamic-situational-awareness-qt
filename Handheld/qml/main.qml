@@ -181,6 +181,7 @@ Handheld {
             }
         }
 
+        // commenting out until alerts are added to handheld
 //        AlertList {
 //            id: alertsTool
 //            anchors {
@@ -319,6 +320,7 @@ Handheld {
         textColor: Material.foreground
     }
 
+    // commenting out until identify is added to handheld
 //    IdentifyFeaturesController {
 //        id: identifyController
 //        active: mapToolRow.state === "Identify"
@@ -358,6 +360,7 @@ Handheld {
         text: "Error"
     }
 
+    // commenting out until identify is added to handheld
     //    BusyIndicator {
     //        anchors.centerIn: parent
     //        visible: identifyController.busy

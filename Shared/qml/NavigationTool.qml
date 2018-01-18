@@ -32,7 +32,6 @@ Item {
     }
 
     ButtonGroup { id: zoomButtonGroup }
-    ButtonGroup { id: panButtonGroup3D }
 
     height: controlsColumn.height
     width: buttonSize
@@ -125,7 +124,6 @@ Item {
             height: buttonSize
             checkable: true
             checked: false
-            ButtonGroup.group: panButtonGroup3D
 
             background: Rectangle {
                 anchors.fill: set2DButton
@@ -145,68 +143,36 @@ Item {
             }
         }
 
-
-    }
-        // The following buttons have been commented out until we have public API to
-        // to use an existing distance from the camera.
-
-        /*
         Button {
-            id: pan
+            id: panOrRotate
             width: 32 * scaleFactor
             height: 32 * scaleFactor
             checkable: true
             checked: false
-            ButtonGroup.group: panButtonGroup3D
-            text: "Pan"
 
             background: Rectangle {
                 implicitHeight: 40 * scaleFactor
                 implicitWidth: 40 * scaleFactor
-                anchors.fill: pan
+                anchors.fill: panOrRotate
                 radius: 5 * scaleFactor
                 color: buttonColor
             }
 
             Image {
                 anchors.centerIn: parent
-                width: 26 * scaleFactor
-                height: width
-//                source: navController.vertical ? "qrc:/Resources/icons/xhdpi/3D.png" : "qrc:/Resources/icons/xhdpi/2D.png"
+                sourceSize.height: 0.85 * zoomInButton.height
+                width: sourceSize.height
+                source: panOrRotate.checked ? "qrc:/Resources/icons/xhdpi/ic_menu_refresh_dark.png" :
+                                              "qrc:/Resources/icons/xhdpi/ic_menu_drag_dark.png"
             }
 
-            onClicked: {
-                navController.pan();
+            onCheckedChanged: {
+                if (checked)
+                    navController.setRotation();
+                else
+                    navController.pan();
             }
         }
-
-        Button {
-            id: rotate
-            width: 32 * scaleFactor
-            height: 32 * scaleFactor
-            checkable: true
-            checked: false
-            ButtonGroup.group: panButtonGroup3D
-            text: "Rotate"
-
-            background: Rectangle {
-                implicitHeight: 40 * scaleFactor
-                implicitWidth: 40 * scaleFactor
-                anchors.fill: rotate
-                radius: 5 * scaleFactor
-                color: buttonColor
-            }
-
-            Image {
-                anchors.centerIn: parent
-                width: 26 * scaleFactor
-                height: width
-//                source: navController.vertical ? "qrc:/Resources/icons/xhdpi/3D.png" : "qrc:/Resources/icons/xhdpi/2D.png"
-            }
-
-            onClicked: {
-                navController.setRotation();
-            }
-        } */
+    }
 }
 

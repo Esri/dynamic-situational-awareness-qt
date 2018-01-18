@@ -12,6 +12,7 @@
 
 #include "NavigationController.h"
 
+#include "Camera.h"
 #include "Map.h"
 #include "SceneView.h"
 #include "Scene.h"
@@ -311,8 +312,7 @@ double NavigationController::currentCameraDistance(const Camera &currentCamera)
   if (currentCamera.isEmpty())
     return 0.0;
 
-  const GeodeticDistanceResult result = GeometryEngine::distanceGeodetic(currentCamera.location(), m_currentCenter, LinearUnit::meters(), m_geoView->spatialReference().unit(), GeodeticCurveType::Geodesic);
-  return result.distance();
+  return DsaUtility::distance3D(currentCamera.location(), m_currentCenter);
 }
 
 double NavigationController::initialRoll() const

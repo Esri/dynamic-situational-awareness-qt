@@ -1,9 +1,9 @@
 <RCC>
     <qresource prefix="/qml">
         <file>BasemapPicker.qml</file>
-        <file>GenericToolbar.qml</file>
+        <file>PrimaryToolbar.qml</file>
         <file>AddLocalData.qml</file>
-        <file>DsaToolBase.qml</file>
+        <file>DsaPanel.qml</file>
         <file>MessageFeeds.qml</file>
         <file>FollowHud.qml</file>
         <file>TableOfContents.qml</file>
@@ -12,6 +12,16 @@
         <file>Imports.qml</file>
         <file>Analysis.qml</file>
         <file>Options.qml</file>
+        <file>CategoryIcon.qml</file>
+        <file>CategoryToolbar.qml</file>
+        <file>ToolIcon.qml</file>
+        <file>MapToolRow.qml</file>
+        <file>ReportToolRow.qml</file>
+        <file>AnalysisToolRow.qml</file>
+        <file>AlertToolRow.qml</file>
+        <file>MarkupToolRow.qml</file>
+        <file>OverlayButton.qml</file>
+        <file>OptionsToolRow.qml</file>
         <file>AlertList.qml</file>
         <file>ViewedAlerts.qml</file>
     </qresource>

@@ -10,15 +10,15 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-import QtQuick 2.6
-import QtQuick.Controls 2.1
-import QtQuick.Controls.Material 2.1
+import QtQuick 2.9
+import QtQuick.Controls 2.2
+import QtQuick.Controls.Material 2.2
 import QtGraphicalEffects 1.0
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 import Esri.DSA 1.0
 
-DsaToolBase {
+DsaPanel {
     id: telestrateRoot
     title: qsTr("Telestrate")
 

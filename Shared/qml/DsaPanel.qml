@@ -10,14 +10,14 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-import QtQuick 2.6
-import QtQuick.Controls 2.1
-import QtQuick.Controls.Material 2.1
+import QtQuick 2.9
+import QtQuick.Controls 2.2
+import QtQuick.Controls.Material 2.2
 import QtQuick.Window 2.2
 import Esri.DSA 1.0
 
 Rectangle {
-    id: dsaToolRoot
+    id: dsaPanel
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
     property string title: ""
     property alias titleBar: titleBar
@@ -31,6 +31,7 @@ Rectangle {
             top: parent.top
             left: parent.left
             right: parent.right
+            topMargin: 5 * scaleFactor
         }
 
         Rectangle {
@@ -43,8 +44,7 @@ Rectangle {
                 anchors.centerIn: parent
                 text: qsTr(title)
                 color: Material.foreground
-                font.pixelSize: 20 * scaleFactor
-                font.underline: true
+                font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
             }
 
             Button {

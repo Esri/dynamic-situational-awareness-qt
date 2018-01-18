@@ -11,16 +11,15 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-import QtQuick 2.6
-import QtQuick.Controls 2.1
-import QtQuick.Controls.Material 2.1
+import QtQuick 2.9
+import QtQuick.Controls 2.2
+import QtQuick.Controls.Material 2.2
 import QtQuick.Window 2.2
 import Esri.DSA 1.0
 
-DsaToolBase {
+Rectangle {
     id: optionsRoot
-    title: "Options"
-    width: 272 * scaleFactor
+    color: Material.primary
 
     OptionsController {
         id: optionsController
@@ -28,10 +27,7 @@ DsaToolBase {
 
     Flickable {
         anchors {
-            top: optionsRoot.titleBar.bottom
-            left: parent.left
-            right: parent.right
-            bottom: parent.bottom
+            fill: parent
             margins: 8 * scaleFactor
         }
         contentHeight: optionsColumn.height
@@ -59,6 +55,7 @@ DsaToolBase {
             bottom: parent.bottom
             margins: 10 * scaleFactor
         }
-        text: "Apply"
+        text: "Close"
+        onClicked: optionsRoot.visible = false;
     }
 }

@@ -11,163 +11,77 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-import QtQuick 2.0
+import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
 import QtQuick.Window 2.2
-import QtQuick.Controls.Material 2.1
+import QtQuick.Controls.Material 2.2
 import Esri.DSA 1.0
 
 Item {
-    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
-
-    property int fontSize: 24 * scaleFactor
-    property int buttonSize: 32 * scaleFactor
-    property color buttonColor: Material.primary
-    property real buttonOpacity: 0.9
-
     NavigationController {
         id: navController
         objectName: "navigationController"
     }
+    height: controlsColumn.height + 10 * scaleFactor
+    width: controlsColumn.width + 10 * scaleFactor
 
-    ButtonGroup { id: zoomButtonGroup }
-
-    height: controlsColumn.height
-    width: buttonSize
-    opacity: buttonOpacity
+    Rectangle {
+        anchors.fill: parent
+        color: Material.primary
+        opacity: 0.5
+        radius: 5 * scaleFactor
+    }
 
     Column {
         id: controlsColumn
-        spacing: 2 * scaleFactor
+        anchors.centerIn: parent
+        spacing: 5 * scaleFactor
 
-        Button {
-            id: homeButton
-            width: buttonSize
-            height: buttonSize
-
-            background: Rectangle {
-                anchors.fill: homeButton
-                radius: 5 * scaleFactor
-                color: buttonColor
-            }
-
-            Image {
-                anchors.centerIn: parent
-                sourceSize.height: 0.85 * zoomInButton.height
-                width: sourceSize.height
-                source: "qrc:/Resources/icons/xhdpi/ic_menu_home_dark.png"
-            }
-
+        OverlayButton {
+            iconUrl: "qrc:/Resources/icons/xhdpi/ic_menu_home_dark.png"
             onClicked: {
                 navController.zoomToInitialLocation();
             }
         }
 
-        Button {
-            id: zoomInButton
-            width: buttonSize
-            height: buttonSize
-            checkable: true
-            checked: false
-            ButtonGroup.group: zoomButtonGroup
-
-            background: Rectangle {
-                anchors.fill: zoomInButton
-                radius: 5 * scaleFactor
-                color: buttonColor
-            }
-
-            Image {
-                anchors.centerIn: parent
-                sourceSize.height: 0.85 * zoomInButton.height
-                width: sourceSize.height
-                source: "qrc:/Resources/icons/xhdpi/ic_menu_add_dark_d.png"
-            }
-
+        OverlayButton {
+            iconUrl: "qrc:/Resources/icons/xhdpi/ic_menu_add_dark_d.png"
             onClicked: {
                 navController.zoomFactor = 2.0;
                 navController.zoomIn();
             }
         }
 
-        Button {
-            id: zoomOutButton
-            width: buttonSize
-            height: buttonSize
-            checkable: true
-            checked: false
-            ButtonGroup.group: zoomButtonGroup
-
-            background: Rectangle {
-                anchors.fill: zoomOutButton
-                radius: 5 * scaleFactor
-                color: buttonColor
-            }
-
-            Image {
-                anchors.centerIn: parent
-                sourceSize.height: 0.85 * zoomOutButton.height
-                width: sourceSize.height
-                source: "qrc:/Resources/icons/xhdpi/ic_menu_subtract_dark_d.png"
-            }
-
+        OverlayButton {
+            iconUrl: "qrc:/Resources/icons/xhdpi/ic_menu_subtract_dark_d.png"
             onClicked: {
                 navController.zoomFactor = 0.5;
                 navController.zoomOut();
             }
         }
 
-        Button {
-            id: set2DButton
-            width: buttonSize
-            height: buttonSize
-            checkable: true
-            checked: false
-
-            background: Rectangle {
-                anchors.fill: set2DButton
-                radius: 5 * scaleFactor
-                color: buttonColor
-            }
-
-            Image {
-                anchors.centerIn: parent
-                sourceSize.height: 0.85 * set2DButton.height
-                width: sourceSize.height
-                source: "qrc:/Resources/icons/xhdpi/2D.png"
-            }
-
+        OverlayButton {
+            iconUrl: "qrc:/Resources/icons/xhdpi/2D.png"
             onClicked: {
                 navController.set2D();
             }
         }
 
-        Button {
-            id: panOrRotate
-            width: 32 * scaleFactor
-            height: 32 * scaleFactor
-            checkable: true
-            checked: false
-
-            background: Rectangle {
-                implicitHeight: 40 * scaleFactor
-                implicitWidth: 40 * scaleFactor
-                anchors.fill: panOrRotate
-                radius: 5 * scaleFactor
-                color: buttonColor
+        OverlayButton {
+            iconUrl: "qrc:/Resources/icons/xhdpi/ic_menu_gpsondontfollow_dark.png"
+            onClicked: {
+                selected = !selected;
+                followHud.enabled = selected;
+                locationController.enabled = selected;
             }
+        }
 
-            Image {
-                anchors.centerIn: parent
-                sourceSize.height: 0.85 * zoomInButton.height
-                width: sourceSize.height
-                source: panOrRotate.checked ? "qrc:/Resources/icons/xhdpi/ic_menu_refresh_dark.png" :
-                                              "qrc:/Resources/icons/xhdpi/ic_menu_drag_dark.png"
-            }
-
-            onCheckedChanged: {
-                if (checked)
+        OverlayButton {
+            iconUrl: "qrc:/Resources/icons/xhdpi/ic_menu_refresh_dark.png"
+            onClicked: {
+                selected = !selected;
+                if (selected)
                     navController.setRotation();
                 else
                     navController.pan();
@@ -175,4 +89,3 @@ Item {
         }
     }
 }
-

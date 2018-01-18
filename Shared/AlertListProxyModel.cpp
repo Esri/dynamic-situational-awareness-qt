@@ -22,9 +22,13 @@ AlertListProxyModel::AlertListProxyModel(QObject* parent):
   if (sourceModel)
   {
     setSourceModel(sourceModel);
-    connect(sourceModel, &AlertListModel::dataChanged, this, [this]()
+    connect(sourceModel, &AlertListModel::dataChanged, this, [this](const QModelIndex& topLeft)
     {
-      invalidate();
+      const bool inModel = m_currentSourceRows.contains(topLeft.row());
+      const bool shouldBeInModel = passesAllRules(topLeft.row());
+
+      if (inModel != shouldBeInModel)
+        invalidate();
     });
 
     connect(sourceModel, &AlertListModel::rowsInserted, this, [this]()
@@ -46,6 +50,18 @@ void AlertListProxyModel::applyFilter(const QList<AbstractAlertRule*>& rules)
 }
 
 bool AlertListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex&) const
+{
+  const bool res = passesAllRules(sourceRow);
+
+  if (res)
+    m_currentSourceRows.insert(sourceRow);
+  else
+    m_currentSourceRows.remove(sourceRow);
+
+  return res;
+}
+
+bool AlertListProxyModel::passesAllRules(int sourceRow) const
 {
   AlertListModel* sourceModel = AlertListModel::instance();
   if (!sourceModel)

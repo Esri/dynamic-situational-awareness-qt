@@ -1,4 +1,4 @@
-// Copyright 2016 ESRI
+// Copyright 2017 ESRI
 //
 // All rights reserved under the copyright laws of the United States
 // and applicable international laws, treaties, and conventions.
@@ -25,10 +25,6 @@ public:
 
   static QString dataPath();
   static Esri::ArcGISRuntime::Point montereyCA();
-
-  // dpi
-  static qreal screenScale();
-  static qreal dipsToPixels();
 };
 
 #endif // UTILITY_H

@@ -1,5 +1,4 @@
-
-// Copyright 2016 ESRI
+// Copyright 2017 ESRI
 //
 // All rights reserved under the copyright laws of the United States
 // and applicable international laws, treaties, and conventions.
@@ -27,8 +26,10 @@
 #include "ArcGISRuntimeEnvironment.h"
 #include "ArcGISRuntimeToolkit.h"
 
+#include "PopupManager.h"
 #include "SceneQuickView.h"
 
+#include "AlertToolController.h"
 #include "BasemapPickerController.h"
 #include "AddLocalDataController.h"
 #include "FollowPositionController.h"
@@ -40,6 +41,8 @@
 #include "AnalysisController.h"
 #include "OptionsController.h"
 #include "DsaStyles.h"
+#include "ViewedAlertsController.h"
+#include "IdentifyFeaturesController.h"
 
 #include "ArcGISRuntimeToolkit.h"
 #include "ArcGISCompassController.h"
@@ -115,6 +118,7 @@ int main(int argc, char *argv[])
 
   // Register the map view for QML
   qmlRegisterType<SceneQuickView>("Esri.Vehicle", 1, 0, "SceneView");
+  qRegisterMetaType<PopupManager*>("PopupManager*");
 
   // Register the Vehicle (QQuickItem) for QML
   qmlRegisterType<Vehicle>("Esri.Vehicle", 1, 0, "Vehicle");
@@ -129,6 +133,9 @@ int main(int argc, char *argv[])
   qmlRegisterType<AnalysisController>("Esri.DSA", 1, 0, "AnalysisController");
   qmlRegisterType<OptionsController>("Esri.DSA", 1, 0, "OptionsController");
   qmlRegisterSingletonType<DsaStyles>("Esri.DSA", 1, 0, "DsaStyles", &dsaStylesProvider);
+  qmlRegisterType<IdentifyFeaturesController>("Esri.DSA", 1, 0, "IdentifyFeaturesController");
+  qmlRegisterType<AlertToolController>("Esri.DSA", 1, 0, "AlertToolController");
+  qmlRegisterType<ViewedAlertsController>("Esri.DSA", 1, 0, "ViewedAlertsController");
 
   // Register Toolkit Component Types
   ArcGISRuntimeToolkit::registerToolkitTypes();

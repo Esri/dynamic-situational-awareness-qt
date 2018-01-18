@@ -2,8 +2,8 @@
 The repo contains [Qt](http://qt.io) projects for dynamic situational awareness applications that can be run from within the Qt Creator IDE.
 
 # Prerequisites
-* ArcGIS Runtime SDK for Qt 100.2
-* Qt SDK 5.9.1 or higher
+* ArcGIS Runtime SDK for Qt 100.2.1
+* Qt SDK 5.9.2 or higher
 * Qt Creator
 * For Windows: Microsoft Visual C++ Compiler 14.0 
 * For more information, please visit the [System Requirements](https://developers.arcgis.com/qt/quartz/qml/guide/arcgis-runtime-sdk-for-qt-system-requirements.htm) page.

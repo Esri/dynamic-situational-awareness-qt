@@ -293,6 +293,10 @@ Vehicle {
         id: optionsTool
         anchors.fill: sceneView
         visible: false
+        onVisibleChanged: {
+            if (!visible)
+                optionsToolRow.state = "clear";
+        }
     }
 
     onErrorOccurred: {

@@ -177,7 +177,6 @@ int main(int argc, char *argv[])
   commandLineParser.process(app);
 
   // Show app window
-
   auto showValue = commandLineParser.value(kArgShowName).toLower();
 
   if (showValue.compare(kShowMaximized) == 0)

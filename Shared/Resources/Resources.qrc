@@ -46,5 +46,7 @@
         <file>icons/xhdpi/ic_menu_mapview_dark_d.png</file>
         <file>icons/xhdpi/ic_menu_sendmap_dark_d.png</file>
         <file>icons/xhdpi/ic_menu_trash_dark_d.png</file>
+        <file>icons/xhdpi/ic_menu_about_dark_d.png</file>
+        <file>icons/xhdpi/ic_menu_multiply_dark_d.png</file>
     </qresource>
 </RCC>

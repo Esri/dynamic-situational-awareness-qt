@@ -60,20 +60,21 @@ Row {
     // Settings
     ToolIcon {
         id: settingsIcon
-        iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_video_dark_d.png"
+        iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_settings_dark_d.png"
         toolName: "Settings"
         onToolSelected: {
             parent.state = toolName;
-            // TODO - not implemented yet
+            optionsTool.visible = selected;
         }
     }
 
     // About
     ToolIcon {
         id: aboutIcon
-        iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_video_dark_d.png"
+        iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_about_dark_d.png"
         toolName: "About"
         onToolSelected: {
+            optionsTool.visible = false;
             parent.state = toolName;
             // TODO - not implemented yet
         }
@@ -82,7 +83,7 @@ Row {
     // Close Tool
     ToolIcon {
         id: closeIcon
-        iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_video_dark_d.png"
+        iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_multiply_dark_d.png"
         toolName: "Close"
         onToolSelected: Qt.quit()
     }

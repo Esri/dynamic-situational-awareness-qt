@@ -22,16 +22,29 @@ ToolBar {
     property int imageWidth: 36 * scaleFactor
     height: 64 * scaleFactor
 
-    RowLayout {
-        anchors.fill: parent
+    Row {
+        anchors {
+            fill: parent
+            margins: 5 * scaleFactor
+        }
+
+        spacing: 10 * scaleFactor
+
+        Image {
+            anchors.verticalCenter: parent.verticalCenter
+            width: 42 * scaleFactor
+            height: 48 * scaleFactor
+            source: "qrc:/Resources/icons/xhdpi/drawer_large.png"
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: categoryToolbar.visible = !categoryToolbar.visible
+            }
+        }
 
         Label {
             id: toolbarLabel
-            anchors {
-                left: parent.left
-                leftMargin: marginWidth * 2
-                verticalCenter: parent.verticalCenter
-            }
+            anchors.verticalCenter: parent.verticalCenter
 
             font {
                 pixelSize: DsaStyles.titleFontPixelSize * scaleFactor

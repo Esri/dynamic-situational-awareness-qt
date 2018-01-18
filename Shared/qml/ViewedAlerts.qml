@@ -21,7 +21,7 @@ Rectangle {
      width: toolController.unviewedCount > 0 ? 12 * scaleFactor : 0
      height: width
      color: "red"
-     radius: width*0.5
+     radius: width * 0.5
 
      ViewedAlertsController {
          id: toolController

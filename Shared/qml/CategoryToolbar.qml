@@ -19,6 +19,8 @@ import QtQuick.Controls.Material 2.2
 Item {
     id: categoryToolbar
 
+    property string appTitle
+
     Rectangle {
         anchors.fill: parent
         color: Material.primary
@@ -37,7 +39,7 @@ Item {
             }
             PropertyChanges {
                 target: categoryToolbar
-                titleText: "DSA - V"
+                titleText: appTitle
             }
         },
         State {
@@ -149,12 +151,13 @@ Item {
             categoryName: "alerts"
             onCategorySelected: categoryToolbar.state = categoryName
 
-            ViewedAlerts {
-                anchors {
-                    right: parent.right
-                    top: parent.top
-                }
-            }
+            // commented out until handheld supports it
+//            ViewedAlerts {
+//                anchors {
+//                    right: parent.right
+//                    top: parent.top
+//                }
+//            }
         }
 
         CategoryIcon {

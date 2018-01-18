@@ -77,7 +77,6 @@ Vehicle {
             }
         }
 
-
         MarkupToolRow {
             id: markupToolRow
             anchors {
@@ -161,6 +160,7 @@ Vehicle {
                 bottom: sceneView.attributionTop
             }
             width: 56 * scaleFactor
+            appTitle: "DSA - V"
         }
 
         TableOfContents {
@@ -324,6 +324,24 @@ Vehicle {
         }
     }
 
+    IdentifyFeaturesController {
+        id: identifyController
+        active: mapToolRow.state === "Identify"
+
+        onActiveChanged: {
+            if (!active)
+                identifyResults.dismiss();
+        }
+
+        onPopupManagersChanged: {
+            identifyResults.dismiss();
+            identifyResults.popupManagers = popupManagers;
+
+            if (popupManagers.length > 0)
+                identifyResults.show();
+        }
+    }
+
     onErrorOccurred: {
         msgDialog.informativeText = message;
         msgDialog.detailedText = additionalMessage;
@@ -335,8 +353,8 @@ Vehicle {
         text: "Error"
     }
 
-//    BusyIndicator {
-//        anchors.centerIn: parent
-//        visible: identifyController.busy
-//    }
+    BusyIndicator {
+        anchors.centerIn: parent
+        visible: identifyController.busy
+    }
 }

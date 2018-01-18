@@ -16,7 +16,6 @@ import QtQuick.Controls.Material 2.2
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 import Esri.DSA 1.0
-import Esri.Vehicle 1.0
 import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.2
 
 Row {
@@ -166,24 +165,6 @@ Row {
                 identifyResults.visible = false;
                 mapToolRow.state = "clear";
                 selected = false;
-            }
-        }
-
-        IdentifyFeaturesController {
-            id: identifyController
-            active: mapToolRow.state === identifyIcon.toolName
-
-            onActiveChanged: {
-                if (!active)
-                    identifyResults.dismiss();
-            }
-
-            onPopupManagersChanged: {
-                identifyResults.dismiss();
-                identifyResults.popupManagers = popupManagers;
-
-                if (popupManagers.length > 0)
-                    identifyResults.show();
             }
         }
     }

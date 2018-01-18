@@ -144,19 +144,26 @@ Item {
         }
 
         Button {
-            id: pan
+            id: panOrRotate
             width: 32 * scaleFactor
             height: 32 * scaleFactor
             checkable: true
             checked: false
-            text: checked ? "Rotate" : "Pan"
 
             background: Rectangle {
                 implicitHeight: 40 * scaleFactor
                 implicitWidth: 40 * scaleFactor
-                anchors.fill: pan
+                anchors.fill: panOrRotate
                 radius: 5 * scaleFactor
                 color: buttonColor
+            }
+
+            Image {
+                anchors.centerIn: parent
+                sourceSize.height: 0.85 * zoomInButton.height
+                width: sourceSize.height
+                source: panOrRotate.checked ? "qrc:/Resources/icons/xhdpi/ic_menu_refresh_dark.png" :
+                                              "qrc:/Resources/icons/xhdpi/ic_menu_drag_dark.png"
             }
 
             onCheckedChanged: {

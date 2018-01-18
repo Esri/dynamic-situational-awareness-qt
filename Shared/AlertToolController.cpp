@@ -64,7 +64,7 @@ void AlertToolController::highlight(int rowIndex)
   if (!alert)
     return;
 
-  alert->highlight();
+  alert->highlight(true);
 }
 
 void AlertToolController::zoomTo(int rowIndex)
@@ -132,5 +132,22 @@ void AlertToolController::setMinStatus(int status)
     break;
   default:
     break;
+  }
+}
+
+void AlertToolController::flashAll(bool on)
+{
+  AlertListModel* model = AlertListModel::instance();
+  if (!model)
+    return;
+
+  const int modelSize = model->rowCount();
+  for (int i = 0; i < modelSize; ++i)
+  {
+    AbstractAlert* alert = model->alertAt(i);
+    if (!alert || !alert->active())
+      continue;
+
+    alert->highlight(on);
   }
 }

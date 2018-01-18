@@ -32,7 +32,7 @@ public:
   ~DummyAlert();
 
   Esri::ArcGISRuntime::Geometry position() const override;
-  void highlight() override;
+  void highlight(bool on) override;
 
 private:
   Esri::ArcGISRuntime::Graphic* m_graphic;

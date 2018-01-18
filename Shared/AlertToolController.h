@@ -44,6 +44,8 @@ public:
   Q_INVOKABLE void dismiss(int rowIndex);
   Q_INVOKABLE void setMinStatus(int status);
 
+  Q_INVOKABLE void flashAll(bool on);
+
 signals:
   void alertListModelChanged();
 

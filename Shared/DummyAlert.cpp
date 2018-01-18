@@ -21,6 +21,7 @@ DummyAlert::DummyAlert(Graphic* graphic, QObject* parent):
   AbstractAlert(parent),
   m_graphic(graphic)
 {
+  m_graphic->setSelected(true);
 }
 
 DummyAlert::~DummyAlert()
@@ -33,8 +34,8 @@ Geometry DummyAlert::position() const
   return m_graphic ? m_graphic->geometry() : Point();
 }
 
-void DummyAlert::highlight()
+void DummyAlert::highlight(bool on)
 {
   if (m_graphic)
-    m_graphic->setSelected(true);
+    m_graphic->setSelected(on);
 }

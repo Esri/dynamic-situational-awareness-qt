@@ -123,4 +123,17 @@ DsaToolBase {
         for (var i = 0; i < alertsView.count; ++i)
             toolController.setViewed(i);
     }
+
+    Timer {
+        id: flashTimer
+        interval: 500
+
+        property bool highlightOn: true
+        running: alertsView.count > 0
+        repeat: true
+        onTriggered: {
+            toolController.flashAll(highlightOn);
+            highlightOn = !highlightOn;
+        }
+    }
 }

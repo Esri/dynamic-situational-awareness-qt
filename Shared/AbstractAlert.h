@@ -45,7 +45,7 @@ public:
 
   virtual Esri::ArcGISRuntime::Geometry position() const = 0;
 
-  virtual void highlight() = 0;
+  virtual void highlight(bool on) = 0;
 
   QString message() const;
   void setMessage(const QString &message);

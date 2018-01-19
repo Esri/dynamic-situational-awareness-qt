@@ -41,7 +41,6 @@ AlertListProxyModel::AlertListProxyModel(QObject* parent):
   }
 
   m_updateTimer->setInterval(500);
-  m_updateTimer->setSingleShot(false);
   connect(m_updateTimer, &QTimer::timeout, this, [this]()
   {
     invalidate();

@@ -79,7 +79,7 @@ DsaPanel {
 
     Column {
         clip: true
-        spacing: 16
+        spacing: 16 * scaleFactor
 
         anchors {
             top: newAlertText.bottom

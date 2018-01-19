@@ -24,8 +24,6 @@
 #include "Layer.h"
 #include "LayerListModel.h"
 
-#include <QDebug>
-
 using namespace Esri::ArcGISRuntime;
 
 EditAlertsController::EditAlertsController(QObject* parent /* = nullptr */):

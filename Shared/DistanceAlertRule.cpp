@@ -16,8 +16,6 @@
 
 #include "GeometryEngine.h"
 
-#include <QDebug>
-
 using namespace Esri::ArcGISRuntime;
 
 DistanceAlertRule::DistanceAlertRule(QObject* parent):

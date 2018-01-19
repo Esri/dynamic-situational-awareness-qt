@@ -102,7 +102,8 @@ void Handheld::componentComplete()
   DictionaryRenderer* renderer = new DictionaryRenderer(dictionarySymbolStyle, this);
 
   GraphicsOverlay* alertsOverlay = new GraphicsOverlay(this);
-  alertsOverlay->setRenderer(renderer);  connect(m_sceneView, &SceneQuickView::mousePressedAndHeld, this, [this, alertsOverlay](QMouseEvent& mouseEvent)
+  alertsOverlay->setRenderer(renderer);
+  connect(m_sceneView, &SceneQuickView::mousePressedAndHeld, this, [this, alertsOverlay](QMouseEvent& mouseEvent)
   {
     const Point alertPos = m_sceneView->screenToBaseSurface(mouseEvent.x(), mouseEvent.y());
     const int alertCount = AlertListModel::instance()->rowCount();

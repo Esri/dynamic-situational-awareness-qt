@@ -11,272 +11,90 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-import QtQuick 2.6
-import QtQuick.Controls 2.1
-import QtQuick.Controls.Material 2.1
+import QtQuick 2.9
+import QtQuick.Controls 2.2
+import QtQuick.Controls.Material 2.2
 import QtQuick.Window 2.2
 import QtQml.Models 2.2
 import QtGraphicalEffects 1.0
 import QtQuick.Dialogs 1.2
 import Esri.DSA 1.0
 import Esri.Handheld 1.0
+import Esri.ArcGISRuntime.Toolkit.Controls 100.2
 import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.2
 
 Handheld {
-    width: 320
-    height: 480
+    width: 320 * scaleFactor
+    height: 480 * scaleFactor
 
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
-    GenericToolbar {
-        id: toolbar
+    LocationController {
+        id: locationController
+        enabled: true
+    }
+
+    PrimaryToolbar {
+        id: topToolbar
         anchors {
             top: parent.top
             left: parent.left
             right: parent.right
         }
-        fontSize: 20 * scaleFactor
-        toolbarLabelText: "DSA - H"
+        toolbarLabelText: categoryToolbar.titleText
 
-        onMenuClicked: {
-            console.log("Menu button was clicked");
-        }
-
-        onDrawerClicked: {
-            console.log("Drawer was clicked");
-        }
-
-        Row {
-            spacing: 5 * scaleFactor
-
+        MapToolRow {
+            id: mapToolRow
             anchors {
-                right: parent.right
                 verticalCenter: parent.verticalCenter
-                rightMargin: 2 * scaleFactor
+                right: parent.right
+                rightMargin: 10 * scaleFactor
             }
+        }
 
-            Button {
-                id: basemapsCheckBox
-                width: 32 * scaleFactor
-                height: 32 * scaleFactor
-
-                background: Rectangle {
-                    anchors.fill: basemapsCheckBox
-                    color: Material.primary
-                }
-
-                Image {
-                    fillMode: Image.PreserveAspectFit
-                    anchors.centerIn: parent
-                    sourceSize.height: basemapsCheckBox.background.height - (6 * scaleFactor)
-                    height: sourceSize.height
-                    source: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_dark.png"
-                }
-
-                onClicked: {
-                    if (drawer.visible)
-                        drawer.close();
-                    else {
-                        toolRect.state = "basemap";
-                        drawer.open();
-                    }
-                }
+        ReportToolRow {
+            id: reportToolRow
+            anchors {
+                verticalCenter: parent.verticalCenter
+                right: parent.right
+                rightMargin: 10 * scaleFactor
             }
+        }
 
-            Button {
-                id: addLocalDataCheckBox
-                width: 32 * scaleFactor
-                height: 32 * scaleFactor
-
-                background: Rectangle {
-                    anchors.fill: addLocalDataCheckBox
-                    color: Material.primary
-                }
-
-                Image {
-                    fillMode: Image.PreserveAspectFit
-                    anchors.centerIn: parent
-                    sourceSize.height: addLocalDataCheckBox.background.height - (6 * scaleFactor)
-                    height: sourceSize.height
-                    source: "qrc:/Resources/icons/xhdpi/ic_menu_layervisibilitypopover_dark_d.png"
-                }
-
-                onClicked: {
-                    if (drawer.visible)
-                        drawer.close();
-                    else {
-                        toolRect.state = "data";
-                        drawer.open();
-                    }
-                }
+        AnalysisToolRow {
+            id: analysisToolRow
+            anchors {
+                verticalCenter: parent.verticalCenter
+                right: parent.right
+                rightMargin: 10 * scaleFactor
             }
+        }
 
-            Button {
-                id: messageFeedsCheckBox
-                width: 32 * scaleFactor
-                height: 32 * scaleFactor
-
-                background: Rectangle {
-                    anchors.fill: messageFeedsCheckBox
-                    color: Material.primary
-                }
-
-                Image {
-                    fillMode: Image.PreserveAspectFit
-                    anchors.centerIn: parent
-                    sourceSize.height: messageFeedsCheckBox.background.height - (6 * scaleFactor)
-                    height: sourceSize.height
-                    source: "qrc:/Resources/icons/xhdpi/ic_menu_messages_dark.png"
-                }
-
-                onClicked: {
-                    if (drawer.visible)
-                        drawer.close();
-                    else {
-                        toolRect.state = "message";
-                        drawer.open();
-                    }
-                }
+        AlertToolRow {
+            id: alertToolRow
+            anchors {
+                verticalCenter: parent.verticalCenter
+                right: parent.right
+                rightMargin: 10 * scaleFactor
             }
+        }
 
-            Button {
-                id: tocCheckBox
-                width: 32 * scaleFactor
-                height: 32 * scaleFactor
+        MarkupToolRow {
+            id: markupToolRow
+            anchors {
+                verticalCenter: parent.verticalCenter
+                right: parent.right
+                rightMargin: 10 * scaleFactor
 
-                background: Rectangle {
-                    anchors.fill: tocCheckBox
-                    color: Material.primary
-                }
-
-                Image {
-                    fillMode: Image.PreserveAspectFit
-                    anchors.centerIn: parent
-                    sourceSize.height: tocCheckBox.background.height - (6 * scaleFactor)
-                    height: sourceSize.height
-                    source: "qrc:/Resources/icons/xhdpi/ic_menu_openlistview_dark.png"
-                }
-
-                onClicked: {
-                    if (drawer.visible)
-                        drawer.close();
-                    else {
-                        toolRect.state = "table of contents";
-                        drawer.open();
-                    }
-                }
             }
+        }
 
-            Button {
-                id: analysisCheckBox
-                checkable: true
-                checked: false
-                width: 32 * scaleFactor
-                height: 32 * scaleFactor
-
-                background: Rectangle {
-                    anchors.fill: analysisCheckBox
-                    color: Material.primary
-                }
-
-                Image {
-                    fillMode: Image.PreserveAspectFit
-                    anchors.centerIn: parent
-                    sourceSize.height: parent.height * 0.85
-                    height: sourceSize.height
-                    source: "qrc:/Resources/icons/xhdpi/ic_menu_video_dark_d.png"
-                }
-
-                onClicked: {
-                    if (drawer.visible)
-                        drawer.close();
-                    else {
-                        toolRect.state = "analysis";
-                        drawer.open();
-                    }
-                }
-            }
-
-            Button {
-                id: navCheckBox
-                checkable: true
-                checked: true
-                width: 32 * scaleFactor
-                height: 32 * scaleFactor
-
-                background: Rectangle {
-                    anchors.fill: navCheckBox
-                    color: Material.primary
-                }
-
-                Image {
-                    fillMode: Image.PreserveAspectFit
-                    anchors.centerIn: parent
-                    sourceSize.height: parent.height * 0.85
-                    height: sourceSize.height
-                    source: navCheckBox.checked ? "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark.png" : "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark_d.png"
-                }
-            }
-
-            Button {
-                id: telestrateCheckBox
-                checkable: true
-                checked: false
-                width: 32 * scaleFactor
-                height: 32 * scaleFactor
-
-                background: Rectangle {
-                    anchors.fill: telestrateCheckBox
-                    color: Material.primary
-                }
-
-                Image {
-                    fillMode: Image.PreserveAspectFit
-                    anchors.centerIn: parent
-                    sourceSize.height: parent.height * 0.85
-                    height: sourceSize.height
-                    source: telestrateTool.visible ? "qrc:/Resources/icons/xhdpi/ic_menu_freehandsketchon_dark.png" :
-                                                     "qrc:/Resources/icons/xhdpi/ic_menu_freehandsketchoff_dark.png"
-                }
-
-                onClicked: {
-                    if (drawer.visible)
-                        drawer.close();
-                    else {
-                        toolRect.state = "telestrate";
-                        drawer.open();
-                    }
-                }
-            }
-
-            Button {
-                id: optionsCheckBox
-                checkable: true
-                checked: false
-                width: 32 * scaleFactor
-                height: 32 * scaleFactor
-
-                background: Rectangle {
-                    anchors.fill: optionsCheckBox
-                    color: Material.primary
-                }
-
-                Image {
-                    fillMode: Image.PreserveAspectFit
-                    anchors.centerIn: parent
-                    sourceSize.height: parent.height * 0.85
-                    height: sourceSize.height
-                    source: "qrc:/Resources/icons/xhdpi/ic_menu_settings_dark_d.png"
-                }
-
-                onClicked: {
-                    if (drawer.visible)
-                        drawer.close();
-                    else {
-                        toolRect.state = "options";
-                        drawer.open();
-                    }
-                }
+        OptionsToolRow {
+            id: optionsToolRow
+            anchors {
+                verticalCenter: parent.verticalCenter
+                right: parent.right
+                rightMargin: 10 * scaleFactor
             }
         }
     }
@@ -284,66 +102,25 @@ Handheld {
     // Create SceneQuickView here, and create its Scene etc. in C++ code
     SceneView {
         id: sceneView
-
         anchors {
-            top: toolbar.bottom
+            top: topToolbar.bottom
             left: parent.left
             right: parent.right
-            bottom: parent.bottom
+            bottom: coordinateConversion.visible ? coordinateConversion.top : parent.bottom
         }
-
         objectName: "sceneView"
 
         onMousePressed: followHud.stopFollowing();
 
-        Column {
-            id: navToolsColumn
-            visible: navCheckBox.checked
-            spacing: 1 * scaleFactor
-
+        Rectangle {
             anchors {
-                margins: 8 * scaleFactor
-                bottom: sceneView.attributionTop
-                right: sceneView.right
+                fill: followHud
+                margins: -5 * scaleFactor
             }
-
-            NavigationTool {
-                id: navTool
-
-                visible: compass.visible && navCheckBox.checked
-            }
-
-            Button {
-                id: locationCheckBox
-                checkable: true
-                checked: false
-                width: 32 * scaleFactor
-                height: 32 * scaleFactor
-                opacity: 0.9
-
-                background: Rectangle {
-                    anchors.fill: locationCheckBox
-                    color: Material.primary
-                    radius: 5 * scaleFactor
-                }
-
-                Image {
-                    fillMode: Image.PreserveAspectFit
-                    anchors.centerIn: parent
-                    sourceSize.height: parent.height * 0.85
-                    height: sourceSize.height
-                    source: locationCheckBox.checked ?
-                                "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark.png" :
-                                "qrc:/Resources/icons/xhdpi/ic_menu_gpsondontfollow_dark.png"
-
-                }
-            }
-
-            ArcGISCompass {
-                id: compass
-
-                autoHideCompass: false
-            }
+            visible: followHud.enabled
+            color: Material.primary
+            radius: 5 * scaleFactor
+            opacity: 0.5
         }
 
         FollowHud {
@@ -351,143 +128,225 @@ Handheld {
             anchors {
                 bottom: sceneView.attributionTop
                 horizontalCenter: parent.horizontalCenter
-                margins: 8 * scaleFactor
+                margins: 10 * scaleFactor
+            }
+            enabled: false
+        }
+
+        NavigationTool {
+            id: navTool
+            anchors {
+                margins: 10 * scaleFactor
+                verticalCenter: parent.verticalCenter
+                right: sceneView.right
+            }
+        }
+
+        ArcGISCompass {
+            id: compass
+            anchors {
+                horizontalCenter: navTool.horizontalCenter
+                bottom: sceneView.attributionTop
+                margins: 10 * scaleFactor
+            }
+            autoHideCompass: false
+            width: DsaStyles.primaryIconSize * scaleFactor
+            height: width
+        }
+
+        CategoryToolbar {
+            id: categoryToolbar
+            anchors {
+                top: parent.top
+                left: parent.left
+                bottom: sceneView.attributionTop
+            }
+            width: 56 * scaleFactor
+            appTitle: "DSA - H"
+        }
+
+        TableOfContents {
+            id: tableOfContentsTool
+            anchors {
+                left: parent.left
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+
+            onClosed: {
+                mapToolRow.tocIconSelected = false;
+                visible = false;
+            }
+        }
+
+        // commenting out until alerts are added to handheld
+//        AlertList {
+//            id: alertsTool
+//            anchors {
+//                left: parent.left
+//                top: parent.top
+//                bottom: sceneView.attributionTop
+//            }
+//            width: drawer.width
+//            visible: false
+
+//            onClosed: visible = false;
+//        }
+
+        TelestrateTool {
+            id: telestrateTool
+            anchors {
+                left: parent.left
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+
+            onClosed: visible = false;
+        }
+
+        PopupStackView {
+            id: identifyResults
+            anchors {
+                left: sceneView.left
+                top: sceneView.top
+                bottom: sceneView.attributionTop
+            }
+        }
+
+        Drawer {
+            id: drawer
+            width: parent.width
+            height: parent.height
+            edge: Qt.BottomEdge
+            interactive: false
+
+            onClosed: {
+                // update state for each category
+                mapToolRow.state = "clear";
+                alertToolRow.state = "clear";
+                analysisTool.state = "clear";
+                reportToolRow.state = "clear";
+                markupToolRow.state = "clear";
             }
 
-            enabled: locationCheckBox.checked
+            Rectangle {
+                id: toolRect
+                anchors.fill: parent
+
+                states: [
+                    State {
+                        name: "basemap"
+                        PropertyChanges {
+                            target: basemapsTool
+                            visible: true
+                        }
+                    },
+                    State {
+                        name: "data"
+                        PropertyChanges {
+                            target: addLocalDataTool
+                            visible: true
+                        }
+                    },
+                    State {
+                        name: "message"
+                        PropertyChanges {
+                            target: messageFeedsTool
+                            visible: true
+                        }
+                    },
+                    State {
+                        name: "analysis"
+                        PropertyChanges {
+                            target: analysisTool
+                            visible: true
+                        }
+                    },
+                    State {
+                        name: "options"
+                        PropertyChanges {
+                            target: optionsTool
+                            visible: true
+                        }
+                    }
+                ]
+
+                BasemapPicker {
+                    id: basemapsTool
+                    anchors.fill: parent
+                    onBasemapSelected: closed();
+                    visible: false
+                    onClosed: drawer.close();
+                }
+
+                AddLocalData {
+                    id: addLocalDataTool
+                    anchors.fill: parent
+                    showDataConnectionPane: true
+                    visible: false
+                    onClosed: drawer.close();
+                }
+
+                MessageFeeds {
+                    id: messageFeedsTool
+                    anchors.fill: parent
+                    visible: false
+                    onClosed: drawer.close();
+                }
+
+                Analysis {
+                    id: analysisTool
+                    anchors.fill: parent
+                    visible: false
+                    onClosed: drawer.close();
+                }
+            }
         }
     }
 
-    Drawer {
-        id: drawer
+
+    CoordinateConversion {
+        id: coordinateConversion
+        anchors.bottom: parent.bottom
+        objectName: "coordinateConversion"
+        visible: false
+        height: parent.height / 2
         width: parent.width
-        height: parent.height
-        edge: Qt.BottomEdge
-        interactive: false
-
-        Rectangle {
-            id: toolRect
-            anchors.fill: parent
-
-            states: [
-                State {
-                    name: "basemap"
-                    PropertyChanges {
-                        target: basemapsTool
-                        visible: true
-                    }
-                },
-                State {
-                    name: "data"
-                    PropertyChanges {
-                        target: addLocalDataTool
-                        visible: true
-                    }
-                },
-                State {
-                    name: "message"
-                    PropertyChanges {
-                        target: messageFeedsTool
-                        visible: true
-                    }
-                },
-                State {
-                    name: "table of contents"
-                    PropertyChanges {
-                        target: tableOfContentsTool
-                        visible: true
-                    }
-                },
-                State {
-                    name: "telestrate"
-                    PropertyChanges {
-                        target: telestrateTool
-                        visible: true
-                    }
-                },
-                State {
-                    name: "analysis"
-                    PropertyChanges {
-                        target: analysisTool
-                        visible: true
-                    }
-                },
-                State {
-                    name: "options"
-                    PropertyChanges {
-                        target: optionsTool
-                        visible: true
-                    }
-                }
-            ]
-
-            BasemapPicker {
-                id: basemapsTool
-                anchors.fill: parent
-                height: parent.height
-                visible: false
-                onBasemapSelected: closed()
-                onClosed: drawer.close();
-            }
-
-            AddLocalData {
-                id: addLocalDataTool
-                anchors.fill: parent
-                height: parent.height
-                visible: false
-                showDataConnectionPane: false
-                onClosed: drawer.close();
-            }
-
-            MessageFeeds {
-                id: messageFeedsTool
-                anchors.fill: parent
-                visible: false
-                onClosed: drawer.close();
-            }
-
-            TableOfContents {
-                id: tableOfContentsTool
-                anchors.fill: parent
-                visible: false
-                onClosed: drawer.close();
-            }
-
-            TelestrateTool {
-                id: telestrateTool
-                anchors.fill: parent
-                visible: false
-                onClosed: drawer.close();
-                onGraphicsDeleted: drawer.close();
-                onColorSelected: drawer.close();
-
-                onColorDialogVisibleChanged: {
-                    if (dialogVisible)
-                        drawer.close();
-                    else
-                        drawer.open();
-                }
-            }
-
-            Analysis {
-                id: analysisTool
-                anchors.fill: parent
-                visible: false
-                onClosed: drawer.close();
-            }
-
-            Options {
-                id: optionsTool
-                anchors.fill: parent
-                visible: false
-                onClosed: drawer.close();
-            }
-        }
+        color: Material.primary
+        textColor: Material.foreground
     }
 
-    LocationController {
-        id: locationController
-        enabled: locationCheckBox.checked
+    // commenting out until identify is added to handheld
+//    IdentifyFeaturesController {
+//        id: identifyController
+//        active: mapToolRow.state === "Identify"
+
+//        onActiveChanged: {
+//            if (!active)
+//                identifyResults.dismiss();
+//        }
+
+//        onPopupManagersChanged: {
+//            identifyResults.dismiss();
+//            identifyResults.popupManagers = popupManagers;
+
+//            if (popupManagers.length > 0)
+//                identifyResults.show();
+//        }
+//    }
+
+    Options {
+        id: optionsTool
+        anchors.fill: sceneView
+        visible: false
+        onVisibleChanged: {
+            if (!visible)
+                optionsToolRow.state = "clear";
+        }
     }
 
     onErrorOccurred: {
@@ -500,4 +359,10 @@ Handheld {
         id: msgDialog
         text: "Error"
     }
+
+    // commenting out until identify is added to handheld
+    //    BusyIndicator {
+    //        anchors.centerIn: parent
+    //        visible: identifyController.busy
+    //    }
 }

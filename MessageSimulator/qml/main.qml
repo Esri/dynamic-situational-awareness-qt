@@ -1,6 +1,6 @@
 import QtQuick 2.7
-import QtQuick.Controls 2.1
-import QtQuick.Controls.Material 2.1
+import QtQuick.Controls 2.2
+import QtQuick.Controls.Material 2.2
 import QtQuick.Layouts 1.0
 import QtQuick.Window 2.3
 import Esri.MessageSimulator 1.0

@@ -1,5 +1,4 @@
-
-// Copyright 2017 ESRI
+// Copyright 2016 ESRI
 //
 // All rights reserved under the copyright laws of the United States
 // and applicable international laws, treaties, and conventions.
@@ -11,19 +10,13 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-import QtQuick 2.6
-import QtQuick.Controls 2.1
-import QtQuick.Controls.Material 2.1
-import QtQuick.Window 2.2
-import Esri.DSA 1.0
+#include "DsaStyles.h"
 
-DsaPanel {
-    id: createAlertsRoot
-    width: 272 * scaleFactor
-    title: qsTr("Create Alert Rules")
-    clip: true
+DsaStyles::DsaStyles(QObject* parent):
+  QObject(parent)
+{  
+}
 
-//    CreateAlertToolController {
-//        id: toolController
-//    }
+DsaStyles::~DsaStyles()
+{ 
 }

@@ -17,6 +17,7 @@
 #include <QDir>
 #include <QMessageBox>
 #include <QQmlEngine>
+#include <QObject>
 
 #ifdef Q_OS_WIN
 #include <Windows.h>
@@ -39,6 +40,7 @@
 #include "TelestrateController.h"
 #include "AnalysisController.h"
 #include "OptionsController.h"
+#include "DsaStyles.h"
 #include "ViewedAlertsController.h"
 #include "IdentifyFeaturesController.h"
 
@@ -70,6 +72,8 @@
 
 using namespace Esri::ArcGISRuntime;
 using namespace Esri::ArcGISRuntime::Toolkit;
+
+QObject* dsaStylesProvider(QQmlEngine* engine, QJSEngine* scriptEngine);
 
 int main(int argc, char *argv[])
 {
@@ -128,6 +132,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<TelestrateController>("Esri.DSA", 1, 0, "TelestrateController");
   qmlRegisterType<AnalysisController>("Esri.DSA", 1, 0, "AnalysisController");
   qmlRegisterType<OptionsController>("Esri.DSA", 1, 0, "OptionsController");
+  qmlRegisterSingletonType<DsaStyles>("Esri.DSA", 1, 0, "DsaStyles", &dsaStylesProvider);
   qmlRegisterType<IdentifyFeaturesController>("Esri.DSA", 1, 0, "IdentifyFeaturesController");
   qmlRegisterType<AlertToolController>("Esri.DSA", 1, 0, "AlertToolController");
   qmlRegisterType<ViewedAlertsController>("Esri.DSA", 1, 0, "ViewedAlertsController");
@@ -159,6 +164,10 @@ int main(int argc, char *argv[])
   view.engine()->addImportPath(arcGISToolkitImportPath);
 #endif // DEPLOYMENT_BUILD
 
+  // To quit via Qt.quit() from QML, you must connect the QQmlEngine::quit()
+  // signal to the QCoreApplication::quit() slot
+  QObject::connect(view.engine(), &QQmlEngine::quit, &QCoreApplication::quit);
+
   // Set the source
   view.setSource(QUrl(kApplicationSourceUrl));
 
@@ -175,7 +184,6 @@ int main(int argc, char *argv[])
   commandLineParser.process(app);
 
   // Show app window
-
   auto showValue = commandLineParser.value(kArgShowName).toLower();
 
   if (showValue.compare(kShowMaximized) == 0)
@@ -207,3 +215,10 @@ int main(int argc, char *argv[])
 }
 
 //------------------------------------------------------------------------------
+
+// qml dsa styles provider
+QObject* dsaStylesProvider(QQmlEngine* engine, QJSEngine*)
+{
+  static DsaStyles* dsaStyles = new DsaStyles(engine);
+  return dsaStyles;
+}

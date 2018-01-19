@@ -82,6 +82,8 @@ bool AlertListProxyModel::passesAllRules(int sourceRow) const
   if (!alert)
     return false;
 
+  bool shouldBeActive = true;
+
   auto rulesIt = m_rules.cbegin();
   auto rulesEnd = m_rules.cend();
   for (; rulesIt != rulesEnd; ++rulesIt)
@@ -91,8 +93,13 @@ bool AlertListProxyModel::passesAllRules(int sourceRow) const
       continue;
 
     if (!rule->matchesRule(alert))
-      return false;
+    {
+      shouldBeActive = false;
+      break;
+    }
   }
 
-  return true;
+  alert->setActive(shouldBeActive);
+
+  return shouldBeActive;
 }

@@ -44,19 +44,5 @@ bool DistanceAlertRule::matchesRule(AbstractAlert* alert) const
   Geometry geom2 = GeometryEngine::project(pairAlert->position2(), geom1.spatialReference());
   const double result = GeometryEngine::instance()->distance(geom1, geom2);
 
-  if (result <= pairAlert->distance())
-  {
-    if (!pairAlert->active())
-    {
-      pairAlert->setActive(true);
-    }
-
-    return true;
-  }
-  else
-  {
-    pairAlert->setActive(false);
-  }
-
-  return false;
+  return result <= pairAlert->distance();
 }

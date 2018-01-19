@@ -64,6 +64,12 @@ bool AlertListModel::addAlert(AbstractAlert* alert)
     emit dataChanged(changedIndex, changedIndex);
   });
 
+  connect(alert, &AbstractAlert::activeChanged, this, [this, insertIdx]
+  {
+    const QModelIndex changedIndex = index(insertIdx, 0);
+    emit dataChanged(changedIndex, changedIndex);
+  });
+
   beginInsertRows(QModelIndex(), insertIdx, insertIdx);
   m_alerts.append(alert);
   endInsertRows();

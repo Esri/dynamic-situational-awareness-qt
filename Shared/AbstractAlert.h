@@ -66,6 +66,7 @@ signals:
   void statusChanged();
   void viewedChanged();
   void positionChanged();
+  void activeChanged();
 
 private:
   AlertStatus m_status = AlertStatus::Inactive;

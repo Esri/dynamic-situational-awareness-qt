@@ -21,7 +21,7 @@ import Esri.DSA 1.0
 DsaPanel {
     id: tocRoot
 
-    title: "Table of contents"
+    title: "Overlays"
     clip: true
 
     // Create the controller

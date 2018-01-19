@@ -153,7 +153,7 @@ Row {
     ToolIcon {
         id: identifyIcon
         iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_aboutmap_dark.png"
-        toolName: "Identify"
+        toolName: "Query"
         onToolSelected: {
             if (selected) {
                 selected = false;
@@ -173,7 +173,7 @@ Row {
     ToolIcon {
         id: coordinateConversionIcon
         iconSource: "qrc:/Resources/icons/xhdpi/icon-64-coorconv-white.png"
-        toolName: "Convert"
+        toolName: "Convert XY"
         onToolSelected: {
             if (selected)
                 mapToolRow.state = "clear"
@@ -210,7 +210,7 @@ Row {
     ToolIcon {
         id: tocIcon
         iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_layergroup_dark_d.png"
-        toolName: "Layers"
+        toolName: "Overlays"
         onToolSelected: {
             if (selected)
                 mapToolRow.state = "clear"

@@ -29,7 +29,7 @@ Vehicle {
 
     LocationController {
         id: locationController
-        enabled: true
+        enabled: false
     }
 
     PrimaryToolbar {
@@ -317,6 +317,17 @@ Vehicle {
     Options {
         id: optionsTool
         anchors.fill: sceneView
+        visible: false
+        onVisibleChanged: {
+            if (!visible)
+                optionsToolRow.state = "clear";
+        }
+    }
+
+    About {
+        id: aboutTool
+        anchors.fill: parent
+
         visible: false
         onVisibleChanged: {
             if (!visible)

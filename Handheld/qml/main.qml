@@ -31,7 +31,7 @@ Handheld {
 
     LocationController {
         id: locationController
-        enabled: true
+        enabled: false
     }
 
     PrimaryToolbar {

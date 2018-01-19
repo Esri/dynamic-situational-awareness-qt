@@ -25,9 +25,10 @@
 #endif
 
 #include "ArcGISRuntimeEnvironment.h"
-
+#include "PopupManager.h"
 #include "SceneQuickView.h"
 
+#include "AlertToolController.h"
 #include "BasemapPickerController.h"
 #include "AddLocalDataController.h"
 #include "LocationController.h"
@@ -39,6 +40,8 @@
 #include "AnalysisController.h"
 #include "OptionsController.h"
 #include "DsaStyles.h"
+#include "ViewedAlertsController.h"
+#include "IdentifyFeaturesController.h"
 #include "EditAlertsController.h"
 
 #include "ArcGISRuntimeToolkit.h"
@@ -115,6 +118,7 @@ int main(int argc, char *argv[])
 
   // Register the map view for QML
   qmlRegisterType<SceneQuickView>("Esri.Handheld", 1, 0, "SceneView");
+  qRegisterMetaType<PopupManager*>("PopupManager*");
 
   // Register the Handheld (QQuickItem) for QML
   qmlRegisterType<Handheld>("Esri.Handheld", 1, 0, "Handheld");
@@ -129,6 +133,9 @@ int main(int argc, char *argv[])
   qmlRegisterType<AnalysisController>("Esri.DSA", 1, 0, "AnalysisController");
   qmlRegisterType<OptionsController>("Esri.DSA", 1, 0, "OptionsController");
   qmlRegisterSingletonType<DsaStyles>("Esri.DSA", 1, 0, "DsaStyles", &dsaStylesProvider);
+  qmlRegisterType<IdentifyFeaturesController>("Esri.DSA", 1, 0, "IdentifyFeaturesController");
+  qmlRegisterType<AlertToolController>("Esri.DSA", 1, 0, "AlertToolController");
+  qmlRegisterType<ViewedAlertsController>("Esri.DSA", 1, 0, "ViewedAlertsController");
   qmlRegisterType<EditAlertsController>("Esri.DSA", 1, 0, "EditAlertsController");
 
   // Register Toolkit Component Types

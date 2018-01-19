@@ -20,7 +20,6 @@
 
 #include "AlertListModel.h"
 #include "DsaController.h"
-#include "DsaUtility.h"
 #include "DummyAlert.h"
 #include "Vehicle.h"
 #include "ToolResourceProvider.h"

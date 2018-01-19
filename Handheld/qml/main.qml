@@ -214,6 +214,10 @@ Handheld {
                 top: sceneView.top
                 bottom: sceneView.attributionTop
             }
+            backgroundColor: Material.primary
+            attributeNameTextColor: Material.foreground
+            attributeValueTextColor: Material.foreground
+            titleTextColor: Material.foreground
         }
 
         Drawer {

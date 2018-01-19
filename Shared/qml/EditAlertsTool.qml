@@ -23,9 +23,9 @@ DsaPanel {
     title: qsTr("Edit Alert Rules")
     clip: true
 
-    //    CreateAlertToolController {
-    //        id: toolController
-    //    }
+    EditAlertsController {
+        id: toolController
+    }
 
     property bool readyToAdd: leftHandSideCB.currentIndex !== -1 && layerCB.currentIndex !== -1 && featureIdEdit.text.length > 0
     property bool expandNewAlert: true
@@ -102,6 +102,14 @@ DsaPanel {
         }
 
         onClicked: {
+            if (withinDistanceRb.checked)
+            {
+                toolController.addWithinDistanceAlert(
+                            leftHandSideCB.currentIndex,
+                            withinDistanceSB.value,
+                            Number(featureIdEdit.text),
+                            layerCB.currentIndex);
+            }
         }
     }
 
@@ -134,9 +142,10 @@ DsaPanel {
                 left: parent.left
                 right: parent.right
             }
-            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
 
-            model: ["My position", "Overlay1", "Overlay2", "Overlay3"]
+            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+            textRole: "display"
+            model: toolController.layerNames
             currentIndex: -1
         }
 
@@ -232,7 +241,8 @@ DsaPanel {
             }
             font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
 
-            model: ["Layer1", "Overlay1", "Overlay2", "Overlay3"]
+            textRole: "display"
+            model: toolController.layerNames
             currentIndex: -1
         }
     }

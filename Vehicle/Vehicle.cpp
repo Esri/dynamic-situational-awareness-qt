@@ -22,8 +22,6 @@
 #include "DsaController.h"
 #include "DsaUtility.h"
 #include "DummyAlert.h"
-#include "GraphicPairAlert.h"
-#include "LocationController.h"
 #include "Vehicle.h"
 #include "ToolResourceProvider.h"
 #include "ToolManager.h"
@@ -107,7 +105,10 @@ void Vehicle::componentComplete()
   DictionaryRenderer* renderer = new DictionaryRenderer(dictionarySymbolStyle, this);
 
   GraphicsOverlay* alertsOverlay = new GraphicsOverlay(this);
-  alertsOverlay->setRenderer(renderer);  connect(m_sceneView, &SceneQuickView::mousePressedAndHeld, this, [this, alertsOverlay](QMouseEvent& mouseEvent)
+  alertsOverlay->setOverlayId("Dummy alerts overlay");
+  alertsOverlay->setRenderer(renderer);
+  m_sceneView->graphicsOverlays()->append(alertsOverlay);
+  connect(m_sceneView, &SceneQuickView::mousePressedAndHeld, this, [this, alertsOverlay](QMouseEvent& mouseEvent)
   {
     const Point alertPos = m_sceneView->screenToBaseSurface(mouseEvent.x(), mouseEvent.y());
     const int alertCount = AlertListModel::instance()->rowCount();
@@ -127,11 +128,10 @@ void Vehicle::componentComplete()
     dummyAlert->setActive(true);
     alertsOverlay->graphics()->append(dummyAlertGraphic);
     dummyAlert->registerAlert();
-
-    m_sceneView->graphicsOverlays()->append(alertsOverlay);
   });
 
   GraphicsOverlay* geofenceOverlay = new GraphicsOverlay(this);
+  geofenceOverlay->setOverlayId("Geofence overlay");
   SimpleLineSymbol* geofenceSymbol = new SimpleLineSymbol(SimpleLineSymbolStyle::Dash, Qt::green, 5, this);
   PolygonBuilder pb(SpatialReference::wgs84());
   pb.addPoint(-121.91, 36.605);
@@ -142,22 +142,6 @@ void Vehicle::componentComplete()
   Graphic* geofenceGraphic = new Graphic(pb.toPolygon(), geofenceSymbol, this);
   geofenceOverlay->graphics()->append(geofenceGraphic);
   m_sceneView->graphicsOverlays()->append(geofenceOverlay);
-
-  LocationController* locationTool = Toolkit::ToolManager::instance().tool<LocationController>();
-  if (locationTool)
-  {
-    Graphic* locationGraphic = locationTool->positionGraphic();
-    if (locationGraphic)
-    {
-      GraphicPairAlert* geofenceAlert = new GraphicPairAlert(locationGraphic, geofenceGraphic, 0., this);
-      geofenceAlert->setStatus(AlertStatus::Critical);
-      geofenceAlert->setMessage("Location in geofence");
-      geofenceAlert->registerAlert();
-      geofenceAlert->setViewed(false);
-
-      connect(locationTool, &LocationController::positionChanged, geofenceAlert, &GraphicPairAlert::onPositionChanged);
-    }
-  }
 }
 
 void Vehicle::setCoordinateConversionOptions()

@@ -15,8 +15,11 @@
 #include "AlertListModel.h"
 #include "AlertListProxyModel.h"
 
+#include <QTimer>
+
 AlertListProxyModel::AlertListProxyModel(QObject* parent):
-  QSortFilterProxyModel(parent)
+  QSortFilterProxyModel(parent),
+  m_updateTimer(new QTimer(this))
 {
   AlertListModel* sourceModel = AlertListModel::instance();
   if (sourceModel)
@@ -36,6 +39,14 @@ AlertListProxyModel::AlertListProxyModel(QObject* parent):
       invalidate();
     });
   }
+
+  m_updateTimer->setInterval(500);
+  m_updateTimer->setSingleShot(false);
+  connect(m_updateTimer, &QTimer::timeout, this, [this]()
+  {
+    invalidate();
+  });
+  m_updateTimer->start();
 }
 
 AlertListProxyModel::~AlertListProxyModel()

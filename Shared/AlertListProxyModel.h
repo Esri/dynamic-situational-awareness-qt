@@ -19,6 +19,8 @@
 
 class AbstractAlertRule;
 
+class QTimer;
+
 class AlertListProxyModel : public QSortFilterProxyModel
 {
   Q_OBJECT
@@ -39,6 +41,7 @@ private:
 
   QList<AbstractAlertRule*> m_rules;
   mutable QSet<int> m_currentSourceRows;
+  QTimer* m_updateTimer = nullptr;
 };
 
 #endif // ALERTLISTPROXYMODEL_H

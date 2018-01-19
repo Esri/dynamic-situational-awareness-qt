@@ -151,13 +151,12 @@ Item {
             categoryName: "alerts"
             onCategorySelected: categoryToolbar.state = categoryName
 
-            // commented out until handheld supports it
-//            ViewedAlerts {
-//                anchors {
-//                    right: parent.right
-//                    top: parent.top
-//                }
-//            }
+            ViewedAlerts {
+                anchors {
+                    right: parent.right
+                    top: parent.top
+                }
+            }
         }
 
         CategoryIcon {

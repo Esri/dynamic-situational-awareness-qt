@@ -181,19 +181,18 @@ Handheld {
             }
         }
 
-        // commenting out until alerts are added to handheld
-//        AlertList {
-//            id: alertsTool
-//            anchors {
-//                left: parent.left
-//                top: parent.top
-//                bottom: sceneView.attributionTop
-//            }
-//            width: drawer.width
-//            visible: false
+        AlertList {
+            id: alertsTool
+            anchors {
+                left: parent.left
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
 
-//            onClosed: visible = false;
-//        }
+            onClosed: visible = false;
+        }
 
         TelestrateTool {
             id: telestrateTool
@@ -320,24 +319,23 @@ Handheld {
         textColor: Material.foreground
     }
 
-    // commenting out until identify is added to handheld
-//    IdentifyFeaturesController {
-//        id: identifyController
-//        active: mapToolRow.state === "Identify"
+    IdentifyFeaturesController {
+        id: identifyController
+        active: mapToolRow.state === "Identify"
 
-//        onActiveChanged: {
-//            if (!active)
-//                identifyResults.dismiss();
-//        }
+        onActiveChanged: {
+            if (!active)
+                identifyResults.dismiss();
+        }
 
-//        onPopupManagersChanged: {
-//            identifyResults.dismiss();
-//            identifyResults.popupManagers = popupManagers;
+        onPopupManagersChanged: {
+            identifyResults.dismiss();
+            identifyResults.popupManagers = popupManagers;
 
-//            if (popupManagers.length > 0)
-//                identifyResults.show();
-//        }
-//    }
+            if (popupManagers.length > 0)
+                identifyResults.show();
+        }
+    }
 
     Options {
         id: optionsTool
@@ -360,9 +358,8 @@ Handheld {
         text: "Error"
     }
 
-    // commenting out until identify is added to handheld
-    //    BusyIndicator {
-    //        anchors.centerIn: parent
-    //        visible: identifyController.busy
-    //    }
+    BusyIndicator {
+        anchors.centerIn: parent
+        visible: identifyController.busy
+    }
 }

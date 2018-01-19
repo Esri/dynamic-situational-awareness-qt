@@ -10,12 +10,22 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "DictionaryRenderer.h"
+#include "DictionarySymbolStyle.h"
+#include "Graphic.h"
+#include "GraphicsOverlay.h"
+#include "PolygonBuilder.h"
 #include "SceneQuickView.h"
-#include "ArcGISCompassController.h"
-#include "ToolResourceProvider.h"
+#include "SimpleLineSymbol.h"
 
+#include "AlertListModel.h"
 #include "DsaController.h"
 #include "Handheld.h"
+#include "DummyAlert.h"
+#include "GraphicPairAlert.h"
+#include "LocationController.h"
+#include "ToolResourceProvider.h"
+#include "ToolManager.h"
 
 using namespace Esri::ArcGISRuntime;
 using namespace Esri::ArcGISRuntime::Toolkit;
@@ -67,6 +77,15 @@ void Handheld::componentComplete()
   connect(m_sceneView, &SceneQuickView::identifyGraphicsOverlayCompleted,
           ToolResourceProvider::instance(), &ToolResourceProvider::onIdentifyGraphicsOverlayCompleted);
 
+  connect(m_sceneView, &SceneQuickView::identifyGraphicsOverlaysCompleted,
+          ToolResourceProvider::instance(), &ToolResourceProvider::onIdentifyGraphicsOverlaysCompleted);
+
+  connect(m_sceneView, &SceneQuickView::identifyLayerCompleted,
+          ToolResourceProvider::instance(), &ToolResourceProvider::onIdentifyLayerCompleted);
+
+  connect(m_sceneView, &SceneQuickView::identifyLayersCompleted,
+          ToolResourceProvider::instance(), &ToolResourceProvider::onIdentifyLayersCompleted);
+
   connect(m_sceneView, &SceneQuickView::screenToLocationCompleted,
           ToolResourceProvider::instance(), &ToolResourceProvider::onScreenToLocationCompleted);
 
@@ -77,4 +96,62 @@ void Handheld::componentComplete()
 
   // Set scene to scene view
   m_sceneView->setArcGISScene(m_controller->scene());
+
+  // Alerts: Proof of concept
+  DictionarySymbolStyle* dictionarySymbolStyle = new DictionarySymbolStyle("mil2525d", this);
+  DictionaryRenderer* renderer = new DictionaryRenderer(dictionarySymbolStyle, this);
+
+  GraphicsOverlay* alertsOverlay = new GraphicsOverlay(this);
+  alertsOverlay->setRenderer(renderer);
+  connect(m_sceneView, &SceneQuickView::mousePressedAndHeld, this, [this, alertsOverlay](QMouseEvent& mouseEvent)
+  {
+    const Point alertPos = m_sceneView->screenToBaseSurface(mouseEvent.x(), mouseEvent.y());
+    const int alertCount = AlertListModel::instance()->rowCount();
+
+    qsrand(qrand());
+    const int maxStatus = static_cast<int>(AlertStatus::Critical);
+    AlertStatus randomStatus = static_cast<AlertStatus>((qrand() % ( maxStatus + 1) - 1) + 1);
+    if (randomStatus == AlertStatus::Inactive)
+      randomStatus = AlertStatus::Low;
+
+    Graphic* dummyAlertGraphic = new Graphic(alertPos, this);
+    dummyAlertGraphic->attributes()->insertAttribute("sic", "GFGPOAO-------X");
+    DummyAlert* dummyAlert = new DummyAlert(dummyAlertGraphic, this);
+    dummyAlert->setMessage(QString("Dummy Alert %1").arg(alertCount));
+    dummyAlert->setStatus(randomStatus);
+    dummyAlert->setViewed(false);
+    dummyAlert->setActive(true);
+    alertsOverlay->graphics()->append(dummyAlertGraphic);
+    dummyAlert->registerAlert();
+
+    m_sceneView->graphicsOverlays()->append(alertsOverlay);
+  });
+
+  GraphicsOverlay* geofenceOverlay = new GraphicsOverlay(this);
+  SimpleLineSymbol* geofenceSymbol = new SimpleLineSymbol(SimpleLineSymbolStyle::Dash, Qt::green, 5, this);
+  PolygonBuilder pb(SpatialReference::wgs84());
+  pb.addPoint(-121.91, 36.605);
+  pb.addPoint(-121.91, 36.61);
+  pb.addPoint(-121.92, 36.61);
+  pb.addPoint(-121.92, 36.605);
+
+  Graphic* geofenceGraphic = new Graphic(pb.toPolygon(), geofenceSymbol, this);
+  geofenceOverlay->graphics()->append(geofenceGraphic);
+  m_sceneView->graphicsOverlays()->append(geofenceOverlay);
+
+  LocationController* locationTool = Toolkit::ToolManager::instance().tool<LocationController>();
+  if (locationTool)
+  {
+    Graphic* locationGraphic = locationTool->positionGraphic();
+    if (locationGraphic)
+    {
+      GraphicPairAlert* geofenceAlert = new GraphicPairAlert(locationGraphic, geofenceGraphic, 0., this);
+      geofenceAlert->setStatus(AlertStatus::Critical);
+      geofenceAlert->setMessage("Location in geofence");
+      geofenceAlert->registerAlert();
+      geofenceAlert->setViewed(false);
+
+      connect(locationTool, &LocationController::positionChanged, geofenceAlert, &GraphicPairAlert::onPositionChanged);
+    }
+  }
 }

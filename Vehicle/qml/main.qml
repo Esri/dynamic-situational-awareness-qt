@@ -361,6 +361,31 @@ Vehicle {
                     }
                 }
             }
+
+            Button {
+                id: createAlertsCheckBox
+                checkable: true
+                checked: false
+                width: 32 * scaleFactor
+                height: 32 * scaleFactor
+
+                background: Rectangle {
+                    anchors.fill: createAlertsCheckBox
+                    color: Material.primary
+                }
+
+                Image {
+                    fillMode: Image.PreserveAspectFit
+                    anchors.centerIn: parent
+                    sourceSize.height: parent.height * 0.85
+                    height: sourceSize.height
+                    source: "qrc:/Resources/icons/xhdpi/ic_menu_failedlayer.png"
+                }
+
+                onClicked: {
+                    createAlertsTool.visible = !createAlertsTool1.visible;
+                }
+            }
         }
     }
 
@@ -406,6 +431,19 @@ Vehicle {
 
         AlertList {
             id: alertsTool
+            anchors {
+                left: parent.left
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+
+            onClosed: visible = false;
+        }
+
+        CreateAlertsTool {
+            id: createAlertsTool
             anchors {
                 left: parent.left
                 top: parent.top

@@ -14,5 +14,6 @@
         <file>Options.qml</file>
         <file>AlertList.qml</file>
         <file>ViewedAlerts.qml</file>
+        <file>CreateAlertsTool.qml</file>
     </qresource>
 </RCC>

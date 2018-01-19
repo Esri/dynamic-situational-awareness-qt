@@ -38,6 +38,10 @@ Row {
                 target: drawIcon
                 selected: true
             }
+            PropertyChanges {
+                target: telestrateTool
+                visible: true
+            }
         },
         State {
             name: configureIcon.toolName

@@ -74,43 +74,6 @@ DsaPanel {
         }
     }
 
-    // When this button is clicked, all checked items will be added as layers/elevation sources
-    RoundButton {
-        id: addButton
-        anchors {
-            right: parent.right
-            verticalCenter: localDataList.bottom
-            margins: 10 * scaleFactor
-        }
-        opacity: 0.95
-
-        background: Rectangle {
-            implicitWidth: 40 * scaleFactor
-            implicitHeight: 40 * scaleFactor
-            opacity: enabled ? 1 : 0.3
-            radius: addButton.radius
-            color: Material.accent
-
-            Image {
-                anchors.centerIn: parent
-                width: 26 * scaleFactor
-                height: width
-                source: "qrc:/Resources/icons/xhdpi/ic_menu_add_dark_d.png"
-            }
-
-        }
-
-        onClicked: {
-            if (elevationCheckbox.checked && elevationCheckbox.visible)
-                toolController.addItemAsElevationSource(selectedItems);
-            else
-                toolController.addItemAsLayer(selectedItems);
-            selectedItems = []; // clear so we don't add again next time
-            toolController.refreshLocalDataModel(filter.currentText);
-            closed();
-        }
-    }
-
     // filter the files by file type
     Column {
         id: filterColumn
@@ -150,6 +113,32 @@ DsaPanel {
                 horizontalAlignment: Text.AlignHCenter
                 color: Material.foreground
                 leftPadding: elevationCheckbox.indicator.width + elevationCheckbox.spacing
+            }
+        }
+
+        // When this button is clicked, all checked items will be added as layers/elevation sources
+        Button {
+            id: addButton
+            opacity: 0.95
+            text: "Add Selected"
+            width: parent.width
+
+            background: Rectangle {
+                implicitWidth: filterColumn.width
+                implicitHeight: 40 * scaleFactor
+                opacity: enabled ? 1 : 0.3
+                color: Material.accent
+                radius: 2 * scaleFactor
+            }
+
+            onClicked: {
+                if (elevationCheckbox.checked && elevationCheckbox.visible)
+                    toolController.addItemAsElevationSource(selectedItems);
+                else
+                    toolController.addItemAsLayer(selectedItems);
+                selectedItems = []; // clear so we don't add again next time
+                toolController.refreshLocalDataModel(filter.currentText);
+                closed();
             }
         }
     }

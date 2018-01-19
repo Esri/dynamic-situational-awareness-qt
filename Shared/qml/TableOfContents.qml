@@ -21,7 +21,7 @@ import Esri.DSA 1.0
 DsaPanel {
     id: tocRoot
 
-    title: "Table of contents"
+    title: "Overlays"
     clip: true
 
     // Create the controller
@@ -116,7 +116,7 @@ DsaPanel {
                 opacity: dragArea.held ? 0.5 : 1
                 Behavior on color { ColorAnimation { duration: 100 } }
 
-                radius: 2
+                radius: 2 * scaleFactor
                 Drag.active: dragArea.held
                 Drag.source: dragArea
                 Drag.hotSpot.x: width / 2
@@ -148,7 +148,7 @@ DsaPanel {
                         left: visibleCheckBox.right
                         verticalCenter: parent.verticalCenter
                     }
-                    radius: 50
+                    radius: 50 * scaleFactor
                     width: 24 * scaleFactor
                     height: width
                     color: Material.foreground
@@ -212,7 +212,11 @@ DsaPanel {
                     MouseArea {
                         anchors.fill: parent
 
-                        onClicked: toolController.zoomTo(index);
+                        onClicked: {
+                            toolController.zoomTo(index);
+                            mapToolRow.tocIconSelected = false;
+                            tocRoot.visible = false;
+                        }
                     }
                 }
 
@@ -257,6 +261,23 @@ DsaPanel {
         model: visualModel
         width: parent.width
         spacing: 5 * scaleFactor
+    }
+
+    Text {
+        anchors {
+            left: parent.left
+            right: parent.right
+            top: tocRoot.titleBar.bottom
+            margins: 15 * scaleFactor
+        }
+        visible: visualModel.count === 0
+        text: "No overlays have been added.\n\nSelect 'Add Data' to add overlays to the map."
+        color: Material.foreground
+        horizontalAlignment: Text.AlignHCenter
+        font {
+            pixelSize: 12 * scaleFactor
+            family: DsaStyles.fontFamily
+        }
     }
 }
 

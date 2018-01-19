@@ -31,12 +31,28 @@ Row {
                 target: settingsIcon
                 selected: true
             }
+            PropertyChanges {
+                target: optionsTool
+                visible: true
+            }
+            PropertyChanges {
+                target: aboutTool
+                visible: false
+            }
         },
         State {
             name: aboutIcon.toolName
             PropertyChanges {
                 target: aboutIcon
                 selected: true
+            }
+            PropertyChanges {
+                target: optionsTool
+                visible: false
+            }
+            PropertyChanges {
+                target: aboutTool
+                visible: true
             }
         },
         State {
@@ -61,10 +77,7 @@ Row {
         id: settingsIcon
         iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_settings_dark_d.png"
         toolName: "Settings"
-        onToolSelected: {
-            parent.state = toolName;
-            optionsTool.visible = selected;
-        }
+        onToolSelected: parent.state = toolName;
     }
 
     // About
@@ -72,11 +85,7 @@ Row {
         id: aboutIcon
         iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_about_dark_d.png"
         toolName: "About"
-        onToolSelected: {
-            optionsTool.visible = false;
-            parent.state = toolName;
-            // TODO - not implemented yet
-        }
+        onToolSelected: parent.state = toolName;
     }
 
     // Close Tool

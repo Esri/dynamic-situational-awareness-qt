@@ -191,8 +191,8 @@ Vehicle {
             onClosed: visible = false;
         }
 
-        CreateAlertsTool {
-            id: createAlertsTool
+        EditAlertsTool {
+            id: editAlertsTool
             anchors {
                 left: parent.left
                 top: parent.top

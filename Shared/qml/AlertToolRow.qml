@@ -65,10 +65,10 @@ Row {
         onToolSelected: {
             if (alertToolRow.state === toolName) {
                 alertToolRow.state = "clear";
-                createAlertsTool.visible = false;
+                editAlertsTool.visible = false;
             } else {
                 alertToolRow.state = toolName;
-                createAlertsTool.visible = true;
+                editAlertsTool.visible = true;
             }
         }
     }

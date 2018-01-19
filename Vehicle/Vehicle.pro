@@ -28,11 +28,13 @@ INCLUDEPATH += $$PWD/../Shared/
 HEADERS += \
     AppInfo.h \
     Vehicle.h \
+    VehicleStyles.h \
     $$PWD/../Shared/*.h
 
 SOURCES += \
     main.cpp \
     Vehicle.cpp \
+    VehicleStyles.cpp \
     $$PWD/../Shared/*.cpp
 
 RESOURCES += \

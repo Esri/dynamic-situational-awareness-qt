@@ -10,12 +10,12 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef DSASTYLES_H
-#define DSASTYLES_H
+#ifndef VEHICLESTYLES_H
+#define VEHICLESTYLES_H
 
 #include <QObject>
 
-class DsaStyles : public QObject
+class VehicleStyles : public QObject
 {
   Q_OBJECT
 
@@ -26,8 +26,8 @@ class DsaStyles : public QObject
   Q_PROPERTY(int toolFontPixelSize READ toolFontPixelSize CONSTANT)
 
 public:
-  DsaStyles(QObject* parent = nullptr);
-  ~DsaStyles();
+  VehicleStyles(QObject* parent = nullptr);
+  ~VehicleStyles();
 
 private:
   QString fontFamily() const { return "helvetica"; }
@@ -37,4 +37,4 @@ private:
   int toolFontPixelSize() const { return 11; }
 };
 
-#endif // DSASTYLES_H
+#endif // VEHICLESTYLES_H

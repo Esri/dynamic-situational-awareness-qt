@@ -10,13 +10,13 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "DsaStyles.h"
+#include "VehicleStyles.h"
 
-DsaStyles::DsaStyles(QObject* parent):
+VehicleStyles::VehicleStyles(QObject* parent):
   QObject(parent)
 {  
 }
 
-DsaStyles::~DsaStyles()
+VehicleStyles::~VehicleStyles()
 { 
 }

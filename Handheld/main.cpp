@@ -39,7 +39,7 @@
 #include "TelestrateController.h"
 #include "AnalysisController.h"
 #include "OptionsController.h"
-#include "DsaStyles.h"
+#include "HandheldStyles.h"
 #include "ViewedAlertsController.h"
 #include "IdentifyFeaturesController.h"
 
@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<TelestrateController>("Esri.DSA", 1, 0, "TelestrateController");
   qmlRegisterType<AnalysisController>("Esri.DSA", 1, 0, "AnalysisController");
   qmlRegisterType<OptionsController>("Esri.DSA", 1, 0, "OptionsController");
-  qmlRegisterSingletonType<DsaStyles>("Esri.DSA", 1, 0, "DsaStyles", &dsaStylesProvider);
+  qmlRegisterSingletonType<HandheldStyles>("Esri.DSA", 1, 0, "DsaStyles", &dsaStylesProvider);
   qmlRegisterType<IdentifyFeaturesController>("Esri.DSA", 1, 0, "IdentifyFeaturesController");
   qmlRegisterType<AlertToolController>("Esri.DSA", 1, 0, "AlertToolController");
   qmlRegisterType<ViewedAlertsController>("Esri.DSA", 1, 0, "ViewedAlertsController");
@@ -219,6 +219,6 @@ int main(int argc, char *argv[])
 // qml dsa styles provider
 QObject* dsaStylesProvider(QQmlEngine* engine, QJSEngine*)
 {
-  static DsaStyles* dsaStyles = new DsaStyles(engine);
+  static HandheldStyles* dsaStyles = new HandheldStyles(engine);
   return dsaStyles;
 }

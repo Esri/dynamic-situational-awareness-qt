@@ -226,7 +226,7 @@ Handheld {
         Drawer {
             id: drawer
             width: parent.width
-            height: parent.height
+            height: parent.height - topToolbar.height
             edge: Qt.BottomEdge
             interactive: false
 

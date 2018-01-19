@@ -212,7 +212,11 @@ DsaPanel {
                     MouseArea {
                         anchors.fill: parent
 
-                        onClicked: toolController.zoomTo(index);
+                        onClicked: {
+                            toolController.zoomTo(index);
+                            mapToolRow.tocIconSelected = false;
+                            tocRoot.visible = false;
+                        }
                     }
                 }
 
@@ -257,6 +261,23 @@ DsaPanel {
         model: visualModel
         width: parent.width
         spacing: 5 * scaleFactor
+    }
+
+    Text {
+        anchors {
+            left: parent.left
+            right: parent.right
+            top: tocRoot.titleBar.bottom
+            margins: 15 * scaleFactor
+        }
+        visible: visualModel.count === 0
+        text: "No overlays have been added.\n\nSelect 'Add Data' to add overlays to the map."
+        color: Material.foreground
+        horizontalAlignment: Text.AlignHCenter
+        font {
+            pixelSize: 12 * scaleFactor
+            family: DsaStyles.fontFamily
+        }
     }
 }
 

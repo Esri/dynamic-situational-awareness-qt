@@ -203,7 +203,10 @@ Handheld {
             }
             width: drawer.width
             visible: false
-
+            onVisibleChanged: {
+                if (!visible)
+                    markupToolRow.state = "clear";
+            }
             onClosed: visible = false;
         }
 

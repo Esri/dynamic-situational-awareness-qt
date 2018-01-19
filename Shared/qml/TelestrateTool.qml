@@ -409,6 +409,14 @@ DsaPanel {
     onVisibleChanged: {
         if (visible && activeOnVisible)
             telestrateController.active = true;
+        if (visible && !drawModeSwitch.checked) {
+            drawModeSwitch.checked = true;
+            telestrateController.drawModeEnabled = true;
+        }
+        if (!visible && drawModeSwitch.checked) {
+            drawModeSwitch.checked = false;
+            telestrateController.drawModeEnabled = false;
+        }
     }
 
     // initialize the ListModel with the initial draw colors

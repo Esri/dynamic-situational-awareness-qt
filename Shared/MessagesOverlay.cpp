@@ -165,6 +165,7 @@ bool MessagesOverlay::addMessage(const Message& message)
 
       // add point/multipoint geometry types to a dynamically-rendered graphics overlay
       m_pointGraphicsOverlay = new GraphicsOverlay(this);
+      m_pointGraphicsOverlay->setOverlayId(message.messageType());
       m_pointGraphicsOverlay->setRenderingMode(GraphicsRenderingMode::Dynamic);
       m_pointGraphicsOverlay->setSceneProperties(LayerSceneProperties(SurfacePlacement::Relative));
       m_pointGraphicsOverlay->setRenderer(m_renderer);

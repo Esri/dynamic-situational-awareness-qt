@@ -194,6 +194,19 @@ Handheld {
             onClosed: visible = false;
         }
 
+        EditAlertsTool {
+            id: editAlertsTool
+            anchors {
+                left: parent.left
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+
+            onClosed: visible = false;
+        }
+
         TelestrateTool {
             id: telestrateTool
             anchors {

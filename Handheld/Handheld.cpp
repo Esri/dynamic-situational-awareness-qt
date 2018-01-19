@@ -22,8 +22,6 @@
 #include "DsaController.h"
 #include "Handheld.h"
 #include "DummyAlert.h"
-#include "GraphicPairAlert.h"
-#include "LocationController.h"
 #include "ToolResourceProvider.h"
 #include "ToolManager.h"
 
@@ -102,6 +100,7 @@ void Handheld::componentComplete()
   DictionaryRenderer* renderer = new DictionaryRenderer(dictionarySymbolStyle, this);
 
   GraphicsOverlay* alertsOverlay = new GraphicsOverlay(this);
+  alertsOverlay->setOverlayId("Dummy alerts ovevrlay");
   alertsOverlay->setRenderer(renderer);
   connect(m_sceneView, &SceneQuickView::mousePressedAndHeld, this, [this, alertsOverlay](QMouseEvent& mouseEvent)
   {
@@ -128,6 +127,7 @@ void Handheld::componentComplete()
   });
 
   GraphicsOverlay* geofenceOverlay = new GraphicsOverlay(this);
+  geofenceOverlay->setOverlayId("Geofence overlay");
   SimpleLineSymbol* geofenceSymbol = new SimpleLineSymbol(SimpleLineSymbolStyle::Dash, Qt::green, 5, this);
   PolygonBuilder pb(SpatialReference::wgs84());
   pb.addPoint(-121.91, 36.605);
@@ -138,20 +138,4 @@ void Handheld::componentComplete()
   Graphic* geofenceGraphic = new Graphic(pb.toPolygon(), geofenceSymbol, this);
   geofenceOverlay->graphics()->append(geofenceGraphic);
   m_sceneView->graphicsOverlays()->append(geofenceOverlay);
-
-  LocationController* locationTool = Toolkit::ToolManager::instance().tool<LocationController>();
-  if (locationTool)
-  {
-    Graphic* locationGraphic = locationTool->positionGraphic();
-    if (locationGraphic)
-    {
-      GraphicPairAlert* geofenceAlert = new GraphicPairAlert(locationGraphic, geofenceGraphic, 0., this);
-      geofenceAlert->setStatus(AlertStatus::Critical);
-      geofenceAlert->setMessage("Location in geofence");
-      geofenceAlert->registerAlert();
-      geofenceAlert->setViewed(false);
-
-      connect(locationTool, &LocationController::positionChanged, geofenceAlert, &GraphicPairAlert::onPositionChanged);
-    }
-  }
 }

@@ -38,7 +38,7 @@ DsaPanel {
             right: parent.right
             margins: 8 * scaleFactor
         }
-        height: expandNewAlert ? parent.height * 0.75 : addButton.height + (anchors.margins * 2)
+        height: expandNewAlert ? parent.height * 0.6 : addButton.height + (anchors.margins * 2)
         color: "transparent"
         border.color: Material.foreground
         border.width: 1 * scaleFactor
@@ -46,9 +46,10 @@ DsaPanel {
     }
 
     Image {
+        id: collapseNewAlertButton
         anchors {
             margins: 8 * scaleFactor
-            verticalCenter: addButton.verticalCenter
+            top: newAlertFrame.top
             left: newAlertFrame.left
         }
 
@@ -66,7 +67,7 @@ DsaPanel {
         id: newAlertText
         anchors {
             margins: 8 * scaleFactor
-            verticalCenter: addButton.verticalCenter
+            verticalCenter: collapseNewAlertButton.verticalCenter
             horizontalCenter: newAlertFrame.horizontalCenter
         }
         text: qsTr("New alert")
@@ -76,49 +77,12 @@ DsaPanel {
         verticalAlignment: Text.AlignVCenter
     }
 
-    RoundButton {
-        id: addButton
-        enabled: readyToAdd
-
-        anchors {
-            margins: 8 * scaleFactor
-            top: newAlertFrame.top
-            left: newAlertText.right
-        }
-
-        background: Rectangle {
-            implicitWidth: 40 * scaleFactor
-            implicitHeight: 40 * scaleFactor
-            opacity: enabled ? 1 : 0.3
-            radius: addButton.radius
-            color: Material.accent
-
-            Image {
-                anchors.centerIn: parent
-                width: 26 * scaleFactor
-                height: width
-                source: "qrc:/Resources/icons/xhdpi/ic_menu_add_dark_d.png"
-            }
-        }
-
-        onClicked: {
-            if (withinDistanceRb.checked)
-            {
-                toolController.addWithinDistanceAlert(
-                            leftHandSideCB.currentIndex,
-                            withinDistanceSB.value,
-                            Number(featureIdEdit.text),
-                            layerCB.currentIndex);
-            }
-        }
-    }
-
     Column {
         clip: true
         spacing: 16
 
         anchors {
-            top: addButton.bottom
+            top: newAlertText.bottom
             left: newAlertFrame.left
             right: newAlertFrame.right
             bottom: newAlertFrame.bottom
@@ -244,6 +208,41 @@ DsaPanel {
             textRole: "display"
             model: toolController.layerNames
             currentIndex: -1
+        }
+
+        RoundButton {
+            id: addButton
+            enabled: readyToAdd
+
+            anchors {
+                horizontalCenter: parent.horizontalCenter
+            }
+
+            background: Rectangle {
+                implicitWidth: 40 * scaleFactor
+                implicitHeight: 40 * scaleFactor
+                opacity: enabled ? 1 : 0.3
+                radius: addButton.radius
+                color: Material.accent
+
+                Image {
+                    anchors.centerIn: parent
+                    width: 26 * scaleFactor
+                    height: width
+                    source: "qrc:/Resources/icons/xhdpi/ic_menu_add_dark_d.png"
+                }
+            }
+
+            onClicked: {
+                if (withinDistanceRb.checked)
+                {
+                    toolController.addWithinDistanceAlert(
+                                leftHandSideCB.currentIndex,
+                                withinDistanceSB.value,
+                                Number(featureIdEdit.text),
+                                layerCB.currentIndex);
+                }
+            }
         }
     }
 

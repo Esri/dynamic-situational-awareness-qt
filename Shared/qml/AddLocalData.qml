@@ -128,7 +128,7 @@ DsaPanel {
                 implicitHeight: 40 * scaleFactor
                 opacity: enabled ? 1 : 0.3
                 color: Material.accent
-                radius: 2
+                radius: 2 * scaleFactor
             }
 
             onClicked: {

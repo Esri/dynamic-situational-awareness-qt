@@ -59,7 +59,7 @@ DsaPanel {
                 anchors.fill: colorRect
                 horizontalOffset: -1
                 verticalOffset: 1
-                radius: 8
+                radius: 8 * scaleFactor
                 smooth: true
                 samples: 16
                 color: "#80000000"
@@ -102,7 +102,7 @@ DsaPanel {
                         Rectangle {
                             height: 30 * scaleFactor
                             width: height
-                            radius: 100
+                            radius: 100 * scaleFactor
                             color: drawColors[index]
                             border {
                                 color: Material.accent
@@ -183,7 +183,7 @@ DsaPanel {
                 anchors.fill: toggleRect
                 horizontalOffset: -1
                 verticalOffset: 1
-                radius: 8
+                radius: 8 * scaleFactor
                 smooth: true
                 samples: 16
                 color: "#80000000"
@@ -331,7 +331,7 @@ DsaPanel {
                 anchors.fill: graphicDeleteRect
                 horizontalOffset: -1
                 verticalOffset: 1
-                radius: 8
+                radius: 8 * scaleFactor
                 smooth: true
                 samples: 16
                 color: "#80000000"

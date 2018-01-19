@@ -116,7 +116,7 @@ DsaPanel {
                 opacity: dragArea.held ? 0.5 : 1
                 Behavior on color { ColorAnimation { duration: 100 } }
 
-                radius: 2
+                radius: 2 * scaleFactor
                 Drag.active: dragArea.held
                 Drag.source: dragArea
                 Drag.hotSpot.x: width / 2
@@ -148,7 +148,7 @@ DsaPanel {
                         left: visibleCheckBox.right
                         verticalCenter: parent.verticalCenter
                     }
-                    radius: 50
+                    radius: 50 * scaleFactor
                     width: 24 * scaleFactor
                     height: width
                     color: Material.foreground

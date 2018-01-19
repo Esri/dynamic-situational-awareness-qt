@@ -56,4 +56,20 @@ Row {
             }
         }
     }
+
+    // Create Alert Tool
+    ToolIcon {
+        id: createAlertIcon
+        iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_edit_dark_d.png"
+        toolName: "Edit"
+        onToolSelected: {
+            if (alertToolRow.state === toolName) {
+                alertToolRow.state = "clear";
+                createAlertsTool.visible = false;
+            } else {
+                alertToolRow.state = toolName;
+                createAlertsTool.visible = true;
+            }
+        }
+    }
 }

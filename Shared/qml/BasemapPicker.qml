@@ -38,7 +38,7 @@ DsaPanel {
             border.color: index === basemapsList.currentIndex ? Material.accent : Material.background
             border.width: index === basemapsList.currentIndex ? 2 * scaleFactor : 1 * scaleFactor
             color: Material.background
-            radius: 2
+            radius: 2 * scaleFactor
 
             Image {
                 source: thumbnailUrl;

@@ -31,7 +31,7 @@ Handheld {
 
     LocationController {
         id: locationController
-        enabled: true
+        enabled: false
     }
 
     PrimaryToolbar {
@@ -216,7 +216,10 @@ Handheld {
             }
             width: drawer.width
             visible: false
-
+            onVisibleChanged: {
+                if (!visible)
+                    markupToolRow.state = "clear";
+            }
             onClosed: visible = false;
         }
 
@@ -227,12 +230,16 @@ Handheld {
                 top: sceneView.top
                 bottom: sceneView.attributionTop
             }
+            backgroundColor: Material.primary
+            attributeNameTextColor: Material.foreground
+            attributeValueTextColor: Material.foreground
+            titleTextColor: Material.foreground
         }
 
         Drawer {
             id: drawer
             width: parent.width
-            height: parent.height
+            height: parent.height - topToolbar.height
             edge: Qt.BottomEdge
             interactive: false
 

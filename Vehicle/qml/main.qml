@@ -29,7 +29,7 @@ Vehicle {
 
     LocationController {
         id: locationController
-        enabled: true
+        enabled: false
     }
 
     PrimaryToolbar {
@@ -213,7 +213,10 @@ Vehicle {
             }
             width: drawer.width
             visible: false
-
+            onVisibleChanged: {
+                if (!visible)
+                    markupToolRow.state = "clear";
+            }
             onClosed: visible = false;
         }
 
@@ -224,12 +227,17 @@ Vehicle {
                 top: sceneView.top
                 bottom: sceneView.attributionTop
             }
+            backgroundColor: Material.primary
+            attributeNameTextColor: Material.foreground
+            attributeValueTextColor: Material.foreground
+            titleTextColor: Material.foreground
         }
 
         Drawer {
             id: drawer
             width: 272 * scaleFactor
-            height: parent.height
+            height: sceneView.height - 20 * scaleFactor // approximation for attribution text
+            y: topToolbar.height
 
             onClosed: {
                 // update state for each category
@@ -329,6 +337,17 @@ Vehicle {
     Options {
         id: optionsTool
         anchors.fill: sceneView
+        visible: false
+        onVisibleChanged: {
+            if (!visible)
+                optionsToolRow.state = "clear";
+        }
+    }
+
+    About {
+        id: aboutTool
+        anchors.fill: parent
+
         visible: false
         onVisibleChanged: {
             if (!visible)

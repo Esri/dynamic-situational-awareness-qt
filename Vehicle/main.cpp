@@ -206,7 +206,9 @@ int main(int argc, char *argv[])
   }
   else
   {
-    view.show();
+    // shows full screen by default.
+    // Use command line argument to make it show in normal mode: --show normal
+    view.showFullScreen();
   }
 
 #else

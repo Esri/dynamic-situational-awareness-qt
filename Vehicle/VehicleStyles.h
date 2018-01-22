@@ -24,6 +24,8 @@ class VehicleStyles : public QObject
   Q_PROPERTY(int primaryIconSize READ primaryIconSize CONSTANT)
   Q_PROPERTY(int secondaryIconSize READ secondaryIconSize CONSTANT)
   Q_PROPERTY(int toolFontPixelSize READ toolFontPixelSize CONSTANT)
+  Q_PROPERTY(int mainToolbarHeight READ mainToolbarHeight CONSTANT)
+  Q_PROPERTY(int categoryToolbarWidth READ categoryToolbarWidth CONSTANT)
 
 public:
   VehicleStyles(QObject* parent = nullptr);
@@ -33,8 +35,10 @@ private:
   QString fontFamily() const { return "helvetica"; }
   int titleFontPixelSize() const { return 24; }
   int primaryIconSize() const { return 42; }
-  int secondaryIconSize() const { return 42; }
+  int secondaryIconSize() const { return 38; }
   int toolFontPixelSize() const { return 11; }
+  int mainToolbarHeight() const { return 64; }
+  int categoryToolbarWidth() const { return 56; }
 };
 
 #endif // VEHICLESTYLES_H

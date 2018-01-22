@@ -20,7 +20,6 @@ ToolBar {
     property alias toolbarLabelText: toolbarLabel.text
     property int marginWidth: 5 * scaleFactor
     property int imageWidth: 36 * scaleFactor
-    height: 64 * scaleFactor
 
     Row {
         anchors {
@@ -28,12 +27,12 @@ ToolBar {
             margins: 5 * scaleFactor
         }
 
-        spacing: 10 * scaleFactor
+        spacing: 5 * scaleFactor
 
         Image {
             anchors.verticalCenter: parent.verticalCenter
-            width: 42 * scaleFactor
-            height: 48 * scaleFactor
+            width: DsaStyles.secondaryIconSize * scaleFactor
+            height: width
             source: "qrc:/Resources/icons/xhdpi/drawer_large.png"
 
             MouseArea {

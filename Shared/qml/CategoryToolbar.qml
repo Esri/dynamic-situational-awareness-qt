@@ -20,6 +20,9 @@ Item {
     id: categoryToolbar
 
     property string appTitle
+    property string titleText
+    signal settingsClicked()
+    signal aboutClicked()
 
     Rectangle {
         anchors.fill: parent
@@ -27,7 +30,6 @@ Item {
         opacity: 0.75
     }
 
-    property string titleText
 
     state: "home"
     states: [
@@ -96,19 +98,7 @@ Item {
                 target: categoryToolbar
                 titleText: "Markup"
             }
-        },
-        State {
-            name: "options"
-            PropertyChanges {
-                target: optionsIcon
-                selected: true
-            }
-            PropertyChanges {
-                target: categoryToolbar
-                titleText: "Options"
-            }
         }
-
     ]
 
     Column {
@@ -167,14 +157,34 @@ Item {
         }
     }
 
-    CategoryIcon {
-        id: optionsIcon
+    Column {
         anchors {
             bottom: parent.bottom
             horizontalCenter: parent.horizontalCenter
         }
-        iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_settings_dark_d.png"
-        categoryName: "options"
-        onCategorySelected: categoryToolbar.state = categoryName
+        CategoryIcon {
+            id: optionsIcon
+
+            iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_settings_dark_d.png"
+            categoryName: "options"
+            onCategorySelected: menu.open()
+            //onCategorySelected: categoryToolbar.state = categoryName
+        }
+
+        Menu {
+            id: menu
+            MenuItem {
+                text: "About"
+                onTriggered: aboutClicked()
+            }
+            MenuItem {
+                text: "Settings"
+                onTriggered: settingsClicked()
+            }
+            MenuItem {
+                text: "Close"
+                onTriggered: Qt.quit()
+            }
+        }
     }
 }

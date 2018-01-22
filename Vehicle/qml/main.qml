@@ -40,6 +40,7 @@ Vehicle {
             right: parent.right
         }
         toolbarLabelText: categoryToolbar.titleText
+        height: DsaStyles.mainToolbarHeight * scaleFactor
 
         MapToolRow {
             id: mapToolRow
@@ -85,15 +86,6 @@ Vehicle {
                 rightMargin: 10 * scaleFactor
 
             }                        
-        }
-
-        OptionsToolRow {
-            id: optionsToolRow
-            anchors {
-                verticalCenter: parent.verticalCenter
-                right: parent.right
-                rightMargin: 10 * scaleFactor
-            }
         }
     }
 
@@ -161,6 +153,9 @@ Vehicle {
             }
             width: 56 * scaleFactor
             appTitle: "DSA - V"
+
+            onSettingsClicked: optionsTool.visible = true;
+            onAboutClicked: aboutTool.visible = true;
         }
 
         TableOfContents {
@@ -268,13 +263,6 @@ Vehicle {
                             target: analysisTool
                             visible: true
                         }
-                    },
-                    State {
-                        name: "options"
-                        PropertyChanges {
-                            target: optionsTool
-                            visible: true
-                        }
                     }
                 ]
 
@@ -326,10 +314,6 @@ Vehicle {
         id: optionsTool
         anchors.fill: sceneView
         visible: false
-        onVisibleChanged: {
-            if (!visible)
-                optionsToolRow.state = "clear";
-        }
     }
 
     About {
@@ -337,10 +321,6 @@ Vehicle {
         anchors.fill: parent
 
         visible: false
-        onVisibleChanged: {
-            if (!visible)
-                optionsToolRow.state = "clear";
-        }
     }
 
     IdentifyFeaturesController {

@@ -73,7 +73,7 @@ Item {
             onClicked: {
                 selected = !selected;
                 followHud.enabled = selected;
-                locationController.enabled = selected;
+                locationController.locationVisible = selected;
             }
         }
 

@@ -10,7 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "GraphicPairAlert.h"
+#include "ProximityGraphicPairAlert.h"
 
 #include "Graphic.h"
 #include "GraphicsOverlay.h"
@@ -18,7 +18,7 @@
 
 using namespace Esri::ArcGISRuntime;
 
-GraphicPairAlert::GraphicPairAlert(Graphic* graphic1, Graphic* graphic2, double distance, QObject* parent):
+ProximityGraphicPairAlert::ProximityGraphicPairAlert(Graphic* graphic1, Graphic* graphic2, double distance, QObject* parent):
   ProximityPairAlert(graphic1, graphic2, distance, parent),
   m_graphic1(graphic1),
   m_graphic2(graphic2),
@@ -40,23 +40,23 @@ GraphicPairAlert::GraphicPairAlert(Graphic* graphic1, Graphic* graphic2, double 
   }
 }
 
-GraphicPairAlert::~GraphicPairAlert()
+ProximityGraphicPairAlert::~ProximityGraphicPairAlert()
 {
 
 }
 
-void GraphicPairAlert::highlight(bool on)
+void ProximityGraphicPairAlert::highlight(bool on)
 {
   if (m_graphic1)
     m_graphic1->setSelected(on);
 }
 
-QString GraphicPairAlert::element1Description() const
+QString ProximityGraphicPairAlert::element1Description() const
 {
   return m_description1;
 }
 
-QString GraphicPairAlert::element2Description() const
+QString ProximityGraphicPairAlert::element2Description() const
 {
   return m_description2;
 }

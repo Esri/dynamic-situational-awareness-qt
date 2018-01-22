@@ -13,7 +13,7 @@
 #include "AbstractAlert.h"
 #include "AlertListModel.h"
 #include "EditAlertsController.h"
-#include "GraphicPairAlert.h"
+#include "ProximityGraphicPairAlert.h"
 
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
@@ -133,7 +133,7 @@ void EditAlertsController::addWithinDistanceAlert(int statusIndex, int sourceLay
     if (!sourceGraphic)
       return;
 
-    GraphicPairAlert* geofenceAlert = new GraphicPairAlert(sourceGraphic, targetGraphic, distance, this);
+    ProximityGraphicPairAlert* geofenceAlert = new ProximityGraphicPairAlert(sourceGraphic, targetGraphic, distance, this);
     geofenceAlert->setStatus(status);
     geofenceAlert->setMessage("Location in geofence");
     geofenceAlert->setViewed(false);

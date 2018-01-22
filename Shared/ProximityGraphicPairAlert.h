@@ -10,8 +10,8 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef GRAPHICTPAIRALERT_H
-#define GRAPHICTPAIRALERT_H
+#ifndef PROXIMITYGRAPHICTPAIRALERT_H
+#define PROXIMITYGRAPHICTPAIRALERT_H
 
 #include "ProximityPairAlert.h"
 
@@ -23,16 +23,16 @@ namespace ArcGISRuntime
 }
 }
 
-class GraphicPairAlert : public ProximityPairAlert
+class ProximityGraphicPairAlert : public ProximityPairAlert
 {
   Q_OBJECT
 
 public:
-  explicit GraphicPairAlert(Esri::ArcGISRuntime::Graphic* graphic1,
+  explicit ProximityGraphicPairAlert(Esri::ArcGISRuntime::Graphic* graphic1,
                             Esri::ArcGISRuntime::Graphic* graphic2,
                             double distance,
                             QObject* parent = nullptr);
-  ~GraphicPairAlert();
+  ~ProximityGraphicPairAlert();
 
   void highlight(bool on) override;
 
@@ -46,4 +46,4 @@ private:
   QString m_description2;
 };
 
-#endif // GRAPHICTPAIRALERT_H
+#endif // PROXIMITYGRAPHICTPAIRALERT_H

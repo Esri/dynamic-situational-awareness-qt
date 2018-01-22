@@ -11,7 +11,7 @@
 //
 
 #include "AbstractAlert.h"
-#include "GraphicPairAlert.h"
+#include "ProximityPairAlert.h"
 #include "DistanceAlertRule.h"
 
 #include "GeometryEngine.h"
@@ -34,7 +34,7 @@ bool DistanceAlertRule::matchesRule(AbstractAlert* alert) const
   if (!alert)
     return false;
 
-  GraphicPairAlert* pairAlert = qobject_cast<GraphicPairAlert*>(alert);
+  ProximityPairAlert* pairAlert = qobject_cast<ProximityPairAlert*>(alert);
   if (!pairAlert)
     return true; // test is not valid for this alert type
 

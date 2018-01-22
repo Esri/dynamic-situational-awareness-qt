@@ -60,7 +60,7 @@ Row {
     OverlayButton {
         id: disableLocation
         anchors.verticalCenter: parent.verticalCenter
-        iconUrl: "qrc:/Resources/icons/xhdpi/navigation_disabled.png"
+        iconUrl: DsaResources.iconFollowLocationOff
         color: "transparent"
         name: "Off"
         onClicked: {
@@ -72,7 +72,7 @@ Row {
     OverlayButton {
         id: followLocation
         anchors.verticalCenter: parent.verticalCenter
-        iconUrl: "qrc:/Resources/icons/xhdpi/navigation.png"
+        iconUrl: DsaResources.iconFollowLocation
         color: "transparent"
         name: "Follow"
         onClicked: {
@@ -84,7 +84,7 @@ Row {
     OverlayButton {
         id: northUpLocation
         anchors.verticalCenter: parent.verticalCenter
-        iconUrl: "qrc:/Resources/icons/xhdpi/navigation_north.png"
+        iconUrl: DsaResources.iconFollowLocationNorthUp
         color: "transparent"
         name: "North Up"
         onClicked: {

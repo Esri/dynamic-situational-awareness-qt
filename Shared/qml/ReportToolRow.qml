@@ -67,7 +67,7 @@ Row {
     // Enemy Tool
     ToolIcon {
         id: enemyIcon
-        iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_editmap_dark_d-2.png"
+        iconSource: DsaResources.iconCreateReport
         toolName: "Enemy"
         onToolSelected: {
             reportToolRow.state = toolName;
@@ -78,7 +78,7 @@ Row {
     // SIGACT Tool
     ToolIcon {
         id: sigactIcon
-        iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_editmap_dark_d-2.png"
+        iconSource: DsaResources.iconCreateReport
         toolName: "SIGACT"
         onToolSelected: {
             reportToolRow.state = toolName;
@@ -89,7 +89,7 @@ Row {
     // CoT Tool
     ToolIcon {
         id: cotIcon
-        iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_editmap_dark_d-2.png"
+        iconSource: DsaResources.iconCreateReport
         toolName: "CoT"
         onToolSelected: {
             reportToolRow.state = toolName;

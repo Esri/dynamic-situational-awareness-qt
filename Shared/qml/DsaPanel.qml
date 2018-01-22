@@ -22,7 +22,7 @@ Rectangle {
     property string title: ""
     property alias titleBar: titleBar
     signal closed()
-    property string iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_closeclear_dark.png"
+    property string iconSource: DsaResources.iconClose
     color: Material.primary
 
     Column {

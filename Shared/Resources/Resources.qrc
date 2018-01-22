@@ -7,17 +7,13 @@
         <file>icons/xhdpi/ic_menu_closeclear_dark.png</file>
         <file>icons/xhdpi/ic_menu_choosebasemap_dark.png</file>
         <file>icons/xhdpi/drawer_large.png</file>
-        <file>icons/xhdpi/menu_large.png</file>
         <file>icons/xhdpi/ic_menu_layervisibilitypopover_dark_d.png</file>
         <file>icons/xhdpi/ic_menu_add_dark_d.png</file>
         <file>icons/xhdpi/ic_menu_messages_dark.png</file>
-        <file>icons/xhdpi/ic_menu_gpson_dark.png</file>
         <file>icons/xhdpi/ic_menu_gpsondontfollow_dark.png</file>
         <file>icons/xhdpi/navigation_north.png</file>
-        <file>icons/xhdpi/ic_menu_zoomtomapextent_light.png</file>
         <file>icons/xhdpi/ic_menu_openlistview_dark.png</file>
         <file>icons/xhdpi/ic_menu_zoomtofeature_light.png</file>
-        <file>icons/xhdpi/ic_menu_actionarrowb_dark_d.png</file>
         <file>icons/xhdpi/icon-64-coorconv-white.png</file>
         <file>icons/xhdpi/ic_menu_linelayer_light.png</file>
         <file>icons/xhdpi/ic_menu_pointlayer_light.png</file>
@@ -26,7 +22,6 @@
         <file>icons/xhdpi/ic_menu_subtract_dark_d.png</file>
         <file>icons/xhdpi/2D.png</file>
         <file>icons/xhdpi/3D.png</file>
-        <file>icons/xhdpi/ic_menu_gpson_dark_d.png</file>
         <file>icons/xhdpi/message/enemycontact1600.png</file>
         <file>icons/xhdpi/message/eod1600.png</file>
         <file>icons/xhdpi/message/sensorobs1600.png</file>
@@ -34,23 +29,17 @@
         <file>icons/xhdpi/ic_menu_completedone_dark.png</file>
         <file>icons/xhdpi/ic_menu_failedlayer.png</file>
         <file>icons/xhdpi/ic_menu_freehandsketchoff_dark.png</file>
-        <file>icons/xhdpi/ic_menu_freehandsketchon_dark.png</file>
         <file>icons/xhdpi/ic_menu_video_dark_d.png</file>
         <file>icons/xhdpi/ic_menu_settings_dark_d.png</file>
         <file>icons/xhdpi/ic_menu_home_dark.png</file>
         <file>icons/xhdpi/ic_menu_editmap_dark_d-2.png</file>
         <file>icons/xhdpi/ic_menu_layergroup_dark_d.png</file>
         <file>icons/xhdpi/ic_menu_tooloverflow_dark_d.png</file>
-        <file>icons/xhdpi/ic_menu_freehandsketch_dark_d.png</file>
         <file>icons/xhdpi/ic_menu_edit_dark_d.png</file>
-        <file>icons/xhdpi/ic_menu_help_dark_d.png</file>
         <file>icons/xhdpi/ic_menu_mapview_dark_d.png</file>
         <file>icons/xhdpi/ic_menu_sendmap_dark_d.png</file>
         <file>icons/xhdpi/ic_menu_trash_dark_d.png</file>
-        <file>icons/xhdpi/ic_menu_about_dark_d.png</file>
-        <file>icons/xhdpi/ic_menu_multiply_dark_d.png</file>
         <file>icons/xhdpi/ic_menu_aboutmap_dark.png</file>
-        <file>icons/xhdpi/ic_menu_drag_dark.png</file>
         <file>icons/xhdpi/ic_menu_refresh_dark.png</file>
         <file>icons/xhdpi/applogo.png</file>
     </qresource>

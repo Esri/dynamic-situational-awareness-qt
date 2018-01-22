@@ -113,7 +113,7 @@ DsaPanel {
                                 anchors.centerIn: parent
                                 height: parent.height
                                 width: height
-                                source: "qrc:/Resources/icons/xhdpi/ic_menu_completedone_dark.png"
+                                source: DsaResources.iconComplete
                                 visible: selected
                             }
 
@@ -160,7 +160,7 @@ DsaPanel {
                             anchors.centerIn: parent
                             width: 16 * scaleFactor
                             height: width
-                            source: "qrc:/Resources/icons/xhdpi/ic_menu_add_dark_d.png"
+                            source: DsaResources.iconAdd
                         }
                     }
 

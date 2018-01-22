@@ -109,35 +109,35 @@ Item {
 
         CategoryIcon {
             id: homeIcon
-            iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_home_dark.png"
+            iconSource: DsaResources.iconHome
             categoryName: "home"
             onCategorySelected: categoryToolbar.state = categoryName
         }
 
         CategoryIcon {
             id: mapIcon
-            iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_mapview_dark_d.png"
+            iconSource: DsaResources.iconMap
             categoryName: "map"
             onCategorySelected: categoryToolbar.state = categoryName
         }
 
         CategoryIcon {
             id: reportsIcon
-            iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_editmap_dark_d-2.png"
+            iconSource: DsaResources.iconCreateReport
             categoryName: "reports"
             onCategorySelected: categoryToolbar.state = categoryName
         }
 
         CategoryIcon {
             id: analysisIcon
-            iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_tooloverflow_dark_d.png"
+            iconSource: DsaResources.iconTools
             categoryName: "analysis"
             onCategorySelected: categoryToolbar.state = categoryName
         }
 
         CategoryIcon {
             id: alertIcon
-            iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_failedlayer.png"
+            iconSource: DsaResources.iconAlert
             categoryName: "alerts"
             onCategorySelected: categoryToolbar.state = categoryName
 
@@ -151,7 +151,7 @@ Item {
 
         CategoryIcon {
             id: markupIcon
-            iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_edit_dark_d.png"
+            iconSource: DsaResources.iconDraw
             categoryName: "markup"
             onCategorySelected: categoryToolbar.state = categoryName
         }
@@ -162,13 +162,13 @@ Item {
             bottom: parent.bottom
             horizontalCenter: parent.horizontalCenter
         }
+
         CategoryIcon {
             id: optionsIcon
 
-            iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_settings_dark_d.png"
+            iconSource: DsaResources.iconSettings
             categoryName: "options"
             onCategorySelected: menu.open()
-            //onCategorySelected: categoryToolbar.state = categoryName
         }
 
         Menu {

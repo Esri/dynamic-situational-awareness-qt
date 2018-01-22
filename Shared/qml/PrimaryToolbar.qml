@@ -33,7 +33,7 @@ ToolBar {
             anchors.verticalCenter: parent.verticalCenter
             width: DsaStyles.secondaryIconSize * scaleFactor
             height: width
-            source: "qrc:/Resources/icons/xhdpi/drawer_large.png"
+            source: DsaResources.iconDrawer
 
             MouseArea {
                 anchors.fill: parent

@@ -61,7 +61,7 @@ Item {
 
                 Image {
                     anchors.verticalCenter: parent.verticalCenter
-                    source: "qrc:/Resources/icons/xhdpi/applogo.png"
+                    source: DsaResources.iconAppLogo
                     width: 64 * scaleFactor
                     height: width
                     Layout.maximumHeight: height

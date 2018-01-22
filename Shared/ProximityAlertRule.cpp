@@ -12,24 +12,24 @@
 
 #include "AbstractAlert.h"
 #include "ProximityPairAlert.h"
-#include "DistanceAlertRule.h"
+#include "ProximityAlertRule.h"
 
 #include "GeometryEngine.h"
 
 using namespace Esri::ArcGISRuntime;
 
-DistanceAlertRule::DistanceAlertRule(QObject* parent):
+ProximityAlertRule::ProximityAlertRule(QObject* parent):
   AbstractAlertRule(parent)
 {
 
 }
 
-DistanceAlertRule::~DistanceAlertRule()
+ProximityAlertRule::~ProximityAlertRule()
 {
 
 }
 
-bool DistanceAlertRule::matchesRule(AbstractAlert* alert) const
+bool ProximityAlertRule::matchesRule(AbstractAlert* alert) const
 {
   if (!alert)
     return false;

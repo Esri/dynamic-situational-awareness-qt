@@ -10,22 +10,22 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef DISTANCEALERTRULE_H
-#define DISTANCEALERTRULE_H
+#ifndef PROXIMITYALERTRULE_H
+#define PROXIMITYALERTRULE_H
 
 #include "AbstractAlertRule.h"
 
 class AbstractAlert;
 
-class DistanceAlertRule : public AbstractAlertRule
+class ProximityAlertRule : public AbstractAlertRule
 {
   Q_OBJECT
 
 public:
-  explicit DistanceAlertRule(QObject* parent = nullptr);
-  ~DistanceAlertRule();
+  explicit ProximityAlertRule(QObject* parent = nullptr);
+  ~ProximityAlertRule();
 
   bool matchesRule(AbstractAlert* alert) const override;
 };
 
-#endif // DISTANCEALERTRULE_H
+#endif // PROXIMITYALERTRULE_H

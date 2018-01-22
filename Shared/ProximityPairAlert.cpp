@@ -10,6 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "AbstractOverlayManager.h"
 #include "ProximityPairAlert.h"
 
 #include "GeoElement.h"
@@ -17,10 +18,17 @@
 
 using namespace Esri::ArcGISRuntime;
 
-ProximityPairAlert::ProximityPairAlert(GeoElement* element1, GeoElement* element2, double distance, QObject* parent):
+ProximityPairAlert::ProximityPairAlert(GeoElement* element1,
+                                       GeoElement* element2,
+                                       AbstractOverlayManager* overlay1Manager,
+                                       AbstractOverlayManager* overlay2Manager,
+                                       double distance,
+                                       QObject* parent):
   AbstractAlert(parent),
   m_element1(element1),
   m_element2(element2),
+  m_overlay1Manager(overlay1Manager),
+  m_overlay2Manager(overlay2Manager),
   m_distance(distance)
 {
   auto onElementDestroyed = [this]()
@@ -49,6 +57,11 @@ QString ProximityPairAlert::description() const
   return QString(element1Description() + " within %1 m of " + element2Description()).arg(m_distance);
 }
 
+void ProximityPairAlert::highlight(bool on)
+{
+  m_overlay1Manager->setSelected(m_element1, on);
+}
+
 Geometry ProximityPairAlert::position2() const
 {
   return m_element2 ? m_element2->geometry() : Point();
@@ -57,4 +70,14 @@ Geometry ProximityPairAlert::position2() const
 double ProximityPairAlert::distance() const
 {
   return m_distance;
+}
+
+QString ProximityPairAlert::element1Description() const
+{
+  return m_overlay1Manager->elementDescription(m_element1);
+}
+
+QString ProximityPairAlert::element2Description() const
+{
+  return m_overlay2Manager->elementDescription(m_element2);
 }

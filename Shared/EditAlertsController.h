@@ -24,6 +24,7 @@ class EditAlertsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
   Q_OBJECT
 
   Q_PROPERTY(QAbstractItemModel* layerNames READ layerNames NOTIFY layerNamesChanged)
+  Q_PROPERTY(QAbstractItemModel* statusNames READ statusNames CONSTANT)
 
 public:
   explicit EditAlertsController(QObject* parent = nullptr);
@@ -32,9 +33,10 @@ public:
   // AbstractTool interface
   QString toolName() const override;
 
-  Q_INVOKABLE void addWithinDistanceAlert(int sourceLayerIndex, double distance, int itemId, int targetLayerIndex);
+  Q_INVOKABLE void addWithinDistanceAlert(int statusIndex, int sourceLayerIndex, double distance, int itemId, int targetLayerIndex);
 
   QAbstractItemModel* layerNames() const;
+  QAbstractItemModel* statusNames() const;
 
 signals:
   void layerNamesChanged();
@@ -47,7 +49,7 @@ private:
   void setLayerNames(const QStringList& layerNames);
 
   QStringListModel* m_layerNames;
-
+  QStringListModel* m_statusNames;
 };
 
 #endif // EDITALERTSCONTROLLER_H

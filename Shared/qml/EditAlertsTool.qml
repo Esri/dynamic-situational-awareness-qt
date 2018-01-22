@@ -27,7 +27,10 @@ DsaPanel {
         id: toolController
     }
 
-    property bool readyToAdd: leftHandSideCB.currentIndex !== -1 && layerCB.currentIndex !== -1 && featureIdEdit.text.length > 0
+    property bool readyToAdd: statusCb.currentIndex !== -1 &&
+                              leftHandSideCB.currentIndex !== -1 &&
+                              layerCB.currentIndex !== -1 &&
+                              featureIdEdit.text.length > 0
     property bool expandNewAlert: true
 
     Rectangle {
@@ -87,6 +90,19 @@ DsaPanel {
             right: newAlertFrame.right
             bottom: newAlertFrame.bottom
             margins: 8 * scaleFactor
+        }
+
+        ComboBox {
+            id: statusCb
+            anchors {
+                left: parent.left
+                right: parent.right
+            }
+
+            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+            textRole: "display"
+            model: toolController.statusNames
+            currentIndex: -1
         }
 
         Text {
@@ -237,6 +253,7 @@ DsaPanel {
                 if (withinDistanceRb.checked)
                 {
                     toolController.addWithinDistanceAlert(
+                                statusCb.currentIndex,
                                 leftHandSideCB.currentIndex,
                                 withinDistanceSB.value,
                                 Number(featureIdEdit.text),

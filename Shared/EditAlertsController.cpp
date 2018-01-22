@@ -28,7 +28,8 @@ using namespace Esri::ArcGISRuntime;
 
 EditAlertsController::EditAlertsController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent),
-  m_layerNames(new QStringListModel(this))
+  m_layerNames(new QStringListModel(this)),
+  m_statusNames(new QStringListModel(QStringList{"Low", "Moderate", "High", "Critical"},this))
 {
   Toolkit::ToolManager::instance().addTool(this);
 
@@ -47,9 +48,13 @@ QString EditAlertsController::toolName() const
   return "Edit Alerts";
 }
 
-void EditAlertsController::addWithinDistanceAlert(int sourceLayerIndex, double distance, int itemId, int targetLayerIndex)
+void EditAlertsController::addWithinDistanceAlert(int statusIndex, int sourceLayerIndex, double distance, int itemId, int targetLayerIndex)
 {
-  if (sourceLayerIndex < 0 || distance < 0.0 || itemId < 0 || targetLayerIndex < 0)
+  if (statusIndex < 0 ||
+      sourceLayerIndex < 0 ||
+      distance < 0.0 ||
+      itemId < 0 ||
+      targetLayerIndex < 0)
     return;
 
   if (sourceLayerIndex == targetLayerIndex)
@@ -116,14 +121,18 @@ void EditAlertsController::addWithinDistanceAlert(int sourceLayerIndex, double d
   if (!sourceGraphics)
     return;
 
-  auto createGraphicAlert = [this, sourceGraphics, targetGraphic, distance](int newGraphic)
+  AlertStatus status = static_cast<AlertStatus>(statusIndex);
+  if (status > AlertStatus::Critical)
+    return;
+
+  auto createGraphicAlert = [this, sourceGraphics, targetGraphic, distance, status](int newGraphic)
   {
     Graphic* sourceGraphic = sourceGraphics->at(newGraphic);
     if (!sourceGraphic)
       return;
 
     GraphicPairAlert* geofenceAlert = new GraphicPairAlert(sourceGraphic, targetGraphic, distance, this);
-    geofenceAlert->setStatus(AlertStatus::Critical);
+    geofenceAlert->setStatus(status);
     geofenceAlert->setMessage("Location in geofence");
     geofenceAlert->registerAlert();
     geofenceAlert->setViewed(false);
@@ -138,6 +147,11 @@ void EditAlertsController::addWithinDistanceAlert(int sourceLayerIndex, double d
 QAbstractItemModel* EditAlertsController::layerNames() const
 {
   return m_layerNames;
+}
+
+QAbstractItemModel* EditAlertsController::statusNames() const
+{
+  return m_statusNames;
 }
 
 void EditAlertsController::onGeoviewChanged()

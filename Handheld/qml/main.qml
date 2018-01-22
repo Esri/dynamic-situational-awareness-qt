@@ -369,4 +369,9 @@ Handheld {
         anchors.centerIn: parent
         visible: identifyController.busy
     }
+
+    Shortcut {
+        sequence: "Ctrl+Q"
+        onActivated: Qt.quit()
+    }
 }

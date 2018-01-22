@@ -120,13 +120,33 @@ void Vehicle::componentComplete()
 
     Graphic* dummyAlertGraphic = new Graphic(alertPos, this);
     dummyAlertGraphic->attributes()->insertAttribute("sic", "GFGPOAO-------X");
-    DummyAlert* dummyAlert = new DummyAlert(dummyAlertGraphic, this);
+    DummyAlert* dummyAlert = new DummyAlert(dummyAlertGraphic);
     dummyAlert->setMessage(QString("Dummy Alert %1").arg(alertCount));
     dummyAlert->setStatus(randomStatus);
     dummyAlert->setViewed(false);
     dummyAlert->setActive(true);
     alertsOverlay->graphics()->append(dummyAlertGraphic);
-    dummyAlert->registerAlert();
+    AlertListModel::instance()->addAlert(dummyAlert);
+  });
+
+  connect(m_sceneView, &SceneQuickView::mouseClicked, this, [this, alertsOverlay](QMouseEvent& mouseEvent)
+  {
+    if (mouseEvent.button() != Qt::MouseButton::RightButton)
+      return;
+
+    GraphicListModel* graphics = alertsOverlay->graphics();
+    if (!graphics)
+      return;
+
+    for (int i = graphics->rowCount() -1; i >= 0; --i)
+    {
+      Graphic* g = graphics->at(i);
+      if (g)
+        g->deleteLater();
+    }
+
+    graphics->clear();
+    mouseEvent.accept();
   });
 
   GraphicsOverlay* geofenceOverlay = new GraphicsOverlay(this);

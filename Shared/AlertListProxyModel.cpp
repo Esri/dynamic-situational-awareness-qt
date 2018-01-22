@@ -38,6 +38,11 @@ AlertListProxyModel::AlertListProxyModel(QObject* parent):
     {
       invalidate();
     });
+
+    connect(sourceModel, &AlertListModel::rowsRemoved, this, [this]()
+    {
+      invalidate();
+    });
   }
 
   m_updateTimer->setInterval(500);

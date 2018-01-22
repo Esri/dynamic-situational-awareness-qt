@@ -40,6 +40,7 @@ public:
   ~AlertListModel();
 
   bool addAlert(AbstractAlert* alert);
+  void removeAlert(AbstractAlert* alert);
 
   AbstractAlert* alertAt(int rowIndex) const;
 

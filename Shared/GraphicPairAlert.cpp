@@ -39,6 +39,20 @@ GraphicPairAlert::GraphicPairAlert(Graphic* graphic1, Graphic* graphic2, double 
     if (graphics2)
       m_description2 = QString("%1 (%2)").arg(m_graphic2->graphicsOverlay()->overlayId(), graphics2->indexOf(m_graphic2));
   }
+
+  connect(m_graphic1, &Graphic::destroyed, this, [this]()
+  {
+    emit noLongerValid();
+    m_graphic1 = nullptr;
+    m_graphic2 = nullptr;
+  });
+
+  connect(m_graphic2, &Graphic::destroyed, this, [this]()
+  {
+    emit noLongerValid();
+    m_graphic1 = nullptr;
+    m_graphic2 = nullptr;
+  });
 }
 
 GraphicPairAlert::~GraphicPairAlert()

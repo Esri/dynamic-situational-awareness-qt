@@ -22,6 +22,11 @@ DummyAlert::DummyAlert(Graphic* graphic, QObject* parent):
   m_graphic(graphic)
 {
   m_graphic->setSelected(true);
+
+  connect(m_graphic, &Graphic::destroyed, this, [this]()
+  {
+    emit noLongerValid();
+  });
 }
 
 DummyAlert::~DummyAlert()

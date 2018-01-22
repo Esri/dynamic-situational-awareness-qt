@@ -36,8 +36,6 @@ public:
   explicit AbstractAlert(QObject* parent = nullptr);
   ~AbstractAlert();
 
-  void registerAlert();
-
   AlertStatus status() const;
   void setStatus(const AlertStatus& status);
 
@@ -67,6 +65,7 @@ signals:
   void viewedChanged();
   void positionChanged();
   void activeChanged();
+  void noLongerValid();
 
 private:
   AlertStatus m_status = AlertStatus::Inactive;

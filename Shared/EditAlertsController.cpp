@@ -136,8 +136,8 @@ void EditAlertsController::addWithinDistanceAlert(int statusIndex, int sourceLay
     GraphicPairAlert* geofenceAlert = new GraphicPairAlert(sourceGraphic, targetGraphic, distance, this);
     geofenceAlert->setStatus(status);
     geofenceAlert->setMessage("Location in geofence");
-    geofenceAlert->registerAlert();
     geofenceAlert->setViewed(false);
+    AlertListModel::instance()->addAlert(geofenceAlert);
   };
 
   for (int g = 0; g < sourceGraphics->rowCount(); ++g)
@@ -185,7 +185,7 @@ void EditAlertsController::onGeoviewChanged()
   if (graphicsOverlays)
   {
     connect(graphicsOverlays, &GraphicsOverlayListModel::graphicsOverlayAdded, this, &EditAlertsController::onLayersChanged);
-    connect(graphicsOverlays, &GraphicsOverlayListModel::graphicsOverlayAdded, this, &EditAlertsController::onLayersChanged);
+    connect(graphicsOverlays, &GraphicsOverlayListModel::graphicsOverlayRemoved, this, &EditAlertsController::onLayersChanged);
   }
 
   onLayersChanged();

@@ -11,7 +11,6 @@
 //
 
 #include "AbstractAlert.h"
-#include "AlertListModel.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -23,15 +22,6 @@ AbstractAlert::AbstractAlert(QObject* parent):
 AbstractAlert::~AbstractAlert()
 {
 
-}
-
-void AbstractAlert::registerAlert()
-{
-  AlertListModel* alertsList = AlertListModel::instance();
-  if (!alertsList)
-    return;
-
-  alertsList->addAlert(this);
 }
 
 AlertStatus AbstractAlert::status() const

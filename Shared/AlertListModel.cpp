@@ -71,11 +71,41 @@ bool AlertListModel::addAlert(AbstractAlert* alert)
     emit dataChanged(changedIndex, changedIndex);
   });
 
+  connect(alert, &AbstractAlert::noLongerValid, this, [this, alert]
+  {
+    removeAlert(alert);
+  });
+
   beginInsertRows(QModelIndex(), insertIdx, insertIdx);
   m_alerts.append(alert);
   endInsertRows();
 
   return true;
+}
+
+void AlertListModel::removeAlert(AbstractAlert* alert)
+{
+  if (!alert)
+    return;
+
+
+  if (alert->id().isNull())
+    return;
+
+  const QUuid theId = alert->id();
+
+  for (int i = 0; i < m_alerts.size(); ++i)
+  {
+    AbstractAlert* testAlert = m_alerts.at(i);
+    if (!testAlert)
+      continue;
+
+    if (testAlert->id() != theId)
+      continue;
+
+    removeAt(i);
+    break;
+  }
 }
 
 AbstractAlert* AlertListModel::alertAt(int rowIndex) const

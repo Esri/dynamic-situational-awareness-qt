@@ -13,6 +13,7 @@
 #include "AbstractAlert.h"
 #include "AlertListModel.h"
 #include "EditAlertsController.h"
+#include "FeatureOverlayManager.h"
 #include "GraphicsOverlayManager.h"
 #include "ProximityPairAlert.h"
 
@@ -22,8 +23,11 @@
 #include "GeoView.h"
 #include "GraphicsOverlay.h"
 #include "GraphicsOverlayListModel.h"
+#include "FeatureLayer.h"
 #include "Layer.h"
 #include "LayerListModel.h"
+
+#include <QDebug>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -63,14 +67,16 @@ void EditAlertsController::addWithinDistanceAlert(int statusIndex, int sourceLay
   if (sourceLayerIndex == targetLayerIndex)
     return;
 
+  AlertStatus status = static_cast<AlertStatus>(statusIndex);
+  if (status > AlertStatus::Critical)
+    return;
+
   GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
   if (!geoView)
     return;
 
-  Layer* sourceLayer = nullptr;
-  Layer* targetLayer = nullptr;
-  GraphicsOverlay* sourceOverlay = nullptr;
-  GraphicsOverlay* targetOverlay = nullptr;
+  AbstractOverlayManager* sourceOverlayMgr = nullptr;
+  AbstractOverlayManager* targetOverlayMgr = nullptr;
   int currIndex = -1;
   LayerListModel* operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
   if (operationalLayers)
@@ -83,11 +89,15 @@ void EditAlertsController::addWithinDistanceAlert(int statusIndex, int sourceLay
       if (!layer)
         continue;
 
+      FeatureLayer* featLayer = qobject_cast<FeatureLayer*>(layer);
+      if (!featLayer)
+        continue;
+
       if (currIndex == sourceLayerIndex)
-        sourceLayer = layer;
+        sourceOverlayMgr = new FeatureOverlayManager(featLayer, this);
 
       if (currIndex == targetLayerIndex)
-        targetLayer = layer;
+        targetOverlayMgr = new FeatureOverlayManager(featLayer, this);
     }
   }
 
@@ -103,44 +113,31 @@ void EditAlertsController::addWithinDistanceAlert(int statusIndex, int sourceLay
         continue;
 
       if (currIndex == sourceLayerIndex)
-        sourceOverlay = overlay;
+        sourceOverlayMgr = new GraphicsOverlayManager(overlay, this);
 
       if (currIndex == targetLayerIndex)
-        targetOverlay = overlay;
+        targetOverlayMgr = new GraphicsOverlayManager(overlay, this);
     }
   }
 
-  if (!sourceLayer && !sourceOverlay)
+  if (!targetOverlayMgr && !sourceOverlayMgr)
     return;
 
-  if (!targetLayer && !targetOverlay)
+  GeoElement* targetElement = targetOverlayMgr->elementAt(itemId);
+  if (!targetElement)
     return;
 
-  Graphic* targetGraphic = targetOverlay->graphics()->at(itemId);
-  if (!targetGraphic)
-    return;
 
-  GraphicListModel* sourceGraphics = sourceOverlay->graphics();
-  if (!sourceGraphics)
-    return;
-
-  AlertStatus status = static_cast<AlertStatus>(statusIndex);
-  if (status > AlertStatus::Critical)
-    return;
-
-  GraphicsOverlayManager* sourceOverlayManager = new GraphicsOverlayManager(sourceOverlay);
-  GraphicsOverlayManager* targetOverlayManager = new GraphicsOverlayManager(targetOverlay);
-
-  auto createGraphicAlert = [this, sourceGraphics, targetGraphic, distance, status, sourceOverlayManager, targetOverlayManager](int newGraphic)
+  auto createProximityAlert = [this, targetElement, distance, status, sourceOverlayMgr, targetOverlayMgr](int newElement)
   {
-    Graphic* sourceGraphic = sourceGraphics->at(newGraphic);
-    if (!sourceGraphic)
+    GeoElement* sourceElement = sourceOverlayMgr->elementAt(newElement);
+    if (!sourceElement)
       return;
 
-    ProximityPairAlert* geofenceAlert = new ProximityPairAlert(sourceGraphic,
-                                                               targetGraphic,
-                                                               sourceOverlayManager,
-                                                               targetOverlayManager,
+    ProximityPairAlert* geofenceAlert = new ProximityPairAlert(sourceElement,
+                                                               targetElement,
+                                                               sourceOverlayMgr,
+                                                               targetOverlayMgr,
                                                                distance,
                                                                this);
     geofenceAlert->setStatus(status);
@@ -149,10 +146,11 @@ void EditAlertsController::addWithinDistanceAlert(int statusIndex, int sourceLay
     AlertListModel::instance()->addAlert(geofenceAlert);
   };
 
-  for (int g = 0; g < sourceGraphics->rowCount(); ++g)
-    createGraphicAlert(g);
+  const int totalElements = static_cast<int>(sourceOverlayMgr->numberOfElements());
+  for (qint64 i = 0; i < totalElements; ++i)
+    createProximityAlert(i);
 
-  connect(sourceGraphics, &GraphicListModel::graphicAdded, this, createGraphicAlert);
+  connect(sourceOverlayMgr, &AbstractOverlayManager::elementAdded, this, createProximityAlert);
 }
 
 void EditAlertsController::removeConditionAt(int rowIndex)
@@ -220,7 +218,14 @@ void EditAlertsController::onLayersChanged()
       if (!lyr)
         continue;
 
-      newList.append(lyr->name());
+      FeatureLayer* featLayer = qobject_cast<FeatureLayer*>(lyr);
+      if (!featLayer)
+        continue;
+
+      if (featLayer->loadStatus() != LoadStatus::Loaded)
+        connect(featLayer, &FeatureLayer::doneLoading, this, &EditAlertsController::onLayersChanged);
+      else
+        newList.append(featLayer->name());
     }
   }
 

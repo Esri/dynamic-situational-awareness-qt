@@ -33,6 +33,13 @@ public:
 
   virtual void setSelected(Esri::ArcGISRuntime::GeoElement* element, bool on) = 0;
   virtual QString elementDescription(Esri::ArcGISRuntime::GeoElement* element) const = 0;
+
+  virtual Esri::ArcGISRuntime::GeoElement* elementAt(int elementId) const = 0;
+
+  virtual qint64 numberOfElements() const = 0;
+
+signals:
+  void elementAdded(int addedElement);
 };
 
 #endif // ABSTRACTOVERLAYMANAGER_H

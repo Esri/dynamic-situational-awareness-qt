@@ -34,6 +34,10 @@ public:
   void setSelected(Esri::ArcGISRuntime::GeoElement* element, bool ons) override;
   QString elementDescription(Esri::ArcGISRuntime::GeoElement* element) const;
 
+  Esri::ArcGISRuntime::GeoElement* elementAt(int elementId) const override;
+
+  qint64 numberOfElements() const override;
+
 private:
   Esri::ArcGISRuntime::GraphicsOverlay* m_overlay;
 };

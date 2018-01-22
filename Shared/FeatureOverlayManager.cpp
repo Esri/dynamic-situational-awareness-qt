@@ -15,6 +15,11 @@
 #include "Feature.h"
 #include "FeatureLayer.h"
 
+#include <QDebug>
+#include <QEventLoop>
+#include <QThread>
+#include <QTimer>
+
 using namespace Esri::ArcGISRuntime;
 
 FeatureOverlayManager::FeatureOverlayManager(FeatureLayer* overlay, QObject* parent):
@@ -53,7 +58,47 @@ QString FeatureOverlayManager::elementDescription(GeoElement* element) const
   if (!atts)
     return "";
 
-  QString oid = atts->attributeValue("OID");
+  QString oid = atts->attributeValue("OID").toString();
 
   return QString("%1 (%2)").arg(m_overlay->name(), oid);
+}
+
+GeoElement* FeatureOverlayManager::elementAt(int elementId) const
+{
+  qDebug() << m_overlay->name();
+  FeatureTable* tab = m_overlay->featureTable();
+  if (!tab)
+    return nullptr;
+
+  QueryParameters qp;
+  qp.setWhereClause("OBJECTID = " + elementId);
+
+  Feature* feature = nullptr;
+
+  connect(tab, &FeatureTable::errorOccurred, this, [this](Error error)
+  {
+    qDebug() << error.message() << error.additionalMessage();
+  });
+
+  QEventLoop loop;
+  loop.connect(tab, &FeatureTable::queryFeaturesCompleted, this, [this, &loop, &feature](QUuid, FeatureQueryResult* featureQueryResult)
+  {
+    if (!featureQueryResult)
+      return;
+
+    feature = featureQueryResult->iterator().next();
+    loop.quit();
+  });
+  loop.connect(tab, &FeatureTable::errorOccurred, &loop, &QEventLoop::quit);
+
+  tab->queryFeatures(qp);
+
+  loop.exec();
+
+  return feature;
+}
+
+qint64 FeatureOverlayManager::numberOfElements() const
+{
+  return m_overlay->featureTable()->numberOfFeatures();
 }

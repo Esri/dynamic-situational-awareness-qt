@@ -22,7 +22,7 @@ GraphicsOverlayManager::GraphicsOverlayManager(GraphicsOverlay* overlay, QObject
   AbstractOverlayManager(parent),
   m_overlay(overlay)
 {
-
+  connect(m_overlay->graphics(), &GraphicListModel::graphicAdded, this, &GraphicsOverlayManager::elementAdded);
 }
 
 GraphicsOverlayManager::~GraphicsOverlayManager()
@@ -55,4 +55,14 @@ QString GraphicsOverlayManager::elementDescription(GeoElement* element) const
 
   return QString("%1 (%2)").arg(m_overlay->overlayId(), graphics->indexOf(g));
 
+}
+
+GeoElement* GraphicsOverlayManager::elementAt(int elementId) const
+{
+  return m_overlay->graphics() ? m_overlay->graphics()->at(elementId) : nullptr;
+}
+
+qint64 GraphicsOverlayManager::numberOfElements() const
+{
+  return m_overlay->graphics()->rowCount();
 }

@@ -25,6 +25,7 @@ class EditAlertsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 
   Q_PROPERTY(QAbstractItemModel* layerNames READ layerNames NOTIFY layerNamesChanged)
   Q_PROPERTY(QAbstractItemModel* statusNames READ statusNames CONSTANT)
+  Q_PROPERTY(QAbstractItemModel* conditionsList READ conditionsList NOTIFY conditionsListChanged)
 
 public:
   explicit EditAlertsController(QObject* parent = nullptr);
@@ -37,9 +38,11 @@ public:
 
   QAbstractItemModel* layerNames() const;
   QAbstractItemModel* statusNames() const;
+  QAbstractItemModel* conditionsList() const;
 
 signals:
   void layerNamesChanged();
+  void conditionsListChanged();
 
 private slots:
   void onGeoviewChanged();

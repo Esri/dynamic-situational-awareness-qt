@@ -36,6 +36,8 @@ EditAlertsController::EditAlertsController(QObject* parent /* = nullptr */):
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged,
           this, &EditAlertsController::onGeoviewChanged);
 
+  connect(AlertListModel::instance(), &AlertListModel::dataChanged, this, &EditAlertsController::conditionsListChanged);
+
   onGeoviewChanged();
 }
 
@@ -152,6 +154,11 @@ QAbstractItemModel* EditAlertsController::layerNames() const
 QAbstractItemModel* EditAlertsController::statusNames() const
 {
   return m_statusNames;
+}
+
+QAbstractItemModel* EditAlertsController::conditionsList() const
+{
+  return AlertListModel::instance();
 }
 
 void EditAlertsController::onGeoviewChanged()

@@ -36,6 +36,7 @@ public:
 
   Esri::ArcGISRuntime::Geometry position() const override;
   void highlight(bool on) override;
+  QString description() const override;
 
   Esri::ArcGISRuntime::Geometry position2() const;
 
@@ -45,6 +46,8 @@ private:
   Esri::ArcGISRuntime::Graphic* m_graphic1;
   Esri::ArcGISRuntime::Graphic* m_graphic2;
   double m_distance;
+  QString m_description1;
+  QString m_description2;
 };
 
 #endif // GRAPHICTPAIRALERT_H

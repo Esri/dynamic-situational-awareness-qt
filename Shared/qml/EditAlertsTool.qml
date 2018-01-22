@@ -73,7 +73,7 @@ DsaPanel {
             verticalCenter: collapseNewAlertButton.verticalCenter
             horizontalCenter: newAlertFrame.horizontalCenter
         }
-        text: qsTr("New alert")
+        text: qsTr("New condition")
         color: Material.foreground
         font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
         horizontalAlignment: Text.AlignRight
@@ -263,23 +263,78 @@ DsaPanel {
         }
     }
 
+    Text {
+        id: conditionsListTitle
+        anchors {
+            margins: 8 * scaleFactor
+            top: newAlertFrame.bottom
+            horizontalCenter: newAlertFrame.horizontalCenter
+        }
+        text: qsTr("Conditions")
+        color: Material.foreground
+        font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
+        horizontalAlignment: Text.AlignRight
+        verticalAlignment: Text.AlignVCenter
+    }
+
     ListView {
         id: alertsList
         clip: true
         anchors {
             margins: 8 * scaleFactor
-            top: newAlertFrame.bottom
-            bottom: parent.bottom
+            top: conditionsListTitle.bottom
+            bottom: removeConditionButton.top
             left: parent.left
             right: parent.right
         }
 
         model: toolController.conditionsList
+        currentIndex: -1
 
         delegate: Row {
             Text {
-                text: message
+                text: description
+                color: index === alertsList.currentIndex ? Material.accent : Material.foreground
+                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                horizontalAlignment: Text.AlignLeft
+                verticalAlignment: Text.AlignVCenter
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: alertsList.currentIndex = index;
+                }
             }
+        }
+    }
+
+    RoundButton {
+        id: removeConditionButton
+        enabled: alertsList.currentIndex !== -1
+
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+            bottom: parent.bottom
+            margins: 8 * scaleFactor
+        }
+
+        background: Rectangle {
+            implicitWidth: 40 * scaleFactor
+            implicitHeight: 40 * scaleFactor
+            opacity: enabled ? 1 : 0.3
+            radius: addButton.radius
+            color: Material.accent
+
+            Image {
+                anchors.centerIn: parent
+                width: 26 * scaleFactor
+                height: width
+                source: "qrc:/Resources/icons/xhdpi/ic_menu_trash_dark_d.png"
+            }
+        }
+
+        onClicked: {
+            toolController.removeConditionAt(alertsList.currentIndex);
+            alertsList.currentIndex = -1;
         }
     }
 }

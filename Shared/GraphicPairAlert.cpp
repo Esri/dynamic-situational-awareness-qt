@@ -13,6 +13,7 @@
 #include "GraphicPairAlert.h"
 
 #include "Graphic.h"
+#include "GraphicsOverlay.h"
 #include "Point.h"
 
 using namespace Esri::ArcGISRuntime;
@@ -21,9 +22,23 @@ GraphicPairAlert::GraphicPairAlert(Graphic* graphic1, Graphic* graphic2, double 
   AbstractAlert(parent),
   m_graphic1(graphic1),
   m_graphic2(graphic2),
-  m_distance(distance)
+  m_distance(distance),
+  m_description1("Graphic1"),
+  m_description2("Graphic2")
 {
+  if (m_graphic1->graphicsOverlay())
+  {
+    GraphicListModel* graphics1 = m_graphic1->graphicsOverlay()->graphics();
+    if (graphics1)
+      m_description1 = QString("%1 (%2)").arg(m_graphic1->graphicsOverlay()->overlayId(), graphics1->indexOf(m_graphic1));
+  }
 
+  if (m_graphic2->graphicsOverlay())
+  {
+    GraphicListModel* graphics2 = m_graphic2->graphicsOverlay()->graphics();
+    if (graphics2)
+      m_description2 = QString("%1 (%2)").arg(m_graphic2->graphicsOverlay()->overlayId(), graphics2->indexOf(m_graphic2));
+  }
 }
 
 GraphicPairAlert::~GraphicPairAlert()
@@ -40,6 +55,11 @@ void GraphicPairAlert::highlight(bool on)
 {
   if (m_graphic1)
     m_graphic1->setSelected(on);
+}
+
+QString GraphicPairAlert::description() const
+{
+  return QString(m_description1 + " within %2 m of " + m_description2).arg(m_distance);
 }
 
 Geometry GraphicPairAlert::position2() const

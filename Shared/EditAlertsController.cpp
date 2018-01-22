@@ -146,6 +146,11 @@ void EditAlertsController::addWithinDistanceAlert(int statusIndex, int sourceLay
   connect(sourceGraphics, &GraphicListModel::graphicAdded, this, createGraphicAlert);
 }
 
+void EditAlertsController::removeConditionAt(int rowIndex)
+{
+  AlertListModel::instance()->removeAt(rowIndex);
+}
+
 QAbstractItemModel* EditAlertsController::layerNames() const
 {
   return m_layerNames;

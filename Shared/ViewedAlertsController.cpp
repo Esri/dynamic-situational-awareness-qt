@@ -28,6 +28,7 @@ ViewedAlertsController::ViewedAlertsController(QObject* parent /* = nullptr */):
   {
     connect(model, &AlertListModel::dataChanged, this, &ViewedAlertsController::unviewedCountChanged);
     connect(model, &AlertListModel::rowsInserted, this, &ViewedAlertsController::unviewedCountChanged);
+    connect(model, &AlertListModel::rowsRemoved, this, &ViewedAlertsController::unviewedCountChanged);
     emit unviewedCountChanged();
   }
 }

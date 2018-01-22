@@ -28,8 +28,6 @@ enum class AlertStatus : unsigned int
   Critical
 };
 
-Q_DECLARE_METATYPE(AlertStatus);
-
 class AbstractAlert : public QObject
 {
   Q_OBJECT
@@ -46,6 +44,8 @@ public:
   virtual Esri::ArcGISRuntime::Geometry position() const = 0;
 
   virtual void highlight(bool on) = 0;
+
+  virtual QString description() const = 0;
 
   QString message() const;
   void setMessage(const QString &message);

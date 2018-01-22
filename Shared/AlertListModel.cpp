@@ -32,6 +32,7 @@ AlertListModel::AlertListModel(QObject* parent):
   m_roles[AlertListRoles::Status] = "status";
   m_roles[AlertListRoles::Position] = "position";
   m_roles[AlertListRoles::Viewed] = "viewed";
+  m_roles[AlertListRoles::Description] = "description";
 }
 
 AlertListModel::~AlertListModel()
@@ -82,6 +83,17 @@ AbstractAlert* AlertListModel::alertAt(int rowIndex) const
   return m_alerts.value(rowIndex, nullptr);
 }
 
+void AlertListModel::removeAt(int rowIndex)
+{
+  AbstractAlert* alert = alertAt(rowIndex);
+  if (!alert)
+    return;
+
+  beginRemoveRows(QModelIndex(), rowIndex, rowIndex);
+  m_alerts.removeAt(rowIndex);
+  endRemoveRows();
+}
+
 int AlertListModel::rowCount(const QModelIndex&) const
 {
   return m_alerts.size();
@@ -113,6 +125,10 @@ QVariant AlertListModel::data(const QModelIndex& index, int role) const
   case AlertListRoles::Viewed:
   {
     return alert->viewed();
+  }
+  case AlertListRoles::Description:
+  {
+    return alert->description();
   }
   default:
     break;

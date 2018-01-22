@@ -31,7 +31,8 @@ public:
     Message = Qt::UserRole + 2,
     Status = Qt::UserRole + 3,
     Position = Qt::UserRole +4 ,
-    Viewed = Qt::UserRole + 5
+    Viewed = Qt::UserRole + 5,
+    Description = Qt::UserRole + 6
   };
 
   static AlertListModel* instance();
@@ -41,6 +42,8 @@ public:
   bool addAlert(AbstractAlert* alert);
 
   AbstractAlert* alertAt(int rowIndex) const;
+
+  void removeAt(int rowIndex);
 
   // QAbstractItemModel interface
   int rowCount(const QModelIndex& parent = QModelIndex()) const override;

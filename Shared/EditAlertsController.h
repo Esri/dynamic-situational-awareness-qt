@@ -35,6 +35,7 @@ public:
   QString toolName() const override;
 
   Q_INVOKABLE void addWithinDistanceAlert(int statusIndex, int sourceLayerIndex, double distance, int itemId, int targetLayerIndex);
+  Q_INVOKABLE void removeConditionAt(int rowIndex);
 
   QAbstractItemModel* layerNames() const;
   QAbstractItemModel* statusNames() const;

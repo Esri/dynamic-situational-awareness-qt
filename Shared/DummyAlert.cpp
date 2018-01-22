@@ -39,3 +39,8 @@ void DummyAlert::highlight(bool on)
   if (m_graphic)
     m_graphic->setSelected(on);
 }
+
+QString DummyAlert::description() const
+{
+  return message();
+}

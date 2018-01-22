@@ -19,10 +19,9 @@
 using namespace Esri::ArcGISRuntime;
 
 GraphicPairAlert::GraphicPairAlert(Graphic* graphic1, Graphic* graphic2, double distance, QObject* parent):
-  AbstractAlert(parent),
+  ProximityPairAlert(graphic1, graphic2, distance, parent),
   m_graphic1(graphic1),
   m_graphic2(graphic2),
-  m_distance(distance),
   m_description1("Graphic1"),
   m_description2("Graphic2")
 {
@@ -39,30 +38,11 @@ GraphicPairAlert::GraphicPairAlert(Graphic* graphic1, Graphic* graphic2, double 
     if (graphics2)
       m_description2 = QString("%1 (%2)").arg(m_graphic2->graphicsOverlay()->overlayId(), graphics2->indexOf(m_graphic2));
   }
-
-  connect(m_graphic1, &Graphic::destroyed, this, [this]()
-  {
-    emit noLongerValid();
-    m_graphic1 = nullptr;
-    m_graphic2 = nullptr;
-  });
-
-  connect(m_graphic2, &Graphic::destroyed, this, [this]()
-  {
-    emit noLongerValid();
-    m_graphic1 = nullptr;
-    m_graphic2 = nullptr;
-  });
 }
 
 GraphicPairAlert::~GraphicPairAlert()
 {
 
-}
-
-Geometry GraphicPairAlert::position() const
-{
-  return m_graphic1 ? m_graphic1->geometry() : Point();
 }
 
 void GraphicPairAlert::highlight(bool on)
@@ -71,17 +51,12 @@ void GraphicPairAlert::highlight(bool on)
     m_graphic1->setSelected(on);
 }
 
-QString GraphicPairAlert::description() const
+QString GraphicPairAlert::element1Description() const
 {
-  return QString(m_description1 + " within %2 m of " + m_description2).arg(m_distance);
+  return m_description1;
 }
 
-Geometry GraphicPairAlert::position2() const
+QString GraphicPairAlert::element2Description() const
 {
-  return m_graphic2 ? m_graphic2->geometry() : Point();
-}
-
-double GraphicPairAlert::distance() const
-{
-  return m_distance;
+  return m_description2;
 }

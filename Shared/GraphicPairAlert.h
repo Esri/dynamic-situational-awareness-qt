@@ -13,7 +13,7 @@
 #ifndef GRAPHICTPAIRALERT_H
 #define GRAPHICTPAIRALERT_H
 
-#include "AbstractAlert.h"
+#include "ProximityPairAlert.h"
 
 namespace Esri
 {
@@ -23,7 +23,7 @@ namespace ArcGISRuntime
 }
 }
 
-class GraphicPairAlert : public AbstractAlert
+class GraphicPairAlert : public ProximityPairAlert
 {
   Q_OBJECT
 
@@ -34,18 +34,14 @@ public:
                             QObject* parent = nullptr);
   ~GraphicPairAlert();
 
-  Esri::ArcGISRuntime::Geometry position() const override;
   void highlight(bool on) override;
-  QString description() const override;
 
-  Esri::ArcGISRuntime::Geometry position2() const;
-
-  double distance() const;
+  QString element1Description() const override;
+  QString element2Description() const override;
 
 private:
   Esri::ArcGISRuntime::Graphic* m_graphic1;
   Esri::ArcGISRuntime::Graphic* m_graphic2;
-  double m_distance;
   QString m_description1;
   QString m_description2;
 };

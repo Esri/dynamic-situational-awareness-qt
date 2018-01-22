@@ -38,14 +38,19 @@ Rectangle {
             width: parent.width
             spacing: 5 * scaleFactor
 
-            /*
-            // Add options that hook into the OptionsController
-            // Each option can have a row like below
             Row {
                 height: 40 * scaleFactor
                 width: parent.width
+
+                CheckBox {
+                    text: "Show Navigation Controls"
+                    checked: true
+                    onCheckedChanged: {
+                        navTool.visible = checked;
+                        compass.visible = checked;
+                    }
+                }
             }
-            */
         }
     }
 

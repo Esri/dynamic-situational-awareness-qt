@@ -44,7 +44,7 @@ Row {
     // Viewshed Tool
     ToolIcon {
         id: viewshedIcon
-        iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_video_dark_d.png"
+        iconSource: DsaResources.iconViewshed
         toolName: "Viewshed"
         onToolSelected: {
             if (analysisToolRow.state === toolName)

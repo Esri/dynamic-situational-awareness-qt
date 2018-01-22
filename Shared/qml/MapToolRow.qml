@@ -152,7 +152,7 @@ Row {
     // Identify Tool
     ToolIcon {
         id: identifyIcon
-        iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_aboutmap_dark.png"
+        iconSource: DsaResources.iconAboutMap
         toolName: "Query"
         onToolSelected: {
             if (selected) {
@@ -172,7 +172,7 @@ Row {
     // Coordinate Conversion Tool
     ToolIcon {
         id: coordinateConversionIcon
-        iconSource: "qrc:/Resources/icons/xhdpi/icon-64-coorconv-white.png"
+        iconSource: DsaResources.iconCoordinateConversion
         toolName: "Convert XY"
         onToolSelected: {
             if (selected)
@@ -193,7 +193,7 @@ Row {
     // Add Local Data Tool
     ToolIcon {
         id: messageFeedsIcon
-        iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_messages_dark.png"
+        iconSource: DsaResources.iconMessages
         toolName: "Feeds"
         onToolSelected: {
             if (drawer.visible)
@@ -209,7 +209,7 @@ Row {
     // Table of Contents
     ToolIcon {
         id: tocIcon
-        iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_layergroup_dark_d.png"
+        iconSource: DsaResources.iconLayers
         toolName: "Overlays"
         onToolSelected: {
             if (selected)
@@ -230,7 +230,7 @@ Row {
     // Add Local Data Tool
     ToolIcon {
         id: addLocalDataIcon
-        iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_layervisibilitypopover_dark_d.png"
+        iconSource: DsaResources.iconAddLayer
         toolName: "Add Data"
         onToolSelected: {
             if (drawer.visible)
@@ -246,7 +246,7 @@ Row {
     // Basemap Tool
     ToolIcon {
         id: basemapIcon
-        iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_dark.png"
+        iconSource: DsaResources.iconChooseBasemap
         toolName: "Basemap"
         onToolSelected: {
             if (drawer.visible)

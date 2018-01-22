@@ -10,13 +10,13 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "DsaStyles.h"
+#include "DsaResources.h"
 
-DsaStyles::DsaStyles(QObject* parent):
+DsaResources::DsaResources(QObject* parent):
   QObject(parent)
 {  
 }
 
-DsaStyles::~DsaStyles()
+DsaResources::~DsaResources()
 { 
 }

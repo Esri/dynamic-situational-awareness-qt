@@ -167,13 +167,13 @@ DsaPanel {
                             case TableOfContentsController.Unknown:
                                 return "";
                             case TableOfContentsController.Points:
-                                return "qrc:/Resources/icons/xhdpi/ic_menu_pointlayer_light.png";
+                                return DsaResources.iconPoint;
                             case TableOfContentsController.Polylines:
-                                return "qrc:/Resources/icons/xhdpi/ic_menu_linelayer_light.png";
+                                return DsaResources.iconPolyline;
                             case TableOfContentsController.Polygons:
-                                return "qrc:/Resources/icons/xhdpi/ic_menu_polygonlayer_light.png";
+                                return DsaResources.iconPolygon;
                             case TableOfContentsController.Raster:
-                                return "qrc:/Resources/icons/xhdpi/raster_layer.png";
+                                return DsaResources.iconRaster;
                             }
                         }
                     }
@@ -207,7 +207,7 @@ DsaPanel {
                     }
                     sourceSize.height: 32 * scaleFactor
                     height: sourceSize.height
-                    source: "qrc:/Resources/icons/xhdpi/ic_menu_zoomtofeature_light.png"
+                    source: DsaResources.iconZoomTo
 
                     MouseArea {
                         anchors.fill: parent

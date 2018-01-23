@@ -40,6 +40,7 @@ Vehicle {
             right: parent.right
         }
         toolbarLabelText: categoryToolbar.titleText
+        height: DsaStyles.mainToolbarHeight * scaleFactor
 
         MapToolRow {
             id: mapToolRow
@@ -79,15 +80,6 @@ Vehicle {
 
         MarkupToolRow {
             id: markupToolRow
-            anchors {
-                verticalCenter: parent.verticalCenter
-                right: parent.right
-                rightMargin: 10 * scaleFactor
-            }
-        }
-
-        OptionsToolRow {
-            id: optionsToolRow
             anchors {
                 verticalCenter: parent.verticalCenter
                 right: parent.right
@@ -160,6 +152,9 @@ Vehicle {
             }
             width: 56 * scaleFactor
             appTitle: "DSA - V"
+
+            onSettingsClicked: optionsTool.visible = true;
+            onAboutClicked: aboutTool.visible = true;
         }
 
         TableOfContents {
@@ -280,13 +275,6 @@ Vehicle {
                             target: analysisTool
                             visible: true
                         }
-                    },
-                    State {
-                        name: "options"
-                        PropertyChanges {
-                            target: optionsTool
-                            visible: true
-                        }
                     }
                 ]
 
@@ -338,10 +326,6 @@ Vehicle {
         id: optionsTool
         anchors.fill: sceneView
         visible: false
-        onVisibleChanged: {
-            if (!visible)
-                optionsToolRow.state = "clear";
-        }
     }
 
     About {
@@ -349,10 +333,6 @@ Vehicle {
         anchors.fill: parent
 
         visible: false
-        onVisibleChanged: {
-            if (!visible)
-                optionsToolRow.state = "clear";
-        }
     }
 
     IdentifyFeaturesController {
@@ -387,5 +367,10 @@ Vehicle {
     BusyIndicator {
         anchors.centerIn: parent
         visible: identifyController.busy
+    }
+
+    Shortcut {
+        sequence: "Ctrl+Q"
+        onActivated: Qt.quit()
     }
 }

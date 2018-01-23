@@ -10,12 +10,12 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef DSASTYLES_H
-#define DSASTYLES_H
+#ifndef HANDHELDSTYLES_H
+#define HANDHELDSTYLES_H
 
 #include <QObject>
 
-class DsaStyles : public QObject
+class HandheldStyles : public QObject
 {
   Q_OBJECT
 
@@ -24,17 +24,21 @@ class DsaStyles : public QObject
   Q_PROPERTY(int primaryIconSize READ primaryIconSize CONSTANT)
   Q_PROPERTY(int secondaryIconSize READ secondaryIconSize CONSTANT)
   Q_PROPERTY(int toolFontPixelSize READ toolFontPixelSize CONSTANT)
+  Q_PROPERTY(int mainToolbarHeight READ mainToolbarHeight CONSTANT)
+  Q_PROPERTY(int categoryToolbarWidth READ categoryToolbarWidth CONSTANT)
 
 public:
-  DsaStyles(QObject* parent = nullptr);
-  ~DsaStyles();
+  HandheldStyles(QObject* parent = nullptr);
+  ~HandheldStyles();
 
 private:
   QString fontFamily() const { return "helvetica"; }
-  int titleFontPixelSize() const { return 24; }
-  int primaryIconSize() const { return 42; }
-  int secondaryIconSize() const { return 42; }
-  int toolFontPixelSize() const { return 11; }
+  int titleFontPixelSize() const { return 18; }
+  int primaryIconSize() const { return 30; }
+  int secondaryIconSize() const { return 30; }
+  int toolFontPixelSize() const { return 9; }
+  int mainToolbarHeight() const { return 48; }
+  int categoryToolbarWidth() const { return 42; }
 };
 
-#endif // DSASTYLES_H
+#endif // HANDHELDSTYLES_H

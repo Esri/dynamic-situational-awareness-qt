@@ -44,7 +44,7 @@ Row {
     // View Alert Tool
     ToolIcon {
         id: viewAlertIcon
-        iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_openlistview_dark.png"
+        iconSource: DsaResources.iconListView
         toolName: "View"
         onToolSelected: {
             if (alertToolRow.state === toolName) {

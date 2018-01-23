@@ -42,6 +42,7 @@ Handheld {
             right: parent.right
         }
         toolbarLabelText: categoryToolbar.titleText
+        height: DsaStyles.mainToolbarHeight * scaleFactor
 
         MapToolRow {
             id: mapToolRow
@@ -86,15 +87,6 @@ Handheld {
                 right: parent.right
                 rightMargin: 10 * scaleFactor
 
-            }
-        }
-
-        OptionsToolRow {
-            id: optionsToolRow
-            anchors {
-                verticalCenter: parent.verticalCenter
-                right: parent.right
-                rightMargin: 10 * scaleFactor
             }
         }
     }
@@ -145,9 +137,10 @@ Handheld {
         ArcGISCompass {
             id: compass
             anchors {
-                horizontalCenter: navTool.horizontalCenter
+                right: parent.right
                 bottom: sceneView.attributionTop
-                margins: 10 * scaleFactor
+                bottomMargin: 10 * scaleFactor
+                rightMargin: parent.height < navTool.height * 1.6 ? 60 * scaleFactor : 15 * scaleFactor
             }
             autoHideCompass: false
             width: DsaStyles.primaryIconSize * scaleFactor
@@ -161,8 +154,11 @@ Handheld {
                 left: parent.left
                 bottom: sceneView.attributionTop
             }
-            width: 56 * scaleFactor
+            width: DsaStyles.categoryToolbarWidth * scaleFactor
             appTitle: "DSA - H"
+
+            onSettingsClicked: optionsTool.visible = true;
+            onAboutClicked: aboutTool.visible = true;
         }
 
         TableOfContents {
@@ -284,13 +280,6 @@ Handheld {
                             target: analysisTool
                             visible: true
                         }
-                    },
-                    State {
-                        name: "options"
-                        PropertyChanges {
-                            target: optionsTool
-                            visible: true
-                        }
                     }
                 ]
 
@@ -361,10 +350,13 @@ Handheld {
         id: optionsTool
         anchors.fill: sceneView
         visible: false
-        onVisibleChanged: {
-            if (!visible)
-                optionsToolRow.state = "clear";
-        }
+    }
+
+    About {
+        id: aboutTool
+        anchors.fill: parent
+
+        visible: false
     }
 
     onErrorOccurred: {
@@ -381,5 +373,10 @@ Handheld {
     BusyIndicator {
         anchors.centerIn: parent
         visible: identifyController.busy
+    }
+
+    Shortcut {
+        sequence: "Ctrl+Q"
+        onActivated: Qt.quit()
     }
 }

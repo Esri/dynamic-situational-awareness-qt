@@ -21,7 +21,6 @@
         <file>AlertToolRow.qml</file>
         <file>MarkupToolRow.qml</file>
         <file>OverlayButton.qml</file>
-        <file>OptionsToolRow.qml</file>
         <file>AlertList.qml</file>
         <file>ViewedAlerts.qml</file>
         <file>EditAlertsTool.qml</file>

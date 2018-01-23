@@ -39,14 +39,14 @@ Item {
         spacing: 5 * scaleFactor
 
         OverlayButton {
-            iconUrl: "qrc:/Resources/icons/xhdpi/ic_menu_home_dark.png"
+            iconUrl: DsaResources.iconHome
             onClicked: {
                 navController.zoomToInitialLocation();
             }
         }
 
         OverlayButton {
-            iconUrl: "qrc:/Resources/icons/xhdpi/ic_menu_add_dark_d.png"
+            iconUrl: DsaResources.iconAdd
             onClicked: {
                 navController.zoomFactor = 2.0;
                 navController.zoomIn();
@@ -54,7 +54,7 @@ Item {
         }
 
         OverlayButton {
-            iconUrl: "qrc:/Resources/icons/xhdpi/ic_menu_subtract_dark_d.png"
+            iconUrl: DsaResources.iconRemove
             onClicked: {
                 navController.zoomFactor = 0.5;
                 navController.zoomOut();
@@ -62,14 +62,14 @@ Item {
         }
 
         OverlayButton {
-            iconUrl: "qrc:/Resources/icons/xhdpi/2D.png"
+            iconUrl: DsaResources.icon2d
             onClicked: {
                 navController.set2D();
             }
         }
 
         OverlayButton {
-            iconUrl: "qrc:/Resources/icons/xhdpi/ic_menu_gpsondontfollow_dark.png"
+            iconUrl: DsaResources.iconGps
             onClicked: {
                 selected = !selected;
                 followHud.enabled = selected;
@@ -78,7 +78,7 @@ Item {
         }
 
         OverlayButton {
-            iconUrl: "qrc:/Resources/icons/xhdpi/ic_menu_refresh_dark.png"
+            iconUrl: DsaResources.iconRotate
             onClicked: {
                 selected = !selected;
                 if (selected)

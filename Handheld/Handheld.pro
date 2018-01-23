@@ -28,11 +28,13 @@ INCLUDEPATH += $$PWD/../Shared/
 HEADERS += \
     AppInfo.h \
     Handheld.h \
+    HandheldStyles.h \
     $$PWD/../Shared/*.h
 
 SOURCES += \
     main.cpp \
     Handheld.cpp \
+    HandheldStyles.cpp \
     $$PWD/../Shared/*.cpp
 
 RESOURCES += \

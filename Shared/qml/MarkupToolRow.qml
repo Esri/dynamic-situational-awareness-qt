@@ -77,7 +77,7 @@ Row {
     // Send
     ToolIcon {
         id: sendIcon
-        iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_sendmap_dark_d.png"
+        iconSource: DsaResources.iconSendMap
         toolName: "Send"
         onToolSelected: {
             // TODO
@@ -87,7 +87,7 @@ Row {
     // Draw
     ToolIcon {
         id: drawIcon
-        iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_freehandsketchoff_dark.png"
+        iconSource: DsaResources.iconSketch
         toolName: "Draw"
         onToolSelected: {
             if (markupToolRow.state === toolName)
@@ -101,7 +101,7 @@ Row {
     // Configure
     ToolIcon {
         id: configureIcon
-        iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_settings_dark_d.png"
+        iconSource: DsaResources.iconSettings
         toolName: "Configure"
         onToolSelected: {
             if (markupToolRow.state === toolName)
@@ -115,7 +115,7 @@ Row {
     // Clear
     ToolIcon {
         id: clearIcon
-        iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_trash_dark_d.png"
+        iconSource: DsaResources.iconTrash
         toolName: "Clear"
         onToolSelected: {
             // TODO - clear graphics overlay

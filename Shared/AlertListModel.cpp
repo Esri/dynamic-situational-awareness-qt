@@ -53,23 +53,31 @@ bool AlertListModel::addAlert(AbstractAlert* alert)
   const QUuid id = QUuid::createUuid();
   alert->setId(id);
 
-  connect(alert, &AbstractAlert::viewedChanged, this, [this, insertIdx]
+  auto handleDataChanged = [this, alert]()
   {
-    const QModelIndex changedIndex = index(insertIdx, 0);
-    emit dataChanged(changedIndex, changedIndex);
-  });
+    if (alert->id().isNull())
+      return;
 
-  connect(alert, &AbstractAlert::positionChanged, this, [this, insertIdx]
-  {
-    const QModelIndex changedIndex = index(insertIdx, 0);
-    emit dataChanged(changedIndex, changedIndex);
-  });
+    auto it = m_alerts.cbegin();
+    auto itEnd = m_alerts.cend();
+    int currRow = -1;
+    for (; it != itEnd; ++it, ++currRow)
+    {
+      AbstractAlert* testAlert = *it;
+      if (!testAlert)
+        continue;
 
-  connect(alert, &AbstractAlert::activeChanged, this, [this, insertIdx]
-  {
-    const QModelIndex changedIndex = index(insertIdx, 0);
-    emit dataChanged(changedIndex, changedIndex);
-  });
+      if (testAlert->id() == alert->id())
+      {
+        const QModelIndex changedIndex = index(currRow, 0);
+        emit dataChanged(changedIndex, changedIndex);
+      }
+    }
+  };
+
+  connect(alert, &AbstractAlert::viewedChanged, this, handleDataChanged);
+  connect(alert, &AbstractAlert::positionChanged, this, handleDataChanged);
+  connect(alert, &AbstractAlert::activeChanged, this, handleDataChanged);
 
   connect(alert, &AbstractAlert::noLongerValid, this, [this, alert]
   {

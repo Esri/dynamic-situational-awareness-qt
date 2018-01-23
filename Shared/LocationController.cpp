@@ -25,6 +25,7 @@
 
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
+#include "LocationDisplay3d.h"
 
 #include "GPXLocationSimulator.h"
 
@@ -35,7 +36,8 @@ const QString LocationController::GPX_FILE_PROPERTYNAME = "GpxFile";
 const QString LocationController::RESOURCE_DIRECTORY_PROPERTYNAME = "ResourceDirectory";
 
 LocationController::LocationController(QObject* parent) :
-  Toolkit::AbstractTool(parent)
+  Toolkit::AbstractTool(parent),
+  m_locationDisplay3d(new LocationDisplay3d(this))
 {
   Toolkit::ToolManager::instance().addTool(this);
 
@@ -50,51 +52,33 @@ LocationController::~LocationController()
 
 void LocationController::initPositionInfoSource(bool simulated)
 {
-  if (simulated && !m_simulator)
-  {
-    m_simulator = new GPXLocationSimulator(this);
+  if (simulated && dynamic_cast<GPXLocationSimulator*>(m_positionSource))
+    return;
 
-    connect(m_simulator, &GPXLocationSimulator::positionUpdateAvailable, this,
-    [this](const Point& pos, double heading)
+  if (simulated)
+  {
+    clearPositionInfoSource();
+
+    auto gpxLocationSimulator = new GPXLocationSimulator(this);
+    m_positionSource = gpxLocationSimulator;
+
+    connect(gpxLocationSimulator, &GPXLocationSimulator::headingChanged, this,
+    [this](double heading)
     {
+      if (m_lastKnownHeading == heading)
+        return;
+
       m_lastKnownHeading = heading;
 
-      emit positionChanged(pos);
       emit headingChanged(heading);
       emit relativeHeadingChanged(heading - m_lastViewHeading);
     });
   }
-  else if (!simulated && !m_positionSource)
+  else
   {
+    clearPositionInfoSource();
+
     m_positionSource = QGeoPositionInfoSource::createDefaultSource(this);
-
-    connect(m_positionSource, &QGeoPositionInfoSource::positionUpdated, this,
-    [this](const QGeoPositionInfo& update)
-    {
-      if (!update.isValid())
-        return;
-
-      const auto pos = update.coordinate();
-
-      if (!pos.isValid())
-        return;
-
-      Point newPosition;
-      switch (pos.type())
-      {
-        case QGeoCoordinate::Coordinate2D:
-          newPosition = Point(pos.longitude(), pos.latitude(), SpatialReference::wgs84());
-          break;
-        case QGeoCoordinate::Coordinate3D:
-          newPosition = Point(pos.longitude(), pos.latitude(), pos.altitude(), SpatialReference::wgs84());
-          break;
-        case QGeoCoordinate::InvalidCoordinate:
-        default:
-          return;
-      }
-
-      emit positionChanged(newPosition);
-    });
 
     m_compass = new QCompass(this);
 
@@ -106,6 +90,54 @@ void LocationController::initPositionInfoSource(bool simulated)
 
       emit headingChanged(static_cast<double>(reading->azimuth()));
     });
+  }
+
+  connect(m_positionSource, &QGeoPositionInfoSource::positionUpdated, this,
+  [this](const QGeoPositionInfo& update)
+  {
+    if (!update.isValid())
+      return;
+
+    const auto pos = update.coordinate();
+
+    if (!pos.isValid())
+      return;
+
+    switch (pos.type())
+    {
+      case QGeoCoordinate::Coordinate2D:
+        m_currentLocation = Point(pos.longitude(), pos.latitude(), SpatialReference::wgs84());
+        break;
+      case QGeoCoordinate::Coordinate3D:
+        m_currentLocation = Point(pos.longitude(), pos.latitude(), pos.altitude(), SpatialReference::wgs84());
+        break;
+      case QGeoCoordinate::InvalidCoordinate:
+      default:
+        return;
+    }
+
+    emit locationChanged(m_currentLocation);
+  });
+
+  // apply position source and compass to the location display
+  m_locationDisplay3d->setPositionSource(m_positionSource);
+  m_locationDisplay3d->setCompass(m_compass);
+}
+
+void LocationController::clearPositionInfoSource()
+{
+  if (m_positionSource)
+  {
+    m_positionSource->stopUpdates();
+    delete m_positionSource;
+    m_positionSource = nullptr;
+  }
+
+  if (m_compass)
+  {
+    m_compass->stop();
+    delete m_compass;
+    m_compass = nullptr;
   }
 }
 
@@ -134,32 +166,39 @@ void LocationController::setEnabled(bool enabled)
 
   initPositionInfoSource(m_simulated);
 
-  if (m_locationOverlay)
-    m_locationOverlay->setVisible(enabled);
-
-  if (m_simulated)
+  if (enabled)
   {
-    if (enabled)
-      m_simulator->startUpdates();
-    else
-      m_simulator->stopUpdates();
+    m_positionSource->startUpdates();
+    if (m_compass)
+      m_compass->start();
   }
   else
   {
-    if (enabled)
-    {
-      m_positionSource->startUpdates();
-      m_compass->start();
-    }
-    else
-    {
-      m_positionSource->stopUpdates();
+    m_positionSource->stopUpdates();
+    if (m_compass)
       m_compass->stop();
-    }
   }
 
   m_enabled = enabled;
   emit enabledChanged();
+}
+
+bool LocationController::isLocationVisible() const
+{
+  return m_locationDisplay3d->isStarted();
+}
+
+void LocationController::setLocationVisible(bool isVisible)
+{
+  if (m_locationDisplay3d->isStarted() == isVisible)
+    return;
+
+  if (isVisible)
+    m_locationDisplay3d->start();
+  else
+    m_locationDisplay3d->stop();
+
+  emit locationVisibleChanged();
 }
 
 bool LocationController::isSimulated() const
@@ -172,12 +211,28 @@ void LocationController::setSimulated(bool simulated)
   if (m_simulated == simulated)
     return;
 
-  if (simulated)
-    initPositionInfoSource(simulated);
+  initPositionInfoSource(simulated);
+
+  if (!m_gpxFilePath.isEmpty() && dynamic_cast<GPXLocationSimulator*>(m_positionSource))
+  {
+    static_cast<GPXLocationSimulator*>(m_positionSource)->setGpxFile(m_gpxFilePath.toLocalFile());
+  }
+
+  if (isEnabled())
+  {
+    m_positionSource->startUpdates();
+    if (m_compass)
+      m_compass->start();
+  }
 
   m_simulated = simulated;
   emit simulatedChanged();
   emit propertyChanged(SIMULATE_LOCATION_PROPERTYNAME, m_simulated);
+}
+
+Point LocationController::currentLocation() const
+{
+  return m_currentLocation;
 }
 
 QUrl LocationController::gpxFilePath() const
@@ -197,17 +252,23 @@ void LocationController::setGpxFilePath(const QUrl& gpxFilePath)
 
   initPositionInfoSource(true); // ignore m_simulated, we need to init the simulator now
 
-  m_simulator->setGpxFile(gpxFilePath.toLocalFile());
+  static_cast<GPXLocationSimulator*>(m_positionSource)->setGpxFile(gpxFilePath.toLocalFile());
+
+  if (isEnabled())
+  {
+    m_positionSource->startUpdates();
+    if (m_compass)
+      m_compass->start();
+  }
 
   m_gpxFilePath = gpxFilePath;
   emit gpxFilePathChanged();
   emit propertyChanged(GPX_FILE_PROPERTYNAME, m_gpxFilePath);
 }
 
-void LocationController::setRelativeHeadingSceneView(Esri::ArcGISRuntime::SceneQuickView* sceneView)
+void LocationController::setRelativeHeadingSceneView(SceneQuickView* sceneView)
 {
-  connect(sceneView, &SceneQuickView::viewpointChanged, this,
-  [sceneView, this]()
+  connect(sceneView, &SceneQuickView::viewpointChanged, this, [this, sceneView]()
   {
     const auto sceneViewHeading = sceneView->currentViewpointCamera().heading();
     if (std::abs(m_lastViewHeading - sceneViewHeading) < 0.1)
@@ -225,72 +286,38 @@ void LocationController::updateGeoView()
 {
   GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
   if (geoView)
-    geoView->graphicsOverlays()->append(locationOverlay());
-}
-
-GraphicsOverlay* LocationController::locationOverlay()
-{
-  if (!m_locationOverlay)
-    initOverlay();
-
-  return m_locationOverlay;
-}
-
-void LocationController::initOverlay()
-{
-  constexpr float symbolSize = 45.0;
-  constexpr double rangeMultiplier = 1.04; // the closer to 1.0, the smoother the transitions
-  constexpr double maxRange = 10000000.0;
-
-  const QUrl modelPath = modelSymbolPath();
-
-  ModelSceneSymbol* modelSceneSymbol = new ModelSceneSymbol(modelPath, this);
-  modelSceneSymbol->setWidth(symbolSize);
-  modelSceneSymbol->setDepth(symbolSize);
-
-  DistanceCompositeSceneSymbol* distanceCompSymbol = new DistanceCompositeSceneSymbol(this);
-  distanceCompSymbol->ranges()->append(new DistanceSymbolRange(modelSceneSymbol, 0.0, 1000.0, this));
-
-  float rangeSize = symbolSize;
-  for (double i = 1000.0; i < maxRange; i *= rangeMultiplier)
   {
-    ModelSceneSymbol* rangeSym = new ModelSceneSymbol(modelPath, this);
-    rangeSize *= static_cast<float>(rangeMultiplier);
-    rangeSym->setWidth(rangeSize);
-    rangeSym->setDepth(rangeSize);
+    geoView->graphicsOverlays()->append(m_locationDisplay3d->locationOverlay());
 
-    if (i * rangeMultiplier >= maxRange)
-      distanceCompSymbol->ranges()->append(new DistanceSymbolRange(rangeSym, i, 0.0, this));
-    else
-      distanceCompSymbol->ranges()->append(new DistanceSymbolRange(rangeSym, i, i * rangeMultiplier, this));
+    constexpr float symbolSize = 45.0;
+    constexpr double rangeMultiplier = 1.04; // the closer to 1.0, the smoother the transitions
+    constexpr double maxRange = 10000000.0;
+
+    const QUrl modelPath = modelSymbolPath();
+
+    ModelSceneSymbol* modelSceneSymbol = new ModelSceneSymbol(modelPath, this);
+    modelSceneSymbol->setWidth(symbolSize);
+    modelSceneSymbol->setDepth(symbolSize);
+
+    DistanceCompositeSceneSymbol* distanceCompSymbol = new DistanceCompositeSceneSymbol(this);
+    distanceCompSymbol->ranges()->append(new DistanceSymbolRange(modelSceneSymbol, 0.0, 1000.0, this));
+
+    float rangeSize = symbolSize;
+    for (double i = 1000.0; i < maxRange; i *= rangeMultiplier)
+    {
+      ModelSceneSymbol* rangeSym = new ModelSceneSymbol(modelPath, this);
+      rangeSize *= static_cast<float>(rangeMultiplier);
+      rangeSym->setWidth(rangeSize);
+      rangeSym->setDepth(rangeSize);
+
+      if (i * rangeMultiplier >= maxRange)
+        distanceCompSymbol->ranges()->append(new DistanceSymbolRange(rangeSym, i, 0.0, this));
+      else
+        distanceCompSymbol->ranges()->append(new DistanceSymbolRange(rangeSym, i, i * rangeMultiplier, this));
+    }
+
+    m_locationDisplay3d->setDefaultSymbol(distanceCompSymbol);
   }
-
-  SimpleRenderer* renderer = new SimpleRenderer(distanceCompSymbol, this);
-  RendererSceneProperties renderProperties = renderer->sceneProperties();
-  renderProperties.setHeadingExpression(QString("[heading]"));
-  renderer->setSceneProperties(renderProperties);
-
-  m_locationOverlay = new GraphicsOverlay(this);
-  m_locationOverlay->setOverlayId(QStringLiteral("SCENEVIEWLOCATIONOVERLAY"));
-  m_locationOverlay->setSceneProperties(LayerSceneProperties(SurfacePlacement::Relative));
-  m_locationOverlay->setRenderingMode(GraphicsRenderingMode::Dynamic);
-  m_locationOverlay->setRenderer(renderer);
-
-  m_positionGraphic = new Graphic(this);
-  m_positionGraphic->attributes()->insertAttribute("heading", 0.0);
-  m_locationOverlay->graphics()->append(m_positionGraphic);
-
-  connect(this, &LocationController::positionChanged, this, [this](const Point& newPosition)
-  {
-    constexpr double z = 10.0;
-    m_positionGraphic->setGeometry(Point(newPosition.x(), newPosition.y(), z));
-  });
-
-  auto attributes = m_positionGraphic->attributes();
-  connect(this, &LocationController::headingChanged, this, [this, attributes](double newHeading)
-  {
-    attributes->replaceAttribute("heading", newHeading);
-  });
 }
 
 void LocationController::setIconDataPath(const QString& dataPath)
@@ -341,9 +368,4 @@ QUrl LocationController::modelSymbolPath() const
     file->close();
 
   return QUrl::fromLocalFile(modelPath);
-}
-
-Esri::ArcGISRuntime::Graphic* LocationController::positionGraphic() const
-{
-  return m_positionGraphic;
 }

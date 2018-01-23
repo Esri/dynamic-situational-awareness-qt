@@ -54,7 +54,7 @@ public slots:
   void requestUpdate(int timeout = 0) override;
 
 signals:
-  void positionUpdateAvailable(const Esri::ArcGISRuntime::Point& pos, double heading);
+  void headingChanged(double heading);
 
   // This is only used internally. Use QGeoPositionInfoSource::error signal instead.
   void errorInternal(QGeoPositionInfoSource::Error);

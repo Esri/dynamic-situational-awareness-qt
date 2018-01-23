@@ -26,6 +26,7 @@ class EditAlertsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
   Q_PROPERTY(QAbstractItemModel* layerNames READ layerNames NOTIFY layerNamesChanged)
   Q_PROPERTY(QAbstractItemModel* statusNames READ statusNames CONSTANT)
   Q_PROPERTY(QAbstractItemModel* conditionsList READ conditionsList NOTIFY conditionsListChanged)
+  Q_PROPERTY(bool pickMode READ pickMode NOTIFY pickModeChanged)
 
 public:
   explicit EditAlertsController(QObject* parent = nullptr);
@@ -36,14 +37,17 @@ public:
 
   Q_INVOKABLE void addWithinDistanceAlert(int statusIndex, int sourceLayerIndex, double distance, int itemId, int targetLayerIndex);
   Q_INVOKABLE void removeConditionAt(int rowIndex);
+  Q_INVOKABLE void togglePickMode();
 
   QAbstractItemModel* layerNames() const;
   QAbstractItemModel* statusNames() const;
   QAbstractItemModel* conditionsList() const;
+  bool pickMode() const;
 
 signals:
   void layerNamesChanged();
   void conditionsListChanged();
+  void pickModeChanged();
 
 private slots:
   void onGeoviewChanged();
@@ -54,6 +58,7 @@ private:
 
   QStringListModel* m_layerNames;
   QStringListModel* m_statusNames;
+  bool m_pickMode = false;
 };
 
 #endif // EDITALERTSCONTROLLER_H

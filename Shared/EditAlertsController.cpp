@@ -158,6 +158,12 @@ void EditAlertsController::removeConditionAt(int rowIndex)
   AlertListModel::instance()->removeAt(rowIndex);
 }
 
+void EditAlertsController::togglePickMode()
+{
+  m_pickMode = !m_pickMode;
+  emit pickModeChanged();
+}
+
 QAbstractItemModel* EditAlertsController::layerNames() const
 {
   return m_layerNames;
@@ -171,6 +177,11 @@ QAbstractItemModel* EditAlertsController::statusNames() const
 QAbstractItemModel* EditAlertsController::conditionsList() const
 {
   return AlertListModel::instance();
+}
+
+bool EditAlertsController::pickMode() const
+{
+  return m_pickMode;
 }
 
 void EditAlertsController::onGeoviewChanged()

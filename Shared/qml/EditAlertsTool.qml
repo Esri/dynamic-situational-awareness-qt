@@ -220,20 +220,13 @@ DsaPanel {
                 placeholderText: "<Feature ID>"
             }
 
-            Button {
+            OverlayButton {
                 id: pickButton
+                selected: toolController.pickMode
+                iconUrl: DsaResources.iconGps
                 anchors.verticalCenter: featureIdLabel.verticalCenter
-                height: 28 * scaleFactor
-                width:  height
-
-                Image {
-                    anchors.centerIn: parent
-                    width: pickButton.height
-                    height: width
-                    source: DsaResources.iconGps
-                }
-
                 onClicked: {
+                    toolController.togglePickMode();
                 }
             }
         }

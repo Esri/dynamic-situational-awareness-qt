@@ -29,7 +29,7 @@ Vehicle {
 
     LocationController {
         id: locationController
-        enabled: false
+        enabled: true
     }
 
     PrimaryToolbar {

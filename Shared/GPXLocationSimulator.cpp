@@ -144,6 +144,9 @@ Point GPXLocationSimulator::getNextPoint(QTime& time)
 //
 void GPXLocationSimulator::startUpdates()
 {
+  if (isStarted())
+    return;
+
   // if the gpx file does not contain enough information to
   // interpolate on then cancel the simulation.
   if (!initializeInterpolationValues())
@@ -165,6 +168,7 @@ void GPXLocationSimulator::requestUpdate(int timeout)
 void GPXLocationSimulator::stopUpdates()
 {
   m_timer->stop();
+  m_isStarted = false;
 }
 
 bool GPXLocationSimulator::isActive()
@@ -232,17 +236,16 @@ void GPXLocationSimulator::handleTimerEvent()
   const Point currentPosition = normalizedTime <= 0.5 ? m_currentSegment.startPoint() : m_currentSegment.endPoint();
   const double currentHeading = getInterpolatedHeading(currentPosition, normalizedTime);
 
-  emit positionUpdateAvailable(currentPosition, currentHeading);
-
   QGeoPositionInfo qtPosition;
   auto timeStamp = QDateTime::currentDateTime();
   timeStamp.setTime(m_currentTime);
   qtPosition.setTimestamp(timeStamp);
 
-  qtPosition.setCoordinate(QGeoCoordinate(currentPosition.y(), currentPosition.x()));
+  qtPosition.setCoordinate(QGeoCoordinate(currentPosition.y(), currentPosition.x(), currentPosition.z()));
 
   m_lastKnownPosition = qtPosition;
   emit positionUpdated(qtPosition);
+  emit headingChanged(currentHeading);
 } // end HandleTimerEvent
 
 //

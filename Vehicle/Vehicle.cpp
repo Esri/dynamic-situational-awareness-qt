@@ -141,22 +141,6 @@ void Vehicle::componentComplete()
   Graphic* geofenceGraphic = new Graphic(pb.toPolygon(), geofenceSymbol, this);
   geofenceOverlay->graphics()->append(geofenceGraphic);
   m_sceneView->graphicsOverlays()->append(geofenceOverlay);
-
-  LocationController* locationTool = Toolkit::ToolManager::instance().tool<LocationController>();
-  if (locationTool)
-  {
-    Graphic* locationGraphic = locationTool->positionGraphic();
-    if (locationGraphic)
-    {
-      GraphicPairAlert* geofenceAlert = new GraphicPairAlert(locationGraphic, geofenceGraphic, 0., this);
-      geofenceAlert->setStatus(AlertStatus::Critical);
-      geofenceAlert->setMessage("Location in geofence");
-      geofenceAlert->registerAlert();
-      geofenceAlert->setViewed(false);
-
-      connect(locationTool, &LocationController::positionChanged, geofenceAlert, &GraphicPairAlert::onPositionChanged);
-    }
-  }
 }
 
 void Vehicle::setCoordinateConversionOptions()

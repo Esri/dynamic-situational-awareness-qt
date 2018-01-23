@@ -73,6 +73,7 @@ private:
   QUuid m_id;
   bool m_viewed = true;
   bool m_active = false;
+  bool m_static = false;
 };
 
 #endif // ABSTRACTALERT_H

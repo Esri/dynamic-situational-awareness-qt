@@ -361,6 +361,8 @@ DsaPanel {
         id: removeConditionButton
         enabled: alertsList.currentIndex !== -1
 
+        height: expandNewAlert ? 0 : implicitHeight
+
         anchors {
             horizontalCenter: parent.horizontalCenter
             bottom: parent.bottom
@@ -368,8 +370,8 @@ DsaPanel {
         }
 
         background: Rectangle {
-            implicitWidth: expandNewAlert ? 0 : 40 * scaleFactor
-            implicitHeight: implicitWidth
+            implicitWidth: 40 * scaleFactor
+            implicitHeight: 40 * scaleFactor
             opacity: enabled ? 1 : 0.3
             radius: addButton.radius
             color: Material.accent

@@ -161,6 +161,8 @@ Row {
             } else
                 mapToolRow.state = toolName;
 
+            identifyController.active = selected;
+
             if (identifyResults.visible) {
                 identifyResults.visible = false;
                 mapToolRow.state = "clear";

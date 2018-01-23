@@ -15,6 +15,8 @@
 
 #include "AbstractOverlayManager.h"
 
+#include <QHash>
+
 namespace Esri
 {
 namespace ArcGISRuntime
@@ -41,6 +43,7 @@ public:
 private:
   QString m_oidFieldName;
   Esri::ArcGISRuntime::FeatureLayer* m_overlay;
+  mutable QHash<int, Esri::ArcGISRuntime::GeoElement*> m_elementCache;
 };
 
 #endif // FEATUREOVERLAYMANAGER_H

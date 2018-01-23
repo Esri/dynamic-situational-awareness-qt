@@ -74,6 +74,10 @@ QString FeatureOverlayManager::elementDescription(GeoElement* element) const
 
 GeoElement* FeatureOverlayManager::elementAt(int elementId) const
 {
+  GeoElement* feature = m_elementCache.value(elementId, nullptr);
+  if (feature)
+    return feature;
+
   FeatureTable* tab = m_overlay->featureTable();
   if (!tab)
     return nullptr;
@@ -81,7 +85,7 @@ GeoElement* FeatureOverlayManager::elementAt(int elementId) const
   QueryParameters qp;
   qp.setWhereClause(QString("\"%1\" = %2").arg(m_oidFieldName, QString::number(elementId)));
 
-  Feature* feature = nullptr;
+
   QEventLoop loop;
   tab->queryFeatures(qp);
 
@@ -103,6 +107,7 @@ GeoElement* FeatureOverlayManager::elementAt(int elementId) const
 
   disconnect(connection);
 
+  m_elementCache.insert(elementId, feature);
   return feature;
 }
 

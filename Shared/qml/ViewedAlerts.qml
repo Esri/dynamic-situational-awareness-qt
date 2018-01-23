@@ -18,7 +18,10 @@ import QtQuick.Window 2.2
 import Esri.DSA 1.0
 
 Rectangle {
-     width: toolController.unviewedCount > 0 ? 12 * scaleFactor : 0
+     width: toolController.unviewedCount > 0 ?
+                (toolController.unviewedCount > 9 ? 16 * scaleFactor
+                                                  : 12 * scaleFactor)
+              : 0
      height: width
      color: "red"
      radius: width * 0.5
@@ -31,7 +34,7 @@ Rectangle {
           visible: parent.width > 0
           anchors.fill: parent
           color: "white"
-          text: toolController.unviewedCount
+          text: toolController.unviewedCount > 99 ? "N" : toolController.unviewedCount
           font.bold: true
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter

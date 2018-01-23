@@ -24,6 +24,15 @@ class IdsAlertRule;
 class ProximityAlertRule;
 class StatusAlertRule;
 
+namespace Esri {
+namespace ArcGISRuntime
+{
+  class GraphicsOverlay;
+  class SimpleMarkerSceneSymbol;
+}}
+
+class QTimer;
+
 class AlertToolController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
   Q_OBJECT
@@ -39,7 +48,7 @@ public:
   // AbstractTool interface
   QString toolName() const override;
 
-  Q_INVOKABLE void highlight(int rowIndex);
+  Q_INVOKABLE void highlight(int rowIndex, bool on);
   Q_INVOKABLE void zoomTo(int rowIndex);
   Q_INVOKABLE void setViewed(int rowIndex);
   Q_INVOKABLE void dismiss(int rowIndex);
@@ -50,13 +59,19 @@ public:
 signals:
   void alertListModelChanged();
 
+private slots:
+  void onGeoviewChanged();
+
 private:
-  AlertListProxyModel* m_alertsProxyModel;
-  ProximityAlertRule* m_distanceAlertRule;
-  IntersectsAlertRule* m_intersectsRule;
-  StatusAlertRule* m_statusAlertRule;
-  IdsAlertRule* m_idsAlertRule;
+  AlertListProxyModel* m_alertsProxyModel = nullptr;
+  ProximityAlertRule* m_distanceAlertRule = nullptr;
+  IntersectsAlertRule* m_intersectsRule = nullptr;
+  StatusAlertRule* m_statusAlertRule = nullptr;
+  IdsAlertRule* m_idsAlertRule = nullptr;
   QList<AbstractAlertRule*> m_rules;
+  Esri::ArcGISRuntime::GraphicsOverlay* m_highlightOverlay = nullptr;
+  Esri::ArcGISRuntime::SimpleMarkerSceneSymbol* m_highlightSymbol = nullptr;
+  QTimer* m_highlightTimer = nullptr;
 };
 
 #endif // ALERTTOOLCONTROLLER_H

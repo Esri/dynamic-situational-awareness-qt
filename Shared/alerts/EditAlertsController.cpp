@@ -150,10 +150,14 @@ void EditAlertsController::addWithinDistanceAlert(int statusIndex, int sourceOve
     const int overlaysCount = graphicsOverlays->rowCount();
     for (int i = 0; i < overlaysCount; ++i)
     {
-      ++currIndex;
       GraphicsOverlay* overlay = graphicsOverlays->at(i);
       if (!overlay)
         continue;
+
+      if (overlay->overlayId().isEmpty())
+        continue;
+
+      ++currIndex;
 
       if (currIndex == sourceOverlayIndex)
         sourceOverlayMgr = new GraphicsOverlayManager(overlay, this);
@@ -246,10 +250,14 @@ void EditAlertsController::addIntersectsAlert(int statusIndex, int sourceOverlay
     const int overlaysCount = graphicsOverlays->rowCount();
     for (int i = 0; i < overlaysCount; ++i)
     {
-      ++currIndex;
       GraphicsOverlay* overlay = graphicsOverlays->at(i);
       if (!overlay)
         continue;
+
+      if (overlay->overlayId().isEmpty())
+        continue;
+
+      ++currIndex;
 
       if (currIndex == sourceOverlayIndex)
         sourceOverlayMgr = new GraphicsOverlayManager(overlay, this);
@@ -404,6 +412,9 @@ void EditAlertsController::onLayersChanged()
     {
       GraphicsOverlay* overlay = graphicsOverlays->at(i);
       if (!overlay)
+        continue;
+
+      if (overlay->overlayId().isEmpty())
         continue;
 
       newList.append(overlay->overlayId());

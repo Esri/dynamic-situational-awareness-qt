@@ -23,6 +23,8 @@ DsaPanel {
     title: qsTr("Alerts")
     clip: true
 
+    property int hightlightIndex: -1
+
     AlertToolController {
         id: toolController
     }
@@ -52,10 +54,12 @@ DsaPanel {
         }
         model: toolController.alertListModel
         clip: true
+        spacing: 8 * scaleFactor
 
         delegate: SwipeDelegate {
             id: swipeDelegate
             width: parent.width
+            height: highlightButton.height
             Text {
                 anchors {
                     left: parent.left
@@ -71,15 +75,27 @@ DsaPanel {
                 color: "white"
             }
 
-            Button {
+            OverlayButton {
                 id: highlightButton
-                text: "flash";
+                iconUrl: DsaResources.iconGps
+                selected: hightlightIndex === index
                 visible: swipeDelegate.swipe.position === 0
                 anchors {
                     right: zoomButton.left
                     verticalCenter: parent.verticalCenter
                 }
-                onClicked: toolController.highlight(index);
+                onClicked: {
+
+                    if (hightlightIndex == index) {
+                        toolController.highlight(index, false);
+                        hightlightIndex = -1;
+                    }
+                    else {
+                        toolController.highlight(hightlightIndex, false);
+                        toolController.highlight(index, true);
+                        hightlightIndex = index;
+                    }
+                }
             }
 
             Button {

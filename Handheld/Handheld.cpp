@@ -121,7 +121,7 @@ void Handheld::componentComplete()
     dummyAlert->setViewed(false);
     dummyAlert->setActive(true);
     alertsOverlay->graphics()->append(dummyAlertGraphic);
-    dummyAlert->registerAlert();
+    AlertListModel::instance()->addAlert(dummyAlert);
 
     m_sceneView->graphicsOverlays()->append(alertsOverlay);
   });

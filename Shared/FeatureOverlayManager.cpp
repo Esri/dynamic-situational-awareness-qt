@@ -65,35 +65,34 @@ QString FeatureOverlayManager::elementDescription(GeoElement* element) const
 
 GeoElement* FeatureOverlayManager::elementAt(int elementId) const
 {
-  qDebug() << m_overlay->name();
   FeatureTable* tab = m_overlay->featureTable();
   if (!tab)
     return nullptr;
 
   QueryParameters qp;
-  qp.setWhereClause("OBJECTID = " + elementId);
+  qp.setWhereClause(QString("\"FID\" = %1").arg(QString::number(elementId)));
 
   Feature* feature = nullptr;
-
-  connect(tab, &FeatureTable::errorOccurred, this, [this](Error error)
-  {
-    qDebug() << error.message() << error.additionalMessage();
-  });
-
   QEventLoop loop;
-  loop.connect(tab, &FeatureTable::queryFeaturesCompleted, this, [this, &loop, &feature](QUuid, FeatureQueryResult* featureQueryResult)
-  {
-    if (!featureQueryResult)
-      return;
-
-    feature = featureQueryResult->iterator().next();
-    loop.quit();
-  });
-  loop.connect(tab, &FeatureTable::errorOccurred, &loop, &QEventLoop::quit);
-
   tab->queryFeatures(qp);
 
+  connect(tab, &FeatureTable::errorOccurred, this, [this, &loop](Error error)
+  {
+    qDebug() << "error:" << error.message() << error.additionalMessage();
+    loop.quit();
+  });
+
+  auto connection = loop.connect(tab, &FeatureTable::queryFeaturesCompleted, this, [this, &loop, &feature](QUuid, FeatureQueryResult* featureQueryResult)
+  {
+    loop.quit();
+
+    if (featureQueryResult)
+      feature = featureQueryResult->iterator().next();
+  });
+
   loop.exec();
+
+  disconnect(connection);
 
   return feature;
 }

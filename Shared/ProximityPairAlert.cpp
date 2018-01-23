@@ -54,7 +54,7 @@ Geometry ProximityPairAlert::position() const
 
 QString ProximityPairAlert::description() const
 {
-  return QString(element1Description() + " within %1 m of " + element2Description()).arg(m_distance);
+  return QString(element1Description() + QString(" < %1 m of ").arg(QString::number(m_distance)) + element2Description());
 }
 
 void ProximityPairAlert::highlight(bool on)

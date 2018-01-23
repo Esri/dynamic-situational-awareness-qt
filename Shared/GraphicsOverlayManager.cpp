@@ -53,8 +53,7 @@ QString GraphicsOverlayManager::elementDescription(GeoElement* element) const
   if (!graphics)
     return "";
 
-  return QString("%1 (%2)").arg(m_overlay->overlayId(), graphics->indexOf(g));
-
+  return QString("%1 (%2)").arg(m_overlay->overlayId(), QString::number(graphics->indexOf(g)));
 }
 
 GeoElement* GraphicsOverlayManager::elementAt(int elementId) const

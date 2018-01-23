@@ -41,7 +41,7 @@ DsaPanel {
             right: parent.right
             margins: 8 * scaleFactor
         }
-        height: expandNewAlert ? parent.height * 0.6 : addButton.height + (anchors.margins * 2)
+        height: expandNewAlert ? parent.height * 0.75 : addButton.height + (anchors.margins * 2)
         color: "transparent"
         border.color: Material.foreground
         border.width: 1 * scaleFactor
@@ -103,6 +103,16 @@ DsaPanel {
             textRole: "display"
             model: toolController.statusNames
             currentIndex: -1
+
+            Text {
+                anchors.centerIn: parent
+                visible: parent.currentIndex === -1
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                color: Material.accent
+                text: "<status>"
+            }
         }
 
         Text {
@@ -127,6 +137,16 @@ DsaPanel {
             textRole: "display"
             model: toolController.layerNames
             currentIndex: -1
+
+            Text {
+                anchors.fill: parent
+                visible: parent.currentIndex === -1
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                color: Material.accent
+                text: "<source overlay>"
+            }
         }
 
         ButtonGroup {
@@ -159,7 +179,10 @@ DsaPanel {
                 anchors.verticalCenter: withinDistanceRb.verticalCenter
                 enabled: withinDistanceRb.checked
                 font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                editable: true
                 value: 50
+                from: 0
+                to: 9999
             }
 
             Text {
@@ -193,6 +216,8 @@ DsaPanel {
                 font.bold: true
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignVCenter
+
+                placeholderText: "<Feature ID>"
             }
 
             Button {
@@ -205,7 +230,7 @@ DsaPanel {
                     anchors.centerIn: parent
                     width: pickButton.height
                     height: width
-                    source: "qrc:/Resources/icons/xhdpi/ic_menu_gpson_dark_d.png"
+                    source: DsaResources.iconGps
                 }
 
                 onClicked: {
@@ -224,6 +249,16 @@ DsaPanel {
             textRole: "display"
             model: toolController.layerNames
             currentIndex: -1
+
+            Text {
+                anchors.fill: layerCB
+                visible: parent.currentIndex === -1
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                text: "<target overlay>"
+                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                color: Material.accent
+            }
         }
 
         RoundButton {
@@ -259,6 +294,11 @@ DsaPanel {
                                 Number(featureIdEdit.text),
                                 layerCB.currentIndex);
                 }
+
+                statusCb.currentIndex = -1;
+                leftHandSideCB.currentIndex = -1;
+                featureIdEdit.text = "";
+                layerCB.currentIndex = "";
             }
         }
     }
@@ -298,6 +338,8 @@ DsaPanel {
                 font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignVCenter
+                wrapMode: Text.WrapAnywhere
+                elide: Text.ElideRight
 
                 MouseArea {
                     anchors.fill: parent
@@ -318,17 +360,17 @@ DsaPanel {
         }
 
         background: Rectangle {
-            implicitWidth: 40 * scaleFactor
-            implicitHeight: 40 * scaleFactor
+            implicitWidth: expandNewAlert ? 0 : 40 * scaleFactor
+            implicitHeight: implicitWidth
             opacity: enabled ? 1 : 0.3
             radius: addButton.radius
             color: Material.accent
 
             Image {
                 anchors.centerIn: parent
-                width: 26 * scaleFactor
+                width: expandNewAlert ? 0 : 26 * scaleFactor
                 height: width
-                source: "qrc:/Resources/icons/xhdpi/ic_menu_trash_dark_d.png"
+                source: DsaResources.iconTrash
             }
         }
 

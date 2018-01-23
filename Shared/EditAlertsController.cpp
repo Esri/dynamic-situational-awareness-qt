@@ -32,7 +32,6 @@
 
 using namespace Esri::ArcGISRuntime;
 
-
 struct ResultsManager {
 
   QList<IdentifyLayerResult*>& m_results;
@@ -43,6 +42,21 @@ struct ResultsManager {
   }
 
   ~ResultsManager()
+  {
+    qDeleteAll(m_results);
+  }
+};
+
+struct GraphicsResultsManager {
+
+  QList<IdentifyGraphicsOverlayResult*>& m_results;
+
+  GraphicsResultsManager(QList<IdentifyGraphicsOverlayResult*>& results):
+    m_results(results)
+  {
+  }
+
+  ~GraphicsResultsManager()
   {
     qDeleteAll(m_results);
   }
@@ -77,8 +91,8 @@ void EditAlertsController::setActive(bool active)
   if (active == m_active)
     return;
 
-  if (m_taskWatcher.isValid() && !m_taskWatcher.isDone() && !m_taskWatcher.isCanceled())
-    m_taskWatcher.cancel();
+  if (m_identifyLayersWatcher.isValid() && !m_identifyLayersWatcher.isDone() && !m_identifyLayersWatcher.isCanceled())
+    m_identifyLayersWatcher.cancel();
 
   m_active = active;
   emit activeChanged();
@@ -292,11 +306,15 @@ void EditAlertsController::togglePickMode()
 
     m_identifyLayersConnection =  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::identifyLayersCompleted,
                                           this, &EditAlertsController::onIdentifyLayersCompleted);
+
+    m_identifyGraphicsConnection =  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::identifyGraphicsOverlaysCompleted,
+                                          this, &EditAlertsController::onIdentifyGraphicsOverlaysCompleted);
   }
   else
   {
     disconnect(m_mouseClickConnection);
     disconnect(m_identifyLayersConnection);
+    disconnect(m_identifyGraphicsConnection);
   }
 
   emit pickModeChanged();
@@ -406,21 +424,25 @@ void EditAlertsController::onMouseClicked(QMouseEvent &event)
   if (!m_pickMode)
     return;
 
-  if (m_taskWatcher.isValid() && !m_taskWatcher.isDone())
+  if (m_identifyLayersWatcher.isValid() && !m_identifyLayersWatcher.isDone())
+    return;
+
+  if (m_identifyGraphicsWatcher.isValid() && !m_identifyGraphicsWatcher.isDone())
     return;
 
   GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
   if (!geoView)
     return;
 
-  m_taskWatcher = geoView->identifyLayers(event.pos().x(), event.pos().y(), m_tolerance, false);
+  m_identifyLayersWatcher = geoView->identifyLayers(event.pos().x(), event.pos().y(), m_tolerance, false);
+  m_identifyGraphicsWatcher = geoView->identifyGraphicsOverlays(event.pos().x(), event.pos().y(), m_tolerance, false);
 
   event.accept();
 }
 
 void EditAlertsController::onIdentifyLayersCompleted(const QUuid& taskId, QList<Esri::ArcGISRuntime::IdentifyLayerResult*> identifyResults)
 {
-  if (taskId != m_taskWatcher.taskId())
+  if (taskId != m_identifyLayersWatcher.taskId())
     return;
 
   ResultsManager resultsManager(identifyResults);
@@ -428,7 +450,7 @@ void EditAlertsController::onIdentifyLayersCompleted(const QUuid& taskId, QList<
   if (!isActive())
     return;
 
-  m_taskWatcher = TaskWatcher();
+  m_identifyLayersWatcher = TaskWatcher();
 
   auto it = resultsManager.m_results.begin();
   auto itEnd = resultsManager.m_results.end();
@@ -454,9 +476,59 @@ void EditAlertsController::onIdentifyLayersCompleted(const QUuid& taskId, QList<
         return;
 
       if (atts->containsAttribute("FID"))
+      {
+        m_identifyGraphicsWatcher.cancel();
+        m_identifyGraphicsWatcher = TaskWatcher();
         emit pickedElement(layerName, atts->attributeValue("FID").toInt());
+      }
       else if(atts->containsAttribute("OID"))
+      {
+        m_identifyGraphicsWatcher.cancel();
+        m_identifyGraphicsWatcher = TaskWatcher();
         emit pickedElement(layerName, atts->attributeValue("OID").toInt());
+      }
+
+      break;
+    }
+  }
+}
+
+void EditAlertsController::onIdentifyGraphicsOverlaysCompleted(const QUuid& taskId, QList<Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult*> identifyResults)
+{
+  if (taskId != m_identifyGraphicsWatcher.taskId())
+    return;
+
+  GraphicsResultsManager resultsManager(identifyResults);
+
+  if (!isActive())
+    return;
+
+  m_identifyGraphicsWatcher = TaskWatcher();
+
+  auto it = resultsManager.m_results.begin();
+  auto itEnd = resultsManager.m_results.end();
+  for (; it != itEnd; ++it)
+  {
+    IdentifyGraphicsOverlayResult* res = *it;
+    if (!res)
+      continue;
+
+    const QString overlayName = res->graphicsOverlay()->overlayId();
+
+    const QList<Graphic*> graphics = res->graphics();
+    auto graphicsIt = graphics.begin();
+    auto graphicsEnd = graphics.end();
+    for (; graphicsIt != graphicsEnd; ++graphicsIt)
+    {
+      Graphic* graphic = *graphicsIt;
+      if (!graphic || !graphic->graphicsOverlay() || !graphic->graphicsOverlay()->graphics())
+        continue;
+
+      const int index = graphic->graphicsOverlay()->graphics()->indexOf(graphic);
+
+      m_identifyLayersWatcher.cancel();
+      m_identifyLayersWatcher = TaskWatcher();
+      emit pickedElement(overlayName, index);
 
       break;
     }

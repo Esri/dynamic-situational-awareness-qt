@@ -27,6 +27,7 @@ namespace Esri
 namespace ArcGISRuntime
 {
 class IdentifyLayerResult;
+class IdentifyGraphicsOverlayResult;
 }
 }
 
@@ -71,6 +72,7 @@ private slots:
   void onLayersChanged();
   void onMouseClicked(QMouseEvent& event);
   void onIdentifyLayersCompleted(const QUuid& taskId, QList<Esri::ArcGISRuntime::IdentifyLayerResult*> identifyResults);
+  void onIdentifyGraphicsOverlaysCompleted(const QUuid& taskId, QList<Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult*> identifyResults);
 
 private:
   void setLayerNames(const QStringList& layerNames);
@@ -79,10 +81,12 @@ private:
   QStringListModel* m_statusNames;
   bool m_pickMode = false;
   double m_tolerance = 5;
-  Esri::ArcGISRuntime::TaskWatcher m_taskWatcher;
+  Esri::ArcGISRuntime::TaskWatcher m_identifyLayersWatcher;
+  Esri::ArcGISRuntime::TaskWatcher m_identifyGraphicsWatcher;
 
   QMetaObject::Connection m_mouseClickConnection;
   QMetaObject::Connection m_identifyLayersConnection;
+  QMetaObject::Connection m_identifyGraphicsConnection;
 };
 
 #endif // EDITALERTSCONTROLLER_H

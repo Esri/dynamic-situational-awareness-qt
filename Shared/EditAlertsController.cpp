@@ -183,7 +183,7 @@ void EditAlertsController::addWithinDistanceAlert(int statusIndex, int sourceOve
                                                                distance,
                                                                this);
     geofenceAlert->setStatus(status);
-    geofenceAlert->setMessage("Location in geofence");
+    geofenceAlert->setMessage("Within distance!");
     geofenceAlert->setViewed(false);
     AlertListModel::instance()->addAlert(geofenceAlert);
   };

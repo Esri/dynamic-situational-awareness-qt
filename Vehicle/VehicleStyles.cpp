@@ -23,7 +23,7 @@ VehicleStyles::~VehicleStyles()
 
 QString VehicleStyles::fontFamily() const
 {
-  return "helvetica";
+  return QStringLiteral("helvetica");
 }
 
 int VehicleStyles::titleFontPixelSize() const

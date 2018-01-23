@@ -32,13 +32,13 @@ public:
   ~VehicleStyles();
 
 private:
-  QString fontFamily() const { return "helvetica"; }
-  int titleFontPixelSize() const { return 24; }
-  int primaryIconSize() const { return 42; }
-  int secondaryIconSize() const { return 38; }
-  int toolFontPixelSize() const { return 11; }
-  int mainToolbarHeight() const { return 64; }
-  int categoryToolbarWidth() const { return 56; }
+  QString fontFamily() const;
+  int titleFontPixelSize() const;
+  int primaryIconSize() const;
+  int secondaryIconSize() const;
+  int toolFontPixelSize() const;
+  int mainToolbarHeight() const;
+  int categoryToolbarWidth() const;
 };
 
 #endif // VEHICLESTYLES_H

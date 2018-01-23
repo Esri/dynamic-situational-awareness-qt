@@ -32,13 +32,13 @@ public:
   ~HandheldStyles();
 
 private:
-  QString fontFamily() const { return "helvetica"; }
-  int titleFontPixelSize() const { return 18; }
-  int primaryIconSize() const { return 30; }
-  int secondaryIconSize() const { return 30; }
-  int toolFontPixelSize() const { return 9; }
-  int mainToolbarHeight() const { return 48; }
-  int categoryToolbarWidth() const { return 42; }
+  QString fontFamily() const;
+  int titleFontPixelSize() const;
+  int primaryIconSize() const;
+  int secondaryIconSize() const;
+  int toolFontPixelSize() const;
+  int mainToolbarHeight() const;
+  int categoryToolbarWidth() const;
 };
 
 #endif // HANDHELDSTYLES_H

@@ -289,14 +289,18 @@ DsaPanel {
             }
 
             onClicked: {
-                if (withinDistanceRb.checked)
-                {
-                    toolController.addWithinDistanceAlert(
-                                statusCb.currentIndex,
-                                leftHandSideCB.currentIndex,
-                                withinDistanceSB.value,
-                                Number(featureIdEdit.text),
-                                layerCB.currentIndex);
+                if (withinDistanceRb.checked) {
+                    toolController.addWithinDistanceAlert(statusCb.currentIndex,
+                                                          leftHandSideCB.currentIndex,
+                                                          withinDistanceSB.value,
+                                                          Number(featureIdEdit.text),
+                                                          layerCB.currentIndex);
+                }
+                else if (intersectsRb.checked) {
+                    toolController.addIntersectsAlert(statusCb.currentIndex,
+                                                      leftHandSideCB.currentIndex,
+                                                      Number(featureIdEdit.text),
+                                                      layerCB.currentIndex);
                 }
 
                 statusCb.currentIndex = -1;

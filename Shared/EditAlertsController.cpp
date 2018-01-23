@@ -15,6 +15,7 @@
 #include "EditAlertsController.h"
 #include "FeatureOverlayManager.h"
 #include "GraphicsOverlayManager.h"
+#include "IntersectsPairAlert.h"
 #include "ProximityPairAlert.h"
 
 #include "ToolManager.h"
@@ -83,16 +84,16 @@ void EditAlertsController::setActive(bool active)
   emit activeChanged();
 }
 
-void EditAlertsController::addWithinDistanceAlert(int statusIndex, int sourceLayerIndex, double distance, int itemId, int targetLayerIndex)
+void EditAlertsController::addWithinDistanceAlert(int statusIndex, int sourceOverlayIndex, double distance, int itemId, int targetOverlayIndex)
 {
   if (statusIndex < 0 ||
-      sourceLayerIndex < 0 ||
+      sourceOverlayIndex < 0 ||
       distance < 0.0 ||
       itemId < 0 ||
-      targetLayerIndex < 0)
+      targetOverlayIndex < 0)
     return;
 
-  if (sourceLayerIndex == targetLayerIndex)
+  if (sourceOverlayIndex == targetOverlayIndex)
     return;
 
   AlertStatus status = static_cast<AlertStatus>(statusIndex);
@@ -121,10 +122,10 @@ void EditAlertsController::addWithinDistanceAlert(int statusIndex, int sourceLay
       if (!featLayer)
         continue;
 
-      if (currIndex == sourceLayerIndex)
+      if (currIndex == sourceOverlayIndex)
         sourceOverlayMgr = new FeatureOverlayManager(featLayer, this);
 
-      if (currIndex == targetLayerIndex)
+      if (currIndex == targetOverlayIndex)
         targetOverlayMgr = new FeatureOverlayManager(featLayer, this);
     }
   }
@@ -140,10 +141,10 @@ void EditAlertsController::addWithinDistanceAlert(int statusIndex, int sourceLay
       if (!overlay)
         continue;
 
-      if (currIndex == sourceLayerIndex)
+      if (currIndex == sourceOverlayIndex)
         sourceOverlayMgr = new GraphicsOverlayManager(overlay, this);
 
-      if (currIndex == targetLayerIndex)
+      if (currIndex == targetOverlayIndex)
         targetOverlayMgr = new GraphicsOverlayManager(overlay, this);
     }
   }
@@ -154,7 +155,6 @@ void EditAlertsController::addWithinDistanceAlert(int statusIndex, int sourceLay
   GeoElement* targetElement = targetOverlayMgr->elementAt(itemId);
   if (!targetElement)
     return;
-
 
   auto createProximityAlert = [this, targetElement, distance, status, sourceOverlayMgr, targetOverlayMgr](int newElement)
   {
@@ -179,6 +179,101 @@ void EditAlertsController::addWithinDistanceAlert(int statusIndex, int sourceLay
     createProximityAlert(i);
 
   connect(sourceOverlayMgr, &AbstractOverlayManager::elementAdded, this, createProximityAlert);
+}
+
+void EditAlertsController::addIntersectsAlert(int statusIndex, int sourceOverlayIndex, int itemId, int targetOverlayIndex)
+{
+  if (statusIndex < 0 ||
+      sourceOverlayIndex < 0 ||
+      itemId < 0 ||
+      targetOverlayIndex < 0)
+    return;
+
+  if (sourceOverlayIndex == targetOverlayIndex)
+    return;
+
+  AlertStatus status = static_cast<AlertStatus>(statusIndex);
+  if (status > AlertStatus::Critical)
+    return;
+
+  GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
+  if (!geoView)
+    return;
+
+  AbstractOverlayManager* sourceOverlayMgr = nullptr;
+  AbstractOverlayManager* targetOverlayMgr = nullptr;
+  int currIndex = -1;
+  LayerListModel* operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+  if (operationalLayers)
+  {
+    const int opLayersCount = operationalLayers->rowCount();
+    for (int i = 0; i < opLayersCount; ++i)
+    {
+      currIndex++;
+      Layer* layer = operationalLayers->at(i);
+      if (!layer)
+        continue;
+
+      FeatureLayer* featLayer = qobject_cast<FeatureLayer*>(layer);
+      if (!featLayer)
+        continue;
+
+      if (currIndex == sourceOverlayIndex)
+        sourceOverlayMgr = new FeatureOverlayManager(featLayer, this);
+
+      if (currIndex == targetOverlayIndex)
+        targetOverlayMgr = new FeatureOverlayManager(featLayer, this);
+    }
+  }
+
+  GraphicsOverlayListModel* graphicsOverlays = geoView->graphicsOverlays();
+  if (graphicsOverlays)
+  {
+    const int overlaysCount = graphicsOverlays->rowCount();
+    for (int i = 0; i < overlaysCount; ++i)
+    {
+      ++currIndex;
+      GraphicsOverlay* overlay = graphicsOverlays->at(i);
+      if (!overlay)
+        continue;
+
+      if (currIndex == sourceOverlayIndex)
+        sourceOverlayMgr = new GraphicsOverlayManager(overlay, this);
+
+      if (currIndex == targetOverlayIndex)
+        targetOverlayMgr = new GraphicsOverlayManager(overlay, this);
+    }
+  }
+
+  if (!targetOverlayMgr && !sourceOverlayMgr)
+    return;
+
+  GeoElement* targetElement = targetOverlayMgr->elementAt(itemId);
+  if (!targetElement)
+    return;
+
+  auto createIntersectsAlert = [this, targetElement, status, sourceOverlayMgr, targetOverlayMgr](int newElement)
+  {
+    GeoElement* sourceElement = sourceOverlayMgr->elementAt(newElement);
+    if (!sourceElement)
+      return;
+
+    IntersectsPairAlert* intersectsAlert = new IntersectsPairAlert(sourceElement,
+                                                                   targetElement,
+                                                                   sourceOverlayMgr,
+                                                                   targetOverlayMgr,
+                                                                   this);
+    intersectsAlert->setStatus(status);
+    intersectsAlert->setMessage("Intersects!");
+    intersectsAlert->setViewed(false);
+    AlertListModel::instance()->addAlert(intersectsAlert);
+  };
+
+  const int totalElements = static_cast<int>(sourceOverlayMgr->numberOfElements());
+  for (qint64 i = 0; i < totalElements; ++i)
+    createIntersectsAlert(i);
+
+  connect(sourceOverlayMgr, &AbstractOverlayManager::elementAdded, this, createIntersectsAlert);
 }
 
 void EditAlertsController::removeConditionAt(int rowIndex)

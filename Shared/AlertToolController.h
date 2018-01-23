@@ -19,8 +19,9 @@
 
 class AbstractAlertRule;
 class AlertListProxyModel;
-class ProximityAlertRule;
+class IntersectsAlertRule;
 class IdsAlertRule;
+class ProximityAlertRule;
 class StatusAlertRule;
 
 class AlertToolController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
@@ -52,6 +53,7 @@ signals:
 private:
   AlertListProxyModel* m_alertsProxyModel;
   ProximityAlertRule* m_distanceAlertRule;
+  IntersectsAlertRule* m_intersectsRule;
   StatusAlertRule* m_statusAlertRule;
   IdsAlertRule* m_idsAlertRule;
   QList<AbstractAlertRule*> m_rules;

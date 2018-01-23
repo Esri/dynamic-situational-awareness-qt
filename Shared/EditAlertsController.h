@@ -49,7 +49,8 @@ public:
 
   void setActive(bool active) override;
 
-  Q_INVOKABLE void addWithinDistanceAlert(int statusIndex, int sourceLayerIndex, double distance, int itemId, int targetLayerIndex);
+  Q_INVOKABLE void addWithinDistanceAlert(int statusIndex, int sourceOverlayIndex, double distance, int itemId, int targetOverlayIndex);
+  Q_INVOKABLE void addIntersectsAlert(int statusIndex, int sourceOverlayIndex, int itemId, int targetOverlayIndex);
   Q_INVOKABLE void removeConditionAt(int rowIndex);
   Q_INVOKABLE void togglePickMode();
 

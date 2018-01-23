@@ -14,6 +14,7 @@
 #include "AlertToolController.h"
 #include "AlertListModel.h"
 #include "AlertListProxyModel.h"
+#include "IntersectsAlertRule.h"
 #include "ProximityAlertRule.h"
 #include "DsaUtility.h"
 #include "IdsAlertRule.h"
@@ -31,11 +32,13 @@ AlertToolController::AlertToolController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent),
   m_alertsProxyModel(new AlertListProxyModel(this)),
   m_distanceAlertRule(new ProximityAlertRule(this)),
+  m_intersectsRule(new IntersectsAlertRule(this)),
   m_statusAlertRule(new StatusAlertRule(this)),
   m_idsAlertRule(new IdsAlertRule(this))
 {
   Toolkit::ToolManager::instance().addTool(this);
   m_rules.append(m_distanceAlertRule);
+  m_rules.append(m_intersectsRule);
   m_rules.append(m_statusAlertRule);
   m_rules.append(m_idsAlertRule);
 

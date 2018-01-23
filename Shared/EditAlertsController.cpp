@@ -31,6 +31,22 @@
 
 using namespace Esri::ArcGISRuntime;
 
+
+struct ResultsManager {
+
+  QList<IdentifyLayerResult*>& m_results;
+
+  ResultsManager(QList<IdentifyLayerResult*>& results):
+    m_results(results)
+  {
+  }
+
+  ~ResultsManager()
+  {
+    qDeleteAll(m_results);
+  }
+};
+
 EditAlertsController::EditAlertsController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent),
   m_layerNames(new QStringListModel(this)),
@@ -53,6 +69,18 @@ EditAlertsController::~EditAlertsController()
 QString EditAlertsController::toolName() const
 {
   return "Edit Alerts";
+}
+
+void EditAlertsController::setActive(bool active)
+{
+  if (active == m_active)
+    return;
+
+  if (m_taskWatcher.isValid() && !m_taskWatcher.isDone() && !m_taskWatcher.isCanceled())
+    m_taskWatcher.cancel();
+
+  m_active = active;
+  emit activeChanged();
 }
 
 void EditAlertsController::addWithinDistanceAlert(int statusIndex, int sourceLayerIndex, double distance, int itemId, int targetLayerIndex)
@@ -161,6 +189,21 @@ void EditAlertsController::removeConditionAt(int rowIndex)
 void EditAlertsController::togglePickMode()
 {
   m_pickMode = !m_pickMode;
+
+  if (m_pickMode)
+  {
+    m_mouseClickConnection = connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mouseClicked,
+                                     this, &EditAlertsController::onMouseClicked);
+
+    m_identifyLayersConnection =  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::identifyLayersCompleted,
+                                          this, &EditAlertsController::onIdentifyLayersCompleted);
+  }
+  else
+  {
+    disconnect(m_mouseClickConnection);
+    disconnect(m_identifyLayersConnection);
+  }
+
   emit pickModeChanged();
 }
 
@@ -255,6 +298,74 @@ void EditAlertsController::onLayersChanged()
   }
 
   setLayerNames(newList);
+}
+
+void EditAlertsController::onMouseClicked(QMouseEvent &event)
+{
+  if (!isActive())
+    return;
+
+  if (event.button() != Qt::MouseButton::LeftButton)
+    return;
+
+  if (!m_pickMode)
+    return;
+
+  if (m_taskWatcher.isValid() && !m_taskWatcher.isDone())
+    return;
+
+  GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
+  if (!geoView)
+    return;
+
+  m_taskWatcher = geoView->identifyLayers(event.pos().x(), event.pos().y(), m_tolerance, false);
+
+  event.accept();
+}
+
+void EditAlertsController::onIdentifyLayersCompleted(const QUuid& taskId, QList<Esri::ArcGISRuntime::IdentifyLayerResult*> identifyResults)
+{
+  if (taskId != m_taskWatcher.taskId())
+    return;
+
+  ResultsManager resultsManager(identifyResults);
+
+  if (!isActive())
+    return;
+
+  m_taskWatcher = TaskWatcher();
+
+  auto it = resultsManager.m_results.begin();
+  auto itEnd = resultsManager.m_results.end();
+  for (; it != itEnd; ++it)
+  {
+    IdentifyLayerResult* res = *it;
+    if (!res)
+      continue;
+
+    const QString layerName = res->layerContent()->name();
+
+    const QList<GeoElement*> geoElements = res->geoElements();
+    auto geoElemIt = geoElements.begin();
+    auto geoElemEnd = geoElements.end();
+    for (; geoElemIt != geoElemEnd; ++geoElemIt)
+    {
+      GeoElement* geoElement = *geoElemIt;
+      if (!geoElement)
+        continue;
+
+      AttributeListModel* atts = geoElement->attributes();
+      if (!atts)
+        return;
+
+      if (atts->containsAttribute("FID"))
+        emit pickedElement(layerName, atts->attributeValue("FID").toInt());
+      else if(atts->containsAttribute("OID"))
+        emit pickedElement(layerName, atts->attributeValue("OID").toInt());
+
+      break;
+    }
+  }
 }
 
 void EditAlertsController::setLayerNames(const QStringList& layerNames)

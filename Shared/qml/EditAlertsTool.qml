@@ -25,6 +25,17 @@ DsaPanel {
 
     EditAlertsController {
         id: toolController
+        active: parent.visible
+        onPickedElement: {
+            for (var i = 0; i < layerCB.count; ++i) {
+                if (layerCB.textAt(i) === overlayName)
+                {
+                    layerCB.currentIndex = i;
+                    featureIdEdit.text = elementId;
+                    break;
+                }
+            }
+        }
     }
 
     property bool readyToAdd: statusCb.currentIndex !== -1 &&

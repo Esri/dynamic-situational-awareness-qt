@@ -39,6 +39,7 @@ public:
   qint64 numberOfElements() const override;
 
 private:
+  QString m_oidFieldName;
   Esri::ArcGISRuntime::FeatureLayer* m_overlay;
 };
 

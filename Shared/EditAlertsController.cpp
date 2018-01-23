@@ -110,7 +110,7 @@ void EditAlertsController::addWithinDistanceAlert(int statusIndex, int sourceOve
   if (sourceOverlayIndex == targetOverlayIndex)
     return;
 
-  AlertStatus status = static_cast<AlertStatus>(statusIndex);
+  AlertStatus status = static_cast<AlertStatus>(statusIndex + 1);
   if (status > AlertStatus::Critical)
     return;
 
@@ -206,7 +206,7 @@ void EditAlertsController::addIntersectsAlert(int statusIndex, int sourceOverlay
   if (sourceOverlayIndex == targetOverlayIndex)
     return;
 
-  AlertStatus status = static_cast<AlertStatus>(statusIndex);
+  AlertStatus status = static_cast<AlertStatus>(statusIndex + 1);
   if (status > AlertStatus::Critical)
     return;
 

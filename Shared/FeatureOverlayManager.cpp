@@ -26,7 +26,16 @@ FeatureOverlayManager::FeatureOverlayManager(FeatureLayer* overlay, QObject* par
   AbstractOverlayManager(parent),
   m_overlay(overlay)
 {
+  FeatureTable* tab = m_overlay->featureTable();
+  if (!tab)
+    return;
 
+  const QList<Field> fields = tab->fields();
+  for (const Field& f: fields)
+  {
+    if (f.fieldType() == FieldType::OID)
+      m_oidFieldName = f.name();
+  }
 }
 
 FeatureOverlayManager::~FeatureOverlayManager()
@@ -58,7 +67,7 @@ QString FeatureOverlayManager::elementDescription(GeoElement* element) const
   if (!atts)
     return "";
 
-  QString oid = atts->attributeValue("OID").toString();
+  QString oid = atts->attributeValue(m_oidFieldName).toString();
 
   return QString("%1 (%2)").arg(m_overlay->name(), oid);
 }
@@ -70,7 +79,7 @@ GeoElement* FeatureOverlayManager::elementAt(int elementId) const
     return nullptr;
 
   QueryParameters qp;
-  qp.setWhereClause(QString("\"FID\" = %1").arg(QString::number(elementId)));
+  qp.setWhereClause(QString("\"%1\" = %2").arg(m_oidFieldName, QString::number(elementId)));
 
   Feature* feature = nullptr;
   QEventLoop loop;

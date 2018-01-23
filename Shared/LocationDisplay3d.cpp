@@ -19,7 +19,9 @@
 
 using namespace Esri::ArcGISRuntime;
 
-LocationDisplay3d::LocationDisplay3d(QObject *parent) :
+static const QString s_headingAttribute{"heading"};
+
+LocationDisplay3d::LocationDisplay3d(QObject* parent) :
   QObject(parent),
   m_locationOverlay(new GraphicsOverlay(this)),
   m_positionGraphic(new Graphic(this))
@@ -29,7 +31,7 @@ LocationDisplay3d::LocationDisplay3d(QObject *parent) :
   m_locationOverlay->setRenderingMode(GraphicsRenderingMode::Dynamic);
   m_locationOverlay->setVisible(false);
 
-  m_positionGraphic->attributes()->insertAttribute("heading", 0.0);
+  m_positionGraphic->attributes()->insertAttribute(s_headingAttribute, 0.0);
   m_locationOverlay->graphics()->append(m_positionGraphic);
 }
 
@@ -130,7 +132,7 @@ void LocationDisplay3d::setPositionSource(QGeoPositionInfoSource* positionSource
 
     m_headingConnection = connect(gpxLocationSimulator, &GPXLocationSimulator::headingChanged, this, [this](double heading)
     {
-      m_positionGraphic->attributes()->replaceAttribute("heading", heading);
+      m_positionGraphic->attributes()->replaceAttribute(s_headingAttribute, heading);
     });
   }
 
@@ -159,7 +161,7 @@ void LocationDisplay3d::setCompass(QCompass* compass)
     if (!reading)
       return;
 
-    m_positionGraphic->attributes()->replaceAttribute("heading", static_cast<double>(reading->azimuth()));
+    m_positionGraphic->attributes()->replaceAttribute(s_headingAttribute, static_cast<double>(reading->azimuth()));
 
     emit headingChanged();
   });
@@ -185,7 +187,7 @@ void LocationDisplay3d::setDefaultSymbol(Symbol* defaultSymbol)
   {
     m_locationRenderer = new SimpleRenderer(defaultSymbol, this);
     RendererSceneProperties renderProperties = m_locationRenderer->sceneProperties();
-    renderProperties.setHeadingExpression(QString("[heading]"));
+    renderProperties.setHeadingExpression(QString("[%1]").arg(s_headingAttribute));
     m_locationRenderer->setSceneProperties(renderProperties);
 
     m_locationOverlay->setRenderer(m_locationRenderer);

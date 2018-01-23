@@ -21,7 +21,6 @@
 namespace Esri {
 namespace ArcGISRuntime
 {
-  class Point;
   class SceneQuickView;
   class GraphicsOverlay;
 }}

@@ -65,6 +65,9 @@ void LocationController::initPositionInfoSource(bool simulated)
     connect(gpxLocationSimulator, &GPXLocationSimulator::headingChanged, this,
     [this](double heading)
     {
+      if (m_lastKnownHeading == heading)
+        return;
+
       m_lastKnownHeading = heading;
 
       emit headingChanged(heading);

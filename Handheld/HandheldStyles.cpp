@@ -20,3 +20,38 @@ HandheldStyles::HandheldStyles(QObject* parent):
 HandheldStyles::~HandheldStyles()
 { 
 }
+
+QString HandheldStyles::fontFamily() const
+{
+  return QStringLiteral("helvetica");
+}
+
+int HandheldStyles::titleFontPixelSize() const
+{
+  return 18;
+}
+
+int HandheldStyles::primaryIconSize() const
+{
+  return 30;
+}
+
+int HandheldStyles::secondaryIconSize() const
+{
+  return 30;
+}
+
+int HandheldStyles::toolFontPixelSize() const
+{
+  return 9;
+}
+
+int HandheldStyles::mainToolbarHeight() const
+{
+  return 48;
+}
+
+int HandheldStyles::categoryToolbarWidth() const
+{
+  return 42;
+}

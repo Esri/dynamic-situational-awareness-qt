@@ -20,3 +20,38 @@ VehicleStyles::VehicleStyles(QObject* parent):
 VehicleStyles::~VehicleStyles()
 { 
 }
+
+QString VehicleStyles::fontFamily() const
+{
+  return "helvetica";
+}
+
+int VehicleStyles::titleFontPixelSize() const
+{
+  return 24;
+}
+
+int VehicleStyles::primaryIconSize() const
+{
+  return 42;
+}
+
+int VehicleStyles::secondaryIconSize() const
+{
+  return 38;
+}
+
+int VehicleStyles::toolFontPixelSize() const
+{
+  return 11;
+}
+
+int VehicleStyles::mainToolbarHeight() const
+{
+  return 64;
+}
+
+int VehicleStyles::categoryToolbarWidth() const
+{
+  return 56;
+}

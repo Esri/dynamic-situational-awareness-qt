@@ -18,7 +18,7 @@
 using namespace Esri::ArcGISRuntime;
 
 IntersectsAlertRule::IntersectsAlertRule(QObject* parent):
-  AbstractAlertRule(parent)
+  AlertQuery(parent)
 {
 
 }

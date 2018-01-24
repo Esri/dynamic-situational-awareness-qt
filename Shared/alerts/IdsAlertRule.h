@@ -20,7 +20,7 @@
 
 class AlertConditionData;
 
-class IdsAlertRule : public AbstractAlertRule
+class IdsAlertRule : public AlertQuery
 {
   Q_OBJECT
 

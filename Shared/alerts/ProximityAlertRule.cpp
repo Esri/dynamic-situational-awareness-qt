@@ -19,7 +19,7 @@
 using namespace Esri::ArcGISRuntime;
 
 ProximityAlertRule::ProximityAlertRule(QObject* parent):
-  AbstractAlertRule(parent)
+  AlertQuery(parent)
 {
 
 }

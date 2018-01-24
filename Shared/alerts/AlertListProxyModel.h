@@ -17,7 +17,7 @@
 #include <QList>
 #include <QSet>
 
-class AbstractAlertRule;
+class AlertQuery;
 
 class QTimer;
 
@@ -30,7 +30,7 @@ public:
   AlertListProxyModel(QObject* parent = nullptr);
   ~AlertListProxyModel();
 
-  void applyFilter(const QList<AbstractAlertRule*>& rules);
+  void applyFilter(const QList<AlertQuery*>& rules);
 
   // QSortFilterProxyModel interface
 protected:
@@ -39,7 +39,7 @@ protected:
 private:
   bool passesAllRules(int sourceRow) const;
 
-  QList<AbstractAlertRule*> m_rules;
+  QList<AlertQuery*> m_rules;
   mutable QSet<int> m_currentSourceRows;
   QTimer* m_updateTimer = nullptr;
 };

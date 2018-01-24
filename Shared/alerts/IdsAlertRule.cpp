@@ -14,7 +14,7 @@
 #include "IdsAlertRule.h"
 
 IdsAlertRule::IdsAlertRule(QObject* parent):
-  AbstractAlertRule(parent)
+  AlertQuery(parent)
 {
 
 }

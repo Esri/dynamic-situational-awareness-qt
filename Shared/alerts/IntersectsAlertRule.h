@@ -17,7 +17,7 @@
 
 class AlertConditionData;
 
-class IntersectsAlertRule : public AbstractAlertRule
+class IntersectsAlertRule : public AlertQuery
 {
   Q_OBJECT
 

@@ -18,7 +18,7 @@
 
 class AlertConditionData;
 
-class StatusAlertRule : public AbstractAlertRule
+class StatusAlertRule : public AlertQuery
 {
   Q_OBJECT
 

@@ -10,20 +10,20 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef ABSTRACTALERTRULE_H
-#define ABSTRACTALERTRULE_H
+#ifndef ALERTQUERY_H
+#define ALERTQUERY_H
 
 #include <QObject>
 
 class AlertConditionData;
 
-class AbstractAlertRule : public QObject
+class AlertQuery : public QObject
 {
   Q_OBJECT
 
 public:
-  explicit AbstractAlertRule(QObject* parent = nullptr);
-  ~AbstractAlertRule();
+  explicit AlertQuery(QObject* parent = nullptr);
+  ~AlertQuery();
 
   virtual bool matchesRule(AlertConditionData* alert) const = 0;
 
@@ -34,4 +34,4 @@ private:
   bool m_active = false;
 };
 
-#endif // ABSTRACTALERTRULE_H
+#endif // ALERTQUERY_H

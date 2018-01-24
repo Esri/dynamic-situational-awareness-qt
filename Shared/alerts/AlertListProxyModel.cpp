@@ -58,7 +58,7 @@ AlertListProxyModel::~AlertListProxyModel()
 
 }
 
-void AlertListProxyModel::applyFilter(const QList<AbstractAlertRule*>& rules)
+void AlertListProxyModel::applyFilter(const QList<AlertQuery*>& rules)
 {
   m_rules = rules;
   invalidate();

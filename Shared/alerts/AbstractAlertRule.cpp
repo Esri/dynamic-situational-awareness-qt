@@ -15,23 +15,23 @@
 
 using namespace Esri::ArcGISRuntime;
 
-AbstractAlertRule::AbstractAlertRule(QObject* parent):
+AlertQuery::AlertQuery(QObject* parent):
   QObject(parent)
 {
 
 }
 
-AbstractAlertRule::~AbstractAlertRule()
+AlertQuery::~AlertQuery()
 {
 
 }
 
-bool AbstractAlertRule::active() const
+bool AlertQuery::active() const
 {
   return m_active;
 }
 
-void AbstractAlertRule::setActive(bool active)
+void AlertQuery::setActive(bool active)
 {
   m_active = active;
 }

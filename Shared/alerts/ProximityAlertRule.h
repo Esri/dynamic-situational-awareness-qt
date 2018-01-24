@@ -17,7 +17,7 @@
 
 class AlertConditionData;
 
-class ProximityAlertRule : public AbstractAlertRule
+class ProximityAlertRule : public AlertQuery
 {
   Q_OBJECT
 

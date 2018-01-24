@@ -17,7 +17,7 @@
 
 #include "AbstractTool.h"
 
-class AbstractAlertRule;
+class AlertQuery;
 class AlertListProxyModel;
 class IntersectsAlertRule;
 class IdsAlertRule;
@@ -67,7 +67,7 @@ private:
   IntersectsAlertRule* m_intersectsRule = nullptr;
   StatusAlertRule* m_statusAlertRule = nullptr;
   IdsAlertRule* m_idsAlertRule = nullptr;
-  QList<AbstractAlertRule*> m_rules;
+  QList<AlertQuery*> m_rules;
   GeoElementHighlighter* m_highlighter = nullptr;
 
 };

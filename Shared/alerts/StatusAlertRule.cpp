@@ -14,7 +14,7 @@
 #include "StatusAlertRule.h"
 
 StatusAlertRule::StatusAlertRule(QObject* parent):
-  AbstractAlertRule(parent)
+  AlertQuery(parent)
 {
 
 }

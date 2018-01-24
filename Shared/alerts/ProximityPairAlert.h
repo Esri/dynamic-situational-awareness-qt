@@ -10,8 +10,8 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef PROXIMITYPAIRALERT_H
-#define PROXIMITYPAIRALERT_H
+#ifndef WITHINDISTANCEALERTCONDITIONDATA_H
+#define WITHINDISTANCEALERTCONDITIONDATA_H
 
 #include "AlertConditionData.h"
 
@@ -25,18 +25,18 @@ class GeoElement;
 
 class AbstractOverlayManager;
 
-class ProximityPairAlert : public AlertConditionData
+class WithinDistanceAlertConditionData : public AlertConditionData
 {
   Q_OBJECT
 
 public:
-  explicit ProximityPairAlert(Esri::ArcGISRuntime::GeoElement* element1,
+  explicit WithinDistanceAlertConditionData(Esri::ArcGISRuntime::GeoElement* element1,
                               Esri::ArcGISRuntime::GeoElement* element2,
                               AbstractOverlayManager* overlay1Manager,
                               AbstractOverlayManager* overlay2Manager,
                               double distance,
                               QObject* parent = nullptr);
-  ~ProximityPairAlert();
+  ~WithinDistanceAlertConditionData();
 
   void highlight(bool on) override;
 
@@ -58,4 +58,4 @@ private:
   double m_distance;
 };
 
-#endif // PROXIMITYPAIRALERT_H
+#endif // WITHINDISTANCEALERTCONDITIONDATA_H

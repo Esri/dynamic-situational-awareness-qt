@@ -37,7 +37,7 @@ using namespace Esri::ArcGISRuntime;
 AlertToolController::AlertToolController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent),
   m_alertsProxyModel(new AlertListProxyModel(this)),
-  m_distanceAlertRule(new ProximityAlertRule(this)),
+  m_distanceAlertRule(new WithinDistanceAlertQuery(this)),
   m_intersectsRule(new IntersectsAlertRule(this)),
   m_statusAlertRule(new StatusAlertRule(this)),
   m_idsAlertRule(new IdsAlertRule(this)),

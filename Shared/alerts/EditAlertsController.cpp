@@ -178,7 +178,7 @@ void EditAlertsController::addWithinDistanceAlert(int levelIndex, int sourceOver
     if (!sourceElement)
       return;
 
-    ProximityPairAlert* geofenceAlert = new ProximityPairAlert(sourceElement,
+    WithinDistanceAlertConditionData* geofenceAlert = new WithinDistanceAlertConditionData(sourceElement,
                                                                targetElement,
                                                                sourceOverlayMgr,
                                                                targetOverlayMgr,

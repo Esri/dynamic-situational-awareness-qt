@@ -21,7 +21,7 @@ class AlertQuery;
 class AlertListProxyModel;
 class IntersectsAlertRule;
 class IdsAlertRule;
-class ProximityAlertRule;
+class WithinDistanceAlertQuery;
 class StatusAlertRule;
 
 namespace Esri {
@@ -63,7 +63,7 @@ signals:
 
 private:
   AlertListProxyModel* m_alertsProxyModel = nullptr;
-  ProximityAlertRule* m_distanceAlertRule = nullptr;
+  WithinDistanceAlertQuery* m_distanceAlertRule = nullptr;
   IntersectsAlertRule* m_intersectsRule = nullptr;
   StatusAlertRule* m_statusAlertRule = nullptr;
   IdsAlertRule* m_idsAlertRule = nullptr;

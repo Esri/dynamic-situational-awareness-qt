@@ -10,22 +10,22 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef PROXIMITYALERTRULE_H
-#define PROXIMITYALERTRULE_H
+#ifndef WITHONDISTANCEALERTQUERY_H
+#define WITHONDISTANCEALERTQUERY_H
 
 #include "AlertQuery.h"
 
 class AlertConditionData;
 
-class ProximityAlertRule : public AlertQuery
+class WithinDistanceAlertQuery : public AlertQuery
 {
   Q_OBJECT
 
 public:
-  explicit ProximityAlertRule(QObject* parent = nullptr);
-  ~ProximityAlertRule();
+  explicit WithinDistanceAlertQuery(QObject* parent = nullptr);
+  ~WithinDistanceAlertQuery();
 
   bool matchesRule(AlertConditionData* alert) const override;
 };
 
-#endif // PROXIMITYALERTRULE_H
+#endif // WITHONDISTANCEALERTQUERY_H

@@ -18,7 +18,7 @@
 
 using namespace Esri::ArcGISRuntime;
 
-ProximityPairAlert::ProximityPairAlert(GeoElement* element1,
+WithinDistanceAlertConditionData::WithinDistanceAlertConditionData(GeoElement* element1,
                                        GeoElement* element2,
                                        AbstractOverlayManager* overlay1Manager,
                                        AbstractOverlayManager* overlay2Manager,
@@ -42,42 +42,42 @@ ProximityPairAlert::ProximityPairAlert(GeoElement* element1,
   connect(m_element2, &GeoElement::destroyed, this, onElementDestroyed);
 }
 
-ProximityPairAlert::~ProximityPairAlert()
+WithinDistanceAlertConditionData::~WithinDistanceAlertConditionData()
 {
 
 }
 
-Geometry ProximityPairAlert::position() const
+Geometry WithinDistanceAlertConditionData::position() const
 {
   return m_element1 ? m_element1->geometry() : Point();
 }
 
-void ProximityPairAlert::highlight(bool on)
+void WithinDistanceAlertConditionData::highlight(bool on)
 {
   m_overlay1Manager->setSelected(m_element1, on);
 }
 
-Geometry ProximityPairAlert::position2() const
+Geometry WithinDistanceAlertConditionData::position2() const
 {
   return m_element2 ? m_element2->geometry() : Point();
 }
 
-double ProximityPairAlert::distance() const
+double WithinDistanceAlertConditionData::distance() const
 {
   return m_distance;
 }
 
-GeoElement* ProximityPairAlert::geoElement() const
+GeoElement* WithinDistanceAlertConditionData::geoElement() const
 {
   return m_element1;
 }
 
-QString ProximityPairAlert::element1Description() const
+QString WithinDistanceAlertConditionData::element1Description() const
 {
   return m_overlay1Manager->elementDescription(m_element1);
 }
 
-QString ProximityPairAlert::element2Description() const
+QString WithinDistanceAlertConditionData::element2Description() const
 {
   return m_overlay2Manager->elementDescription(m_element2);
 }

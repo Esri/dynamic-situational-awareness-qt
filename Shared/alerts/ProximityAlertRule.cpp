@@ -18,23 +18,23 @@
 
 using namespace Esri::ArcGISRuntime;
 
-ProximityAlertRule::ProximityAlertRule(QObject* parent):
+WithinDistanceAlertQuery::WithinDistanceAlertQuery(QObject* parent):
   AlertQuery(parent)
 {
 
 }
 
-ProximityAlertRule::~ProximityAlertRule()
+WithinDistanceAlertQuery::~WithinDistanceAlertQuery()
 {
 
 }
 
-bool ProximityAlertRule::matchesRule(AlertConditionData* alert) const
+bool WithinDistanceAlertQuery::matchesRule(AlertConditionData* alert) const
 {
   if (!alert)
     return false;
 
-  ProximityPairAlert* pairAlert = qobject_cast<ProximityPairAlert*>(alert);
+  WithinDistanceAlertConditionData* pairAlert = qobject_cast<WithinDistanceAlertConditionData*>(alert);
   if (!pairAlert)
     return true; // test is not valid for this alert type
 

@@ -13,7 +13,7 @@
 #ifndef PROXIMITYALERTRULE_H
 #define PROXIMITYALERTRULE_H
 
-#include "AbstractAlertRule.h"
+#include "AlertQuery.h"
 
 class AlertConditionData;
 

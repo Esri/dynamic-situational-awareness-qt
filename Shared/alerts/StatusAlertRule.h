@@ -14,7 +14,7 @@
 #define STATUSALERTRULE_H
 
 #include "AlertConditionData.h"
-#include "AbstractAlertRule.h"
+#include "AlertQuery.h"
 
 class AlertConditionData;
 

@@ -11,7 +11,7 @@
 //
 
 #include "AlertConditionData.h"
-#include "AbstractAlertRule.h"
+#include "AlertQuery.h"
 #include "AlertListModel.h"
 #include "AlertListProxyModel.h"
 

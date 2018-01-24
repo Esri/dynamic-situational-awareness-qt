@@ -10,7 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "AbstractAlertRule.h"
+#include "AlertQuery.h"
 #include "StatusAlertRule.h"
 
 StatusAlertRule::StatusAlertRule(QObject* parent):

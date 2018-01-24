@@ -13,7 +13,7 @@
 #ifndef IDSALERTRULE_H
 #define IDSALERTRULE_H
 
-#include "AbstractAlertRule.h"
+#include "AlertQuery.h"
 
 #include <QSet>
 #include <QUuid>

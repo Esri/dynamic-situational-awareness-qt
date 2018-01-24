@@ -13,7 +13,7 @@
 #ifndef INTERSECTSALERTRULE_H
 #define INTERSECTSALERTRULE_H
 
-#include "AbstractAlertRule.h"
+#include "AlertQuery.h"
 
 class AlertConditionData;
 

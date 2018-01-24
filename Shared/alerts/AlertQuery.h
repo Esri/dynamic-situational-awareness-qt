@@ -10,30 +10,28 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "AbstractAlert.h"
-#include "IdsAlertRule.h"
+#ifndef ALERTQUERY_H
+#define ALERTQUERY_H
 
-IdsAlertRule::IdsAlertRule(QObject* parent):
-  AbstractAlertRule(parent)
+#include <QObject>
+
+class AlertConditionData;
+
+class AlertQuery : public QObject
 {
+  Q_OBJECT
 
-}
+public:
+  explicit AlertQuery(QObject* parent = nullptr);
+  ~AlertQuery();
 
-IdsAlertRule::~IdsAlertRule()
-{
+  virtual bool matchesRule(AlertConditionData* alert) const = 0;
 
-}
+  bool active() const;
+  void setActive(bool active);
 
-bool IdsAlertRule::matchesRule(AbstractAlert* alert) const
-{
-  if (!alert)
-    return false;
+private:
+  bool m_active = false;
+};
 
-  return !m_ids.contains(alert->id());
-}
-
-void IdsAlertRule::addId(const QUuid& id)
-{
-  m_ids.insert(id);
-}
-
+#endif // ALERTQUERY_H

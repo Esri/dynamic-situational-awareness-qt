@@ -10,32 +10,28 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "DummyAlert.h"
-
-#include "Graphic.h"
-#include "Point.h"
+#include "AlertQuery.h"
+#include "AlertConditionData.h"
 
 using namespace Esri::ArcGISRuntime;
 
-DummyAlert::DummyAlert(Graphic* graphic, QObject* parent):
-  AbstractAlert(parent),
-  m_graphic(graphic)
-{
-  m_graphic->setSelected(true);
-}
-
-DummyAlert::~DummyAlert()
+AlertQuery::AlertQuery(QObject* parent):
+  QObject(parent)
 {
 
 }
 
-Geometry DummyAlert::position() const
+AlertQuery::~AlertQuery()
 {
-  return m_graphic ? m_graphic->geometry() : Point();
+
 }
 
-void DummyAlert::highlight(bool on)
+bool AlertQuery::active() const
 {
-  if (m_graphic)
-    m_graphic->setSelected(on);
+  return m_active;
+}
+
+void AlertQuery::setActive(bool active)
+{
+  m_active = active;
 }

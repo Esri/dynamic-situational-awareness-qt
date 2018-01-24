@@ -18,11 +18,7 @@
 #include "SceneQuickView.h"
 #include "SimpleLineSymbol.h"
 
-#include "AlertListModel.h"
 #include "DsaController.h"
-#include "DummyAlert.h"
-#include "GraphicPairAlert.h"
-#include "LocationController.h"
 #include "Vehicle.h"
 #include "ToolResourceProvider.h"
 #include "ToolManager.h"
@@ -101,36 +97,8 @@ void Vehicle::componentComplete()
   // set the options for the coordinateConversionTool
   setCoordinateConversionOptions();
 
-  // Alerts: Proof of concept
-  DictionarySymbolStyle* dictionarySymbolStyle = new DictionarySymbolStyle("mil2525d", this);
-  DictionaryRenderer* renderer = new DictionaryRenderer(dictionarySymbolStyle, this);
-
-  GraphicsOverlay* alertsOverlay = new GraphicsOverlay(this);
-  alertsOverlay->setRenderer(renderer);  connect(m_sceneView, &SceneQuickView::mousePressedAndHeld, this, [this, alertsOverlay](QMouseEvent& mouseEvent)
-  {
-    const Point alertPos = m_sceneView->screenToBaseSurface(mouseEvent.x(), mouseEvent.y());
-    const int alertCount = AlertListModel::instance()->rowCount();
-
-    qsrand(qrand());
-    const int maxStatus = static_cast<int>(AlertStatus::Critical);
-    AlertStatus randomStatus = static_cast<AlertStatus>((qrand() % ( maxStatus + 1) - 1) + 1);
-    if (randomStatus == AlertStatus::Inactive)
-      randomStatus = AlertStatus::Low;
-
-    Graphic* dummyAlertGraphic = new Graphic(alertPos, this);
-    dummyAlertGraphic->attributes()->insertAttribute("sic", "GFGPOAO-------X");
-    DummyAlert* dummyAlert = new DummyAlert(dummyAlertGraphic, this);
-    dummyAlert->setMessage(QString("Dummy Alert %1").arg(alertCount));
-    dummyAlert->setStatus(randomStatus);
-    dummyAlert->setViewed(false);
-    dummyAlert->setActive(true);
-    alertsOverlay->graphics()->append(dummyAlertGraphic);
-    dummyAlert->registerAlert();
-
-    m_sceneView->graphicsOverlays()->append(alertsOverlay);
-  });
-
   GraphicsOverlay* geofenceOverlay = new GraphicsOverlay(this);
+  geofenceOverlay->setOverlayId("Geofence overlay");
   SimpleLineSymbol* geofenceSymbol = new SimpleLineSymbol(SimpleLineSymbolStyle::Dash, Qt::green, 5, this);
   PolygonBuilder pb(SpatialReference::wgs84());
   pb.addPoint(-121.91, 36.605);

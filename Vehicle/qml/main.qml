@@ -84,8 +84,7 @@ Vehicle {
                 verticalCenter: parent.verticalCenter
                 right: parent.right
                 rightMargin: 10 * scaleFactor
-
-            }                        
+            }
         }
     }
 
@@ -176,6 +175,19 @@ Vehicle {
 
         AlertList {
             id: alertsTool
+            anchors {
+                left: parent.left
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+
+            onClosed: visible = false;
+        }
+
+        EditAlertsTool {
+            id: editAlertsTool
             anchors {
                 left: parent.left
                 top: parent.top

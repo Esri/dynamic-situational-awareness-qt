@@ -10,7 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "AbstractAlert.h"
+#include "AlertConditionData.h"
 #include "AlertListModel.h"
 #include "ViewedAlertsController.h"
 
@@ -28,6 +28,7 @@ ViewedAlertsController::ViewedAlertsController(QObject* parent /* = nullptr */):
   {
     connect(model, &AlertListModel::dataChanged, this, &ViewedAlertsController::unviewedCountChanged);
     connect(model, &AlertListModel::rowsInserted, this, &ViewedAlertsController::unviewedCountChanged);
+    connect(model, &AlertListModel::rowsRemoved, this, &ViewedAlertsController::unviewedCountChanged);
     emit unviewedCountChanged();
   }
 }
@@ -51,7 +52,7 @@ int ViewedAlertsController::unviewedCount() const
   const int alertsCount = model->rowCount();
   for (int i = 0; i < alertsCount; ++i)
   {
-    AbstractAlert* alert = model->alertAt(i);
+    AlertConditionData* alert = model->alertAt(i);
     if (!alert)
       continue;
 

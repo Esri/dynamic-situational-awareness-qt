@@ -112,12 +112,18 @@ void IdentifyFeaturesController::onMouseClicked(QMouseEvent& event)
   event.accept();
 }
 
-void IdentifyFeaturesController::onIdentifyLayersCompleted(const QUuid&, QList<IdentifyLayerResult*> identifyResults)
+void IdentifyFeaturesController::onIdentifyLayersCompleted(const QUuid& taskId, QList<IdentifyLayerResult*> identifyResults)
 {
+  if (taskId != m_taskWatcher.taskId())
+    return;
+
   ResultsManager resultsManager(identifyResults);
 
-  emit busyChanged();
   m_taskWatcher = TaskWatcher();
+  emit busyChanged();
+
+  if (!isActive())
+    return;
 
   auto it = resultsManager.m_results.begin();
   auto itEnd = resultsManager.m_results.end();

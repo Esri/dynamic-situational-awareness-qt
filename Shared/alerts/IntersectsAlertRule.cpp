@@ -10,51 +10,34 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "AbstractAlert.h"
-#include "GraphicPairAlert.h"
-#include "DistanceAlertRule.h"
+#include "IntersectsPairAlert.h"
+#include "IntersectsAlertRule.h"
 
 #include "GeometryEngine.h"
 
 using namespace Esri::ArcGISRuntime;
 
-DistanceAlertRule::DistanceAlertRule(QObject* parent):
-  AbstractAlertRule(parent)
+IntersectsAlertRule::IntersectsAlertRule(QObject* parent):
+  AlertQuery(parent)
 {
 
 }
 
-DistanceAlertRule::~DistanceAlertRule()
+IntersectsAlertRule::~IntersectsAlertRule()
 {
 
 }
 
-bool DistanceAlertRule::matchesRule(AbstractAlert* alert) const
+bool IntersectsAlertRule::matchesRule(AlertConditionData* alert) const
 {
   if (!alert)
     return false;
 
-  GraphicPairAlert* pairAlert = qobject_cast<GraphicPairAlert*>(alert);
+  IntersectsPairAlert* pairAlert = qobject_cast<IntersectsPairAlert*>(alert);
   if (!pairAlert)
     return true; // test is not valid for this alert type
 
   Geometry geom1 = GeometryEngine::project(pairAlert->position(), SpatialReference::wgs84());
   Geometry geom2 = GeometryEngine::project(pairAlert->position2(), geom1.spatialReference());
-  const double result = GeometryEngine::instance()->distance(geom1, geom2);
-
-  if (result <= pairAlert->distance())
-  {
-    if (!pairAlert->active())
-    {
-      pairAlert->setActive(true);
-    }
-
-    return true;
-  }
-  else
-  {
-    pairAlert->setActive(false);
-  }
-
-  return false;
+  return GeometryEngine::instance()->intersects(geom1, geom2);
 }

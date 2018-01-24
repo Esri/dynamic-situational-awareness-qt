@@ -10,28 +10,22 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "AbstractAlertRule.h"
-#include "AbstractAlert.h"
+#ifndef INTERSECTSALERTRULE_H
+#define INTERSECTSALERTRULE_H
 
-using namespace Esri::ArcGISRuntime;
+#include "AlertQuery.h"
 
-AbstractAlertRule::AbstractAlertRule(QObject* parent):
-  QObject(parent)
+class AlertConditionData;
+
+class IntersectsAlertRule : public AlertQuery
 {
+  Q_OBJECT
 
-}
+public:
+  explicit IntersectsAlertRule(QObject* parent = nullptr);
+  ~IntersectsAlertRule();
 
-AbstractAlertRule::~AbstractAlertRule()
-{
+  bool matchesRule(AlertConditionData* alert) const override;
+};
 
-}
-
-bool AbstractAlertRule::active() const
-{
-  return m_active;
-}
-
-void AbstractAlertRule::setActive(bool active)
-{
-  m_active = active;
-}
+#endif // INTERSECTSALERTRULE_H

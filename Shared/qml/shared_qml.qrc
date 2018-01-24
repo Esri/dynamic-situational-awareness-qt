@@ -23,6 +23,7 @@
         <file>OverlayButton.qml</file>
         <file>AlertList.qml</file>
         <file>ViewedAlerts.qml</file>
+        <file>EditAlertsTool.qml</file>
         <file>About.qml</file>
     </qresource>
 </RCC>

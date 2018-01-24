@@ -10,13 +10,16 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "AbstractAlert.h"
-#include "AbstractAlertRule.h"
+#include "AlertConditionData.h"
+#include "AlertQuery.h"
 #include "AlertListModel.h"
 #include "AlertListProxyModel.h"
 
+#include <QTimer>
+
 AlertListProxyModel::AlertListProxyModel(QObject* parent):
-  QSortFilterProxyModel(parent)
+  QSortFilterProxyModel(parent),
+  m_updateTimer(new QTimer(this))
 {
   AlertListModel* sourceModel = AlertListModel::instance();
   if (sourceModel)
@@ -35,7 +38,19 @@ AlertListProxyModel::AlertListProxyModel(QObject* parent):
     {
       invalidate();
     });
+
+    connect(sourceModel, &AlertListModel::rowsRemoved, this, [this]()
+    {
+      invalidate();
+    });
   }
+
+  m_updateTimer->setInterval(500);
+  connect(m_updateTimer, &QTimer::timeout, this, [this]()
+  {
+    invalidate();
+  });
+  m_updateTimer->start();
 }
 
 AlertListProxyModel::~AlertListProxyModel()
@@ -43,7 +58,7 @@ AlertListProxyModel::~AlertListProxyModel()
 
 }
 
-void AlertListProxyModel::applyFilter(const QList<AbstractAlertRule*>& rules)
+void AlertListProxyModel::applyFilter(const QList<AlertQuery*>& rules)
 {
   m_rules = rules;
   invalidate();
@@ -67,9 +82,11 @@ bool AlertListProxyModel::passesAllRules(int sourceRow) const
   if (!sourceModel)
     return false;
 
-  AbstractAlert* alert = sourceModel->alertAt(sourceRow);
+  AlertConditionData* alert = sourceModel->alertAt(sourceRow);
   if (!alert)
     return false;
+
+  bool shouldBeActive = true;
 
   auto rulesIt = m_rules.cbegin();
   auto rulesEnd = m_rules.cend();
@@ -80,8 +97,13 @@ bool AlertListProxyModel::passesAllRules(int sourceRow) const
       continue;
 
     if (!rule->matchesRule(alert))
-      return false;
+    {
+      shouldBeActive = false;
+      break;
+    }
   }
 
-  return true;
+  alert->setActive(shouldBeActive);
+
+  return shouldBeActive;
 }

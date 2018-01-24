@@ -17,11 +17,23 @@
 
 #include "AbstractTool.h"
 
-class AbstractAlertRule;
+class AlertQuery;
 class AlertListProxyModel;
-class DistanceAlertRule;
+class IntersectsAlertRule;
 class IdsAlertRule;
+class WithinDistanceAlertQuery;
 class StatusAlertRule;
+
+namespace Esri {
+namespace ArcGISRuntime
+{
+  class GraphicsOverlay;
+  class SimpleMarkerSceneSymbol;
+}}
+
+class QTimer;
+
+class GeoElementHighlighter;
 
 class AlertToolController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -38,11 +50,11 @@ public:
   // AbstractTool interface
   QString toolName() const override;
 
-  Q_INVOKABLE void highlight(int rowIndex);
+  Q_INVOKABLE void highlight(int rowIndex, bool showHighlight);
   Q_INVOKABLE void zoomTo(int rowIndex);
   Q_INVOKABLE void setViewed(int rowIndex);
   Q_INVOKABLE void dismiss(int rowIndex);
-  Q_INVOKABLE void setMinStatus(int status);
+  Q_INVOKABLE void setMinLevel(int level);
 
   Q_INVOKABLE void flashAll(bool on);
 
@@ -50,11 +62,15 @@ signals:
   void alertListModelChanged();
 
 private:
-  AlertListProxyModel* m_alertsProxyModel;
-  DistanceAlertRule* m_distanceAlertRule;
-  StatusAlertRule* m_statusAlertRule;
-  IdsAlertRule* m_idsAlertRule;
-  QList<AbstractAlertRule*> m_rules;
+  AlertListProxyModel* m_alertsProxyModel = nullptr;
+  WithinDistanceAlertQuery* m_distanceAlertRule = nullptr;
+  IntersectsAlertRule* m_intersectsRule = nullptr;
+  StatusAlertRule* m_statusAlertRule = nullptr;
+  IdsAlertRule* m_idsAlertRule = nullptr;
+  QList<AlertQuery*> m_rules;
+  GeoElementHighlighter* m_highlighter = nullptr;
+
+  QMetaObject::Connection m_highlightConnection;
 };
 
 #endif // ALERTTOOLCONTROLLER_H

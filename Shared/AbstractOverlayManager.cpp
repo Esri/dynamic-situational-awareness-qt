@@ -10,30 +10,18 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef IDSALERTRULE_H
-#define IDSALERTRULE_H
+#include "AbstractOverlayManager.h"
 
-#include "AbstractAlertRule.h"
+using namespace Esri::ArcGISRuntime;
 
-#include <QSet>
-#include <QUuid>
 
-class AbstractAlert;
-
-class IdsAlertRule : public AbstractAlertRule
+AbstractOverlayManager::AbstractOverlayManager(QObject* parent):
+  QObject(parent)
 {
-  Q_OBJECT
 
-public:
-  explicit IdsAlertRule(QObject* parent = nullptr);
-  ~IdsAlertRule();
+}
 
-  bool matchesRule(AbstractAlert* alert) const override;
+AbstractOverlayManager::~AbstractOverlayManager()
+{
 
-  void addId(const QUuid& id);
-
-private:
-  QSet<QUuid> m_ids;
-};
-
-#endif // IDSALERTRULE_H
+}

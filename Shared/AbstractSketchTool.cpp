@@ -30,6 +30,7 @@ AbstractSketchTool::AbstractSketchTool(QObject* parent) :
   AbstractTool(parent),
   m_sketchOverlay(new GraphicsOverlay(this))
 {
+  m_sketchOverlay->setOverlayId("Sketch overlay");
 }
 
 AbstractSketchTool::~AbstractSketchTool()

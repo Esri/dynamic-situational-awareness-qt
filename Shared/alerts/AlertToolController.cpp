@@ -10,11 +10,13 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "AbstractAlert.h"
+#include "AlertConditionData.h"
 #include "AlertToolController.h"
 #include "AlertListModel.h"
 #include "AlertListProxyModel.h"
-#include "DistanceAlertRule.h"
+#include "GeoElementHighlighter.h"
+#include "IntersectsAlertRule.h"
+#include "WithinDistanceAlertQuery.h"
 #include "DsaUtility.h"
 #include "IdsAlertRule.h"
 #include "StatusAlertRule.h"
@@ -23,19 +25,27 @@
 #include "ToolResourceProvider.h"
 
 #include "GeoView.h"
+#include "GraphicsOverlay.h"
 #include "SceneView.h"
+#include "SimpleMarkerSceneSymbol.h"
+#include "SimpleRenderer.h"
+
+#include <QTimer>
 
 using namespace Esri::ArcGISRuntime;
 
 AlertToolController::AlertToolController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent),
   m_alertsProxyModel(new AlertListProxyModel(this)),
-  m_distanceAlertRule(new DistanceAlertRule(this)),
+  m_distanceAlertRule(new WithinDistanceAlertQuery(this)),
+  m_intersectsRule(new IntersectsAlertRule(this)),
   m_statusAlertRule(new StatusAlertRule(this)),
-  m_idsAlertRule(new IdsAlertRule(this))
+  m_idsAlertRule(new IdsAlertRule(this)),
+  m_highlighter(new GeoElementHighlighter(this))
 {
   Toolkit::ToolManager::instance().addTool(this);
   m_rules.append(m_distanceAlertRule);
+  m_rules.append(m_intersectsRule);
   m_rules.append(m_statusAlertRule);
   m_rules.append(m_idsAlertRule);
 
@@ -56,21 +66,37 @@ QString AlertToolController::toolName() const
   return "Alert Tool";
 }
 
-void AlertToolController::highlight(int rowIndex)
+void AlertToolController::highlight(int rowIndex, bool showHighlight)
 {
-  QModelIndex sourceIndex = m_alertsProxyModel->mapToSource(m_alertsProxyModel->index(rowIndex, 0));
-  AbstractAlert* alert = AlertListModel::instance()->alertAt(sourceIndex.row());
+  if (showHighlight)
+  {
+    QModelIndex sourceIndex = m_alertsProxyModel->mapToSource(m_alertsProxyModel->index(rowIndex, 0));
+    AlertConditionData* alert = AlertListModel::instance()->alertAt(sourceIndex.row());
 
-  if (!alert)
-    return;
+    if (!alert)
+      return;
 
-  alert->highlight(true);
+    if (m_highlightConnection)
+      disconnect(m_highlightConnection);
+
+    m_highlightConnection = connect(alert, &AlertConditionData::noLongerValid, this, [this]()
+    {
+      m_highlighter->stopHighlight();
+    });
+
+    m_highlighter->setGeoElement(alert->geoElement());
+    m_highlighter->startHighlight();
+  }
+  else
+  {
+    m_highlighter->stopHighlight();
+  }
 }
 
 void AlertToolController::zoomTo(int rowIndex)
 {
   QModelIndex sourceIndex = m_alertsProxyModel->mapToSource(m_alertsProxyModel->index(rowIndex, 0));
-  AbstractAlert* alert = AlertListModel::instance()->alertAt(sourceIndex.row());
+  AlertConditionData* alert = AlertListModel::instance()->alertAt(sourceIndex.row());
   if (!alert)
     return;
 
@@ -111,7 +137,7 @@ void AlertToolController::setViewed(int rowIndex)
 void AlertToolController::dismiss(int rowIndex)
 {
   QModelIndex sourceIndex = m_alertsProxyModel->mapToSource(m_alertsProxyModel->index(rowIndex, 0));
-  AbstractAlert* alert = AlertListModel::instance()->alertAt(sourceIndex.row());
+  AlertConditionData* alert = AlertListModel::instance()->alertAt(sourceIndex.row());
   if (!alert)
     return;
 
@@ -119,15 +145,15 @@ void AlertToolController::dismiss(int rowIndex)
   m_alertsProxyModel->applyFilter(m_rules);
 }
 
-void AlertToolController::setMinStatus(int status)
+void AlertToolController::setMinLevel(int level)
 {
-  AlertStatus alertStatus = static_cast<AlertStatus>(status);
-  switch (alertStatus) {
-  case AlertStatus::Low:
-  case AlertStatus::Medium:
-  case AlertStatus::High:
-  case AlertStatus::Critical:
-    m_statusAlertRule->setMinStatus(alertStatus);
+  AlertLevel alertLevel = static_cast<AlertLevel>(level);
+  switch (alertLevel) {
+  case AlertLevel::Low:
+  case AlertLevel::Medium:
+  case AlertLevel::High:
+  case AlertLevel::Critical:
+    m_statusAlertRule->setMinStatus(alertLevel);
     m_alertsProxyModel->applyFilter(m_rules);
     break;
   default:
@@ -144,7 +170,7 @@ void AlertToolController::flashAll(bool on)
   const int modelSize = model->rowCount();
   for (int i = 0; i < modelSize; ++i)
   {
-    AbstractAlert* alert = model->alertAt(i);
+    AlertConditionData* alert = model->alertAt(i);
     if (!alert || !alert->active())
       continue;
 

@@ -10,28 +10,30 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef ABSTRACTALERTRULE_H
-#define ABSTRACTALERTRULE_H
+#ifndef IDSALERTRULE_H
+#define IDSALERTRULE_H
 
-#include <QObject>
+#include "AlertQuery.h"
 
-class AbstractAlert;
+#include <QSet>
+#include <QUuid>
 
-class AbstractAlertRule : public QObject
+class AlertConditionData;
+
+class IdsAlertRule : public AlertQuery
 {
   Q_OBJECT
 
 public:
-  explicit AbstractAlertRule(QObject* parent = nullptr);
-  ~AbstractAlertRule();
+  explicit IdsAlertRule(QObject* parent = nullptr);
+  ~IdsAlertRule();
 
-  virtual bool matchesRule(AbstractAlert* alert) const = 0;
+  bool matchesRule(AlertConditionData* alert) const override;
 
-  bool active() const;
-  void setActive(bool active);
+  void addId(const QUuid& id);
 
 private:
-  bool m_active = false;
+  QSet<QUuid> m_ids;
 };
 
-#endif // ABSTRACTALERTRULE_H
+#endif // IDSALERTRULE_H

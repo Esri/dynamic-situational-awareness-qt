@@ -17,7 +17,7 @@
 #include <QHash>
 #include <QList>
 
-class AbstractAlert;
+class AlertConditionData;
 
 class AlertListModel : public QAbstractListModel
 {
@@ -28,8 +28,8 @@ public:
   enum AlertListRoles
   {
     AlertId = Qt::UserRole + 1,
-    Message = Qt::UserRole + 2,
-    Status = Qt::UserRole + 3,
+    Name = Qt::UserRole + 2,
+    Level = Qt::UserRole + 3,
     Position = Qt::UserRole +4 ,
     Viewed = Qt::UserRole + 5
   };
@@ -38,9 +38,12 @@ public:
 
   ~AlertListModel();
 
-  bool addAlert(AbstractAlert* alert);
+  bool addAlertConditionData(AlertConditionData* alert);
+  void removeAlert(AlertConditionData* alert);
 
-  AbstractAlert* alertAt(int rowIndex) const;
+  AlertConditionData* alertAt(int rowIndex) const;
+
+  void removeAt(int rowIndex);
 
   // QAbstractItemModel interface
   int rowCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -54,7 +57,7 @@ private:
   AlertListModel(QObject* parent = nullptr);
 
   QHash<int, QByteArray>  m_roles;
-  QList<AbstractAlert*>   m_alerts;
+  QList<AlertConditionData*>   m_alerts;
 };
 
 #endif // ALERT_LISTMODEL_H

@@ -49,6 +49,7 @@ void AnalysisController::connectMouseSignals()
       sceneView->analysisOverlays()->append(m_analysisOverlay);
 
       m_graphicsOverlay = new GraphicsOverlay(this);
+      m_graphicsOverlay->setOverlayId("Analysis overlay");
       sceneView->graphicsOverlays()->append(m_graphicsOverlay);
 
       return;

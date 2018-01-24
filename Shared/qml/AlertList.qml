@@ -23,12 +23,15 @@ DsaPanel {
     title: qsTr("Alerts")
     clip: true
 
+    property int hightlightIndex: -1
+
     AlertToolController {
         id: toolController
     }
 
-    ComboBox {
-        id: statusFilter
+    Row {
+        id: levelRow
+        spacing: 8 * scaleFactor
         anchors {
             top: alertsRoot.titleBar.bottom
             left: parent.left
@@ -36,15 +39,29 @@ DsaPanel {
             margins: 8 * scaleFactor
         }
 
-        model: ["Low", "Medium", "High", "Critical"]
-        currentIndex: 0
-        onCurrentIndexChanged: toolController.setMinStatus(currentIndex+1);
+        Text {
+            anchors.verticalCenter: levelFilter.verticalCenter
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+            color: "white"
+            text: "Minimum level"
+        }
+
+        ComboBox {
+            id: levelFilter
+            width: 128 * scaleFactor
+            model: ["Low", "Medium", "High", "Critical"]
+            currentIndex: 0
+            onCurrentIndexChanged: toolController.setMinLevel(currentIndex+1);
+            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+        }
     }
 
     ListView {
         id: alertsView
         anchors {
-            top: statusFilter.bottom
+            top: levelRow.bottom
             left: parent.left
             right: parent.right
             bottom: parent.bottom
@@ -52,10 +69,12 @@ DsaPanel {
         }
         model: toolController.alertListModel
         clip: true
+        spacing: 8 * scaleFactor
 
         delegate: SwipeDelegate {
             id: swipeDelegate
             width: parent.width
+            height: highlightButton.height
             Text {
                 anchors {
                     left: parent.left
@@ -63,23 +82,35 @@ DsaPanel {
                     verticalCenter: parent.verticalCenter
                 }
 
-                text: message + ": " + (status === 0 ? "inactive" :
-                                       (status === 1 ? "low" :
-                                       (status === 2 ? "medium" :
-                                       (status === 3 ? "high" :
-                                       (status === 4 ? "critical" : "???")))))
+                text: name + ": " + (level === 0 ? "unknown" :
+                                    (level === 1 ? "low" :
+                                    (level === 2 ? "medium" :
+                                    (level === 3 ? "high" :
+                                    (level === 4 ? "critical" : "???")))))
                 color: "white"
             }
 
-            Button {
+            OverlayButton {
                 id: highlightButton
-                text: "flash";
+                iconUrl: DsaResources.iconGps
+                selected: hightlightIndex === index
                 visible: swipeDelegate.swipe.position === 0
                 anchors {
                     right: zoomButton.left
                     verticalCenter: parent.verticalCenter
                 }
-                onClicked: toolController.highlight(index);
+                onClicked: {
+
+                    if (hightlightIndex == index) {
+                        toolController.highlight(index, false);
+                        hightlightIndex = -1;
+                    }
+                    else {
+                        toolController.highlight(hightlightIndex, false);
+                        toolController.highlight(index, true);
+                        hightlightIndex = index;
+                    }
+                }
             }
 
             Button {

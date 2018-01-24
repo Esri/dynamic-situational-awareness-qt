@@ -13,12 +13,12 @@
 #ifndef STATUSALERTRULE_H
 #define STATUSALERTRULE_H
 
-#include "AbstractAlert.h"
-#include "AbstractAlertRule.h"
+#include "AlertConditionData.h"
+#include "AlertQuery.h"
 
-class AbstractAlert;
+class AlertConditionData;
 
-class StatusAlertRule : public AbstractAlertRule
+class StatusAlertRule : public AlertQuery
 {
   Q_OBJECT
 
@@ -26,13 +26,13 @@ public:
   explicit StatusAlertRule(QObject* parent = nullptr);
   ~StatusAlertRule();
 
-  bool matchesRule(AbstractAlert* alert) const override;
+  bool matchesRule(AlertConditionData* alert) const override;
 
-  AlertStatus minStatus() const;
-  void setMinStatus(const AlertStatus& minStatus);
+  AlertLevel minStatus() const;
+  void setMinStatus(const AlertLevel& minStatus);
 
 private:
-  AlertStatus m_minStatus = AlertStatus::Low;
+  AlertLevel m_minStatus = AlertLevel::Low;
 };
 
 #endif // STATUSALERTRULE_H

@@ -10,8 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef ABSTRACTALERT_H
-#define ABSTRACTALERT_H
+#ifndef ALERTCONDITIONDATA_H
+#define ALERTCONDITIONDATA_H
+
+#include "AlertLevel.h"
 
 #include "Geometry.h"
 
@@ -19,36 +21,33 @@
 #include <QString>
 #include <QUuid>
 
-enum class AlertStatus : unsigned int
+class AlertCondition;
+
+namespace Esri
 {
-  Inactive = 0,
-  Low,
-  Medium,
-  High,
-  Critical
-};
+namespace ArcGISRuntime
+{
+  class GeoElement;
+}
+}
 
-Q_DECLARE_METATYPE(AlertStatus);
-
-class AbstractAlert : public QObject
+class AlertConditionData : public QObject
 {
   Q_OBJECT
 
 public:
-  explicit AbstractAlert(QObject* parent = nullptr);
-  ~AbstractAlert();
+  explicit AlertConditionData(AlertCondition* condition);
+  ~AlertConditionData();
 
-  void registerAlert();
-
-  AlertStatus status() const;
-  void setStatus(const AlertStatus& status);
+  AlertLevel level() const;
 
   virtual Esri::ArcGISRuntime::Geometry position() const = 0;
 
   virtual void highlight(bool on) = 0;
 
-  QString message() const;
-  void setMessage(const QString &message);
+  virtual Esri::ArcGISRuntime::GeoElement* geoElement() const = 0;
+
+  QString name() const;
 
   QUuid id() const;
   void setId(const QUuid& id);
@@ -66,13 +65,14 @@ signals:
   void statusChanged();
   void viewedChanged();
   void positionChanged();
+  void activeChanged();
+  void noLongerValid();
 
 private:
-  AlertStatus m_status = AlertStatus::Inactive;
-  QString m_message;
+  AlertCondition* m_condition = nullptr;
   QUuid m_id;
   bool m_viewed = true;
   bool m_active = false;
 };
 
-#endif // ABSTRACTALERT_H
+#endif // ALERTCONDITIONDATA_H

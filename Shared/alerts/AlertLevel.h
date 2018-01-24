@@ -10,22 +10,16 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef DISTANCEALERTRULE_H
-#define DISTANCEALERTRULE_H
+#ifndef ALERTLEVEL_H
+#define ALERTLEVEL_H
 
-#include "AbstractAlertRule.h"
-
-class AbstractAlert;
-
-class DistanceAlertRule : public AbstractAlertRule
+enum class AlertLevel : unsigned int
 {
-  Q_OBJECT
-
-public:
-  explicit DistanceAlertRule(QObject* parent = nullptr);
-  ~DistanceAlertRule();
-
-  bool matchesRule(AbstractAlert* alert) const override;
+  Unknown = 0,
+  Low,
+  Medium,
+  High,
+  Critical
 };
 
-#endif // DISTANCEALERTRULE_H
+#endif // ALERTLEVEL_H

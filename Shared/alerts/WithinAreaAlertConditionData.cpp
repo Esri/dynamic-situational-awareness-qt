@@ -11,7 +11,7 @@
 //
 
 #include "AbstractOverlayManager.h"
-#include "IntersectsPairAlert.h"
+#include "WithinAreaAlertConditionData.h"
 
 #include "GeoElement.h"
 #include "Graphic.h"
@@ -19,7 +19,7 @@
 
 using namespace Esri::ArcGISRuntime;
 
-IntersectsPairAlert::IntersectsPairAlert(Graphic* source,
+WithinAreaAlertConditionData::WithinAreaAlertConditionData(Graphic* source,
                                          GeoElement* target,
                                          AlertCondition* condition):
   AlertConditionData(condition),
@@ -37,27 +37,27 @@ IntersectsPairAlert::IntersectsPairAlert(Graphic* source,
   connect(m_target, &GeoElement::destroyed, this, onElementDestroyed);
 }
 
-IntersectsPairAlert::~IntersectsPairAlert()
+WithinAreaAlertConditionData::~WithinAreaAlertConditionData()
 {
 
 }
 
-Geometry IntersectsPairAlert::position() const
+Geometry WithinAreaAlertConditionData::position() const
 {
   return m_source ? m_source->geometry() : Point();
 }
 
-void IntersectsPairAlert::highlight(bool on)
+void WithinAreaAlertConditionData::highlight(bool on)
 {
   m_source->setSelected(on);
 }
 
-Geometry IntersectsPairAlert::position2() const
+Geometry WithinAreaAlertConditionData::position2() const
 {
   return m_target ? m_target->geometry() : Point();
 }
 
-GeoElement* IntersectsPairAlert::geoElement() const
+GeoElement* WithinAreaAlertConditionData::geoElement() const
 {
   return m_source;
 }

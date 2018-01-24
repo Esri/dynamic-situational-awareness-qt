@@ -15,7 +15,7 @@
 #include "EditAlertsController.h"
 #include "FeatureOverlayManager.h"
 #include "GraphicsOverlayManager.h"
-#include "IntersectsPairAlert.h"
+#include "WithinAreaAlertConditionData.h"
 #include "WithinDistanceAlertCondition.h"
 
 #include "ToolManager.h"

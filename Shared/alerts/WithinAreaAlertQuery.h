@@ -10,22 +10,22 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef INTERSECTSALERTRULE_H
-#define INTERSECTSALERTRULE_H
+#ifndef WITHINAREAALERTQUERY_H
+#define WITHINAREAALERTQUERY_H
 
 #include "AlertQuery.h"
 
 class AlertConditionData;
 
-class IntersectsAlertRule : public AlertQuery
+class WithinAreaAlertQuery : public AlertQuery
 {
   Q_OBJECT
 
 public:
-  explicit IntersectsAlertRule(QObject* parent = nullptr);
-  ~IntersectsAlertRule();
+  explicit WithinAreaAlertQuery(QObject* parent = nullptr);
+  ~WithinAreaAlertQuery();
 
   bool matchesRule(AlertConditionData* alert) const override;
 };
 
-#endif // INTERSECTSALERTRULE_H
+#endif // WITHINAREAALERTQUERY_H

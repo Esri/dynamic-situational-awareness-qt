@@ -10,30 +10,30 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "IntersectsPairAlert.h"
-#include "IntersectsAlertRule.h"
+#include "WithinAreaAlertConditionData.h"
+#include "WithinAreaAlertQuery.h"
 
 #include "GeometryEngine.h"
 
 using namespace Esri::ArcGISRuntime;
 
-IntersectsAlertRule::IntersectsAlertRule(QObject* parent):
+WithinAreaAlertQuery::WithinAreaAlertQuery(QObject* parent):
   AlertQuery(parent)
 {
 
 }
 
-IntersectsAlertRule::~IntersectsAlertRule()
+WithinAreaAlertQuery::~WithinAreaAlertQuery()
 {
 
 }
 
-bool IntersectsAlertRule::matchesRule(AlertConditionData* alert) const
+bool WithinAreaAlertQuery::matchesRule(AlertConditionData* alert) const
 {
   if (!alert)
     return false;
 
-  IntersectsPairAlert* pairAlert = qobject_cast<IntersectsPairAlert*>(alert);
+  WithinAreaAlertConditionData* pairAlert = qobject_cast<WithinAreaAlertConditionData*>(alert);
   if (!pairAlert)
     return true; // test is not valid for this alert type
 

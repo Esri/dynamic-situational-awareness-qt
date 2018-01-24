@@ -15,7 +15,7 @@
 #include "AlertListModel.h"
 #include "AlertListProxyModel.h"
 #include "GeoElementHighlighter.h"
-#include "IntersectsAlertRule.h"
+#include "WithinAreaAlertQuery.h"
 #include "WithinDistanceAlertQuery.h"
 #include "DsaUtility.h"
 #include "IdsAlertRule.h"
@@ -38,7 +38,7 @@ AlertToolController::AlertToolController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent),
   m_alertsProxyModel(new AlertListProxyModel(this)),
   m_distanceAlertRule(new WithinDistanceAlertQuery(this)),
-  m_intersectsRule(new IntersectsAlertRule(this)),
+  m_intersectsRule(new WithinAreaAlertQuery(this)),
   m_statusAlertRule(new StatusAlertRule(this)),
   m_idsAlertRule(new IdsAlertRule(this)),
   m_highlighter(new GeoElementHighlighter(this))

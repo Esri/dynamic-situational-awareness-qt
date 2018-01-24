@@ -11,7 +11,7 @@
 //
 
 #include "AlertConditionData.h"
-#include "ProximityPairAlert.h"
+#include "WithinDistanceAlertConditionData.h"
 #include "WithinDistanceAlertQuery.h"
 
 #include "GeometryEngine.h"

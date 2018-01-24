@@ -103,6 +103,18 @@ DsaPanel {
             margins: 8 * scaleFactor
         }
 
+        TextField {
+            id: newAlertName
+            color: Material.accent
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: parent.width
+            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+            font.bold: true
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            placeholderText: "<condition name>"
+        }
+
         ComboBox {
             id: levelCb
             anchors {
@@ -290,8 +302,9 @@ DsaPanel {
 
             onClicked: {
                 if (withinDistanceRb.checked) {
-                    toolController.addWithinDistanceAlert(levelCb.currentIndex,
-                                                          sourceCb.currentIndex,
+                    toolController.addWithinDistanceAlert(newAlertName.text,
+                                                          levelCb.currentIndex,
+                                                          sourceCb.currentText,
                                                           withinDistanceSB.value,
                                                           Number(featureIdEdit.text),
                                                           targetCB.currentIndex);

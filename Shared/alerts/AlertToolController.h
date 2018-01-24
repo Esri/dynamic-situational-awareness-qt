@@ -70,6 +70,7 @@ private:
   QList<AlertQuery*> m_rules;
   GeoElementHighlighter* m_highlighter = nullptr;
 
+  QMetaObject::Connection m_highlightConnection;
 };
 
 #endif // ALERTTOOLCONTROLLER_H

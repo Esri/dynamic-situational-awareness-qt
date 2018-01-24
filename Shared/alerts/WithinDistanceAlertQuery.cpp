@@ -38,9 +38,28 @@ bool WithinDistanceAlertQuery::matchesRule(AlertConditionData* alert) const
   if (!pairAlert)
     return true; // test is not valid for this alert type
 
-  Geometry geom1 = GeometryEngine::project(pairAlert->position(), SpatialReference::wgs84());
-  Geometry geom2 = GeometryEngine::project(pairAlert->position2(), geom1.spatialReference());
-  const double result = GeometryEngine::instance()->distance(geom1, geom2);
+  Point sourceGeom = GeometryEngine::project(pairAlert->position(), SpatialReference::wgs84());
+  Geometry geom2 = GeometryEngine::project(pairAlert->position2(), sourceGeom.spatialReference());
+  Point nearestPoint;
 
-  return result <= pairAlert->distance();
+  switch (geom2.geometryType())
+  {
+  case GeometryType::Point:
+    nearestPoint = geom2;
+    break;
+  case GeometryType::Polyline:
+  case GeometryType::Polygon:
+  {
+    nearestPoint = GeometryEngine::nearestCoordinate(geom2, sourceGeom).coordinate();
+    break;
+  }
+  default:
+    nearestPoint = geom2.extent().center();
+    break;
+  }
+
+  const GeodeticDistanceResult result = GeometryEngine::instance()->distanceGeodetic(
+        sourceGeom, nearestPoint, LinearUnit::meters(), AngularUnit::degrees(), GeodeticCurveType::Geodesic);
+
+  return result.distance() <= pairAlert->distance();
 }

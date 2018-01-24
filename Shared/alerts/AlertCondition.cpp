@@ -27,7 +27,7 @@ AlertCondition::AlertCondition(const AlertLevel& level, const QString& name, QOb
 
 AlertCondition::~AlertCondition()
 {
-
+  emit noLongerValid();
 }
 
 AlertLevel AlertCondition::level() const

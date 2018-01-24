@@ -95,7 +95,6 @@ void AlertListModel::removeAlert(AlertConditionData* alert)
   if (!alert)
     return;
 
-
   if (alert->id().isNull())
     return;
 

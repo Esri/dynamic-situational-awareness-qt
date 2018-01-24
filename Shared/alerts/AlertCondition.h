@@ -36,6 +36,9 @@ public:
 
   void addData(AlertConditionData* newData);
 
+signals:
+  void noLongerValid();
+
 private:
   AlertLevel m_level;
   QString m_name;

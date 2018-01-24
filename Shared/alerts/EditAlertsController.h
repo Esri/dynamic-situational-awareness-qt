@@ -31,6 +31,8 @@ class IdentifyGraphicsOverlayResult;
 }
 }
 
+class AlertConditionListModel;
+
 class EditAlertsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
   Q_OBJECT
@@ -51,7 +53,7 @@ public:
 
   void setActive(bool active) override;
 
-  Q_INVOKABLE void addWithinDistanceAlert(int levelIndex, int sourceOverlayIndex, double distance, int itemId, int targetOverlayIndex);
+  Q_INVOKABLE void addWithinDistanceAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, double distance, int itemId, int targetOverlayIndex);
   Q_INVOKABLE void addIntersectsAlert(int levelIndex, int sourceOverlayIndex, int itemId, int targetOverlayIndex);
   Q_INVOKABLE void removeConditionAt(int rowIndex);
   Q_INVOKABLE void togglePickMode();
@@ -83,6 +85,7 @@ private:
 
   static QStringList realtimeFeedNames();
 
+  AlertConditionListModel* m_conditions;
   QStringListModel* m_sourceNames;
   QStringListModel* m_targetNames;
   QStringListModel* m_levelNames;

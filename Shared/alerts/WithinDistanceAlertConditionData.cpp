@@ -17,6 +17,8 @@
 #include "Graphic.h"
 #include "Point.h"
 
+#include <QDebug>
+
 using namespace Esri::ArcGISRuntime;
 
 WithinDistanceAlertConditionData::WithinDistanceAlertConditionData(Graphic* source,
@@ -28,6 +30,8 @@ WithinDistanceAlertConditionData::WithinDistanceAlertConditionData(Graphic* sour
   m_target(target),
   m_distance(distance)
 {
+  qDebug() << "condition data created";
+
   auto onElementDestroyed = [this]()
   {
     m_source = nullptr;
@@ -51,7 +55,7 @@ Geometry WithinDistanceAlertConditionData::position() const
 
 void WithinDistanceAlertConditionData::highlight(bool on)
 {
-  m_source->setSelected(true);
+  m_source->setSelected(on);
 }
 
 Geometry WithinDistanceAlertConditionData::position2() const

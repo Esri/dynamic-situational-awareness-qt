@@ -19,12 +19,12 @@ AlertConditionData::AlertConditionData(AlertCondition* parent):
   QObject(parent),
   m_condition(parent)
 {
-
+  connect(m_condition, &AlertCondition::noLongerValid, this, &AlertConditionData::noLongerValid);
 }
 
 AlertConditionData::~AlertConditionData()
 {
-
+  emit noLongerValid();
 }
 
 AlertLevel AlertConditionData::level() const

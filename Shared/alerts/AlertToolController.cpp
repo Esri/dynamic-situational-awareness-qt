@@ -76,6 +76,14 @@ void AlertToolController::highlight(int rowIndex, bool showHighlight)
     if (!alert)
       return;
 
+    if (m_highlightConnection)
+      disconnect(m_highlightConnection);
+
+    m_highlightConnection = connect(alert, &AlertConditionData::noLongerValid, this, [this]()
+    {
+      m_highlighter->stopHighlight();
+    });
+
     m_highlighter->setGeoElement(alert->geoElement());
     m_highlighter->startHighlight();
   }

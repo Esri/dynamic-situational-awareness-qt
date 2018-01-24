@@ -11,7 +11,7 @@
 //
 
 #include "AlertConditionData.h"
-#include "AlertListModel.h"
+#include "AlertConditionListModel.h"
 #include "EditAlertsController.h"
 #include "FeatureOverlayManager.h"
 #include "GraphicsOverlayManager.h"
@@ -62,6 +62,7 @@ struct GraphicsResultsManager {
 
 EditAlertsController::EditAlertsController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent),
+  m_conditions(new AlertConditionListModel(this)),
   m_sourceNames(new QStringListModel(this)),
   m_targetNames(new QStringListModel(this)),
   m_levelNames(new QStringListModel(QStringList{"Low", "Moderate", "High", "Critical"},this))
@@ -71,7 +72,7 @@ EditAlertsController::EditAlertsController(QObject* parent /* = nullptr */):
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged,
           this, &EditAlertsController::onGeoviewChanged);
 
-  connect(AlertListModel::instance(), &AlertListModel::dataChanged, this, &EditAlertsController::conditionsListChanged);
+  connect(m_conditions, &AlertConditionListModel::dataChanged, this, &EditAlertsController::conditionsListChanged);
 
   onGeoviewChanged();
 }
@@ -97,16 +98,13 @@ void EditAlertsController::setActive(bool active)
   emit activeChanged();
 }
 
-void EditAlertsController::addWithinDistanceAlert(int levelIndex, int sourceOverlayIndex, double distance, int itemId, int targetOverlayIndex)
+void EditAlertsController::addWithinDistanceAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedName, double distance, int itemId, int targetOverlayIndex)
 {
   if (levelIndex < 0 ||
-      sourceOverlayIndex < 0 ||
+      sourceFeedName.isEmpty() ||
       distance < 0.0 ||
       itemId < 0 ||
       targetOverlayIndex < 0)
-    return;
-
-  if (sourceOverlayIndex == targetOverlayIndex)
     return;
 
   AlertLevel level = static_cast<AlertLevel>(levelIndex + 1);
@@ -155,7 +153,7 @@ void EditAlertsController::addWithinDistanceAlert(int levelIndex, int sourceOver
 
       ++currIndex;
 
-      if (currIndex == sourceOverlayIndex)
+      if (sourceFeedName == overlay->overlayId())
         sourceOverlay = overlay;
 
       if (currIndex == targetOverlayIndex)
@@ -170,8 +168,8 @@ void EditAlertsController::addWithinDistanceAlert(int levelIndex, int sourceOver
   if (!targetElement)
     return;
 
-  WithinDistanceAlertCondition* condition = new WithinDistanceAlertCondition(sourceOverlay, targetElement, distance, level, "Within Distance", this);
-
+  WithinDistanceAlertCondition* condition = new WithinDistanceAlertCondition(sourceOverlay, targetElement, distance, level, conditionName, this);
+  m_conditions->addAlertCondition(condition);
 }
 
 void EditAlertsController::addIntersectsAlert(int levelIndex, int sourceOverlayIndex, int itemId, int targetOverlayIndex)
@@ -275,7 +273,9 @@ void EditAlertsController::addIntersectsAlert(int levelIndex, int sourceOverlayI
 
 void EditAlertsController::removeConditionAt(int rowIndex)
 {
-  AlertListModel::instance()->removeAt(rowIndex);
+  AlertCondition* condition = m_conditions->conditionAt(rowIndex);
+  m_conditions->removeAt(rowIndex);
+  delete condition;
 }
 
 void EditAlertsController::togglePickMode()
@@ -320,7 +320,7 @@ QAbstractItemModel* EditAlertsController::levelNames() const
 
 QAbstractItemModel* EditAlertsController::conditionsList() const
 {
-  return AlertListModel::instance();
+  return m_conditions;
 }
 
 bool EditAlertsController::pickMode() const

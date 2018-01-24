@@ -12,7 +12,7 @@
 
 #include "AlertConditionData.h"
 #include "ProximityPairAlert.h"
-#include "ProximityAlertRule.h"
+#include "WithinDistanceAlertQuery.h"
 
 #include "GeometryEngine.h"
 

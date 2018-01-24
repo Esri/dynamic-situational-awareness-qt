@@ -16,7 +16,7 @@
 #include "AlertListProxyModel.h"
 #include "GeoElementHighlighter.h"
 #include "IntersectsAlertRule.h"
-#include "ProximityAlertRule.h"
+#include "WithinDistanceAlertQuery.h"
 #include "DsaUtility.h"
 #include "IdsAlertRule.h"
 #include "StatusAlertRule.h"

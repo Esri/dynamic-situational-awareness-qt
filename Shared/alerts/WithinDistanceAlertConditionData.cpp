@@ -11,7 +11,7 @@
 //
 
 #include "AbstractOverlayManager.h"
-#include "ProximityPairAlert.h"
+#include "WithinDistanceAlertConditionData.h"
 
 #include "GeoElement.h"
 #include "Point.h"

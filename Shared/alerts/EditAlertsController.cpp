@@ -16,7 +16,7 @@
 #include "FeatureOverlayManager.h"
 #include "GraphicsOverlayManager.h"
 #include "IntersectsPairAlert.h"
-#include "ProximityPairAlert.h"
+#include "WithinDistanceAlertConditionData.h"
 
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"

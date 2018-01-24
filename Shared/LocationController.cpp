@@ -41,6 +41,7 @@ LocationController::LocationController(QObject* parent) :
 {
   Toolkit::ToolManager::instance().addTool(this);
 
+  connect(this, &LocationController::locationChanged, Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::onLocationChanged);
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, &LocationController::updateGeoView);
 
   updateGeoView();

@@ -82,7 +82,7 @@ bool AlertListProxyModel::passesAllRules(int sourceRow) const
   if (!sourceModel)
     return false;
 
-  AbstractAlert* alert = sourceModel->alertAt(sourceRow);
+  AlertConditionData* alert = sourceModel->alertAt(sourceRow);
   if (!alert)
     return false;
 

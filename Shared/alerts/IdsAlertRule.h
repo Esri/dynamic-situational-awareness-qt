@@ -18,7 +18,7 @@
 #include <QSet>
 #include <QUuid>
 
-class AbstractAlert;
+class AlertConditionData;
 
 class IdsAlertRule : public AbstractAlertRule
 {
@@ -28,7 +28,7 @@ public:
   explicit IdsAlertRule(QObject* parent = nullptr);
   ~IdsAlertRule();
 
-  bool matchesRule(AbstractAlert* alert) const override;
+  bool matchesRule(AlertConditionData* alert) const override;
 
   void addId(const QUuid& id);
 

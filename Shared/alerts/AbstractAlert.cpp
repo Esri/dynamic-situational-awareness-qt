@@ -14,56 +14,56 @@
 
 using namespace Esri::ArcGISRuntime;
 
-AbstractAlert::AbstractAlert(QObject* parent):
+AlertConditionData::AlertConditionData(QObject* parent):
   QObject(parent)
 {
 }
 
-AbstractAlert::~AbstractAlert()
+AlertConditionData::~AlertConditionData()
 {
 
 }
 
-AlertStatus AbstractAlert::status() const
+AlertLevel AlertConditionData::level() const
 {
-  return m_status;
+  return m_level;
 }
 
-void AbstractAlert::setStatus(const AlertStatus& status)
+void AlertConditionData::alertLevel(const AlertLevel& status)
 {
-  if (status == m_status)
+  if (status == m_level)
     return;
 
-  m_status = status;
+  m_level = status;
   emit statusChanged();
 }
 
-QString AbstractAlert::message() const
+QString AlertConditionData::name() const
 {
-  return m_message;
+  return m_name;
 }
 
-void AbstractAlert::setMessage(const QString& message)
+void AlertConditionData::setName(const QString& message)
 {
-  m_message = message;
+  m_name = message;
 }
 
-QUuid AbstractAlert::id() const
+QUuid AlertConditionData::id() const
 {
   return m_id;
 }
 
-void AbstractAlert::setId(const QUuid& id)
+void AlertConditionData::setId(const QUuid& id)
 {
   m_id = id;
 }
 
-bool AbstractAlert::viewed() const
+bool AlertConditionData::viewed() const
 {
   return m_viewed;
 }
 
-void AbstractAlert::setViewed(bool viewed)
+void AlertConditionData::setViewed(bool viewed)
 {
   if (viewed == m_viewed)
     return;
@@ -72,12 +72,12 @@ void AbstractAlert::setViewed(bool viewed)
   emit viewedChanged();
 }
 
-void AbstractAlert::onPositionChanged()
+void AlertConditionData::onPositionChanged()
 {
   emit positionChanged();
 }
 
-void AbstractAlert::setActive(bool active)
+void AlertConditionData::setActive(bool active)
 {
   if (active == m_active)
     return;
@@ -86,7 +86,7 @@ void AbstractAlert::setActive(bool active)
   emit activeChanged();
 }
 
-bool AbstractAlert::active() const
+bool AlertConditionData::active() const
 {
   return m_active;
 }

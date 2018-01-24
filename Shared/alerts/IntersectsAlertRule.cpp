@@ -28,7 +28,7 @@ IntersectsAlertRule::~IntersectsAlertRule()
 
 }
 
-bool IntersectsAlertRule::matchesRule(AbstractAlert* alert) const
+bool IntersectsAlertRule::matchesRule(AlertConditionData* alert) const
 {
   if (!alert)
     return false;

@@ -71,7 +71,7 @@ void AlertToolController::highlight(int rowIndex, bool showHighlight)
   if (showHighlight)
   {
     QModelIndex sourceIndex = m_alertsProxyModel->mapToSource(m_alertsProxyModel->index(rowIndex, 0));
-    AbstractAlert* alert = AlertListModel::instance()->alertAt(sourceIndex.row());
+    AlertConditionData* alert = AlertListModel::instance()->alertAt(sourceIndex.row());
 
     if (!alert)
       return;
@@ -88,7 +88,7 @@ void AlertToolController::highlight(int rowIndex, bool showHighlight)
 void AlertToolController::zoomTo(int rowIndex)
 {
   QModelIndex sourceIndex = m_alertsProxyModel->mapToSource(m_alertsProxyModel->index(rowIndex, 0));
-  AbstractAlert* alert = AlertListModel::instance()->alertAt(sourceIndex.row());
+  AlertConditionData* alert = AlertListModel::instance()->alertAt(sourceIndex.row());
   if (!alert)
     return;
 
@@ -129,7 +129,7 @@ void AlertToolController::setViewed(int rowIndex)
 void AlertToolController::dismiss(int rowIndex)
 {
   QModelIndex sourceIndex = m_alertsProxyModel->mapToSource(m_alertsProxyModel->index(rowIndex, 0));
-  AbstractAlert* alert = AlertListModel::instance()->alertAt(sourceIndex.row());
+  AlertConditionData* alert = AlertListModel::instance()->alertAt(sourceIndex.row());
   if (!alert)
     return;
 
@@ -137,15 +137,15 @@ void AlertToolController::dismiss(int rowIndex)
   m_alertsProxyModel->applyFilter(m_rules);
 }
 
-void AlertToolController::setMinStatus(int status)
+void AlertToolController::setMinLevel(int level)
 {
-  AlertStatus alertStatus = static_cast<AlertStatus>(status);
-  switch (alertStatus) {
-  case AlertStatus::Low:
-  case AlertStatus::Medium:
-  case AlertStatus::High:
-  case AlertStatus::Critical:
-    m_statusAlertRule->setMinStatus(alertStatus);
+  AlertLevel alertLevel = static_cast<AlertLevel>(level);
+  switch (alertLevel) {
+  case AlertLevel::Low:
+  case AlertLevel::Medium:
+  case AlertLevel::High:
+  case AlertLevel::Critical:
+    m_statusAlertRule->setMinStatus(alertLevel);
     m_alertsProxyModel->applyFilter(m_rules);
     break;
   default:
@@ -162,7 +162,7 @@ void AlertToolController::flashAll(bool on)
   const int modelSize = model->rowCount();
   for (int i = 0; i < modelSize; ++i)
   {
-    AbstractAlert* alert = model->alertAt(i);
+    AlertConditionData* alert = model->alertAt(i);
     if (!alert || !alert->active())
       continue;
 

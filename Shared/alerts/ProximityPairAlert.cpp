@@ -24,7 +24,7 @@ ProximityPairAlert::ProximityPairAlert(GeoElement* element1,
                                        AbstractOverlayManager* overlay2Manager,
                                        double distance,
                                        QObject* parent):
-  AbstractAlert(parent),
+  AlertConditionData(parent),
   m_element1(element1),
   m_element2(element2),
   m_overlay1Manager(overlay1Manager),
@@ -50,11 +50,6 @@ ProximityPairAlert::~ProximityPairAlert()
 Geometry ProximityPairAlert::position() const
 {
   return m_element1 ? m_element1->geometry() : Point();
-}
-
-QString ProximityPairAlert::description() const
-{
-  return QString(element1Description() + QString(" < %1 m of ").arg(QString::number(m_distance)) + element2Description());
 }
 
 void ProximityPairAlert::highlight(bool on)

@@ -23,7 +23,7 @@ IntersectsPairAlert::IntersectsPairAlert(GeoElement* element1,
                                        AbstractOverlayManager* overlay1Manager,
                                        AbstractOverlayManager* overlay2Manager,
                                        QObject* parent):
-  AbstractAlert(parent),
+  AlertConditionData(parent),
   m_element1(element1),
   m_element2(element2),
   m_overlay1Manager(overlay1Manager),
@@ -48,11 +48,6 @@ IntersectsPairAlert::~IntersectsPairAlert()
 Geometry IntersectsPairAlert::position() const
 {
   return m_element1 ? m_element1->geometry() : Point();
-}
-
-QString IntersectsPairAlert::description() const
-{
-  return QString(element1Description() + QStringLiteral(" intersects ") + element2Description());
 }
 
 void IntersectsPairAlert::highlight(bool on)

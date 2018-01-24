@@ -15,7 +15,7 @@
 
 #include <QObject>
 
-class AbstractAlert;
+class AlertConditionData;
 
 class AbstractAlertRule : public QObject
 {
@@ -25,7 +25,7 @@ public:
   explicit AbstractAlertRule(QObject* parent = nullptr);
   ~AbstractAlertRule();
 
-  virtual bool matchesRule(AbstractAlert* alert) const = 0;
+  virtual bool matchesRule(AlertConditionData* alert) const = 0;
 
   bool active() const;
   void setActive(bool active);

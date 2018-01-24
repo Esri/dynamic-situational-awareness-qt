@@ -113,16 +113,16 @@ void Vehicle::componentComplete()
     const int alertCount = AlertListModel::instance()->rowCount();
 
     qsrand(qrand());
-    const int maxStatus = static_cast<int>(AlertStatus::Critical);
-    AlertStatus randomStatus = static_cast<AlertStatus>((qrand() % ( maxStatus + 1) - 1) + 1);
-    if (randomStatus == AlertStatus::Inactive)
-      randomStatus = AlertStatus::Low;
+    const int maxStatus = static_cast<int>(AlertLevel::Critical);
+    AlertLevel randomStatus = static_cast<AlertLevel>((qrand() % ( maxStatus + 1) - 1) + 1);
+    if (randomStatus == AlertLevel::Unknown)
+      randomStatus = AlertLevel::Low;
 
     Graphic* dummyAlertGraphic = new Graphic(alertPos, this);
     dummyAlertGraphic->attributes()->insertAttribute("sic", "GFGPOAO-------X");
     DummyAlert* dummyAlert = new DummyAlert(dummyAlertGraphic);
-    dummyAlert->setMessage(QString("Dummy Alert %1").arg(alertCount));
-    dummyAlert->setStatus(randomStatus);
+    dummyAlert->setName(QString("Dummy Alert %1").arg(alertCount));
+    dummyAlert->alertLevel(randomStatus);
     dummyAlert->setViewed(false);
     dummyAlert->setActive(true);
     alertsOverlay->graphics()->append(dummyAlertGraphic);

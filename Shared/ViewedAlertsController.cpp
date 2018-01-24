@@ -52,7 +52,7 @@ int ViewedAlertsController::unviewedCount() const
   const int alertsCount = model->rowCount();
   for (int i = 0; i < alertsCount; ++i)
   {
-    AbstractAlert* alert = model->alertAt(i);
+    AlertConditionData* alert = model->alertAt(i);
     if (!alert)
       continue;
 

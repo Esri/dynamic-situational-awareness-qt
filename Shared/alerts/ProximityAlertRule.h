@@ -15,7 +15,7 @@
 
 #include "AbstractAlertRule.h"
 
-class AbstractAlert;
+class AlertConditionData;
 
 class ProximityAlertRule : public AbstractAlertRule
 {
@@ -25,7 +25,7 @@ public:
   explicit ProximityAlertRule(QObject* parent = nullptr);
   ~ProximityAlertRule();
 
-  bool matchesRule(AbstractAlert* alert) const override;
+  bool matchesRule(AlertConditionData* alert) const override;
 };
 
 #endif // PROXIMITYALERTRULE_H

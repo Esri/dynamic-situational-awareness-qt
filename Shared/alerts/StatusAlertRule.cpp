@@ -24,20 +24,20 @@ StatusAlertRule::~StatusAlertRule()
 
 }
 
-bool StatusAlertRule::matchesRule(AbstractAlert* alert) const
+bool StatusAlertRule::matchesRule(AlertConditionData* alert) const
 {
   if (!alert)
     return false;
 
-  return alert->status() >= m_minStatus;
+  return alert->level() >= m_minStatus;
 }
 
-AlertStatus StatusAlertRule::minStatus() const
+AlertLevel StatusAlertRule::minStatus() const
 {
   return m_minStatus;
 }
 
-void StatusAlertRule::setMinStatus(const AlertStatus& minStatus)
+void StatusAlertRule::setMinStatus(const AlertLevel& minStatus)
 {
   m_minStatus = minStatus;
 }

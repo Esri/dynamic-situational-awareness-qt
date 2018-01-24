@@ -25,7 +25,7 @@ class GeoElement;
 
 class AbstractOverlayManager;
 
-class ProximityPairAlert : public AbstractAlert
+class ProximityPairAlert : public AlertConditionData
 {
   Q_OBJECT
 
@@ -37,8 +37,6 @@ public:
                               double distance,
                               QObject* parent = nullptr);
   ~ProximityPairAlert();
-
-  QString description() const override;
 
   void highlight(bool on) override;
 

@@ -37,7 +37,7 @@ class EditAlertsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 
   Q_PROPERTY(bool active READ isActive WRITE setActive NOTIFY activeChanged)
   Q_PROPERTY(QAbstractItemModel* layerNames READ layerNames NOTIFY layerNamesChanged)
-  Q_PROPERTY(QAbstractItemModel* statusNames READ statusNames CONSTANT)
+  Q_PROPERTY(QAbstractItemModel* levelNames READ levelNames CONSTANT)
   Q_PROPERTY(QAbstractItemModel* conditionsList READ conditionsList NOTIFY conditionsListChanged)
   Q_PROPERTY(bool pickMode READ pickMode NOTIFY pickModeChanged)
 
@@ -50,13 +50,13 @@ public:
 
   void setActive(bool active) override;
 
-  Q_INVOKABLE void addWithinDistanceAlert(int statusIndex, int sourceOverlayIndex, double distance, int itemId, int targetOverlayIndex);
-  Q_INVOKABLE void addIntersectsAlert(int statusIndex, int sourceOverlayIndex, int itemId, int targetOverlayIndex);
+  Q_INVOKABLE void addWithinDistanceAlert(int levelIndex, int sourceOverlayIndex, double distance, int itemId, int targetOverlayIndex);
+  Q_INVOKABLE void addIntersectsAlert(int levelIndex, int sourceOverlayIndex, int itemId, int targetOverlayIndex);
   Q_INVOKABLE void removeConditionAt(int rowIndex);
   Q_INVOKABLE void togglePickMode();
 
   QAbstractItemModel* layerNames() const;
-  QAbstractItemModel* statusNames() const;
+  QAbstractItemModel* levelNames() const;
   QAbstractItemModel* conditionsList() const;
   bool pickMode() const;
 
@@ -78,7 +78,7 @@ private:
   void setLayerNames(const QStringList& layerNames);
 
   QStringListModel* m_layerNames;
-  QStringListModel* m_statusNames;
+  QStringListModel* m_levelNames;
   bool m_pickMode = false;
   double m_tolerance = 5;
   Esri::ArcGISRuntime::TaskWatcher m_identifyLayersWatcher;

@@ -63,7 +63,7 @@ struct GraphicsResultsManager {
 EditAlertsController::EditAlertsController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent),
   m_layerNames(new QStringListModel(this)),
-  m_statusNames(new QStringListModel(QStringList{"Low", "Moderate", "High", "Critical"},this))
+  m_levelNames(new QStringListModel(QStringList{"Low", "Moderate", "High", "Critical"},this))
 {
   Toolkit::ToolManager::instance().addTool(this);
 
@@ -96,9 +96,9 @@ void EditAlertsController::setActive(bool active)
   emit activeChanged();
 }
 
-void EditAlertsController::addWithinDistanceAlert(int statusIndex, int sourceOverlayIndex, double distance, int itemId, int targetOverlayIndex)
+void EditAlertsController::addWithinDistanceAlert(int levelIndex, int sourceOverlayIndex, double distance, int itemId, int targetOverlayIndex)
 {
-  if (statusIndex < 0 ||
+  if (levelIndex < 0 ||
       sourceOverlayIndex < 0 ||
       distance < 0.0 ||
       itemId < 0 ||
@@ -108,8 +108,8 @@ void EditAlertsController::addWithinDistanceAlert(int statusIndex, int sourceOve
   if (sourceOverlayIndex == targetOverlayIndex)
     return;
 
-  AlertStatus status = static_cast<AlertStatus>(statusIndex + 1);
-  if (status > AlertStatus::Critical)
+  AlertLevel level = static_cast<AlertLevel>(levelIndex + 1);
+  if (level > AlertLevel::Critical)
     return;
 
   GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
@@ -172,7 +172,7 @@ void EditAlertsController::addWithinDistanceAlert(int statusIndex, int sourceOve
   if (!targetElement)
     return;
 
-  auto createProximityAlert = [this, targetElement, distance, status, sourceOverlayMgr, targetOverlayMgr](int newElement)
+  auto createProximityAlert = [this, targetElement, distance, level, sourceOverlayMgr, targetOverlayMgr](int newElement)
   {
     GeoElement* sourceElement = sourceOverlayMgr->elementAt(newElement);
     if (!sourceElement)
@@ -184,8 +184,8 @@ void EditAlertsController::addWithinDistanceAlert(int statusIndex, int sourceOve
                                                                targetOverlayMgr,
                                                                distance,
                                                                this);
-    geofenceAlert->setStatus(status);
-    geofenceAlert->setMessage("Within distance!");
+    geofenceAlert->alertLevel(level);
+    geofenceAlert->setName("Within distance!");
     geofenceAlert->setViewed(false);
     AlertListModel::instance()->addAlert(geofenceAlert);
   };
@@ -197,9 +197,9 @@ void EditAlertsController::addWithinDistanceAlert(int statusIndex, int sourceOve
   connect(sourceOverlayMgr, &AbstractOverlayManager::elementAdded, this, createProximityAlert);
 }
 
-void EditAlertsController::addIntersectsAlert(int statusIndex, int sourceOverlayIndex, int itemId, int targetOverlayIndex)
+void EditAlertsController::addIntersectsAlert(int levelIndex, int sourceOverlayIndex, int itemId, int targetOverlayIndex)
 {
-  if (statusIndex < 0 ||
+  if (levelIndex < 0 ||
       sourceOverlayIndex < 0 ||
       itemId < 0 ||
       targetOverlayIndex < 0)
@@ -208,8 +208,8 @@ void EditAlertsController::addIntersectsAlert(int statusIndex, int sourceOverlay
   if (sourceOverlayIndex == targetOverlayIndex)
     return;
 
-  AlertStatus status = static_cast<AlertStatus>(statusIndex + 1);
-  if (status > AlertStatus::Critical)
+  AlertLevel level = static_cast<AlertLevel>(levelIndex + 1);
+  if (level > AlertLevel::Critical)
     return;
 
   GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
@@ -272,7 +272,7 @@ void EditAlertsController::addIntersectsAlert(int statusIndex, int sourceOverlay
   if (!targetElement)
     return;
 
-  auto createIntersectsAlert = [this, targetElement, status, sourceOverlayMgr, targetOverlayMgr](int newElement)
+  auto createIntersectsAlert = [this, targetElement, level, sourceOverlayMgr, targetOverlayMgr](int newElement)
   {
     GeoElement* sourceElement = sourceOverlayMgr->elementAt(newElement);
     if (!sourceElement)
@@ -283,8 +283,8 @@ void EditAlertsController::addIntersectsAlert(int statusIndex, int sourceOverlay
                                                                    sourceOverlayMgr,
                                                                    targetOverlayMgr,
                                                                    this);
-    intersectsAlert->setStatus(status);
-    intersectsAlert->setMessage("Intersects!");
+    intersectsAlert->alertLevel(level);
+    intersectsAlert->setName("Intersects!");
     intersectsAlert->setViewed(false);
     AlertListModel::instance()->addAlert(intersectsAlert);
   };
@@ -331,9 +331,9 @@ QAbstractItemModel* EditAlertsController::layerNames() const
   return m_layerNames;
 }
 
-QAbstractItemModel* EditAlertsController::statusNames() const
+QAbstractItemModel* EditAlertsController::levelNames() const
 {
-  return m_statusNames;
+  return m_levelNames;
 }
 
 QAbstractItemModel* EditAlertsController::conditionsList() const

@@ -24,7 +24,7 @@ IdsAlertRule::~IdsAlertRule()
 
 }
 
-bool IdsAlertRule::matchesRule(AbstractAlert* alert) const
+bool IdsAlertRule::matchesRule(AlertConditionData* alert) const
 {
   if (!alert)
     return false;

@@ -15,7 +15,7 @@
 
 #include "AbstractAlertRule.h"
 
-class AbstractAlert;
+class AlertConditionData;
 
 class IntersectsAlertRule : public AbstractAlertRule
 {
@@ -25,7 +25,7 @@ public:
   explicit IntersectsAlertRule(QObject* parent = nullptr);
   ~IntersectsAlertRule();
 
-  bool matchesRule(AbstractAlert* alert) const override;
+  bool matchesRule(AlertConditionData* alert) const override;
 };
 
 #endif // INTERSECTSALERTRULE_H

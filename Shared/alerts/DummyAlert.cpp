@@ -18,7 +18,7 @@
 using namespace Esri::ArcGISRuntime;
 
 DummyAlert::DummyAlert(Graphic* graphic, QObject* parent):
-  AbstractAlert(parent),
+  AlertConditionData(parent),
   m_graphic(graphic)
 {
   m_graphic->setSelected(true);
@@ -43,11 +43,6 @@ void DummyAlert::highlight(bool on)
 {
   if (m_graphic)
     m_graphic->setSelected(on);
-}
-
-QString DummyAlert::description() const
-{
-  return message();
 }
 
 GeoElement* DummyAlert::geoElement() const

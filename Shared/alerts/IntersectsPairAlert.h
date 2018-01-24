@@ -25,7 +25,7 @@ class GeoElement;
 
 class AbstractOverlayManager;
 
-class IntersectsPairAlert : public AbstractAlert
+class IntersectsPairAlert : public AlertConditionData
 {
   Q_OBJECT
 
@@ -36,8 +36,6 @@ public:
                               AbstractOverlayManager* overlay2Manager,
                               QObject* parent = nullptr);
   ~IntersectsPairAlert();
-
-  QString description() const override;
 
   void highlight(bool on) override;
 

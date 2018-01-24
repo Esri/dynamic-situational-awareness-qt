@@ -38,7 +38,7 @@ DsaPanel {
         }
     }
 
-    property bool readyToAdd: statusCb.currentIndex !== -1 &&
+    property bool readyToAdd: levelCb.currentIndex !== -1 &&
                               leftHandSideCB.currentIndex !== -1 &&
                               layerCB.currentIndex !== -1 &&
                               featureIdEdit.text.length > 0
@@ -104,7 +104,7 @@ DsaPanel {
         }
 
         ComboBox {
-            id: statusCb
+            id: levelCb
             anchors {
                 left: parent.left
                 right: parent.right
@@ -112,7 +112,7 @@ DsaPanel {
 
             font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
             textRole: "display"
-            model: toolController.statusNames
+            model: toolController.levelNames
             currentIndex: -1
 
             Text {
@@ -122,7 +122,7 @@ DsaPanel {
                 horizontalAlignment: Text.AlignHCenter
                 font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 color: Material.accent
-                text: "<status>"
+                text: "<level>"
             }
         }
 
@@ -290,20 +290,20 @@ DsaPanel {
 
             onClicked: {
                 if (withinDistanceRb.checked) {
-                    toolController.addWithinDistanceAlert(statusCb.currentIndex,
+                    toolController.addWithinDistanceAlert(levelCb.currentIndex,
                                                           leftHandSideCB.currentIndex,
                                                           withinDistanceSB.value,
                                                           Number(featureIdEdit.text),
                                                           layerCB.currentIndex);
                 }
                 else if (intersectsRb.checked) {
-                    toolController.addIntersectsAlert(statusCb.currentIndex,
+                    toolController.addIntersectsAlert(levelCb.currentIndex,
                                                       leftHandSideCB.currentIndex,
                                                       Number(featureIdEdit.text),
                                                       layerCB.currentIndex);
                 }
 
-                statusCb.currentIndex = -1;
+                levelCb.currentIndex = -1;
                 leftHandSideCB.currentIndex = -1;
                 featureIdEdit.text = "";
                 layerCB.currentIndex = "";
@@ -341,7 +341,7 @@ DsaPanel {
 
         delegate: Row {
             Text {
-                text: description
+                text: name
                 color: index === alertsList.currentIndex ? Material.accent : Material.foreground
                 font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 horizontalAlignment: Text.AlignLeft

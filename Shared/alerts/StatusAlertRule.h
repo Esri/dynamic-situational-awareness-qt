@@ -16,7 +16,7 @@
 #include "AbstractAlert.h"
 #include "AbstractAlertRule.h"
 
-class AbstractAlert;
+class AlertConditionData;
 
 class StatusAlertRule : public AbstractAlertRule
 {
@@ -26,13 +26,13 @@ public:
   explicit StatusAlertRule(QObject* parent = nullptr);
   ~StatusAlertRule();
 
-  bool matchesRule(AbstractAlert* alert) const override;
+  bool matchesRule(AlertConditionData* alert) const override;
 
-  AlertStatus minStatus() const;
-  void setMinStatus(const AlertStatus& minStatus);
+  AlertLevel minStatus() const;
+  void setMinStatus(const AlertLevel& minStatus);
 
 private:
-  AlertStatus m_minStatus = AlertStatus::Low;
+  AlertLevel m_minStatus = AlertLevel::Low;
 };
 
 #endif // STATUSALERTRULE_H

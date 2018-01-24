@@ -28,11 +28,10 @@ AlertListModel::AlertListModel(QObject* parent):
   QAbstractListModel(parent)
 {
   m_roles[AlertListRoles::AlertId] = "alertId";
-  m_roles[AlertListRoles::Message] = "message";
-  m_roles[AlertListRoles::Status] = "status";
+  m_roles[AlertListRoles::Name] = "name";
+  m_roles[AlertListRoles::Level] = "level";
   m_roles[AlertListRoles::Position] = "position";
   m_roles[AlertListRoles::Viewed] = "viewed";
-  m_roles[AlertListRoles::Description] = "description";
 }
 
 AlertListModel::~AlertListModel()
@@ -40,7 +39,7 @@ AlertListModel::~AlertListModel()
 
 }
 
-bool AlertListModel::addAlert(AbstractAlert* alert)
+bool AlertListModel::addAlert(AlertConditionData* alert)
 {
   if (!alert)
     return false;
@@ -63,7 +62,7 @@ bool AlertListModel::addAlert(AbstractAlert* alert)
     int currRow = -1;
     for (; it != itEnd; ++it, ++currRow)
     {
-      AbstractAlert* testAlert = *it;
+      AlertConditionData* testAlert = *it;
       if (!testAlert)
         continue;
 
@@ -75,11 +74,11 @@ bool AlertListModel::addAlert(AbstractAlert* alert)
     }
   };
 
-  connect(alert, &AbstractAlert::viewedChanged, this, handleDataChanged);
-  connect(alert, &AbstractAlert::positionChanged, this, handleDataChanged);
-  connect(alert, &AbstractAlert::activeChanged, this, handleDataChanged);
+  connect(alert, &AlertConditionData::viewedChanged, this, handleDataChanged);
+  connect(alert, &AlertConditionData::positionChanged, this, handleDataChanged);
+  connect(alert, &AlertConditionData::activeChanged, this, handleDataChanged);
 
-  connect(alert, &AbstractAlert::noLongerValid, this, [this, alert]
+  connect(alert, &AlertConditionData::noLongerValid, this, [this, alert]
   {
     removeAlert(alert);
   });
@@ -91,7 +90,7 @@ bool AlertListModel::addAlert(AbstractAlert* alert)
   return true;
 }
 
-void AlertListModel::removeAlert(AbstractAlert* alert)
+void AlertListModel::removeAlert(AlertConditionData* alert)
 {
   if (!alert)
     return;
@@ -104,7 +103,7 @@ void AlertListModel::removeAlert(AbstractAlert* alert)
 
   for (int i = 0; i < m_alerts.size(); ++i)
   {
-    AbstractAlert* testAlert = m_alerts.at(i);
+    AlertConditionData* testAlert = m_alerts.at(i);
     if (!testAlert)
       continue;
 
@@ -116,14 +115,14 @@ void AlertListModel::removeAlert(AbstractAlert* alert)
   }
 }
 
-AbstractAlert* AlertListModel::alertAt(int rowIndex) const
+AlertConditionData* AlertListModel::alertAt(int rowIndex) const
 {
   return m_alerts.value(rowIndex, nullptr);
 }
 
 void AlertListModel::removeAt(int rowIndex)
 {
-  AbstractAlert* alert = alertAt(rowIndex);
+  AlertConditionData* alert = alertAt(rowIndex);
   if (!alert)
     return;
 
@@ -142,7 +141,7 @@ QVariant AlertListModel::data(const QModelIndex& index, int role) const
   if (index.row() < 0 || index.row() > rowCount())
     return QVariant();
 
-  AbstractAlert* alert = m_alerts.at(index.row());
+  AlertConditionData* alert = m_alerts.at(index.row());
   if (!alert)
     return QVariant();
 
@@ -150,11 +149,11 @@ QVariant AlertListModel::data(const QModelIndex& index, int role) const
   {
   case AlertListRoles::AlertId:
     return alert->id();
-  case AlertListRoles::Status:
-    return static_cast<int>(alert->status());
-  case AlertListRoles::Message:
+  case AlertListRoles::Level:
+    return static_cast<int>(alert->level());
+  case AlertListRoles::Name:
   {
-    return alert->message();
+    return alert->name();
   }
   case AlertListRoles::Position:
   {
@@ -163,10 +162,6 @@ QVariant AlertListModel::data(const QModelIndex& index, int role) const
   case AlertListRoles::Viewed:
   {
     return alert->viewed();
-  }
-  case AlertListRoles::Description:
-  {
-    return alert->description();
   }
   default:
     break;
@@ -180,7 +175,7 @@ bool AlertListModel::setData(const QModelIndex& index, const QVariant& value, in
   if (!index.isValid() || value.isNull())
     return false;
 
-  AbstractAlert* alert = alertAt(index.row());
+  AlertConditionData* alert = alertAt(index.row());
   if (!alert)
     return false;
 
@@ -189,9 +184,9 @@ bool AlertListModel::setData(const QModelIndex& index, const QVariant& value, in
   {
   case AlertListRoles::AlertId:
     break;
-  case AlertListRoles::Status:
+  case AlertListRoles::Level:
     break;
-  case AlertListRoles::Message:
+  case AlertListRoles::Name:
     break;
   case AlertListRoles::Position:
     break;

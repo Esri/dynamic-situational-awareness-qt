@@ -30,7 +30,7 @@ DsaPanel {
     }
 
     Row {
-        id: statusRow
+        id: levelRow
         spacing: 8 * scaleFactor
         anchors {
             top: alertsRoot.titleBar.bottom
@@ -40,7 +40,7 @@ DsaPanel {
         }
 
         Text {
-            anchors.verticalCenter: statusFilter.verticalCenter
+            anchors.verticalCenter: levelFilter.verticalCenter
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
             font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
@@ -49,11 +49,11 @@ DsaPanel {
         }
 
         ComboBox {
-            id: statusFilter
+            id: levelFilter
             width: 128 * scaleFactor
             model: ["Low", "Medium", "High", "Critical"]
             currentIndex: 0
-            onCurrentIndexChanged: toolController.setMinStatus(currentIndex+1);
+            onCurrentIndexChanged: toolController.setMinLevel(currentIndex+1);
             font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
         }
     }
@@ -61,7 +61,7 @@ DsaPanel {
     ListView {
         id: alertsView
         anchors {
-            top: statusRow.bottom
+            top: levelRow.bottom
             left: parent.left
             right: parent.right
             bottom: parent.bottom
@@ -82,11 +82,11 @@ DsaPanel {
                     verticalCenter: parent.verticalCenter
                 }
 
-                text: message + ": " + (status === 0 ? "inactive" :
-                                                       (status === 1 ? "low" :
-                                                                       (status === 2 ? "medium" :
-                                                                                       (status === 3 ? "high" :
-                                                                                                       (status === 4 ? "critical" : "???")))))
+                text: name + ": " + (level === 0 ? "unknown" :
+                                                       (level === 1 ? "low" :
+                                                                       (level === 2 ? "medium" :
+                                                                                       (level === 3 ? "high" :
+                                                                                                       (level === 4 ? "critical" : "???")))))
                 color: "white"
             }
 

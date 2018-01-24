@@ -29,7 +29,7 @@ ProximityAlertRule::~ProximityAlertRule()
 
 }
 
-bool ProximityAlertRule::matchesRule(AbstractAlert* alert) const
+bool ProximityAlertRule::matchesRule(AlertConditionData* alert) const
 {
   if (!alert)
     return false;

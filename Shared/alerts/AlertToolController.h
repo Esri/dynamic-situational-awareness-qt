@@ -54,7 +54,7 @@ public:
   Q_INVOKABLE void zoomTo(int rowIndex);
   Q_INVOKABLE void setViewed(int rowIndex);
   Q_INVOKABLE void dismiss(int rowIndex);
-  Q_INVOKABLE void setMinStatus(int status);
+  Q_INVOKABLE void setMinLevel(int level);
 
   Q_INVOKABLE void flashAll(bool on);
 

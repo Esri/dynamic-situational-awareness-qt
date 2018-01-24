@@ -83,10 +83,10 @@ DsaPanel {
                 }
 
                 text: name + ": " + (level === 0 ? "unknown" :
-                                                       (level === 1 ? "low" :
-                                                                       (level === 2 ? "medium" :
-                                                                                       (level === 3 ? "high" :
-                                                                                                       (level === 4 ? "critical" : "???")))))
+                                    (level === 1 ? "low" :
+                                    (level === 2 ? "medium" :
+                                    (level === 3 ? "high" :
+                                    (level === 4 ? "critical" : "???")))))
                 color: "white"
             }
 

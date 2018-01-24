@@ -33,6 +33,8 @@ namespace ArcGISRuntime
 
 class QTimer;
 
+class GeoElementHighlighter;
+
 class AlertToolController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
   Q_OBJECT
@@ -48,7 +50,7 @@ public:
   // AbstractTool interface
   QString toolName() const override;
 
-  Q_INVOKABLE void highlight(int rowIndex, bool on);
+  Q_INVOKABLE void highlight(int rowIndex, bool showHighlight);
   Q_INVOKABLE void zoomTo(int rowIndex);
   Q_INVOKABLE void setViewed(int rowIndex);
   Q_INVOKABLE void dismiss(int rowIndex);
@@ -59,9 +61,6 @@ public:
 signals:
   void alertListModelChanged();
 
-private slots:
-  void onGeoviewChanged();
-
 private:
   AlertListProxyModel* m_alertsProxyModel = nullptr;
   ProximityAlertRule* m_distanceAlertRule = nullptr;
@@ -69,9 +68,8 @@ private:
   StatusAlertRule* m_statusAlertRule = nullptr;
   IdsAlertRule* m_idsAlertRule = nullptr;
   QList<AbstractAlertRule*> m_rules;
-  Esri::ArcGISRuntime::GraphicsOverlay* m_highlightOverlay = nullptr;
-  Esri::ArcGISRuntime::SimpleMarkerSceneSymbol* m_highlightSymbol = nullptr;
-  QTimer* m_highlightTimer = nullptr;
+  GeoElementHighlighter* m_highlighter = nullptr;
+
 };
 
 #endif // ALERTTOOLCONTROLLER_H

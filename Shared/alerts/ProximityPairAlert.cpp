@@ -72,6 +72,11 @@ double ProximityPairAlert::distance() const
   return m_distance;
 }
 
+GeoElement* ProximityPairAlert::geoElement() const
+{
+  return m_element1;
+}
+
 QString ProximityPairAlert::element1Description() const
 {
   return m_overlay1Manager->elementDescription(m_element1);

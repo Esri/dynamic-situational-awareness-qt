@@ -19,6 +19,14 @@
 #include <QString>
 #include <QUuid>
 
+namespace Esri
+{
+namespace ArcGISRuntime
+{
+  class GeoElement;
+}
+}
+
 enum class AlertStatus : unsigned int
 {
   Inactive = 0,
@@ -44,6 +52,8 @@ public:
   virtual void highlight(bool on) = 0;
 
   virtual QString description() const = 0;
+
+  virtual Esri::ArcGISRuntime::GeoElement* geoElement() const = 0;
 
   QString message() const;
   void setMessage(const QString &message);

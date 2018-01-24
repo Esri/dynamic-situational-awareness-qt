@@ -65,6 +65,11 @@ Geometry IntersectsPairAlert::position2() const
   return m_element2 ? m_element2->geometry() : Point();
 }
 
+GeoElement* IntersectsPairAlert::geoElement() const
+{
+  return m_element1;
+}
+
 QString IntersectsPairAlert::element1Description() const
 {
   return m_overlay1Manager->elementDescription(m_element1);

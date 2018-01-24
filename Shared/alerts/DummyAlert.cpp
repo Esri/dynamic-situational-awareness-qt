@@ -49,3 +49,8 @@ QString DummyAlert::description() const
 {
   return message();
 }
+
+GeoElement* DummyAlert::geoElement() const
+{
+  return m_graphic;
+}

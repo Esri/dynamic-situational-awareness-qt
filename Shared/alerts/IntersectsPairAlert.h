@@ -44,6 +44,8 @@ public:
   Esri::ArcGISRuntime::Geometry position() const override;
   Esri::ArcGISRuntime::Geometry position2() const;
 
+  Esri::ArcGISRuntime::GeoElement* geoElement() const override;
+
   virtual QString element1Description() const;
   virtual QString element2Description() const;
 

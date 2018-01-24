@@ -34,6 +34,7 @@ public:
   Esri::ArcGISRuntime::Geometry position() const override;
   void highlight(bool on) override;
   QString description() const override;
+  Esri::ArcGISRuntime::GeoElement* geoElement() const override;
 
 private:
   Esri::ArcGISRuntime::Graphic* m_graphic;

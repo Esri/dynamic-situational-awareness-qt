@@ -47,6 +47,8 @@ public:
 
   double distance() const;
 
+  Esri::ArcGISRuntime::GeoElement* geoElement() const override;
+
   virtual QString element1Description() const;
   virtual QString element2Description() const;
 

@@ -14,6 +14,7 @@
 #include "AlertToolController.h"
 #include "AlertListModel.h"
 #include "AlertListProxyModel.h"
+#include "GeoElementHighlighter.h"
 #include "IntersectsAlertRule.h"
 #include "ProximityAlertRule.h"
 #include "DsaUtility.h"
@@ -39,7 +40,8 @@ AlertToolController::AlertToolController(QObject* parent /* = nullptr */):
   m_distanceAlertRule(new ProximityAlertRule(this)),
   m_intersectsRule(new IntersectsAlertRule(this)),
   m_statusAlertRule(new StatusAlertRule(this)),
-  m_idsAlertRule(new IdsAlertRule(this))
+  m_idsAlertRule(new IdsAlertRule(this)),
+  m_highlighter(new GeoElementHighlighter(this))
 {
   Toolkit::ToolManager::instance().addTool(this);
   m_rules.append(m_distanceAlertRule);
@@ -48,11 +50,6 @@ AlertToolController::AlertToolController(QObject* parent /* = nullptr */):
   m_rules.append(m_idsAlertRule);
 
   m_alertsProxyModel->applyFilter(m_rules);
-
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged,
-          this, &AlertToolController::onGeoviewChanged);
-
-  onGeoviewChanged();
 }
 
 AlertToolController::~AlertToolController()
@@ -69,9 +66,9 @@ QString AlertToolController::toolName() const
   return "Alert Tool";
 }
 
-void AlertToolController::highlight(int rowIndex, bool on)
+void AlertToolController::highlight(int rowIndex, bool showHighlight)
 {
-  if (on)
+  if (showHighlight)
   {
     QModelIndex sourceIndex = m_alertsProxyModel->mapToSource(m_alertsProxyModel->index(rowIndex, 0));
     AbstractAlert* alert = AlertListModel::instance()->alertAt(sourceIndex.row());
@@ -79,74 +76,13 @@ void AlertToolController::highlight(int rowIndex, bool on)
     if (!alert)
       return;
 
-    if (!m_highlightOverlay || !m_highlightSymbol)
-      return;
-
-    const Geometry alertPosition = alert->position();
-
-    Graphic* highlightGraphic = new Graphic(alertPosition, m_highlightSymbol, this);
-    m_highlightOverlay->graphics()->append(highlightGraphic);
-
-    m_highlightTimer = new QTimer(this);
-    connect(m_highlightTimer, &QTimer::timeout, this, [this, alert]()
-    {
-      if (!m_highlightSymbol || !alert)
-      {
-        m_highlightTimer->stop();
-        return;
-      }
-
-      Graphic* graphic = m_highlightOverlay->graphics()->first();
-      if (!graphic)
-      {
-        m_highlightTimer->stop();
-        return;
-      }
-
-      graphic->setGeometry(alert->position());
-
-      const int currDim = m_highlightSymbol->width();
-      constexpr int maxDimension = 1000;
-      int newDimension = currDim;
-      float newOpacity = m_highlightOverlay->opacity();
-      if (currDim < maxDimension)
-      {
-        newDimension += 10;
-        newOpacity -= 0.01f;
-      }
-      else
-      {
-        newDimension = 1;
-      }
-
-      if (currDim > 10 && currDim < 30)
-        newOpacity = 1.0f;
-
-      m_highlightSymbol->setWidth(newDimension);
-      m_highlightSymbol->setHeight(newDimension);
-      m_highlightSymbol->setDepth(newDimension);
-      m_highlightOverlay->setOpacity(newOpacity);
-    });
-
-    m_highlightTimer->start(10);
+    m_highlighter->setGeoElement(alert->geoElement());
+    m_highlighter->startHighlight();
   }
   else
   {
-    Graphic* graphic = m_highlightOverlay->graphics()->first();
-    if (graphic)
-    {
-      delete graphic;
-      m_highlightOverlay->graphics()->clear();
-    }
-
-    if (m_highlightTimer)
-    {
-      m_highlightTimer->stop();
-      delete m_highlightTimer;
-      m_highlightTimer = nullptr;
-    }
+    m_highlighter->stopHighlight();
   }
-
 }
 
 void AlertToolController::zoomTo(int rowIndex)
@@ -232,29 +168,4 @@ void AlertToolController::flashAll(bool on)
 
     alert->highlight(on);
   }
-}
-
-void AlertToolController::onGeoviewChanged()
-{
-  if (m_highlightOverlay)
-  {
-    delete m_highlightOverlay;
-    m_highlightOverlay = nullptr;
-  }
-
-  if (m_highlightSymbol)
-  {
-    delete m_highlightSymbol;
-    m_highlightSymbol = nullptr;
-  }
-
-  GeoView* geoview = Toolkit::ToolResourceProvider::instance()->geoView();
-  if (!geoview)
-    return;
-
-  m_highlightOverlay = new GraphicsOverlay(this);
-  geoview->graphicsOverlays()->append(m_highlightOverlay);
-
-  m_highlightSymbol = new SimpleMarkerSceneSymbol(
-        SimpleMarkerSceneSymbolStyle::Sphere, Qt::red, 1.0, 1.0, 1.0, SceneSymbolAnchorPosition::Center, this);
 }

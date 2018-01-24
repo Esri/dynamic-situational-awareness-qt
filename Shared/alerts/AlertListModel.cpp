@@ -39,7 +39,7 @@ AlertListModel::~AlertListModel()
 
 }
 
-bool AlertListModel::addAlert(AlertConditionData* alert)
+bool AlertListModel::addAlertConditionData(AlertConditionData* alert)
 {
   if (!alert)
     return false;

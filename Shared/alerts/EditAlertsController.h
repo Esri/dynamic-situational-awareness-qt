@@ -36,7 +36,8 @@ class EditAlertsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
   Q_OBJECT
 
   Q_PROPERTY(bool active READ isActive WRITE setActive NOTIFY activeChanged)
-  Q_PROPERTY(QAbstractItemModel* layerNames READ layerNames NOTIFY layerNamesChanged)
+  Q_PROPERTY(QAbstractItemModel* sourceNames READ sourceNames NOTIFY sourceNamesChanged)
+  Q_PROPERTY(QAbstractItemModel* targetNames READ targetNames NOTIFY targetNamesChanged)
   Q_PROPERTY(QAbstractItemModel* levelNames READ levelNames CONSTANT)
   Q_PROPERTY(QAbstractItemModel* conditionsList READ conditionsList NOTIFY conditionsListChanged)
   Q_PROPERTY(bool pickMode READ pickMode NOTIFY pickModeChanged)
@@ -55,14 +56,16 @@ public:
   Q_INVOKABLE void removeConditionAt(int rowIndex);
   Q_INVOKABLE void togglePickMode();
 
-  QAbstractItemModel* layerNames() const;
+  QAbstractItemModel* sourceNames() const;
+  QAbstractItemModel* targetNames() const;
   QAbstractItemModel* levelNames() const;
   QAbstractItemModel* conditionsList() const;
   bool pickMode() const;
 
 signals:
   void activeChanged();
-  void layerNamesChanged();
+  void sourceNamesChanged();
+  void targetNamesChanged();
   void conditionsListChanged();
   void pickModeChanged();
   void pickedElement(const QString& overlayName, int elementId);
@@ -75,9 +78,13 @@ private slots:
   void onIdentifyGraphicsOverlaysCompleted(const QUuid& taskId, QList<Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult*> identifyResults);
 
 private:
-  void setLayerNames(const QStringList& layerNames);
+  void setTargetNames(const QStringList& targetNames);
+  void setSourceNames(const QStringList& sourceNames);
 
-  QStringListModel* m_layerNames;
+  static QStringList realtimeFeedNames();
+
+  QStringListModel* m_sourceNames;
+  QStringListModel* m_targetNames;
   QStringListModel* m_levelNames;
   bool m_pickMode = false;
   double m_tolerance = 5;

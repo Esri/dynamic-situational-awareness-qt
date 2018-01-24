@@ -38,7 +38,7 @@ public:
 
   ~AlertListModel();
 
-  bool addAlert(AlertConditionData* alert);
+  bool addAlertConditionData(AlertConditionData* alert);
   void removeAlert(AlertConditionData* alert);
 
   AlertConditionData* alertAt(int rowIndex) const;

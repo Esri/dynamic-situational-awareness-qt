@@ -27,10 +27,10 @@ DsaPanel {
         id: toolController
         active: parent.visible
         onPickedElement: {
-            for (var i = 0; i < layerCB.count; ++i) {
-                if (layerCB.textAt(i) === overlayName)
+            for (var i = 0; i < targetCB.count; ++i) {
+                if (targetCB.textAt(i) === overlayName)
                 {
-                    layerCB.currentIndex = i;
+                    targetCB.currentIndex = i;
                     featureIdEdit.text = elementId;
                     break;
                 }
@@ -39,8 +39,8 @@ DsaPanel {
     }
 
     property bool readyToAdd: levelCb.currentIndex !== -1 &&
-                              leftHandSideCB.currentIndex !== -1 &&
-                              layerCB.currentIndex !== -1 &&
+                              sourceCb.currentIndex !== -1 &&
+                              targetCB.currentIndex !== -1 &&
                               featureIdEdit.text.length > 0
     property bool expandNewAlert: true
 
@@ -138,7 +138,7 @@ DsaPanel {
         }
 
         ComboBox {
-            id: leftHandSideCB
+            id: sourceCb
             anchors {
                 left: parent.left
                 right: parent.right
@@ -146,7 +146,7 @@ DsaPanel {
 
             font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
             textRole: "display"
-            model: toolController.layerNames
+            model: toolController.sourceNames
             currentIndex: -1
 
             Text {
@@ -156,7 +156,7 @@ DsaPanel {
                 horizontalAlignment: Text.AlignHCenter
                 font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 color: Material.accent
-                text: "<source overlay>"
+                text: "<source feed>"
             }
         }
 
@@ -243,7 +243,7 @@ DsaPanel {
         }
 
         ComboBox {
-            id: layerCB
+            id: targetCB
             anchors {
                 left: parent.left
                 right: parent.right
@@ -251,11 +251,11 @@ DsaPanel {
             font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
 
             textRole: "display"
-            model: toolController.layerNames
+            model: toolController.targetNames
             currentIndex: -1
 
             Text {
-                anchors.fill: layerCB
+                anchors.fill: targetCB
                 visible: parent.currentIndex === -1
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignHCenter
@@ -291,22 +291,22 @@ DsaPanel {
             onClicked: {
                 if (withinDistanceRb.checked) {
                     toolController.addWithinDistanceAlert(levelCb.currentIndex,
-                                                          leftHandSideCB.currentIndex,
+                                                          sourceCb.currentIndex,
                                                           withinDistanceSB.value,
                                                           Number(featureIdEdit.text),
-                                                          layerCB.currentIndex);
+                                                          targetCB.currentIndex);
                 }
                 else if (intersectsRb.checked) {
                     toolController.addIntersectsAlert(levelCb.currentIndex,
-                                                      leftHandSideCB.currentIndex,
+                                                      sourceCb.currentIndex,
                                                       Number(featureIdEdit.text),
-                                                      layerCB.currentIndex);
+                                                      targetCB.currentIndex);
                 }
 
                 levelCb.currentIndex = -1;
-                leftHandSideCB.currentIndex = -1;
+                sourceCb.currentIndex = -1;
                 featureIdEdit.text = "";
-                layerCB.currentIndex = "";
+                targetCB.currentIndex = "";
             }
         }
     }

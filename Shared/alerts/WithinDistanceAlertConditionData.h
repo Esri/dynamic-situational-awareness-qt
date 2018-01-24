@@ -19,6 +19,7 @@ namespace Esri
 {
 namespace ArcGISRuntime
 {
+class Graphic;
 class GeoElement;
 }
 }
@@ -30,12 +31,10 @@ class WithinDistanceAlertConditionData : public AlertConditionData
   Q_OBJECT
 
 public:
-  explicit WithinDistanceAlertConditionData(Esri::ArcGISRuntime::GeoElement* element1,
-                              Esri::ArcGISRuntime::GeoElement* element2,
-                              AbstractOverlayManager* overlay1Manager,
-                              AbstractOverlayManager* overlay2Manager,
+  explicit WithinDistanceAlertConditionData(Esri::ArcGISRuntime::Graphic* source,
+                              Esri::ArcGISRuntime::GeoElement* target,
                               double distance,
-                              QObject* parent = nullptr);
+                              AlertCondition* condition);
   ~WithinDistanceAlertConditionData();
 
   void highlight(bool on) override;
@@ -47,14 +46,9 @@ public:
 
   Esri::ArcGISRuntime::GeoElement* geoElement() const override;
 
-  virtual QString element1Description() const;
-  virtual QString element2Description() const;
-
 private:
-  Esri::ArcGISRuntime::GeoElement* m_element1 = nullptr;
-  Esri::ArcGISRuntime::GeoElement* m_element2 = nullptr;
-  AbstractOverlayManager* m_overlay1Manager = nullptr;
-  AbstractOverlayManager* m_overlay2Manager = nullptr;
+  Esri::ArcGISRuntime::Graphic* m_source = nullptr;
+  Esri::ArcGISRuntime::GeoElement* m_target = nullptr;
   double m_distance;
 };
 

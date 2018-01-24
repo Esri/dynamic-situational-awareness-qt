@@ -14,32 +14,29 @@
 #include "WithinDistanceAlertConditionData.h"
 
 #include "GeoElement.h"
+#include "Graphic.h"
 #include "Point.h"
 
 using namespace Esri::ArcGISRuntime;
 
-WithinDistanceAlertConditionData::WithinDistanceAlertConditionData(GeoElement* element1,
-                                       GeoElement* element2,
-                                       AbstractOverlayManager* overlay1Manager,
-                                       AbstractOverlayManager* overlay2Manager,
+WithinDistanceAlertConditionData::WithinDistanceAlertConditionData(Graphic* source,
+                                       GeoElement* target,
                                        double distance,
-                                       QObject* parent):
-  AlertConditionData(parent),
-  m_element1(element1),
-  m_element2(element2),
-  m_overlay1Manager(overlay1Manager),
-  m_overlay2Manager(overlay2Manager),
+                                       AlertCondition* condition):
+  AlertConditionData(condition),
+  m_source(source),
+  m_target(target),
   m_distance(distance)
 {
   auto onElementDestroyed = [this]()
   {
-    m_element1 = nullptr;
-    m_element2 = nullptr;
+    m_source = nullptr;
+    m_target = nullptr;
     emit noLongerValid();
   };
 
-  connect(m_element1, &GeoElement::destroyed, this, onElementDestroyed);
-  connect(m_element2, &GeoElement::destroyed, this, onElementDestroyed);
+  connect(m_source, &GeoElement::destroyed, this, onElementDestroyed);
+  connect(m_target, &GeoElement::destroyed, this, onElementDestroyed);
 }
 
 WithinDistanceAlertConditionData::~WithinDistanceAlertConditionData()
@@ -49,17 +46,17 @@ WithinDistanceAlertConditionData::~WithinDistanceAlertConditionData()
 
 Geometry WithinDistanceAlertConditionData::position() const
 {
-  return m_element1 ? m_element1->geometry() : Point();
+  return m_source ? m_source->geometry() : Point();
 }
 
 void WithinDistanceAlertConditionData::highlight(bool on)
 {
-  m_overlay1Manager->setSelected(m_element1, on);
+  m_source->setSelected(true);
 }
 
 Geometry WithinDistanceAlertConditionData::position2() const
 {
-  return m_element2 ? m_element2->geometry() : Point();
+  return m_target ? m_target->geometry() : Point();
 }
 
 double WithinDistanceAlertConditionData::distance() const
@@ -69,15 +66,5 @@ double WithinDistanceAlertConditionData::distance() const
 
 GeoElement* WithinDistanceAlertConditionData::geoElement() const
 {
-  return m_element1;
-}
-
-QString WithinDistanceAlertConditionData::element1Description() const
-{
-  return m_overlay1Manager->elementDescription(m_element1);
-}
-
-QString WithinDistanceAlertConditionData::element2Description() const
-{
-  return m_overlay2Manager->elementDescription(m_element2);
+  return m_source;
 }

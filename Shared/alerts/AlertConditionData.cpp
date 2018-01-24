@@ -10,13 +10,16 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "AlertCondition.h"
 #include "AlertConditionData.h"
 
 using namespace Esri::ArcGISRuntime;
 
-AlertConditionData::AlertConditionData(QObject* parent):
-  QObject(parent)
+AlertConditionData::AlertConditionData(AlertCondition* parent):
+  QObject(parent),
+  m_condition(parent)
 {
+
 }
 
 AlertConditionData::~AlertConditionData()
@@ -26,26 +29,12 @@ AlertConditionData::~AlertConditionData()
 
 AlertLevel AlertConditionData::level() const
 {
-  return m_level;
-}
-
-void AlertConditionData::alertLevel(const AlertLevel& status)
-{
-  if (status == m_level)
-    return;
-
-  m_level = status;
-  emit statusChanged();
+  return m_condition->level();
 }
 
 QString AlertConditionData::name() const
 {
-  return m_name;
-}
-
-void AlertConditionData::setName(const QString& message)
-{
-  m_name = message;
+  return m_condition->name();
 }
 
 QUuid AlertConditionData::id() const

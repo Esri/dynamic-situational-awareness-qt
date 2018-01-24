@@ -71,7 +71,7 @@ signals:
 private:
   AlertCondition* m_condition = nullptr;
   QUuid m_id;
-  bool m_viewed = true;
+  bool m_viewed = false;
   bool m_active = false;
 };
 

@@ -177,12 +177,12 @@ DsaPanel {
         }
 
         RadioButton {
+            id: withinAreaRb
             anchors {
                 left: parent.left
                 right: parent.right
             }
-            id: intersectsRb
-            text: "intersects"
+            text: "within area"
             font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
             checked: true
             ButtonGroup.group: spatialOperationGroup
@@ -192,7 +192,7 @@ DsaPanel {
             spacing: 8 * scaleFactor
             RadioButton {
                 id: withinDistanceRb
-                text: "is within"
+                text: "within distance"
                 font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 ButtonGroup.group: spatialOperationGroup
             }
@@ -309,9 +309,10 @@ DsaPanel {
                                                           Number(featureIdEdit.text),
                                                           targetCB.currentIndex);
                 }
-                else if (intersectsRb.checked) {
-                    toolController.addIntersectsAlert(levelCb.currentIndex,
-                                                      sourceCb.currentIndex,
+                else if (withinAreaRb.checked) {
+                    toolController.addWithinAreaAlert(newAlertName.text,
+                                                      levelCb.currentIndex,
+                                                      sourceCb.currentText,
                                                       Number(featureIdEdit.text),
                                                       targetCB.currentIndex);
                 }

@@ -33,7 +33,7 @@ public:
   explicit FeatureOverlayManager(Esri::ArcGISRuntime::FeatureLayer* overlay, QObject* parent = nullptr);
   ~FeatureOverlayManager();
 
-  void setSelected(Esri::ArcGISRuntime::GeoElement* element, bool ons) override;
+  void setSelected(Esri::ArcGISRuntime::GeoElement* element, bool selected) override;
   QString elementDescription(Esri::ArcGISRuntime::GeoElement* element) const;
 
   Esri::ArcGISRuntime::GeoElement* elementAt(int elementId) const override;

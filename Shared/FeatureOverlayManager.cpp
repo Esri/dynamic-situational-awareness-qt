@@ -43,7 +43,7 @@ FeatureOverlayManager::~FeatureOverlayManager()
 
 }
 
-void FeatureOverlayManager::setSelected(GeoElement* element, bool on)
+void FeatureOverlayManager::setSelected(GeoElement* element, bool selected)
 {
   if (!element)
     return;
@@ -52,7 +52,7 @@ void FeatureOverlayManager::setSelected(GeoElement* element, bool on)
   if (!f)
     return;
 
-  if (on)
+  if (selected)
     m_overlay->selectFeature(f);
   else
     m_overlay->unselectFeature(f);

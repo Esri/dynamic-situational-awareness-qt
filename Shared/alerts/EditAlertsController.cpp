@@ -28,8 +28,6 @@
 #include "Layer.h"
 #include "LayerListModel.h"
 
-#include <QDebug>
-
 using namespace Esri::ArcGISRuntime;
 
 struct ResultsManager {
@@ -451,7 +449,7 @@ void EditAlertsController::onMouseClicked(QMouseEvent &event)
   event.accept();
 }
 
-void EditAlertsController::onIdentifyLayersCompleted(const QUuid& taskId, QList<Esri::ArcGISRuntime::IdentifyLayerResult*> identifyResults)
+void EditAlertsController::onIdentifyLayersCompleted(const QUuid& taskId, QList<IdentifyLayerResult*> identifyResults)
 {
   if (taskId != m_identifyLayersWatcher.taskId())
     return;
@@ -504,7 +502,7 @@ void EditAlertsController::onIdentifyLayersCompleted(const QUuid& taskId, QList<
   }
 }
 
-void EditAlertsController::onIdentifyGraphicsOverlaysCompleted(const QUuid& taskId, QList<Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult*> identifyResults)
+void EditAlertsController::onIdentifyGraphicsOverlaysCompleted(const QUuid& taskId, QList<IdentifyGraphicsOverlayResult*> identifyResults)
 {
   if (taskId != m_identifyGraphicsWatcher.taskId())
     return;

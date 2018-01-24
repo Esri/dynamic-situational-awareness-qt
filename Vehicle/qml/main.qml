@@ -101,6 +101,15 @@ Vehicle {
 
         onMousePressed: followHud.stopFollowing();
 
+        CurrentLocation {
+            id: currentLocation
+            anchors {
+                bottom: sceneView.attributionTop
+                horizontalCenter: parent.horizontalCenter
+                margins: 10 * scaleFactor
+            }
+        }
+
         Rectangle {
             anchors {
                 fill: followHud
@@ -117,7 +126,7 @@ Vehicle {
             anchors {
                 bottom: sceneView.attributionTop
                 horizontalCenter: parent.horizontalCenter
-                margins: 10 * scaleFactor
+                margins: currentLocation.visible ? currentLocation.height + 25 * scaleFactor : 10 * scaleFactor
             }
             enabled: false
         }

@@ -22,30 +22,39 @@ Item {
     width: locationText.width
     height: locationText.height
 
+    LocationTextController {
+        id: locationTextController
+    }
+
     Rectangle {
         anchors {
             margins: -2 * scaleFactor
-            fill: locationText
+            fill: displayRow
         }
         color: Material.primary
         radius: 3 * scaleFactor
-        opacity: 0.85
+        opacity: 0.75
     }
 
-    Column {
-        id: locationText
+    // Column {
+    Row {
+        id: displayRow
         anchors.centerIn: parent
-        spacing: 1 * scaleFactor
+        spacing: 10 * scaleFactor
         Text {
-            text: "N 42 18 1983 W 125 15 2114"
+            id: locationText
             font {
-                pixelSize: 10 * scaleFactor
+                pixelSize: 12 * scaleFactor
                 family: DsaStyles.fontFamily
             }
+            text: locationTextController.currentLocationText
             color: Material.foreground
+            style: Text.Outline
+            styleColor: Material.primary
         }
         Text {
-            text: "Elevation: 123 z"
+            id: elevationText
+            text: locationTextController.currentElevationText
             font {
                 pixelSize: 10 * scaleFactor
                 family: DsaStyles.fontFamily

@@ -51,6 +51,19 @@ Rectangle {
                     }
                 }
             }
+
+            Row {
+                height: 40 * scaleFactor
+                width: parent.width
+
+                CheckBox {
+                    text: "Show Location and Elevation"
+                    checked: true
+                    onCheckedChanged: {
+                        currentLocation.visible = checked;
+                    }
+                }
+            }
         }
     }
 

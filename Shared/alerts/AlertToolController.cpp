@@ -88,13 +88,22 @@ void AlertToolController::highlight(int rowIndex, bool on)
     m_highlightOverlay->graphics()->append(highlightGraphic);
 
     m_highlightTimer = new QTimer(this);
-    connect(m_highlightTimer, &QTimer::timeout, this, [this]()
+    connect(m_highlightTimer, &QTimer::timeout, this, [this, alert]()
     {
-      if (!m_highlightSymbol)
+      if (!m_highlightSymbol || !alert)
       {
         m_highlightTimer->stop();
         return;
       }
+
+      Graphic* graphic = m_highlightOverlay->graphics()->first();
+      if (!graphic)
+      {
+        m_highlightTimer->stop();
+        return;
+      }
+
+      graphic->setGeometry(alert->position());
 
       const int currDim = m_highlightSymbol->width();
       constexpr int maxDimension = 1000;

@@ -28,16 +28,20 @@ WithinAreaAlertQuery::~WithinAreaAlertQuery()
 
 }
 
-bool WithinAreaAlertQuery::matchesRule(AlertConditionData* alert) const
+bool WithinAreaAlertQuery::matchesRule(AlertConditionData* conditionData) const
 {
-  if (!alert)
+  if (!conditionData)
     return false;
 
-  WithinAreaAlertConditionData* pairAlert = qobject_cast<WithinAreaAlertConditionData*>(alert);
+  WithinAreaAlertConditionData* pairAlert = qobject_cast<WithinAreaAlertConditionData*>(conditionData);
   if (!pairAlert)
     return true; // test is not valid for this alert type
 
   Geometry geom1 = GeometryEngine::project(pairAlert->position(), SpatialReference::wgs84());
   Geometry geom2 = GeometryEngine::project(pairAlert->position2(), geom1.spatialReference());
+
+  if (geom2.geometryType() != GeometryType::Polygon)
+    return false;
+
   return GeometryEngine::instance()->intersects(geom1, geom2);
 }

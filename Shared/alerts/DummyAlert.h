@@ -13,7 +13,7 @@
 #ifndef DUMMYALERT_H
 #define DUMMYALERT_H
 
-#include "AbstractAlert.h"
+#include "AlertConditionData.h"
 
 namespace Esri
 {

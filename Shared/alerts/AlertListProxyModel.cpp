@@ -10,7 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "AbstractAlert.h"
+#include "AlertConditionData.h"
 #include "AbstractAlertRule.h"
 #include "AlertListModel.h"
 #include "AlertListProxyModel.h"

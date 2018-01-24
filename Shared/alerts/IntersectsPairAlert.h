@@ -13,7 +13,7 @@
 #ifndef INTERSECTSPAIRALERT_H
 #define INTERSECTSPAIRALERT_H
 
-#include "AbstractAlert.h"
+#include "AlertConditionData.h"
 
 namespace Esri
 {

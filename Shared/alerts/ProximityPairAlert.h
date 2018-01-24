@@ -13,7 +13,7 @@
 #ifndef PROXIMITYPAIRALERT_H
 #define PROXIMITYPAIRALERT_H
 
-#include "AbstractAlert.h"
+#include "AlertConditionData.h"
 
 namespace Esri
 {

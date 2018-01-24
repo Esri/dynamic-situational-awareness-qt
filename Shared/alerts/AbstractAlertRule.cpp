@@ -11,7 +11,7 @@
 //
 
 #include "AbstractAlertRule.h"
-#include "AbstractAlert.h"
+#include "AlertConditionData.h"
 
 using namespace Esri::ArcGISRuntime;
 

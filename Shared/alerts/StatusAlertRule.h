@@ -13,7 +13,7 @@
 #ifndef STATUSALERTRULE_H
 #define STATUSALERTRULE_H
 
-#include "AbstractAlert.h"
+#include "AlertConditionData.h"
 #include "AbstractAlertRule.h"
 
 class AlertConditionData;

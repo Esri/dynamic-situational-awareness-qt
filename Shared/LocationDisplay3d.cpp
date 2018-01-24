@@ -16,6 +16,7 @@
 #include "GPXLocationSimulator.h"
 
 #include <QCompass>
+#include <cmath>
 
 using namespace Esri::ArcGISRuntime;
 

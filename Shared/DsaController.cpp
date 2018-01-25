@@ -132,10 +132,10 @@ void DsaController::createDefaultSettings()
   m_dsaSettings["SimulationDirectory"] = QString("%1/SimulationData").arg(m_dsaSettings["RootDataDirectory"].toString());
   m_dsaSettings["ResourceDirectory"] = QString("%1/ResourceData").arg(m_dsaSettings["RootDataDirectory"].toString());
   m_dsaSettings["LocalDataPaths"] = QStringList { QString("%1/OperationalData").arg(m_dsaSettings["RootDataDirectory"].toString()), m_dsaSettings["RootDataDirectory"].toString() };
-  m_dsaSettings["DefaultBasemap"] = "topographic";
+  m_dsaSettings["DefaultBasemap"] = QStringLiteral("topographic");
   m_dsaSettings["DefaultElevationSource"] = QString("%1/CaDEM.tpk").arg(m_dsaSettings["ElevationDirectory"].toString());
   m_dsaSettings["GpxFile"] = QString("%1/MontereyMounted.gpx").arg(m_dsaSettings["SimulationDirectory"].toString());
-  m_dsaSettings["SimulateLocation"] = "true";
+  m_dsaSettings["SimulateLocation"] = QStringLiteral("true");
   m_dsaSettings["MessageFeedUdpPorts"] = QStringList { QString("45678"), QString("45679") };
   m_dsaSettings["MessageFeeds"] = QStringList { QString("Cursor-on-Target:cot:mil2525c"),
       QString("Friendly Tracks:position_report:mil2525c"), QString("Contact Reports:spotrep:enemycontact1600.png"),
@@ -144,8 +144,9 @@ void DsaController::createDefaultSettings()
   m_dsaSettings["InitialLocation"] = QStringList { QString::number(DsaUtility::montereyCA().x()),
       QString::number(DsaUtility::montereyCA().y()), QString("5000.0"), QString("0.0"),
       QString("75.0"), QString("0.0") };
-  m_dsaSettings["CoordinateFormat"] = QString("DMS");
-  m_dsaSettings["UnitOfMeasurement"] = QString("Meters");
+  m_dsaSettings["CoordinateFormat"] = QStringLiteral("DMS");
+  m_dsaSettings["UnitOfMeasurement"] = QStringLiteral("meters");
+  m_dsaSettings["UseGpsForElevation"] = QStringLiteral("false");
 }
 
 void DsaController::saveSettings(QFile& configFile)

@@ -23,6 +23,7 @@
 using namespace Esri::ArcGISRuntime;
 
 const QString LocationTextController::COORDINATE_FORMAT_PROPERTYNAME = QStringLiteral("CoordinateFormat");
+const QString LocationTextController::USE_GPS_PROPERTYNAME = QStringLiteral("UseGpsForElevation");
 const QString LocationTextController::DMS = QStringLiteral("DMS");
 const QString LocationTextController::DD = QStringLiteral("DD");
 const QString LocationTextController::DDM = QStringLiteral("DDM");
@@ -31,6 +32,8 @@ const QString LocationTextController::MGRS = QStringLiteral("MGRS");
 const QString LocationTextController::USNG = QStringLiteral("USNG");
 const QString LocationTextController::GeoRef = QStringLiteral("GeoRef");
 const QString LocationTextController::Gars = QStringLiteral("Gars");
+const QString LocationTextController::Meters = QStringLiteral("meters");
+const QString LocationTextController::Feet = QStringLiteral("feet");
 
 LocationTextController::LocationTextController(QObject* parent) :
   Toolkit::AbstractTool(parent)
@@ -44,6 +47,7 @@ LocationTextController::LocationTextController(QObject* parent) :
           this, &LocationTextController::onLocationChanged);
 
   m_coordinateFormatOptions << DMS << DD << DDM << UTM << MGRS << USNG << GeoRef << Gars;
+  m_units << Meters << Feet;
 }
 
 LocationTextController::~LocationTextController()
@@ -76,7 +80,7 @@ void LocationTextController::onLocationChanged(const Point& pt)
     return;
 
   if (m_useGpsForElevation)
-    formatElevationText(QString::number(pt.z()));
+    formatElevationText(pt.z());
   else
     m_surface->locationToElevation(pt);
 }
@@ -90,7 +94,7 @@ void LocationTextController::onGeoViewChanged()
 
     connect(m_surface, &Surface::locationToElevationCompleted, this, [this](QUuid, double elevation)
     {
-      formatElevationText(QString::number(elevation));
+      formatElevationText(elevation);
     });
   }
 }
@@ -104,6 +108,8 @@ void LocationTextController::setProperties(const QVariantMap& properties)
 {
   const QString defaultFormat = properties[COORDINATE_FORMAT_PROPERTYNAME].toString();
   setCoordinateFormat(defaultFormat);
+
+  m_useGpsForElevation = properties[USE_GPS_PROPERTYNAME].toBool();
 }
 
 void LocationTextController::setCoordinateFormat(const QString& format)
@@ -183,8 +189,27 @@ void LocationTextController::setUseGpsForElevation(bool useGps)
   m_useGpsForElevation = useGps;
 }
 
-void LocationTextController::formatElevationText(const QString& elevation)
+void LocationTextController::formatElevationText(double elevation)
 {
-  m_currentElevationText = QString("%1 %2 MSL").arg(elevation, "meters");
+  if (unitOfMeasurement() == Feet)
+  {
+    elevation = elevation * 3.280839895;
+  }
+  m_currentElevationText = QString("%1 %2 MSL").arg(QString::number(elevation), unitOfMeasurement());
   emit currentElevationTextChanged();
+}
+
+QStringList LocationTextController::units() const
+{
+  return m_units;
+}
+
+QString LocationTextController::unitOfMeasurement() const
+{
+  return m_unitOfMeasurement;
+}
+
+void LocationTextController::setUnitOfMeasurement(const QString& unit)
+{
+  m_unitOfMeasurement = unit;
 }

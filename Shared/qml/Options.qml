@@ -71,7 +71,7 @@ Rectangle {
 
             CheckBox {
                 text: "Use GPS for current elevation display"
-                checked: false
+                checked: optionsController.useGpsForElevation
                 onCheckedChanged: optionsController.useGpsForElevation = checked;
             }
 
@@ -125,7 +125,8 @@ Rectangle {
 
                 ComboBox {
                     anchors.verticalCenter: parent.verticalCenter
-                    model: 4
+                    model: optionsController.units
+                    onCurrentTextChanged: optionsController.setUnitOfMeasurement(currentText)
                 }
             }
         }

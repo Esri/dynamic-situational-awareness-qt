@@ -37,6 +37,12 @@ void OptionsController::getUpdatedTools()
   {
     m_coordinateFormats = m_locationTextController->coordinateFormatOptions();
     emit coordinateFormatsChanged();
+
+    m_useGpsForElevation = m_locationTextController->useGpsForElevation();
+    emit useGpsForElevationChanged();
+
+    m_units = m_locationTextController->units();
+    emit unitsChanged();
   }
 }
 
@@ -67,4 +73,15 @@ void OptionsController::setUseGpsForElevation(bool useGps)
   if (m_locationTextController)
     m_locationTextController->setUseGpsForElevation(useGps);
   emit useGpsForElevationChanged();
+}
+
+QStringList OptionsController::units() const
+{
+  return m_units;
+}
+
+void OptionsController::setUnitOfMeasurement(const QString& unit)
+{
+  if (m_locationTextController)
+    m_locationTextController->setUnitOfMeasurement(unit);
 }

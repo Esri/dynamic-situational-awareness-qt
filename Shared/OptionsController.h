@@ -23,6 +23,7 @@ class OptionsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
   Q_OBJECT
 
   Q_PROPERTY(QStringList coordinateFormats READ coordinateFormats NOTIFY coordinateFormatsChanged)
+  Q_PROPERTY(QStringList units READ units NOTIFY unitsChanged)
   Q_PROPERTY(bool useGpsForElevation READ useGpsForElevation WRITE setUseGpsForElevation NOTIFY useGpsForElevationChanged)
 
 public:
@@ -31,18 +32,22 @@ public:
 
   QString toolName() const override;
   Q_INVOKABLE void setCoordinateFormat(const QString& format);
+  Q_INVOKABLE void setUnitOfMeasurement(const QString& unit);
 
 signals:
   void coordinateFormatsChanged();
   void useGpsForElevationChanged();
+  void unitsChanged();
 
 private:
   LocationTextController* m_locationTextController = nullptr;
   QStringList m_coordinateFormats;
   bool m_useGpsForElevation = false;
+  QStringList m_units;
 
   void getUpdatedTools();
   QStringList coordinateFormats() const;
+  QStringList units() const;
   bool useGpsForElevation() const;
   void setUseGpsForElevation(bool useGps);
 };

@@ -162,6 +162,7 @@ DsaPanel {
             Button {
                 id: attributeConditionButton
                 text: "Attribute\nAlert"
+                enabled: false
                 font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 font.bold: checked
                 height: geofenceConditionButton.height
@@ -178,6 +179,7 @@ DsaPanel {
             Button {
                 id: analysisConditionButton
                 text: "Analysis\nAlert"
+                enabled: false
                 font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 font.bold: checked
                 height: geofenceConditionButton.height
@@ -357,21 +359,41 @@ DsaPanel {
             verticalAlignment: Text.AlignVCenter
         }
 
+        Text {
+            visible: geofenceConditionButton.checked || analysisConditionButton.checked
+            text: qsTr("the target")
+            color: Material.foreground
+            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+            horizontalAlignment: Text.AlignLeft
+            verticalAlignment: Text.AlignVCenter
+        }
+
+        ButtonGroup {
+            id: singleOrAllObjects
+        }
+
+        RadioButton {
+            id: allObjectRb
+            visible: geofenceConditionButton.checked || analysisConditionButton.checked
+            text: qsTr("objects from")
+            ButtonGroup.group: singleOrAllObjects
+            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+        }
+
         Row {
             visible: geofenceConditionButton.checked || analysisConditionButton.checked
             spacing: 8 * scaleFactor
-            height: pickButton.height
-            Text {
-                id: featureIdLabel
+            RadioButton {
+                id: singleFeatureRb
                 text: qsTr("object")
-                color: Material.foreground
+                checked: true
+                ButtonGroup.group: singleOrAllObjects
                 font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                horizontalAlignment: Text.AlignLeft
-                verticalAlignment: Text.AlignVCenter
             }
 
             TextField {
                 id: featureIdEdit
+                anchors.verticalCenter: singleFeatureRb.verticalCenter
                 validator: IntValidator{}
                 color: Material.accent
                 font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
@@ -382,22 +404,25 @@ DsaPanel {
                 placeholderText: "<object ID>"
             }
 
-            OverlayButton {
-                id: pickButton
-                selected: toolController.pickMode
-                iconUrl: DsaResources.iconGps
-                anchors.verticalCenter: featureIdLabel.verticalCenter
-                onClicked: {
-                    toolController.togglePickMode();
-                }
-            }
-
             Text {
                 text: qsTr("from")
+                anchors.verticalCenter: singleFeatureRb.verticalCenter
                 color: Material.foreground
                 font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignVCenter
+            }
+
+            OverlayButton {
+                id: pickButton
+                enabled: singleFeatureRb.checked
+                selected: toolController.pickMode
+                iconUrl: DsaResources.iconGps
+                opacity: enabled ? 1.0 : 0.8
+                anchors.verticalCenter: featureIdEdit.verticalCenter
+                onClicked: {
+                    toolController.togglePickMode();
+                }
             }
         }
 

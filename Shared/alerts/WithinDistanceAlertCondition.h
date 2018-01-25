@@ -27,34 +27,40 @@ class GraphicsOverlay;
 }
 
 class AbstractOverlayManager;
+class AlertSource;
 
 class WithinDistanceAlertCondition : public AlertCondition
 {
   Q_OBJECT
 
 public:
+  explicit WithinDistanceAlertCondition(AlertSource* source,
+                                        Esri::ArcGISRuntime::GeoElement* target,
+                                        double distance,
+                                        AlertLevel level,
+                                        const QString& name,
+                                        QObject* parent = nullptr);
+
   explicit WithinDistanceAlertCondition(Esri::ArcGISRuntime::GraphicsOverlay* source,
                                         Esri::ArcGISRuntime::GeoElement* target,
                                         double distance,
-                                        const AlertLevel& level,
+                                        AlertLevel level,
                                         const QString& name,
                                         QObject* parent = nullptr);
 
   explicit WithinDistanceAlertCondition(Esri::ArcGISRuntime::GraphicsOverlay* source,
                                         AbstractOverlayManager* targetOverlay,
                                         double distance,
-                                        const AlertLevel& level,
+                                        AlertLevel level,
                                         const QString& name,
                                         QObject* parent = nullptr);
 
   ~WithinDistanceAlertCondition();
 
 private:
-  void connectSourceSignals();
+  void connectSourceSignals(Esri::ArcGISRuntime::GraphicsOverlay* sourceOverlay);
   void connectTargetOverlaySignals();
-  void handleGraphicAt(int index);
 
-  Esri::ArcGISRuntime::GraphicsOverlay* m_source = nullptr;
   Esri::ArcGISRuntime::GeoElement* m_target = nullptr;
   AbstractOverlayManager* m_targetOverlay = nullptr;
   double m_distance;

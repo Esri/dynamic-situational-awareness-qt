@@ -30,8 +30,7 @@ public:
     AlertId = Qt::UserRole + 1,
     Name = Qt::UserRole + 2,
     Level = Qt::UserRole + 3,
-    Position = Qt::UserRole +4 ,
-    Viewed = Qt::UserRole + 5
+    Viewed = Qt::UserRole + 4
   };
 
   static AlertListModel* instance();

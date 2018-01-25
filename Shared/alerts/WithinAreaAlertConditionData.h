@@ -10,8 +10,8 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef INTERSECTSPAIRALERT_H
-#define INTERSECTSPAIRALERT_H
+#ifndef WITHINAREAALERTCONDITIONDATA_H
+#define WITHINAREAALERTCONDITIONDATA_H
 
 #include "AlertConditionData.h"
 
@@ -26,26 +26,21 @@ class Graphic;
 
 class AbstractOverlayManager;
 
-class IntersectsPairAlert : public AlertConditionData
+class WithinAreaAlertConditionData : public AlertConditionData
 {
   Q_OBJECT
 
 public:
-  explicit IntersectsPairAlert(Esri::ArcGISRuntime::Graphic* source,
-                              Esri::ArcGISRuntime::GeoElement* target,
-                              AlertCondition* parent = nullptr);
-  ~IntersectsPairAlert();
+  explicit WithinAreaAlertConditionData(AlertCondition* condition,
+                                        AlertSource* source,
+                                        Esri::ArcGISRuntime::GeoElement* target);
 
-  void highlight(bool on) override;
+  ~WithinAreaAlertConditionData();
 
-  Esri::ArcGISRuntime::Geometry position() const override;
   Esri::ArcGISRuntime::Geometry position2() const;
 
-  Esri::ArcGISRuntime::GeoElement* geoElement() const override;
-
 private:
-  Esri::ArcGISRuntime::Graphic* m_source;
   Esri::ArcGISRuntime::GeoElement* m_target;
 };
 
-#endif // INTERSECTSPAIRALERT_H
+#endif // WITHINAREAALERTCONDITIONDATA_H

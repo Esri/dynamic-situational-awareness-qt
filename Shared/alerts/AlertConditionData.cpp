@@ -12,14 +12,23 @@
 
 #include "AlertCondition.h"
 #include "AlertConditionData.h"
+#include "AlertSource.h"
 
 using namespace Esri::ArcGISRuntime;
 
-AlertConditionData::AlertConditionData(AlertCondition* parent):
-  QObject(parent),
-  m_condition(parent)
+AlertConditionData::AlertConditionData(AlertCondition* condition, AlertSource* source):
+  QObject(condition),
+  m_condition(condition),
+  m_source(source)
 {
   connect(m_condition, &AlertCondition::noLongerValid, this, &AlertConditionData::noLongerValid);
+  connect(m_source, &AlertSource::noLongerValid, this, &AlertConditionData::noLongerValid);
+  connect(m_source, &AlertSource::positionChanged, this, &AlertConditionData::positionChanged);
+  connect(m_source, &AlertSource::destroyed, this, [this]()
+  {
+    m_source = nullptr;
+    emit noLongerValid();
+  });
 }
 
 AlertConditionData::~AlertConditionData()
@@ -30,6 +39,16 @@ AlertConditionData::~AlertConditionData()
 AlertLevel AlertConditionData::level() const
 {
   return m_condition->level();
+}
+
+Point AlertConditionData::sourcePosition() const
+{
+  return m_source->position();
+}
+
+void AlertConditionData::highlight(bool on)
+{
+  source()->setSelected(on);
 }
 
 QString AlertConditionData::name() const
@@ -61,11 +80,6 @@ void AlertConditionData::setViewed(bool viewed)
   emit viewedChanged();
 }
 
-void AlertConditionData::onPositionChanged()
-{
-  emit positionChanged();
-}
-
 void AlertConditionData::setActive(bool active)
 {
   if (active == m_active)
@@ -73,6 +87,11 @@ void AlertConditionData::setActive(bool active)
 
   m_active = active;
   emit activeChanged();
+}
+
+AlertSource *AlertConditionData::source() const
+{
+  return m_source;
 }
 
 bool AlertConditionData::active() const

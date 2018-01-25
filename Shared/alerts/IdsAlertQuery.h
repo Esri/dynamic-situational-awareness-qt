@@ -10,8 +10,8 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef IDSALERTRULE_H
-#define IDSALERTRULE_H
+#ifndef IDSALERTQUERY_H
+#define IDSALERTQUERY_H
 
 #include "AlertQuery.h"
 
@@ -20,13 +20,13 @@
 
 class AlertConditionData;
 
-class IdsAlertRule : public AlertQuery
+class IdsAlertQuery : public AlertQuery
 {
   Q_OBJECT
 
 public:
-  explicit IdsAlertRule(QObject* parent = nullptr);
-  ~IdsAlertRule();
+  explicit IdsAlertQuery(QObject* parent = nullptr);
+  ~IdsAlertQuery();
 
   bool matchesRule(AlertConditionData* alert) const override;
 
@@ -36,4 +36,4 @@ private:
   QSet<QUuid> m_ids;
 };
 
-#endif // IDSALERTRULE_H
+#endif // IDSALERTQUERY_H

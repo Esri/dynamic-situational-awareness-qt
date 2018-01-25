@@ -15,11 +15,9 @@
 
 #include <QSortFilterProxyModel>
 #include <QList>
-#include <QSet>
+#include <QHash>
 
 class AlertQuery;
-
-class QTimer;
 
 class AlertListProxyModel : public QSortFilterProxyModel
 {
@@ -37,11 +35,10 @@ protected:
   bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const override;
 
 private:
-  bool passesAllRules(int sourceRow) const;
+  bool passesAllQueries(int sourceRow) const;
 
-  QList<AlertQuery*> m_rules;
-  mutable QSet<int> m_currentSourceRows;
-  QTimer* m_updateTimer = nullptr;
+  QList<AlertQuery*> m_queries;
+  mutable QHash<int, bool> m_rowsInModel;
 };
 
 #endif // ALERTLISTPROXYMODEL_H

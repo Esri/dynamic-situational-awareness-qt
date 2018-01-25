@@ -10,30 +10,27 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "AlertConditionData.h"
-#include "IdsAlertRule.h"
+#ifndef ALERTSOURCE_H
+#define ALERTSOURCE_H
 
-IdsAlertRule::IdsAlertRule(QObject* parent):
-  AlertQuery(parent)
+#include "Point.h"
+
+#include <QObject>
+
+class AlertSource : public QObject
 {
+  Q_OBJECT
 
-}
+public:
+  explicit AlertSource(QObject* parent = nullptr);
+  ~AlertSource();
 
-IdsAlertRule::~IdsAlertRule()
-{
+  virtual Esri::ArcGISRuntime::Point position() const = 0;
+  virtual void setSelected(bool selected);
 
-}
+signals:
+  void positionChanged();
+  void noLongerValid();
+};
 
-bool IdsAlertRule::matchesRule(AlertConditionData* alert) const
-{
-  if (!alert)
-    return false;
-
-  return !m_ids.contains(alert->id());
-}
-
-void IdsAlertRule::addId(const QUuid& id)
-{
-  m_ids.insert(id);
-}
-
+#endif // ALERTSOURCE_H

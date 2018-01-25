@@ -20,7 +20,7 @@
 #include "AbstractTool.h"
 
 class AlertListProxyModel;
-class StatusAlertRule;
+class StatusAlertQuery;
 
 class ViewedAlertsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {

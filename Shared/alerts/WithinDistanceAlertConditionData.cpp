@@ -17,45 +17,28 @@
 #include "Graphic.h"
 #include "Point.h"
 
-#include <QDebug>
-
 using namespace Esri::ArcGISRuntime;
 
-WithinDistanceAlertConditionData::WithinDistanceAlertConditionData(Graphic* source,
-                                       GeoElement* target,
-                                       double distance,
-                                       AlertCondition* condition):
-  AlertConditionData(condition),
-  m_source(source),
+WithinDistanceAlertConditionData::WithinDistanceAlertConditionData(AlertCondition* condition,
+                                                                   AlertSource* source,
+                                                                   GeoElement* target,
+                                                                   double distance):
+  AlertConditionData(condition, source),
   m_target(target),
   m_distance(distance)
 {
-  qDebug() << "condition data created";
-
-  auto onElementDestroyed = [this]()
+  connect(m_target, &GeoElement::destroyed, this, [this]()
   {
-    m_source = nullptr;
     m_target = nullptr;
     emit noLongerValid();
-  };
+  });
 
-  connect(m_source, &GeoElement::destroyed, this, onElementDestroyed);
-  connect(m_target, &GeoElement::destroyed, this, onElementDestroyed);
+  connect(m_target, &GeoElement::geometryChanged, this, &WithinDistanceAlertConditionData::positionChanged);
 }
 
 WithinDistanceAlertConditionData::~WithinDistanceAlertConditionData()
 {
 
-}
-
-Geometry WithinDistanceAlertConditionData::position() const
-{
-  return m_source ? m_source->geometry() : Point();
-}
-
-void WithinDistanceAlertConditionData::highlight(bool on)
-{
-  m_source->setSelected(on);
 }
 
 Geometry WithinDistanceAlertConditionData::position2() const
@@ -66,9 +49,4 @@ Geometry WithinDistanceAlertConditionData::position2() const
 double WithinDistanceAlertConditionData::distance() const
 {
   return m_distance;
-}
-
-GeoElement* WithinDistanceAlertConditionData::geoElement() const
-{
-  return m_source;
 }

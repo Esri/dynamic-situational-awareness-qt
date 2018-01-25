@@ -70,8 +70,3 @@ double WithinDistanceAlertConditionData::distance() const
 {
   return m_distance;
 }
-
-GeoElement* WithinDistanceAlertConditionData::geoElement() const
-{
-  return m_source;
-}

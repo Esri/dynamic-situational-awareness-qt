@@ -45,8 +45,6 @@ public:
 
   virtual void highlight(bool on) = 0;
 
-  virtual Esri::ArcGISRuntime::GeoElement* geoElement() const = 0;
-
   QString name() const;
 
   QUuid id() const;

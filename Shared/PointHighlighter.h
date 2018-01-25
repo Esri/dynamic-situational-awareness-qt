@@ -10,34 +10,37 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef GEOELEMENTHIGHLIGHTER_H
-#define GEOELEMENTHIGHLIGHTER_H
+#ifndef POINTHIGHLIGHTER_H
+#define POINTHIGHLIGHTER_H
 
 #include <QObject>
+
+#include "Point.h"
 
 namespace Esri
 {
 namespace ArcGISRuntime
 {
-  class GeoElement;
-  class GraphicsOverlay;
-  class SimpleMarkerSceneSymbol;
+class GraphicsOverlay;
+class SimpleMarkerSceneSymbol;
 }
 }
 
 class QTimer;
 
-class GeoElementHighlighter : public QObject
+class PointHighlighter : public QObject
 {
   Q_OBJECT
 
 public:
-  explicit GeoElementHighlighter(QObject* parent = nullptr);
-  ~GeoElementHighlighter();
+  explicit PointHighlighter(QObject* parent = nullptr);
+  ~PointHighlighter();
 
-  void setGeoElement(Esri::ArcGISRuntime::GeoElement* geoElement);
   void startHighlight();
   void stopHighlight();
+
+public slots:
+  void onPointChanged(const Esri::ArcGISRuntime::Point& point);
 
 private slots:
   void onGeoViewChanged();
@@ -45,8 +48,8 @@ private slots:
 private:
   Esri::ArcGISRuntime::GraphicsOverlay* m_highlightOverlay = nullptr;
   Esri::ArcGISRuntime::SimpleMarkerSceneSymbol* m_highlightSymbol = nullptr;
-  Esri::ArcGISRuntime::GeoElement* m_geoElement = nullptr;
+  Esri::ArcGISRuntime::Point m_point;
   QTimer* m_highlightTimer = nullptr;
 };
 
-#endif // GEOELEMENTHIGHLIGHTER_H
+#endif // POINTHIGHLIGHTER_H

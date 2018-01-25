@@ -14,7 +14,7 @@
 #include "AlertToolController.h"
 #include "AlertListModel.h"
 #include "AlertListProxyModel.h"
-#include "GeoElementHighlighter.h"
+#include "PointHighlighter.h"
 #include "WithinAreaAlertQuery.h"
 #include "WithinDistanceAlertQuery.h"
 #include "DsaUtility.h"
@@ -41,7 +41,7 @@ AlertToolController::AlertToolController(QObject* parent /* = nullptr */):
   m_withinAreaRule(new WithinAreaAlertQuery(this)),
   m_statusAlertRule(new StatusAlertQuery(this)),
   m_idsAlertRule(new IdsAlertQuery(this)),
-  m_highlighter(new GeoElementHighlighter(this))
+  m_highlighter(new PointHighlighter(this))
 {
   Toolkit::ToolManager::instance().addTool(this);
   m_rules.append(m_withinDistanceAlertRule);
@@ -76,19 +76,38 @@ void AlertToolController::highlight(int rowIndex, bool showHighlight)
     if (!alert)
       return;
 
-    if (m_highlightConnection)
-      disconnect(m_highlightConnection);
+    for (const auto& connection : m_highlightConnections)
+      disconnect(connection);
 
-    m_highlightConnection = connect(alert, &AlertConditionData::noLongerValid, this, [this]()
+    m_highlightConnections.clear();
+
+    m_highlightConnections.append(connect(alert, &AlertConditionData::noLongerValid, this, [this]()
     {
       m_highlighter->stopHighlight();
-    });
+    }));
 
-    m_highlighter->setGeoElement(alert->geoElement());
+    m_highlightConnections.append(connect(alert, &AlertConditionData::positionChanged, this, [this, alert]()
+    {
+      if (alert)
+        m_highlighter->onPointChanged(alert->position());
+    }));
+
+    m_highlightConnections.append(connect(alert, &AlertConditionData::activeChanged, this, [this, alert]()
+    {
+      if (!alert || !alert->active())
+        m_highlighter->stopHighlight();
+    }));
+
+    m_highlighter->onPointChanged(alert->position());
     m_highlighter->startHighlight();
   }
   else
   {
+    for (const auto& connection : m_highlightConnections)
+      disconnect(connection);
+
+    m_highlightConnections.clear();
+
     m_highlighter->stopHighlight();
   }
 }

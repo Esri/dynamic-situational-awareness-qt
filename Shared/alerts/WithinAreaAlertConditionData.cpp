@@ -59,8 +59,3 @@ Geometry WithinAreaAlertConditionData::position2() const
 {
   return m_target ? m_target->geometry() : Point();
 }
-
-GeoElement* WithinAreaAlertConditionData::geoElement() const
-{
-  return m_source;
-}

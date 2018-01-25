@@ -33,7 +33,7 @@ namespace ArcGISRuntime
 
 class QTimer;
 
-class GeoElementHighlighter;
+class PointHighlighter;
 
 class AlertToolController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -68,9 +68,9 @@ private:
   StatusAlertQuery* m_statusAlertRule = nullptr;
   IdsAlertQuery* m_idsAlertRule = nullptr;
   QList<AlertQuery*> m_rules;
-  GeoElementHighlighter* m_highlighter = nullptr;
+  PointHighlighter* m_highlighter = nullptr;
 
-  QMetaObject::Connection m_highlightConnection;
+  QList<QMetaObject::Connection> m_highlightConnections;
 };
 
 #endif // ALERTTOOLCONTROLLER_H

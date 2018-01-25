@@ -44,8 +44,6 @@ public:
 
   double distance() const;
 
-  Esri::ArcGISRuntime::GeoElement* geoElement() const override;
-
 private:
   Esri::ArcGISRuntime::Graphic* m_source = nullptr;
   Esri::ArcGISRuntime::GeoElement* m_target = nullptr;

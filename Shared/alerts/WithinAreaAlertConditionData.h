@@ -41,8 +41,6 @@ public:
   Esri::ArcGISRuntime::Geometry position() const override;
   Esri::ArcGISRuntime::Geometry position2() const;
 
-  Esri::ArcGISRuntime::GeoElement* geoElement() const override;
-
 private:
   Esri::ArcGISRuntime::Graphic* m_source;
   Esri::ArcGISRuntime::GeoElement* m_target;

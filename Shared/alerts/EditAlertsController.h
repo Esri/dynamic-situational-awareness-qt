@@ -31,6 +31,7 @@ class IdentifyGraphicsOverlayResult;
 }
 }
 
+class LocationAlertSource;
 class AlertConditionListModel;
 
 class EditAlertsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
@@ -91,6 +92,7 @@ private:
   QStringListModel* m_levelNames;
   bool m_pickMode = false;
   double m_tolerance = 5;
+  LocationAlertSource* m_locationSource = nullptr;
   Esri::ArcGISRuntime::TaskWatcher m_identifyLayersWatcher;
   Esri::ArcGISRuntime::TaskWatcher m_identifyGraphicsWatcher;
 

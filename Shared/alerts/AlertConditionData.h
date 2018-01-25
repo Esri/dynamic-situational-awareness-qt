@@ -15,35 +15,28 @@
 
 #include "AlertLevel.h"
 
-#include "Geometry.h"
+#include "Point.h"
 
 #include <QObject>
 #include <QString>
 #include <QUuid>
 
 class AlertCondition;
-
-namespace Esri
-{
-namespace ArcGISRuntime
-{
-  class GeoElement;
-}
-}
+class AlertSource;
 
 class AlertConditionData : public QObject
 {
   Q_OBJECT
 
 public:
-  explicit AlertConditionData(AlertCondition* condition);
+  explicit AlertConditionData(AlertCondition* condition, AlertSource* source);
   ~AlertConditionData();
 
   AlertLevel level() const;
 
-  virtual Esri::ArcGISRuntime::Geometry position() const = 0;
+  Esri::ArcGISRuntime::Point sourcePosition() const;
 
-  virtual void highlight(bool on) = 0;
+  void highlight(bool on);
 
   QString name() const;
 
@@ -56,8 +49,7 @@ public:
   bool active() const;
   void setActive(bool active);
 
-public slots:
-  void onPositionChanged();
+  AlertSource* source() const;
 
 signals:
   void statusChanged();
@@ -68,6 +60,7 @@ signals:
 
 private:
   AlertCondition* m_condition = nullptr;
+  AlertSource* m_source = nullptr;
   QUuid m_id;
   bool m_viewed = false;
   bool m_active = false;

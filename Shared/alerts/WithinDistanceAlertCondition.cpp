@@ -10,6 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "GraphicAlertSource.h"
 #include "WithinDistanceAlertCondition.h"
 #include "WithinDistanceAlertConditionData.h"
 
@@ -18,6 +19,19 @@
 
 using namespace Esri::ArcGISRuntime;
 
+WithinDistanceAlertCondition::WithinDistanceAlertCondition(AlertSource* source,
+                                                           GeoElement* target,
+                                                           double distance,
+                                                           const AlertLevel& level,
+                                                           const QString& name,
+                                                           QObject* parent):
+  AlertCondition(level, name, parent),
+  m_target(target)
+{
+  WithinDistanceAlertConditionData* data = new WithinDistanceAlertConditionData(this, source, m_target, distance);
+  addData(data);
+}
+
 WithinDistanceAlertCondition::WithinDistanceAlertCondition(GraphicsOverlay* source,
                                                            GeoElement* target,
                                                            double distance,
@@ -25,11 +39,10 @@ WithinDistanceAlertCondition::WithinDistanceAlertCondition(GraphicsOverlay* sour
                                                            const QString& name,
                                                            QObject* parent):
   AlertCondition(level, name, parent),
-  m_source(source),
   m_target(target),
   m_distance(distance)
 {
-  connectSourceSignals();
+  connectSourceSignals(source);
 }
 
 WithinDistanceAlertCondition::WithinDistanceAlertCondition(GraphicsOverlay* source,
@@ -39,11 +52,10 @@ WithinDistanceAlertCondition::WithinDistanceAlertCondition(GraphicsOverlay* sour
                                                            const QString& name,
                                                            QObject* parent):
   AlertCondition(level, name, parent),
-  m_source(source),
   m_targetOverlay(targetOverlay),
   m_distance(distance)
 {
-  connectSourceSignals();
+  connectSourceSignals(source);
   connectTargetOverlaySignals();
 }
 
@@ -52,13 +64,37 @@ WithinDistanceAlertCondition::~WithinDistanceAlertCondition()
 
 }
 
-void WithinDistanceAlertCondition::connectSourceSignals()
+void WithinDistanceAlertCondition::connectSourceSignals(GraphicsOverlay* sourceOverlay)
 {
-  GraphicListModel* graphics = m_source->graphics();
+  if (!sourceOverlay)
+    return;
+
+  GraphicListModel* graphics = sourceOverlay->graphics();
   if (!graphics)
     return;
 
-  connect(graphics, &GraphicListModel::graphicAdded, this, &WithinDistanceAlertCondition::handleGraphicAt);
+  auto handleGraphicAt = [this, graphics](int index)
+  {
+    if (!graphics)
+      return;
+
+    Graphic* newGraphic = graphics->at(index);
+    if (!newGraphic)
+      return;
+
+    if (m_target)
+    {
+      GraphicAlertSource* source = new GraphicAlertSource(newGraphic);
+      WithinDistanceAlertConditionData* data = new WithinDistanceAlertConditionData(this, source, m_target, m_distance);
+      addData(data);
+    }
+    else if (m_targetOverlay)
+    {
+      // TODO
+    }
+  };
+
+  connect(graphics, &GraphicListModel::graphicAdded, this, handleGraphicAt);
 
   const int count = graphics->rowCount();
   for (int i = 0; i < count; ++i)
@@ -68,25 +104,4 @@ void WithinDistanceAlertCondition::connectSourceSignals()
 void WithinDistanceAlertCondition::connectTargetOverlaySignals()
 {
   // TODO
-}
-
-void WithinDistanceAlertCondition::handleGraphicAt(int index)
-{
-  GraphicListModel* graphics = m_source->graphics();
-  if (!graphics)
-    return;
-
-  Graphic* newGraphic = graphics->at(index);
-  if (!newGraphic)
-    return;
-
-  if (m_target)
-  {
-    WithinDistanceAlertConditionData* data = new WithinDistanceAlertConditionData(newGraphic, m_target, m_distance, this);
-    addData(data);
-  }
-  else if (m_targetOverlay)
-  {
-    // TODO
-  }
 }

@@ -31,21 +31,17 @@ class WithinDistanceAlertConditionData : public AlertConditionData
   Q_OBJECT
 
 public:
-  explicit WithinDistanceAlertConditionData(Esri::ArcGISRuntime::Graphic* source,
-                              Esri::ArcGISRuntime::GeoElement* target,
-                              double distance,
-                              AlertCondition* condition);
+  explicit WithinDistanceAlertConditionData(AlertCondition* condition,
+                                            AlertSource* source,
+                                            Esri::ArcGISRuntime::GeoElement* target,
+                                            double distance);
   ~WithinDistanceAlertConditionData();
 
-  void highlight(bool on) override;
-
-  Esri::ArcGISRuntime::Geometry position() const override;
   Esri::ArcGISRuntime::Geometry position2() const;
 
   double distance() const;
 
 private:
-  Esri::ArcGISRuntime::Graphic* m_source = nullptr;
   Esri::ArcGISRuntime::GeoElement* m_target = nullptr;
   double m_distance;
 };

@@ -27,32 +27,38 @@ class GraphicsOverlay;
 }
 
 class AbstractOverlayManager;
+class AlertSource;
 
 class WithinAreaAlertCondition : public AlertCondition
 {
   Q_OBJECT
 
 public:
-  explicit WithinAreaAlertCondition(Esri::ArcGISRuntime::GraphicsOverlay* source,
-                                        Esri::ArcGISRuntime::GeoElement* target,
-                                        const AlertLevel& level,
-                                        const QString& name,
-                                        QObject* parent = nullptr);
+  explicit WithinAreaAlertCondition(AlertSource* source,
+                                    Esri::ArcGISRuntime::GeoElement* target,
+                                    const AlertLevel& level,
+                                    const QString& name,
+                                    QObject* parent = nullptr);
 
   explicit WithinAreaAlertCondition(Esri::ArcGISRuntime::GraphicsOverlay* source,
-                                        AbstractOverlayManager* targetOverlay,
-                                        const AlertLevel& level,
-                                        const QString& name,
-                                        QObject* parent = nullptr);
+                                    Esri::ArcGISRuntime::GeoElement* target,
+                                    const AlertLevel& level,
+                                    const QString& name,
+                                    QObject* parent = nullptr);
+
+  explicit WithinAreaAlertCondition(Esri::ArcGISRuntime::GraphicsOverlay* source,
+                                    AbstractOverlayManager* targetOverlay,
+                                    const AlertLevel& level,
+                                    const QString& name,
+                                    QObject* parent = nullptr);
 
   ~WithinAreaAlertCondition();
 
 private:
-  void connectSourceSignals();
+  void connectSourceSignals(Esri::ArcGISRuntime::GraphicsOverlay* sourceOverlay);
   void connectTargetOverlaySignals();
-  void handleGraphicAt(int index);
 
-  Esri::ArcGISRuntime::GraphicsOverlay* m_source = nullptr;
+//  Esri::ArcGISRuntime::GraphicsOverlay* m_source = nullptr;
   Esri::ArcGISRuntime::GeoElement* m_target = nullptr;
   AbstractOverlayManager* m_targetOverlay = nullptr;
 };

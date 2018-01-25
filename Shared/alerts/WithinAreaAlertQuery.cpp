@@ -39,7 +39,7 @@ bool WithinAreaAlertQuery::matchesRule(AlertConditionData* conditionData) const
   if (!pairAlert)
     return true; // test is not valid for this alert type
 
-  Geometry geom1 = GeometryEngine::project(pairAlert->position(), SpatialReference::wgs84());
+  Geometry geom1 = GeometryEngine::project(pairAlert->sourcePosition(), SpatialReference::wgs84());
   Geometry geom2 = GeometryEngine::project(pairAlert->position2(), geom1.spatialReference());
 
   if (geom2.geometryType() != GeometryType::Polygon)

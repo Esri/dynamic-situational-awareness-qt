@@ -31,18 +31,15 @@ class WithinAreaAlertConditionData : public AlertConditionData
   Q_OBJECT
 
 public:
-  explicit WithinAreaAlertConditionData(Esri::ArcGISRuntime::Graphic* source,
-                              Esri::ArcGISRuntime::GeoElement* target,
-                              AlertCondition* parent = nullptr);
+  explicit WithinAreaAlertConditionData(AlertCondition* condition,
+                                        AlertSource* source,
+                                        Esri::ArcGISRuntime::GeoElement* target);
+
   ~WithinAreaAlertConditionData();
 
-  void highlight(bool on) override;
-
-  Esri::ArcGISRuntime::Geometry position() const override;
   Esri::ArcGISRuntime::Geometry position2() const;
 
 private:
-  Esri::ArcGISRuntime::Graphic* m_source;
   Esri::ArcGISRuntime::GeoElement* m_target;
 };
 

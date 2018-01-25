@@ -15,6 +15,7 @@
 #include "EditAlertsController.h"
 #include "FeatureOverlayManager.h"
 #include "GraphicsOverlayManager.h"
+#include "LocationAlertSource.h"
 #include "WithinAreaAlertCondition.h"
 #include "WithinDistanceAlertCondition.h"
 
@@ -64,9 +65,10 @@ struct GraphicsResultsManager {
 EditAlertsController::EditAlertsController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent),
   m_conditions(new AlertConditionListModel(this)),
-  m_sourceNames(new QStringListModel(this)),
+  m_sourceNames(new QStringListModel(QStringList{"My Location"}, this)),
   m_targetNames(new QStringListModel(this)),
-  m_levelNames(new QStringListModel(QStringList{"Low priority", "Moderate priority", "High priority", "Critical priority"},this))
+  m_levelNames(new QStringListModel(QStringList{"Low priority", "Moderate priority", "High priority", "Critical priority"},this)),
+  m_locationSource(new LocationAlertSource(this))
 {
   Toolkit::ToolManager::instance().addTool(this);
 
@@ -162,15 +164,23 @@ void EditAlertsController::addWithinDistanceAlert(const QString& conditionName, 
     }
   }
 
-  if (!targetOverlayMgr && !sourceOverlay)
+  if (!targetOverlayMgr)
     return;
 
   GeoElement* targetElement = targetOverlayMgr->elementAt(itemId);
   if (!targetElement)
     return;
 
-  WithinDistanceAlertCondition* condition = new WithinDistanceAlertCondition(sourceOverlay, targetElement, distance, level, conditionName, this);
-  m_conditions->addAlertCondition(condition);
+  if (sourceFeedName == "My Location")
+  {
+    WithinDistanceAlertCondition* condition = new WithinDistanceAlertCondition(m_locationSource, targetElement, distance, level, conditionName, this);
+    m_conditions->addAlertCondition(condition);
+  }
+  else if (sourceOverlay)
+  {
+    WithinDistanceAlertCondition* condition = new WithinDistanceAlertCondition(sourceOverlay, targetElement, distance, level, conditionName, this);
+    m_conditions->addAlertCondition(condition);
+  }
 }
 
 void EditAlertsController::addWithinAreaAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedName, int itemId, int targetOverlayIndex)
@@ -235,15 +245,23 @@ void EditAlertsController::addWithinAreaAlert(const QString& conditionName, int 
     }
   }
 
-  if (!targetOverlayMgr && !sourceOverlay)
+  if (!targetOverlayMgr)
     return;
 
   GeoElement* targetElement = targetOverlayMgr->elementAt(itemId);
   if (!targetElement)
     return;
 
-  WithinAreaAlertCondition* condition = new WithinAreaAlertCondition(sourceOverlay, targetElement, level, conditionName, this);
-  m_conditions->addAlertCondition(condition);
+  if (sourceFeedName == "My Location")
+  {
+    WithinAreaAlertCondition* condition = new WithinAreaAlertCondition(m_locationSource, targetElement, level, conditionName, this);
+    m_conditions->addAlertCondition(condition);
+  }
+  else if (sourceOverlay)
+  {
+    WithinAreaAlertCondition* condition = new WithinAreaAlertCondition(sourceOverlay, targetElement, level, conditionName, this);
+    m_conditions->addAlertCondition(condition);
+  }
 }
 
 void EditAlertsController::removeConditionAt(int rowIndex)
@@ -306,7 +324,7 @@ bool EditAlertsController::pickMode() const
 void EditAlertsController::onGeoviewChanged()
 {
   setTargetNames(QStringList());
-  setSourceNames(QStringList());
+  setSourceNames(QStringList("My Location"));
 
   GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
   if (!geoView)
@@ -335,7 +353,7 @@ void EditAlertsController::onLayersChanged()
   if (!geoView)
   {
     setTargetNames(QStringList());
-    setSourceNames(QStringList());
+    setSourceNames(QStringList("My Location"));
     return;
   }
 
@@ -361,7 +379,7 @@ void EditAlertsController::onLayersChanged()
     }
   }
 
-  QStringList newSourceList;
+  QStringList newSourceList{"My Location"};
   GraphicsOverlayListModel* graphicsOverlays = geoView->graphicsOverlays();
   if (graphicsOverlays)
   {
@@ -542,7 +560,7 @@ void EditAlertsController::setTargetNames(const QStringList& targetNames)
   emit targetNamesChanged();
 }
 
-void EditAlertsController::setSourceNames(const QStringList &sourceNames)
+void EditAlertsController::setSourceNames(const QStringList& sourceNames)
 {
   const QStringList existingNames = m_sourceNames->stringList();
   if (existingNames == sourceNames)
@@ -554,6 +572,6 @@ void EditAlertsController::setSourceNames(const QStringList &sourceNames)
 
 QStringList EditAlertsController::realtimeFeedNames()
 {
-  return QStringList{"SCENEVIEWLOCATIONOVERLAY", "cot"};
+  return QStringList{"cot"};
 }
 

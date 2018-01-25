@@ -23,7 +23,7 @@ AlertConditionData::AlertConditionData(AlertCondition* condition, AlertSource* s
 {
   connect(m_condition, &AlertCondition::noLongerValid, this, &AlertConditionData::noLongerValid);
   connect(m_source, &AlertSource::noLongerValid, this, &AlertConditionData::noLongerValid);
-  connect(m_source, &AlertSource::positionChanged, this, &AlertConditionData::positionChanged);
+  connect(m_source, &AlertSource::locationChanged, this, &AlertConditionData::locationChanged);
   connect(m_source, &AlertSource::destroyed, this, [this]()
   {
     m_source = nullptr;
@@ -41,9 +41,9 @@ AlertLevel AlertConditionData::level() const
   return m_condition->level();
 }
 
-Point AlertConditionData::sourcePosition() const
+Point AlertConditionData::sourceLocation() const
 {
-  return m_source->position();
+  return m_source->location();
 }
 
 void AlertConditionData::highlight(bool on)

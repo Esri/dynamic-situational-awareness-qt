@@ -34,7 +34,7 @@ public:
 
   AlertLevel level() const;
 
-  Esri::ArcGISRuntime::Point sourcePosition() const;
+  Esri::ArcGISRuntime::Point sourceLocation() const;
 
   void highlight(bool on);
 
@@ -54,7 +54,7 @@ public:
 signals:
   void statusChanged();
   void viewedChanged();
-  void positionChanged();
+  void locationChanged();
   void activeChanged();
   void noLongerValid();
 

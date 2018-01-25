@@ -10,32 +10,31 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef GRAPHICALERTSOURCE_H
-#define GRAPHICALERTSOURCE_H
-
-#include "AlertSource.h"
+#ifndef GEOELEMENTALERTTARGET_H
+#define GEOELEMENTALERTTARGET_H
 
 namespace Esri
 {
 namespace ArcGISRuntime
 {
-class Graphic;
+class GeoElement;
 }
 }
 
-class GraphicAlertSource : public AlertSource
+#include "AlertTarget.h"
+
+class GeoElementAlertTarget : public AlertTarget
 {
   Q_OBJECT
 
 public:
-  explicit GraphicAlertSource(Esri::ArcGISRuntime::Graphic* graphic);
-  ~GraphicAlertSource();
+  explicit GeoElementAlertTarget(Esri::ArcGISRuntime::GeoElement* geoElement);
+  ~GeoElementAlertTarget();
 
-  Esri::ArcGISRuntime::Point location() const override;
-  void setSelected(bool selected) override;
+  virtual QList<Esri::ArcGISRuntime::Geometry> location() const override;
 
 private:
-  Esri::ArcGISRuntime::Graphic* m_graphic = nullptr;
+  Esri::ArcGISRuntime::GeoElement* m_geoElement = nullptr;
 };
 
-#endif // GRAPHICALERTSOURCE_H
+#endif // GEOELEMENTALERTTARGET_H

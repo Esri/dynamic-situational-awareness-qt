@@ -37,7 +37,7 @@ public:
 
   ~WithinAreaAlertConditionData();
 
-  Esri::ArcGISRuntime::Geometry position2() const;
+  Esri::ArcGISRuntime::Geometry targetLocation() const;
 
 private:
   Esri::ArcGISRuntime::GeoElement* m_target;

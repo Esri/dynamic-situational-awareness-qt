@@ -86,10 +86,10 @@ void AlertToolController::highlight(int rowIndex, bool showHighlight)
       m_highlighter->stopHighlight();
     }));
 
-    m_highlightConnections.append(connect(alert, &AlertConditionData::positionChanged, this, [this, alert]()
+    m_highlightConnections.append(connect(alert, &AlertConditionData::locationChanged, this, [this, alert]()
     {
       if (alert)
-        m_highlighter->onPointChanged(alert->sourcePosition());
+        m_highlighter->onPointChanged(alert->sourceLocation());
     }));
 
     m_highlightConnections.append(connect(alert, &AlertConditionData::activeChanged, this, [this, alert]()
@@ -98,7 +98,7 @@ void AlertToolController::highlight(int rowIndex, bool showHighlight)
         m_highlighter->stopHighlight();
     }));
 
-    m_highlighter->onPointChanged(alert->sourcePosition());
+    m_highlighter->onPointChanged(alert->sourceLocation());
     m_highlighter->startHighlight();
   }
   else
@@ -123,7 +123,7 @@ void AlertToolController::zoomTo(int rowIndex)
   if (!geoView)
     return;
 
-  const Point pos = alert->sourcePosition().extent().center();
+  const Point pos = alert->sourceLocation().extent().center();
 
   SceneView* sceneView = dynamic_cast<SceneView*>(geoView);
 

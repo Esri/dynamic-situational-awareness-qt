@@ -33,7 +33,7 @@ WithinDistanceAlertConditionData::WithinDistanceAlertConditionData(AlertConditio
     emit noLongerValid();
   });
 
-  connect(m_target, &GeoElement::geometryChanged, this, &WithinDistanceAlertConditionData::positionChanged);
+  connect(m_target, &GeoElement::geometryChanged, this, &WithinDistanceAlertConditionData::locationChanged);
 }
 
 WithinDistanceAlertConditionData::~WithinDistanceAlertConditionData()

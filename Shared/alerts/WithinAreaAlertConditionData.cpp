@@ -31,7 +31,7 @@ WithinAreaAlertConditionData::WithinAreaAlertConditionData(AlertCondition* condi
     emit noLongerValid();
   });
 
-  connect(m_target, &GeoElement::geometryChanged, this, &WithinAreaAlertConditionData::positionChanged);
+  connect(m_target, &GeoElement::geometryChanged, this, &WithinAreaAlertConditionData::locationChanged);
 }
 
 WithinAreaAlertConditionData::~WithinAreaAlertConditionData()
@@ -39,7 +39,7 @@ WithinAreaAlertConditionData::~WithinAreaAlertConditionData()
 
 }
 
-Geometry WithinAreaAlertConditionData::position2() const
+Geometry WithinAreaAlertConditionData::targetLocation() const
 {
   return m_target ? m_target->geometry() : Point();
 }

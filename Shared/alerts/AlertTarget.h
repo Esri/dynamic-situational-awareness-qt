@@ -10,24 +10,28 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef LOCATIONALERTSOURCE_H
-#define LOCATIONALERTSOURCE_H
+#ifndef ALERTTARGET_H
+#define ALERTTARGET_H
 
-#include "AlertSource.h"
+#include "Geometry.h"
 
-class LocationAlertSource : public AlertSource
+#include <QObject>
+
+#include <QList>
+
+class AlertTarget : public QObject
 {
   Q_OBJECT
 
 public:
-  explicit LocationAlertSource(QObject* parent = nullptr);
-  ~LocationAlertSource();
+  explicit AlertTarget(QObject* parent = nullptr);
+  ~AlertTarget();
 
-  Esri::ArcGISRuntime::Point location() const override;
-  void setSelected(bool selected) override;
-private:
-  Esri::ArcGISRuntime::Point m_location;
+  virtual QList<Esri::ArcGISRuntime::Geometry> location() const = 0;
 
+signals:
+  void locationChanged();
+  void noLongerValid();
 };
 
-#endif // LOCATIONALERTSOURCE_H
+#endif // ALERTTARGET_H

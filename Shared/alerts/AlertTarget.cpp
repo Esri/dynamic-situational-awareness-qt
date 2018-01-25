@@ -10,27 +10,17 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef ALERTSOURCE_H
-#define ALERTSOURCE_H
+#include "AlertTarget.h"
 
-#include "Point.h"
+using namespace Esri::ArcGISRuntime;
 
-#include <QObject>
-
-class AlertSource : public QObject
+AlertTarget::AlertTarget(QObject* parent):
+  QObject(parent)
 {
-  Q_OBJECT
 
-public:
-  explicit AlertSource(QObject* parent = nullptr);
-  ~AlertSource();
+}
 
-  virtual Esri::ArcGISRuntime::Point location() const = 0;
-  virtual void setSelected(bool selected) = 0;
-
-signals:
-  void locationChanged();
-  void noLongerValid();
-};
-
-#endif // ALERTSOURCE_H
+AlertTarget::~AlertTarget()
+{
+  emit noLongerValid();
+}

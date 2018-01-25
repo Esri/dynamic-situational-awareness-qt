@@ -29,7 +29,7 @@ Item {
     Rectangle {
         anchors {
             margins: -2 * scaleFactor
-            fill: displayRow
+            fill: displayColumn
         }
         color: Material.primary
         radius: 3 * scaleFactor
@@ -37,26 +37,24 @@ Item {
     }
 
     // Column {
-    Row {
-        id: displayRow
+    Column {
+        id: displayColumn
         anchors.centerIn: parent
-        spacing: 10 * scaleFactor
+        spacing: 1 * scaleFactor
         Text {
             id: locationText
             font {
-                pixelSize: 12 * scaleFactor
+                pixelSize: 11 * scaleFactor
                 family: DsaStyles.fontFamily
             }
             text: locationTextController.currentLocationText
             color: Material.foreground
-            style: Text.Outline
-            styleColor: Material.primary
         }
         Text {
             id: elevationText
             text: locationTextController.currentElevationText
             font {
-                pixelSize: 10 * scaleFactor
+                pixelSize: 11 * scaleFactor
                 family: DsaStyles.fontFamily
             }
             color: Material.foreground

@@ -16,6 +16,7 @@
 namespace Esri {
 namespace ArcGISRuntime {
 class Point;
+class Surface;
 }
 }
 
@@ -33,17 +34,23 @@ public:
   ~LocationTextController();
 
   QString toolName() const override;
+  QStringList coordinateFormatOptions() const;
 
 signals:
   void currentLocationTextChanged();
   void currentElevationTextChanged();
 
+private slots:
+  void onGeoViewChanged();
+  void onLocationChanged(const Esri::ArcGISRuntime::Point& pt);
+
 private:
   QString currentLocationText() const;
   QString currentElevationText() const;
-  void updateLocationText(const Esri::ArcGISRuntime::Point& pt);
+  Esri::ArcGISRuntime::Surface* m_surface = nullptr;
   QString m_currentLocationText = "Location Unavailable";
   QString m_currentElevationText = "Elevation Unavailable";
+  QStringList m_coordinateFormatOptions;
 };
 
 #endif // LOCATIONTEXTCONTROLLER_H

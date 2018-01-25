@@ -38,32 +38,45 @@ Rectangle {
             width: parent.width
             spacing: 5 * scaleFactor
 
-            Row {
-                height: 40 * scaleFactor
-                width: parent.width
+            Label {
+                text: "Map Controls"
+                font {
+                    pixelSize: 12 * scaleFactor
+                    family: DsaStyles.fontFamily
+                    bold: true
+                }
+                color: Material.foreground
+            }
 
-                CheckBox {
-                    text: "Show Navigation Controls"
-                    checked: true
-                    onCheckedChanged: {
-                        navTool.visible = checked;
-                        compass.visible = checked;
-                    }
+
+            CheckBox {
+                text: "Show Navigation Controls"
+                checked: true
+                onCheckedChanged: {
+                    navTool.visible = checked;
+                    compass.visible = checked;
                 }
             }
 
-            Row {
-                height: 40 * scaleFactor
-                width: parent.width
-
-                CheckBox {
-                    text: "Show Location and Elevation"
-                    checked: true
-                    onCheckedChanged: {
-                        currentLocation.visible = checked;
-                    }
+            CheckBox {
+                text: "Show Location and Elevation"
+                checked: true
+                onCheckedChanged: {
+                    currentLocation.visible = checked;
                 }
             }
+
+            Label {
+                text: "Units of Measurement, Formats, etc"
+                font {
+                    pixelSize: 12 * scaleFactor
+                    family: DsaStyles.fontFamily
+                    bold: true
+                }
+                color: Material.foreground
+            }
+
+
         }
     }
 

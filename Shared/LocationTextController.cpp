@@ -15,6 +15,8 @@
 #include "CoordinateFormatter.h"
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
+#include "Scene.h"
+#include "Surface.h"
 
 #include <QDebug>
 
@@ -25,10 +27,20 @@ LocationTextController::LocationTextController(QObject* parent) :
 {
   Toolkit::ToolManager::instance().addTool(this);
 
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::locationChanged, this, [this](const Point& pt)
-  {
-    updateLocationText(pt);
-  });
+  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged,
+          this, &LocationTextController::onGeoViewChanged);
+
+  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::locationChanged,
+          this, &LocationTextController::onLocationChanged);
+
+  m_coordinateFormatOptions << QStringLiteral("Degrees Minutes Seconds")
+                            << QStringLiteral("Decimal Degrees")
+                            << QStringLiteral("Decimal Minutes")
+                            << QStringLiteral("UTM")
+                            << QStringLiteral("MGRS")
+                            << QStringLiteral("USNG")
+                            << QStringLiteral("GeoRef")
+                            << QStringLiteral("Gars");
 }
 
 LocationTextController::~LocationTextController()
@@ -50,10 +62,35 @@ QString LocationTextController::currentElevationText() const
   return m_currentElevationText;
 }
 
-void LocationTextController::updateLocationText(const Point& pt)
+void LocationTextController::onLocationChanged(const Point& pt)
 {
-  m_currentLocationText = CoordinateFormatter::toLatitudeLongitude(pt, LatitudeLongitudeFormat::DegreesMinutesSeconds, 8);
-  m_currentElevationText = QString::number(pt.z());
+  // update location text
+  m_currentLocationText = CoordinateFormatter::toLatitudeLongitude(pt, LatitudeLongitudeFormat::DegreesMinutesSeconds, 5);
   emit currentLocationTextChanged();
-  emit currentElevationTextChanged();
+
+  // get elevation text
+  if (!m_surface)
+    return;
+
+  m_surface->locationToElevation(pt);
+}
+
+void LocationTextController::onGeoViewChanged()
+{
+  Scene* scene = dynamic_cast<Scene*>(Toolkit::ToolResourceProvider::instance()->scene());
+  if (scene)
+  {
+    m_surface = scene->baseSurface();
+
+    connect(m_surface, &Surface::locationToElevationCompleted, this, [this](QUuid, double elevation)
+    {
+      m_currentElevationText = QString::number(elevation);
+      emit currentElevationTextChanged();
+    });
+  }
+}
+
+QStringList LocationTextController::coordinateFormatOptions() const
+{
+  return m_coordinateFormatOptions;
 }

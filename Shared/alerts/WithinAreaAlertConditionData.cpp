@@ -33,8 +33,11 @@ WithinAreaAlertConditionData::WithinAreaAlertConditionData(Graphic* source,
     emit noLongerValid();
   };
 
-  connect(m_source, &GeoElement::destroyed, this, onElementDestroyed);
+  connect(m_source, &Graphic::destroyed, this, onElementDestroyed);
   connect(m_target, &GeoElement::destroyed, this, onElementDestroyed);
+
+  connect(m_source, &Graphic::geometryChanged, this, &WithinAreaAlertConditionData::positionChanged);
+  connect(m_target, &GeoElement::geometryChanged, this, &WithinAreaAlertConditionData::positionChanged);
 }
 
 WithinAreaAlertConditionData::~WithinAreaAlertConditionData()

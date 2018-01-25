@@ -63,8 +63,8 @@ signals:
 
 private:
   AlertListProxyModel* m_alertsProxyModel = nullptr;
-  WithinDistanceAlertQuery* m_distanceAlertRule = nullptr;
-  WithinAreaAlertQuery* m_intersectsRule = nullptr;
+  WithinDistanceAlertQuery* m_withinDistanceAlertRule = nullptr;
+  WithinAreaAlertQuery* m_withinAreaRule = nullptr;
   StatusAlertQuery* m_statusAlertRule = nullptr;
   IdsAlertQuery* m_idsAlertRule = nullptr;
   QList<AlertQuery*> m_rules;

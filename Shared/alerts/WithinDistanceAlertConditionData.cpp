@@ -41,6 +41,9 @@ WithinDistanceAlertConditionData::WithinDistanceAlertConditionData(Graphic* sour
 
   connect(m_source, &GeoElement::destroyed, this, onElementDestroyed);
   connect(m_target, &GeoElement::destroyed, this, onElementDestroyed);
+
+  connect(m_source, &Graphic::geometryChanged, this, &WithinDistanceAlertConditionData::positionChanged);
+  connect(m_target, &GeoElement::geometryChanged, this, &WithinDistanceAlertConditionData::positionChanged);
 }
 
 WithinDistanceAlertConditionData::~WithinDistanceAlertConditionData()

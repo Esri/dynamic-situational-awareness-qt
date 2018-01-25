@@ -108,7 +108,7 @@ DsaPanel {
             color: Material.accent
             anchors.horizontalCenter: parent.horizontalCenter
             width: parent.width
-            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+            font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
             font.bold: true
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter

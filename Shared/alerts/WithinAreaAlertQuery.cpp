@@ -15,6 +15,8 @@
 
 #include "GeometryEngine.h"
 
+#include <QDebug>
+
 using namespace Esri::ArcGISRuntime;
 
 WithinAreaAlertQuery::WithinAreaAlertQuery(QObject* parent):

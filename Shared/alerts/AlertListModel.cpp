@@ -59,7 +59,7 @@ bool AlertListModel::addAlertConditionData(AlertConditionData* alert)
 
     auto it = m_alerts.cbegin();
     auto itEnd = m_alerts.cend();
-    int currRow = -1;
+    int currRow = 0;
     for (; it != itEnd; ++it, ++currRow)
     {
       AlertConditionData* testAlert = *it;

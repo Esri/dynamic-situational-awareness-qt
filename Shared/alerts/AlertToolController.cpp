@@ -37,15 +37,15 @@ using namespace Esri::ArcGISRuntime;
 AlertToolController::AlertToolController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent),
   m_alertsProxyModel(new AlertListProxyModel(this)),
-  m_distanceAlertRule(new WithinDistanceAlertQuery(this)),
-  m_intersectsRule(new WithinAreaAlertQuery(this)),
+  m_withinDistanceAlertRule(new WithinDistanceAlertQuery(this)),
+  m_withinAreaRule(new WithinAreaAlertQuery(this)),
   m_statusAlertRule(new StatusAlertQuery(this)),
   m_idsAlertRule(new IdsAlertQuery(this)),
   m_highlighter(new GeoElementHighlighter(this))
 {
   Toolkit::ToolManager::instance().addTool(this);
-  m_rules.append(m_distanceAlertRule);
-  m_rules.append(m_intersectsRule);
+  m_rules.append(m_withinDistanceAlertRule);
+  m_rules.append(m_withinAreaRule);
   m_rules.append(m_statusAlertRule);
   m_rules.append(m_idsAlertRule);
 

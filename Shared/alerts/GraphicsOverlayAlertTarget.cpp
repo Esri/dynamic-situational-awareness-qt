@@ -53,7 +53,7 @@ GraphicsOverlayAlertTarget::GraphicsOverlayAlertTarget(GraphicsOverlay* graphics
     const int count = graphics->rowCount();
     for (int i = 0; i < count; ++i)
     {
-      Graphic* graphic = m_graphicsOverlay->graphics()->at(index);
+      Graphic* graphic = m_graphicsOverlay->graphics()->at(i);
       if (graphic)
       {
         m_geomList.append(graphic->geometry());

@@ -22,6 +22,8 @@
 
 using namespace Esri::ArcGISRuntime;
 
+const QString LocationTextController::COORDINATE_FORMAT_PROPERTYNAME = "CoordinateFormat";
+
 LocationTextController::LocationTextController(QObject* parent) :
   Toolkit::AbstractTool(parent)
 {
@@ -93,4 +95,10 @@ void LocationTextController::onGeoViewChanged()
 QStringList LocationTextController::coordinateFormatOptions() const
 {
   return m_coordinateFormatOptions;
+}
+
+void LocationTextController::setProperties(const QVariantMap& properties)
+{
+  const QString defaultMeasurement = properties[COORDINATE_FORMAT_PROPERTYNAME].toString();
+  qDebug() << defaultMeasurement;
 }

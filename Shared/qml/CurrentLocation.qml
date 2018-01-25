@@ -41,6 +41,7 @@ Item {
         id: displayColumn
         anchors.centerIn: parent
         spacing: 1 * scaleFactor
+
         Text {
             id: locationText
             font {
@@ -50,6 +51,7 @@ Item {
             text: locationTextController.currentLocationText
             color: Material.foreground
         }
+
         Text {
             id: elevationText
             text: locationTextController.currentElevationText

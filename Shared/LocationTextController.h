@@ -34,6 +34,7 @@ public:
   ~LocationTextController();
 
   QString toolName() const override;
+  void setProperties(const QVariantMap& properties) override;
   QStringList coordinateFormatOptions() const;
 
 signals:
@@ -45,6 +46,7 @@ private slots:
   void onLocationChanged(const Esri::ArcGISRuntime::Point& pt);
 
 private:
+  static const QString COORDINATE_FORMAT_PROPERTYNAME;
   QString currentLocationText() const;
   QString currentElevationText() const;
   Esri::ArcGISRuntime::Surface* m_surface = nullptr;

@@ -144,6 +144,8 @@ void DsaController::createDefaultSettings()
   m_dsaSettings["InitialLocation"] = QStringList { QString::number(DsaUtility::montereyCA().x()),
       QString::number(DsaUtility::montereyCA().y()), QString("5000.0"), QString("0.0"),
       QString("75.0"), QString("0.0") };
+  m_dsaSettings["CoordinateFormat"] = QString("Degrees Minutes Seeconds");
+  m_dsaSettings["UnitOfMeasurement"] = QString("Meters");
 }
 
 void DsaController::saveSettings(QFile& configFile)

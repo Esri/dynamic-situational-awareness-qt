@@ -29,7 +29,7 @@ public:
   bool matchesRule(AlertConditionData* alert) const override;
 
   AlertLevel minLevel() const;
-  void setMinLevel(const AlertLevel& minLevel);
+  void setMinLevel(AlertLevel minLevel);
 
 private:
   AlertLevel m_minLevel = AlertLevel::Low;

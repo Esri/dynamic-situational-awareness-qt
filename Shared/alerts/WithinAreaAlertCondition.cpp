@@ -21,7 +21,7 @@ using namespace Esri::ArcGISRuntime;
 
 WithinAreaAlertCondition::WithinAreaAlertCondition(AlertSource* source,
                                                    GeoElement* target,
-                                                   const AlertLevel& level,
+                                                   AlertLevel level,
                                                    const QString &name,
                                                    QObject* parent):
   AlertCondition(level, name, parent),
@@ -33,7 +33,7 @@ WithinAreaAlertCondition::WithinAreaAlertCondition(AlertSource* source,
 
 WithinAreaAlertCondition::WithinAreaAlertCondition(GraphicsOverlay* source,
                                                    GeoElement* target,
-                                                   const AlertLevel& level,
+                                                   AlertLevel level,
                                                    const QString& name,
                                                    QObject* parent):
   AlertCondition(level, name, parent),
@@ -44,7 +44,7 @@ WithinAreaAlertCondition::WithinAreaAlertCondition(GraphicsOverlay* source,
 
 WithinAreaAlertCondition::WithinAreaAlertCondition(GraphicsOverlay* source,
                                                    AbstractOverlayManager* targetOverlay,
-                                                   const AlertLevel& level,
+                                                   AlertLevel level,
                                                    const QString& name,
                                                    QObject* parent):
   AlertCondition(level, name, parent),

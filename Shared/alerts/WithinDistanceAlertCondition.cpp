@@ -22,7 +22,7 @@ using namespace Esri::ArcGISRuntime;
 WithinDistanceAlertCondition::WithinDistanceAlertCondition(AlertSource* source,
                                                            GeoElement* target,
                                                            double distance,
-                                                           const AlertLevel& level,
+                                                           AlertLevel level,
                                                            const QString& name,
                                                            QObject* parent):
   AlertCondition(level, name, parent),
@@ -35,7 +35,7 @@ WithinDistanceAlertCondition::WithinDistanceAlertCondition(AlertSource* source,
 WithinDistanceAlertCondition::WithinDistanceAlertCondition(GraphicsOverlay* source,
                                                            GeoElement* target,
                                                            double distance,
-                                                           const AlertLevel& level,
+                                                           AlertLevel level,
                                                            const QString& name,
                                                            QObject* parent):
   AlertCondition(level, name, parent),
@@ -48,7 +48,7 @@ WithinDistanceAlertCondition::WithinDistanceAlertCondition(GraphicsOverlay* sour
 WithinDistanceAlertCondition::WithinDistanceAlertCondition(GraphicsOverlay* source,
                                                            AbstractOverlayManager* targetOverlay,
                                                            double distance,
-                                                           const AlertLevel& level,
+                                                           AlertLevel level,
                                                            const QString& name,
                                                            QObject* parent):
   AlertCondition(level, name, parent),

@@ -37,7 +37,7 @@ AlertLevel StatusAlertQuery::minLevel() const
   return m_minLevel;
 }
 
-void StatusAlertQuery::setMinLevel(const AlertLevel& minStatus)
+void StatusAlertQuery::setMinLevel(AlertLevel minStatus)
 {
   m_minLevel = minStatus;
 }

@@ -36,19 +36,19 @@ class WithinAreaAlertCondition : public AlertCondition
 public:
   explicit WithinAreaAlertCondition(AlertSource* source,
                                     Esri::ArcGISRuntime::GeoElement* target,
-                                    const AlertLevel& level,
+                                    AlertLevel level,
                                     const QString& name,
                                     QObject* parent = nullptr);
 
   explicit WithinAreaAlertCondition(Esri::ArcGISRuntime::GraphicsOverlay* source,
                                     Esri::ArcGISRuntime::GeoElement* target,
-                                    const AlertLevel& level,
+                                    AlertLevel level,
                                     const QString& name,
                                     QObject* parent = nullptr);
 
   explicit WithinAreaAlertCondition(Esri::ArcGISRuntime::GraphicsOverlay* source,
                                     AbstractOverlayManager* targetOverlay,
-                                    const AlertLevel& level,
+                                    AlertLevel level,
                                     const QString& name,
                                     QObject* parent = nullptr);
 

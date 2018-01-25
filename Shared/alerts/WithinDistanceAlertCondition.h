@@ -37,21 +37,21 @@ public:
   explicit WithinDistanceAlertCondition(AlertSource* source,
                                         Esri::ArcGISRuntime::GeoElement* target,
                                         double distance,
-                                        const AlertLevel& level,
+                                        AlertLevel level,
                                         const QString& name,
                                         QObject* parent = nullptr);
 
   explicit WithinDistanceAlertCondition(Esri::ArcGISRuntime::GraphicsOverlay* source,
                                         Esri::ArcGISRuntime::GeoElement* target,
                                         double distance,
-                                        const AlertLevel& level,
+                                        AlertLevel level,
                                         const QString& name,
                                         QObject* parent = nullptr);
 
   explicit WithinDistanceAlertCondition(Esri::ArcGISRuntime::GraphicsOverlay* source,
                                         AbstractOverlayManager* targetOverlay,
                                         double distance,
-                                        const AlertLevel& level,
+                                        AlertLevel level,
                                         const QString& name,
                                         QObject* parent = nullptr);
 

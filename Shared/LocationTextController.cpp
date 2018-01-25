@@ -22,7 +22,15 @@
 
 using namespace Esri::ArcGISRuntime;
 
-const QString LocationTextController::COORDINATE_FORMAT_PROPERTYNAME = "CoordinateFormat";
+const QString LocationTextController::COORDINATE_FORMAT_PROPERTYNAME = QStringLiteral("CoordinateFormat");
+const QString LocationTextController::DMS = QStringLiteral("DMS");
+const QString LocationTextController::DD = QStringLiteral("DD");
+const QString LocationTextController::DDM = QStringLiteral("DDM");
+const QString LocationTextController::UTM = QStringLiteral("UTM");
+const QString LocationTextController::MGRS = QStringLiteral("MGRS");
+const QString LocationTextController::USNG = QStringLiteral("USNG");
+const QString LocationTextController::GeoRef = QStringLiteral("GeoRef");
+const QString LocationTextController::Gars = QStringLiteral("Gars");
 
 LocationTextController::LocationTextController(QObject* parent) :
   Toolkit::AbstractTool(parent)
@@ -35,14 +43,7 @@ LocationTextController::LocationTextController(QObject* parent) :
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::locationChanged,
           this, &LocationTextController::onLocationChanged);
 
-  m_coordinateFormatOptions << QStringLiteral("DMS")
-                            << QStringLiteral("DD")
-                            << QStringLiteral("DDM")
-                            << QStringLiteral("UTM")
-                            << QStringLiteral("MGRS")
-                            << QStringLiteral("USNG")
-                            << QStringLiteral("GeoRef")
-                            << QStringLiteral("Gars");
+  m_coordinateFormatOptions << DMS << DD << DDM << UTM << MGRS << USNG << GeoRef << Gars;
 }
 
 LocationTextController::~LocationTextController()
@@ -67,14 +68,17 @@ QString LocationTextController::currentElevationText() const
 void LocationTextController::onLocationChanged(const Point& pt)
 {
   // update location text
-  m_currentLocationText = formatCoordinate(pt);
+  m_currentLocationText = QString("%1 (%2)").arg(formatCoordinate(pt), m_coordinateFormat);
   emit currentLocationTextChanged();
 
   // get elevation text
   if (!m_surface)
     return;
 
-  m_surface->locationToElevation(pt);
+  if (m_useGpsForElevation)
+    formatElevationText(QString::number(pt.z()));
+  else
+    m_surface->locationToElevation(pt);
 }
 
 void LocationTextController::onGeoViewChanged()
@@ -86,8 +90,7 @@ void LocationTextController::onGeoViewChanged()
 
     connect(m_surface, &Surface::locationToElevationCompleted, this, [this](QUuid, double elevation)
     {
-      m_currentElevationText = QString::number(elevation);
-      emit currentElevationTextChanged();
+      formatElevationText(QString::number(elevation));
     });
   }
 }
@@ -107,49 +110,49 @@ void LocationTextController::setCoordinateFormat(const QString& format)
 {
   m_coordinateFormat = format;
 
-  if (coordinateFormat() == "DD")
+  if (coordinateFormat() == DD)
   {
     formatCoordinate = [](const Point& p)
     {
       return CoordinateFormatter::toLatitudeLongitude(p, LatitudeLongitudeFormat::DecimalDegrees, 5);
     };
   }
-  else if (coordinateFormat() == "DDM")
+  else if (coordinateFormat() == DDM)
   {
     formatCoordinate = [](const Point& p)
     {
       return CoordinateFormatter::toLatitudeLongitude(p, LatitudeLongitudeFormat::DegreesDecimalMinutes, 5);
     };
   }
-  else if (coordinateFormat() == "UTM")
+  else if (coordinateFormat() == UTM)
   {
     formatCoordinate = [](const Point& p)
     {
       return CoordinateFormatter::toUtm(p, UtmConversionMode::NorthSouthIndicators, true);
     };
   }
-  else if (coordinateFormat() == "MGRS")
+  else if (coordinateFormat() == MGRS)
   {
     formatCoordinate = [](const Point& p)
     {
       return CoordinateFormatter::toMgrs(p, MgrsConversionMode::Automatic, 5, true);
     };
   }
-  else if (coordinateFormat() == "USNG")
+  else if (coordinateFormat() == USNG)
   {
     formatCoordinate = [](const Point& p)
     {
       return CoordinateFormatter::toUsng(p, 5, true);
     };
   }
-  else if (coordinateFormat() == "GeoRef")
+  else if (coordinateFormat() == GeoRef)
   {
     formatCoordinate = [](const Point& p)
     {
       return CoordinateFormatter::toGeoRef(p, 5);
     };
   }
-  else if (coordinateFormat() == "Gars")
+  else if (coordinateFormat() == Gars)
   {
     formatCoordinate = [](const Point& p)
     {
@@ -168,4 +171,20 @@ void LocationTextController::setCoordinateFormat(const QString& format)
 QString LocationTextController::coordinateFormat() const
 {
   return m_coordinateFormat;
+}
+
+bool LocationTextController::useGpsForElevation() const
+{
+  return m_useGpsForElevation;
+}
+
+void LocationTextController::setUseGpsForElevation(bool useGps)
+{
+  m_useGpsForElevation = useGps;
+}
+
+void LocationTextController::formatElevationText(const QString& elevation)
+{
+  m_currentElevationText = QString("%1 %2 MSL").arg(elevation, "meters");
+  emit currentElevationTextChanged();
 }

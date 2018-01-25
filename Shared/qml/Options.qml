@@ -72,9 +72,7 @@ Rectangle {
             CheckBox {
                 text: "Use GPS for current elevation display"
                 checked: false
-                onCheckedChanged: {
-                    console.log("TODO");
-                }
+                onCheckedChanged: optionsController.useGpsForElevation = checked;
             }
 
             Label {

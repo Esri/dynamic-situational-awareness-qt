@@ -38,6 +38,8 @@ public:
   QStringList coordinateFormatOptions() const;
   QString coordinateFormat() const;
   void setCoordinateFormat(const QString& format);
+  bool useGpsForElevation() const;
+  void setUseGpsForElevation(bool useGps);
 
 signals:
   void currentLocationTextChanged();
@@ -48,18 +50,28 @@ private slots:
   void onLocationChanged(const Esri::ArcGISRuntime::Point& pt);
 
 private:
-  static const QString COORDINATE_FORMAT_PROPERTYNAME;
+  std::function<QString(const Esri::ArcGISRuntime::Point&)> formatCoordinate;
+
   QString currentLocationText() const;
   QString currentElevationText() const;
-  std::function<QString(const Esri::ArcGISRuntime::Point&)> formatCoordinate;
+  void formatElevationText(const QString& elevation);
+
+  static const QString COORDINATE_FORMAT_PROPERTYNAME;
+  static const QString DMS;
+  static const QString DD;
+  static const QString DDM;
+  static const QString UTM;
+  static const QString MGRS;
+  static const QString USNG;
+  static const QString GeoRef;
+  static const QString Gars;
+
   Esri::ArcGISRuntime::Surface* m_surface = nullptr;
   QString m_currentLocationText = "Location Unavailable";
   QString m_currentElevationText = "Elevation Unavailable";
   QString m_coordinateFormat;
   QStringList m_coordinateFormatOptions;
-
-
-  //void doStuff();
+  bool m_useGpsForElevation = false;
 };
 
 #endif // LOCATIONTEXTCONTROLLER_H

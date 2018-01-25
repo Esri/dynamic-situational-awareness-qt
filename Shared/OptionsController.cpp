@@ -55,3 +55,16 @@ void OptionsController::setCoordinateFormat(const QString& format)
   if (m_locationTextController)
     m_locationTextController->setCoordinateFormat(format);
 }
+
+bool OptionsController::useGpsForElevation() const
+{
+  return m_useGpsForElevation;
+}
+
+void OptionsController::setUseGpsForElevation(bool useGps)
+{
+  m_useGpsForElevation = useGps;
+  if (m_locationTextController)
+    m_locationTextController->setUseGpsForElevation(useGps);
+  emit useGpsForElevationChanged();
+}

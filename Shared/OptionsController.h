@@ -13,7 +13,7 @@
 #ifndef OPTIONSCONTROLLER_H
 #define OPTIONSCONTROLLER_H
 
-class ArcGISCompassController;
+class LocationTextController;
 
 #include "AbstractTool.h"
 #include <QObject>
@@ -22,14 +22,23 @@ class OptionsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
   Q_OBJECT
 
+  Q_PROPERTY(QStringList coordinateFormats READ coordinateFormats NOTIFY coordinateFormatsChanged)
+
 public:
   explicit OptionsController(QObject* parent = nullptr);
   ~OptionsController();
 
   QString toolName() const override;
+  Q_INVOKABLE void setCoordinateFormat(const QString& format);
+
+signals:
+  void coordinateFormatsChanged();
 
 private:
   void getUpdatedTools();
+  QStringList coordinateFormats() const;
+  QStringList m_coordinateFormats;
+  LocationTextController* m_locationTextController = nullptr;
 };
 
 #endif // OPTIONSCONTROLLER_H

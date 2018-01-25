@@ -35,9 +35,9 @@ LocationTextController::LocationTextController(QObject* parent) :
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::locationChanged,
           this, &LocationTextController::onLocationChanged);
 
-  m_coordinateFormatOptions << QStringLiteral("Degrees Minutes Seconds")
-                            << QStringLiteral("Decimal Degrees")
-                            << QStringLiteral("Decimal Minutes")
+  m_coordinateFormatOptions << QStringLiteral("DMS")
+                            << QStringLiteral("DD")
+                            << QStringLiteral("DDM")
                             << QStringLiteral("UTM")
                             << QStringLiteral("MGRS")
                             << QStringLiteral("USNG")
@@ -67,7 +67,7 @@ QString LocationTextController::currentElevationText() const
 void LocationTextController::onLocationChanged(const Point& pt)
 {
   // update location text
-  m_currentLocationText = CoordinateFormatter::toLatitudeLongitude(pt, LatitudeLongitudeFormat::DegreesMinutesSeconds, 5);
+  m_currentLocationText = formatCoordinate(pt);
   emit currentLocationTextChanged();
 
   // get elevation text
@@ -99,6 +99,73 @@ QStringList LocationTextController::coordinateFormatOptions() const
 
 void LocationTextController::setProperties(const QVariantMap& properties)
 {
-  const QString defaultMeasurement = properties[COORDINATE_FORMAT_PROPERTYNAME].toString();
-  qDebug() << defaultMeasurement;
+  const QString defaultFormat = properties[COORDINATE_FORMAT_PROPERTYNAME].toString();
+  setCoordinateFormat(defaultFormat);
+}
+
+void LocationTextController::setCoordinateFormat(const QString& format)
+{
+  m_coordinateFormat = format;
+
+  if (coordinateFormat() == "DD")
+  {
+    formatCoordinate = [](const Point& p)
+    {
+      return CoordinateFormatter::toLatitudeLongitude(p, LatitudeLongitudeFormat::DecimalDegrees, 5);
+    };
+  }
+  else if (coordinateFormat() == "DDM")
+  {
+    formatCoordinate = [](const Point& p)
+    {
+      return CoordinateFormatter::toLatitudeLongitude(p, LatitudeLongitudeFormat::DegreesDecimalMinutes, 5);
+    };
+  }
+  else if (coordinateFormat() == "UTM")
+  {
+    formatCoordinate = [](const Point& p)
+    {
+      return CoordinateFormatter::toUtm(p, UtmConversionMode::NorthSouthIndicators, true);
+    };
+  }
+  else if (coordinateFormat() == "MGRS")
+  {
+    formatCoordinate = [](const Point& p)
+    {
+      return CoordinateFormatter::toMgrs(p, MgrsConversionMode::Automatic, 5, true);
+    };
+  }
+  else if (coordinateFormat() == "USNG")
+  {
+    formatCoordinate = [](const Point& p)
+    {
+      return CoordinateFormatter::toUsng(p, 5, true);
+    };
+  }
+  else if (coordinateFormat() == "GeoRef")
+  {
+    formatCoordinate = [](const Point& p)
+    {
+      return CoordinateFormatter::toGeoRef(p, 5);
+    };
+  }
+  else if (coordinateFormat() == "Gars")
+  {
+    formatCoordinate = [](const Point& p)
+    {
+      return CoordinateFormatter::toGars(p);
+    };
+  }
+  else // DMS
+  {
+    formatCoordinate =  [](const Point& p)
+    {
+      return CoordinateFormatter::toLatitudeLongitude(p, LatitudeLongitudeFormat::DegreesMinutesSeconds, 3);
+    };
+  }
+}
+
+QString LocationTextController::coordinateFormat() const
+{
+  return m_coordinateFormat;
 }

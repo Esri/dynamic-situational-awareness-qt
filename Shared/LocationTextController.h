@@ -36,6 +36,8 @@ public:
   QString toolName() const override;
   void setProperties(const QVariantMap& properties) override;
   QStringList coordinateFormatOptions() const;
+  QString coordinateFormat() const;
+  void setCoordinateFormat(const QString& format);
 
 signals:
   void currentLocationTextChanged();
@@ -49,10 +51,15 @@ private:
   static const QString COORDINATE_FORMAT_PROPERTYNAME;
   QString currentLocationText() const;
   QString currentElevationText() const;
+  std::function<QString(const Esri::ArcGISRuntime::Point&)> formatCoordinate;
   Esri::ArcGISRuntime::Surface* m_surface = nullptr;
   QString m_currentLocationText = "Location Unavailable";
   QString m_currentElevationText = "Elevation Unavailable";
+  QString m_coordinateFormat;
   QStringList m_coordinateFormatOptions;
+
+
+  //void doStuff();
 };
 
 #endif // LOCATIONTEXTCONTROLLER_H

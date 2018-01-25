@@ -28,7 +28,7 @@ Rectangle {
     Flickable {
         anchors {
             fill: parent
-            margins: 8 * scaleFactor
+            margins: 10 * scaleFactor
         }
         contentHeight: optionsColumn.height
         clip: true
@@ -36,47 +36,100 @@ Rectangle {
         Column {
             id: optionsColumn
             width: parent.width
-            spacing: 5 * scaleFactor
+            spacing: 10 * scaleFactor
 
             Label {
                 text: "Map Controls"
                 font {
-                    pixelSize: 12 * scaleFactor
+                    pixelSize: 14 * scaleFactor
                     family: DsaStyles.fontFamily
                     bold: true
+                    underline: true
                 }
                 color: Material.foreground
             }
 
 
             CheckBox {
-                text: "Show Navigation Controls"
+                text: "Show navigation controls"
                 checked: true
                 onCheckedChanged: {
+                    // update visibility of UI components
                     navTool.visible = checked;
                     compass.visible = checked;
                 }
             }
 
             CheckBox {
-                text: "Show Location and Elevation"
+                text: "Show location and elevation"
                 checked: true
                 onCheckedChanged: {
+                    // update visibility of UI component
                     currentLocation.visible = checked;
                 }
             }
 
+            CheckBox {
+                text: "Use GPS for current elevation display"
+                checked: false
+                onCheckedChanged: {
+                    console.log("TODO");
+                }
+            }
+
             Label {
-                text: "Units of Measurement, Formats, etc"
+                text: "Formats, Units of measurement, etc"
                 font {
-                    pixelSize: 12 * scaleFactor
+                    pixelSize: 14 * scaleFactor
                     family: DsaStyles.fontFamily
                     bold: true
+                    underline: true
                 }
                 color: Material.foreground
             }
 
+            Row {
+                width: parent.width
+                spacing: 10 * scaleFactor
 
+                Label {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "Default Coordinate Format"
+                    font {
+                        pixelSize: 12 * scaleFactor
+                        family: DsaStyles.fontFamily
+                    }
+                    color: Material.foreground
+                }
+
+                ComboBox {
+                    anchors.verticalCenter: parent.verticalCenter
+                    model: optionsController.coordinateFormats
+                    onCurrentTextChanged: {
+                        optionsController.setCoordinateFormat(currentText);
+                    }
+                }
+            }
+
+            Row {
+                width: parent.width
+                spacing: 10 * scaleFactor
+
+                Label {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "Default Unit of Measurement"
+                    font {
+                        pixelSize: 12 * scaleFactor
+                        family: DsaStyles.fontFamily
+                    }
+                    color: Material.foreground
+                }
+
+                ComboBox {
+                    anchors.verticalCenter: parent.verticalCenter
+                    model: 4
+                }
+            }
         }
     }
 

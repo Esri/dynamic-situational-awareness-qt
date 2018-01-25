@@ -67,7 +67,7 @@ void AlertListProxyModel::applyFilter(const QList<AlertQuery*>& rules)
 
 bool AlertListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex&) const
 {
-  if (!m_rowsInModel.contains(sourceRow));
+  if (!m_rowsInModel.contains(sourceRow))
     m_rowsInModel.insert(sourceRow, passesAllQueries(sourceRow));
 
   return m_rowsInModel.value(sourceRow);

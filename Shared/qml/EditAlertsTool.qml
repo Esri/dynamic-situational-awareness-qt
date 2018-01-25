@@ -18,9 +18,9 @@ import QtQuick.Window 2.2
 import Esri.DSA 1.0
 
 DsaPanel {
-    id: createAlertsRoot
+    id: manageAlertsRoot
     width: 272 * scaleFactor
-    title: qsTr("Edit Alert Rules")
+    title: qsTr("Edit Alert Conditions")
     clip: true
 
     EditAlertsController {
@@ -38,82 +38,79 @@ DsaPanel {
         }
     }
 
-    property bool readyToAdd: levelCb.currentIndex !== -1 &&
-                              sourceCb.currentIndex !== -1 &&
-                              targetCB.currentIndex !== -1 &&
-                              featureIdEdit.text.length > 0
-    property bool expandNewAlert: true
+    property bool readyToAdd: geofenceReadyToAdd || attributeReadyToAdd || analysisReadyToAdd
 
-    Rectangle {
-        id: newAlertFrame
+    property bool geofenceReadyToAdd:  geofenceConditionButton.checked && (levelCb.currentIndex !== -1 &&
+                                                                           sourceCb.currentIndex !== -1 &&
+                                                                           targetCB.currentIndex !== -1 &&
+                                                                           featureIdEdit.text.length > 0)
+    property bool attributeReadyToAdd: attributeConditionButton.checked && (levelCb.currentIndex !== -1 &&
+                                                                            sourceCb.currentIndex !== -1 &&
+                                                                            attributeFieldEdit.length > 0 &&
+                                                                            attributeValueEdit.length > 0)
+    property bool analysisReadyToAdd: analysisConditionButton.checked && (levelCb.currentIndex !== -1 &&
+                                                                          sourceCb.currentIndex !== -1 &&
+                                                                          targetCB.currentIndex !== -1 &&
+                                                                          featureIdEdit.text.length > 0)
+
+    Row {
+        id: newOrViewRow
+        spacing: 0
+
         anchors {
-            top: titleBar.bottom
+            margins: 8 * scaleFactor
             left: parent.left
             right: parent.right
-            margins: 8 * scaleFactor
-        }
-        height: expandNewAlert ? parent.height * 0.75 : addButton.height + (anchors.margins * 2)
-        color: "transparent"
-        border.color: Material.foreground
-        border.width: 1 * scaleFactor
-        radius: 12
-    }
-
-    Image {
-        id: collapseNewAlertButton
-        anchors {
-            margins: 8 * scaleFactor
-            top: newAlertFrame.top
-            left: newAlertFrame.left
+            top: titleBar.bottom
         }
 
-        width: 42 * scaleFactor
-        height: 48 * scaleFactor
-        source: "qrc:/Resources/icons/xhdpi/drawer_large.png"
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: expandNewAlert = !expandNewAlert;
+        ButtonGroup {
+            id: newOrViewGroup
         }
-    }
 
-    Text {
-        id: newAlertText
-        anchors {
-            margins: 8 * scaleFactor
-            verticalCenter: collapseNewAlertButton.verticalCenter
-            horizontalCenter: newAlertFrame.horizontalCenter
+        Button {
+            id: createNewModeButton
+            text: "Create new"
+            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+            font.bold: checked
+            width: (newOrViewRow.width - (newOrViewRow.anchors.margins * 2)) * 0.5
+            checked: true
+            checkable: true
+            ButtonGroup.group: newOrViewGroup
+            background: Rectangle {
+                color: createNewModeButton.checked ? Material.accent : Material.primary
+                border.color: Material.foreground
+            }
         }
-        text: qsTr("New condition")
-        color: Material.foreground
-        font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
-        horizontalAlignment: Text.AlignRight
-        verticalAlignment: Text.AlignVCenter
+
+        Button {
+            id: viewExistingModeButton
+            text: "View existing"
+            font.pixelSize: createNewModeButton.font.pixelSize
+            font.bold: checked
+            width: createNewModeButton.width
+            checked: false
+            checkable: true
+            ButtonGroup.group: newOrViewGroup
+            background: Rectangle {
+                color: viewExistingModeButton.checked ? Material.accent : Material.primary
+                border.color: Material.foreground
+            }
+        }
     }
 
     Column {
         clip: true
-        spacing: 16 * scaleFactor
+        spacing: 8 * scaleFactor
 
         anchors {
-            top: newAlertText.bottom
-            left: newAlertFrame.left
-            right: newAlertFrame.right
-            bottom: newAlertFrame.bottom
+            top: newOrViewRow.bottom
+            bottom: parent.bottom
+            left: parent.left
+            right: parent.right
             margins: 8 * scaleFactor
         }
-
-        TextField {
-            id: newAlertName
-            color: Material.accent
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: parent.width
-            font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
-            font.bold: true
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            placeholderText: "<condition name>"
-        }
+        visible: createNewModeButton.checked
 
         ComboBox {
             id: levelCb
@@ -134,7 +131,89 @@ DsaPanel {
                 horizontalAlignment: Text.AlignHCenter
                 font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 color: Material.accent
-                text: "<level>"
+                text: "<select priority>"
+            }
+        }
+
+        Row {
+            id: conditionTypeRow
+            spacing: 0
+
+            ButtonGroup {
+                id: conditionTypeGroup
+            }
+
+            Button {
+                id: geofenceConditionButton
+                text: "GeoFence\nAlert"
+                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                font.bold: checked
+                height: 48 * scaleFactor
+                width: (newOrViewRow.width - (newOrViewRow.anchors.margins * 2)) / 3
+                checked: true
+                checkable: true
+                ButtonGroup.group: conditionTypeGroup
+                background: Rectangle {
+                    color: geofenceConditionButton.checked ? Material.accent : Material.primary
+                    border.color: Material.foreground
+                }
+            }
+
+            Button {
+                id: attributeConditionButton
+                text: "Attribute\nAlert"
+                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                font.bold: checked
+                height: geofenceConditionButton.height
+                width: geofenceConditionButton.width
+                checked: false
+                checkable: true
+                ButtonGroup.group: conditionTypeGroup
+                background: Rectangle {
+                    color: attributeConditionButton.checked ? Material.accent : Material.primary
+                    border.color: Material.foreground
+                }
+            }
+
+            Button {
+                id: analysisConditionButton
+                text: "Analysis\nAlert"
+                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                font.bold: checked
+                height: geofenceConditionButton.height
+                width: geofenceConditionButton.width
+                checked: false
+                checkable: true
+                ButtonGroup.group: conditionTypeGroup
+                background: Rectangle {
+                    color: analysisConditionButton.checked ? Material.accent : Material.primary
+                    border.color: Material.foreground
+                }
+            }
+        }
+
+        Row {
+            spacing: 8 * scaleFactor
+            height: newAlertName.height
+
+            Text {
+                text: qsTr("called")
+                anchors.verticalCenter: newAlertName.verticalCenter
+                color: Material.foreground
+                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                horizontalAlignment: Text.AlignLeft
+                verticalAlignment: Text.AlignVCenter
+            }
+
+            TextField {
+                id: newAlertName
+                color: Material.accent
+                font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
+                font.bold: true
+                width: 235 * scaleFactor
+                horizontalAlignment: Text.AlignLeft
+                verticalAlignment: Text.AlignVCenter
+                placeholderText: "<enter name>"
             }
         }
 
@@ -143,7 +222,7 @@ DsaPanel {
                 left: parent.left
                 right: parent.right
             }
-            text: qsTr("Alert when")
+            text: qsTr("when objects from")
             color: Material.foreground
             font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
             horizontalAlignment: Text.AlignLeft
@@ -178,21 +257,23 @@ DsaPanel {
 
         RadioButton {
             id: withinAreaRb
+            visible: geofenceConditionButton.checked
             anchors {
                 left: parent.left
                 right: parent.right
             }
-            text: "within area"
+            text: "are within area of"
             font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
             checked: true
             ButtonGroup.group: spatialOperationGroup
         }
 
         Row {
+            visible: geofenceConditionButton.checked
             spacing: 8 * scaleFactor
             RadioButton {
                 id: withinDistanceRb
-                text: "within distance"
+                text: checked ? "are within" : "are within distance of"
                 font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 ButtonGroup.group: spatialOperationGroup
             }
@@ -200,7 +281,7 @@ DsaPanel {
             SpinBox {
                 id: withinDistanceSB
                 anchors.verticalCenter: withinDistanceRb.verticalCenter
-                enabled: withinDistanceRb.checked
+                visible: withinDistanceRb.checked
                 font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 editable: true
                 value: 50
@@ -210,7 +291,7 @@ DsaPanel {
 
             Text {
                 anchors.verticalCenter: withinDistanceRb.verticalCenter
-                enabled: withinDistanceRb.checked
+                visible: withinDistanceRb.checked
                 text: qsTr("m of")
                 color: Material.foreground
                 font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
@@ -219,12 +300,70 @@ DsaPanel {
             }
         }
 
+        Grid {
+            rows: 2
+            columns: 2
+            visible: attributeConditionButton.checked
+            spacing: 8 * scaleFactor
+
+            Text {
+                id: fieldLabel
+                text: qsTr("have attribute")
+                color: Material.foreground
+                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                horizontalAlignment: Text.AlignLeft
+                verticalAlignment: Text.AlignVCenter
+            }
+
+            TextField {
+                id: attributeFieldEdit
+                color: Material.accent
+                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                font.bold: true
+                horizontalAlignment: Text.AlignLeft
+                verticalAlignment: Text.AlignVCenter
+
+                placeholderText: "<enter attribute name>"
+            }
+
+            Text {
+                text: qsTr("equal to")
+                color: Material.foreground
+                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                horizontalAlignment: Text.AlignLeft
+                verticalAlignment: Text.AlignVCenter
+            }
+
+            TextField {
+                id: attributeValueEdit
+                color: Material.accent
+                width: attributeFieldEdit.width
+                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                font.bold: true
+                horizontalAlignment: Text.AlignLeft
+                verticalAlignment: Text.AlignVCenter
+
+                placeholderText: "<enter value>"
+            }
+        }
+
+        Text {
+            id: visibleLabel
+            visible: analysisConditionButton.checked
+            text: qsTr("can be seen by")
+            color: Material.foreground
+            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+            horizontalAlignment: Text.AlignLeft
+            verticalAlignment: Text.AlignVCenter
+        }
+
         Row {
+            visible: geofenceConditionButton.checked || analysisConditionButton.checked
             spacing: 8 * scaleFactor
             height: pickButton.height
             Text {
                 id: featureIdLabel
-                text: qsTr("feature")
+                text: qsTr("object")
                 color: Material.foreground
                 font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 horizontalAlignment: Text.AlignLeft
@@ -240,7 +379,7 @@ DsaPanel {
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignVCenter
 
-                placeholderText: "<Feature ID>"
+                placeholderText: "<object ID>"
             }
 
             OverlayButton {
@@ -252,9 +391,18 @@ DsaPanel {
                     toolController.togglePickMode();
                 }
             }
+
+            Text {
+                text: qsTr("from")
+                color: Material.foreground
+                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                horizontalAlignment: Text.AlignLeft
+                verticalAlignment: Text.AlignVCenter
+            }
         }
 
         ComboBox {
+            visible: geofenceConditionButton.checked || analysisConditionButton.checked
             id: targetCB
             anchors {
                 left: parent.left
@@ -321,16 +469,20 @@ DsaPanel {
                 sourceCb.currentIndex = -1;
                 featureIdEdit.text = "";
                 targetCB.currentIndex = "";
+                attributeFieldEdit.text = "";
+                attributeValueEdit.text = "";
+                newAlertName.text = "";
             }
         }
     }
 
     Text {
         id: conditionsListTitle
+        visible: viewExistingModeButton.checked
         anchors {
             margins: 8 * scaleFactor
-            top: newAlertFrame.bottom
-            horizontalCenter: newAlertFrame.horizontalCenter
+            top: newOrViewRow.bottom
+            horizontalCenter: parent.horizontalCenter
         }
         text: qsTr("Conditions")
         color: Material.foreground
@@ -341,6 +493,7 @@ DsaPanel {
 
     ListView {
         id: alertsList
+        visible: viewExistingModeButton.checked
         clip: true
         anchors {
             margins: 8 * scaleFactor
@@ -373,9 +526,8 @@ DsaPanel {
 
     RoundButton {
         id: removeConditionButton
+        visible: viewExistingModeButton.checked
         enabled: alertsList.currentIndex !== -1
-
-        height: expandNewAlert ? 0 : implicitHeight
 
         anchors {
             horizontalCenter: parent.horizontalCenter
@@ -392,7 +544,7 @@ DsaPanel {
 
             Image {
                 anchors.centerIn: parent
-                width: expandNewAlert ? 0 : 26 * scaleFactor
+                width: 26 * scaleFactor
                 height: width
                 source: DsaResources.iconTrash
             }

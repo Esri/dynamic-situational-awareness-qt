@@ -36,7 +36,7 @@ AlertListProxyModel::AlertListProxyModel(QObject* parent):
       }
     });
 
-    connect(sourceModel, &AlertListModel::rowsInserted, this, [this](const QModelIndex&, int first, int last)
+    connect(sourceModel, &AlertListModel::rowsInserted, this, [this](const QModelIndex&, int first, int)
     {
       // only clear the cache if this is an insert rather than an append
       if (m_rowsInModel.contains(first))

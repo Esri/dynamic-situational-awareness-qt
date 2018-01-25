@@ -66,7 +66,7 @@ EditAlertsController::EditAlertsController(QObject* parent /* = nullptr */):
   m_conditions(new AlertConditionListModel(this)),
   m_sourceNames(new QStringListModel(this)),
   m_targetNames(new QStringListModel(this)),
-  m_levelNames(new QStringListModel(QStringList{"Low", "Moderate", "High", "Critical"},this))
+  m_levelNames(new QStringListModel(QStringList{"Low priority", "Moderate priority", "High priority", "Critical priority"},this))
 {
   Toolkit::ToolManager::instance().addTool(this);
 

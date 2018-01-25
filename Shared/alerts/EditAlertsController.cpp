@@ -21,6 +21,7 @@
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
+#include "ArcGISFeatureTable.h"
 #include "GeoView.h"
 #include "GraphicsOverlay.h"
 #include "GraphicsOverlayListModel.h"
@@ -447,18 +448,42 @@ void EditAlertsController::onIdentifyLayersCompleted(const QUuid& taskId, QList<
       if (!atts)
         return;
 
-      if (atts->containsAttribute("FID"))
+      Feature* feature = qobject_cast<Feature*>(geoElement);
+      if (!feature)
+        continue;
+
+      FeatureTable* table = feature->featureTable();
+      if (!table)
+        continue;
+
+      QString primaryKeyField;
+      ArcGISFeatureTable* agsFeatureTable = qobject_cast<ArcGISFeatureTable*>(table);
+      if (agsFeatureTable)
       {
-        m_identifyGraphicsWatcher.cancel();
-        m_identifyGraphicsWatcher = TaskWatcher();
-        emit pickedElement(layerName, atts->attributeValue("FID").toInt());
+        primaryKeyField = agsFeatureTable->objectIdField();
       }
-      else if(atts->containsAttribute("OID"))
+      else
       {
-        m_identifyGraphicsWatcher.cancel();
-        m_identifyGraphicsWatcher = TaskWatcher();
-        emit pickedElement(layerName, atts->attributeValue("OID").toInt());
+        const QList<Field> fields = table->fields();
+        for( const Field& field : fields)
+        {
+          if (field.fieldType() == FieldType::OID)
+          {
+            primaryKeyField = field.name();
+            break;
+          }
+        }
       }
+
+      if (primaryKeyField.isEmpty())
+        continue;
+
+      if (!atts->containsAttribute(primaryKeyField))
+        continue;
+
+      m_identifyGraphicsWatcher.cancel();
+      m_identifyGraphicsWatcher = TaskWatcher();
+      emit pickedElement(layerName, atts->attributeValue(primaryKeyField).toInt());
 
       break;
     }

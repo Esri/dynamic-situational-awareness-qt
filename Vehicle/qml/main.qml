@@ -331,12 +331,6 @@ Vehicle {
         textColor: Material.foreground
     }
 
-    Options {
-        id: optionsTool
-        anchors.fill: sceneView
-        visible: false
-    }
-
     About {
         id: aboutTool
         anchors.fill: parent
@@ -366,6 +360,12 @@ Vehicle {
         msgDialog.informativeText = message;
         msgDialog.detailedText = additionalMessage;
         msgDialog.open();
+    }
+
+    Options {
+        id: optionsTool
+        anchors.fill: parent
+        visible: false
     }
 
     MessageDialog {

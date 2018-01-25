@@ -24,6 +24,7 @@ using namespace Esri::ArcGISRuntime;
 
 const QString LocationTextController::COORDINATE_FORMAT_PROPERTYNAME = QStringLiteral("CoordinateFormat");
 const QString LocationTextController::USE_GPS_PROPERTYNAME = QStringLiteral("UseGpsForElevation");
+const QString LocationTextController::UNIT_OF_MEASUREMENT_PROPERTYNAME = QStringLiteral("UnitOfMeasurement");
 const QString LocationTextController::DMS = QStringLiteral("DMS");
 const QString LocationTextController::DD = QStringLiteral("DD");
 const QString LocationTextController::DDM = QStringLiteral("DDM");
@@ -106,15 +107,16 @@ QStringList LocationTextController::coordinateFormatOptions() const
 
 void LocationTextController::setProperties(const QVariantMap& properties)
 {
-  const QString defaultFormat = properties[COORDINATE_FORMAT_PROPERTYNAME].toString();
-  setCoordinateFormat(defaultFormat);
-
-  m_useGpsForElevation = properties[USE_GPS_PROPERTYNAME].toBool();
+  setCoordinateFormat(properties[COORDINATE_FORMAT_PROPERTYNAME].toString());
+  setUseGpsForElevation(properties[USE_GPS_PROPERTYNAME].toBool());
+  setUnitOfMeasurement(properties[UNIT_OF_MEASUREMENT_PROPERTYNAME].toString());
 }
 
 void LocationTextController::setCoordinateFormat(const QString& format)
 {
   m_coordinateFormat = format;
+  emit propertyChanged(COORDINATE_FORMAT_PROPERTYNAME, format);
+  emit coordinateFormatChanged();
 
   if (coordinateFormat() == DD)
   {
@@ -187,6 +189,8 @@ bool LocationTextController::useGpsForElevation() const
 void LocationTextController::setUseGpsForElevation(bool useGps)
 {
   m_useGpsForElevation = useGps;
+  emit propertyChanged(USE_GPS_PROPERTYNAME, useGps);
+  emit useGpsForElevationChanged();
 }
 
 void LocationTextController::formatElevationText(double elevation)
@@ -212,4 +216,6 @@ QString LocationTextController::unitOfMeasurement() const
 void LocationTextController::setUnitOfMeasurement(const QString& unit)
 {
   m_unitOfMeasurement = unit;
+  emit propertyChanged(UNIT_OF_MEASUREMENT_PROPERTYNAME, unit);
+  emit unitOfMeasurementChanged();
 }

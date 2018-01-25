@@ -356,7 +356,7 @@ Handheld {
 
     Options {
         id: optionsTool
-        anchors.fill: sceneView
+        anchors.fill: parent
         visible: false
     }
 

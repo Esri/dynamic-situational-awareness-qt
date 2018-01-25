@@ -47,6 +47,9 @@ public:
 signals:
   void currentLocationTextChanged();
   void currentElevationTextChanged();
+  void useGpsForElevationChanged();
+  void unitOfMeasurementChanged();
+  void coordinateFormatChanged();
 
 private slots:
   void onGeoViewChanged();
@@ -61,6 +64,7 @@ private:
 
   static const QString COORDINATE_FORMAT_PROPERTYNAME;
   static const QString USE_GPS_PROPERTYNAME;
+  static const QString UNIT_OF_MEASUREMENT_PROPERTYNAME;
   static const QString DMS;
   static const QString DD;
   static const QString DDM;

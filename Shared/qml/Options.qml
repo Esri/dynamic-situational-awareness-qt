@@ -39,11 +39,19 @@ Rectangle {
             spacing: 10 * scaleFactor
 
             Label {
+                id: toolbarLabel
+                text: "Settings"
+                font {
+                    pixelSize: DsaStyles.titleFontPixelSize * scaleFactor * 1.5
+                    family: DsaStyles.fontFamily
+                }
+                color: Material.foreground
+            }
+
+            Label {
                 text: "Map Controls"
                 font {
-                    pixelSize: 14 * scaleFactor
                     family: DsaStyles.fontFamily
-                    bold: true
                     underline: true
                 }
                 color: Material.foreground
@@ -78,9 +86,7 @@ Rectangle {
             Label {
                 text: "Formats, Units of measurement, etc"
                 font {
-                    pixelSize: 14 * scaleFactor
                     family: DsaStyles.fontFamily
-                    bold: true
                     underline: true
                 }
                 color: Material.foreground

@@ -18,8 +18,8 @@
 #include "WithinAreaAlertQuery.h"
 #include "WithinDistanceAlertQuery.h"
 #include "DsaUtility.h"
-#include "IdsAlertRule.h"
-#include "StatusAlertRule.h"
+#include "IdsAlertQuery.h"
+#include "StatusAlertQuery.h"
 
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
@@ -39,8 +39,8 @@ AlertToolController::AlertToolController(QObject* parent /* = nullptr */):
   m_alertsProxyModel(new AlertListProxyModel(this)),
   m_distanceAlertRule(new WithinDistanceAlertQuery(this)),
   m_intersectsRule(new WithinAreaAlertQuery(this)),
-  m_statusAlertRule(new StatusAlertRule(this)),
-  m_idsAlertRule(new IdsAlertRule(this)),
+  m_statusAlertRule(new StatusAlertQuery(this)),
+  m_idsAlertRule(new IdsAlertQuery(this)),
   m_highlighter(new GeoElementHighlighter(this))
 {
   Toolkit::ToolManager::instance().addTool(this);
@@ -153,7 +153,7 @@ void AlertToolController::setMinLevel(int level)
   case AlertLevel::Medium:
   case AlertLevel::High:
   case AlertLevel::Critical:
-    m_statusAlertRule->setMinStatus(alertLevel);
+    m_statusAlertRule->setMinLevel(alertLevel);
     m_alertsProxyModel->applyFilter(m_rules);
     break;
   default:

@@ -20,9 +20,9 @@
 class AlertQuery;
 class AlertListProxyModel;
 class WithinAreaAlertQuery;
-class IdsAlertRule;
+class IdsAlertQuery;
 class WithinDistanceAlertQuery;
-class StatusAlertRule;
+class StatusAlertQuery;
 
 namespace Esri {
 namespace ArcGISRuntime
@@ -65,8 +65,8 @@ private:
   AlertListProxyModel* m_alertsProxyModel = nullptr;
   WithinDistanceAlertQuery* m_distanceAlertRule = nullptr;
   WithinAreaAlertQuery* m_intersectsRule = nullptr;
-  StatusAlertRule* m_statusAlertRule = nullptr;
-  IdsAlertRule* m_idsAlertRule = nullptr;
+  StatusAlertQuery* m_statusAlertRule = nullptr;
+  IdsAlertQuery* m_idsAlertRule = nullptr;
   QList<AlertQuery*> m_rules;
   GeoElementHighlighter* m_highlighter = nullptr;
 

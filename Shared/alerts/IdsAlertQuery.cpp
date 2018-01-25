@@ -11,20 +11,20 @@
 //
 
 #include "AlertConditionData.h"
-#include "IdsAlertRule.h"
+#include "IdsAlertQuery.h"
 
-IdsAlertRule::IdsAlertRule(QObject* parent):
+IdsAlertQuery::IdsAlertQuery(QObject* parent):
   AlertQuery(parent)
 {
 
 }
 
-IdsAlertRule::~IdsAlertRule()
+IdsAlertQuery::~IdsAlertQuery()
 {
 
 }
 
-bool IdsAlertRule::matchesRule(AlertConditionData* alert) const
+bool IdsAlertQuery::matchesRule(AlertConditionData* alert) const
 {
   if (!alert)
     return false;
@@ -32,7 +32,7 @@ bool IdsAlertRule::matchesRule(AlertConditionData* alert) const
   return !m_ids.contains(alert->id());
 }
 
-void IdsAlertRule::addId(const QUuid& id)
+void IdsAlertQuery::addId(const QUuid& id)
 {
   m_ids.insert(id);
 }

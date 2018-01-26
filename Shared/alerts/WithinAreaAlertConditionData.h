@@ -24,8 +24,6 @@ class Graphic;
 }
 }
 
-class AbstractOverlayManager;
-
 class WithinAreaAlertConditionData : public AlertConditionData
 {
   Q_OBJECT

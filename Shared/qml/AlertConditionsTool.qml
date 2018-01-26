@@ -522,7 +522,7 @@ DsaPanel {
         anchors {
             margins: 8 * scaleFactor
             top: conditionsListTitle.bottom
-            bottom: removeConditionButton.top
+            bottom: parent.bottom
             left: parent.left
             right: parent.right
         }

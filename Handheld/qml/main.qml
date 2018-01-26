@@ -224,12 +224,24 @@ Handheld {
             anchors {
                 left: sceneView.left
                 top: sceneView.top
+                right: sceneView.right
                 bottom: sceneView.attributionTop
             }
             backgroundColor: Material.primary
             attributeNameTextColor: Material.foreground
             attributeValueTextColor: Material.foreground
             titleTextColor: Material.foreground
+
+            Button {
+                text: "Close"
+                anchors {
+                    margins: 4 * scaleFactor
+                    bottom: identifyResults.bottom
+                    horizontalCenter: identifyResults.horizontalCenter
+                }
+                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                onClicked: identifyResults.dismiss();
+            }
         }
 
         Drawer {

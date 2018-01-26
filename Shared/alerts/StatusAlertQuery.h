@@ -10,29 +10,29 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef STATUSALERTRULE_H
-#define STATUSALERTRULE_H
+#ifndef STATUSALERTQUERY_H
+#define STATUSALERTQUERY_H
 
 #include "AlertConditionData.h"
 #include "AlertQuery.h"
 
 class AlertConditionData;
 
-class StatusAlertRule : public AlertQuery
+class StatusAlertQuery : public AlertQuery
 {
   Q_OBJECT
 
 public:
-  explicit StatusAlertRule(QObject* parent = nullptr);
-  ~StatusAlertRule();
+  explicit StatusAlertQuery(QObject* parent = nullptr);
+  ~StatusAlertQuery();
 
   bool matchesRule(AlertConditionData* alert) const override;
 
-  AlertLevel minStatus() const;
-  void setMinStatus(const AlertLevel& minStatus);
+  AlertLevel minLevel() const;
+  void setMinLevel(AlertLevel minLevel);
 
 private:
-  AlertLevel m_minStatus = AlertLevel::Low;
+  AlertLevel m_minLevel = AlertLevel::Low;
 };
 
-#endif // STATUSALERTRULE_H
+#endif // STATUSALERTQUERY_H

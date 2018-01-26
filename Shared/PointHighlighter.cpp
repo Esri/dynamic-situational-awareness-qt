@@ -10,58 +10,55 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "GeoElementHighlighter.h"
+#include "PointHighlighter.h"
 
 #include "ToolResourceProvider.h"
 
-#include "GeoElement.h"
 #include "GeoView.h"
 #include "Graphic.h"
 #include "GraphicListModel.h"
 #include "GraphicsOverlay.h"
+#include "Point.h"
 #include "SimpleMarkerSceneSymbol.h"
 
 #include <QTimer>
 
 using namespace Esri::ArcGISRuntime;
 
-GeoElementHighlighter::GeoElementHighlighter(QObject* parent):
+PointHighlighter::PointHighlighter(QObject* parent):
   QObject(parent)
 {
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged,
-          this, &GeoElementHighlighter::onGeoViewChanged);
+          this, &PointHighlighter::onGeoViewChanged);
 
   onGeoViewChanged();
 }
 
-GeoElementHighlighter::~GeoElementHighlighter()
+PointHighlighter::~PointHighlighter()
 {
 
 }
 
-void GeoElementHighlighter::setGeoElement(GeoElement* geoElement)
+void PointHighlighter::onPointChanged(const Point& point)
 {
-  stopHighlight();
-  m_geoElement = geoElement;
+  m_point = point;
 }
 
-void GeoElementHighlighter::startHighlight()
+void PointHighlighter::startHighlight()
 {
-  if (!m_geoElement)
+  if (m_point.isEmpty())
     return;
 
   if (!m_highlightOverlay || !m_highlightSymbol)
     return;
 
-  const Geometry position = m_geoElement->geometry();
-
-  Graphic* highlightGraphic = new Graphic(position, m_highlightSymbol, this);
+  Graphic* highlightGraphic = new Graphic(m_point, m_highlightSymbol, this);
   m_highlightOverlay->graphics()->append(highlightGraphic);
 
   m_highlightTimer = new QTimer(this);
   connect(m_highlightTimer, &QTimer::timeout, this, [this]()
   {
-    if (!m_highlightSymbol || !m_geoElement)
+    if (!m_highlightSymbol)
     {
       m_highlightTimer->stop();
       return;
@@ -74,7 +71,7 @@ void GeoElementHighlighter::startHighlight()
       return;
     }
 
-    graphic->setGeometry(m_geoElement->geometry());
+    graphic->setGeometry(m_point);
 
     const int currDim = m_highlightSymbol->width();
     constexpr int maxDimension = 1000;
@@ -102,7 +99,7 @@ void GeoElementHighlighter::startHighlight()
   m_highlightTimer->start(10);
 }
 
-void GeoElementHighlighter::stopHighlight()
+void PointHighlighter::stopHighlight()
 {
   Graphic* graphic = m_highlightOverlay->graphics()->first();
   if (graphic)
@@ -119,7 +116,7 @@ void GeoElementHighlighter::stopHighlight()
   }
 }
 
-void GeoElementHighlighter::onGeoViewChanged()
+void PointHighlighter::onGeoViewChanged()
 {
   if (m_highlightOverlay)
   {

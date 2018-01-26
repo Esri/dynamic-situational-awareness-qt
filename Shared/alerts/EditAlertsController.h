@@ -31,6 +31,7 @@ class IdentifyGraphicsOverlayResult;
 }
 }
 
+class LocationAlertSource;
 class AlertConditionListModel;
 
 class EditAlertsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
@@ -54,7 +55,7 @@ public:
   void setActive(bool active) override;
 
   Q_INVOKABLE void addWithinDistanceAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, double distance, int itemId, int targetOverlayIndex);
-  Q_INVOKABLE void addIntersectsAlert(int levelIndex, int sourceOverlayIndex, int itemId, int targetOverlayIndex);
+  Q_INVOKABLE void addWithinAreaAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, int itemId, int targetOverlayIndex);
   Q_INVOKABLE void removeConditionAt(int rowIndex);
   Q_INVOKABLE void togglePickMode();
 
@@ -91,6 +92,7 @@ private:
   QStringListModel* m_levelNames;
   bool m_pickMode = false;
   double m_tolerance = 5;
+  LocationAlertSource* m_locationSource = nullptr;
   Esri::ArcGISRuntime::TaskWatcher m_identifyLayersWatcher;
   Esri::ArcGISRuntime::TaskWatcher m_identifyGraphicsWatcher;
 

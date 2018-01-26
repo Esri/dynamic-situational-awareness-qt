@@ -11,33 +11,33 @@
 //
 
 #include "AlertQuery.h"
-#include "StatusAlertRule.h"
+#include "StatusAlertQuery.h"
 
-StatusAlertRule::StatusAlertRule(QObject* parent):
+StatusAlertQuery::StatusAlertQuery(QObject* parent):
   AlertQuery(parent)
 {
 
 }
 
-StatusAlertRule::~StatusAlertRule()
+StatusAlertQuery::~StatusAlertQuery()
 {
 
 }
 
-bool StatusAlertRule::matchesRule(AlertConditionData* alert) const
+bool StatusAlertQuery::matchesRule(AlertConditionData* alert) const
 {
   if (!alert)
     return false;
 
-  return alert->level() >= m_minStatus;
+  return alert->level() >= m_minLevel;
 }
 
-AlertLevel StatusAlertRule::minStatus() const
+AlertLevel StatusAlertQuery::minLevel() const
 {
-  return m_minStatus;
+  return m_minLevel;
 }
 
-void StatusAlertRule::setMinStatus(const AlertLevel& minStatus)
+void StatusAlertQuery::setMinLevel(AlertLevel minStatus)
 {
-  m_minStatus = minStatus;
+  m_minLevel = minStatus;
 }

@@ -14,12 +14,12 @@
 #include "AlertToolController.h"
 #include "AlertListModel.h"
 #include "AlertListProxyModel.h"
-#include "GeoElementHighlighter.h"
-#include "IntersectsAlertRule.h"
+#include "PointHighlighter.h"
+#include "WithinAreaAlertQuery.h"
 #include "WithinDistanceAlertQuery.h"
 #include "DsaUtility.h"
-#include "IdsAlertRule.h"
-#include "StatusAlertRule.h"
+#include "IdsAlertQuery.h"
+#include "StatusAlertQuery.h"
 
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
@@ -37,15 +37,15 @@ using namespace Esri::ArcGISRuntime;
 AlertToolController::AlertToolController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent),
   m_alertsProxyModel(new AlertListProxyModel(this)),
-  m_distanceAlertRule(new WithinDistanceAlertQuery(this)),
-  m_intersectsRule(new IntersectsAlertRule(this)),
-  m_statusAlertRule(new StatusAlertRule(this)),
-  m_idsAlertRule(new IdsAlertRule(this)),
-  m_highlighter(new GeoElementHighlighter(this))
+  m_withinDistanceAlertRule(new WithinDistanceAlertQuery(this)),
+  m_withinAreaRule(new WithinAreaAlertQuery(this)),
+  m_statusAlertRule(new StatusAlertQuery(this)),
+  m_idsAlertRule(new IdsAlertQuery(this)),
+  m_highlighter(new PointHighlighter(this))
 {
   Toolkit::ToolManager::instance().addTool(this);
-  m_rules.append(m_distanceAlertRule);
-  m_rules.append(m_intersectsRule);
+  m_rules.append(m_withinDistanceAlertRule);
+  m_rules.append(m_withinAreaRule);
   m_rules.append(m_statusAlertRule);
   m_rules.append(m_idsAlertRule);
 
@@ -76,19 +76,38 @@ void AlertToolController::highlight(int rowIndex, bool showHighlight)
     if (!alert)
       return;
 
-    if (m_highlightConnection)
-      disconnect(m_highlightConnection);
+    for (const auto& connection : m_highlightConnections)
+      disconnect(connection);
 
-    m_highlightConnection = connect(alert, &AlertConditionData::noLongerValid, this, [this]()
+    m_highlightConnections.clear();
+
+    m_highlightConnections.append(connect(alert, &AlertConditionData::noLongerValid, this, [this]()
     {
       m_highlighter->stopHighlight();
-    });
+    }));
 
-    m_highlighter->setGeoElement(alert->geoElement());
+    m_highlightConnections.append(connect(alert, &AlertConditionData::positionChanged, this, [this, alert]()
+    {
+      if (alert)
+        m_highlighter->onPointChanged(alert->sourcePosition());
+    }));
+
+    m_highlightConnections.append(connect(alert, &AlertConditionData::activeChanged, this, [this, alert]()
+    {
+      if (!alert || !alert->active())
+        m_highlighter->stopHighlight();
+    }));
+
+    m_highlighter->onPointChanged(alert->sourcePosition());
     m_highlighter->startHighlight();
   }
   else
   {
+    for (const auto& connection : m_highlightConnections)
+      disconnect(connection);
+
+    m_highlightConnections.clear();
+
     m_highlighter->stopHighlight();
   }
 }
@@ -104,7 +123,7 @@ void AlertToolController::zoomTo(int rowIndex)
   if (!geoView)
     return;
 
-  const Point pos = alert->position().extent().center();
+  const Point pos = alert->sourcePosition().extent().center();
 
   SceneView* sceneView = dynamic_cast<SceneView*>(geoView);
 
@@ -153,7 +172,7 @@ void AlertToolController::setMinLevel(int level)
   case AlertLevel::Medium:
   case AlertLevel::High:
   case AlertLevel::Critical:
-    m_statusAlertRule->setMinStatus(alertLevel);
+    m_statusAlertRule->setMinLevel(alertLevel);
     m_alertsProxyModel->applyFilter(m_rules);
     break;
   default:

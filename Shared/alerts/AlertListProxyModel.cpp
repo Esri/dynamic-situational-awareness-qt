@@ -18,8 +18,7 @@
 #include <QTimer>
 
 AlertListProxyModel::AlertListProxyModel(QObject* parent):
-  QSortFilterProxyModel(parent),
-  m_updateTimer(new QTimer(this))
+  QSortFilterProxyModel(parent)
 {
   AlertListModel* sourceModel = AlertListModel::instance();
   if (sourceModel)
@@ -27,30 +26,31 @@ AlertListProxyModel::AlertListProxyModel(QObject* parent):
     setSourceModel(sourceModel);
     connect(sourceModel, &AlertListModel::dataChanged, this, [this](const QModelIndex& topLeft)
     {
-      const bool inModel = m_currentSourceRows.contains(topLeft.row());
-      const bool shouldBeInModel = passesAllRules(topLeft.row());
+      const bool inModel = m_rowsInModel.value(topLeft.row(), false);
+      const bool shouldBeInModel = passesAllQueries(topLeft.row());
 
       if (inModel != shouldBeInModel)
+      {
+        m_rowsInModel.insert(topLeft.row(), shouldBeInModel);
         invalidate();
+      }
     });
 
-    connect(sourceModel, &AlertListModel::rowsInserted, this, [this]()
+    connect(sourceModel, &AlertListModel::rowsInserted, this, [this](const QModelIndex&, int first, int)
     {
+      // only clear the cache if this is an insert rather than an append
+      if (m_rowsInModel.contains(first))
+        m_rowsInModel.clear();
+
       invalidate();
     });
 
     connect(sourceModel, &AlertListModel::rowsRemoved, this, [this]()
     {
+      m_rowsInModel.clear();
       invalidate();
     });
   }
-
-  m_updateTimer->setInterval(500);
-  connect(m_updateTimer, &QTimer::timeout, this, [this]()
-  {
-    invalidate();
-  });
-  m_updateTimer->start();
 }
 
 AlertListProxyModel::~AlertListProxyModel()
@@ -60,23 +60,20 @@ AlertListProxyModel::~AlertListProxyModel()
 
 void AlertListProxyModel::applyFilter(const QList<AlertQuery*>& rules)
 {
-  m_rules = rules;
+  m_queries = rules;
+  m_rowsInModel.clear();
   invalidate();
 }
 
 bool AlertListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex&) const
 {
-  const bool res = passesAllRules(sourceRow);
+  if (!m_rowsInModel.contains(sourceRow))
+    m_rowsInModel.insert(sourceRow, passesAllQueries(sourceRow));
 
-  if (res)
-    m_currentSourceRows.insert(sourceRow);
-  else
-    m_currentSourceRows.remove(sourceRow);
-
-  return res;
+  return m_rowsInModel.value(sourceRow);
 }
 
-bool AlertListProxyModel::passesAllRules(int sourceRow) const
+bool AlertListProxyModel::passesAllQueries(int sourceRow) const
 {
   AlertListModel* sourceModel = AlertListModel::instance();
   if (!sourceModel)
@@ -88,8 +85,8 @@ bool AlertListProxyModel::passesAllRules(int sourceRow) const
 
   bool shouldBeActive = true;
 
-  auto rulesIt = m_rules.cbegin();
-  auto rulesEnd = m_rules.cend();
+  auto rulesIt = m_queries.cbegin();
+  auto rulesEnd = m_queries.cend();
   for (; rulesIt != rulesEnd; ++rulesIt)
   {
     const auto rule = *rulesIt;

@@ -19,10 +19,10 @@
 
 class AlertQuery;
 class AlertListProxyModel;
-class IntersectsAlertRule;
-class IdsAlertRule;
+class WithinAreaAlertQuery;
+class IdsAlertQuery;
 class WithinDistanceAlertQuery;
-class StatusAlertRule;
+class StatusAlertQuery;
 
 namespace Esri {
 namespace ArcGISRuntime
@@ -33,7 +33,7 @@ namespace ArcGISRuntime
 
 class QTimer;
 
-class GeoElementHighlighter;
+class PointHighlighter;
 
 class AlertToolController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -63,14 +63,14 @@ signals:
 
 private:
   AlertListProxyModel* m_alertsProxyModel = nullptr;
-  WithinDistanceAlertQuery* m_distanceAlertRule = nullptr;
-  IntersectsAlertRule* m_intersectsRule = nullptr;
-  StatusAlertRule* m_statusAlertRule = nullptr;
-  IdsAlertRule* m_idsAlertRule = nullptr;
+  WithinDistanceAlertQuery* m_withinDistanceAlertRule = nullptr;
+  WithinAreaAlertQuery* m_withinAreaRule = nullptr;
+  StatusAlertQuery* m_statusAlertRule = nullptr;
+  IdsAlertQuery* m_idsAlertRule = nullptr;
   QList<AlertQuery*> m_rules;
-  GeoElementHighlighter* m_highlighter = nullptr;
+  PointHighlighter* m_highlighter = nullptr;
 
-  QMetaObject::Connection m_highlightConnection;
+  QList<QMetaObject::Connection> m_highlightConnections;
 };
 
 #endif // ALERTTOOLCONTROLLER_H

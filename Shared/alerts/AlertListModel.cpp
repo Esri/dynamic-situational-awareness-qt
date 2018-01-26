@@ -30,7 +30,6 @@ AlertListModel::AlertListModel(QObject* parent):
   m_roles[AlertListRoles::AlertId] = "alertId";
   m_roles[AlertListRoles::Name] = "name";
   m_roles[AlertListRoles::Level] = "level";
-  m_roles[AlertListRoles::Position] = "position";
   m_roles[AlertListRoles::Viewed] = "viewed";
 }
 
@@ -59,7 +58,7 @@ bool AlertListModel::addAlertConditionData(AlertConditionData* alert)
 
     auto it = m_alerts.cbegin();
     auto itEnd = m_alerts.cend();
-    int currRow = -1;
+    int currRow = 0;
     for (; it != itEnd; ++it, ++currRow)
     {
       AlertConditionData* testAlert = *it;
@@ -154,10 +153,6 @@ QVariant AlertListModel::data(const QModelIndex& index, int role) const
   {
     return alert->name();
   }
-  case AlertListRoles::Position:
-  {
-    return QVariant::fromValue(alert->position());
-  }
   case AlertListRoles::Viewed:
   {
     return alert->viewed();
@@ -186,8 +181,6 @@ bool AlertListModel::setData(const QModelIndex& index, const QVariant& value, in
   case AlertListRoles::Level:
     break;
   case AlertListRoles::Name:
-    break;
-  case AlertListRoles::Position:
     break;
   case AlertListRoles::Viewed:
   {

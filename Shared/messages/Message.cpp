@@ -416,6 +416,25 @@ Message::MessageAction Message::toMessageAction(const QString& action)
   return MessageAction::Unknown;
 }
 
+QString Message::fromMessageAction(MessageAction action)
+{
+  switch (action)
+  {
+  case MessageAction::Remove:
+    return "remove";
+  case MessageAction::Select:
+    return "select";
+  case MessageAction::Unselect:
+    return "un-select";
+  case MessageAction::Update:
+    return "update";
+  default:
+    break;
+  }
+
+  return QString();
+}
+
 bool Message::isEmpty() const
 {
   return d->attributes.isEmpty() && d->geometry.isEmpty() &&
@@ -492,6 +511,62 @@ QString Message::symbolId() const
 void Message::setSymbolId(const QString& symbolId)
 {
   d->symbolId = symbolId;
+}
+
+QByteArray Message::toGeoMessage() const
+{
+  QByteArray message;
+  QXmlStreamWriter streamWriter(&message);
+
+  streamWriter.writeStartElement(s_geoMessageElementName);
+
+  streamWriter.writeStartElement(s_geoMessageTypeName);
+  streamWriter.writeCharacters(messageType());
+  streamWriter.writeEndElement();
+
+  streamWriter.writeStartElement(s_geoMessageActionName);
+  streamWriter.writeCharacters(fromMessageAction(messageAction()));
+  streamWriter.writeEndElement();
+
+  streamWriter.writeStartElement(s_geoMessageIdName);
+  streamWriter.writeCharacters(messageId());
+  streamWriter.writeEndElement();
+
+  QString controlPoints;
+  switch (geometry().geometryType())
+  {
+  case GeometryType::Point:
+  {
+    Point pt = geometry_cast<Point>(geometry());
+    controlPoints = QString("%1,%2").arg(QString::number(pt.x()), QString::number(pt.y()));
+  }
+  default:
+    break;
+  }
+
+  streamWriter.writeStartElement(s_geoMessageControlPointsName);
+  streamWriter.writeCharacters(controlPoints);
+  streamWriter.writeEndElement();
+
+  streamWriter.writeStartElement(s_geoMessageWkidName);
+  streamWriter.writeCharacters(QString::number(geometry().spatialReference().wkid()));
+  streamWriter.writeEndElement();
+
+  const auto attribs = attributes();
+  for (QVariantMap::const_iterator iter = attribs.constBegin(); iter != attribs.constEnd(); ++iter)
+  {
+    const auto key = iter.key();
+    if (key.startsWith("_")) // attributes which start with "_" are stored in member variables
+      continue;
+
+    streamWriter.writeStartElement(key);
+    streamWriter.writeCharacters(iter.value().toString());
+    streamWriter.writeEndElement();
+  }
+
+  streamWriter.writeEndElement(); // end geomessage
+
+  return message;
 }
 
 MessageData::MessageData()

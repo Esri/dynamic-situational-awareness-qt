@@ -16,6 +16,7 @@
 #include "MessageListener.h"
 #include "MessageFeedListModel.h"
 #include "MessageFeed.h"
+#include "MessageSender.h"
 
 #include "ToolResourceProvider.h"
 #include "ToolManager.h"
@@ -26,12 +27,15 @@
 #include "PictureMarkerSymbol.h"
 
 #include <QUdpSocket>
+#include <QHostInfo>
+#include <QTimer>
 
 using namespace Esri::ArcGISRuntime;
 
 const QString MessageFeedsController::RESOURCE_DIRECTORY_PROPERTYNAME = "ResourceDirectory";
 const QString MessageFeedsController::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME = "MessageFeedUdpPorts";
 const QString MessageFeedsController::MESSAGE_FEEDS_PROPERTYNAME = "MessageFeeds";
+const QString MessageFeedsController::SEND_LOCATION_MESSAGE_FEED_PROPERTYNAME = "SendLocationMessageFeed";
 
 MessageFeedsController::MessageFeedsController(QObject* parent) :
   Toolkit::AbstractTool(parent),
@@ -75,6 +79,9 @@ void MessageFeedsController::addMessageListener(MessageListener* messageListener
   {
     Message m = Message::create(message);
     if (m.isEmpty())
+      return;
+
+    if (m.messageId() == m_sendLocationMessage.messageId()) // do not display current location message
       return;
 
     MessageFeed* messageFeed = m_messageFeeds->messageFeedByType(m.messageType());
@@ -130,6 +137,13 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
     MessageFeed* feed = new MessageFeed(feedName, feedType, overlay, this);
     m_messageFeeds->append(feed);
   }
+
+  const auto sendLocationMessageFeed = properties[SEND_LOCATION_MESSAGE_FEED_PROPERTYNAME].toStringList();
+  if (sendLocationMessageFeed.size() == 2)
+  {
+    setSendLocationMessageFeedType(sendLocationMessageFeed.at(0));
+    setSendLocationMessageFeedUdpPort(sendLocationMessageFeed.at(1).toInt());
+  }
 }
 
 void MessageFeedsController::setDataPath(const QString& dataPath)
@@ -140,6 +154,77 @@ void MessageFeedsController::setDataPath(const QString& dataPath)
   m_dataPath = dataPath;
 
   emit propertyChanged(RESOURCE_DIRECTORY_PROPERTYNAME, dataPath);
+}
+
+QString MessageFeedsController::sendLocationMessageFeedType() const
+{
+  return m_sendLocationMessageFeedType;
+}
+
+void MessageFeedsController::setSendLocationMessageFeedType(const QString& messageFeedType)
+{
+  if (m_sendLocationMessageFeedType == messageFeedType)
+    return;
+
+  m_sendLocationMessageFeedType = messageFeedType;
+
+  if (m_sendLocationMessageFeedType.isEmpty())
+    setSendLocationMessageEnabled(false);
+  else
+    updateSendLocationMessage();
+}
+
+int MessageFeedsController::sendLocationMessageFeedUdpPort() const
+{
+  return m_sendLocationMessageFeedUdpPort;
+}
+
+void MessageFeedsController::setSendLocationMessageFeedUdpPort(int port)
+{
+  if (m_sendLocationMessageFeedUdpPort == port)
+    return;
+
+  m_sendLocationMessageFeedUdpPort = port;
+
+  if (m_sendLocationMessageFeedUdpPort == -1)
+    setSendLocationMessageEnabled(false);
+  else
+    updateSendLocationMessage();
+}
+
+bool MessageFeedsController::isSendLocationMessageEnabled() const
+{
+  return m_sendLocationMessageEnabled;
+}
+
+void MessageFeedsController::setSendLocationMessageEnabled(bool enabled)
+{
+  if (m_sendLocationMessageEnabled == enabled)
+    return;
+
+  m_sendLocationMessageEnabled = enabled;
+
+  emit sendLocationMessageEnabledChanged();
+
+  updateSendLocationMessage();
+}
+
+int MessageFeedsController::sendLocationMessageFrequency() const
+{
+  return m_sendLocationMessageFrequency;
+}
+
+void MessageFeedsController::setSendLocationMessageFrequency(int frequency)
+{
+  if (m_sendLocationMessageFrequency == frequency)
+    return;
+
+  m_sendLocationMessageFrequency = frequency;
+
+  emit sendLocationMessageFrequencyChanged();
+
+  if (m_sendLocationMessageTimer)
+    m_sendLocationMessageTimer->setInterval(m_sendLocationMessageFrequency);
 }
 
 Renderer* MessageFeedsController::createRenderer(const QString& rendererInfo, QObject* parent) const
@@ -168,4 +253,66 @@ Renderer* MessageFeedsController::createRenderer(const QString& rendererInfo, QO
   symbol->setWidth(40.0f);
   symbol->setHeight(40.0f);
   return new SimpleRenderer(symbol, parent);
+}
+
+void MessageFeedsController::updateSendLocationMessage()
+{
+  if (m_locationChangedConn)
+    disconnect(m_locationChangedConn);
+
+  if (m_sendLocationMessageFeedType.isEmpty() || m_sendLocationMessageFeedUdpPort == -1)
+    return;
+
+  if (m_sendLocationMessageSender)
+  {
+    delete m_sendLocationMessageSender;
+    m_sendLocationMessageSender = nullptr;
+  }
+
+  m_sendLocationMessageSender = new MessageSender(this);
+
+  QUdpSocket* udpSocket = new QUdpSocket(m_sendLocationMessageSender);
+  udpSocket->connectToHost(QHostAddress::Broadcast, m_sendLocationMessageFeedUdpPort, QIODevice::WriteOnly);
+  m_sendLocationMessageSender->setDevice(udpSocket);
+
+  m_sendLocationMessageTimer = new QTimer(m_sendLocationMessageSender);
+  connect(m_sendLocationMessageTimer, &QTimer::timeout, this, [this]
+  {
+    if (!m_sendLocationMessageEnabled || !m_sendLocationMessageSender)
+      return;
+
+    if (m_currentLocation.isEmpty())
+      return;
+
+    if (m_sendLocationMessage.isEmpty())
+    {
+      QVariantMap attribs;
+
+      m_sendLocationMessage = Message(Message::MessageAction::Update, m_currentLocation);
+      m_sendLocationMessage.setMessageId(QUuid::createUuid().toString());
+      m_sendLocationMessage.setMessageType(m_sendLocationMessageFeedType);
+      m_sendLocationMessage.setSymbolId("SFGPEVAL-------");
+
+      attribs.insert("sic", "SFGPEVAL-------");
+      attribs.insert("uniquedesignation", QHostInfo::localHostName());
+      attribs.insert("status911", 0);
+      m_sendLocationMessage.setAttributes(attribs);
+    }
+    else
+    {
+      m_sendLocationMessage.setGeometry(m_currentLocation);
+    }
+
+    m_sendLocationMessageSender->sendMessage(m_sendLocationMessage.toGeoMessage());
+  });
+
+  m_sendLocationMessageTimer->start(m_sendLocationMessageFrequency);
+
+  m_locationChangedConn = connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::locationChanged, this, [this](const Point& location)
+  {
+    if (!m_sendLocationMessageEnabled)
+      return;
+
+    m_currentLocation = location;
+  });
 }

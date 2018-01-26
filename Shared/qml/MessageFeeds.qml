@@ -21,6 +21,8 @@ DsaPanel {
     width: 272 * scaleFactor
     title: qsTr("Message Feeds")
 
+    property alias controller: toolController
+
     // Create the controller
     MessageFeedsController {
         id: toolController
@@ -44,7 +46,7 @@ DsaPanel {
         delegate:  SwitchDelegate {
             id: control
             text: feedName
-            checked: feedEnabled
+            checked: feedVisible
             width: messageFeedsList.width
 
             contentItem: Label {
@@ -58,7 +60,7 @@ DsaPanel {
                 verticalAlignment: Text.AlignVCenter
             }
 
-            onClicked: feedEnabled = !feedEnabled
+            onClicked: feedVisible = !feedVisible
         }
     }
 }

@@ -51,6 +51,48 @@ Rectangle {
                     }
                 }
             }
+
+            Row {
+                height: 40 * scaleFactor
+                width: parent.width
+
+                CheckBox {
+                    text: "Send Current Location"
+                    checked: messageFeeds.controller.sendLocationMessageEnabled
+                    onCheckedChanged: {
+                        messageFeeds.controller.sendLocationMessageEnabled = checked;
+                    }
+                }
+            }
+
+            Row {
+                height: 40 * scaleFactor
+                width: parent.width
+                spacing: 5 * scaleFactor
+
+                Text {
+                    text: "Send Location frequency (ms)"
+                    color: Material.foreground
+                    font {
+                        pixelSize: 10 * scaleFactor
+                        family: DsaStyles.fontFamily
+                    }
+                }
+
+                TextField {
+                    width: 50 * scaleFactor
+                    text: messageFeeds.controller.sendLocationMessageFrequency
+                    color: Material.foreground
+                    font {
+                        pixelSize: 10 * scaleFactor
+                        family: DsaStyles.fontFamily
+                    }
+
+                    onTextChanged: {
+                        messageFeeds.controller.sendLocationMessageFrequency = Number(text);
+                    }
+                }
+            }
         }
     }
 

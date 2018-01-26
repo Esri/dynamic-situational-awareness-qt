@@ -49,6 +49,7 @@ public:
 
   static QString cotTypeToSidc(const QString& cotType);
   static MessageAction toMessageAction(const QString& action);
+  static QString fromMessageAction(MessageAction action);
 
   bool isEmpty() const;
 
@@ -72,6 +73,8 @@ public:
 
   QString symbolId() const;
   void setSymbolId(const QString& symbolId);
+
+  QByteArray toGeoMessage() const;
 
 private:
   QSharedDataPointer<MessageData> d;

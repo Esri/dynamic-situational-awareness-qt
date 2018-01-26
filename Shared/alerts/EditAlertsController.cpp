@@ -119,76 +119,26 @@ void EditAlertsController::addWithinDistanceAlert(const QString& conditionName, 
   if (level > AlertLevel::Critical)
     return;
 
-  GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
-  if (!geoView)
-    return;
-
-  GraphicsOverlay* sourceOverlay = nullptr;
-  AlertTarget* target = nullptr;
-  int currIndex = -1;
-  LayerListModel* operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
-  if (operationalLayers)
-  {
-    const int opLayersCount = operationalLayers->rowCount();
-    for (int i = 0; i < opLayersCount; ++i)
-    {
-      currIndex++;
-      Layer* layer = operationalLayers->at(i);
-      if (!layer)
-        continue;
-
-      FeatureLayer* featLayer = qobject_cast<FeatureLayer*>(layer);
-      if (!featLayer)
-        continue;
-
-      if (currIndex == targetOverlayIndex)
-      {
-        if (itemId == -1)
-          target = new FeatureLayerAlertTarget(featLayer);
-        else
-          target = targetFromFeatureLayer(featLayer, itemId);
-      }
-    }
-  }
-
-  GraphicsOverlayListModel* graphicsOverlays = geoView->graphicsOverlays();
-  if (graphicsOverlays)
-  {
-    const int overlaysCount = graphicsOverlays->rowCount();
-    for (int i = 0; i < overlaysCount; ++i)
-    {
-      GraphicsOverlay* overlay = graphicsOverlays->at(i);
-      if (!overlay)
-        continue;
-
-      if (overlay->overlayId().isEmpty())
-        continue;
-
-      ++currIndex;
-
-      if (sourceFeedName == overlay->overlayId())
-        sourceOverlay = overlay;
-
-      if (currIndex == targetOverlayIndex)
-      {
-        if (itemId == -1)
-          target = new GraphicsOverlayAlertTarget(overlay);
-        else
-          target = targetFromGraphicsOverlay(overlay, itemId);
-      }
-    }
-  }
-
+  AlertTarget* target = targetFromItemIdAndIndex(itemId, targetOverlayIndex);
   if (!target)
     return;
 
-  WithinDistanceAlertCondition* condition = new WithinDistanceAlertCondition(level, conditionName, distance, this);
   if (sourceFeedName == "My Location")
+  {
+    WithinDistanceAlertCondition* condition = new WithinDistanceAlertCondition(level, conditionName, distance, this);
     condition->init(m_locationSource, target);
-  else if (sourceOverlay)
-    condition->init(sourceOverlay, target);
-
-  m_conditions->addAlertCondition(condition);
+    m_conditions->addAlertCondition(condition);
+  }
+  else
+  {
+    GraphicsOverlay* sourceOverlay = graphicsOverlayFromName(sourceFeedName);
+    if (sourceOverlay)
+    {
+      WithinDistanceAlertCondition* condition = new WithinDistanceAlertCondition(level, conditionName, distance, this);
+      condition->init(sourceOverlay, target);
+      m_conditions->addAlertCondition(condition);
+    }
+  }
 }
 
 void EditAlertsController::addWithinAreaAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedName, int itemId, int targetOverlayIndex)
@@ -203,76 +153,26 @@ void EditAlertsController::addWithinAreaAlert(const QString& conditionName, int 
   if (level > AlertLevel::Critical)
     return;
 
-  GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
-  if (!geoView)
-    return;
-
-  GraphicsOverlay* sourceOverlay = nullptr;
-  AlertTarget* target = nullptr;
-  int currIndex = -1;
-  LayerListModel* operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
-  if (operationalLayers)
-  {
-    const int opLayersCount = operationalLayers->rowCount();
-    for (int i = 0; i < opLayersCount; ++i)
-    {
-      currIndex++;
-      Layer* layer = operationalLayers->at(i);
-      if (!layer)
-        continue;
-
-      FeatureLayer* featLayer = qobject_cast<FeatureLayer*>(layer);
-      if (!featLayer)
-        continue;
-
-      if (currIndex == targetOverlayIndex)
-      {
-        if (itemId == -1)
-          target = new FeatureLayerAlertTarget(featLayer);
-        else
-          target = targetFromFeatureLayer(featLayer, itemId);
-      }
-    }
-  }
-
-  GraphicsOverlayListModel* graphicsOverlays = geoView->graphicsOverlays();
-  if (graphicsOverlays)
-  {
-    const int overlaysCount = graphicsOverlays->rowCount();
-    for (int i = 0; i < overlaysCount; ++i)
-    {
-      GraphicsOverlay* overlay = graphicsOverlays->at(i);
-      if (!overlay)
-        continue;
-
-      if (overlay->overlayId().isEmpty())
-        continue;
-
-      ++currIndex;
-
-      if (sourceFeedName == overlay->overlayId())
-        sourceOverlay = overlay;
-
-      if (currIndex == targetOverlayIndex)
-      {
-        if (itemId == -1)
-          target = new GraphicsOverlayAlertTarget(overlay);
-        else
-          target = targetFromGraphicsOverlay(overlay, itemId);
-      }
-    }
-  }
-
+  AlertTarget* target = targetFromItemIdAndIndex(itemId, targetOverlayIndex);
   if (!target)
     return;
 
-  WithinAreaAlertCondition* condition = new WithinAreaAlertCondition(level, conditionName, this);
   if (sourceFeedName == "My Location")
+  {
+    WithinAreaAlertCondition* condition = new WithinAreaAlertCondition(level, conditionName, this);
     condition->init(m_locationSource, target);
-  else if (sourceOverlay)
-    condition->init(sourceOverlay, target);
-
-  m_conditions->addAlertCondition(condition);
+    m_conditions->addAlertCondition(condition);
+  }
+  else
+  {
+    GraphicsOverlay* sourceOverlay = graphicsOverlayFromName(sourceFeedName);
+    if (sourceOverlay)
+    {
+     WithinAreaAlertCondition* condition = new WithinAreaAlertCondition(level, conditionName, this);
+      condition->init(sourceOverlay, target);
+      m_conditions->addAlertCondition(condition);
+    }
+  }
 }
 
 void EditAlertsController::removeConditionAt(int rowIndex)
@@ -295,7 +195,7 @@ void EditAlertsController::togglePickMode()
                                           this, &EditAlertsController::onIdentifyLayersCompleted);
 
     m_identifyGraphicsConnection =  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::identifyGraphicsOverlaysCompleted,
-                                          this, &EditAlertsController::onIdentifyGraphicsOverlaysCompleted);
+                                            this, &EditAlertsController::onIdentifyGraphicsOverlaysCompleted);
   }
   else
   {
@@ -564,6 +464,66 @@ void EditAlertsController::setSourceNames(const QStringList& sourceNames)
   emit sourceNamesChanged();
 }
 
+AlertTarget *EditAlertsController::targetFromItemIdAndIndex(int itemId, int targetOverlayIndex) const
+{
+  GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
+  if (!geoView)
+    return nullptr;
+
+  int currIndex = -1;
+  LayerListModel* operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+  if (operationalLayers)
+  {
+    const int opLayersCount = operationalLayers->rowCount();
+    for (int i = 0; i < opLayersCount; ++i)
+    {
+      currIndex++;
+      Layer* layer = operationalLayers->at(i);
+      if (!layer)
+        continue;
+
+      FeatureLayer* featLayer = qobject_cast<FeatureLayer*>(layer);
+      if (!featLayer)
+        continue;
+
+      if (currIndex == targetOverlayIndex)
+      {
+        if (itemId == -1)
+          return new FeatureLayerAlertTarget(featLayer);
+        else
+          return targetFromFeatureLayer(featLayer, itemId);
+      }
+    }
+  }
+
+  GraphicsOverlayListModel* graphicsOverlays = geoView->graphicsOverlays();
+  if (graphicsOverlays)
+  {
+    const int overlaysCount = graphicsOverlays->rowCount();
+    for (int i = 0; i < overlaysCount; ++i)
+    {
+      GraphicsOverlay* overlay = graphicsOverlays->at(i);
+      if (!overlay)
+        continue;
+
+      if (overlay->overlayId().isEmpty())
+        continue;
+
+      ++currIndex;
+
+      if (currIndex == targetOverlayIndex)
+      {
+        if (itemId == -1)
+          return new GraphicsOverlayAlertTarget(overlay);
+        else
+          return targetFromGraphicsOverlay(overlay, itemId);
+      }
+    }
+  }
+
+  return nullptr;
+}
+
 AlertTarget* EditAlertsController::targetFromFeatureLayer(FeatureLayer* featureLayer, int itemId) const
 {
   FeatureTable* tab = featureLayer->featureTable();
@@ -616,6 +576,33 @@ AlertTarget* EditAlertsController::targetFromGraphicsOverlay(GraphicsOverlay* gr
     return nullptr;
 
   return new GeoElementAlertTarget(g);
+}
+
+GraphicsOverlay* EditAlertsController::graphicsOverlayFromName(const QString& overlayName)
+{
+  GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
+  if (!geoView)
+    return nullptr;
+
+  GraphicsOverlayListModel* graphicsOverlays = geoView->graphicsOverlays();
+  if (graphicsOverlays)
+  {
+    const int overlaysCount = graphicsOverlays->rowCount();
+    for (int i = 0; i < overlaysCount; ++i)
+    {
+      GraphicsOverlay* overlay = graphicsOverlays->at(i);
+      if (!overlay)
+        continue;
+
+      if (overlay->overlayId().isEmpty())
+        continue;
+
+      if (overlayName == overlay->overlayId())
+        return overlay;
+    }
+  }
+
+  return nullptr;
 }
 
 QString EditAlertsController::primaryKeyFieldName(FeatureTable* featureTable) const

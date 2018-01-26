@@ -10,8 +10,8 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef EDITALERTSCONTROLLER_H
-#define EDITALERTSCONTROLLER_H
+#ifndef ALERTCONDITIONSCONTROLLER_H
+#define ALERTCONDITIONSCONTROLLER_H
 
 #include "AbstractTool.h"
 
@@ -38,7 +38,7 @@ class LocationAlertSource;
 class AlertConditionListModel;
 class AlertTarget;
 
-class EditAlertsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+class AlertConditionsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
   Q_OBJECT
 
@@ -50,8 +50,8 @@ class EditAlertsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
   Q_PROPERTY(bool pickMode READ pickMode NOTIFY pickModeChanged)
 
 public:
-  explicit EditAlertsController(QObject* parent = nullptr);
-  ~EditAlertsController();
+  explicit AlertConditionsController(QObject* parent = nullptr);
+  ~AlertConditionsController();
 
   // AbstractTool interface
   QString toolName() const override;
@@ -111,4 +111,4 @@ private:
   QMetaObject::Connection m_identifyGraphicsConnection;
 };
 
-#endif // EDITALERTSCONTROLLER_H
+#endif // ALERTCONDITIONSCONTROLLER_H

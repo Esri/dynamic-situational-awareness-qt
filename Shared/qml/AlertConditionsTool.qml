@@ -20,10 +20,10 @@ import Esri.DSA 1.0
 DsaPanel {
     id: manageAlertsRoot
     width: 272 * scaleFactor
-    title: qsTr("Edit Alert Conditions")
+    title: qsTr("Alert Conditions")
     clip: true
 
-    EditAlertsController {
+    AlertConditionsController {
         id: toolController
         active: parent.visible
         onPickedElement: {
@@ -101,7 +101,7 @@ DsaPanel {
 
     Column {
         clip: true
-        spacing: 8 * scaleFactor
+        spacing: 4 * scaleFactor
 
         anchors {
             top: newOrViewRow.bottom
@@ -148,7 +148,7 @@ DsaPanel {
                 text: "GeoFence\nAlert"
                 font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 font.bold: checked
-                height: 48 * scaleFactor
+                height: 32 * scaleFactor
                 width: (newOrViewRow.width - (newOrViewRow.anchors.margins * 2)) / 3
                 checked: true
                 checkable: true

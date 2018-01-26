@@ -62,7 +62,7 @@ Row {
         iconSource: DsaResources.iconListView
         toolName: "View"
         onToolSelected: {
-            editAlertsTool.visible = false;
+            alertConditionsTool.visible = false;
             if (alertToolRow.state === toolName) {
                 alertToolRow.state = "clear";
                 alertsTool.visible = false;
@@ -77,15 +77,15 @@ Row {
     ToolIcon {
         id: createAlertIcon
         iconSource: DsaResources.iconDraw
-        toolName: "Edit"
+        toolName: "Conditions"
         onToolSelected: {
             alertsTool.visible = false;
             if (alertToolRow.state === toolName) {
                 alertToolRow.state = "clear";
-                editAlertsTool.visible = false;
+                alertConditionsTool.visible = false;
             } else {
                 alertToolRow.state = toolName;
-                editAlertsTool.visible = true;
+                alertConditionsTool.visible = true;
             }
         }
     }

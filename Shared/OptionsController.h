@@ -25,6 +25,8 @@ class OptionsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
   Q_PROPERTY(QStringList coordinateFormats READ coordinateFormats NOTIFY coordinateFormatsChanged)
   Q_PROPERTY(QStringList units READ units NOTIFY unitsChanged)
   Q_PROPERTY(bool useGpsForElevation READ useGpsForElevation WRITE setUseGpsForElevation NOTIFY useGpsForElevationChanged)
+  Q_PROPERTY(int initialFormatIndex READ initialFormatIndex NOTIFY initialFormatIndexChanged)
+  Q_PROPERTY(int initialUnitIndex READ initialUnitIndex NOTIFY initialUnitIndexChanged)
 
 public:
   explicit OptionsController(QObject* parent = nullptr);
@@ -38,18 +40,21 @@ signals:
   void coordinateFormatsChanged();
   void useGpsForElevationChanged();
   void unitsChanged();
+  void initialUnitIndexChanged();
+  void initialFormatIndexChanged();
 
-private:
+public:
   LocationTextController* m_locationTextController = nullptr;
-  QStringList m_coordinateFormats;
-  bool m_useGpsForElevation = false;
-  QStringList m_units;
+  int m_initialUnitIndex;
+  int m_initialFormatIndex;
 
   void getUpdatedTools();
   QStringList coordinateFormats() const;
   QStringList units() const;
   bool useGpsForElevation() const;
   void setUseGpsForElevation(bool useGps);
+  int initialUnitIndex() const;
+  int initialFormatIndex() const;
 };
 
 #endif // OPTIONSCONTROLLER_H

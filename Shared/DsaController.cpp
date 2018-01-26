@@ -146,7 +146,7 @@ void DsaController::createDefaultSettings()
       QString("75.0"), QString("0.0") };
   m_dsaSettings["CoordinateFormat"] = QStringLiteral("DMS");
   m_dsaSettings["UnitOfMeasurement"] = QStringLiteral("meters");
-  m_dsaSettings["UseGpsForElevation"] = QStringLiteral("false");
+  m_dsaSettings["UseGpsForElevation"] = QStringLiteral("true");
 }
 
 void DsaController::saveSettings(QFile& configFile)

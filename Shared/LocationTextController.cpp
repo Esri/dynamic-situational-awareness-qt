@@ -22,9 +22,11 @@
 
 using namespace Esri::ArcGISRuntime;
 
+// constant strings used for properties in the config file
 const QString LocationTextController::COORDINATE_FORMAT_PROPERTYNAME = QStringLiteral("CoordinateFormat");
 const QString LocationTextController::USE_GPS_PROPERTYNAME = QStringLiteral("UseGpsForElevation");
 const QString LocationTextController::UNIT_OF_MEASUREMENT_PROPERTYNAME = QStringLiteral("UnitOfMeasurement");
+// constant strings used for display in the options
 const QString LocationTextController::DMS = QStringLiteral("DMS");
 const QString LocationTextController::DD = QStringLiteral("DD");
 const QString LocationTextController::DDM = QStringLiteral("DDM");
@@ -55,56 +57,67 @@ LocationTextController::~LocationTextController()
 {
 }
 
+// Returns the Tool Name
 QString LocationTextController::toolName() const
 {
-  return QStringLiteral("location text");
+  return QStringLiteral("Location Text");
 }
 
+// Returns the location text string for display in QML
 QString LocationTextController::currentLocationText() const
 {
   return m_currentLocationText;
 }
 
+// Returns the elevation text string for display in QML
 QString LocationTextController::currentElevationText() const
 {
   return m_currentElevationText;
 }
 
+// Slot for Toolkit::ToolResourceProvider::locationChanged
 void LocationTextController::onLocationChanged(const Point& pt)
 {
   // update location text
   m_currentLocationText = QString("%1 (%2)").arg(formatCoordinate(pt), m_coordinateFormat);
   emit currentLocationTextChanged();
 
-  // get elevation text
-  if (!m_surface)
-    return;
-
+  // update the elevation text
   if (m_useGpsForElevation)
     formatElevationText(pt.z());
   else
+  {
+    if (!m_surface)
+      return;
+
     m_surface->locationToElevation(pt);
+  }
 }
 
+// Slot to obtain the Scene's base surface
 void LocationTextController::onGeoViewChanged()
 {
-  Scene* scene = dynamic_cast<Scene*>(Toolkit::ToolResourceProvider::instance()->scene());
+  Scene* scene = Toolkit::ToolResourceProvider::instance()->scene();
   if (scene)
   {
     m_surface = scene->baseSurface();
 
+    // connect the Surface::locationToElevationCompleted signal
     connect(m_surface, &Surface::locationToElevationCompleted, this, [this](QUuid, double elevation)
     {
+      // format the elevation for display in QML
       formatElevationText(elevation);
     });
   }
 }
 
+// Returns a string list of coordinate format options
 QStringList LocationTextController::coordinateFormatOptions() const
 {
   return m_coordinateFormatOptions;
 }
 
+// Set properties from the configuration file
 void LocationTextController::setProperties(const QVariantMap& properties)
 {
   setCoordinateFormat(properties[COORDINATE_FORMAT_PROPERTYNAME].toString());
@@ -112,12 +125,15 @@ void LocationTextController::setProperties(const QVariantMap& properties)
   setUnitOfMeasurement(properties[UNIT_OF_MEASUREMENT_PROPERTYNAME].toString());
 }
 
+// Changes the coordinate format
 void LocationTextController::setCoordinateFormat(const QString& format)
 {
   m_coordinateFormat = format;
   emit propertyChanged(COORDINATE_FORMAT_PROPERTYNAME, format);
   emit coordinateFormatChanged();
 
+  // use std::function to change the lambda that the formatCoordinate member points to
+  // Decimal Degrees
   if (coordinateFormat() == DD)
   {
     formatCoordinate = [](const Point& p)
@@ -125,6 +141,7 @@ void LocationTextController::setCoordinateFormat(const QString& format)
       return CoordinateFormatter::toLatitudeLongitude(p, LatitudeLongitudeFormat::DecimalDegrees, 5);
     };
   }
+  // Degrees Decimal Minutes
   else if (coordinateFormat() == DDM)
   {
     formatCoordinate = [](const Point& p)
@@ -132,6 +149,7 @@ void LocationTextController::setCoordinateFormat(const QString& format)
       return CoordinateFormatter::toLatitudeLongitude(p, LatitudeLongitudeFormat::DegreesDecimalMinutes, 5);
     };
   }
+  // UTM
   else if (coordinateFormat() == UTM)
   {
     formatCoordinate = [](const Point& p)
@@ -139,6 +157,7 @@ void LocationTextController::setCoordinateFormat(const QString& format)
       return CoordinateFormatter::toUtm(p, UtmConversionMode::NorthSouthIndicators, true);
     };
   }
+  // MGRS
   else if (coordinateFormat() == MGRS)
   {
     formatCoordinate = [](const Point& p)
@@ -146,6 +165,7 @@ void LocationTextController::setCoordinateFormat(const QString& format)
       return CoordinateFormatter::toMgrs(p, MgrsConversionMode::Automatic, 5, true);
     };
   }
+  // USNG
   else if (coordinateFormat() == USNG)
   {
     formatCoordinate = [](const Point& p)
@@ -153,6 +173,7 @@ void LocationTextController::setCoordinateFormat(const QString& format)
       return CoordinateFormatter::toUsng(p, 5, true);
     };
   }
+  // GeoRef
   else if (coordinateFormat() == GeoRef)
   {
     formatCoordinate = [](const Point& p)
@@ -160,6 +181,7 @@ void LocationTextController::setCoordinateFormat(const QString& format)
       return CoordinateFormatter::toGeoRef(p, 5);
     };
   }
+  // Gars
   else if (coordinateFormat() == Gars)
   {
     formatCoordinate = [](const Point& p)
@@ -167,7 +189,8 @@ void LocationTextController::setCoordinateFormat(const QString& format)
       return CoordinateFormatter::toGars(p);
     };
   }
-  else // DMS
+  // DMS
+  else
   {
     formatCoordinate =  [](const Point& p)
     {
@@ -176,23 +199,27 @@ void LocationTextController::setCoordinateFormat(const QString& format)
   }
 }
 
+// Returns the current format to use
 QString LocationTextController::coordinateFormat() const
 {
   return m_coordinateFormat;
 }
 
+// Returns whether to use GPS for elevation. If false, it will use the Scene's Surface
 bool LocationTextController::useGpsForElevation() const
 {
   return m_useGpsForElevation;
 }
 
+// Sets whether to use GPS for elevation
 void LocationTextController::setUseGpsForElevation(bool useGps)
 {
   m_useGpsForElevation = useGps;
-  emit propertyChanged(USE_GPS_PROPERTYNAME, useGps);
+  emit propertyChanged(USE_GPS_PROPERTYNAME, useGps ? "true" : "false");
   emit useGpsForElevationChanged();
 }
 
+// Formats the elevation text for display in QML
 void LocationTextController::formatElevationText(double elevation)
 {
   if (unitOfMeasurement() == Feet)
@@ -203,16 +230,19 @@ void LocationTextController::formatElevationText(double elevation)
   emit currentElevationTextChanged();
 }
 
+// Returns the list of units
 QStringList LocationTextController::units() const
 {
   return m_units;
 }
 
+// Returns the current unit of measurement
 QString LocationTextController::unitOfMeasurement() const
 {
   return m_unitOfMeasurement;
 }
 
+// Sets the current unnit of measurement
 void LocationTextController::setUnitOfMeasurement(const QString& unit)
 {
   m_unitOfMeasurement = unit;

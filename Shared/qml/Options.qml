@@ -21,10 +21,12 @@ Rectangle {
     id: optionsRoot
     color: Material.primary
 
+    // Add the Options Controller Class
     OptionsController {
         id: optionsController
     }
 
+    // Create a flickable column so that n number of options can be added
     Flickable {
         anchors {
             fill: parent
@@ -57,7 +59,7 @@ Rectangle {
                 color: Material.foreground
             }
 
-
+            // Toggle navigation controls
             CheckBox {
                 text: "Show navigation controls"
                 checked: true
@@ -68,6 +70,7 @@ Rectangle {
                 }
             }
 
+            // Toggle location/elevation overlay
             CheckBox {
                 text: "Show location and elevation"
                 checked: true
@@ -77,10 +80,19 @@ Rectangle {
                 }
             }
 
+            // Whether to use GPS for the location/elevation display or not.
+            // The alternative is the use the Scene's base surface.
             CheckBox {
+                id: useGPS
                 text: "Use GPS for current elevation display"
-                checked: optionsController.useGpsForElevation
-                onCheckedChanged: optionsController.useGpsForElevation = checked;
+                onCheckedChanged: optionsController.useGpsForElevation = checked
+                Component.onCompleted: checked = optionsController.useGpsForElevation
+                // Checking/Unchecking breaks the binding, so a connection is set up to re-bind
+                // More info - https://stackoverflow.com/questions/23860270/binding-checkbox-checked-property-with-a-c-object-q-property
+                Connections {
+                    target: optionsController
+                    onUseGpsForElevationChanged: useGPS.checked = optionsController.useGpsForElevation
+                }
             }
 
             Label {
@@ -92,6 +104,7 @@ Rectangle {
                 color: Material.foreground
             }
 
+            // Change the default coordinate formats between DMS, USNG, MGRS, etc.
             Row {
                 width: parent.width
                 spacing: 10 * scaleFactor
@@ -109,12 +122,12 @@ Rectangle {
                 ComboBox {
                     anchors.verticalCenter: parent.verticalCenter
                     model: optionsController.coordinateFormats
-                    onCurrentTextChanged: {
-                        optionsController.setCoordinateFormat(currentText);
-                    }
+                    Component.onCompleted: currentIndex = optionsController.initialFormatIndex
+                    onCurrentTextChanged: optionsController.setCoordinateFormat(currentText);
                 }
             }
 
+            // Change the default units between feet and meters
             Row {
                 width: parent.width
                 spacing: 10 * scaleFactor
@@ -132,6 +145,7 @@ Rectangle {
                 ComboBox {
                     anchors.verticalCenter: parent.verticalCenter
                     model: optionsController.units
+                    Component.onCompleted: currentIndex = optionsController.initialUnitIndex
                     onCurrentTextChanged: optionsController.setUnitOfMeasurement(currentText)
                 }
             }

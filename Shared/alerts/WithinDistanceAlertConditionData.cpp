@@ -10,7 +10,6 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "AbstractOverlayManager.h"
 #include "WithinDistanceAlertConditionData.h"
 
 #include "GeoElement.h"

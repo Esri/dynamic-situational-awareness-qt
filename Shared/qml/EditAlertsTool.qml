@@ -43,7 +43,7 @@ DsaPanel {
     property bool geofenceReadyToAdd:  geofenceConditionButton.checked && (levelCb.currentIndex !== -1 &&
                                                                            sourceCb.currentIndex !== -1 &&
                                                                            targetCB.currentIndex !== -1 &&
-                                                                           featureIdEdit.text.length > 0)
+                                                                           (featureIdEdit.text.length > 0 || allObjectRb.checked))
     property bool attributeReadyToAdd: attributeConditionButton.checked && (levelCb.currentIndex !== -1 &&
                                                                             sourceCb.currentIndex !== -1 &&
                                                                             attributeFieldEdit.length > 0 &&
@@ -51,7 +51,7 @@ DsaPanel {
     property bool analysisReadyToAdd: analysisConditionButton.checked && (levelCb.currentIndex !== -1 &&
                                                                           sourceCb.currentIndex !== -1 &&
                                                                           targetCB.currentIndex !== -1 &&
-                                                                          featureIdEdit.text.length > 0)
+                                                                          (featureIdEdit.text.length > 0 || allObjectRb.checked))
 
     Row {
         id: newOrViewRow

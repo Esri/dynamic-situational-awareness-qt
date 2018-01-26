@@ -111,7 +111,6 @@ void EditAlertsController::addWithinDistanceAlert(const QString& conditionName, 
   if (levelIndex < 0 ||
       sourceFeedName.isEmpty() ||
       distance < 0.0 ||
-      itemId < 0 ||
       targetOverlayIndex < 0)
     return;
 
@@ -145,7 +144,6 @@ void EditAlertsController::addWithinAreaAlert(const QString& conditionName, int 
 {
   if (levelIndex < 0 ||
       sourceFeedName.isEmpty() ||
-      itemId < 0 ||
       targetOverlayIndex < 0)
     return;
 

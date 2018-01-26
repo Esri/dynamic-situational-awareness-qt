@@ -22,13 +22,28 @@ Row {
     id: alertToolRow
     spacing: 10 * scaleFactor
     visible: categoryToolbar.state === "alerts"
-    onVisibleChanged: state = "clear"
+    onVisibleChanged: {
+        state = "clear"
+        if (visible)
+        {
+            viewAlertIcon.selected = true;
+            alertToolRow.state = viewAlertIcon.toolName;
+            alertsTool.visible = true;
+        }
+    }
 
     states: [
         State {
             name: viewAlertIcon.toolName
             PropertyChanges {
                 target: viewAlertIcon
+                selected: true
+            }
+        },
+        State {
+            name: createAlertIcon.toolName
+            PropertyChanges {
+                target: createAlertIcon
                 selected: true
             }
         },
@@ -47,6 +62,7 @@ Row {
         iconSource: DsaResources.iconListView
         toolName: "View"
         onToolSelected: {
+            editAlertsTool.visible = false;
             if (alertToolRow.state === toolName) {
                 alertToolRow.state = "clear";
                 alertsTool.visible = false;
@@ -60,9 +76,10 @@ Row {
     // Create Alert Tool
     ToolIcon {
         id: createAlertIcon
-        iconSource: "qrc:/Resources/icons/xhdpi/ic_menu_edit_dark_d.png"
+        iconSource: DsaResources.iconDraw
         toolName: "Edit"
         onToolSelected: {
+            alertsTool.visible = false;
             if (alertToolRow.state === toolName) {
                 alertToolRow.state = "clear";
                 editAlertsTool.visible = false;

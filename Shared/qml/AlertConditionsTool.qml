@@ -517,7 +517,7 @@ DsaPanel {
     }
 
     ListView {
-        id: alertsList
+        id: conditionsList
         visible: viewExistingModeButton.checked
         clip: true
         anchors {
@@ -534,7 +534,7 @@ DsaPanel {
         delegate: Row {
             Text {
                 text: name
-                color: index === alertsList.currentIndex ? Material.accent : Material.foreground
+                color: index === conditionsList.currentIndex ? Material.accent : Material.foreground
                 font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignVCenter
@@ -543,16 +543,34 @@ DsaPanel {
 
                 MouseArea {
                     anchors.fill: parent
-                    onClicked: alertsList.currentIndex = index;
+                    onClicked: conditionsList.currentIndex = index;
                 }
             }
+        }
+    }
+
+
+    Text {
+        anchors {
+            left: parent.left
+            right: parent.right
+            top: conditionsListTitle.bottom
+            margins: 15 * scaleFactor
+        }
+        visible: conditionsList.count === 0 && viewExistingModeButton.checked
+        text: "No Conditions.\n\nSelect 'Create New' to set up alert queries."
+        color: Material.foreground
+        horizontalAlignment: Text.AlignHCenter
+        font {
+            pixelSize: 12 * scaleFactor
+            family: DsaStyles.fontFamily
         }
     }
 
     RoundButton {
         id: removeConditionButton
         visible: viewExistingModeButton.checked
-        enabled: alertsList.currentIndex !== -1
+        enabled: conditionsList.currentIndex !== -1
 
         anchors {
             horizontalCenter: parent.horizontalCenter
@@ -576,8 +594,8 @@ DsaPanel {
         }
 
         onClicked: {
-            toolController.removeConditionAt(alertsList.currentIndex);
-            alertsList.currentIndex = -1;
+            toolController.removeConditionAt(conditionsList.currentIndex);
+            conditionsList.currentIndex = -1;
         }
     }
 }

@@ -23,13 +23,14 @@
 
 class AlertCondition;
 class AlertSource;
+class AlertTarget;
 
 class AlertConditionData : public QObject
 {
   Q_OBJECT
 
 public:
-  explicit AlertConditionData(AlertCondition* condition, AlertSource* source);
+  explicit AlertConditionData(AlertCondition* condition, AlertSource* source, AlertTarget* target);
   ~AlertConditionData();
 
   AlertLevel level() const;
@@ -50,6 +51,7 @@ public:
   void setActive(bool active);
 
   AlertSource* source() const;
+  AlertTarget* target() const;
 
 signals:
   void statusChanged();
@@ -61,6 +63,7 @@ signals:
 private:
   AlertCondition* m_condition = nullptr;
   AlertSource* m_source = nullptr;
+  AlertTarget* m_target = nullptr;
   QUuid m_id;
   bool m_viewed = false;
   bool m_active = false;

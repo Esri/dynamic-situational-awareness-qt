@@ -21,25 +21,13 @@ using namespace Esri::ArcGISRuntime;
 
 WithinAreaAlertConditionData::WithinAreaAlertConditionData(AlertCondition* condition,
                                                            AlertSource* source,
-                                                           GeoElement* target):
-  AlertConditionData(condition, source),
-  m_target(target)
+                                                           AlertTarget* target):
+  AlertConditionData(condition, source, target)
 {
-  connect(m_target, &GeoElement::destroyed, this, [this]()
-  {
-    m_target = nullptr;
-    emit noLongerValid();
-  });
 
-  connect(m_target, &GeoElement::geometryChanged, this, &WithinAreaAlertConditionData::locationChanged);
 }
 
 WithinAreaAlertConditionData::~WithinAreaAlertConditionData()
 {
 
-}
-
-Geometry WithinAreaAlertConditionData::targetLocation() const
-{
-  return m_target ? m_target->geometry() : Point();
 }

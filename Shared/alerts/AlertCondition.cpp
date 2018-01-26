@@ -13,16 +13,57 @@
 #include "AlertCondition.h"
 #include "AlertConditionData.h"
 #include "AlertListModel.h"
+#include "GraphicAlertSource.h"
+
+#include "GraphicsOverlay.h"
+#include "GraphicListModel.h"
 
 using namespace Esri::ArcGISRuntime;
 
-
-AlertCondition::AlertCondition(const AlertLevel& level, const QString& name, QObject* parent):
+AlertCondition::AlertCondition(const AlertLevel& level,
+                               const QString& name,
+                               QObject* parent):
   QObject(parent),
   m_level(level),
   m_name(name)
 {
 
+}
+
+void AlertCondition::init(AlertSource* source, AlertTarget* target)
+{
+  AlertConditionData* newData = createData(source, target);
+  addData(newData);
+}
+
+void AlertCondition::init(GraphicsOverlay* sourceFeed, AlertTarget* target)
+{
+  if (!sourceFeed)
+    return;
+
+  GraphicListModel* graphics = sourceFeed->graphics();
+  if (!graphics)
+    return;
+
+  auto handleGraphicAt = [this, graphics, target](int index)
+  {
+    if (!graphics)
+      return;
+
+    Graphic* newGraphic = graphics->at(index);
+    if (!newGraphic)
+      return;
+
+    GraphicAlertSource* source = new GraphicAlertSource(newGraphic);
+    AlertConditionData* newData = createData(source, target);
+    addData(newData);
+  };
+
+  connect(graphics, &GraphicListModel::graphicAdded, this, handleGraphicAt);
+
+  const int count = graphics->rowCount();
+  for (int i = 0; i < count; ++i)
+    handleGraphicAt(i);
 }
 
 AlertCondition::~AlertCondition()
@@ -63,3 +104,4 @@ void AlertCondition::addData(AlertConditionData* newData)
 
   AlertListModel::instance()->addAlertConditionData(newData);
 }
+

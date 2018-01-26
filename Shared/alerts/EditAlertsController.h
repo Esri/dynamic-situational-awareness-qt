@@ -28,11 +28,15 @@ namespace ArcGISRuntime
 {
 class IdentifyLayerResult;
 class IdentifyGraphicsOverlayResult;
+class FeatureLayer;
+class FeatureTable;
+class GraphicsOverlay;
 }
 }
 
 class LocationAlertSource;
 class AlertConditionListModel;
+class AlertTarget;
 
 class EditAlertsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -83,6 +87,10 @@ private slots:
 private:
   void setTargetNames(const QStringList& targetNames);
   void setSourceNames(const QStringList& sourceNames);
+
+  AlertTarget* targetFromFeatureLayer(Esri::ArcGISRuntime::FeatureLayer* featureLayer, int itemId) const;
+  AlertTarget* targetFromGraphicsOverlay(Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlay, int itemId) const;
+  QString primaryKeyFieldName(Esri::ArcGISRuntime::FeatureTable* featureTable) const;
 
   static QStringList realtimeFeedNames();
 

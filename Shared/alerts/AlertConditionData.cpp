@@ -13,13 +13,15 @@
 #include "AlertCondition.h"
 #include "AlertConditionData.h"
 #include "AlertSource.h"
+#include "AlertTarget.h"
 
 using namespace Esri::ArcGISRuntime;
 
-AlertConditionData::AlertConditionData(AlertCondition* condition, AlertSource* source):
+AlertConditionData::AlertConditionData(AlertCondition* condition, AlertSource* source, AlertTarget* target):
   QObject(condition),
   m_condition(condition),
-  m_source(source)
+  m_source(source),
+  m_target(target)
 {
   connect(m_condition, &AlertCondition::noLongerValid, this, &AlertConditionData::noLongerValid);
   connect(m_source, &AlertSource::noLongerValid, this, &AlertConditionData::noLongerValid);
@@ -27,6 +29,12 @@ AlertConditionData::AlertConditionData(AlertCondition* condition, AlertSource* s
   connect(m_source, &AlertSource::destroyed, this, [this]()
   {
     m_source = nullptr;
+    emit noLongerValid();
+  });
+  connect(m_target, &AlertTarget::locationChanged, this, &AlertConditionData::locationChanged);
+  connect(m_target, &AlertTarget::destroyed, this, [this]()
+  {
+    m_target = nullptr;
     emit noLongerValid();
   });
 }
@@ -92,6 +100,11 @@ void AlertConditionData::setActive(bool active)
 AlertSource *AlertConditionData::source() const
 {
   return m_source;
+}
+
+AlertTarget* AlertConditionData::target() const
+{
+  return m_target;
 }
 
 bool AlertConditionData::active() const

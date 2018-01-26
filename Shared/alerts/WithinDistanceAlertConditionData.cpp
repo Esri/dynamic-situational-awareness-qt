@@ -21,29 +21,17 @@ using namespace Esri::ArcGISRuntime;
 
 WithinDistanceAlertConditionData::WithinDistanceAlertConditionData(AlertCondition* condition,
                                                                    AlertSource* source,
-                                                                   GeoElement* target,
+                                                                   AlertTarget* target,
                                                                    double distance):
-  AlertConditionData(condition, source),
-  m_target(target),
+  AlertConditionData(condition, source, target),
   m_distance(distance)
 {
-  connect(m_target, &GeoElement::destroyed, this, [this]()
-  {
-    m_target = nullptr;
-    emit noLongerValid();
-  });
 
-  connect(m_target, &GeoElement::geometryChanged, this, &WithinDistanceAlertConditionData::locationChanged);
 }
 
 WithinDistanceAlertConditionData::~WithinDistanceAlertConditionData()
 {
 
-}
-
-Geometry WithinDistanceAlertConditionData::position2() const
-{
-  return m_target ? m_target->geometry() : Point();
 }
 
 double WithinDistanceAlertConditionData::distance() const

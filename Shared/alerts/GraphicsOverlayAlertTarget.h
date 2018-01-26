@@ -17,6 +17,7 @@ namespace Esri
 {
 namespace ArcGISRuntime
 {
+class Graphic;
 class GraphicsOverlay;
 }
 }
@@ -34,8 +35,9 @@ public:
   virtual QList<Esri::ArcGISRuntime::Geometry> location() const override;
 
 private:
+  void setupGraphicConnections(Esri::ArcGISRuntime::Graphic* graphic);
+
   Esri::ArcGISRuntime::GraphicsOverlay* m_graphicsOverlay = nullptr;
-  QList<Esri::ArcGISRuntime::Geometry> m_geomList;
   QList<QMetaObject::Connection> m_graphicConnections;
 };
 

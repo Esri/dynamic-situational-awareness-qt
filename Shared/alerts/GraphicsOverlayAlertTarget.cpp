@@ -26,41 +26,22 @@ GraphicsOverlayAlertTarget::GraphicsOverlayAlertTarget(GraphicsOverlay* graphics
     auto conn = m_graphicConnections.at(index);
     disconnect(conn);
     m_graphicConnections.removeAt(index);
-    m_geomList.removeAt(index);
     emit locationChanged();
   });
 
   connect(m_graphicsOverlay->graphics(), &GraphicListModel::graphicAdded, this, [this](int index)
   {
     Graphic* graphic = m_graphicsOverlay->graphics()->at(index);
-    if (graphic)
-    {
-      m_geomList.append(graphic->geometry());
-      m_graphicConnections.append(connect(graphic, &Graphic::geometryChanged, this, &GraphicsOverlayAlertTarget::locationChanged));
-      emit locationChanged();
-    }
+    setupGraphicConnections(graphic);
   });
 
-  m_geomList.clear();
-  for (const auto conn : m_graphicConnections)
-    disconnect(conn);
-
-  m_graphicConnections.clear();
-
   const GraphicListModel* graphics = m_graphicsOverlay->graphics();
-  if (graphics)
-  {
-    const int count = graphics->rowCount();
-    for (int i = 0; i < count; ++i)
-    {
-      Graphic* graphic = m_graphicsOverlay->graphics()->at(i);
-      if (graphic)
-      {
-        m_geomList.append(graphic->geometry());
-        m_graphicConnections.append(connect(graphic, &Graphic::geometryChanged, this, &GraphicsOverlayAlertTarget::locationChanged));
-      }
-    }
-  }
+  if (!graphics)
+    return;
+
+  const int count = graphics->rowCount();
+  for (int i = 0; i < count; ++i)
+    setupGraphicConnections(m_graphicsOverlay->graphics()->at(i));
 }
 
 GraphicsOverlayAlertTarget::~GraphicsOverlayAlertTarget()
@@ -70,6 +51,27 @@ GraphicsOverlayAlertTarget::~GraphicsOverlayAlertTarget()
 
 QList<Geometry> GraphicsOverlayAlertTarget::location() const
 {
-  return m_geomList;
+  QList<Geometry> geomList;
+  const GraphicListModel* graphics = m_graphicsOverlay->graphics();
+  if (!graphics)
+    return geomList;
+
+  const int count = graphics->rowCount();
+  for (int i = 0; i < count; ++i)
+  {
+    Graphic* graphic = m_graphicsOverlay->graphics()->at(i);
+    if (graphic)
+      geomList.append(graphic->geometry());
+  }
+
+  return geomList;
+}
+
+void GraphicsOverlayAlertTarget::setupGraphicConnections(Graphic* graphic)
+{
+  if (!graphic)
+    return;
+
+  m_graphicConnections.append(connect(graphic, &Graphic::geometryChanged, this, &GraphicsOverlayAlertTarget::locationChanged));
 }
 

@@ -479,14 +479,14 @@ DsaPanel {
                                                           levelCb.currentIndex,
                                                           sourceCb.currentText,
                                                           withinDistanceSB.value,
-                                                          Number(featureIdEdit.text),
+                                                          singleFeatureRb.checked ? Number(featureIdEdit.text) : -1,
                                                           targetCB.currentIndex);
                 }
                 else if (withinAreaRb.checked) {
                     toolController.addWithinAreaAlert(newAlertName.text,
                                                       levelCb.currentIndex,
                                                       sourceCb.currentText,
-                                                      Number(featureIdEdit.text),
+                                                      singleFeatureRb.checked ? Number(featureIdEdit.text) : -1,
                                                       targetCB.currentIndex);
                 }
 

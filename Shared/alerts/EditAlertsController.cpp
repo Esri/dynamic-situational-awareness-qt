@@ -13,7 +13,10 @@
 #include "AlertConditionData.h"
 #include "AlertConditionListModel.h"
 #include "EditAlertsController.h"
+#include "FeatureLayerAlertTarget.h"
 #include "FeatureOverlayManager.h"
+#include "GeoElementAlertTarget.h"
+#include "GraphicsOverlayAlertTarget.h"
 #include "GraphicsOverlayManager.h"
 #include "LocationAlertSource.h"
 #include "WithinAreaAlertCondition.h"
@@ -29,6 +32,8 @@
 #include "FeatureLayer.h"
 #include "Layer.h"
 #include "LayerListModel.h"
+
+#include <QEventLoop>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -119,7 +124,7 @@ void EditAlertsController::addWithinDistanceAlert(const QString& conditionName, 
     return;
 
   GraphicsOverlay* sourceOverlay = nullptr;
-  AbstractOverlayManager* targetOverlayMgr = nullptr;
+  AlertTarget* target = nullptr;
   int currIndex = -1;
   LayerListModel* operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
   if (operationalLayers)
@@ -137,7 +142,12 @@ void EditAlertsController::addWithinDistanceAlert(const QString& conditionName, 
         continue;
 
       if (currIndex == targetOverlayIndex)
-        targetOverlayMgr = new FeatureOverlayManager(featLayer, this);
+      {
+        if (itemId == -1)
+          target = new FeatureLayerAlertTarget(featLayer);
+        else
+          target = targetFromFeatureLayer(featLayer, itemId);
+      }
     }
   }
 
@@ -160,27 +170,25 @@ void EditAlertsController::addWithinDistanceAlert(const QString& conditionName, 
         sourceOverlay = overlay;
 
       if (currIndex == targetOverlayIndex)
-        targetOverlayMgr = new GraphicsOverlayManager(overlay, this);
+      {
+        if (itemId == -1)
+          target = new GraphicsOverlayAlertTarget(overlay);
+        else
+          target = targetFromGraphicsOverlay(overlay, itemId);
+      }
     }
   }
 
-  if (!targetOverlayMgr)
+  if (!target)
     return;
 
-  GeoElement* targetElement = targetOverlayMgr->elementAt(itemId);
-  if (!targetElement)
-    return;
-
+  WithinDistanceAlertCondition* condition = new WithinDistanceAlertCondition(level, conditionName, distance, this);
   if (sourceFeedName == "My Location")
-  {
-    WithinDistanceAlertCondition* condition = new WithinDistanceAlertCondition(m_locationSource, targetElement, distance, level, conditionName, this);
-    m_conditions->addAlertCondition(condition);
-  }
+    condition->init(m_locationSource, target);
   else if (sourceOverlay)
-  {
-    WithinDistanceAlertCondition* condition = new WithinDistanceAlertCondition(sourceOverlay, targetElement, distance, level, conditionName, this);
-    m_conditions->addAlertCondition(condition);
-  }
+    condition->init(sourceOverlay, target);
+
+  m_conditions->addAlertCondition(condition);
 }
 
 void EditAlertsController::addWithinAreaAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedName, int itemId, int targetOverlayIndex)
@@ -200,7 +208,7 @@ void EditAlertsController::addWithinAreaAlert(const QString& conditionName, int 
     return;
 
   GraphicsOverlay* sourceOverlay = nullptr;
-  AbstractOverlayManager* targetOverlayMgr = nullptr;
+  AlertTarget* target = nullptr;
   int currIndex = -1;
   LayerListModel* operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
   if (operationalLayers)
@@ -218,7 +226,12 @@ void EditAlertsController::addWithinAreaAlert(const QString& conditionName, int 
         continue;
 
       if (currIndex == targetOverlayIndex)
-        targetOverlayMgr = new FeatureOverlayManager(featLayer, this);
+      {
+        if (itemId == -1)
+          target = new FeatureLayerAlertTarget(featLayer);
+        else
+          target = targetFromFeatureLayer(featLayer, itemId);
+      }
     }
   }
 
@@ -241,27 +254,25 @@ void EditAlertsController::addWithinAreaAlert(const QString& conditionName, int 
         sourceOverlay = overlay;
 
       if (currIndex == targetOverlayIndex)
-        targetOverlayMgr = new GraphicsOverlayManager(overlay, this);
+      {
+        if (itemId == -1)
+          target = new GraphicsOverlayAlertTarget(overlay);
+        else
+          target = targetFromGraphicsOverlay(overlay, itemId);
+      }
     }
   }
 
-  if (!targetOverlayMgr)
+  if (!target)
     return;
 
-  GeoElement* targetElement = targetOverlayMgr->elementAt(itemId);
-  if (!targetElement)
-    return;
-
+  WithinAreaAlertCondition* condition = new WithinAreaAlertCondition(level, conditionName, this);
   if (sourceFeedName == "My Location")
-  {
-    WithinAreaAlertCondition* condition = new WithinAreaAlertCondition(m_locationSource, targetElement, level, conditionName, this);
-    m_conditions->addAlertCondition(condition);
-  }
+    condition->init(m_locationSource, target);
   else if (sourceOverlay)
-  {
-    WithinAreaAlertCondition* condition = new WithinAreaAlertCondition(sourceOverlay, targetElement, level, conditionName, this);
-    m_conditions->addAlertCondition(condition);
-  }
+    condition->init(sourceOverlay, target);
+
+  m_conditions->addAlertCondition(condition);
 }
 
 void EditAlertsController::removeConditionAt(int rowIndex)
@@ -474,24 +485,7 @@ void EditAlertsController::onIdentifyLayersCompleted(const QUuid& taskId, QList<
       if (!table)
         continue;
 
-      QString primaryKeyField;
-      ArcGISFeatureTable* agsFeatureTable = qobject_cast<ArcGISFeatureTable*>(table);
-      if (agsFeatureTable)
-      {
-        primaryKeyField = agsFeatureTable->objectIdField();
-      }
-      else
-      {
-        const QList<Field> fields = table->fields();
-        for( const Field& field : fields)
-        {
-          if (field.fieldType() == FieldType::OID)
-          {
-            primaryKeyField = field.name();
-            break;
-          }
-        }
-      }
+      QString primaryKeyField = primaryKeyFieldName(table);
 
       if (primaryKeyField.isEmpty())
         continue;
@@ -568,6 +562,83 @@ void EditAlertsController::setSourceNames(const QStringList& sourceNames)
 
   m_sourceNames->setStringList(sourceNames);
   emit sourceNamesChanged();
+}
+
+AlertTarget* EditAlertsController::targetFromFeatureLayer(FeatureLayer* featureLayer, int itemId) const
+{
+  FeatureTable* tab = featureLayer->featureTable();
+  if (!tab)
+    return nullptr;
+
+  const QString primaryKey = primaryKeyFieldName(tab);
+
+  QueryParameters qp;
+  qp.setWhereClause(QString("\"%1\" = %2").arg(primaryKey, QString::number(itemId)));
+
+  QEventLoop loop;
+  tab->queryFeatures(qp);
+
+  connect(tab, &FeatureTable::errorOccurred, this, [this, &loop](Error)
+  {
+    loop.quit();
+  });
+
+  Feature* feature = nullptr;
+  auto connection = loop.connect(tab, &FeatureTable::queryFeaturesCompleted, this, [this, &loop, &feature](QUuid, FeatureQueryResult* featureQueryResult)
+  {
+    loop.quit();
+
+    if (featureQueryResult)
+      feature = featureQueryResult->iterator().next();
+  });
+
+  loop.exec();
+
+  disconnect(connection);
+
+  if (!feature)
+    return nullptr;
+
+  return new GeoElementAlertTarget(feature);
+}
+
+AlertTarget* EditAlertsController::targetFromGraphicsOverlay(GraphicsOverlay* graphicsOverlay, int itemId) const
+{
+  if (!graphicsOverlay)
+    return nullptr;
+
+  GraphicListModel* graphics = graphicsOverlay->graphics();
+  if (!graphics)
+    return nullptr;
+
+  Graphic* g = graphics->at(itemId);
+  if (!g)
+    return nullptr;
+
+  return new GeoElementAlertTarget(g);
+}
+
+QString EditAlertsController::primaryKeyFieldName(FeatureTable* featureTable) const
+{
+  if (!featureTable)
+    return QString();
+
+  ArcGISFeatureTable* agsFeatureTable = qobject_cast<ArcGISFeatureTable*>(featureTable);
+  if (agsFeatureTable)
+  {
+    return agsFeatureTable->objectIdField();
+  }
+  else
+  {
+    const QList<Field> fields = featureTable->fields();
+    for( const Field& field : fields)
+    {
+      if (field.fieldType() == FieldType::OID)
+        return field.name();
+    }
+  }
+
+  return QString();
 }
 
 QStringList EditAlertsController::realtimeFeedNames()

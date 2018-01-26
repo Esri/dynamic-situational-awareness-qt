@@ -33,14 +33,9 @@ class WithinAreaAlertConditionData : public AlertConditionData
 public:
   explicit WithinAreaAlertConditionData(AlertCondition* condition,
                                         AlertSource* source,
-                                        Esri::ArcGISRuntime::GeoElement* target);
+                                        AlertTarget* target);
 
   ~WithinAreaAlertConditionData();
-
-  Esri::ArcGISRuntime::Geometry targetLocation() const;
-
-private:
-  Esri::ArcGISRuntime::GeoElement* m_target;
 };
 
 #endif // WITHINAREAALERTCONDITIONDATA_H

@@ -22,10 +22,12 @@ Item {
     width: locationText.width
     height: locationText.height
 
+    // Declare Controller Class
     LocationTextController {
         id: locationTextController
     }
 
+    // Fill Rectangle to display behind text
     Rectangle {
         anchors {
             margins: -2 * scaleFactor
@@ -36,7 +38,7 @@ Item {
         opacity: 0.75
     }
 
-    // Column {
+    // Column that displays the location and elevation text
     Column {
         id: displayColumn
         anchors.centerIn: parent

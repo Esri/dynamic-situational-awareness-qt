@@ -123,7 +123,7 @@ bool IdentifyController::busy() const
 }
 
 /*!
-  \brief Returns a QVariantList of \l ESri::ArcGISRuntime::PopupManager which can be displayed in the view.
+  \brief Returns a QVariantList of \l Esri::ArcGISRuntime::PopupManager which can be displayed in the view.
 
   For example, this can be passed to a \l PopupView or \l PopupStackView for display.
  */
@@ -178,7 +178,7 @@ void IdentifyController::onMouseClicked(QMouseEvent& event)
 /*!
   \brief Handles the output of an IdentifyLayers task with Id \a taskId and results \l identifyResults.
 
-  Creates a new \l Esri::ArcGISRumtime::PopupManager objects for every valid feature with attributes
+  Creates a new \l Esri::ArcGISRuntime::PopupManager objects for every valid feature with attributes
  */
 void IdentifyController::onIdentifyLayersCompleted(const QUuid& taskId, QList<IdentifyLayerResult*> identifyResults)
 {
@@ -186,7 +186,7 @@ void IdentifyController::onIdentifyLayersCompleted(const QUuid& taskId, QList<Id
   if (taskId != m_layersWatcher.taskId())
     return;
 
-  // Create a RAII helper to ensure we clean uop the results
+  // Create a RAII helper to ensure we clean up the results
   LayerResultsManager resultsManager(identifyResults);
 
   m_layersWatcher = TaskWatcher();
@@ -229,7 +229,7 @@ void IdentifyController::onIdentifyGraphicsOverlaysCompleted(const QUuid& taskId
   if (taskId != m_graphicsOverlaysWatcher.taskId())
     return;
 
-  // Create a RAII helper to ensure we clean uop the results
+  // Create a RAII helper to ensure we clean up the results
   GraphicsOverlaysResultsManager resultsManager(identifyResults);
 
   m_graphicsOverlaysWatcher = TaskWatcher();
@@ -263,7 +263,7 @@ void IdentifyController::onIdentifyGraphicsOverlaysCompleted(const QUuid& taskId
 }
 
 /*!
-  \brief Helper method to create a new PopupManager with the totlel \a popupTitle,
+  \brief Helper method to create a new PopupManager with the title \a popupTitle,
   if \a geoElement is valid and has attributes.
  */
 bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QString& popupTitle)

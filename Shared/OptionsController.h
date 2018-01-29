@@ -33,6 +33,7 @@ public:
   ~OptionsController();
 
   QString toolName() const override;
+  void setProperties(const QVariantMap& properties) override;
   Q_INVOKABLE void setCoordinateFormat(const QString& format);
   Q_INVOKABLE void setUnitOfMeasurement(const QString& unit);
 
@@ -43,10 +44,27 @@ signals:
   void initialUnitIndexChanged();
   void initialFormatIndexChanged();
 
-public:
+private:
+  static const QString COORDINATE_FORMAT_PROPERTYNAME;
+  static const QString UNIT_OF_MEASUREMENT_PROPERTYNAME;
+  static const QString DMS;
+  static const QString DD;
+  static const QString DDM;
+  static const QString UTM;
+  static const QString MGRS;
+  static const QString USNG;
+  static const QString GeoRef;
+  static const QString Gars;
+  static const QString Meters;
+  static const QString Feet;
+
   LocationTextController* m_locationTextController = nullptr;
   int m_initialUnitIndex;
   int m_initialFormatIndex;
+  QString m_unitOfMeasurement;
+  QString m_coordinateFormat;
+  QStringList m_coordinateFormatOptions;
+  QStringList m_units;
 
   void getUpdatedTools();
   QStringList coordinateFormats() const;

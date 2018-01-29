@@ -35,10 +35,8 @@ public:
 
   QString toolName() const override;
   void setProperties(const QVariantMap& properties) override;
-  QStringList coordinateFormatOptions() const;
   void setCoordinateFormat(const QString& format);
   QString coordinateFormat() const;
-  QStringList units() const;
   void setUnitOfMeasurement(const QString& unit);
   QString unitOfMeasurement() const;
   bool useGpsForElevation() const;
@@ -80,8 +78,6 @@ private:
   QString m_currentLocationText = "Location Unavailable";
   QString m_currentElevationText = "Elevation Unavailable";
   QString m_coordinateFormat;
-  QStringList m_coordinateFormatOptions;
-  QStringList m_units;
   bool m_useGpsForElevation = false;
   QString m_unitOfMeasurement;
 };

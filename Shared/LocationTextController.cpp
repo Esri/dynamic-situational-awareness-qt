@@ -25,7 +25,7 @@ const QString LocationTextController::COORDINATE_FORMAT_PROPERTYNAME = QStringLi
 const QString LocationTextController::USE_GPS_PROPERTYNAME = QStringLiteral("UseGpsForElevation");
 const QString LocationTextController::UNIT_OF_MEASUREMENT_PROPERTYNAME = QStringLiteral("UnitOfMeasurement");
 
-// constant strings used for display in the options
+// constant strings for formats/units
 const QString LocationTextController::DMS = QStringLiteral("DMS");
 const QString LocationTextController::DD = QStringLiteral("DD");
 const QString LocationTextController::DDM = QStringLiteral("DDM");
@@ -50,9 +50,6 @@ LocationTextController::LocationTextController(QObject* parent) :
 
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::locationChanged,
           this, &LocationTextController::onLocationChanged);
-
-  m_coordinateFormatOptions << DMS << DD << DDM << UTM << MGRS << USNG << GeoRef << Gars;
-  m_units << Meters << Feet;
 }
 
 /*
@@ -126,14 +123,6 @@ void LocationTextController::onGeoViewChanged()
       formatElevationText(elevation);
     });
   }
-}
-
-/*
- \brief Returns a string list of coordinate format options
- */
-QStringList LocationTextController::coordinateFormatOptions() const
-{
-  return m_coordinateFormatOptions;
 }
 
 /*
@@ -266,14 +255,6 @@ void LocationTextController::formatElevationText(double elevation)
   }
   m_currentElevationText = QString("%1 %2 MSL").arg(QString::number(elevation), unitOfMeasurement());
   emit currentElevationTextChanged();
-}
-
-/*
- \brief Returns the list of units
- */
-QStringList LocationTextController::units() const
-{
-  return m_units;
 }
 
 /*

@@ -17,6 +17,19 @@
 
 using namespace Esri::ArcGISRuntime;
 
+const QString OptionsController::COORDINATE_FORMAT_PROPERTYNAME = QStringLiteral("CoordinateFormat");
+const QString OptionsController::UNIT_OF_MEASUREMENT_PROPERTYNAME = QStringLiteral("UnitOfMeasurement");
+const QString OptionsController::DMS = QStringLiteral("DMS");
+const QString OptionsController::DD = QStringLiteral("DD");
+const QString OptionsController::DDM = QStringLiteral("DDM");
+const QString OptionsController::UTM = QStringLiteral("UTM");
+const QString OptionsController::MGRS = QStringLiteral("MGRS");
+const QString OptionsController::USNG = QStringLiteral("USNG");
+const QString OptionsController::GeoRef = QStringLiteral("GEOREF");
+const QString OptionsController::Gars = QStringLiteral("GARS");
+const QString OptionsController::Meters = QStringLiteral("meters");
+const QString OptionsController::Feet = QStringLiteral("feet");
+
 /*
  \brief Constructor that takes an optional \a parent.
  */
@@ -24,9 +37,10 @@ OptionsController::OptionsController(QObject* parent) :
   Toolkit::AbstractTool(parent)
 {
   Toolkit::ToolManager::instance().addTool(this);
-
-  // get access to the various tool controllers
-  getUpdatedTools();
+  m_coordinateFormatOptions << DMS << DD << DDM << UTM << MGRS << USNG << GeoRef << Gars;
+  m_units << Meters << Feet;
+  emit unitsChanged();
+  emit coordinateFormatsChanged();
 }
 
 /*
@@ -50,21 +64,7 @@ void OptionsController::getUpdatedTools()
       emit useGpsForElevationChanged();
     });
 
-    connect(m_locationTextController, &LocationTextController::coordinateFormatChanged, this, [this]
-    {
-      m_initialFormatIndex = m_locationTextController->coordinateFormatOptions().indexOf(m_locationTextController->coordinateFormat());
-      emit initialFormatIndex();
-    });
-
-    connect(m_locationTextController, &LocationTextController::unitOfMeasurementChanged, this, [this]
-    {
-      m_initialUnitIndex = m_locationTextController->units().indexOf(m_locationTextController->unitOfMeasurement());
-      emit initialUnitIndexChanged();
-    });
-
-    emit coordinateFormatsChanged();
     emit useGpsForElevationChanged();
-    emit unitsChanged();
   }
 }
 
@@ -77,14 +77,30 @@ QString OptionsController::toolName() const
 }
 
 /*
+ \brief Sets \a properties from the configuration file
+ */
+void OptionsController::setProperties(const QVariantMap& properties)
+{
+  // access tool properties from the config
+  m_coordinateFormat = properties[COORDINATE_FORMAT_PROPERTYNAME].toString();
+  m_unitOfMeasurement = properties[UNIT_OF_MEASUREMENT_PROPERTYNAME].toString();
+
+  // update properties
+  m_initialUnitIndex = m_units.indexOf(m_unitOfMeasurement);
+  emit initialUnitIndexChanged();
+  m_initialFormatIndex = m_coordinateFormatOptions.indexOf(m_coordinateFormat);
+  emit initialFormatIndex();
+
+  // get access to the various tool controllers
+  getUpdatedTools();
+}
+
+/*
  \brief Returns the coordinate format list for display in the combo box
  */
 QStringList OptionsController::coordinateFormats() const
 {
-  if (!m_locationTextController)
-    return QStringList{};
-
-  return m_locationTextController->coordinateFormatOptions();
+  return m_coordinateFormatOptions;
 }
 
 /*
@@ -125,10 +141,7 @@ void OptionsController::setUseGpsForElevation(bool useGps)
  */
 QStringList OptionsController::units() const
 {
-  if (!m_locationTextController)
-    return QStringList{};
-
-  return m_locationTextController->units();
+  return m_units;
 }
 
 /*

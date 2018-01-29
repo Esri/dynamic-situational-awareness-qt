@@ -41,7 +41,7 @@ bool WithinAreaAlertQuery::matchesRule(AlertConditionData* conditionData) const
     return true; // test is not valid for this alert type
 
   Geometry geom1 = GeometryEngine::project(pairAlert->sourceLocation(), SpatialReference::wgs84());
-  const QList<Geometry> targetGeometries = pairAlert->target()->location();
+  const QList<Geometry> targetGeometries = pairAlert->target()->targetGeometries();
 
   for (const Geometry& target : targetGeometries)
   {

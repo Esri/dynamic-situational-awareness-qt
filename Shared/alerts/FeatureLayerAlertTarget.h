@@ -35,7 +35,7 @@ public:
   explicit FeatureLayerAlertTarget(Esri::ArcGISRuntime::FeatureLayer* FeatureLayer);
   ~FeatureLayerAlertTarget();
 
-  virtual QList<Esri::ArcGISRuntime::Geometry> location() const override;
+  virtual QList<Esri::ArcGISRuntime::Geometry> targetGeometries() const override;
 
 private slots:
   void handleQueryFeaturesCompleted(QUuid taskId, Esri::ArcGISRuntime::FeatureQueryResult* featureQueryResult);

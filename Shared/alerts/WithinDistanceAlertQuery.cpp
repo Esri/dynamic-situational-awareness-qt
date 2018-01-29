@@ -41,7 +41,7 @@ bool WithinDistanceAlertQuery::matchesRule(AlertConditionData* alert) const
 
   Point sourceGeom = GeometryEngine::project(pairAlert->sourceLocation(), SpatialReference::wgs84());
 
-  const QList<Geometry> targetGeometries = pairAlert->target()->location();
+  const QList<Geometry> targetGeometries = pairAlert->target()->targetGeometries();
 
   for (const Geometry& target : targetGeometries)
   {

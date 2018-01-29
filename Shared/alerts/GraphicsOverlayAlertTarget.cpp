@@ -49,7 +49,7 @@ GraphicsOverlayAlertTarget::~GraphicsOverlayAlertTarget()
 
 }
 
-QList<Geometry> GraphicsOverlayAlertTarget::location() const
+QList<Geometry> GraphicsOverlayAlertTarget::targetGeometries() const
 {
   QList<Geometry> geomList;
   const GraphicListModel* graphics = m_graphicsOverlay->graphics();

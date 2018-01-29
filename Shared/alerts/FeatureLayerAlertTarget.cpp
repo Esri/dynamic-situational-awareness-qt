@@ -52,7 +52,7 @@ FeatureLayerAlertTarget::~FeatureLayerAlertTarget()
 
 }
 
-QList<Esri::ArcGISRuntime::Geometry> FeatureLayerAlertTarget::location() const
+QList<Esri::ArcGISRuntime::Geometry> FeatureLayerAlertTarget::targetGeometries() const
 {
   if (!m_geomCache.isEmpty())
     return m_geomCache;

@@ -27,7 +27,7 @@ public:
   explicit AlertTarget(QObject* parent = nullptr);
   ~AlertTarget();
 
-  virtual QList<Esri::ArcGISRuntime::Geometry> location() const = 0;
+  virtual QList<Esri::ArcGISRuntime::Geometry> targetGeometries() const = 0;
 
 signals:
   void locationChanged();

@@ -28,7 +28,7 @@ GeoElementAlertTarget::~GeoElementAlertTarget()
 
 }
 
-QList<Esri::ArcGISRuntime::Geometry> GeoElementAlertTarget::location() const
+QList<Esri::ArcGISRuntime::Geometry> GeoElementAlertTarget::targetGeometries() const
 {
   return QList<Geometry>{m_geoElement->geometry()};
 }

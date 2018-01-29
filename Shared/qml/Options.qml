@@ -85,14 +85,8 @@ Rectangle {
             CheckBox {
                 id: useGPS
                 text: "Use GPS for current elevation display"
+                checked: optionsController.useGpsForElevation
                 onCheckedChanged: optionsController.useGpsForElevation = checked
-                Component.onCompleted: checked = optionsController.useGpsForElevation
-                // Checking/Unchecking breaks the binding, so a connection is set up to re-bind
-                // More info - https://stackoverflow.com/questions/23860270/binding-checkbox-checked-property-with-a-c-object-q-property
-                Connections {
-                    target: optionsController
-                    onUseGpsForElevationChanged: useGPS.checked = optionsController.useGpsForElevation
-                }
             }
 
             Label {

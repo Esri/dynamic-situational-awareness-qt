@@ -17,6 +17,9 @@
 
 using namespace Esri::ArcGISRuntime;
 
+/*
+ \brief Constructor that takes an optional \a parent.
+ */
 OptionsController::OptionsController(QObject* parent) :
   Toolkit::AbstractTool(parent)
 {
@@ -26,10 +29,16 @@ OptionsController::OptionsController(QObject* parent) :
   getUpdatedTools();
 }
 
+/*
+ \brief Destructor
+ */
 OptionsController::~OptionsController()
 {
 }
 
+/*
+ \brief Obtains the update tool from the tool manager and sets up connections to the various signals.
+ */
 void OptionsController::getUpdatedTools()
 {
   // Obtain and cache the LocationTextController. Connect members and emit signals so properties update
@@ -59,66 +68,93 @@ void OptionsController::getUpdatedTools()
   }
 }
 
+/*
+ \brief Returns the tool name.
+ */
 QString OptionsController::toolName() const
 {
   return "Options Tool";
 }
 
-// Getter to return the coordinate format list for display in the combo box
+/*
+ \brief Returns the coordinate format list for display in the combo box
+ */
 QStringList OptionsController::coordinateFormats() const
 {
-  if (m_locationTextController)
-    return m_locationTextController->coordinateFormatOptions();
-  else
+  if (!m_locationTextController)
     return QStringList{};
+
+  return m_locationTextController->coordinateFormatOptions();
 }
 
-// Setter to set the current coordinate format to be used
+/*
+ \brief Sets the current coordinate \a format to be used
+ */
 void OptionsController::setCoordinateFormat(const QString& format)
 {
-  if (m_locationTextController)
-    m_locationTextController->setCoordinateFormat(format);
+  if (!m_locationTextController)
+    return;
+
+  m_locationTextController->setCoordinateFormat(format);
 }
 
-// Getter to return whether to use GPS for elevation for display in a check box
+/*
+ \brief Returns whether to use GPS for elevation for display
+ */
 bool OptionsController::useGpsForElevation() const
 {
-  if (m_locationTextController)
-    return m_locationTextController->useGpsForElevation();
-  else
+  if (!m_locationTextController)
     return false;
+
+  return m_locationTextController->useGpsForElevation();
 }
 
-// Setter to set whether to use GPS for elevation for display
+/*
+ \brief Sets whether to \a useGps for elevation display
+ */
 void OptionsController::setUseGpsForElevation(bool useGps)
 {
-  if (m_locationTextController)
-    m_locationTextController->setUseGpsForElevation(useGps);
+  if (!m_locationTextController)
+    return;
+
+  m_locationTextController->setUseGpsForElevation(useGps);
 }
 
-// Getter to return the unit of measurement list for display in the combo box
+/*
+ \brief Returns the unit of measurement list for display
+ */
 QStringList OptionsController::units() const
 {
-  if (m_locationTextController)
-    return m_locationTextController->units();
-  else
+  if (!m_locationTextController)
     return QStringList{};
+
+  return m_locationTextController->units();
 }
 
-// Setter to set the unit of measurement
+/*
+ \brief Sets the \a unit of measurement
+ */
 void OptionsController::setUnitOfMeasurement(const QString& unit)
 {
-  if (m_locationTextController)
-    m_locationTextController->setUnitOfMeasurement(unit);
+  if (!m_locationTextController)
+    return;
+
+  m_locationTextController->setUnitOfMeasurement(unit);
 }
 
-// Getter for initial index. This is used to set the initial index in the combo box to match the controller
+/*
+ \brief Returns the initial index.
+  This is used to set the initial index in the combo box to match the controller
+  */
 int OptionsController::initialFormatIndex() const
 {
   return m_initialFormatIndex;
 }
 
-// Getter for initial index. This is used to set the initial index in the combo box to match the controller
+/*
+ \brief Returns the initial index.
+  This is used to set the initial index in the combo box to match the controller
+  */
 int OptionsController::initialUnitIndex() const
 {
   return m_initialUnitIndex;

@@ -22,6 +22,8 @@ namespace Esri
 {
 namespace ArcGISRuntime
 {
+class GeoElement;
+class IdentifyGraphicsOverlayResult;
 class IdentifyLayerResult;
 class PopupManager;
 }
@@ -29,7 +31,7 @@ class PopupManager;
 
 #include "TaskWatcher.h"
 
-class IdentifyFeaturesController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+class IdentifyController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
   Q_OBJECT
 
@@ -39,8 +41,8 @@ class IdentifyFeaturesController : public Esri::ArcGISRuntime::Toolkit::Abstract
 
 public:
 
-  explicit IdentifyFeaturesController(QObject* parent = nullptr);
-  ~IdentifyFeaturesController();
+  explicit IdentifyController(QObject* parent = nullptr);
+  ~IdentifyController();
 
   QString toolName() const override;
 
@@ -52,6 +54,7 @@ public:
 private slots:
   void onMouseClicked(QMouseEvent& event);
   void onIdentifyLayersCompleted(const QUuid& taskId, QList<Esri::ArcGISRuntime::IdentifyLayerResult*> identifyResults);
+  void onIdentifyGraphicsOverlaysCompleted(const QUuid& taskId, QList<Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult*> identifyResults);
 
 signals:
   void activeChanged();
@@ -59,8 +62,11 @@ signals:
   void popupManagersChanged();
 
 private:
+  bool addGeoElementPopup(Esri::ArcGISRuntime::GeoElement* geoElement, const QString& popupTitle);
+
   double m_tolerance = 5;
-  Esri::ArcGISRuntime::TaskWatcher m_taskWatcher;
+  Esri::ArcGISRuntime::TaskWatcher m_layersWatcher;
+  Esri::ArcGISRuntime::TaskWatcher m_graphicsOverlaysWatcher;
   QList<Esri::ArcGISRuntime::PopupManager*> m_popupManagers;
 };
 

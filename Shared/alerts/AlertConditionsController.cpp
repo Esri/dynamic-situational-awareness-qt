@@ -164,7 +164,7 @@ void AlertConditionsController::addWithinAreaAlert(const QString& conditionName,
     GraphicsOverlay* sourceOverlay = graphicsOverlayFromName(sourceFeedName);
     if (sourceOverlay)
     {
-     WithinAreaAlertCondition* condition = new WithinAreaAlertCondition(level, conditionName, this);
+      WithinAreaAlertCondition* condition = new WithinAreaAlertCondition(level, conditionName, this);
       condition->init(sourceOverlay, target);
       m_conditions->addAlertCondition(condition);
     }

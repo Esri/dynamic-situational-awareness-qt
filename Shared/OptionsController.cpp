@@ -77,7 +77,7 @@ QString OptionsController::toolName() const
 }
 
 /*
- \brief Set \a properties from the configuration file
+ \brief Sets \a properties from the configuration file
  */
 void OptionsController::setProperties(const QVariantMap& properties)
 {

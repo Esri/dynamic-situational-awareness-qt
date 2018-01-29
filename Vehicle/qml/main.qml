@@ -346,7 +346,7 @@ Vehicle {
         visible: false
     }
 
-    IdentifyFeaturesController {
+    IdentifyController {
         id: identifyController
         active: mapToolRow.state === "Identify"
 

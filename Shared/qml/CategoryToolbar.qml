@@ -13,6 +13,7 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
+import QtQuick.Dialogs 1.1
 import Esri.DSA 1.0
 import QtQuick.Controls.Material 2.2
 
@@ -183,8 +184,21 @@ Item {
             }
             MenuItem {
                 text: "Close"
-                onTriggered: Qt.quit()
+                onTriggered: {
+                    closePrompt.visible = true;
+                }
             }
         }
+    }
+
+    MessageDialog {
+        id: closePrompt
+        visible: false
+        icon: StandardIcon.Question
+        title: appTitle
+        text: "Are you sure you want to close?"
+        standardButtons: StandardButton.Yes | StandardButton.No
+        onYes: Qt.quit();
+        onNo:  visible = false;
     }
 }

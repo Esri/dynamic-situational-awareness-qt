@@ -10,8 +10,8 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef EDITALERTSCONTROLLER_H
-#define EDITALERTSCONTROLLER_H
+#ifndef ALERTCONDITIONSCONTROLLER_H
+#define ALERTCONDITIONSCONTROLLER_H
 
 #include "AbstractTool.h"
 
@@ -28,13 +28,17 @@ namespace ArcGISRuntime
 {
 class IdentifyLayerResult;
 class IdentifyGraphicsOverlayResult;
+class FeatureLayer;
+class FeatureTable;
+class GraphicsOverlay;
 }
 }
 
 class LocationAlertSource;
 class AlertConditionListModel;
+class AlertTarget;
 
-class EditAlertsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+class AlertConditionsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
   Q_OBJECT
 
@@ -46,8 +50,8 @@ class EditAlertsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
   Q_PROPERTY(bool pickMode READ pickMode NOTIFY pickModeChanged)
 
 public:
-  explicit EditAlertsController(QObject* parent = nullptr);
-  ~EditAlertsController();
+  explicit AlertConditionsController(QObject* parent = nullptr);
+  ~AlertConditionsController();
 
   // AbstractTool interface
   QString toolName() const override;
@@ -84,6 +88,12 @@ private:
   void setTargetNames(const QStringList& targetNames);
   void setSourceNames(const QStringList& sourceNames);
 
+  AlertTarget* targetFromItemIdAndIndex(int itemId, int targetOverlayIndex) const;
+  AlertTarget* targetFromFeatureLayer(Esri::ArcGISRuntime::FeatureLayer* featureLayer, int itemId) const;
+  AlertTarget* targetFromGraphicsOverlay(Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlay, int itemId) const;
+  Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlayFromName(const QString& overlayName);
+  QString primaryKeyFieldName(Esri::ArcGISRuntime::FeatureTable* featureTable) const;
+
   static QStringList realtimeFeedNames();
 
   AlertConditionListModel* m_conditions;
@@ -101,4 +111,4 @@ private:
   QMetaObject::Connection m_identifyGraphicsConnection;
 };
 
-#endif // EDITALERTSCONTROLLER_H
+#endif // ALERTCONDITIONSCONTROLLER_H

@@ -17,52 +17,23 @@
 
 #include <QObject>
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
-class GeoElement;
-class GraphicsOverlay;
-}
-}
-
-class AbstractOverlayManager;
-class AlertSource;
-
 class WithinDistanceAlertCondition : public AlertCondition
 {
   Q_OBJECT
 
 public:
-  explicit WithinDistanceAlertCondition(AlertSource* source,
-                                        Esri::ArcGISRuntime::GeoElement* target,
-                                        double distance,
-                                        AlertLevel level,
+  explicit WithinDistanceAlertCondition(AlertLevel level,
                                         const QString& name,
-                                        QObject* parent = nullptr);
-
-  explicit WithinDistanceAlertCondition(Esri::ArcGISRuntime::GraphicsOverlay* source,
-                                        Esri::ArcGISRuntime::GeoElement* target,
                                         double distance,
-                                        AlertLevel level,
-                                        const QString& name,
-                                        QObject* parent = nullptr);
-
-  explicit WithinDistanceAlertCondition(Esri::ArcGISRuntime::GraphicsOverlay* source,
-                                        AbstractOverlayManager* targetOverlay,
-                                        double distance,
-                                        AlertLevel level,
-                                        const QString& name,
                                         QObject* parent = nullptr);
 
   ~WithinDistanceAlertCondition();
 
-private:
-  void connectSourceSignals(Esri::ArcGISRuntime::GraphicsOverlay* sourceOverlay);
-  void connectTargetOverlaySignals();
+  AlertConditionData* createData(AlertSource* source, AlertTarget* target) override;
 
-  Esri::ArcGISRuntime::GeoElement* m_target = nullptr;
-  AbstractOverlayManager* m_targetOverlay = nullptr;
+  double distance() const;
+
+private:
   double m_distance;
 };
 

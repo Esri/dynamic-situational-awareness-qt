@@ -22,7 +22,7 @@ LocationAlertSource::LocationAlertSource(QObject* parent):
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::locationChanged, this, [this](const Point& location)
   {
     m_location = location;
-    emit positionChanged();
+    emit locationChanged();
   });
 }
 
@@ -31,7 +31,12 @@ LocationAlertSource::~LocationAlertSource()
 
 }
 
-Point LocationAlertSource::position() const
+Point LocationAlertSource::location() const
 {
   return m_location;
+}
+
+void LocationAlertSource::setSelected(bool)
+{
+  // do not select the location display
 }

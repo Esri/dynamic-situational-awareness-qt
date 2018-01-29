@@ -15,17 +15,6 @@
 
 #include "AlertConditionData.h"
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
-class Graphic;
-class GeoElement;
-}
-}
-
-class AbstractOverlayManager;
-
 class WithinDistanceAlertConditionData : public AlertConditionData
 {
   Q_OBJECT
@@ -33,16 +22,13 @@ class WithinDistanceAlertConditionData : public AlertConditionData
 public:
   explicit WithinDistanceAlertConditionData(AlertCondition* condition,
                                             AlertSource* source,
-                                            Esri::ArcGISRuntime::GeoElement* target,
+                                            AlertTarget* target,
                                             double distance);
   ~WithinDistanceAlertConditionData();
-
-  Esri::ArcGISRuntime::Geometry position2() const;
 
   double distance() const;
 
 private:
-  Esri::ArcGISRuntime::GeoElement* m_target = nullptr;
   double m_distance;
 };
 

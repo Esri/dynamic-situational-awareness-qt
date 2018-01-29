@@ -199,8 +199,8 @@ Handheld {
             onClosed: visible = false;
         }
 
-        EditAlertsTool {
-            id: editAlertsTool
+        AlertConditionsTool {
+            id: alertConditionsTool
             anchors {
                 left: parent.left
                 top: parent.top
@@ -348,7 +348,7 @@ Handheld {
         textColor: Material.foreground
     }
 
-    IdentifyFeaturesController {
+    IdentifyController {
         id: identifyController
         active: mapToolRow.state === "Identify"
 

@@ -147,6 +147,23 @@ DsaPanel {
         }
     }
 
+    Text {
+        anchors {
+            left: parent.left
+            right: parent.right
+            top: levelRow.bottom
+            margins: 15 * scaleFactor
+        }
+        visible: alertsView.count === 0
+        text: "No active alerts.\n\nSelect 'Conditions' to set up alert queries."
+        color: Material.foreground
+        horizontalAlignment: Text.AlignHCenter
+        font {
+            pixelSize: 12 * scaleFactor
+            family: DsaStyles.fontFamily
+        }
+    }
+
     onVisibleChanged: {
         if (!visible)
             return;

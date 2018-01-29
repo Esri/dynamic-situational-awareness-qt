@@ -31,7 +31,7 @@ public:
   explicit GraphicAlertSource(Esri::ArcGISRuntime::Graphic* graphic);
   ~GraphicAlertSource();
 
-  Esri::ArcGISRuntime::Point position() const override;
+  Esri::ArcGISRuntime::Point location() const override;
   void setSelected(bool selected) override;
 
 private:

@@ -44,6 +44,7 @@
 #include "AlertConditionsController.h"
 #include "IdentifyController.h"
 #include "DsaResources.h"
+#include "LocationTextController.h"
 
 #include "ArcGISRuntimeToolkit.h"
 #include "ArcGISCompassController.h"
@@ -139,6 +140,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<IdentifyController>("Esri.DSA", 1, 0, "IdentifyController");
   qmlRegisterType<AlertToolController>("Esri.DSA", 1, 0, "AlertToolController");
   qmlRegisterType<ViewedAlertsController>("Esri.DSA", 1, 0, "ViewedAlertsController");
+  qmlRegisterType<LocationTextController>("Esri.DSA", 1, 0, "LocationTextController");
   qmlRegisterType<AlertConditionsController>("Esri.DSA", 1, 0, "AlertConditionsController");
 
   // Register Toolkit Component Types

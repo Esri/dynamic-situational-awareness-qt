@@ -101,6 +101,15 @@ Vehicle {
 
         onMousePressed: followHud.stopFollowing();
 
+        CurrentLocation {
+            id: currentLocation
+            anchors {
+                bottom: sceneView.attributionTop
+                horizontalCenter: parent.horizontalCenter
+                margins: 10 * scaleFactor
+            }
+        }
+
         Rectangle {
             anchors {
                 fill: followHud
@@ -117,7 +126,7 @@ Vehicle {
             anchors {
                 bottom: sceneView.attributionTop
                 horizontalCenter: parent.horizontalCenter
-                margins: 10 * scaleFactor
+                margins: currentLocation.visible ? currentLocation.height + 25 * scaleFactor : 10 * scaleFactor
             }
             enabled: false
         }
@@ -333,12 +342,6 @@ Vehicle {
         textColor: Material.foreground
     }
 
-    Options {
-        id: optionsTool
-        anchors.fill: sceneView
-        visible: false
-    }
-
     About {
         id: aboutTool
         anchors.fill: parent
@@ -368,6 +371,12 @@ Vehicle {
         msgDialog.informativeText = message;
         msgDialog.detailedText = additionalMessage;
         msgDialog.open();
+    }
+
+    Options {
+        id: optionsTool
+        anchors.fill: parent
+        visible: false
     }
 
     MessageDialog {

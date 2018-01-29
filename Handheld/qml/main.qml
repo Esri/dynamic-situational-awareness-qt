@@ -104,6 +104,15 @@ Handheld {
 
         onMousePressed: followHud.stopFollowing();
 
+        CurrentLocation {
+            id: currentLocation
+            anchors {
+                bottom: sceneView.attributionTop
+                horizontalCenter: parent.horizontalCenter
+                margins: 10 * scaleFactor
+            }
+        }
+
         Rectangle {
             anchors {
                 fill: followHud
@@ -120,7 +129,7 @@ Handheld {
             anchors {
                 bottom: sceneView.attributionTop
                 horizontalCenter: parent.horizontalCenter
-                margins: 10 * scaleFactor
+                margins: currentLocation.visible ? currentLocation.height + 25 * scaleFactor : 10 * scaleFactor
             }
             enabled: false
         }
@@ -328,7 +337,6 @@ Handheld {
         }
     }
 
-
     CoordinateConversion {
         id: coordinateConversion
         anchors.bottom: parent.bottom
@@ -360,7 +368,7 @@ Handheld {
 
     Options {
         id: optionsTool
-        anchors.fill: sceneView
+        anchors.fill: parent
         visible: false
     }
 

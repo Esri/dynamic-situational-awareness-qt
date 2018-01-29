@@ -25,5 +25,6 @@
         <file>ViewedAlerts.qml</file>
         <file>AlertConditionsTool.qml</file>
         <file>About.qml</file>
+        <file>CurrentLocation.qml</file>
     </qresource>
 </RCC>

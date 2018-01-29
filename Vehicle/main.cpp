@@ -42,6 +42,7 @@
 #include "OptionsController.h"
 #include "VehicleStyles.h"
 #include "ViewedAlertsController.h"
+#include "LocationTextController.h"
 #include "IdentifyController.h"
 #include "AlertConditionsController.h"
 #include "DsaResources.h"
@@ -140,6 +141,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<IdentifyController>("Esri.DSA", 1, 0, "IdentifyController");
   qmlRegisterType<AlertToolController>("Esri.DSA", 1, 0, "AlertToolController");
   qmlRegisterType<ViewedAlertsController>("Esri.DSA", 1, 0, "ViewedAlertsController");
+  qmlRegisterType<LocationTextController>("Esri.DSA", 1, 0, "LocationTextController");
   qmlRegisterType<AlertConditionsController>("Esri.DSA", 1, 0, "AlertConditionsController");
 
   // Register Toolkit Component Types

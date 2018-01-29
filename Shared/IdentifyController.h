@@ -64,7 +64,7 @@ signals:
 private:
   bool addGeoElementPopup(Esri::ArcGISRuntime::GeoElement* geoElement, const QString& popupTitle);
 
-  double m_tolerance = 5;
+  double m_tolerance = 5.0;
   Esri::ArcGISRuntime::TaskWatcher m_layersWatcher;
   Esri::ArcGISRuntime::TaskWatcher m_graphicsOverlaysWatcher;
   QList<Esri::ArcGISRuntime::PopupManager*> m_popupManagers;

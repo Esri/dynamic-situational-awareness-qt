@@ -23,6 +23,7 @@
 
 using namespace Esri::ArcGISRuntime;
 
+// RAII helper to ensure the QList<IdentifyLayerResult*> is deleted when we leave the scope
 struct LayerResultsManager {
 
   QList<IdentifyLayerResult*>& m_results;
@@ -38,6 +39,7 @@ struct LayerResultsManager {
   }
 };
 
+// RAII helper to ensure the QList<IdentifyGraphicsOverlayResult*> is deleted when we leave the scope
 struct GraphicsOverlaysResultsManager {
 
   QList<IdentifyGraphicsOverlayResult*>& m_results;
@@ -53,35 +55,54 @@ struct GraphicsOverlaysResultsManager {
   }
 };
 
+/*!
+  \brief Constructor accepting an optional \a parent.
+ */
 IdentifyController::IdentifyController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent)
 {
   Toolkit::ToolManager::instance().addTool(this);
 
+  // setup connection to handle mouse-clicking in the view (used to trigger the identify tasks)
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mouseClicked,
           this, &IdentifyController::onMouseClicked);
 
+  // setup connection to handle the results of an Identify Layers task
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::identifyLayersCompleted,
           this, &IdentifyController::onIdentifyLayersCompleted);
 
+  // setup connection to handle the results of an Identify Graphic Overlays task
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::identifyGraphicsOverlaysCompleted,
           this, &IdentifyController::onIdentifyGraphicsOverlaysCompleted);
 }
 
+/*!
+  \brief Destructor.
+ */
 IdentifyController::~IdentifyController()
 {
 }
 
+/*!
+  \brief The name of this tool.
+ */
 QString IdentifyController::toolName() const
 {
   return QStringLiteral("identify");
 }
 
+/*!
+  \brief Sets whether this tool should be \a active or not.
+
+  When active, the tool will kick off identify tasks for graphics and feataures when
+  it recieves a mouse-clcik in the view.
+ */
 void IdentifyController::setActive(bool active)
 {
   if (active == m_active)
     return;
 
+  // if the tool is busy (identify tasks are in-progress), cancel those tasks and start new ones
   if (busy())
   {
     m_layersWatcher.cancel();
@@ -92,12 +113,20 @@ void IdentifyController::setActive(bool active)
   emit activeChanged();
 }
 
+/*!
+  \brief Returns whether the tool is busy or not (e.g. whether identify tasks are running).
+ */
 bool IdentifyController::busy() const
 {
   return (m_layersWatcher.isValid() && !m_layersWatcher.isDone() && !m_layersWatcher.isCanceled()) ||
       (m_graphicsOverlaysWatcher.isValid() && !m_graphicsOverlaysWatcher.isDone() && !m_graphicsOverlaysWatcher.isCanceled());
 }
 
+/*!
+  \brief Returns a QVariantList of \l ESri::ArcGISRuntime::PopupManager which can be displayed in the view.
+
+  For example, this can be passed to a \l PopupView or \l PopupStackView for display.
+ */
 QVariantList IdentifyController::popupManagers() const
 {
   QVariantList res;
@@ -111,14 +140,20 @@ QVariantList IdentifyController::popupManagers() const
   return res;
 }
 
+/*!
+  \brief Handles a mouse-click event in the view - used to trigger identify graphics and features tasks.
+ */
 void IdentifyController::onMouseClicked(QMouseEvent& event)
 {
+  // ignore the event if the tool is not active.
   if (!isActive())
     return;
 
+  // only consider left clicks (or taps) onn the view.
   if (event.button() != Qt::MouseButton::LeftButton)
     return;
 
+  // Ignore the event if the tool is cuurrently running tasks.
   if (busy())
     return;
 
@@ -126,6 +161,9 @@ void IdentifyController::onMouseClicked(QMouseEvent& event)
   if (!geoView)
     return;
 
+  // start new identifyLayers and identifyGraphicsOverlays tasks at the x and y position of the event and using the
+  // specifed tolerance (m_tolerance) to determine how accurate a hit-test to perform.
+  // create a TaskWatcher to store the progress/state of the task.
   m_layersWatcher = geoView->identifyLayers(event.pos().x(), event.pos().y(), m_tolerance, false);
   m_graphicsOverlaysWatcher = geoView->identifyGraphicsOverlays(event.pos().x(), event.pos().y(), m_tolerance, false);
   emit busyChanged();
@@ -133,14 +171,22 @@ void IdentifyController::onMouseClicked(QMouseEvent& event)
   m_popupManagers.clear();
   emit popupManagersChanged();
 
+  // accept the event to prevent it being used by other tools etc.
   event.accept();
 }
 
+/*!
+  \brief Handles the output of an IdentifyLayers task with Id \a taskId and results \l identifyResults.
+
+  Creates a new \l Esri::ArcGISRumtime::PopupManager objects for every valid feature with attributes
+ */
 void IdentifyController::onIdentifyLayersCompleted(const QUuid& taskId, QList<IdentifyLayerResult*> identifyResults)
 {
+  // if the task Id does not match the one we are tracking, ignore it
   if (taskId != m_layersWatcher.taskId())
     return;
 
+  // Create a RAII helper to ensure we clean uop the results
   LayerResultsManager resultsManager(identifyResults);
 
   m_layersWatcher = TaskWatcher();
@@ -149,6 +195,7 @@ void IdentifyController::onIdentifyLayersCompleted(const QUuid& taskId, QList<Id
   if (!isActive())
     return;
 
+  // iterate over the results and add a new PopupManager for any valid features, with attributes
   bool anyAdded = false;
   auto it = resultsManager.m_results.begin();
   auto itEnd = resultsManager.m_results.end();
@@ -171,11 +218,18 @@ void IdentifyController::onIdentifyLayersCompleted(const QUuid& taskId, QList<Id
     emit popupManagersChanged();
 }
 
+/*!
+  \brief Handles the output of an IdentifyGraphicsOverlays task with Id \a taskId and results \l identifyResults.
+
+  Creates a new \l Esri::ArcGISRumtime::PopupManager objects for every valid graphic with attributes
+ */
 void IdentifyController::onIdentifyGraphicsOverlaysCompleted(const QUuid& taskId, QList<IdentifyGraphicsOverlayResult*> identifyResults)
 {
+  // if the task Id does not match the one we are tracking, ignore it
   if (taskId != m_graphicsOverlaysWatcher.taskId())
     return;
 
+  // Create a RAII helper to ensure we clean uop the results
   GraphicsOverlaysResultsManager resultsManager(identifyResults);
 
   m_graphicsOverlaysWatcher = TaskWatcher();
@@ -184,6 +238,7 @@ void IdentifyController::onIdentifyGraphicsOverlaysCompleted(const QUuid& taskId
   if (!isActive())
     return;
 
+  // iterate over the results and add a new PopupManager for any valid graphics, with attributes
   bool anyAdded = false;
   auto it = resultsManager.m_results.begin();
   auto itEnd = resultsManager.m_results.end();
@@ -207,6 +262,10 @@ void IdentifyController::onIdentifyGraphicsOverlaysCompleted(const QUuid& taskId
     emit popupManagersChanged();
 }
 
+/*!
+  \brief Helper method to create a new PopupManager with the totlel \a popupTitle,
+  if \a geoElement is valid and has attributes.
+ */
 bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QString& popupTitle)
 {
   if (!geoElement)
@@ -215,6 +274,7 @@ bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QStrin
   if (!geoElement->attributes() || geoElement->attributes()->isEmpty())
     return false;
 
+  // create a new Popup from the geoElement
   Popup* newPopup = new Popup(geoElement, this);
   newPopup->popupDefinition()->setTitle(popupTitle);
   PopupManager* newManager = new PopupManager(newPopup, this);

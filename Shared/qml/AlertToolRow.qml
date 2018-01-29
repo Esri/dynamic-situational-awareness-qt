@@ -80,7 +80,6 @@ Row {
         toolName: "Conditions"
         onToolSelected: {
             identifyController.active = false;
-            identifyIcon.selected = false;
             alertsTool.visible = false;
             if (alertToolRow.state === toolName) {
                 alertToolRow.state = "clear";

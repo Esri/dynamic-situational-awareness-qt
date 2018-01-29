@@ -20,10 +20,10 @@ import Esri.DSA 1.0
 DsaPanel {
     id: manageAlertsRoot
     width: 272 * scaleFactor
-    title: qsTr("Edit Alert Conditions")
+    title: qsTr("Alert Conditions")
     clip: true
 
-    EditAlertsController {
+    AlertConditionsController {
         id: toolController
         active: parent.visible
         onPickedElement: {
@@ -43,7 +43,7 @@ DsaPanel {
     property bool geofenceReadyToAdd:  geofenceConditionButton.checked && (levelCb.currentIndex !== -1 &&
                                                                            sourceCb.currentIndex !== -1 &&
                                                                            targetCB.currentIndex !== -1 &&
-                                                                           featureIdEdit.text.length > 0)
+                                                                           (featureIdEdit.text.length > 0 || allObjectRb.checked))
     property bool attributeReadyToAdd: attributeConditionButton.checked && (levelCb.currentIndex !== -1 &&
                                                                             sourceCb.currentIndex !== -1 &&
                                                                             attributeFieldEdit.length > 0 &&
@@ -51,8 +51,7 @@ DsaPanel {
     property bool analysisReadyToAdd: analysisConditionButton.checked && (levelCb.currentIndex !== -1 &&
                                                                           sourceCb.currentIndex !== -1 &&
                                                                           targetCB.currentIndex !== -1 &&
-                                                                          featureIdEdit.text.length > 0)
-
+                                                                          (featureIdEdit.text.length > 0 || allObjectRb.checked))
     Row {
         id: newOrViewRow
         spacing: 0
@@ -101,7 +100,7 @@ DsaPanel {
 
     Column {
         clip: true
-        spacing: 8 * scaleFactor
+        spacing: 4 * scaleFactor
 
         anchors {
             top: newOrViewRow.bottom
@@ -148,7 +147,7 @@ DsaPanel {
                 text: "GeoFence\nAlert"
                 font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 font.bold: checked
-                height: 48 * scaleFactor
+                height: 32 * scaleFactor
                 width: (newOrViewRow.width - (newOrViewRow.anchors.margins * 2)) / 3
                 checked: true
                 checkable: true
@@ -479,15 +478,15 @@ DsaPanel {
                                                           levelCb.currentIndex,
                                                           sourceCb.currentText,
                                                           withinDistanceSB.value,
-                                                          Number(featureIdEdit.text),
-                                                          targetCB.currentIndex);
+                                                          singleFeatureRb.checked ? Number(featureIdEdit.text) : -1,
+                                                                                    targetCB.currentIndex);
                 }
                 else if (withinAreaRb.checked) {
                     toolController.addWithinAreaAlert(newAlertName.text,
                                                       levelCb.currentIndex,
                                                       sourceCb.currentText,
-                                                      Number(featureIdEdit.text),
-                                                      targetCB.currentIndex);
+                                                      singleFeatureRb.checked ? Number(featureIdEdit.text) : -1,
+                                                                                targetCB.currentIndex);
                 }
 
                 levelCb.currentIndex = -1;
@@ -517,13 +516,13 @@ DsaPanel {
     }
 
     ListView {
-        id: alertsList
+        id: conditionsList
         visible: viewExistingModeButton.checked
         clip: true
         anchors {
             margins: 8 * scaleFactor
             top: conditionsListTitle.bottom
-            bottom: removeConditionButton.top
+            bottom: parent.bottom
             left: parent.left
             right: parent.right
         }
@@ -531,53 +530,114 @@ DsaPanel {
         model: toolController.conditionsList
         currentIndex: -1
 
-        delegate: Row {
+        delegate: Rectangle {
+            width: conditionsList.width
+            height: expandRowButton.height + (8 * scaleFactor)
+            color: Material.background
+            radius: 2 * scaleFactor
+
             Text {
+                anchors {
+                    left: parent.left
+                    verticalCenter: parent.verticalCenter
+                    right: expandRowButton.left
+                    margins: 8 * scaleFactor
+                }
                 text: name
-                color: index === alertsList.currentIndex ? Material.accent : Material.foreground
+                color: index === conditionsList.currentIndex ? Material.accent : Material.foreground
                 font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignVCenter
                 wrapMode: Text.WrapAnywhere
                 elide: Text.ElideRight
+            }
 
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: alertsList.currentIndex = index;
+            OverlayButton {
+                id: expandRowButton
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                    right: parent.right
+                    margins: 8 * scaleFactor
+                }
+                iconUrl: DsaResources.iconDrawer
+
+                onClicked: {
+                    conditionsMenu.visible = true;
+                }
+            }
+
+            Rectangle {
+                id: conditionsMenu
+                visible: false
+                color: Material.background
+                border.color: Material.accent
+                border.width: 2 * scaleFactor
+                radius: 8 * scaleFactor
+                width: 64 * scaleFactor
+                height: 128 * scaleFactor
+
+                anchors {
+                    right: expandRowButton.right
+                    top: expandRowButton.top
+                }
+
+                Column {
+                    id: conditionsCol
+                    anchors{
+                        margins: 8 * scaleFactor
+                        fill: parent
+                    }
+                    spacing: 4 * scaleFactor
+
+                    Button {
+                        width: parent.width
+                        text: "Edit"
+                        enabled: false
+                        font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                        onClicked: toolController.removeConditionAt(index);
+                    }
+
+                    Button {
+                        width: parent.width
+                        text: "Delete"
+                        font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                        onClicked: toolController.removeConditionAt(index);
+                    }
+
+                    Button {
+                        width: parent.width
+                        text: "Pause"
+                        enabled: false
+                        font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                        onClicked: toolController.removeConditionAt(index);
+                    }
+
+                    Button {
+                        width: parent.width
+                        text: "Close"
+                        font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                        onClicked: conditionsMenu.visible = false;
+                    }
+
                 }
             }
         }
     }
 
-    RoundButton {
-        id: removeConditionButton
-        visible: viewExistingModeButton.checked
-        enabled: alertsList.currentIndex !== -1
-
+    Text {
         anchors {
-            horizontalCenter: parent.horizontalCenter
-            bottom: parent.bottom
-            margins: 8 * scaleFactor
+            left: parent.left
+            right: parent.right
+            top: conditionsListTitle.bottom
+            margins: 15 * scaleFactor
         }
-
-        background: Rectangle {
-            implicitWidth: 40 * scaleFactor
-            implicitHeight: 40 * scaleFactor
-            opacity: enabled ? 1 : 0.3
-            radius: addButton.radius
-            color: Material.accent
-
-            Image {
-                anchors.centerIn: parent
-                width: 26 * scaleFactor
-                height: width
-                source: DsaResources.iconTrash
-            }
-        }
-
-        onClicked: {
-            toolController.removeConditionAt(alertsList.currentIndex);
-            alertsList.currentIndex = -1;
+        visible: conditionsList.count === 0 && viewExistingModeButton.checked
+        text: "No Conditions.\n\nSelect 'Create New' to set up alert queries."
+        color: Material.foreground
+        horizontalAlignment: Text.AlignHCenter
+        font {
+            pixelSize: 12 * scaleFactor
+            family: DsaStyles.fontFamily
         }
     }
 }

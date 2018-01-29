@@ -25,11 +25,11 @@ public:
   explicit AlertSource(QObject* parent = nullptr);
   ~AlertSource();
 
-  virtual Esri::ArcGISRuntime::Point position() const = 0;
-  virtual void setSelected(bool selected);
+  virtual Esri::ArcGISRuntime::Point location() const = 0;
+  virtual void setSelected(bool selected) = 0;
 
 signals:
-  void positionChanged();
+  void locationChanged();
   void noLongerValid();
 };
 

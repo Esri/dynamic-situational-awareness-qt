@@ -22,7 +22,7 @@ GraphicAlertSource::GraphicAlertSource(Graphic* graphic):
   AlertSource(graphic),
   m_graphic(graphic)
 {
-  connect(m_graphic, &Graphic::geometryChanged, this, &GraphicAlertSource::positionChanged);
+  connect(m_graphic, &Graphic::geometryChanged, this, &GraphicAlertSource::locationChanged);
 }
 
 GraphicAlertSource::~GraphicAlertSource()
@@ -30,7 +30,7 @@ GraphicAlertSource::~GraphicAlertSource()
 
 }
 
-Point GraphicAlertSource::position() const
+Point GraphicAlertSource::location() const
 {
   if (m_graphic->geometry().geometryType() == GeometryType::Point)
     return m_graphic->geometry();

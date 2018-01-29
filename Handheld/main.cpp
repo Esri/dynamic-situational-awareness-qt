@@ -41,8 +41,8 @@
 #include "OptionsController.h"
 #include "HandheldStyles.h"
 #include "ViewedAlertsController.h"
+#include "AlertConditionsController.h"
 #include "IdentifyController.h"
-#include "EditAlertsController.h"
 #include "DsaResources.h"
 
 #include "ArcGISRuntimeToolkit.h"
@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<IdentifyController>("Esri.DSA", 1, 0, "IdentifyController");
   qmlRegisterType<AlertToolController>("Esri.DSA", 1, 0, "AlertToolController");
   qmlRegisterType<ViewedAlertsController>("Esri.DSA", 1, 0, "ViewedAlertsController");
-  qmlRegisterType<EditAlertsController>("Esri.DSA", 1, 0, "EditAlertsController");
+  qmlRegisterType<AlertConditionsController>("Esri.DSA", 1, 0, "AlertConditionsController");
 
   // Register Toolkit Component Types
   ArcGISRuntimeToolkit::registerToolkitTypes();

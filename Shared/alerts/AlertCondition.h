@@ -19,13 +19,29 @@
 #include <QObject>
 
 class AlertConditionData;
+class AlertSource;
+class AlertTarget;
+
+namespace Esri
+{
+namespace ArcGISRuntime
+{
+class GraphicsOverlay;
+}
+}
 
 class AlertCondition : public QObject
 {
   Q_OBJECT
 
 public:
-  explicit AlertCondition(const AlertLevel& level, const QString& name, QObject* parent = nullptr);
+  explicit AlertCondition(const AlertLevel& level,
+                          const QString& name,
+                          QObject* parent = nullptr);
+
+  void init(AlertSource* source, AlertTarget* target);
+  void init(Esri::ArcGISRuntime::GraphicsOverlay* sourceFeed, AlertTarget* target);
+
   ~AlertCondition();
 
   AlertLevel level() const;
@@ -35,6 +51,8 @@ public:
   void setName(const QString& name);
 
   void addData(AlertConditionData* newData);
+
+  virtual AlertConditionData* createData(AlertSource* source, AlertTarget* target) = 0;
 
 signals:
   void noLongerValid();

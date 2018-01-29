@@ -24,8 +24,3 @@ AlertSource::~AlertSource()
 {
   emit noLongerValid();
 }
-
-void AlertSource::setSelected(bool)
-{
-
-}

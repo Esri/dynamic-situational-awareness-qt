@@ -17,50 +17,18 @@
 
 #include <QObject>
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
-class GeoElement;
-class GraphicsOverlay;
-}
-}
-
-class AbstractOverlayManager;
-class AlertSource;
-
 class WithinAreaAlertCondition : public AlertCondition
 {
   Q_OBJECT
 
 public:
-  explicit WithinAreaAlertCondition(AlertSource* source,
-                                    Esri::ArcGISRuntime::GeoElement* target,
-                                    AlertLevel level,
-                                    const QString& name,
-                                    QObject* parent = nullptr);
-
-  explicit WithinAreaAlertCondition(Esri::ArcGISRuntime::GraphicsOverlay* source,
-                                    Esri::ArcGISRuntime::GeoElement* target,
-                                    AlertLevel level,
-                                    const QString& name,
-                                    QObject* parent = nullptr);
-
-  explicit WithinAreaAlertCondition(Esri::ArcGISRuntime::GraphicsOverlay* source,
-                                    AbstractOverlayManager* targetOverlay,
-                                    AlertLevel level,
+  explicit WithinAreaAlertCondition( AlertLevel level,
                                     const QString& name,
                                     QObject* parent = nullptr);
 
   ~WithinAreaAlertCondition();
 
-private:
-  void connectSourceSignals(Esri::ArcGISRuntime::GraphicsOverlay* sourceOverlay);
-  void connectTargetOverlaySignals();
-
-//  Esri::ArcGISRuntime::GraphicsOverlay* m_source = nullptr;
-  Esri::ArcGISRuntime::GeoElement* m_target = nullptr;
-  AbstractOverlayManager* m_targetOverlay = nullptr;
+  AlertConditionData* createData(AlertSource* source, AlertTarget* target) override;
 };
 
 #endif // WITHINAREAALERTCONDITION_H

@@ -14,7 +14,6 @@
 #include "ToolResourceProvider.h"
 #include "ToolManager.h"
 #include "LocationTextController.h"
-#include <QDebug>
 
 using namespace Esri::ArcGISRuntime;
 

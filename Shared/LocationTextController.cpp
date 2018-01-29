@@ -18,8 +18,6 @@
 #include "Scene.h"
 #include "Surface.h"
 
-#include <QDebug>
-
 using namespace Esri::ArcGISRuntime;
 
 // constant strings used for properties in the config file
@@ -275,7 +273,6 @@ void LocationTextController::setUnitOfMeasurement(const QString& unit)
   if (unit == m_unitOfMeasurement)
     return;
 
-  qDebug() << "setting to " << unit;
   m_unitOfMeasurement = unit;
   emit propertyChanged(UNIT_OF_MEASUREMENT_PROPERTYNAME, unit);
   emit unitOfMeasurementChanged();

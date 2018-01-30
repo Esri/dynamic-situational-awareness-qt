@@ -60,29 +60,22 @@ GeometryQuadtree::GeometryQuadtree(const Esri::ArcGISRuntime::Envelope& extent,
                                    int maxLevels,
                                    QObject* parent):
   QObject(parent),
-  m_maxLevels(maxLevels)
+  m_maxLevels(maxLevels),
+  m_elements(geoElements)
 {
-  // ensure the tree's extent is in WGS84
-  const Envelope extentWgs84 = GeometryEngine::project(extent, SpatialReference::wgs84());
-
-  // build the (currently empty) tree to the desired depth
-  m_tree.reset(new QuadTree(0, extentWgs84.xMin(), extentWgs84.xMax(), extentWgs84.yMin(), extentWgs84.yMax(), m_maxLevels));
-
-  // store a list of the geometry which the tree will use
+  // connect to the geometryChanged signal of individual GeoElements
   for (const auto& element : geoElements)
-    m_geometry.append(element->geometry());
-
-  // assign each geometry to the tree, alongwith its index in the m_geometry list
-  int index = 0;
-  for (const auto& geom : m_geometry)
   {
-    const Geometry wgs84 = GeometryEngine::project(geom, SpatialReference::wgs84());
-    m_tree->assign(wgs84, index);
-    index++;
+    connect(element, &GeoElement::geometryChanged, this, [this]()
+    {
+      cacheGeometry();
+      const Envelope newExtent = GeometryEngine::combineExtents(m_geometry);
+      buildTree(newExtent);
+    });
   }
 
-  // remove any nodes from the tree which contain no geometry
-  m_tree->prune();
+  cacheGeometry();
+  buildTree(extent);
 }
 
 /*!
@@ -141,6 +134,44 @@ QList<Geometry> GeometryQuadtree::candidateIntersections(const Point& location) 
   }
 
   return results;
+}
+
+/*!
+  \internal
+ */
+void GeometryQuadtree::buildTree(const Esri::ArcGISRuntime::Envelope& extent)
+{
+  // ensure the tree's extent is in WGS84
+  const Envelope extentWgs84 = GeometryEngine::project(extent, SpatialReference::wgs84());
+
+  // build the (currently empty) tree to the desired depth
+  m_tree.reset(new QuadTree(0, extentWgs84.xMin(), extentWgs84.xMax(), extentWgs84.yMin(), extentWgs84.yMax(), m_maxLevels));
+
+  // assign each geometry to the tree, alongwith its index in the m_geometry list
+  int index = 0;
+  for (const auto& geom : m_geometry)
+  {
+    const Geometry wgs84 = GeometryEngine::project(geom, SpatialReference::wgs84());
+    m_tree->assign(wgs84, index);
+    index++;
+  }
+
+  // remove any nodes from the tree which contain no geometry
+  m_tree->prune();
+
+  emit treeChanged();
+}
+
+/*!
+  \internal
+ */
+void GeometryQuadtree::cacheGeometry()
+{
+  m_geometry.clear();
+
+  // store a list of the geometry which the tree will use
+  for (const auto& element : geoElements)
+    m_geometry.append(element->geometry());
 }
 
 /*!

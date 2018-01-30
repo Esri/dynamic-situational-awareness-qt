@@ -41,10 +41,17 @@ public:
   QList<Esri::ArcGISRuntime::Geometry> candidateIntersections(const Esri::ArcGISRuntime::Envelope& extent) const;
   QList<Esri::ArcGISRuntime::Geometry> candidateIntersections(const Esri::ArcGISRuntime::Point& location) const;
 
+signals:
+  void treeChanged();
+
 private:
+  void buildTree(const Esri::ArcGISRuntime::Envelope& extent);
+  void cacheGeometry();
+
   struct QuadTree;
 
   int m_maxLevels;
+  QList<Esri::ArcGISRuntime::GeoElement*> m_elements;
   std::unique_ptr<QuadTree> m_tree;
   QList<Esri::ArcGISRuntime::Geometry> m_geometry;
 };

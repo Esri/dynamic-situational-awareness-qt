@@ -249,7 +249,7 @@ void GeometryQuadtree::QuadTree::prune()
   // for each existing child node,
   if (m_tl)
   {
-    // remove the node (and alal of it's children) if it is empty
+    // remove the node (and all of it's children) if it is empty
     if (m_tl->m_geometryIndices.empty())
     {
       delete m_tl;
@@ -315,7 +315,7 @@ QSet<int> GeometryQuadtree::QuadTree::intersectingIndices(const Envelope& extent
   if (!intersects(extent))
     return QSet<int>();
 
-  // if this node intesects but has no children, it must be a leaf node: return alal geometry indices
+  // if this node intersects but has no children, it must be a leaf node: return all geometry indices
   if (!m_tl && !m_tr && !m_bl && !m_br)
     return m_geometryIndices;
 
@@ -341,7 +341,7 @@ QSet<int> GeometryQuadtree::QuadTree::intersectingIndices(const Envelope& extent
  */
 QSet<int> GeometryQuadtree::QuadTree::intersectingIndices(const Point& location) const
 {
-  // if this node contains no geometry indices there is no intersection
+  // if this node contains no geometry indices, there is no intersection
   if (m_geometryIndices.empty())
     return QSet<int>();
 
@@ -349,7 +349,7 @@ QSet<int> GeometryQuadtree::QuadTree::intersectingIndices(const Point& location)
   if (!intersects(location))
     return QSet<int>();
 
-  // if this node intesects but has no children, it must be a leaf node: return alal geometry indices
+  // if this node intesects but has no children, it must be a leaf node: return all geometry indices
   if (!m_tl && !m_tr && !m_bl && !m_br)
     return m_geometryIndices;
 

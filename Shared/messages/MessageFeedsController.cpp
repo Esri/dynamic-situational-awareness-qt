@@ -104,11 +104,11 @@ void MessageFeedsController::addMessageListener(MessageListener* messageListener
     if (m.isEmpty())
       return;
 
-//    if (m_locationBroadcast->isEnabled())
-//    {
-//      if (m_locationBroadcast->message().messageId() == m.messageId()) // do not display our own location broadcast message
-//        return;
-//    }
+    if (m_locationBroadcast->isEnabled())
+    {
+      if (m_locationBroadcast->message().messageId() == m.messageId()) // do not display our own location broadcast message
+        return;
+    }
 
     MessageFeed* messageFeed = m_messageFeeds->messageFeedByType(m.messageType());
     if (!messageFeed)

@@ -34,15 +34,17 @@ class GeometryQuadtree : public QObject
 public:
   explicit GeometryQuadtree(const Esri::ArcGISRuntime::Envelope& extent,
                             const QList<Esri::ArcGISRuntime::GeoElement*>& geoElements,
+                            int maxLevels,
                             QObject* parent = nullptr);
   ~GeometryQuadtree();
 
-  QList<Esri::ArcGISRuntime::Geometry> intersections(const Esri::ArcGISRuntime::Envelope& extent) const;
-  QList<Esri::ArcGISRuntime::Geometry> intersections(const Esri::ArcGISRuntime::Point& location) const;
+  QList<Esri::ArcGISRuntime::Geometry> candidateIntersections(const Esri::ArcGISRuntime::Envelope& extent) const;
+  QList<Esri::ArcGISRuntime::Geometry> candidateIntersections(const Esri::ArcGISRuntime::Point& location) const;
 
 private:
   struct QuadTree;
 
+  int m_maxLevels;
   std::unique_ptr<QuadTree> m_tree;
   QList<Esri::ArcGISRuntime::Geometry> m_geometry;
 };

@@ -42,6 +42,7 @@ class DsaResources : public QObject
   Q_PROPERTY(QUrl iconLayers READ iconLayers CONSTANT)
   Q_PROPERTY(QUrl iconListView READ iconListView CONSTANT)
   Q_PROPERTY(QUrl iconMap READ iconMap CONSTANT)
+  Q_PROPERTY(QUrl iconMenu READ iconMenu CONSTANT)
   Q_PROPERTY(QUrl iconMessages READ iconMessages CONSTANT)
   Q_PROPERTY(QUrl iconPoint READ iconPoint CONSTANT)
   Q_PROPERTY(QUrl iconPolygon READ iconPolygon CONSTANT)
@@ -84,6 +85,7 @@ private:
   QUrl iconLayers() const;
   QUrl iconListView() const;
   QUrl iconMap() const;
+  QUrl iconMenu() const;
   QUrl iconMessages() const;
   QUrl iconPoint() const;
   QUrl iconPolygon() const;

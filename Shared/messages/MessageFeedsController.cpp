@@ -206,6 +206,11 @@ void MessageFeedsController::setResourcePath(const QString& resourcePath)
   emit propertyChanged(RESOURCE_DIRECTORY_PROPERTYNAME, resourcePath);
 }
 
+LocationBroadcast* MessageFeedsController::locationBroadcast() const
+{
+  return m_locationBroadcast;
+}
+
 /*!
    \brief Returns \c true if the location broadcast is enabled.
 

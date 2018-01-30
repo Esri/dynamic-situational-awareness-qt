@@ -199,7 +199,7 @@ void LocationBroadcast::setUdpPort(int port)
 /*!
    \brief Returns the frequency of broadcasted location updates.
 
-   The frequency value is in milliseconds.
+   The frequency value is in milliseconds. The default is \c 3000 milliseconds
  */
 int LocationBroadcast::frequency() const
 {
@@ -211,6 +211,8 @@ int LocationBroadcast::frequency() const
 
    Setting the frequency to a new value will adjust the current broadcast of
    location updates.
+
+   The default is \c 3000 milliseconds
  */
 void LocationBroadcast::setFrequency(int frequency)
 {

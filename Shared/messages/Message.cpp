@@ -269,6 +269,7 @@ Message Message::createFromGeoMessage(const QByteArray& message)
       else if (QStringRef::compare(reader.name(), GEOMESSAGE_SIC_NAME, Qt::CaseInsensitive) == 0)
       {
         const auto sidc = reader.readElementText();
+        attributes.insert(GEOMESSAGE_SIC_NAME, sidc);
         attributes.insert(SIDC_NAME, sidc);
         geoMessage.d->symbolId = sidc;
       }

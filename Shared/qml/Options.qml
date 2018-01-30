@@ -21,14 +21,16 @@ Rectangle {
     id: optionsRoot
     color: Material.primary
 
+    // Add the Options Controller Class
     OptionsController {
         id: optionsController
     }
 
+    // Create a flickable column so that n number of options can be added
     Flickable {
         anchors {
             fill: parent
-            margins: 8 * scaleFactor
+            margins: 10 * scaleFactor
         }
         contentHeight: optionsColumn.height
         clip: true
@@ -36,19 +38,109 @@ Rectangle {
         Column {
             id: optionsColumn
             width: parent.width
-            spacing: 5 * scaleFactor
+            spacing: 10 * scaleFactor
 
+            Label {
+                id: toolbarLabel
+                text: "Settings"
+                font {
+                    pixelSize: DsaStyles.titleFontPixelSize * scaleFactor * 1.5
+                    family: DsaStyles.fontFamily
+                }
+                color: Material.foreground
+            }
+
+            Label {
+                text: "Map Controls"
+                font {
+                    family: DsaStyles.fontFamily
+                    underline: true
+                }
+                color: Material.foreground
+            }
+
+            // Toggle navigation controls
+            CheckBox {
+                text: "Show navigation controls"
+                checked: true
+                onCheckedChanged: {
+                    // update visibility of UI components
+                    navTool.visible = checked;
+                    compass.visible = checked;
+                }
+            }
+
+            // Toggle location/elevation overlay
+            CheckBox {
+                text: "Show location and elevation"
+                checked: true
+                onCheckedChanged: {
+                    // update visibility of UI component
+                    currentLocation.visible = checked;
+                }
+            }
+
+            // Whether to use GPS for the location/elevation display or not.
+            // The alternative is the use the Scene's base surface.
+            CheckBox {
+                id: useGPS
+                text: "Use GPS for current elevation display"
+                checked: optionsController.useGpsForElevation
+                onCheckedChanged: optionsController.useGpsForElevation = checked
+            }
+
+            Label {
+                text: "Formats, Units of measurement, etc"
+                font {
+                    family: DsaStyles.fontFamily
+                    underline: true
+                }
+                color: Material.foreground
+            }
+
+            // Change the default coordinate formats between DMS, USNG, MGRS, etc.
             Row {
-                height: 40 * scaleFactor
                 width: parent.width
+                spacing: 10 * scaleFactor
 
-                CheckBox {
-                    text: "Show Navigation Controls"
-                    checked: true
-                    onCheckedChanged: {
-                        navTool.visible = checked;
-                        compass.visible = checked;
+                Label {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "Default Coordinate Format"
+                    font {
+                        pixelSize: 12 * scaleFactor
+                        family: DsaStyles.fontFamily
                     }
+                    color: Material.foreground
+                }
+
+                ComboBox {
+                    anchors.verticalCenter: parent.verticalCenter
+                    model: optionsController.coordinateFormats
+                    Component.onCompleted: currentIndex = optionsController.initialFormatIndex
+                    onCurrentTextChanged: optionsController.setCoordinateFormat(currentText);
+                }
+            }
+
+            // Change the default units between feet and meters
+            Row {
+                width: parent.width
+                spacing: 10 * scaleFactor
+
+                Label {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "Default Unit of Measurement"
+                    font {
+                        pixelSize: 12 * scaleFactor
+                        family: DsaStyles.fontFamily
+                    }
+                    color: Material.foreground
+                }
+
+                ComboBox {
+                    anchors.verticalCenter: parent.verticalCenter
+                    model: optionsController.units
+                    Component.onCompleted: currentIndex = optionsController.initialUnitIndex
+                    onCurrentTextChanged: optionsController.setUnitOfMeasurement(currentText)
                 }
             }
         }

@@ -57,10 +57,10 @@ Rectangle {
                 width: parent.width
 
                 CheckBox {
-                    text: "Send Current Location"
-                    checked: messageFeeds.controller.sendLocationMessageEnabled
+                    text: "Location Broadcast"
+                    checked: messageFeeds.controller.locationBroadcastEnabled
                     onCheckedChanged: {
-                        messageFeeds.controller.sendLocationMessageEnabled = checked;
+                        messageFeeds.controller.locationBroadcastEnabled = checked;
                     }
                 }
             }
@@ -71,7 +71,7 @@ Rectangle {
                 spacing: 5 * scaleFactor
 
                 Text {
-                    text: "Send Location frequency (ms)"
+                    text: "Location Broadcast frequency (ms)"
                     color: Material.foreground
                     font {
                         pixelSize: 10 * scaleFactor
@@ -81,7 +81,7 @@ Rectangle {
 
                 TextField {
                     width: 50 * scaleFactor
-                    text: messageFeeds.controller.sendLocationMessageFrequency
+                    text: messageFeeds.controller.locationBroadcastFrequency
                     color: Material.foreground
                     font {
                         pixelSize: 10 * scaleFactor
@@ -89,7 +89,7 @@ Rectangle {
                     }
 
                     onTextChanged: {
-                        messageFeeds.controller.sendLocationMessageFrequency = Number(text);
+                        messageFeeds.controller.locationBroadcastFrequency = Number(text);
                     }
                 }
             }

@@ -83,7 +83,12 @@ void OptionsController::setProperties(const QVariantMap& properties)
 {
   // access tool properties from the config
   m_coordinateFormat = properties[COORDINATE_FORMAT_PROPERTYNAME].toString();
+  if (m_coordinateFormat.isEmpty())
+    m_coordinateFormat = DMS;
+
   m_unitOfMeasurement = properties[UNIT_OF_MEASUREMENT_PROPERTYNAME].toString();
+  if (m_unitOfMeasurement.isEmpty())
+    m_unitOfMeasurement = Meters;
 
   // update properties
   m_initialUnitIndex = m_units.indexOf(m_unitOfMeasurement);

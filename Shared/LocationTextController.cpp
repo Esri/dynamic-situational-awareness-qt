@@ -90,6 +90,9 @@ QString LocationTextController::currentElevationText() const
  */
 void LocationTextController::onLocationChanged(const Point& pt)
 {
+  if (m_coordinateFormat.isEmpty())
+    return;
+
   // update location text
   m_currentLocationText = QString("%1 (%2)").arg(formatCoordinate(pt), m_coordinateFormat);
   emit currentLocationTextChanged();

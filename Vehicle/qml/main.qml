@@ -169,7 +169,7 @@ Vehicle {
         TableOfContents {
             id: tableOfContentsTool
             anchors {
-                left: parent.left
+                right: parent.right
                 top: parent.top
                 bottom: sceneView.attributionTop
             }

@@ -170,7 +170,7 @@ void GeometryQuadtree::cacheGeometry()
   m_geometry.clear();
 
   // store a list of the geometry which the tree will use
-  for (const auto& element : geoElements)
+  for (const auto& element : m_elements)
     m_geometry.append(element->geometry());
 }
 

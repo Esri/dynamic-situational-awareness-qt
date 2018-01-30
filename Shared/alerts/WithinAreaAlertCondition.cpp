@@ -19,39 +19,12 @@
 
 using namespace Esri::ArcGISRuntime;
 
-WithinAreaAlertCondition::WithinAreaAlertCondition(AlertSource* source,
-                                                   GeoElement* target,
-                                                   AlertLevel level,
-                                                   const QString &name,
-                                                   QObject* parent):
-  AlertCondition(level, name, parent),
-  m_target(target)
-{
-  WithinAreaAlertConditionData* data = new WithinAreaAlertConditionData(this, source, m_target);
-  addData(data);
-}
-
-WithinAreaAlertCondition::WithinAreaAlertCondition(GraphicsOverlay* source,
-                                                   GeoElement* target,
-                                                   AlertLevel level,
+WithinAreaAlertCondition::WithinAreaAlertCondition(AlertLevel level,
                                                    const QString& name,
                                                    QObject* parent):
-  AlertCondition(level, name, parent),
-  m_target(target)
+  AlertCondition(level, name, parent)
 {
-  connectSourceSignals(source);
-}
 
-WithinAreaAlertCondition::WithinAreaAlertCondition(GraphicsOverlay* source,
-                                                   AbstractOverlayManager* targetOverlay,
-                                                   AlertLevel level,
-                                                   const QString& name,
-                                                   QObject* parent):
-  AlertCondition(level, name, parent),
-  m_targetOverlay(targetOverlay)
-{
-  connectSourceSignals(source);
-  connectTargetOverlaySignals();
 }
 
 WithinAreaAlertCondition::~WithinAreaAlertCondition()
@@ -59,44 +32,7 @@ WithinAreaAlertCondition::~WithinAreaAlertCondition()
 
 }
 
-void WithinAreaAlertCondition::connectSourceSignals(GraphicsOverlay* sourceOverlay)
+AlertConditionData* WithinAreaAlertCondition::createData(AlertSource* source, AlertTarget* target)
 {
-  if (!sourceOverlay)
-    return;
-
-  GraphicListModel* graphics = sourceOverlay->graphics();
-  if (!graphics)
-    return;
-
-  auto handleGraphicAt = [this, graphics](int index)
-  {
-    if (!graphics)
-      return;
-
-    Graphic* newGraphic = graphics->at(index);
-    if (!newGraphic)
-      return;
-
-    if (m_target)
-    {
-      GraphicAlertSource* source = new GraphicAlertSource(newGraphic);
-      WithinAreaAlertConditionData* data = new WithinAreaAlertConditionData(this, source, m_target);
-      addData(data);
-    }
-    else if (m_targetOverlay)
-    {
-      // TODO
-    }
-  };
-
-  connect(graphics, &GraphicListModel::graphicAdded, this, handleGraphicAt);
-
-  const int count = graphics->rowCount();
-  for (int i = 0; i < count; ++i)
-    handleGraphicAt(i);
-}
-
-void WithinAreaAlertCondition::connectTargetOverlaySignals()
-{
-  // TODO
+  return new WithinAreaAlertConditionData(this, source, target);
 }

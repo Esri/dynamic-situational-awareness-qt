@@ -107,6 +107,7 @@ void Vehicle::componentComplete()
   pb.addPoint(-121.92, 36.605);
 
   Graphic* geofenceGraphic = new Graphic(pb.toPolygon(), geofenceSymbol, this);
+  geofenceGraphic->attributes()->insertAttribute("TestAttribute", "Test Value");
   geofenceOverlay->graphics()->append(geofenceGraphic);
   m_sceneView->graphicsOverlays()->append(geofenceOverlay);
 }

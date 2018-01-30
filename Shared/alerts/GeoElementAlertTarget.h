@@ -10,30 +10,31 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef WITHINAREAALERTCONDITIONDATA_H
-#define WITHINAREAALERTCONDITIONDATA_H
-
-#include "AlertConditionData.h"
+#ifndef GEOELEMENTALERTTARGET_H
+#define GEOELEMENTALERTTARGET_H
 
 namespace Esri
 {
 namespace ArcGISRuntime
 {
 class GeoElement;
-class Graphic;
 }
 }
 
-class WithinAreaAlertConditionData : public AlertConditionData
+#include "AlertTarget.h"
+
+class GeoElementAlertTarget : public AlertTarget
 {
   Q_OBJECT
 
 public:
-  explicit WithinAreaAlertConditionData(AlertCondition* condition,
-                                        AlertSource* source,
-                                        AlertTarget* target);
+  explicit GeoElementAlertTarget(Esri::ArcGISRuntime::GeoElement* geoElement);
+  ~GeoElementAlertTarget();
 
-  ~WithinAreaAlertConditionData();
+  virtual QList<Esri::ArcGISRuntime::Geometry> targetGeometries() const override;
+
+private:
+  Esri::ArcGISRuntime::GeoElement* m_geoElement = nullptr;
 };
 
-#endif // WITHINAREAALERTCONDITIONDATA_H
+#endif // GEOELEMENTALERTTARGET_H

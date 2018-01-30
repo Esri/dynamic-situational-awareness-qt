@@ -102,6 +102,15 @@ Vehicle {
 
         onMousePressed: followHud.stopFollowing();
 
+        CurrentLocation {
+            id: currentLocation
+            anchors {
+                bottom: sceneView.attributionTop
+                horizontalCenter: parent.horizontalCenter
+                margins: 10 * scaleFactor
+            }
+        }
+
         Rectangle {
             anchors {
                 fill: followHud
@@ -118,7 +127,7 @@ Vehicle {
             anchors {
                 bottom: sceneView.attributionTop
                 horizontalCenter: parent.horizontalCenter
-                margins: 10 * scaleFactor
+                margins: currentLocation.visible ? currentLocation.height + 25 * scaleFactor : 10 * scaleFactor
             }
             enabled: false
         }
@@ -187,8 +196,8 @@ Vehicle {
             onClosed: visible = false;
         }
 
-        EditAlertsTool {
-            id: editAlertsTool
+        AlertConditionsTool {
+            id: alertConditionsTool
             anchors {
                 left: parent.left
                 top: parent.top
@@ -227,6 +236,17 @@ Vehicle {
             attributeNameTextColor: Material.foreground
             attributeValueTextColor: Material.foreground
             titleTextColor: Material.foreground
+
+            Button {
+                text: "Close"
+                anchors {
+                    margins: 4 * scaleFactor
+                    bottom: identifyResults.bottom
+                    horizontalCenter: identifyResults.horizontalCenter
+                }
+                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                onClicked: identifyResults.dismiss();
+            }
         }
 
         Drawer {
@@ -323,12 +343,6 @@ Vehicle {
         textColor: Material.foreground
     }
 
-    Options {
-        id: optionsTool
-        anchors.fill: sceneView
-        visible: false
-    }
-
     About {
         id: aboutTool
         anchors.fill: parent
@@ -336,7 +350,7 @@ Vehicle {
         visible: false
     }
 
-    IdentifyFeaturesController {
+    IdentifyController {
         id: identifyController
         active: mapToolRow.state === "Identify"
 
@@ -358,6 +372,12 @@ Vehicle {
         msgDialog.informativeText = message;
         msgDialog.detailedText = additionalMessage;
         msgDialog.open();
+    }
+
+    Options {
+        id: optionsTool
+        anchors.fill: parent
+        visible: false
     }
 
     MessageDialog {

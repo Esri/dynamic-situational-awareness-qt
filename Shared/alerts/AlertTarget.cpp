@@ -10,18 +10,17 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "AbstractOverlayManager.h"
+#include "AlertTarget.h"
 
 using namespace Esri::ArcGISRuntime;
 
-
-AbstractOverlayManager::AbstractOverlayManager(QObject* parent):
+AlertTarget::AlertTarget(QObject* parent):
   QObject(parent)
 {
 
 }
 
-AbstractOverlayManager::~AbstractOverlayManager()
+AlertTarget::~AlertTarget()
 {
-
+  emit noLongerValid();
 }

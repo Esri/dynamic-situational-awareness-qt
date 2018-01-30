@@ -10,23 +10,25 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "AlertSource.h"
-#include "WithinAreaAlertConditionData.h"
+#include "GeoElementAlertTarget.h"
 
 #include "GeoElement.h"
-#include "Point.h"
 
 using namespace Esri::ArcGISRuntime;
 
-WithinAreaAlertConditionData::WithinAreaAlertConditionData(AlertCondition* condition,
-                                                           AlertSource* source,
-                                                           AlertTarget* target):
-  AlertConditionData(condition, source, target)
+GeoElementAlertTarget::GeoElementAlertTarget(GeoElement* geoElement):
+  AlertTarget(geoElement),
+  m_geoElement(geoElement)
+{
+  connect(m_geoElement, &GeoElement::geometryChanged, this, &GeoElementAlertTarget::locationChanged);
+}
+
+GeoElementAlertTarget::~GeoElementAlertTarget()
 {
 
 }
 
-WithinAreaAlertConditionData::~WithinAreaAlertConditionData()
+QList<Esri::ArcGISRuntime::Geometry> GeoElementAlertTarget::targetGeometries() const
 {
-
+  return QList<Geometry>{m_geoElement->geometry()};
 }

@@ -11,6 +11,7 @@
 //
 
 #include "AlertConditionData.h"
+#include "AlertTarget.h"
 #include "WithinDistanceAlertConditionData.h"
 #include "WithinDistanceAlertQuery.h"
 
@@ -38,28 +39,37 @@ bool WithinDistanceAlertQuery::matchesRule(AlertConditionData* alert) const
   if (!pairAlert)
     return true; // test is not valid for this alert type
 
-  Point sourceGeom = GeometryEngine::project(pairAlert->sourcePosition(), SpatialReference::wgs84());
-  Geometry geom2 = GeometryEngine::project(pairAlert->position2(), sourceGeom.spatialReference());
-  Point nearestPoint;
+  Point sourceGeom = GeometryEngine::project(pairAlert->sourceLocation(), SpatialReference::wgs84());
 
-  switch (geom2.geometryType())
+  const QList<Geometry> targetGeometries = pairAlert->target()->targetGeometries();
+
+  for (const Geometry& target : targetGeometries)
   {
-  case GeometryType::Point:
-    nearestPoint = geom2;
-    break;
-  case GeometryType::Polyline:
-  case GeometryType::Polygon:
-  {
-    nearestPoint = GeometryEngine::nearestCoordinate(geom2, sourceGeom).coordinate();
-    break;
-  }
-  default:
-    nearestPoint = geom2.extent().center();
-    break;
+    Geometry geom2 = GeometryEngine::project(target, sourceGeom.spatialReference());
+    Point nearestPoint;
+
+    switch (geom2.geometryType())
+    {
+    case GeometryType::Point:
+      nearestPoint = geom2;
+      break;
+    case GeometryType::Polyline:
+    case GeometryType::Polygon:
+    {
+      nearestPoint = GeometryEngine::nearestCoordinate(geom2, sourceGeom).coordinate();
+      break;
+    }
+    default:
+      nearestPoint = geom2.extent().center();
+      break;
+    }
+
+    const GeodeticDistanceResult result = GeometryEngine::instance()->distanceGeodetic(
+          sourceGeom, nearestPoint, LinearUnit::meters(), AngularUnit::degrees(), GeodeticCurveType::Geodesic);
+
+    if (result.distance() <= pairAlert->distance())
+      return true;
   }
 
-  const GeodeticDistanceResult result = GeometryEngine::instance()->distanceGeodetic(
-        sourceGeom, nearestPoint, LinearUnit::meters(), AngularUnit::degrees(), GeodeticCurveType::Geodesic);
-
-  return result.distance() <= pairAlert->distance();
+  return false;
 }

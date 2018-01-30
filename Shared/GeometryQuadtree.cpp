@@ -14,15 +14,15 @@
 
 #include "Envelope.h"
 #include "GeoElement.h"
-#include "GeoElement.h"
 #include "GeometryEngine.h"
 #include "Point.h"
 
 #include <QList>
+#include <QSet>
 
 using namespace Esri::ArcGISRuntime;
 
-struct QuadTree
+struct GeometryQuadtree::QuadTree
 {
   explicit  QuadTree(int level, double xMin, double xMax, double yMin, double yMax, int maxLevel);
   ~QuadTree();
@@ -103,7 +103,7 @@ QList<Geometry> GeometryQuadtree::intersections(const Point &location) const
   return results;
 }
 
-QuadTree::QuadTree(int level, double xMin, double xMax, double yMin, double yMax, int maxLevel):
+GeometryQuadtree::QuadTree::QuadTree(int level, double xMin, double xMax, double yMin, double yMax, int maxLevel):
   m_level(level),
   m_xMin(xMin),
   m_xMax(xMax),
@@ -122,7 +122,7 @@ QuadTree::QuadTree(int level, double xMin, double xMax, double yMin, double yMax
   }
 }
 
-QuadTree::~QuadTree()
+GeometryQuadtree::QuadTree::~QuadTree()
 {
   if (m_tl)
     delete m_tl;
@@ -137,7 +137,7 @@ QuadTree::~QuadTree()
     delete m_br;
 }
 
-bool QuadTree::assign(const Geometry& geometry, int geomId)
+bool GeometryQuadtree::QuadTree::assign(const Geometry& geometry, int geomId)
 {
   const Envelope extent = geometry.extent();
   if (!intersects(extent))
@@ -157,7 +157,7 @@ bool QuadTree::assign(const Geometry& geometry, int geomId)
   return true;
 }
 
-void QuadTree::prune()
+void GeometryQuadtree::QuadTree::prune()
 {
   if (m_tl)
   {
@@ -204,7 +204,7 @@ void QuadTree::prune()
   }
 }
 
-QSet<int> QuadTree::intersectingIds(const Envelope& extent) const
+QSet<int> GeometryQuadtree::QuadTree::intersectingIds(const Envelope& extent) const
 {
   if (m_geometries.empty())
     return QSet<int>();
@@ -231,7 +231,7 @@ QSet<int> QuadTree::intersectingIds(const Envelope& extent) const
  return result;
 }
 
-QSet<int> QuadTree::intersectingIds(const Point& location) const
+QSet<int> GeometryQuadtree::QuadTree::intersectingIds(const Point& location) const
 {
   if (!intersects(location))
     return QSet<int>();
@@ -255,7 +255,7 @@ QSet<int> QuadTree::intersectingIds(const Point& location) const
  return result;
 }
 
-bool QuadTree::intersects(const Envelope& extent) const
+bool GeometryQuadtree::QuadTree::intersects(const Envelope& extent) const
 {
   return (extent.xMin() < m_xMax &&
           extent.xMax() > m_xMin &&
@@ -263,7 +263,7 @@ bool QuadTree::intersects(const Envelope& extent) const
           extent.yMax() > m_yMin);
 }
 
-bool QuadTree::intersects(const Point& location) const
+bool GeometryQuadtree::QuadTree::intersects(const Point& location) const
 {
   return (location.x() <= m_xMax &&
           location.x() >= m_xMin &&

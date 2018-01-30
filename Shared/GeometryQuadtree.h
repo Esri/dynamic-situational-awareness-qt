@@ -23,12 +23,9 @@ namespace ArcGISRuntime {
 class Envelope;
 class GeoElement;
 class Geometry;
-class Graphic;
 class Point;
 }
 }
-
-struct QuadTree;
 
 class GeometryQuadtree : public QObject
 {
@@ -44,6 +41,8 @@ public:
   QList<Esri::ArcGISRuntime::Geometry> intersections(const Esri::ArcGISRuntime::Point& location) const;
 
 private:
+  struct QuadTree;
+
   std::unique_ptr<QuadTree> m_tree;
   QList<Esri::ArcGISRuntime::Geometry> m_geometry;
 };

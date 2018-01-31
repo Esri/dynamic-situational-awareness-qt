@@ -26,5 +26,8 @@
         <file>AlertConditionsTool.qml</file>
         <file>About.qml</file>
         <file>CurrentLocation.qml</file>
+        <file>ListItemDelegate.qml</file>
+        <file>ListSeparator.qml</file>
+        <file>ListLabel.qml</file>
     </qresource>
 </RCC>

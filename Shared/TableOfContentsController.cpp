@@ -79,7 +79,7 @@ void TableOfContentsController::removeAt(int layerIndex)
   m_layerListModel->removeAt(modelIndex);
 }
 
-void TableOfContentsController::moveUp(int layerIndex)
+void TableOfContentsController::moveDown(int layerIndex)
 {
   if (!m_layerListModel)
     return;
@@ -92,7 +92,7 @@ void TableOfContentsController::moveUp(int layerIndex)
   m_layerListModel->move(modelIndex, modelIndex - 1);
 }
 
-void TableOfContentsController::moveDown(int layerIndex)
+void TableOfContentsController::moveUp(int layerIndex)
 {
   if (!m_layerListModel)
     return;

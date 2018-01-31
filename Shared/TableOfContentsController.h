@@ -69,7 +69,7 @@ public:
 signals:
   void layerListModelChanged();
 
-private slots:
+public slots:
   void updateLayerListModel();
 
 private:

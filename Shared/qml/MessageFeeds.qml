@@ -41,24 +41,13 @@ DsaPanel {
         clip: true
         model: toolController.messageFeeds
         width: parent.width
-        delegate:  SwitchDelegate {
+        delegate:  ListItemDelegate {
             id: control
-            text: feedName
-            checked: feedEnabled
-            width: messageFeedsList.width
-
-            contentItem: Label {
-                rightPadding: control.indicator.width + control.spacing
-                text: control.text
-                font: control.font
-                opacity: enabled ? 1.0 : 0.3
-                color: Material.foreground
-                elide: Text.ElideRight
-                horizontalAlignment: Text.AlignLeft
-                verticalAlignment: Text.AlignVCenter
-            }
-
-            onClicked: feedEnabled = !feedEnabled
+            width: parent.width
+            height: 40 * scaleFactor
+            mainText: feedName
+            itemChecked: feedEnabled
+            onItemCheckedChanged: feedEnabled = itemChecked
         }
     }
 }

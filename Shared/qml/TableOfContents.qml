@@ -61,13 +61,13 @@ DsaPanel {
         delegate: ListItemDelegate {
             width: parent.width
             height: 40 * scaleFactor
-            itemVisible: layerVisible
+            itemChecked: layerVisible
             imageUrl: imageSourceForGeomType(index)
             imageVisible: true
             mainText: name && name !== "" ?
                           name :
                           toolController.alternateName(index)
-            onItemVisibleChanged: layerVisible = itemVisible
+            onItemCheckedChanged: layerVisible = itemChecked
 
             Image {
                 anchors {

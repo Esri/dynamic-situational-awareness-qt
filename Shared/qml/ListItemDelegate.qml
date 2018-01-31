@@ -17,18 +17,20 @@ import QtQuick.Window 2.2
 import Esri.DSA 1.0
 
 Item {
-    property bool itemVisible
+    property alias itemChecked: visibleCheckBox.checked
     property url imageUrl
     property bool imageVisible
     property string mainText
 
     Row {
+        id: itemRow
         spacing: 3 * scaleFactor
+
         CheckBox {
             id: visibleCheckBox
             anchors.verticalCenter: parent.verticalCenter
-            checked: itemVisible
-            onClicked: itemVisible = checked;
+            checked: itemChecked
+            onClicked: itemChecked = checked;
         }
 
         Rectangle {
@@ -62,5 +64,11 @@ Item {
                 family: DsaStyles.fontFamily
             }
         }
+
+    }
+
+    MouseArea {
+        anchors.fill: itemRow
+        onClicked: visibleCheckBox.checked = !visibleCheckBox.checked
     }
 }

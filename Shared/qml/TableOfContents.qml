@@ -25,6 +25,11 @@ DsaPanel {
 
     property bool isMobile
 
+    onVisibleChanged: {
+        if (visible)
+            toolController.updateLayerListModel()
+    }
+
     // Create the controller
     TableOfContentsController {
         id: toolController
@@ -45,11 +50,12 @@ DsaPanel {
         spacing: 5 * scaleFactor
         model: toolController.layerListModel
         highlight: Rectangle {
-            width: 50
-            height: 50
-            color: "lightsteelblue"
-            visible: mobileMenu.isOpen
+            radius: 5 * scaleFactor
+            color: Material.accent
         }
+        highlightFollowsCurrentItem: isMobile
+        highlightMoveVelocity: 1000000000
+        highlightResizeVelocity: 1000
         delegate: ListItemDelegate {
             width: parent.width
             height: 40 * scaleFactor
@@ -198,6 +204,7 @@ DsaPanel {
             animateVertical.from = openY;
             animateVertical.to = closedY;
             animateVertical.start();
+            layersList.currentIndex = -1;
         }
 
         NumberAnimation {

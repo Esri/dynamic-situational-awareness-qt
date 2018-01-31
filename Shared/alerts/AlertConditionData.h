@@ -21,7 +21,6 @@
 #include <QString>
 #include <QUuid>
 
-class AlertCondition;
 class AlertSource;
 class AlertTarget;
 
@@ -30,7 +29,7 @@ class AlertConditionData : public QObject
   Q_OBJECT
 
 public:
-  explicit AlertConditionData(AlertCondition* condition, AlertSource* source, AlertTarget* target);
+  explicit AlertConditionData(const QString& name, AlertLevel level, AlertSource* source, AlertTarget* target, QObject* parent = nullptr);
   ~AlertConditionData();
 
   AlertLevel level() const;
@@ -61,7 +60,8 @@ signals:
   void noLongerValid();
 
 private:
-  AlertCondition* m_condition = nullptr;
+  QString m_name;
+  AlertLevel m_level = AlertLevel::Unknown;
   AlertSource* m_source = nullptr;
   AlertTarget* m_target = nullptr;
   QUuid m_id;

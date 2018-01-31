@@ -18,10 +18,12 @@
 
 using namespace Esri::ArcGISRuntime;
 
-WithinAreaAlertConditionData::WithinAreaAlertConditionData(AlertCondition* condition,
+WithinAreaAlertConditionData::WithinAreaAlertConditionData(const QString& name,
+                                                           AlertLevel level,
                                                            AlertSource* source,
-                                                           AlertTarget* target):
-  AlertConditionData(condition, source, target)
+                                                           AlertTarget* target,
+                                                            QObject* parent):
+  AlertConditionData(name, level, source, target, parent)
 {
 
 }

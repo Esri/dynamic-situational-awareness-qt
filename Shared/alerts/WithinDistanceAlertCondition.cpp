@@ -32,7 +32,7 @@ WithinDistanceAlertCondition::~WithinDistanceAlertCondition()
 
 AlertConditionData* WithinDistanceAlertCondition::createData(AlertSource* source, AlertTarget* target)
 {
-  return new WithinDistanceAlertConditionData(this, source, target, m_distance);
+  return new WithinDistanceAlertConditionData(name(), level(), source, target, m_distance, this);
 }
 
 double WithinDistanceAlertCondition::distance() const

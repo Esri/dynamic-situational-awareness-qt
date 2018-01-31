@@ -34,5 +34,5 @@ WithinAreaAlertCondition::~WithinAreaAlertCondition()
 
 AlertConditionData* WithinAreaAlertCondition::createData(AlertSource* source, AlertTarget* target)
 {
-  return new WithinAreaAlertConditionData(this, source, target);
+  return new WithinAreaAlertConditionData(name(), level(), source, target, this);
 }

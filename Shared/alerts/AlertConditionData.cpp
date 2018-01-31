@@ -17,13 +17,17 @@
 
 using namespace Esri::ArcGISRuntime;
 
-AlertConditionData::AlertConditionData(AlertCondition* condition, AlertSource* source, AlertTarget* target):
-  QObject(condition),
-  m_condition(condition),
+AlertConditionData::AlertConditionData(const QString& name,
+                                       AlertLevel level,
+                                       AlertSource* source,
+                                       AlertTarget* target,
+                                       QObject* parent):
+  QObject(parent),
+  m_name(name),
+  m_level(level),
   m_source(source),
   m_target(target)
 {
-  connect(m_condition, &AlertCondition::noLongerValid, this, &AlertConditionData::noLongerValid);
   connect(m_source, &AlertSource::noLongerValid, this, &AlertConditionData::noLongerValid);
   connect(m_source, &AlertSource::locationChanged, this, &AlertConditionData::locationChanged);
   connect(m_source, &AlertSource::destroyed, this, [this]()
@@ -46,7 +50,7 @@ AlertConditionData::~AlertConditionData()
 
 AlertLevel AlertConditionData::level() const
 {
-  return m_condition->level();
+  return m_level;
 }
 
 Point AlertConditionData::sourceLocation() const
@@ -61,7 +65,7 @@ void AlertConditionData::highlight(bool on)
 
 QString AlertConditionData::name() const
 {
-  return m_condition->name();
+  return m_name;
 }
 
 QUuid AlertConditionData::id() const

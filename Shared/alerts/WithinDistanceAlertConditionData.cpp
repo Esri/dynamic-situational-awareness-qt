@@ -20,11 +20,13 @@
 
 using namespace Esri::ArcGISRuntime;
 
-WithinDistanceAlertConditionData::WithinDistanceAlertConditionData(AlertCondition* condition,
+WithinDistanceAlertConditionData::WithinDistanceAlertConditionData(const QString& name,
+                                                                   AlertLevel level,
                                                                    AlertSource* source,
                                                                    AlertTarget* target,
-                                                                   double distance):
-  AlertConditionData(condition, source, target),
+                                                                   double distance,
+                                                                   QObject* parent):
+  AlertConditionData(name, level, source, target, parent),
   m_distance(distance)
 {
 

@@ -60,6 +60,7 @@ signals:
 private:
   AlertLevel m_level;
   QString m_name;
+  QList<AlertConditionData*> m_data;
 };
 
 #endif // ALERTCONDITIONDATA_H

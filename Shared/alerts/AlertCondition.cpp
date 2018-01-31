@@ -102,6 +102,7 @@ void AlertCondition::addData(AlertConditionData* newData)
   if (!newData)
     return;
 
+  m_data.append(newData);
   AlertListModel::instance()->addAlertConditionData(newData);
 }
 

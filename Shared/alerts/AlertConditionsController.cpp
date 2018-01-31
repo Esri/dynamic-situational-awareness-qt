@@ -65,6 +65,26 @@ struct GraphicsResultsManager {
   }
 };
 
+/*!
+  \class AlertConditionsController
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller for working with the conditions which can trigger alerts.
+
+  Alerts are created when a given \l AlertCondition is met.
+
+  This tool presents the list of currently active conditions and allows these to
+  be deleted etc.
+
+  This tool allows new \l AlertConditions of various types to be created.
+
+  \sa AlertConditionListModel
+  \sa WithinAreaAlertCondition
+  \sa WithinDistanceAlertCondition
+ */
+
+/*!
+  \brief Constructor taking an optional \a parent.
+ */
 AlertConditionsController::AlertConditionsController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent),
   m_conditions(new AlertConditionListModel(this)),
@@ -83,15 +103,26 @@ AlertConditionsController::AlertConditionsController(QObject* parent /* = nullpt
   onGeoviewChanged();
 }
 
+/*!
+  \brief Destructor.
+ */
 AlertConditionsController::~AlertConditionsController()
 {
 }
 
+/*!
+  \brief The name of this tool.
+ */
 QString AlertConditionsController::toolName() const
 {
   return "Alert Conditions";
 }
 
+/*!
+  \brief Sets the active state of this tool to \a active.
+
+  \note When active this tool may handle clicks in the view for picking features or graphics.
+ */
 void AlertConditionsController::setActive(bool active)
 {
   if (active == m_active)
@@ -104,6 +135,23 @@ void AlertConditionsController::setActive(bool active)
   emit activeChanged();
 }
 
+/*!
+  \brief Adds a \l WithinDistanceAlertCondition to the list of conditions.
+
+  \list
+    \li \a conditionName. The name for the condition.
+    \li \a levelIndex. The \l AlertLevel for the condition.
+    \li \a sourceFeedName. The name of the source feed (e.g. "My Location" or the
+      name of a \l Esri::ArcGISRuntime::GraphicsOverlay) used to create an \l AlertSource.
+    \li \a distance. The threshold distance for this cobdition in meters.
+    \li \a itemId. The item id for the target. If \c -1, then all items in the target will be used.
+      In the case where the target is a \l Esri::ArcGISRuntime::GraphicsOverlay, the  id should be the
+      index of the graphic. In the case where the target is a \l Esri::ArcGISRuntime::FeatureLayer, the
+      id should be the primary key value (e.g. the OID).
+    \li \a targetOverlayIndex. The index of the target for the condition in the \l targetNames list. A target can be either
+    a \l Esri::ArcGISRuntime::GraphicsOverlay or a \l Esri::ArcGISRuntime::FeatureLayer.
+  \endlist
+ */
 void AlertConditionsController::addWithinDistanceAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedName, double distance, int itemId, int targetOverlayIndex)
 {
   if (levelIndex < 0 ||
@@ -138,6 +186,22 @@ void AlertConditionsController::addWithinDistanceAlert(const QString& conditionN
   }
 }
 
+/*!
+  \brief Adds a \l WithinAreaAlertCondition to the list of conditions.
+
+  \list
+    \li \a conditionName. The name for the condition.
+    \li \a levelIndex. The \l AlertLevel for the condition.
+    \li \a sourceFeedName. The name of the source feed (e.g. "My Location" or the
+      name of a \l Esri::ArcGISRuntime::GraphicsOverlay) used to create an \l AlertSource.
+    \li \a itemId. The item id for the target. If \c -1, then all items in the target will be used.
+      In the case where the target is a \l Esri::ArcGISRuntime::GraphicsOverlay, the  id should be the
+      index of the graphic. In the case where the target is a \l Esri::ArcGISRuntime::FeatureLayer, the
+      id should be the primary key value (e.g. the OID).
+    \li \a targetOverlayIndex. The index of the target for the condition in the \l targetNames list. A target can be either
+    a \l Esri::ArcGISRuntime::GraphicsOverlay or a \l Esri::ArcGISRuntime::FeatureLayer.
+  \endlist
+ */
 void AlertConditionsController::addWithinAreaAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedName, int itemId, int targetOverlayIndex)
 {
   if (levelIndex < 0 ||
@@ -171,6 +235,9 @@ void AlertConditionsController::addWithinAreaAlert(const QString& conditionName,
   }
 }
 
+/*!
+  \brief Removes the condition at \a rowIndex from the list.
+ */
 void AlertConditionsController::removeConditionAt(int rowIndex)
 {
   AlertCondition* condition = m_conditions->conditionAt(rowIndex);
@@ -178,6 +245,14 @@ void AlertConditionsController::removeConditionAt(int rowIndex)
   delete condition;
 }
 
+/*!
+  \brief Toggle the pick mode of the tool.
+
+  When \c true, the tool will attempt to pick a graphic or feature if the user clicks
+  in the view.
+
+  \sa pickMode
+ */
 void AlertConditionsController::togglePickMode()
 {
   m_pickMode = !m_pickMode;
@@ -203,31 +278,63 @@ void AlertConditionsController::togglePickMode()
   emit pickModeChanged();
 }
 
+/*!
+  \brief Returns a QAbstractItemModel containing the list of
+  names for creating condition sources.
+
+  \sa AlertSource
+ */
 QAbstractItemModel* AlertConditionsController::sourceNames() const
 {
   return m_sourceNames;
 }
 
+/*!
+  \brief Returns a QAbstractItemModel containing the list of
+  names for creating condition targets.
+
+  \sa AlertTarget
+ */
 QAbstractItemModel* AlertConditionsController::targetNames() const
 {
   return m_targetNames;
 }
 
+/*!
+  \brief Returns a QAbstractItemModel containing the list of
+  level names for creating condition targets.
+
+  \sa AlertLevel
+ */
 QAbstractItemModel* AlertConditionsController::levelNames() const
 {
   return m_levelNames;
 }
 
+/*!
+  \brief Returns a QAbstractItemModel containing the list of
+  conditions.
+
+  \sa AlertCondition
+ */
 QAbstractItemModel* AlertConditionsController::conditionsList() const
 {
   return m_conditions;
 }
 
+/*!
+  \brief Returns whether the tool is in pick mode or not.
+ */
 bool AlertConditionsController::pickMode() const
 {
   return m_pickMode;
 }
 
+/*!
+  \brief internal
+
+  Handle changes to the geoView.
+ */
 void AlertConditionsController::onGeoviewChanged()
 {
   setTargetNames(QStringList());
@@ -254,6 +361,13 @@ void AlertConditionsController::onGeoviewChanged()
   onLayersChanged();
 }
 
+/*!
+  \brief internal
+
+  Handle changes to the list of layers and graphics overlays in the geoView.
+
+  These data types are the underlying data for \l AlertSource and \l AlertTarget.
+ */
 void AlertConditionsController::onLayersChanged()
 {
   GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
@@ -329,6 +443,12 @@ void AlertConditionsController::onLayersChanged()
   setTargetNames(newTargetList);
 }
 
+/*!
+  \brief internal
+
+  Handle mouse click events in the view. If active, this will attenpt to pick
+  graphics or features.
+ */
 void AlertConditionsController::onMouseClicked(QMouseEvent &event)
 {
   if (!isActive())
@@ -356,6 +476,11 @@ void AlertConditionsController::onMouseClicked(QMouseEvent &event)
   event.accept();
 }
 
+/*!
+  \brief internal
+
+  Handle the result of an identify layers task.
+ */
 void AlertConditionsController::onIdentifyLayersCompleted(const QUuid& taskId, QList<IdentifyLayerResult*> identifyResults)
 {
   if (taskId != m_identifyLayersWatcher.taskId())
@@ -416,6 +541,11 @@ void AlertConditionsController::onIdentifyLayersCompleted(const QUuid& taskId, Q
   }
 }
 
+/*!
+  \brief internal
+
+  Handle the result of an identify graphic overlays task.
+ */
 void AlertConditionsController::onIdentifyGraphicsOverlaysCompleted(const QUuid& taskId, QList<IdentifyGraphicsOverlayResult*> identifyResults)
 {
   if (taskId != m_identifyGraphicsWatcher.taskId())
@@ -458,6 +588,14 @@ void AlertConditionsController::onIdentifyGraphicsOverlaysCompleted(const QUuid&
   }
 }
 
+/*!
+  \brief internal
+
+  Set the list of names for targets to be used when creating conditions.
+
+  \sa AlertCondition
+  \sa AlertTarget
+ */
 void AlertConditionsController::setTargetNames(const QStringList& targetNames)
 {
   const QStringList existingNames = m_targetNames->stringList();
@@ -468,6 +606,14 @@ void AlertConditionsController::setTargetNames(const QStringList& targetNames)
   emit targetNamesChanged();
 }
 
+/*!
+  \brief internal
+
+  Set the list of names for sources to be used when creating conditions.
+
+  \sa AlertCondition
+  \sa AlertSource
+ */
 void AlertConditionsController::setSourceNames(const QStringList& sourceNames)
 {
   const QStringList existingNames = m_sourceNames->stringList();
@@ -478,6 +624,9 @@ void AlertConditionsController::setSourceNames(const QStringList& sourceNames)
   emit sourceNamesChanged();
 }
 
+/*!
+  \brief internal
+ */
 AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int targetOverlayIndex) const
 {
   GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
@@ -548,6 +697,9 @@ AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int
   return nullptr;
 }
 
+/*!
+  \brief internal
+ */
 AlertTarget* AlertConditionsController::targetFromFeatureLayer(FeatureLayer* featureLayer, int itemId) const
 {
   FeatureTable* tab = featureLayer->featureTable();
@@ -586,6 +738,9 @@ AlertTarget* AlertConditionsController::targetFromFeatureLayer(FeatureLayer* fea
   return new GeoElementAlertTarget(feature);
 }
 
+/*!
+  \brief internal
+ */
 AlertTarget* AlertConditionsController::targetFromGraphicsOverlay(GraphicsOverlay* graphicsOverlay, int itemId) const
 {
   if (!graphicsOverlay)
@@ -602,6 +757,9 @@ AlertTarget* AlertConditionsController::targetFromGraphicsOverlay(GraphicsOverla
   return new GeoElementAlertTarget(g);
 }
 
+/*!
+  \brief internal
+ */
 GraphicsOverlay* AlertConditionsController::graphicsOverlayFromName(const QString& overlayName)
 {
   GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
@@ -629,6 +787,9 @@ GraphicsOverlay* AlertConditionsController::graphicsOverlayFromName(const QStrin
   return nullptr;
 }
 
+/*!
+  \brief internal
+ */
 QString AlertConditionsController::primaryKeyFieldName(FeatureTable* featureTable) const
 {
   if (!featureTable)
@@ -652,6 +813,9 @@ QString AlertConditionsController::primaryKeyFieldName(FeatureTable* featureTabl
   return QString();
 }
 
+/*!
+  \brief internal
+ */
 QStringList AlertConditionsController::realtimeFeedNames()
 {
   return QStringList{"cot"};

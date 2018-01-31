@@ -17,7 +17,19 @@
 
 using namespace Esri::ArcGISRuntime;
 
+/*!
+  \class GraphicAlertSource
+  \inherits AlertSource
+  \brief Represents a source based on a single \l Esri::ArcGISRuntime::Graphic
+  for an \l AlertCondition.
 
+  Changes to the underlying graphic's position will cause the \l AlertSource::locationChanged
+  signal to be emitted.
+  */
+
+/*!
+  \brief Constructor taking an \l Esri::ArcGISRuntime::Graphic \a graphic.
+ */
 GraphicAlertSource::GraphicAlertSource(Graphic* graphic):
   AlertSource(graphic),
   m_graphic(graphic)
@@ -25,11 +37,17 @@ GraphicAlertSource::GraphicAlertSource(Graphic* graphic):
   connect(m_graphic, &Graphic::geometryChanged, this, &GraphicAlertSource::locationChanged);
 }
 
+/*!
+  \brief Destructor.
+ */
 GraphicAlertSource::~GraphicAlertSource()
 {
 
 }
 
+/*!
+  \brief Returns the location of the underlying \l Esri::ArcGISRuntime::Graphic.
+ */
 Point GraphicAlertSource::location() const
 {
   if (m_graphic->geometry().geometryType() == GeometryType::Point)
@@ -38,6 +56,9 @@ Point GraphicAlertSource::location() const
     return m_graphic->geometry().extent().center();
 }
 
+/*!
+  \brief Sets the selected state of the \l Esri::ArcGISRuntime::Graphic to \a selected.
+ */
 void GraphicAlertSource::setSelected(bool selected)
 {
   m_graphic->setSelected(selected);

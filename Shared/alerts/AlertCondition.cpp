@@ -34,6 +34,8 @@ using namespace Esri::ArcGISRuntime;
   When either the source or target is changed for a given data element, the condition can be
   re-tested using an \l AlertQuery to determine whether an elert should be triggered.
 
+  \note This is an abstract base type.
+
   \sa AlertSource
   \sa AlertTarget
   \sa AlertConditionData

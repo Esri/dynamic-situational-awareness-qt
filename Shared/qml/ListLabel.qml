@@ -18,7 +18,10 @@ import QtQuick.Dialogs 1.2
 import Esri.DSA 1.0
 
 Label {
-    font.pixelSize: 16 * scaleFactor
+    font {
+        family: DsaStyles.fontFamily
+        pixelSize: 16 * scaleFactor
+    }
     color: Material.foreground
     signal triggered();
 

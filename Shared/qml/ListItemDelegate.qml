@@ -49,37 +49,18 @@ Item {
             }
         }
 
-        Text {
+        Label {
             anchors.verticalCenter: parent.verticalCenter
             elide: Text.ElideRight
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
             text: mainText
             verticalAlignment: Text.AlignVCenter
             color: Material.foreground
-            font.pixelSize: 14 * scaleFactor
-            font.bold: true
+            font {
+                pixelSize: 14 * scaleFactor
+                bold: true
+                family: DsaStyles.fontFamily
+            }
         }
     }
-
-    //    Image {
-    //        id: zoomToImage
-    //        fillMode: Image.PreserveAspectFit
-    //        anchors{
-    //            right: parent.right
-    //            verticalCenter: parent.verticalCenter
-    //        }
-    //        sourceSize.height: 32 * scaleFactor
-    //        height: sourceSize.height
-    //        source: DsaResources.iconZoomTo
-
-    //        MouseArea {
-    //            anchors.fill: parent
-
-    //            onClicked: {
-    //                toolController.zoomTo(index);
-    //                mapToolRow.tocIconSelected = false;
-    //                tocRoot.visible = false;
-    //            }
-    //        }
-    //    }
 }

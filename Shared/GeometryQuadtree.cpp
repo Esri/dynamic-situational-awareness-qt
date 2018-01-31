@@ -55,8 +55,8 @@ struct GeometryQuadtree::QuadTree
   \brief Constructor taking the \a extent of the Quadtree, the list of \a geoElements
   which the tree should include, the \a maxLevels for the tree and an optional \a parent.
  */
-GeometryQuadtree::GeometryQuadtree(const Esri::ArcGISRuntime::Envelope& extent,
-                                   const QList<Esri::ArcGISRuntime::GeoElement*>& geoElements,
+GeometryQuadtree::GeometryQuadtree(const Envelope& extent,
+                                   const QList<GeoElement*>& geoElements,
                                    int maxLevels,
                                    QObject* parent):
   QObject(parent),
@@ -139,7 +139,7 @@ QList<Geometry> GeometryQuadtree::candidateIntersections(const Point& location) 
 /*!
   \internal
  */
-void GeometryQuadtree::buildTree(const Esri::ArcGISRuntime::Envelope& extent)
+void GeometryQuadtree::buildTree(const Envelope& extent)
 {
   // ensure the tree's extent is in WGS84
   const Envelope extentWgs84 = GeometryEngine::project(extent, SpatialReference::wgs84());

@@ -26,8 +26,10 @@ DsaPanel {
     property bool isMobile
 
     onVisibleChanged: {
-        if (visible)
-            toolController.updateLayerListModel()
+        if (visible) {
+            toolController.updateLayerListModel();
+            layersList.currentIndex = -1;
+        }
     }
 
     // Create the controller
@@ -52,10 +54,10 @@ DsaPanel {
         highlight: Rectangle {
             radius: 5 * scaleFactor
             color: Material.accent
+            opacity: 0.5
         }
         highlightFollowsCurrentItem: isMobile
-        highlightMoveVelocity: 1000000000
-        highlightResizeVelocity: 1000
+        highlightMoveVelocity: 10000
         delegate: ListItemDelegate {
             width: parent.width
             height: 40 * scaleFactor
@@ -184,6 +186,10 @@ DsaPanel {
             }
             color: Material.background
             radius: 10 * scaleFactor
+            border {
+                color: Material.primary
+                width: 1 * scaleFactor
+            }
         }
 
         function open() {
@@ -230,9 +236,10 @@ DsaPanel {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: "Zoom to"
                 onTriggered: {
+                    var i = layersList.currentIndex;
                     mobileMenu.close();
                     tocRoot.closed();
-                    toolController.zoomTo(layersList.currentIndex);
+                    toolController.zoomTo(i);
                 }
             }
 
@@ -242,8 +249,8 @@ DsaPanel {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: "Remove"
                 onTriggered: {
-                    mobileMenu.close()
                     toolController.removeAt(layersList.currentIndex);
+                    mobileMenu.close()
                 }
             }
 
@@ -256,8 +263,8 @@ DsaPanel {
                 text: "Move up"
                 visible: layersList.currentIndex !== 0
                 onTriggered: {
-                    mobileMenu.close()
                     toolController.moveUp(layersList.currentIndex);
+                    mobileMenu.close()
                 }
             }
 
@@ -270,8 +277,8 @@ DsaPanel {
                 text: "Move down"
                 visible: layersList.currentIndex + 1 !== layersList.count
                 onTriggered: {
-                    mobileMenu.close()
                     toolController.moveDown(layersList.currentIndex);
+                    mobileMenu.close()
                 }
             }
 

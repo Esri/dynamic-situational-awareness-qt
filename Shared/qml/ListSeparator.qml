@@ -20,6 +20,7 @@ import Esri.DSA 1.0
 Rectangle {
     anchors.horizontalCenter: parent.horizontalCenter
     width: parent.width * 0.8
-    height: 1 * scaleFactor
+    height: 2 * scaleFactor
     color: Material.foreground
+    opacity: 0.5
 }

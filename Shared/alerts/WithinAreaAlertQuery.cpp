@@ -36,20 +36,20 @@ bool WithinAreaAlertQuery::matchesRule(AlertConditionData* conditionData) const
   if (!conditionData)
     return false;
 
-  WithinAreaAlertConditionData* pairAlert = qobject_cast<WithinAreaAlertConditionData*>(conditionData);
-  if (!pairAlert)
+  WithinAreaAlertConditionData* withinAreaConditionData = qobject_cast<WithinAreaAlertConditionData*>(conditionData);
+  if (!withinAreaConditionData)
     return true; // test is not valid for this alert type
 
-  Geometry geom1 = GeometryEngine::project(pairAlert->sourceLocation(), SpatialReference::wgs84());
-  const QList<Geometry> targetGeometries = pairAlert->target()->targetGeometries();
+  Geometry sourceWgs84 = GeometryEngine::project(withinAreaConditionData->sourceLocation(), SpatialReference::wgs84());
+  const QList<Geometry> targetGeometries = withinAreaConditionData->target()->targetGeometries(sourceWgs84.extent());
 
   for (const Geometry& target : targetGeometries)
   {
     if (target.geometryType() != GeometryType::Polygon)
       continue;
 
-    const Geometry geom2 = GeometryEngine::project(target, geom1.spatialReference());
-    if (GeometryEngine::instance()->intersects(geom1, geom2))
+    const Geometry targetWgs84 = GeometryEngine::project(target, sourceWgs84.spatialReference());
+    if (GeometryEngine::instance()->intersects(sourceWgs84, targetWgs84))
       return true;
   }
 

@@ -14,6 +14,7 @@
 #define WITHINDISTANCEALERTCONDITIONDATA_H
 
 #include "AlertConditionData.h"
+#include "Geometry.h"
 
 class WithinDistanceAlertConditionData : public AlertConditionData
 {

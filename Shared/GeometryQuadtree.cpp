@@ -36,6 +36,7 @@ struct GeometryQuadtree::QuadTree
   QSet<int> intersectingIndices(const Envelope& extent) const;
   QSet<int> intersectingIndices(const Point& location) const;
 
+  bool contains(const Envelope& extent) const;
   bool intersects(const Envelope& extent) const;
   bool intersects(const Point& location) const;
 
@@ -68,9 +69,7 @@ GeometryQuadtree::GeometryQuadtree(const Envelope& extent,
   {
     connect(element, &GeoElement::geometryChanged, this, [this]()
     {
-      cacheGeometry();
-      const Envelope newExtent = GeometryEngine::combineExtents(m_geometry);
-      buildTree(newExtent);
+      handleGeometryChange();
     });
   }
 
@@ -84,6 +83,31 @@ GeometryQuadtree::GeometryQuadtree(const Envelope& extent,
 GeometryQuadtree::~GeometryQuadtree()
 {
 
+}
+
+/*!
+  \brief Adds the \a newGeoElement into the quadtree.
+
+  \note The tree will be re-built.
+ */
+void GeometryQuadtree::appendGeoElment(GeoElement* newGeoElement)
+{
+  if (!newGeoElement)
+    return;
+
+  m_elements.append(newGeoElement);
+  handleGeometryChange();
+}
+
+/*!
+  \brief Returns the list of \l Geometry objects which are in quadtree cells which intersect \a geometry
+
+  \note No intersection test is carried out between the supplied Geometry and the results. For exact results,
+  you should perform the desired geometry tests on the list of \l Geometry objects returned.
+ */
+QList<Geometry> GeometryQuadtree::candidateIntersections(const Geometry& geometry) const
+{
+  return candidateIntersections(geometry.extent());
 }
 
 /*!
@@ -172,6 +196,17 @@ void GeometryQuadtree::cacheGeometry()
   // store a list of the geometry which the tree will use
   for (const auto& element : m_elements)
     m_geometry.append(element->geometry());
+}
+
+/*!
+  \internal
+ */
+void GeometryQuadtree::handleGeometryChange()
+{
+  cacheGeometry();
+  const Envelope newExtent = GeometryEngine::combineExtents(m_geometry);
+  const Envelope wgs84 = GeometryEngine::project(newExtent, SpatialReference::wgs84());
+  buildTree(newExtent);
 }
 
 /*!
@@ -368,6 +403,17 @@ QSet<int> GeometryQuadtree::QuadTree::intersectingIndices(const Point& location)
     result += m_br->intersectingIndices(location);
 
   return result;
+}
+
+/*!
+  \internal
+ */
+bool GeometryQuadtree::QuadTree::contains(const Envelope& extent) const
+{
+  return (extent.xMin() >= m_xMin &&
+          extent.xMax() <= m_xMax &&
+          extent.yMin() >= m_yMin &&
+          extent.yMax() <= m_yMax);
 }
 
 /*!

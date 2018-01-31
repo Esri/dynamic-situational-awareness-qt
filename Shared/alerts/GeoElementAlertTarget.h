@@ -31,7 +31,7 @@ public:
   explicit GeoElementAlertTarget(Esri::ArcGISRuntime::GeoElement* geoElement);
   ~GeoElementAlertTarget();
 
-  virtual QList<Esri::ArcGISRuntime::Geometry> targetGeometries() const override;
+  virtual QList<Esri::ArcGISRuntime::Geometry> targetGeometries(const Esri::ArcGISRuntime::Envelope& targetArea) const override;
 
 private:
   Esri::ArcGISRuntime::GeoElement* m_geoElement = nullptr;

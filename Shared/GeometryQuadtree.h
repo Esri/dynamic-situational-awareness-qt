@@ -38,6 +38,9 @@ public:
                             QObject* parent = nullptr);
   ~GeometryQuadtree();
 
+  void appendGeoElment(Esri::ArcGISRuntime::GeoElement* newGeoElement);
+
+  QList<Esri::ArcGISRuntime::Geometry> candidateIntersections(const Esri::ArcGISRuntime::Geometry& geometry) const;
   QList<Esri::ArcGISRuntime::Geometry> candidateIntersections(const Esri::ArcGISRuntime::Envelope& extent) const;
   QList<Esri::ArcGISRuntime::Geometry> candidateIntersections(const Esri::ArcGISRuntime::Point& location) const;
 
@@ -47,6 +50,7 @@ signals:
 private:
   void buildTree(const Esri::ArcGISRuntime::Envelope& extent);
   void cacheGeometry();
+  void handleGeometryChange();
 
   struct QuadTree;
 

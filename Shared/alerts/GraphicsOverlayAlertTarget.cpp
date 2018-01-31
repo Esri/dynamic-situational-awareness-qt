@@ -10,6 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "GeometryQuadtree.h"
 #include "GraphicsOverlayAlertTarget.h"
 
 #include "GraphicsOverlay.h"
@@ -21,11 +22,9 @@ GraphicsOverlayAlertTarget::GraphicsOverlayAlertTarget(GraphicsOverlay* graphics
   AlertTarget(graphicsOverlay),
   m_graphicsOverlay(graphicsOverlay)
 {
-  connect(m_graphicsOverlay->graphics(), &GraphicListModel::graphicRemoved, this, [this](int index)
+  connect(m_graphicsOverlay->graphics(), &GraphicListModel::graphicRemoved, this, [this](int)
   {
-    auto conn = m_graphicConnections.at(index);
-    disconnect(conn);
-    m_graphicConnections.removeAt(index);
+    rebuildQuadtree();
     emit locationChanged();
   });
 
@@ -33,15 +32,13 @@ GraphicsOverlayAlertTarget::GraphicsOverlayAlertTarget(GraphicsOverlay* graphics
   {
     Graphic* graphic = m_graphicsOverlay->graphics()->at(index);
     setupGraphicConnections(graphic);
+    if (m_quadtree)
+      m_quadtree->appendGeoElment(graphic);
+
+    emit locationChanged();
   });
 
-  const GraphicListModel* graphics = m_graphicsOverlay->graphics();
-  if (!graphics)
-    return;
-
-  const int count = graphics->rowCount();
-  for (int i = 0; i < count; ++i)
-    setupGraphicConnections(m_graphicsOverlay->graphics()->at(i));
+  rebuildQuadtree();
 }
 
 GraphicsOverlayAlertTarget::~GraphicsOverlayAlertTarget()
@@ -49,8 +46,11 @@ GraphicsOverlayAlertTarget::~GraphicsOverlayAlertTarget()
 
 }
 
-QList<Geometry> GraphicsOverlayAlertTarget::targetGeometries() const
+QList<Geometry> GraphicsOverlayAlertTarget::targetGeometries(const Esri::ArcGISRuntime::Envelope& targetArea) const
 {
+  if (m_quadtree)
+    return m_quadtree->candidateIntersections(targetArea);
+
   QList<Geometry> geomList;
   const GraphicListModel* graphics = m_graphicsOverlay->graphics();
   if (!graphics)
@@ -73,5 +73,32 @@ void GraphicsOverlayAlertTarget::setupGraphicConnections(Graphic* graphic)
     return;
 
   m_graphicConnections.append(connect(graphic, &Graphic::geometryChanged, this, &GraphicsOverlayAlertTarget::locationChanged));
+}
+
+void GraphicsOverlayAlertTarget::rebuildQuadtree()
+{
+  if (m_quadtree)
+  {
+    delete m_quadtree;
+    m_quadtree = nullptr;
+  }
+
+  const GraphicListModel* graphics = m_graphicsOverlay->graphics();
+  if (!graphics)
+    return;
+
+  const int count = graphics->rowCount();
+  QList<GeoElement*> elements;
+  for (int i = 0; i < count; ++i)
+  {
+    Graphic* g = m_graphicsOverlay->graphics()->at(i);
+    if (!g)
+      continue;
+
+    setupGraphicConnections(g);
+  }
+
+  if (elements.size() > 1)
+    m_quadtree = new GeometryQuadtree(m_graphicsOverlay->extent(), elements, 8, this);
 }
 

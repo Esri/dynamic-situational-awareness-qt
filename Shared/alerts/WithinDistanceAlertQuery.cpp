@@ -22,7 +22,6 @@ using namespace Esri::ArcGISRuntime;
 WithinDistanceAlertQuery::WithinDistanceAlertQuery(QObject* parent):
   AlertQuery(parent)
 {
-
 }
 
 WithinDistanceAlertQuery::~WithinDistanceAlertQuery()
@@ -30,44 +29,24 @@ WithinDistanceAlertQuery::~WithinDistanceAlertQuery()
 
 }
 
-bool WithinDistanceAlertQuery::matchesRule(AlertConditionData* alert) const
+bool WithinDistanceAlertQuery::matchesRule(AlertConditionData* conditionData) const
 {
-  if (!alert)
+  if (!conditionData)
     return false;
 
-  WithinDistanceAlertConditionData* pairAlert = qobject_cast<WithinDistanceAlertConditionData*>(alert);
-  if (!pairAlert)
-    return true; // test is not valid for this alert type
+  WithinDistanceAlertConditionData* withinDistanceData = qobject_cast<WithinDistanceAlertConditionData*>(conditionData);
+  if (!withinDistanceData)
+    return true; // test is not valid for this condition
 
-  Point sourceGeom = GeometryEngine::project(pairAlert->sourceLocation(), SpatialReference::wgs84());
+  const Geometry bufferGeom = GeometryEngine::bufferGeodetic(withinDistanceData->sourceLocation(), withinDistanceData->distance(), LinearUnit::meters(), 1.0, GeodeticCurveType::Geodesic);
+  const Geometry bufferWgs84 = GeometryEngine::project(bufferGeom, SpatialReference::wgs84());
 
-  const QList<Geometry> targetGeometries = pairAlert->target()->targetGeometries();
+  const QList<Geometry> targetGeometries = withinDistanceData->target()->targetGeometries(bufferWgs84.extent());
 
   for (const Geometry& target : targetGeometries)
   {
-    Geometry geom2 = GeometryEngine::project(target, sourceGeom.spatialReference());
-    Point nearestPoint;
-
-    switch (geom2.geometryType())
-    {
-    case GeometryType::Point:
-      nearestPoint = geom2;
-      break;
-    case GeometryType::Polyline:
-    case GeometryType::Polygon:
-    {
-      nearestPoint = GeometryEngine::nearestCoordinate(geom2, sourceGeom).coordinate();
-      break;
-    }
-    default:
-      nearestPoint = geom2.extent().center();
-      break;
-    }
-
-    const GeodeticDistanceResult result = GeometryEngine::instance()->distanceGeodetic(
-          sourceGeom, nearestPoint, LinearUnit::meters(), AngularUnit::degrees(), GeodeticCurveType::Geodesic);
-
-    if (result.distance() <= pairAlert->distance())
+    Geometry targetWgs84 = GeometryEngine::project(target, SpatialReference::wgs84());
+    if (GeometryEngine::intersects(bufferWgs84, targetWgs84))
       return true;
   }
 

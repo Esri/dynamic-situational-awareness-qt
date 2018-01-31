@@ -28,7 +28,7 @@ GeoElementAlertTarget::~GeoElementAlertTarget()
 
 }
 
-QList<Esri::ArcGISRuntime::Geometry> GeoElementAlertTarget::targetGeometries() const
+QList<Esri::ArcGISRuntime::Geometry> GeoElementAlertTarget::targetGeometries(const Esri::ArcGISRuntime::Envelope&) const
 {
   return QList<Geometry>{m_geoElement->geometry()};
 }

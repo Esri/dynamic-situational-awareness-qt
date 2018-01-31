@@ -11,6 +11,7 @@
 //
 
 #include "FeatureLayerAlertTarget.h"
+#include "GeometryQuadtree.h"
 
 #include "FeatureLayer.h"
 
@@ -52,8 +53,11 @@ FeatureLayerAlertTarget::~FeatureLayerAlertTarget()
 
 }
 
-QList<Esri::ArcGISRuntime::Geometry> FeatureLayerAlertTarget::targetGeometries() const
+QList<Esri::ArcGISRuntime::Geometry> FeatureLayerAlertTarget::targetGeometries(const Esri::ArcGISRuntime::Envelope& targetArea) const
 {
+  if (m_quadtree)
+    return m_quadtree->candidateIntersections(targetArea);
+
   if (!m_geomCache.isEmpty())
     return m_geomCache;
 
@@ -87,15 +91,33 @@ void FeatureLayerAlertTarget::handleQueryFeaturesCompleted(QUuid, FeatureQueryRe
   for (; it != itEnd; ++it)
   {
     Feature* feature = *it;
-    if (feature)
+    if (!feature)
       continue;
 
     connect(feature, &Feature::geometryChanged, this, [this]()
     {
       m_geomCache.clear();
+      rebuildQuadtree();
       emit locationChanged();
     });
   }
 
+  rebuildQuadtree();
   emit locationChanged();
+}
+
+void FeatureLayerAlertTarget::rebuildQuadtree()
+{
+  if (m_quadtree)
+  {
+    delete m_quadtree;
+    m_quadtree = nullptr;
+  }
+
+  QList<GeoElement*> elements;
+  for (auto it = m_features.begin(); it != m_features.end(); ++it)
+    elements.append(*it);
+
+  if (elements.size() > 1)
+    m_quadtree = new GeometryQuadtree(m_FeatureLayer->fullExtent(), elements, 8, this);
 }

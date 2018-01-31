@@ -19,6 +19,14 @@
 
 #include <QList>
 
+namespace Esri
+{
+namespace ArcGISRuntime
+{
+  class Envelope;
+}
+}
+
 class AlertTarget : public QObject
 {
   Q_OBJECT
@@ -27,7 +35,7 @@ public:
   explicit AlertTarget(QObject* parent = nullptr);
   ~AlertTarget();
 
-  virtual QList<Esri::ArcGISRuntime::Geometry> targetGeometries() const = 0;
+  virtual QList<Esri::ArcGISRuntime::Geometry> targetGeometries(const Esri::ArcGISRuntime::Envelope& targetArea) const = 0;
 
 signals:
   void locationChanged();

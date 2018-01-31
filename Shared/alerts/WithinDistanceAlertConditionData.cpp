@@ -11,8 +11,10 @@
 //
 
 #include "WithinDistanceAlertConditionData.h"
+#include "AlertSource.h"
 
 #include "GeoElement.h"
+#include "GeometryEngine.h"
 #include "Graphic.h"
 #include "Point.h"
 

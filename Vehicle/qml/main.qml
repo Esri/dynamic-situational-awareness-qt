@@ -180,6 +180,7 @@ Vehicle {
             onClosed: {
                 mapToolRow.tocIconSelected = false;
                 visible = false;
+                mapToolRow.state = "clear";
             }
         }
 

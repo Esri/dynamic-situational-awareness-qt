@@ -32,6 +32,10 @@ Row {
                 target: identifyIcon
                 selected: true
             }
+            PropertyChanges {
+                target: tocIcon
+                selected: selected
+            }
         },
         State {
             name: coordinateConversionIcon.toolName

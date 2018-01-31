@@ -33,6 +33,21 @@ struct FeatureQueryResultManager {
   }
 };
 
+/*!
+  \class FeatureLayerAlertTarget
+  \inherits AlertTarget
+  \brief Represents a target based on an \l Esri::ArcGISRuntime::FeatureLayer
+  for an \l AlertCondition.
+
+  Changes to any of the features in the layer will cause the \l AlertTarget::locationChanged
+  signal to be emitted.
+  */
+
+/*!
+  \brief Constructor taking an \l Esri::ArcGISRuntime::FeatureLayer (\a featureLayer).
+
+  All features will be retrieved from the underlying feature layer.
+ */
 FeatureLayerAlertTarget::FeatureLayerAlertTarget(FeatureLayer* featureLayer):
   AlertTarget(featureLayer),
   m_FeatureLayer(featureLayer)
@@ -48,19 +63,30 @@ FeatureLayerAlertTarget::FeatureLayerAlertTarget(FeatureLayer* featureLayer):
   table->queryFeatures(allFeaturesQuery);
 }
 
+/*!
+  \brief Destructor.
+ */
 FeatureLayerAlertTarget::~FeatureLayerAlertTarget()
 {
 
 }
 
+/*!
+  \brief Returns the list of \l Esri::ArcGISRuntime::Geometry which are in the \a targetArea.
+
+  \note No exact intersection tests are carried out to create this list.
+ */
 QList<Esri::ArcGISRuntime::Geometry> FeatureLayerAlertTarget::targetGeometries(const Esri::ArcGISRuntime::Envelope& targetArea) const
 {
+  // if the quad-tree has been built use it to determine the candidate geometry
   if (m_quadtree)
     return m_quadtree->candidateIntersections(targetArea);
 
+  // if there is no quad-tree just return the cache of geoemtry
   if (!m_geomCache.isEmpty())
     return m_geomCache;
 
+  // if there is no cached geometry, get the geometry for all features
   auto it = m_features.begin();
   auto itEnd = m_features.end();
   for (; it != itEnd; ++it)
@@ -75,8 +101,14 @@ QList<Esri::ArcGISRuntime::Geometry> FeatureLayerAlertTarget::targetGeometries(c
   return m_geomCache;
 }
 
+/*!
+  \brief internal.
+
+  Handle the query to obtain all of the features in the layer.
+ */
 void FeatureLayerAlertTarget::handleQueryFeaturesCompleted(QUuid, FeatureQueryResult* queryResults)
 {
+  // Store the results in a RAII manager to ensure they are cleaned up
   FeatureQueryResultManager results(queryResults);
   if (!results.m_results)
   {
@@ -84,6 +116,7 @@ void FeatureLayerAlertTarget::handleQueryFeaturesCompleted(QUuid, FeatureQueryRe
     return;
   }
 
+  // cache all of the features
   m_geomCache.clear();
   m_features = results.m_results->iterator().features(this);
   auto it = m_features.begin();
@@ -94,6 +127,7 @@ void FeatureLayerAlertTarget::handleQueryFeaturesCompleted(QUuid, FeatureQueryRe
     if (!feature)
       continue;
 
+    // for each feature, connect to the geometryChanged signal
     connect(feature, &Feature::geometryChanged, this, [this]()
     {
       m_geomCache.clear();
@@ -106,6 +140,11 @@ void FeatureLayerAlertTarget::handleQueryFeaturesCompleted(QUuid, FeatureQueryRe
   emit locationChanged();
 }
 
+/*!
+  \brief internal.
+
+  Build the quadtree used to find intersections with feature geometry etc.
+ */
 void FeatureLayerAlertTarget::rebuildQuadtree()
 {
   if (m_quadtree)

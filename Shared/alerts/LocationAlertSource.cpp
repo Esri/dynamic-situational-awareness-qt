@@ -26,7 +26,7 @@ using namespace Esri::ArcGISRuntime;
   signal to be emitted.
 
   /sa Toolkit::ToolResourceProvider
-  */
+ */
 
 /*!
   \brief Constructor taking an optional \a parent.

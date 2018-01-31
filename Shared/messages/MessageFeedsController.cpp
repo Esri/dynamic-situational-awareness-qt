@@ -76,7 +76,7 @@ QAbstractListModel* MessageFeedsController::messageFeeds() const
 }
 
 /*!
-   \brief Returns the list of message listeners objects that exist for
+   \brief Returns the list of message listener objects that exist for
    the message feeds.
  */
 QList<MessageListener*> MessageFeedsController::messageListeners() const

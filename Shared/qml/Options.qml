@@ -118,6 +118,8 @@ Rectangle {
                         family: DsaStyles.fontFamily
                     }
 
+                    validator: IntValidator { bottom:0 }
+
                     onTextChanged: messageFeeds.controller.locationBroadcastFrequency = Number(text)
                 }
             }

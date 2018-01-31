@@ -424,13 +424,13 @@ QString Message::fromMessageAction(MessageAction action)
   switch (action)
   {
   case MessageAction::Remove:
-    return "remove";
+    return QStringLiteral("remove");
   case MessageAction::Select:
-    return "select";
+    return QStringLiteral("select");
   case MessageAction::Unselect:
-    return "un-select";
+    return QStringLiteral("un-select");
   case MessageAction::Update:
-    return "update";
+    return QStringLiteral("update");
   default:
     break;
   }

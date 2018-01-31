@@ -179,6 +179,7 @@ Handheld {
             }
             width: drawer.width
             visible: false
+            isMobile: true
 
             onClosed: {
                 mapToolRow.tocIconSelected = false;

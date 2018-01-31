@@ -169,12 +169,13 @@ Vehicle {
         TableOfContents {
             id: tableOfContentsTool
             anchors {
-                right: parent.right
+                left: parent.left
                 top: parent.top
                 bottom: sceneView.attributionTop
             }
             width: drawer.width
             visible: false
+            isMobile: false
 
             onClosed: {
                 mapToolRow.tocIconSelected = false;

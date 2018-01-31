@@ -50,7 +50,7 @@ signals:
 private:
   void buildTree(const Esri::ArcGISRuntime::Envelope& extent);
   void cacheGeometry();
-  void handleGeometryChange();
+  void handleGeometryChange(int changedIndex);
 
   struct QuadTree;
 

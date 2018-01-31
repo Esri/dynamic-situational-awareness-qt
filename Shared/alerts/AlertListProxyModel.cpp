@@ -15,8 +15,6 @@
 #include "AlertListModel.h"
 #include "AlertListProxyModel.h"
 
-#include <QTimer>
-
 AlertListProxyModel::AlertListProxyModel(QObject* parent):
   QSortFilterProxyModel(parent)
 {

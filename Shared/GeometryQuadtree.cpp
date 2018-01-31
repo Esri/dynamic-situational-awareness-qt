@@ -27,10 +27,15 @@ using namespace Esri::ArcGISRuntime;
  */
 struct GeometryQuadtree::QuadTree
 {
-  explicit  QuadTree(int level, double xMin, double xMax, double yMin, double yMax, int maxLevel);
+  explicit  QuadTree(int level, double xMin, double xMax, double yMin, double yMax);
   ~QuadTree();
 
-  bool assign(const Geometry& geoElement, int geomId);
+  QuadTree* createTopLeft(int maxLevels);
+  QuadTree* createTopRight(int maxLevels);
+  QuadTree* createBottomLeft(int maxLevels);
+  QuadTree* createBottomRight(int maxLevels);
+
+  bool assign(const Envelope& extent, int geomId, int maxLevels);
   void prune();
 
   QSet<int> intersectingIndices(const Envelope& extent) const;
@@ -39,6 +44,8 @@ struct GeometryQuadtree::QuadTree
   bool contains(const Envelope& extent) const;
   bool intersects(const Envelope& extent) const;
   bool intersects(const Point& location) const;
+
+  void removeIndex(int index);
 
   int m_level = 0;
   double m_xMin = 0.0;
@@ -67,9 +74,18 @@ GeometryQuadtree::GeometryQuadtree(const Envelope& extent,
   // connect to the geometryChanged signal of individual GeoElements
   for (const auto& element : geoElements)
   {
-    connect(element, &GeoElement::geometryChanged, this, [this]()
+    connect(element, &GeoElement::geometryChanged, this, [this, element]()
     {
-      handleGeometryChange();
+      int index = -1;
+      for (int i = 0; i < m_elements.size(); ++i)
+      {
+        if (m_elements.at(i) == element)
+        {
+          index = i;
+          break;
+        }
+      }
+      handleGeometryChange(index);
     });
   }
 
@@ -96,7 +112,7 @@ void GeometryQuadtree::appendGeoElment(GeoElement* newGeoElement)
     return;
 
   m_elements.append(newGeoElement);
-  handleGeometryChange();
+  handleGeometryChange(m_elements.size()-1);
 }
 
 /*!
@@ -169,14 +185,14 @@ void GeometryQuadtree::buildTree(const Envelope& extent)
   const Envelope extentWgs84 = GeometryEngine::project(extent, SpatialReference::wgs84());
 
   // build the (currently empty) tree to the desired depth
-  m_tree.reset(new QuadTree(0, extentWgs84.xMin(), extentWgs84.xMax(), extentWgs84.yMin(), extentWgs84.yMax(), m_maxLevels));
+  m_tree.reset(new QuadTree(0, extentWgs84.xMin(), extentWgs84.xMax(), extentWgs84.yMin(), extentWgs84.yMax()));
 
   // assign each geometry to the tree, alongwith its index in the m_geometry list
   int index = 0;
   for (const auto& geom : m_geometry)
   {
     const Geometry wgs84 = GeometryEngine::project(geom, SpatialReference::wgs84());
-    m_tree->assign(wgs84, index);
+    m_tree->assign(wgs84.extent(), index, m_maxLevels);
     index++;
   }
 
@@ -201,35 +217,41 @@ void GeometryQuadtree::cacheGeometry()
 /*!
   \internal
  */
-void GeometryQuadtree::handleGeometryChange()
+void GeometryQuadtree::handleGeometryChange(int changedIndex)
 {
   cacheGeometry();
   const Envelope newExtent = GeometryEngine::combineExtents(m_geometry);
   const Envelope wgs84 = GeometryEngine::project(newExtent, SpatialReference::wgs84());
-  buildTree(newExtent);
+
+  // if the new extent is the same or smaller than the existing tree, it can still be used
+  if (changedIndex > 0 &&
+      changedIndex < m_elements.size() &&
+      m_tree->m_xMin <= wgs84.xMin() &&
+      m_tree->m_xMax >= wgs84.xMax() &&
+      m_tree->m_yMin <= wgs84.yMin() &&
+      m_tree->m_yMax >= wgs84.yMax())
+  {
+    GeoElement* changedElement = m_elements.at(changedIndex);
+    const Geometry wgs84 = GeometryEngine::project(changedElement->geometry(), SpatialReference::wgs84());
+    m_tree->assign(wgs84.extent(), changedIndex, m_maxLevels);
+  }
+  else
+  {
+    buildTree(newExtent);
+  }
 }
 
 /*!
   \internal
  */
-GeometryQuadtree::QuadTree::QuadTree(int level, double xMin, double xMax, double yMin, double yMax, int maxLevel):
+GeometryQuadtree::QuadTree::QuadTree(int level, double xMin, double xMax, double yMin, double yMax):
   m_level(level),
   m_xMin(xMin),
   m_xMax(xMax),
   m_yMin(yMin),
   m_yMax(yMax)
 {
-  // if we have not reached the max depth of the tree, add the child nodes
-  if (m_level <= maxLevel)
-  {
-    const int newLevel = m_level +1;
-    const double xMid = ((m_xMax - m_xMin) * 0.5) + m_xMin;
-    const double yMid = ((m_yMax - m_yMin) * 0.5) + m_yMin;
-    m_tl = new QuadTree(newLevel, m_xMin, xMid, yMid, m_yMax, maxLevel);
-    m_tr = new QuadTree(newLevel, xMid, m_xMax, yMid, m_yMax, maxLevel);
-    m_bl = new QuadTree(newLevel, m_xMin, xMid, m_yMin, yMid, maxLevel);
-    m_br = new QuadTree(newLevel, xMid, m_xMax, m_yMin, yMid, maxLevel);
-  }
+
 }
 
 /*!
@@ -250,13 +272,60 @@ GeometryQuadtree::QuadTree::~QuadTree()
     delete m_br;
 }
 
+GeometryQuadtree::QuadTree* GeometryQuadtree::QuadTree::createTopLeft(int maxLevels)
+{
+  // if we have not reached the max depth of the tree, add the child nodes
+  if (m_level > maxLevels)
+    return nullptr;
+
+  const double xMid = ((m_xMax - m_xMin) * 0.5) + m_xMin;
+  const double yMid = ((m_yMax - m_yMin) * 0.5) + m_yMin;
+
+  return new QuadTree(m_level +1, m_xMin, xMid, yMid, m_yMax);
+}
+
+GeometryQuadtree::QuadTree* GeometryQuadtree::QuadTree::createTopRight(int maxLevels)
+{
+  // if we have not reached the max depth of the tree, add the child nodes
+  if (m_level > maxLevels)
+    return nullptr;
+
+  const double xMid = ((m_xMax - m_xMin) * 0.5) + m_xMin;
+  const double yMid = ((m_yMax - m_yMin) * 0.5) + m_yMin;
+
+  return new QuadTree(m_level + 1, xMid, m_xMax, yMid, m_yMax);
+}
+
+GeometryQuadtree::QuadTree* GeometryQuadtree::QuadTree::createBottomLeft(int maxLevels)
+{
+  // if we have not reached the max depth of the tree, add the child nodes
+  if (m_level > maxLevels)
+    return nullptr;
+
+  const double xMid = ((m_xMax - m_xMin) * 0.5) + m_xMin;
+  const double yMid = ((m_yMax - m_yMin) * 0.5) + m_yMin;
+
+  return new QuadTree(m_level + 1, m_xMin, xMid, m_yMin, yMid);
+}
+
+GeometryQuadtree::QuadTree* GeometryQuadtree::QuadTree::createBottomRight(int maxLevels)
+{
+  // if we have not reached the max depth of the tree, add the child nodes
+  if (m_level > maxLevels)
+    return nullptr;
+
+  const double xMid = ((m_xMax - m_xMin) * 0.5) + m_xMin;
+  const double yMid = ((m_yMax - m_yMin) * 0.5) + m_yMin;
+
+  return new QuadTree(m_level + 1, xMid, m_xMax, m_yMin, yMid);
+}
+
 /*!
   \internal
  */
-bool GeometryQuadtree::QuadTree::assign(const Geometry& geometry, int geomIndex)
+bool GeometryQuadtree::QuadTree::assign(const Envelope& extent, int geomIndex, int maxLevels)
 {
   // if the extent of the incoming geometry does not lie within this node, return
-  const Envelope extent = geometry.extent();
   if (!intersects(extent))
     return false;
 
@@ -264,14 +333,59 @@ bool GeometryQuadtree::QuadTree::assign(const Geometry& geometry, int geomIndex)
   m_geometryIndices.insert(geomIndex);
 
   // (recursively) attempt to assign the geomeytry to each child node
+  // if the node already exists, just assign
   if (m_tl)
-    m_tl->assign(geometry, geomIndex);
+  {
+    m_tl->assign(extent, geomIndex, maxLevels);
+  }
+  // otherwise, create a temporary node and only keep it if it will containthis geometry
+  else
+  {
+    QuadTree* temp = createTopLeft(maxLevels);
+    if (temp && temp->assign(extent, geomIndex, maxLevels))
+      m_tl = temp;
+    else
+      delete temp;
+  }
+
   if (m_tr)
-    m_tr->assign(geometry, geomIndex);
+  {
+    m_tr->assign(extent, geomIndex, maxLevels);
+  }
+  else
+  {
+    QuadTree* temp = createTopRight(maxLevels);
+    if (temp && temp->assign(extent, geomIndex, maxLevels))
+      m_tr = temp;
+    else
+      delete temp;
+  }
+
   if (m_bl)
-    m_bl->assign(geometry, geomIndex);
+  {
+    m_bl->assign(extent, geomIndex, maxLevels);
+  }
+  else
+  {
+    QuadTree* temp = createBottomLeft(maxLevels);
+    if (temp && temp->assign(extent, geomIndex, maxLevels))
+      m_bl = temp;
+    else
+      delete temp;
+  }
+
   if (m_br)
-    m_br->assign(geometry, geomIndex);
+  {
+    m_br->assign(extent, geomIndex, maxLevels);
+  }
+  else
+  {
+    QuadTree* temp = createBottomRight(maxLevels);
+    if (temp && temp->assign(extent, geomIndex, maxLevels))
+      m_br = temp;
+    else
+      delete temp;
+  }
 
   return true;
 }
@@ -438,4 +552,22 @@ bool GeometryQuadtree::QuadTree::intersects(const Point& location) const
           location.x() >= m_xMin &&
           location.y() <= m_yMax &&
           location.y() >= m_yMin);
+}
+
+void GeometryQuadtree::QuadTree::removeIndex(int index)
+{
+  if (m_geometryIndices.remove(index))
+  {
+    if (m_tl)
+      m_tl->removeIndex(index);
+
+    if (m_tr)
+      m_tr->removeIndex(index);
+
+    if (m_bl)
+      m_bl->removeIndex(index);
+
+    if (m_br)
+      m_br->removeIndex(index);
+  }
 }

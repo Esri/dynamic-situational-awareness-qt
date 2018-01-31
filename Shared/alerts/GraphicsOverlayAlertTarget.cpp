@@ -34,6 +34,8 @@ GraphicsOverlayAlertTarget::GraphicsOverlayAlertTarget(GraphicsOverlay* graphics
     setupGraphicConnections(graphic);
     if (m_quadtree)
       m_quadtree->appendGeoElment(graphic);
+    else
+      rebuildQuadtree();
 
     emit locationChanged();
   });
@@ -96,6 +98,7 @@ void GraphicsOverlayAlertTarget::rebuildQuadtree()
       continue;
 
     setupGraphicConnections(g);
+    elements.append(g);
   }
 
   if (elements.size() > 1)

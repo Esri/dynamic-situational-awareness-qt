@@ -64,7 +64,6 @@ Item {
                 family: DsaStyles.fontFamily
             }
         }
-
     }
 
     MouseArea {

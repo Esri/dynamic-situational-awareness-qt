@@ -17,6 +17,7 @@
 
 #include "TaskWatcher.h"
 
+#include <QHash>
 #include <QStringListModel>
 
 class QMouseEvent;
@@ -105,6 +106,8 @@ private:
   LocationAlertSource* m_locationSource = nullptr;
   Esri::ArcGISRuntime::TaskWatcher m_identifyLayersWatcher;
   Esri::ArcGISRuntime::TaskWatcher m_identifyGraphicsWatcher;
+  mutable QHash<QString,AlertTarget*> m_layerTargets;
+  mutable QHash<QString,AlertTarget*> m_overlayTargets;
 
   QMetaObject::Connection m_mouseClickConnection;
   QMetaObject::Connection m_identifyLayersConnection;

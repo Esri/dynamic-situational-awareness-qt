@@ -265,6 +265,7 @@ void AlertConditionsController::onLayersChanged()
   }
 
   QStringList newTargetList;
+  QStringList existingLayerIds;
   LayerListModel* operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
   if (operationalLayers)
   {
@@ -282,8 +283,18 @@ void AlertConditionsController::onLayersChanged()
       if (featLayer->loadStatus() != LoadStatus::Loaded)
         connect(featLayer, &FeatureLayer::doneLoading, this, &AlertConditionsController::onLayersChanged);
       else
+      {
         newTargetList.append(featLayer->name());
+        existingLayerIds.append(featLayer->layerId());
+      }
     }
+  }
+
+  const auto cachedLayerTargetKeys = m_layerTargets.keys();
+  for (const QString& key : cachedLayerTargetKeys)
+  {
+    if (!existingLayerIds.contains(key))
+      m_layerTargets.remove(key);
   }
 
   QStringList newSourceList{"My Location"};
@@ -305,6 +316,13 @@ void AlertConditionsController::onLayersChanged()
 
       newTargetList.append(overlay->overlayId());
     }
+  }
+
+  const auto cachedOverlayTargetKeys = m_overlayTargets.keys();
+  for (const QString& key : cachedOverlayTargetKeys)
+  {
+    if (!newSourceList.contains(key))
+      m_overlayTargets.remove(key);
   }
 
   setSourceNames(newSourceList);
@@ -485,7 +503,12 @@ AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int
       if (currIndex == targetOverlayIndex)
       {
         if (itemId == -1)
-          return new FeatureLayerAlertTarget(featLayer);
+        {
+          if (!m_layerTargets.contains(featLayer->layerId()))
+            m_layerTargets.insert(featLayer->layerId(), new FeatureLayerAlertTarget(featLayer));
+
+          return m_layerTargets.value(featLayer->layerId(), nullptr);
+        }
         else
           return targetFromFeatureLayer(featLayer, itemId);
       }
@@ -510,7 +533,12 @@ AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int
       if (currIndex == targetOverlayIndex)
       {
         if (itemId == -1)
-          return new GraphicsOverlayAlertTarget(overlay);
+        {
+          if (!m_overlayTargets.contains(overlay->overlayId()))
+            m_overlayTargets.insert(overlay->overlayId(), new GraphicsOverlayAlertTarget(overlay));
+
+          return m_overlayTargets.value(overlay->overlayId(), nullptr);
+        }
         else
           return targetFromGraphicsOverlay(overlay, itemId);
       }

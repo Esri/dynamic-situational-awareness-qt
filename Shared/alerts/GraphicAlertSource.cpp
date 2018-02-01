@@ -12,8 +12,11 @@
 
 #include "GraphicAlertSource.h"
 
+#include "AttributeListModel.h"
 #include "Envelope.h"
 #include "Graphic.h"
+
+#include <QDebug>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -25,7 +28,7 @@ using namespace Esri::ArcGISRuntime;
 
   Changes to the underlying graphic's position will cause the \l AlertSource::locationChanged
   signal to be emitted.
-  */
+ */
 
 /*!
   \brief Constructor taking an \l Esri::ArcGISRuntime::Graphic \a graphic.
@@ -34,7 +37,8 @@ GraphicAlertSource::GraphicAlertSource(Graphic* graphic):
   AlertSource(graphic),
   m_graphic(graphic)
 {
-  connect(m_graphic, &Graphic::geometryChanged, this, &GraphicAlertSource::locationChanged);
+  connect(m_graphic, &Graphic::geometryChanged, this, &GraphicAlertSource::dataChanged);
+  connect(m_graphic->attributes(), &AttributeListModel::dataChanged, this, &GraphicAlertSource::dataChanged);
 }
 
 /*!
@@ -54,6 +58,18 @@ Point GraphicAlertSource::location() const
     return m_graphic->geometry();
   else
     return m_graphic->geometry().extent().center();
+}
+
+/*!
+  \brief Returns the attribute value for the field \a key in the
+  underlying \l Esri::ArcGISRuntime::Graphic.
+ */
+QVariant GraphicAlertSource::value(const QString& key) const
+{
+  if (!m_graphic->attributes())
+    return QVariant();
+
+  return m_graphic->attributes()->attributeValue(key);
 }
 
 /*!

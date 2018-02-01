@@ -37,7 +37,7 @@ LocationAlertSource::LocationAlertSource(QObject* parent):
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::locationChanged, this, [this](const Point& location)
   {
     m_location = location;
-    emit locationChanged();
+    emit dataChanged();
   });
 }
 
@@ -55,6 +55,14 @@ LocationAlertSource::~LocationAlertSource()
 Point LocationAlertSource::location() const
 {
   return m_location;
+}
+
+/*!
+  \brief Returns an empty QVariant since this type has no attributes.
+ */
+QVariant LocationAlertSource::value(const QString&) const
+{
+  return QVariant();
 }
 
 /*!

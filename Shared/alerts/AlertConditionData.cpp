@@ -29,7 +29,7 @@ AlertConditionData::AlertConditionData(const QString& name,
   m_target(target)
 {
   connect(m_source, &AlertSource::noLongerValid, this, &AlertConditionData::noLongerValid);
-  connect(m_source, &AlertSource::locationChanged, this, &AlertConditionData::dataChanged);
+  connect(m_source, &AlertSource::dataChanged, this, &AlertConditionData::dataChanged);
   connect(m_source, &AlertSource::destroyed, this, [this]()
   {
     m_source = nullptr;

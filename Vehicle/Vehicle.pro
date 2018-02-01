@@ -32,14 +32,18 @@ HEADERS += \
     Vehicle.h \
     VehicleStyles.h \
     $$PWD/../Shared/*.h \
-    $$PWD/../Shared/alerts/*.h
+    $$PWD/../Shared/alerts/*.h \
+    ../Shared/alerts/AttributeEqualsAlertCondition.h \
+    ../Shared/alerts/AttributeEqualsAlertConditionData.h
 
 SOURCES += \
     main.cpp \
     Vehicle.cpp \
     VehicleStyles.cpp \
     $$PWD/../Shared/*.cpp \
-    $$PWD/../Shared/alerts/*.cpp
+    $$PWD/../Shared/alerts/*.cpp \
+    ../Shared/alerts/AttributeEqualsAlertCondition.cpp \
+    ../Shared/alerts/AttributeEqualsAlertConditionData.cpp
 
 RESOURCES += \
     qml/qml.qrc \

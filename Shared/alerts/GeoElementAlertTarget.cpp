@@ -13,6 +13,7 @@
 #include "GeoElementAlertTarget.h"
 
 #include "Geometry.h"
+#include "GeometryEngine.h"
 #include "GeoElement.h"
 
 using namespace Esri::ArcGISRuntime;
@@ -53,4 +54,12 @@ GeoElementAlertTarget::~GeoElementAlertTarget()
 QList<Esri::ArcGISRuntime::Geometry> GeoElementAlertTarget::targetGeometries(const Esri::ArcGISRuntime::Envelope&) const
 {
   return QList<Geometry>{m_geoElement->geometry()};
+}
+
+/*!
+  \brief Returns an empty QVariant.
+ */
+QVariant GeoElementAlertTarget::targetValue() const
+{
+  return QVariant();
 }

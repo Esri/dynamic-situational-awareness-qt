@@ -61,6 +61,7 @@ public:
 
   Q_INVOKABLE void addWithinDistanceAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, double distance, int itemId, int targetOverlayIndex);
   Q_INVOKABLE void addWithinAreaAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, int itemId, int targetOverlayIndex);
+  Q_INVOKABLE void addAttributeEqualsAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, const QString& attributeName, const QVariant& targetValue);
   Q_INVOKABLE void removeConditionAt(int rowIndex);
   Q_INVOKABLE void togglePickMode();
 

@@ -102,6 +102,14 @@ QList<Esri::ArcGISRuntime::Geometry> FeatureLayerAlertTarget::targetGeometries(c
 }
 
 /*!
+  \brief Returns an empty QVariant.
+ */
+QVariant FeatureLayerAlertTarget::targetValue() const
+{
+  return QVariant();
+}
+
+/*!
   \brief internal.
 
   Handle the query to obtain all of the features in the layer.

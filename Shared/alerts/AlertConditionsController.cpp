@@ -10,6 +10,8 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "AttributeEqualsAlertCondition.h"
+#include "FixedValueAlertTarget.h"
 #include "AlertConditionData.h"
 #include "AlertConditionListModel.h"
 #include "AlertConditionsController.h"
@@ -233,6 +235,42 @@ void AlertConditionsController::addWithinAreaAlert(const QString& conditionName,
       m_conditions->addAlertCondition(condition);
     }
   }
+}
+
+/*!
+  \brief Adds a \l AttributeEqualsAlertCondition to the list of conditions.
+
+  \list
+    \li \a conditionName. The name for the condition.
+    \li \a levelIndex. The \l AlertLevel for the condition.
+    \li \a sourceFeedName. The name of the source feed
+      (e.g. a \l Esri::ArcGISRuntime::GraphicsOverlay) used to create an \l AlertSource.
+    \li attributeName. The name of the attribute to query.
+    \li targetValue. The attribute value to check for.
+  \endlist
+ */
+void AlertConditionsController::addAttributeEqualsAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedName, const QString& attributeName, const QVariant& targetValue)
+{
+  if (levelIndex < 0 ||
+      sourceFeedName.isEmpty() ||
+      attributeName.isEmpty() ||
+      targetValue.isNull())
+    return;
+
+  AlertLevel level = static_cast<AlertLevel>(levelIndex + 1);
+  if (level > AlertLevel::Critical)
+    return;
+
+  AlertTarget* target = new FixedValueAlertTarget(targetValue, this);
+
+  GraphicsOverlay* sourceOverlay = graphicsOverlayFromName(sourceFeedName);
+  if (sourceOverlay)
+  {
+    AttributeEqualsAlertCondition* condition = new AttributeEqualsAlertCondition(level, conditionName, attributeName, this);
+    condition->init(sourceOverlay, target);
+    m_conditions->addAlertCondition(condition);
+  }
+
 }
 
 /*!

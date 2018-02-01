@@ -34,7 +34,8 @@ public:
   explicit GraphicsOverlayAlertTarget(Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlay);
   ~GraphicsOverlayAlertTarget();
 
-  virtual QList<Esri::ArcGISRuntime::Geometry> targetGeometries(const Esri::ArcGISRuntime::Envelope& targetArea) const override;
+  QList<Esri::ArcGISRuntime::Geometry> targetGeometries(const Esri::ArcGISRuntime::Envelope& targetArea) const override;
+  QVariant targetValue() const override;
 
 private:
   void setupGraphicConnections(Esri::ArcGISRuntime::Graphic* graphic);

@@ -99,6 +99,14 @@ QList<Geometry> GraphicsOverlayAlertTarget::targetGeometries(const Esri::ArcGISR
 }
 
 /*!
+  \brief Returns an empty QVariant.
+ */
+QVariant GraphicsOverlayAlertTarget::targetValue() const
+{
+  return QVariant();
+}
+
+/*!
   \internal
 
   Connect signals etc. for a new \a graphic.

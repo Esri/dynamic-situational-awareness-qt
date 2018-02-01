@@ -14,6 +14,7 @@
 #define ALERTTARGET_H
 
 #include <QObject>
+#include <QVariant>
 
 namespace Esri
 {
@@ -33,6 +34,7 @@ public:
   ~AlertTarget();
 
   virtual QList<Esri::ArcGISRuntime::Geometry> targetGeometries(const Esri::ArcGISRuntime::Envelope& targetArea) const = 0;
+  virtual QVariant targetValue() const = 0;
 
 signals:
   void noLongerValid();

@@ -123,7 +123,7 @@ AlertLevel AlertCondition::level() const
 }
 
 /*!
-  \brief Sets the \l AlertLevel foro the condition to \a level.
+  \brief Sets the \l AlertLevel for the condition to \a level.
  */
 void AlertCondition::setLevel(AlertLevel level)
 {
@@ -131,6 +131,13 @@ void AlertCondition::setLevel(AlertLevel level)
     return;
 
   m_level = level;
+
+  for (auto it = m_data.begin(); it != m_data.end(); ++it)
+  {
+    AlertConditionData* data = *it;
+    if (data)
+      data->setLevel(m_level);
+  }
 }
 
 /*!
@@ -142,7 +149,7 @@ QString AlertCondition::name() const
 }
 
 /*!
-  \brief Sets the \l AlertLevel foro the condition to \a level.
+  \brief Sets the name for the condition and associated data to \a name.
  */
 void AlertCondition::setName(const QString& name)
 {
@@ -150,6 +157,13 @@ void AlertCondition::setName(const QString& name)
     return;
 
   m_name = name;
+
+  for (int i = 0; i < m_data.count(); ++i)
+  {
+    AlertConditionData* data = m_data.at(i);
+    if (data)
+      data->setName(m_name + QString(" (%1)").arg(QString::number(i));
+  }
 }
 
 /*!

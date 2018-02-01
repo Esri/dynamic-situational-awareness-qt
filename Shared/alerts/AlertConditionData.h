@@ -33,12 +33,14 @@ public:
   ~AlertConditionData();
 
   AlertLevel level() const;
+  void setLevel(AlertLevel& level);
 
   Esri::ArcGISRuntime::Point sourceLocation() const;
 
   void highlight(bool on);
 
   QString name() const;
+  void setName(const QString& name);
 
   QUuid id() const;
   void setId(const QUuid& id);

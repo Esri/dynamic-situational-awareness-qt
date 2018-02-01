@@ -42,5 +42,6 @@
         <file>icons/xhdpi/ic_menu_aboutmap_dark.png</file>
         <file>icons/xhdpi/ic_menu_refresh_dark.png</file>
         <file>icons/xhdpi/applogo.png</file>
+        <file>icons/xhdpi/ic_menu_overflowcirclessmall_dark_d.png</file>
     </qresource>
 </RCC>

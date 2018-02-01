@@ -176,10 +176,12 @@ Vehicle {
             }
             width: drawer.width
             visible: false
+            isMobile: false
 
             onClosed: {
                 mapToolRow.tocIconSelected = false;
                 visible = false;
+                mapToolRow.state = "clear";
             }
         }
 

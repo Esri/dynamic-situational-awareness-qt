@@ -89,6 +89,41 @@ Rectangle {
                 onCheckedChanged: optionsController.useGpsForElevation = checked
             }
 
+
+            CheckBox {
+                text: "Location Broadcast"
+                checked: messageFeeds.controller.locationBroadcastEnabled
+                onCheckedChanged: messageFeeds.controller.locationBroadcastEnabled = checked
+            }
+
+            Row {
+                height: 40 * scaleFactor
+                spacing: 5 * scaleFactor
+
+                Text {
+                    text: "Location Broadcast frequency (ms)"
+                    color: Material.foreground
+                    font {
+                        pixelSize: 10 * scaleFactor
+                        family: DsaStyles.fontFamily
+                    }
+                }
+
+                TextField {
+                    width: 50 * scaleFactor
+                    text: messageFeeds.controller.locationBroadcastFrequency
+                    color: Material.foreground
+                    font {
+                        pixelSize: 10 * scaleFactor
+                        family: DsaStyles.fontFamily
+                    }
+
+                    validator: IntValidator { bottom:0 }
+
+                    onTextChanged: messageFeeds.controller.locationBroadcastFrequency = Number(text)
+                }
+            }
+
             Label {
                 text: "Formats, Units of measurement, etc"
                 font {

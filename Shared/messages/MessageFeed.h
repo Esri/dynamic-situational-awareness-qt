@@ -34,8 +34,8 @@ public:
   QString feedMessageType() const;
   void setFeedMessageType(const QString& feedMessageType);
 
-  bool isFeedEnabled() const;
-  void setFeedEnabled(bool feedEnabled);
+  bool isFeedVisible() const;
+  void setFeedVisible(bool feedVisible);
 
   MessagesOverlay* messagesOverlay() const;
   void setMessagesOverlay(MessagesOverlay* messagesOverlay);
@@ -47,7 +47,7 @@ private:
 
   QString m_feedName;
   QString m_feedMessageType;
-  bool m_feedEnabled = true;
+  bool m_feedVisible = true;
   MessagesOverlay* m_messagesOverlay = nullptr;
 };
 

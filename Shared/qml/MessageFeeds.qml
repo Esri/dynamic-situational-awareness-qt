@@ -21,6 +21,8 @@ DsaPanel {
     width: 272 * scaleFactor
     title: qsTr("Message Feeds")
 
+    property alias controller: toolController
+
     // Create the controller
     MessageFeedsController {
         id: toolController
@@ -46,8 +48,8 @@ DsaPanel {
             width: parent.width
             height: 40 * scaleFactor
             mainText: feedName
-            itemChecked: feedEnabled
-            onItemCheckedChanged: feedEnabled = itemChecked
+            itemChecked: feedVisible
+            onItemCheckedChanged: feedVisible = itemChecked
         }
     }
 }

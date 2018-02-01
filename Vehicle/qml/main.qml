@@ -346,7 +346,6 @@ Vehicle {
     About {
         id: aboutTool
         anchors.fill: parent
-
         visible: false
     }
 

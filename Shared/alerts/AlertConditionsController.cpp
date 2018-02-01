@@ -856,6 +856,6 @@ QString AlertConditionsController::primaryKeyFieldName(FeatureTable* featureTabl
  */
 QStringList AlertConditionsController::realtimeFeedNames()
 {
-  return QStringList{"cot"};
+  return QStringList{"cot", "position_report"};
 }
 

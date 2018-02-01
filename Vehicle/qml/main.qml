@@ -169,7 +169,7 @@ Vehicle {
         TableOfContents {
             id: tableOfContentsTool
             anchors {
-                left: parent.left
+                right: parent.right
                 top: parent.top
                 bottom: sceneView.attributionTop
             }
@@ -187,7 +187,7 @@ Vehicle {
         AlertList {
             id: alertsTool
             anchors {
-                left: parent.left
+                right: parent.right
                 top: parent.top
                 bottom: sceneView.attributionTop
             }
@@ -200,7 +200,7 @@ Vehicle {
         AlertConditionsTool {
             id: alertConditionsTool
             anchors {
-                left: parent.left
+                right: parent.right
                 top: parent.top
                 bottom: sceneView.attributionTop
             }
@@ -213,7 +213,7 @@ Vehicle {
         TelestrateTool {
             id: telestrateTool
             anchors {
-                left: parent.left
+                right: parent.right
                 top: parent.top
                 bottom: sceneView.attributionTop
             }
@@ -229,7 +229,7 @@ Vehicle {
         PopupStackView {
             id: identifyResults
             anchors {
-                left: sceneView.left
+                right: sceneView.right
                 top: sceneView.top
                 bottom: sceneView.attributionTop
             }
@@ -255,6 +255,7 @@ Vehicle {
             width: 272 * scaleFactor
             height: sceneView.height - 20 * scaleFactor // approximation for attribution text
             y: topToolbar.height
+            edge: Qt.RightEdge
 
             onClosed: {
                 // update state for each category

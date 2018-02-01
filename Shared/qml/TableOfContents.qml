@@ -97,14 +97,18 @@ DsaPanel {
                 }
 
                 // Menu for Vehicle
-                Popup {
+                Menu {
                     id: vehicleMenu
+                    width: 125 * scaleFactor
 
                     Column {
                         anchors.margins: 10 * scaleFactor
+                        width: parent.width
                         spacing: 10 * scaleFactor
+                        leftPadding: 10 * scaleFactor
 
                         ListLabel {
+                            //anchors.horizontalCenter: parent.horizontalCenter
                             text: "Zoom to"
                             onTriggered: {
                                 vehicleMenu.close();
@@ -114,6 +118,7 @@ DsaPanel {
                         }
 
                         ListLabel {
+                            //anchors.horizontalCenter: parent.horizontalCenter
                             text: "Remove"
                             onTriggered: {
                                 vehicleMenu.close()
@@ -122,6 +127,7 @@ DsaPanel {
                         }
 
                         ListLabel {
+                            //anchors.horizontalCenter: parent.horizontalCenter
                             text: "Move up"
                             visible: layersList.currentIndex !== 0
                             onTriggered: {
@@ -131,6 +137,7 @@ DsaPanel {
                         }
 
                         ListLabel {
+                            //anchors.horizontalCenter: parent.horizontalCenter
                             text: "Move down"
                             visible: layersList.currentIndex + 1 !== layersList.count
                             onTriggered: {

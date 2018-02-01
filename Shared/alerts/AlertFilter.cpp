@@ -12,8 +12,6 @@
 
 #include "AlertFilter.h"
 
-using namespace Esri::ArcGISRuntime;
-
 /*!
   \class AlertFilter
   \inherits QObject

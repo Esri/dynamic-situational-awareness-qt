@@ -13,25 +13,46 @@
 #include "AlertConditionData.h"
 #include "IdsAlertFilter.h"
 
+/*!
+  \class IdsAlertFilter
+  \inherits AlertFilter
+  \brief Represents a filter to be applied to an alert condition data
+  in order to exclude specific IDs.
+  */
+
+/*!
+  \brief Constructor taking an optional \a parent.
+ */
 IdsAlertFilter::IdsAlertFilter(QObject* parent):
   AlertFilter(parent)
 {
 
 }
 
+/*!
+  \brief Destructor.
+ */
 IdsAlertFilter::~IdsAlertFilter()
 {
 
 }
 
-bool IdsAlertFilter::passesFilter(AlertConditionData* alert) const
+
+/*!
+  \brief Returns whether \a conditionData is contained in the list of IDs
+  to be excluded.
+ */
+bool IdsAlertFilter::passesFilter(AlertConditionData* conditionData) const
 {
-  if (!alert)
+  if (!conditionData)
     return false;
 
-  return !m_ids.contains(alert->id());
+  return !m_ids.contains(conditionData->id());
 }
 
+/*!
+  \brief Adds \a id to the list of IDs to be excluded.
+ */
 void IdsAlertFilter::addId(const QUuid& id)
 {
   m_ids.insert(id);

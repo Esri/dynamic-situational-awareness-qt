@@ -159,7 +159,7 @@ void AlertCondition::setName(const QString& name)
  */
 QString AlertCondition::newConditionDataName() const
 {
-  return m_name + QString(" (%1)").arg(QString(m_data.count()));
+  return m_name + QString(" (%1)").arg(QString::number(m_data.count()));
 }
 
 /*!

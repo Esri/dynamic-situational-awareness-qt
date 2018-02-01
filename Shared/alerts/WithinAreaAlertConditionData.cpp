@@ -11,6 +11,7 @@
 //
 
 #include "AlertSource.h"
+#include "AlertTarget.h"
 #include "WithinAreaAlertConditionData.h"
 
 #include "GeoElement.h"

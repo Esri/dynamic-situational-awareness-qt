@@ -12,6 +12,7 @@
 
 #include "WithinDistanceAlertConditionData.h"
 #include "AlertSource.h"
+#include "AlertTarget.h"
 
 #include "GeoElement.h"
 #include "GeometryEngine.h"
@@ -27,7 +28,6 @@ WithinDistanceAlertConditionData::WithinDistanceAlertConditionData(const QString
                                                                    double distance,
                                                                    QObject* parent):
   AlertConditionData(name, level, source, target, parent),
-  m_spatialTarget(target),
   m_distance(distance)
 {
 
@@ -48,7 +48,7 @@ bool WithinDistanceAlertConditionData::matchesQuery() const
   const Geometry bufferGeom = GeometryEngine::bufferGeodetic(sourceLocation(), distance(), LinearUnit::meters(), 1.0, GeodeticCurveType::Geodesic);
   const Geometry bufferWgs84 = GeometryEngine::project(bufferGeom, SpatialReference::wgs84());
 
-  const QList<Geometry> targetGeometries = spatialTarget()->targetGeometries(bufferWgs84.extent());
+  const QList<Geometry> targetGeometries = target()->targetGeometries(bufferWgs84.extent());
 
   for (const Geometry& target : targetGeometries)
   {

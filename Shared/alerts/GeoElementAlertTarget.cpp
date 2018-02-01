@@ -12,6 +12,7 @@
 
 #include "GeoElementAlertTarget.h"
 
+#include "Geometry.h"
 #include "GeoElement.h"
 
 using namespace Esri::ArcGISRuntime;

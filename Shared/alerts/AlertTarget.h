@@ -15,6 +15,15 @@
 
 #include <QObject>
 
+namespace Esri
+{
+namespace ArcGISRuntime
+{
+  class Envelope;
+  class Geometry;
+}
+}
+
 class AlertTarget : public QObject
 {
   Q_OBJECT

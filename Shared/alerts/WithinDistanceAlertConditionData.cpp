@@ -10,7 +10,6 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "AlertSpatialTarget.h"
 #include "WithinDistanceAlertConditionData.h"
 #include "AlertSource.h"
 
@@ -24,7 +23,7 @@ using namespace Esri::ArcGISRuntime;
 WithinDistanceAlertConditionData::WithinDistanceAlertConditionData(const QString& name,
                                                                    AlertLevel level,
                                                                    AlertSource* source,
-                                                                   AlertSpatialTarget* target,
+                                                                   AlertTarget* target,
                                                                    double distance,
                                                                    QObject* parent):
   AlertConditionData(name, level, source, target, parent),
@@ -42,11 +41,6 @@ WithinDistanceAlertConditionData::~WithinDistanceAlertConditionData()
 double WithinDistanceAlertConditionData::distance() const
 {
   return m_distance;
-}
-
-AlertSpatialTarget* WithinDistanceAlertConditionData::spatialTarget() const
-{
-  return m_spatialTarget;
 }
 
 bool WithinDistanceAlertConditionData::matchesQuery() const

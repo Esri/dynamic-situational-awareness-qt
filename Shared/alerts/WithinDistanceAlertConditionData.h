@@ -16,8 +16,6 @@
 #include "AlertConditionData.h"
 #include "Geometry.h"
 
-class AlertSpatialTarget;
-
 class WithinDistanceAlertConditionData : public AlertConditionData
 {
   Q_OBJECT
@@ -26,18 +24,16 @@ public:
   explicit WithinDistanceAlertConditionData(const QString& name,
                                             AlertLevel level,
                                             AlertSource* source,
-                                            AlertSpatialTarget* target,
+                                            AlertTarget* target,
                                             double distance,
                                             QObject* parent = nullptr);
   ~WithinDistanceAlertConditionData();
 
   double distance() const;
-  AlertSpatialTarget* spatialTarget() const;
 
   bool matchesQuery() const override;
 
 private:
-  AlertSpatialTarget* m_spatialTarget;
   double m_distance;
 };
 

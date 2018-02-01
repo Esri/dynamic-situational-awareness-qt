@@ -23,6 +23,8 @@ public:
   explicit AlertTarget(QObject* parent = nullptr);
   ~AlertTarget();
 
+  virtual QList<Esri::ArcGISRuntime::Geometry> targetGeometries(const Esri::ArcGISRuntime::Envelope& targetArea) const = 0;
+
 signals:
   void noLongerValid();
   void dataChanged();

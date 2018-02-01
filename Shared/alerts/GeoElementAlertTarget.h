@@ -21,9 +21,9 @@ class GeoElement;
 }
 }
 
-#include "AlertSpatialTarget.h"
+#include "AlertTarget.h"
 
-class GeoElementAlertTarget : public AlertSpatialTarget
+class GeoElementAlertTarget : public AlertTarget
 {
   Q_OBJECT
 

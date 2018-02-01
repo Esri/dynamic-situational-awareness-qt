@@ -35,7 +35,7 @@ struct FeatureQueryResultManager {
 
 /*!
   \class FeatureLayerAlertTarget
-  \inherits AlertSpatialTarget
+  \inherits AlertTarget
   \brief Represents a target based on an \l Esri::ArcGISRuntime::FeatureLayer
   for an \l AlertCondition.
 
@@ -49,7 +49,7 @@ struct FeatureQueryResultManager {
   All features will be retrieved from the underlying feature layer.
  */
 FeatureLayerAlertTarget::FeatureLayerAlertTarget(FeatureLayer* featureLayer):
-  AlertSpatialTarget(featureLayer),
+  AlertTarget(featureLayer),
   m_FeatureLayer(featureLayer)
 {
   // assume no editing of feature table

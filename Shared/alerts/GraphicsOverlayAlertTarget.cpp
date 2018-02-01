@@ -20,7 +20,7 @@ using namespace Esri::ArcGISRuntime;
 
 /*!
   \class GraphicsOverlayAlertTarget
-  \inherits AlertSpatialTarget
+  \inherits AlertTarget
   \brief Represents a target based on an \l Esri::ArcGISRuntime::GraphicsOverlay
   for an \l AlertCondition.
 
@@ -35,7 +35,7 @@ using namespace Esri::ArcGISRuntime;
   will also be handled.
  */
 GraphicsOverlayAlertTarget::GraphicsOverlayAlertTarget(GraphicsOverlay* graphicsOverlay):
-  AlertSpatialTarget(graphicsOverlay),
+  AlertTarget(graphicsOverlay),
   m_graphicsOverlay(graphicsOverlay)
 {
   // respond to graphics being removed from the overlay

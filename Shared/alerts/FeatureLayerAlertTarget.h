@@ -13,7 +13,7 @@
 #ifndef FEATURELAYERALERTTARGET_H
 #define FEATURELAYERALERTTARGET_H
 
-#include "AlertSpatialTarget.h"
+#include "AlertTarget.h"
 
 #include <QUuid>
 
@@ -29,7 +29,7 @@ class FeatureQueryResult;
 
 class GeometryQuadtree;
 
-class FeatureLayerAlertTarget : public AlertSpatialTarget
+class FeatureLayerAlertTarget : public AlertTarget
 {
   Q_OBJECT
 

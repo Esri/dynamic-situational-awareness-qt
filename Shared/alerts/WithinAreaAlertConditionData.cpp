@@ -11,7 +11,6 @@
 //
 
 #include "AlertSource.h"
-#include "AlertSpatialTarget.h"
 #include "WithinAreaAlertConditionData.h"
 
 #include "GeoElement.h"
@@ -23,10 +22,9 @@ using namespace Esri::ArcGISRuntime;
 WithinAreaAlertConditionData::WithinAreaAlertConditionData(const QString& name,
                                                            AlertLevel level,
                                                            AlertSource* source,
-                                                           AlertSpatialTarget* target,
+                                                           AlertTarget* target,
                                                             QObject* parent):
-  AlertConditionData(name, level, source, target, parent),
-  m_spatialTarget(target)
+  AlertConditionData(name, level, source, target, parent)
 {
 
 }
@@ -36,15 +34,10 @@ WithinAreaAlertConditionData::~WithinAreaAlertConditionData()
 
 }
 
-AlertSpatialTarget* WithinAreaAlertConditionData::spatialTarget() const
-{
-  return m_spatialTarget;
-}
-
 bool WithinAreaAlertConditionData::matchesQuery() const
 {
   Geometry sourceWgs84 = GeometryEngine::project(sourceLocation(), SpatialReference::wgs84());
-  const QList<Geometry> targetGeometries = spatialTarget()->targetGeometries(sourceWgs84.extent());
+  const QList<Geometry> targetGeometries = target()->targetGeometries(sourceWgs84.extent());
 
   for (const Geometry& target : targetGeometries)
   {

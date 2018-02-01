@@ -23,7 +23,7 @@ void MessageFeedListModel::setupRoles()
 {
   m_roles[MessageFeedNameRole] = "feedName";
   m_roles[MessageFeedTypeRole] = "feedMessageType";
-  m_roles[MessageFeedEnabledRole] = "feedEnabled";
+  m_roles[MessageFeedVisibleRole] = "feedVisible";
 }
 
 bool MessageFeedListModel::isEmpty() const
@@ -92,8 +92,8 @@ QVariant MessageFeedListModel::data(const QModelIndex& index, int role) const
   case MessageFeedTypeRole:
     retVal = messageFeed->feedMessageType();
     break;
-  case MessageFeedEnabledRole:
-    retVal = messageFeed->isFeedEnabled();
+  case MessageFeedVisibleRole:
+    retVal = messageFeed->isFeedVisible();
   default:
     break;
   }
@@ -136,12 +136,12 @@ bool MessageFeedListModel::setData(const QModelIndex& index, const QVariant& val
     }
     break;
   }
-  case MessageFeedEnabledRole:
+  case MessageFeedVisibleRole:
   {
     const auto val = value.toBool();
-    if (messageFeed->isFeedEnabled() != val)
+    if (messageFeed->isFeedVisible() != val)
     {
-      messageFeed->setFeedEnabled(val);
+      messageFeed->setFeedVisible(val);
 
       isDataChanged = true;
     }

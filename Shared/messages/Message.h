@@ -23,6 +23,28 @@ class MessageData;
 class Message
 {
 public:
+  static const QString COT_ROOT_ELEMENT_NAME;
+  static const QString COT_ELEMENT_NAME;
+  static const QString COT_TYPE_NAME;
+  static const QString COT_UID_NAME;
+  static const QString COT_POINT_NAME;
+  static const QString COT_POINT_LAT_NAME;
+  static const QString COT_POINT_LON_NAME;
+  static const QString COT_POINT_HAE_NAME;
+
+  static const QString GEOMESSAGE_ROOT_ELEMENT_NAME;
+  static const QString GEOMESSAGE_ELEMENT_NAME;
+  static const QString GEOMESSAGE_TYPE_NAME;
+  static const QString GEOMESSAGE_ACTION_NAME;
+  static const QString GEOMESSAGE_ID_NAME;
+  static const QString GEOMESSAGE_WKID_NAME;
+  static const QString GEOMESSAGE_SIC_NAME;
+  static const QString GEOMESSAGE_CONTROL_POINTS_NAME;
+  static const QString GEOMESSAGE_UNIQUE_DESIGNATION_NAME;
+  static const QString GEOMESSAGE_STATUS_911_NAME;
+
+  static const QString SIDC_NAME;
+
   enum class MessageAction
   {
     Update = 0,
@@ -49,6 +71,7 @@ public:
 
   static QString cotTypeToSidc(const QString& cotType);
   static MessageAction toMessageAction(const QString& action);
+  static QString fromMessageAction(MessageAction action);
 
   bool isEmpty() const;
 
@@ -72,6 +95,8 @@ public:
 
   QString symbolId() const;
   void setSymbolId(const QString& symbolId);
+
+  QByteArray toGeoMessage() const;
 
 private:
   QSharedDataPointer<MessageData> d;

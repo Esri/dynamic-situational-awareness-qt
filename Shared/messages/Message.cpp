@@ -19,25 +19,27 @@
 #include <QXmlStreamReader>
 #include <QDomDocument>
 
-static const QString s_cotRootElementName{QStringLiteral("events")};
-static const QString s_cotElementName{QStringLiteral("event")};
-static const QString s_cotTypeName{QStringLiteral("type")};
-static const QString s_cotUidName{QStringLiteral("uid")};
-static const QString s_cotPointName{QStringLiteral("point")};
-static const QString s_cotPointLatName{QStringLiteral("lat")};
-static const QString s_cotPointLonName{QStringLiteral("lon")};
-static const QString s_cotPointHaeName{QStringLiteral("hae")};
+const QString Message::COT_ROOT_ELEMENT_NAME{QStringLiteral("events")};
+const QString Message::COT_ELEMENT_NAME{QStringLiteral("event")};
+const QString Message::COT_TYPE_NAME{QStringLiteral("type")};
+const QString Message::COT_UID_NAME{QStringLiteral("uid")};
+const QString Message::COT_POINT_NAME{QStringLiteral("point")};
+const QString Message::COT_POINT_LAT_NAME{QStringLiteral("lat")};
+const QString Message::COT_POINT_LON_NAME{QStringLiteral("lon")};
+const QString Message::COT_POINT_HAE_NAME{QStringLiteral("hae")};
 
-static const QString s_geoMessageRootElementName{QStringLiteral("geomessages")};
-static const QString s_geoMessageElementName{QStringLiteral("geomessage")};
-static const QString s_geoMessageTypeName{QStringLiteral("_type")};
-static const QString s_geoMessageActionName{QStringLiteral("_action")};
-static const QString s_geoMessageIdName{QStringLiteral("_id")};
-static const QString s_geoMessageWkidName{QStringLiteral("_wkid")};
-static const QString s_geoMessageSicName{QStringLiteral("sic")};
-static const QString s_geoMessageControlPointsName{QStringLiteral("_control_points")};
+const QString Message::GEOMESSAGE_ROOT_ELEMENT_NAME{QStringLiteral("geomessages")};
+const QString Message::GEOMESSAGE_ELEMENT_NAME{QStringLiteral("geomessage")};
+const QString Message::GEOMESSAGE_TYPE_NAME{QStringLiteral("_type")};
+const QString Message::GEOMESSAGE_ACTION_NAME{QStringLiteral("_action")};
+const QString Message::GEOMESSAGE_ID_NAME{QStringLiteral("_id")};
+const QString Message::GEOMESSAGE_WKID_NAME{QStringLiteral("_wkid")};
+const QString Message::GEOMESSAGE_SIC_NAME{QStringLiteral("sic")};
+const QString Message::GEOMESSAGE_CONTROL_POINTS_NAME{QStringLiteral("_control_points")};
+const QString Message::GEOMESSAGE_UNIQUE_DESIGNATION_NAME{QStringLiteral("uniquedesignation")};
+const QString Message::GEOMESSAGE_STATUS_911_NAME{QStringLiteral("status911")};
 
-static const QString s_sidcName{QStringLiteral("sidc")};
+const QString Message::SIDC_NAME{QStringLiteral("sidc")};
 
 using namespace Esri::ArcGISRuntime;
 
@@ -105,26 +107,26 @@ Message Message::create(const QByteArray& message)
     return Message();
 
   // check root element name
-  QDomElement parentElement = doc.firstChildElement(s_cotRootElementName);
+  QDomElement parentElement = doc.firstChildElement(COT_ROOT_ELEMENT_NAME);
   if (!parentElement.isNull())
   {
     return createFromCoTMessage(message);
   }
 
-  parentElement = doc.firstChildElement(s_geoMessageRootElementName);
+  parentElement = doc.firstChildElement(GEOMESSAGE_ROOT_ELEMENT_NAME);
   if (!parentElement.isNull())
   {
     return createFromGeoMessage(message);
   }
 
   // fall back to individual element name
-  parentElement = doc.firstChildElement(s_cotElementName);
+  parentElement = doc.firstChildElement(COT_ELEMENT_NAME);
   if (!parentElement.isNull())
   {
     return createFromCoTMessage(message);
   }
 
-  parentElement = doc.firstChildElement(s_geoMessageElementName);
+  parentElement = doc.firstChildElement(GEOMESSAGE_ELEMENT_NAME);
   if (!parentElement.isNull())
   {
     return createFromGeoMessage(message);
@@ -149,12 +151,12 @@ Message Message::createFromCoTMessage(const QByteArray& message)
     if (reader.isStartElement())
     {
       // CoT event
-      if (QStringRef::compare(reader.name(), s_cotElementName, Qt::CaseInsensitive) == 0)
+      if (QStringRef::compare(reader.name(), COT_ELEMENT_NAME, Qt::CaseInsensitive) == 0)
       {
         inCoTMessageElement = true;
 
         const auto attrs = reader.attributes();
-        const auto type = attrs.value(s_cotTypeName).toString();
+        const auto type = attrs.value(COT_TYPE_NAME).toString();
         // convert the CoT type to a sidc symbol code
         const auto sidc = cotTypeToSidc(type);
         if (sidc.isEmpty())
@@ -168,11 +170,11 @@ Message Message::createFromCoTMessage(const QByteArray& message)
 
         // store the sidc symbol id code as an attribute of
         // the Message as well as the symbol Id variable
-        attributes.insert(s_sidcName, sidc);
+        attributes.insert(SIDC_NAME, sidc);
         cotMessage.d->symbolId = sidc;
 
         // assign the unique message id
-        cotMessage.d->messageId = attrs.value(s_cotUidName).toString();
+        cotMessage.d->messageId = attrs.value(COT_UID_NAME).toString();
       }
 
       // before reading other element tags, make sure we are parsing a CoT element
@@ -182,25 +184,25 @@ Message Message::createFromCoTMessage(const QByteArray& message)
         continue;
       }
 
-      if (QStringRef::compare(reader.name(), s_cotPointName, Qt::CaseInsensitive) == 0)
+      if (QStringRef::compare(reader.name(), COT_POINT_NAME, Qt::CaseInsensitive) == 0)
       {
         // parse the CoT point to populate the Message's geometry
         auto attrs = reader.attributes();
         bool lonOk = false;
         bool latOk = false;
-        const auto lon = attrs.value(s_cotPointLonName).toDouble(&lonOk);
-        const auto lat = attrs.value(s_cotPointLatName).toDouble(&latOk);
+        const auto lon = attrs.value(COT_POINT_LON_NAME).toDouble(&lonOk);
+        const auto lat = attrs.value(COT_POINT_LAT_NAME).toDouble(&latOk);
         if (!lonOk || !latOk)
           return Message();
 
-        const auto hae = attrs.value(s_cotPointHaeName).toDouble();
+        const auto hae = attrs.value(COT_POINT_HAE_NAME).toDouble();
 
         cotMessage.d->geometry = Point(lon, lat, hae, SpatialReference::wgs84());
       }
     }
     else if (reader.isEndElement())
     {
-      if (QStringRef::compare(reader.name(), s_cotElementName, Qt::CaseInsensitive) == 0)
+      if (QStringRef::compare(reader.name(), COT_ELEMENT_NAME, Qt::CaseInsensitive) == 0)
       {
         inCoTMessageElement = false;
       }
@@ -233,7 +235,7 @@ Message Message::createFromGeoMessage(const QByteArray& message)
     if (reader.isStartElement())
     {
       // GeoMessage
-      if (QStringRef::compare(reader.name(), s_geoMessageElementName, Qt::CaseInsensitive) == 0)
+      if (QStringRef::compare(reader.name(), GEOMESSAGE_ELEMENT_NAME, Qt::CaseInsensitive) == 0)
       {
         inGeoMessageElement = true;
         reader.readNext();
@@ -247,30 +249,31 @@ Message Message::createFromGeoMessage(const QByteArray& message)
         continue;
       }
 
-      if (QStringRef::compare(reader.name(), s_geoMessageTypeName, Qt::CaseInsensitive) == 0)
+      if (QStringRef::compare(reader.name(), GEOMESSAGE_TYPE_NAME, Qt::CaseInsensitive) == 0)
       {
         geoMessage.d->messageType = reader.readElementText();
       }
-      else if (QStringRef::compare(reader.name(), s_geoMessageActionName, Qt::CaseInsensitive) == 0)
+      else if (QStringRef::compare(reader.name(), GEOMESSAGE_ACTION_NAME, Qt::CaseInsensitive) == 0)
       {
         const QString actionText = reader.readElementText();
         geoMessage.d->messageAction = toMessageAction(actionText);
       }
-      else if (QStringRef::compare(reader.name(), s_geoMessageIdName, Qt::CaseInsensitive) == 0)
+      else if (QStringRef::compare(reader.name(), GEOMESSAGE_ID_NAME, Qt::CaseInsensitive) == 0)
       {
         geoMessage.d->messageId = reader.readElementText();
       }
-      else if (QStringRef::compare(reader.name(), s_geoMessageWkidName, Qt::CaseInsensitive) == 0)
+      else if (QStringRef::compare(reader.name(), GEOMESSAGE_WKID_NAME, Qt::CaseInsensitive) == 0)
       {
         wkidText = reader.readElementText();
       }
-      else if (QStringRef::compare(reader.name(), s_geoMessageSicName, Qt::CaseInsensitive) == 0)
+      else if (QStringRef::compare(reader.name(), GEOMESSAGE_SIC_NAME, Qt::CaseInsensitive) == 0)
       {
         const auto sidc = reader.readElementText();
-        attributes.insert(s_sidcName, sidc);
+        attributes.insert(GEOMESSAGE_SIC_NAME, sidc);
+        attributes.insert(SIDC_NAME, sidc);
         geoMessage.d->symbolId = sidc;
       }
-      else if (QStringRef::compare(reader.name(), s_geoMessageControlPointsName, Qt::CaseInsensitive) == 0)
+      else if (QStringRef::compare(reader.name(), GEOMESSAGE_CONTROL_POINTS_NAME, Qt::CaseInsensitive) == 0)
       {
         controlPointsText = reader.readElementText();
       }
@@ -281,7 +284,7 @@ Message Message::createFromGeoMessage(const QByteArray& message)
     }
     else if (reader.isEndElement())
     {
-      if (QStringRef::compare(reader.name(), s_geoMessageElementName, Qt::CaseInsensitive) == 0)
+      if (QStringRef::compare(reader.name(), GEOMESSAGE_ELEMENT_NAME, Qt::CaseInsensitive) == 0)
       {
         inGeoMessageElement = false;
       }
@@ -416,6 +419,25 @@ Message::MessageAction Message::toMessageAction(const QString& action)
   return MessageAction::Unknown;
 }
 
+QString Message::fromMessageAction(MessageAction action)
+{
+  switch (action)
+  {
+  case MessageAction::Remove:
+    return QStringLiteral("remove");
+  case MessageAction::Select:
+    return QStringLiteral("select");
+  case MessageAction::Unselect:
+    return QStringLiteral("un-select");
+  case MessageAction::Update:
+    return QStringLiteral("update");
+  default:
+    break;
+  }
+
+  return QString();
+}
+
 bool Message::isEmpty() const
 {
   return d->attributes.isEmpty() && d->geometry.isEmpty() &&
@@ -492,6 +514,62 @@ QString Message::symbolId() const
 void Message::setSymbolId(const QString& symbolId)
 {
   d->symbolId = symbolId;
+}
+
+QByteArray Message::toGeoMessage() const
+{
+  QByteArray message;
+  QXmlStreamWriter streamWriter(&message);
+
+  streamWriter.writeStartElement(GEOMESSAGE_ELEMENT_NAME);
+
+  streamWriter.writeStartElement(GEOMESSAGE_TYPE_NAME);
+  streamWriter.writeCharacters(messageType());
+  streamWriter.writeEndElement();
+
+  streamWriter.writeStartElement(GEOMESSAGE_ACTION_NAME);
+  streamWriter.writeCharacters(fromMessageAction(messageAction()));
+  streamWriter.writeEndElement();
+
+  streamWriter.writeStartElement(GEOMESSAGE_ID_NAME);
+  streamWriter.writeCharacters(messageId());
+  streamWriter.writeEndElement();
+
+  QString controlPoints;
+  switch (geometry().geometryType())
+  {
+  case GeometryType::Point:
+  {
+    Point pt = geometry_cast<Point>(geometry());
+    controlPoints = QString("%1,%2").arg(QString::number(pt.x(), 'g', 9), QString::number(pt.y(), 'g', 9));
+  }
+  default:
+    break;
+  }
+
+  streamWriter.writeStartElement(GEOMESSAGE_CONTROL_POINTS_NAME);
+  streamWriter.writeCharacters(controlPoints);
+  streamWriter.writeEndElement();
+
+  streamWriter.writeStartElement(GEOMESSAGE_WKID_NAME);
+  streamWriter.writeCharacters(QString::number(geometry().spatialReference().wkid()));
+  streamWriter.writeEndElement();
+
+  const auto attribs = attributes();
+  for (QVariantMap::const_iterator iter = attribs.constBegin(); iter != attribs.constEnd(); ++iter)
+  {
+    const auto key = iter.key();
+    if (key.startsWith("_")) // attributes which start with "_" are stored in member variables
+      continue;
+
+    streamWriter.writeStartElement(key);
+    streamWriter.writeCharacters(iter.value().toString());
+    streamWriter.writeEndElement();
+  }
+
+  streamWriter.writeEndElement(); // end geomessage
+
+  return message;
 }
 
 MessageData::MessageData()

@@ -24,22 +24,24 @@ ARCGIS_RUNTIME_VERSION = 100.2.1
 include($$PWD/../Shared/arcgisruntime.pri)
 
 INCLUDEPATH += $$PWD/../Shared/ \
-    $$PWD/../Shared/alerts
-
+    $$PWD/../Shared/alerts \
+    $$PWD/../Shared/messages
 
 HEADERS += \
     AppInfo.h \
     Vehicle.h \
     VehicleStyles.h \
     $$PWD/../Shared/*.h \
-    $$PWD/../Shared/alerts/*.h
+    $$PWD/../Shared/alerts/*.h \
+    $$PWD/../Shared/messages/*.h
 
 SOURCES += \
     main.cpp \
     Vehicle.cpp \
     VehicleStyles.cpp \
     $$PWD/../Shared/*.cpp \
-    $$PWD/../Shared/alerts/*.cpp
+    $$PWD/../Shared/alerts/*.cpp \
+    $$PWD/../Shared/messages/*.cpp
 
 RESOURCES += \
     qml/qml.qrc \

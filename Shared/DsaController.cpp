@@ -141,6 +141,7 @@ void DsaController::createDefaultSettings()
       QString("Friendly Tracks:position_report:mil2525c"), QString("Contact Reports:spotrep:enemycontact1600.png"),
       QString("Situation Reports:sitrep:sitrep1600.png"), QString("EOD Reports:eod:eod1600.png"),
       QString("Sensor Observations:sensor_obs:sensorobs1600.png") };
+  m_dsaSettings["LocationBroadcastConfig"] = QStringList { QString("position_report"), QString("45679") };
   m_dsaSettings["InitialLocation"] = QStringList { QString::number(DsaUtility::montereyCA().x()),
       QString::number(DsaUtility::montereyCA().y()), QString("5000.0"), QString("0.0"),
       QString("75.0"), QString("0.0") };

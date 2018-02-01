@@ -60,6 +60,10 @@ AttributeEqualsAlertConditionData::~AttributeEqualsAlertConditionData()
 
 }
 
+/*!
+  \brief Returns whether the source data currently has an attribute value
+  matching the target value.
+ */
 bool AttributeEqualsAlertConditionData::matchesQuery() const
 {
   const QVariant sourceValue = source()->value(attributeName());
@@ -74,8 +78,7 @@ bool AttributeEqualsAlertConditionData::matchesQuery() const
 }
 
 /*!
-  \brief Returns whether the source data currently has an attribute value
-  matching the target value.
+  \brief Returns the name of the attribute to be tested.
  */
 QString AttributeEqualsAlertConditionData::attributeName() const
 {

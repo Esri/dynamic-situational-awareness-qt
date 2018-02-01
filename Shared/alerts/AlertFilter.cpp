@@ -11,16 +11,30 @@
 //
 
 #include "AlertFilter.h"
-#include "AlertConditionData.h"
 
 using namespace Esri::ArcGISRuntime;
 
+/*!
+  \class AlertFilter
+  \inherits QObject
+  \brief Represents a filter to be applied to an alert condition data.
+
+  This allows for certain condition data objects to be excluded - for
+  example by \l AlertLevel or by specific ID.
+  */
+
+/*!
+  \brief Constructor taking an optional \a parent.
+ */
 AlertFilter::AlertFilter(QObject* parent):
   QObject(parent)
 {
 
 }
 
+/*!
+  \brief Destructor.
+ */
 AlertFilter::~AlertFilter()
 {
 

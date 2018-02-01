@@ -39,7 +39,7 @@ IdsAlertFilter::~IdsAlertFilter()
 
 
 /*!
-  \brief Returns whether \a conditionData is contained in the list of IDs
+  \brief Returns whether \a conditionData is not contained in the list of IDs
   to be excluded.
  */
 bool IdsAlertFilter::passesFilter(AlertConditionData* conditionData) const

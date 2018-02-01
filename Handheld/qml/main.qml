@@ -43,6 +43,7 @@ Handheld {
         }
         toolbarLabelText: categoryToolbar.titleText
         height: DsaStyles.mainToolbarHeight * scaleFactor
+        menuVisible: false
 
         MapToolRow {
             id: mapToolRow
@@ -98,7 +99,7 @@ Handheld {
             top: topToolbar.bottom
             left: parent.left
             right: parent.right
-            bottom: coordinateConversion.visible ? coordinateConversion.top : parent.bottom
+            bottom: coordinateConversion.visible ? coordinateConversion.top : categoryToolbar.top
         }
         objectName: "sceneView"
 
@@ -154,20 +155,6 @@ Handheld {
             autoHideCompass: false
             width: DsaStyles.primaryIconSize * scaleFactor
             height: width
-        }
-
-        CategoryToolbar {
-            id: categoryToolbar
-            anchors {
-                top: parent.top
-                left: parent.left
-                bottom: sceneView.attributionTop
-            }
-            width: DsaStyles.categoryToolbarWidth * scaleFactor
-            appTitle: "DSA - H"
-
-            onSettingsClicked: optionsTool.visible = true;
-            onAboutClicked: aboutTool.visible = true;
         }
 
         TableOfContents {
@@ -348,6 +335,20 @@ Handheld {
         width: parent.width
         color: Material.primary
         textColor: Material.foreground
+    }
+
+    CategoryToolbarRow {
+        id: categoryToolbar
+        anchors {
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
+        height: DsaStyles.categoryToolbarWidth * scaleFactor
+        appTitle: "DSA - H"
+
+        onSettingsClicked: optionsTool.visible = true;
+        onAboutClicked: aboutTool.visible = true;
     }
 
     IdentifyController {

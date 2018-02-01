@@ -108,7 +108,6 @@ DsaPanel {
                         leftPadding: 10 * scaleFactor
 
                         ListLabel {
-                            //anchors.horizontalCenter: parent.horizontalCenter
                             text: "Zoom to"
                             onTriggered: {
                                 vehicleMenu.close();
@@ -118,7 +117,6 @@ DsaPanel {
                         }
 
                         ListLabel {
-                            //anchors.horizontalCenter: parent.horizontalCenter
                             text: "Remove"
                             onTriggered: {
                                 vehicleMenu.close()
@@ -127,7 +125,6 @@ DsaPanel {
                         }
 
                         ListLabel {
-                            //anchors.horizontalCenter: parent.horizontalCenter
                             text: "Move up"
                             visible: layersList.currentIndex !== 0
                             onTriggered: {
@@ -137,7 +134,6 @@ DsaPanel {
                         }
 
                         ListLabel {
-                            //anchors.horizontalCenter: parent.horizontalCenter
                             text: "Move down"
                             visible: layersList.currentIndex + 1 !== layersList.count
                             onTriggered: {

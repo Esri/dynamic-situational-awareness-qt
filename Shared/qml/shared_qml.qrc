@@ -29,5 +29,7 @@
         <file>ListItemDelegate.qml</file>
         <file>ListSeparator.qml</file>
         <file>ListLabel.qml</file>
+        <file>CategoryToolbarColumn.qml</file>
+        <file>CategoryToolbarRow.qml</file>
     </qresource>
 </RCC>

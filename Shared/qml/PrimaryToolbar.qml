@@ -20,11 +20,12 @@ ToolBar {
     property alias toolbarLabelText: toolbarLabel.text
     property int marginWidth: 5 * scaleFactor
     property int imageWidth: 36 * scaleFactor
+    property bool menuVisible
 
     Row {
         anchors {
             fill: parent
-            margins: 5 * scaleFactor
+            margins: 10 * scaleFactor
         }
 
         spacing: 5 * scaleFactor
@@ -34,6 +35,7 @@ ToolBar {
             width: DsaStyles.secondaryIconSize * scaleFactor
             height: width
             source: DsaResources.iconDrawer
+            visible: menuVisible
 
             MouseArea {
                 anchors.fill: parent

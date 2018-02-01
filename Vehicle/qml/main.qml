@@ -41,6 +41,7 @@ Vehicle {
         }
         toolbarLabelText: categoryToolbar.titleText
         height: DsaStyles.mainToolbarHeight * scaleFactor
+        menuVisible: true
 
         MapToolRow {
             id: mapToolRow
@@ -152,7 +153,7 @@ Vehicle {
             height: width
         }
 
-        CategoryToolbar {
+        CategoryToolbarColumn {
             id: categoryToolbar
             anchors {
                 top: parent.top
@@ -176,7 +177,6 @@ Vehicle {
             width: drawer.width
             visible: false
             isMobile: false
-
             onClosed: {
                 mapToolRow.tocIconSelected = false;
                 visible = false;
@@ -193,7 +193,6 @@ Vehicle {
             }
             width: drawer.width
             visible: false
-
             onClosed: visible = false;
         }
 
@@ -206,7 +205,6 @@ Vehicle {
             }
             width: drawer.width
             visible: false
-
             onClosed: visible = false;
         }
 

@@ -16,6 +16,30 @@
 
 using namespace Esri::ArcGISRuntime;
 
+/*!
+  \class AttributeEqualsAlertConditionData
+  \inherits AlertConditionData
+  \brief Represents the data to be tested as part of a non-spatial, attribute condition.
+
+  This condition data allows a query to determine whether a source object currently matches
+  a given query of the form "[my_attribute] = [my_value]".
+
+  The target should be a fixed value whereas the attributes of the source object may change.
+ */
+
+/*!
+  \brief Constructor for a new attribute equals condition data object.
+
+  \list
+    \li \a name. The name of the condition.
+    \li \a level. The \l AlertLevel for the condition.
+    \li \a source. The source data for the condition (for example
+      \l Esri::ArcGISRuntime::Graphic or a location).
+    \li \a target. The target data for the condition. This should be a fixed value.
+    \li \a attributeName. The name of the attribute in the source object to be queried.
+    \li \a parent. The (optional) parent object.
+  \endlist
+ */
 AttributeEqualsAlertConditionData::AttributeEqualsAlertConditionData(const QString& name,
                                                                      AlertLevel level,
                                                                      AlertSource* source,
@@ -28,6 +52,9 @@ AttributeEqualsAlertConditionData::AttributeEqualsAlertConditionData(const QStri
 
 }
 
+/*!
+  \brief Destructor.
+ */
 AttributeEqualsAlertConditionData::~AttributeEqualsAlertConditionData()
 {
 
@@ -46,6 +73,10 @@ bool AttributeEqualsAlertConditionData::matchesQuery() const
   return sourceValue == targetValue;
 }
 
+/*!
+  \brief Returns whether the source data currently has an attribute value
+  matching the target value.
+ */
 QString AttributeEqualsAlertConditionData::attributeName() const
 {
     return m_attributeName;

@@ -21,6 +21,29 @@
 
 using namespace Esri::ArcGISRuntime;
 
+/*!
+  \class WithinDistanceAlertConditionData
+  \inherits AlertConditionData
+  \brief Represents the data to be tested as part of a spatial, within distance condition.
+
+  This condition data allows a query to determine whether a source object is within a threshold
+  distance of a target object, or objects.
+ */
+
+/*!
+  \brief Constructor for a new within distance condition data object.
+
+  \list
+    \li \a name. The name of the condition.
+    \li \a level. The \l AlertLevel for the condition.
+    \li \a source. The source data for the condition (for example
+      \l Esri::ArcGISRuntime::Graphic or a location).
+    \li \a target. The target data for the condition. For example,
+      a real-time feed or an overlay.
+    \li \a distance. The threshold distance in meters.
+    \li \a parent. The (optional) parent object.
+  \endlist
+ */
 WithinDistanceAlertConditionData::WithinDistanceAlertConditionData(const QString& name,
                                                                    AlertLevel level,
                                                                    AlertSource* source,
@@ -33,16 +56,26 @@ WithinDistanceAlertConditionData::WithinDistanceAlertConditionData(const QString
 
 }
 
+/*!
+  \brief Destructor.
+ */
 WithinDistanceAlertConditionData::~WithinDistanceAlertConditionData()
 {
 
 }
 
+/*!
+  \brief Returns the threshold distance in meters.
+ */
 double WithinDistanceAlertConditionData::distance() const
 {
   return m_distance;
 }
 
+/*!
+  \brief Returns whether the source data currently lies within the threshold distance of
+  the target object or objects.
+ */
 bool WithinDistanceAlertConditionData::matchesQuery() const
 {
   const Geometry bufferGeom = GeometryEngine::bufferGeodetic(sourceLocation(), distance(), LinearUnit::meters(), 1.0, GeodeticCurveType::Geodesic);

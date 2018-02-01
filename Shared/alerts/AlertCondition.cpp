@@ -162,7 +162,7 @@ void AlertCondition::setName(const QString& name)
   {
     AlertConditionData* data = m_data.at(i);
     if (data)
-      data->setName(m_name + QString(" (%1)").arg(QString::number(i));
+      data->setName(m_name + QString(" (%1)").arg(QString::number(i)));
   }
 }
 

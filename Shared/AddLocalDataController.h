@@ -37,8 +37,6 @@ class AddLocalDataController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
   Q_PROPERTY(QStringList fileFilterList READ fileFilterList NOTIFY fileFilterListChanged)
 
 public:
-  static const QString LOCAL_DATAPATHS_PROPERTYNAME;
-
   explicit AddLocalDataController(QObject* parent = nullptr);
   ~AddLocalDataController() = default;
 
@@ -91,6 +89,8 @@ private:
   static const QString s_sceneLayerData;
   static const QString s_vectorTilePackageData;
   static const QString s_tilePackageData;
+  static const QString LOCAL_DATAPATHS_PROPERTYNAME;
+  static const QString DEFAULT_ELEVATION_PROPERTYNAME;
 };
 
 #endif // ADDLOCALDATACONTROLLER_H

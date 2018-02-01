@@ -41,6 +41,7 @@
 using namespace Esri::ArcGISRuntime;
 
 const QString AddLocalDataController::LOCAL_DATAPATHS_PROPERTYNAME = "LocalDataPaths";
+const QString AddLocalDataController::DEFAULT_ELEVATION_PROPERTYNAME = "DefaultElevationSource";
 
 const QString AddLocalDataController::s_allData = QStringLiteral("All Data (*.geodatabase *tpk *shp *gpkg *mmpk *slpk *vtpk *.img *.tif *.tiff *.i1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr)");
 const QString AddLocalDataController::s_rasterData = QStringLiteral("Raster Files (*.img *.tif *.tiff *.I1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr)");
@@ -167,6 +168,7 @@ void AddLocalDataController::addItemAsElevationSource(const QList<int>& indices)
             scene->baseSurface()->elevationSources()->append(source);
 
           emit elevationSourceSelected(source);
+          emit propertyChanged(DEFAULT_ELEVATION_PROPERTYNAME, tileCache->path());
         }
       });
 
@@ -194,6 +196,7 @@ void AddLocalDataController::addItemAsElevationSource(const QList<int>& indices)
     scene->baseSurface()->elevationSources()->append(source);
 
   emit elevationSourceSelected(source);
+  emit propertyChanged(DEFAULT_ELEVATION_PROPERTYNAME, dataPaths);
 }
 
 // Q_INVOKABLE function that takes the indices passed in, gets the path and data type
@@ -365,3 +368,4 @@ void AddLocalDataController::setProperties(const QVariantMap& properties)
 
   refreshLocalDataModel();
 }
+

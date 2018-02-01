@@ -33,6 +33,7 @@ public:
 
   double distance() const;
 
+
 private:
   double m_distance;
 };

@@ -20,7 +20,7 @@ using namespace Esri::ArcGISRuntime;
 
 /*!
   \class GraphicsOverlayAlertTarget
-  \inherits AlertTarget
+  \inherits AlertSpatialTarget
   \brief Represents a target based on an \l Esri::ArcGISRuntime::GraphicsOverlay
   for an \l AlertCondition.
 
@@ -35,14 +35,14 @@ using namespace Esri::ArcGISRuntime;
   will also be handled.
  */
 GraphicsOverlayAlertTarget::GraphicsOverlayAlertTarget(GraphicsOverlay* graphicsOverlay):
-  AlertTarget(graphicsOverlay),
+  AlertSpatialTarget(graphicsOverlay),
   m_graphicsOverlay(graphicsOverlay)
 {
   // respond to graphics being removed from the overlay
   connect(m_graphicsOverlay->graphics(), &GraphicListModel::graphicRemoved, this, [this](int)
   {
     rebuildQuadtree();
-    emit locationChanged();
+    emit dataChanged();
   });
 
   // respond to graphics being added to the overlay
@@ -55,7 +55,7 @@ GraphicsOverlayAlertTarget::GraphicsOverlayAlertTarget(GraphicsOverlay* graphics
     else
       rebuildQuadtree();
 
-    emit locationChanged();
+    emit dataChanged();
   });
 
   // build the quadtree for all graphics in the overlay to begin with
@@ -108,7 +108,7 @@ void GraphicsOverlayAlertTarget::setupGraphicConnections(Graphic* graphic)
   if (!graphic)
     return;
 
-  m_graphicConnections.append(connect(graphic, &Graphic::geometryChanged, this, &GraphicsOverlayAlertTarget::locationChanged));
+  m_graphicConnections.append(connect(graphic, &Graphic::geometryChanged, this, &GraphicsOverlayAlertTarget::dataChanged));
 }
 
 /*!

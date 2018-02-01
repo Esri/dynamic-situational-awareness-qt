@@ -10,28 +10,31 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "AlertQuery.h"
-#include "AlertConditionData.h"
+#include "AlertSpatialTarget.h"
 
 using namespace Esri::ArcGISRuntime;
 
-AlertQuery::AlertQuery(QObject* parent):
-  QObject(parent)
+/*!
+  \class AlertSpatialTarget
+  \inherits AlertTarget
+  \brief Represents a spatial target (e.g. an overlay or a real-time feed) for an \l AlertCondition.
+
+  \note This is an abstract base type.
+  */
+
+/*!
+  \brief Constructor taking an optional \a parent.
+ */
+AlertSpatialTarget::AlertSpatialTarget(QObject* parent):
+  AlertTarget(parent)
 {
 
 }
 
-AlertQuery::~AlertQuery()
+/*!
+  \brief Destructor.
+ */
+AlertSpatialTarget::~AlertSpatialTarget()
 {
 
-}
-
-bool AlertQuery::active() const
-{
-  return m_active;
-}
-
-void AlertQuery::setActive(bool active)
-{
-  m_active = active;
 }

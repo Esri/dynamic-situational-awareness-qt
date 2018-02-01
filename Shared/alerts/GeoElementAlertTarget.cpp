@@ -18,7 +18,7 @@ using namespace Esri::ArcGISRuntime;
 
 /*!
   \class GeoElementAlertTarget
-  \inherits AlertTarget
+  \inherits AlertSpatialTarget
   \brief Represents a target based on a single \l Esri::ArcGISRuntime::GeoElement
   for an \l AlertCondition.
 
@@ -30,10 +30,10 @@ using namespace Esri::ArcGISRuntime;
   \brief Constructor taking an \l Esri::ArcGISRuntime::GeoElement (\a geoElement).
  */
 GeoElementAlertTarget::GeoElementAlertTarget(GeoElement* geoElement):
-  AlertTarget(geoElement),
+  AlertSpatialTarget(geoElement),
   m_geoElement(geoElement)
 {
-  connect(m_geoElement, &GeoElement::geometryChanged, this, &GeoElementAlertTarget::locationChanged);
+  connect(m_geoElement, &GeoElement::geometryChanged, this, &GeoElementAlertTarget::dataChanged);
 }
 
 /*!

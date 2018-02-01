@@ -24,6 +24,8 @@ class Graphic;
 }
 }
 
+class AlertSpatialTarget;
+
 class WithinAreaAlertConditionData : public AlertConditionData
 {
   Q_OBJECT
@@ -32,10 +34,17 @@ public:
   explicit WithinAreaAlertConditionData(const QString& name,
                                         AlertLevel level,
                                         AlertSource* source,
-                                        AlertTarget* target,
+                                        AlertSpatialTarget* target,
                                         QObject* parent = nullptr);
 
   ~WithinAreaAlertConditionData();
+
+  AlertSpatialTarget* spatialTarget() const;
+
+  bool matchesQuery() const override;
+
+private:
+  AlertSpatialTarget* m_spatialTarget = nullptr;
 };
 
 #endif // WITHINAREAALERTCONDITIONDATA_H

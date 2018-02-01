@@ -10,21 +10,21 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "AlertQuery.h"
-#include "StatusAlertQuery.h"
+#include "AlertFilter.h"
+#include "StatusAlertFilter.h"
 
-StatusAlertQuery::StatusAlertQuery(QObject* parent):
-  AlertQuery(parent)
+StatusAlertFilter::StatusAlertFilter(QObject* parent):
+  AlertFilter(parent)
 {
 
 }
 
-StatusAlertQuery::~StatusAlertQuery()
+StatusAlertFilter::~StatusAlertFilter()
 {
 
 }
 
-bool StatusAlertQuery::matchesRule(AlertConditionData* alert) const
+bool StatusAlertFilter::passesFilter(AlertConditionData* alert) const
 {
   if (!alert)
     return false;
@@ -32,12 +32,12 @@ bool StatusAlertQuery::matchesRule(AlertConditionData* alert) const
   return alert->level() >= m_minLevel;
 }
 
-AlertLevel StatusAlertQuery::minLevel() const
+AlertLevel StatusAlertFilter::minLevel() const
 {
   return m_minLevel;
 }
 
-void StatusAlertQuery::setMinLevel(AlertLevel minStatus)
+void StatusAlertFilter::setMinLevel(AlertLevel minStatus)
 {
   m_minLevel = minStatus;
 }

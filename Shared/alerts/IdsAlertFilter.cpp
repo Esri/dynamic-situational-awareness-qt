@@ -10,30 +10,30 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef IDSALERTQUERY_H
-#define IDSALERTQUERY_H
+#include "AlertConditionData.h"
+#include "IdsAlertFilter.h"
 
-#include "AlertQuery.h"
-
-#include <QSet>
-#include <QUuid>
-
-class AlertConditionData;
-
-class IdsAlertQuery : public AlertQuery
+IdsAlertFilter::IdsAlertFilter(QObject* parent):
+  AlertFilter(parent)
 {
-  Q_OBJECT
 
-public:
-  explicit IdsAlertQuery(QObject* parent = nullptr);
-  ~IdsAlertQuery();
+}
 
-  bool matchesRule(AlertConditionData* alert) const override;
+IdsAlertFilter::~IdsAlertFilter()
+{
 
-  void addId(const QUuid& id);
+}
 
-private:
-  QSet<QUuid> m_ids;
-};
+bool IdsAlertFilter::passesFilter(AlertConditionData* alert) const
+{
+  if (!alert)
+    return false;
 
-#endif // IDSALERTQUERY_H
+  return !m_ids.contains(alert->id());
+}
+
+void IdsAlertFilter::addId(const QUuid& id)
+{
+  m_ids.insert(id);
+}
+

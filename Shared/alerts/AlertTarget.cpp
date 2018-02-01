@@ -12,8 +12,6 @@
 
 #include "AlertTarget.h"
 
-using namespace Esri::ArcGISRuntime;
-
 /*!
   \class AlertTarget
   \inherits QObject

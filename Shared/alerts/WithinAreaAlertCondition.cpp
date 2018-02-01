@@ -10,6 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "AlertSpatialTarget.h"
 #include "GraphicAlertSource.h"
 #include "WithinAreaAlertCondition.h"
 #include "WithinAreaAlertConditionData.h"
@@ -55,5 +56,9 @@ WithinAreaAlertCondition::~WithinAreaAlertCondition()
  */
 AlertConditionData* WithinAreaAlertCondition::createData(AlertSource* source, AlertTarget* target)
 {
-  return new WithinAreaAlertConditionData(newConditionDataName(), level(), source, target, this);
+  AlertSpatialTarget* spatialTarget = qobject_cast<AlertSpatialTarget*>(target);
+  if (spatialTarget)
+    return new WithinAreaAlertConditionData(newConditionDataName(), level(), source, spatialTarget, this);
+  else
+    return nullptr;
 }

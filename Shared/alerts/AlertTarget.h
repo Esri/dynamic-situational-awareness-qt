@@ -13,19 +13,7 @@
 #ifndef ALERTTARGET_H
 #define ALERTTARGET_H
 
-#include "Geometry.h"
-
 #include <QObject>
-
-#include <QList>
-
-namespace Esri
-{
-namespace ArcGISRuntime
-{
-  class Envelope;
-}
-}
 
 class AlertTarget : public QObject
 {
@@ -35,11 +23,9 @@ public:
   explicit AlertTarget(QObject* parent = nullptr);
   ~AlertTarget();
 
-  virtual QList<Esri::ArcGISRuntime::Geometry> targetGeometries(const Esri::ArcGISRuntime::Envelope& targetArea) const = 0;
-
 signals:
-  void locationChanged();
   void noLongerValid();
+  void dataChanged();
 };
 
 #endif // ALERTTARGET_H

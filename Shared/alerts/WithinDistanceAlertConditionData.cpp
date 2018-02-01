@@ -10,6 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "AlertSpatialTarget.h"
 #include "WithinDistanceAlertConditionData.h"
 #include "AlertSource.h"
 
@@ -23,10 +24,11 @@ using namespace Esri::ArcGISRuntime;
 WithinDistanceAlertConditionData::WithinDistanceAlertConditionData(const QString& name,
                                                                    AlertLevel level,
                                                                    AlertSource* source,
-                                                                   AlertTarget* target,
+                                                                   AlertSpatialTarget* target,
                                                                    double distance,
                                                                    QObject* parent):
   AlertConditionData(name, level, source, target, parent),
+  m_spatialTarget(target),
   m_distance(distance)
 {
 
@@ -40,4 +42,26 @@ WithinDistanceAlertConditionData::~WithinDistanceAlertConditionData()
 double WithinDistanceAlertConditionData::distance() const
 {
   return m_distance;
+}
+
+AlertSpatialTarget* WithinDistanceAlertConditionData::spatialTarget() const
+{
+  return m_spatialTarget;
+}
+
+bool WithinDistanceAlertConditionData::matchesQuery() const
+{
+  const Geometry bufferGeom = GeometryEngine::bufferGeodetic(sourceLocation(), distance(), LinearUnit::meters(), 1.0, GeodeticCurveType::Geodesic);
+  const Geometry bufferWgs84 = GeometryEngine::project(bufferGeom, SpatialReference::wgs84());
+
+  const QList<Geometry> targetGeometries = spatialTarget()->targetGeometries(bufferWgs84.extent());
+
+  for (const Geometry& target : targetGeometries)
+  {
+    Geometry targetWgs84 = GeometryEngine::project(target, SpatialReference::wgs84());
+    if (GeometryEngine::intersects(bufferWgs84, targetWgs84))
+      return true;
+  }
+
+  return false;
 }

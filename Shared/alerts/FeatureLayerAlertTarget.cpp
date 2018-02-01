@@ -35,7 +35,7 @@ struct FeatureQueryResultManager {
 
 /*!
   \class FeatureLayerAlertTarget
-  \inherits AlertTarget
+  \inherits AlertSpatialTarget
   \brief Represents a target based on an \l Esri::ArcGISRuntime::FeatureLayer
   for an \l AlertCondition.
 
@@ -49,7 +49,7 @@ struct FeatureQueryResultManager {
   All features will be retrieved from the underlying feature layer.
  */
 FeatureLayerAlertTarget::FeatureLayerAlertTarget(FeatureLayer* featureLayer):
-  AlertTarget(featureLayer),
+  AlertSpatialTarget(featureLayer),
   m_FeatureLayer(featureLayer)
 {
   // assume no editing of feature table
@@ -112,7 +112,7 @@ void FeatureLayerAlertTarget::handleQueryFeaturesCompleted(QUuid, FeatureQueryRe
   FeatureQueryResultManager results(queryResults);
   if (!results.m_results)
   {
-    emit locationChanged();
+    emit dataChanged();
     return;
   }
 
@@ -132,12 +132,12 @@ void FeatureLayerAlertTarget::handleQueryFeaturesCompleted(QUuid, FeatureQueryRe
     {
       m_geomCache.clear();
       rebuildQuadtree();
-      emit locationChanged();
+      emit dataChanged();
     });
   }
 
   rebuildQuadtree();
-  emit locationChanged();
+  emit dataChanged();
 }
 
 /*!

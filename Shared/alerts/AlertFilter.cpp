@@ -10,22 +10,18 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef WITHONDISTANCEALERTQUERY_H
-#define WITHONDISTANCEALERTQUERY_H
+#include "AlertFilter.h"
+#include "AlertConditionData.h"
 
-#include "AlertQuery.h"
+using namespace Esri::ArcGISRuntime;
 
-class AlertConditionData;
-
-class WithinDistanceAlertQuery : public AlertQuery
+AlertFilter::AlertFilter(QObject* parent):
+  QObject(parent)
 {
-  Q_OBJECT
 
-public:
-  explicit WithinDistanceAlertQuery(QObject* parent = nullptr);
-  ~WithinDistanceAlertQuery();
+}
 
-  bool matchesRule(AlertConditionData* alert) const override;
-};
+AlertFilter::~AlertFilter()
+{
 
-#endif // WITHONDISTANCEALERTQUERY_H
+}

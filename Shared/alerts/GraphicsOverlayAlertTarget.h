@@ -13,7 +13,7 @@
 #ifndef GRAPHICSOVERLAYALERTTARGET_H
 #define GRAPHICSOVERLAYALERTTARGET_H
 
-#include "AlertTarget.h"
+#include "AlertSpatialTarget.h"
 
 namespace Esri
 {
@@ -26,7 +26,7 @@ class GraphicsOverlay;
 
 class GeometryQuadtree;
 
-class GraphicsOverlayAlertTarget : public AlertTarget
+class GraphicsOverlayAlertTarget : public AlertSpatialTarget
 {
   Q_OBJECT
 

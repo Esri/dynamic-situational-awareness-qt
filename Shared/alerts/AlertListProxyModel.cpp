@@ -11,7 +11,7 @@
 //
 
 #include "AlertConditionData.h"
-#include "AlertQuery.h"
+#include "AlertFilter.h"
 #include "AlertListModel.h"
 #include "AlertListProxyModel.h"
 
@@ -56,9 +56,9 @@ AlertListProxyModel::~AlertListProxyModel()
 
 }
 
-void AlertListProxyModel::applyFilter(const QList<AlertQuery*>& rules)
+void AlertListProxyModel::applyFilter(const QList<AlertFilter*>& filters)
 {
-  m_queries = rules;
+  m_filters = filters;
   m_rowsInModel.clear();
   invalidate();
 }
@@ -83,20 +83,23 @@ bool AlertListProxyModel::passesAllQueries(int sourceRow) const
 
   bool shouldBeActive = true;
 
-  auto rulesIt = m_queries.cbegin();
-  auto rulesEnd = m_queries.cend();
+  auto rulesIt = m_filters.cbegin();
+  auto rulesEnd = m_filters.cend();
   for (; rulesIt != rulesEnd; ++rulesIt)
   {
     const auto rule = *rulesIt;
     if (!rule)
       continue;
 
-    if (!rule->matchesRule(alert))
+    if (!rule->passesFilter(alert))
     {
       shouldBeActive = false;
       break;
     }
   }
+
+  if (shouldBeActive)
+    shouldBeActive = alert->matchesQuery();
 
   alert->setActive(shouldBeActive);
 

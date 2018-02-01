@@ -10,29 +10,30 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef STATUSALERTQUERY_H
-#define STATUSALERTQUERY_H
+#ifndef IDSALERTFILTER_H
+#define IDSALERTFILTER_H
 
-#include "AlertConditionData.h"
-#include "AlertQuery.h"
+#include "AlertFilter.h"
+
+#include <QSet>
+#include <QUuid>
 
 class AlertConditionData;
 
-class StatusAlertQuery : public AlertQuery
+class IdsAlertFilter : public AlertFilter
 {
   Q_OBJECT
 
 public:
-  explicit StatusAlertQuery(QObject* parent = nullptr);
-  ~StatusAlertQuery();
+  explicit IdsAlertFilter(QObject* parent = nullptr);
+  ~IdsAlertFilter();
 
-  bool matchesRule(AlertConditionData* alert) const override;
+  bool passesFilter(AlertConditionData* conditionData) const override;
 
-  AlertLevel minLevel() const;
-  void setMinLevel(AlertLevel minLevel);
+  void addId(const QUuid& id);
 
 private:
-  AlertLevel m_minLevel = AlertLevel::Low;
+  QSet<QUuid> m_ids;
 };
 
-#endif // STATUSALERTQUERY_H
+#endif // IDSALERTFILTER_H

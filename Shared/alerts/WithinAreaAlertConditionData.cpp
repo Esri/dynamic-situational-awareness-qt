@@ -11,9 +11,11 @@
 //
 
 #include "AlertSource.h"
+#include "AlertSpatialTarget.h"
 #include "WithinAreaAlertConditionData.h"
 
 #include "GeoElement.h"
+#include "GeometryEngine.h"
 #include "Point.h"
 
 using namespace Esri::ArcGISRuntime;
@@ -21,9 +23,10 @@ using namespace Esri::ArcGISRuntime;
 WithinAreaAlertConditionData::WithinAreaAlertConditionData(const QString& name,
                                                            AlertLevel level,
                                                            AlertSource* source,
-                                                           AlertTarget* target,
+                                                           AlertSpatialTarget* target,
                                                             QObject* parent):
-  AlertConditionData(name, level, source, target, parent)
+  AlertConditionData(name, level, source, target, parent),
+  m_spatialTarget(target)
 {
 
 }
@@ -31,4 +34,27 @@ WithinAreaAlertConditionData::WithinAreaAlertConditionData(const QString& name,
 WithinAreaAlertConditionData::~WithinAreaAlertConditionData()
 {
 
+}
+
+AlertSpatialTarget* WithinAreaAlertConditionData::spatialTarget() const
+{
+  return m_spatialTarget;
+}
+
+bool WithinAreaAlertConditionData::matchesQuery() const
+{
+  Geometry sourceWgs84 = GeometryEngine::project(sourceLocation(), SpatialReference::wgs84());
+  const QList<Geometry> targetGeometries = spatialTarget()->targetGeometries(sourceWgs84.extent());
+
+  for (const Geometry& target : targetGeometries)
+  {
+    if (target.geometryType() != GeometryType::Polygon)
+      continue;
+
+    const Geometry targetWgs84 = GeometryEngine::project(target, sourceWgs84.spatialReference());
+    if (GeometryEngine::instance()->intersects(sourceWgs84, targetWgs84))
+      return true;
+  }
+
+  return false;
 }

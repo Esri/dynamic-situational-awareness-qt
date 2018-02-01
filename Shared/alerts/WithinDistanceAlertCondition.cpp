@@ -10,6 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "AlertSpatialTarget.h"
 #include "WithinDistanceAlertCondition.h"
 #include "WithinDistanceAlertConditionData.h"
 
@@ -53,7 +54,11 @@ WithinDistanceAlertCondition::~WithinDistanceAlertCondition()
  */
 AlertConditionData* WithinDistanceAlertCondition::createData(AlertSource* source, AlertTarget* target)
 {
-  return new WithinDistanceAlertConditionData(newConditionDataName(), level(), source, target, m_distance, this);
+  AlertSpatialTarget* spatialTarget = qobject_cast<AlertSpatialTarget*>(target);
+  if (spatialTarget)
+    return new WithinDistanceAlertConditionData(newConditionDataName(), level(), source, spatialTarget, m_distance, this);
+  else
+    return nullptr;
 }
 
 /*!

@@ -52,10 +52,12 @@ public:
   AlertSource* source() const;
   AlertTarget* target() const;
 
+  virtual bool matchesQuery() const = 0;
+
 signals:
   void statusChanged();
   void viewedChanged();
-  void locationChanged();
+  void dataChanged();
   void activeChanged();
   void noLongerValid();
 

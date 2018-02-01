@@ -10,22 +10,29 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef WITHINAREAALERTQUERY_H
-#define WITHINAREAALERTQUERY_H
+#ifndef STATUSALERTFILTER_H
+#define STATUSALERTFILTER_H
 
-#include "AlertQuery.h"
+#include "AlertConditionData.h"
+#include "AlertFilter.h"
 
 class AlertConditionData;
 
-class WithinAreaAlertQuery : public AlertQuery
+class StatusAlertFilter : public AlertFilter
 {
   Q_OBJECT
 
 public:
-  explicit WithinAreaAlertQuery(QObject* parent = nullptr);
-  ~WithinAreaAlertQuery();
+  explicit StatusAlertFilter(QObject* parent = nullptr);
+  ~StatusAlertFilter();
 
-  bool matchesRule(AlertConditionData* alert) const override;
+  bool passesFilter(AlertConditionData* alert) const override;
+
+  AlertLevel minLevel() const;
+  void setMinLevel(AlertLevel minLevel);
+
+private:
+  AlertLevel m_minLevel = AlertLevel::Low;
 };
 
-#endif // WITHINAREAALERTQUERY_H
+#endif // STATUSALERTFILTER_H

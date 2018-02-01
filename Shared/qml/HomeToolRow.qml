@@ -35,9 +35,7 @@ Row {
             }
             MenuItem {
                 text: "Close"
-                onTriggered: {
-                    closePrompt.visible = true;
-                }
+                onTriggered: closePrompt.visible = true
             }
         }
     }

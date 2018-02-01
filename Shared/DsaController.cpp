@@ -15,6 +15,19 @@
 #include "Scene.h"
 #include "ElevationSource.h"
 #include "GeoView.h"
+#include "FeatureLayer.h"
+#include "RasterLayer.h"
+#include "Geodatabase.h"
+#include "GeodatabaseFeatureTable.h"
+#include "FeatureTable.h"
+#include "GeoPackage.h"
+#include "GeoPackageFeatureTable.h"
+#include "GeoPackageRaster.h"
+#include "ShapefileFeatureTable.h"
+#include "ArcGISSceneLayer.h"
+#include "ArcGISTiledLayer.h"
+#include "ArcGISVectorTiledLayer.h"
+#include "Raster.h"
 
 // Toolkit
 #include "AbstractTool.h"
@@ -24,10 +37,14 @@
 // Dsa apps
 #include "DsaUtility.h"
 #include "DsaController.h"
+#include "TableOfContentsController.h"
 
 // Qt
 #include <QSettings>
 #include <QDir>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QVariantList>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -73,6 +90,13 @@ void DsaController::init(GeoView* geoView)
 
     connect(abstractTool, &Toolkit::AbstractTool::errorOccurred, this, &DsaController::onError);
     connect(abstractTool, &Toolkit::AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
+  }
+
+  TableOfContentsController* toc = Toolkit::ToolManager::instance().tool<TableOfContentsController>();
+  if (toc)
+  {
+    connect(toc, &TableOfContentsController::layerListModelChanged, this, &DsaController::onLayerListChanged);
+    connect(toc, &TableOfContentsController::layerChanged, this, &DsaController::onLayerChanged);
   }
 }
 
@@ -148,6 +172,7 @@ void DsaController::createDefaultSettings()
   m_dsaSettings["CoordinateFormat"] = QStringLiteral("DMS");
   m_dsaSettings["UnitOfMeasurement"] = QStringLiteral("meters");
   m_dsaSettings["UseGpsForElevation"] = QStringLiteral("true");
+  m_dsaSettings["Layers"] = QStringLiteral("");
 }
 
 void DsaController::saveSettings(QFile& configFile)
@@ -165,3 +190,74 @@ void DsaController::saveSettings(QFile& configFile)
     }
   }
 }
+
+void DsaController::onLayerListChanged()
+{
+  m_layers.clear();
+}
+
+void DsaController::onLayerChanged(Layer* layer)
+{
+  qDebug() << "layer changed" << layer->name();
+  QString layerPath;
+
+  // Get Feature Layers
+  auto featureLayer = dynamic_cast<FeatureLayer*>(layer);
+  if (featureLayer)
+  {
+    // Check if a Geodatabase
+    auto gdbFeatureTable = dynamic_cast<GeodatabaseFeatureTable*>(featureLayer->featureTable());
+    if (gdbFeatureTable)
+      layerPath = gdbFeatureTable->geodatabase()->path();
+
+    // Check if a GeoPackage
+    auto gpkgFeatureTable = dynamic_cast<GeoPackageFeatureTable*>(featureLayer->featureTable());
+    if (gpkgFeatureTable)
+      layerPath = gpkgFeatureTable->geoPackage()->path();
+
+    // Check if a Shapefile
+    auto shpFeatureTable = dynamic_cast<ShapefileFeatureTable*>(featureLayer->featureTable());
+    if (shpFeatureTable)
+      layerPath = shpFeatureTable->path();
+  }
+
+  // Get Raster Layers
+  auto rasterLayer = dynamic_cast<RasterLayer*>(layer);
+  if (rasterLayer)
+  {
+    // Check if a GeoPackage
+    auto gpkgRaster = dynamic_cast<GeoPackageRaster*>(rasterLayer->raster());
+    if (gpkgRaster)
+      layerPath = gpkgRaster->geoPackage()->path();
+
+    // Check if a Raster
+    auto raster = dynamic_cast<Raster*>(rasterLayer->raster());
+    if (raster)
+      layerPath = raster->path();
+  }
+
+  // Get Scene Layers
+  auto sceneLayer = dynamic_cast<ArcGISSceneLayer*>(layer);
+  if (sceneLayer)
+    layerPath = sceneLayer->url().toString();
+
+
+  // Get TPKs
+  auto tiledLayer = dynamic_cast<ArcGISTiledLayer*>(layer);
+  if (tiledLayer)
+    layerPath = tiledLayer->url().toString();
+
+  // Get VTPKs
+  auto vectorTiledLayer = dynamic_cast<ArcGISVectorTiledLayer*>(layer);
+  if (vectorTiledLayer)
+    layerPath = vectorTiledLayer->url().toString();
+
+  // add the layer to the layer list for caching
+  QJsonObject layerJson;
+  layerJson.insert("path", QString(layerPath).simplified());
+  layerJson.insert("visible", layer->isVisible() ? "true" : "false");
+  QJsonDocument layerJsonDoc(layerJson);
+  m_layers.append(layerJsonDoc.toJson(QJsonDocument::Compact));
+  onPropertyChanged("Layers", m_layers);
+}
+

@@ -27,8 +27,11 @@ namespace ArcGISRuntime
   class Error;
   class Scene;
   class GeoView;
+  class Layer;
 }
 }
+
+#include <QJsonArray>
 
 class DsaController : public QObject
 {
@@ -47,6 +50,8 @@ public slots:
 
 private slots:
   void onPropertyChanged(const QString& propertyName, const QVariant& propertyValue);
+  void onLayerChanged(Esri::ArcGISRuntime::Layer* layer);
+  void onLayerListChanged();
 
 signals:
   void errorOccurred(const QString& message, const QString& additionalMessage);
@@ -62,6 +67,7 @@ private:
   QString m_dataPath;
   QVariantMap m_dsaSettings;
   QString m_configFilePath;
+  QStringList m_layers;
 };
 
 #endif // DSACONTROLLER_H

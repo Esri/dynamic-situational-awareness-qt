@@ -68,6 +68,7 @@ public:
 
 signals:
   void layerListModelChanged();
+  void layerChanged(Esri::ArcGISRuntime::Layer* layer);
 
 public slots:
   void updateLayerListModel();

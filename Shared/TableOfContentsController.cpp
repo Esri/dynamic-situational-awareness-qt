@@ -223,6 +223,25 @@ void TableOfContentsController::updateLayerListModel()
     m_drawOrderModel = new DrawOrderLayerListModel(this);
     m_drawOrderModel->setSourceModel(m_layerListModel);
     emit layerListModelChanged();
+
+    for (int i = 0; i < operationalLayers->size(); i++)
+    {
+      Layer* layer = operationalLayers->at(i);
+      if (layer->loadStatus() == LoadStatus::Loaded)
+      {
+        emit layerChanged(layer);
+        continue;
+      }
+
+      connect(layer, &Layer::doneLoading, this, [this, layer](Error e)
+      {
+        if (!e.isEmpty())
+          return;
+
+        emit layerChanged(layer);
+      });
+      layer->load();
+    }
   }
 }
 

@@ -131,6 +131,11 @@ QUrl DsaResources::iconMap() const
   return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_mapview_dark_d.png");
 }
 
+QUrl DsaResources::iconMenu() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_overflowcirclessmall_dark_d.png");
+}
+
 QUrl DsaResources::iconMessages() const
 {
   return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_messages_dark.png");

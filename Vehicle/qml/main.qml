@@ -136,8 +136,8 @@ Vehicle {
             id: navTool
             anchors {
                 margins: 10 * scaleFactor
-                verticalCenter: parent.verticalCenter
-                right: sceneView.right
+                top: parent.top
+                left: sceneView.left
             }
         }
 
@@ -157,7 +157,7 @@ Vehicle {
             id: categoryToolbar
             anchors {
                 top: parent.top
-                left: parent.left
+                right: parent.right
                 bottom: sceneView.attributionTop
             }
             width: 56 * scaleFactor
@@ -170,7 +170,7 @@ Vehicle {
         TableOfContents {
             id: tableOfContentsTool
             anchors {
-                right: parent.right
+                right: categoryToolbar.left
                 top: parent.top
                 bottom: sceneView.attributionTop
             }
@@ -187,7 +187,7 @@ Vehicle {
         AlertList {
             id: alertsTool
             anchors {
-                right: parent.right
+                right: categoryToolbar.left
                 top: parent.top
                 bottom: sceneView.attributionTop
             }
@@ -199,7 +199,7 @@ Vehicle {
         AlertConditionsTool {
             id: alertConditionsTool
             anchors {
-                right: parent.right
+                right: categoryToolbar.left
                 top: parent.top
                 bottom: sceneView.attributionTop
             }
@@ -211,7 +211,7 @@ Vehicle {
         TelestrateTool {
             id: telestrateTool
             anchors {
-                right: parent.right
+                right: categoryToolbar.left
                 top: parent.top
                 bottom: sceneView.attributionTop
             }
@@ -227,7 +227,7 @@ Vehicle {
         PopupStackView {
             id: identifyResults
             anchors {
-                right: sceneView.right
+                right: categoryToolbar.left
                 top: sceneView.top
                 bottom: sceneView.attributionTop
             }
@@ -252,7 +252,6 @@ Vehicle {
             id: drawer
             width: 272 * scaleFactor
             height: sceneView.height - 20 * scaleFactor // approximation for attribution text
-            y: topToolbar.height
             edge: Qt.RightEdge
 
             onClosed: {

@@ -19,7 +19,7 @@ import QtQuick.Controls.Material 2.2
 
 CategoryToolbar {
     Row {
-        spacing: 15 * scaleFactor
+        spacing: 20 * scaleFactor
         anchors.horizontalCenter: parent.horizontalCenter
         topPadding: 20 * scaleFactor
 
@@ -77,42 +77,5 @@ CategoryToolbar {
             categoryName: "markup"
             onCategorySelected: categoryToolbar.state = categoryName
         }
-
-        CategoryIcon {
-            id: optionsIcon
-            anchors.verticalCenter: parent.verticalCenter
-            iconSource: DsaResources.iconSettings
-            categoryName: "options"
-            onCategorySelected: menu.open()
-
-            Menu {
-                id: menu
-                MenuItem {
-                    text: "About"
-                    onTriggered: aboutClicked()
-                }
-                MenuItem {
-                    text: "Settings"
-                    onTriggered: settingsClicked()
-                }
-                MenuItem {
-                    text: "Close"
-                    onTriggered: {
-                        closePrompt.visible = true;
-                    }
-                }
-            }
-        }
-    }
-
-    MessageDialog {
-        id: closePrompt
-        visible: false
-        icon: StandardIcon.Question
-        title: appTitle
-        text: "Are you sure you want to close?"
-        standardButtons: StandardButton.Yes | StandardButton.No
-        onYes: Qt.quit();
-        onNo:  visible = false;
     }
 }

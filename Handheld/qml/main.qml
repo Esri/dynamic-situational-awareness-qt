@@ -45,6 +45,15 @@ Handheld {
         height: DsaStyles.mainToolbarHeight * scaleFactor
         menuVisible: false
 
+        HomeToolRow  {
+            id: homeToolRow
+            anchors {
+                verticalCenter: parent.verticalCenter
+                right: parent.right
+                rightMargin: 10 * scaleFactor
+            }
+        }
+
         MapToolRow {
             id: mapToolRow
             anchors {
@@ -346,9 +355,6 @@ Handheld {
         }
         height: DsaStyles.categoryToolbarWidth * scaleFactor
         appTitle: "DSA - H"
-
-        onSettingsClicked: optionsTool.visible = true;
-        onAboutClicked: aboutTool.visible = true;
     }
 
     IdentifyController {

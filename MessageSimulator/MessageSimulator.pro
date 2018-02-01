@@ -17,18 +17,21 @@ TEMPLATE = app
 QT += qml quick
 CONFIG += c++11
 
+INCLUDEPATH += \
+    $$PWD/../Shared/messages
+
 HEADERS += \
+    $$PWD/../Shared/messages/MessageSender.h \
     MessageSimulatorController.h \
     AbstractMessageParser.h \
     CoTMessageParser.h \
-    MessageSender.h \
     SimulatedMessage.h \
     SimulatedMessageListModel.h
 
 SOURCES += main.cpp \
+    $$PWD/../Shared/messages/MessageSender.cpp \
     AbstractMessageParser.cpp \
     CoTMessageParser.cpp \
-    MessageSender.cpp \
     MessageSimulatorController.cpp \
     SimulatedMessage.cpp \
     SimulatedMessageListModel.cpp

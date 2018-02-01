@@ -48,17 +48,17 @@ void MessageFeed::setFeedMessageType(const QString& feedMessageType)
   m_feedMessageType = feedMessageType;
 }
 
-bool MessageFeed::isFeedEnabled() const
+bool MessageFeed::isFeedVisible() const
 {
-  return m_feedEnabled;
+  return m_feedVisible;
 }
 
-void MessageFeed::setFeedEnabled(bool feedEnabled)
+void MessageFeed::setFeedVisible(bool feedVisible)
 {
-  if (m_feedEnabled == feedEnabled)
+  if (m_feedVisible == feedVisible)
     return;
 
-  m_feedEnabled = feedEnabled;
+  m_feedVisible = feedVisible;
 
   updateOverlay();
 }
@@ -80,5 +80,5 @@ void MessageFeed::updateOverlay()
   // update the visibility of the messages overlay
   // that corresponds to this message feed
   if (m_messagesOverlay)
-    m_messagesOverlay->setVisible(m_feedEnabled);
+    m_messagesOverlay->setVisible(m_feedVisible);
 }

@@ -26,17 +26,21 @@ namespace Esri {
 
 class MessageFeedListModel;
 class MessageListener;
+class LocationBroadcast;
 
 class MessageFeedsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
   Q_OBJECT
 
   Q_PROPERTY(QAbstractListModel* messageFeeds READ messageFeeds CONSTANT)
+  Q_PROPERTY(bool locationBroadcastEnabled READ isLocationBroadcastEnabled WRITE setLocationBroadcastEnabled NOTIFY locationBroadcastEnabledChanged)
+  Q_PROPERTY(int locationBroadcastFrequency READ locationBroadcastFrequency WRITE setLocationBroadcastFrequency NOTIFY locationBroadcastFrequencyChanged)
 
 public:
   static const QString RESOURCE_DIRECTORY_PROPERTYNAME;
   static const QString MESSAGE_FEED_UDP_PORTS_PROPERTYNAME;
   static const QString MESSAGE_FEEDS_PROPERTYNAME;
+  static const QString LOCATION_BROADCAST_CONFIG_PROPERTYNAME;
 
   explicit MessageFeedsController(QObject* parent = nullptr);
   ~MessageFeedsController();
@@ -52,8 +56,20 @@ public:
   QString toolName() const override;
   void setProperties(const QVariantMap& properties) override;
 
-  QString dataPath() const { return m_dataPath; }
-  void setDataPath(const QString& dataPath);
+  QString resourcePath() const { return m_resourcePath; }
+  void setResourcePath(const QString& resourcePath);
+
+  LocationBroadcast* locationBroadcast() const;
+
+  bool isLocationBroadcastEnabled() const;
+  void setLocationBroadcastEnabled(bool enabled);
+
+  int locationBroadcastFrequency() const;
+  void setLocationBroadcastFrequency(int frequency);
+
+signals:
+  void locationBroadcastEnabledChanged();
+  void locationBroadcastFrequencyChanged();
 
 private:
   Esri::ArcGISRuntime::Renderer* createRenderer(const QString& rendererInfo, QObject* parent = nullptr) const;
@@ -62,7 +78,8 @@ private:
 
   MessageFeedListModel* m_messageFeeds = nullptr;
   QList<MessageListener*> m_messageListeners;
-  QString m_dataPath;
+  QString m_resourcePath;
+  LocationBroadcast* m_locationBroadcast = nullptr;
 };
 
 #endif // MESSAGEFEEDSCONTROLLER_H

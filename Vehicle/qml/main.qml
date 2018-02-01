@@ -26,6 +26,7 @@ Vehicle {
     height: 600 * scaleFactor
 
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+    property alias messageFeeds: messageFeedsTool
 
     LocationController {
         id: locationController

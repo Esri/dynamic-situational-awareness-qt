@@ -64,6 +64,12 @@ void PointHighlighter::startHighlight()
       return;
     }
 
+    if (!m_highlightOverlay || !m_highlightOverlay->graphics() || m_highlightOverlay->graphics()->isEmpty())
+    {
+      m_highlightTimer->stop();
+      return;
+    }
+
     Graphic* graphic = m_highlightOverlay->graphics()->first();
     if (!graphic)
     {

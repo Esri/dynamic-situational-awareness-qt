@@ -14,6 +14,7 @@
 #include "AlertToolController.h"
 #include "AlertListModel.h"
 #include "AlertListProxyModel.h"
+#include "AlertSource.h"
 #include "PointHighlighter.h"
 #include "DsaUtility.h"
 #include "IdsAlertFilter.h"
@@ -65,9 +66,9 @@ void AlertToolController::highlight(int rowIndex, bool showHighlight)
   if (showHighlight)
   {
     QModelIndex sourceIndex = m_alertsProxyModel->mapToSource(m_alertsProxyModel->index(rowIndex, 0));
-    AlertConditionData* alert = AlertListModel::instance()->alertAt(sourceIndex.row());
+    AlertConditionData* conditionData = AlertListModel::instance()->alertAt(sourceIndex.row());
 
-    if (!alert)
+    if (!conditionData)
       return;
 
     for (const auto& connection : m_highlightConnections)
@@ -75,24 +76,24 @@ void AlertToolController::highlight(int rowIndex, bool showHighlight)
 
     m_highlightConnections.clear();
 
-    m_highlightConnections.append(connect(alert, &AlertConditionData::noLongerValid, this, [this]()
+    m_highlightConnections.append(connect(conditionData, &AlertConditionData::noLongerValid, this, [this]()
     {
       m_highlighter->stopHighlight();
     }));
 
-    m_highlightConnections.append(connect(alert, &AlertConditionData::dataChanged, this, [this, alert]()
+    m_highlightConnections.append(connect(conditionData->source(), &AlertSource::dataChanged, this, [this, conditionData]()
     {
-      if (alert)
-        m_highlighter->onPointChanged(alert->sourceLocation());
+      if (conditionData)
+        m_highlighter->onPointChanged(conditionData->sourceLocation());
     }));
 
-    m_highlightConnections.append(connect(alert, &AlertConditionData::activeChanged, this, [this, alert]()
+    m_highlightConnections.append(connect(conditionData, &AlertConditionData::activeChanged, this, [this, conditionData]()
     {
-      if (!alert || !alert->active())
+      if (!conditionData || !conditionData->active())
         m_highlighter->stopHighlight();
     }));
 
-    m_highlighter->onPointChanged(alert->sourceLocation());
+    m_highlighter->onPointChanged(conditionData->sourceLocation());
     m_highlighter->startHighlight();
   }
   else

@@ -12,7 +12,6 @@
 
 #include "AlertCondition.h"
 #include "AlertConditionData.h"
-#include "AlertListModel.h"
 #include "GraphicAlertSource.h"
 
 #include "GraphicsOverlay.h"
@@ -185,6 +184,6 @@ void AlertCondition::addData(AlertConditionData* newData)
     return;
 
   m_data.append(newData);
-  AlertListModel::instance()->addAlertConditionData(newData);
+  emit newConditionData(newData);
 }
 

@@ -36,6 +36,7 @@ class GraphicsOverlay;
 }
 
 class LocationAlertSource;
+class AlertConditionData;
 class AlertConditionListModel;
 class AlertTarget;
 
@@ -85,6 +86,7 @@ private slots:
   void onMouseClicked(QMouseEvent& event);
   void onIdentifyLayersCompleted(const QUuid& taskId, QList<Esri::ArcGISRuntime::IdentifyLayerResult*> identifyResults);
   void onIdentifyGraphicsOverlaysCompleted(const QUuid& taskId, QList<Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult*> identifyResults);
+  void handleNewAlertConditionData(AlertConditionData* newConditionData);
 
 private:
   void setTargetNames(const QStringList& targetNames);

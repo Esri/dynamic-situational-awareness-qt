@@ -10,6 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "AlertListModel.h"
 #include "AttributeEqualsAlertCondition.h"
 #include "FixedValueAlertTarget.h"
 #include "AlertConditionData.h"
@@ -175,22 +176,21 @@ void AlertConditionsController::addWithinDistanceAlert(const QString& conditionN
   if (!target)
     return;
 
+  WithinDistanceAlertCondition* condition = new WithinDistanceAlertCondition(level, conditionName, distance, this);
+  connect(condition, &WithinDistanceAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
+
   if (sourceFeedName == "My Location")
   {
-    WithinDistanceAlertCondition* condition = new WithinDistanceAlertCondition(level, conditionName, distance, this);
     condition->init(m_locationSource, target);
-    m_conditions->addAlertCondition(condition);
   }
   else
   {
     GraphicsOverlay* sourceOverlay = graphicsOverlayFromName(sourceFeedName);
     if (sourceOverlay)
-    {
-      WithinDistanceAlertCondition* condition = new WithinDistanceAlertCondition(level, conditionName, distance, this);
       condition->init(sourceOverlay, target);
-      m_conditions->addAlertCondition(condition);
-    }
   }
+
+  m_conditions->addAlertCondition(condition);
 }
 
 /*!
@@ -228,22 +228,20 @@ void AlertConditionsController::addWithinAreaAlert(const QString& conditionName,
   if (!target)
     return;
 
+  WithinAreaAlertCondition* condition = new WithinAreaAlertCondition(level, conditionName, this);
+  connect(condition, &WithinAreaAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
+
   if (sourceFeedName == "My Location")
   {
-    WithinAreaAlertCondition* condition = new WithinAreaAlertCondition(level, conditionName, this);
     condition->init(m_locationSource, target);
-    m_conditions->addAlertCondition(condition);
   }
   else
   {
     GraphicsOverlay* sourceOverlay = graphicsOverlayFromName(sourceFeedName);
     if (sourceOverlay)
-    {
-      WithinAreaAlertCondition* condition = new WithinAreaAlertCondition(level, conditionName, this);
       condition->init(sourceOverlay, target);
-      m_conditions->addAlertCondition(condition);
-    }
   }
+  m_conditions->addAlertCondition(condition);
 }
 
 /*!
@@ -277,12 +275,13 @@ void AlertConditionsController::addAttributeEqualsAlert(const QString& condition
   AlertTarget* target = new FixedValueAlertTarget(targetValue, this);
 
   GraphicsOverlay* sourceOverlay = graphicsOverlayFromName(sourceFeedName);
-  if (sourceOverlay)
-  {
-    AttributeEqualsAlertCondition* condition = new AttributeEqualsAlertCondition(level, conditionName, attributeName, this);
-    condition->init(sourceOverlay, target);
-    m_conditions->addAlertCondition(condition);
-  }
+  if (!sourceOverlay)
+    return;
+
+  AttributeEqualsAlertCondition* condition = new AttributeEqualsAlertCondition(level, conditionName, attributeName, this);
+  connect(condition, &AttributeEqualsAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
+  condition->init(sourceOverlay, target);
+  m_conditions->addAlertCondition(condition);
 }
 
 /*!
@@ -636,6 +635,14 @@ void AlertConditionsController::onIdentifyGraphicsOverlaysCompleted(const QUuid&
       break;
     }
   }
+}
+
+void AlertConditionsController::handleNewAlertConditionData(AlertConditionData* newConditionData)
+{
+  if (!newConditionData)
+    return;
+
+  AlertListModel::instance()->addAlertConditionData(newConditionData);
 }
 
 /*!

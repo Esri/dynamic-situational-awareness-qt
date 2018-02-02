@@ -77,11 +77,9 @@ bool AlertListProxyModel::passesAllQueries(int sourceRow) const
   if (!sourceModel)
     return false;
 
-  AlertConditionData* alert = sourceModel->alertAt(sourceRow);
-  if (!alert)
+  AlertConditionData* conditionData = sourceModel->alertAt(sourceRow);
+  if (!conditionData)
     return false;
-
-  bool shouldBeActive = true;
 
   auto rulesIt = m_filters.cbegin();
   auto rulesEnd = m_filters.cend();
@@ -91,17 +89,9 @@ bool AlertListProxyModel::passesAllQueries(int sourceRow) const
     if (!rule)
       continue;
 
-    if (!rule->passesFilter(alert))
-    {
-      shouldBeActive = false;
-      break;
-    }
+    if (!rule->passesFilter(conditionData))
+      return false;
   }
 
-  if (shouldBeActive)
-    shouldBeActive = alert->matchesQuery();
-
-  alert->setActive(shouldBeActive);
-
-  return shouldBeActive;
+  return conditionData->matchesQuery();
 }

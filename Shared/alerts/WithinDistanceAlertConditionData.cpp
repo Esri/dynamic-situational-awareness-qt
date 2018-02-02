@@ -81,8 +81,6 @@ bool WithinDistanceAlertConditionData::matchesQuery() const
   if (!queryOutOfDate())
     return cachedQueryResult();
 
-  setCachedQueryResult(false);
-
   const Geometry bufferGeom = GeometryEngine::bufferGeodetic(sourceLocation(), distance(), LinearUnit::meters(), 1.0, GeodeticCurveType::Geodesic);
   const Geometry bufferWgs84 = GeometryEngine::project(bufferGeom, SpatialReference::wgs84());
 
@@ -92,10 +90,8 @@ bool WithinDistanceAlertConditionData::matchesQuery() const
   {
     Geometry targetWgs84 = GeometryEngine::project(target, SpatialReference::wgs84());
     if (GeometryEngine::intersects(bufferWgs84, targetWgs84))
-    {
-      setCachedQueryResult(true);
-    }
+      return true;
   }
 
-  return cachedQueryResult();
+  return false;
 }

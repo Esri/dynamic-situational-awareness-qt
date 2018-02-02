@@ -78,7 +78,7 @@ double WithinDistanceAlertConditionData::distance() const
  */
 bool WithinDistanceAlertConditionData::matchesQuery() const
 {
-  if (!queryOutOfDate())
+  if (!isQueryOutOfDate())
     return cachedQueryResult();
 
   const Geometry bufferGeom = GeometryEngine::bufferGeodetic(sourceLocation(), distance(), LinearUnit::meters(), 1.0, GeodeticCurveType::Geodesic);

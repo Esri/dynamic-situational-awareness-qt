@@ -57,7 +57,7 @@ public:
   virtual bool matchesQuery() const = 0;
 
   bool cachedQueryResult() const;
-  bool queryOutOfDate() const;
+  bool isQueryOutOfDate() const;
 
 signals:
   void statusChanged();

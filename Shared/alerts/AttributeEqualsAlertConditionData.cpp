@@ -66,7 +66,7 @@ AttributeEqualsAlertConditionData::~AttributeEqualsAlertConditionData()
  */
 bool AttributeEqualsAlertConditionData::matchesQuery() const
 {
-  if (!queryOutOfDate())
+  if (!isQueryOutOfDate())
     return cachedQueryResult();
 
   return false;

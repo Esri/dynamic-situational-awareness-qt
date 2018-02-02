@@ -36,7 +36,7 @@ using namespace Esri::ArcGISRuntime;
 /*!
   \class AlertListController
   \inherits Toolkit::AbstractTool
-  \brief Tool controller for working with the list of conditions data which can trigger alerts.
+  \brief Tool controller for working with the list of condition data which can trigger alerts.
 
   Alerts are created when a given \l AlertCondition is met.
 
@@ -228,9 +228,9 @@ void AlertListController::setMinLevel(int level)
 }
 
 /*!
-  \brief Sets the highlight state for all currently active condition data to \a shouldHighlight.
+  \brief Sets the highlight state for all currently active condition data to \a highlight.
  */
-void AlertListController::flashAll(bool shouldHighlight)
+void AlertListController::flashAll(bool highlight)
 {
   AlertListModel* model = AlertListModel::instance();
   if (!model)
@@ -243,6 +243,6 @@ void AlertListController::flashAll(bool shouldHighlight)
     if (!alert || !alert->active())
       continue;
 
-    alert->highlight(shouldHighlight);
+    alert->highlight(highlight);
   }
 }

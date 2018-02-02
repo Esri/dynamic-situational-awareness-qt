@@ -228,12 +228,19 @@ AlertTarget* AlertConditionData::target() const
   return m_target;
 }
 
+/*!
+  \brief Returns the cached value from the last time the underlying query
+  was run.
+ */
 bool AlertConditionData::cachedQueryResult() const
 {
   return m_cachedQueryResult;
 }
 
-bool AlertConditionData::queryOutOfDate() const
+/*!
+  \brief Returns whether the query should be re-run.
+ */
+bool AlertConditionData::isQueryOutOfDate() const
 {
   return m_queryOutOfDate;
 }

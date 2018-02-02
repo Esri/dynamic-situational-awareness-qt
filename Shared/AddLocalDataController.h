@@ -43,6 +43,7 @@ public:
   Q_INVOKABLE void addPathToDirectoryList(const QString& path);
   Q_INVOKABLE void refreshLocalDataModel(const QString& fileType = "All");
   Q_INVOKABLE void addItemAsLayer(const QList<int>& index);
+  Q_INVOKABLE void addLayerFromPath(const QString& path);
   Q_INVOKABLE void addItemAsElevationSource(const QList<int>& indices);
   QAbstractListModel* localDataModel() const;
 

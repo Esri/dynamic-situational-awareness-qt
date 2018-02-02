@@ -236,6 +236,33 @@ void AddLocalDataController::addItemAsLayer(const QList<int>& indices)
   }
 }
 
+/*
+ \brief Determines data type from the give \a path, and calls the appropriate helper.
+*/
+void AddLocalDataController::addLayerFromPath(const QString& path)
+{
+  QFileInfo fileInfo(path);
+  QStringList rasterExtensions{"img", "tif", "tiff", "i1", "dt0", "dt1", "dt2", "tc2", "geotiff", "hr1", "jpg", "jpeg", "jp2", "ntf", "png", "i21"};
+
+  // determine the layer type
+  QString fileExtension = fileInfo.completeSuffix();
+
+  if (fileExtension == "geodatabase")
+    createFeatureLayerGeodatabase(path);
+  else if (fileExtension.compare("tpk", Qt::CaseInsensitive) == 0)
+    createTiledLayer(path);
+  else if (fileExtension.compare("shp", Qt::CaseInsensitive) == 0)
+    createFeatureLayerShapefile(path);
+  else if (fileExtension.compare("gpkg", Qt::CaseInsensitive) == 0)
+    createLayerGeoPackage(path);
+  else if (fileExtension.compare("slpk", Qt::CaseInsensitive) == 0)
+    createSceneLayer(path);
+  else if (fileExtension.compare("vtpk", Qt::CaseInsensitive) == 0)
+    createVectorTiledLayer(path);
+  else if (rasterExtensions.contains(fileExtension.toLower()))
+    createRasterLayer(path);
+}
+
 // Helper that creates a FeatureLayer for each table in the Geodatabase
 void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path)
 {

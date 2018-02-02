@@ -19,7 +19,11 @@ class Layer;
 }
 }
 
+class TableOfContentsController;
+class AddLocalDataController;
+
 #include "AbstractTool.h"
+#include <QJsonArray>
 
 class LayerCacheManager : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -37,7 +41,11 @@ private slots:
   void onLayerListChanged();
 
 private:
-  QStringList m_layers;
+  static const QString LAYERS_PROPERTYNAME;
+  QJsonArray m_layers;
+  bool m_initialLoadCompleted = false;
+  AddLocalDataController* m_localDataController;
+  TableOfContentsController* m_tocController;
 };
 
 #endif // LAYERCACHEMANAGER_H

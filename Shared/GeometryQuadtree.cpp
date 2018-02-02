@@ -182,9 +182,9 @@ void GeometryQuadtree::buildTree(const Envelope& extent)
   // build the (currently empty) tree to the desired depth
   m_tree.reset(new QuadTree(0, extentWgs84.xMin(), extentWgs84.xMax(), extentWgs84.yMin(), extentWgs84.yMax()));
 
-  // assign the geometry of each element to the tree, alongwith its id in the lookup
-  auto it = m_elementStorage.begin();
-  auto itEnd = m_elementStorage.end();
+  // assign the geometry of each element to the tree, along with its id in the lookup
+  auto it = m_elementStorage.cbegin();
+  auto itEnd = m_elementStorage.cend();
   for (; it != itEnd; ++it)
   {
     GeoElement* element = it.value();
@@ -260,8 +260,8 @@ int GeometryQuadtree::handleNewGeoElement(GeoElement* geoElement)
 
   connect(geoElement, &GeoElement::geometryChanged, this, [this, geoElement]()
   {
-    auto it = m_elementStorage.begin();
-    auto itEnd = m_elementStorage.end();
+    auto it = m_elementStorage.cbegin();
+    auto itEnd = m_elementStorage.cend();
     for (; it != itEnd; ++it)
     {
       GeoElement* testElement = it.value();
@@ -278,8 +278,8 @@ int GeometryQuadtree::handleNewGeoElement(GeoElement* geoElement)
 
   connect(geoElement, &GeoElement::destroyed, this, [this, geoElement]()
   {
-    auto it = m_elementStorage.begin();
-    auto itEnd = m_elementStorage.end();
+    auto it = m_elementStorage.cbegin();
+    auto itEnd = m_elementStorage.cend();
     for (; it != itEnd; ++it)
     {
       GeoElement* testElement = it.value();

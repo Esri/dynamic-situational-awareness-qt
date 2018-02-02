@@ -16,6 +16,7 @@
 #include "Point.h"
 
 #include <QObject>
+#include <QVariant>
 
 class AlertSource : public QObject
 {
@@ -26,10 +27,12 @@ public:
   ~AlertSource();
 
   virtual Esri::ArcGISRuntime::Point location() const = 0;
+  virtual QVariant value(const QString& key) const = 0;
+
   virtual void setSelected(bool selected) = 0;
 
 signals:
-  void locationChanged();
+  void dataChanged();
   void noLongerValid();
 };
 

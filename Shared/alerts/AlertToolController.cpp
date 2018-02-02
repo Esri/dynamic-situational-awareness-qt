@@ -15,11 +15,9 @@
 #include "AlertListModel.h"
 #include "AlertListProxyModel.h"
 #include "PointHighlighter.h"
-#include "WithinAreaAlertQuery.h"
-#include "WithinDistanceAlertQuery.h"
 #include "DsaUtility.h"
-#include "IdsAlertQuery.h"
-#include "StatusAlertQuery.h"
+#include "IdsAlertFilter.h"
+#include "StatusAlertFilter.h"
 
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
@@ -37,19 +35,15 @@ using namespace Esri::ArcGISRuntime;
 AlertToolController::AlertToolController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent),
   m_alertsProxyModel(new AlertListProxyModel(this)),
-  m_withinDistanceAlertRule(new WithinDistanceAlertQuery(this)),
-  m_withinAreaRule(new WithinAreaAlertQuery(this)),
-  m_statusAlertRule(new StatusAlertQuery(this)),
-  m_idsAlertRule(new IdsAlertQuery(this)),
+  m_statusAlertFilter(new StatusAlertFilter(this)),
+  m_idsAlertFilter(new IdsAlertFilter(this)),
   m_highlighter(new PointHighlighter(this))
 {
   Toolkit::ToolManager::instance().addTool(this);
-  m_rules.append(m_withinDistanceAlertRule);
-  m_rules.append(m_withinAreaRule);
-  m_rules.append(m_statusAlertRule);
-  m_rules.append(m_idsAlertRule);
+  m_filters.append(m_statusAlertFilter);
+  m_filters.append(m_idsAlertFilter);
 
-  m_alertsProxyModel->applyFilter(m_rules);
+  m_alertsProxyModel->applyFilter(m_filters);
 }
 
 AlertToolController::~AlertToolController()
@@ -86,7 +80,7 @@ void AlertToolController::highlight(int rowIndex, bool showHighlight)
       m_highlighter->stopHighlight();
     }));
 
-    m_highlightConnections.append(connect(alert, &AlertConditionData::locationChanged, this, [this, alert]()
+    m_highlightConnections.append(connect(alert, &AlertConditionData::dataChanged, this, [this, alert]()
     {
       if (alert)
         m_highlighter->onPointChanged(alert->sourceLocation());
@@ -160,8 +154,8 @@ void AlertToolController::dismiss(int rowIndex)
   if (!alert)
     return;
 
-  m_idsAlertRule->addId(alert->id());
-  m_alertsProxyModel->applyFilter(m_rules);
+  m_idsAlertFilter->addId(alert->id());
+  m_alertsProxyModel->applyFilter(m_filters);
 }
 
 void AlertToolController::setMinLevel(int level)
@@ -172,8 +166,8 @@ void AlertToolController::setMinLevel(int level)
   case AlertLevel::Medium:
   case AlertLevel::High:
   case AlertLevel::Critical:
-    m_statusAlertRule->setMinLevel(alertLevel);
-    m_alertsProxyModel->applyFilter(m_rules);
+    m_statusAlertFilter->setMinLevel(alertLevel);
+    m_alertsProxyModel->applyFilter(m_filters);
     break;
   default:
     break;

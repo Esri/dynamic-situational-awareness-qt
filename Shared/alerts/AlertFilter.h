@@ -10,28 +10,22 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef ALERTQUERY_H
-#define ALERTQUERY_H
+#ifndef ALERTFILTER_H
+#define ALERTFILTER_H
 
 #include <QObject>
 
 class AlertConditionData;
 
-class AlertQuery : public QObject
+class AlertFilter : public QObject
 {
   Q_OBJECT
 
 public:
-  explicit AlertQuery(QObject* parent = nullptr);
-  ~AlertQuery();
+  explicit AlertFilter(QObject* parent = nullptr);
+  ~AlertFilter();
 
-  virtual bool matchesRule(AlertConditionData* alert) const = 0;
-
-  bool active() const;
-  void setActive(bool active);
-
-private:
-  bool m_active = false;
+  virtual bool passesFilter(AlertConditionData* alertData) const = 0;
 };
 
-#endif // ALERTQUERY_H
+#endif // ALERTFILTER_H

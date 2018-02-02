@@ -17,6 +17,7 @@
 
 #include "TaskWatcher.h"
 
+#include <QHash>
 #include <QStringListModel>
 
 class QMouseEvent;
@@ -60,6 +61,7 @@ public:
 
   Q_INVOKABLE void addWithinDistanceAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, double distance, int itemId, int targetOverlayIndex);
   Q_INVOKABLE void addWithinAreaAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, int itemId, int targetOverlayIndex);
+  Q_INVOKABLE void addAttributeEqualsAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, const QString& attributeName, const QVariant& targetValue);
   Q_INVOKABLE void removeConditionAt(int rowIndex);
   Q_INVOKABLE void togglePickMode();
 
@@ -105,6 +107,8 @@ private:
   LocationAlertSource* m_locationSource = nullptr;
   Esri::ArcGISRuntime::TaskWatcher m_identifyLayersWatcher;
   Esri::ArcGISRuntime::TaskWatcher m_identifyGraphicsWatcher;
+  mutable QHash<QString,AlertTarget*> m_layerTargets;
+  mutable QHash<QString,AlertTarget*> m_overlayTargets;
 
   QMetaObject::Connection m_mouseClickConnection;
   QMetaObject::Connection m_identifyLayersConnection;

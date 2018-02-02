@@ -17,12 +17,10 @@
 
 #include "AbstractTool.h"
 
-class AlertQuery;
+class AlertFilter;
 class AlertListProxyModel;
-class WithinAreaAlertQuery;
-class IdsAlertQuery;
-class WithinDistanceAlertQuery;
-class StatusAlertQuery;
+class IdsAlertFilter;
+class StatusAlertFilter;
 
 namespace Esri {
 namespace ArcGISRuntime
@@ -63,11 +61,9 @@ signals:
 
 private:
   AlertListProxyModel* m_alertsProxyModel = nullptr;
-  WithinDistanceAlertQuery* m_withinDistanceAlertRule = nullptr;
-  WithinAreaAlertQuery* m_withinAreaRule = nullptr;
-  StatusAlertQuery* m_statusAlertRule = nullptr;
-  IdsAlertQuery* m_idsAlertRule = nullptr;
-  QList<AlertQuery*> m_rules;
+  StatusAlertFilter* m_statusAlertFilter = nullptr;
+  IdsAlertFilter* m_idsAlertFilter = nullptr;
+  QList<AlertFilter*> m_filters;
   PointHighlighter* m_highlighter = nullptr;
 
   QList<QMetaObject::Connection> m_highlightConnections;

@@ -13,6 +13,8 @@
 #ifndef GRAPHICSOVERLAYALERTTARGET_H
 #define GRAPHICSOVERLAYALERTTARGET_H
 
+#include "AlertTarget.h"
+
 namespace Esri
 {
 namespace ArcGISRuntime
@@ -22,7 +24,7 @@ class GraphicsOverlay;
 }
 }
 
-#include "AlertTarget.h"
+class GeometryQuadtree;
 
 class GraphicsOverlayAlertTarget : public AlertTarget
 {
@@ -32,12 +34,15 @@ public:
   explicit GraphicsOverlayAlertTarget(Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlay);
   ~GraphicsOverlayAlertTarget();
 
-  virtual QList<Esri::ArcGISRuntime::Geometry> targetGeometries() const override;
+  QList<Esri::ArcGISRuntime::Geometry> targetGeometries(const Esri::ArcGISRuntime::Envelope& targetArea) const override;
+  QVariant targetValue() const override;
 
 private:
   void setupGraphicConnections(Esri::ArcGISRuntime::Graphic* graphic);
+  void rebuildQuadtree();
 
   Esri::ArcGISRuntime::GraphicsOverlay* m_graphicsOverlay = nullptr;
+  GeometryQuadtree* m_quadtree = nullptr;
   QList<QMetaObject::Connection> m_graphicConnections;
 };
 

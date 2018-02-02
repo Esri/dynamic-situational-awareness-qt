@@ -16,26 +16,58 @@
 
 using namespace Esri::ArcGISRuntime;
 
+/*!
+  \class LocationAlertSource
+  \inherits AlertSource
+  \brief Represents a source, based on a the current location of the device,
+  for an \l AlertCondition.
+
+  Changes to the device position will cause the \l AlertSource::locationChanged
+  signal to be emitted.
+
+  /sa Toolkit::ToolResourceProvider
+ */
+
+/*!
+  \brief Constructor taking an optional \a parent.
+ */
 LocationAlertSource::LocationAlertSource(QObject* parent):
   AlertSource(parent)
 {
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::locationChanged, this, [this](const Point& location)
   {
     m_location = location;
-    emit locationChanged();
+    emit dataChanged();
   });
 }
 
+/*!
+  \brief Destructor.
+ */
 LocationAlertSource::~LocationAlertSource()
 {
 
 }
 
+/*!
+  \brief Returns the current location of the device.
+ */
 Point LocationAlertSource::location() const
 {
   return m_location;
 }
 
+/*!
+  \brief Returns an empty QVariant since this type has no attributes.
+ */
+QVariant LocationAlertSource::value(const QString&) const
+{
+  return QVariant();
+}
+
+/*!
+  \brief This method is not implemented for this type.
+ */
 void LocationAlertSource::setSelected(bool)
 {
   // do not select the location display

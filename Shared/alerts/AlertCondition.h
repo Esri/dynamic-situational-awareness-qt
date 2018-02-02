@@ -45,10 +45,12 @@ public:
   ~AlertCondition();
 
   AlertLevel level() const;
-  void alertLevel(const AlertLevel& level);
+  void setLevel(AlertLevel level);
 
   QString name() const;
   void setName(const QString& name);
+
+  QString newConditionDataName() const;
 
   void addData(AlertConditionData* newData);
 
@@ -60,6 +62,7 @@ signals:
 private:
   AlertLevel m_level;
   QString m_name;
+  QList<AlertConditionData*> m_data;
 };
 
 #endif // ALERTCONDITIONDATA_H

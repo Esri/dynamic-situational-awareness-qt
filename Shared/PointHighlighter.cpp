@@ -101,6 +101,9 @@ void PointHighlighter::startHighlight()
 
 void PointHighlighter::stopHighlight()
 {
+  if (!m_highlightOverlay || !m_highlightOverlay->graphics() || m_highlightOverlay->graphics()->isEmpty())
+    return;
+
   Graphic* graphic = m_highlightOverlay->graphics()->first();
   if (graphic)
   {

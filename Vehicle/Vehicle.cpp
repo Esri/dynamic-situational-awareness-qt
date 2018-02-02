@@ -102,13 +102,24 @@ void Vehicle::componentComplete()
   SimpleLineSymbol* geofenceSymbol = new SimpleLineSymbol(SimpleLineSymbolStyle::Dash, Qt::green, 5, this);
   PolygonBuilder pb(SpatialReference::wgs84());
   pb.addPoint(-121.91, 36.605);
-  pb.addPoint(-121.91, 36.61);
-  pb.addPoint(-121.92, 36.61);
+  pb.addPoint(-121.91, 36.607);
+  pb.addPoint(-121.92, 36.607);
   pb.addPoint(-121.92, 36.605);
 
   Graphic* geofenceGraphic = new Graphic(pb.toPolygon(), geofenceSymbol, this);
   geofenceGraphic->attributes()->insertAttribute("TestAttribute", "Test Value");
   geofenceOverlay->graphics()->append(geofenceGraphic);
+
+  PolygonBuilder pb2(SpatialReference::wgs84());
+  pb2.addPoint(-121.91, 36.608);
+  pb2.addPoint(-121.91, 36.611);
+  pb2.addPoint(-121.92, 36.611);
+  pb2.addPoint(-121.92, 36.608);
+
+  Graphic* geofenceGraphic2 = new Graphic(pb2.toPolygon(), geofenceSymbol, this);
+  geofenceGraphic2->attributes()->insertAttribute("TestAttribute", "Test Value");
+  geofenceOverlay->graphics()->append(geofenceGraphic2);
+
   m_sceneView->graphicsOverlays()->append(geofenceOverlay);
 }
 

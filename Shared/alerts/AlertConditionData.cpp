@@ -65,13 +65,13 @@ AlertConditionData::AlertConditionData(const QString& name,
   m_target(target)
 {
   connect(m_source, &AlertSource::noLongerValid, this, &AlertConditionData::noLongerValid);
-  connect(m_source, &AlertSource::dataChanged, this, &AlertConditionData::dataChanged);
+  connect(m_source, &AlertSource::dataChanged, this, &AlertConditionData::handleDataChanged);
   connect(m_source, &AlertSource::destroyed, this, [this]()
   {
     m_source = nullptr;
     emit noLongerValid();
   });
-  connect(m_target, &AlertTarget::dataChanged, this, &AlertConditionData::dataChanged);
+  connect(m_target, &AlertTarget::dataChanged, this, &AlertConditionData::handleDataChanged);
   connect(m_target, &AlertTarget::destroyed, this, [this]()
   {
     m_target = nullptr;
@@ -226,6 +226,54 @@ AlertSource* AlertConditionData::source() const
 AlertTarget* AlertConditionData::target() const
 {
   return m_target;
+}
+
+/*!
+  \brief Returns the cached value from the last time the underlying query
+  was run.
+ */
+bool AlertConditionData::cachedQueryResult() const
+{
+  return m_cachedQueryResult;
+}
+
+/*!
+  \brief Returns whether the query should be re-run.
+ */
+bool AlertConditionData::isQueryOutOfDate() const
+{
+  return m_queryOutOfDate;
+}
+
+/*!
+  \brief Internal.
+
+  Respond to changes to the underlying source or target data.
+ */
+void AlertConditionData::handleDataChanged()
+{
+  // set the query flag to out-of-date to force a new query to be run
+  m_queryOutOfDate = true;
+
+  // run the query and cache whether this condition has now been met
+  m_cachedQueryResult = matchesQuery();
+
+  // the query is now up-to-date
+  m_queryOutOfDate = false;
+
+  // if the active state still matches that returned by the query, no changes are required
+  if (active() == m_cachedQueryResult)
+    return;
+
+  // update the new active state
+  setActive(m_cachedQueryResult);
+
+  // if the condition data has newly moved into the active state, reset the viewed flag to false
+  if (active())
+    setViewed(false);
+
+  // broadcast that this condition data has changed
+  emit dataChanged();
 }
 
 /*!

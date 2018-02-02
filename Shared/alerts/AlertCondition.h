@@ -58,6 +58,7 @@ public:
 
 signals:
   void noLongerValid();
+  void newConditionData(AlertConditionData* newConditionData);
 
 private:
   AlertLevel m_level;

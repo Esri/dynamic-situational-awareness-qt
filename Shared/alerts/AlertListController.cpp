@@ -33,6 +33,26 @@
 
 using namespace Esri::ArcGISRuntime;
 
+/*!
+  \class AlertListController
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller for working with the list of conditions data which can trigger alerts.
+
+  Alerts are created when a given \l AlertCondition is met.
+
+  This tool manages the list of current condition data and presents a filtered list of those
+  which are active.
+
+  It also allows individual alerts to highlighted, zoomed to and marked as viewed.
+
+  \sa AlertListModel
+  \sa AlertListProxyModel
+  \sa AlertConditionData
+ */
+
+/*!
+  \brief Constructor taking an optional \a parent.
+ */
 AlertListController::AlertListController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent),
   m_alertsProxyModel(new AlertListProxyModel(AlertListModel::instance(), this)),
@@ -44,23 +64,40 @@ AlertListController::AlertListController(QObject* parent /* = nullptr */):
   m_filters.append(m_statusAlertFilter);
   m_filters.append(m_idsAlertFilter);
 
+  // sets the initial set of filters for condition data
   m_alertsProxyModel->applyFilter(m_filters);
 }
 
+/*!
+  \brief Destructor.
+ */
 AlertListController::~AlertListController()
 {
 }
 
+/*!
+  \brief Returns a model containing the filtered list of active alert condition data.
+ */
 QAbstractItemModel* AlertListController::alertListModel() const
 {
   return m_alertsProxyModel;
 }
 
+/*!
+  \brief Returns the name of this tool.
+ */
 QString AlertListController::toolName() const
 {
-  return "Alert Tool";
+  return "Alert List";
 }
 
+/*!
+  \brief Sets the highlight state for the active condition data at \a rowIndex in the filtered model to \a showHighlight.
+
+  \note Only one alert can be highlighted at a given time.
+
+  \sa PointHighlighter.
+ */
 void AlertListController::highlight(int rowIndex, bool showHighlight)
 {
   if (showHighlight)
@@ -107,6 +144,9 @@ void AlertListController::highlight(int rowIndex, bool showHighlight)
   }
 }
 
+/*!
+  \brief Zooms the geo view to the active alert condition data at \a rowIndex in the filtered model.
+ */
 void AlertListController::zoomTo(int rowIndex)
 {
   QModelIndex sourceIndex = m_alertsProxyModel->mapToSource(m_alertsProxyModel->index(rowIndex, 0));
@@ -138,6 +178,9 @@ void AlertListController::zoomTo(int rowIndex)
   }
 }
 
+/*!
+  \brief Sets the viewed state of the active alert at index \a rowIndex in the filtered model to \c true.
+ */
 void AlertListController::setViewed(int rowIndex)
 {
   QModelIndex sourceIndex = m_alertsProxyModel->mapToSource(m_alertsProxyModel->index(rowIndex, 0));
@@ -148,6 +191,11 @@ void AlertListController::setViewed(int rowIndex)
   model->setData(sourceIndex, QVariant::fromValue(true), AlertListModel::AlertListRoles::Viewed);
 }
 
+/*!
+  \brief Dismiss the active alert at index \a rowIndex in the filtered model.
+
+  This will add the ID of the alert condition data to the current \l IdsAlertFilter.
+ */
 void AlertListController::dismiss(int rowIndex)
 {
   QModelIndex sourceIndex = m_alertsProxyModel->mapToSource(m_alertsProxyModel->index(rowIndex, 0));
@@ -159,6 +207,10 @@ void AlertListController::dismiss(int rowIndex)
   m_alertsProxyModel->applyFilter(m_filters);
 }
 
+
+/*!
+  \brief Sets the minimum \l AlertLevel for the current \l StatusAlertFilter to \a level.
+ */
 void AlertListController::setMinLevel(int level)
 {
   AlertLevel alertLevel = static_cast<AlertLevel>(level);
@@ -175,7 +227,10 @@ void AlertListController::setMinLevel(int level)
   }
 }
 
-void AlertListController::flashAll(bool on)
+/*!
+  \brief Sets the highlight state for all currently active condition data to \a shouldHighlight.
+ */
+void AlertListController::flashAll(bool shouldHighlight)
 {
   AlertListModel* model = AlertListModel::instance();
   if (!model)
@@ -188,6 +243,6 @@ void AlertListController::flashAll(bool on)
     if (!alert || !alert->active())
       continue;
 
-    alert->highlight(on);
+    alert->highlight(shouldHighlight);
   }
 }

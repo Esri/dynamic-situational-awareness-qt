@@ -65,13 +65,21 @@ AlertConditionData::AlertConditionData(const QString& name,
   m_target(target)
 {
   connect(m_source, &AlertSource::noLongerValid, this, &AlertConditionData::noLongerValid);
-  connect(m_source, &AlertSource::dataChanged, this, &AlertConditionData::dataChanged);
+  connect(m_source, &AlertSource::dataChanged, this, [this]()
+  {
+    m_queryOutOfDate = true;
+    emit dataChanged();
+  });
   connect(m_source, &AlertSource::destroyed, this, [this]()
   {
     m_source = nullptr;
     emit noLongerValid();
   });
-  connect(m_target, &AlertTarget::dataChanged, this, &AlertConditionData::dataChanged);
+  connect(m_target, &AlertTarget::dataChanged, this, , [this]()
+  {
+    m_queryOutOfDate = true;
+    emit dataChanged();
+  });
   connect(m_target, &AlertTarget::destroyed, this, [this]()
   {
     m_target = nullptr;
@@ -226,6 +234,21 @@ AlertSource* AlertConditionData::source() const
 AlertTarget* AlertConditionData::target() const
 {
   return m_target;
+}
+
+void AlertConditionData::cachedQueryResult() const
+{
+  return m_cachedQueryResult;
+}
+
+void AlertConditionData::setCachedQueryResult(bool result)
+{
+  m_cachedQueryResult = result;
+}
+
+bool AlertConditionData::queryOutOfDate() const
+{
+  return m_queryOutOfDate;
 }
 
 /*!

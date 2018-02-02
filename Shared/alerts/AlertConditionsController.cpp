@@ -270,7 +270,6 @@ void AlertConditionsController::addAttributeEqualsAlert(const QString& condition
     condition->init(sourceOverlay, target);
     m_conditions->addAlertCondition(condition);
   }
-
 }
 
 /*!

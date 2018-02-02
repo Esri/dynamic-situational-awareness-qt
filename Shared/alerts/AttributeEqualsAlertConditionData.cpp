@@ -66,15 +66,22 @@ AttributeEqualsAlertConditionData::~AttributeEqualsAlertConditionData()
  */
 bool AttributeEqualsAlertConditionData::matchesQuery() const
 {
+  if (!queryOutOfDate())
+    return cachedQueryResult();
+
+  setCachedQueryResult(false);
+
   const QVariant sourceValue = source()->value(attributeName());
   if (sourceValue.isNull() || !sourceValue.isValid())
-    return false;
+    return cachedQueryResult();
 
   const QVariant targetValue = target()->targetValue();
   if (targetValue.isNull() || !targetValue.isValid())
-    return false;
+    return cachedQueryResult();
 
-  return sourceValue == targetValue;
+  setCachedQueryResult(sourceValue == targetValue);
+
+  return cachedQueryResult();
 }
 
 /*!

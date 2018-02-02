@@ -67,6 +67,10 @@ WithinAreaAlertConditionData::~WithinAreaAlertConditionData()
  */
 bool WithinAreaAlertConditionData::matchesQuery() const
 {
+  if (!queryOutOfDate())
+    return cachedQueryResult();
+
+  setCachedQueryResult(false);
   Geometry sourceWgs84 = GeometryEngine::project(sourceLocation(), SpatialReference::wgs84());
   const QList<Geometry> targetGeometries = target()->targetGeometries(sourceWgs84.extent());
 
@@ -77,8 +81,11 @@ bool WithinAreaAlertConditionData::matchesQuery() const
 
     const Geometry targetWgs84 = GeometryEngine::project(target, sourceWgs84.spatialReference());
     if (GeometryEngine::instance()->intersects(sourceWgs84, targetWgs84))
-      return true;
+    {
+      setCachedQueryResult(true);
+      break;
+    }
   }
 
-  return false;
+  return cachedQueryResult();
 }

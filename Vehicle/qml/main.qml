@@ -137,8 +137,8 @@ Vehicle {
             id: navTool
             anchors {
                 margins: 10 * scaleFactor
-                top: parent.top
-                left: sceneView.left
+                verticalCenter: parent.verticalCenter
+                right: sceneView.right
             }
         }
 
@@ -158,11 +158,12 @@ Vehicle {
             id: categoryToolbar
             anchors {
                 top: parent.top
-                right: parent.right
+                left: parent.left
                 bottom: sceneView.attributionTop
             }
             width: 56 * scaleFactor
             appTitle: "DSA - V"
+            opacity: 0.75
 
             onSettingsClicked: optionsTool.visible = true;
             onAboutClicked: aboutTool.visible = true;
@@ -171,7 +172,7 @@ Vehicle {
         TableOfContents {
             id: tableOfContentsTool
             anchors {
-                right: categoryToolbar.left
+                right: parent.right
                 top: parent.top
                 bottom: sceneView.attributionTop
             }
@@ -188,7 +189,7 @@ Vehicle {
         AlertList {
             id: alertsTool
             anchors {
-                right: categoryToolbar.left
+                right: parent.right
                 top: parent.top
                 bottom: sceneView.attributionTop
             }
@@ -200,7 +201,7 @@ Vehicle {
         AlertConditionsTool {
             id: alertConditionsTool
             anchors {
-                right: categoryToolbar.left
+                right: parent.right
                 top: parent.top
                 bottom: sceneView.attributionTop
             }
@@ -212,7 +213,7 @@ Vehicle {
         TelestrateTool {
             id: telestrateTool
             anchors {
-                right: categoryToolbar.left
+                right: parent.right
                 top: parent.top
                 bottom: sceneView.attributionTop
             }
@@ -228,7 +229,7 @@ Vehicle {
         PopupStackView {
             id: identifyResults
             anchors {
-                right: categoryToolbar.left
+                right: parent.right
                 top: sceneView.top
                 bottom: sceneView.attributionTop
             }

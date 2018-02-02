@@ -19,7 +19,7 @@ import QtQuick.Controls.Material 2.2
 
 CategoryToolbar {
     Column {
-        spacing: 5 * scaleFactor
+        spacing: 2 * scaleFactor
         anchors {
             fill: parent
             topMargin: 10 * scaleFactor

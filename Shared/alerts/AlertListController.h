@@ -10,8 +10,8 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef ALERTTOOLCONTROLLER_H
-#define ALERTTOOLCONTROLLER_H
+#ifndef ALERTLISTCONTROLLER_H
+#define ALERTLISTCONTROLLER_H
 
 #include <QAbstractListModel>
 
@@ -33,15 +33,15 @@ class QTimer;
 
 class PointHighlighter;
 
-class AlertToolController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+class AlertListController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
   Q_OBJECT
 
   Q_PROPERTY(QAbstractItemModel* alertListModel READ alertListModel NOTIFY alertListModelChanged)
 
 public:
-  explicit AlertToolController(QObject* parent = nullptr);
-  ~AlertToolController();
+  explicit AlertListController(QObject* parent = nullptr);
+  ~AlertListController();
 
   QAbstractItemModel* alertListModel() const;
 
@@ -69,4 +69,4 @@ private:
   QList<QMetaObject::Connection> m_highlightConnections;
 };
 
-#endif // ALERTTOOLCONTROLLER_H
+#endif // ALERTLISTCONTROLLER_H

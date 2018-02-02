@@ -28,7 +28,7 @@
 #include "PopupManager.h"
 #include "SceneQuickView.h"
 
-#include "AlertToolController.h"
+#include "AlertListController.h"
 #include "BasemapPickerController.h"
 #include "AddLocalDataController.h"
 #include "LocationController.h"
@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
   qmlRegisterSingletonType<HandheldStyles>("Esri.DSA", 1, 0, "DsaStyles", &dsaStylesProvider);
   qmlRegisterSingletonType<DsaResources>("Esri.DSA", 1, 0, "DsaResources", &dsaResourcesProvider);
   qmlRegisterType<IdentifyController>("Esri.DSA", 1, 0, "IdentifyController");
-  qmlRegisterType<AlertToolController>("Esri.DSA", 1, 0, "AlertToolController");
+  qmlRegisterType<AlertListController>("Esri.DSA", 1, 0, "AlertListController");
   qmlRegisterType<ViewedAlertsController>("Esri.DSA", 1, 0, "ViewedAlertsController");
   qmlRegisterType<LocationTextController>("Esri.DSA", 1, 0, "LocationTextController");
   qmlRegisterType<AlertConditionsController>("Esri.DSA", 1, 0, "AlertConditionsController");

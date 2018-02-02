@@ -11,7 +11,7 @@
 //
 
 #include "AlertConditionData.h"
-#include "AlertToolController.h"
+#include "AlertListController.h"
 #include "AlertListModel.h"
 #include "AlertListProxyModel.h"
 #include "AlertSource.h"
@@ -33,7 +33,7 @@
 
 using namespace Esri::ArcGISRuntime;
 
-AlertToolController::AlertToolController(QObject* parent /* = nullptr */):
+AlertListController::AlertListController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent),
   m_alertsProxyModel(new AlertListProxyModel(AlertListModel::instance(), this)),
   m_statusAlertFilter(new StatusAlertFilter(this)),
@@ -47,21 +47,21 @@ AlertToolController::AlertToolController(QObject* parent /* = nullptr */):
   m_alertsProxyModel->applyFilter(m_filters);
 }
 
-AlertToolController::~AlertToolController()
+AlertListController::~AlertListController()
 {
 }
 
-QAbstractItemModel* AlertToolController::alertListModel() const
+QAbstractItemModel* AlertListController::alertListModel() const
 {
   return m_alertsProxyModel;
 }
 
-QString AlertToolController::toolName() const
+QString AlertListController::toolName() const
 {
   return "Alert Tool";
 }
 
-void AlertToolController::highlight(int rowIndex, bool showHighlight)
+void AlertListController::highlight(int rowIndex, bool showHighlight)
 {
   if (showHighlight)
   {
@@ -107,7 +107,7 @@ void AlertToolController::highlight(int rowIndex, bool showHighlight)
   }
 }
 
-void AlertToolController::zoomTo(int rowIndex)
+void AlertListController::zoomTo(int rowIndex)
 {
   QModelIndex sourceIndex = m_alertsProxyModel->mapToSource(m_alertsProxyModel->index(rowIndex, 0));
   AlertConditionData* alert = AlertListModel::instance()->alertAt(sourceIndex.row());
@@ -138,7 +138,7 @@ void AlertToolController::zoomTo(int rowIndex)
   }
 }
 
-void AlertToolController::setViewed(int rowIndex)
+void AlertListController::setViewed(int rowIndex)
 {
   QModelIndex sourceIndex = m_alertsProxyModel->mapToSource(m_alertsProxyModel->index(rowIndex, 0));
   AlertListModel* model = AlertListModel::instance();
@@ -148,7 +148,7 @@ void AlertToolController::setViewed(int rowIndex)
   model->setData(sourceIndex, QVariant::fromValue(true), AlertListModel::AlertListRoles::Viewed);
 }
 
-void AlertToolController::dismiss(int rowIndex)
+void AlertListController::dismiss(int rowIndex)
 {
   QModelIndex sourceIndex = m_alertsProxyModel->mapToSource(m_alertsProxyModel->index(rowIndex, 0));
   AlertConditionData* alert = AlertListModel::instance()->alertAt(sourceIndex.row());
@@ -159,7 +159,7 @@ void AlertToolController::dismiss(int rowIndex)
   m_alertsProxyModel->applyFilter(m_filters);
 }
 
-void AlertToolController::setMinLevel(int level)
+void AlertListController::setMinLevel(int level)
 {
   AlertLevel alertLevel = static_cast<AlertLevel>(level);
   switch (alertLevel) {
@@ -175,7 +175,7 @@ void AlertToolController::setMinLevel(int level)
   }
 }
 
-void AlertToolController::flashAll(bool on)
+void AlertListController::flashAll(bool on)
 {
   AlertListModel* model = AlertListModel::instance();
   if (!model)

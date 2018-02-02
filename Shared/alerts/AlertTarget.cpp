@@ -12,14 +12,26 @@
 
 #include "AlertTarget.h"
 
-using namespace Esri::ArcGISRuntime;
+/*!
+  \class AlertTarget
+  \inherits QObject
+  \brief Represents a target (e.g. an overlay or a real-time feed) for an \l AlertCondition.
 
+  \note This is an abstract base type.
+  */
+
+/*!
+  \brief Constructor taking an optional \a parent.
+ */
 AlertTarget::AlertTarget(QObject* parent):
   QObject(parent)
 {
 
 }
 
+/*!
+  \brief Destructor.
+ */
 AlertTarget::~AlertTarget()
 {
   emit noLongerValid();

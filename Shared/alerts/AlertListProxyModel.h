@@ -17,7 +17,7 @@
 #include <QList>
 #include <QHash>
 
-class AlertQuery;
+class AlertFilter;
 
 class AlertListProxyModel : public QSortFilterProxyModel
 {
@@ -28,7 +28,7 @@ public:
   AlertListProxyModel(QObject* parent = nullptr);
   ~AlertListProxyModel();
 
-  void applyFilter(const QList<AlertQuery*>& rules);
+  void applyFilter(const QList<AlertFilter*>& filters);
 
   // QSortFilterProxyModel interface
 protected:
@@ -37,7 +37,7 @@ protected:
 private:
   bool passesAllQueries(int sourceRow) const;
 
-  QList<AlertQuery*> m_queries;
+  QList<AlertFilter*> m_filters;
   mutable QHash<int, bool> m_rowsInModel;
 };
 

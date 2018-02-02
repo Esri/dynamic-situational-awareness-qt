@@ -32,6 +32,8 @@ public:
   ~GraphicAlertSource();
 
   Esri::ArcGISRuntime::Point location() const override;
+  QVariant value(const QString& key) const override;
+
   void setSelected(bool selected) override;
 
 private:

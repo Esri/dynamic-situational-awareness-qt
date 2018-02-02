@@ -10,32 +10,26 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef GEOELEMENTALERTTARGET_H
-#define GEOELEMENTALERTTARGET_H
+#ifndef FIXEDVALUEALERTTARGET_H
+#define FIXEDVALUEALERTTARGET_H
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
-class GeoElement;
-}
-}
+#include <QVariant>
 
 #include "AlertTarget.h"
 
-class GeoElementAlertTarget : public AlertTarget
+class FixedValueAlertTarget : public AlertTarget
 {
   Q_OBJECT
 
 public:
-  explicit GeoElementAlertTarget(Esri::ArcGISRuntime::GeoElement* geoElement);
-  ~GeoElementAlertTarget();
+  explicit FixedValueAlertTarget(const QVariant& value, QObject* parent = nullptr);
+  ~FixedValueAlertTarget();
 
-  QList<Esri::ArcGISRuntime::Geometry> targetGeometries(const Esri::ArcGISRuntime::Envelope& targetArea) const override;
+  virtual QList<Esri::ArcGISRuntime::Geometry> targetGeometries(const Esri::ArcGISRuntime::Envelope& targetArea) const override;
   QVariant targetValue() const override;
 
 private:
-  Esri::ArcGISRuntime::GeoElement* m_geoElement = nullptr;
+  QVariant m_value;
 };
 
-#endif // GEOELEMENTALERTTARGET_H
+#endif // FIXEDVALUEALERTTARGET_H

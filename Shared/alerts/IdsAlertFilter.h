@@ -10,22 +10,30 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef WITHONDISTANCEALERTQUERY_H
-#define WITHONDISTANCEALERTQUERY_H
+#ifndef IDSALERTFILTER_H
+#define IDSALERTFILTER_H
 
-#include "AlertQuery.h"
+#include "AlertFilter.h"
+
+#include <QSet>
+#include <QUuid>
 
 class AlertConditionData;
 
-class WithinDistanceAlertQuery : public AlertQuery
+class IdsAlertFilter : public AlertFilter
 {
   Q_OBJECT
 
 public:
-  explicit WithinDistanceAlertQuery(QObject* parent = nullptr);
-  ~WithinDistanceAlertQuery();
+  explicit IdsAlertFilter(QObject* parent = nullptr);
+  ~IdsAlertFilter();
 
-  bool matchesRule(AlertConditionData* alert) const override;
+  bool passesFilter(AlertConditionData* conditionData) const override;
+
+  void addId(const QUuid& id);
+
+private:
+  QSet<QUuid> m_ids;
 };
 
-#endif // WITHONDISTANCEALERTQUERY_H
+#endif // IDSALERTFILTER_H

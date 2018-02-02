@@ -10,28 +10,30 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "AlertQuery.h"
-#include "AlertConditionData.h"
+#include "AlertFilter.h"
 
-using namespace Esri::ArcGISRuntime;
+/*!
+  \class AlertFilter
+  \inherits QObject
+  \brief Represents a filter to be applied to an alert condition data.
 
-AlertQuery::AlertQuery(QObject* parent):
+  This allows for certain condition data objects to be excluded - for
+  example by \l AlertLevel or by specific ID.
+  */
+
+/*!
+  \brief Constructor taking an optional \a parent.
+ */
+AlertFilter::AlertFilter(QObject* parent):
   QObject(parent)
 {
 
 }
 
-AlertQuery::~AlertQuery()
+/*!
+  \brief Destructor.
+ */
+AlertFilter::~AlertFilter()
 {
 
-}
-
-bool AlertQuery::active() const
-{
-  return m_active;
-}
-
-void AlertQuery::setActive(bool active)
-{
-  m_active = active;
 }

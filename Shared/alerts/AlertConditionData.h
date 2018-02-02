@@ -21,7 +21,6 @@
 #include <QString>
 #include <QUuid>
 
-class AlertCondition;
 class AlertSource;
 class AlertTarget;
 
@@ -30,16 +29,18 @@ class AlertConditionData : public QObject
   Q_OBJECT
 
 public:
-  explicit AlertConditionData(AlertCondition* condition, AlertSource* source, AlertTarget* target);
+  explicit AlertConditionData(const QString& name, AlertLevel level, AlertSource* source, AlertTarget* target, QObject* parent = nullptr);
   ~AlertConditionData();
 
   AlertLevel level() const;
+  void setLevel(AlertLevel& level);
 
   Esri::ArcGISRuntime::Point sourceLocation() const;
 
   void highlight(bool on);
 
   QString name() const;
+  void setName(const QString& name);
 
   QUuid id() const;
   void setId(const QUuid& id);
@@ -53,15 +54,18 @@ public:
   AlertSource* source() const;
   AlertTarget* target() const;
 
+  virtual bool matchesQuery() const = 0;
+
 signals:
   void statusChanged();
   void viewedChanged();
-  void locationChanged();
+  void dataChanged();
   void activeChanged();
   void noLongerValid();
 
 private:
-  AlertCondition* m_condition = nullptr;
+  QString m_name;
+  AlertLevel m_level = AlertLevel::Unknown;
   AlertSource* m_source = nullptr;
   AlertTarget* m_target = nullptr;
   QUuid m_id;

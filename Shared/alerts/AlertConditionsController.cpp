@@ -154,7 +154,12 @@ void AlertConditionsController::setActive(bool active)
     a \l Esri::ArcGISRuntime::GraphicsOverlay or a \l Esri::ArcGISRuntime::FeatureLayer.
   \endlist
  */
-void AlertConditionsController::addWithinDistanceAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedName, double distance, int itemId, int targetOverlayIndex)
+void AlertConditionsController::addWithinDistanceAlert(const QString& conditionName,
+                                                       int levelIndex,
+                                                       const QString& sourceFeedName,
+                                                       double distance,
+                                                       int itemId,
+                                                       int targetOverlayIndex)
 {
   if (levelIndex < 0 ||
       sourceFeedName.isEmpty() ||
@@ -204,7 +209,11 @@ void AlertConditionsController::addWithinDistanceAlert(const QString& conditionN
     a \l Esri::ArcGISRuntime::GraphicsOverlay or a \l Esri::ArcGISRuntime::FeatureLayer.
   \endlist
  */
-void AlertConditionsController::addWithinAreaAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedName, int itemId, int targetOverlayIndex)
+void AlertConditionsController::addWithinAreaAlert(const QString& conditionName,
+                                                   int levelIndex,
+                                                   const QString& sourceFeedName,
+                                                   int itemId,
+                                                   int targetOverlayIndex)
 {
   if (levelIndex < 0 ||
       sourceFeedName.isEmpty() ||
@@ -249,7 +258,11 @@ void AlertConditionsController::addWithinAreaAlert(const QString& conditionName,
     \li targetValue. The attribute value to check for.
   \endlist
  */
-void AlertConditionsController::addAttributeEqualsAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedName, const QString& attributeName, const QVariant& targetValue)
+void AlertConditionsController::addAttributeEqualsAlert(const QString& conditionName,
+                                                        int levelIndex,
+                                                        const QString& sourceFeedName,
+                                                        const QString& attributeName,
+                                                        const QVariant& targetValue)
 {
   if (levelIndex < 0 ||
       sourceFeedName.isEmpty() ||

@@ -31,7 +31,7 @@ using namespace Esri::ArcGISRuntime;
   query, a condition data must be created and tested for each object in the source.
 
   When either the source or target is changed for a given data element, the condition can be
-  re-tested using an \l AlertQuery to determine whether an elert should be triggered.
+  re-tested using an \l AlertQuery to determine whether an alert should be triggered.
 
   \note This is an abstract base type.
 
@@ -210,7 +210,7 @@ void AlertConditionData::setActive(bool active)
 
   \list
     \li a dynamic \l Esri::ArcGISRuntime::GraphicsOverlay
-    \li the devices current position
+    \li the device's current position
   \endlist
  */
 AlertSource* AlertConditionData::source() const

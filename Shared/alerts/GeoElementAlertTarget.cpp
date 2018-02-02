@@ -51,7 +51,7 @@ GeoElementAlertTarget::~GeoElementAlertTarget()
 
   \note No exact intersection tests are carried against the \a targetArea for this type.
  */
-QList<Esri::ArcGISRuntime::Geometry> GeoElementAlertTarget::targetGeometries(const Esri::ArcGISRuntime::Envelope&) const
+QList<Geometry> GeoElementAlertTarget::targetGeometries(const Envelope&) const
 {
   return QList<Geometry>{m_geoElement->geometry()};
 }

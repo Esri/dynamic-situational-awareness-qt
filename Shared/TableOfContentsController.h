@@ -78,6 +78,7 @@ private:
 
   Esri::ArcGISRuntime::LayerListModel* m_layerListModel = nullptr;
   QHash<Esri::ArcGISRuntime::Layer*, QMetaObject::Connection> m_layerConnections;
+  QHash<Esri::ArcGISRuntime::LayerListModel*, QMetaObject::Connection> m_layerListConnections;
   DrawOrderLayerListModel* m_drawOrderModel = nullptr;
 };
 

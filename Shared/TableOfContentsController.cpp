@@ -25,6 +25,8 @@
 #include "DrawOrderLayerListModel.h"
 #include "TableOfContentsController.h"
 
+#include <QDebug>
+
 using namespace Esri::ArcGISRuntime;
 
 TableOfContentsController::TableOfContentsController(QObject* parent /* = nullptr */):
@@ -165,6 +167,7 @@ TableOfContentsController::LayerGeometryType TableOfContentsController::layerGeo
   if (layer->loadStatus() != LoadStatus::Loaded && layer->loadStatus() != LoadStatus::FailedToLoad)
   {
     if (!m_layerConnections.contains(layer))
+    {
       m_layerConnections.insert(layer, connect(layer, &Layer::doneLoading, this, [this, layer](const Error& loadError)
       {
         m_layerConnections.remove(layer);
@@ -174,6 +177,7 @@ TableOfContentsController::LayerGeometryType TableOfContentsController::layerGeo
         else
           emit layerListModelChanged();
       }));
+    }
   }
 
   switch (layer->layerType())
@@ -220,28 +224,48 @@ void TableOfContentsController::updateLayerListModel()
   if (operationalLayers)
   {
     m_layerListModel = operationalLayers;
+
+    if (!m_layerListConnections.contains(m_layerListModel))
+    {
+      // connect to dataChanged signal to know when something about one of the layer's has changed
+      m_layerListConnections.insert(m_layerListModel, connect(m_layerListModel, &LayerListModel::dataChanged, this, [this]
+      {
+        m_layerListConnections.remove(m_layerListModel);
+        emit layerListModelChanged();
+
+        // access each layer and emit that it has changed and emit that it has changed
+        for (int i = 0; i < m_layerListModel->size(); i++)
+        {
+          Layer* layer = m_layerListModel->at(i);
+
+          // if it is already loaded, emit the signal
+          if (layer->loadStatus() == LoadStatus::Loaded)
+          {
+            emit layerChanged(layer);
+            continue;
+          }
+
+          // if it is not loaded, load it and then emit the signal
+          if (!m_layerConnections.contains(layer))
+          {
+            m_layerConnections.insert(layer, connect(layer, &Layer::doneLoading, this, [this, layer](Error e)
+            {
+              m_layerConnections.remove(layer);
+
+              if (!e.isEmpty())
+                return;
+
+              emit layerChanged(layer);
+            }));
+            layer->load();
+          }
+        }
+      }));
+    }
+
     m_drawOrderModel = new DrawOrderLayerListModel(this);
     m_drawOrderModel->setSourceModel(m_layerListModel);
     emit layerListModelChanged();
-
-    for (int i = 0; i < operationalLayers->size(); i++)
-    {
-      Layer* layer = operationalLayers->at(i);
-      if (layer->loadStatus() == LoadStatus::Loaded)
-      {
-        emit layerChanged(layer);
-        continue;
-      }
-
-      connect(layer, &Layer::doneLoading, this, [this, layer](Error e)
-      {
-        if (!e.isEmpty())
-          return;
-
-        emit layerChanged(layer);
-      });
-      layer->load();
-    }
   }
 }
 

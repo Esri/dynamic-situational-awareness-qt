@@ -28,8 +28,13 @@ namespace ArcGISRuntime
   class Scene;
   class GeoView;
   class Layer;
+
 }
 }
+
+class LayerCacheManager;
+
+
 
 #include <QJsonArray>
 
@@ -50,8 +55,6 @@ public slots:
 
 private slots:
   void onPropertyChanged(const QString& propertyName, const QVariant& propertyValue);
-  void onLayerChanged(Esri::ArcGISRuntime::Layer* layer);
-  void onLayerListChanged();
 
 signals:
   void errorOccurred(const QString& message, const QString& additionalMessage);
@@ -63,6 +66,7 @@ private:
 
 private:
   Esri::ArcGISRuntime::Scene* m_scene = nullptr;
+  LayerCacheManager* m_cacheManager = nullptr;
 
   QString m_dataPath;
   QVariantMap m_dsaSettings;

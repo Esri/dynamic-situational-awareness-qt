@@ -33,6 +33,7 @@
 #include "AbstractTool.h"
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
+#include "LayerCacheManager.h"
 
 // Dsa apps
 #include "DsaUtility.h"
@@ -42,9 +43,6 @@
 // Qt
 #include <QSettings>
 #include <QDir>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QVariantList>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -81,6 +79,8 @@ void DsaController::init(GeoView* geoView)
   Toolkit::ToolResourceProvider::instance()->setScene(m_scene);
   Toolkit::ToolResourceProvider::instance()->setGeoView(geoView);
 
+  m_cacheManager = new LayerCacheManager(this);
+
   for(Toolkit::AbstractTool* abstractTool : Toolkit::ToolManager::instance())
   {
     if (!abstractTool)
@@ -90,13 +90,6 @@ void DsaController::init(GeoView* geoView)
 
     connect(abstractTool, &Toolkit::AbstractTool::errorOccurred, this, &DsaController::onError);
     connect(abstractTool, &Toolkit::AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
-  }
-
-  TableOfContentsController* toc = Toolkit::ToolManager::instance().tool<TableOfContentsController>();
-  if (toc)
-  {
-    connect(toc, &TableOfContentsController::layerListModelChanged, this, &DsaController::onLayerListChanged);
-    connect(toc, &TableOfContentsController::layerChanged, this, &DsaController::onLayerChanged);
   }
 }
 
@@ -189,75 +182,5 @@ void DsaController::saveSettings(QFile& configFile)
       stream << key << "=" << m_dsaSettings.value(key).toStringList().join(",") << "\n";
     }
   }
-}
-
-void DsaController::onLayerListChanged()
-{
-  m_layers.clear();
-}
-
-void DsaController::onLayerChanged(Layer* layer)
-{
-  qDebug() << "layer changed" << layer->name();
-  QString layerPath;
-
-  // Get Feature Layers
-  auto featureLayer = dynamic_cast<FeatureLayer*>(layer);
-  if (featureLayer)
-  {
-    // Check if a Geodatabase
-    auto gdbFeatureTable = dynamic_cast<GeodatabaseFeatureTable*>(featureLayer->featureTable());
-    if (gdbFeatureTable)
-      layerPath = gdbFeatureTable->geodatabase()->path();
-
-    // Check if a GeoPackage
-    auto gpkgFeatureTable = dynamic_cast<GeoPackageFeatureTable*>(featureLayer->featureTable());
-    if (gpkgFeatureTable)
-      layerPath = gpkgFeatureTable->geoPackage()->path();
-
-    // Check if a Shapefile
-    auto shpFeatureTable = dynamic_cast<ShapefileFeatureTable*>(featureLayer->featureTable());
-    if (shpFeatureTable)
-      layerPath = shpFeatureTable->path();
-  }
-
-  // Get Raster Layers
-  auto rasterLayer = dynamic_cast<RasterLayer*>(layer);
-  if (rasterLayer)
-  {
-    // Check if a GeoPackage
-    auto gpkgRaster = dynamic_cast<GeoPackageRaster*>(rasterLayer->raster());
-    if (gpkgRaster)
-      layerPath = gpkgRaster->geoPackage()->path();
-
-    // Check if a Raster
-    auto raster = dynamic_cast<Raster*>(rasterLayer->raster());
-    if (raster)
-      layerPath = raster->path();
-  }
-
-  // Get Scene Layers
-  auto sceneLayer = dynamic_cast<ArcGISSceneLayer*>(layer);
-  if (sceneLayer)
-    layerPath = sceneLayer->url().toString();
-
-
-  // Get TPKs
-  auto tiledLayer = dynamic_cast<ArcGISTiledLayer*>(layer);
-  if (tiledLayer)
-    layerPath = tiledLayer->url().toString();
-
-  // Get VTPKs
-  auto vectorTiledLayer = dynamic_cast<ArcGISVectorTiledLayer*>(layer);
-  if (vectorTiledLayer)
-    layerPath = vectorTiledLayer->url().toString();
-
-  // add the layer to the layer list for caching
-  QJsonObject layerJson;
-  layerJson.insert("path", QString(layerPath).simplified());
-  layerJson.insert("visible", layer->isVisible() ? "true" : "false");
-  QJsonDocument layerJsonDoc(layerJson);
-  m_layers.append(layerJsonDoc.toJson(QJsonDocument::Compact));
-  onPropertyChanged("Layers", m_layers);
 }
 

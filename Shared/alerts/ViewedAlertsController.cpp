@@ -18,6 +18,23 @@
 
 using namespace Esri::ArcGISRuntime;
 
+/*!
+  \class ViewedAlertsController
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller for managing the count of unviewed, active alert condition data.
+
+  Alerts are created when a given \l AlertCondition is met.
+
+  This tool reports changes to the total number of alert condition data which are
+  active but have not been marked as viwed.
+
+  \sa AlertListModel
+  \sa AlertConditionData
+ */
+
+/*!
+  \brief Constructor taking an optional \a parent.
+ */
 ViewedAlertsController::ViewedAlertsController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent)
 {
@@ -33,15 +50,25 @@ ViewedAlertsController::ViewedAlertsController(QObject* parent /* = nullptr */):
   }
 }
 
+/*!
+  \brief The name of this tool.
+ */
 QString ViewedAlertsController::toolName() const
 {
   return QString("viewed alerts");
 }
 
+/*!
+  \brief Destructor.
+ */
 ViewedAlertsController::~ViewedAlertsController()
 {
 }
 
+/*!
+  \brief Returns the number of alert condition data objects which are currently active
+  and which have nit been marked as viewed.
+ */
 int ViewedAlertsController::unviewedCount() const
 {
   AlertListModel* model = AlertListModel::instance();
@@ -54,9 +81,6 @@ int ViewedAlertsController::unviewedCount() const
   {
     AlertConditionData* alert = model->alertAt(i);
     if (!alert)
-      continue;
-
-    if (!alert->active())
       continue;
 
     if (alert->viewed())

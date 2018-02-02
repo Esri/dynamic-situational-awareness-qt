@@ -64,6 +64,10 @@ void OptionsController::getUpdatedTools()
       emit useGpsForElevationChanged();
     });
 
+    // set initial format
+    setCoordinateFormat(m_coordinateFormat);
+    setUnitOfMeasurement(m_unitOfMeasurement);
+
     emit useGpsForElevationChanged();
   }
 }

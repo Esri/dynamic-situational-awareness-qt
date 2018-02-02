@@ -169,6 +169,7 @@ bool MessagesOverlay::addMessage(const Message& message)
       m_pointGraphicsOverlay->setRenderingMode(GraphicsRenderingMode::Dynamic);
       m_pointGraphicsOverlay->setSceneProperties(LayerSceneProperties(SurfacePlacement::Relative));
       m_pointGraphicsOverlay->setRenderer(m_renderer);
+      m_pointGraphicsOverlay->setSelectionColor(Qt::red);
       m_graphicsOverlays.append(m_pointGraphicsOverlay);
       m_geoView->graphicsOverlays()->append(m_pointGraphicsOverlay);
 

@@ -41,7 +41,9 @@ const QString LocationTextController::Feet = QStringLiteral("feet");
  \brief Constructor that takes an optional \a parent.
  */
 LocationTextController::LocationTextController(QObject* parent) :
-  Toolkit::AbstractTool(parent)
+  Toolkit::AbstractTool(parent),
+  m_coordinateFormat(DMS),
+  m_unitOfMeasurement(Meters)
 {
   Toolkit::ToolManager::instance().addTool(this);
 

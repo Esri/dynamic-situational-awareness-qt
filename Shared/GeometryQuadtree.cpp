@@ -17,7 +17,6 @@
 #include "GeometryEngine.h"
 #include "Point.h"
 
-#include <QList>
 #include <QSet>
 
 using namespace Esri::ArcGISRuntime;
@@ -38,14 +37,14 @@ struct GeometryQuadtree::QuadTree
   bool assign(const Envelope& extent, int geomId, int maxLevels);
   void prune();
 
-  QSet<int> intersectingIndices(const Envelope& extent) const;
-  QSet<int> intersectingIndices(const Point& location) const;
+  QSet<int> intersectingIds(const Envelope& extent) const;
+  QSet<int> intersectingIds(const Point& location) const;
 
   bool contains(const Envelope& extent) const;
   bool intersects(const Envelope& extent) const;
   bool intersects(const Point& location) const;
 
-  void removeIndex(int index);
+  void removeId(int geomId);
 
   int m_level = 0;
   double m_xMin = 0.0;
@@ -56,7 +55,7 @@ struct GeometryQuadtree::QuadTree
   QuadTree* m_tr = nullptr; // top right
   QuadTree* m_bl = nullptr; // bottom left
   QuadTree* m_br = nullptr; // bottom right
-  QSet<int> m_geometryIndices;
+  QSet<int> m_geometryIds;
 };
 
 /*!
@@ -68,28 +67,12 @@ GeometryQuadtree::GeometryQuadtree(const Envelope& extent,
                                    int maxLevels,
                                    QObject* parent):
   QObject(parent),
-  m_maxLevels(maxLevels),
-  m_elements(geoElements)
+  m_maxLevels(maxLevels)
 {
   // connect to the geometryChanged signal of individual GeoElements
   for (const auto& element : geoElements)
-  {
-    connect(element, &GeoElement::geometryChanged, this, [this, element]()
-    {
-      int index = -1;
-      for (int i = 0; i < m_elements.size(); ++i)
-      {
-        if (m_elements.at(i) == element)
-        {
-          index = i;
-          break;
-        }
-      }
-      handleGeometryChange(index);
-    });
-  }
+    handleNewGeoElement(element);
 
-  cacheGeometry();
   buildTree(extent);
 }
 
@@ -111,8 +94,8 @@ void GeometryQuadtree::appendGeoElment(GeoElement* newGeoElement)
   if (!newGeoElement)
     return;
 
-  m_elements.append(newGeoElement);
-  handleGeometryChange(m_elements.size()-1);
+  const int newKey = handleNewGeoElement(newGeoElement);
+  handleGeometryChange(newKey);
 }
 
 /*!
@@ -138,14 +121,20 @@ QList<Geometry> GeometryQuadtree::candidateIntersections(const Envelope& extent)
   const Envelope wgs84 = GeometryEngine::project(extent, SpatialReference::wgs84());
 
   // obtain the indices of Geometry objects from quadtree nodes which intersect the extent
-  QSet<int> geomIndexes = m_tree->intersectingIndices(wgs84);
+  QSet<int> geomIds = m_tree->intersectingIds(wgs84);
 
-  // collect the Geometry objects with an intersecting index
+  // collect the Geometry objects with an intersecting Id
   QList<Geometry> results;
-  for(const int idx: geomIndexes)
+  for(const int id: geomIds)
   {
-    if (idx < m_geometry.size())
-      results.push_back(m_geometry.at(idx));
+    // attempt to find the element Id in the lookup. If the element has been removed it may not be found
+    auto findIt = m_elementStorage.find(id);
+    if (findIt != m_elementStorage.end())
+    {
+      GeoElement* element = findIt.value();
+      if (element)
+        results.push_back(element->geometry());
+    }
   }
 
   return results;
@@ -163,14 +152,20 @@ QList<Geometry> GeometryQuadtree::candidateIntersections(const Point& location) 
   const Point wgs84 = GeometryEngine::project(location, SpatialReference::wgs84());
 
   // obtain the indices of Geometry objects from quadtree nodes which contain the location
-  QSet<int> geomIndexes = m_tree->intersectingIndices(wgs84);
+  QSet<int> geomIds = m_tree->intersectingIds(wgs84);
 
-  // collect the Geometry objects with an intersecting index
+  // collect the Geometry objects with an intersecting Id
   QList<Geometry> results;
-  for(const int idx: geomIndexes)
+  for(const int id: geomIds)
   {
-    if (idx < m_geometry.size())
-      results.push_back(m_geometry.at(idx));
+    // attempt to find the element Id in the lookup. If the element has been removed it may not be found
+    auto findIt = m_elementStorage.find(id);
+    if (findIt != m_elementStorage.end())
+    {
+      GeoElement* element = findIt.value();
+      if (element)
+        results.push_back(element->geometry());
+    }
   }
 
   return results;
@@ -187,13 +182,17 @@ void GeometryQuadtree::buildTree(const Envelope& extent)
   // build the (currently empty) tree to the desired depth
   m_tree.reset(new QuadTree(0, extentWgs84.xMin(), extentWgs84.xMax(), extentWgs84.yMin(), extentWgs84.yMax()));
 
-  // assign each geometry to the tree, alongwith its index in the m_geometry list
-  int index = 0;
-  for (const auto& geom : m_geometry)
+  // assign the geometry of each element to the tree, along with its id in the lookup
+  auto it = m_elementStorage.cbegin();
+  auto itEnd = m_elementStorage.cend();
+  for (; it != itEnd; ++it)
   {
-    const Geometry wgs84 = GeometryEngine::project(geom, SpatialReference::wgs84());
-    m_tree->assign(wgs84.extent(), index, m_maxLevels);
-    index++;
+    GeoElement* element = it.value();
+    if (!element)
+      continue;
+
+    const Geometry wgs84 = GeometryEngine::project(element->geometry(), SpatialReference::wgs84());
+    m_tree->assign(wgs84.extent(), it.key(), m_maxLevels);
   }
 
   // remove any nodes from the tree which contain no geometry
@@ -205,40 +204,100 @@ void GeometryQuadtree::buildTree(const Envelope& extent)
 /*!
   \internal
  */
-void GeometryQuadtree::cacheGeometry()
+void GeometryQuadtree::handleGeometryChange(int changedId)
 {
-  m_geometry.clear();
+  const GeoElement* changedElement = m_elementStorage.value(changedId);
+  if (!changedElement)
+    return;
 
-  // store a list of the geometry which the tree will use
-  for (const auto& element : m_elements)
-    m_geometry.append(element->geometry());
+  const Geometry wgs84Geom = GeometryEngine::project(changedElement->geometry(), SpatialReference::wgs84());
+  const Envelope wgs84Extent = wgs84Geom.extent();
+
+  // if the extent of the changed geom is the same or smaller than the existing tree, it can still be used
+  if (m_tree->m_xMin <= wgs84Extent.xMin() &&
+      m_tree->m_xMax >= wgs84Extent.xMax() &&
+      m_tree->m_yMin <= wgs84Extent.yMin() &&
+      m_tree->m_yMax >= wgs84Extent.yMax())
+  {
+    m_tree->removeId(changedId);
+    m_tree->assign(wgs84Geom.extent(), changedId, m_maxLevels);
+    m_tree->prune();
+    emit treeChanged();
+  }
+  // otherwise calculate the new extent and rebuild the tree
+  else
+  {
+    QList<Geometry> allGeom;
+    for(auto it = m_elementStorage.begin(); it != m_elementStorage.end(); ++it)
+    {
+      GeoElement* element = it.value();
+      if (!element)
+        continue;
+
+      allGeom.append(GeometryEngine::project(element->geometry(), SpatialReference::wgs84()));
+    }
+
+    const Geometry newExtent = GeometryEngine::combineExtents(allGeom);
+    buildTree(newExtent);
+  }
 }
 
 /*!
   \internal
- */
-void GeometryQuadtree::handleGeometryChange(int changedIndex)
-{
-  cacheGeometry();
-  const Envelope newExtent = GeometryEngine::combineExtents(m_geometry);
-  const Envelope wgs84 = GeometryEngine::project(newExtent, SpatialReference::wgs84());
 
-  // if the new extent is the same or smaller than the existing tree, it can still be used
-  if (changedIndex > 0 &&
-      changedIndex < m_elements.size() &&
-      m_tree->m_xMin <= wgs84.xMin() &&
-      m_tree->m_xMax >= wgs84.xMax() &&
-      m_tree->m_yMin <= wgs84.yMin() &&
-      m_tree->m_yMax >= wgs84.yMax())
+  Attempts to add the new \a geoElement into the storage QHash and connects to changes.
+
+  Returns the key in the storage or \c -1 if unsuccesful.
+ */
+int GeometryQuadtree::handleNewGeoElement(GeoElement* geoElement)
+{
+  if (!geoElement)
+    return -1;
+
+  m_elementStorage.insert(m_nextKey, geoElement);
+  const int insertedKey = m_nextKey;
+  m_nextKey++;
+
+  connect(geoElement, &GeoElement::geometryChanged, this, [this, geoElement]()
   {
-    GeoElement* changedElement = m_elements.at(changedIndex);
-    const Geometry wgs84 = GeometryEngine::project(changedElement->geometry(), SpatialReference::wgs84());
-    m_tree->assign(wgs84.extent(), changedIndex, m_maxLevels);
-  }
-  else
+    auto it = m_elementStorage.cbegin();
+    auto itEnd = m_elementStorage.cend();
+    for (; it != itEnd; ++it)
+    {
+      GeoElement* testElement = it.value();
+      if (!testElement)
+        continue;
+
+      if (testElement == geoElement)
+      {
+        handleGeometryChange(it.key());
+        return;
+      }
+    }
+  });
+
+  connect(geoElement, &GeoElement::destroyed, this, [this, geoElement]()
   {
-    buildTree(newExtent);
-  }
+    auto it = m_elementStorage.cbegin();
+    auto itEnd = m_elementStorage.cend();
+    for (; it != itEnd; ++it)
+    {
+      GeoElement* testElement = it.value();
+      if (!testElement)
+        continue;
+
+      if (testElement == geoElement)
+      {
+        m_tree->removeId(it.key());
+        m_tree->prune();
+        m_elementStorage.remove(it.key());
+        emit treeChanged();
+        return;
+      }
+    }
+  });
+
+  return insertedKey;
 }
 
 /*!
@@ -330,7 +389,7 @@ bool GeometryQuadtree::QuadTree::assign(const Envelope& extent, int geomIndex, i
     return false;
 
   // record this geometry index
-  m_geometryIndices.insert(geomIndex);
+  m_geometryIds.insert(geomIndex);
 
   // (recursively) attempt to assign the geomeytry to each child node
   // if the node already exists, just assign
@@ -399,7 +458,7 @@ void GeometryQuadtree::QuadTree::prune()
   if (m_tl)
   {
     // remove the node (and all of it's children) if it is empty
-    if (m_tl->m_geometryIndices.empty())
+    if (m_tl->m_geometryIds.empty())
     {
       delete m_tl;
       m_tl = nullptr;
@@ -413,7 +472,7 @@ void GeometryQuadtree::QuadTree::prune()
 
   if (m_tr)
   {
-    if (m_tr->m_geometryIndices.empty())
+    if (m_tr->m_geometryIds.empty())
     {
       delete m_tr;
       m_tr = nullptr;
@@ -426,7 +485,7 @@ void GeometryQuadtree::QuadTree::prune()
 
   if (m_bl)
   {
-    if (m_bl->m_geometryIndices.empty())
+    if (m_bl->m_geometryIds.empty())
     {
       delete m_bl;
       m_bl = nullptr;
@@ -439,7 +498,7 @@ void GeometryQuadtree::QuadTree::prune()
 
   if (m_br)
   {
-    if (m_br->m_geometryIndices.empty())
+    if (m_br->m_geometryIds.empty())
     {
       delete m_br;
       m_br = nullptr;
@@ -454,10 +513,10 @@ void GeometryQuadtree::QuadTree::prune()
 /*!
   \internal
  */
-QSet<int> GeometryQuadtree::QuadTree::intersectingIndices(const Envelope& extent) const
+QSet<int> GeometryQuadtree::QuadTree::intersectingIds(const Envelope& extent) const
 {
   // if this node contains no geometry indices there is no intersection
-  if (m_geometryIndices.empty())
+  if (m_geometryIds.empty())
     return QSet<int>();
 
   // if this node does not intersect with the supplied extent, there is no intersection
@@ -466,21 +525,21 @@ QSet<int> GeometryQuadtree::QuadTree::intersectingIndices(const Envelope& extent
 
   // if this node intersects but has no children, it must be a leaf node: return all geometry indices
   if (!m_tl && !m_tr && !m_bl && !m_br)
-    return m_geometryIndices;
+    return m_geometryIds;
 
   // for each existing child node, (recursively) build up the set of intersecting indices
   QSet<int> result;
   if (m_tl)
-    result += m_tl->intersectingIndices(extent);
+    result += m_tl->intersectingIds(extent);
 
   if (m_tr)
-    result += m_tr->intersectingIndices(extent);
+    result += m_tr->intersectingIds(extent);
 
   if (m_bl)
-    result += m_bl->intersectingIndices(extent);
+    result += m_bl->intersectingIds(extent);
 
   if (m_br)
-    result += m_br->intersectingIndices(extent);
+    result += m_br->intersectingIds(extent);
 
   return result;
 }
@@ -488,10 +547,10 @@ QSet<int> GeometryQuadtree::QuadTree::intersectingIndices(const Envelope& extent
 /*!
   \internal
  */
-QSet<int> GeometryQuadtree::QuadTree::intersectingIndices(const Point& location) const
+QSet<int> GeometryQuadtree::QuadTree::intersectingIds(const Point& location) const
 {
   // if this node contains no geometry indices, there is no intersection
-  if (m_geometryIndices.empty())
+  if (m_geometryIds.empty())
     return QSet<int>();
 
   // if this node does not intersect with the supplied extent, there is no intersection
@@ -500,21 +559,21 @@ QSet<int> GeometryQuadtree::QuadTree::intersectingIndices(const Point& location)
 
   // if this node intesects but has no children, it must be a leaf node: return all geometry indices
   if (!m_tl && !m_tr && !m_bl && !m_br)
-    return m_geometryIndices;
+    return m_geometryIds;
 
   // for each existing child node, (recursively) build up the set of intersecting indices
   QSet<int> result;
   if (m_tl)
-    result += m_tl->intersectingIndices(location);
+    result += m_tl->intersectingIds(location);
 
   if (m_tr)
-    result += m_tr->intersectingIndices(location);
+    result += m_tr->intersectingIds(location);
 
   if (m_bl)
-    result += m_bl->intersectingIndices(location);
+    result += m_bl->intersectingIds(location);
 
   if (m_br)
-    result += m_br->intersectingIndices(location);
+    result += m_br->intersectingIds(location);
 
   return result;
 }
@@ -554,20 +613,20 @@ bool GeometryQuadtree::QuadTree::intersects(const Point& location) const
           location.y() >= m_yMin);
 }
 
-void GeometryQuadtree::QuadTree::removeIndex(int index)
+void GeometryQuadtree::QuadTree::removeId(int index)
 {
-  if (m_geometryIndices.remove(index))
+  if (m_geometryIds.remove(index))
   {
     if (m_tl)
-      m_tl->removeIndex(index);
+      m_tl->removeId(index);
 
     if (m_tr)
-      m_tr->removeIndex(index);
+      m_tr->removeId(index);
 
     if (m_bl)
-      m_bl->removeIndex(index);
+      m_bl->removeId(index);
 
     if (m_br)
-      m_br->removeIndex(index);
+      m_br->removeId(index);
   }
 }

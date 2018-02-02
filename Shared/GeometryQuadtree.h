@@ -15,6 +15,7 @@
 
 #include <memory>
 
+#include <QHash>
 #include <QList>
 #include <QObject>
 
@@ -49,15 +50,15 @@ signals:
 
 private:
   void buildTree(const Esri::ArcGISRuntime::Envelope& extent);
-  void cacheGeometry();
   void handleGeometryChange(int changedIndex);
+  int handleNewGeoElement(Esri::ArcGISRuntime::GeoElement* geoElement);
 
   struct QuadTree;
 
   int m_maxLevels;
-  QList<Esri::ArcGISRuntime::GeoElement*> m_elements;
   std::unique_ptr<QuadTree> m_tree;
-  QList<Esri::ArcGISRuntime::Geometry> m_geometry;
+  QHash<int, Esri::ArcGISRuntime::GeoElement*> m_elementStorage;
+  int m_nextKey = 0;
 };
 
 #endif // GEOMETRYQUADTREE_H

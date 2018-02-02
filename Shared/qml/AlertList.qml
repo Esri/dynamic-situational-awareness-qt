@@ -25,7 +25,7 @@ DsaPanel {
 
     property int hightlightIndex: -1
 
-    AlertToolController {
+    AlertListController {
         id: toolController
     }
 

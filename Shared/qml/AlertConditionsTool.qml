@@ -161,7 +161,6 @@ DsaPanel {
             Button {
                 id: attributeConditionButton
                 text: "Attribute\nAlert"
-                enabled: false
                 font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 font.bold: checked
                 height: geofenceConditionButton.height
@@ -473,20 +472,27 @@ DsaPanel {
             }
 
             onClicked: {
-                if (withinDistanceRb.checked) {
-                    toolController.addWithinDistanceAlert(newAlertName.text,
+                if (geofenceConditionButton.checked) {
+                    if (withinDistanceRb.checked) {
+                        toolController.addWithinDistanceAlert(newAlertName.text,
+                                                              levelCb.currentIndex,
+                                                              sourceCb.currentText,
+                                                              withinDistanceSB.value,
+                                                              singleFeatureRb.checked ? Number(featureIdEdit.text) : -1,
+                                                                                        targetCB.currentIndex);
+                    } else if (withinAreaRb.checked) {
+                        toolController.addWithinAreaAlert(newAlertName.text,
                                                           levelCb.currentIndex,
                                                           sourceCb.currentText,
-                                                          withinDistanceSB.value,
                                                           singleFeatureRb.checked ? Number(featureIdEdit.text) : -1,
                                                                                     targetCB.currentIndex);
-                }
-                else if (withinAreaRb.checked) {
-                    toolController.addWithinAreaAlert(newAlertName.text,
-                                                      levelCb.currentIndex,
-                                                      sourceCb.currentText,
-                                                      singleFeatureRb.checked ? Number(featureIdEdit.text) : -1,
-                                                                                targetCB.currentIndex);
+                    }
+                } else if (attributeConditionButton.checked) {
+                    toolController.addAttributeEqualsAlert(newAlertName.text,
+                                                           levelCb.currentIndex,
+                                                           sourceCb.currentText,
+                                                           attributeFieldEdit.text,
+                                                           attributeValueEdit.text);
                 }
 
                 levelCb.currentIndex = -1;

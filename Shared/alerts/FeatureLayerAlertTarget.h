@@ -13,6 +13,10 @@
 #ifndef FEATURELAYERALERTTARGET_H
 #define FEATURELAYERALERTTARGET_H
 
+#include "AlertTarget.h"
+
+#include <QUuid>
+
 namespace Esri
 {
 namespace ArcGISRuntime
@@ -23,9 +27,7 @@ class FeatureQueryResult;
 }
 }
 
-#include "AlertTarget.h"
-
-#include <QUuid>
+class GeometryQuadtree;
 
 class FeatureLayerAlertTarget : public AlertTarget
 {
@@ -35,13 +37,17 @@ public:
   explicit FeatureLayerAlertTarget(Esri::ArcGISRuntime::FeatureLayer* FeatureLayer);
   ~FeatureLayerAlertTarget();
 
-  virtual QList<Esri::ArcGISRuntime::Geometry> targetGeometries() const override;
+  QList<Esri::ArcGISRuntime::Geometry> targetGeometries(const Esri::ArcGISRuntime::Envelope& targetArea) const override;
+  QVariant targetValue() const override;
 
 private slots:
   void handleQueryFeaturesCompleted(QUuid taskId, Esri::ArcGISRuntime::FeatureQueryResult* featureQueryResult);
 
 private:
+  void rebuildQuadtree();
+
   Esri::ArcGISRuntime::FeatureLayer* m_FeatureLayer = nullptr;
+  GeometryQuadtree* m_quadtree = nullptr;
   QList<Esri::ArcGISRuntime::Feature*> m_features;
   mutable QList<Esri::ArcGISRuntime::Geometry> m_geomCache;
 };

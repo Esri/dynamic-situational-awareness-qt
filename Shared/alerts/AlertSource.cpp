@@ -14,12 +14,26 @@
 
 using namespace Esri::ArcGISRuntime;
 
+/*!
+  \class AlertSource
+  \inherits QObject
+  \brief Represents a source (generally a real-time feed) for an \l AlertCondition.
+
+  \note This is an abstract base type.
+  */
+
+/*!
+  \brief Constructor taking an optional \a parent.
+ */
 AlertSource::AlertSource(QObject* parent):
   QObject(parent)
 {
 
 }
 
+/*!
+  \brief Destructor.
+ */
 AlertSource::~AlertSource()
 {
   emit noLongerValid();

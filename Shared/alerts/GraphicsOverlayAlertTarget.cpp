@@ -75,7 +75,7 @@ GraphicsOverlayAlertTarget::~GraphicsOverlayAlertTarget()
 
   \note No exact intersection tests are carried out to create this list.
  */
-QList<Geometry> GraphicsOverlayAlertTarget::targetGeometries(const Esri::ArcGISRuntime::Envelope& targetArea) const
+QList<Geometry> GraphicsOverlayAlertTarget::targetGeometries(const Envelope& targetArea) const
 {
   // if the quadtree has been built, use  it to return the set of candidate geometries
   if (m_quadtree)

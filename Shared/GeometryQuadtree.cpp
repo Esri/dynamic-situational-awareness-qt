@@ -27,7 +27,7 @@ using namespace Esri::ArcGISRuntime;
  */
 struct GeometryQuadtree::QuadTree
 {
-  explicit  QuadTree(int level, double xMin, double xMax, double yMin, double yMax);
+  explicit QuadTree(int level, double xMin, double xMax, double yMin, double yMax);
   ~QuadTree();
 
   QuadTree* createTopLeft(int maxLevels);
@@ -338,7 +338,7 @@ bool GeometryQuadtree::QuadTree::assign(const Envelope& extent, int geomIndex, i
   {
     m_tl->assign(extent, geomIndex, maxLevels);
   }
-  // otherwise, create a temporary node and only keep it if it will containthis geometry
+  // otherwise, create a temporary node and only keep it if it will contain this geometry
   else
   {
     QuadTree* temp = createTopLeft(maxLevels);
@@ -395,7 +395,7 @@ bool GeometryQuadtree::QuadTree::assign(const Envelope& extent, int geomIndex, i
  */
 void GeometryQuadtree::QuadTree::prune()
 {
-  // for each existing child node,
+  // for each existing child node remove the node (and any children if they are empty)
   if (m_tl)
   {
     // remove the node (and all of it's children) if it is empty

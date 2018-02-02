@@ -16,8 +16,6 @@
 #include "Envelope.h"
 #include "Graphic.h"
 
-#include <QDebug>
-
 using namespace Esri::ArcGISRuntime;
 
 /*!

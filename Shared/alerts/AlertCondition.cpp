@@ -56,7 +56,7 @@ AlertCondition::AlertCondition(const AlertLevel& level,
 }
 
 /*!
-  \brief Initialises the condition with a \a source and \target.
+  \brief Initializes the condition with a \a source and \target.
 
   A new \a AlertConditionData will be created to track changes to the
   source and target.
@@ -68,7 +68,7 @@ void AlertCondition::init(AlertSource* source, AlertTarget* target)
 }
 
 /*!
-  \brief Initialises the condition with a \a sourceFeed and \target.
+  \brief Initializes the condition with a \a sourceFeed and \target.
 
   A new \a AlertConditionData will be created for each \l Esri::ArcGISRuntime::Graphic
   in the source feed, to track changes to the source and target.

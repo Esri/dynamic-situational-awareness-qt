@@ -76,7 +76,7 @@ FeatureLayerAlertTarget::~FeatureLayerAlertTarget()
 
   \note No exact intersection tests are carried out to create this list.
  */
-QList<Esri::ArcGISRuntime::Geometry> FeatureLayerAlertTarget::targetGeometries(const Esri::ArcGISRuntime::Envelope& targetArea) const
+QList<Geometry> FeatureLayerAlertTarget::targetGeometries(const Envelope& targetArea) const
 {
   // if the quad-tree has been built use it to determine the candidate geometry
   if (m_quadtree)

@@ -48,7 +48,7 @@ WithinAreaAlertConditionData::WithinAreaAlertConditionData(const QString& name,
                                                            AlertLevel level,
                                                            AlertSource* source,
                                                            AlertTarget* target,
-                                                            QObject* parent):
+                                                           QObject* parent):
   AlertConditionData(name, level, source, target, parent)
 {
 

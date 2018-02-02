@@ -49,7 +49,7 @@ FixedValueAlertTarget::~FixedValueAlertTarget()
 
   \note This type of target is non-spatial.
  */
-QList<Esri::ArcGISRuntime::Geometry> FixedValueAlertTarget::targetGeometries(const Esri::ArcGISRuntime::Envelope&) const
+QList<Geometry> FixedValueAlertTarget::targetGeometries(const Envelope&) const
 {
   return QList<Geometry>();
 }

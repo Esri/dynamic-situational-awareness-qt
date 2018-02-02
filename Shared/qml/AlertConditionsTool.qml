@@ -472,8 +472,7 @@ DsaPanel {
             }
 
             onClicked: {
-                if (geofenceConditionButton.checked)
-                {
+                if (geofenceConditionButton.checked) {
                     if (withinDistanceRb.checked) {
                         toolController.addWithinDistanceAlert(newAlertName.text,
                                                               levelCb.currentIndex,
@@ -481,16 +480,14 @@ DsaPanel {
                                                               withinDistanceSB.value,
                                                               singleFeatureRb.checked ? Number(featureIdEdit.text) : -1,
                                                                                         targetCB.currentIndex);
-                    }
-                    else if (withinAreaRb.checked) {
+                    } else if (withinAreaRb.checked) {
                         toolController.addWithinAreaAlert(newAlertName.text,
                                                           levelCb.currentIndex,
                                                           sourceCb.currentText,
                                                           singleFeatureRb.checked ? Number(featureIdEdit.text) : -1,
                                                                                     targetCB.currentIndex);
                     }
-                }
-                else if (attributeConditionButton.checked) {
+                } else if (attributeConditionButton.checked) {
                     toolController.addAttributeEqualsAlert(newAlertName.text,
                                                            levelCb.currentIndex,
                                                            sourceCb.currentText,

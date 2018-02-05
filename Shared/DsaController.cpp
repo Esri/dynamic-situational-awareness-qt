@@ -158,20 +158,14 @@ m_dsaSettings["UseGpsForElevation"] = QStringLiteral("true");
 void DsaController::saveSettings()
 {
   QSettings settings(m_configFilePath, m_jsonFormat);
-  settings.setValue("test", 123);
 
-  // create file
-  //  if (configFile.open(QIODevice::ReadWrite))
-  //  {
-  //    QTextStream stream(&configFile);
-  //    stream << "[Settings]\n";
-
-  //    // write defaults to the config file
-  //    for (const QString& key : m_dsaSettings.keys())
-  //    {
-  //      stream << key << "=" << m_dsaSettings.value(key).toStringList().join(",") << "\n";
-  //    }
-  //  }
+  auto it = m_dsaSettings.cbegin();
+  auto itEnd = m_dsaSettings.cend();
+  for (; it != itEnd; ++it)
+  {
+    const QVariant& val = it.value();
+    settings.setValue(it.key(), val.toStringList().join(","));
+  }
 }
 
 bool readJsonFile(QIODevice& device, QSettings::SettingsMap& map)
@@ -196,7 +190,7 @@ bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map)
     return false;
 
   QJsonDocument conditionsJsonDoc(jsonObject);
-  device.write(conditionsJsonDoc.toJson(QJsonDocument::Compact));
+  device.write(conditionsJsonDoc.toJson(QJsonDocument::Indented));
 
   return true;
 }

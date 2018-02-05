@@ -39,8 +39,8 @@ public:
                           const QString& name,
                           QObject* parent = nullptr);
 
-  void init(AlertSource* source, AlertTarget* target);
-  void init(Esri::ArcGISRuntime::GraphicsOverlay* sourceFeed, AlertTarget* target);
+  void init(AlertSource* source, AlertTarget* target, const QString& sourceDescription, const QString& targetDescription);
+  void init(Esri::ArcGISRuntime::GraphicsOverlay* sourceFeed, AlertTarget* target, const QString& targetDescription);
 
   ~AlertCondition();
 
@@ -56,6 +56,10 @@ public:
 
   virtual AlertConditionData* createData(AlertSource* source, AlertTarget* target) = 0;
 
+  QString sourceDescription() const;
+  QString targetSecription() const;
+  virtual QString description() const = 0;
+
 signals:
   void noLongerValid();
   void newConditionData(AlertConditionData* newConditionData);
@@ -64,6 +68,8 @@ private:
   AlertLevel m_level;
   QString m_name;
   QList<AlertConditionData*> m_data;
+  QString m_sourceDescription;
+  QString m_targetDescription;
 };
 
 #endif // ALERTCONDITIONDATA_H

@@ -67,7 +67,7 @@ bool AlertListModel::addAlertConditionData(AlertConditionData* newConditionData)
     return false;
 
   const int size = m_alerts.size();
-  const int insertIdx = size == 0 ? 0 : size -1;
+  const int insertIdx = size == 0 ? 0 : size;
   const QUuid id = QUuid::createUuid();
   newConditionData->setId(id);
 

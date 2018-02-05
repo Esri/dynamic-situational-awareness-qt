@@ -57,3 +57,11 @@ AlertConditionData* WithinAreaAlertCondition::createData(AlertSource* source, Al
 {
   return new WithinAreaAlertConditionData(newConditionDataName(), level(), source, target, this);
 }
+
+/*!
+  \brief Returns the description of this condition.
+ */
+QString WithinAreaAlertCondition::description() const
+{
+  return QString("%1 is within %2").arg(sourceDescription(), targetSecription());
+}

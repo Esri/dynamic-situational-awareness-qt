@@ -18,6 +18,7 @@ AlertConditionListModel::AlertConditionListModel(QObject* parent):
 {
   m_roles[AlertConditionListRoles::Name] = "name";
   m_roles[AlertConditionListRoles::Level] = "level";
+  m_roles[AlertConditionListRoles::Description] = "description";
 }
 
 AlertConditionListModel::~AlertConditionListModel()
@@ -31,7 +32,7 @@ bool AlertConditionListModel::addAlertCondition(AlertCondition* condition)
     return false;
 
   const int size = m_conditions.size();
-  const int insertIdx = size == 0 ? 0 : size -1;
+  const int insertIdx = size == 0 ? 0 : size;
 
   beginInsertRows(QModelIndex(), insertIdx, insertIdx);
   m_conditions.append(condition);
@@ -76,6 +77,8 @@ QVariant AlertConditionListModel::data(const QModelIndex& index, int role) const
     return condition->name();
   case AlertConditionListRoles::Level:
     return static_cast<int>(condition->level());
+  case AlertConditionListRoles::Description:
+    return condition->description();
   default:
     break;
   }

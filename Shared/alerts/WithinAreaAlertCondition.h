@@ -29,6 +29,8 @@ public:
   ~WithinAreaAlertCondition();
 
   AlertConditionData* createData(AlertSource* source, AlertTarget* target) override;
+
+  QString description() const override;
 };
 
 #endif // WITHINAREAALERTCONDITION_H

@@ -63,3 +63,11 @@ double WithinDistanceAlertCondition::distance() const
 {
   return m_distance;
 }
+
+/*!
+  \brief Returns the description of this condition.
+ */
+QString WithinDistanceAlertCondition::description() const
+{
+  return QString("%1 is within %2 meters of %3").arg(sourceDescription(), QString::number(m_distance), targetSecription());
+}

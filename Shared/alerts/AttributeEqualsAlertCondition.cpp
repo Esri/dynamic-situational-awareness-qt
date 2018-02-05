@@ -53,3 +53,11 @@ AlertConditionData* AttributeEqualsAlertCondition::createData(AlertSource* sourc
 {
   return new AttributeEqualsAlertConditionData(newConditionDataName(), level(), source, target, m_attributeName, this);
 }
+
+/*!
+  \brief Returns the description of this condition.
+ */
+QString AttributeEqualsAlertCondition::description() const
+{
+  return QString("%1.%2 = %3").arg(sourceDescription(), m_attributeName, targetSecription());
+}

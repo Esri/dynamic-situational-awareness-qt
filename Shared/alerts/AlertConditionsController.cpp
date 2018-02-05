@@ -172,7 +172,8 @@ void AlertConditionsController::addWithinDistanceAlert(const QString& conditionN
   if (level > AlertLevel::Critical)
     return;
 
-  AlertTarget* target = targetFromItemIdAndIndex(itemId, targetOverlayIndex);
+  QString targetDescription;
+  AlertTarget* target = targetFromItemIdAndIndex(itemId, targetOverlayIndex, targetDescription);
   if (!target)
     return;
 
@@ -181,13 +182,13 @@ void AlertConditionsController::addWithinDistanceAlert(const QString& conditionN
 
   if (sourceFeedName == "My Location")
   {
-    condition->init(m_locationSource, target);
+    condition->init(m_locationSource, target, "My Location", targetDescription);
   }
   else
   {
     GraphicsOverlay* sourceOverlay = graphicsOverlayFromName(sourceFeedName);
     if (sourceOverlay)
-      condition->init(sourceOverlay, target);
+      condition->init(sourceOverlay, target, targetDescription);
   }
 
   m_conditions->addAlertCondition(condition);
@@ -224,7 +225,8 @@ void AlertConditionsController::addWithinAreaAlert(const QString& conditionName,
   if (level > AlertLevel::Critical)
     return;
 
-  AlertTarget* target = targetFromItemIdAndIndex(itemId, targetOverlayIndex);
+  QString targetDescription;
+  AlertTarget* target = targetFromItemIdAndIndex(itemId, targetOverlayIndex, targetDescription);
   if (!target)
     return;
 
@@ -233,13 +235,13 @@ void AlertConditionsController::addWithinAreaAlert(const QString& conditionName,
 
   if (sourceFeedName == "My Location")
   {
-    condition->init(m_locationSource, target);
+    condition->init(m_locationSource, target, "My Location", targetDescription);
   }
   else
   {
     GraphicsOverlay* sourceOverlay = graphicsOverlayFromName(sourceFeedName);
     if (sourceOverlay)
-      condition->init(sourceOverlay, target);
+      condition->init(sourceOverlay, target, targetDescription);
   }
   m_conditions->addAlertCondition(condition);
 }
@@ -280,7 +282,7 @@ void AlertConditionsController::addAttributeEqualsAlert(const QString& condition
 
   AttributeEqualsAlertCondition* condition = new AttributeEqualsAlertCondition(level, conditionName, attributeName, this);
   connect(condition, &AttributeEqualsAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
-  condition->init(sourceOverlay, target);
+  condition->init(sourceOverlay, target, targetValue.toString());
   m_conditions->addAlertCondition(condition);
 }
 
@@ -684,7 +686,7 @@ void AlertConditionsController::setSourceNames(const QStringList& sourceNames)
 /*!
   \brief internal
  */
-AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int targetOverlayIndex) const
+AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int targetOverlayIndex, QString& targetDescription) const
 {
   GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
   if (!geoView)
@@ -713,10 +715,14 @@ AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int
           if (!m_layerTargets.contains(featLayer->layerId()))
             m_layerTargets.insert(featLayer->layerId(), new FeatureLayerAlertTarget(featLayer));
 
+          targetDescription = featLayer->layerId();
           return m_layerTargets.value(featLayer->layerId(), nullptr);
         }
         else
+        {
+          targetDescription = QString("%1 (%2)").arg(featLayer->name(), QString::number(itemId));
           return targetFromFeatureLayer(featLayer, itemId);
+        }
       }
     }
   }
@@ -743,10 +749,14 @@ AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int
           if (!m_overlayTargets.contains(overlay->overlayId()))
             m_overlayTargets.insert(overlay->overlayId(), new GraphicsOverlayAlertTarget(overlay));
 
+          targetDescription = overlay->overlayId();
           return m_overlayTargets.value(overlay->overlayId(), nullptr);
         }
         else
+        {
+          targetDescription = QString("%1 (%2)").arg(overlay->overlayId(), QString::number(itemId));
           return targetFromGraphicsOverlay(overlay, itemId);
+        }
       }
     }
   }

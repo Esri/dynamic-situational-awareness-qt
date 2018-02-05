@@ -55,27 +55,35 @@ AlertCondition::AlertCondition(const AlertLevel& level,
 }
 
 /*!
-  \brief Initializes the condition with a \a source and \target.
+  \brief Initializes the condition with a \a source and \a target with a \a sourceDescription and a \a targetDescription.
 
   A new \a AlertConditionData will be created to track changes to the
   source and target.
  */
-void AlertCondition::init(AlertSource* source, AlertTarget* target)
+void AlertCondition::init(AlertSource* source, AlertTarget* target, const QString& sourceDescription, const QString& targetDescription)
 {
+  if (!source || !target)
+    return;
+
+  m_sourceDescription = sourceDescription;
+  m_targetDescription = targetDescription;
   AlertConditionData* newData = createData(source, target);
   addData(newData);
 }
 
 /*!
-  \brief Initializes the condition with a \a sourceFeed and \target.
+  \brief Initializes the condition with a \a sourceFeed and \a target and a \a targetDescription.
 
   A new \a AlertConditionData will be created for each \l Esri::ArcGISRuntime::Graphic
   in the source feed, to track changes to the source and target.
  */
-void AlertCondition::init(GraphicsOverlay* sourceFeed, AlertTarget* target)
+void AlertCondition::init(GraphicsOverlay* sourceFeed, AlertTarget* target, const QString& targetDescription)
 {
-  if (!sourceFeed)
+  if (!sourceFeed || !target)
     return;
+
+  m_sourceDescription = sourceFeed->overlayId();
+  m_targetDescription = targetDescription;
 
   GraphicListModel* graphics = sourceFeed->graphics();
   if (!graphics)
@@ -185,5 +193,21 @@ void AlertCondition::addData(AlertConditionData* newData)
 
   m_data.append(newData);
   emit newConditionData(newData);
+}
+
+/*!
+  \brief Returns the name of the condition source.
+ */
+QString AlertCondition::sourceDescription() const
+{
+  return m_sourceDescription;
+}
+
+/*!
+  \brief Returns the name of the condition target.
+ */
+QString AlertCondition::targetSecription() const
+{
+  return m_targetDescription;
 }
 

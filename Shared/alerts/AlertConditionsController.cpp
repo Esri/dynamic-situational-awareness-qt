@@ -121,6 +121,11 @@ QString AlertConditionsController::toolName() const
   return "Alert Conditions";
 }
 
+void AlertConditionsController::setProperties(const QVariantMap& properties)
+{
+
+}
+
 /*!
   \brief Sets the active state of this tool to \a active.
 

@@ -60,6 +60,8 @@ public:
   QString targetSecription() const;
   virtual QString description() const = 0;
 
+  QString toJson() const;
+
 signals:
   void noLongerValid();
   void newConditionData(AlertConditionData* newConditionData);

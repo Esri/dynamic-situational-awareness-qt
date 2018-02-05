@@ -85,11 +85,17 @@ void DataItemListModel::clear()
 
 DataType DataItemListModel::getDataItemType(int index)
 {
+  if (index >= m_dataItems.size())
+    return DataType::Unknown;
+
   return m_dataItems.at(index).dataType;
 }
 
 QString DataItemListModel::getDataItemPath(int index) const
 {
+  if (index >= m_dataItems.size())
+    return QString();
+
   return m_dataItems.at(index).fullPath;
 }
 

@@ -30,7 +30,7 @@ public:
 
   AlertConditionData* createData(AlertSource* source, AlertTarget* target) override;
 
-  QString description() const override;
+  QString queryString() const override;
 };
 
 #endif // WITHINAREAALERTCONDITION_H

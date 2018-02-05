@@ -59,9 +59,9 @@ AlertConditionData* WithinAreaAlertCondition::createData(AlertSource* source, Al
 }
 
 /*!
-  \brief Returns the description of this condition.
+  \brief Returns the query string component for this condition - e.g. "is within".
  */
-QString WithinAreaAlertCondition::description() const
+QString WithinAreaAlertCondition::queryString() const
 {
-  return QString("%1 is within %2").arg(sourceDescription(), targetSecription());
+  return QStringLiteral("is within");
 }

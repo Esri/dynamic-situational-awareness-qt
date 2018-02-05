@@ -54,11 +54,12 @@ public:
 
   void addData(AlertConditionData* newData);
 
+  virtual QString queryString() const = 0;
   virtual AlertConditionData* createData(AlertSource* source, AlertTarget* target) = 0;
 
   QString sourceDescription() const;
-  QString targetSecription() const;
-  virtual QString description() const = 0;
+  QString targetDescription() const;
+  QString description() const;
 
   QString toJson() const;
 

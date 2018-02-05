@@ -55,9 +55,9 @@ AlertConditionData* AttributeEqualsAlertCondition::createData(AlertSource* sourc
 }
 
 /*!
-  \brief Returns the description of this condition.
+  \brief Returns the query string component for this condition in the form "[MyAttribute] =".
  */
-QString AttributeEqualsAlertCondition::description() const
+QString AttributeEqualsAlertCondition::queryString() const
 {
-  return QString("%1.%2 = %3").arg(sourceDescription(), m_attributeName, targetSecription());
+  return QString("[%1] = ").arg(m_attributeName);
 }

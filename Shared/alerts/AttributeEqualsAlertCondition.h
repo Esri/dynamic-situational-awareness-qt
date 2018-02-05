@@ -31,7 +31,7 @@ public:
 
   AlertConditionData* createData(AlertSource* source, AlertTarget* target) override;
 
-  QString description() const override;
+  QString queryString() const;
 
 private:
   QString m_attributeName;

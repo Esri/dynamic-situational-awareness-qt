@@ -17,7 +17,6 @@
 #include "GraphicsOverlay.h"
 #include "GraphicListModel.h"
 
-#include <QDebug>
 #include <QJsonDocument>
 #include <QJsonObject>
 
@@ -73,8 +72,6 @@ void AlertCondition::init(AlertSource* source, AlertTarget* target, const QStrin
   m_targetDescription = targetDescription;
   AlertConditionData* newData = createData(source, target);
   addData(newData);
-
-  qDebug() << toJson();
 }
 
 /*!
@@ -117,8 +114,6 @@ void AlertCondition::init(GraphicsOverlay* sourceFeed, AlertTarget* target, cons
   const int count = graphics->rowCount();
   for (int i = 0; i < count; ++i)
     handleGraphicAt(i);
-
-  qDebug() << toJson();
 }
 
 /*!
@@ -214,9 +209,17 @@ QString AlertCondition::sourceDescription() const
 /*!
   \brief Returns the name of the condition target.
  */
-QString AlertCondition::targetSecription() const
+QString AlertCondition::targetDescription() const
 {
   return m_targetDescription;
+}
+
+/*!
+  \brief Returns the description of this condition target.
+ */
+QString AlertCondition::description() const
+{
+  return QString("%1 %2 %3").arg(sourceDescription(), queryString(), targetDescription());
 }
 
 /*!
@@ -229,7 +232,8 @@ QString AlertCondition::toJson() const
   conditionJson.insert( "level", static_cast<int>(level()));
   conditionJson.insert( "condition_type", this->metaObject()->className());
   conditionJson.insert( "source", sourceDescription());
-  conditionJson.insert( "target", targetSecription());
+  conditionJson.insert( "query", queryString());
+  conditionJson.insert( "target", targetDescription());
 
   QJsonDocument jsonDoc(conditionJson);
   return jsonDoc.toJson(QJsonDocument::Compact);

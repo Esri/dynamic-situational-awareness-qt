@@ -27,6 +27,7 @@
 #include "Symbol.h"
 #include "SimpleLineSymbol.h"
 #include "GeometryTypes.h"
+#include "GeometryEngine.h"
 
 #include <QCursor>
 
@@ -215,7 +216,10 @@ void MarkupController::updateSketch()
 
   MultipartBuilder* outlineBuilder = new PolylineBuilder(m_geoView->spatialReference(), this);
   outlineBuilder->parts()->addPart(currentPart);
-  m_partOutlineGraphics.at(m_currentPartIndex)->setGeometry(outlineBuilder->toGeometry());
+
+  // get simplified geometry
+  const Geometry simplifiedLine = GeometryEngine::simplify(outlineBuilder->toGeometry());
+  m_partOutlineGraphics.at(m_currentPartIndex)->setGeometry(simplifiedLine);
 }
 
 void MarkupController::updateGeoView()

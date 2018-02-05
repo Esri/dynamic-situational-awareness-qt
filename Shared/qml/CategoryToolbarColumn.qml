@@ -81,8 +81,6 @@ CategoryToolbar {
         }
     }
 
-
-
     CategoryIcon {
         id: optionsIcon
         anchors {
@@ -109,7 +107,6 @@ CategoryToolbar {
                     closePrompt.visible = true;
                 }
             }
-
         }
     }
 

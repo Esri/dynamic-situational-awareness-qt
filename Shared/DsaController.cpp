@@ -27,6 +27,7 @@
 
 // Qt
 #include <QDir>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QSettings>
 
@@ -40,7 +41,6 @@ DsaController::DsaController(QObject* parent):
   m_scene(new Scene(this)),
   m_jsonFormat(QSettings::registerFormat("json", &readJsonFile, &writeJsonFile))
 {
-
   // setup config settings
   setupConfig();
   m_dataPath = m_dsaSettings["RootDataDirectory"].toString();
@@ -56,7 +56,6 @@ DsaController::DsaController(QObject* parent):
 DsaController::~DsaController()
 {
   // save the settings
-//  QFile configFile(m_configFilePath);
   saveSettings();
 }
 
@@ -92,7 +91,6 @@ void DsaController::onPropertyChanged(const QString& propertyName, const QVarian
 {
   m_dsaSettings.insert(propertyName, propertyValue);
   // save the settings
-//  QFile configFile(m_configFilePath);
   saveSettings();
 }
 
@@ -113,9 +111,9 @@ void DsaController::setupConfig()
   {
     // Open the config file, get settings, set them to the application controller
     QSettings settings(m_configFilePath, m_jsonFormat);
-    settings.beginGroup("Settings");
+    const QStringList allKeys = settings.allKeys();
     // get the values from the config, and write to the settings map
-    for (const QString& key : m_dsaSettings.keys())
+    for (const QString& key : allKeys)
     {
       if (settings.value(key).toStringList().length() > 1)
         m_dsaSettings[key] = settings.value(key).toStringList();
@@ -171,7 +169,8 @@ void DsaController::saveSettings()
 bool readJsonFile(QIODevice& device, QSettings::SettingsMap& map)
 {
   const QByteArray data = device.readAll();
-  QJsonDocument jsonDoc = QJsonDocument::fromBinaryData(data, QJsonDocument::Validate);
+  const QJsonDocument jsonDoc = QJsonDocument::fromJson(data);
+
   const QJsonObject jsonObject = jsonDoc.object();
 
   if (jsonObject.isEmpty())

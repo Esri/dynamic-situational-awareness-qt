@@ -57,3 +57,11 @@ AlertConditionData* WithinAreaAlertCondition::createData(AlertSource* source, Al
 {
   return new WithinAreaAlertConditionData(newConditionDataName(), level(), source, target, this);
 }
+
+/*!
+  \brief Returns the query string component for this condition - e.g. "is within".
+ */
+QString WithinAreaAlertCondition::queryString() const
+{
+  return QStringLiteral("is within");
+}

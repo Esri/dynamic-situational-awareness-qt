@@ -31,6 +31,8 @@ public:
 
   AlertConditionData* createData(AlertSource* source, AlertTarget* target) override;
 
+  QString queryString() const override;
+
   double distance() const;
 
 private:

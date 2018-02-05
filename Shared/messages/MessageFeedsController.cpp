@@ -261,6 +261,21 @@ void MessageFeedsController::setLocationBroadcastFrequency(int frequency)
   emit locationBroadcastFrequencyChanged();
 }
 
+bool MessageFeedsController::isLocationBroadcastInDistress() const
+{
+  return m_locationBroadcast->isInDistress();
+}
+
+void MessageFeedsController::setLocationBroadcastInDistress(bool inDistress)
+{
+  if (m_locationBroadcast->isInDistress() == inDistress)
+    return;
+
+  m_locationBroadcast->setInDistress(inDistress);
+
+  emit locationBroadcastInDistressChanged();
+}
+
 /*!
    \internal
    \brief Creates and returns a renderer from the provided \a rendererInfo with an optional \a parent.

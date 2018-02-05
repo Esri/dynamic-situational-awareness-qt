@@ -81,6 +81,11 @@ QUrl DsaResources::iconCreateReport() const
   return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_editmap_dark_d-2.png");
 }
 
+QUrl DsaResources::iconDistress() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/distressIcon.png");
+}
+
 QUrl DsaResources::iconDraw() const
 {
   return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_edit_dark_d.png");

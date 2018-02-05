@@ -102,6 +102,19 @@ Vehicle {
 
         onMousePressed: followHud.stopFollowing();
 
+        OverlayButton {
+            anchors {
+                top: parent.top
+                right: parent.right
+                margins: 10 * scaleFactor
+            }
+
+            iconUrl: DsaResources.iconDistress
+            onClicked: {
+                messageFeeds.toolController.locationBroadcastInDistress = !messageFeeds.toolController.locationBroadcastInDistress;
+            }
+        }
+
         CurrentLocation {
             id: currentLocation
             anchors {

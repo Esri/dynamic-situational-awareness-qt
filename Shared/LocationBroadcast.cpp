@@ -225,6 +225,22 @@ void LocationBroadcast::setFrequency(int frequency)
     m_timer->setInterval(m_frequency);
 }
 
+bool LocationBroadcast::isInDistress() const
+{
+  return m_inDistress;
+}
+
+void LocationBroadcast::setInDistress(bool inDistress)
+{
+  if (m_inDistress == inDistress)
+    return;
+
+  m_inDistress = inDistress;
+
+  if (m_inDistress && !isEnabled())
+    setEnabled(true);
+}
+
 /*!
    \brief Returns the message that is being broadcasted.
  */
@@ -301,19 +317,57 @@ void LocationBroadcast::broadcastLocation()
   {
     QVariantMap attribs;
 
-    m_message = Message(Message::MessageAction::Update, m_location);
+    const Message::MessageAction action = m_inDistress ? Message::MessageAction::Select :
+                                                         Message::MessageAction::Update;
+    m_message = Message(action, m_location);
     m_message.setMessageId(QUuid::createUuid().toString());
     m_message.setMessageType(m_messageType);
     m_message.setSymbolId(s_locationBroadcastSic);
 
     attribs.insert(Message::GEOMESSAGE_SIC_NAME, s_locationBroadcastSic);
     attribs.insert(Message::GEOMESSAGE_UNIQUE_DESIGNATION_NAME, QHostInfo::localHostName());
-    attribs.insert(Message::GEOMESSAGE_STATUS_911_NAME, 0);
+    const int status911 = m_inDistress ? 1 : 0;
+    attribs.insert(Message::GEOMESSAGE_STATUS_911_NAME, status911);
     m_message.setAttributes(attribs);
   }
   else
   {
     m_message.setGeometry(m_location);
+
+    const Message::MessageAction lastSentAction = m_message.messageAction();
+    switch (lastSentAction)
+    {
+    case Message::MessageAction::Update:
+    {
+      if (m_inDistress)
+        m_message.setMessageAction(Message::MessageAction::Select);
+      break;
+    }
+    case Message::MessageAction::Select:
+    {
+      if (!m_inDistress)
+        m_message.setMessageAction(Message::MessageAction::Unselect);
+      else
+        m_message.setMessageAction(Message::MessageAction::Update);
+      break;
+    }
+    case Message::MessageAction::Unselect:
+    {
+      if (m_inDistress)
+        m_message.setMessageAction(Message::MessageAction::Select);
+      else
+        m_message.setMessageAction(Message::MessageAction::Update);
+      break;
+    }
+    default:
+      break;
+    }
+
+    QVariantMap attribs = m_message.attributes();
+
+    const int status911 = m_inDistress ? 1 : 0;
+    attribs.insert(Message::GEOMESSAGE_STATUS_911_NAME, status911);
+    m_message.setAttributes(attribs);
   }
 
   emit messageChanged();

@@ -26,15 +26,21 @@
 #include "DsaController.h"
 
 // Qt
-#include <QSettings>
 #include <QDir>
+#include <QJsonDocument>
+#include <QSettings>
 
 using namespace Esri::ArcGISRuntime;
 
+bool readJsonFile(QIODevice& device, QSettings::SettingsMap& map);
+bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map);
+
 DsaController::DsaController(QObject* parent):
   QObject(parent),
-  m_scene(new Scene(this))
+  m_scene(new Scene(this)),
+  m_jsonFormat(QSettings::registerFormat("json", &readJsonFile, &writeJsonFile))
 {
+
   // setup config settings
   setupConfig();
   m_dataPath = m_dsaSettings["RootDataDirectory"].toString();
@@ -50,8 +56,8 @@ DsaController::DsaController(QObject* parent):
 DsaController::~DsaController()
 {
   // save the settings
-  QFile configFile(m_configFilePath);
-  saveSettings(configFile);
+//  QFile configFile(m_configFilePath);
+  saveSettings();
 }
 
 Esri::ArcGISRuntime::Scene* DsaController::scene() const
@@ -86,8 +92,8 @@ void DsaController::onPropertyChanged(const QString& propertyName, const QVarian
 {
   m_dsaSettings.insert(propertyName, propertyValue);
   // save the settings
-  QFile configFile(m_configFilePath);
-  saveSettings(configFile);
+//  QFile configFile(m_configFilePath);
+  saveSettings();
 }
 
 void DsaController::setupConfig()
@@ -96,18 +102,17 @@ void DsaController::setupConfig()
   createDefaultSettings();
 
   // get the app config
-  m_configFilePath = QString("%1/%2").arg(m_dsaSettings["RootDataDirectory"].toString(), "DsaAppConfig.ini");
+  m_configFilePath = QString("%1/%2").arg(m_dsaSettings["RootDataDirectory"].toString(), "DsaAppConfig.json");
 
   // If the config file does not exist, create it, and set all of the defaults
-  QFile configFile(m_configFilePath);
-  if (!configFile.exists())
+  if (!QFileInfo::exists(m_configFilePath))
   {
-    saveSettings(configFile);
+    saveSettings();
   }
   else
   {
     // Open the config file, get settings, set them to the application controller
-    QSettings settings(m_configFilePath, QSettings::IniFormat);
+    QSettings settings(m_configFilePath, m_jsonFormat);
     settings.beginGroup("Settings");
     // get the values from the config, and write to the settings map
     for (const QString& key : m_dsaSettings.keys())
@@ -150,18 +155,48 @@ m_dsaSettings["UnitOfMeasurement"] = QStringLiteral("meters");
 m_dsaSettings["UseGpsForElevation"] = QStringLiteral("true");
 }
 
-void DsaController::saveSettings(QFile& configFile)
+void DsaController::saveSettings()
 {
-  // create file
-  if (configFile.open(QIODevice::ReadWrite))
-  {
-    QTextStream stream(&configFile);
-    stream << "[Settings]\n";
+  QSettings settings(m_configFilePath, m_jsonFormat);
+  settings.setValue("test", 123);
 
-    // write defaults to the config file
-    for (const QString& key : m_dsaSettings.keys())
-    {
-      stream << key << "=" << m_dsaSettings.value(key).toStringList().join(",") << "\n";
-    }
+  // create file
+  //  if (configFile.open(QIODevice::ReadWrite))
+  //  {
+  //    QTextStream stream(&configFile);
+  //    stream << "[Settings]\n";
+
+  //    // write defaults to the config file
+  //    for (const QString& key : m_dsaSettings.keys())
+  //    {
+  //      stream << key << "=" << m_dsaSettings.value(key).toStringList().join(",") << "\n";
+  //    }
+  //  }
+}
+
+bool readJsonFile(QIODevice& device, QSettings::SettingsMap& map)
+{
+  return false;
+}
+
+bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map)
+{
+  QJsonObject jsonObject;
+  auto it = map.cbegin();
+  auto itEnd = map.cend();
+  for(; it != itEnd; ++it)
+  {
+    const QString& key = it.key();
+    const QVariant& val = it.value();
+
+    jsonObject.insert(key, val.toString());
   }
+
+  if (jsonObject.isEmpty())
+    return false;
+
+  QJsonDocument conditionsJsonDoc(jsonObject);
+  device.write(conditionsJsonDoc.toJson(QJsonDocument::Compact));
+
+  return true;
 }

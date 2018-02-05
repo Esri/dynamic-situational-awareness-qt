@@ -1,5 +1,5 @@
-#ifndef TELESTRATECONTROLLER_H
-#define TELESTRATECONTROLLER_H
+#ifndef MARKUPCONTROLLER_H
+#define MARKUPCONTROLLER_H
 
 #include "AbstractTool.h"
 #include "AbstractSketchTool.h"
@@ -8,7 +8,7 @@
 
 #include "GeometryTypes.h"
 
-class TelestrateController : public AbstractSketchTool
+class MarkupController : public AbstractSketchTool
 {
   Q_OBJECT
 
@@ -18,8 +18,8 @@ class TelestrateController : public AbstractSketchTool
   Q_PROPERTY(double drawingAltitude READ drawingAltitude WRITE setDrawingAltitude NOTIFY drawingAltitudeChanged)
 
 public:
-  explicit TelestrateController(QObject* parent = nullptr);
-  ~TelestrateController();
+  explicit MarkupController(QObject* parent = nullptr);
+  ~MarkupController();
 
   Q_INVOKABLE void setColor(QColor color);
   Q_INVOKABLE void setSurfacePlacement(int placementEnum);
@@ -57,4 +57,4 @@ private:
   bool m_is3d = false;
 };
 
-#endif // TELESTRATECONTROLLER_H
+#endif // MARKUPCONTROLLER_H

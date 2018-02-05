@@ -8,7 +8,7 @@
         <file>FollowHud.qml</file>
         <file>TableOfContents.qml</file>
         <file>NavigationTool.qml</file>
-        <file>TelestrateTool.qml</file>
+        <file>MarkupTool.qml</file>
         <file>Imports.qml</file>
         <file>Analysis.qml</file>
         <file>Options.qml</file>

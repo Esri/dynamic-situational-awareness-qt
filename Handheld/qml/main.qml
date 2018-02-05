@@ -211,8 +211,8 @@ Handheld {
             onClosed: visible = false;
         }
 
-        TelestrateTool {
-            id: telestrateTool
+        MarkupTool {
+            id: markup
             anchors {
                 left: parent.left
                 top: parent.top

@@ -210,8 +210,8 @@ Vehicle {
             onClosed: visible = false;
         }
 
-        TelestrateTool {
-            id: telestrateTool
+        MarkupTool {
+            id: markup
             anchors {
                 right: parent.right
                 top: parent.top

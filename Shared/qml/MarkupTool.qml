@@ -19,8 +19,7 @@ import QtQuick.Dialogs 1.2
 import Esri.DSA 1.0
 
 DsaPanel {
-    id: telestrateRoot
-    title: qsTr("Telestrate")
+    title: qsTr("Markup")
 
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
@@ -35,8 +34,8 @@ DsaPanel {
     signal colorSelected()
     signal colorDialogVisibleChanged(bool dialogVisible)
 
-    TelestrateController {
-        id: telestrateController
+    MarkupController {
+        id: markupController
         drawModeEnabled: activeOnVisible
     }
 
@@ -124,7 +123,7 @@ DsaPanel {
                                     parent.ListView.view.currentIndex = index;
                                     selected = true;
 
-                                    if (telestrateController.drawModeEnabled)
+                                    if (markupController.drawModeEnabled)
                                         colorSelected();
                                 }
                             }
@@ -219,7 +218,7 @@ DsaPanel {
                     SwitchDelegate{
                         id: layerAppendedSwitch
                         text: qsTr("Visible")
-                        checked: telestrateController.active
+                        checked: markupController.active
                         width: parent.width
                         font.pixelSize: 15 * scaleFactor
 
@@ -235,7 +234,7 @@ DsaPanel {
                         }
 
                         onCheckedChanged: {
-                            telestrateController.active = checked;
+                            markupController.active = checked;
                             if (!checked)
                                 drawModeSwitch.checked = checked;
                         }
@@ -244,7 +243,7 @@ DsaPanel {
                     SwitchDelegate {
                         id: drawModeSwitch
                         text: qsTr("Drawing Mode Enabled")
-                        checked: telestrateController.drawModeEnabled
+                        checked: markupController.drawModeEnabled
                         width: parent.width
                         font.pixelSize: 15 * scaleFactor
 
@@ -260,7 +259,7 @@ DsaPanel {
                         }
 
                         onCheckedChanged: {
-                            telestrateController.drawModeEnabled = checked;
+                            markupController.drawModeEnabled = checked;
                             if (checked)
                                 layerAppendedSwitch.checked = checked;
                         }
@@ -270,7 +269,7 @@ DsaPanel {
                         text: "Surface Placement"
                         leftPadding: 5 * scaleFactor
                         color: Material.foreground
-                        visible: telestrateController.is3d
+                        visible: markupController.is3d
                     }
 
                     Row {
@@ -284,15 +283,15 @@ DsaPanel {
                             model: ["Draped", "Relative"]
                             currentIndex: 0
                             width: currentIndex === 0 ? parent.width * 0.95 : parent.width / 2
-                            visible: telestrateController.is3d
+                            visible: markupController.is3d
 
                             onCurrentIndexChanged: {
                                 // Draped
                                 if (currentIndex === 0)
-                                    telestrateController.setSurfacePlacement(currentIndex);
+                                    markupController.setSurfacePlacement(currentIndex);
                                 // The corresponding Enum value for Relative placement is 2
                                 else if (currentIndex === 1)
-                                    telestrateController.setSurfacePlacement(currentIndex + 1);
+                                    markupController.setSurfacePlacement(currentIndex + 1);
                             }
 
                             Behavior on width {
@@ -315,7 +314,7 @@ DsaPanel {
 
 
                             onTextChanged: {
-                                telestrateController.drawingAltitude = Number(text)
+                                markupController.drawingAltitude = Number(text)
                             }
                         }
                     }
@@ -370,7 +369,7 @@ DsaPanel {
                         width: parent.width / 1.50
                         onClicked: {
                             graphicsDeleted()
-                            telestrateController.deleteSelectedGraphics()
+                            markupController.deleteSelectedGraphics()
                         }
                     }
 
@@ -380,7 +379,7 @@ DsaPanel {
                         width: parent.width / 1.50
                         onClicked: {
                             graphicsDeleted()
-                            telestrateController.deleteAllGraphics()
+                            markupController.deleteAllGraphics()
                         }
                     }
                 }
@@ -403,19 +402,19 @@ DsaPanel {
     // calls into C++ to create a new SimpleLineSymbol with the desired color
     function selectColor(colorRectangle) {
         colorModel.setProperty(colorView.currentIndex, "selected", false);
-        telestrateController.setColor(colorRectangle.color);
+        markupController.setColor(colorRectangle.color);
     }
 
     onVisibleChanged: {
         if (visible && activeOnVisible)
-            telestrateController.active = true;
+            markupController.active = true;
         if (visible && !drawModeSwitch.checked) {
             drawModeSwitch.checked = true;
-            telestrateController.drawModeEnabled = true;
+            markupController.drawModeEnabled = true;
         }
         if (!visible && drawModeSwitch.checked) {
             drawModeSwitch.checked = false;
-            telestrateController.drawModeEnabled = false;
+            markupController.drawModeEnabled = false;
         }
     }
 
@@ -424,7 +423,7 @@ DsaPanel {
         for (var i = 0; i < drawColors.length; i++)
             colorModel.append({"drawColor": drawColors[i], "selected": false});
 
-        telestrateController.setColor(drawColors[0]);
+        markupController.setColor(drawColors[0]);
         colorModel.setProperty(colorView.currentIndex, "selected", true);
     }
 }

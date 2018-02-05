@@ -39,7 +39,7 @@ Row {
                 selected: true
             }
             PropertyChanges {
-                target: telestrateTool
+                target: markup
                 visible: true
             }
         },

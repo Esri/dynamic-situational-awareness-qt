@@ -42,6 +42,7 @@ Vehicle {
         }
         toolbarLabelText: categoryToolbar.titleText
         height: DsaStyles.mainToolbarHeight * scaleFactor
+        menuVisible: true
 
         MapToolRow {
             id: mapToolRow
@@ -153,7 +154,7 @@ Vehicle {
             height: width
         }
 
-        CategoryToolbar {
+        CategoryToolbarColumn {
             id: categoryToolbar
             anchors {
                 top: parent.top
@@ -162,6 +163,7 @@ Vehicle {
             }
             width: 56 * scaleFactor
             appTitle: "DSA - V"
+            opacity: 0.75
 
             onSettingsClicked: optionsTool.visible = true;
             onAboutClicked: aboutTool.visible = true;
@@ -170,14 +172,13 @@ Vehicle {
         TableOfContents {
             id: tableOfContentsTool
             anchors {
-                left: parent.left
+                right: parent.right
                 top: parent.top
                 bottom: sceneView.attributionTop
             }
             width: drawer.width
             visible: false
             isMobile: false
-
             onClosed: {
                 mapToolRow.tocIconSelected = false;
                 visible = false;
@@ -188,33 +189,31 @@ Vehicle {
         AlertList {
             id: alertsTool
             anchors {
-                left: parent.left
+                right: parent.right
                 top: parent.top
                 bottom: sceneView.attributionTop
             }
             width: drawer.width
             visible: false
-
             onClosed: visible = false;
         }
 
         AlertConditionsTool {
             id: alertConditionsTool
             anchors {
-                left: parent.left
+                right: parent.right
                 top: parent.top
                 bottom: sceneView.attributionTop
             }
             width: drawer.width
             visible: false
-
             onClosed: visible = false;
         }
 
         TelestrateTool {
             id: telestrateTool
             anchors {
-                left: parent.left
+                right: parent.right
                 top: parent.top
                 bottom: sceneView.attributionTop
             }
@@ -230,7 +229,7 @@ Vehicle {
         PopupStackView {
             id: identifyResults
             anchors {
-                left: sceneView.left
+                right: parent.right
                 top: sceneView.top
                 bottom: sceneView.attributionTop
             }
@@ -245,6 +244,7 @@ Vehicle {
             id: drawer
             width: 272 * scaleFactor
             height: sceneView.height - 20 * scaleFactor // approximation for attribution text
+            edge: Qt.RightEdge
             y: topToolbar.height
 
             onClosed: {
@@ -338,7 +338,6 @@ Vehicle {
     About {
         id: aboutTool
         anchors.fill: parent
-
         visible: false
     }
 

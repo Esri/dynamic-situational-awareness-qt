@@ -28,9 +28,8 @@ Item {
     Rectangle {
         anchors.fill: parent
         color: Material.primary
-        opacity: 0.75
+        opacity: 0.9
     }
-
 
     state: "home"
     states: [
@@ -101,104 +100,4 @@ Item {
             }
         }
     ]
-
-    Column {
-        anchors {
-            fill: parent
-            topMargin: 10 * scaleFactor
-        }
-
-        CategoryIcon {
-            id: homeIcon
-            iconSource: DsaResources.iconHome
-            categoryName: "home"
-            onCategorySelected: categoryToolbar.state = categoryName
-        }
-
-        CategoryIcon {
-            id: mapIcon
-            iconSource: DsaResources.iconMap
-            categoryName: "map"
-            onCategorySelected: categoryToolbar.state = categoryName
-        }
-
-        CategoryIcon {
-            id: reportsIcon
-            iconSource: DsaResources.iconCreateReport
-            categoryName: "reports"
-            onCategorySelected: categoryToolbar.state = categoryName
-        }
-
-        CategoryIcon {
-            id: analysisIcon
-            iconSource: DsaResources.iconTools
-            categoryName: "analysis"
-            onCategorySelected: categoryToolbar.state = categoryName
-        }
-
-        CategoryIcon {
-            id: alertIcon
-            iconSource: DsaResources.iconAlert
-            categoryName: "alerts"
-            onCategorySelected: categoryToolbar.state = categoryName
-
-            ViewedAlerts {
-                anchors {
-                    right: parent.right
-                    top: parent.top
-                }
-            }
-        }
-
-        CategoryIcon {
-            id: markupIcon
-            iconSource: DsaResources.iconDraw
-            categoryName: "markup"
-            onCategorySelected: categoryToolbar.state = categoryName
-        }
-    }
-
-    Column {
-        anchors {
-            bottom: parent.bottom
-            horizontalCenter: parent.horizontalCenter
-        }
-
-        CategoryIcon {
-            id: optionsIcon
-
-            iconSource: DsaResources.iconSettings
-            categoryName: "options"
-            onCategorySelected: menu.open()
-        }
-
-        Menu {
-            id: menu
-            MenuItem {
-                text: "About"
-                onTriggered: aboutClicked()
-            }
-            MenuItem {
-                text: "Settings"
-                onTriggered: settingsClicked()
-            }
-            MenuItem {
-                text: "Close"
-                onTriggered: {
-                    closePrompt.visible = true;
-                }
-            }
-        }
-    }
-
-    MessageDialog {
-        id: closePrompt
-        visible: false
-        icon: StandardIcon.Question
-        title: appTitle
-        text: "Are you sure you want to close?"
-        standardButtons: StandardButton.Yes | StandardButton.No
-        onYes: Qt.quit();
-        onNo:  visible = false;
-    }
 }

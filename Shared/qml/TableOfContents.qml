@@ -97,12 +97,15 @@ DsaPanel {
                 }
 
                 // Menu for Vehicle
-                Popup {
+                Menu {
                     id: vehicleMenu
+                    width: 125 * scaleFactor
 
                     Column {
                         anchors.margins: 10 * scaleFactor
+                        width: parent.width
                         spacing: 10 * scaleFactor
+                        leftPadding: 10 * scaleFactor
 
                         ListLabel {
                             text: "Zoom to"

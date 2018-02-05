@@ -13,6 +13,7 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
+import QtQuick.Dialogs 1.2
 import Esri.DSA 1.0
 import QtQuick.Controls.Material 2.2
 
@@ -20,11 +21,12 @@ ToolBar {
     property alias toolbarLabelText: toolbarLabel.text
     property int marginWidth: 5 * scaleFactor
     property int imageWidth: 36 * scaleFactor
+    property bool menuVisible
 
     Row {
         anchors {
             fill: parent
-            margins: 5 * scaleFactor
+            margins: 10 * scaleFactor
         }
 
         spacing: 5 * scaleFactor
@@ -34,6 +36,7 @@ ToolBar {
             width: DsaStyles.secondaryIconSize * scaleFactor
             height: width
             source: DsaResources.iconDrawer
+            visible: menuVisible
 
             MouseArea {
                 anchors.fill: parent
@@ -51,6 +54,7 @@ ToolBar {
             }
             color: Material.foreground
         }
+
     }
 }
 

@@ -170,7 +170,24 @@ void DsaController::saveSettings()
 
 bool readJsonFile(QIODevice& device, QSettings::SettingsMap& map)
 {
-  return false;
+  const QByteArray data = device.readAll();
+  QJsonDocument jsonDoc = QJsonDocument::fromBinaryData(data, QJsonDocument::Validate);
+  const QJsonObject jsonObject = jsonDoc.object();
+
+  if (jsonObject.isEmpty())
+    return false;
+
+  auto objIt = jsonObject.constBegin();
+  auto objEnd = jsonObject.constEnd();
+  for (; objIt != objEnd; ++objIt)
+  {
+    const QString& key = objIt.key();
+    const QString val = objIt.value().toString();
+
+    map.insert(key, val);
+  }
+
+  return !map.isEmpty();
 }
 
 bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map)

@@ -95,6 +95,9 @@ void LocationTextController::onLocationChanged(const Point& pt)
   if (m_coordinateFormat.isEmpty())
     return;
 
+  if (formatCoordinate == nullptr)
+    return;
+
   // update location text
   m_currentLocationText = QString("%1 (%2)").arg(formatCoordinate(pt), m_coordinateFormat);
   emit currentLocationTextChanged();
@@ -145,7 +148,7 @@ void LocationTextController::setProperties(const QVariantMap& properties)
  */
 void LocationTextController::setCoordinateFormat(const QString& format)
 {
-  if (format == m_coordinateFormat)
+  if (format == m_coordinateFormat && formatCoordinate != nullptr)
     return;
 
   m_coordinateFormat = format;

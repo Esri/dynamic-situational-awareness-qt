@@ -63,3 +63,11 @@ double WithinDistanceAlertCondition::distance() const
 {
   return m_distance;
 }
+
+/*!
+  \brief Returns the query string component for this condition - e.g. "is within X meters of".
+ */
+QString WithinDistanceAlertCondition::queryString() const
+{
+  return QString("is within %2 meters of").arg(QString::number(m_distance));
+}

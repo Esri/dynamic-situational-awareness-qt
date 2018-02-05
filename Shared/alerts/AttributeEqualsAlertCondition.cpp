@@ -53,3 +53,11 @@ AlertConditionData* AttributeEqualsAlertCondition::createData(AlertSource* sourc
 {
   return new AttributeEqualsAlertConditionData(newConditionDataName(), level(), source, target, m_attributeName, this);
 }
+
+/*!
+  \brief Returns the query string component for this condition in the form "[MyAttribute] =".
+ */
+QString AttributeEqualsAlertCondition::queryString() const
+{
+  return QString("[%1] = ").arg(m_attributeName);
+}

@@ -17,6 +17,7 @@
 
 #include "TaskWatcher.h"
 
+#include <QJsonObject>
 #include <QHash>
 #include <QStringListModel>
 
@@ -36,6 +37,7 @@ class GraphicsOverlay;
 }
 
 class LocationAlertSource;
+class AlertCondition;
 class AlertConditionData;
 class AlertConditionListModel;
 class AlertTarget;
@@ -52,11 +54,14 @@ class AlertConditionsController : public Esri::ArcGISRuntime::Toolkit::AbstractT
   Q_PROPERTY(bool pickMode READ pickMode NOTIFY pickModeChanged)
 
 public:
+  static const QString ALERT_CONDITIONS_PROPERTYNAME;
+
   explicit AlertConditionsController(QObject* parent = nullptr);
   ~AlertConditionsController();
 
   // AbstractTool interface
   QString toolName() const override;
+  void setProperties(const QVariantMap& properties) override;
 
   void setActive(bool active) override;
 
@@ -87,12 +92,15 @@ private slots:
   void onIdentifyLayersCompleted(const QUuid& taskId, QList<Esri::ArcGISRuntime::IdentifyLayerResult*> identifyResults);
   void onIdentifyGraphicsOverlaysCompleted(const QUuid& taskId, QList<Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult*> identifyResults);
   void handleNewAlertConditionData(AlertConditionData* newConditionData);
+  void onConditionsChanged();
 
 private:
   void setTargetNames(const QStringList& targetNames);
   void setSourceNames(const QStringList& sourceNames);
+  QJsonObject conditionToJson(AlertCondition* condition) const;
+  AlertCondition* jsonToCondition(const QString& json) const;
 
-  AlertTarget* targetFromItemIdAndIndex(int itemId, int targetOverlayIndex) const;
+  AlertTarget* targetFromItemIdAndIndex(int itemId, int targetOverlayIndex, QString& targetDescription) const;
   AlertTarget* targetFromFeatureLayer(Esri::ArcGISRuntime::FeatureLayer* featureLayer, int itemId) const;
   AlertTarget* targetFromGraphicsOverlay(Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlay, int itemId) const;
   Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlayFromName(const QString& overlayName);

@@ -27,7 +27,8 @@ public:
   enum AlertConditionListRoles
   {
     Name = Qt::UserRole + 2,
-    Level = Qt::UserRole + 3
+    Level = Qt::UserRole + 3,
+    Description = Qt::UserRole + 4
   };
 
   explicit AlertConditionListModel(QObject* parent = nullptr);

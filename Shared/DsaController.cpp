@@ -162,7 +162,11 @@ void DsaController::saveSettings()
   for (; it != itEnd; ++it)
   {
     const QVariant& val = it.value();
-    settings.setValue(it.key(), val.toStringList().join(","));
+    QString stringVal = val.toStringList().join(",");
+    if (stringVal.isEmpty())
+      stringVal = val.toString();
+
+    settings.setValue(it.key(), stringVal);
   }
 }
 

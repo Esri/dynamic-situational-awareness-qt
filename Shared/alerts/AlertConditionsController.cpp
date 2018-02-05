@@ -683,7 +683,7 @@ void AlertConditionsController::onConditionsChanged()
     return;
 
   QJsonDocument conditionsJsonDoc(allConditionsJson);
-//  emit propertyChanged(ALERT_CONDITIONS_PROPERTYNAME, conditionsJsonDoc.toJson(QJsonDocument::Compact));
+  emit propertyChanged(ALERT_CONDITIONS_PROPERTYNAME, conditionsJsonDoc.toJson(QJsonDocument::Compact));
 }
 
 /*!

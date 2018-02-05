@@ -17,6 +17,16 @@
 
 using namespace Esri::ArcGISRuntime;
 
+/*!
+  \class AlertListModel
+  \inherits QAbstractListModel
+  \brief A model responsible for storing \l AlertConditionData objects and reporting when they
+  change.
+  */
+
+/*!
+  \brief Static method to return a singleton instance of the model.
+ */
 AlertListModel* AlertListModel::instance()
 {
   static AlertListModel s_instance;
@@ -24,36 +34,46 @@ AlertListModel* AlertListModel::instance()
   return &s_instance;
 }
 
+/*!
+  \brief Constructor for a model taking an optional \a parent.
+ */
 AlertListModel::AlertListModel(QObject* parent):
   QAbstractListModel(parent)
 {
+  // set up the hash of role names
   m_roles[AlertListRoles::AlertId] = "alertId";
   m_roles[AlertListRoles::Name] = "name";
   m_roles[AlertListRoles::Level] = "level";
   m_roles[AlertListRoles::Viewed] = "viewed";
 }
 
+/*!
+  \brief Destructor.
+ */
 AlertListModel::~AlertListModel()
 {
 
 }
 
-bool AlertListModel::addAlertConditionData(AlertConditionData* alert)
+/*!
+  \brief Adds a new \l AlertConditionData \a newConditionData to the model.
+ */
+bool AlertListModel::addAlertConditionData(AlertConditionData* newConditionData)
 {
-  if (!alert)
+  if (!newConditionData)
     return false;
 
-  if (!alert->id().isNull())
+  if (!newConditionData->id().isNull())
     return false;
 
   const int size = m_alerts.size();
   const int insertIdx = size == 0 ? 0 : size -1;
   const QUuid id = QUuid::createUuid();
-  alert->setId(id);
+  newConditionData->setId(id);
 
-  auto handleDataChanged = [this, alert]()
+  auto handleDataChanged = [this, newConditionData]()
   {
-    if (alert->id().isNull())
+    if (newConditionData->id().isNull())
       return;
 
     auto it = m_alerts.cbegin();
@@ -65,7 +85,7 @@ bool AlertListModel::addAlertConditionData(AlertConditionData* alert)
       if (!testAlert)
         continue;
 
-      if (testAlert->id() == alert->id())
+      if (testAlert->id() == newConditionData->id())
       {
         const QModelIndex changedIndex = index(currRow, 0);
         emit dataChanged(changedIndex, changedIndex);
@@ -73,31 +93,34 @@ bool AlertListModel::addAlertConditionData(AlertConditionData* alert)
     }
   };
 
-  connect(alert, &AlertConditionData::viewedChanged, this, handleDataChanged);
-  connect(alert, &AlertConditionData::dataChanged, this, handleDataChanged);
-  connect(alert, &AlertConditionData::activeChanged, this, handleDataChanged);
+  connect(newConditionData, &AlertConditionData::viewedChanged, this, handleDataChanged);
+  connect(newConditionData, &AlertConditionData::dataChanged, this, handleDataChanged);
+  connect(newConditionData, &AlertConditionData::activeChanged, this, handleDataChanged);
 
-  connect(alert, &AlertConditionData::noLongerValid, this, [this, alert]
+  connect(newConditionData, &AlertConditionData::noLongerValid, this, [this, newConditionData]
   {
-    removeAlert(alert);
+    removeAlert(newConditionData);
   });
 
   beginInsertRows(QModelIndex(), insertIdx, insertIdx);
-  m_alerts.append(alert);
+  m_alerts.append(newConditionData);
   endInsertRows();
 
   return true;
 }
 
-void AlertListModel::removeAlert(AlertConditionData* alert)
+/*!
+  \brief Removes \l conditionData from the model.
+ */
+void AlertListModel::removeAlert(AlertConditionData* conditionData)
 {
-  if (!alert)
+  if (!conditionData)
     return;
 
-  if (alert->id().isNull())
+  if (conditionData->id().isNull())
     return;
 
-  const QUuid theId = alert->id();
+  const QUuid theId = conditionData->id();
 
   for (int i = 0; i < m_alerts.size(); ++i)
   {
@@ -113,11 +136,18 @@ void AlertListModel::removeAlert(AlertConditionData* alert)
   }
 }
 
+/*!
+  \brief Return the \l AlertConditionData at \a rowIndex.
+ */
 AlertConditionData* AlertListModel::alertAt(int rowIndex) const
 {
   return m_alerts.value(rowIndex, nullptr);
 }
 
+
+/*!
+  \brief Removes the \l AlertConditionData at \a rowIndex.
+ */
 void AlertListModel::removeAt(int rowIndex)
 {
   AlertConditionData* alert = alertAt(rowIndex);
@@ -129,11 +159,20 @@ void AlertListModel::removeAt(int rowIndex)
   endRemoveRows();
 }
 
+
+/*!
+  \brief Returns the number of condition data objects in the model.
+ */
 int AlertListModel::rowCount(const QModelIndex&) const
 {
   return m_alerts.size();
 }
 
+/*!
+  \brief Returns the data stored under \a role at \a index in the model.
+
+  The role should make use of the \l AlertListRoles enum.
+ */
 QVariant AlertListModel::data(const QModelIndex& index, int role) const
 {
   if (index.row() < 0 || index.row() > rowCount())
@@ -164,6 +203,13 @@ QVariant AlertListModel::data(const QModelIndex& index, int role) const
   return QVariant();
 }
 
+/*!
+  \brief Sets the data stored under \a role at \a index in the model to \a value.
+
+  The role should make use of the \l AlertListRoles enum.
+
+  Return \c true if the data was successfully set and \c false otherwise.
+ */
 bool AlertListModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
   if (!index.isValid() || value.isNull())
@@ -202,6 +248,11 @@ bool AlertListModel::setData(const QModelIndex& index, const QVariant& value, in
   return valueSet;
 }
 
+/*!
+  \brief Returns the hash of role names used by the model.
+
+  The roles are based on the \l AlertListRoles enum.
+ */
 QHash<int, QByteArray> AlertListModel::roleNames() const
 {
   return m_roles;

@@ -243,17 +243,7 @@ Handheld {
             attributeNameTextColor: Material.foreground
             attributeValueTextColor: Material.foreground
             titleTextColor: Material.foreground
-
-            Button {
-                text: "Close"
-                anchors {
-                    margins: 4 * scaleFactor
-                    bottom: identifyResults.bottom
-                    horizontalCenter: identifyResults.horizontalCenter
-                }
-                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                onClicked: identifyResults.dismiss();
-            }
+            closeButtonColor: Material.foreground
         }
 
         Drawer {

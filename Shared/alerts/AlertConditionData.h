@@ -56,12 +56,18 @@ public:
 
   virtual bool matchesQuery() const = 0;
 
+  bool cachedQueryResult() const;
+  bool isQueryOutOfDate() const;
+
 signals:
   void statusChanged();
   void viewedChanged();
   void dataChanged();
   void activeChanged();
   void noLongerValid();
+
+private slots:
+  void handleDataChanged();
 
 private:
   QString m_name;
@@ -71,6 +77,8 @@ private:
   QUuid m_id;
   bool m_viewed = false;
   bool m_active = false;
+  bool m_queryOutOfDate = true;
+  mutable bool m_cachedQueryResult = false;
 };
 
 #endif // ALERTCONDITIONDATA_H

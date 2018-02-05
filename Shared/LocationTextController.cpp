@@ -41,7 +41,9 @@ const QString LocationTextController::Feet = QStringLiteral("feet");
  \brief Constructor that takes an optional \a parent.
  */
 LocationTextController::LocationTextController(QObject* parent) :
-  Toolkit::AbstractTool(parent)
+  Toolkit::AbstractTool(parent),
+  m_coordinateFormat(DMS),
+  m_unitOfMeasurement(Meters)
 {
   Toolkit::ToolManager::instance().addTool(this);
 
@@ -91,6 +93,9 @@ QString LocationTextController::currentElevationText() const
 void LocationTextController::onLocationChanged(const Point& pt)
 {
   if (m_coordinateFormat.isEmpty())
+    return;
+
+  if (formatCoordinate == nullptr)
     return;
 
   // update location text
@@ -143,7 +148,7 @@ void LocationTextController::setProperties(const QVariantMap& properties)
  */
 void LocationTextController::setCoordinateFormat(const QString& format)
 {
-  if (format == m_coordinateFormat)
+  if (format == m_coordinateFormat && formatCoordinate != nullptr)
     return;
 
   m_coordinateFormat = format;

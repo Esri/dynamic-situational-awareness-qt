@@ -34,6 +34,25 @@ bool AlertConditionListModel::addAlertCondition(AlertCondition* condition)
   const int size = m_conditions.size();
   const int insertIdx = size == 0 ? 0 : size;
 
+  connect(condition, &AlertCondition::conditionChanged, this, [this, condition]()
+  {
+    auto it = m_conditions.cbegin();
+    auto itEnd = m_conditions.cend();
+    int currRow = 0;
+    for (; it != itEnd; ++it, ++currRow)
+    {
+      AlertCondition* candidateCondition = *it;
+      if (!candidateCondition)
+        continue;
+
+      if (candidateCondition == condition)
+      {
+        const QModelIndex changedIndex = index(currRow, 0);
+        emit dataChanged(changedIndex, changedIndex);
+      }
+    }
+  });
+
   beginInsertRows(QModelIndex(), insertIdx, insertIdx);
   m_conditions.append(condition);
   endInsertRows();

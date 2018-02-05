@@ -61,11 +61,10 @@ public:
   QString targetDescription() const;
   QString description() const;
 
-  QString toJson() const;
-
 signals:
   void noLongerValid();
   void newConditionData(AlertConditionData* newConditionData);
+  void conditionChanged();
 
 private:
   AlertLevel m_level;

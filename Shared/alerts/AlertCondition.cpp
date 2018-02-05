@@ -17,9 +17,6 @@
 #include "GraphicsOverlay.h"
 #include "GraphicListModel.h"
 
-#include <QJsonDocument>
-#include <QJsonObject>
-
 using namespace Esri::ArcGISRuntime;
 
 /*!
@@ -148,6 +145,8 @@ void AlertCondition::setLevel(AlertLevel level)
     if (data)
       data->setLevel(m_level);
   }
+
+  emit conditionChanged();
 }
 
 /*!
@@ -174,6 +173,8 @@ void AlertCondition::setName(const QString& name)
     if (data)
       data->setName(m_name + QString(" (%1)").arg(QString::number(i)));
   }
+
+  emit conditionChanged();
 }
 
 /*!
@@ -220,21 +221,4 @@ QString AlertCondition::targetDescription() const
 QString AlertCondition::description() const
 {
   return QString("%1 %2 %3").arg(sourceDescription(), queryString(), targetDescription());
-}
-
-/*!
-  \brief Returns a JSON representation of this condition.
- */
-QString AlertCondition::toJson() const
-{
-  QJsonObject conditionJson;
-  conditionJson.insert( "name", name());
-  conditionJson.insert( "level", static_cast<int>(level()));
-  conditionJson.insert( "condition_type", this->metaObject()->className());
-  conditionJson.insert( "source", sourceDescription());
-  conditionJson.insert( "query", queryString());
-  conditionJson.insert( "target", targetDescription());
-
-  QJsonDocument jsonDoc(conditionJson);
-  return jsonDoc.toJson(QJsonDocument::Compact);
 }

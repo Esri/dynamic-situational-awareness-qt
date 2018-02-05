@@ -35,6 +35,9 @@
 #include "LayerListModel.h"
 
 #include <QEventLoop>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -67,6 +70,8 @@ struct GraphicsResultsManager {
     qDeleteAll(m_results);
   }
 };
+
+const QString AlertConditionsController::ALERT_CONDITIONS_PROPERTYNAME = "Conditions";
 
 /*!
   \class AlertConditionsController
@@ -101,7 +106,10 @@ AlertConditionsController::AlertConditionsController(QObject* parent /* = nullpt
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged,
           this, &AlertConditionsController::onGeoviewChanged);
 
-  connect(m_conditions, &AlertConditionListModel::dataChanged, this, &AlertConditionsController::conditionsListChanged);
+  connect(m_conditions, &AlertConditionListModel::rowsInserted, this, &AlertConditionsController::onConditionsChanged);
+  connect(m_conditions, &AlertConditionListModel::rowsRemoved, this, &AlertConditionsController::onConditionsChanged);
+  connect(m_conditions, &AlertConditionListModel::modelReset, this, &AlertConditionsController::onConditionsChanged);
+  connect(m_conditions, &AlertConditionListModel::dataChanged, this, &AlertConditionsController::onConditionsChanged);
 
   onGeoviewChanged();
 }
@@ -652,6 +660,32 @@ void AlertConditionsController::handleNewAlertConditionData(AlertConditionData* 
   AlertListModel::instance()->addAlertConditionData(newConditionData);
 }
 
+void AlertConditionsController::onConditionsChanged()
+{
+  emit conditionsListChanged();
+
+  QJsonArray allConditionsJson;
+  const int conditionsCount = m_conditions->rowCount();
+  for(int i = 0; i < conditionsCount; ++i)
+  {
+    AlertCondition* condition = m_conditions->conditionAt(i);
+    if (condition == nullptr)
+      continue;
+
+    const QJsonObject conditionJson = conditionToJson(condition);
+    if (conditionJson.isEmpty())
+      continue;
+
+    allConditionsJson.append(conditionJson);
+  }
+
+  if (allConditionsJson.isEmpty())
+    return;
+
+  QJsonDocument conditionsJsonDoc(allConditionsJson);
+  emit propertyChanged(ALERT_CONDITIONS_PROPERTYNAME, conditionsJsonDoc.toJson(QJsonDocument::Compact));
+}
+
 /*!
   \brief internal
 
@@ -686,6 +720,37 @@ void AlertConditionsController::setSourceNames(const QStringList& sourceNames)
 
   m_sourceNames->setStringList(sourceNames);
   emit sourceNamesChanged();
+}
+
+/*!
+  \brief internal
+
+  Serialize \a condition to JSON.
+ */
+QJsonObject AlertConditionsController::conditionToJson(AlertCondition* condition) const
+{
+  if (!condition)
+    return QJsonObject();
+
+  QJsonObject conditionJson;
+  conditionJson.insert( QStringLiteral("name"), condition->name());
+  conditionJson.insert( QStringLiteral("level"), static_cast<int>(condition->level()));
+  conditionJson.insert( QStringLiteral("condition_type"), condition->metaObject()->className());
+  conditionJson.insert( QStringLiteral("source"), condition->sourceDescription());
+  conditionJson.insert( QStringLiteral("query"), condition->queryString());
+  conditionJson.insert( QStringLiteral("target"), condition->targetDescription());
+
+  return conditionJson;
+}
+
+/*!
+  \brief internal
+
+  Deserialize \a json to an \l AlertCondition.
+ */
+AlertCondition* AlertConditionsController::jsonToCondition(const QString& json) const
+{
+  return nullptr;
 }
 
 /*!

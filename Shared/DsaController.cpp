@@ -82,7 +82,7 @@ void DsaController::onError(const Error& e)
   emit errorOccurred(e.message(), e.additionalMessage());
 }
 
-void DsaController::onPropertyChanged(const QString &propertyName, const QVariant &propertyValue)
+void DsaController::onPropertyChanged(const QString& propertyName, const QVariant& propertyValue)
 {
   m_dsaSettings.insert(propertyName, propertyValue);
   // save the settings
@@ -159,9 +159,20 @@ void DsaController::saveSettings(QFile& configFile)
     stream << "[Settings]\n";
 
     // write defaults to the config file
-    for (const QString& key : m_dsaSettings.keys())
+    auto it = m_dsaSettings.cbegin();
+    auto itEnd = m_dsaSettings.cend();
+    for (; it != itEnd; ++it)
     {
-      stream << key << "=" << m_dsaSettings.value(key).toStringList().join(",") << "\n";
+      const QString& key = it.key();
+      const QVariant& val = it.value();
+      if (val.isNull())
+        continue;
+
+      QString settingsVal = val.toStringList().join(",");
+      if (settingsVal.isEmpty())
+        settingsVal = val.toString();
+
+      stream << key << "=" << settingsVal << "\n";
     }
   }
 }

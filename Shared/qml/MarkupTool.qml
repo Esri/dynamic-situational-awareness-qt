@@ -12,6 +12,7 @@
 
 import QtQuick 2.9
 import QtQuick.Controls 2.2
+import QtQuick.Controls 1.4 as QtQuick1
 import QtQuick.Controls.Material 2.2
 import QtGraphicalEffects 1.0
 import QtQuick.Window 2.2
@@ -20,9 +21,10 @@ import Esri.DSA 1.0
 
 Rectangle {
     id: rootMarkup
-    //title: qsTr("Markup")
     color: Material.primary
     opacity: 0.85
+
+    property alias markupEnabled: markupController.drawModeEnabled
 
     // Modifying this array will change the initial available colors
     property var drawColors: ["#000000", "#ffffff", "#F44336", "#03a9f4", "#fff176"]
@@ -30,31 +32,48 @@ Rectangle {
     // state strings
     property string drawState: "draw"
     property string editState: "edit"
-    property string tocState: "tocState"
+    property string tocState: "toc"
+    property string clearState: "clear"
 
     // to be emitted for UI purposes
     signal graphicsDeleted()
     signal colorSelected()
     signal colorDialogVisibleChanged(bool dialogVisible)
 
-    MarkupController {
-        id: markupController
-        drawModeEnabled: true
+    onVisibleChanged: {
+        if (visible) {
+            state = drawState;
+            markupController.active = true;
+            markupController.drawModeEnabled = true;
+        } else {
+            markupController.drawModeEnabled = false;
+            state = clearState;
+        }
     }
 
-    state: drawState
+    MarkupController {
+        id: markupController
+
+        onSketchComplete: nameDialog.open();
+    }
+
+    state: clearState
     states: [
         State {
             name: drawState
             PropertyChanges {
-                target: rootMarkup
-                visible: false
+                target: markupController
+                active: true
+            }
+            PropertyChanges {
+                target: markupController
+                drawModeEnabled: true
             }
         },
         State {
             name: editState
             PropertyChanges {
-                target: editRow
+                target: editPane
                 visible: true
             }
             PropertyChanges {
@@ -69,11 +88,19 @@ Rectangle {
                 target: rootMarkup
                 height: DsaStyles.mainToolbarHeight
             }
+            PropertyChanges {
+                target: markupController
+                active: true
+            }
+            PropertyChanges {
+                target: markupController
+                drawModeEnabled: drawModeEnabled
+            }
         },
         State {
             name: tocState
             PropertyChanges {
-                target: editRow
+                target: editPane
                 visible: false
             }
             PropertyChanges {
@@ -88,408 +115,232 @@ Rectangle {
                 target: rootMarkup
                 height: drawer.height
             }
+            PropertyChanges {
+                target: markupController
+                active: true
+            }
+            PropertyChanges {
+                target: markupController
+                drawModeEnabled: drawModeEnabled
+            }
+            PropertyChanges {
+                target: markupToc
+                visible: true
+            }
+        },
+        State {
+            name: clearState
+            PropertyChanges {
+                target: markupController
+                drawModeEnabled: drawModeEnabled
+            }
+            PropertyChanges {
+                target: markupController
+                active: active
+            }
+            PropertyChanges {
+                target: editPane
+                visible: false
+            }
+            PropertyChanges {
+                target: markupToc
+                visible: false
+            }
         }
     ]
 
-    Row {
-        id: editRow
-        anchors.fill: parent
+    Item {
+        id: editPane
+        width : parent.width
+        height: DsaStyles.mainToolbarHeight * scaleFactor
         visible: false
 
-        Text {
-            text: "edit"
+        DropShadow {
+            anchors.fill: colorRect
+            horizontalOffset: -1
+            verticalOffset: 1
+            radius: 8 * scaleFactor
+            smooth: true
+            samples: 16
+            color: "#80000000"
+            source: colorRect
         }
 
-        Text {
-            text: "edit2"
+        Rectangle {
+            id: colorRect
+            anchors.fill: parent
+            color: Material.background
+
+            Text {
+                id: colorTitle
+                anchors {
+                    top: parent.top
+                    left: parent.left
+                    margins: 5 * scaleFactor
+                }
+                text: qsTr("Draw Color")
+                color: Material.foreground
+            }
+
+            ListView {
+                id: colorView
+                anchors {
+                    top: colorTitle.bottom
+                    horizontalCenter: parent.horizontalCenter
+                    margins: 2 * scaleFactor
+                }
+                orientation: ListView.Horizontal
+                model: colorModel
+                height: 30 * scaleFactor
+                width: 150 * scaleFactor
+                spacing: 5 * scaleFactor
+                currentIndex: 0
+                snapMode: ListView.SnapOneItem
+
+                delegate: Component {
+
+                    Rectangle {
+                        height: 30 * scaleFactor
+                        width: height
+                        radius: 100 * scaleFactor
+                        color: drawColors[index]
+                        border {
+                            color: Material.accent
+                            width: 0.50 * scaleFactor
+                        }
+
+                        Image {
+                            anchors.centerIn: parent
+                            height: parent.height
+                            width: height
+                            source: DsaResources.iconComplete
+                            visible: selected
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                selectColor(parent);
+                                parent.ListView.view.currentIndex = index;
+                                selected = true;
+
+                                if (markupController.drawModeEnabled)
+                                    colorSelected();
+                            }
+                        }
+                    }
+                }
+
+                ListModel {
+                    id: colorModel
+                }
+            }
+
+            // button for adding new colors
+            RoundButton {
+                id: addButton
+                anchors {
+                    margins: 5 * scaleFactor
+                    right: parent.right
+                    bottom: parent.bottom
+                }
+                visible: Qt.platform.os !== "android" // ColorDialog does not scale properly on Android
+                height: 20 * scaleFactor
+                width: height
+                opacity: 0.95
+
+                background: Rectangle {
+                    implicitWidth: parent.width
+                    implicitHeight: implicitWidth
+                    opacity: enabled ? 1 : 0.3
+                    radius: addButton.radius
+                    color: Material.accent
+
+                    Image {
+                        anchors.centerIn: parent
+                        width: 16 * scaleFactor
+                        height: width
+                        source: DsaResources.iconAdd
+                    }
+                }
+
+                onClicked: {
+                    if (!newColorDialog.visible) {
+                        colorDialogVisibleChanged(true);
+                        newColorDialog.open();
+                    }
+                }
+            }
         }
     }
 
-//    Column {
-//        id: menuColumn
-//        spacing: 15 * scaleFactor
-//        anchors {
-//            top: titleBar.bottom
-//            horizontalCenter: parent.horizontalCenter
-//        }
-//        topPadding: 15 * scaleFactor
-//        width: parent.width / 1.1
+    Item {
+        id: markupToc
+        anchors.fill: parent
 
-//        // color selection
-//        Item {
-//            width : parent.width
-//            height: 75 * scaleFactor
+        // TODO
+    }
 
-//            DropShadow {
-//                anchors.fill: colorRect
-//                horizontalOffset: -1
-//                verticalOffset: 1
-//                radius: 8 * scaleFactor
-//                smooth: true
-//                samples: 16
-//                color: "#80000000"
-//                source: colorRect
-//            }
+    Dialog {
+        id: nameDialog
+        property int i: 1
+        onAccepted: {
+            markupController.setName(nameText.text.length > 0 ? nameText.text : "sketch " + i);
+            i++
+        }
 
-//            Rectangle {
-//                id: colorRect
-//                anchors.fill: parent
-//                color: Material.background
+        Row {
+            spacing: 5 * scaleFactor
 
-//                Text {
-//                    id: colorTitle
-//                    anchors {
-//                        top: parent.top
-//                        left: parent.left
-//                        margins: 5 * scaleFactor
-//                    }
-//                    text: qsTr("Draw Color")
-//                    color: Material.foreground
-//                }
+            Label {
+                anchors.verticalCenter: parent.verticalCenter
+                text: "Sketch Name:"
+                color: Material.primary
+                font {
+                    family: DsaStyles.fontFamily
+                    pixelSize: 12 * scaleFactor
+                }
+            }
 
-//                ListView {
-//                    id: colorView
-//                    anchors {
-//                        top: colorTitle.bottom
-//                        horizontalCenter: parent.horizontalCenter
-//                        margins: 2 * scaleFactor
-//                    }
-//                    orientation: ListView.Horizontal
-//                    model: colorModel
-//                    height: 30 * scaleFactor
-//                    width: 150 * scaleFactor
-//                    spacing: 5 * scaleFactor
-//                    currentIndex: 0
-//                    snapMode: ListView.SnapOneItem
+            QtQuick1.TextField {
+                id: nameText
+                anchors.verticalCenter: parent.verticalCenter
+                placeholderText: "sketch %1".arg(nameDialog.i)
+            }
+        }
 
-//                    delegate: Component {
+        onVisibleChanged: {
+            if (visible) {
+                nameText.text = "";
+                nameText.focus = true;
+            }
+        }
+    }
 
-//                        Rectangle {
-//                            height: 30 * scaleFactor
-//                            width: height
-//                            radius: 100 * scaleFactor
-//                            color: drawColors[index]
-//                            border {
-//                                color: Material.accent
-//                                width: 0.50 * scaleFactor
-//                            }
+    ColorDialog {
+        id: newColorDialog
+        title: "Choose a Draw Color"
 
-//                            Image {
-//                                anchors.centerIn: parent
-//                                height: parent.height
-//                                width: height
-//                                source: DsaResources.iconComplete
-//                                visible: selected
-//                            }
+        onAccepted: {
+            colorDialogVisibleChanged(false);
+            drawColors.push(color);
+            colorModel.append({"selected": false});
+            colorView.positionViewAtEnd();
+        }
+    }
 
-//                            MouseArea {
-//                                anchors.fill: parent
-//                                onClicked: {
-//                                    selectColor(parent);
-//                                    parent.ListView.view.currentIndex = index;
-//                                    selected = true;
+    // calls into C++ to create a new SimpleLineSymbol with the desired color
+    function selectColor(colorRectangle) {
+        colorModel.setProperty(colorView.currentIndex, "selected", false);
+        markupController.setColor(colorRectangle.color);
+    }
 
-//                                    if (markupController.drawModeEnabled)
-//                                        colorSelected();
-//                                }
-//                            }
-//                        }
-//                    }
+    // initialize the ListModel with the initial draw colors
+    Component.onCompleted: {
+        for (var i = 0; i < drawColors.length; i++)
+            colorModel.append({"drawColor": drawColors[i], "selected": false});
 
-//                    ListModel {
-//                        id: colorModel
-//                    }
-//                }
-
-//                // button for adding new colors
-//                RoundButton {
-//                    id: addButton
-//                    anchors {
-//                        margins: 5 * scaleFactor
-//                        right: parent.right
-//                        bottom: parent.bottom
-//                    }
-//                    visible: Qt.platform.os !== "android" // ColorDialog does not scale properly on Android
-//                    height: 20 * scaleFactor
-//                    width: height
-//                    opacity: 0.95
-
-//                    background: Rectangle {
-//                        implicitWidth: parent.width
-//                        implicitHeight: implicitWidth
-//                        opacity: enabled ? 1 : 0.3
-//                        radius: addButton.radius
-//                        color: Material.accent
-
-//                        Image {
-//                            anchors.centerIn: parent
-//                            width: 16 * scaleFactor
-//                            height: width
-//                            source: DsaResources.iconAdd
-//                        }
-//                    }
-
-//                    onClicked: {
-//                        if (!newColorDialog.visible) {
-//                            colorDialogVisibleChanged(true);
-//                            newColorDialog.open();
-//                        }
-//                    }
-//                }
-//            }
-//        }
-
-//        // draw and layer options
-//        Item {
-//            width : parent.width
-//            height: toolOptionsTitle.height + togglesColumn.height + 20 * scaleFactor
-
-//            DropShadow {
-//                anchors.fill: toggleRect
-//                horizontalOffset: -1
-//                verticalOffset: 1
-//                radius: 8 * scaleFactor
-//                smooth: true
-//                samples: 16
-//                color: "#80000000"
-//                source: toggleRect
-//            }
-
-//            Rectangle {
-//                id: toggleRect
-//                anchors.fill: parent
-//                color: Material.background
-
-//                Text {
-//                    id: toolOptionsTitle
-//                    text: "Tool Options"
-//                    color: Material.foreground
-//                    anchors {
-//                        top: parent.top
-//                        left: parent.left
-//                        margins: 5 * scaleFactor
-//                    }
-//                }
-
-//                Column {
-//                    id: togglesColumn
-//                    anchors {
-//                        top: toolOptionsTitle.bottom
-//                        horizontalCenter: parent.horizontalCenter
-//                        margins: 2 * scaleFactor
-//                    }
-//                    width: parent.width
-//                    spacing: 1 * scaleFactor
-
-//                    SwitchDelegate{
-//                        id: layerAppendedSwitch
-//                        text: qsTr("Visible")
-//                        checked: markupController.active
-//                        width: parent.width
-//                        font.pixelSize: 15 * scaleFactor
-
-//                        contentItem: Text {
-//                            rightPadding: layerAppendedSwitch.indicator.width + layerAppendedSwitch.spacing
-//                            text: layerAppendedSwitch.text
-//                            font: layerAppendedSwitch.font
-//                            opacity: enabled ? 1.0 : 0.3
-//                            color: Material.foreground
-//                            elide: Text.ElideRight
-//                            horizontalAlignment: Text.AlignLeft
-//                            verticalAlignment: Text.AlignVCenter
-//                        }
-
-//                        onCheckedChanged: {
-//                            markupController.active = checked;
-//                            if (!checked)
-//                                drawModeSwitch.checked = checked;
-//                        }
-//                    }
-
-//                    SwitchDelegate {
-//                        id: drawModeSwitch
-//                        text: qsTr("Drawing Mode Enabled")
-//                        checked: markupController.drawModeEnabled
-//                        width: parent.width
-//                        font.pixelSize: 15 * scaleFactor
-
-//                        contentItem: Text {
-//                            rightPadding: drawModeSwitch.indicator.width + drawModeSwitch.spacing
-//                            text: drawModeSwitch.text
-//                            font: drawModeSwitch.font
-//                            opacity: enabled ? 1.0 : 0.3
-//                            color: Material.foreground
-//                            elide: Text.ElideRight
-//                            horizontalAlignment: Text.AlignLeft
-//                            verticalAlignment: Text.AlignVCenter
-//                        }
-
-//                        onCheckedChanged: {
-//                            markupController.drawModeEnabled = checked;
-//                            if (checked)
-//                                layerAppendedSwitch.checked = checked;
-//                        }
-//                    }
-
-//                    Label {
-//                        text: "Surface Placement"
-//                        leftPadding: 5 * scaleFactor
-//                        color: Material.foreground
-//                        visible: markupController.is3d
-//                    }
-
-//                    Row {
-//                        anchors.horizontalCenter: parent.horizontalCenter
-//                        width: parent.width
-//                        padding: 5 * scaleFactor
-//                        spacing: 5 * scaleFactor
-
-//                        ComboBox {
-//                            id: surfacePlacementComboBox
-//                            model: ["Draped", "Relative"]
-//                            currentIndex: 0
-//                            width: currentIndex === 0 ? parent.width * 0.95 : parent.width / 2
-//                            visible: markupController.is3d
-
-//                            onCurrentIndexChanged: {
-//                                // Draped
-//                                if (currentIndex === 0)
-//                                    markupController.setSurfacePlacement(currentIndex);
-//                                // The corresponding Enum value for Relative placement is 2
-//                                else if (currentIndex === 1)
-//                                    markupController.setSurfacePlacement(currentIndex + 1);
-//                            }
-
-//                            Behavior on width {
-//                                SpringAnimation {
-//                                    spring: 3
-//                                    damping: .4
-//                                }
-//                            }
-//                        }
-
-//                        TextField {
-//                            id: altitudeInput
-//                            anchors.verticalCenter: parent.verticalCenter
-//                            visible: surfacePlacementComboBox.currentIndex === 1
-//                            placeholderText: "Alt. (m)"
-//                            width: parent.width / 3
-//                            color: Material.foreground
-//                            font.pixelSize: 12 * scaleFactor
-//                            inputMethodHints: Qt.ImhFormattedNumbersOnly
-
-
-//                            onTextChanged: {
-//                                markupController.drawingAltitude = Number(text)
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-
-//        Item {
-//            width : parent.width
-//            height: graphicsRemoveTitle.height + removeGraphicsColumn.height + 10 * scaleFactor
-
-//            DropShadow {
-//                anchors.fill: graphicDeleteRect
-//                horizontalOffset: -1
-//                verticalOffset: 1
-//                radius: 8 * scaleFactor
-//                smooth: true
-//                samples: 16
-//                color: "#80000000"
-//                source: graphicDeleteRect
-//            }
-
-//            Rectangle {
-//                id: graphicDeleteRect
-//                anchors.fill: parent
-//                color: Material.background
-
-//                Text {
-//                    id: graphicsRemoveTitle
-//                    text: "Remove Graphics"
-//                    color: Material.foreground
-//                    anchors {
-//                        top: parent.top
-//                        left: parent.left
-//                        margins: 5 * scaleFactor
-//                    }
-//                }
-
-//                Column {
-//                    id: removeGraphicsColumn
-//                    anchors{
-//                        top: graphicsRemoveTitle.bottom
-//                        horizontalCenter: parent.horizontalCenter
-//                        margins: 2 * scaleFactor
-//                    }
-//                    width: parent.width
-//                    spacing: 2 * scaleFactor
-
-//                    Button {
-//                        anchors.horizontalCenter: parent.horizontalCenter
-//                        text: "Selected Graphics"
-//                        width: parent.width / 1.50
-//                        onClicked: {
-//                            graphicsDeleted()
-//                            markupController.deleteSelectedGraphics()
-//                        }
-//                    }
-
-//                    Button {
-//                        anchors.horizontalCenter: parent.horizontalCenter
-//                        text: "All Graphics"
-//                        width: parent.width / 1.50
-//                        onClicked: {
-//                            graphicsDeleted()
-//                            markupController.deleteAllGraphics()
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-
-//    ColorDialog {
-//        id: newColorDialog
-//        title: "Choose a Draw Color"
-
-//        onAccepted: {
-//            colorDialogVisibleChanged(false);
-//            drawColors.push(color);
-//            colorModel.append({"selected": false});
-//            colorView.positionViewAtEnd();
-//        }
-//    }
-
-//    // calls into C++ to create a new SimpleLineSymbol with the desired color
-//    function selectColor(colorRectangle) {
-//        colorModel.setProperty(colorView.currentIndex, "selected", false);
-//        markupController.setColor(colorRectangle.color);
-//    }
-
-//    onVisibleChanged: {
-//        if (visible)
-//            markupController.active = true;
-//        if (visible && !drawModeSwitch.checked) {
-//            drawModeSwitch.checked = true;
-//            markupController.drawModeEnabled = true;
-//        }
-//        if (!visible && drawModeSwitch.checked) {
-//            drawModeSwitch.checked = false;
-//            markupController.drawModeEnabled = false;
-//        }
-//    }
-
-//    // initialize the ListModel with the initial draw colors
-//    Component.onCompleted: {
-//        for (var i = 0; i < drawColors.length; i++)
-//            colorModel.append({"drawColor": drawColors[i], "selected": false});
-
-//        markupController.setColor(drawColors[0]);
-//        colorModel.setProperty(colorView.currentIndex, "selected", true);
-//    }
+        markupController.setColor(drawColors[0]);
+        colorModel.setProperty(colorView.currentIndex, "selected", true);
+    }
 }

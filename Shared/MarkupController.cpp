@@ -40,6 +40,7 @@ MarkupController::MarkupController(QObject* parent):
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, &MarkupController::updateGeoView);
 
   updateGeoView();
+  setColor(QColor("black"));
 }
 
 MarkupController::~MarkupController()
@@ -205,6 +206,8 @@ void MarkupController::init()
 
     Toolkit::ToolResourceProvider::instance()->setMouseCursor(QCursor(Qt::ArrowCursor));
     m_isDrawing = false;
+
+    emit sketchComplete();
   });
 }
 
@@ -263,4 +266,13 @@ QString MarkupController::toolName() const
 GeometryType MarkupController::geometryType() const
 {
   return GeometryType::Polyline;
+}
+
+void MarkupController::setName(const QString& name)
+{
+  if (!m_sketchOverlay)
+    return;
+
+  const auto graphic = m_sketchOverlay->graphics()->last();
+  graphic->attributes()->setProperty("name", name);
 }

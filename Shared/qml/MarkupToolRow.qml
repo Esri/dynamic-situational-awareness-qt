@@ -22,7 +22,14 @@ Row {
     id: markupToolRow
     spacing: 10 * scaleFactor
     visible: categoryToolbar.state === "markup"
-    onVisibleChanged: state = "clear"
+    onVisibleChanged: {
+        if (visible) {
+            state = drawIcon.toolName
+        } else {
+            state = "clear";
+        }
+
+    }
 
     states: [
         State {
@@ -30,6 +37,10 @@ Row {
             PropertyChanges {
                 target: clearIcon
                 selected: true
+            }
+            PropertyChanges {
+                target: markup
+                state: markup.clearState
             }
         },
         State {
@@ -44,7 +55,7 @@ Row {
             }
             PropertyChanges {
                 target: markup
-                state: drawState
+                state: markup.drawState
             }
         },
         State {
@@ -59,16 +70,32 @@ Row {
             }
             PropertyChanges {
                 target: markup
-                state: editState
+                state: markup.editState
+            }
+            PropertyChanges {
+                target: drawIcon
+                selected: selected
             }
         },
-//        State {
-//            name: sendIcon.toolName
-//            PropertyChanges {
-//                target: sendIcon
-//                selected: true
-//            }
-//        },
+        State {
+            name: markupTocIcon.toolName
+            PropertyChanges {
+                target: markupTocIcon
+                selected: true
+            }
+            PropertyChanges {
+                target: markup
+                visible: true
+            }
+            PropertyChanges {
+                target: markup
+                state: markup.tocState
+            }
+            PropertyChanges {
+                target: drawIcon
+                selected: selected
+            }
+        },
         State {
             name: "clear"
             PropertyChanges {
@@ -77,28 +104,18 @@ Row {
             }
             PropertyChanges {
                 target: drawIcon
-                selected: false
+                selected: selected
             }
             PropertyChanges {
                 target: markupTocIcon
                 selected: false
             }
-//            PropertyChanges {
-//                target: sendIcon
-//                selected: false
-//            }
+            PropertyChanges {
+                target: markup
+                state: markup.clearState
+            }
         }
     ]
-
-//    // Send
-//    ToolIcon {
-//        id: sendIcon
-//        iconSource: DsaResources.iconSendMap
-//        toolName: "Send"
-//        onToolSelected: {
-//            // TODO
-//        }
-//    }
 
     // Draw
     ToolIcon {
@@ -106,9 +123,11 @@ Row {
         iconSource: DsaResources.iconSketch
         toolName: "Draw"
         onToolSelected: {
-            if (markupToolRow.state === toolName)
+            if (markupToolRow.state === toolName) {
+                selected = false;
+                markup.markupEnabled = false;
                 markupToolRow.state = "clear";
-            else {
+            } else {
                 markupToolRow.state = toolName;
             }
         }

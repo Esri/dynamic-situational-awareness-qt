@@ -25,6 +25,7 @@ public:
   Q_INVOKABLE void setSurfacePlacement(int placementEnum);
   Q_INVOKABLE void deleteSelectedGraphics();
   Q_INVOKABLE void deleteAllGraphics();
+  Q_INVOKABLE void setName(const QString& name);
 
   void setActive(bool active) override;
 
@@ -44,6 +45,7 @@ signals:
   void drawModeEnabledChanged();
   void activeChanged();
   void drawingAltitudeChanged();
+  void sketchComplete();
 
 private:
   void updateGeoView();

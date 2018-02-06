@@ -115,6 +115,22 @@ Handheld {
 
         onMousePressed: followHud.stopFollowing();
 
+        OverlayButton {
+            id: distressButton
+            anchors {
+                top: parent.top
+                horizontalCenter: navTool.horizontalCenter
+                margins: 10 * scaleFactor
+            }
+            iconUrl: messageFeeds.controller.locationBroadcastInDistress ?
+                         DsaResources.iconDistressRed :
+                         DsaResources.iconDistressGray
+
+            onClicked: {
+                messageFeeds.controller.locationBroadcastInDistress = !messageFeeds.controller.locationBroadcastInDistress;
+            }
+        }
+
         CurrentLocation {
             id: currentLocation
             anchors {

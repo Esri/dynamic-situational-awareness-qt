@@ -104,15 +104,18 @@ Vehicle {
         onMousePressed: followHud.stopFollowing();
 
         OverlayButton {
+            id: distressButton
             anchors {
                 top: parent.top
-                right: parent.right
+                horizontalCenter: navTool.horizontalCenter
                 margins: 10 * scaleFactor
             }
+            iconUrl: messageFeeds.controller.locationBroadcastInDistress ?
+                         DsaResources.iconDistressRed :
+                         DsaResources.iconDistressGray
 
-            iconUrl: DsaResources.iconDistress
             onClicked: {
-                messageFeeds.toolController.locationBroadcastInDistress = !messageFeeds.toolController.locationBroadcastInDistress;
+                messageFeeds.controller.locationBroadcastInDistress = !messageFeeds.controller.locationBroadcastInDistress;
             }
         }
 

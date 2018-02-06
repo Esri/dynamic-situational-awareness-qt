@@ -164,7 +164,7 @@ void LocationBroadcast::setMessageType(const QString& messageType)
 
   m_messageType = messageType;
 
-  if (m_messageType.isEmpty() || m_udpPort == -1)
+  if (m_messageType.isEmpty())
     setEnabled(false);
   else
     update();
@@ -190,7 +190,7 @@ void LocationBroadcast::setUdpPort(int port)
 
   m_udpPort = port;
 
-  if (m_udpPort == -1 || m_messageType.isEmpty())
+  if (m_udpPort == -1)
     setEnabled(false);
   else
     update();
@@ -317,9 +317,7 @@ void LocationBroadcast::broadcastLocation()
   {
     QVariantMap attribs;
 
-    const Message::MessageAction action = m_inDistress ? Message::MessageAction::Select :
-                                                         Message::MessageAction::Update;
-    m_message = Message(action, m_location);
+    m_message = Message(Message::MessageAction::Update, m_location);
     m_message.setMessageId(QUuid::createUuid().toString());
     m_message.setMessageType(m_messageType);
     m_message.setSymbolId(s_locationBroadcastSic);
@@ -333,35 +331,6 @@ void LocationBroadcast::broadcastLocation()
   else
   {
     m_message.setGeometry(m_location);
-
-    const Message::MessageAction lastSentAction = m_message.messageAction();
-    switch (lastSentAction)
-    {
-    case Message::MessageAction::Update:
-    {
-      if (m_inDistress)
-        m_message.setMessageAction(Message::MessageAction::Select);
-      break;
-    }
-    case Message::MessageAction::Select:
-    {
-      if (!m_inDistress)
-        m_message.setMessageAction(Message::MessageAction::Unselect);
-      else
-        m_message.setMessageAction(Message::MessageAction::Update);
-      break;
-    }
-    case Message::MessageAction::Unselect:
-    {
-      if (m_inDistress)
-        m_message.setMessageAction(Message::MessageAction::Select);
-      else
-        m_message.setMessageAction(Message::MessageAction::Update);
-      break;
-    }
-    default:
-      break;
-    }
 
     QVariantMap attribs = m_message.attributes();
 

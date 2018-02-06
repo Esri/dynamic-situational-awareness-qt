@@ -100,7 +100,7 @@ void DsaController::setupConfig()
   createDefaultSettings();
 
   // get the app config
-  m_configFilePath = QString("%1/%2").arg(m_dsaSettings["RootDataDirectory"].toString(), "DsaAppConfig.json");
+  m_configFilePath = QString("%1/%2").arg(m_dsaSettings["RootDataDirectory"].toString(), QStringLiteral("DsaAppConfig.json"));
 
   // If the config file does not exist, create it, and set all of the defaults
   if (!QFileInfo::exists(m_configFilePath))
@@ -112,20 +112,47 @@ void DsaController::setupConfig()
     // Open the config file, get settings, set them to the application controller
     QSettings settings(m_configFilePath, m_jsonFormat);
     const QStringList allKeys = settings.allKeys();
+
     // get the values from the config, and write to the settings map
     for (const QString& key : allKeys)
-    {
-      if (settings.value(key).toStringList().length() > 1)
-        m_dsaSettings[key] = settings.value(key).toStringList();
-      else
-        m_dsaSettings[key] = settings.value(key).toString();
-    }
+      m_dsaSettings[key] = settings.value(key);
   }
 }
 
-// This creates the default values for the config file. If the app
-// starts and there is no config file, it will create one, and write
-// the following values to the file.
+/* \brief internal
+ *
+ * Writes the default initial location (in this app Monterey California)
+ * as JSON to the settings map.
+ */
+void DsaController::writeDefaultInitialLocation()
+{
+  QJsonObject initialLocationJson;
+  initialLocationJson.insert( QStringLiteral("center"), DsaUtility::montereyCA().toJson());
+  initialLocationJson.insert( QStringLiteral("distance"), 5000.0);
+  initialLocationJson.insert( QStringLiteral("heading"), 0.0);
+  initialLocationJson.insert( QStringLiteral("pitch"), 75.0);
+  initialLocationJson.insert( QStringLiteral("roll"), 0.0);
+  m_dsaSettings[QStringLiteral("InitialLocation")] = initialLocationJson.toVariantMap();
+}
+
+/* \brief internal
+ *
+ * Writes the default local data paths as JSON to the settings map.
+ */
+void DsaController::writeDefaultLocalDataPaths()
+{
+  const QString rootDir = m_dsaSettings["RootDataDirectory"].toString();
+  QStringList pathsList{QString("%1/").arg(rootDir),
+        QString("%1/OperationalData").arg(rootDir)};
+  m_dsaSettings[QStringLiteral("LocalDataPaths")] = pathsList;
+}
+
+/* \brief internal
+ *
+ * This creates the default values for the config file. If the app
+ * starts and there is no config file, it will create one, and write
+ * the following values to the file.
+ */
 void DsaController::createDefaultSettings()
 {
   // setup the defaults
@@ -134,25 +161,25 @@ void DsaController::createDefaultSettings()
   m_dsaSettings["ElevationDirectory"] = QString("%1/ElevationData").arg(m_dsaSettings["RootDataDirectory"].toString());
   m_dsaSettings["SimulationDirectory"] = QString("%1/SimulationData").arg(m_dsaSettings["RootDataDirectory"].toString());
   m_dsaSettings["ResourceDirectory"] = QString("%1/ResourceData").arg(m_dsaSettings["RootDataDirectory"].toString());
-  m_dsaSettings["LocalDataPaths"] = QStringList { QString("%1/OperationalData").arg(m_dsaSettings["RootDataDirectory"].toString()), m_dsaSettings["RootDataDirectory"].toString() };
-m_dsaSettings["DefaultBasemap"] = QStringLiteral("topographic");
-m_dsaSettings["DefaultElevationSource"] = QString("%1/CaDEM.tpk").arg(m_dsaSettings["ElevationDirectory"].toString());
-m_dsaSettings["GpxFile"] = QString("%1/MontereyMounted.gpx").arg(m_dsaSettings["SimulationDirectory"].toString());
-m_dsaSettings["SimulateLocation"] = QStringLiteral("true");
-m_dsaSettings["MessageFeedUdpPorts"] = QStringList { QString("45678"), QString("45679") };
-m_dsaSettings["MessageFeeds"] = QStringList { QString("Cursor-on-Target:cot:mil2525c"),
-    QString("Friendly Tracks:position_report:mil2525c"), QString("Contact Reports:spotrep:enemycontact1600.png"),
-    QString("Situation Reports:sitrep:sitrep1600.png"), QString("EOD Reports:eod:eod1600.png"),
-    QString("Sensor Observations:sensor_obs:sensorobs1600.png") };
-m_dsaSettings["LocationBroadcastConfig"] = QStringList { QString("position_report"), QString("45679") };
-m_dsaSettings["InitialLocation"] = QStringList { QString::number(DsaUtility::montereyCA().x()),
-    QString::number(DsaUtility::montereyCA().y()), QString("5000.0"), QString("0.0"),
-    QString("75.0"), QString("0.0") };
-m_dsaSettings["CoordinateFormat"] = QStringLiteral("DMS");
-m_dsaSettings["UnitOfMeasurement"] = QStringLiteral("meters");
-m_dsaSettings["UseGpsForElevation"] = QStringLiteral("true");
+  writeDefaultLocalDataPaths();
+  m_dsaSettings["DefaultBasemap"] = QStringLiteral("topographic");
+  m_dsaSettings["DefaultElevationSource"] = QString("%1/CaDEM.tpk").arg(m_dsaSettings["ElevationDirectory"].toString());
+  m_dsaSettings["GpxFile"] = QString("%1/MontereyMounted.gpx").arg(m_dsaSettings["SimulationDirectory"].toString());
+  m_dsaSettings["SimulateLocation"] = QStringLiteral("true");
+  m_dsaSettings["MessageFeedUdpPorts"] = QStringList { QString("45678"), QString("45679") };
+  m_dsaSettings["MessageFeeds"] = QStringList { QString("Cursor-on-Target:cot:mil2525c"),
+      QString("Friendly Tracks:position_report:mil2525c"), QString("Contact Reports:spotrep:enemycontact1600.png"),
+      QString("Situation Reports:sitrep:sitrep1600.png"), QString("EOD Reports:eod:eod1600.png"),
+      QString("Sensor Observations:sensor_obs:sensorobs1600.png") };
+  m_dsaSettings["LocationBroadcastConfig"] = QStringList { QString("position_report"), QString("45679") };
+  writeDefaultInitialLocation();
+  m_dsaSettings["CoordinateFormat"] = QStringLiteral("DMS");
+  m_dsaSettings["UnitOfMeasurement"] = QStringLiteral("meters");
+  m_dsaSettings["UseGpsForElevation"] = QStringLiteral("true");
 }
 
+/* brief Save the app properties to a custom JSON QSettings file.
+ */
 void DsaController::saveSettings()
 {
   QSettings settings(m_configFilePath, m_jsonFormat);
@@ -160,14 +187,7 @@ void DsaController::saveSettings()
   auto it = m_dsaSettings.cbegin();
   auto itEnd = m_dsaSettings.cend();
   for (; it != itEnd; ++it)
-  {
-    const QVariant& val = it.value();
-    QString stringVal = val.toStringList().join(",");
-    if (stringVal.isEmpty())
-      stringVal = val.toString();
-
-    settings.setValue(it.key(), stringVal);
-  }
+    settings.setValue(it.key(), it.value());
 }
 
 /* brief Read method for custom QSettings JSON format

@@ -55,8 +55,9 @@ private:
   void setupConfig();
   void createDefaultSettings();
   void saveSettings();
+  void writeDefaultInitialLocation();
+  void writeDefaultLocalDataPaths();
 
-private:
   Esri::ArcGISRuntime::Scene* m_scene = nullptr;
 
   QString m_dataPath;

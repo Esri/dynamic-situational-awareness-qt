@@ -55,6 +55,12 @@ class AlertConditionsController : public Esri::ArcGISRuntime::Toolkit::AbstractT
 
 public:
   static const QString ALERT_CONDITIONS_PROPERTYNAME;
+  static const QString CONDITION_TYPE;
+  static const QString CONDITION_NAME;
+  static const QString CONDITION_LEVEL;
+  static const QString CONDITION_SOURCE;
+  static const QString CONDITION_QUERY;
+  static const QString CONDITION_TARGET;
 
   explicit AlertConditionsController(QObject* parent = nullptr);
   ~AlertConditionsController();

@@ -71,6 +71,12 @@ struct GraphicsResultsManager {
 };
 
 const QString AlertConditionsController::ALERT_CONDITIONS_PROPERTYNAME = "Conditions";
+const QString AlertConditionsController::CONDITION_TYPE = "condition_type";
+const QString AlertConditionsController::CONDITION_NAME = "name";
+const QString AlertConditionsController::CONDITION_LEVEL = "level";
+const QString AlertConditionsController::CONDITION_SOURCE = "source";
+const QString AlertConditionsController::CONDITION_QUERY = "query";
+const QString AlertConditionsController::CONDITION_TARGET = "target";
 
 /*!
   \class AlertConditionsController
@@ -128,9 +134,9 @@ QString AlertConditionsController::toolName() const
   return "Alert Conditions";
 }
 
-/*! \brief Sets any values in \\ properties which are relevant for the alert conditions controller.
+/*! \brief Sets any values in \a properties which are relevant for the alert conditions controller.
  *
- * This tool will use the following key/value pairs if they are set:
+ * This tool will use the following key/value pairs in the \a properties map if they are set:
  *
  * \list
  *  \li Conditions. A list of JSON objects describing alert conditions to be added to the map.
@@ -239,7 +245,9 @@ bool AlertConditionsController::addWithinDistanceAlert(const QString& conditionN
   {
     GraphicsOverlay* sourceOverlay = graphicsOverlayFromName(sourceFeedName);
     if (sourceOverlay)
+    {
       condition->init(sourceOverlay, target, targetDescription);
+    }
     else
     {
       delete condition;
@@ -299,7 +307,9 @@ bool AlertConditionsController::addWithinAreaAlert(const QString& conditionName,
   {
     GraphicsOverlay* sourceOverlay = graphicsOverlayFromName(sourceFeedName);
     if (sourceOverlay)
+    {
       condition->init(sourceOverlay, target, targetDescription);
+    }
     else
     {
       delete condition;
@@ -791,13 +801,13 @@ QJsonObject AlertConditionsController::conditionToJson(AlertCondition* condition
     return QJsonObject();
 
   QJsonObject conditionJson;
-  conditionJson.insert( QStringLiteral("name"), condition->name());
-  conditionJson.insert( QStringLiteral("level"), static_cast<int>(condition->level()));
-  conditionJson.insert( QStringLiteral("condition_type"), condition->metaObject()->className());
-  conditionJson.insert( QStringLiteral("source"), condition->sourceDescription());
+  conditionJson.insert( CONDITION_NAME, condition->name());
+  conditionJson.insert( CONDITION_LEVEL, static_cast<int>(condition->level()));
+  conditionJson.insert( CONDITION_TYPE, condition->metaObject()->className());
+  conditionJson.insert( CONDITION_SOURCE, condition->sourceDescription());
   QJsonObject queryObject = QJsonObject::fromVariantMap(condition->queryComponents());
-  conditionJson.insert( QStringLiteral("query"), queryObject);
-  conditionJson.insert( QStringLiteral("target"), condition->targetDescription());
+  conditionJson.insert( CONDITION_QUERY, queryObject);
+  conditionJson.insert( CONDITION_TARGET, condition->targetDescription());
 
   return conditionJson;
 }
@@ -823,7 +833,7 @@ bool AlertConditionsController::addConditionFromJson(const QJsonObject& json)
     return findIt.value().toString();
   };
 
-  const QString conditionType = findString(QStringLiteral("condition_type"));
+  const QString conditionType = findString(CONDITION_TYPE);
   if (conditionType.isEmpty())
     return false;
 
@@ -834,26 +844,26 @@ bool AlertConditionsController::addConditionFromJson(const QJsonObject& json)
   if (!isAttributeEquals && !isWithinArea && !isWithinDistance)
     return false;
 
-  auto findLevel = json.constFind(QStringLiteral("level"));
-  if (findLevel == json.constEnd())
+  auto levelIt = json.constFind(CONDITION_LEVEL);
+  if (levelIt == json.constEnd())
     return false;
 
-  const int level = findLevel.value().toInt(0);
+  const int level = levelIt.value().toInt(0);
   const int levelIndex = level -1; // account for 0 = Unknown
 
-  const QString conditionName = findString(QStringLiteral("name"));
+  const QString conditionName = findString(CONDITION_NAME);
   if (conditionName.isEmpty())
     return false;
 
-  const QString sourceString = findString(QStringLiteral("source"));
+  const QString sourceString = findString(CONDITION_SOURCE);
   if (sourceString.isEmpty())
     return false;
 
-  const QString targetString = findString(QStringLiteral("target"));
+  const QString targetString = findString(CONDITION_TARGET);
   if (targetString.isEmpty())
     return false;
 
-  QJsonObject queryObject = json.value(QStringLiteral("query")).toObject();
+  QJsonObject queryObject = json.value(CONDITION_QUERY).toObject();
   if (queryObject.isEmpty())
     return false;
 

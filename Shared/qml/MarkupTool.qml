@@ -19,14 +19,12 @@ import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 import Esri.DSA 1.0
 
-Rectangle {
+Item {
     id: rootMarkup
-    color: Material.primary
-    opacity: 0.85
 
     // expose properties to be used by other tools
     property alias markupEnabled: markupController.drawModeEnabled
-    property var clear: markupController.clearGraphics
+    property var clear: clearPrompt.open
 
     // Modifying this array will change the initial available colors
     property var drawColors: ["#000000", "#ffffff", "#F44336", "#03a9f4", "#fff176"]
@@ -48,6 +46,7 @@ Rectangle {
             markupController.active = true;
             markupController.drawModeEnabled = true;
         } else {
+            console.log("visibility is changing");
             markupController.drawModeEnabled = false;
             state = clearState;
         }
@@ -84,11 +83,11 @@ Rectangle {
             }
             PropertyChanges {
                 target: rootMarkup
-                width: 250 * scaleFactor
+                width: 200 * scaleFactor
             }
             PropertyChanges {
                 target: rootMarkup
-                height: DsaStyles.mainToolbarHeight
+                height: DsaStyles.mainToolbarHeight * scaleFactor
             }
             PropertyChanges {
                 target: markupController
@@ -202,7 +201,7 @@ Rectangle {
                 delegate: Component {
 
                     Rectangle {
-                        height: 30 * scaleFactor
+                        height: DsaStyles.mainToolbarHeight * 0.5
                         width: height
                         radius: 100 * scaleFactor
                         color: drawColors[index]
@@ -228,6 +227,9 @@ Rectangle {
 
                                 if (markupController.drawModeEnabled)
                                     colorSelected();
+
+                                markup.state = clearState;
+                                markupToolRow.configureSelected = false;
                             }
                         }
                     }
@@ -344,5 +346,16 @@ Rectangle {
 
         markupController.setColor(drawColors[0]);
         colorModel.setProperty(colorView.currentIndex, "selected", true);
+    }
+
+    MessageDialog {
+        id: clearPrompt
+        visible: false
+        icon: StandardIcon.Question
+        title: "Markup Alert"
+        text: "Are you sure you want to clear all markups?"
+        standardButtons: StandardButton.Yes | StandardButton.No
+        onYes: markupController.clearGraphics();
+        onNo:  visible = false;
     }
 }

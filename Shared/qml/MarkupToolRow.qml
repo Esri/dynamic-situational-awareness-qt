@@ -28,8 +28,8 @@ Row {
         } else {
             state = "clear";
         }
-
     }
+    property alias configureSelected: configureIcon.selected
 
     states: [
         State {
@@ -110,10 +110,10 @@ Row {
                 target: markupTocIcon
                 selected: false
             }
-            PropertyChanges {
-                target: markup
-                state: markup.clearState
-            }
+//            PropertyChanges {
+//                target: markup
+//                state: markup.clearState
+//            }
         }
     ]
 
@@ -139,9 +139,10 @@ Row {
         iconSource: DsaResources.iconSettings
         toolName: "Configure"
         onToolSelected: {
-            if (markupToolRow.state === toolName)
+            if (markupToolRow.state === toolName) {
+                selected = false;
                 markupToolRow.state = "clear";
-            else {
+            } else {
                 markupToolRow.state = toolName;
             }
         }

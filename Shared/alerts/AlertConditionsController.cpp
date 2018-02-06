@@ -140,10 +140,26 @@ QString AlertConditionsController::toolName() const
  *
  * \list
  *  \li Conditions. A list of JSON objects describing alert conditions to be added to the map.
+ *  \li MessageFeeds. A list of real-time feeds to be used as condition sources.
  * \endList
  */
 void AlertConditionsController::setProperties(const QVariantMap& properties)
 {
+  const QVariant realTimeFeedsData = properties.value(QStringLiteral("MessageFeeds"));
+  if (!realTimeFeedsData.isNull())
+  {
+    m_realTimeFeeds.clear();
+    const QStringList messageFeeds = realTimeFeedsData.toStringList();
+    for (const QString& messageFeed : messageFeeds)
+    {
+      const QStringList& messageFeedConfig = messageFeed.split(":");
+      if (messageFeedConfig.size() != 3)
+        continue;
+
+      m_realTimeFeeds.append(messageFeedConfig.at(1));
+    }
+  }
+
   const QVariant conditionsData = properties.value(ALERT_CONDITIONS_PROPERTYNAME);
   if (conditionsData.isNull())
     return;
@@ -1141,8 +1157,8 @@ QString AlertConditionsController::primaryKeyFieldName(FeatureTable* featureTabl
 /*!
   \brief internal
  */
-QStringList AlertConditionsController::realtimeFeedNames()
+QStringList AlertConditionsController::realtimeFeedNames() const
 {
-  return QStringList{"cot", "position_report"};
+  return m_realTimeFeeds;
 }
 

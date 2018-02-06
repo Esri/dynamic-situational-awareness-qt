@@ -61,3 +61,18 @@ QString AttributeEqualsAlertCondition::queryString() const
 {
   return QString("[%1] = ").arg(m_attributeName);
 }
+
+/*!
+  \brief Static method to extract the attribute name from a query string.
+ */
+QString AttributeEqualsAlertCondition::attributeNameFromQueryString(const QString& queryString)
+{
+  if (!queryString.startsWith('['))
+    return QString();
+
+  const int endBracketIndex = queryString.indexOf(']');
+  if (endBracketIndex < 2)
+    return QString();
+
+  return queryString.mid(1, endBracketIndex -1);
+}

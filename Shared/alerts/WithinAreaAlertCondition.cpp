@@ -63,5 +63,13 @@ AlertConditionData* WithinAreaAlertCondition::createData(AlertSource* source, Al
  */
 QString WithinAreaAlertCondition::queryString() const
 {
+  return isWithinQueryString();
+}
+
+/*!
+  \brief Static methofd to get the query string "is within".
+ */
+QString WithinAreaAlertCondition::isWithinQueryString()
+{
   return QStringLiteral("is within");
 }

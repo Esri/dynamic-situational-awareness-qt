@@ -35,6 +35,8 @@ public:
 
   double distance() const;
 
+  static double getDistanceFromQueryString(const QString& queryString);
+
 private:
   double m_distance;
 };

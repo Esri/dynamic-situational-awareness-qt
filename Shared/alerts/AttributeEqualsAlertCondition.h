@@ -33,6 +33,8 @@ public:
 
   QString queryString() const;
 
+  static QString attributeNameFromQueryString(const QString& queryString);
+
 private:
   QString m_attributeName;
 };

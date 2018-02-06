@@ -65,6 +65,27 @@ double WithinDistanceAlertCondition::distance() const
 }
 
 /*!
+  \brief Static methofd to get the distance in meters from a \a queryString.
+
+  Returns \c -1.0 if unsuccessful
+ */
+double WithinDistanceAlertCondition::getDistanceFromQueryString(const QString& queryString)
+{
+  if (queryString.length() < 22)
+    return -1.0;
+
+  const int metersIndex = queryString.indexOf(QStringLiteral("meters"));
+  if (metersIndex == -1 || metersIndex < 12)
+    return -1.0;
+
+  const QString distanceString = queryString.mid(10, (metersIndex - 2) - 10);
+  bool ok = false;
+  const double distance = distanceString.toDouble(&ok);
+
+  return ok ? distance :-1.0;
+}
+
+/*!
   \brief Returns the query string component for this condition - e.g. "is within X meters of".
  */
 QString WithinDistanceAlertCondition::queryString() const

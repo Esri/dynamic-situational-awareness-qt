@@ -36,7 +36,6 @@ class IdentifyController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
   Q_OBJECT
 
   Q_PROPERTY(bool busy READ busy NOTIFY busyChanged)
-  Q_PROPERTY(bool active READ isActive WRITE setActive NOTIFY activeChanged)
   Q_PROPERTY(QVariantList popupManagers READ popupManagers NOTIFY popupManagersChanged)
 
 public:

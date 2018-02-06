@@ -10,13 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "DictionaryRenderer.h"
-#include "DictionarySymbolStyle.h"
-#include "Graphic.h"
-#include "GraphicsOverlay.h"
-#include "PolygonBuilder.h"
 #include "SceneQuickView.h"
-#include "SimpleLineSymbol.h"
 
 #include "DsaController.h"
 #include "Vehicle.h"
@@ -96,31 +90,6 @@ void Vehicle::componentComplete()
 
   // set the options for the coordinateConversionTool
   setCoordinateConversionOptions();
-
-  GraphicsOverlay* geofenceOverlay = new GraphicsOverlay(this);
-  geofenceOverlay->setOverlayId("Geofence overlay");
-  SimpleLineSymbol* geofenceSymbol = new SimpleLineSymbol(SimpleLineSymbolStyle::Dash, Qt::green, 5, this);
-  PolygonBuilder pb(SpatialReference::wgs84());
-  pb.addPoint(-121.91, 36.605);
-  pb.addPoint(-121.91, 36.607);
-  pb.addPoint(-121.92, 36.607);
-  pb.addPoint(-121.92, 36.605);
-
-  Graphic* geofenceGraphic = new Graphic(pb.toPolygon(), geofenceSymbol, this);
-  geofenceGraphic->attributes()->insertAttribute("TestAttribute", "Test Value");
-  geofenceOverlay->graphics()->append(geofenceGraphic);
-
-  PolygonBuilder pb2(SpatialReference::wgs84());
-  pb2.addPoint(-121.91, 36.608);
-  pb2.addPoint(-121.91, 36.611);
-  pb2.addPoint(-121.92, 36.611);
-  pb2.addPoint(-121.92, 36.608);
-
-  Graphic* geofenceGraphic2 = new Graphic(pb2.toPolygon(), geofenceSymbol, this);
-  geofenceGraphic2->attributes()->insertAttribute("TestAttribute", "Test Value");
-  geofenceOverlay->graphics()->append(geofenceGraphic2);
-
-  m_sceneView->graphicsOverlays()->append(geofenceOverlay);
 }
 
 void Vehicle::setCoordinateConversionOptions()

@@ -170,6 +170,13 @@ void DsaController::saveSettings()
   }
 }
 
+/* brief Read method for custom QSettings JSON format
+ *
+ * Attempts to read the information in \a device in a JSON format
+ * and stores the results in \a map.
+ *
+ * Returns \c true if the read was successful and \c false if not.
+ */
 bool readJsonFile(QIODevice& device, QSettings::SettingsMap& map)
 {
   const QByteArray data = device.readAll();
@@ -182,6 +189,13 @@ bool readJsonFile(QIODevice& device, QSettings::SettingsMap& map)
   return !map.isEmpty();
 }
 
+/* brief Write method for custom QSettings JSON format
+ *
+ * Attempts to encode the information in \a map as valid JSON
+ * and writes the results to \a device.
+ *
+ * Returns \c true if the write was successful and \c false if not.
+ */
 bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map)
 {
   QJsonObject jsonObject = QJsonObject::fromVariantMap(map);

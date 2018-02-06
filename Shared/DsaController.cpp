@@ -190,7 +190,7 @@ void DsaController::saveSettings()
     settings.setValue(it.key(), it.value());
 }
 
-/*! brief Read method for custom QSettings JSON format
+/*! \brief Read method for custom QSettings JSON format
  *
  * Attempts to read the information in \a device in a JSON format
  * and stores the results in \a map.
@@ -209,7 +209,7 @@ bool readJsonFile(QIODevice& device, QSettings::SettingsMap& map)
   return !map.isEmpty();
 }
 
-/*! brief Write method for custom QSettings JSON format
+/*! \brief Write method for custom QSettings JSON format
  *
  * Attempts to encode the information in \a map as valid JSON
  * and writes the results to \a device.

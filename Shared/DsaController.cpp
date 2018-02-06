@@ -218,12 +218,12 @@ bool readJsonFile(QIODevice& device, QSettings::SettingsMap& map)
  */
 bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map)
 {
-  QJsonObject jsonObject = QJsonObject::fromVariantMap(map);
+  const QJsonObject jsonObject = QJsonObject::fromVariantMap(map);
 
   if (jsonObject.isEmpty())
     return false;
 
-  QJsonDocument conditionsJsonDoc(jsonObject);
+  const QJsonDocument conditionsJsonDoc(jsonObject);
   const qint64 writtenBytes = device.write(conditionsJsonDoc.toJson(QJsonDocument::Indented));
 
   return writtenBytes != -1;

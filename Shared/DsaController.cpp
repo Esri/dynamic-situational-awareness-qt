@@ -119,7 +119,7 @@ void DsaController::setupConfig()
   }
 }
 
-/* \brief internal
+/*! \brief internal
  *
  * Writes the default initial location (in this app Monterey California)
  * as JSON to the settings map.
@@ -135,7 +135,7 @@ void DsaController::writeDefaultInitialLocation()
   m_dsaSettings[QStringLiteral("InitialLocation")] = initialLocationJson.toVariantMap();
 }
 
-/* \brief internal
+/*! \brief internal
  *
  * Writes the default local data paths as JSON to the settings map.
  */
@@ -147,7 +147,7 @@ void DsaController::writeDefaultLocalDataPaths()
   m_dsaSettings[QStringLiteral("LocalDataPaths")] = pathsList;
 }
 
-/* \brief internal
+/*! \brief internal
  *
  * This creates the default values for the config file. If the app
  * starts and there is no config file, it will create one, and write
@@ -178,7 +178,7 @@ void DsaController::createDefaultSettings()
   m_dsaSettings["UseGpsForElevation"] = QStringLiteral("true");
 }
 
-/* brief Save the app properties to a custom JSON QSettings file.
+/*! brief Save the app properties to a custom JSON QSettings file.
  */
 void DsaController::saveSettings()
 {
@@ -190,7 +190,7 @@ void DsaController::saveSettings()
     settings.setValue(it.key(), it.value());
 }
 
-/* brief Read method for custom QSettings JSON format
+/*! brief Read method for custom QSettings JSON format
  *
  * Attempts to read the information in \a device in a JSON format
  * and stores the results in \a map.
@@ -209,7 +209,7 @@ bool readJsonFile(QIODevice& device, QSettings::SettingsMap& map)
   return !map.isEmpty();
 }
 
-/* brief Write method for custom QSettings JSON format
+/*! brief Write method for custom QSettings JSON format
  *
  * Attempts to encode the information in \a map as valid JSON
  * and writes the results to \a device.

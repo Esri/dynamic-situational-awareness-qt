@@ -25,6 +25,7 @@
 #include "GeometryEngine.h"
 #include "DsaUtility.h"
 
+#include <QJsonDocument>
 #include <QJsonObject>
 #include <QScreen>
 #include <QGuiApplication>
@@ -57,10 +58,9 @@ QString NavigationController::toolName() const
   return QStringLiteral("NavigationController");
 }
 
-/* \brief Sets any values in \\ properties which are relevant for the navigation controller.
+/* \brief Sets any values in \a properties which are relevant for the navigation controller.
  *
- * This tool will use the following key/value pairs if they are set:
- *
+ * This tool will use the following key/value pairs from the \a properties map if they are set:
  * \list
  *  \li InitialLocation. A JSON description of a the starting location for the app.
  * \endList
@@ -80,29 +80,33 @@ void NavigationController::setProperties(const QVariantMap& properties)
     return;
 
   // set the initial center Point from JSON if it is found
-  auto findCenter = initialLocation.find("center");
-  if (findCenter != initialLocation.constEnd())
-    m_initialCenter = Point::fromJson(findCenter.value().toString());
+  auto centerIt = initialLocation.find("center");
+  if (centerIt != initialLocation.constEnd())
+  {
+    const QJsonValue centerVal = centerIt.value();
+    const QJsonDocument centerDoc = QJsonDocument(centerVal.toObject());
+    m_initialCenter = Point::fromJson(centerDoc.toJson(QJsonDocument::JsonFormat::Compact));
+  }
 
   // set the initial distance from JSON if it is found (if not default to the existing value)
-  auto findDistance = initialLocation.find("distance");
-  if (findDistance != initialLocation.constEnd())
-    m_initialDistance = findDistance.value().toDouble(m_initialDistance);
+  auto distanceIt = initialLocation.find("distance");
+  if (distanceIt != initialLocation.constEnd())
+    m_initialDistance = distanceIt.value().toDouble(m_initialDistance);
 
   // set the initial heading from JSON if it is found (if not default to the existing value)
-  auto findHeading = initialLocation.find("heading");
-  if (findDistance != initialLocation.constEnd())
-    m_initialHeading = findHeading.value().toDouble(m_initialHeading);
+  auto headingIt = initialLocation.find("heading");
+  if (distanceIt != initialLocation.constEnd())
+    m_initialHeading = headingIt.value().toDouble(m_initialHeading);
 
   // set the initial pitch from JSON if it is found (if not default to the existing value)
-  auto findPitch = initialLocation.find("pitch");
-  if (findPitch != initialLocation.constEnd())
-    m_initialPitch = findPitch.value().toDouble(m_initialPitch);
+  auto pitchIt = initialLocation.find("pitch");
+  if (pitchIt != initialLocation.constEnd())
+    m_initialPitch = pitchIt.value().toDouble(m_initialPitch);
 
   // set the initial roll from JSON if it is found (if not default to the existing value)
-  auto findRoll = initialLocation.find("roll");
-  if (findRoll != initialLocation.constEnd())
-    m_initialRoll = findRoll.value().toDouble(m_initialRoll);
+  auto rollIt = initialLocation.find("roll");
+  if (rollIt != initialLocation.constEnd())
+    m_initialRoll = rollIt.value().toDouble(m_initialRoll);
 
   setInitialLocation();
 }

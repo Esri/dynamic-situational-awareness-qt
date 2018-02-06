@@ -26,6 +26,7 @@ public:
   Q_INVOKABLE void deleteSelectedGraphics();
   Q_INVOKABLE void deleteAllGraphics();
   Q_INVOKABLE void setName(const QString& name);
+  Q_INVOKABLE void clearGraphics();
 
   void setActive(bool active) override;
 

@@ -276,3 +276,11 @@ void MarkupController::setName(const QString& name)
   const auto graphic = m_sketchOverlay->graphics()->last();
   graphic->attributes()->setProperty("name", name);
 }
+
+void MarkupController::clearGraphics()
+{
+  if (!m_sketchOverlay)
+    return;
+
+  m_sketchOverlay->graphics()->clear();
+}

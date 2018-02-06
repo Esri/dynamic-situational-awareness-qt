@@ -166,8 +166,6 @@ Row {
         id: clearIcon
         iconSource: DsaResources.iconTrash
         toolName: "Clear"
-        onToolSelected: {
-            // TODO - clear graphics overlay
-        }
+        onToolSelected: markup.clear();
     }
 }

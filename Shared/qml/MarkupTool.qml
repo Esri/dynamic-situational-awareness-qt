@@ -24,7 +24,9 @@ Rectangle {
     color: Material.primary
     opacity: 0.85
 
+    // expose properties to be used by other tools
     property alias markupEnabled: markupController.drawModeEnabled
+    property var clear: markupController.clearGraphics
 
     // Modifying this array will change the initial available colors
     property var drawColors: ["#000000", "#ffffff", "#F44336", "#03a9f4", "#fff176"]

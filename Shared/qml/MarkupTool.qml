@@ -43,10 +43,10 @@ Item {
     onVisibleChanged: {
         if (visible) {
             state = drawState;
-            markupController.active = true;
+            markupController.setActive(true);
             markupController.drawModeEnabled = true;
         } else {
-            console.log("visibility is changing");
+            markupController.setActive(false);
             markupController.drawModeEnabled = false;
             state = clearState;
         }
@@ -55,17 +55,13 @@ Item {
     MarkupController {
         id: markupController
 
-        onSketchComplete: nameDialog.open();
+        onSketchComplete: sketchButtons.visible = true
     }
 
     state: clearState
     states: [
         State {
             name: drawState
-            PropertyChanges {
-                target: markupController
-                active: true
-            }
             PropertyChanges {
                 target: markupController
                 drawModeEnabled: true
@@ -88,10 +84,6 @@ Item {
             PropertyChanges {
                 target: rootMarkup
                 height: DsaStyles.mainToolbarHeight * scaleFactor
-            }
-            PropertyChanges {
-                target: markupController
-                active: true
             }
             PropertyChanges {
                 target: markupController
@@ -118,10 +110,6 @@ Item {
             }
             PropertyChanges {
                 target: markupController
-                active: true
-            }
-            PropertyChanges {
-                target: markupController
                 drawModeEnabled: drawModeEnabled
             }
             PropertyChanges {
@@ -136,10 +124,6 @@ Item {
                 drawModeEnabled: drawModeEnabled
             }
             PropertyChanges {
-                target: markupController
-                active: active
-            }
-            PropertyChanges {
                 target: editPane
                 visible: false
             }
@@ -149,6 +133,34 @@ Item {
             }
         }
     ]
+
+    Column {
+        id: sketchButtons
+        anchors {
+            top: parent.top
+            right: parent.right
+            margins: 5 * scaleFactor
+        }
+        visible: false
+        spacing: 5 * scaleFactor
+
+        Button {
+            text: "Finish Sketch"
+            background: Rectangle { color: Material.primary; }
+            width: 125 * scaleFactor
+            onClicked: nameDialog.open()
+        }
+
+        Button {
+            text: "Clear Sketch"
+            background: Rectangle { color: Material.primary; }
+            width: 125 * scaleFactor
+            onClicked: {
+                //markupController.clearCurrentSketch(); // TODO
+                sketchButtons.visible = false;
+            }
+        }
+    }
 
     Item {
         id: editPane
@@ -290,7 +302,8 @@ Item {
         property int i: 1
         onAccepted: {
             markupController.setName(nameText.text.length > 0 ? nameText.text : "sketch " + i);
-            i++
+            i++;
+            sketchButtons.visible = false;
         }
 
         Row {

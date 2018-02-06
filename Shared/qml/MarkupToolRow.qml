@@ -110,10 +110,6 @@ Row {
                 target: markupTocIcon
                 selected: false
             }
-//            PropertyChanges {
-//                target: markup
-//                state: markup.clearState
-//            }
         }
     ]
 

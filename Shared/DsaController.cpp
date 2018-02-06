@@ -177,40 +177,20 @@ bool readJsonFile(QIODevice& device, QSettings::SettingsMap& map)
 
   const QJsonObject jsonObject = jsonDoc.object();
 
-  if (jsonObject.isEmpty())
-    return false;
-
-  auto objIt = jsonObject.constBegin();
-  auto objEnd = jsonObject.constEnd();
-  for (; objIt != objEnd; ++objIt)
-  {
-    const QString& key = objIt.key();
-    const QString val = objIt.value().toString();
-
-    map.insert(key, val);
-  }
+  map = jsonObject.toVariantMap();
 
   return !map.isEmpty();
 }
 
 bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map)
 {
-  QJsonObject jsonObject;
-  auto it = map.cbegin();
-  auto itEnd = map.cend();
-  for(; it != itEnd; ++it)
-  {
-    const QString& key = it.key();
-    const QVariant& val = it.value();
-
-    jsonObject.insert(key, val.toString());
-  }
+  QJsonObject jsonObject = QJsonObject::fromVariantMap(map);
 
   if (jsonObject.isEmpty())
     return false;
 
   QJsonDocument conditionsJsonDoc(jsonObject);
-  device.write(conditionsJsonDoc.toJson(QJsonDocument::Indented));
+  const qint64 writtenBytes = device.write(conditionsJsonDoc.toJson(QJsonDocument::Indented));
 
-  return true;
+  return writtenBytes != -1;
 }

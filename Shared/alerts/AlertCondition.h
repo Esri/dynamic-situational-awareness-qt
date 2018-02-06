@@ -17,6 +17,7 @@
 
 #include <QList>
 #include <QObject>
+#include <QVariantMap>
 
 class AlertConditionData;
 class AlertSource;
@@ -55,6 +56,7 @@ public:
   void addData(AlertConditionData* newData);
 
   virtual QString queryString() const = 0;
+  virtual QVariantMap queryComponents() const = 0;
   virtual AlertConditionData* createData(AlertSource* source, AlertTarget* target) = 0;
 
   QString sourceDescription() const;

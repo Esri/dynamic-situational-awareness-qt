@@ -57,7 +57,6 @@ private slots:
   void onIdentifyGraphicsOverlaysCompleted(const QUuid& taskId, QList<Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult*> identifyResults);
 
 signals:
-  void activeChanged();
   void busyChanged();
   void popupManagersChanged();
 

@@ -15,6 +15,8 @@
 
 using namespace Esri::ArcGISRuntime;
 
+const QString AttributeEqualsAlertCondition::ATTRIBUTE_NAME = "attribute_name";
+
 /*!
   \class AttributeEqualsAlertCondition
   \inherits AlertCondition
@@ -60,4 +62,29 @@ AlertConditionData* AttributeEqualsAlertCondition::createData(AlertSource* sourc
 QString AttributeEqualsAlertCondition::queryString() const
 {
   return QString("[%1] = ").arg(m_attributeName);
+}
+
+/*!
+  \brief Returns a map of the variable components that make up the query for this condition.
+
+  This condition type uses a query comprising the following components:
+
+  \list
+    \li attribute_name. The name of the attribute field to be queried.
+  \endlist
+ */
+QVariantMap AttributeEqualsAlertCondition::queryComponents() const
+{
+  QVariantMap queryMap;
+  queryMap.insert(ATTRIBUTE_NAME, m_attributeName);
+
+  return queryMap;
+}
+
+/*!
+  \brief Static method to extract the attribute name from a \a queryMap.
+ */
+QString AttributeEqualsAlertCondition::attributeNameFromQueryComponents(const QVariantMap& queryMap)
+{
+  return queryMap.value(ATTRIBUTE_NAME).toString();
 }

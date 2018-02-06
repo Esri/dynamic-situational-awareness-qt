@@ -63,16 +63,26 @@ QString AttributeEqualsAlertCondition::queryString() const
 }
 
 /*!
-  \brief Static method to extract the attribute name from a \a queryString.
+  \brief Returns a map of the variable components that make up the query for this condition.
+
+  This condition type uses a query comprising the following components:
+
+  \list
+    \li attribute_name. The name of the attribute field to be queried.
+  \endlist
  */
-QString AttributeEqualsAlertCondition::attributeNameFromQueryString(const QString& queryString)
+QVariantMap AttributeEqualsAlertCondition::queryComponents() const
 {
-  if (!queryString.startsWith('['))
-    return QString();
+  QVariantMap queryMap;
+  queryMap.insert(QStringLiteral("attribute_name"), m_attributeName);
 
-  const int endBracketIndex = queryString.indexOf(']');
-  if (endBracketIndex < 2)
-    return QString();
+  return queryMap;
+}
 
-  return queryString.mid(1, endBracketIndex -1);
+/*!
+  \brief Static method to extract the attribute name from a \a queryMap.
+ */
+QString AttributeEqualsAlertCondition::attributeNameFromQueryComponents(const QVariantMap& queryMap)
+{
+  return queryMap.value(QStringLiteral("attribute_name")).toString();
 }

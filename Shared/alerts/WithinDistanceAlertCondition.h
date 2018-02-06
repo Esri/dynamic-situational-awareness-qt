@@ -32,10 +32,11 @@ public:
   AlertConditionData* createData(AlertSource* source, AlertTarget* target) override;
 
   QString queryString() const override;
+  QVariantMap queryComponents() const override;
 
   double distance() const;
 
-  static double getDistanceFromQueryString(const QString& queryString);
+  static double getDistanceFromQueryComponents(const QVariantMap& queryComponents);
 
 private:
   double m_distance;

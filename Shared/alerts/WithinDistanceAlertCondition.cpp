@@ -65,24 +65,30 @@ double WithinDistanceAlertCondition::distance() const
 }
 
 /*!
-  \brief Static method to get the distance in meters from a \a queryString.
+  \brief Returns a map of the variable components that make up the query for this condition.
+
+  This condition type uses a query comprising the following components:
+
+  \list
+    \li distance. The threshold distance in meters.
+  \endlist
+ */
+QVariantMap WithinDistanceAlertCondition::queryComponents() const
+{
+  QVariantMap queryMap;
+  queryMap.insert(QStringLiteral("meters"), m_distance);
+
+  return queryMap;
+}
+
+/*!
+  \brief Static method to get the distance in meters from a \a queryComponents.
 
   Returns \c -1.0 if unsuccessful
  */
-double WithinDistanceAlertCondition::getDistanceFromQueryString(const QString& queryString)
+double WithinDistanceAlertCondition::getDistanceFromQueryComponents(const QVariantMap& queryComponents)
 {
-  if (queryString.length() < 22)
-    return -1.0;
-
-  const int metersIndex = queryString.indexOf(QStringLiteral("meters"));
-  if (metersIndex == -1 || metersIndex < 12)
-    return -1.0;
-
-  const QString distanceString = queryString.mid(10, (metersIndex - 2) - 10);
-  bool ok = false;
-  const double distance = distanceString.toDouble(&ok);
-
-  return ok ? distance :-1.0;
+  return queryComponents.value(QStringLiteral("meters"), -1.0).toDouble();
 }
 
 /*!

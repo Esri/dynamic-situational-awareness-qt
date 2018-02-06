@@ -32,8 +32,9 @@ public:
   AlertConditionData* createData(AlertSource* source, AlertTarget* target) override;
 
   QString queryString() const;
+  QVariantMap queryComponents() const override;
 
-  static QString attributeNameFromQueryString(const QString& queryString);
+  static QString attributeNameFromQueryComponents(const QVariantMap& queryMap);
 
 private:
   QString m_attributeName;

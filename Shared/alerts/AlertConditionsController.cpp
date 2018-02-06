@@ -795,7 +795,8 @@ QJsonObject AlertConditionsController::conditionToJson(AlertCondition* condition
   conditionJson.insert( QStringLiteral("level"), static_cast<int>(condition->level()));
   conditionJson.insert( QStringLiteral("condition_type"), condition->metaObject()->className());
   conditionJson.insert( QStringLiteral("source"), condition->sourceDescription());
-  conditionJson.insert( QStringLiteral("query"), condition->queryString());
+  QJsonObject queryObject = QJsonObject::fromVariantMap(condition->queryComponents());
+  conditionJson.insert( QStringLiteral("query"), queryObject);
   conditionJson.insert( QStringLiteral("target"), condition->targetDescription());
 
   return conditionJson;
@@ -850,15 +851,17 @@ bool AlertConditionsController::addConditionFromJson(const QJsonObject& json)
 
   const QString targetString = findString(QStringLiteral("target"));
   if (targetString.isEmpty())
-    return nullptr;
-
-  const QString query = findString(QStringLiteral("query"));
-  if (query.isEmpty())
     return false;
+
+  QJsonObject queryObject = json.value(QStringLiteral("query")).toObject();
+  if (queryObject.isEmpty())
+    return false;
+
+  const QVariantMap queryComponents = queryObject.toVariantMap();
 
   if (isAttributeEquals)
   {
-    const QString attributeName = AttributeEqualsAlertCondition::attributeNameFromQueryString(query);
+    const QString attributeName = AttributeEqualsAlertCondition::attributeNameFromQueryComponents(queryComponents);
     if (attributeName.isEmpty())
       return false;
 
@@ -872,7 +875,8 @@ bool AlertConditionsController::addConditionFromJson(const QJsonObject& json)
     {
       const int bracketStartIndex = targetString.indexOf('[');
       targetOverlayName = targetString.left(bracketStartIndex).trimmed();
-      QString itemString = targetString.mid(bracketStartIndex +1, targetString.length() - 2);
+      const int substrLength = (targetString.length()-1) - (bracketStartIndex + 1);
+      QString itemString = targetString.mid(bracketStartIndex +1, substrLength);
       bool ok = false;
       itemId = itemString.toInt(&ok);
 
@@ -891,14 +895,11 @@ bool AlertConditionsController::addConditionFromJson(const QJsonObject& json)
 
     if (isWithinArea)
     {
-      if (query != WithinAreaAlertCondition::isWithinQueryString())
-        return false;
-
       return addWithinAreaAlert(conditionName, levelIndex, sourceString, itemId, targetOverlayIndex );
     }
     else if (isWithinDistance)
     {
-      const double distance = WithinDistanceAlertCondition::getDistanceFromQueryString(query);
+      const double distance = WithinDistanceAlertCondition::getDistanceFromQueryComponents(queryComponents);
       if (distance == -1.0)
         return false;
 

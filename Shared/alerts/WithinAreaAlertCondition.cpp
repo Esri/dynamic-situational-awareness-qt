@@ -67,6 +67,16 @@ QString WithinAreaAlertCondition::queryString() const
 }
 
 /*!
+  \brief Returns a map of the variable components that make up the query for this condition.
+
+  \note This query type has no variable components.
+ */
+QVariantMap WithinAreaAlertCondition::queryComponents() const
+{
+  return QVariantMap();
+}
+
+/*!
   \brief Static method to get the query string "is within".
  */
 QString WithinAreaAlertCondition::isWithinQueryString()

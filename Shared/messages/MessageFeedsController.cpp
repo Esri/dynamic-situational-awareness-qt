@@ -261,11 +261,21 @@ void MessageFeedsController::setLocationBroadcastFrequency(int frequency)
   emit locationBroadcastFrequencyChanged();
 }
 
+/*!
+   \brief Returns \c true if the location broadcast reports
+   message status as being in distress.
+ */
 bool MessageFeedsController::isLocationBroadcastInDistress() const
 {
   return m_locationBroadcast->isInDistress();
 }
 
+/*!
+   \brief Sets the location broadcast to report
+   message status as being in distress to \a inDistress.
+
+   \sa LocationBroadcast::setInDistress
+ */
 void MessageFeedsController::setLocationBroadcastInDistress(bool inDistress)
 {
   if (m_locationBroadcast->isInDistress() == inDistress)
@@ -311,3 +321,40 @@ Renderer* MessageFeedsController::createRenderer(const QString& rendererInfo, QO
   symbol->setHeight(40.0f);
   return new SimpleRenderer(symbol, parent);
 }
+
+// Properties:
+/*!
+  \property MessageFeedsController::messageFeeds
+  \brief The message feeds list model (read-only).
+*/
+
+/*!
+  \property MessageFeedsController::locationBroadcastEnabled
+  \brief Whether the location broadcast is enabled or not.
+*/
+
+/*!
+  \property MessageFeedsController::locationBroadcastFrequency
+  \brief The location broadcast frequency.
+*/
+
+/*!
+  \property MessageFeedsController::locationBroadcastInDistress
+  \brief Whether the location broadcast reports message status as being in distress.
+*/
+
+// Signals:
+/*!
+  \fn void MessageFeedsController::locationBroadcastEnabledChanged();
+  \brief Signal emitted when the \l locationBroadcastEnabled property changes.
+ */
+
+/*!
+  \fn void MessageFeedsController::locationBroadcastFrequencyChanged();
+  \brief Signal emitted when the \l locationBroadcastFrequency property changes.
+ */
+
+/*!
+  \fn void MessageFeedsController::locationBroadcastInDistressChanged();
+  \brief Signal emitted when the \l locationBroadcastInDistress property changes.
+ */

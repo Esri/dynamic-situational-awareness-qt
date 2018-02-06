@@ -225,11 +225,26 @@ void LocationBroadcast::setFrequency(int frequency)
     m_timer->setInterval(m_frequency);
 }
 
+/*!
+   \brief Returns \c true if the location broadcast reports
+   message status as being in distress.
+
+   The default is \c false
+
+   \sa message
+ */
 bool LocationBroadcast::isInDistress() const
 {
   return m_inDistress;
 }
 
+/*!
+   \brief Sets the location broadcast to report
+   message status as being in distress to \a inDistress.
+
+   Setting \a inDistress to \c true will enable the
+   location broadcast if disabled.
+ */
 void LocationBroadcast::setInDistress(bool inDistress)
 {
   if (m_inDistress == inDistress)

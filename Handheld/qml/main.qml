@@ -214,17 +214,17 @@ Handheld {
         MarkupTool {
             id: markup
             anchors {
-                left: parent.left
+                right: parent.right
                 top: parent.top
                 bottom: sceneView.attributionTop
             }
-            width: drawer.width
+//            width: drawer.width
             visible: false
-            onVisibleChanged: {
-                if (!visible)
-                    markupToolRow.state = "clear";
-            }
-            onClosed: visible = false;
+//            onVisibleChanged: {
+//                if (!visible)
+//                    markupToolRow.state = "clear";
+//            }
+//            onClosed: visible = false;
         }
 
         PopupStackView {

@@ -42,6 +42,10 @@ Row {
                 target: markup
                 visible: true
             }
+            PropertyChanges {
+                target: markup
+                state: drawState
+            }
         },
         State {
             name: configureIcon.toolName
@@ -49,14 +53,22 @@ Row {
                 target: configureIcon
                 selected: true
             }
-        },
-        State {
-            name: sendIcon.toolName
             PropertyChanges {
-                target: sendIcon
-                selected: true
+                target: markup
+                visible: true
+            }
+            PropertyChanges {
+                target: markup
+                state: editState
             }
         },
+//        State {
+//            name: sendIcon.toolName
+//            PropertyChanges {
+//                target: sendIcon
+//                selected: true
+//            }
+//        },
         State {
             name: "clear"
             PropertyChanges {
@@ -68,21 +80,25 @@ Row {
                 selected: false
             }
             PropertyChanges {
-                target: sendIcon
+                target: markupTocIcon
                 selected: false
             }
+//            PropertyChanges {
+//                target: sendIcon
+//                selected: false
+//            }
         }
     ]
 
-    // Send
-    ToolIcon {
-        id: sendIcon
-        iconSource: DsaResources.iconSendMap
-        toolName: "Send"
-        onToolSelected: {
-            // TODO
-        }
-    }
+//    // Send
+//    ToolIcon {
+//        id: sendIcon
+//        iconSource: DsaResources.iconSendMap
+//        toolName: "Send"
+//        onToolSelected: {
+//            // TODO
+//        }
+//    }
 
     // Draw
     ToolIcon {
@@ -103,6 +119,20 @@ Row {
         id: configureIcon
         iconSource: DsaResources.iconSettings
         toolName: "Configure"
+        onToolSelected: {
+            if (markupToolRow.state === toolName)
+                markupToolRow.state = "clear";
+            else {
+                markupToolRow.state = toolName;
+            }
+        }
+    }
+
+    // Markups TOC
+    ToolIcon {
+        id: markupTocIcon
+        iconSource: DsaResources.iconListView
+        toolName: "Markups"
         onToolSelected: {
             if (markupToolRow.state === toolName)
                 markupToolRow.state = "clear";

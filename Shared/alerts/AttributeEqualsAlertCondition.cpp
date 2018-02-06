@@ -63,7 +63,7 @@ QString AttributeEqualsAlertCondition::queryString() const
 }
 
 /*!
-  \brief Static method to extract the attribute name from a query string.
+  \brief Static method to extract the attribute name from a \a queryString.
  */
 QString AttributeEqualsAlertCondition::attributeNameFromQueryString(const QString& queryString)
 {

@@ -65,7 +65,7 @@ double WithinDistanceAlertCondition::distance() const
 }
 
 /*!
-  \brief Static methofd to get the distance in meters from a \a queryString.
+  \brief Static method to get the distance in meters from a \a queryString.
 
   Returns \c -1.0 if unsuccessful
  */

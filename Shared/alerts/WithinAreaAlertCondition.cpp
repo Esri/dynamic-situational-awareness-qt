@@ -67,7 +67,7 @@ QString WithinAreaAlertCondition::queryString() const
 }
 
 /*!
-  \brief Static methofd to get the query string "is within".
+  \brief Static method to get the query string "is within".
  */
 QString WithinAreaAlertCondition::isWithinQueryString()
 {

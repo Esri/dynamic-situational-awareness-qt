@@ -204,7 +204,7 @@ void AlertConditionsController::setActive(bool active)
     a \l Esri::ArcGISRuntime::GraphicsOverlay or a \l Esri::ArcGISRuntime::FeatureLayer.
   \endlist
 
-  Returns \c if the condition was successfully added.
+  Returns \c true if the condition was successfully added.
  */
 bool AlertConditionsController::addWithinDistanceAlert(const QString& conditionName,
                                                        int levelIndex,
@@ -806,7 +806,7 @@ QJsonObject AlertConditionsController::conditionToJson(AlertCondition* condition
 
   Attempt to deserialize \a json to an \l AlertCondition and add it to the app.
 
-  Returns \c true if succesful, \c false if not.
+  Returns \c true if successful, \c false if not.
  */
 bool AlertConditionsController::addConditionFromJson(const QJsonObject& json)
 {
@@ -912,7 +912,7 @@ bool AlertConditionsController::addConditionFromJson(const QJsonObject& json)
 /*!
   \brief internal
 
-  Attemp to add any stired Conditions serialized as JSON.
+  Attemp to add any stored Conditions serialized as JSON.
  */
 void AlertConditionsController::addStoredConditions()
 {

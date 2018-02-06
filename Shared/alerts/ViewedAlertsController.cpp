@@ -67,7 +67,7 @@ ViewedAlertsController::~ViewedAlertsController()
 
 /*!
   \brief Returns the number of alert condition data objects which are currently active
-  and which have nit been marked as viewed.
+  and which have not been marked as viewed.
  */
 int ViewedAlertsController::unviewedCount() const
 {
@@ -81,6 +81,9 @@ int ViewedAlertsController::unviewedCount() const
   {
     AlertConditionData* alert = model->alertAt(i);
     if (!alert)
+      continue;
+
+    if (!alert->active())
       continue;
 
     if (alert->viewed())

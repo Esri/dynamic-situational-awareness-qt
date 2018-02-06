@@ -913,7 +913,7 @@ bool AlertConditionsController::addConditionFromJson(const QJsonObject& json)
 /*!
   \brief internal
 
-  Attemp to add any stored Conditions serialized as JSON.
+  Attempt to add any stored Conditions serialized as JSON.
  */
 void AlertConditionsController::addStoredConditions()
 {

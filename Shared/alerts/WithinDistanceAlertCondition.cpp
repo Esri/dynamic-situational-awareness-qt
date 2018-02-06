@@ -15,6 +15,8 @@
 
 using namespace Esri::ArcGISRuntime;
 
+const QString WithinDistanceAlertCondition::METERS = "meters";
+
 /*!
   \class WithinDistanceAlertCondition
   \inherits AlertCondition
@@ -76,7 +78,7 @@ double WithinDistanceAlertCondition::distance() const
 QVariantMap WithinDistanceAlertCondition::queryComponents() const
 {
   QVariantMap queryMap;
-  queryMap.insert(QStringLiteral("meters"), m_distance);
+  queryMap.insert(METERS, m_distance);
 
   return queryMap;
 }
@@ -88,7 +90,7 @@ QVariantMap WithinDistanceAlertCondition::queryComponents() const
  */
 double WithinDistanceAlertCondition::getDistanceFromQueryComponents(const QVariantMap& queryComponents)
 {
-  return queryComponents.value(QStringLiteral("meters"), -1.0).toDouble();
+  return queryComponents.value(METERS, -1.0).toDouble();
 }
 
 /*!

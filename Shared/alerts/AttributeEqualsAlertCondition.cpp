@@ -15,6 +15,8 @@
 
 using namespace Esri::ArcGISRuntime;
 
+const QString AttributeEqualsAlertCondition::ATTRIBUTE_NAME = "attribute_name";
+
 /*!
   \class AttributeEqualsAlertCondition
   \inherits AlertCondition
@@ -74,7 +76,7 @@ QString AttributeEqualsAlertCondition::queryString() const
 QVariantMap AttributeEqualsAlertCondition::queryComponents() const
 {
   QVariantMap queryMap;
-  queryMap.insert(QStringLiteral("attribute_name"), m_attributeName);
+  queryMap.insert(ATTRIBUTE_NAME, m_attributeName);
 
   return queryMap;
 }
@@ -84,5 +86,5 @@ QVariantMap AttributeEqualsAlertCondition::queryComponents() const
  */
 QString AttributeEqualsAlertCondition::attributeNameFromQueryComponents(const QVariantMap& queryMap)
 {
-  return queryMap.value(QStringLiteral("attribute_name")).toString();
+  return queryMap.value(ATTRIBUTE_NAME).toString();
 }

@@ -22,6 +22,9 @@ class WithinDistanceAlertCondition : public AlertCondition
   Q_OBJECT
 
 public:
+
+  static const QString METERS;
+
   explicit WithinDistanceAlertCondition(AlertLevel level,
                                         const QString& name,
                                         double distance,

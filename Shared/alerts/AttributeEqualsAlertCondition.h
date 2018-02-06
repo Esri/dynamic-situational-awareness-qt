@@ -22,10 +22,13 @@ class AttributeEqualsAlertCondition : public AlertCondition
   Q_OBJECT
 
 public:
+
+  static const QString ATTRIBUTE_NAME;
+
   explicit AttributeEqualsAlertCondition( AlertLevel level,
-                                    const QString& name,
-                                    const QString& attributeName,
-                                    QObject* parent = nullptr);
+                                          const QString& name,
+                                          const QString& attributeName,
+                                          QObject* parent = nullptr);
 
   ~AttributeEqualsAlertCondition();
 

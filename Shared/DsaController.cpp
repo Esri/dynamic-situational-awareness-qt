@@ -127,7 +127,9 @@ void DsaController::setupConfig()
 void DsaController::writeDefaultInitialLocation()
 {
   QJsonObject initialLocationJson;
-  initialLocationJson.insert( QStringLiteral("center"), DsaUtility::montereyCA().toJson());
+  const QString centerString = DsaUtility::montereyCA().toJson();
+  const QJsonDocument centerDoc = QJsonDocument::fromJson(centerString.toLatin1());
+  initialLocationJson.insert( QStringLiteral("center"), centerDoc.object());
   initialLocationJson.insert( QStringLiteral("distance"), 5000.0);
   initialLocationJson.insert( QStringLiteral("heading"), 0.0);
   initialLocationJson.insert( QStringLiteral("pitch"), 75.0);

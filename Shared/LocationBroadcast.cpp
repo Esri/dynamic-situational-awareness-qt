@@ -164,7 +164,7 @@ void LocationBroadcast::setMessageType(const QString& messageType)
 
   m_messageType = messageType;
 
-  if (m_messageType.isEmpty() || m_udpPort == -1)
+  if (m_messageType.isEmpty())
     setEnabled(false);
   else
     update();
@@ -190,7 +190,7 @@ void LocationBroadcast::setUdpPort(int port)
 
   m_udpPort = port;
 
-  if (m_udpPort == -1 || m_messageType.isEmpty())
+  if (m_udpPort == -1)
     setEnabled(false);
   else
     update();

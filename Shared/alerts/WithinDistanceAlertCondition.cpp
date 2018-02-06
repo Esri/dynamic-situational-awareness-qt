@@ -15,6 +15,8 @@
 
 using namespace Esri::ArcGISRuntime;
 
+const QString WithinDistanceAlertCondition::METERS = "meters";
+
 /*!
   \class WithinDistanceAlertCondition
   \inherits AlertCondition
@@ -62,6 +64,33 @@ AlertConditionData* WithinDistanceAlertCondition::createData(AlertSource* source
 double WithinDistanceAlertCondition::distance() const
 {
   return m_distance;
+}
+
+/*!
+  \brief Returns a map of the variable components that make up the query for this condition.
+
+  This condition type uses a query comprising the following components:
+
+  \list
+    \li distance. The threshold distance in meters.
+  \endlist
+ */
+QVariantMap WithinDistanceAlertCondition::queryComponents() const
+{
+  QVariantMap queryMap;
+  queryMap.insert(METERS, m_distance);
+
+  return queryMap;
+}
+
+/*!
+  \brief Static method to get the distance in meters from a \a queryComponents.
+
+  Returns \c -1.0 if unsuccessful
+ */
+double WithinDistanceAlertCondition::getDistanceFromQueryComponents(const QVariantMap& queryComponents)
+{
+  return queryComponents.value(METERS, -1.0).toDouble();
 }
 
 /*!

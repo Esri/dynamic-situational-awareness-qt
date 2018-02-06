@@ -55,6 +55,7 @@ void MarkupController::setActive(bool active)
   m_active = active;
   GraphicsOverlayListModel* graphicsOverlays = m_geoView->graphicsOverlays();
   active ? graphicsOverlays->append(m_sketchOverlay) : graphicsOverlays->removeOne(m_sketchOverlay);
+  emit activeChanged();
 }
 
 void MarkupController::setDrawingAltitude(double altitude)

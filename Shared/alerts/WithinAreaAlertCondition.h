@@ -31,6 +31,9 @@ public:
   AlertConditionData* createData(AlertSource* source, AlertTarget* target) override;
 
   QString queryString() const override;
+  QVariantMap queryComponents() const override;
+
+  static QString isWithinQueryString();
 };
 
 #endif // WITHINAREAALERTCONDITION_H

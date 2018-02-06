@@ -29,6 +29,7 @@ class AttributeEqualsAlertConditionData : public AlertConditionData
   Q_OBJECT
 
 public:
+
   explicit AttributeEqualsAlertConditionData(const QString& name,
                                              AlertLevel level,
                                              AlertSource* source,

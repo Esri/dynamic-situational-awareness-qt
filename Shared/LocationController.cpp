@@ -85,6 +85,9 @@ void LocationController::initPositionInfoSource(bool simulated)
 
     connect(m_compass, &QCompass::readingChanged, this, [this]()
     {
+      if (!m_compass)
+        return;
+
       QCompassReading* reading = m_compass->reading();
       if (!reading)
         return;

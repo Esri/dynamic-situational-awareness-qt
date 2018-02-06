@@ -158,6 +158,9 @@ void LocationDisplay3d::setCompass(QCompass* compass)
 
   m_headingConnection = connect(m_compass, &QCompass::readingChanged, this, [this]()
   {
+    if (!m_compass)
+      return;
+
     QCompassReading* reading = m_compass->reading();
     if (!reading)
       return;

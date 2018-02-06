@@ -44,17 +44,18 @@ Rectangle {
                 id: toolbarLabel
                 text: "Settings"
                 font {
-                    pixelSize: DsaStyles.titleFontPixelSize * scaleFactor * 1.5
+                    pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
                     family: DsaStyles.fontFamily
                 }
                 color: Material.foreground
             }
 
             Label {
-                text: "Map Controls"
+                text: "Map Options"
                 font {
                     family: DsaStyles.fontFamily
                     underline: true
+                    pixelSize: DsaStyles.titleFontPixelSize * 0.75
                 }
                 color: Material.foreground
             }
@@ -78,6 +79,16 @@ Rectangle {
                     // update visibility of UI component
                     currentLocation.visible = checked;
                 }
+            }
+
+            Label {
+                text: "Location Options"
+                font {
+                    family: DsaStyles.fontFamily
+                    underline: true
+                    pixelSize: DsaStyles.titleFontPixelSize * 0.75
+                }
+                color: Material.foreground
             }
 
             // Whether to use GPS for the location/elevation display or not.
@@ -125,10 +136,11 @@ Rectangle {
             }
 
             Label {
-                text: "Formats, Units of measurement, etc"
+                text: "General Options"
                 font {
                     family: DsaStyles.fontFamily
                     underline: true
+                    pixelSize: DsaStyles.titleFontPixelSize * 0.75
                 }
                 color: Material.foreground
             }

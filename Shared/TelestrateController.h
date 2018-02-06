@@ -42,7 +42,6 @@ public:
 signals:
   void is3dChanged();
   void drawModeEnabledChanged();
-  void activeChanged();
   void drawingAltitudeChanged();
 
 private:

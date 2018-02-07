@@ -99,10 +99,13 @@ bool MessagesOverlay::addMessage(const Message& message)
     case Message::MessageAction::Select:
     case Message::MessageAction::Unselect:
     {
-      if (graphic->geometry().geometryType() != geometry.geometryType())
+      const Geometry geom = graphic->geometry();
+      if (geom.geometryType() != geometry.geometryType())
         return false;
 
-      graphic->setGeometry(geometry);
+      if (!(geom == geometry))
+        graphic->setGeometry(geometry);
+
       graphic->attributes()->setAttributesMap(message.attributes());
 
       if (messageAction == Message::MessageAction::Select)

@@ -48,6 +48,9 @@ public:
   int frequency() const;
   void setFrequency(int frequency);
 
+  bool isInDistress() const;
+  void setInDistress(bool inDistress);
+
   Message message() const;
 
 signals:
@@ -65,6 +68,7 @@ private:
   QString m_messageType;
   int m_udpPort = -1;
   int m_frequency = 3000;
+  bool m_inDistress = false;
 
   MessageSender* m_messageSender = nullptr;
   Message m_message;

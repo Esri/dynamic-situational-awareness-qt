@@ -32,6 +32,8 @@ class DsaResources : public QObject
   Q_PROPERTY(QUrl iconComplete READ iconComplete CONSTANT)
   Q_PROPERTY(QUrl iconCoordinateConversion READ iconCoordinateConversion CONSTANT)
   Q_PROPERTY(QUrl iconCreateReport READ iconCreateReport CONSTANT)
+  Q_PROPERTY(QUrl iconDistressGray READ iconDistressGray CONSTANT)
+  Q_PROPERTY(QUrl iconDistressRed READ iconDistressRed CONSTANT)
   Q_PROPERTY(QUrl iconDraw READ iconDraw CONSTANT)
   Q_PROPERTY(QUrl iconDrawer READ iconDrawer CONSTANT)
   Q_PROPERTY(QUrl iconFollowLocation READ iconFollowLocation CONSTANT)
@@ -79,6 +81,8 @@ private:
   QUrl iconComplete() const;
   QUrl iconCoordinateConversion() const;
   QUrl iconCreateReport() const;
+  QUrl iconDistressGray() const;
+  QUrl iconDistressRed() const;
   QUrl iconDraw() const;
   QUrl iconDrawer() const;
   QUrl iconFollowLocation() const;

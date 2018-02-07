@@ -32,5 +32,6 @@
         <file>CategoryToolbarColumn.qml</file>
         <file>CategoryToolbarRow.qml</file>
         <file>HomeToolRow.qml</file>
+        <file>DistressButton.qml</file>
     </qresource>
 </RCC>

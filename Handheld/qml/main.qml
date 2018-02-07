@@ -115,6 +115,15 @@ Handheld {
 
         onMousePressed: followHud.stopFollowing();
 
+        DistressButton {
+            anchors {
+                top: parent.top
+                horizontalCenter: navTool.horizontalCenter
+                margins: 10 * scaleFactor
+            }
+            messageFeedsController: messageFeeds.controller
+        }
+
         CurrentLocation {
             id: currentLocation
             anchors {

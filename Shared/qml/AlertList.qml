@@ -117,11 +117,11 @@ DsaPanel {
             width: parent.width
             height: 40 * scaleFactor
             itemChecked: true
-            imageUrl: level === 0 ?
-                          DsaResources.iconWarningBlue
-                        : ( level === 1 ? DsaResources.iconWarningGreen
-                                        : ( level === 2 ? DsaResources.iconWarningOrange
-                                                        : DsaResources.iconWarningRed) )
+            imageUrl: level === 1 ?
+                          DsaResources.iconWarningGreen
+                        : ( level === 2 ? DsaResources.iconWarningOrange
+                                        : ( level === 3 ? DsaResources.iconWarningRed
+                                                        : DsaResources.iconWarningRedExclamation) )
             imageVisible: true
             checkBoxVisible: false
             mainText: name

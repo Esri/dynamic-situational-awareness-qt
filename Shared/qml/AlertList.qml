@@ -118,10 +118,10 @@ DsaPanel {
             height: 40 * scaleFactor
             itemChecked: true
             imageUrl: level === 0 ?
-                          "qrc:/Resources/icons/xhdpi/warning_blue.png"
-                        : ( level === 1 ? "qrc:/Resources/icons/xhdpi/warning_green.png"
-                                        : ( level === 2 ? "qrc:/Resources/icons/xhdpi/warning_orange.png"
-                                                        : "qrc:/Resources/icons/xhdpi/warning_red.png") )
+                          DsaResources.iconWarningBlue
+                        : ( level === 1 ? DsaResources.iconWarningGreen
+                                        : ( level === 2 ? DsaResources.iconWarningOrange
+                                                        : DsaResources.iconWarningRed) )
             imageVisible: true
             checkBoxVisible: false
             mainText: name
@@ -169,10 +169,10 @@ DsaPanel {
                         }
 
                         ListLabel {
-                            text: index == hightlightIndex ? "Highlight (off)" : "Highlight"
+                            text: index === hightlightIndex ? "Highlight (off)" : "Highlight"
                             onTriggered: {
-                                alertMenu.close()
-                                if (hightlightIndex == index) {
+                                alertMenu.close();
+                                if (hightlightIndex === index) {
                                     toolController.highlight(index, false);
                                     hightlightIndex = -1;
                                 }
@@ -187,7 +187,7 @@ DsaPanel {
                         ListLabel {
                             text: "Dismiss"
                             onTriggered: {
-                                alertMenu.close()
+                                alertMenu.close();
                                 toolController.dismiss(index);
                             }
                         }

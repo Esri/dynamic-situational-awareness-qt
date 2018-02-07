@@ -30,10 +30,52 @@ DsaPanel {
     }
 
     Row {
-        id: levelRow
+        id: filtersRow
         spacing: 8 * scaleFactor
         anchors {
             top: alertsRoot.titleBar.bottom
+            left: parent.left
+            right: parent.right
+            margins: 8 * scaleFactor
+        }
+
+        Label {
+            id: viewCountLabel
+
+            anchors.verticalCenter: parent.verticalCenter
+            elide: Text.ElideRight
+            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+            text: "Viewing " + alertsView.count + " of " + toolController.allAlertsCount
+            verticalAlignment: Text.AlignVCenter
+            color: Material.foreground
+            font {
+                pixelSize: 14 * scaleFactor
+                family: DsaStyles.fontFamily
+            }
+        }
+
+        Button {
+            id: clearAllFiltersButton
+
+            anchors.verticalCenter: parent.verticalCenter
+            text: "Clear filters"
+            font {
+                pixelSize: 12 * scaleFactor
+                family: DsaStyles.fontFamily
+            }
+
+            onClicked: {
+                levelFilter.currentIndex = 0;
+                toolController.clearAllFilters();
+            }
+        }
+    }
+
+    Row {
+        id: levelRow
+        spacing: 8 * scaleFactor
+        anchors {
+            top: filtersRow.bottom
             left: parent.left
             right: parent.right
             margins: 8 * scaleFactor

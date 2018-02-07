@@ -66,6 +66,11 @@ QUrl DsaResources::iconClose() const
   return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_closeclear_dark.png");
 }
 
+QUrl DsaResources::iconColorPalette() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_colorpalette_dark_d.png");
+}
+
 QUrl DsaResources::iconComplete() const
 {
   return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_completedone_dark.png");
@@ -129,6 +134,11 @@ QUrl DsaResources::iconHome() const
 QUrl DsaResources::iconLayers() const
 {
   return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_layergroup_dark_d.png");
+}
+
+QUrl DsaResources::iconLineWidth() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_sketchlinepopover_dark_d.png");
 }
 
 QUrl DsaResources::iconListView() const

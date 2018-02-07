@@ -1,4 +1,5 @@
-// Copyright 2017 ESRI
+
+// Copyright 2016 ESRI
 //
 // All rights reserved under the copyright laws of the United States
 // and applicable international laws, treaties, and conventions.
@@ -14,20 +15,27 @@ import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
 import QtQuick.Window 2.2
+import QtQml.Models 2.2
+import QtGraphicalEffects 1.0
 import Esri.DSA 1.0
 
-Label {
-    font {
-        family: DsaStyles.fontFamily
-        pixelSize: 16 * scaleFactor
-    }
-    color: Material.foreground
-    signal triggered();
+Dialog {
+    visible: false
+    x: appRoot.width / 2 - width / 2
+    y: appRoot.height / 2 - height / 2
+    width: 250 * scaleFactor
+    height: 125 * scaleFactor
+    standardButtons: Dialog.Ok
 
-    MouseArea {
-        anchors.fill: parent
-        onClicked: {
-            parent.triggered();
+    property alias informativeText: label.text
+
+    Label {
+        id: label
+        font {
+            pixelSize: 12 * scaleFactor
+            family: DsaStyles.fontFamily
         }
+        wrapMode: Text.Wrap
+        width: parent.width
     }
 }

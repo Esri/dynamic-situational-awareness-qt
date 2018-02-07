@@ -29,6 +29,7 @@ class DsaResources : public QObject
   Q_PROPERTY(QUrl iconAppLogo READ iconAppLogo CONSTANT)
   Q_PROPERTY(QUrl iconChooseBasemap READ iconChooseBasemap CONSTANT)
   Q_PROPERTY(QUrl iconClose READ iconClose CONSTANT)
+  Q_PROPERTY(QUrl iconColorPalette READ iconColorPalette CONSTANT)
   Q_PROPERTY(QUrl iconComplete READ iconComplete CONSTANT)
   Q_PROPERTY(QUrl iconCoordinateConversion READ iconCoordinateConversion CONSTANT)
   Q_PROPERTY(QUrl iconCreateReport READ iconCreateReport CONSTANT)
@@ -42,6 +43,7 @@ class DsaResources : public QObject
   Q_PROPERTY(QUrl iconGps READ iconGps CONSTANT)
   Q_PROPERTY(QUrl iconHome READ iconHome CONSTANT)
   Q_PROPERTY(QUrl iconLayers READ iconLayers CONSTANT)
+  Q_PROPERTY(QUrl iconLineWidth READ iconLineWidth CONSTANT)
   Q_PROPERTY(QUrl iconListView READ iconListView CONSTANT)
   Q_PROPERTY(QUrl iconMap READ iconMap CONSTANT)
   Q_PROPERTY(QUrl iconMenu READ iconMenu CONSTANT)
@@ -78,6 +80,7 @@ private:
   QUrl iconAppLogo() const;
   QUrl iconChooseBasemap() const;
   QUrl iconClose() const;
+  QUrl iconColorPalette() const;
   QUrl iconComplete() const;
   QUrl iconCoordinateConversion() const;
   QUrl iconCreateReport() const;
@@ -91,6 +94,7 @@ private:
   QUrl iconGps() const;
   QUrl iconHome() const;
   QUrl iconLayers() const;
+  QUrl iconLineWidth() const;
   QUrl iconListView() const;
   QUrl iconMap() const;
   QUrl iconMenu() const;

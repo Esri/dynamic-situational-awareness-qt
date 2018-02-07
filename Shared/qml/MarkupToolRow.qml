@@ -14,7 +14,6 @@ import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
 import QtQuick.Window 2.2
-import QtQuick.Dialogs 1.2
 import Esri.DSA 1.0
 import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.2
 
@@ -22,7 +21,14 @@ Row {
     id: markupToolRow
     spacing: 10 * scaleFactor
     visible: categoryToolbar.state === "markup"
-    onVisibleChanged: state = "clear"
+    onVisibleChanged: {
+        if (visible) {
+            state = drawIcon.toolName
+        } else {
+            state = "clear";
+        }
+    }
+    property alias configureSelected: colorIcon.selected
 
     states: [
         State {
@@ -30,6 +36,10 @@ Row {
             PropertyChanges {
                 target: clearIcon
                 selected: true
+            }
+            PropertyChanges {
+                target: markup
+                state: markup.clearState
             }
         },
         State {
@@ -39,22 +49,42 @@ Row {
                 selected: true
             }
             PropertyChanges {
-                target: telestrateTool
+                target: markup
                 visible: true
             }
-        },
-        State {
-            name: configureIcon.toolName
             PropertyChanges {
-                target: configureIcon
-                selected: true
+                target: markup
+                state: markup.drawState
             }
         },
         State {
-            name: sendIcon.toolName
+            name: colorIcon.toolName
             PropertyChanges {
-                target: sendIcon
+                target: colorIcon
                 selected: true
+            }
+            PropertyChanges {
+                target: markup
+                visible: true
+            }
+            PropertyChanges {
+                target: markup
+                state: markup.colorState
+            }
+        },
+        State {
+            name: widthIcon.toolName
+            PropertyChanges {
+                target: widthIcon
+                selected: true
+            }
+            PropertyChanges {
+                target: markup
+                visible: true
+            }
+            PropertyChanges {
+                target: markup
+                state: markup.widthState
             }
         },
         State {
@@ -67,22 +97,8 @@ Row {
                 target: drawIcon
                 selected: false
             }
-            PropertyChanges {
-                target: sendIcon
-                selected: false
-            }
         }
     ]
-
-    // Send
-    ToolIcon {
-        id: sendIcon
-        iconSource: DsaResources.iconSendMap
-        toolName: "Send"
-        onToolSelected: {
-            // TODO
-        }
-    }
 
     // Draw
     ToolIcon {
@@ -90,23 +106,43 @@ Row {
         iconSource: DsaResources.iconSketch
         toolName: "Draw"
         onToolSelected: {
-            if (markupToolRow.state === toolName)
+            if (markupToolRow.state === toolName) {
+                selected = false;
+                markup.markupEnabled = false;
                 markupToolRow.state = "clear";
-            else {
+            } else {
                 markupToolRow.state = toolName;
             }
         }
     }
 
-    // Configure
+    // Color
     ToolIcon {
-        id: configureIcon
-        iconSource: DsaResources.iconSettings
-        toolName: "Configure"
+        id: colorIcon
+        iconSource: DsaResources.iconColorPalette
+        toolName: "Color"
         onToolSelected: {
-            if (markupToolRow.state === toolName)
+            if (markupToolRow.state === toolName) {
+                selected = false;
                 markupToolRow.state = "clear";
-            else {
+            } else {
+                markup.markupEnabled = false;
+                markupToolRow.state = toolName;
+            }
+        }
+    }
+
+    // Color
+    ToolIcon {
+        id: widthIcon
+        iconSource: DsaResources.iconLineWidth
+        toolName: "Width"
+        onToolSelected: {
+            if (markupToolRow.state === toolName) {
+                selected = false;
+                markupToolRow.state = "clear";
+            } else {
+                markup.markupEnabled = false;
                 markupToolRow.state = toolName;
             }
         }
@@ -116,9 +152,7 @@ Row {
     ToolIcon {
         id: clearIcon
         iconSource: DsaResources.iconTrash
-        toolName: "Clear"
-        onToolSelected: {
-            // TODO - clear graphics overlay
-        }
+        toolName: "Clear All"
+        onToolSelected: appRoot.showClearDialog("Are you sure you want to clear all markups?")
     }
 }

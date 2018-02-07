@@ -12,22 +12,31 @@
 
 import QtQuick 2.9
 import QtQuick.Controls 2.2
+import QtQuick.Controls 1.4 as QtQuick1
 import QtQuick.Controls.Material 2.2
+import QtGraphicalEffects 1.0
 import QtQuick.Window 2.2
 import Esri.DSA 1.0
 
-Label {
-    font {
-        family: DsaStyles.fontFamily
-        pixelSize: 16 * scaleFactor
-    }
-    color: Material.foreground
-    signal triggered();
+Item {
+    width : parent.width
+    height: DsaStyles.mainToolbarHeight * scaleFactor
+    visible: false
 
-    MouseArea {
+    DropShadow {
+        anchors.fill: fill
+        horizontalOffset: -1 * scaleFactor
+        verticalOffset: 1 * scaleFactor
+        radius: 8 * scaleFactor
+        smooth: true
+        samples: 16
+        color: "#80000000"
+        source: fill
+    }
+
+    Rectangle {
+        id: fill
         anchors.fill: parent
-        onClicked: {
-            parent.triggered();
-        }
+        color: Material.background
     }
 }

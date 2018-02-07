@@ -43,5 +43,9 @@
         <file>icons/xhdpi/ic_menu_refresh_dark.png</file>
         <file>icons/xhdpi/applogo.png</file>
         <file>icons/xhdpi/ic_menu_overflowcirclessmall_dark_d.png</file>
+        <file>icons/xhdpi/warning_green.png</file>
+        <file>icons/xhdpi/warning_blue.png</file>
+        <file>icons/xhdpi/warning_orange.png</file>
+        <file>icons/xhdpi/warning_red.png</file>
     </qresource>
 </RCC>

@@ -51,7 +51,8 @@ WithinDistanceAlertConditionData::WithinDistanceAlertConditionData(const QString
                                                                    double distance,
                                                                    QObject* parent):
   AlertConditionData(name, level, source, target, parent),
-  m_distance(distance)
+  m_distance(distance),
+  m_moveDistance(std::sqrt((m_distance * m_distance) + (m_distance * m_distance)))
 {
 
 }
@@ -81,11 +82,29 @@ bool WithinDistanceAlertConditionData::matchesQuery() const
   if (!isQueryOutOfDate())
     return cachedQueryResult();
 
-  const Geometry bufferGeom = GeometryEngine::bufferGeodetic(sourceLocation(), distance(), LinearUnit::meters(), 1.0, GeodeticCurveType::Geodesic);
+  // get 2 new points by moving the source position in a NE and SW position
+  // m_moveDistance is the hypotenuse of the triangle with opposite and adjacent of distance
+  const QList<Point> southWest = GeometryEngine::moveGeodetic(QList<Point>{sourceLocation()}, m_moveDistance,
+                                                              LinearUnit::meters(), 225.0, AngularUnit::degrees(),
+                                                              GeodeticCurveType::Geodesic);
+  const QList<Point> northEast = GeometryEngine::moveGeodetic(QList<Point>{sourceLocation()}, m_moveDistance,
+                                                              LinearUnit::meters(), 45.0, AngularUnit::degrees(),
+                                                              GeodeticCurveType::Geodesic);
+
+  // form an Envelope from these 2 extreme points and check for target geometrties within this extent
+  const Envelope distanceExtent(southWest.first(), northEast.first());
+  const QList<Geometry> targetGeometries = target()->targetGeometries(distanceExtent);
+
+  // if there are no target geometries within the distance extent, stop
+  if (targetGeometries.isEmpty())
+    return false;
+
+  // buffer the source position by the distance for an accurate within distance test
+  const Geometry bufferGeom = GeometryEngine::bufferGeodetic(sourceLocation(), distance(), LinearUnit::meters(), 1.0,
+                                                             GeodeticCurveType::Geodesic);
   const Geometry bufferWgs84 = GeometryEngine::project(bufferGeom, SpatialReference::wgs84());
 
-  const QList<Geometry> targetGeometries = target()->targetGeometries(bufferWgs84.extent());
-
+  // test the buffer against all the target geometries
   for (const Geometry& target : targetGeometries)
   {
     Geometry targetWgs84 = GeometryEngine::project(target, SpatialReference::wgs84());

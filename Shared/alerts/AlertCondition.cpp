@@ -222,3 +222,34 @@ QString AlertCondition::description() const
 {
   return QString("%1 %2 %3").arg(sourceDescription(), queryString(), targetDescription());
 }
+
+/*!
+  \brief Returns whether this condition is enabled.
+
+  When enabled is \false the condition will not be checked and no alerts will be raised.
+ */
+bool AlertCondition::enabled() const
+{
+  return m_enabled;
+}
+
+/*!
+  \brief Sets this condition to be \a enabled.
+
+  When enabled is \false the condition will not be checked and no alerts will be raised.
+ */
+void AlertCondition::setEnabled(bool enabled)
+{
+  if (enabled == m_enabled)
+    return;
+
+  for (auto it = m_data.begin(); it != m_data.end(); ++it)
+  {
+    AlertConditionData* data = *it;
+    if (data)
+      data->setEnabled(enabled);
+  }
+
+  m_enabled = enabled;
+  emit enabledChanged();
+}

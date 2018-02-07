@@ -59,6 +59,9 @@ public:
   bool cachedQueryResult() const;
   bool isQueryOutOfDate() const;
 
+  bool enabled() const;
+  void setEnabled(bool enabled);
+
 signals:
   void statusChanged();
   void viewedChanged();
@@ -75,6 +78,7 @@ private:
   AlertSource* m_source = nullptr;
   AlertTarget* m_target = nullptr;
   QUuid m_id;
+  bool m_enabled = true;
   bool m_viewed = false;
   bool m_active = false;
   bool m_queryOutOfDate = true;

@@ -63,12 +63,17 @@ public:
   QString targetDescription() const;
   QString description() const;
 
+  bool enabled() const;
+  void setEnabled(bool enabled);
+
 signals:
   void noLongerValid();
   void newConditionData(AlertConditionData* newConditionData);
   void conditionChanged();
+  void enabledChanged();
 
 private:
+  bool m_enabled = true;
   AlertLevel m_level;
   QString m_name;
   QList<AlertConditionData*> m_data;

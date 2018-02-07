@@ -28,7 +28,8 @@ public:
   {
     Name = Qt::UserRole + 2,
     Level = Qt::UserRole + 3,
-    Description = Qt::UserRole + 4
+    Description = Qt::UserRole + 4,
+    ConditionEnabled = Qt::UserRole +5
   };
 
   explicit AlertConditionListModel(QObject* parent = nullptr);
@@ -44,6 +45,7 @@ public:
   // QAbstractItemModel interface
   int rowCount(const QModelIndex& parent = QModelIndex()) const override;
   QVariant data(const QModelIndex& index, int role) const override;
+  bool setData(const QModelIndex& index, const QVariant& value, int role);
 
 protected:
   QHash<int, QByteArray> roleNames() const override;

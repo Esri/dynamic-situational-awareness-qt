@@ -108,6 +108,9 @@ int AlertListController::allAlertsCount() const
     if (!alert->active())
       continue;
 
+    if (!alert->enabled())
+      continue;
+
     count++;
   }
 

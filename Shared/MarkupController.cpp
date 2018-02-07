@@ -160,11 +160,15 @@ void MarkupController::init()
       mouseEvent.accept();
 
     // create a new graphic that corresponds to a new Part of the GeometryBuilder
+    if (!m_isSketching)
+    {
+      clear();
+      Graphic* partGraphic = new Graphic(this);
+      partGraphic->setSymbol(m_sketchSymbol);
+      m_partOutlineGraphics.append(partGraphic);
+      m_sketchOverlay->graphics()->append(partGraphic);
+    }
     m_currentPartIndex = addPart();
-    Graphic* partGraphic = new Graphic(this);
-    partGraphic->setSymbol(m_sketchSymbol);
-    m_partOutlineGraphics.append(partGraphic);
-    m_sketchOverlay->graphics()->append(partGraphic);
 
     Toolkit::ToolResourceProvider::instance()->setMouseCursor(QCursor(Qt::PointingHandCursor));
     m_isDrawing = true;
@@ -223,8 +227,8 @@ void MarkupController::updateSketch()
   outlineBuilder->parts()->addPart(currentPart);
 
   // get simplified geometry
-  const Geometry simplifiedLine = GeometryEngine::simplify(outlineBuilder->toGeometry());
-  m_partOutlineGraphics.at(m_currentPartIndex)->setGeometry(simplifiedLine);
+  const Geometry simplifiedLine = GeometryEngine::simplify(multipartBuilder->toGeometry());
+  m_partOutlineGraphics.at(m_partOutlineGraphics.size() - 1)->setGeometry(simplifiedLine);
 }
 
 void MarkupController::updateGeoView()
@@ -285,4 +289,9 @@ void MarkupController::clearGraphics()
     return;
 
   m_sketchOverlay->graphics()->clear();
+}
+
+void MarkupController::setIsSketching(bool isSketching)
+{
+  m_isSketching = isSketching;
 }

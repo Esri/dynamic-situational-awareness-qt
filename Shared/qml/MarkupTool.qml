@@ -198,6 +198,11 @@ Item {
         id: drawPane
         property bool sketchInProgress: false
 
+        onSketchInProgressChanged: {
+            console.log("sketch in progress changed", sketchInProgress)
+            markupController.setIsSketching(sketchInProgress)
+        }
+
         Row {
             anchors.centerIn: parent
             spacing: 40 * scaleFactor

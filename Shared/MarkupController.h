@@ -27,6 +27,7 @@ public:
   Q_INVOKABLE void setName(const QString& name);
   Q_INVOKABLE void clearGraphics();
   Q_INVOKABLE void setActive(bool active) override;
+  Q_INVOKABLE void setIsSketching(bool isSketching);
 
   void setDrawingAltitude(double altitude);
   double drawingAltitude() const;
@@ -55,6 +56,7 @@ private:
   bool m_isDrawing = false;
   bool m_drawModeEnabled = true;
   bool m_is3d = false;
+  bool m_isSketching = false;
 };
 
 #endif // MARKUPCONTROLLER_H

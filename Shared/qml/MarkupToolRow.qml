@@ -87,25 +87,6 @@ Row {
                 state: markup.widthState
             }
         },
-//        State {
-//            name: markupTocIcon.toolName
-//            PropertyChanges {
-//                target: markupTocIcon
-//                selected: true
-//            }
-//            PropertyChanges {
-//                target: markup
-//                visible: true
-//            }
-//            PropertyChanges {
-//                target: markup
-//                state: markup.tocState
-//            }
-//            PropertyChanges {
-//                target: drawIcon
-//                selected: selected
-//            }
-//        },
         State {
             name: "clear"
             PropertyChanges {
@@ -116,10 +97,6 @@ Row {
                 target: drawIcon
                 selected: false
             }
-//            PropertyChanges {
-//                target: markupTocIcon
-//                selected: false
-//            }
         }
     ]
 
@@ -170,20 +147,6 @@ Row {
             }
         }
     }
-
-//    // Markups TOC
-//    ToolIcon {
-//        id: markupTocIcon
-//        iconSource: DsaResources.iconListView
-//        toolName: "Markups"
-//        onToolSelected: {
-//            if (markupToolRow.state === toolName)
-//                markupToolRow.state = "clear";
-//            else {
-//                markupToolRow.state = toolName;
-//            }
-//        }
-//    }
 
     // Clear
     ToolIcon {

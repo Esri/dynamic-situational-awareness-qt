@@ -31,6 +31,7 @@ public:
   bool passesFilter(AlertConditionData* conditionData) const override;
 
   void addId(const QUuid& id);
+  void clearIds();
 
 private:
   QSet<QUuid> m_ids;

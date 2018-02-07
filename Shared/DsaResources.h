@@ -60,6 +60,10 @@ class DsaResources : public QObject
   Q_PROPERTY(QUrl iconTrash READ iconTrash CONSTANT)
   Q_PROPERTY(QUrl iconViewshed READ iconViewshed CONSTANT)
   Q_PROPERTY(QUrl iconZoomTo READ iconZoomTo CONSTANT)
+  Q_PROPERTY(QUrl iconWarningBlue READ iconWarningBlue CONSTANT)
+  Q_PROPERTY(QUrl iconWarningGreen READ iconWarningGreen CONSTANT)
+  Q_PROPERTY(QUrl iconWarningOrange READ iconWarningOrange CONSTANT)
+  Q_PROPERTY(QUrl iconWarningRed READ iconWarningRed CONSTANT)
 
 public:
   DsaResources(QObject* parent = nullptr);
@@ -106,6 +110,10 @@ private:
   QUrl iconTrash() const;
   QUrl iconViewshed() const;
   QUrl iconZoomTo() const;
+  QUrl iconWarningBlue() const;
+  QUrl iconWarningGreen() const;
+  QUrl iconWarningOrange() const;
+  QUrl iconWarningRed() const;
 };
 
 #endif // DSARESOURCES_H

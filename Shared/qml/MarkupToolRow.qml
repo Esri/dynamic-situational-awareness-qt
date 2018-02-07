@@ -70,32 +70,32 @@ Row {
             }
             PropertyChanges {
                 target: markup
-                state: markup.editState
+                state: markup.colorState
             }
             PropertyChanges {
                 target: drawIcon
-                selected: selected
+                selected: false
             }
         },
-        State {
-            name: markupTocIcon.toolName
-            PropertyChanges {
-                target: markupTocIcon
-                selected: true
-            }
-            PropertyChanges {
-                target: markup
-                visible: true
-            }
-            PropertyChanges {
-                target: markup
-                state: markup.tocState
-            }
-            PropertyChanges {
-                target: drawIcon
-                selected: selected
-            }
-        },
+//        State {
+//            name: markupTocIcon.toolName
+//            PropertyChanges {
+//                target: markupTocIcon
+//                selected: true
+//            }
+//            PropertyChanges {
+//                target: markup
+//                visible: true
+//            }
+//            PropertyChanges {
+//                target: markup
+//                state: markup.tocState
+//            }
+//            PropertyChanges {
+//                target: drawIcon
+//                selected: selected
+//            }
+//        },
         State {
             name: "clear"
             PropertyChanges {
@@ -104,12 +104,12 @@ Row {
             }
             PropertyChanges {
                 target: drawIcon
-                selected: selected
-            }
-            PropertyChanges {
-                target: markupTocIcon
                 selected: false
             }
+//            PropertyChanges {
+//                target: markupTocIcon
+//                selected: false
+//            }
         }
     ]
 
@@ -139,24 +139,25 @@ Row {
                 selected = false;
                 markupToolRow.state = "clear";
             } else {
+                markup.markupEnabled = false;
                 markupToolRow.state = toolName;
             }
         }
     }
 
-    // Markups TOC
-    ToolIcon {
-        id: markupTocIcon
-        iconSource: DsaResources.iconListView
-        toolName: "Markups"
-        onToolSelected: {
-            if (markupToolRow.state === toolName)
-                markupToolRow.state = "clear";
-            else {
-                markupToolRow.state = toolName;
-            }
-        }
-    }
+//    // Markups TOC
+//    ToolIcon {
+//        id: markupTocIcon
+//        iconSource: DsaResources.iconListView
+//        toolName: "Markups"
+//        onToolSelected: {
+//            if (markupToolRow.state === toolName)
+//                markupToolRow.state = "clear";
+//            else {
+//                markupToolRow.state = toolName;
+//            }
+//        }
+//    }
 
     // Clear
     ToolIcon {

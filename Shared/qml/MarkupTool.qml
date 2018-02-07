@@ -31,7 +31,7 @@ Item {
 
     // state strings
     property string drawState: "draw"
-    property string editState: "edit"
+    property string colorState: "color"
     property string tocState: "toc"
     property string clearState: "clear"
 
@@ -55,7 +55,7 @@ Item {
     MarkupController {
         id: markupController
 
-        onSketchComplete: sketchButtons.visible = true
+        onSketchComplete: drawPane.sketchInProgress = true
     }
 
     state: clearState
@@ -66,11 +66,27 @@ Item {
                 target: markupController
                 drawModeEnabled: true
             }
+            PropertyChanges {
+                target: rootMarkup
+                visible: true
+            }
+            PropertyChanges {
+                target: rootMarkup
+                width: 210 * scaleFactor
+            }
+            PropertyChanges {
+                target: rootMarkup
+                height: DsaStyles.mainToolbarHeight * scaleFactor
+            }
+            PropertyChanges {
+                target: drawPane
+                visible: sketchInProgress
+            }
         },
         State {
-            name: editState
+            name: colorState
             PropertyChanges {
-                target: editPane
+                target: colorPane
                 visible: true
             }
             PropertyChanges {
@@ -79,7 +95,7 @@ Item {
             }
             PropertyChanges {
                 target: rootMarkup
-                width: 200 * scaleFactor
+                width: 210 * scaleFactor
             }
             PropertyChanges {
                 target: rootMarkup
@@ -93,7 +109,7 @@ Item {
         State {
             name: tocState
             PropertyChanges {
-                target: editPane
+                target: colorPane
                 visible: false
             }
             PropertyChanges {
@@ -121,171 +137,196 @@ Item {
             name: clearState
             PropertyChanges {
                 target: markupController
-                drawModeEnabled: drawModeEnabled
+                drawModeEnabled: false
             }
             PropertyChanges {
-                target: editPane
+                target: colorPane
+                visible: false
+            }
+            PropertyChanges {
+                target: drawPane
                 visible: false
             }
             PropertyChanges {
                 target: markupToc
                 visible: false
             }
+            PropertyChanges {
+                target: rootMarkup
+                visible: false
+            }
+            PropertyChanges {
+                target: rootMarkup
+                width: 0
+            }
+            PropertyChanges {
+                target: rootMarkup
+                height: 0
+            }
         }
     ]
 
-    Column {
-        id: sketchButtons
-        anchors {
-            top: parent.top
-            right: parent.right
-            margins: 5 * scaleFactor
-        }
-        visible: false
-        spacing: 5 * scaleFactor
+    //    Column {
+    //        id: sketchButtons
+    //        anchors {
+    //            top: parent.top
+    //            right: parent.right
+    //            margins: 5 * scaleFactor
+    //        }
+    //        visible: false
+    //        spacing: 5 * scaleFactor
 
-        Button {
-            text: "Finish Sketch"
-            background: Rectangle { color: Material.primary; }
-            width: 125 * scaleFactor
-            onClicked: nameDialog.open()
-        }
+    //        Button {
+    //            text: "Finish Sketch"
+    //            background: Rectangle { color: Material.primary; }
+    //            width: 125 * scaleFactor
+    //            onClicked: nameDialog.open()
+    //        }
 
-        Button {
-            text: "Cancel Sketch"
-            background: Rectangle { color: Material.primary; }
-            width: 125 * scaleFactor
-            onClicked: {
-                //markupController.clearCurrentSketch(); // TODO
-                sketchButtons.visible = false;
+    //        Button {
+    //            text: "Cancel Sketch"
+    //            background: Rectangle { color: Material.primary; }
+    //            width: 125 * scaleFactor
+    //            onClicked: {
+    //                //markupController.clearCurrentSketch(); // TODO
+    //                sketchButtons.visible = false;
+    //            }
+    //        }
+    //    }
+
+    SecondaryToolbar {
+        id: drawPane
+        property bool sketchInProgress: false
+
+        Row {
+            anchors.centerIn: parent
+            spacing: 40 * scaleFactor
+            visible: parent.visible
+
+            ToolIcon {
+                anchors.verticalCenter: parent.verticalCenter
+                iconSource: DsaResources.iconComplete
+                toolName: "Finish Sketch"
+                onToolSelected: nameDialog.open()
+            }
+
+            ToolIcon {
+                anchors.verticalCenter: parent.verticalCenter
+                iconSource: DsaResources.iconClose
+                toolName: "Cancel Sketch"
+                onToolSelected: {
+                    //markupController.clearCurrentSketch(); // TODO
+                    drawPane.sketchInProgress = false;
+                }
             }
         }
     }
 
-    Item {
-        id: editPane
-        width : parent.width
-        height: DsaStyles.mainToolbarHeight * scaleFactor
-        visible: false
+    SecondaryToolbar {
+        id: colorPane
 
-        DropShadow {
-            anchors.fill: colorRect
-            horizontalOffset: -1
-            verticalOffset: 1
-            radius: 8 * scaleFactor
-            smooth: true
-            samples: 16
-            color: "#80000000"
-            source: colorRect
+        Text {
+            id: colorTitle
+            anchors {
+                top: parent.top
+                left: parent.left
+                margins: 5 * scaleFactor
+            }
+            text: qsTr("Draw Color")
+            color: Material.foreground
         }
 
-        Rectangle {
-            id: colorRect
-            anchors.fill: parent
-            color: Material.background
-
-            Text {
-                id: colorTitle
-                anchors {
-                    top: parent.top
-                    left: parent.left
-                    margins: 5 * scaleFactor
-                }
-                text: qsTr("Draw Color")
-                color: Material.foreground
+        ListView {
+            id: colorView
+            anchors {
+                top: colorTitle.bottom
+                horizontalCenter: parent.horizontalCenter
+                margins: 2 * scaleFactor
             }
+            orientation: ListView.Horizontal
+            model: colorModel
+            height: 30 * scaleFactor
+            width: 150 * scaleFactor
+            spacing: 5 * scaleFactor
+            currentIndex: 0
+            snapMode: ListView.SnapOneItem
 
-            ListView {
-                id: colorView
-                anchors {
-                    top: colorTitle.bottom
-                    horizontalCenter: parent.horizontalCenter
-                    margins: 2 * scaleFactor
-                }
-                orientation: ListView.Horizontal
-                model: colorModel
-                height: 30 * scaleFactor
-                width: 150 * scaleFactor
-                spacing: 5 * scaleFactor
-                currentIndex: 0
-                snapMode: ListView.SnapOneItem
+            delegate: Component {
 
-                delegate: Component {
-
-                    Rectangle {
-                        height: DsaStyles.mainToolbarHeight * 0.5
-                        width: height
-                        radius: 100 * scaleFactor
-                        color: drawColors[index]
-                        border {
-                            color: Material.accent
-                            width: 0.50 * scaleFactor
-                        }
-
-                        Image {
-                            anchors.centerIn: parent
-                            height: parent.height
-                            width: height
-                            source: DsaResources.iconComplete
-                            visible: selected
-                        }
-
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: {
-                                selectColor(parent);
-                                parent.ListView.view.currentIndex = index;
-                                selected = true;
-
-                                if (markupController.drawModeEnabled)
-                                    colorSelected();
-
-                                markup.state = clearState;
-                                markupToolRow.configureSelected = false;
-                            }
-                        }
+                Rectangle {
+                    height: DsaStyles.mainToolbarHeight * 0.5
+                    width: height
+                    radius: 100 * scaleFactor
+                    color: drawColors[index]
+                    border {
+                        color: Material.accent
+                        width: 0.50 * scaleFactor
                     }
-                }
-
-                ListModel {
-                    id: colorModel
-                }
-            }
-
-            // button for adding new colors
-            RoundButton {
-                id: addButton
-                anchors {
-                    margins: 5 * scaleFactor
-                    right: parent.right
-                    bottom: parent.bottom
-                }
-                visible: Qt.platform.os !== "android" // ColorDialog does not scale properly on Android
-                height: 20 * scaleFactor
-                width: height
-                opacity: 0.95
-
-                background: Rectangle {
-                    implicitWidth: parent.width
-                    implicitHeight: implicitWidth
-                    opacity: enabled ? 1 : 0.3
-                    radius: addButton.radius
-                    color: Material.accent
 
                     Image {
                         anchors.centerIn: parent
-                        width: 16 * scaleFactor
-                        height: width
-                        source: DsaResources.iconAdd
+                        height: parent.height
+                        width: height
+                        source: DsaResources.iconComplete
+                        visible: selected
                     }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            selectColor(parent);
+                            parent.ListView.view.currentIndex = index;
+                            selected = true;
+
+                            if (markupController.drawModeEnabled)
+                                colorSelected();
+
+                            markup.state = clearState;
+                            markupToolRow.configureSelected = false;
+                        }
+                    }
+                }
+            }
+
+            ListModel {
+                id: colorModel
+            }
+        }
+
+        // button for adding new colors
+        RoundButton {
+            id: addButton
+            anchors {
+                margins: 5 * scaleFactor
+                right: parent.right
+                bottom: parent.bottom
+            }
+            visible: Qt.platform.os !== "android" // ColorDialog does not scale properly on Android
+            height: 20 * scaleFactor
+            width: height
+            opacity: 0.95
+
+            background: Rectangle {
+                implicitWidth: parent.width
+                implicitHeight: implicitWidth
+                opacity: enabled ? 1 : 0.3
+                radius: addButton.radius
+                color: Material.accent
+
+                Image {
+                    anchors.centerIn: parent
+                    width: 16 * scaleFactor
+                    height: width
+                    source: DsaResources.iconAdd
+                }
+            }
+
+            onClicked: {
+                if (!newColorDialog.visible) {
+                    colorDialogVisibleChanged(true);
+                    newColorDialog.open();
                 }
 
-                onClicked: {
-                    if (!newColorDialog.visible) {
-                        colorDialogVisibleChanged(true);
-                        newColorDialog.open();
-                    }
-                }
             }
         }
     }
@@ -303,7 +344,7 @@ Item {
         onAccepted: {
             markupController.setName(nameText.text.length > 0 ? nameText.text : "sketch " + i);
             i++;
-            sketchButtons.visible = false;
+            drawPane.sketchInProgress = false;
         }
 
         Row {

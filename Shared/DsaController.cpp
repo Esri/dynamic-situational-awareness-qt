@@ -22,6 +22,9 @@
 #include "ToolResourceProvider.h"
 
 // Dsa apps
+#include "AlertLevel.h"
+#include "AlertConditionsController.h"
+#include "AttributeEqualsAlertCondition.h"
 #include "DsaUtility.h"
 #include "DsaController.h"
 
@@ -151,6 +154,28 @@ void DsaController::writeDefaultLocalDataPaths()
 
 /*! \brief internal
  *
+ * Writes the default Alert Conditions as JSON to the settings map.
+ */
+void DsaController::writeDefaultConditions()
+{
+  QJsonArray allConditionsJson;
+
+  // Add a condition "Distress" when an object from the Friendly Tracks feed has attribute status911 = 1
+  QJsonObject conditionJson;
+  conditionJson.insert( AlertConditionsController::CONDITION_NAME, QStringLiteral("Distress"));
+  conditionJson.insert( AlertConditionsController::CONDITION_LEVEL, static_cast<int>(AlertLevel::Critical));
+  conditionJson.insert( AlertConditionsController::CONDITION_TYPE, AttributeEqualsAlertCondition::staticMetaObject.className());
+  conditionJson.insert( AlertConditionsController::CONDITION_SOURCE, QStringLiteral("Friendly Tracks"));
+  QJsonObject queryObject;
+  queryObject.insert( AttributeEqualsAlertCondition::ATTRIBUTE_NAME, QStringLiteral("status911"));
+  conditionJson.insert( AlertConditionsController::CONDITION_QUERY, queryObject);
+  conditionJson.insert( AlertConditionsController::CONDITION_TARGET, "1");
+  allConditionsJson.append(conditionJson);
+  m_dsaSettings.insert(AlertConditionsController::ALERT_CONDITIONS_PROPERTYNAME, allConditionsJson.toVariantList());
+}
+
+/*! \brief internal
+ *
  * This creates the default values for the config file. If the app
  * starts and there is no config file, it will create one, and write
  * the following values to the file.
@@ -178,6 +203,7 @@ void DsaController::createDefaultSettings()
   m_dsaSettings["CoordinateFormat"] = QStringLiteral("DMS");
   m_dsaSettings["UnitOfMeasurement"] = QStringLiteral("meters");
   m_dsaSettings["UseGpsForElevation"] = QStringLiteral("true");
+  writeDefaultConditions();
 }
 
 /*! brief Save the app properties to a custom JSON QSettings file.

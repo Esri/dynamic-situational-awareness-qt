@@ -57,6 +57,7 @@ private:
   void saveSettings();
   void writeDefaultInitialLocation();
   void writeDefaultLocalDataPaths();
+  void writeDefaultConditions();
 
   Esri::ArcGISRuntime::Scene* m_scene = nullptr;
 

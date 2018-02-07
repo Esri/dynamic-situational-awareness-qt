@@ -152,7 +152,7 @@ Item {
         }
 
         Button {
-            text: "Clear Sketch"
+            text: "Cancel Sketch"
             background: Rectangle { color: Material.primary; }
             width: 125 * scaleFactor
             onClicked: {

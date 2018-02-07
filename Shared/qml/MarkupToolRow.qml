@@ -29,7 +29,7 @@ Row {
             state = "clear";
         }
     }
-    property alias configureSelected: configureIcon.selected
+    property alias configureSelected: colorIcon.selected
 
     states: [
         State {
@@ -59,9 +59,9 @@ Row {
             }
         },
         State {
-            name: configureIcon.toolName
+            name: colorIcon.toolName
             PropertyChanges {
-                target: configureIcon
+                target: colorIcon
                 selected: true
             }
             PropertyChanges {
@@ -129,11 +129,11 @@ Row {
         }
     }
 
-    // Configure
+    // Color
     ToolIcon {
-        id: configureIcon
+        id: colorIcon
         iconSource: DsaResources.iconSettings
-        toolName: "Configure"
+        toolName: "Color"
         onToolSelected: {
             if (markupToolRow.state === toolName) {
                 selected = false;
@@ -162,7 +162,7 @@ Row {
     ToolIcon {
         id: clearIcon
         iconSource: DsaResources.iconTrash
-        toolName: "Clear"
+        toolName: "Clear All"
         onToolSelected: markup.clear();
     }
 }

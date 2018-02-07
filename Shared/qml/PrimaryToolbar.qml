@@ -53,7 +53,6 @@ ToolBar {
             }
             color: Material.foreground
         }
-
     }
 }
 

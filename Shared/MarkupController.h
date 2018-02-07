@@ -15,7 +15,7 @@ class MarkupController : public AbstractSketchTool
   Q_PROPERTY(bool is3d READ is3d NOTIFY is3dChanged)
   Q_PROPERTY(bool drawModeEnabled READ drawModeEnabled WRITE setDrawModeEnabled NOTIFY drawModeEnabledChanged)
   Q_PROPERTY(double drawingAltitude READ drawingAltitude WRITE setDrawingAltitude NOTIFY drawingAltitudeChanged)
-  Q_PROPERTY(bool isSketching READ isSketching WRITE setSketching NOTIFY isSketchingChanged)
+  Q_PROPERTY(bool sketching READ isSketching WRITE setSketching NOTIFY sketchingChanged)
 
 public:
   explicit MarkupController(QObject* parent = nullptr);
@@ -49,7 +49,7 @@ signals:
   void drawModeEnabledChanged();
   void drawingAltitudeChanged();
   void sketchCompleted();
-  void isSketchingChanged();
+  void sketchingChanged();
 
 private:
   void updateGeoView();

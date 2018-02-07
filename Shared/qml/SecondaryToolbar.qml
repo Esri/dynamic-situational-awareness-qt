@@ -25,8 +25,8 @@ Item {
 
     DropShadow {
         anchors.fill: fill
-        horizontalOffset: -1
-        verticalOffset: 1
+        horizontalOffset: -1 * scaleFactor
+        verticalOffset: 1 * scaleFactor
         radius: 8 * scaleFactor
         smooth: true
         samples: 16

@@ -19,8 +19,6 @@
 #include "Graphic.h"
 #include "Point.h"
 
-#include <QElapsedTimer>
-
 using namespace Esri::ArcGISRuntime;
 
 /*!

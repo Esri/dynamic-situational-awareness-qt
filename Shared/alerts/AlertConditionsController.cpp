@@ -771,6 +771,9 @@ void AlertConditionsController::onConditionsChanged()
     allConditionsJson.append(conditionJson);
   }
 
+  for (const QJsonObject& unadded : m_storedConditions)
+    allConditionsJson.append(unadded);
+
   emit propertyChanged(AlertConstants::ALERT_CONDITIONS_PROPERTYNAME, allConditionsJson.toVariantList());
 }
 

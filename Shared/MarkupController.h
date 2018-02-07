@@ -20,7 +20,8 @@ public:
   explicit MarkupController(QObject* parent = nullptr);
   ~MarkupController();
 
-  Q_INVOKABLE void setColor(QColor color);
+  Q_INVOKABLE void setColor(const QColor& color);
+  Q_INVOKABLE void setWidth(float width);
   Q_INVOKABLE void setSurfacePlacement(int placementEnum);
   Q_INVOKABLE void deleteSelectedGraphics();
   Q_INVOKABLE void deleteAllGraphics();
@@ -50,6 +51,7 @@ private:
   void updateGeoView();
   void init();
   void updateSketch() override;
+  void updateSymbol();
 
   int m_currentPartIndex = 0;
   double m_drawingAltitude = 10.0;
@@ -57,6 +59,8 @@ private:
   bool m_drawModeEnabled = true;
   bool m_is3d = false;
   bool m_isSketching = false;
+  QColor m_color = QColor("black");
+  float m_width = 8.0f;
 };
 
 #endif // MARKUPCONTROLLER_H

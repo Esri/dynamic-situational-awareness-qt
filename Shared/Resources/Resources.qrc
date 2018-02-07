@@ -47,5 +47,7 @@
         <file>icons/xhdpi/warning_blue.png</file>
         <file>icons/xhdpi/warning_orange.png</file>
         <file>icons/xhdpi/warning_red.png</file>
+        <file>icons/xhdpi/ic_menu_sketchlinepopover_dark_d.png</file>
+        <file>icons/xhdpi/ic_menu_colorpalette_dark_d.png</file>
     </qresource>
 </RCC>

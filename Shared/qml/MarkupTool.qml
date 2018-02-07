@@ -33,6 +33,7 @@ Item {
     property string drawState: "draw"
     property string colorState: "color"
     property string tocState: "toc"
+    property string widthState: "width"
     property string clearState: "clear"
 
     // to be emitted for UI purposes
@@ -103,7 +104,30 @@ Item {
             }
             PropertyChanges {
                 target: markupController
-                drawModeEnabled: drawModeEnabled
+                drawModeEnabled: false
+            }
+        },
+        State {
+            name: widthState
+            PropertyChanges {
+                target: widthPane
+                visible: true
+            }
+            PropertyChanges {
+                target: rootMarkup
+                visible: true
+            }
+            PropertyChanges {
+                target: rootMarkup
+                width: 210 * scaleFactor
+            }
+            PropertyChanges {
+                target: rootMarkup
+                height: DsaStyles.mainToolbarHeight * scaleFactor
+            }
+            PropertyChanges {
+                target: markupController
+                drawModeEnabled: false
             }
         },
         State {
@@ -166,34 +190,6 @@ Item {
         }
     ]
 
-    //    Column {
-    //        id: sketchButtons
-    //        anchors {
-    //            top: parent.top
-    //            right: parent.right
-    //            margins: 5 * scaleFactor
-    //        }
-    //        visible: false
-    //        spacing: 5 * scaleFactor
-
-    //        Button {
-    //            text: "Finish Sketch"
-    //            background: Rectangle { color: Material.primary; }
-    //            width: 125 * scaleFactor
-    //            onClicked: nameDialog.open()
-    //        }
-
-    //        Button {
-    //            text: "Cancel Sketch"
-    //            background: Rectangle { color: Material.primary; }
-    //            width: 125 * scaleFactor
-    //            onClicked: {
-    //                //markupController.clearCurrentSketch(); // TODO
-    //                sketchButtons.visible = false;
-    //            }
-    //        }
-    //    }
-
     SecondaryToolbar {
         id: drawPane
         property bool sketchInProgress: false
@@ -223,6 +219,35 @@ Item {
                     //markupController.clearCurrentSketch(); // TODO
                     drawPane.sketchInProgress = false;
                 }
+            }
+        }
+    }
+
+    SecondaryToolbar {
+        id: widthPane
+
+        Row {
+            anchors.centerIn: parent
+            spacing: 10 * scaleFactor
+            visible: parent.visible
+
+            Slider {
+                id: widthSlider
+                anchors.verticalCenter: parent.verticalCenter
+                width: widthPane * 0.75
+                from: 1
+                to: 20
+                value: 8
+                onValueChanged: markupController.setWidth(value)
+            }
+
+            Label {
+                anchors.verticalCenter: parent.verticalCenter
+                font {
+                    pixelSize: 12 * scaleFactor
+                    family: DsaStyles.fontFamily
+                }
+                text: Math.round(widthSlider.value)
             }
         }
     }

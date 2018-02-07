@@ -72,9 +72,20 @@ Row {
                 target: markup
                 state: markup.colorState
             }
+        },
+        State {
+            name: widthIcon.toolName
             PropertyChanges {
-                target: drawIcon
-                selected: false
+                target: widthIcon
+                selected: true
+            }
+            PropertyChanges {
+                target: markup
+                visible: true
+            }
+            PropertyChanges {
+                target: markup
+                state: markup.widthState
             }
         },
 //        State {
@@ -132,8 +143,24 @@ Row {
     // Color
     ToolIcon {
         id: colorIcon
-        iconSource: DsaResources.iconSettings
+        iconSource: DsaResources.iconColorPalette
         toolName: "Color"
+        onToolSelected: {
+            if (markupToolRow.state === toolName) {
+                selected = false;
+                markupToolRow.state = "clear";
+            } else {
+                markup.markupEnabled = false;
+                markupToolRow.state = toolName;
+            }
+        }
+    }
+
+    // Color
+    ToolIcon {
+        id: widthIcon
+        iconSource: DsaResources.iconLineWidth
+        toolName: "Width"
         onToolSelected: {
             if (markupToolRow.state === toolName) {
                 selected = false;

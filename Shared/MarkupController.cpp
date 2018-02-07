@@ -40,7 +40,6 @@ MarkupController::MarkupController(QObject* parent):
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, &MarkupController::updateGeoView);
 
   updateGeoView();
-  setColor(QColor("black"));
 }
 
 MarkupController::~MarkupController()
@@ -73,9 +72,30 @@ double MarkupController::drawingAltitude() const
 }
 
 // creates a new LineSymbol rather than updating the current one so previously drawn sketches stay the same color
-void MarkupController::setColor(QColor color)
+void MarkupController::setColor(const QColor& color)
 {
+  m_color = color;
+  updateSymbol();
   m_sketchSymbol = new SimpleLineSymbol(SimpleLineSymbolStyle::Solid, color, 8, this);
+}
+
+void MarkupController::setWidth(float width)
+{
+  m_width = width;
+  updateSymbol();
+}
+
+void MarkupController::updateSymbol()
+{
+  m_sketchSymbol = new SimpleLineSymbol(SimpleLineSymbolStyle::Solid, m_color, m_width, this);
+  if (m_isSketching)
+  {
+    if (m_sketchOverlay)
+    {
+      auto graphic = m_sketchOverlay->graphics()->last();
+      graphic->setSymbol(m_sketchSymbol);
+    }
+  }
 }
 
 void MarkupController::setSurfacePlacement(int placementEnum)

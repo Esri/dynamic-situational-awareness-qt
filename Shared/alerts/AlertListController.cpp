@@ -165,7 +165,8 @@ void AlertListController::zoomTo(int rowIndex)
   if (sceneView)
   {
     const Camera currentCam = sceneView->currentViewpointCamera();
-    Camera newCam = currentCam.zoomToward(pos, 10.0);
+    constexpr double targetDistance = 2000.0;
+    Camera newCam(pos, targetDistance, currentCam.heading(), currentCam.pitch(), currentCam.roll());
 
     sceneView->setViewpointCamera(newCam, 1.0);
   }

@@ -585,14 +585,6 @@ DsaPanel {
                                 toolController.removeConditionAt(index);
                             }
                         }
-
-                        ListLabel {
-                            text: "Close"
-                            onTriggered: {
-                                conditionMenu.close();
-                            }
-                        }
-
                     }
                 }
             }
@@ -616,51 +608,6 @@ DsaPanel {
             }
         }
     }
-
-
-
-
-
-    /*Rectangle {
-            width: conditionsList.width
-            height: (expandRowButton.height * 2) + (8 * scaleFactor)
-            color: Material.background
-            radius: 2 * scaleFactor
-
-            Text {
-                id: titleText
-                anchors {
-                    left: parent.left
-                    verticalCenter: expandRowButton.verticalCenter
-                    right: expandRowButton.left
-                    margins: 8 * scaleFactor
-                }
-                text: name
-                color: index === conditionsList.currentIndex ? Material.accent : Material.foreground
-                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                font.bold: true
-                horizontalAlignment: Text.AlignLeft
-                verticalAlignment: Text.AlignVCenter
-                wrapMode: Text.WrapAnywhere
-                elide: Text.ElideRight
-            }
-
-            Text {
-                anchors {
-                    left: parent.left
-                    top: expandRowButton.bottom
-                    right: expandRowButton.left
-                    margins: 8 * scaleFactor
-                }
-                text: description
-                color: Material.foreground
-                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                horizontalAlignment: Text.AlignLeft
-                verticalAlignment: Text.AlignVCenter
-                wrapMode: Text.WrapAnywhere
-                elide: Text.ElideRight
-            }
-        }*/
 
     Text {
         anchors {

@@ -206,11 +206,6 @@ QUrl DsaResources::iconZoomTo() const
   return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_zoomtofeature_light.png");
 }
 
-QUrl DsaResources::iconWarningBlue() const
-{
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/warning_blue.png");
-}
-
 QUrl DsaResources::iconWarningGreen() const
 {
   return QStringLiteral("qrc:/Resources/icons/xhdpi/warning_green.png");
@@ -224,4 +219,9 @@ QUrl DsaResources::iconWarningOrange() const
 QUrl DsaResources::iconWarningRed() const
 {
   return QStringLiteral("qrc:/Resources/icons/xhdpi/warning_red.png");
+}
+
+QUrl DsaResources::iconWarningRedExclamation() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/warning_red_exclamation.png");
 }

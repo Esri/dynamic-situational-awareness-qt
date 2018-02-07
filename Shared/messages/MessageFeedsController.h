@@ -35,6 +35,7 @@ class MessageFeedsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
   Q_PROPERTY(QAbstractListModel* messageFeeds READ messageFeeds CONSTANT)
   Q_PROPERTY(bool locationBroadcastEnabled READ isLocationBroadcastEnabled WRITE setLocationBroadcastEnabled NOTIFY locationBroadcastEnabledChanged)
   Q_PROPERTY(int locationBroadcastFrequency READ locationBroadcastFrequency WRITE setLocationBroadcastFrequency NOTIFY locationBroadcastFrequencyChanged)
+  Q_PROPERTY(bool locationBroadcastInDistress READ isLocationBroadcastInDistress WRITE setLocationBroadcastInDistress NOTIFY locationBroadcastInDistressChanged)
 
 public:
   static const QString RESOURCE_DIRECTORY_PROPERTYNAME;
@@ -67,9 +68,13 @@ public:
   int locationBroadcastFrequency() const;
   void setLocationBroadcastFrequency(int frequency);
 
+  bool isLocationBroadcastInDistress() const;
+  void setLocationBroadcastInDistress(bool inDistress);
+
 signals:
   void locationBroadcastEnabledChanged();
   void locationBroadcastFrequencyChanged();
+  void locationBroadcastInDistressChanged();
 
 private:
   Esri::ArcGISRuntime::Renderer* createRenderer(const QString& rendererInfo, QObject* parent = nullptr) const;

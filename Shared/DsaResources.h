@@ -33,6 +33,8 @@ class DsaResources : public QObject
   Q_PROPERTY(QUrl iconComplete READ iconComplete CONSTANT)
   Q_PROPERTY(QUrl iconCoordinateConversion READ iconCoordinateConversion CONSTANT)
   Q_PROPERTY(QUrl iconCreateReport READ iconCreateReport CONSTANT)
+  Q_PROPERTY(QUrl iconDistressGray READ iconDistressGray CONSTANT)
+  Q_PROPERTY(QUrl iconDistressRed READ iconDistressRed CONSTANT)
   Q_PROPERTY(QUrl iconDraw READ iconDraw CONSTANT)
   Q_PROPERTY(QUrl iconDrawer READ iconDrawer CONSTANT)
   Q_PROPERTY(QUrl iconFollowLocation READ iconFollowLocation CONSTANT)
@@ -59,10 +61,10 @@ class DsaResources : public QObject
   Q_PROPERTY(QUrl iconTrash READ iconTrash CONSTANT)
   Q_PROPERTY(QUrl iconViewshed READ iconViewshed CONSTANT)
   Q_PROPERTY(QUrl iconZoomTo READ iconZoomTo CONSTANT)
-  Q_PROPERTY(QUrl iconWarningBlue READ iconWarningBlue CONSTANT)
   Q_PROPERTY(QUrl iconWarningGreen READ iconWarningGreen CONSTANT)
   Q_PROPERTY(QUrl iconWarningOrange READ iconWarningOrange CONSTANT)
   Q_PROPERTY(QUrl iconWarningRed READ iconWarningRed CONSTANT)
+  Q_PROPERTY(QUrl iconWarningRedExclamation READ iconWarningRedExclamation CONSTANT)
 
 public:
   DsaResources(QObject* parent = nullptr);
@@ -82,6 +84,8 @@ private:
   QUrl iconComplete() const;
   QUrl iconCoordinateConversion() const;
   QUrl iconCreateReport() const;
+  QUrl iconDistressGray() const;
+  QUrl iconDistressRed() const;
   QUrl iconDraw() const;
   QUrl iconDrawer() const;
   QUrl iconFollowLocation() const;
@@ -108,10 +112,10 @@ private:
   QUrl iconTrash() const;
   QUrl iconViewshed() const;
   QUrl iconZoomTo() const;
-  QUrl iconWarningBlue() const;
   QUrl iconWarningGreen() const;
   QUrl iconWarningOrange() const;
   QUrl iconWarningRed() const;
+  QUrl iconWarningRedExclamation() const;
 };
 
 #endif // DSARESOURCES_H

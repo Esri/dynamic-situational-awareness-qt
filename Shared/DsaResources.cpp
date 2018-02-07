@@ -86,6 +86,16 @@ QUrl DsaResources::iconCreateReport() const
   return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_editmap_dark_d-2.png");
 }
 
+QUrl DsaResources::iconDistressGray() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/distressIconGray.svg");
+}
+
+QUrl DsaResources::iconDistressRed() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/distressIconRed.svg");
+}
+
 QUrl DsaResources::iconDraw() const
 {
   return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_edit_dark_d.png");
@@ -216,11 +226,6 @@ QUrl DsaResources::iconZoomTo() const
   return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_zoomtofeature_light.png");
 }
 
-QUrl DsaResources::iconWarningBlue() const
-{
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/warning_blue.png");
-}
-
 QUrl DsaResources::iconWarningGreen() const
 {
   return QStringLiteral("qrc:/Resources/icons/xhdpi/warning_green.png");
@@ -234,4 +239,9 @@ QUrl DsaResources::iconWarningOrange() const
 QUrl DsaResources::iconWarningRed() const
 {
   return QStringLiteral("qrc:/Resources/icons/xhdpi/warning_red.png");
+}
+
+QUrl DsaResources::iconWarningRedExclamation() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/warning_red_exclamation.png");
 }

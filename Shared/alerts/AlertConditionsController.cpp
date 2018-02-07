@@ -10,6 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "AlertConstants.h"
 #include "AlertListModel.h"
 #include "AttributeEqualsAlertCondition.h"
 #include "FixedValueAlertTarget.h"
@@ -70,15 +71,6 @@ struct GraphicsResultsManager {
   }
 };
 
-const QString AlertConditionsController::ALERT_CONDITIONS_PROPERTYNAME = "Conditions";
-const QString AlertConditionsController::CONDITION_TYPE = "condition_type";
-const QString AlertConditionsController::CONDITION_NAME = "name";
-const QString AlertConditionsController::CONDITION_LEVEL = "level";
-const QString AlertConditionsController::CONDITION_SOURCE = "source";
-const QString AlertConditionsController::CONDITION_QUERY = "query";
-const QString AlertConditionsController::CONDITION_TARGET = "target";
-const QString AlertConditionsController::MY_LOCATION = "My Location";
-
 /*!
   \class AlertConditionsController
   \inherits Toolkit::AbstractTool
@@ -102,7 +94,7 @@ const QString AlertConditionsController::MY_LOCATION = "My Location";
 AlertConditionsController::AlertConditionsController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent),
   m_conditions(new AlertConditionListModel(this)),
-  m_sourceNames(new QStringListModel(QStringList{MY_LOCATION}, this)),
+  m_sourceNames(new QStringListModel(QStringList{AlertConstants::MY_LOCATION}, this)),
   m_targetNames(new QStringListModel(this)),
   m_levelNames(new QStringListModel(QStringList{"Low priority", "Moderate priority", "High priority", "Critical priority"},this)),
   m_locationSource(new LocationAlertSource(this))
@@ -161,7 +153,7 @@ void AlertConditionsController::setProperties(const QVariantMap& properties)
     }
   }
 
-  const QVariant conditionsData = properties.value(ALERT_CONDITIONS_PROPERTYNAME);
+  const QVariant conditionsData = properties.value(AlertConstants::ALERT_CONDITIONS_PROPERTYNAME);
   if (conditionsData.isNull())
     return;
 
@@ -254,9 +246,9 @@ bool AlertConditionsController::addWithinDistanceAlert(const QString& conditionN
   WithinDistanceAlertCondition* condition = new WithinDistanceAlertCondition(level, conditionName, distance, this);
   connect(condition, &WithinDistanceAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
 
-  if (sourceFeedName == MY_LOCATION)
+  if (sourceFeedName == AlertConstants::MY_LOCATION)
   {
-    condition->init(m_locationSource, target, MY_LOCATION, targetDescription);
+    condition->init(m_locationSource, target, AlertConstants::MY_LOCATION, targetDescription);
   }
   else
   {
@@ -316,9 +308,9 @@ bool AlertConditionsController::addWithinAreaAlert(const QString& conditionName,
   WithinAreaAlertCondition* condition = new WithinAreaAlertCondition(level, conditionName, this);
   connect(condition, &WithinAreaAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
 
-  if (sourceFeedName == MY_LOCATION)
+  if (sourceFeedName == AlertConstants::MY_LOCATION)
   {
-    condition->init(m_locationSource, target, MY_LOCATION, targetDescription);
+    condition->init(m_locationSource, target, AlertConstants::MY_LOCATION, targetDescription);
   }
   else
   {
@@ -482,7 +474,7 @@ bool AlertConditionsController::pickMode() const
 void AlertConditionsController::onGeoviewChanged()
 {
   setTargetNames(QStringList());
-  setSourceNames(QStringList(MY_LOCATION));
+  setSourceNames(QStringList(AlertConstants::MY_LOCATION));
 
   GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
   if (!geoView)
@@ -518,7 +510,7 @@ void AlertConditionsController::onLayersChanged()
   if (!geoView)
   {
     setTargetNames(QStringList());
-    setSourceNames(QStringList(MY_LOCATION));
+    setSourceNames(QStringList(AlertConstants::MY_LOCATION));
     return;
   }
 
@@ -555,7 +547,7 @@ void AlertConditionsController::onLayersChanged()
       m_layerTargets.remove(key);
   }
 
-  QStringList newSourceList{MY_LOCATION};
+  QStringList newSourceList{AlertConstants::MY_LOCATION};
   GraphicsOverlayListModel* graphicsOverlays = geoView->graphicsOverlays();
   if (graphicsOverlays)
   {
@@ -578,7 +570,7 @@ void AlertConditionsController::onLayersChanged()
       }
       else if (overlay->overlayId() == QStringLiteral("SCENEVIEWLOCATIONOVERLAY"))
       {
-        newTargetList.append(MY_LOCATION);
+        newTargetList.append(AlertConstants::MY_LOCATION);
       }
       else
       {
@@ -779,7 +771,7 @@ void AlertConditionsController::onConditionsChanged()
     allConditionsJson.append(conditionJson);
   }
 
-  emit propertyChanged(ALERT_CONDITIONS_PROPERTYNAME, allConditionsJson.toVariantList());
+  emit propertyChanged(AlertConstants::ALERT_CONDITIONS_PROPERTYNAME, allConditionsJson.toVariantList());
 }
 
 /*!
@@ -829,13 +821,13 @@ QJsonObject AlertConditionsController::conditionToJson(AlertCondition* condition
     return QJsonObject();
 
   QJsonObject conditionJson;
-  conditionJson.insert( CONDITION_NAME, condition->name());
-  conditionJson.insert( CONDITION_LEVEL, static_cast<int>(condition->level()));
-  conditionJson.insert( CONDITION_TYPE, condition->metaObject()->className());
-  conditionJson.insert( CONDITION_SOURCE, condition->sourceDescription());
+  conditionJson.insert( AlertConstants::CONDITION_NAME, condition->name());
+  conditionJson.insert( AlertConstants::CONDITION_LEVEL, static_cast<int>(condition->level()));
+  conditionJson.insert( AlertConstants::CONDITION_TYPE, condition->metaObject()->className());
+  conditionJson.insert( AlertConstants::CONDITION_SOURCE, condition->sourceDescription());
   QJsonObject queryObject = QJsonObject::fromVariantMap(condition->queryComponents());
-  conditionJson.insert( CONDITION_QUERY, queryObject);
-  conditionJson.insert( CONDITION_TARGET, condition->targetDescription());
+  conditionJson.insert( AlertConstants::CONDITION_QUERY, queryObject);
+  conditionJson.insert( AlertConstants::CONDITION_TARGET, condition->targetDescription());
 
   return conditionJson;
 }
@@ -861,37 +853,37 @@ bool AlertConditionsController::addConditionFromJson(const QJsonObject& json)
     return findIt.value().toString();
   };
 
-  const QString conditionType = findString(CONDITION_TYPE);
+  const QString conditionType = findString(AlertConstants::CONDITION_TYPE);
   if (conditionType.isEmpty())
     return false;
 
-  const bool isAttributeEquals = conditionType == AttributeEqualsAlertCondition::staticMetaObject.className();
-  const bool isWithinArea = conditionType == WithinAreaAlertCondition::staticMetaObject.className();
-  const bool isWithinDistance = conditionType == WithinDistanceAlertCondition::staticMetaObject.className();
+  const bool isAttributeEquals = conditionType == AlertConstants::attributeEqualsAlertConditionType();
+  const bool isWithinArea = conditionType == AlertConstants::withinAreaAlertConditionType();
+  const bool isWithinDistance = conditionType == AlertConstants::withinDistanceAlertConditionType();
 
   if (!isAttributeEquals && !isWithinArea && !isWithinDistance)
     return false;
 
-  auto levelIt = json.constFind(CONDITION_LEVEL);
+  auto levelIt = json.constFind(AlertConstants::CONDITION_LEVEL);
   if (levelIt == json.constEnd())
     return false;
 
   const int level = levelIt.value().toInt(0);
   const int levelIndex = level -1; // account for 0 = Unknown
 
-  const QString conditionName = findString(CONDITION_NAME);
+  const QString conditionName = findString(AlertConstants::CONDITION_NAME);
   if (conditionName.isEmpty())
     return false;
 
-  const QString sourceString = findString(CONDITION_SOURCE);
+  const QString sourceString = findString(AlertConstants::CONDITION_SOURCE);
   if (sourceString.isEmpty())
     return false;
 
-  const QString targetString = findString(CONDITION_TARGET);
+  const QString targetString = findString(AlertConstants::CONDITION_TARGET);
   if (targetString.isEmpty())
     return false;
 
-  QJsonObject queryObject = json.value(CONDITION_QUERY).toObject();
+  QJsonObject queryObject = json.value(AlertConstants::CONDITION_QUERY).toObject();
   if (queryObject.isEmpty())
     return false;
 

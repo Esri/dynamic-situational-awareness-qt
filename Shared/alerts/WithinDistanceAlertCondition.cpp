@@ -10,12 +10,11 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "AlertConstants.h"
 #include "WithinDistanceAlertCondition.h"
 #include "WithinDistanceAlertConditionData.h"
 
 using namespace Esri::ArcGISRuntime;
-
-const QString WithinDistanceAlertCondition::METERS = "meters";
 
 /*!
   \class WithinDistanceAlertCondition
@@ -78,7 +77,7 @@ double WithinDistanceAlertCondition::distance() const
 QVariantMap WithinDistanceAlertCondition::queryComponents() const
 {
   QVariantMap queryMap;
-  queryMap.insert(METERS, m_distance);
+  queryMap.insert(AlertConstants::METERS, m_distance);
 
   return queryMap;
 }
@@ -90,7 +89,7 @@ QVariantMap WithinDistanceAlertCondition::queryComponents() const
  */
 double WithinDistanceAlertCondition::getDistanceFromQueryComponents(const QVariantMap& queryComponents)
 {
-  return queryComponents.value(METERS, -1.0).toDouble();
+  return queryComponents.value(AlertConstants::METERS, -1.0).toDouble();
 }
 
 /*!
@@ -98,5 +97,5 @@ double WithinDistanceAlertCondition::getDistanceFromQueryComponents(const QVaria
  */
 QString WithinDistanceAlertCondition::queryString() const
 {
-  return QString("is within %2 meters of").arg(QString::number(m_distance));
+  return QString("is within %1 %2 of").arg(QString::number(m_distance), AlertConstants::METERS);
 }

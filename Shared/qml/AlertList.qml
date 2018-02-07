@@ -71,78 +71,86 @@ DsaPanel {
         clip: true
         spacing: 8 * scaleFactor
 
-        delegate: SwipeDelegate {
-            id: swipeDelegate
+        delegate: ListItemDelegate {
             width: parent.width
-            height: highlightButton.height
-            Text {
-                anchors {
-                    left: parent.left
-                    right: highlightButton.left
-                    verticalCenter: parent.verticalCenter
-                }
-
-                text: name + ": " + (level === 0 ? "unknown" :
-                                    (level === 1 ? "low" :
-                                    (level === 2 ? "medium" :
-                                    (level === 3 ? "high" :
-                                    (level === 4 ? "critical" : "???")))))
-                color: "white"
-            }
-
-            OverlayButton {
-                id: highlightButton
-                iconUrl: DsaResources.iconGps
-                selected: hightlightIndex === index
-                visible: swipeDelegate.swipe.position === 0
-                anchors {
-                    right: zoomButton.left
-                    verticalCenter: parent.verticalCenter
-                }
-                onClicked: {
-
-                    if (hightlightIndex == index) {
-                        toolController.highlight(index, false);
-                        hightlightIndex = -1;
-                    }
-                    else {
-                        toolController.highlight(hightlightIndex, false);
-                        toolController.highlight(index, true);
-                        hightlightIndex = index;
-                    }
-                }
-            }
-
-            Button {
-                id: zoomButton
-                visible: swipeDelegate.swipe.position === 0
-                text: "zoom";
-                anchors {
-                    right: parent.right
-                    verticalCenter: parent.verticalCenter
-                }
-                onClicked: toolController.zoomTo(index);
-            }
-
-            swipe.right: Label {
-                id: deleteLabel
-                text: qsTr("Dismiss")
-                color: "white"
-                verticalAlignment: Label.AlignVCenter
-                padding: 12
-                height: parent.height
-                anchors.right: parent.right
-
-                SwipeDelegate.onClicked: toolController.dismiss(index);
-
-                background: Rectangle {
-                    color: deleteLabel.SwipeDelegate.pressed ? Qt.darker("tomato", 1.1) : "tomato"
-                }
-            }
+            height: 40 * scaleFactor
+            itemChecked: true
+            imageUrl: level === 0 ?
+                          "qrc:/Resources/icons/xhdpi/warning_blue.png"
+                        : ( level === 1 ? "qrc:/Resources/icons/xhdpi/warning_green.png"
+                                        : ( level === 2 ? "qrc:/Resources/icons/xhdpi/warning_orange.png"
+                                                        : "qrc:/Resources/icons/xhdpi/warning_red.png") )
+            imageVisible: true
+            checkBoxVisible: false
+            mainText: name
 
             Component.onCompleted: {
                 if (visible)
                     toolController.setViewed(index);
+            }
+
+            Image {
+                anchors {
+                    right: parent.right
+                    verticalCenter: parent.verticalCenter
+                    margins: 5 * scaleFactor
+                }
+                rotation: 90
+                source: DsaResources.iconMenu
+                height: 32 * scaleFactor
+                width: height
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        alertMenu.open();
+                    }
+                }
+
+                // Menu for Vehicle
+                Menu {
+                    id: alertMenu
+                    width: 125 * scaleFactor
+
+                    Column {
+                        anchors.margins: 10 * scaleFactor
+                        width: parent.width
+                        spacing: 10 * scaleFactor
+                        leftPadding: 10 * scaleFactor
+
+                        ListLabel {
+                            text: "Zoom to"
+                            onTriggered: {
+                                alertMenu.close();
+                                toolController.zoomTo(index);
+                            }
+                        }
+
+                        ListLabel {
+                            text: index == hightlightIndex ? "Highlight (off)" : "Highlight"
+                            onTriggered: {
+                                alertMenu.close()
+                                if (hightlightIndex == index) {
+                                    toolController.highlight(index, false);
+                                    hightlightIndex = -1;
+                                }
+                                else {
+                                    toolController.highlight(hightlightIndex, false);
+                                    toolController.highlight(index, true);
+                                    hightlightIndex = index;
+                                }
+                            }
+                        }
+
+                        ListLabel {
+                            text: "Dismiss"
+                            onTriggered: {
+                                alertMenu.close()
+                                toolController.dismiss(index);
+                            }
+                        }
+                    }
+                }
             }
         }
     }

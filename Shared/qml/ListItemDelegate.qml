@@ -20,6 +20,7 @@ Item {
     property alias itemChecked: visibleCheckBox.checked
     property url imageUrl
     property bool imageVisible
+    property alias checkBoxVisible: visibleCheckBox.visible
     property string mainText
 
     Row {

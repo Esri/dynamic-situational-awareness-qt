@@ -228,15 +228,8 @@ Handheld {
             anchors {
                 right: parent.right
                 top: parent.top
-                bottom: sceneView.attributionTop
             }
-//            width: drawer.width
             visible: false
-//            onVisibleChanged: {
-//                if (!visible)
-//                    markupToolRow.state = "clear";
-//            }
-//            onClosed: visible = false;
         }
 
         PopupStackView {

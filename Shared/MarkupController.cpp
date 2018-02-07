@@ -31,6 +31,9 @@
 
 #include <QCursor>
 
+const QString MarkupController::nameAttribute = QStringLiteral("name");
+
+
 using namespace Esri::ArcGISRuntime;
 
 MarkupController::MarkupController(QObject* parent):
@@ -40,7 +43,7 @@ MarkupController::MarkupController(QObject* parent):
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, &MarkupController::updateGeoView);
 
   updateGeoView();
-  updateSymbol();
+  updatedSymbol();
 }
 
 MarkupController::~MarkupController()
@@ -76,31 +79,45 @@ double MarkupController::drawingAltitude() const
 void MarkupController::setColor(const QColor& color)
 {
   m_color = color;
-  updateSymbol();
-  m_sketchSymbol = new SimpleLineSymbol(SimpleLineSymbolStyle::Solid, color, 8, this);
+
+  if (!m_isSketching)
+    return;
+
+  if (!m_sketchSymbol)
+    return;
+
+  auto lineSym = dynamic_cast<SimpleLineSymbol*>(sketchSymbol());
+  if (!lineSym)
+    return;
+
+  lineSym->setColor(m_color);
 }
 
 void MarkupController::setWidth(float width)
 {
   m_width = width;
-  updateSymbol();
+
+  if (!m_isSketching)
+    return;
+
+  if (!m_sketchSymbol)
+    return;
+
+  auto lineSym = dynamic_cast<SimpleLineSymbol*>(sketchSymbol());
+  if (!lineSym)
+    return;
+
+  lineSym->setWidth(m_width);
 }
 
-void MarkupController::updateSymbol()
+Symbol* MarkupController::updatedSymbol()
 {
   m_sketchSymbol = new SimpleLineSymbol(SimpleLineSymbolStyle::Solid, m_color, m_width, this);
   auto lineSym = dynamic_cast<SimpleLineSymbol*>(sketchSymbol());
   if (lineSym)
     lineSym->setAntiAlias(true);
 
-  if (m_isSketching)
-  {
-    if (m_sketchOverlay)
-    {
-      auto graphic = m_sketchOverlay->graphics()->last();
-      graphic->setSymbol(m_sketchSymbol);
-    }
-  }
+  return m_sketchSymbol;
 }
 
 void MarkupController::setSurfacePlacement(int placementEnum)
@@ -189,7 +206,7 @@ void MarkupController::init()
     {
       clear();
       Graphic* partGraphic = new Graphic(this);
-      partGraphic->setSymbol(m_sketchSymbol);
+      partGraphic->setSymbol(updatedSymbol());
       m_partOutlineGraphics.append(partGraphic);
       m_sketchOverlay->graphics()->append(partGraphic);
     }
@@ -238,7 +255,7 @@ void MarkupController::init()
     Toolkit::ToolResourceProvider::instance()->setMouseCursor(QCursor(Qt::ArrowCursor));
     m_isDrawing = false;
 
-    emit sketchComplete();
+    emit sketchCompleted();
   });
 }
 
@@ -253,7 +270,11 @@ void MarkupController::updateSketch()
 
   // get simplified geometry
   const Geometry simplifiedLine = GeometryEngine::simplify(multipartBuilder->toGeometry());
-  m_partOutlineGraphics.at(m_partOutlineGraphics.size() - 1)->setGeometry(simplifiedLine);
+  auto graphic = m_partOutlineGraphics.at(m_partOutlineGraphics.size() - 1);
+  if (!graphic)
+    return;
+
+  graphic->setGeometry(simplifiedLine);
 }
 
 void MarkupController::updateGeoView()
@@ -305,7 +326,7 @@ void MarkupController::setName(const QString& name)
     return;
 
   const auto graphic = m_sketchOverlay->graphics()->last();
-  graphic->attributes()->setProperty("name", name);
+  graphic->attributes()->insertAttribute(nameAttribute, name);
 }
 
 void MarkupController::clearGraphics()
@@ -316,7 +337,7 @@ void MarkupController::clearGraphics()
   m_sketchOverlay->graphics()->clear();
 }
 
-void MarkupController::setIsSketching(bool isSketching)
+void MarkupController::setSketching(bool isSketching)
 {
   m_isSketching = isSketching;
 }
@@ -330,4 +351,9 @@ void MarkupController::clearCurrentSketch()
     return;
 
   m_sketchOverlay->graphics()->removeAt(m_sketchOverlay->graphics()->size() - 1);
+}
+
+bool MarkupController::isSketching() const
+{
+  return m_isSketching;
 }

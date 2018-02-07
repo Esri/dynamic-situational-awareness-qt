@@ -48,14 +48,12 @@ Item {
         }
     }
 
+
+
     onVisibleChanged: {
         if (visible) {
             state = drawState;
-            markupController.setActive(true);
-            markupController.drawModeEnabled = true;
         } else {
-            markupController.setActive(false);
-            markupController.drawModeEnabled = false;
             state = clearState;
         }
     }
@@ -63,7 +61,10 @@ Item {
     MarkupController {
         id: markupController
 
-        onSketchComplete: drawPane.sketchInProgress = true
+        onSketchCompleted: drawPane.sketchInProgress = true
+        active: rootMarkup.visible
+        drawModeEnabled: rootMarkup.visible
+        isSketching: drawPane.sketchInProgress
     }
 
     state: clearState
@@ -201,10 +202,6 @@ Item {
         id: drawPane
         property bool sketchInProgress: false
 
-        onSketchInProgressChanged: {
-            markupController.setIsSketching(sketchInProgress)
-        }
-
         Row {
             anchors.centerIn: parent
             spacing: 40 * scaleFactor
@@ -287,7 +284,7 @@ Item {
             orientation: ListView.Horizontal
             model: colorModel
             height: 25 * scaleFactor
-            width: Qt.platform === "Android" ? parent.width : 175 * scaleFactor
+            width: Qt.platform.os === "android" ? parent.width : 175 * scaleFactor
             spacing: 5 * scaleFactor
             currentIndex: 0
             clip: true

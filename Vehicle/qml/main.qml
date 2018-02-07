@@ -228,11 +228,6 @@ Vehicle {
                 top: parent.top
             }
             visible: false
-            onVisibleChanged: {
-                if (!visible)
-                    markupToolRow.state = "clear";
-            }
-            //            onClosed: visible = false;
         }
 
         PopupStackView {

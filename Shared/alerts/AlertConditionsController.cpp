@@ -77,6 +77,7 @@ const QString AlertConditionsController::CONDITION_LEVEL = "level";
 const QString AlertConditionsController::CONDITION_SOURCE = "source";
 const QString AlertConditionsController::CONDITION_QUERY = "query";
 const QString AlertConditionsController::CONDITION_TARGET = "target";
+const QString AlertConditionsController::MY_LOCATION = "My Location";
 
 /*!
   \class AlertConditionsController
@@ -101,7 +102,7 @@ const QString AlertConditionsController::CONDITION_TARGET = "target";
 AlertConditionsController::AlertConditionsController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent),
   m_conditions(new AlertConditionListModel(this)),
-  m_sourceNames(new QStringListModel(QStringList{"My Location"}, this)),
+  m_sourceNames(new QStringListModel(QStringList{MY_LOCATION}, this)),
   m_targetNames(new QStringListModel(this)),
   m_levelNames(new QStringListModel(QStringList{"Low priority", "Moderate priority", "High priority", "Critical priority"},this)),
   m_locationSource(new LocationAlertSource(this))
@@ -148,7 +149,7 @@ void AlertConditionsController::setProperties(const QVariantMap& properties)
   const QVariant realTimeFeedsData = properties.value(QStringLiteral("MessageFeeds"));
   if (!realTimeFeedsData.isNull())
   {
-    m_realTimeFeeds.clear();
+    m_realTimeFeedIdsToNames.clear();
     const QStringList messageFeeds = realTimeFeedsData.toStringList();
     for (const QString& messageFeed : messageFeeds)
     {
@@ -156,7 +157,7 @@ void AlertConditionsController::setProperties(const QVariantMap& properties)
       if (messageFeedConfig.size() != 3)
         continue;
 
-      m_realTimeFeeds.append(messageFeedConfig.at(1));
+      m_realTimeFeedIdsToNames.insert(messageFeedConfig.at(1), messageFeedConfig.at(0));
     }
   }
 
@@ -253,16 +254,16 @@ bool AlertConditionsController::addWithinDistanceAlert(const QString& conditionN
   WithinDistanceAlertCondition* condition = new WithinDistanceAlertCondition(level, conditionName, distance, this);
   connect(condition, &WithinDistanceAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
 
-  if (sourceFeedName == "My Location")
+  if (sourceFeedName == MY_LOCATION)
   {
-    condition->init(m_locationSource, target, "My Location", targetDescription);
+    condition->init(m_locationSource, target, MY_LOCATION, targetDescription);
   }
   else
   {
     GraphicsOverlay* sourceOverlay = graphicsOverlayFromName(sourceFeedName);
     if (sourceOverlay)
     {
-      condition->init(sourceOverlay, target, targetDescription);
+      condition->init(sourceOverlay, sourceFeedName, target, targetDescription);
     }
     else
     {
@@ -315,16 +316,16 @@ bool AlertConditionsController::addWithinAreaAlert(const QString& conditionName,
   WithinAreaAlertCondition* condition = new WithinAreaAlertCondition(level, conditionName, this);
   connect(condition, &WithinAreaAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
 
-  if (sourceFeedName == "My Location")
+  if (sourceFeedName == MY_LOCATION)
   {
-    condition->init(m_locationSource, target, "My Location", targetDescription);
+    condition->init(m_locationSource, target, MY_LOCATION, targetDescription);
   }
   else
   {
     GraphicsOverlay* sourceOverlay = graphicsOverlayFromName(sourceFeedName);
     if (sourceOverlay)
     {
-      condition->init(sourceOverlay, target, targetDescription);
+      condition->init(sourceOverlay, sourceFeedName, target, targetDescription);
     }
     else
     {
@@ -374,7 +375,7 @@ bool AlertConditionsController::addAttributeEqualsAlert(const QString& condition
 
   AttributeEqualsAlertCondition* condition = new AttributeEqualsAlertCondition(level, conditionName, attributeName, this);
   connect(condition, &AttributeEqualsAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
-  condition->init(sourceOverlay, target, targetValue.toString());
+  condition->init(sourceOverlay, sourceFeedName, target, targetValue.toString());
   return m_conditions->addAlertCondition(condition);
 }
 
@@ -481,7 +482,7 @@ bool AlertConditionsController::pickMode() const
 void AlertConditionsController::onGeoviewChanged()
 {
   setTargetNames(QStringList());
-  setSourceNames(QStringList("My Location"));
+  setSourceNames(QStringList(MY_LOCATION));
 
   GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
   if (!geoView)
@@ -517,7 +518,7 @@ void AlertConditionsController::onLayersChanged()
   if (!geoView)
   {
     setTargetNames(QStringList());
-    setSourceNames(QStringList("My Location"));
+    setSourceNames(QStringList(MY_LOCATION));
     return;
   }
 
@@ -554,7 +555,7 @@ void AlertConditionsController::onLayersChanged()
       m_layerTargets.remove(key);
   }
 
-  QStringList newSourceList{"My Location"};
+  QStringList newSourceList{MY_LOCATION};
   GraphicsOverlayListModel* graphicsOverlays = geoView->graphicsOverlays();
   if (graphicsOverlays)
   {
@@ -568,10 +569,21 @@ void AlertConditionsController::onLayersChanged()
       if (overlay->overlayId().isEmpty())
         continue;
 
-      if (realtimeFeedNames().contains(overlay->overlayId()))
-        newSourceList.append(overlay->overlayId());
-
-      newTargetList.append(overlay->overlayId());
+      // check whether we have a user facing name defined for the overlay
+      const auto overlayIt = m_realTimeFeedIdsToNames.constFind(overlay->overlayId());
+      if (overlayIt != m_realTimeFeedIdsToNames.constEnd())
+      {
+        newSourceList.append(overlayIt.value());
+        newTargetList.append(overlayIt.value());
+      }
+      else if (overlay->overlayId() == QStringLiteral("SCENEVIEWLOCATIONOVERLAY"))
+      {
+        newTargetList.append(MY_LOCATION);
+      }
+      else
+      {
+        newTargetList.append(overlay->overlayId());
+      }
     }
   }
 
@@ -1107,6 +1119,8 @@ GraphicsOverlay* AlertConditionsController::graphicsOverlayFromName(const QStrin
   if (!geoView)
     return nullptr;
 
+  const QString& overlayId = m_realTimeFeedIdsToNames.key(overlayName, overlayName);
+
   GraphicsOverlayListModel* graphicsOverlays = geoView->graphicsOverlays();
   if (graphicsOverlays)
   {
@@ -1120,7 +1134,7 @@ GraphicsOverlay* AlertConditionsController::graphicsOverlayFromName(const QStrin
       if (overlay->overlayId().isEmpty())
         continue;
 
-      if (overlayName == overlay->overlayId())
+      if (overlayId == overlay->overlayId())
         return overlay;
     }
   }
@@ -1157,8 +1171,13 @@ QString AlertConditionsController::primaryKeyFieldName(FeatureTable* featureTabl
 /*!
   \brief internal
  */
+QStringList AlertConditionsController::realtimeFeedIds() const
+{
+  return m_realTimeFeedIdsToNames.keys();
+}
+
 QStringList AlertConditionsController::realtimeFeedNames() const
 {
-  return m_realTimeFeeds;
+  return m_realTimeFeedIdsToNames.values();
 }
 

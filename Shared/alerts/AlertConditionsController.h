@@ -61,6 +61,7 @@ public:
   static const QString CONDITION_SOURCE;
   static const QString CONDITION_QUERY;
   static const QString CONDITION_TARGET;
+  static const QString MY_LOCATION;
 
   explicit AlertConditionsController(QObject* parent = nullptr);
   ~AlertConditionsController();
@@ -113,6 +114,7 @@ private:
   Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlayFromName(const QString& overlayName);
   QString primaryKeyFieldName(Esri::ArcGISRuntime::FeatureTable* featureTable) const;
 
+  QStringList realtimeFeedIds() const;
   QStringList realtimeFeedNames() const;
 
   AlertConditionListModel* m_conditions;
@@ -127,7 +129,7 @@ private:
   mutable QHash<QString,AlertTarget*> m_layerTargets;
   mutable QHash<QString,AlertTarget*> m_overlayTargets;
   QList<QJsonObject> m_storedConditions;
-  QStringList m_realTimeFeeds;
+  QHash<QString,QString> m_realTimeFeedIdsToNames;
 
   QMetaObject::Connection m_mouseClickConnection;
   QMetaObject::Connection m_identifyLayersConnection;

@@ -40,6 +40,7 @@ MarkupController::MarkupController(QObject* parent):
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, &MarkupController::updateGeoView);
 
   updateGeoView();
+  updateSymbol();
 }
 
 MarkupController::~MarkupController()
@@ -88,6 +89,10 @@ void MarkupController::setWidth(float width)
 void MarkupController::updateSymbol()
 {
   m_sketchSymbol = new SimpleLineSymbol(SimpleLineSymbolStyle::Solid, m_color, m_width, this);
+  auto lineSym = dynamic_cast<SimpleLineSymbol*>(sketchSymbol());
+  if (lineSym)
+    lineSym->setAntiAlias(true);
+
   if (m_isSketching)
   {
     if (m_sketchOverlay)

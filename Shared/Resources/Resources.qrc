@@ -47,5 +47,7 @@
         <file>icons/xhdpi/warning_orange.png</file>
         <file>icons/xhdpi/warning_red.png</file>
         <file>icons/xhdpi/warning_red_exclamation.png</file>
+        <file>icons/xhdpi/distressIconGray.svg</file>
+        <file>icons/xhdpi/distressIconRed.svg</file>
     </qresource>
 </RCC>

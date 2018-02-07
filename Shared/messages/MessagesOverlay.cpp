@@ -70,8 +70,9 @@ bool MessagesOverlay::addMessage(const Message& message)
 
   const auto symbolId = message.symbolId();
   const auto geometry = message.geometry();
+  const auto messageAction = message.messageAction();
 
-  if (message.messageAction() == Message::MessageAction::Update)
+  if (messageAction == Message::MessageAction::Update)
   {
     if (m_renderer && m_renderer->rendererType() == RendererType::DictionaryRenderer && symbolId.isEmpty())
     {
@@ -92,15 +93,33 @@ bool MessagesOverlay::addMessage(const Message& message)
     // if the graphic already exists in the hash
     Graphic* graphic = m_existingGraphics[messageId];
 
-    if (message.messageAction() == Message::MessageAction::Update)
+    switch (messageAction)
     {
-      if (graphic->geometry().geometryType() != geometry.geometryType())
+    case Message::MessageAction::Update:
+    case Message::MessageAction::Select:
+    case Message::MessageAction::Unselect:
+    {
+      const Geometry geom = graphic->geometry();
+      if (geom.geometryType() != geometry.geometryType())
         return false;
 
-      graphic->setGeometry(geometry);
+      if (!(geom == geometry))
+        graphic->setGeometry(geometry);
+
       graphic->attributes()->setAttributesMap(message.attributes());
+
+      if (messageAction == Message::MessageAction::Select)
+      {
+        graphic->setSelected(true);
+      }
+      else if (messageAction == Message::MessageAction::Unselect)
+      {
+        graphic->setSelected(false);
+      }
+
+      break;
     }
-    else if (message.messageAction() == Message::MessageAction::Remove)
+    case Message::MessageAction::Remove:
     {
       switch (geometry.geometryType())
       {
@@ -124,17 +143,10 @@ bool MessagesOverlay::addMessage(const Message& message)
           break;
         }
       }
+
+      break;
     }
-    else if (message.messageAction() == Message::MessageAction::Select)
-    {
-      graphic->setSelected(true);
-    }
-    else if (message.messageAction() == Message::MessageAction::Unselect)
-    {
-      graphic->setSelected(false);
-    }
-    else
-    {
+    default:
       emit errorOccurred(QStringLiteral("Unknown message action"));
       return false;
     }
@@ -142,7 +154,7 @@ bool MessagesOverlay::addMessage(const Message& message)
     return true;
   }
 
-  if (message.messageAction() != Message::MessageAction::Update)
+  if (messageAction != Message::MessageAction::Update)
   {
     emit errorOccurred(QStringLiteral("Message action must be Update to add new message"));
     return false;

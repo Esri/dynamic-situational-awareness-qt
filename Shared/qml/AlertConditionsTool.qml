@@ -536,7 +536,92 @@ DsaPanel {
         model: toolController.conditionsList
         currentIndex: -1
 
-        delegate: Rectangle {
+        delegate: ListItemDelegate {
+            width: parent.width
+            height: 48 * scaleFactor
+            itemChecked: true
+            imageVisible: false
+            mainText: name
+
+            Component.onCompleted: {
+                if (visible)
+                    toolController.setViewed(index);
+            }
+
+            Image {
+                id: menuButton
+                anchors {
+                    right: parent.right
+                    verticalCenter: parent.verticalCenter
+                    margins: 5 * scaleFactor
+                }
+                rotation: 90
+                source: DsaResources.iconMenu
+                height: 32 * scaleFactor
+                width: height
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        conditionMenu.open();
+                    }
+                }
+
+                // Menu for Vehicle
+                Menu {
+                    id: conditionMenu
+                    width: 125 * scaleFactor
+
+                    Column {
+                        anchors.margins: 10 * scaleFactor
+                        width: parent.width
+                        spacing: 10 * scaleFactor
+                        leftPadding: 10 * scaleFactor
+
+                        ListLabel {
+                            text: "Delete"
+                            onTriggered: {
+                                conditionMenu.close();
+                                toolController.removeConditionAt(index);
+                            }
+                        }
+
+                        ListLabel {
+                            text: "Close"
+                            onTriggered: {
+                                conditionMenu.close();
+                            }
+                        }
+
+                    }
+                }
+            }
+
+            Label {
+                anchors {
+                    bottom: parent.bottom
+                    left: parent.left
+                    right:  menuButton.left
+                    margins: 3 * scaleFactor
+                }
+                elide: Text.ElideRight
+                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                text: description
+                verticalAlignment: Text.AlignVCenter
+                color: Material.foreground
+                font {
+                    pixelSize: 10 * scaleFactor
+                    family: DsaStyles.fontFamily
+                }
+            }
+        }
+    }
+
+
+
+
+
+    /*Rectangle {
             width: conditionsList.width
             height: (expandRowButton.height * 2) + (8 * scaleFactor)
             color: Material.background
@@ -575,78 +660,7 @@ DsaPanel {
                 wrapMode: Text.WrapAnywhere
                 elide: Text.ElideRight
             }
-
-            OverlayButton {
-                id: expandRowButton
-                anchors {
-                    verticalCenter: parent.verticalCenter
-                    right: parent.right
-                    margins: 8 * scaleFactor
-                }
-                iconUrl: DsaResources.iconDrawer
-
-                onClicked: {
-                    conditionsMenu.visible = true;
-                }
-            }
-
-            Rectangle {
-                id: conditionsMenu
-                visible: false
-                color: Material.background
-                border.color: Material.accent
-                border.width: 2 * scaleFactor
-                radius: 8 * scaleFactor
-                width: 64 * scaleFactor
-                height: 128 * scaleFactor
-
-                anchors {
-                    right: expandRowButton.right
-                    top: expandRowButton.top
-                }
-
-                Column {
-                    id: conditionsCol
-                    anchors{
-                        margins: 8 * scaleFactor
-                        fill: parent
-                    }
-                    spacing: 4 * scaleFactor
-
-                    Button {
-                        width: parent.width
-                        text: "Edit"
-                        enabled: false
-                        font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                        onClicked: toolController.removeConditionAt(index);
-                    }
-
-                    Button {
-                        width: parent.width
-                        text: "Delete"
-                        font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                        onClicked: toolController.removeConditionAt(index);
-                    }
-
-                    Button {
-                        width: parent.width
-                        text: "Pause"
-                        enabled: false
-                        font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                        onClicked: toolController.removeConditionAt(index);
-                    }
-
-                    Button {
-                        width: parent.width
-                        text: "Close"
-                        font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                        onClicked: conditionsMenu.visible = false;
-                    }
-
-                }
-            }
-        }
-    }
+        }*/
 
     Text {
         anchors {

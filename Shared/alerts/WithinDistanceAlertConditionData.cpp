@@ -83,7 +83,7 @@ bool WithinDistanceAlertConditionData::matchesQuery() const
     return cachedQueryResult();
 
   // get 2 new points by moving the source position in a NE and SW position
-  // m_moveDistance is the hypotenusse of the triangle with opposite and adjacent of distance
+  // m_moveDistance is the hypotenuse of the triangle with opposite and adjacent of distance
   const QList<Point> southWest = GeometryEngine::moveGeodetic(QList<Point>{sourceLocation()}, m_moveDistance,
                                                               LinearUnit::meters(), 225.0, AngularUnit::degrees(),
                                                               GeodeticCurveType::Geodesic);

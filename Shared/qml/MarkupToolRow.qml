@@ -14,7 +14,6 @@ import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
 import QtQuick.Window 2.2
-import QtQuick.Dialogs 1.2
 import Esri.DSA 1.0
 import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.2
 
@@ -191,6 +190,6 @@ Row {
         id: clearIcon
         iconSource: DsaResources.iconTrash
         toolName: "Clear All"
-        onToolSelected: markup.clear();
+        onToolSelected: appRoot.showClearDialog("Are you sure you want to clear all markups?")
     }
 }

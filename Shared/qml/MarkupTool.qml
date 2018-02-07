@@ -12,11 +12,10 @@
 
 import QtQuick 2.9
 import QtQuick.Controls 2.2
-import QtQuick.Controls 1.4 as QtQuick1
 import QtQuick.Controls.Material 2.2
 import QtGraphicalEffects 1.0
 import QtQuick.Window 2.2
-import QtQuick.Dialogs 1.2
+import QtQuick.Dialogs 1.2 as Dialogs1
 import Esri.DSA 1.0
 
 Item {
@@ -24,7 +23,6 @@ Item {
 
     // expose properties to be used by other tools
     property alias markupEnabled: markupController.drawModeEnabled
-    property var clear: clearPrompt.open
 
     // Modifying this array will change the initial available colors
     property var drawColors: ["#000000", "#ffffff", "#F44336", "#03a9f4", "#fff176"]
@@ -40,6 +38,15 @@ Item {
     signal graphicsDeleted()
     signal colorSelected()
     signal colorDialogVisibleChanged(bool dialogVisible)
+
+    Connections {
+        target: appRoot
+        onClearDialogAccepted: markupController.clearGraphics()
+        onInputDialogAccepted: {
+            markupController.setName(input.length > 0 ? input : "sketch " + index);
+            drawPane.sketchInProgress = false;
+        }
+    }
 
     onVisibleChanged: {
         if (visible) {
@@ -195,7 +202,6 @@ Item {
         property bool sketchInProgress: false
 
         onSketchInProgressChanged: {
-            console.log("sketch in progress changed", sketchInProgress)
             markupController.setIsSketching(sketchInProgress)
         }
 
@@ -208,7 +214,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 iconSource: DsaResources.iconComplete
                 toolName: "Finish Sketch"
-                onToolSelected: nameDialog.open()
+                onToolSelected: appRoot.showInputDialog("Sketch name", "ex: Sketch 1")
             }
 
             ToolIcon {
@@ -216,7 +222,7 @@ Item {
                 iconSource: DsaResources.iconClose
                 toolName: "Cancel Sketch"
                 onToolSelected: {
-                    //markupController.clearCurrentSketch(); // TODO
+                    markupController.clearCurrentSketch();
                     drawPane.sketchInProgress = false;
                 }
             }
@@ -230,11 +236,12 @@ Item {
             anchors.centerIn: parent
             spacing: 10 * scaleFactor
             visible: parent.visible
+            width: parent.width
 
             Slider {
                 id: widthSlider
                 anchors.verticalCenter: parent.verticalCenter
-                width: widthPane * 0.75
+                width: parent.width * 0.75
                 from: 1
                 to: 20
                 value: 8
@@ -262,6 +269,10 @@ Item {
                 left: parent.left
                 margins: 5 * scaleFactor
             }
+            font {
+                pixelSize: 10 * scaleFactor
+                family: DsaStyles.fontFamily
+            }
             text: qsTr("Draw Color")
             color: Material.foreground
         }
@@ -270,21 +281,22 @@ Item {
             id: colorView
             anchors {
                 top: colorTitle.bottom
-                horizontalCenter: parent.horizontalCenter
-                margins: 2 * scaleFactor
+                left: parent.left
+                margins: 5 * scaleFactor
             }
             orientation: ListView.Horizontal
             model: colorModel
-            height: 30 * scaleFactor
-            width: 150 * scaleFactor
+            height: 25 * scaleFactor
+            width: Qt.platform === "Android" ? parent.width : 175 * scaleFactor
             spacing: 5 * scaleFactor
             currentIndex: 0
+            clip: true
             snapMode: ListView.SnapOneItem
 
             delegate: Component {
 
                 Rectangle {
-                    height: DsaStyles.mainToolbarHeight * 0.5
+                    height: DsaStyles.mainToolbarHeight * 0.45
                     width: height
                     radius: 100 * scaleFactor
                     color: drawColors[index]
@@ -328,8 +340,8 @@ Item {
             id: addButton
             anchors {
                 margins: 5 * scaleFactor
-                right: parent.right
-                bottom: parent.bottom
+                left: colorView.right
+                top: colorTitle.bottom
             }
             visible: Qt.platform.os !== "android" // ColorDialog does not scale properly on Android
             height: 20 * scaleFactor
@@ -368,44 +380,7 @@ Item {
         // TODO
     }
 
-    Dialog {
-        id: nameDialog
-        property int i: 1
-        onAccepted: {
-            markupController.setName(nameText.text.length > 0 ? nameText.text : "sketch " + i);
-            i++;
-            drawPane.sketchInProgress = false;
-        }
-
-        Row {
-            spacing: 5 * scaleFactor
-
-            Label {
-                anchors.verticalCenter: parent.verticalCenter
-                text: "Sketch Name:"
-                color: Material.primary
-                font {
-                    family: DsaStyles.fontFamily
-                    pixelSize: 12 * scaleFactor
-                }
-            }
-
-            QtQuick1.TextField {
-                id: nameText
-                anchors.verticalCenter: parent.verticalCenter
-                placeholderText: "sketch %1".arg(nameDialog.i)
-            }
-        }
-
-        onVisibleChanged: {
-            if (visible) {
-                nameText.text = "";
-                nameText.focus = true;
-            }
-        }
-    }
-
-    ColorDialog {
+    Dialogs1.ColorDialog {
         id: newColorDialog
         title: "Choose a Draw Color"
 
@@ -430,16 +405,5 @@ Item {
 
         markupController.setColor(drawColors[0]);
         colorModel.setProperty(colorView.currentIndex, "selected", true);
-    }
-
-    MessageDialog {
-        id: clearPrompt
-        visible: false
-        icon: StandardIcon.Question
-        title: "Markup Alert"
-        text: "Are you sure you want to clear all markups?"
-        standardButtons: StandardButton.Yes | StandardButton.No
-        onYes: markupController.clearGraphics();
-        onNo:  visible = false;
     }
 }

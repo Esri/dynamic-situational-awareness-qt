@@ -34,5 +34,7 @@
         <file>HomeToolRow.qml</file>
         <file>SecondaryToolbar.qml</file>
         <file>DistressButton.qml</file>
+        <file>DsaMessageDialog.qml</file>
+        <file>DsaInputDialog.qml</file>
     </qresource>
 </RCC>

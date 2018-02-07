@@ -315,3 +315,14 @@ void MarkupController::setIsSketching(bool isSketching)
 {
   m_isSketching = isSketching;
 }
+
+void MarkupController::clearCurrentSketch()
+{
+  if (!m_isSketching)
+    return;
+
+  if (!m_sketchOverlay)
+    return;
+
+  m_sketchOverlay->graphics()->removeAt(m_sketchOverlay->graphics()->size() - 1);
+}

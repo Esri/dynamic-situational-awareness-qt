@@ -16,7 +16,6 @@ import QtQuick.Controls 1.4 as QtQuick1
 import QtQuick.Controls.Material 2.2
 import QtGraphicalEffects 1.0
 import QtQuick.Window 2.2
-import QtQuick.Dialogs 1.2
 import Esri.DSA 1.0
 
 Item {

@@ -29,6 +29,7 @@ public:
   Q_INVOKABLE void clearGraphics();
   Q_INVOKABLE void setActive(bool active) override;
   Q_INVOKABLE void setIsSketching(bool isSketching);
+  Q_INVOKABLE void clearCurrentSketch();
 
   void setDrawingAltitude(double altitude);
   double drawingAltitude() const;

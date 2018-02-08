@@ -72,17 +72,17 @@ void AlertCondition::init(AlertSource* source, AlertTarget* target, const QStrin
 }
 
 /*!
-  \brief Initializes the condition with a \a sourceFeed and \a target and a \a targetDescription.
+  \brief Initializes the condition with a \a sourceFeed, \a sourceDescription, a \a target and a \a targetDescription.
 
   A new \a AlertConditionData will be created for each \l Esri::ArcGISRuntime::Graphic
   in the source feed, to track changes to the source and target.
  */
-void AlertCondition::init(GraphicsOverlay* sourceFeed, AlertTarget* target, const QString& targetDescription)
+void AlertCondition::init(GraphicsOverlay* sourceFeed, const QString& sourceDescription, AlertTarget* target, const QString& targetDescription)
 {
   if (!sourceFeed || !target)
     return;
 
-  m_sourceDescription = sourceFeed->overlayId();
+  m_sourceDescription = sourceDescription;
   m_targetDescription = targetDescription;
 
   GraphicListModel* graphics = sourceFeed->graphics();

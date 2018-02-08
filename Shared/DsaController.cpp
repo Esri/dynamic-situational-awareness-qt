@@ -176,6 +176,20 @@ void DsaController::writeDefaultConditions()
 
 /*! \brief internal
  *
+ * Writes the default message feeds to the settings map.
+ */
+void DsaController::writeDefaultMessageFeeds()
+{
+  m_dsaSettings[MessageFeedConstants::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME] = QStringList { QString("45678"), QString("45679") };
+  m_dsaSettings[MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME] = QStringList { QString("Cursor-on-Target:cot:mil2525c"),
+      QString("Friendly Tracks:position_report:mil2525c"), QString("Contact Reports:spotrep:enemycontact1600.png"),
+      QString("Situation Reports:sitrep:sitrep1600.png"), QString("EOD Reports:eod:eod1600.png"),
+      QString("Sensor Observations:sensor_obs:sensorobs1600.png") };
+  m_dsaSettings[MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME] = QStringList { QString("position_report"), QString("45679") };
+}
+
+/*! \brief internal
+ *
  * This creates the default values for the config file. If the app
  * starts and there is no config file, it will create one, and write
  * the following values to the file.
@@ -193,12 +207,7 @@ void DsaController::createDefaultSettings()
   m_dsaSettings["DefaultElevationSource"] = QString("%1/CaDEM.tpk").arg(m_dsaSettings["ElevationDirectory"].toString());
   m_dsaSettings["GpxFile"] = QString("%1/MontereyMounted.gpx").arg(m_dsaSettings["SimulationDirectory"].toString());
   m_dsaSettings["SimulateLocation"] = QStringLiteral("true");
-  m_dsaSettings[MessageFeedConstants::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME] = QStringList { QString("45678"), QString("45679") };
-  m_dsaSettings[MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME] = QStringList { QString("Cursor-on-Target:cot:mil2525c"),
-      QString("Friendly Tracks:position_report:mil2525c"), QString("Contact Reports:spotrep:enemycontact1600.png"),
-      QString("Situation Reports:sitrep:sitrep1600.png"), QString("EOD Reports:eod:eod1600.png"),
-      QString("Sensor Observations:sensor_obs:sensorobs1600.png") };
-  m_dsaSettings[MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME] = QStringList { QString("position_report"), QString("45679") };
+  writeDefaultMessageFeeds();
   writeDefaultInitialLocation();
   m_dsaSettings["CoordinateFormat"] = QStringLiteral("DMS");
   m_dsaSettings["UnitOfMeasurement"] = QStringLiteral("meters");

@@ -43,6 +43,8 @@ public:
 
   void clear();
 
+  int count() const;
+
   // QAbstractItemModel interface
   int rowCount(const QModelIndex& = QModelIndex()) const override;
   QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;

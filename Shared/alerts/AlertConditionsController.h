@@ -106,7 +106,7 @@ private:
   Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlayFromName(const QString& overlayName);
   QString primaryKeyFieldName(Esri::ArcGISRuntime::FeatureTable* featureTable) const;
 
-  QStringList realtimeFeedIds() const;
+  QStringList realtimeFeedTypes() const;
   QStringList realtimeFeedNames() const;
 
   AlertConditionListModel* m_conditions;
@@ -121,7 +121,7 @@ private:
   mutable QHash<QString,AlertTarget*> m_layerTargets;
   mutable QHash<QString,AlertTarget*> m_overlayTargets;
   QList<QJsonObject> m_storedConditions;
-  QHash<QString,QString> m_messageFeedIdsToNames;
+  QHash<QString,QString> m_messageFeedTypesToNames;
 
   QMetaObject::Connection m_mouseClickConnection;
   QMetaObject::Connection m_identifyLayersConnection;

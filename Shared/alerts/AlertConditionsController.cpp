@@ -142,7 +142,7 @@ void AlertConditionsController::setProperties(const QVariantMap& properties)
   const QVariant messageFeedsData = properties.value(MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME);
   if (!messageFeedsData.isNull())
   {
-    m_messageFeedIdsToNames.clear();
+    m_messageFeedTypesToNames.clear();
     const QStringList messageFeeds = messageFeedsData.toStringList();
     for (const QString& messageFeed : messageFeeds)
     {
@@ -150,7 +150,7 @@ void AlertConditionsController::setProperties(const QVariantMap& properties)
       if (messageFeedConfig.size() != 3)
         continue;
 
-      m_messageFeedIdsToNames.insert(messageFeedConfig.at(1), messageFeedConfig.at(0));
+      m_messageFeedTypesToNames.insert(messageFeedConfig.at(1), messageFeedConfig.at(0));
     }
   }
 
@@ -563,8 +563,8 @@ void AlertConditionsController::onLayersChanged()
         continue;
 
       // check whether we have a user facing name defined for the overlay
-      const auto overlayIt = m_messageFeedIdsToNames.constFind(overlay->overlayId());
-      if (overlayIt != m_messageFeedIdsToNames.constEnd())
+      const auto overlayIt = m_messageFeedTypesToNames.constFind(overlay->overlayId());
+      if (overlayIt != m_messageFeedTypesToNames.constEnd())
       {
         newSourceList.append(overlayIt.value());
         newTargetList.append(overlayIt.value());
@@ -1115,7 +1115,7 @@ GraphicsOverlay* AlertConditionsController::graphicsOverlayFromName(const QStrin
   if (!geoView)
     return nullptr;
 
-  const QString& overlayId = m_messageFeedIdsToNames.key(overlayName, overlayName);
+  const QString& overlayId = m_messageFeedTypesToNames.key(overlayName, overlayName);
 
   GraphicsOverlayListModel* graphicsOverlays = geoView->graphicsOverlays();
   if (graphicsOverlays)
@@ -1167,13 +1167,13 @@ QString AlertConditionsController::primaryKeyFieldName(FeatureTable* featureTabl
 /*!
   \brief internal
  */
-QStringList AlertConditionsController::realtimeFeedIds() const
+QStringList AlertConditionsController::realtimeFeedTypes() const
 {
-  return m_messageFeedIdsToNames.keys();
+  return m_messageFeedTypesToNames.keys();
 }
 
 QStringList AlertConditionsController::realtimeFeedNames() const
 {
-  return m_messageFeedIdsToNames.values();
+  return m_messageFeedTypesToNames.values();
 }
 

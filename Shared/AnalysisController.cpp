@@ -20,16 +20,41 @@
 
 using namespace Esri::ArcGISRuntime;
 
+const QString AnalysisController::MAP_POINT_VIEWSHED_TYPE = QStringLiteral("Map Point");
+const QString AnalysisController::MY_LOCATION_VIEWSHED_TYPE = QStringLiteral("My Location");
+const QString AnalysisController::FRIENDLY_TRACK_VIEWSHED_TYPE = QStringLiteral("Friendly Track");
+
 AnalysisController::AnalysisController(QObject *parent) :
-  Toolkit::AbstractTool(parent)
+  Toolkit::AbstractTool(parent),
+  m_analysisOverlay(new AnalysisOverlay(this)),
+  m_viewsheds({nullptr, nullptr, nullptr}),
+  m_viewshedTypes({MAP_POINT_VIEWSHED_TYPE,
+                  MY_LOCATION_VIEWSHED_TYPE,
+                  FRIENDLY_TRACK_VIEWSHED_TYPE})
 {
   Toolkit::ToolManager::instance().addTool(this);
 
+  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]
+  {
+    updateGeoView();
+  });
+
   connectMouseSignals();
+
+  updateGeoView();
 }
 
 AnalysisController::~AnalysisController()
 {
+}
+
+void AnalysisController::updateGeoView()
+{
+  SceneView* sceneView = dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView());
+  if (!sceneView)
+    return;
+
+  sceneView->analysisOverlays()->append(m_analysisOverlay);
 }
 
 void AnalysisController::connectMouseSignals()
@@ -137,6 +162,26 @@ void AnalysisController::setViewshedVisible(bool viewshedVisible)
   }
 
   emit viewshedVisibleChanged();
+}
+
+QStringList AnalysisController::viewshedTypes() const
+{
+  return m_viewshedTypes;
+}
+
+int AnalysisController::viewshedTypeIndex() const
+{
+  return m_viewshedTypeIndex;
+}
+
+void AnalysisController::setViewshedTypeIndex(int index)
+{
+  if (m_viewshedTypeIndex == index)
+    return;
+
+  m_viewshedTypeIndex = index;
+
+  emit viewshedTypeIndexChanged();
 }
 
 double AnalysisController::minDistance() const

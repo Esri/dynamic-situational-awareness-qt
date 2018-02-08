@@ -47,16 +47,17 @@ Row {
         iconSource: DsaResources.iconViewshed
         toolName: "Viewshed"
         onToolSelected: {
-            if (analysisToolRow.state === toolName)
-                analysisToolRow.state = "clear";
-            else {
+            if (selected)
+                analysisToolRow.state = "clear"
+            else
                 analysisToolRow.state = toolName;
-                if (drawer.visible)
-                    drawer.close();
-                else {
-                    toolRect.state = "analysis";
-                    drawer.open();
-                }
+
+            if (analysisTool.visible) {
+                analysisTool.visible = false;
+                analysisToolRow.state = "clear";
+                selected = false;
+            } else {
+                analysisTool.visible = true;
             }
         }
     }

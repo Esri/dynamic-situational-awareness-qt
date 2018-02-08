@@ -20,9 +20,17 @@ DsaPanel {
     width: 272 * scaleFactor
     title: qsTr("Analysis")
 
+    property bool isMobile
+
     // Create the controller
     AnalysisController {
         id: toolController
+    }
+
+    onVisibleChanged: {
+        if (!isMobile) {
+            toolController.viewshedEnabled = visible;
+        }
     }
 
     Column {
@@ -35,23 +43,53 @@ DsaPanel {
         }
         spacing: 20 * scaleFactor
 
-        Row {
+        Column {
             width: parent.width
-            height: 25 * scaleFactor
-            spacing: 5 * scaleFactor
+            height: 40 * scaleFactor
 
             Text {
-                anchors.verticalCenter: parent.verticalCenter
-                width: parent.width * 0.5
-                text: qsTr("Viewshed Enabled")
+                width: 80 * scaleFactor
+                text: qsTr("Viewshed Type")
                 color: Material.foreground
                 font.pixelSize: 14 * scaleFactor
             }
 
-            Switch {
-                anchors.verticalCenter: parent.verticalCenter
-                width: 150 * scaleFactor
+            ComboBox {
+                id: levelCb
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
+
+                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                model: toolController.viewshedTypes
+                currentIndex: toolController.viewshedTypeIndex
+
+                onCurrentIndexChanged: {
+                    toolController.viewshedTypeIndex = currentIndex;
+                }
+            }
+        }
+
+        Row {
+            width: parent.width
+            height: 25 * scaleFactor
+            spacing: 5 * scaleFactor
+            visible: isMobile
+
+            CheckBox {
+                id: viewshedEnabledCheckbox
+                text: qsTr("Viewshed Enabled")
+                font.pixelSize: 14 * scaleFactor
                 checked: toolController.viewshedEnabled
+                contentItem: Label {
+                    text: viewshedEnabledCheckbox.text
+                    font: viewshedEnabledCheckbox.font
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
+                    color: Material.foreground
+                    leftPadding: viewshedEnabledCheckbox.indicator.width + viewshedEnabledCheckbox.spacing
+                }
 
                 onCheckedChanged: {
                     toolController.viewshedEnabled = checked;
@@ -64,18 +102,19 @@ DsaPanel {
             height: 25 * scaleFactor
             spacing: 5 * scaleFactor
 
-            Text {
-                anchors.verticalCenter: parent.verticalCenter
-                width: parent.width * 0.5
+            CheckBox {
+                id: viewshedVisibleCheckbox
                 text: qsTr("Viewshed Visible")
-                color: Material.foreground
                 font.pixelSize: 14 * scaleFactor
-            }
-
-            Switch {
-                anchors.verticalCenter: parent.verticalCenter
-                width: 150 * scaleFactor
                 checked: toolController.viewshedVisible
+                contentItem: Label {
+                    text: viewshedVisibleCheckbox.text
+                    font: viewshedVisibleCheckbox.font
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
+                    color: Material.foreground
+                    leftPadding: viewshedVisibleCheckbox.indicator.width + viewshedVisibleCheckbox.spacing
+                }
 
                 onCheckedChanged: {
                     toolController.viewshedVisible = checked;

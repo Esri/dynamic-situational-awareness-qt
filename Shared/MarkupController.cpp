@@ -10,7 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "TelestrateController.h"
+#include "MarkupController.h"
 #include "ToolResourceProvider.h"
 #include "ToolManager.h"
 
@@ -27,36 +27,42 @@
 #include "Symbol.h"
 #include "SimpleLineSymbol.h"
 #include "GeometryTypes.h"
+#include "GeometryEngine.h"
 
 #include <QCursor>
 
+const QString MarkupController::nameAttribute = QStringLiteral("name");
+
+
 using namespace Esri::ArcGISRuntime;
 
-TelestrateController::TelestrateController(QObject* parent):
+MarkupController::MarkupController(QObject* parent):
   AbstractSketchTool(parent)
 {
   Toolkit::ToolManager::instance().addTool(this);
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, &TelestrateController::updateGeoView);
+  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, &MarkupController::updateGeoView);
 
   updateGeoView();
+  updatedSymbol();
 }
 
-TelestrateController::~TelestrateController()
+MarkupController::~MarkupController()
 {
 }
 
-void TelestrateController::setActive(bool active)
+void MarkupController::setActive(bool active)
 {
   if (m_active == active || !m_geoView)
     return;
 
   m_active = active;
   GraphicsOverlayListModel* graphicsOverlays = m_geoView->graphicsOverlays();
-  active ? graphicsOverlays->append(m_sketchOverlay) : graphicsOverlays->removeOne(m_sketchOverlay);
+  if (active)
+    graphicsOverlays->append(m_sketchOverlay);
   emit activeChanged();
 }
 
-void TelestrateController::setDrawingAltitude(double altitude)
+void MarkupController::setDrawingAltitude(double altitude)
 {
   if (m_drawingAltitude == altitude)
     return;
@@ -64,23 +70,62 @@ void TelestrateController::setDrawingAltitude(double altitude)
   m_drawingAltitude = altitude;
 }
 
-double TelestrateController::drawingAltitude() const
+double MarkupController::drawingAltitude() const
 {
   return m_drawingAltitude;
 }
 
 // creates a new LineSymbol rather than updating the current one so previously drawn sketches stay the same color
-void TelestrateController::setColor(QColor color)
+void MarkupController::setColor(const QColor& color)
 {
-  m_sketchSymbol = new SimpleLineSymbol(SimpleLineSymbolStyle::Solid, color, 8, this);
+  m_color = color;
+
+  if (!m_isSketching)
+    return;
+
+  if (!m_sketchSymbol)
+    return;
+
+  auto lineSym = dynamic_cast<SimpleLineSymbol*>(sketchSymbol());
+  if (!lineSym)
+    return;
+
+  lineSym->setColor(m_color);
 }
 
-void TelestrateController::setSurfacePlacement(int placementEnum)
+void MarkupController::setWidth(float width)
+{
+  m_width = width;
+
+  if (!m_isSketching)
+    return;
+
+  if (!m_sketchSymbol)
+    return;
+
+  auto lineSym = dynamic_cast<SimpleLineSymbol*>(sketchSymbol());
+  if (!lineSym)
+    return;
+
+  lineSym->setWidth(m_width);
+}
+
+Symbol* MarkupController::updatedSymbol()
+{
+  m_sketchSymbol = new SimpleLineSymbol(SimpleLineSymbolStyle::Solid, m_color, m_width, this);
+  auto lineSym = dynamic_cast<SimpleLineSymbol*>(sketchSymbol());
+  if (lineSym)
+    lineSym->setAntiAlias(true);
+
+  return m_sketchSymbol;
+}
+
+void MarkupController::setSurfacePlacement(int placementEnum)
 {
   m_sketchOverlay->setSceneProperties(LayerSceneProperties(static_cast<SurfacePlacement>(placementEnum)));
 }
 
-void TelestrateController::deleteSelectedGraphics()
+void MarkupController::deleteSelectedGraphics()
 {
   if (m_sketchOverlay->selectedGraphics().isEmpty())
     return;
@@ -95,7 +140,7 @@ void TelestrateController::deleteSelectedGraphics()
   }
 }
 
-void TelestrateController::deleteAllGraphics()
+void MarkupController::deleteAllGraphics()
 {
   // remove graphics from view
   m_sketchOverlay->graphics()->clear();
@@ -107,7 +152,7 @@ void TelestrateController::deleteAllGraphics()
   clear();
 }
 
-void TelestrateController::setDrawModeEnabled(bool enabled)
+void MarkupController::setDrawModeEnabled(bool enabled)
 {
   if (m_drawModeEnabled == enabled)
     return;
@@ -115,7 +160,7 @@ void TelestrateController::setDrawModeEnabled(bool enabled)
   m_drawModeEnabled = enabled;
 }
 
-void TelestrateController::init()
+void MarkupController::init()
 {
   initGeometryBuilder();
 
@@ -157,11 +202,15 @@ void TelestrateController::init()
       mouseEvent.accept();
 
     // create a new graphic that corresponds to a new Part of the GeometryBuilder
+    if (!m_isSketching)
+    {
+      clear();
+      Graphic* partGraphic = new Graphic(this);
+      partGraphic->setSymbol(updatedSymbol());
+      m_partOutlineGraphics.append(partGraphic);
+      m_sketchOverlay->graphics()->append(partGraphic);
+    }
     m_currentPartIndex = addPart();
-    Graphic* partGraphic = new Graphic(this);
-    partGraphic->setSymbol(m_sketchSymbol);
-    m_partOutlineGraphics.append(partGraphic);
-    m_sketchOverlay->graphics()->append(partGraphic);
 
     Toolkit::ToolResourceProvider::instance()->setMouseCursor(QCursor(Qt::PointingHandCursor));
     m_isDrawing = true;
@@ -205,21 +254,30 @@ void TelestrateController::init()
 
     Toolkit::ToolResourceProvider::instance()->setMouseCursor(QCursor(Qt::ArrowCursor));
     m_isDrawing = false;
+
+    emit sketchCompleted();
   });
 }
 
 // to be called whenever the GeometryBuilder is modified. It will update the Geometry of the Graphic being sketched
-void TelestrateController::updateSketch()
+void MarkupController::updateSketch()
 {
   MultipartBuilder* multipartBuilder = static_cast<MultipartBuilder*>(m_geometryBuilder);
   Part* currentPart = multipartBuilder->parts()->part(m_currentPartIndex);
 
   MultipartBuilder* outlineBuilder = new PolylineBuilder(m_geoView->spatialReference(), this);
   outlineBuilder->parts()->addPart(currentPart);
-  m_partOutlineGraphics.at(m_currentPartIndex)->setGeometry(outlineBuilder->toGeometry());
+
+  // get simplified geometry
+  const Geometry simplifiedLine = GeometryEngine::simplify(multipartBuilder->toGeometry());
+  auto graphic = m_partOutlineGraphics.at(m_partOutlineGraphics.size() - 1);
+  if (!graphic)
+    return;
+
+  graphic->setGeometry(simplifiedLine);
 }
 
-void TelestrateController::updateGeoView()
+void MarkupController::updateGeoView()
 {
   GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
 
@@ -237,27 +295,65 @@ void TelestrateController::updateGeoView()
   init();
 }
 
-bool TelestrateController::is3d() const
+bool MarkupController::is3d() const
 {
   return m_is3d;
 }
 
-int TelestrateController::sketchCount() const
+int MarkupController::sketchCount() const
 {
   return m_partOutlineGraphics.size();
 }
 
-bool TelestrateController::drawModeEnabled() const
+bool MarkupController::drawModeEnabled() const
 {
   return m_drawModeEnabled;
 }
 
-QString TelestrateController::toolName() const
+QString MarkupController::toolName() const
 {
-  return "Telestrate Tool";
+  return "Markup Tool";
 }
 
-GeometryType TelestrateController::geometryType() const
+GeometryType MarkupController::geometryType() const
 {
   return GeometryType::Polyline;
+}
+
+void MarkupController::setName(const QString& name)
+{
+  if (!m_sketchOverlay)
+    return;
+
+  const auto graphic = m_sketchOverlay->graphics()->last();
+  graphic->attributes()->insertAttribute(nameAttribute, name);
+}
+
+void MarkupController::clearGraphics()
+{
+  if (!m_sketchOverlay)
+    return;
+
+  m_sketchOverlay->graphics()->clear();
+}
+
+void MarkupController::setSketching(bool isSketching)
+{
+  m_isSketching = isSketching;
+}
+
+void MarkupController::clearCurrentSketch()
+{
+  if (!m_isSketching)
+    return;
+
+  if (!m_sketchOverlay)
+    return;
+
+  m_sketchOverlay->graphics()->removeAt(m_sketchOverlay->graphics()->size() - 1);
+}
+
+bool MarkupController::isSketching() const
+{
+  return m_isSketching;
 }

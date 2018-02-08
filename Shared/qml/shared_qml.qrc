@@ -8,7 +8,7 @@
         <file>FollowHud.qml</file>
         <file>TableOfContents.qml</file>
         <file>NavigationTool.qml</file>
-        <file>TelestrateTool.qml</file>
+        <file>MarkupTool.qml</file>
         <file>Imports.qml</file>
         <file>Analysis.qml</file>
         <file>Options.qml</file>
@@ -32,6 +32,9 @@
         <file>CategoryToolbarColumn.qml</file>
         <file>CategoryToolbarRow.qml</file>
         <file>HomeToolRow.qml</file>
+        <file>SecondaryToolbar.qml</file>
         <file>DistressButton.qml</file>
+        <file>DsaMessageDialog.qml</file>
+        <file>DsaInputDialog.qml</file>
     </qresource>
 </RCC>

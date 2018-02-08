@@ -43,9 +43,9 @@ ViewedAlertsController::ViewedAlertsController(QObject* parent /* = nullptr */):
   AlertListModel* model = AlertListModel::instance();
   if (model)
   {
-    connect(model, &AlertListModel::dataChanged, this, &ViewedAlertsController::unviewedCountChanged);
-    connect(model, &AlertListModel::rowsInserted, this, &ViewedAlertsController::unviewedCountChanged);
-    connect(model, &AlertListModel::rowsRemoved, this, &ViewedAlertsController::unviewedCountChanged);
+    connect(model, &AlertListModel::dataChanged, this, &ViewedAlertsController::handleDataChanged);
+    connect(model, &AlertListModel::rowsInserted, this, &ViewedAlertsController::handleDataChanged);
+    connect(model, &AlertListModel::rowsRemoved, this, &ViewedAlertsController::handleDataChanged);
     emit unviewedCountChanged();
   }
 }
@@ -56,6 +56,12 @@ ViewedAlertsController::ViewedAlertsController(QObject* parent /* = nullptr */):
 QString ViewedAlertsController::toolName() const
 {
   return QString("viewed alerts");
+}
+
+void ViewedAlertsController::handleDataChanged()
+{
+  m_cachedCount = -1;
+  emit unviewedCountChanged();
 }
 
 /*!
@@ -71,6 +77,9 @@ ViewedAlertsController::~ViewedAlertsController()
  */
 int ViewedAlertsController::unviewedCount() const
 {
+  if (m_cachedCount != -1)
+    return m_cachedCount;
+
   AlertListModel* model = AlertListModel::instance();
   if (!model)
     return 0;
@@ -95,5 +104,7 @@ int ViewedAlertsController::unviewedCount() const
     count++;
   }
 
-  return count;
+  m_cachedCount = count;
+
+  return m_cachedCount;
 }

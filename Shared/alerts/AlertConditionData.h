@@ -59,8 +59,8 @@ public:
   bool cachedQueryResult() const;
   bool isQueryOutOfDate() const;
 
-  bool enabled() const;
-  void setEnabled(bool enabled);
+  bool isConditionEnabled() const;
+  void setConditionEnabled(bool isConditionEnabled);
 
 signals:
   void statusChanged();

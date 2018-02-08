@@ -108,7 +108,7 @@ int AlertListController::allAlertsCount() const
     if (!alert->active())
       continue;
 
-    if (!alert->enabled())
+    if (!alert->isConditionEnabled())
       continue;
 
     count++;

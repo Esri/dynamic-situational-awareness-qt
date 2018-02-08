@@ -252,7 +252,7 @@ bool AlertConditionData::isQueryOutOfDate() const
  */
 void AlertConditionData::handleDataChanged()
 {
-  if (!enabled())
+  if (!isConditionEnabled())
     return;
 
   // set the query flag to out-of-date to force a new query to be run
@@ -284,7 +284,7 @@ void AlertConditionData::handleDataChanged()
 
   When \c false the condition data will not be tested.
  */
-bool AlertConditionData::enabled() const
+bool AlertConditionData::isConditionEnabled() const
 {
   return m_enabled;
 }
@@ -294,7 +294,7 @@ bool AlertConditionData::enabled() const
 
   When \c false the condition data will not be tested.
  */
-void AlertConditionData::setEnabled(bool enabled)
+void AlertConditionData::setConditionEnabled(bool enabled)
 {
   if (enabled == m_enabled)
     return;

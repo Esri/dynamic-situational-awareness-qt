@@ -234,6 +234,9 @@ void GeometryQuadtree::handleGeometryChange(int changedId)
       if (!element)
         continue;
 
+      if (element->geometry().isEmpty())
+        continue;
+
       allGeom.append(GeometryEngine::project(element->geometry(), SpatialReference::wgs84()));
     }
 

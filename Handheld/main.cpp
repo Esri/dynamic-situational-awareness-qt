@@ -36,7 +36,7 @@
 #include "FollowPositionController.h"
 #include "TableOfContentsController.h"
 #include "NavigationController.h"
-#include "TelestrateController.h"
+#include "MarkupController.h"
 #include "AnalysisController.h"
 #include "OptionsController.h"
 #include "HandheldStyles.h"
@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<FollowPositionController>("Esri.DSA", 1, 0, "FollowPositionController");
   qmlRegisterType<TableOfContentsController>("Esri.DSA", 1, 0, "TableOfContentsController");
   qmlRegisterType<NavigationController>("Esri.DSA", 1, 0, "NavigationController");
-  qmlRegisterType<TelestrateController>("Esri.DSA", 1, 0, "TelestrateController");
+  qmlRegisterType<MarkupController>("Esri.DSA", 1, 0, "MarkupController");
   qmlRegisterType<AnalysisController>("Esri.DSA", 1, 0, "AnalysisController");
   qmlRegisterType<OptionsController>("Esri.DSA", 1, 0, "OptionsController");
   qmlRegisterSingletonType<HandheldStyles>("Esri.DSA", 1, 0, "DsaStyles", &dsaStylesProvider);

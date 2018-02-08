@@ -1,4 +1,4 @@
-// Copyright 2017 ESRI
+// Copyright 2018 ESRI
 //
 // All rights reserved under the copyright laws of the United States
 // and applicable international laws, treaties, and conventions.
@@ -11,23 +11,17 @@
 //
 
 import QtQuick 2.9
-import QtQuick.Controls 2.2
-import QtQuick.Controls.Material 2.2
-import QtQuick.Window 2.2
 import Esri.DSA 1.0
 
-Label {
-    font {
-        family: DsaStyles.fontFamily
-        pixelSize: 16 * scaleFactor
-    }
-    color: Material.foreground
-    signal triggered();
+OverlayButton {
+    id: distressButton
+    property var messageFeedsController
 
-    MouseArea {
-        anchors.fill: parent
-        onClicked: {
-            parent.triggered();
-        }
+    iconUrl: messageFeedsController.locationBroadcastInDistress ?
+                 DsaResources.iconDistressRed :
+                 DsaResources.iconDistressGray
+
+    onClicked: {
+        messageFeedsController.locationBroadcastInDistress = !messageFeedsController.locationBroadcastInDistress;
     }
 }

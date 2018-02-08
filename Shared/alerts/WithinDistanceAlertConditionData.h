@@ -34,7 +34,8 @@ public:
   bool matchesQuery() const override;
 
 private:
-  double m_distance;
+  double m_distance = 0.0;
+  double m_moveDistance = 0.0;
 };
 
 #endif // WITHINDISTANCEALERTCONDITIONDATA_H

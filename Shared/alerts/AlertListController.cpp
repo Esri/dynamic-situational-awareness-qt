@@ -66,6 +66,11 @@ AlertListController::AlertListController(QObject* parent /* = nullptr */):
 
   // sets the initial set of filters for condition data
   m_alertsProxyModel->applyFilter(m_filters);
+
+  connect(AlertListModel::instance(), &AlertListModel::dataChanged, this, &AlertListController::allAlertsCountChanged);
+  connect(AlertListModel::instance(), &AlertListModel::rowsInserted, this, &AlertListController::allAlertsCountChanged);
+  connect(AlertListModel::instance(), &AlertListModel::rowsRemoved, this, &AlertListController::allAlertsCountChanged);
+  emit allAlertsCountChanged();
 }
 
 /*!
@@ -81,6 +86,35 @@ AlertListController::~AlertListController()
 QAbstractItemModel* AlertListController::alertListModel() const
 {
   return m_alertsProxyModel;
+}
+
+/*!
+  \brief Returns the count of all alerts - ignoring any filters.
+ */
+int AlertListController::allAlertsCount() const
+{
+  AlertListModel* model = AlertListModel::instance();
+  if (!model)
+    return 0;
+
+  int count = 0;
+  const int alertsCount = model->rowCount();
+  for (int i = 0; i < alertsCount; ++i)
+  {
+    AlertConditionData* alert = model->alertAt(i);
+    if (!alert)
+      continue;
+
+    if (!alert->isActive())
+      continue;
+
+    if (!alert->isConditionEnabled())
+      continue;
+
+    count++;
+  }
+
+  return count;
 }
 
 /*!
@@ -126,7 +160,7 @@ void AlertListController::highlight(int rowIndex, bool showHighlight)
 
     m_highlightConnections.append(connect(conditionData, &AlertConditionData::activeChanged, this, [this, conditionData]()
     {
-      if (!conditionData || !conditionData->active())
+      if (!conditionData || !conditionData->isActive())
         m_highlighter->stopHighlight();
     }));
 
@@ -165,7 +199,8 @@ void AlertListController::zoomTo(int rowIndex)
   if (sceneView)
   {
     const Camera currentCam = sceneView->currentViewpointCamera();
-    Camera newCam = currentCam.zoomToward(pos, 10.0);
+    constexpr double targetDistance = 1500.0;
+    Camera newCam(pos, targetDistance, currentCam.heading(), currentCam.pitch(), currentCam.roll());
 
     sceneView->setViewpointCamera(newCam, 1.0);
   }
@@ -228,6 +263,16 @@ void AlertListController::setMinLevel(int level)
 }
 
 /*!
+  \brief Clears any filters applied to the alerts.
+ */
+void AlertListController::clearAllFilters()
+{
+  m_idsAlertFilter->clearIds();
+  m_statusAlertFilter->setMinLevel(AlertLevel::Low);
+  m_alertsProxyModel->applyFilter(m_filters);
+}
+
+/*!
   \brief Sets the highlight state for all currently active condition data to \a highlight.
  */
 void AlertListController::flashAll(bool highlight)
@@ -240,7 +285,7 @@ void AlertListController::flashAll(bool highlight)
   for (int i = 0; i < modelSize; ++i)
   {
     AlertConditionData* alert = model->alertAt(i);
-    if (!alert || !alert->active())
+    if (!alert || !alert->isActive())
       continue;
 
     alert->highlight(highlight);

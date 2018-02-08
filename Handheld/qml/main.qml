@@ -17,18 +17,21 @@ import QtQuick.Controls.Material 2.2
 import QtQuick.Window 2.2
 import QtQml.Models 2.2
 import QtGraphicalEffects 1.0
-import QtQuick.Dialogs 1.2
 import Esri.DSA 1.0
 import Esri.Handheld 1.0
 import Esri.ArcGISRuntime.Toolkit.Controls 100.2
 import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.2
 
 Handheld {
+    id: appRoot
     width: 320 * scaleFactor
     height: 480 * scaleFactor
 
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
     property alias messageFeeds: messageFeedsTool
+    signal clearDialogAccepted();
+    signal closeDialogAccepted();
+    signal inputDialogAccepted(var input, var index);
 
     LocationController {
         id: locationController
@@ -114,6 +117,15 @@ Handheld {
         objectName: "sceneView"
 
         onMousePressed: followHud.stopFollowing();
+
+        DistressButton {
+            anchors {
+                top: parent.top
+                horizontalCenter: navTool.horizontalCenter
+                margins: 10 * scaleFactor
+            }
+            messageFeedsController: messageFeeds.controller
+        }
 
         CurrentLocation {
             id: currentLocation
@@ -211,20 +223,13 @@ Handheld {
             onClosed: visible = false;
         }
 
-        TelestrateTool {
-            id: telestrateTool
+        MarkupTool {
+            id: markup
             anchors {
-                left: parent.left
+                right: parent.right
                 top: parent.top
-                bottom: sceneView.attributionTop
             }
-            width: drawer.width
             visible: false
-            onVisibleChanged: {
-                if (!visible)
-                    markupToolRow.state = "clear";
-            }
-            onClosed: visible = false;
         }
 
         PopupStackView {
@@ -381,13 +386,12 @@ Handheld {
 
     onErrorOccurred: {
         msgDialog.informativeText = message;
-        msgDialog.detailedText = additionalMessage;
         msgDialog.open();
     }
 
-    MessageDialog {
+    DsaMessageDialog {
         id: msgDialog
-        text: "Error"
+        title: "Error"
     }
 
     BusyIndicator {
@@ -398,5 +402,42 @@ Handheld {
     Shortcut {
         sequence: "Ctrl+Q"
         onActivated: Qt.quit()
+    }
+
+    DsaMessageDialog {
+        id: clearDialog
+        standardButtons: Dialog.Ok | Dialog.Cancel
+        onAccepted: clearDialogAccepted();
+    }
+
+    function showClearDialog(title) {
+        clearDialog.informativeText = title;
+        clearDialog.open();
+    }
+
+    DsaMessageDialog {
+        id: closeDialog
+        standardButtons: Dialog.Ok | Dialog.Cancel
+        onAccepted: closeDialogAccepted();
+    }
+
+    function showCloseDialog(title) {
+        closeDialog.informativeText = title;
+        closeDialog.open();
+    }
+
+    DsaInputDialog {
+        id: inputDialog
+        property int i: 1
+        onAccepted: {
+            i++;
+            inputDialogAccepted(inputDialog.userInputText, i);
+        }
+    }
+
+    function showInputDialog(labelText, placeholderText) {
+        inputDialog.inputLabel = labelText;
+        inputDialog.inputPlaceholderText = placeholderText;
+        inputDialog.open();
     }
 }

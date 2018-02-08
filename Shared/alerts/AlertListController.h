@@ -38,12 +38,14 @@ class AlertListController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
   Q_OBJECT
 
   Q_PROPERTY(QAbstractItemModel* alertListModel READ alertListModel NOTIFY alertListModelChanged)
+  Q_PROPERTY(int allAlertsCount READ allAlertsCount NOTIFY allAlertsCountChanged)
 
 public:
   explicit AlertListController(QObject* parent = nullptr);
   ~AlertListController();
 
   QAbstractItemModel* alertListModel() const;
+  int allAlertsCount() const;
 
   // AbstractTool interface
   QString toolName() const override;
@@ -53,11 +55,13 @@ public:
   Q_INVOKABLE void setViewed(int rowIndex);
   Q_INVOKABLE void dismiss(int rowIndex);
   Q_INVOKABLE void setMinLevel(int level);
+  Q_INVOKABLE void clearAllFilters();
 
   Q_INVOKABLE void flashAll(bool highlight);
 
 signals:
   void alertListModelChanged();
+  void allAlertsCountChanged();
 
 private:
   AlertListProxyModel* m_alertsProxyModel = nullptr;

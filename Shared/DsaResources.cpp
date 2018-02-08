@@ -66,6 +66,11 @@ QUrl DsaResources::iconClose() const
   return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_closeclear_dark.png");
 }
 
+QUrl DsaResources::iconColorPalette() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_colorpalette_dark_d.png");
+}
+
 QUrl DsaResources::iconComplete() const
 {
   return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_completedone_dark.png");
@@ -79,6 +84,16 @@ QUrl DsaResources::iconCoordinateConversion() const
 QUrl DsaResources::iconCreateReport() const
 {
   return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_editmap_dark_d-2.png");
+}
+
+QUrl DsaResources::iconDistressGray() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/distressIconGray.svg");
+}
+
+QUrl DsaResources::iconDistressRed() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/distressIconRed.svg");
 }
 
 QUrl DsaResources::iconDraw() const
@@ -119,6 +134,11 @@ QUrl DsaResources::iconHome() const
 QUrl DsaResources::iconLayers() const
 {
   return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_layergroup_dark_d.png");
+}
+
+QUrl DsaResources::iconLineWidth() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_sketchlinepopover_dark_d.png");
 }
 
 QUrl DsaResources::iconListView() const
@@ -204,4 +224,24 @@ QUrl DsaResources::iconViewshed() const
 QUrl DsaResources::iconZoomTo() const
 {
   return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_zoomtofeature_light.png");
+}
+
+QUrl DsaResources::iconWarningGreen() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/warning_green.png");
+}
+
+QUrl DsaResources::iconWarningOrange() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/warning_orange.png");
+}
+
+QUrl DsaResources::iconWarningRed() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/warning_red.png");
+}
+
+QUrl DsaResources::iconWarningRedExclamation() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/warning_red_exclamation.png");
 }

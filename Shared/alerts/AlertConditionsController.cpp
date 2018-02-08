@@ -378,6 +378,9 @@ bool AlertConditionsController::addAttributeEqualsAlert(const QString& condition
 void AlertConditionsController::removeConditionAt(int rowIndex)
 {
   AlertCondition* condition = m_conditions->conditionAt(rowIndex);
+  if (!condition)
+    return;
+
   m_conditions->removeAt(rowIndex);
   delete condition;
 }

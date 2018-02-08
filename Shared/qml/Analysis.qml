@@ -197,7 +197,7 @@ DsaPanel {
                     enabled: toolController.viewshedEnabled
                     orientation: Qt.Horizontal
                     from: 0
-                    to: 180
+                    to: 120
                     value: toolController.horizontalAngle
                     stepSize: 1
                     snapMode: Slider.SnapAlways
@@ -268,7 +268,7 @@ DsaPanel {
         Column {
             width: parent.width
             height: 25 * scaleFactor
-            visible: toolController.viewshedEnabled
+            visible: toolController.viewshedEnabled && toolController.viewshedTypeIndex != 1
 
             Text {
                 id: headingLabel
@@ -315,7 +315,7 @@ DsaPanel {
         Column {
             width: parent.width
             height: 25 * scaleFactor
-            visible: toolController.viewshedEnabled
+            visible: toolController.viewshedEnabled && toolController.viewshedTypeIndex != 1
 
             Text {
                 id: pitchLabel

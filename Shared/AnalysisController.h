@@ -26,6 +26,8 @@ namespace Esri {
   }
 }
 
+class QMouseEvent;
+
 class AnalysisController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
   Q_OBJECT
@@ -97,6 +99,11 @@ private:
   void updateGeoView();
   void connectMouseSignals();
 
+  void updateCurrentViewshed();
+  void updateMapPointViewshed(QMouseEvent& event);
+  void updateMyLocationViewshed();
+  void updateFriendlyTrackViewshed(QMouseEvent& event);
+
   bool m_viewshedEnabled = false;
 
   Esri::ArcGISRuntime::AnalysisOverlay* m_analysisOverlay = nullptr;
@@ -110,7 +117,7 @@ private:
   int m_viewshedTypeIndex = 0;
   double m_minDistanceDefault = 50;
   double m_maxDistanceDefault = 1000;
-  double m_horizontalAngleDefault = 45;
+  double m_horizontalAngleDefault = 120;
   double m_verticalAngleDefault = 90;
   double m_headingDefault = 0;
   double m_pitchDefault = 90;

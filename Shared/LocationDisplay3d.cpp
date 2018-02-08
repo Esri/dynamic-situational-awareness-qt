@@ -25,15 +25,15 @@ static const QString s_headingAttribute{"heading"};
 LocationDisplay3d::LocationDisplay3d(QObject* parent) :
   QObject(parent),
   m_locationOverlay(new GraphicsOverlay(this)),
-  m_positionGraphic(new Graphic(this))
+  m_locationGraphic(new Graphic(this))
 {
   m_locationOverlay->setOverlayId(QStringLiteral("SCENEVIEWLOCATIONOVERLAY"));
   m_locationOverlay->setSceneProperties(LayerSceneProperties(SurfacePlacement::Relative));
   m_locationOverlay->setRenderingMode(GraphicsRenderingMode::Dynamic);
   m_locationOverlay->setVisible(false);
 
-  m_positionGraphic->attributes()->insertAttribute(s_headingAttribute, 0.0);
-  m_locationOverlay->graphics()->append(m_positionGraphic);
+  m_locationGraphic->attributes()->insertAttribute(s_headingAttribute, 0.0);
+  m_locationOverlay->graphics()->append(m_locationGraphic);
 }
 
 LocationDisplay3d::~LocationDisplay3d()
@@ -120,7 +120,7 @@ void LocationDisplay3d::setPositionSource(QGeoPositionInfoSource* positionSource
       return;
     }
 
-    m_positionGraphic->setGeometry(m_lastKnownLocation);
+    m_locationGraphic->setGeometry(m_lastKnownLocation);
 
     emit locationChanged(m_lastKnownLocation);
   });
@@ -133,7 +133,7 @@ void LocationDisplay3d::setPositionSource(QGeoPositionInfoSource* positionSource
 
     m_headingConnection = connect(gpxLocationSimulator, &GPXLocationSimulator::headingChanged, this, [this](double heading)
     {
-      m_positionGraphic->attributes()->replaceAttribute(s_headingAttribute, heading);
+      m_locationGraphic->attributes()->replaceAttribute(s_headingAttribute, heading);
     });
   }
 
@@ -165,7 +165,7 @@ void LocationDisplay3d::setCompass(QCompass* compass)
     if (!reading)
       return;
 
-    m_positionGraphic->attributes()->replaceAttribute(s_headingAttribute, static_cast<double>(reading->azimuth()));
+    m_locationGraphic->attributes()->replaceAttribute(s_headingAttribute, static_cast<double>(reading->azimuth()));
 
     emit headingChanged();
   });
@@ -176,6 +176,11 @@ void LocationDisplay3d::setCompass(QCompass* compass)
 GraphicsOverlay* LocationDisplay3d::locationOverlay() const
 {
   return m_locationOverlay;
+}
+
+Graphic* LocationDisplay3d::locationGraphic() const
+{
+  return m_locationGraphic;
 }
 
 Symbol* LocationDisplay3d::defaultSymbol() const
@@ -207,7 +212,7 @@ void LocationDisplay3d::postLastKnownLocationUpdate()
   if (m_lastKnownLocation.isEmpty())
     return;
 
-  m_positionGraphic->setGeometry(m_lastKnownLocation);
+  m_locationGraphic->setGeometry(m_lastKnownLocation);
 
   emit locationChanged(m_lastKnownLocation);
 }

@@ -10,12 +10,11 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "AlertConstants.h"
 #include "AttributeEqualsAlertCondition.h"
 #include "AttributeEqualsAlertConditionData.h"
 
 using namespace Esri::ArcGISRuntime;
-
-const QString AttributeEqualsAlertCondition::ATTRIBUTE_NAME = "attribute_name";
 
 /*!
   \class AttributeEqualsAlertCondition
@@ -76,7 +75,7 @@ QString AttributeEqualsAlertCondition::queryString() const
 QVariantMap AttributeEqualsAlertCondition::queryComponents() const
 {
   QVariantMap queryMap;
-  queryMap.insert(ATTRIBUTE_NAME, m_attributeName);
+  queryMap.insert(AlertConstants::ATTRIBUTE_NAME, m_attributeName);
 
   return queryMap;
 }
@@ -86,5 +85,5 @@ QVariantMap AttributeEqualsAlertCondition::queryComponents() const
  */
 QString AttributeEqualsAlertCondition::attributeNameFromQueryComponents(const QVariantMap& queryMap)
 {
-  return queryMap.value(ATTRIBUTE_NAME).toString();
+  return queryMap.value(AlertConstants::ATTRIBUTE_NAME).toString();
 }

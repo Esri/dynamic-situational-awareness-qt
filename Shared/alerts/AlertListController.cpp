@@ -105,7 +105,10 @@ int AlertListController::allAlertsCount() const
     if (!alert)
       continue;
 
-    if (!alert->active())
+    if (!alert->isActive())
+      continue;
+
+    if (!alert->isConditionEnabled())
       continue;
 
     count++;
@@ -157,7 +160,7 @@ void AlertListController::highlight(int rowIndex, bool showHighlight)
 
     m_highlightConnections.append(connect(conditionData, &AlertConditionData::activeChanged, this, [this, conditionData]()
     {
-      if (!conditionData || !conditionData->active())
+      if (!conditionData || !conditionData->isActive())
         m_highlighter->stopHighlight();
     }));
 
@@ -282,7 +285,7 @@ void AlertListController::flashAll(bool highlight)
   for (int i = 0; i < modelSize; ++i)
   {
     AlertConditionData* alert = model->alertAt(i);
-    if (!alert || !alert->active())
+    if (!alert || !alert->isActive())
       continue;
 
     alert->highlight(highlight);

@@ -537,11 +537,24 @@ DsaPanel {
         currentIndex: -1
 
         delegate: ListItemDelegate {
+            id: conditionDelegate
             width: parent.width
             height: 48 * scaleFactor
-            itemChecked: true
-            imageVisible: false
-            mainText: name
+            itemChecked: conditionEnabled
+            imageUrl: level === 1 ?
+                          DsaResources.iconWarningGreen
+                        : ( level === 2 ? DsaResources.iconWarningOrange
+                                        : ( level === 3 ? DsaResources.iconWarningRed
+                                                        : level === 4 ? DsaResources.iconWarningRedExclamation
+                                                                      : "") )
+            imageVisible: true
+
+            onItemCheckedChanged: {
+                if (conditionEnabled !== itemChecked)
+                    conditionEnabled = itemChecked;
+            }
+
+            mainText: conditionName
 
             Component.onCompleted: {
                 if (visible)
@@ -579,6 +592,14 @@ DsaPanel {
                         leftPadding: 10 * scaleFactor
 
                         ListLabel {
+                            text: "Edit"
+                            onTriggered: {
+                                conditionMenu.close();
+                                editMenu.open();
+                            }
+                        }
+
+                        ListLabel {
                             text: "Delete"
                             onTriggered: {
                                 conditionMenu.close();
@@ -604,6 +625,65 @@ DsaPanel {
                 font {
                     pixelSize: 10 * scaleFactor
                     family: DsaStyles.fontFamily
+                }
+            }
+
+            Menu {
+                id: editMenu
+                width: parent.width
+
+                Column {
+                    anchors.margins: 10 * scaleFactor
+                    width: parent.width
+                    spacing: 10 * scaleFactor
+                    leftPadding: 10 * scaleFactor
+
+                    ComboBox {
+                        id: editLevelBox
+                        width: parent.width * 0.9
+                        font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                        textRole: "display"
+                        model: toolController.levelNames
+
+                        currentIndex: level - 1
+                    }
+
+                    TextField {
+                        id: editConditionName
+                        color: Material.accent
+                        font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
+                        width: parent.width * 0.9
+                        horizontalAlignment: Text.AlignLeft
+                        verticalAlignment: Text.AlignVCenter
+                        text: conditionName
+                    }
+
+                    Row {
+                        spacing: 10 * scaleFactor
+                        OverlayButton {
+                            id: keepEditsButton
+                            iconUrl: DsaResources.iconComplete
+
+                            onClicked: {
+                                editMenu.close();
+
+                                if (conditionName !== editConditionName.text)
+                                    conditionName = editConditionName.text;
+
+                                if (level !== editLevelBox.currentIndex + 1)
+                                    level = editLevelBox.currentIndex + 1;
+                            }
+                        }
+
+                        OverlayButton {
+                            id: cancelEditsButton
+                            iconUrl: DsaResources.iconClose
+
+                            onClicked: {
+                                editMenu.close();
+                            }
+                        }
+                    }
                 }
             }
         }

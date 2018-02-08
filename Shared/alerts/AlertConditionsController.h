@@ -54,13 +54,6 @@ class AlertConditionsController : public Esri::ArcGISRuntime::Toolkit::AbstractT
   Q_PROPERTY(bool pickMode READ pickMode NOTIFY pickModeChanged)
 
 public:
-  static const QString ALERT_CONDITIONS_PROPERTYNAME;
-  static const QString CONDITION_TYPE;
-  static const QString CONDITION_NAME;
-  static const QString CONDITION_LEVEL;
-  static const QString CONDITION_SOURCE;
-  static const QString CONDITION_QUERY;
-  static const QString CONDITION_TARGET;
 
   explicit AlertConditionsController(QObject* parent = nullptr);
   ~AlertConditionsController();
@@ -113,7 +106,8 @@ private:
   Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlayFromName(const QString& overlayName);
   QString primaryKeyFieldName(Esri::ArcGISRuntime::FeatureTable* featureTable) const;
 
-  static QStringList realtimeFeedNames();
+  QStringList realtimeFeedTypes() const;
+  QStringList realtimeFeedNames() const;
 
   AlertConditionListModel* m_conditions;
   QStringListModel* m_sourceNames;
@@ -127,6 +121,7 @@ private:
   mutable QHash<QString,AlertTarget*> m_layerTargets;
   mutable QHash<QString,AlertTarget*> m_overlayTargets;
   QList<QJsonObject> m_storedConditions;
+  QHash<QString,QString> m_messageFeedTypesToNames;
 
   QMetaObject::Connection m_mouseClickConnection;
   QMetaObject::Connection m_identifyLayersConnection;

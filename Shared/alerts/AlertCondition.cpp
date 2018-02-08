@@ -72,17 +72,17 @@ void AlertCondition::init(AlertSource* source, AlertTarget* target, const QStrin
 }
 
 /*!
-  \brief Initializes the condition with a \a sourceFeed and \a target and a \a targetDescription.
+  \brief Initializes the condition with a \a sourceFeed, \a sourceDescription, a \a target and a \a targetDescription.
 
   A new \a AlertConditionData will be created for each \l Esri::ArcGISRuntime::Graphic
   in the source feed, to track changes to the source and target.
  */
-void AlertCondition::init(GraphicsOverlay* sourceFeed, AlertTarget* target, const QString& targetDescription)
+void AlertCondition::init(GraphicsOverlay* sourceFeed, const QString& sourceDescription, AlertTarget* target, const QString& targetDescription)
 {
   if (!sourceFeed || !target)
     return;
 
-  m_sourceDescription = sourceFeed->overlayId();
+  m_sourceDescription = sourceDescription;
   m_targetDescription = targetDescription;
 
   GraphicListModel* graphics = sourceFeed->graphics();
@@ -221,4 +221,35 @@ QString AlertCondition::targetDescription() const
 QString AlertCondition::description() const
 {
   return QString("%1 %2 %3").arg(sourceDescription(), queryString(), targetDescription());
+}
+
+/*!
+  \brief Returns whether this condition is enabled.
+
+  When enabled is \false the condition will not be checked and no alerts will be raised.
+ */
+bool AlertCondition::isConditionEnabled() const
+{
+  return m_enabled;
+}
+
+/*!
+  \brief Sets this condition to be \a enabled.
+
+  When enabled is \false the condition will not be checked and no alerts will be raised.
+ */
+void AlertCondition::setConditionEnabled(bool enabled)
+{
+  if (enabled == m_enabled)
+    return;
+
+  for (auto it = m_data.cbegin(); it != m_data.cend(); ++it)
+  {
+    AlertConditionData* data = *it;
+    if (data)
+      data->setConditionEnabled(enabled);
+  }
+
+  m_enabled = enabled;
+  emit conditionEnabledChanged();
 }

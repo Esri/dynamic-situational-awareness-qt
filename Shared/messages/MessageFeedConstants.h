@@ -10,24 +10,20 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-import QtQuick 2.9
-import QtQuick.Controls 2.2
-import QtQuick.Controls.Material 2.2
-import QtQuick.Window 2.2
-import Esri.DSA 1.0
+#ifndef MESSAGEFEEDCONSTANTS_H
+#define MESSAGEFEEDCONSTANTS_H
 
-Label {
-    font {
-        family: DsaStyles.fontFamily
-        pixelSize: 16 * scaleFactor
-    }
-    color: Material.foreground
-    signal triggered();
+#include <QString>
 
-    MouseArea {
-        anchors.fill: parent
-        onClicked: {
-            parent.triggered();
-        }
-    }
-}
+class MessageData;
+
+class MessageFeedConstants
+{
+public:
+  static const QString LOCATION_BROADCAST_CONFIG_PROPERTYNAME;
+  static const QString MESSAGE_FEEDS_PROPERTYNAME;
+  static const QString MESSAGE_FEED_UDP_PORTS_PROPERTYNAME;
+};
+
+
+#endif // MESSAGEFEEDCONSTANTS_H

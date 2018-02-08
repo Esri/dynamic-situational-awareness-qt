@@ -252,6 +252,9 @@ bool AlertConditionData::isQueryOutOfDate() const
  */
 void AlertConditionData::handleDataChanged()
 {
+  if (!isConditionEnabled())
+    return;
+
   // set the query flag to out-of-date to force a new query to be run
   m_queryOutOfDate = true;
 
@@ -262,14 +265,14 @@ void AlertConditionData::handleDataChanged()
   m_queryOutOfDate = false;
 
   // if the active state still matches that returned by the query, no changes are required
-  if (active() == m_cachedQueryResult)
+  if (isActive() == m_cachedQueryResult)
     return;
 
   // update the new active state
   setActive(m_cachedQueryResult);
 
   // if the condition data has newly moved into the active state, reset the viewed flag to false
-  if (active())
+  if (isActive())
     setViewed(false);
 
   // broadcast that this condition data has changed
@@ -277,11 +280,40 @@ void AlertConditionData::handleDataChanged()
 }
 
 /*!
-  \brief Returns the active state of this conditiom data.
+  \brief Returns the enabled state of this conditiom data.
 
+  When \c false the condition data will not be tested.
+ */
+bool AlertConditionData::isConditionEnabled() const
+{
+  return m_enabled;
+}
+
+/*!
+  \brief Sets the enabled state for this condition data to \a enabled.
+
+  When \c false the condition data will not be tested.
+ */
+void AlertConditionData::setConditionEnabled(bool enabled)
+{
+  if (enabled == m_enabled)
+    return;
+
+  m_enabled = enabled;
+
+  // if the condition has been re-enabled, we need to re-apply the query to see if it should now become active
+  if (enabled)
+    handleDataChanged();
+
+  emit dataChanged();
+}
+
+/*!
+  \brief Returns the active state of this conditiom data.
+  
   Should be \c true when the condition data is met.
  */
-bool AlertConditionData::active() const
+bool AlertConditionData::isActive() const
 {
   return m_active;
 }

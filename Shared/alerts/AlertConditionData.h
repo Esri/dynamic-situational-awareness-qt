@@ -48,7 +48,7 @@ public:
   bool viewed() const;
   void setViewed(bool viewed);
 
-  bool active() const;
+  bool isActive() const;
   void setActive(bool active);
 
   AlertSource* source() const;

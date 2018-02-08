@@ -83,7 +83,10 @@ int ViewedAlertsController::unviewedCount() const
     if (!alert)
       continue;
 
-    if (!alert->active())
+    if (!alert->isActive())
+      continue;
+
+    if (!alert->isConditionEnabled())
       continue;
 
     if (alert->viewed())

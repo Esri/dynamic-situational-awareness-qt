@@ -539,7 +539,13 @@ DsaPanel {
         delegate: ListItemDelegate {
             width: parent.width
             height: 48 * scaleFactor
-            itemChecked: true
+            itemChecked: conditionEnabled
+
+            onItemCheckedChanged: {
+                if (conditionEnabled !== itemChecked)
+                    conditionEnabled = itemChecked;
+            }
+
             imageVisible: false
             mainText: name
 

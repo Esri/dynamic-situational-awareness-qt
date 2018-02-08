@@ -16,6 +16,7 @@
 #include "MessageListener.h"
 #include "MessageFeedListModel.h"
 #include "MessageFeed.h"
+#include "MessageFeedConstants.h"
 #include "MessageSender.h"
 #include "LocationBroadcast.h"
 
@@ -32,8 +33,6 @@
 using namespace Esri::ArcGISRuntime;
 
 const QString MessageFeedsController::RESOURCE_DIRECTORY_PROPERTYNAME = "ResourceDirectory";
-const QString MessageFeedsController::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME = "MessageFeedUdpPorts";
-const QString MessageFeedsController::MESSAGE_FEEDS_PROPERTYNAME = "MessageFeeds";
 const QString MessageFeedsController::LOCATION_BROADCAST_CONFIG_PROPERTYNAME = "LocationBroadcastConfig";
 
 /*!
@@ -159,7 +158,7 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
   setResourcePath(properties[RESOURCE_DIRECTORY_PROPERTYNAME].toString());
 
   // parse and add message listeners on specified UDP ports
-  const auto messageFeedUdpPorts = properties[MESSAGE_FEED_UDP_PORTS_PROPERTYNAME].toStringList();
+  const auto messageFeedUdpPorts = properties[MessageFeedConstants::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME].toStringList();
   for (const auto& udpPort : messageFeedUdpPorts)
   {
     QUdpSocket* udpSocket = new QUdpSocket(this);
@@ -169,7 +168,7 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
   }
 
   // parse and add message feeds
-  const auto messageFeeds = properties[MESSAGE_FEEDS_PROPERTYNAME].toStringList();
+  const auto messageFeeds = properties[MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME].toStringList();
   for (const auto& messageFeed : messageFeeds)
   {
     const auto& messageFeedConfig = messageFeed.split(":");

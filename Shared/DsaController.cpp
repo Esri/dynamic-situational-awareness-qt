@@ -26,6 +26,7 @@
 #include "AlertConstants.h"
 #include "DsaUtility.h"
 #include "DsaController.h"
+#include "MessageFeedConstants.h"
 
 // Qt
 #include <QDir>
@@ -192,8 +193,8 @@ void DsaController::createDefaultSettings()
   m_dsaSettings["DefaultElevationSource"] = QString("%1/CaDEM.tpk").arg(m_dsaSettings["ElevationDirectory"].toString());
   m_dsaSettings["GpxFile"] = QString("%1/MontereyMounted.gpx").arg(m_dsaSettings["SimulationDirectory"].toString());
   m_dsaSettings["SimulateLocation"] = QStringLiteral("true");
-  m_dsaSettings["MessageFeedUdpPorts"] = QStringList { QString("45678"), QString("45679") };
-  m_dsaSettings["MessageFeeds"] = QStringList { QString("Cursor-on-Target:cot:mil2525c"),
+  m_dsaSettings[MessageFeedConstants::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME] = QStringList { QString("45678"), QString("45679") };
+  m_dsaSettings[MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME] = QStringList { QString("Cursor-on-Target:cot:mil2525c"),
       QString("Friendly Tracks:position_report:mil2525c"), QString("Contact Reports:spotrep:enemycontact1600.png"),
       QString("Situation Reports:sitrep:sitrep1600.png"), QString("EOD Reports:eod:eod1600.png"),
       QString("Sensor Observations:sensor_obs:sensorobs1600.png") };

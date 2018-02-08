@@ -38,8 +38,6 @@ class MessageFeedsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 
 public:
   static const QString RESOURCE_DIRECTORY_PROPERTYNAME;
-  static const QString MESSAGE_FEED_UDP_PORTS_PROPERTYNAME;
-  static const QString MESSAGE_FEEDS_PROPERTYNAME;
   static const QString LOCATION_BROADCAST_CONFIG_PROPERTYNAME;
 
   explicit MessageFeedsController(QObject* parent = nullptr);

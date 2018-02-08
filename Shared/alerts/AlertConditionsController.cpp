@@ -21,6 +21,7 @@
 #include "GeoElementAlertTarget.h"
 #include "GraphicsOverlayAlertTarget.h"
 #include "LocationAlertSource.h"
+#include "MessageFeedConstants.h"
 #include "WithinAreaAlertCondition.h"
 #include "WithinDistanceAlertCondition.h"
 
@@ -138,7 +139,7 @@ QString AlertConditionsController::toolName() const
  */
 void AlertConditionsController::setProperties(const QVariantMap& properties)
 {
-  const QVariant realTimeFeedsData = properties.value(QStringLiteral("MessageFeeds"));
+  const QVariant realTimeFeedsData = properties.value(MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME);
   if (!realTimeFeedsData.isNull())
   {
     m_realTimeFeedIdsToNames.clear();

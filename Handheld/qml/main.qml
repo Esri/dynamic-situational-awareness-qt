@@ -232,6 +232,22 @@ Handheld {
             visible: false
         }
 
+        Analysis {
+            id: analysisTool
+            anchors {
+                right: parent.right
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+            isMobile: true
+            onClosed: {
+                visible = false;
+                analysisToolRow.state = "clear";
+            }
+        }
+
         PopupStackView {
             id: identifyResults
             anchors {
@@ -288,13 +304,6 @@ Handheld {
                             target: messageFeedsTool
                             visible: true
                         }
-                    },
-                    State {
-                        name: "analysis"
-                        PropertyChanges {
-                            target: analysisTool
-                            visible: true
-                        }
                     }
                 ]
 
@@ -316,13 +325,6 @@ Handheld {
 
                 MessageFeeds {
                     id: messageFeedsTool
-                    anchors.fill: parent
-                    visible: false
-                    onClosed: drawer.close();
-                }
-
-                Analysis {
-                    id: analysisTool
                     anchors.fill: parent
                     visible: false
                     onClosed: drawer.close();

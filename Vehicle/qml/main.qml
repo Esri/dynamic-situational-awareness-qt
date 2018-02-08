@@ -230,6 +230,22 @@ Vehicle {
             visible: false
         }
 
+        Analysis {
+            id: analysisTool
+            anchors {
+                right: parent.right
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+            isMobile: false
+            onClosed: {
+                visible = false;
+                analysisToolRow.state = "clear";
+            }
+        }
+
         PopupStackView {
             id: identifyResults
             anchors {
@@ -286,13 +302,6 @@ Vehicle {
                             target: messageFeedsTool
                             visible: true
                         }
-                    },
-                    State {
-                        name: "analysis"
-                        PropertyChanges {
-                            target: analysisTool
-                            visible: true
-                        }
                     }
                 ]
 
@@ -314,13 +323,6 @@ Vehicle {
 
                 MessageFeeds {
                     id: messageFeedsTool
-                    anchors.fill: parent
-                    visible: false
-                    onClosed: drawer.close();
-                }
-
-                Analysis {
-                    id: analysisTool
                     anchors.fill: parent
                     visible: false
                     onClosed: drawer.close();

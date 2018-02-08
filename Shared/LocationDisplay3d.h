@@ -49,6 +49,8 @@ public:
 
   Esri::ArcGISRuntime::GraphicsOverlay* locationOverlay() const;
 
+  Esri::ArcGISRuntime::Graphic* locationGraphic() const;
+
   Esri::ArcGISRuntime::Symbol* defaultSymbol() const;
   void setDefaultSymbol(Esri::ArcGISRuntime::Symbol* defaultSymbol);
 
@@ -63,7 +65,7 @@ private:
 
   mutable Esri::ArcGISRuntime::GraphicsOverlay* m_locationOverlay = nullptr;
   Esri::ArcGISRuntime::SimpleRenderer* m_locationRenderer = nullptr;
-  Esri::ArcGISRuntime::Graphic* m_positionGraphic = nullptr;
+  Esri::ArcGISRuntime::Graphic* m_locationGraphic = nullptr;
   Esri::ArcGISRuntime::Symbol* m_defaultSymbol = nullptr;
   QGeoPositionInfoSource* m_geoPositionInfoSource = nullptr;
   QCompass* m_compass = nullptr;

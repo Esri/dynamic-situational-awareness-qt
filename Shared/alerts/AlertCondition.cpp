@@ -251,5 +251,5 @@ void AlertCondition::setConditionEnabled(bool enabled)
   }
 
   m_enabled = enabled;
-  emit enabledChanged();
+  emit conditionEnabledChanged();
 }

@@ -70,7 +70,7 @@ signals:
   void noLongerValid();
   void newConditionData(AlertConditionData* newConditionData);
   void conditionChanged();
-  void enabledChanged();
+  void conditionEnabledChanged();
 
 private:
   bool m_enabled = true;

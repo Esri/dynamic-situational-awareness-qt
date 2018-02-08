@@ -100,7 +100,7 @@ QVariant AlertConditionListModel::data(const QModelIndex& index, int role) const
   case AlertConditionListRoles::Description:
     return condition->description();
   case AlertConditionListRoles::ConditionEnabled:
-    return condition->enabled();
+    return condition->isConditionEnabled();
   default:
     break;
   }
@@ -136,7 +136,7 @@ bool AlertConditionListModel::setData(const QModelIndex& index, const QVariant& 
   case AlertConditionListRoles::ConditionEnabled:
   {
     const bool newEnabled = value.toBool();
-    condition->setEnabled(newEnabled);
+    condition->setConditionEnabled(newEnabled);
     valueSet = true;
   }
   default:

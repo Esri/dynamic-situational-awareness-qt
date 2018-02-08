@@ -63,8 +63,8 @@ public:
   QString targetDescription() const;
   QString description() const;
 
-  bool enabled() const;
-  void setEnabled(bool enabled);
+  bool isConditionEnabled() const;
+  void setConditionEnabled(bool enabled);
 
 signals:
   void noLongerValid();

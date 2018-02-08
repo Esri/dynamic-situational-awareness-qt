@@ -228,7 +228,7 @@ QString AlertCondition::description() const
 
   When enabled is \false the condition will not be checked and no alerts will be raised.
  */
-bool AlertCondition::enabled() const
+bool AlertCondition::isConditionEnabled() const
 {
   return m_enabled;
 }
@@ -238,7 +238,7 @@ bool AlertCondition::enabled() const
 
   When enabled is \false the condition will not be checked and no alerts will be raised.
  */
-void AlertCondition::setEnabled(bool enabled)
+void AlertCondition::setConditionEnabled(bool enabled)
 {
   if (enabled == m_enabled)
     return;

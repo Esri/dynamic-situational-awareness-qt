@@ -541,13 +541,19 @@ DsaPanel {
             width: parent.width
             height: 48 * scaleFactor
             itemChecked: conditionEnabled
+            imageUrl: level === 1 ?
+                          DsaResources.iconWarningGreen
+                        : ( level === 2 ? DsaResources.iconWarningOrange
+                                        : ( level === 3 ? DsaResources.iconWarningRed
+                                                        : level === 4 ? DsaResources.iconWarningRedExclamation
+                                                                      : "") )
+            imageVisible: true
 
             onItemCheckedChanged: {
                 if (conditionEnabled !== itemChecked)
                     conditionEnabled = itemChecked;
             }
 
-            imageVisible: false
             mainText: conditionName
 
             Component.onCompleted: {
@@ -664,7 +670,7 @@ DsaPanel {
                                 if (conditionName !== editConditionName.text)
                                     conditionName = editConditionName.text;
 
-                                if (level !== editLevelBox.currentIndex)
+                                if (level !== editLevelBox.currentIndex + 1)
                                     level = editLevelBox.currentIndex + 1;
                             }
                         }

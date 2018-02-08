@@ -198,7 +198,7 @@ void DsaController::createDefaultSettings()
       QString("Friendly Tracks:position_report:mil2525c"), QString("Contact Reports:spotrep:enemycontact1600.png"),
       QString("Situation Reports:sitrep:sitrep1600.png"), QString("EOD Reports:eod:eod1600.png"),
       QString("Sensor Observations:sensor_obs:sensorobs1600.png") };
-  m_dsaSettings["LocationBroadcastConfig"] = QStringList { QString("position_report"), QString("45679") };
+  m_dsaSettings[MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME] = QStringList { QString("position_report"), QString("45679") };
   writeDefaultInitialLocation();
   m_dsaSettings["CoordinateFormat"] = QStringLiteral("DMS");
   m_dsaSettings["UnitOfMeasurement"] = QStringLiteral("meters");

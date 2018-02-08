@@ -12,5 +12,6 @@
 
 #include "MessageFeedConstants.h"
 
+const QString MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME = "LocationBroadcastConfig";
 const QString MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME = "MessageFeeds";
 const QString MessageFeedConstants::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME = "MessageFeedUdpPorts";

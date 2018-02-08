@@ -20,6 +20,7 @@ class MessageData;
 class MessageFeedConstants
 {
 public:
+  static const QString LOCATION_BROADCAST_CONFIG_PROPERTYNAME;
   static const QString MESSAGE_FEEDS_PROPERTYNAME;
   static const QString MESSAGE_FEED_UDP_PORTS_PROPERTYNAME;
 };

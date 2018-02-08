@@ -33,7 +33,6 @@
 using namespace Esri::ArcGISRuntime;
 
 const QString MessageFeedsController::RESOURCE_DIRECTORY_PROPERTYNAME = "ResourceDirectory";
-const QString MessageFeedsController::LOCATION_BROADCAST_CONFIG_PROPERTYNAME = "LocationBroadcastConfig";
 
 /*!
    \brief Constructs a default MessageFeedsController with an optional \a parent.
@@ -184,7 +183,7 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
     m_messageFeeds->append(feed);
   }
 
-  const auto locationBroadcastConfig = properties[LOCATION_BROADCAST_CONFIG_PROPERTYNAME].toStringList();
+  const auto locationBroadcastConfig = properties[MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME].toStringList();
   if (locationBroadcastConfig.size() == 2)
   {
     m_locationBroadcast->setMessageType(locationBroadcastConfig.at(0));

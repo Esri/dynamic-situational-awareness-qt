@@ -26,7 +26,7 @@ public:
 
   enum AlertConditionListRoles
   {
-    Name = Qt::UserRole + 2,
+    ConditionName = Qt::UserRole + 2,
     Level = Qt::UserRole + 3,
     Description = Qt::UserRole + 4,
     ConditionEnabled = Qt::UserRole +5

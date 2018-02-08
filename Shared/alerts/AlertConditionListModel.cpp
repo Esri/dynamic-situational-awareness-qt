@@ -16,7 +16,7 @@
 AlertConditionListModel::AlertConditionListModel(QObject* parent):
   QAbstractListModel(parent)
 {
-  m_roles[AlertConditionListRoles::Name] = "name";
+  m_roles[AlertConditionListRoles::ConditionName] = "conditionName";
   m_roles[AlertConditionListRoles::Level] = "level";
   m_roles[AlertConditionListRoles::Description] = "description";
   m_roles[AlertConditionListRoles::ConditionEnabled] = "conditionEnabled";
@@ -93,7 +93,7 @@ QVariant AlertConditionListModel::data(const QModelIndex& index, int role) const
 
   switch (role)
   {
-  case AlertConditionListRoles::Name:
+  case AlertConditionListRoles::ConditionName:
     return condition->name();
   case AlertConditionListRoles::Level:
     return static_cast<int>(condition->level());
@@ -127,10 +127,22 @@ bool AlertConditionListModel::setData(const QModelIndex& index, const QVariant& 
   bool valueSet = false;
   switch (role)
   {
-  case AlertConditionListRoles::Name:
-    break;
+  case AlertConditionListRoles::ConditionName:
+  {
+    condition->setName(value.toString());
+    valueSet = true;
+  }
   case AlertConditionListRoles::Level:
-    break;
+  {
+    bool ok = false;
+    AlertLevel level = static_cast<AlertLevel>(value.toInt(&ok));
+
+    if (level != AlertLevel::Unknown && ok)
+    {
+      condition->setLevel(level);
+      valueSet = true;
+    }
+  }
   case AlertConditionListRoles::Description:
     break;
   case AlertConditionListRoles::ConditionEnabled:

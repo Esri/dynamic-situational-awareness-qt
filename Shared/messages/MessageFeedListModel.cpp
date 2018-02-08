@@ -161,3 +161,8 @@ QHash<int, QByteArray> MessageFeedListModel::roleNames() const
 {
   return m_roles;
 }
+
+int MessageFeedListModel::count() const
+{
+  return m_messageFeeds.length();
+}

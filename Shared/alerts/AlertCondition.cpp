@@ -243,7 +243,7 @@ void AlertCondition::setConditionEnabled(bool enabled)
   if (enabled == m_enabled)
     return;
 
-  for (auto it = m_data.begin(); it != m_data.end(); ++it)
+  for (auto it = m_data.cbegin(); it != m_data.cend(); ++it)
   {
     AlertConditionData* data = *it;
     if (data)

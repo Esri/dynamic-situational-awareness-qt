@@ -265,14 +265,14 @@ void AlertConditionData::handleDataChanged()
   m_queryOutOfDate = false;
 
   // if the active state still matches that returned by the query, no changes are required
-  if (active() == m_cachedQueryResult)
+  if (isActive() == m_cachedQueryResult)
     return;
 
   // update the new active state
   setActive(m_cachedQueryResult);
 
   // if the condition data has newly moved into the active state, reset the viewed flag to false
-  if (active())
+  if (isActive())
     setViewed(false);
 
   // broadcast that this condition data has changed
@@ -313,7 +313,7 @@ void AlertConditionData::setConditionEnabled(bool enabled)
   
   Should be \c true when the condition data is met.
  */
-bool AlertConditionData::active() const
+bool AlertConditionData::isActive() const
 {
   return m_active;
 }

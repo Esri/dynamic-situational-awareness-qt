@@ -247,7 +247,7 @@ void AlertCondition::setConditionEnabled(bool enabled)
   {
     AlertConditionData* data = *it;
     if (data)
-      data->setEnabled(enabled);
+      data->setConditionEnabled(enabled);
   }
 
   m_enabled = enabled;

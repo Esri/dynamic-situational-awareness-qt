@@ -250,7 +250,7 @@ Vehicle {
             height: sceneView.height - 20 * scaleFactor // approximation for attribution text
             edge: Qt.RightEdge
             y: topToolbar.height
-            interactive: x < sceneView.width
+            interactive: x < appRoot.width
 
             onClosed: {
                 // update state for each category

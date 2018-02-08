@@ -139,18 +139,18 @@ QString AlertConditionsController::toolName() const
  */
 void AlertConditionsController::setProperties(const QVariantMap& properties)
 {
-  const QVariant realTimeFeedsData = properties.value(MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME);
-  if (!realTimeFeedsData.isNull())
+  const QVariant messageFeedsData = properties.value(MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME);
+  if (!messageFeedsData.isNull())
   {
-    m_realTimeFeedIdsToNames.clear();
-    const QStringList messageFeeds = realTimeFeedsData.toStringList();
+    m_messageFeedIdsToNames.clear();
+    const QStringList messageFeeds = messageFeedsData.toStringList();
     for (const QString& messageFeed : messageFeeds)
     {
       const QStringList& messageFeedConfig = messageFeed.split(":");
       if (messageFeedConfig.size() != 3)
         continue;
 
-      m_realTimeFeedIdsToNames.insert(messageFeedConfig.at(1), messageFeedConfig.at(0));
+      m_messageFeedIdsToNames.insert(messageFeedConfig.at(1), messageFeedConfig.at(0));
     }
   }
 
@@ -563,8 +563,8 @@ void AlertConditionsController::onLayersChanged()
         continue;
 
       // check whether we have a user facing name defined for the overlay
-      const auto overlayIt = m_realTimeFeedIdsToNames.constFind(overlay->overlayId());
-      if (overlayIt != m_realTimeFeedIdsToNames.constEnd())
+      const auto overlayIt = m_messageFeedIdsToNames.constFind(overlay->overlayId());
+      if (overlayIt != m_messageFeedIdsToNames.constEnd())
       {
         newSourceList.append(overlayIt.value());
         newTargetList.append(overlayIt.value());
@@ -1115,7 +1115,7 @@ GraphicsOverlay* AlertConditionsController::graphicsOverlayFromName(const QStrin
   if (!geoView)
     return nullptr;
 
-  const QString& overlayId = m_realTimeFeedIdsToNames.key(overlayName, overlayName);
+  const QString& overlayId = m_messageFeedIdsToNames.key(overlayName, overlayName);
 
   GraphicsOverlayListModel* graphicsOverlays = geoView->graphicsOverlays();
   if (graphicsOverlays)
@@ -1169,11 +1169,11 @@ QString AlertConditionsController::primaryKeyFieldName(FeatureTable* featureTabl
  */
 QStringList AlertConditionsController::realtimeFeedIds() const
 {
-  return m_realTimeFeedIdsToNames.keys();
+  return m_messageFeedIdsToNames.keys();
 }
 
 QStringList AlertConditionsController::realtimeFeedNames() const
 {
-  return m_realTimeFeedIdsToNames.values();
+  return m_messageFeedIdsToNames.values();
 }
 

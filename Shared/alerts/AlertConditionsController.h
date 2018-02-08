@@ -121,7 +121,7 @@ private:
   mutable QHash<QString,AlertTarget*> m_layerTargets;
   mutable QHash<QString,AlertTarget*> m_overlayTargets;
   QList<QJsonObject> m_storedConditions;
-  QHash<QString,QString> m_realTimeFeedIdsToNames;
+  QHash<QString,QString> m_messageFeedIdsToNames;
 
   QMetaObject::Connection m_mouseClickConnection;
   QMetaObject::Connection m_identifyLayersConnection;

@@ -108,7 +108,6 @@ void DsaController::onError(const Error& e)
 
 void DsaController::onPropertyChanged(const QString& propertyName, const QVariant& propertyValue)
 {
-  qDebug() << propertyValue;
   m_dsaSettings.insert(propertyName, propertyValue);
   // save the settings
   saveSettings();

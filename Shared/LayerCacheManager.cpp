@@ -34,7 +34,6 @@
 #include "AbstractTool.h"
 
 // DSA
-#include "TableOfContentsController.h"
 #include "AddLocalDataController.h"
 
 // Qt
@@ -44,6 +43,8 @@
 #include <QDir>
 
 const QString LayerCacheManager::LAYERS_PROPERTYNAME = "Layers";
+const QString LayerCacheManager::layerPathKey = "path";
+const QString LayerCacheManager::layerVisibleKey = "visible";
 
 using namespace Esri::ArcGISRuntime;
 
@@ -55,16 +56,18 @@ LayerCacheManager::LayerCacheManager(QObject* parent) :
 {
   Toolkit::ToolManager::instance().addTool(this);
 
-  // connect to TOC Controller
-  m_tocController = Toolkit::ToolManager::instance().tool<TableOfContentsController>();
-  if (m_tocController)
-  {
-    connect(m_tocController, &TableOfContentsController::layerListModelChanged, this, &LayerCacheManager::onLayerListChanged);
-    connect(m_tocController, &TableOfContentsController::layerChanged, this, &LayerCacheManager::onLayerChanged);
-  }
-
   // obtain Add Local Data Controller
   m_localDataController = Toolkit::ToolManager::instance().tool<AddLocalDataController>();
+
+  // obtain Scene and connect slot
+  m_scene = Toolkit::ToolResourceProvider::instance()->scene();
+  if (m_scene)
+  {
+    connect(m_scene->operationalLayers(), &LayerListModel::dataChanged, this, &LayerCacheManager::onLayerListChanged); // layer objects have been added or changed
+    connect(m_scene->operationalLayers(), &LayerListModel::layerRemoved, this, &LayerCacheManager::onLayerListChanged); // layer has been removed
+    connect(m_scene->operationalLayers(), &LayerListModel::layoutChanged, this, &LayerCacheManager::onLayerListChanged); // order changed
+    connect(m_scene->operationalLayers(), &LayerListModel::modelReset, this, &LayerCacheManager::onLayerListChanged); // order changed
+  }
 }
 
 /*
@@ -75,7 +78,7 @@ LayerCacheManager::~LayerCacheManager()
 }
 
 /*
- \brief Returns the Tool Name
+ \brief Returns the tool name
  */
 QString LayerCacheManager::toolName() const
 {
@@ -94,34 +97,63 @@ void LayerCacheManager::setProperties(const QVariantMap& properties)
   if (m_initialLoadCompleted)
     return;
 
-//  Scene* scene = Toolkit::ToolResourceProvider::instance()->scene();
-//  connect(scene, &Scene::doneLoading, this, [this](Error e)
-//  {
-//    //qDebug() << "Done Loading";
-//  });
+  //  Scene* scene = Toolkit::ToolResourceProvider::instance()->scene();
+  //  connect(scene, &Scene::doneLoading, this, [this](Error e)
+  //  {
+  //    //qDebug() << "Done Loading";
+  //  });
 
   //qDebug() << "adding stuff";
-  //qDebug() << properties[LAYERS_PROPERTYNAME];
-//  QString layerList = properties[LAYERS_PROPERTYNAME];
-//  QJsonDocument jsonString = QJsonDocument::fromJson(layerList.toUtf8());
-  qDebug() << properties[LAYERS_PROPERTYNAME];
+ // qDebug() << properties[LAYERS_PROPERTYNAME];
+  const QVariant layersData = properties.value(LAYERS_PROPERTYNAME);
+  if (layersData.isNull())
+    return;
 
-//  for (QString layerString : layerList)
-//  {
-////    qDebug() << layerString;
-//    QJsonObject layerJson = QJsonDocument::fromJson(layerString.toUtf8()).object();
-////    if (!layerJson.contains("path") || !layerJson.contains("visible"))
-////      continue;
-////    qDebug() << layerJson.value("path").toString();
-//    m_localDataController->addLayerFromPath(layerJson.value("path").toString());
-//  }
+  const auto layersList = layersData.toList();
+  if (layersList.isEmpty())
+    return;
+
+  QJsonArray layerJsonArray = QJsonArray::fromVariantList(layersList);
+  if (layerJsonArray.isEmpty())
+    return;
+
+  qDebug() << layerJsonArray.count();
+
+  auto it = layerJsonArray.constBegin();
+  auto itEnd = layerJsonArray.constEnd();
+  for (; it != itEnd; ++it)
+  {
+    const QJsonValue jsonVal = *it;
+    if (jsonVal.isNull())
+      continue;
+
+    const QJsonObject jsonObject = jsonVal.toObject();
+    if (jsonObject.isEmpty())
+      continue;
+
+    m_localDataController->addLayerFromPath(jsonObject.value(layerPathKey).toString());
+    //qDebug() << jsonObject.value(layerPathKey) << jsonObject.value(layerVisibleKey);
+  };
+  //  QString layerList = properties[LAYERS_PROPERTYNAME];
+  //  QJsonDocument jsonString = QJsonDocument::fromJson(layerList.toUtf8());
+  //  qDebug() << properties[LAYERS_PROPERTYNAME];
+
+  //  for (QString layerString : layerList)
+  //  {
+  ////    qDebug() << layerString;
+  //    QJsonObject layerJson = QJsonDocument::fromJson(layerString.toUtf8()).object();
+  ////    if (!layerJson.contains("path") || !layerJson.contains("visible"))
+  ////      continue;
+  ////    qDebug() << layerJson.value("path").toString();
+  //    m_localDataController->addLayerFromPath(layerJson.value("path").toString());
+  //  }
   m_initialLoadCompleted = true;
 }
 
 /*
  \brief Updates the layer list cache with the provided \a layer.
  */
-void LayerCacheManager::onLayerChanged(Layer* layer)
+void LayerCacheManager::layerToJson(Layer* layer)
 {
   QString layerPath;
 
@@ -178,19 +210,25 @@ void LayerCacheManager::onLayerChanged(Layer* layer)
 
   // add the layer to the layer list for caching
   QJsonObject layerJson;
-  layerJson.insert("path", QString(layerPath).simplified());
-  layerJson.insert("visible", layer->isVisible() ? "true" : "false");
+  layerJson.insert(layerPathKey, QString(layerPath).simplified());
+  layerJson.insert(layerVisibleKey, layer->isVisible() ? "true" : "false");
   m_layers.append(layerJson);
-  QJsonDocument layerJsonDoc(m_layers);
-
-  emit propertyChanged("Layers", layerJsonDoc.toJson(QJsonDocument::Compact));
 }
 
 /*
- \brief Resets the layer string list.
+ \brief Resets and recreates the layer JSON array and writes it to the app properties.
 */
 void LayerCacheManager::onLayerListChanged()
 {
-  for (int i = 0; i < m_layers.count(); i++)
-    m_layers.removeAt(i);
+  // clear the JSON
+  m_layers = QJsonArray();
+
+  // update the JSON array
+  for (int i = 0; i < m_scene->operationalLayers()->size(); i++)
+  {
+    layerToJson(m_scene->operationalLayers()->at(i));
+  }
+
+  // write to the config file
+  emit propertyChanged(LAYERS_PROPERTYNAME, m_layers.toVariantList());
 }

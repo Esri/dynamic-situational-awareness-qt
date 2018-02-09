@@ -224,45 +224,6 @@ void TableOfContentsController::updateLayerListModel()
   if (operationalLayers)
   {
     m_layerListModel = operationalLayers;
-
-    if (!m_layerListConnections.contains(m_layerListModel))
-    {
-      // connect to dataChanged signal to know when something about one of the layer's has changed
-      m_layerListConnections.insert(m_layerListModel, connect(m_layerListModel, &LayerListModel::dataChanged, this, [this]
-      {
-        m_layerListConnections.remove(m_layerListModel);
-        emit layerListModelChanged();
-
-        // access each layer and emit that it has changed and emit that it has changed
-        for (int i = 0; i < m_layerListModel->size(); i++)
-        {
-          Layer* layer = m_layerListModel->at(i);
-
-          // if it is already loaded, emit the signal
-          if (layer->loadStatus() == LoadStatus::Loaded)
-          {
-            emit layerChanged(layer);
-            continue;
-          }
-
-          // if it is not loaded, load it and then emit the signal
-          if (!m_layerConnections.contains(layer))
-          {
-            m_layerConnections.insert(layer, connect(layer, &Layer::doneLoading, this, [this, layer](Error e)
-            {
-              m_layerConnections.remove(layer);
-
-              if (!e.isEmpty())
-                return;
-
-              emit layerChanged(layer);
-            }));
-            layer->load();
-          }
-        }
-      }));
-    }
-
     m_drawOrderModel = new DrawOrderLayerListModel(this);
     m_drawOrderModel->setSourceModel(m_layerListModel);
     emit layerListModelChanged();

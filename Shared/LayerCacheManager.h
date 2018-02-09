@@ -16,6 +16,7 @@
 namespace Esri {
 namespace ArcGISRuntime {
 class Layer;
+class Scene;
 }
 }
 
@@ -37,15 +38,17 @@ public:
   void setProperties(const QVariantMap& properties) override;
 
 private slots:
-  void onLayerChanged(Esri::ArcGISRuntime::Layer* layer);
   void onLayerListChanged();
 
 private:
   static const QString LAYERS_PROPERTYNAME;
+  static const QString layerPathKey;
+  static const QString layerVisibleKey;
   QJsonArray m_layers;
   bool m_initialLoadCompleted = false;
   AddLocalDataController* m_localDataController;
-  TableOfContentsController* m_tocController;
+  Esri::ArcGISRuntime::Scene* m_scene;
+  void layerToJson(Esri::ArcGISRuntime::Layer* layer);
 };
 
 #endif // LAYERCACHEMANAGER_H

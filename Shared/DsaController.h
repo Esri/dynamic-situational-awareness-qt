@@ -13,12 +13,12 @@
 #ifndef DSACONTROLLER_H
 #define DSACONTROLLER_H
 
-#include <QObject>
-
 #include <QAbstractListModel>
-#include <QUrl>
-#include <QVariantMap>
 #include <QFile>
+#include <QObject>
+#include <QSettings>
+#include <QVariantMap>
+#include <QUrl>
 
 namespace Esri
 {
@@ -33,8 +33,6 @@ namespace ArcGISRuntime
 }
 
 class LayerCacheManager;
-
-
 
 #include <QJsonArray>
 
@@ -62,16 +60,19 @@ signals:
 private:
   void setupConfig();
   void createDefaultSettings();
-  void saveSettings(QFile& configFile);
+  void saveSettings();
+  void writeDefaultInitialLocation();
+  void writeDefaultLocalDataPaths();
+  void writeDefaultConditions();
+  void writeDefaultMessageFeeds();
 
-private:
   Esri::ArcGISRuntime::Scene* m_scene = nullptr;
   LayerCacheManager* m_cacheManager = nullptr;
 
   QString m_dataPath;
   QVariantMap m_dsaSettings;
   QString m_configFilePath;
-  QStringList m_layers;
+  QSettings::Format m_jsonFormat;
 };
 
 #endif // DSACONTROLLER_H

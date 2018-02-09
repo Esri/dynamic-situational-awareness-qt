@@ -58,3 +58,11 @@ void IdsAlertFilter::addId(const QUuid& id)
   m_ids.insert(id);
 }
 
+/*!
+  \brief Removes all IDs from the filter.
+ */
+void IdsAlertFilter::clearIds()
+{
+  m_ids.clear();
+}
+

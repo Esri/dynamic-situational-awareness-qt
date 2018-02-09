@@ -36,6 +36,9 @@ LocationAlertSource::LocationAlertSource(QObject* parent):
 {
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::locationChanged, this, [this](const Point& location)
   {
+    if (m_location == location)
+      return;
+
     m_location = location;
     emit dataChanged();
   });

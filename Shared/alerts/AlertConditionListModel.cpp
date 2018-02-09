@@ -16,9 +16,10 @@
 AlertConditionListModel::AlertConditionListModel(QObject* parent):
   QAbstractListModel(parent)
 {
-  m_roles[AlertConditionListRoles::Name] = "name";
+  m_roles[AlertConditionListRoles::ConditionName] = "conditionName";
   m_roles[AlertConditionListRoles::Level] = "level";
   m_roles[AlertConditionListRoles::Description] = "description";
+  m_roles[AlertConditionListRoles::ConditionEnabled] = "conditionEnabled";
 }
 
 AlertConditionListModel::~AlertConditionListModel()
@@ -92,17 +93,72 @@ QVariant AlertConditionListModel::data(const QModelIndex& index, int role) const
 
   switch (role)
   {
-  case AlertConditionListRoles::Name:
+  case AlertConditionListRoles::ConditionName:
     return condition->name();
   case AlertConditionListRoles::Level:
     return static_cast<int>(condition->level());
   case AlertConditionListRoles::Description:
     return condition->description();
+  case AlertConditionListRoles::ConditionEnabled:
+    return condition->isConditionEnabled();
   default:
     break;
   }
 
   return QVariant();
+}
+
+/*!
+  \brief Sets the data stored under \a role at \a index in the model to \a value.
+
+  The role should make use of the \l AlertConditionListRoles enum.
+
+  Return \c true if the data was successfully set and \c false otherwise.
+ */
+bool AlertConditionListModel::setData(const QModelIndex& index, const QVariant& value, int role)
+{
+  if (!index.isValid() || value.isNull())
+    return false;
+
+  AlertCondition* condition = conditionAt(index.row());
+  if (!condition)
+    return false;
+
+  bool valueSet = false;
+  switch (role)
+  {
+  case AlertConditionListRoles::ConditionName:
+  {
+    condition->setName(value.toString());
+    valueSet = true;
+  }
+  case AlertConditionListRoles::Level:
+  {
+    bool ok = false;
+    AlertLevel level = static_cast<AlertLevel>(value.toInt(&ok));
+
+    if (level != AlertLevel::Unknown && ok)
+    {
+      condition->setLevel(level);
+      valueSet = true;
+    }
+  }
+  case AlertConditionListRoles::Description:
+    break;
+  case AlertConditionListRoles::ConditionEnabled:
+  {
+    const bool newEnabled = value.toBool();
+    condition->setConditionEnabled(newEnabled);
+    valueSet = true;
+  }
+  default:
+    break;
+  }
+
+  if (valueSet)
+    dataChanged(index, index);
+
+  return valueSet;
 }
 
 QHash<int, QByteArray> AlertConditionListModel::roleNames() const

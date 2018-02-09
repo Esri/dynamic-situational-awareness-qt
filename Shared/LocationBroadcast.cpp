@@ -164,7 +164,7 @@ void LocationBroadcast::setMessageType(const QString& messageType)
 
   m_messageType = messageType;
 
-  if (m_messageType.isEmpty() || m_udpPort == -1)
+  if (m_messageType.isEmpty())
     setEnabled(false);
   else
     update();
@@ -190,7 +190,7 @@ void LocationBroadcast::setUdpPort(int port)
 
   m_udpPort = port;
 
-  if (m_udpPort == -1 || m_messageType.isEmpty())
+  if (m_udpPort == -1)
     setEnabled(false);
   else
     update();
@@ -223,6 +223,37 @@ void LocationBroadcast::setFrequency(int frequency)
 
   if (m_timer)
     m_timer->setInterval(m_frequency);
+}
+
+/*!
+   \brief Returns \c true if the location broadcast reports
+   message status as being in distress.
+
+   The default is \c false
+
+   \sa message
+ */
+bool LocationBroadcast::isInDistress() const
+{
+  return m_inDistress;
+}
+
+/*!
+   \brief Sets the location broadcast to report
+   message status as being in distress to \a inDistress.
+
+   Setting \a inDistress to \c true will enable the
+   location broadcast if disabled.
+ */
+void LocationBroadcast::setInDistress(bool inDistress)
+{
+  if (m_inDistress == inDistress)
+    return;
+
+  m_inDistress = inDistress;
+
+  if (m_inDistress && !isEnabled())
+    setEnabled(true);
 }
 
 /*!
@@ -308,12 +339,19 @@ void LocationBroadcast::broadcastLocation()
 
     attribs.insert(Message::GEOMESSAGE_SIC_NAME, s_locationBroadcastSic);
     attribs.insert(Message::GEOMESSAGE_UNIQUE_DESIGNATION_NAME, QHostInfo::localHostName());
-    attribs.insert(Message::GEOMESSAGE_STATUS_911_NAME, 0);
+    const int status911 = m_inDistress ? 1 : 0;
+    attribs.insert(Message::GEOMESSAGE_STATUS_911_NAME, status911);
     m_message.setAttributes(attribs);
   }
   else
   {
     m_message.setGeometry(m_location);
+
+    QVariantMap attribs = m_message.attributes();
+
+    const int status911 = m_inDistress ? 1 : 0;
+    attribs.insert(Message::GEOMESSAGE_STATUS_911_NAME, status911);
+    m_message.setAttributes(attribs);
   }
 
   emit messageChanged();

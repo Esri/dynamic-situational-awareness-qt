@@ -13,11 +13,15 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
-import QtQuick.Dialogs 1.1
 import Esri.DSA 1.0
 import QtQuick.Controls.Material 2.2
 
 CategoryToolbar {
+    Connections {
+        target: appRoot
+        onCloseDialogAccepted: Qt.quit()
+    }
+
     Row {
         spacing: 20 * scaleFactor
         anchors.horizontalCenter: parent.horizontalCenter

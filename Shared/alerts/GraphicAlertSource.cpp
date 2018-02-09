@@ -37,6 +37,7 @@ GraphicAlertSource::GraphicAlertSource(Graphic* graphic):
 {
   connect(m_graphic, &Graphic::geometryChanged, this, &GraphicAlertSource::dataChanged);
   connect(m_graphic->attributes(), &AttributeListModel::modelReset, this, &GraphicAlertSource::dataChanged);
+  connect(m_graphic->attributes(), &AttributeListModel::dataChanged, this, &GraphicAlertSource::dataChanged);
 }
 
 /*!

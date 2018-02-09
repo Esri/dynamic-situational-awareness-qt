@@ -10,6 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "AlertConstants.h"
 #include "WithinDistanceAlertCondition.h"
 #include "WithinDistanceAlertConditionData.h"
 
@@ -65,9 +66,36 @@ double WithinDistanceAlertCondition::distance() const
 }
 
 /*!
+  \brief Returns a map of the variable components that make up the query for this condition.
+
+  This condition type uses a query comprising the following components:
+
+  \list
+    \li distance. The threshold distance in meters.
+  \endlist
+ */
+QVariantMap WithinDistanceAlertCondition::queryComponents() const
+{
+  QVariantMap queryMap;
+  queryMap.insert(AlertConstants::METERS, m_distance);
+
+  return queryMap;
+}
+
+/*!
+  \brief Static method to get the distance in meters from a \a queryComponents.
+
+  Returns \c -1.0 if unsuccessful
+ */
+double WithinDistanceAlertCondition::getDistanceFromQueryComponents(const QVariantMap& queryComponents)
+{
+  return queryComponents.value(AlertConstants::METERS, -1.0).toDouble();
+}
+
+/*!
   \brief Returns the query string component for this condition - e.g. "is within X meters of".
  */
 QString WithinDistanceAlertCondition::queryString() const
 {
-  return QString("is within %2 meters of").arg(QString::number(m_distance));
+  return QString("is within %1 %2 of").arg(QString::number(m_distance), AlertConstants::METERS);
 }

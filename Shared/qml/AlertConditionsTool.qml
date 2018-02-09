@@ -536,113 +536,154 @@ DsaPanel {
         model: toolController.conditionsList
         currentIndex: -1
 
-        delegate: Rectangle {
-            width: conditionsList.width
-            height: (expandRowButton.height * 2) + (8 * scaleFactor)
-            color: Material.background
-            radius: 2 * scaleFactor
+        delegate: ListItemDelegate {
+            id: conditionDelegate
+            width: parent.width
+            height: 48 * scaleFactor
+            itemChecked: conditionEnabled
+            imageUrl: level === 1 ?
+                          DsaResources.iconWarningGreen
+                        : ( level === 2 ? DsaResources.iconWarningOrange
+                                        : ( level === 3 ? DsaResources.iconWarningRed
+                                                        : level === 4 ? DsaResources.iconWarningRedExclamation
+                                                                      : "") )
+            imageVisible: true
 
-            Text {
-                id: titleText
-                anchors {
-                    left: parent.left
-                    verticalCenter: expandRowButton.verticalCenter
-                    right: expandRowButton.left
-                    margins: 8 * scaleFactor
-                }
-                text: name
-                color: index === conditionsList.currentIndex ? Material.accent : Material.foreground
-                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                font.bold: true
-                horizontalAlignment: Text.AlignLeft
-                verticalAlignment: Text.AlignVCenter
-                wrapMode: Text.WrapAnywhere
-                elide: Text.ElideRight
+            onItemCheckedChanged: {
+                if (conditionEnabled !== itemChecked)
+                    conditionEnabled = itemChecked;
             }
 
-            Text {
-                anchors {
-                    left: parent.left
-                    top: expandRowButton.bottom
-                    right: expandRowButton.left
-                    margins: 8 * scaleFactor
-                }
-                text: description
-                color: Material.foreground
-                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                horizontalAlignment: Text.AlignLeft
-                verticalAlignment: Text.AlignVCenter
-                wrapMode: Text.WrapAnywhere
-                elide: Text.ElideRight
+            mainText: conditionName
+
+            Component.onCompleted: {
+                if (visible)
+                    toolController.setViewed(index);
             }
 
-            OverlayButton {
-                id: expandRowButton
+            Image {
+                id: menuButton
                 anchors {
-                    verticalCenter: parent.verticalCenter
                     right: parent.right
-                    margins: 8 * scaleFactor
+                    verticalCenter: parent.verticalCenter
+                    margins: 5 * scaleFactor
                 }
-                iconUrl: DsaResources.iconDrawer
+                rotation: 90
+                source: DsaResources.iconMenu
+                height: 32 * scaleFactor
+                width: height
 
-                onClicked: {
-                    conditionsMenu.visible = true;
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        conditionMenu.open();
+                    }
+                }
+
+                // Menu for Vehicle
+                Menu {
+                    id: conditionMenu
+                    width: 125 * scaleFactor
+
+                    Column {
+                        anchors.margins: 10 * scaleFactor
+                        width: parent.width
+                        spacing: 10 * scaleFactor
+                        leftPadding: 10 * scaleFactor
+
+                        ListLabel {
+                            text: "Edit"
+                            onTriggered: {
+                                conditionMenu.close();
+                                editMenu.open();
+                            }
+                        }
+
+                        ListLabel {
+                            text: "Delete"
+                            onTriggered: {
+                                conditionMenu.close();
+                                toolController.removeConditionAt(index);
+                            }
+                        }
+                    }
                 }
             }
 
-            Rectangle {
-                id: conditionsMenu
-                visible: false
-                color: Material.background
-                border.color: Material.accent
-                border.width: 2 * scaleFactor
-                radius: 8 * scaleFactor
-                width: 64 * scaleFactor
-                height: 128 * scaleFactor
-
+            Label {
                 anchors {
-                    right: expandRowButton.right
-                    top: expandRowButton.top
+                    bottom: parent.bottom
+                    left: parent.left
+                    right:  menuButton.left
+                    margins: 3 * scaleFactor
                 }
+                elide: Text.ElideRight
+                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                text: description
+                verticalAlignment: Text.AlignVCenter
+                color: Material.foreground
+                font {
+                    pixelSize: 10 * scaleFactor
+                    family: DsaStyles.fontFamily
+                }
+            }
+
+            Menu {
+                id: editMenu
+                width: parent.width
 
                 Column {
-                    id: conditionsCol
-                    anchors{
-                        margins: 8 * scaleFactor
-                        fill: parent
-                    }
-                    spacing: 4 * scaleFactor
+                    anchors.margins: 10 * scaleFactor
+                    width: parent.width
+                    spacing: 10 * scaleFactor
+                    leftPadding: 10 * scaleFactor
 
-                    Button {
-                        width: parent.width
-                        text: "Edit"
-                        enabled: false
+                    ComboBox {
+                        id: editLevelBox
+                        width: parent.width * 0.9
                         font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                        onClicked: toolController.removeConditionAt(index);
+                        textRole: "display"
+                        model: toolController.levelNames
+
+                        currentIndex: level - 1
                     }
 
-                    Button {
-                        width: parent.width
-                        text: "Delete"
-                        font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                        onClicked: toolController.removeConditionAt(index);
+                    TextField {
+                        id: editConditionName
+                        color: Material.accent
+                        font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
+                        width: parent.width * 0.9
+                        horizontalAlignment: Text.AlignLeft
+                        verticalAlignment: Text.AlignVCenter
+                        text: conditionName
                     }
 
-                    Button {
-                        width: parent.width
-                        text: "Pause"
-                        enabled: false
-                        font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                        onClicked: toolController.removeConditionAt(index);
-                    }
+                    Row {
+                        spacing: 10 * scaleFactor
+                        OverlayButton {
+                            id: keepEditsButton
+                            iconUrl: DsaResources.iconComplete
 
-                    Button {
-                        width: parent.width
-                        text: "Close"
-                        font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                        onClicked: conditionsMenu.visible = false;
-                    }
+                            onClicked: {
+                                editMenu.close();
 
+                                if (conditionName !== editConditionName.text)
+                                    conditionName = editConditionName.text;
+
+                                if (level !== editLevelBox.currentIndex + 1)
+                                    level = editLevelBox.currentIndex + 1;
+                            }
+                        }
+
+                        OverlayButton {
+                            id: cancelEditsButton
+                            iconUrl: DsaResources.iconClose
+
+                            onClicked: {
+                                editMenu.close();
+                            }
+                        }
+                    }
                 }
             }
         }

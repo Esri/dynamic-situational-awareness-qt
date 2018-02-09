@@ -36,11 +36,11 @@ class GraphicsOverlay;
 }
 }
 
-class LocationAlertSource;
 class AlertCondition;
 class AlertConditionData;
 class AlertConditionListModel;
 class AlertTarget;
+class LocationAlertSource;
 
 class AlertConditionsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -54,7 +54,6 @@ class AlertConditionsController : public Esri::ArcGISRuntime::Toolkit::AbstractT
   Q_PROPERTY(bool pickMode READ pickMode NOTIFY pickModeChanged)
 
 public:
-  static const QString ALERT_CONDITIONS_PROPERTYNAME;
 
   explicit AlertConditionsController(QObject* parent = nullptr);
   ~AlertConditionsController();
@@ -65,9 +64,9 @@ public:
 
   void setActive(bool active) override;
 
-  Q_INVOKABLE void addWithinDistanceAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, double distance, int itemId, int targetOverlayIndex);
-  Q_INVOKABLE void addWithinAreaAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, int itemId, int targetOverlayIndex);
-  Q_INVOKABLE void addAttributeEqualsAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, const QString& attributeName, const QVariant& targetValue);
+  Q_INVOKABLE bool addWithinDistanceAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, double distance, int itemId, int targetOverlayIndex);
+  Q_INVOKABLE bool addWithinAreaAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, int itemId, int targetOverlayIndex);
+  Q_INVOKABLE bool addAttributeEqualsAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, const QString& attributeName, const QVariant& targetValue);
   Q_INVOKABLE void removeConditionAt(int rowIndex);
   Q_INVOKABLE void togglePickMode();
 
@@ -98,7 +97,8 @@ private:
   void setTargetNames(const QStringList& targetNames);
   void setSourceNames(const QStringList& sourceNames);
   QJsonObject conditionToJson(AlertCondition* condition) const;
-  AlertCondition* jsonToCondition(const QString& json) const;
+  bool addConditionFromJson(const QJsonObject& json);
+  void addStoredConditions();
 
   AlertTarget* targetFromItemIdAndIndex(int itemId, int targetOverlayIndex, QString& targetDescription) const;
   AlertTarget* targetFromFeatureLayer(Esri::ArcGISRuntime::FeatureLayer* featureLayer, int itemId) const;
@@ -106,7 +106,8 @@ private:
   Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlayFromName(const QString& overlayName);
   QString primaryKeyFieldName(Esri::ArcGISRuntime::FeatureTable* featureTable) const;
 
-  static QStringList realtimeFeedNames();
+  QStringList realtimeFeedTypes() const;
+  QStringList realtimeFeedNames() const;
 
   AlertConditionListModel* m_conditions;
   QStringListModel* m_sourceNames;
@@ -119,6 +120,8 @@ private:
   Esri::ArcGISRuntime::TaskWatcher m_identifyGraphicsWatcher;
   mutable QHash<QString,AlertTarget*> m_layerTargets;
   mutable QHash<QString,AlertTarget*> m_overlayTargets;
+  QList<QJsonObject> m_storedConditions;
+  QHash<QString,QString> m_messageFeedTypesToNames;
 
   QMetaObject::Connection m_mouseClickConnection;
   QMetaObject::Connection m_identifyLayersConnection;

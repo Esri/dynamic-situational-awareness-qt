@@ -22,6 +22,7 @@ class WithinDistanceAlertCondition : public AlertCondition
   Q_OBJECT
 
 public:
+
   explicit WithinDistanceAlertCondition(AlertLevel level,
                                         const QString& name,
                                         double distance,
@@ -32,8 +33,11 @@ public:
   AlertConditionData* createData(AlertSource* source, AlertTarget* target) override;
 
   QString queryString() const override;
+  QVariantMap queryComponents() const override;
 
   double distance() const;
+
+  static double getDistanceFromQueryComponents(const QVariantMap& queryComponents);
 
 private:
   double m_distance;

@@ -13,6 +13,12 @@
 #ifndef OPTIONSCONTROLLER_H
 #define OPTIONSCONTROLLER_H
 
+namespace Esri {
+namespace ArcGISRuntime {
+class DictionaryRenderer;
+}
+}
+
 class LocationTextController;
 
 #include "AbstractTool.h"
@@ -27,6 +33,7 @@ class OptionsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
   Q_PROPERTY(bool useGpsForElevation READ useGpsForElevation WRITE setUseGpsForElevation NOTIFY useGpsForElevationChanged)
   Q_PROPERTY(int initialFormatIndex READ initialFormatIndex NOTIFY initialFormatIndexChanged)
   Q_PROPERTY(int initialUnitIndex READ initialUnitIndex NOTIFY initialUnitIndexChanged)
+  Q_PROPERTY(bool showFriendlyTracksLabels READ showFriendlyTracksLabels WRITE setShowFriendlyTracksLabels NOTIFY showFriendlyTracksLabelsChanged)
 
 public:
   explicit OptionsController(QObject* parent = nullptr);
@@ -43,6 +50,7 @@ signals:
   void unitsChanged();
   void initialUnitIndexChanged();
   void initialFormatIndexChanged();
+  void showFriendlyTracksLabelsChanged();
 
 private:
   static const QString COORDINATE_FORMAT_PROPERTYNAME;
@@ -73,6 +81,9 @@ private:
   void setUseGpsForElevation(bool useGps);
   int initialUnitIndex() const;
   int initialFormatIndex() const;
+  bool showFriendlyTracksLabels();
+  void setShowFriendlyTracksLabels(bool show);
+  Esri::ArcGISRuntime::DictionaryRenderer* friendlyOverlayRenderer();
 };
 
 #endif // OPTIONSCONTROLLER_H

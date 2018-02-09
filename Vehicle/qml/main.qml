@@ -14,19 +14,21 @@ import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
 import QtQuick.Window 2.2
-import QtQuick.Dialogs 1.2
 import Esri.DSA 1.0
 import Esri.Vehicle 1.0
 import Esri.ArcGISRuntime.Toolkit.Controls 100.2
 import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.2
 
 Vehicle {
-    id: vehicleRoot
+    id: appRoot
     width: 800 * scaleFactor
     height: 600 * scaleFactor
 
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
     property alias messageFeeds: messageFeedsTool
+    signal clearDialogAccepted();
+    signal closeDialogAccepted();
+    signal inputDialogAccepted(var input, var index);
 
     LocationController {
         id: locationController
@@ -102,6 +104,15 @@ Vehicle {
         objectName: "sceneView"
 
         onMousePressed: followHud.stopFollowing();
+
+        DistressButton {
+            anchors {
+                top: parent.top
+                horizontalCenter: navTool.horizontalCenter
+                margins: 10 * scaleFactor
+            }
+            messageFeedsController: messageFeeds.controller
+        }
 
         CurrentLocation {
             id: currentLocation
@@ -210,8 +221,17 @@ Vehicle {
             onClosed: visible = false;
         }
 
-        TelestrateTool {
-            id: telestrateTool
+        MarkupTool {
+            id: markup
+            anchors {
+                right: parent.right
+                top: parent.top
+            }
+            visible: false
+        }
+
+        Analysis {
+            id: analysisTool
             anchors {
                 right: parent.right
                 top: parent.top
@@ -219,11 +239,11 @@ Vehicle {
             }
             width: drawer.width
             visible: false
-            onVisibleChanged: {
-                if (!visible)
-                    markupToolRow.state = "clear";
+            isMobile: false
+            onClosed: {
+                visible = false;
+                analysisToolRow.state = "clear";
             }
-            onClosed: visible = false;
         }
 
         PopupStackView {
@@ -246,6 +266,7 @@ Vehicle {
             height: sceneView.height - 20 * scaleFactor // approximation for attribution text
             edge: Qt.RightEdge
             y: topToolbar.height
+            interactive: x < appRoot.width
 
             onClosed: {
                 // update state for each category
@@ -281,13 +302,6 @@ Vehicle {
                             target: messageFeedsTool
                             visible: true
                         }
-                    },
-                    State {
-                        name: "analysis"
-                        PropertyChanges {
-                            target: analysisTool
-                            visible: true
-                        }
                     }
                 ]
 
@@ -309,13 +323,6 @@ Vehicle {
 
                 MessageFeeds {
                     id: messageFeedsTool
-                    anchors.fill: parent
-                    visible: false
-                    onClosed: drawer.close();
-                }
-
-                Analysis {
-                    id: analysisTool
                     anchors.fill: parent
                     visible: false
                     onClosed: drawer.close();
@@ -361,7 +368,6 @@ Vehicle {
 
     onErrorOccurred: {
         msgDialog.informativeText = message;
-        msgDialog.detailedText = additionalMessage;
         msgDialog.open();
     }
 
@@ -371,9 +377,9 @@ Vehicle {
         visible: false
     }
 
-    MessageDialog {
+    DsaMessageDialog {
         id: msgDialog
-        text: "Error"
+        title: "Error"
     }
 
     BusyIndicator {
@@ -384,5 +390,42 @@ Vehicle {
     Shortcut {
         sequence: "Ctrl+Q"
         onActivated: Qt.quit()
+    }
+
+    DsaMessageDialog {
+        id: clearDialog
+        standardButtons: Dialog.Ok | Dialog.Cancel
+        onAccepted: clearDialogAccepted();
+    }
+
+    function showClearDialog(title) {
+        clearDialog.informativeText = title;
+        clearDialog.open();
+    }
+
+    DsaMessageDialog {
+        id: closeDialog
+        standardButtons: Dialog.Ok | Dialog.Cancel
+        onAccepted: closeDialogAccepted();
+    }
+
+    function showCloseDialog(title) {
+        closeDialog.informativeText = title;
+        closeDialog.open();
+    }
+
+    DsaInputDialog {
+        id: inputDialog
+        property int i: 1
+        onAccepted: {
+            i++;
+            inputDialogAccepted(inputDialog.userInputText, i);
+        }
+    }
+
+    function showInputDialog(labelText, placeholderText) {
+        inputDialog.inputLabel = labelText;
+        inputDialog.inputPlaceholderText = placeholderText;
+        inputDialog.open();
     }
 }

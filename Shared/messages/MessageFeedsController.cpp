@@ -16,6 +16,7 @@
 #include "MessageListener.h"
 #include "MessageFeedListModel.h"
 #include "MessageFeed.h"
+#include "MessageFeedConstants.h"
 #include "MessageSender.h"
 #include "LocationBroadcast.h"
 
@@ -32,9 +33,6 @@
 using namespace Esri::ArcGISRuntime;
 
 const QString MessageFeedsController::RESOURCE_DIRECTORY_PROPERTYNAME = "ResourceDirectory";
-const QString MessageFeedsController::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME = "MessageFeedUdpPorts";
-const QString MessageFeedsController::MESSAGE_FEEDS_PROPERTYNAME = "MessageFeeds";
-const QString MessageFeedsController::LOCATION_BROADCAST_CONFIG_PROPERTYNAME = "LocationBroadcastConfig";
 
 /*!
    \brief Constructs a default MessageFeedsController with an optional \a parent.
@@ -159,7 +157,7 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
   setResourcePath(properties[RESOURCE_DIRECTORY_PROPERTYNAME].toString());
 
   // parse and add message listeners on specified UDP ports
-  const auto messageFeedUdpPorts = properties[MESSAGE_FEED_UDP_PORTS_PROPERTYNAME].toStringList();
+  const auto messageFeedUdpPorts = properties[MessageFeedConstants::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME].toStringList();
   for (const auto& udpPort : messageFeedUdpPorts)
   {
     QUdpSocket* udpSocket = new QUdpSocket(this);
@@ -169,7 +167,7 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
   }
 
   // parse and add message feeds
-  const auto messageFeeds = properties[MESSAGE_FEEDS_PROPERTYNAME].toStringList();
+  const auto messageFeeds = properties[MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME].toStringList();
   for (const auto& messageFeed : messageFeeds)
   {
     const auto& messageFeedConfig = messageFeed.split(":");
@@ -185,7 +183,7 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
     m_messageFeeds->append(feed);
   }
 
-  const auto locationBroadcastConfig = properties[LOCATION_BROADCAST_CONFIG_PROPERTYNAME].toStringList();
+  const auto locationBroadcastConfig = properties[MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME].toStringList();
   if (locationBroadcastConfig.size() == 2)
   {
     m_locationBroadcast->setMessageType(locationBroadcastConfig.at(0));
@@ -262,6 +260,31 @@ void MessageFeedsController::setLocationBroadcastFrequency(int frequency)
 }
 
 /*!
+   \brief Returns \c true if the location broadcast reports
+   message status as being in distress.
+ */
+bool MessageFeedsController::isLocationBroadcastInDistress() const
+{
+  return m_locationBroadcast->isInDistress();
+}
+
+/*!
+   \brief Sets the location broadcast to report
+   message status as being in distress to \a inDistress.
+
+   \sa LocationBroadcast::setInDistress
+ */
+void MessageFeedsController::setLocationBroadcastInDistress(bool inDistress)
+{
+  if (m_locationBroadcast->isInDistress() == inDistress)
+    return;
+
+  m_locationBroadcast->setInDistress(inDistress);
+
+  emit locationBroadcastInDistressChanged();
+}
+
+/*!
    \internal
    \brief Creates and returns a renderer from the provided \a rendererInfo with an optional \a parent.
 
@@ -296,3 +319,40 @@ Renderer* MessageFeedsController::createRenderer(const QString& rendererInfo, QO
   symbol->setHeight(40.0f);
   return new SimpleRenderer(symbol, parent);
 }
+
+// Properties:
+/*!
+  \property MessageFeedsController::messageFeeds
+  \brief The message feeds list model (read-only).
+*/
+
+/*!
+  \property MessageFeedsController::locationBroadcastEnabled
+  \brief Whether the location broadcast is enabled or not.
+*/
+
+/*!
+  \property MessageFeedsController::locationBroadcastFrequency
+  \brief The location broadcast frequency.
+*/
+
+/*!
+  \property MessageFeedsController::locationBroadcastInDistress
+  \brief Whether the location broadcast reports message status as being in distress.
+*/
+
+// Signals:
+/*!
+  \fn void MessageFeedsController::locationBroadcastEnabledChanged();
+  \brief Signal emitted when the \l locationBroadcastEnabled property changes.
+ */
+
+/*!
+  \fn void MessageFeedsController::locationBroadcastFrequencyChanged();
+  \brief Signal emitted when the \l locationBroadcastFrequency property changes.
+ */
+
+/*!
+  \fn void MessageFeedsController::locationBroadcastInDistressChanged();
+  \brief Signal emitted when the \l locationBroadcastInDistress property changes.
+ */

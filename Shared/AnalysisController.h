@@ -20,11 +20,13 @@
 namespace Esri {
   namespace ArcGISRuntime {
     class AnalysisOverlay;
-    class LocationViewshed;
+    class Viewshed;
     class GraphicsOverlay;
     class Graphic;
   }
 }
+
+class QMouseEvent;
 
 class AnalysisController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -32,6 +34,8 @@ class AnalysisController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 
   Q_PROPERTY(bool viewshedEnabled READ isViewshedEnabled WRITE setViewshedEnabled NOTIFY viewshedEnabledChanged)
   Q_PROPERTY(bool viewshedVisible READ isViewshedVisible WRITE setViewshedVisible NOTIFY viewshedVisibleChanged)
+  Q_PROPERTY(QStringList viewshedTypes READ viewshedTypes CONSTANT)
+  Q_PROPERTY(int viewshedTypeIndex READ viewshedTypeIndex WRITE setViewshedTypeIndex NOTIFY viewshedTypeIndexChanged)
   Q_PROPERTY(double minDistance READ minDistance WRITE setMinDistance NOTIFY minDistanceChanged)
   Q_PROPERTY(double maxDistance READ maxDistance WRITE setMaxDistance NOTIFY maxDistanceChanged)
   Q_PROPERTY(double horizontalAngle READ horizontalAngle WRITE setHorizontalAngle NOTIFY horizontalAngleChanged)
@@ -42,6 +46,7 @@ class AnalysisController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 signals:
   void viewshedEnabledChanged();
   void viewshedVisibleChanged();
+  void viewshedTypeIndexChanged();
   void minDistanceChanged();
   void maxDistanceChanged();
   void horizontalAngleChanged();
@@ -50,6 +55,10 @@ signals:
   void pitchChanged();
 
 public:
+  static const QString MAP_POINT_VIEWSHED_TYPE;
+  static const QString MY_LOCATION_VIEWSHED_TYPE;
+  static const QString FRIENDLY_TRACK_VIEWSHED_TYPE;
+
   explicit AnalysisController(QObject* parent = nullptr);
   ~AnalysisController();
 
@@ -60,6 +69,11 @@ public:
 
   bool isViewshedVisible() const;
   void setViewshedVisible(bool viewshedVisible);
+
+  QStringList viewshedTypes() const;
+
+  int viewshedTypeIndex() const;
+  void setViewshedTypeIndex(int index);
 
   double minDistance() const;
   void setMinDistance(double minDistance);
@@ -82,19 +96,28 @@ public:
   QString toolName() const override;
 
 private:
+  void updateGeoView();
   void connectMouseSignals();
+
+  void updateCurrentViewshed();
+  void updateMapPointViewshed(QMouseEvent& event);
+  void updateMyLocationViewshed();
+  void updateFriendlyTrackViewshed(QMouseEvent& event);
 
   bool m_viewshedEnabled = false;
 
   Esri::ArcGISRuntime::AnalysisOverlay* m_analysisOverlay = nullptr;
-  Esri::ArcGISRuntime::LocationViewshed* m_locationViewshed = nullptr;
+  Esri::ArcGISRuntime::Viewshed* m_currentViewshed = nullptr;
   Esri::ArcGISRuntime::GraphicsOverlay* m_graphicsOverlay = nullptr;
   Esri::ArcGISRuntime::Graphic* m_locationViewshedGraphic = nullptr;
+  QList<Esri::ArcGISRuntime::Viewshed*> m_viewsheds;
 
   bool m_viewshedVisibleDefault = true;
+  QStringList m_viewshedTypes;
+  int m_viewshedTypeIndex = 0;
   double m_minDistanceDefault = 50;
   double m_maxDistanceDefault = 1000;
-  double m_horizontalAngleDefault = 45;
+  double m_horizontalAngleDefault = 120;
   double m_verticalAngleDefault = 90;
   double m_headingDefault = 0;
   double m_pitchDefault = 90;

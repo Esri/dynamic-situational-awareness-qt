@@ -23,15 +23,18 @@ class AttributeEqualsAlertCondition : public AlertCondition
 
 public:
   explicit AttributeEqualsAlertCondition( AlertLevel level,
-                                    const QString& name,
-                                    const QString& attributeName,
-                                    QObject* parent = nullptr);
+                                          const QString& name,
+                                          const QString& attributeName,
+                                          QObject* parent = nullptr);
 
   ~AttributeEqualsAlertCondition();
 
   AlertConditionData* createData(AlertSource* source, AlertTarget* target) override;
 
   QString queryString() const;
+  QVariantMap queryComponents() const override;
+
+  static QString attributeNameFromQueryComponents(const QVariantMap& queryMap);
 
 private:
   QString m_attributeName;

@@ -85,6 +85,9 @@ void LocationController::initPositionInfoSource(bool simulated)
 
     connect(m_compass, &QCompass::readingChanged, this, [this]()
     {
+      if (!m_compass)
+        return;
+
       QCompassReading* reading = m_compass->reading();
       if (!reading)
         return;
@@ -234,6 +237,11 @@ void LocationController::setSimulated(bool simulated)
 Point LocationController::currentLocation() const
 {
   return m_currentLocation;
+}
+
+LocationDisplay3d* LocationController::locationDisplay() const
+{
+  return m_locationDisplay3d;
 }
 
 QUrl LocationController::gpxFilePath() const

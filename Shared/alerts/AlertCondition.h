@@ -17,6 +17,7 @@
 
 #include <QList>
 #include <QObject>
+#include <QVariantMap>
 
 class AlertConditionData;
 class AlertSource;
@@ -40,7 +41,7 @@ public:
                           QObject* parent = nullptr);
 
   void init(AlertSource* source, AlertTarget* target, const QString& sourceDescription, const QString& targetDescription);
-  void init(Esri::ArcGISRuntime::GraphicsOverlay* sourceFeed, AlertTarget* target, const QString& targetDescription);
+  void init(Esri::ArcGISRuntime::GraphicsOverlay* sourceFeed, const QString& sourceDescription, AlertTarget* target, const QString& targetDescription);
 
   ~AlertCondition();
 
@@ -55,18 +56,24 @@ public:
   void addData(AlertConditionData* newData);
 
   virtual QString queryString() const = 0;
+  virtual QVariantMap queryComponents() const = 0;
   virtual AlertConditionData* createData(AlertSource* source, AlertTarget* target) = 0;
 
   QString sourceDescription() const;
   QString targetDescription() const;
   QString description() const;
 
+  bool isConditionEnabled() const;
+  void setConditionEnabled(bool enabled);
+
 signals:
   void noLongerValid();
   void newConditionData(AlertConditionData* newConditionData);
   void conditionChanged();
+  void conditionEnabledChanged();
 
 private:
+  bool m_enabled = true;
   AlertLevel m_level;
   QString m_name;
   QList<AlertConditionData*> m_data;

@@ -112,6 +112,10 @@ bool AlertListProxyModel::passesAllQueries(int sourceRow) const
   if (!conditionData)
     return false;
 
+  // skip conditions data which is disabled
+  if (!conditionData->isConditionEnabled())
+    return false;
+
   // check whether and of the active AlertFilters exclude this condition data
   auto filterIt = m_filters.cbegin();
   auto filterEnd = m_filters.cend();

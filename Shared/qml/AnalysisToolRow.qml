@@ -14,7 +14,6 @@ import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
 import QtQuick.Window 2.2
-import QtQuick.Dialogs 1.2
 import Esri.DSA 1.0
 import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.2
 
@@ -47,16 +46,17 @@ Row {
         iconSource: DsaResources.iconViewshed
         toolName: "Viewshed"
         onToolSelected: {
-            if (analysisToolRow.state === toolName)
-                analysisToolRow.state = "clear";
-            else {
+            if (selected)
+                analysisToolRow.state = "clear"
+            else
                 analysisToolRow.state = toolName;
-                if (drawer.visible)
-                    drawer.close();
-                else {
-                    toolRect.state = "analysis";
-                    drawer.open();
-                }
+
+            if (analysisTool.visible) {
+                analysisTool.visible = false;
+                analysisToolRow.state = "clear";
+                selected = false;
+            } else {
+                analysisTool.visible = true;
             }
         }
     }

@@ -233,5 +233,12 @@ DsaPanel {
             toolController.flashAll(highlightOn);
             highlightOn = !highlightOn;
         }
+
+        onRunningChanged: {
+            if (!running) {
+                highlightOn = false;
+                toolController.flashAll(highlightOn);
+            }
+        }
     }
 }

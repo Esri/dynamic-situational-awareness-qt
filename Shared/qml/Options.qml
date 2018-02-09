@@ -81,6 +81,15 @@ Rectangle {
                 }
             }
 
+            // Toggle friendly tracks labels
+            CheckBox {
+                text: "Show friendly tracks labels"
+                checked: true
+                onCheckedChanged: {
+                    optionsController.showFriendlyTracksLabels = checked;
+                }
+            }
+
             Label {
                 text: "Location Options"
                 font {

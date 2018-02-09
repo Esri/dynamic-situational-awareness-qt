@@ -14,6 +14,11 @@
 #include "ToolResourceProvider.h"
 #include "ToolManager.h"
 #include "LocationTextController.h"
+#include "MessageFeedsController.h"
+#include "MessagesOverlay.h"
+#include "MessageFeed.h"
+#include "MessageFeedListModel.h"
+#include "DictionaryRenderer.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -180,4 +185,55 @@ int OptionsController::initialFormatIndex() const
 int OptionsController::initialUnitIndex() const
 {
   return m_initialUnitIndex;
+}
+
+/*
+ \brief Returns whether the friendly tracks labels show.
+*/
+bool OptionsController::showFriendlyTracksLabels()
+{
+  auto renderer = friendlyOverlayRenderer();
+  if (!renderer)
+    return true;
+
+  return renderer->isTextVisible();
+}
+
+/*
+ \brief Sets whether the friendly tracks labels \a show.
+*/
+void OptionsController::setShowFriendlyTracksLabels(bool show)
+{
+  auto renderer = friendlyOverlayRenderer();
+  if (!renderer)
+    return;
+
+  renderer->setTextVisible(show);
+}
+
+/*
+ \brief Returns the DictionaryRenderer from the friendly tracks MessageFeed.
+*/
+DictionaryRenderer* OptionsController::friendlyOverlayRenderer()
+{
+  // Obtain and cache the MessageFeedsController. Connect members and emit signals so properties update
+  MessageFeedsController* messageController = Toolkit::ToolManager::instance().tool<MessageFeedsController>();
+  if (messageController)
+  {
+    MessageFeedListModel* messageFeedModel = dynamic_cast<MessageFeedListModel*>(messageController->messageFeeds());
+    if (messageFeedModel)
+    {
+      for (int i = 0; i < messageFeedModel->count(); i++)
+      {
+        MessageFeed* feed = messageFeedModel->at(i);
+        if (QString(feed->feedName()).toLower() == "friendly tracks")
+        {
+          Renderer* renderer = feed->messagesOverlay()->renderer();
+          if (renderer)
+            return dynamic_cast<DictionaryRenderer*>(renderer);
+        }
+      }
+    }
+  }
+  return nullptr;
 }

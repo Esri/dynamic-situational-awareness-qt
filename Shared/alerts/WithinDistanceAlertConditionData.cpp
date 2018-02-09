@@ -19,6 +19,8 @@
 #include "Graphic.h"
 #include "Point.h"
 
+#include <cmath>
+
 using namespace Esri::ArcGISRuntime;
 
 /*!

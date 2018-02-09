@@ -14,6 +14,7 @@
 #define ANALYSISCONTROLLER_H
 
 #include "AbstractTool.h"
+#include "TaskWatcher.h"
 
 #include <QPoint>
 
@@ -121,6 +122,9 @@ private:
   double m_verticalAngleDefault = 90;
   double m_headingDefault = 0;
   double m_pitchDefault = 90;
+
+  Esri::ArcGISRuntime::TaskWatcher m_identifyTaskWatcher;
+  QMetaObject::Connection m_identifyConn;
 };
 
 #endif // ANALYSISCONTROLLER_H

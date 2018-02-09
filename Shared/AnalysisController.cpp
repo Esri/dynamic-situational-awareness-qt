@@ -20,6 +20,7 @@
 #include "GeoElementViewshed.h"
 #include "LocationController.h"
 #include "LocationDisplay3d.h"
+#include "IdentifyController.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -171,7 +172,50 @@ void AnalysisController::updateMyLocationViewshed()
 
 void AnalysisController::updateFriendlyTrackViewshed(QMouseEvent& event)
 {
-  Q_UNUSED(event)
+  if (!m_identifyConn)
+  {
+    m_identifyConn = connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::identifyGraphicsOverlaysCompleted,
+                             this, [this](const QUuid& taskId, const QList<IdentifyGraphicsOverlayResult*>& identifyResults)
+    {
+      if (taskId != m_identifyTaskWatcher.taskId())
+        return;
+
+      m_identifyTaskWatcher = TaskWatcher();
+
+      if (!m_viewshedEnabled || identifyResults.isEmpty() || identifyResults[0]->graphics().isEmpty())
+      {
+        qDeleteAll(identifyResults); // TODO: should use the GraphicsOverlaysResultsManager from the IdentifyController instead
+        return;
+      }
+
+      Graphic* graphic = identifyResults[0]->graphics()[0];
+
+      if (m_currentViewshed)
+      {
+        GeoElement* geoElement = static_cast<GeoElementViewshed*>(m_currentViewshed)->geoElement();
+        if (qobject_cast<Graphic*>(geoElement) == graphic)
+        {
+          qDeleteAll(identifyResults); // TODO: should use the GraphicsOverlaysResultsManager from the IdentifyController instead
+          return;
+        }
+
+        removeViewshed();
+      }
+
+      auto geoElementViewshed = new GeoElementViewshed(graphic, m_horizontalAngleDefault, m_verticalAngleDefault,
+                                                       m_minDistanceDefault, m_maxDistanceDefault, 0.0, 0.0, this);
+
+      geoElementViewshed->setOffsetZ(5.0);
+      m_currentViewshed = geoElementViewshed;
+      m_viewsheds[m_viewshedTypeIndex] = geoElementViewshed;
+      geoElementViewshed->setVisible(m_viewshedVisibleDefault);
+      m_analysisOverlay->analyses()->append(geoElementViewshed);
+
+      qDeleteAll(identifyResults); // TODO: should use the GraphicsOverlaysResultsManager from the IdentifyController instead
+    });
+  }
+
+  m_identifyTaskWatcher = Toolkit::ToolResourceProvider::instance()->geoView()->identifyGraphicsOverlays(event.x(), event.y(), 5.0, false, 1);
 }
 
 void AnalysisController::removeViewshed()

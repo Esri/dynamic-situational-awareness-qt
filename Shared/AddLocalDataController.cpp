@@ -41,6 +41,7 @@
 using namespace Esri::ArcGISRuntime;
 
 const QString AddLocalDataController::LOCAL_DATAPATHS_PROPERTYNAME = "LocalDataPaths";
+const QString AddLocalDataController::DEFAULT_ELEVATION_PROPERTYNAME = "DefaultElevationSource";
 
 const QString AddLocalDataController::s_allData = QStringLiteral("All Data (*.geodatabase *tpk *shp *gpkg *mmpk *slpk *vtpk *.img *.tif *.tiff *.i1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr)");
 const QString AddLocalDataController::s_rasterData = QStringLiteral("Raster Files (*.img *.tif *.tiff *.I1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr)");
@@ -51,6 +52,9 @@ const QString AddLocalDataController::s_sceneLayerData = QStringLiteral("Scene L
 const QString AddLocalDataController::s_vectorTilePackageData = QStringLiteral("Vector Tile Package (*.vtpk)");
 const QString AddLocalDataController::s_tilePackageData = QStringLiteral("Tile Package (*.tpk)");
 
+/*
+ \brief Constructor that takes an optional \a parent.
+ */
 AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent),
   m_localDataModel(new DataItemListModel(this))
@@ -68,12 +72,19 @@ AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
   emit localDataModelChanged();
 }
 
+/*
+ \brief Returns the local data model associated with the controller.
+ */
 QAbstractListModel* AddLocalDataController::localDataModel() const
 {
   return m_localDataModel;
 }
 
-// The model will contain data items from all of the paths in the list
+/*
+ \brief Adds the provided \a path to the directory list.
+
+ The directory list contains all of the directories that will be searched for local data.
+ */
 void AddLocalDataController::addPathToDirectoryList(const QString& path)
 {
   if (m_dataPaths.contains(path))
@@ -83,7 +94,9 @@ void AddLocalDataController::addPathToDirectoryList(const QString& path)
   emit propertyChanged(LOCAL_DATAPATHS_PROPERTYNAME, m_dataPaths);
 }
 
-// clear and re-fetch files in list of data paths
+/*
+ \brief Refreshes the local data model with a given \a fileType.
+ */
 void AddLocalDataController::refreshLocalDataModel(const QString& fileType)
 {
   QStringList fileFilters = determineFileFilters(fileType);
@@ -104,7 +117,9 @@ void AddLocalDataController::refreshLocalDataModel(const QString& fileType)
   }
 }
 
-// get the file filter string list for filtering data from the QDir entrylist
+/*
+ \brief Returns the file filter string list for filtering data from the QDir entrylist
+ */
 QStringList AddLocalDataController::determineFileFilters(const QString& fileType)
 {
   QStringList fileFilter;
@@ -133,8 +148,9 @@ QStringList AddLocalDataController::determineFileFilters(const QString& fileType
   return fileFilter;
 }
 
-// Q_INVOKABLE function that takes the indices passed in, gets the path and data type
-// for the file at the given index, and adds the file as an elevation source
+/*
+ \brief Adds the provided \a indices from the list model as elevation sources to the Scene.
+ */
 void AddLocalDataController::addItemAsElevationSource(const QList<int>& indices)
 {
   QStringList dataPaths;
@@ -167,6 +183,7 @@ void AddLocalDataController::addItemAsElevationSource(const QList<int>& indices)
             scene->baseSurface()->elevationSources()->append(source);
 
           emit elevationSourceSelected(source);
+          emit propertyChanged(DEFAULT_ELEVATION_PROPERTYNAME, tileCache->path());
         }
       });
 
@@ -194,10 +211,12 @@ void AddLocalDataController::addItemAsElevationSource(const QList<int>& indices)
     scene->baseSurface()->elevationSources()->append(source);
 
   emit elevationSourceSelected(source);
+  emit propertyChanged(DEFAULT_ELEVATION_PROPERTYNAME, dataPaths);
 }
 
-// Q_INVOKABLE function that takes the indices passed in, gets the path and data type
-// for the file at the given index, and adds the file as a layer
+/*
+ \brief Adds the provided \a indices from the list model as layers.
+ */
 void AddLocalDataController::addItemAsLayer(const QList<int>& indices)
 {
   for (const int index : indices)
@@ -233,14 +252,55 @@ void AddLocalDataController::addItemAsLayer(const QList<int>& indices)
   }
 }
 
-// Helper that creates a FeatureLayer for each table in the Geodatabase
+/*
+ \brief Determines data type from the given \a path, and calls the appropriate helper.
+
+ \list
+   \li \a path - The path to the local data source.
+   \li \a layerIndex - The index for which the layer will be added to the operational layer list.
+   \li \a visible - Whether the layer should be visible by default.
+   \li \a autoAdd - Whether the layer will be automatically added to the operational layer list.
+        If \c false, it will not add automatically. Instead, a signal will emit once the Layer has
+        been constructed.
+ \endlist
+*/
+void AddLocalDataController::addLayerFromPath(const QString& path, int layerIndex, bool visible, bool autoAdd)
+{
+  QFileInfo fileInfo(path);
+  QStringList rasterExtensions{"img", "tif", "tiff", "i1", "dt0", "dt1", "dt2", "tc2", "geotiff", "hr1", "jpg", "jpeg", "jp2", "ntf", "png", "i21"};
+
+  // determine the layer type
+  QString fileExtension = fileInfo.completeSuffix();
+
+  if (fileExtension == "geodatabase")
+    createFeatureLayerGeodatabaseWithId(path, layerIndex, visible, autoAdd);
+  else if (fileExtension.compare("tpk", Qt::CaseInsensitive) == 0)
+    createTiledLayer(path, layerIndex, visible, autoAdd);
+  else if (fileExtension.compare("shp", Qt::CaseInsensitive) == 0)
+    createFeatureLayerShapefile(path, layerIndex, visible, autoAdd);
+  else if (fileExtension.compare("gpkg", Qt::CaseInsensitive) == 0)
+    createLayerGeoPackage(path);
+  else if (fileExtension.compare("slpk", Qt::CaseInsensitive) == 0)
+    createSceneLayer(path, layerIndex, visible, autoAdd);
+  else if (fileExtension.compare("vtpk", Qt::CaseInsensitive) == 0)
+    createVectorTiledLayer(path, layerIndex, visible, autoAdd);
+  else if (rasterExtensions.contains(fileExtension.toLower()))
+    createRasterLayer(path, layerIndex, visible, autoAdd);
+}
+
+/*
+ \brief Creates a Geodatabase from the given \a path, and creates a FeatureLayer for each table in the Geodatabase.
+ */
 void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path)
 {
   Geodatabase* gdb = new Geodatabase(path, this);
   connect(gdb, &Geodatabase::doneLoading, this, [this, gdb](Error e)
   {
     if (!e.isEmpty())
+    {
+      emit errorOccurred(e);
       return;
+    }
 
     for (FeatureTable* featureTable : gdb->geodatabaseFeatureTables())
     {
@@ -258,7 +318,145 @@ void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path)
   gdb->load();
 }
 
-// Helper that creates a Layer for each table and raster in the GeoPackage
+/*
+ \brief Creates a FeatureLayer with the feature table at the given id of a Geodatabase
+
+ \list
+   \li \a path - The path to the local data source.
+   \li \a layerIndex - The index for which the layer will be added to the operational layer list.
+   \li \a serviceLayerId - The service layer ID of the GeodatabaseFeatureTable.
+   \li \a visible - Whether the layer should be visible by default.
+   \li \a autoAdd - Whether the layer will be automatically added to the operational layer list.
+        If \c false, it will not add automatically. Instead, a signal will emit once the Layer has
+        been constructed.
+ \endlist
+*/
+void AddLocalDataController::createFeatureLayerGeodatabaseWithId(const QString& path, int layerIndex, int serviceLayerId, bool visible, bool autoAdd)
+{
+  Geodatabase* gdb = new Geodatabase(path, this);
+  connect(gdb, &Geodatabase::doneLoading, this, [this, gdb, serviceLayerId, visible, autoAdd, layerIndex](Error e)
+  {
+    if (!e.isEmpty())
+    {
+      emit errorOccurred(e);
+      return;
+    }
+
+    FeatureLayer* featureLayer = new FeatureLayer(gdb->geodatabaseFeatureTable(serviceLayerId), this);
+    featureLayer->setVisible(visible);
+    connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+
+    if (autoAdd)
+    {
+      auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+      if (operationalLayers)
+        operationalLayers->append(featureLayer);
+
+      emit layerSelected(featureLayer);
+      Q_UNUSED(layerIndex)
+    }
+    else
+    {
+      emit layerCreated(layerIndex, featureLayer);
+    }
+  });
+  gdb->load();
+}
+
+/*
+ \brief Creates a FeatureLayer with the feature table at the given index of a GeoPackage
+
+ \list
+   \li \a path - The path to the local data source.
+   \li \a layerIndex - The index for which the layer will be added to the operational layer list.
+   \li \a id - The index of the feature table in the GeoPackage feature table list.
+   \li \a visible - Whether the layer should be visible by default.
+   \li \a autoAdd - Whether the layer will be automatically added to the operational layer list.
+        If \c false, it will not add automatically. Instead, a signal will emit once the Layer has
+        been constructed.
+ \endlist
+*/
+void AddLocalDataController::createFeatureLayerGeoPackage(const QString& path, int layerIndex, int id, bool visible, bool autoAdd)
+{
+  GeoPackage* geoPackage = new GeoPackage(path, this);
+
+  connect(geoPackage, &GeoPackage::doneLoading, this, [this, geoPackage, id, visible, autoAdd, layerIndex](Error e)
+  {
+    if (!e.isEmpty())
+    {
+      emit errorOccurred(e);
+      return;
+    }
+
+    FeatureLayer* featureLayer = new FeatureLayer(geoPackage->geoPackageFeatureTables().at(id), this);
+    featureLayer->setVisible(visible);
+    connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+
+    if (autoAdd)
+    {
+      auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+      operationalLayers->append(featureLayer);
+      Q_UNUSED(layerIndex)
+    }
+    else
+    {
+      emit layerCreated(layerIndex, featureLayer);
+    }
+  });
+
+  geoPackage->load();
+}
+
+/*
+ \brief Creates a RasterLayer with the raster at the given index of a GeoPackage
+
+ \list
+   \li \a path - The path to the local data source.
+   \li \a layerIndex - The index for which the layer will be added to the operational layer list.
+   \li \a id - The index of the raster in the GeoPackage raster list.
+   \li \a visible - Whether the layer should be visible by default.
+   \li \a autoAdd - Whether the layer will be automatically added to the operational layer list.
+        If \c false, it will not add automatically. Instead, a signal will emit once the Layer has
+        been constructed.
+ \endlist
+*/
+void AddLocalDataController::createRasterLayerGeoPackage(const QString& path, int layerIndex, int id, bool visible, bool autoAdd)
+{
+  GeoPackage* geoPackage = new GeoPackage(path, this);
+
+  connect(geoPackage, &GeoPackage::doneLoading, this, [this, geoPackage, id, visible, autoAdd, layerIndex](Error e)
+  {
+    if (!e.isEmpty())
+    {
+      emit errorOccurred(e);
+      return;
+    }
+
+    RasterLayer* rasterLayer = new RasterLayer(geoPackage->geoPackageRasters().at(id), this);
+    connect(rasterLayer, &RasterLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+    rasterLayer->setVisible(visible);
+
+    if (autoAdd)
+    {
+      auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+      if (!operationalLayers)
+        return;
+
+      operationalLayers->append(rasterLayer);
+      Q_UNUSED(layerIndex)
+    }
+    else
+    {
+      emit layerCreated(layerIndex, rasterLayer);
+    }
+  });
+
+  geoPackage->load();
+}
+
+/*
+ \brief Creates a GeoPackage from the given \a path, and adds a Layer for each table and raster in the GeoPackage
+ */
 void AddLocalDataController::createLayerGeoPackage(const QString& path)
 {
   GeoPackage* geoPackage = new GeoPackage(path, this);
@@ -266,94 +464,210 @@ void AddLocalDataController::createLayerGeoPackage(const QString& path)
   connect(geoPackage, &GeoPackage::doneLoading, this, [this, geoPackage](Error e)
   {
     if (!e.isEmpty())
-      return;
-
-    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
-    for (auto& table : geoPackage->geoPackageFeatureTables())
     {
-      operationalLayers->append(new FeatureLayer(table, this));
+      emit errorOccurred(e);
+      return;
     }
 
-    for (auto& raster : geoPackage->geoPackageRasters())
+    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+    if (!operationalLayers)
+      return;
+
+    for (const auto& table : geoPackage->geoPackageFeatureTables())
     {
-      operationalLayers->append(new RasterLayer(raster, this));
+      FeatureLayer* featureLayer = new FeatureLayer(table, this);
+      connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+      operationalLayers->append(featureLayer);
+    }
+
+    for (const auto& raster : geoPackage->geoPackageRasters())
+    {
+      RasterLayer* rasterLayer = new RasterLayer(raster, this);
+      connect(rasterLayer, &RasterLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+      operationalLayers->append(rasterLayer);
     }
   });
 
   geoPackage->load();
 }
 
-// Helper that creates a FeatureLayer from the Shapefile FeatureTable
-void AddLocalDataController::createFeatureLayerShapefile(const QString& path)
+/*
+ \brief Creates a FeatureLayer with the provided shapefile path.
+
+ \list
+   \li \a path - The path to the local data source.
+   \li \a layerIndex - The index for which the layer will be added to the operational layer list.
+   \li \a visible - Whether the layer should be visible by default.
+   \li \a autoAdd - Whether the layer will be automatically added to the operational layer list.
+        If \c false, it will not add automatically. Instead, a signal will emit once the Layer has
+        been constructed.
+ \endlist
+*/
+void AddLocalDataController::createFeatureLayerShapefile(const QString& path, int layerIndex, bool visible, bool autoAdd)
 {
   ShapefileFeatureTable* shpFt = new ShapefileFeatureTable(path, this);
   FeatureLayer* featureLayer = new FeatureLayer(shpFt, this);
+  featureLayer->setVisible(visible);
+  connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
-  auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
-  if (operationalLayers)
-    operationalLayers->append(featureLayer);
+  if (autoAdd)
+  {
+    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+    if (operationalLayers)
+      operationalLayers->append(featureLayer);
 
-  emit layerSelected(featureLayer);
+    emit layerSelected(featureLayer);
+    Q_UNUSED(layerIndex)
+  }
+  else
+  {
+    emit layerCreated(layerIndex, featureLayer);
+  }
 }
 
-// Helper that creates a RasterLayer from a raster file path
-void AddLocalDataController::createRasterLayer(const QString& path)
+/*
+ \brief Creates a Rasterlayer with the provided raster path.
+
+ \list
+   \li \a path - The path to the local data source.
+   \li \a layerIndex - The index for which the layer will be added to the operational layer list.
+   \li \a visible - Whether the layer should be visible by default.
+   \li \a autoAdd - Whether the layer will be automatically added to the operational layer list.
+        If \c false, it will not add automatically. Instead, a signal will emit once the Layer has
+        been constructed.
+ \endlist
+*/
+void AddLocalDataController::createRasterLayer(const QString& path, int layerIndex, bool visible, bool autoAdd)
 {
   Raster* raster = new Raster(path, this);
   RasterLayer* rasterLayer = new RasterLayer(raster, this);
-
+  rasterLayer->setVisible(visible);
   connect(rasterLayer, &RasterLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
-  auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
-  if (operationalLayers)
-    operationalLayers->append(rasterLayer);
 
-  emit layerSelected(rasterLayer);
+  if (autoAdd)
+  {
+    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+    if (operationalLayers)
+      operationalLayers->append(rasterLayer);
+
+    emit layerSelected(rasterLayer);
+    Q_UNUSED(layerIndex)
+  }
+  else
+  {
+    emit layerCreated(layerIndex, rasterLayer);
+  }
 }
 
-// Helper that creates an ArcGISSceneLayer from a slpk path
-void AddLocalDataController::createSceneLayer(const QString& path)
+/*
+ \brief Creates an ArcGISSceneLayer with the provided scene layer package path.
+
+ \list
+   \li \a path - The path to the local data source.
+   \li \a layerIndex - The index for which the layer will be added to the operational layer list.
+   \li \a visible - Whether the layer should be visible by default.
+   \li \a autoAdd - Whether the layer will be automatically added to the operational layer list.
+        If \c false, it will not add automatically. Instead, a signal will emit once the Layer has
+        been constructed.
+ \endlist
+*/
+void AddLocalDataController::createSceneLayer(const QString& path, int layerIndex, bool visible, bool autoAdd)
 {
   ArcGISSceneLayer* sceneLayer = new ArcGISSceneLayer(QUrl(path), this);
-
+  sceneLayer->setVisible(visible);
   connect(sceneLayer, &ArcGISSceneLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
-  auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
-  if (operationalLayers)
-    operationalLayers->append(sceneLayer);
 
-  emit layerSelected(sceneLayer);
+  if (autoAdd)
+  {
+    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+    if (operationalLayers)
+      operationalLayers->append(sceneLayer);
+
+    emit layerSelected(sceneLayer);
+    Q_UNUSED(layerIndex)
+  }
+  else
+  {
+    emit layerCreated(layerIndex, sceneLayer);
+  }
 }
 
-// Helper that creates an ArcGISTiledLayer from a tpk path
-void AddLocalDataController::createTiledLayer(const QString& path)
+/*
+ \brief Creates an ArcGISTiledLayer with the provided TPK path.
+
+ \list
+   \li \a path - The path to the local data source.
+   \li \a layerIndex - The index for which the layer will be added to the operational layer list.
+   \li \a visible - Whether the layer should be visible by default.
+   \li \a autoAdd - Whether the layer will be automatically added to the operational layer list.
+        If \c false, it will not add automatically. Instead, a signal will emit once the Layer has
+        been constructed.
+ \endlist
+*/
+void AddLocalDataController::createTiledLayer(const QString& path, int layerIndex, bool visible, bool autoAdd)
 {
   ArcGISTiledLayer* tiledLayer = new ArcGISTiledLayer(QUrl(path), this);
-
+  tiledLayer->setVisible(visible);
   connect(tiledLayer, &ArcGISTiledLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
-  auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
-  if (operationalLayers)
-    operationalLayers->append(tiledLayer);
 
-  emit layerSelected(tiledLayer);
+  if (autoAdd)
+  {
+    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+    if (operationalLayers)
+      operationalLayers->append(tiledLayer);
+
+    emit layerSelected(tiledLayer);
+    Q_UNUSED(layerIndex)
+  }
+  else
+  {
+    emit layerCreated(layerIndex, tiledLayer);
+  }
 }
 
-// Helper that creates an ArcGISVectorTiledLayer from a vtpk path
-void AddLocalDataController::createVectorTiledLayer(const QString& path)
+/*
+ \brief Creates an ArcGISVectorTiledLayer with the provided VTPK path.
+
+ \list
+   \li \a path - The path to the local data source.
+   \li \a layerIndex - The index for which the layer will be added to the operational layer list.
+   \li \a visible - Whether the layer should be visible by default.
+   \li \a autoAdd - Whether the layer will be automatically added to the operational layer list.
+        If \c false, it will not add automatically. Instead, a signal will emit once the Layer has
+        been constructed.
+ \endlist
+*/void AddLocalDataController::createVectorTiledLayer(const QString& path, int layerIndex, bool visible, bool autoAdd)
 {
   ArcGISVectorTiledLayer* vectorTiledLayer = new ArcGISVectorTiledLayer(QUrl(path), this);
-
+  vectorTiledLayer->setVisible(visible);
   connect(vectorTiledLayer, &ArcGISVectorTiledLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
-  auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
-  if (operationalLayers)
-    operationalLayers->append(vectorTiledLayer);
 
-  emit layerSelected(vectorTiledLayer);
+  if (autoAdd)
+  {
+    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+    if (operationalLayers)
+      operationalLayers->append(vectorTiledLayer);
+
+    emit layerSelected(vectorTiledLayer);
+    Q_UNUSED(layerIndex)
+  }
+  else
+  {
+    emit layerCreated(layerIndex, vectorTiledLayer);
+  }
 }
 
+/*
+ \brief Returns the tool's name.
+*/
 QString AddLocalDataController::toolName() const
 {
   return QStringLiteral("add local data");
 }
 
+/*
+ \brief Sets \a properties, such as the directories to search for local data.
+*/
 void AddLocalDataController::setProperties(const QVariantMap& properties)
 {
   const QStringList filePaths = properties[LOCAL_DATAPATHS_PROPERTYNAME].toStringList();

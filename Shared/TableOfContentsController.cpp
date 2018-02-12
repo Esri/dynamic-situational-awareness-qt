@@ -165,6 +165,7 @@ TableOfContentsController::LayerGeometryType TableOfContentsController::layerGeo
   if (layer->loadStatus() != LoadStatus::Loaded && layer->loadStatus() != LoadStatus::FailedToLoad)
   {
     if (!m_layerConnections.contains(layer))
+    {
       m_layerConnections.insert(layer, connect(layer, &Layer::doneLoading, this, [this, layer](const Error& loadError)
       {
         m_layerConnections.remove(layer);
@@ -174,6 +175,7 @@ TableOfContentsController::LayerGeometryType TableOfContentsController::layerGeo
         else
           emit layerListModelChanged();
       }));
+    }
   }
 
   switch (layer->layerType())

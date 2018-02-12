@@ -37,14 +37,13 @@ class AddLocalDataController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
   Q_PROPERTY(QStringList fileFilterList READ fileFilterList NOTIFY fileFilterListChanged)
 
 public:
-  static const QString LOCAL_DATAPATHS_PROPERTYNAME;
-
   explicit AddLocalDataController(QObject* parent = nullptr);
   ~AddLocalDataController() = default;
 
   Q_INVOKABLE void addPathToDirectoryList(const QString& path);
   Q_INVOKABLE void refreshLocalDataModel(const QString& fileType = "All");
   Q_INVOKABLE void addItemAsLayer(const QList<int>& index);
+  Q_INVOKABLE void addLayerFromPath(const QString& path, int layerIndex = -1, bool visible = true, bool autoAdd = true);
   Q_INVOKABLE void addItemAsElevationSource(const QList<int>& indices);
   QAbstractListModel* localDataModel() const;
 
@@ -53,12 +52,15 @@ public:
 
   // helpers for creating the layers for a given string
   void createFeatureLayerGeodatabase(const QString& path);
+  void createFeatureLayerGeodatabaseWithId(const QString &path, int layerIndex = -1, int serviceLayerId = 0, bool visible = true, bool autoAdd = true);
   void createLayerGeoPackage(const QString& path);
-  void createFeatureLayerShapefile(const QString& path);
-  void createRasterLayer(const QString& path);
-  void createSceneLayer(const QString& path);
-  void createTiledLayer(const QString& path);
-  void createVectorTiledLayer(const QString& path);
+  void createFeatureLayerGeoPackage(const QString& path, int layerIndex = -1, int id = 0, bool visible = true, bool autoAdd = true);
+  void createRasterLayerGeoPackage(const QString& path, int layerIndex = -1, int id = 0, bool visible = true, bool autoAdd = true);
+  void createFeatureLayerShapefile(const QString& path, int layerIndex = -1, bool visible = true, bool autoAdd = true);
+  void createRasterLayer(const QString& path, int layerIndex = -1, bool visible = true, bool autoAdd = true);
+  void createSceneLayer(const QString& path, int layerIndex = -1, bool visible = true, bool autoAdd = true);
+  void createTiledLayer(const QString& path, int layerIndex = -1, bool visible = true, bool autoAdd = true);
+  void createVectorTiledLayer(const QString& path, int layerIndex = -1, bool visible = true, bool autoAdd = true);
   QStringList dataPaths() const { return m_dataPaths; }
 
 signals:
@@ -66,6 +68,7 @@ signals:
   void layerSelected(Esri::ArcGISRuntime::Layer* layer);
   void elevationSourceSelected(Esri::ArcGISRuntime::ElevationSource* source);
   void fileFilterListChanged();
+  void layerCreated(int i, Esri::ArcGISRuntime::Layer* layer);
 
 private:
   QStringList determineFileFilters(const QString& fileType);
@@ -91,6 +94,8 @@ private:
   static const QString s_sceneLayerData;
   static const QString s_vectorTilePackageData;
   static const QString s_tilePackageData;
+  static const QString LOCAL_DATAPATHS_PROPERTYNAME;
+  static const QString DEFAULT_ELEVATION_PROPERTYNAME;
 };
 
 #endif // ADDLOCALDATACONTROLLER_H

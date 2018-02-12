@@ -25,8 +25,6 @@
 #include "DrawOrderLayerListModel.h"
 #include "TableOfContentsController.h"
 
-#include <QDebug>
-
 using namespace Esri::ArcGISRuntime;
 
 TableOfContentsController::TableOfContentsController(QObject* parent /* = nullptr */):

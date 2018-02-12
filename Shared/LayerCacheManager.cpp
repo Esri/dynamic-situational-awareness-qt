@@ -104,7 +104,7 @@ LayerCacheManager::~LayerCacheManager()
 }
 
 /*
- \brief Returns the tool name
+ \brief Returns the tool's name
  */
 QString LayerCacheManager::toolName() const
 {
@@ -112,7 +112,7 @@ QString LayerCacheManager::toolName() const
 }
 
 /*
- \brief Set \a properties from the configuration file
+ \brief Sets \a properties from the configuration file
  */
 void LayerCacheManager::setProperties(const QVariantMap& properties)
 {

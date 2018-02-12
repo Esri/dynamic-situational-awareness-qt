@@ -129,9 +129,7 @@ void LayerCacheManager::setProperties(const QVariantMap& properties)
     const QString layerType = jsonObject.value(layerTypeKey).toString();
     const QString layerPath = jsonObject.value(layerPathKey).toString();
     const bool layerVisible = jsonObject.value(layerVisibleKey).toString() == "true";
-    const int layerId = jsonObject.value(layerIdKey).toInt();
-
-    qDebug() << "adding" << layerPath << jsonObject.value(layerVisibleKey);
+    const int layerId = jsonObject.value(layerIdKey).toString().toInt();
 
     if (layerType.isEmpty())
       m_localDataController->addLayerFromPath(layerPath, layerVisible);
@@ -188,6 +186,11 @@ void LayerCacheManager::layerToJson(Layer* layer)
   auto rasterLayer = dynamic_cast<RasterLayer*>(layer);
   if (rasterLayer)
   {
+    // Check if a Raster
+    auto raster = dynamic_cast<Raster*>(rasterLayer->raster());
+    if (raster)
+      layerPath = raster->path();
+
     // Check if a GeoPackage
     auto gpkgRaster = dynamic_cast<GeoPackageRaster*>(rasterLayer->raster());
     if (gpkgRaster)
@@ -196,11 +199,6 @@ void LayerCacheManager::layerToJson(Layer* layer)
       layerType = layerTypeRasterLayerGeoPackage;
       layerId = QString::number(gpkgRaster->geoPackage()->geoPackageRasters().indexOf(gpkgRaster));
     }
-
-    // Check if a Raster
-    auto raster = dynamic_cast<Raster*>(rasterLayer->raster());
-    if (raster)
-      layerPath = raster->path();
   }
 
   // Get Scene Layers

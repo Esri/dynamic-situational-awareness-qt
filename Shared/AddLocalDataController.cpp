@@ -216,19 +216,19 @@ void AddLocalDataController::addItemAsLayer(const QList<int>& indices)
       createLayerGeoPackage(dataItemPath);
       break;
     case DataType::Raster:
-      createRasterLayer(dataItemPath, -1);
+      createRasterLayer(dataItemPath);
       break;
     case DataType::SceneLayerPackage:
-      createSceneLayer(dataItemPath, -1);
+      createSceneLayer(dataItemPath);
       break;
     case DataType::Shapefile:
-      createFeatureLayerShapefile(dataItemPath, -1);
+      createFeatureLayerShapefile(dataItemPath);
       break;
     case DataType::TilePackage:
-      createTiledLayer(dataItemPath, -1);
+      createTiledLayer(dataItemPath);
       break;
     case DataType::VectorTilePackage:
-      createVectorTiledLayer(dataItemPath, -1);
+      createVectorTiledLayer(dataItemPath);
       break;
     default:
       break;
@@ -237,7 +237,7 @@ void AddLocalDataController::addItemAsLayer(const QList<int>& indices)
 }
 
 /*
- \brief Determines data type from the give \a path, and calls the appropriate helper.
+ \brief Determines data type from the given \a path, and calls the appropriate helper.
 */
 void AddLocalDataController::addLayerFromPath(const QString& path, int layerIndex, bool visible, bool autoAdd)
 {
@@ -248,7 +248,7 @@ void AddLocalDataController::addLayerFromPath(const QString& path, int layerInde
   QString fileExtension = fileInfo.completeSuffix();
 
   if (fileExtension == "geodatabase")
-    createFeatureLayerGeodatabase(path, layerIndex, visible, autoAdd);
+    createFeatureLayerGeodatabaseWithId(path, layerIndex, visible, autoAdd);
   else if (fileExtension.compare("tpk", Qt::CaseInsensitive) == 0)
     createTiledLayer(path, layerIndex, visible, autoAdd);
   else if (fileExtension.compare("shp", Qt::CaseInsensitive) == 0)
@@ -270,7 +270,10 @@ void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path)
   connect(gdb, &Geodatabase::doneLoading, this, [this, gdb](Error e)
   {
     if (!e.isEmpty())
+    {
+      emit errorOccurred(e);
       return;
+    }
 
     for (FeatureTable* featureTable : gdb->geodatabaseFeatureTables())
     {
@@ -289,19 +292,19 @@ void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path)
 }
 
 // Helper that creates a FeatureLayer with the feature table at the given id of a Geodatabase
-void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path, int layerIndex, int id, bool visible, bool autoAdd)
+void AddLocalDataController::createFeatureLayerGeodatabaseWithId(const QString& path, int layerIndex, int serviceLayerId, bool visible, bool autoAdd)
 {
   Geodatabase* gdb = new Geodatabase(path, this);
-  connect(gdb, &Geodatabase::doneLoading, this, [this, gdb, id, visible, autoAdd, layerIndex](Error e)
+  connect(gdb, &Geodatabase::doneLoading, this, [this, gdb, serviceLayerId, visible, autoAdd, layerIndex](Error e)
   {
     if (!e.isEmpty())
+    {
+      emit errorOccurred(e);
       return;
+    }
 
-    FeatureLayer* featureLayer = new FeatureLayer(gdb->geodatabaseFeatureTables().at(id), this);
+    FeatureLayer* featureLayer = new FeatureLayer(gdb->geodatabaseFeatureTable(serviceLayerId), this);
     featureLayer->setVisible(visible);
-    connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
-
-
     connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
     if (autoAdd)
@@ -329,7 +332,10 @@ void AddLocalDataController::createFeatureLayerGeoPackage(const QString& path, i
   connect(geoPackage, &GeoPackage::doneLoading, this, [this, geoPackage, id, visible, autoAdd, layerIndex](Error e)
   {
     if (!e.isEmpty())
+    {
+      emit errorOccurred(e);
       return;
+    }
 
     FeatureLayer* featureLayer = new FeatureLayer(geoPackage->geoPackageFeatureTables().at(id), this);
     featureLayer->setVisible(visible);
@@ -358,7 +364,10 @@ void AddLocalDataController::createRasterLayerGeoPackage(const QString& path, in
   connect(geoPackage, &GeoPackage::doneLoading, this, [this, geoPackage, id, visible, autoAdd, layerIndex](Error e)
   {
     if (!e.isEmpty())
+    {
+      emit errorOccurred(e);
       return;
+    }
 
     RasterLayer* rasterLayer = new RasterLayer(geoPackage->geoPackageRasters().at(id), this);
     connect(rasterLayer, &RasterLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
@@ -367,6 +376,9 @@ void AddLocalDataController::createRasterLayerGeoPackage(const QString& path, in
     if (autoAdd)
     {
       auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+      if (!operationalLayers)
+        return;
+
       operationalLayers->append(rasterLayer);
       Q_UNUSED(layerIndex)
     }
@@ -387,19 +399,25 @@ void AddLocalDataController::createLayerGeoPackage(const QString& path)
   connect(geoPackage, &GeoPackage::doneLoading, this, [this, geoPackage](Error e)
   {
     if (!e.isEmpty())
+    {
+      emit errorOccurred(e);
       return;
+    }
 
     auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
-    for (auto& table : geoPackage->geoPackageFeatureTables())
+    if (!operationalLayers)
+      return;
+
+    for (const auto& table : geoPackage->geoPackageFeatureTables())
     {
       FeatureLayer* featureLayer = new FeatureLayer(table, this);
       connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
       operationalLayers->append(featureLayer);
     }
 
-    for (auto& raster : geoPackage->geoPackageRasters())
+    for (const auto& raster : geoPackage->geoPackageRasters())
     {
-      RasterLayer* rasterLayer = new RasterLayer(raster);
+      RasterLayer* rasterLayer = new RasterLayer(raster, this);
       connect(rasterLayer, &RasterLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
       operationalLayers->append(rasterLayer);
     }

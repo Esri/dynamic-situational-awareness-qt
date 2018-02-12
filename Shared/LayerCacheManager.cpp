@@ -69,14 +69,15 @@ LayerCacheManager::LayerCacheManager(QObject* parent) :
     connect(m_localDataController, &AddLocalDataController::layerCreated, this, [this](int layerIndex, Layer* layer)
     {
       m_initialLayerCache.insert(layerIndex, layer);
+      const int layerCount = m_inputLayerJsonArray.size();
 
       // once all the layers are created, add them in the proper order
-      if (m_initialLayerCache.size() == m_inputLayerJsonArray.size())
+      if (m_initialLayerCache.size() == layerCount)
       {
         if (!m_scene)
           return;
 
-        for (int i = 0; i < m_inputLayerJsonArray.size(); i++)
+        for (int i = 0; i < layerCount; i++)
         {
           m_scene->operationalLayers()->append(m_initialLayerCache.value(i));
         }
@@ -163,7 +164,7 @@ void LayerCacheManager::setProperties(const QVariantMap& properties)
     if (layerType.isEmpty())
       m_localDataController->addLayerFromPath(layerPath, layerIndex, layerVisible, false);
     else if (layerType == layerTypeFeatureLayerGeodatabase)
-      m_localDataController->createFeatureLayerGeodatabase(layerPath, layerIndex, layerId, layerVisible, false);
+      m_localDataController->createFeatureLayerGeodatabaseWithId(layerPath, layerIndex, layerId, layerVisible, false);
     else if (layerType == layerTypeFeatureLayerGeoPackage)
       m_localDataController->createFeatureLayerGeoPackage(layerPath, layerIndex, layerId, layerVisible, false);
     else if (layerType == layerTypeRasterLayerGeoPackage)
@@ -194,7 +195,7 @@ void LayerCacheManager::layerToJson(Layer* layer)
     {
       layerPath = gdbFeatureTable->geodatabase()->path();
       layerType = layerTypeFeatureLayerGeodatabase;
-      layerId = QString::number(gdbFeatureTable->geodatabase()->geodatabaseFeatureTables().indexOf(gdbFeatureTable));
+      layerId = QString::number(gdbFeatureTable->serviceLayerId());
     }
 
     // Check if a GeoPackage
@@ -270,10 +271,15 @@ void LayerCacheManager::onLayerListChanged()
   // clear the JSON
   m_layers = QJsonArray();
 
+  const auto operationalLayers = m_scene->operationalLayers();
+  if (!operationalLayers)
+    return;
+
   // update the JSON array
-  for (int i = 0; i < m_scene->operationalLayers()->size(); i++)
+  const int count = operationalLayers->size();
+  for (int i = 0; i < count; i++)
   {
-    layerToJson(m_scene->operationalLayers()->at(i));
+    layerToJson(operationalLayers->at(i));
   }
 
   // write to the config file

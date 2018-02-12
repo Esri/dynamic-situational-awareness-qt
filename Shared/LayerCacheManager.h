@@ -44,6 +44,11 @@ private:
   static const QString LAYERS_PROPERTYNAME;
   static const QString layerPathKey;
   static const QString layerVisibleKey;
+  static const QString layerTypeKey;
+  static const QString layerIdKey;
+  static const QString layerTypeFeatureLayerGeodatabase;
+  static const QString layerTypeFeatureLayerGeoPackage;
+  static const QString layerTypeRasterLayerGeoPackage;
   QJsonArray m_layers;
   bool m_initialLoadCompleted = false;
   AddLocalDataController* m_localDataController;

@@ -43,7 +43,7 @@ public:
   Q_INVOKABLE void addPathToDirectoryList(const QString& path);
   Q_INVOKABLE void refreshLocalDataModel(const QString& fileType = "All");
   Q_INVOKABLE void addItemAsLayer(const QList<int>& index);
-  Q_INVOKABLE void addLayerFromPath(const QString& path);
+  Q_INVOKABLE void addLayerFromPath(const QString& path, bool visible = true);
   Q_INVOKABLE void addItemAsElevationSource(const QList<int>& indices);
   QAbstractListModel* localDataModel() const;
 
@@ -52,12 +52,15 @@ public:
 
   // helpers for creating the layers for a given string
   void createFeatureLayerGeodatabase(const QString& path);
+  void createFeatureLayerGeodatabase(const QString &path, int index, bool visible = true);
   void createLayerGeoPackage(const QString& path);
-  void createFeatureLayerShapefile(const QString& path);
-  void createRasterLayer(const QString& path);
-  void createSceneLayer(const QString& path);
-  void createTiledLayer(const QString& path);
-  void createVectorTiledLayer(const QString& path);
+  void createFeatureLayerGeoPackage(const QString& path, int index, bool visible = true);
+  void createRasterLayerGeoPackage(const QString& path, int index, bool visible = true);
+  void createFeatureLayerShapefile(const QString& path, bool visible = true);
+  void createRasterLayer(const QString& path, bool visible = true);
+  void createSceneLayer(const QString& path, bool visible = true);
+  void createTiledLayer(const QString& path, bool visible = true);
+  void createVectorTiledLayer(const QString& path, bool visible = true);
   QStringList dataPaths() const { return m_dataPaths; }
 
 signals:

@@ -45,6 +45,11 @@
 const QString LayerCacheManager::LAYERS_PROPERTYNAME = "Layers";
 const QString LayerCacheManager::layerPathKey = "path";
 const QString LayerCacheManager::layerVisibleKey = "visible";
+const QString LayerCacheManager::layerTypeKey = "type";
+const QString LayerCacheManager::layerIdKey = "id";
+const QString LayerCacheManager::layerTypeFeatureLayerGeodatabase = "FeatureLayerGeodatabase";
+const QString LayerCacheManager::layerTypeFeatureLayerGeoPackage = "FeatureLayerGeoPackage";
+const QString LayerCacheManager::layerTypeRasterLayerGeoPackage = "RasterLayerGeoPackage";
 
 using namespace Esri::ArcGISRuntime;
 
@@ -97,14 +102,6 @@ void LayerCacheManager::setProperties(const QVariantMap& properties)
   if (m_initialLoadCompleted)
     return;
 
-  //  Scene* scene = Toolkit::ToolResourceProvider::instance()->scene();
-  //  connect(scene, &Scene::doneLoading, this, [this](Error e)
-  //  {
-  //    //qDebug() << "Done Loading";
-  //  });
-
-  //qDebug() << "adding stuff";
- // qDebug() << properties[LAYERS_PROPERTYNAME];
   const QVariant layersData = properties.value(LAYERS_PROPERTYNAME);
   if (layersData.isNull())
     return;
@@ -116,8 +113,6 @@ void LayerCacheManager::setProperties(const QVariantMap& properties)
   QJsonArray layerJsonArray = QJsonArray::fromVariantList(layersList);
   if (layerJsonArray.isEmpty())
     return;
-
-  qDebug() << layerJsonArray.count();
 
   auto it = layerJsonArray.constBegin();
   auto itEnd = layerJsonArray.constEnd();
@@ -131,22 +126,24 @@ void LayerCacheManager::setProperties(const QVariantMap& properties)
     if (jsonObject.isEmpty())
       continue;
 
-    m_localDataController->addLayerFromPath(jsonObject.value(layerPathKey).toString());
-    //qDebug() << jsonObject.value(layerPathKey) << jsonObject.value(layerVisibleKey);
-  };
-  //  QString layerList = properties[LAYERS_PROPERTYNAME];
-  //  QJsonDocument jsonString = QJsonDocument::fromJson(layerList.toUtf8());
-  //  qDebug() << properties[LAYERS_PROPERTYNAME];
+    const QString layerType = jsonObject.value(layerTypeKey).toString();
+    const QString layerPath = jsonObject.value(layerPathKey).toString();
+    const bool layerVisible = jsonObject.value(layerVisibleKey).toString() == "true";
+    const int layerId = jsonObject.value(layerIdKey).toInt();
 
-  //  for (QString layerString : layerList)
-  //  {
-  ////    qDebug() << layerString;
-  //    QJsonObject layerJson = QJsonDocument::fromJson(layerString.toUtf8()).object();
-  ////    if (!layerJson.contains("path") || !layerJson.contains("visible"))
-  ////      continue;
-  ////    qDebug() << layerJson.value("path").toString();
-  //    m_localDataController->addLayerFromPath(layerJson.value("path").toString());
-  //  }
+    qDebug() << "adding" << layerPath << jsonObject.value(layerVisibleKey);
+
+    if (layerType.isEmpty())
+      m_localDataController->addLayerFromPath(layerPath, layerVisible);
+    else if (layerType == layerTypeFeatureLayerGeodatabase)
+      m_localDataController->createFeatureLayerGeodatabase(layerPath, layerId, layerVisible);
+    else if (layerType == layerTypeFeatureLayerGeoPackage)
+      m_localDataController->createFeatureLayerGeoPackage(layerPath, layerId, layerVisible);
+    else if (layerType == layerTypeRasterLayerGeoPackage)
+      m_localDataController->createRasterLayerGeoPackage(layerPath, layerId, layerVisible);
+
+  };
+
   m_initialLoadCompleted = true;
 }
 
@@ -156,6 +153,8 @@ void LayerCacheManager::setProperties(const QVariantMap& properties)
 void LayerCacheManager::layerToJson(Layer* layer)
 {
   QString layerPath;
+  QString layerType;
+  QString layerId;
 
   // Get Feature Layers
   auto featureLayer = dynamic_cast<FeatureLayer*>(layer);
@@ -164,12 +163,20 @@ void LayerCacheManager::layerToJson(Layer* layer)
     // Check if a Geodatabase
     auto gdbFeatureTable = dynamic_cast<GeodatabaseFeatureTable*>(featureLayer->featureTable());
     if (gdbFeatureTable)
+    {
       layerPath = gdbFeatureTable->geodatabase()->path();
+      layerType = layerTypeFeatureLayerGeodatabase;
+      layerId = QString::number(gdbFeatureTable->geodatabase()->geodatabaseFeatureTables().indexOf(gdbFeatureTable));
+    }
 
     // Check if a GeoPackage
     auto gpkgFeatureTable = dynamic_cast<GeoPackageFeatureTable*>(featureLayer->featureTable());
     if (gpkgFeatureTable)
+    {
       layerPath = gpkgFeatureTable->geoPackage()->path();
+      layerType = layerTypeFeatureLayerGeoPackage;
+      layerId = QString::number(gpkgFeatureTable->geoPackage()->geoPackageFeatureTables().indexOf(gpkgFeatureTable));
+    }
 
     // Check if a Shapefile
     auto shpFeatureTable = dynamic_cast<ShapefileFeatureTable*>(featureLayer->featureTable());
@@ -184,7 +191,11 @@ void LayerCacheManager::layerToJson(Layer* layer)
     // Check if a GeoPackage
     auto gpkgRaster = dynamic_cast<GeoPackageRaster*>(rasterLayer->raster());
     if (gpkgRaster)
+    {
       layerPath = gpkgRaster->geoPackage()->path();
+      layerType = layerTypeRasterLayerGeoPackage;
+      layerId = QString::number(gpkgRaster->geoPackage()->geoPackageRasters().indexOf(gpkgRaster));
+    }
 
     // Check if a Raster
     auto raster = dynamic_cast<Raster*>(rasterLayer->raster());
@@ -212,6 +223,11 @@ void LayerCacheManager::layerToJson(Layer* layer)
   QJsonObject layerJson;
   layerJson.insert(layerPathKey, QString(layerPath).simplified());
   layerJson.insert(layerVisibleKey, layer->isVisible() ? "true" : "false");
+  if (layerId.length() > 0)
+    layerJson.insert(layerIdKey, layerId);
+  if (layerType.length() > 0)
+    layerJson.insert(layerTypeKey, layerType);
+
   m_layers.append(layerJson);
 }
 

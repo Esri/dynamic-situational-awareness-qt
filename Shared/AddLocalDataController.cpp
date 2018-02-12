@@ -239,7 +239,7 @@ void AddLocalDataController::addItemAsLayer(const QList<int>& indices)
 /*
  \brief Determines data type from the give \a path, and calls the appropriate helper.
 */
-void AddLocalDataController::addLayerFromPath(const QString& path)
+void AddLocalDataController::addLayerFromPath(const QString& path, bool visible)
 {
   QFileInfo fileInfo(path);
   QStringList rasterExtensions{"img", "tif", "tiff", "i1", "dt0", "dt1", "dt2", "tc2", "geotiff", "hr1", "jpg", "jpeg", "jp2", "ntf", "png", "i21"};
@@ -250,17 +250,17 @@ void AddLocalDataController::addLayerFromPath(const QString& path)
   if (fileExtension == "geodatabase")
     createFeatureLayerGeodatabase(path);
   else if (fileExtension.compare("tpk", Qt::CaseInsensitive) == 0)
-    createTiledLayer(path);
+    createTiledLayer(path, visible);
   else if (fileExtension.compare("shp", Qt::CaseInsensitive) == 0)
-    createFeatureLayerShapefile(path);
+    createFeatureLayerShapefile(path, visible);
   else if (fileExtension.compare("gpkg", Qt::CaseInsensitive) == 0)
     createLayerGeoPackage(path);
   else if (fileExtension.compare("slpk", Qt::CaseInsensitive) == 0)
-    createSceneLayer(path);
+    createSceneLayer(path, visible);
   else if (fileExtension.compare("vtpk", Qt::CaseInsensitive) == 0)
-    createVectorTiledLayer(path);
+    createVectorTiledLayer(path, visible);
   else if (rasterExtensions.contains(fileExtension.toLower()))
-    createRasterLayer(path);
+    createRasterLayer(path, visible);
 }
 
 // Helper that creates a FeatureLayer for each table in the Geodatabase
@@ -286,6 +286,69 @@ void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path)
     }
   });
   gdb->load();
+}
+
+// Helper that creates a FeatureLayer with the feature table at the given index of a Geodatabase
+void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path, int index, bool visible)
+{
+  Geodatabase* gdb = new Geodatabase(path, this);
+  connect(gdb, &Geodatabase::doneLoading, this, [this, gdb, index, visible](Error e)
+  {
+    if (!e.isEmpty())
+      return;
+
+    FeatureLayer* featureLayer = new FeatureLayer(gdb->geodatabaseFeatureTables().at(index), this);
+    featureLayer->setVisible(visible);
+
+    connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+
+    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+    if (operationalLayers)
+      operationalLayers->append(featureLayer);
+
+    emit layerSelected(featureLayer);
+  });
+  gdb->load();
+}
+
+// Helper that creates a FeatureLayer for the given index of a GeoPackage
+void AddLocalDataController::createFeatureLayerGeoPackage(const QString& path, int index, bool visible)
+{
+  GeoPackage* geoPackage = new GeoPackage(path, this);
+
+  connect(geoPackage, &GeoPackage::doneLoading, this, [this, geoPackage, index, visible](Error e)
+  {
+    if (!e.isEmpty())
+      return;
+
+    FeatureLayer* featureLayer = new FeatureLayer(geoPackage->geoPackageFeatureTables().at(index), this);
+    featureLayer->setVisible(visible);
+
+    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+    operationalLayers->append(featureLayer);
+  });
+
+  geoPackage->load();
+}
+
+// Helper that creates a RasterLayer for the given index of a GeoPackage
+void AddLocalDataController::createRasterLayerGeoPackage(const QString& path, int index, bool visible)
+{
+  GeoPackage* geoPackage = new GeoPackage(path, this);
+
+  connect(geoPackage, &GeoPackage::doneLoading, this, [this, geoPackage, index, visible](Error e)
+  {
+    if (!e.isEmpty())
+      return;
+
+    RasterLayer* rasterLayer = new RasterLayer(geoPackage->geoPackageRasters().at(index), this);
+    rasterLayer->setVisible(visible);
+
+    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+    operationalLayers->append(rasterLayer);
+  });
+
+  geoPackage->load();
 }
 
 // Helper that creates a Layer for each table and raster in the GeoPackage
@@ -314,10 +377,11 @@ void AddLocalDataController::createLayerGeoPackage(const QString& path)
 }
 
 // Helper that creates a FeatureLayer from the Shapefile FeatureTable
-void AddLocalDataController::createFeatureLayerShapefile(const QString& path)
+void AddLocalDataController::createFeatureLayerShapefile(const QString& path, bool visible)
 {
   ShapefileFeatureTable* shpFt = new ShapefileFeatureTable(path, this);
   FeatureLayer* featureLayer = new FeatureLayer(shpFt, this);
+  featureLayer->setVisible(visible);
 
   auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
   if (operationalLayers)
@@ -327,10 +391,11 @@ void AddLocalDataController::createFeatureLayerShapefile(const QString& path)
 }
 
 // Helper that creates a RasterLayer from a raster file path
-void AddLocalDataController::createRasterLayer(const QString& path)
+void AddLocalDataController::createRasterLayer(const QString& path, bool visible)
 {
   Raster* raster = new Raster(path, this);
   RasterLayer* rasterLayer = new RasterLayer(raster, this);
+  rasterLayer->setVisible(visible);
 
   connect(rasterLayer, &RasterLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
   auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
@@ -341,9 +406,10 @@ void AddLocalDataController::createRasterLayer(const QString& path)
 }
 
 // Helper that creates an ArcGISSceneLayer from a slpk path
-void AddLocalDataController::createSceneLayer(const QString& path)
+void AddLocalDataController::createSceneLayer(const QString& path, bool visible)
 {
   ArcGISSceneLayer* sceneLayer = new ArcGISSceneLayer(QUrl(path), this);
+  sceneLayer->setVisible(visible);
 
   connect(sceneLayer, &ArcGISSceneLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
   auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
@@ -354,9 +420,10 @@ void AddLocalDataController::createSceneLayer(const QString& path)
 }
 
 // Helper that creates an ArcGISTiledLayer from a tpk path
-void AddLocalDataController::createTiledLayer(const QString& path)
+void AddLocalDataController::createTiledLayer(const QString& path, bool visible)
 {
   ArcGISTiledLayer* tiledLayer = new ArcGISTiledLayer(QUrl(path), this);
+  tiledLayer->setVisible(visible);
 
   connect(tiledLayer, &ArcGISTiledLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
   auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
@@ -367,9 +434,10 @@ void AddLocalDataController::createTiledLayer(const QString& path)
 }
 
 // Helper that creates an ArcGISVectorTiledLayer from a vtpk path
-void AddLocalDataController::createVectorTiledLayer(const QString& path)
+void AddLocalDataController::createVectorTiledLayer(const QString& path, bool visible)
 {
   ArcGISVectorTiledLayer* vectorTiledLayer = new ArcGISVectorTiledLayer(QUrl(path), this);
+  vectorTiledLayer->setVisible(visible);
 
   connect(vectorTiledLayer, &ArcGISVectorTiledLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
   auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();

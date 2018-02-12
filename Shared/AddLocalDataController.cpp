@@ -216,19 +216,19 @@ void AddLocalDataController::addItemAsLayer(const QList<int>& indices)
       createLayerGeoPackage(dataItemPath);
       break;
     case DataType::Raster:
-      createRasterLayer(dataItemPath);
+      createRasterLayer(dataItemPath, -1);
       break;
     case DataType::SceneLayerPackage:
-      createSceneLayer(dataItemPath);
+      createSceneLayer(dataItemPath, -1);
       break;
     case DataType::Shapefile:
-      createFeatureLayerShapefile(dataItemPath);
+      createFeatureLayerShapefile(dataItemPath, -1);
       break;
     case DataType::TilePackage:
-      createTiledLayer(dataItemPath);
+      createTiledLayer(dataItemPath, -1);
       break;
     case DataType::VectorTilePackage:
-      createVectorTiledLayer(dataItemPath);
+      createVectorTiledLayer(dataItemPath, -1);
       break;
     default:
       break;
@@ -239,7 +239,7 @@ void AddLocalDataController::addItemAsLayer(const QList<int>& indices)
 /*
  \brief Determines data type from the give \a path, and calls the appropriate helper.
 */
-void AddLocalDataController::addLayerFromPath(const QString& path, bool visible)
+void AddLocalDataController::addLayerFromPath(const QString& path, int layerIndex, bool visible, bool autoAdd)
 {
   QFileInfo fileInfo(path);
   QStringList rasterExtensions{"img", "tif", "tiff", "i1", "dt0", "dt1", "dt2", "tc2", "geotiff", "hr1", "jpg", "jpeg", "jp2", "ntf", "png", "i21"};
@@ -248,19 +248,19 @@ void AddLocalDataController::addLayerFromPath(const QString& path, bool visible)
   QString fileExtension = fileInfo.completeSuffix();
 
   if (fileExtension == "geodatabase")
-    createFeatureLayerGeodatabase(path);
+    createFeatureLayerGeodatabase(path, layerIndex, visible, autoAdd);
   else if (fileExtension.compare("tpk", Qt::CaseInsensitive) == 0)
-    createTiledLayer(path, visible);
+    createTiledLayer(path, layerIndex, visible, autoAdd);
   else if (fileExtension.compare("shp", Qt::CaseInsensitive) == 0)
-    createFeatureLayerShapefile(path, visible);
+    createFeatureLayerShapefile(path, layerIndex, visible, autoAdd);
   else if (fileExtension.compare("gpkg", Qt::CaseInsensitive) == 0)
     createLayerGeoPackage(path);
   else if (fileExtension.compare("slpk", Qt::CaseInsensitive) == 0)
-    createSceneLayer(path, visible);
+    createSceneLayer(path, layerIndex, visible, autoAdd);
   else if (fileExtension.compare("vtpk", Qt::CaseInsensitive) == 0)
-    createVectorTiledLayer(path, visible);
+    createVectorTiledLayer(path, layerIndex, visible, autoAdd);
   else if (rasterExtensions.contains(fileExtension.toLower()))
-    createRasterLayer(path, visible);
+    createRasterLayer(path, layerIndex, visible, autoAdd);
 }
 
 // Helper that creates a FeatureLayer for each table in the Geodatabase
@@ -288,64 +288,92 @@ void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path)
   gdb->load();
 }
 
-// Helper that creates a FeatureLayer with the feature table at the given index of a Geodatabase
-void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path, int index, bool visible)
+// Helper that creates a FeatureLayer with the feature table at the given id of a Geodatabase
+void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path, int layerIndex, int id, bool visible, bool autoAdd)
 {
   Geodatabase* gdb = new Geodatabase(path, this);
-  connect(gdb, &Geodatabase::doneLoading, this, [this, gdb, index, visible](Error e)
+  connect(gdb, &Geodatabase::doneLoading, this, [this, gdb, id, visible, autoAdd, layerIndex](Error e)
   {
     if (!e.isEmpty())
       return;
 
-    FeatureLayer* featureLayer = new FeatureLayer(gdb->geodatabaseFeatureTables().at(index), this);
+    FeatureLayer* featureLayer = new FeatureLayer(gdb->geodatabaseFeatureTables().at(id), this);
     featureLayer->setVisible(visible);
+    connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+
 
     connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
-    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
-    if (operationalLayers)
-      operationalLayers->append(featureLayer);
+    if (autoAdd)
+    {
+      auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+      if (operationalLayers)
+        operationalLayers->append(featureLayer);
 
-    emit layerSelected(featureLayer);
+      emit layerSelected(featureLayer);
+      Q_UNUSED(layerIndex)
+    }
+    else
+    {
+      emit layerCreated(layerIndex, featureLayer);
+    }
   });
   gdb->load();
 }
 
 // Helper that creates a FeatureLayer for the given index of a GeoPackage
-void AddLocalDataController::createFeatureLayerGeoPackage(const QString& path, int index, bool visible)
+void AddLocalDataController::createFeatureLayerGeoPackage(const QString& path, int layerIndex, int id, bool visible, bool autoAdd)
 {
   GeoPackage* geoPackage = new GeoPackage(path, this);
 
-  connect(geoPackage, &GeoPackage::doneLoading, this, [this, geoPackage, index, visible](Error e)
+  connect(geoPackage, &GeoPackage::doneLoading, this, [this, geoPackage, id, visible, autoAdd, layerIndex](Error e)
   {
     if (!e.isEmpty())
       return;
 
-    FeatureLayer* featureLayer = new FeatureLayer(geoPackage->geoPackageFeatureTables().at(index), this);
+    FeatureLayer* featureLayer = new FeatureLayer(geoPackage->geoPackageFeatureTables().at(id), this);
     featureLayer->setVisible(visible);
+    connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
-    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
-    operationalLayers->append(featureLayer);
+    if (autoAdd)
+    {
+      auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+      operationalLayers->append(featureLayer);
+      Q_UNUSED(layerIndex)
+    }
+    else
+    {
+      emit layerCreated(layerIndex, featureLayer);
+    }
   });
 
   geoPackage->load();
 }
 
 // Helper that creates a RasterLayer for the given index of a GeoPackage
-void AddLocalDataController::createRasterLayerGeoPackage(const QString& path, int index, bool visible)
+void AddLocalDataController::createRasterLayerGeoPackage(const QString& path, int layerIndex, int id, bool visible, bool autoAdd)
 {
   GeoPackage* geoPackage = new GeoPackage(path, this);
 
-  connect(geoPackage, &GeoPackage::doneLoading, this, [this, geoPackage, index, visible](Error e)
+  connect(geoPackage, &GeoPackage::doneLoading, this, [this, geoPackage, id, visible, autoAdd, layerIndex](Error e)
   {
     if (!e.isEmpty())
       return;
 
-    RasterLayer* rasterLayer = new RasterLayer(geoPackage->geoPackageRasters().at(index), this);
+    RasterLayer* rasterLayer = new RasterLayer(geoPackage->geoPackageRasters().at(id), this);
+    connect(rasterLayer, &RasterLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
     rasterLayer->setVisible(visible);
 
-    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
-    operationalLayers->append(rasterLayer);
+    if (autoAdd)
+    {
+      auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+      operationalLayers->append(rasterLayer);
+      Q_UNUSED(layerIndex)
+    }
+    else
+    {
+      emit layerCreated(layerIndex, rasterLayer);
+    }
   });
 
   geoPackage->load();
@@ -364,12 +392,16 @@ void AddLocalDataController::createLayerGeoPackage(const QString& path)
     auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
     for (auto& table : geoPackage->geoPackageFeatureTables())
     {
-      operationalLayers->append(new FeatureLayer(table, this));
+      FeatureLayer* featureLayer = new FeatureLayer(table, this);
+      connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+      operationalLayers->append(featureLayer);
     }
 
     for (auto& raster : geoPackage->geoPackageRasters())
     {
-      operationalLayers->append(new RasterLayer(raster, this));
+      RasterLayer* rasterLayer = new RasterLayer(raster);
+      connect(rasterLayer, &RasterLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+      operationalLayers->append(rasterLayer);
     }
   });
 
@@ -377,74 +409,115 @@ void AddLocalDataController::createLayerGeoPackage(const QString& path)
 }
 
 // Helper that creates a FeatureLayer from the Shapefile FeatureTable
-void AddLocalDataController::createFeatureLayerShapefile(const QString& path, bool visible)
+void AddLocalDataController::createFeatureLayerShapefile(const QString& path, int layerIndex, bool visible, bool autoAdd)
 {
   ShapefileFeatureTable* shpFt = new ShapefileFeatureTable(path, this);
   FeatureLayer* featureLayer = new FeatureLayer(shpFt, this);
   featureLayer->setVisible(visible);
+  connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
-  auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
-  if (operationalLayers)
-    operationalLayers->append(featureLayer);
+  if (autoAdd)
+  {
+    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+    if (operationalLayers)
+      operationalLayers->append(featureLayer);
 
-  emit layerSelected(featureLayer);
+    emit layerSelected(featureLayer);
+    Q_UNUSED(layerIndex)
+  }
+  else
+  {
+    emit layerCreated(layerIndex, featureLayer);
+  }
 }
 
 // Helper that creates a RasterLayer from a raster file path
-void AddLocalDataController::createRasterLayer(const QString& path, bool visible)
+void AddLocalDataController::createRasterLayer(const QString& path, int layerIndex, bool visible, bool autoAdd)
 {
   Raster* raster = new Raster(path, this);
   RasterLayer* rasterLayer = new RasterLayer(raster, this);
   rasterLayer->setVisible(visible);
-
   connect(rasterLayer, &RasterLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
-  auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
-  if (operationalLayers)
-    operationalLayers->append(rasterLayer);
 
-  emit layerSelected(rasterLayer);
+  if (autoAdd)
+  {
+    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+    if (operationalLayers)
+      operationalLayers->append(rasterLayer);
+
+    emit layerSelected(rasterLayer);
+    Q_UNUSED(layerIndex)
+  }
+  else
+  {
+    emit layerCreated(layerIndex, rasterLayer);
+  }
 }
 
 // Helper that creates an ArcGISSceneLayer from a slpk path
-void AddLocalDataController::createSceneLayer(const QString& path, bool visible)
+void AddLocalDataController::createSceneLayer(const QString& path, int layerIndex, bool visible, bool autoAdd)
 {
   ArcGISSceneLayer* sceneLayer = new ArcGISSceneLayer(QUrl(path), this);
   sceneLayer->setVisible(visible);
-
   connect(sceneLayer, &ArcGISSceneLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
-  auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
-  if (operationalLayers)
-    operationalLayers->append(sceneLayer);
 
-  emit layerSelected(sceneLayer);
+  if (autoAdd)
+  {
+    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+    if (operationalLayers)
+      operationalLayers->append(sceneLayer);
+
+    emit layerSelected(sceneLayer);
+    Q_UNUSED(layerIndex)
+  }
+  else
+  {
+    emit layerCreated(layerIndex, sceneLayer);
+  }
 }
 
 // Helper that creates an ArcGISTiledLayer from a tpk path
-void AddLocalDataController::createTiledLayer(const QString& path, bool visible)
+void AddLocalDataController::createTiledLayer(const QString& path, int layerIndex, bool visible, bool autoAdd)
 {
   ArcGISTiledLayer* tiledLayer = new ArcGISTiledLayer(QUrl(path), this);
   tiledLayer->setVisible(visible);
-
   connect(tiledLayer, &ArcGISTiledLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
-  auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
-  if (operationalLayers)
-    operationalLayers->append(tiledLayer);
 
-  emit layerSelected(tiledLayer);
+  if (autoAdd)
+  {
+    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+    if (operationalLayers)
+      operationalLayers->append(tiledLayer);
+
+    emit layerSelected(tiledLayer);
+    Q_UNUSED(layerIndex)
+  }
+  else
+  {
+    emit layerCreated(layerIndex, tiledLayer);
+  }
 }
 
 // Helper that creates an ArcGISVectorTiledLayer from a vtpk path
-void AddLocalDataController::createVectorTiledLayer(const QString& path, bool visible)
+void AddLocalDataController::createVectorTiledLayer(const QString& path, int layerIndex, bool visible, bool autoAdd)
 {
   ArcGISVectorTiledLayer* vectorTiledLayer = new ArcGISVectorTiledLayer(QUrl(path), this);
   vectorTiledLayer->setVisible(visible);
-
   connect(vectorTiledLayer, &ArcGISVectorTiledLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
-  auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
-  if (operationalLayers)
-    operationalLayers->append(vectorTiledLayer);
 
-  emit layerSelected(vectorTiledLayer);
+  if (autoAdd)
+  {
+    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+    if (operationalLayers)
+      operationalLayers->append(vectorTiledLayer);
+
+    emit layerSelected(vectorTiledLayer);
+    Q_UNUSED(layerIndex)
+  }
+  else
+  {
+    emit layerCreated(layerIndex, vectorTiledLayer);
+  }
 }
 
 QString AddLocalDataController::toolName() const

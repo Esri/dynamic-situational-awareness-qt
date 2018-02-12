@@ -50,10 +50,12 @@ private:
   static const QString layerTypeFeatureLayerGeoPackage;
   static const QString layerTypeRasterLayerGeoPackage;
   QJsonArray m_layers;
+  QJsonArray m_inputLayerJsonArray;
   bool m_initialLoadCompleted = false;
   AddLocalDataController* m_localDataController;
   Esri::ArcGISRuntime::Scene* m_scene;
   void layerToJson(Esri::ArcGISRuntime::Layer* layer);
+  QHash<int, Esri::ArcGISRuntime::Layer*> m_initialLayerCache;
 };
 
 #endif // LAYERCACHEMANAGER_H

@@ -63,6 +63,26 @@ LayerCacheManager::LayerCacheManager(QObject* parent) :
 
   // obtain Add Local Data Controller
   m_localDataController = Toolkit::ToolManager::instance().tool<AddLocalDataController>();
+  if (m_localDataController)
+  {
+    // cache the created layers
+    connect(m_localDataController, &AddLocalDataController::layerCreated, this, [this](int layerIndex, Layer* layer)
+    {
+      m_initialLayerCache.insert(layerIndex, layer);
+
+      // once all the layers are created, add them in the proper order
+      if (m_initialLayerCache.size() == m_inputLayerJsonArray.size())
+      {
+        if (!m_scene)
+          return;
+
+        for (int i = 0; i < m_inputLayerJsonArray.size(); i++)
+        {
+          m_scene->operationalLayers()->append(m_initialLayerCache.value(i));
+        }
+      }
+    });
+  }
 
   // obtain Scene and connect slot
   m_scene = Toolkit::ToolResourceProvider::instance()->scene();
@@ -90,7 +110,6 @@ QString LayerCacheManager::toolName() const
   return QStringLiteral("Layer Cache Manager");
 }
 
-
 /*
  \brief Set \a properties from the configuration file
  */
@@ -104,18 +123,28 @@ void LayerCacheManager::setProperties(const QVariantMap& properties)
 
   const QVariant layersData = properties.value(LAYERS_PROPERTYNAME);
   if (layersData.isNull())
+  {
+    m_initialLoadCompleted = true;
     return;
+  }
 
   const auto layersList = layersData.toList();
   if (layersList.isEmpty())
+  {
+    m_initialLoadCompleted = true;
     return;
+  }
 
-  QJsonArray layerJsonArray = QJsonArray::fromVariantList(layersList);
-  if (layerJsonArray.isEmpty())
+  m_inputLayerJsonArray = QJsonArray::fromVariantList(layersList);
+  if (m_inputLayerJsonArray.isEmpty())
+  {
+    m_initialLoadCompleted = true;
     return;
+  }
 
-  auto it = layerJsonArray.constBegin();
-  auto itEnd = layerJsonArray.constEnd();
+  auto it = m_inputLayerJsonArray.constBegin();
+  auto itEnd = m_inputLayerJsonArray.constEnd();
+  int layerIndex = 0;
   for (; it != itEnd; ++it)
   {
     const QJsonValue jsonVal = *it;
@@ -132,14 +161,15 @@ void LayerCacheManager::setProperties(const QVariantMap& properties)
     const int layerId = jsonObject.value(layerIdKey).toString().toInt();
 
     if (layerType.isEmpty())
-      m_localDataController->addLayerFromPath(layerPath, layerVisible);
+      m_localDataController->addLayerFromPath(layerPath, layerIndex, layerVisible, false);
     else if (layerType == layerTypeFeatureLayerGeodatabase)
-      m_localDataController->createFeatureLayerGeodatabase(layerPath, layerId, layerVisible);
+      m_localDataController->createFeatureLayerGeodatabase(layerPath, layerIndex, layerId, layerVisible, false);
     else if (layerType == layerTypeFeatureLayerGeoPackage)
-      m_localDataController->createFeatureLayerGeoPackage(layerPath, layerId, layerVisible);
+      m_localDataController->createFeatureLayerGeoPackage(layerPath, layerIndex, layerId, layerVisible, false);
     else if (layerType == layerTypeRasterLayerGeoPackage)
-      m_localDataController->createRasterLayerGeoPackage(layerPath, layerId, layerVisible);
+      m_localDataController->createRasterLayerGeoPackage(layerPath, layerIndex, layerId, layerVisible, false);
 
+    layerIndex++;
   };
 
   m_initialLoadCompleted = true;
@@ -234,6 +264,9 @@ void LayerCacheManager::layerToJson(Layer* layer)
 */
 void LayerCacheManager::onLayerListChanged()
 {
+  if (!m_initialLoadCompleted)
+    return;
+
   // clear the JSON
   m_layers = QJsonArray();
 

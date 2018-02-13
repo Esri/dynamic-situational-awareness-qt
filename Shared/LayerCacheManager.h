@@ -36,12 +36,14 @@ public:
 
   QString toolName() const override;
   void setProperties(const QVariantMap& properties) override;
+
   void layerToJson(Esri::ArcGISRuntime::Layer* layer);
+  void jsonToLayer(QJsonObject jsonObject, const int layerIndex);
   QJsonArray layerJson() const;
-  void clearLayerJson();
 
 signals:
   void layerJsonChanged();
+  void jsonToLayerCompleted(Esri::ArcGISRuntime::Layer* layer);
 
 private slots:
   void onLayerListChanged();

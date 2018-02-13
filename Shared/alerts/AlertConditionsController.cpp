@@ -152,6 +152,8 @@ void AlertConditionsController::setProperties(const QVariantMap& properties)
 
       m_messageFeedTypesToNames.insert(messageFeedConfig.at(1), messageFeedConfig.at(0));
     }
+
+    onLayersChanged();
   }
 
   const QVariant conditionsData = properties.value(AlertConstants::ALERT_CONDITIONS_PROPERTYNAME);
@@ -959,6 +961,9 @@ void AlertConditionsController::addStoredConditions()
   auto itEnd = m_storedConditions.constEnd();
   for (; it != itEnd; ++it)
   {
+    // block signals while we are adding each stored condition
+    QSignalBlocker blocker(this);
+    Q_UNUSED(blocker)
     const QJsonObject& stored = *it;
     if (addConditionFromJson(stored))
       addedConditions.append(stored);
@@ -966,6 +971,9 @@ void AlertConditionsController::addStoredConditions()
 
   for (const QJsonObject& added : addedConditions)
     m_storedConditions.removeOne(added);
+
+  // emit once for all conditions (including stored)
+  onConditionsChanged();
 }
 
 /*!

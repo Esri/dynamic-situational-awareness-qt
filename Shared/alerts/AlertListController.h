@@ -29,8 +29,6 @@ namespace ArcGISRuntime
   class SimpleMarkerSceneSymbol;
 }}
 
-class QTimer;
-
 class PointHighlighter;
 
 class AlertListController : public Esri::ArcGISRuntime::Toolkit::AbstractTool

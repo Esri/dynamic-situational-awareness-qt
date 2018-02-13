@@ -265,7 +265,6 @@ void AlertConditionData::handleDataChanged()
   m_queryOutOfDate = false;
 
   // if the active state still matches that returned by the query, no changes are required
-  if (isActive() == m_cachedQueryResult)
   if (m_active == m_cachedQueryResult)
     return;
 

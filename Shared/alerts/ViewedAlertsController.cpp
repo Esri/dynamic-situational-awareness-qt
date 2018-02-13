@@ -60,8 +60,12 @@ QString ViewedAlertsController::toolName() const
 
 void ViewedAlertsController::handleDataChanged()
 {
+  const int oldCount = m_cachedCount;
   m_cachedCount = -1;
-  emit unviewedCountChanged();
+  m_cachedCount = unviewedCount();
+
+  if (oldCount != m_cachedCount)
+    emit unviewedCountChanged();
 }
 
 /*!

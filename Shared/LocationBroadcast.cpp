@@ -369,11 +369,15 @@ void LocationBroadcast::broadcastLocation()
  */
 void LocationBroadcast::removeBroadcast()
 {
-  m_message.setMessageAction(Message::MessageAction::Remove);
+  if (!m_message.isEmpty())
+  {
+    m_message.setMessageAction(Message::MessageAction::Remove);
 
-  emit messageChanged();
+    emit messageChanged();
 
-  m_messageSender->sendMessage(m_message.toGeoMessage());
+    if (m_messageSender)
+      m_messageSender->sendMessage(m_message.toGeoMessage());
+  }
 }
 
 /*!

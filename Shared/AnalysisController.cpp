@@ -20,7 +20,6 @@
 #include "GeoElementViewshed.h"
 #include "LocationController.h"
 #include "LocationDisplay3d.h"
-#include "IdentifyController.h"
 
 using namespace Esri::ArcGISRuntime;
 

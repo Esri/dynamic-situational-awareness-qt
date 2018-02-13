@@ -63,6 +63,7 @@ LayerCacheManager::LayerCacheManager(QObject* parent) :
 
   // obtain Add Local Data Controller
   m_localDataController = Toolkit::ToolManager::instance().tool<AddLocalDataController>();
+
   if (m_localDataController)
   {
     // cache the created layers
@@ -70,6 +71,7 @@ LayerCacheManager::LayerCacheManager(QObject* parent) :
     {
       m_initialLayerCache.insert(layerIndex, layer);
       const int layerCount = m_inputLayerJsonArray.size();
+      emit jsonToLayerCompleted(layer);
 
       // once all the layers are created, add them in the proper order
       if (m_initialLayerCache.size() == layerCount)
@@ -156,19 +158,7 @@ void LayerCacheManager::setProperties(const QVariantMap& properties)
     if (jsonObject.isEmpty())
       continue;
 
-    const QString layerType = jsonObject.value(layerTypeKey).toString();
-    const QString layerPath = jsonObject.value(layerPathKey).toString();
-    const bool layerVisible = jsonObject.value(layerVisibleKey).toString() == "true";
-    const int layerId = jsonObject.value(layerIdKey).toString().toInt();
-
-    if (layerType.isEmpty())
-      m_localDataController->addLayerFromPath(layerPath, layerIndex, layerVisible, false);
-    else if (layerType == layerTypeFeatureLayerGeodatabase)
-      m_localDataController->createFeatureLayerGeodatabaseWithId(layerPath, layerIndex, layerId, layerVisible, false);
-    else if (layerType == layerTypeFeatureLayerGeoPackage)
-      m_localDataController->createFeatureLayerGeoPackage(layerPath, layerIndex, layerId, layerVisible, false);
-    else if (layerType == layerTypeRasterLayerGeoPackage)
-      m_localDataController->createRasterLayerGeoPackage(layerPath, layerIndex, layerId, layerVisible, false);
+    jsonToLayer(jsonObject, layerIndex);
 
     layerIndex++;
   };
@@ -177,7 +167,34 @@ void LayerCacheManager::setProperties(const QVariantMap& properties)
 }
 
 /*
+ \brief Creates a Layer from the provided \a jsonObject and adds at the given \a layerIndex.
+
+  Obtain the output Layer through the \l jsonToLayerCompleted() signal.
+*/
+void LayerCacheManager::jsonToLayer(const QJsonObject& jsonObject, const int layerIndex)
+{
+  if (!m_localDataController)
+    return;
+
+  const QString layerType = jsonObject.value(layerTypeKey).toString();
+  const QString layerPath = jsonObject.value(layerPathKey).toString();
+  const bool layerVisible = jsonObject.value(layerVisibleKey).toString() == "true";
+  const int layerId = jsonObject.value(layerIdKey).toString().toInt();
+
+  if (layerType.isEmpty())
+    m_localDataController->addLayerFromPath(layerPath, layerIndex, layerVisible, false);
+  else if (layerType == layerTypeFeatureLayerGeodatabase)
+    m_localDataController->createFeatureLayerGeodatabaseWithId(layerPath, layerIndex, layerId, layerVisible, false);
+  else if (layerType == layerTypeFeatureLayerGeoPackage)
+    m_localDataController->createFeatureLayerGeoPackage(layerPath, layerIndex, layerId, layerVisible, false);
+  else if (layerType == layerTypeRasterLayerGeoPackage)
+    m_localDataController->createRasterLayerGeoPackage(layerPath, layerIndex, layerId, layerVisible, false);
+}
+
+/*
  \brief Updates the layer list cache with the provided \a layer.
+
+ Obtain the updated JSON from \l layerJson() after layerJsonChanged() emits.
  */
 void LayerCacheManager::layerToJson(Layer* layer)
 {
@@ -258,6 +275,7 @@ void LayerCacheManager::layerToJson(Layer* layer)
     layerJson.insert(layerTypeKey, layerType);
 
   m_layers.append(layerJson);
+  emit layerJsonChanged();
 }
 
 /*
@@ -284,4 +302,12 @@ void LayerCacheManager::onLayerListChanged()
 
   // write to the config file
   emit propertyChanged(LAYERS_PROPERTYNAME, m_layers.toVariantList());
+}
+
+/*
+ \brief Returns the layer JSON array.
+*/
+QJsonArray LayerCacheManager::layerJson() const
+{
+  return m_layers;
 }

@@ -142,7 +142,6 @@ DsaPanel {
 
                 RangeSlider {
                     anchors.verticalCenter: parent.verticalCenter
-                    enabled: toolController.viewshedEnabled
                     orientation: Qt.Horizontal
                     from: 1
                     to: 2000
@@ -192,12 +191,13 @@ DsaPanel {
                 spacing: 5 * scaleFactor
 
                 Slider {
+                    id: horizontalAngleSlider
                     anchors.verticalCenter: parent.verticalCenter
                     width: parent.width * 0.66
-                    enabled: toolController.viewshedEnabled
+                    enabled: !toolController.viewshed360Override
                     orientation: Qt.Horizontal
                     from: 0
-                    to: 120
+                    to: toolController.viewshed360Override ? 360 : 120
                     value: toolController.horizontalAngle
                     stepSize: 1
                     snapMode: Slider.SnapAlways
@@ -215,6 +215,15 @@ DsaPanel {
                     text: Math.round(toolController.horizontalAngle) + "°"
                     color: Material.foreground
                     font.pixelSize: 14 * scaleFactor
+                }
+
+                OverlayButton {
+                    visible: toolController.viewshedTypeIndex === 1
+                    iconUrl: DsaResources.iconRotate
+                    onClicked: {
+                        selected = !selected;
+                        toolController.viewshed360Override = !toolController.viewshed360Override;
+                    }
                 }
             }
         }
@@ -240,10 +249,10 @@ DsaPanel {
                 Slider {
                     anchors.verticalCenter: parent.verticalCenter
                     width: parent.width * 0.66
-                    enabled: toolController.viewshedEnabled
+                    enabled: !toolController.viewshed360Override
                     orientation: Qt.Horizontal
                     from: 0
-                    to: 180
+                    to: 120
                     value: toolController.verticalAngle
                     stepSize: 1
                     snapMode: Slider.SnapAlways
@@ -286,7 +295,6 @@ DsaPanel {
                 Slider {
                     anchors.verticalCenter: parent.verticalCenter
                     width: parent.width * 0.66
-                    enabled: toolController.viewshedEnabled
                     orientation: Qt.Horizontal
                     from: 0
                     to: 359
@@ -295,7 +303,6 @@ DsaPanel {
                     snapMode: Slider.SnapAlways
 
                     onValueChanged: {
-                        live = true;
                         toolController.heading = value;
                     }
                 }
@@ -333,10 +340,9 @@ DsaPanel {
                 Slider {
                     anchors.verticalCenter: parent.verticalCenter
                     width:  parent.width * 0.66
-                    enabled: toolController.viewshedEnabled
                     orientation: Qt.Horizontal
-                    from: 0
-                    to: 179
+                    from: toolController.viewshedTypeIndex == 0 ? 0 : -90
+                    to: toolController.viewshedTypeIndex == 0 ? 179 : 90
                     value: toolController.pitch
                     stepSize: 2
                     snapMode: Slider.SnapAlways

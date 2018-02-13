@@ -14,6 +14,7 @@
 #define ANALYSISCONTROLLER_H
 
 #include "AbstractTool.h"
+#include "TaskWatcher.h"
 
 #include <QPoint>
 
@@ -42,6 +43,7 @@ class AnalysisController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
   Q_PROPERTY(double verticalAngle READ verticalAngle WRITE setVerticalAngle NOTIFY verticalAngleChanged)
   Q_PROPERTY(double heading READ heading WRITE setHeading NOTIFY headingChanged)
   Q_PROPERTY(double pitch READ pitch WRITE setPitch NOTIFY pitchChanged)
+  Q_PROPERTY(bool viewshed360Override READ isViewshed360Override WRITE setViewshed360Override NOTIFY viewshed360OverrideChanged)
 
 signals:
   void viewshedEnabledChanged();
@@ -53,6 +55,7 @@ signals:
   void verticalAngleChanged();
   void headingChanged();
   void pitchChanged();
+  void viewshed360OverrideChanged();
 
 public:
   static const QString MAP_POINT_VIEWSHED_TYPE;
@@ -93,6 +96,9 @@ public:
   double pitch() const;
   void setPitch(double pitch);
 
+  bool isViewshed360Override() const;
+  void setViewshed360Override(bool viewshed360Override);
+
   QString toolName() const override;
 
 private:
@@ -103,6 +109,9 @@ private:
   void updateMapPointViewshed(QMouseEvent& event);
   void updateMyLocationViewshed();
   void updateFriendlyTrackViewshed(QMouseEvent& event);
+  void createViewsheds360Offsets();
+
+  void emitAllChanged();
 
   bool m_viewshedEnabled = false;
 
@@ -111,6 +120,7 @@ private:
   Esri::ArcGISRuntime::GraphicsOverlay* m_graphicsOverlay = nullptr;
   Esri::ArcGISRuntime::Graphic* m_locationViewshedGraphic = nullptr;
   QList<Esri::ArcGISRuntime::Viewshed*> m_viewsheds;
+  QList<Esri::ArcGISRuntime::Viewshed*> m_viewsheds360Offsets;
 
   bool m_viewshedVisibleDefault = true;
   QStringList m_viewshedTypes;
@@ -120,7 +130,13 @@ private:
   double m_horizontalAngleDefault = 120;
   double m_verticalAngleDefault = 90;
   double m_headingDefault = 0;
+  double m_headingOffsetDefault = 0;
   double m_pitchDefault = 90;
+  double m_pitchOffsetDefault = 0;
+  bool m_viewshed360Override = false;
+
+  Esri::ArcGISRuntime::TaskWatcher m_identifyTaskWatcher;
+  QMetaObject::Connection m_identifyConn;
 };
 
 #endif // ANALYSISCONTROLLER_H

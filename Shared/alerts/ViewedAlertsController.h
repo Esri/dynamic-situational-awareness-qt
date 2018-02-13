@@ -39,6 +39,12 @@ public:
 
 signals:
   void unviewedCountChanged();
+
+private slots:
+  void handleDataChanged();
+
+private:
+  mutable int m_cachedCount = -1;
 };
 
 #endif // VIEWEDALERTSCONTROLLER_H

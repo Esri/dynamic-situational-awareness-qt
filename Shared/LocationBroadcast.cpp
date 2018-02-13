@@ -72,6 +72,7 @@ LocationBroadcast::LocationBroadcast(const QString& messageType, int udpPort, QO
  */
 LocationBroadcast::~LocationBroadcast()
 {
+  removeBroadcast();
 }
 
 /*!
@@ -353,6 +354,22 @@ void LocationBroadcast::broadcastLocation()
     attribs.insert(Message::GEOMESSAGE_STATUS_911_NAME, status911);
     m_message.setAttributes(attribs);
   }
+
+  emit messageChanged();
+
+  m_messageSender->sendMessage(m_message.toGeoMessage());
+}
+
+/*!
+   \internal
+   \brief Removes the location broadcast by broadcasting
+   a message with the Message::MessageAction::Remove action.
+
+   This function is called at the time of the object's destruction.
+ */
+void LocationBroadcast::removeBroadcast()
+{
+  m_message.setMessageAction(Message::MessageAction::Remove);
 
   emit messageChanged();
 

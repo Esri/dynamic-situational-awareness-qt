@@ -61,6 +61,7 @@ private:
 
   void update();
   void broadcastLocation();
+  void removeBroadcast();
 
   bool m_enabled = true;
   Esri::ArcGISRuntime::Point m_location;

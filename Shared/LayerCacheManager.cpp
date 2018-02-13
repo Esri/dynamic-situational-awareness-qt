@@ -166,7 +166,12 @@ void LayerCacheManager::setProperties(const QVariantMap& properties)
   m_initialLoadCompleted = true;
 }
 
-void LayerCacheManager::jsonToLayer(QJsonObject jsonObject, const int layerIndex)
+/*
+ \brief Creates a Layer from the provided \a jsonObject and adds at the given \a index.
+
+  Obtain the output Layer through the \l jsonToLayerCompleted() signal.
+*/
+void LayerCacheManager::jsonToLayer(const QJsonObject& jsonObject, const int layerIndex)
 {
   if (!m_localDataController)
     return;
@@ -188,6 +193,8 @@ void LayerCacheManager::jsonToLayer(QJsonObject jsonObject, const int layerIndex
 
 /*
  \brief Updates the layer list cache with the provided \a layer.
+
+ Obtain the updated JSON from \l layerJson() after layerJsonChanged() emits.
  */
 void LayerCacheManager::layerToJson(Layer* layer)
 {

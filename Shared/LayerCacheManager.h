@@ -38,7 +38,7 @@ public:
   void setProperties(const QVariantMap& properties) override;
 
   void layerToJson(Esri::ArcGISRuntime::Layer* layer);
-  void jsonToLayer(QJsonObject jsonObject, const int layerIndex);
+  void jsonToLayer(const QJsonObject& jsonObject, const int layerIndex = -1);
   QJsonArray layerJson() const;
 
 signals:

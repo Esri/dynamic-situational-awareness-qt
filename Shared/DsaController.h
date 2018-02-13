@@ -27,8 +27,14 @@ namespace ArcGISRuntime
   class Error;
   class Scene;
   class GeoView;
+  class Layer;
+
 }
 }
+
+class LayerCacheManager;
+
+#include <QJsonArray>
 
 class DsaController : public QObject
 {
@@ -61,6 +67,7 @@ private:
   void writeDefaultMessageFeeds();
 
   Esri::ArcGISRuntime::Scene* m_scene = nullptr;
+  LayerCacheManager* m_cacheManager = nullptr;
 
   QString m_dataPath;
   QVariantMap m_dsaSettings;

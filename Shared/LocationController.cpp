@@ -239,6 +239,11 @@ Point LocationController::currentLocation() const
   return m_currentLocation;
 }
 
+LocationDisplay3d* LocationController::locationDisplay() const
+{
+  return m_locationDisplay3d;
+}
+
 QUrl LocationController::gpxFilePath() const
 {
   return m_gpxFilePath;

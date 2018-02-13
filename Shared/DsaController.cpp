@@ -15,11 +15,25 @@
 #include "Scene.h"
 #include "ElevationSource.h"
 #include "GeoView.h"
+#include "FeatureLayer.h"
+#include "RasterLayer.h"
+#include "Geodatabase.h"
+#include "GeodatabaseFeatureTable.h"
+#include "FeatureTable.h"
+#include "GeoPackage.h"
+#include "GeoPackageFeatureTable.h"
+#include "GeoPackageRaster.h"
+#include "ShapefileFeatureTable.h"
+#include "ArcGISSceneLayer.h"
+#include "ArcGISTiledLayer.h"
+#include "ArcGISVectorTiledLayer.h"
+#include "Raster.h"
 
 // Toolkit
 #include "AbstractTool.h"
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
+#include "LayerCacheManager.h"
 
 // Dsa apps
 #include "AlertLevel.h"
@@ -71,6 +85,8 @@ void DsaController::init(GeoView* geoView)
 {
   Toolkit::ToolResourceProvider::instance()->setScene(m_scene);
   Toolkit::ToolResourceProvider::instance()->setGeoView(geoView);
+
+  m_cacheManager = new LayerCacheManager(this);
 
   for(Toolkit::AbstractTool* abstractTool : Toolkit::ToolManager::instance())
   {
@@ -215,7 +231,8 @@ void DsaController::createDefaultSettings()
   writeDefaultConditions();
 }
 
-/*! brief Save the app properties to a custom JSON QSettings file.
+/*!
+ * \brief Save the app properties to a custom JSON QSettings file.
  */
 void DsaController::saveSettings()
 {
@@ -265,3 +282,4 @@ bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map)
 
   return writtenBytes != -1;
 }
+

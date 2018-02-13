@@ -62,6 +62,8 @@ public:
 
   Esri::ArcGISRuntime::Point currentLocation() const;
 
+  LocationDisplay3d* locationDisplay() const;
+
   QUrl gpxFilePath() const;
   void setGpxFilePath(const QUrl& gpxFilePath);
 

@@ -893,9 +893,6 @@ bool AlertConditionsController::addConditionFromJson(const QJsonObject& json)
     return false;
 
   QJsonObject queryObject = json.value(AlertConstants::CONDITION_QUERY).toObject();
-  if (queryObject.isEmpty())
-    return false;
-
   const QVariantMap queryComponents = queryObject.toVariantMap();
 
   if (isAttributeEquals)

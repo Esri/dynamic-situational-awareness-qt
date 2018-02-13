@@ -258,6 +258,7 @@ void LayerCacheManager::layerToJson(Layer* layer)
     layerJson.insert(layerTypeKey, layerType);
 
   m_layers.append(layerJson);
+  emit layerJsonChanged();
 }
 
 /*
@@ -284,4 +285,21 @@ void LayerCacheManager::onLayerListChanged()
 
   // write to the config file
   emit propertyChanged(LAYERS_PROPERTYNAME, m_layers.toVariantList());
+}
+
+/*
+ \brief Returns the layer JSON array.
+*/
+QJsonArray LayerCacheManager::layerJson() const
+{
+  return m_layers;
+}
+
+/*
+ \brief Clears the layer JSON array.
+*/
+void LayerCacheManager::clearLayerJson()
+{
+  m_layers = QJsonArray();
+  emit layerJsonChanged();
 }

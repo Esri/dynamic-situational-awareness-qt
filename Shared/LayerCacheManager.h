@@ -36,6 +36,12 @@ public:
 
   QString toolName() const override;
   void setProperties(const QVariantMap& properties) override;
+  void layerToJson(Esri::ArcGISRuntime::Layer* layer);
+  QJsonArray layerJson() const;
+  void clearLayerJson();
+
+signals:
+  void layerJsonChanged();
 
 private slots:
   void onLayerListChanged();
@@ -54,7 +60,6 @@ private:
   bool m_initialLoadCompleted = false;
   AddLocalDataController* m_localDataController;
   Esri::ArcGISRuntime::Scene* m_scene;
-  void layerToJson(Esri::ArcGISRuntime::Layer* layer);
   QHash<int, Esri::ArcGISRuntime::Layer*> m_initialLayerCache;
 };
 

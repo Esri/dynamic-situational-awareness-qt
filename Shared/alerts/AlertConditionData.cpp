@@ -275,6 +275,10 @@ void AlertConditionData::handleDataChanged()
   if (isActive())
     setViewed(false);
 
+  // if the condition has newly moved into the non-active state, reset the highlight
+  if (!isActive())
+    highlight(false);
+
   // broadcast that this condition data has changed
   emit dataChanged();
 }

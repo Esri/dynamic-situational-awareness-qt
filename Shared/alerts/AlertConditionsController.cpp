@@ -152,6 +152,8 @@ void AlertConditionsController::setProperties(const QVariantMap& properties)
 
       m_messageFeedTypesToNames.insert(messageFeedConfig.at(1), messageFeedConfig.at(0));
     }
+
+    onLayersChanged();
   }
 
   const QVariant conditionsData = properties.value(AlertConstants::ALERT_CONDITIONS_PROPERTYNAME);

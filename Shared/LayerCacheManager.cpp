@@ -167,7 +167,7 @@ void LayerCacheManager::setProperties(const QVariantMap& properties)
 }
 
 /*
- \brief Creates a Layer from the provided \a jsonObject and adds at the given \a index.
+ \brief Creates a Layer from the provided \a jsonObject and adds at the given \a layerIndex.
 
   Obtain the output Layer through the \l jsonToLayerCompleted() signal.
 */

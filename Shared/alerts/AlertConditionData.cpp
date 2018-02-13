@@ -315,5 +315,8 @@ void AlertConditionData::setConditionEnabled(bool enabled)
  */
 bool AlertConditionData::isActive() const
 {
+  if (m_queryOutOfDate)
+    const_cast<AlertConditionData*>(this)->handleDataChanged();
+
   return m_active;
 }

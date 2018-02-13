@@ -1030,21 +1030,23 @@ AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int
       if (overlay->overlayId().isEmpty())
         continue;
 
+      QString overlayIdOrName = m_messageFeedTypesToNames.value(overlay->overlayId(), overlay->overlayId());
+
       ++currIndex;
 
       if (currIndex == targetOverlayIndex)
       {
         if (itemId == -1)
         {
-          if (!m_overlayTargets.contains(overlay->overlayId()))
-            m_overlayTargets.insert(overlay->overlayId(), new GraphicsOverlayAlertTarget(overlay));
+          if (!m_overlayTargets.contains(overlayIdOrName))
+            m_overlayTargets.insert(overlayIdOrName, new GraphicsOverlayAlertTarget(overlay));
 
-          targetDescription = overlay->overlayId();
-          return m_overlayTargets.value(overlay->overlayId(), nullptr);
+          targetDescription = overlayIdOrName;
+          return m_overlayTargets.value(overlayIdOrName, nullptr);
         }
         else
         {
-          targetDescription = QString("%1 [%2]").arg(overlay->overlayId(), QString::number(itemId));
+          targetDescription = QString("%1 [%2]").arg(overlayIdOrName, QString::number(itemId));
           return targetFromGraphicsOverlay(overlay, itemId);
         }
       }

@@ -1030,7 +1030,7 @@ AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int
       if (overlay->overlayId().isEmpty())
         continue;
 
-      QString overlayIdOrName = m_messageFeedTypesToNames.value(overlay->overlayId(), overlay->overlayId());
+      const QString overlayIdOrName = m_messageFeedTypesToNames.value(overlay->overlayId(), overlay->overlayId());
 
       ++currIndex;
 

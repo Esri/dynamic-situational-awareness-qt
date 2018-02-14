@@ -25,7 +25,7 @@ DsaPanel {
 
     AlertConditionsController {
         id: toolController
-        active: parent.visible
+        active: manageAlertsRoot.visible
         onPickedElement: {
             for (var i = 0; i < targetCB.count; ++i) {
                 if (targetCB.textAt(i) === overlayName)
@@ -35,6 +35,11 @@ DsaPanel {
                     break;
                 }
             }
+        }
+
+        onActiveChanged: {
+            if (!active && manageAlertsRoot.visible)
+                manageAlertsRoot.visible = false;
         }
     }
 

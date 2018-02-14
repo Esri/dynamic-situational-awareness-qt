@@ -355,7 +355,10 @@ Vehicle {
 
         onActiveChanged: {
             if (!active)
+            {
                 identifyResults.dismiss();
+                mapToolRow.state = "clear";
+            }
         }
 
         onPopupManagersChanged: {

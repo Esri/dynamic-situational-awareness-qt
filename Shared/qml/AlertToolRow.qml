@@ -78,7 +78,6 @@ Row {
         iconSource: DsaResources.iconDraw
         toolName: "Conditions"
         onToolSelected: {
-            identifyController.active = false;
             alertsTool.visible = false;
             if (alertToolRow.state === toolName) {
                 alertToolRow.state = "clear";

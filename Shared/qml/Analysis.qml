@@ -25,7 +25,6 @@ DsaPanel {
     // Create the controller
     AnalysisController {
         id: toolController
-        active: analysisRoot.visible
 
         onActiveChanged: {
             if (!active && analysisRoot.visible)
@@ -36,6 +35,7 @@ DsaPanel {
     onVisibleChanged: {
         if (!isMobile) {
             toolController.viewshedEnabled = visible;
+            toolController.active = visible;
         }
     }
 
@@ -99,6 +99,7 @@ DsaPanel {
 
                 onCheckedChanged: {
                     toolController.viewshedEnabled = checked;
+                    toolController.active = checked;
                 }
             }
         }

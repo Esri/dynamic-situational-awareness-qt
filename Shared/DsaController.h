@@ -17,6 +17,7 @@
 #include <QFile>
 #include <QObject>
 #include <QSettings>
+#include <QStringList>
 #include <QVariantMap>
 #include <QUrl>
 
@@ -28,7 +29,6 @@ namespace ArcGISRuntime
   class Scene;
   class GeoView;
   class Layer;
-
 }
 }
 
@@ -65,6 +65,7 @@ private:
   void writeDefaultLocalDataPaths();
   void writeDefaultConditions();
   void writeDefaultMessageFeeds();
+  bool isConflictingTool(const QString& toolName) const;
 
   Esri::ArcGISRuntime::Scene* m_scene = nullptr;
   LayerCacheManager* m_cacheManager = nullptr;
@@ -73,6 +74,7 @@ private:
   QVariantMap m_dsaSettings;
   QString m_configFilePath;
   QSettings::Format m_jsonFormat;
+  QStringList m_conflictingToolNames;
 };
 
 #endif // DSACONTROLLER_H

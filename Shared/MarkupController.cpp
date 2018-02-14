@@ -131,12 +131,14 @@ void MarkupController::deleteSelectedGraphics()
     return;
 
   MultipartBuilder* multipartBuilder = static_cast<MultipartBuilder*>(m_geometryBuilder);
-  for (auto graphic : m_sketchOverlay->selectedGraphics())
+  const auto graphics = m_sketchOverlay->selectedGraphics();
+  for (auto graphic : graphics)
   {
     int index = m_sketchOverlay->graphics()->indexOf(graphic);
     m_partOutlineGraphics.removeAt(index);
     multipartBuilder->parts()->removePart(index);
     m_sketchOverlay->graphics()->removeOne(graphic);
+    delete graphic;
   }
 }
 
@@ -147,9 +149,11 @@ void MarkupController::deleteAllGraphics()
 
   // clear stored Graphics
   m_partOutlineGraphics.clear();
+  qDeleteAll(m_partOutlineGraphics);
 
   // clear GeometryBuilder
   clear();
+  m_currentPartIndex = 0;
 }
 
 void MarkupController::setDrawModeEnabled(bool enabled)
@@ -205,15 +209,13 @@ void MarkupController::init()
     if (!m_isSketching)
     {
       clear();
+      m_currentPartIndex = 0;
       Graphic* partGraphic = new Graphic(this);
       partGraphic->setSymbol(updatedSymbol());
       m_partOutlineGraphics.append(partGraphic);
       m_sketchOverlay->graphics()->append(partGraphic);
     }
     m_currentPartIndex = addPart();
-
-    Toolkit::ToolResourceProvider::instance()->setMouseCursor(QCursor(Qt::PointingHandCursor));
-    m_isDrawing = true;
 
     Point pressedPoint(normalizedPoint(mouseEvent.x(), mouseEvent.y()));
     if (m_sketchOverlay->sceneProperties().surfacePlacement() == SurfacePlacement::Relative)
@@ -223,6 +225,9 @@ void MarkupController::init()
 
     // for touch screen operation
     mouseEvent.ignore();
+
+    Toolkit::ToolResourceProvider::instance()->setMouseCursor(QCursor(Qt::PointingHandCursor));
+    m_isDrawing = true;
   });
 
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mouseMoved, this, [this](QMouseEvent& mouseEvent)
@@ -263,17 +268,14 @@ void MarkupController::init()
 void MarkupController::updateSketch()
 {
   MultipartBuilder* multipartBuilder = static_cast<MultipartBuilder*>(m_geometryBuilder);
-  Part* currentPart = multipartBuilder->parts()->part(m_currentPartIndex);
-
-  MultipartBuilder* outlineBuilder = new PolylineBuilder(m_geoView->spatialReference(), this);
-  outlineBuilder->parts()->addPart(currentPart);
 
   // get simplified geometry
   const Geometry simplifiedLine = GeometryEngine::simplify(multipartBuilder->toGeometry());
-  auto graphic = m_partOutlineGraphics.at(m_partOutlineGraphics.size() - 1);
+  auto graphic = m_partOutlineGraphics.last();
   if (!graphic)
     return;
 
+  graphic->setSymbol(m_sketchSymbol);
   graphic->setGeometry(simplifiedLine);
 }
 

@@ -28,7 +28,9 @@ Row {
             state = "clear";
         }
     }
+
     property alias configureSelected: colorIcon.selected
+    property alias drawSelected: drawIcon.selected
 
     states: [
         State {
@@ -124,7 +126,8 @@ Row {
         onToolSelected: {
             if (markupToolRow.state === toolName) {
                 selected = false;
-                markupToolRow.state = "clear";
+                markupToolRow.state = drawIcon.toolName;
+                drawSelected = true;
             } else {
                 markup.markupEnabled = false;
                 markupToolRow.state = toolName;
@@ -132,7 +135,7 @@ Row {
         }
     }
 
-    // Color
+    // Width
     ToolIcon {
         id: widthIcon
         iconSource: DsaResources.iconLineWidth
@@ -140,7 +143,8 @@ Row {
         onToolSelected: {
             if (markupToolRow.state === toolName) {
                 selected = false;
-                markupToolRow.state = "clear";
+                markupToolRow.state = drawIcon.toolName
+                drawSelected = true;
             } else {
                 markup.markupEnabled = false;
                 markupToolRow.state = toolName;

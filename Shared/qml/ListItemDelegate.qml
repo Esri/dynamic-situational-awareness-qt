@@ -22,6 +22,7 @@ Item {
     property bool imageVisible
     property alias checkBoxVisible: visibleCheckBox.visible
     property string mainText
+    property bool menuIconVisible: false
 
     Row {
         id: itemRow
@@ -55,9 +56,9 @@ Item {
         Label {
             anchors.verticalCenter: parent.verticalCenter
             elide: Text.ElideRight
-            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
             text: mainText
             verticalAlignment: Text.AlignVCenter
+            //width: menuIconVisible ? parent.width * 0.7 : parent.width
             color: Material.foreground
             font {
                 pixelSize: 14 * scaleFactor

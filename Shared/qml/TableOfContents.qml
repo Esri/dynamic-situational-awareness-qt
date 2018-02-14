@@ -64,6 +64,7 @@ DsaPanel {
             itemChecked: layerVisible
             imageUrl: imageSourceForGeomType(index)
             imageVisible: true
+            menuIconVisible: true
             mainText: name && name !== "" ?
                           name :
                           toolController.alternateName(index)

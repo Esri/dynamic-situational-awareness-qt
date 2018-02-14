@@ -35,6 +35,7 @@ public:
   double drawingAltitude() const;
 
   void setSketching(bool isSketching);
+  bool isSketching() const;
 
   bool drawModeEnabled() const;
   void setDrawModeEnabled(bool enabled);
@@ -56,7 +57,6 @@ private:
   void init();
   void updateSketch() override;
   Esri::ArcGISRuntime::Symbol* updatedSymbol();
-  bool isSketching() const;
 
   static const QString nameAttribute;
   int m_currentPartIndex = 0;

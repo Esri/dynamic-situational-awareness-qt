@@ -43,7 +43,7 @@ using namespace Esri::ArcGISRuntime;
 const QString AddLocalDataController::LOCAL_DATAPATHS_PROPERTYNAME = "LocalDataPaths";
 const QString AddLocalDataController::DEFAULT_ELEVATION_PROPERTYNAME = "DefaultElevationSource";
 
-const QString AddLocalDataController::s_allData = QStringLiteral("All Data (*.geodatabase *tpk *shp *gpkg *mmpk *slpk *vtpk *.img *.tif *.tiff *.i1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr)");
+const QString AddLocalDataController::s_allData = QStringLiteral("All Data (*.geodatabase *.tpk *.shp *.gpkg *.mmpk *.slpk *.vtpk *.img *.tif *.tiff *.i1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr)");
 const QString AddLocalDataController::s_rasterData = QStringLiteral("Raster Files (*.img *.tif *.tiff *.I1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr)");
 const QString AddLocalDataController::s_geodatabaseData = QStringLiteral("Geodatabase (*.geodatabase)");
 const QString AddLocalDataController::s_shapefileData = QStringLiteral("Shapefile (*.shp)");
@@ -302,13 +302,14 @@ void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path)
       return;
     }
 
+    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+
     for (FeatureTable* featureTable : gdb->geodatabaseFeatureTables())
     {
       FeatureLayer* featureLayer = new FeatureLayer(featureTable, this);
 
       connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
-      auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
       if (operationalLayers)
         operationalLayers->append(featureLayer);
 
@@ -396,6 +397,7 @@ void AddLocalDataController::createFeatureLayerGeoPackage(const QString& path, i
     {
       auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
       operationalLayers->append(featureLayer);
+      emit layerSelected(featureLayer);
       Q_UNUSED(layerIndex)
     }
     else
@@ -443,6 +445,7 @@ void AddLocalDataController::createRasterLayerGeoPackage(const QString& path, in
         return;
 
       operationalLayers->append(rasterLayer);
+      emit layerSelected(rasterLayer);
       Q_UNUSED(layerIndex)
     }
     else
@@ -470,21 +473,25 @@ void AddLocalDataController::createLayerGeoPackage(const QString& path)
     }
 
     auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
-    if (!operationalLayers)
-      return;
 
     for (const auto& table : geoPackage->geoPackageFeatureTables())
     {
       FeatureLayer* featureLayer = new FeatureLayer(table, this);
       connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
-      operationalLayers->append(featureLayer);
+      if (operationalLayers)
+        operationalLayers->append(featureLayer);
+
+      emit layerSelected(featureLayer);
     }
 
     for (const auto& raster : geoPackage->geoPackageRasters())
     {
       RasterLayer* rasterLayer = new RasterLayer(raster, this);
       connect(rasterLayer, &RasterLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
-      operationalLayers->append(rasterLayer);
+      if (operationalLayers)
+        operationalLayers->append(rasterLayer);
+
+      emit layerSelected(rasterLayer);
     }
   });
 

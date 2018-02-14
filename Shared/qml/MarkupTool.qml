@@ -48,8 +48,6 @@ Item {
         }
     }
 
-
-
     onVisibleChanged: {
         if (visible) {
             state = drawState;
@@ -320,7 +318,8 @@ Item {
                             if (markupController.drawModeEnabled)
                                 colorSelected();
 
-                            markup.state = clearState;
+                            markup.state = drawState;
+                            markupToolRow.drawSelected = true;
                             markupToolRow.configureSelected = false;
                         }
                     }

@@ -207,6 +207,7 @@ Vehicle {
             }
             width: drawer.width
             visible: false
+            isMobile: false
             onClosed: visible = false;
         }
 
@@ -219,6 +220,7 @@ Vehicle {
             }
             width: drawer.width
             visible: false
+            isMobile: false
             onClosed: visible = false;
         }
 

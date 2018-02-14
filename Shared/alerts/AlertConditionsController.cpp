@@ -420,6 +420,31 @@ void AlertConditionsController::togglePickMode()
   emit pickModeChanged();
 }
 
+/*
+ \brief Updates the name of the given \a rowIndex with \a conditionName.
+*/
+void AlertConditionsController::updateConditionName(int rowIndex, const QString& conditionName)
+{
+  auto alertCondition = m_conditions->conditionAt(rowIndex);
+  if (!alertCondition)
+    return;
+
+  alertCondition->setName(conditionName);
+}
+
+/*
+ \brief Updates the level of the given \a rowIndex with \a level.
+*/
+void AlertConditionsController::updateConditionLevel(int rowIndex, int level)
+{
+  auto alertCondition = m_conditions->conditionAt(rowIndex);
+  if (!alertCondition)
+    return;
+
+  AlertLevel alertLevel = static_cast<AlertLevel>(level);
+  alertCondition->setLevel(alertLevel);
+}
+
 /*!
   \brief Returns a QAbstractItemModel containing the list of
   names for creating condition sources.

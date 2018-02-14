@@ -68,6 +68,8 @@ public:
   Q_INVOKABLE bool addAttributeEqualsAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, const QString& attributeName, const QVariant& targetValue);
   Q_INVOKABLE void removeConditionAt(int rowIndex);
   Q_INVOKABLE void togglePickMode();
+  Q_INVOKABLE void updateConditionName(int rowIndex, const QString& conditionName);
+  Q_INVOKABLE void updateConditionLevel(int rowIndex, int level);
 
   QAbstractItemModel* sourceNames() const;
   QAbstractItemModel* targetNames() const;

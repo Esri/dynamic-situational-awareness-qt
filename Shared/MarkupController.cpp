@@ -131,7 +131,8 @@ void MarkupController::deleteSelectedGraphics()
     return;
 
   MultipartBuilder* multipartBuilder = static_cast<MultipartBuilder*>(m_geometryBuilder);
-  for (auto graphic : m_sketchOverlay->selectedGraphics())
+  const auto graphics = m_sketchOverlay->selectedGraphics();
+  for (auto graphic : graphics)
   {
     int index = m_sketchOverlay->graphics()->indexOf(graphic);
     m_partOutlineGraphics.removeAt(index);

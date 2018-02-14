@@ -103,9 +103,11 @@ void DsaController::init(GeoView* geoView)
     connect(abstractTool, &Toolkit::AbstractTool::errorOccurred, this, &DsaController::onError);
     connect(abstractTool, &Toolkit::AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
 
-    if (!m_conflictingToolNames.contains(abstractTool->toolName()))
+    // certain tools can conflict - for example, those which interact directly with the view
+    if (!isConflictingTool(abstractTool->toolName()))
       continue;
 
+    // whenever a conflciting tool is activated, deactivate all of the other conflicting tools
     connect(abstractTool, &Toolkit::AbstractTool::activeChanged, this, [this, abstractTool]()
     {
       if (!abstractTool->isActive())
@@ -122,7 +124,7 @@ void DsaController::init(GeoView* geoView)
         if (candidateTool->toolName() == abstractTool->toolName())
           continue;
 
-        if (!m_conflictingToolNames.contains(candidateTool->toolName()))
+        if (!isConflictingTool(candidateTool->toolName()))
           continue;
 
         candidateTool->setActive(false);
@@ -233,6 +235,17 @@ void DsaController::writeDefaultMessageFeeds()
       QString("Situation Reports:sitrep:sitrep1600.png"), QString("EOD Reports:eod:eod1600.png"),
       QString("Sensor Observations:sensor_obs:sensorobs1600.png") };
   m_dsaSettings[MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME] = QStringList { QString("position_report"), QString("45679") };
+}
+
+/*! \brief internal
+ *
+ * Returns \c true if this tool is considered to conlfict with other tools.
+ *
+ * For example, this could be tools which interact directly with the view.
+ */
+bool DsaController::isConflictingTool(const QString& toolName) const
+{
+  return m_conflictingToolNames.contains(toolName);
 }
 
 /*! \brief internal

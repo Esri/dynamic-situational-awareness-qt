@@ -65,6 +65,7 @@ private:
   void writeDefaultLocalDataPaths();
   void writeDefaultConditions();
   void writeDefaultMessageFeeds();
+  bool isConflictingTool(const QString& toolName) const;
 
   Esri::ArcGISRuntime::Scene* m_scene = nullptr;
   LayerCacheManager* m_cacheManager = nullptr;

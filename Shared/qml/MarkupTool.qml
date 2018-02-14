@@ -48,8 +48,6 @@ Item {
         }
     }
 
-
-
     onVisibleChanged: {
         if (visible) {
             state = drawState;
@@ -65,6 +63,11 @@ Item {
         active: rootMarkup.visible
         drawModeEnabled: rootMarkup.visible
         sketching: drawPane.sketchInProgress
+
+        onActiveChanged: {
+            if (!active)
+                rootMarkup.visible = false;
+        }
     }
 
     state: clearState

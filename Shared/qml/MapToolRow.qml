@@ -127,7 +127,7 @@ Row {
             name: "clear"
             PropertyChanges {
                 target: identifyIcon
-                selected: selected
+                selected: false
             }
             PropertyChanges {
                 target: coordinateConversionIcon

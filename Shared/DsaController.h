@@ -17,6 +17,7 @@
 #include <QFile>
 #include <QObject>
 #include <QSettings>
+#include <QStringList>
 #include <QVariantMap>
 #include <QUrl>
 
@@ -28,7 +29,6 @@ namespace ArcGISRuntime
   class Scene;
   class GeoView;
   class Layer;
-
 }
 }
 
@@ -73,6 +73,7 @@ private:
   QVariantMap m_dsaSettings;
   QString m_configFilePath;
   QSettings::Format m_jsonFormat;
+  QStringList m_conflictingToolNames;
 };
 
 #endif // DSACONTROLLER_H

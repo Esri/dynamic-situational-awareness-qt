@@ -67,6 +67,9 @@ void AnalysisController::connectMouseSignals()
 {
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mouseClicked, this, [this](QMouseEvent& event)
   {
+    if (!isActive())
+      return;
+
     if (!m_viewshedEnabled)
       return;
 

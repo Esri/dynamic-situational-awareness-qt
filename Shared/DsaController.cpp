@@ -56,7 +56,12 @@ bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map);
 DsaController::DsaController(QObject* parent):
   QObject(parent),
   m_scene(new Scene(this)),
-  m_jsonFormat(QSettings::registerFormat("json", &readJsonFile, &writeJsonFile))
+  m_jsonFormat(QSettings::registerFormat("json", &readJsonFile, &writeJsonFile)),
+  m_conflictingToolNames{QStringLiteral("Alert Conditions"),
+                         QStringLiteral("identify"),
+                         QStringLiteral("Markup Tool"),
+                         QStringLiteral("CoordinateConversion"),
+                         QStringLiteral("analysis")}
 {
   // setup config settings
   setupConfig();
@@ -97,6 +102,32 @@ void DsaController::init(GeoView* geoView)
 
     connect(abstractTool, &Toolkit::AbstractTool::errorOccurred, this, &DsaController::onError);
     connect(abstractTool, &Toolkit::AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
+
+    if (!m_conflictingToolNames.contains(abstractTool->toolName()))
+      continue;
+
+    connect(abstractTool, &Toolkit::AbstractTool::activeChanged, this, [this, abstractTool]()
+    {
+      if (!abstractTool->isActive())
+        return;
+
+      auto toolsIt = Toolkit::ToolManager::instance().begin();
+      auto toolsEnd = Toolkit::ToolManager::instance().end();
+      for (; toolsIt != toolsEnd; ++toolsIt)
+      {
+        Toolkit::AbstractTool* candidateTool = *toolsIt;
+        if (!candidateTool)
+          continue;
+
+        if (candidateTool->toolName() == abstractTool->toolName())
+          continue;
+
+        if (!m_conflictingToolNames.contains(candidateTool->toolName()))
+          continue;
+
+        candidateTool->setActive(false);
+      }
+    });
   }
 }
 

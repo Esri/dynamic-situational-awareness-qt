@@ -25,6 +25,12 @@ DsaPanel {
     // Create the controller
     AnalysisController {
         id: toolController
+        active: analysisRoot.visible
+
+        onActiveChanged: {
+            if (!active && analysisRoot.visible)
+                analysisRoot.visible = false;
+        }
     }
 
     onVisibleChanged: {

@@ -46,7 +46,6 @@ class AlertConditionsController : public Esri::ArcGISRuntime::Toolkit::AbstractT
 {
   Q_OBJECT
 
-  Q_PROPERTY(bool active READ isActive WRITE setActive NOTIFY activeChanged)
   Q_PROPERTY(QAbstractItemModel* sourceNames READ sourceNames NOTIFY sourceNamesChanged)
   Q_PROPERTY(QAbstractItemModel* targetNames READ targetNames NOTIFY targetNamesChanged)
   Q_PROPERTY(QAbstractItemModel* levelNames READ levelNames CONSTANT)
@@ -77,7 +76,6 @@ public:
   bool pickMode() const;
 
 signals:
-  void activeChanged();
   void sourceNamesChanged();
   void targetNamesChanged();
   void conditionsListChanged();

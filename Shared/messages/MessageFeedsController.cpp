@@ -187,7 +187,8 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
   }
 
   const auto locationBroadcastConfig = properties[MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME].toMap();
-  if (locationBroadcastConfig.size() == 2)
+  if (locationBroadcastConfig.contains(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE) &&
+      locationBroadcastConfig.contains(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PORT))
   {
     m_locationBroadcast->setMessageType(locationBroadcastConfig.value(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE).toString());
     m_locationBroadcast->setUdpPort(locationBroadcastConfig.value(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PORT).toInt());

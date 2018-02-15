@@ -216,7 +216,7 @@ void OptionsController::setShowFriendlyTracksLabels(bool show)
 /*
  \brief Returns the DictionaryRenderer from the friendly tracks MessageFeed.
 */
-QList<DictionaryRenderer*> OptionsController::friendlyTracksOverlayRenderers()
+QList<DictionaryRenderer*> OptionsController::friendlyTracksOverlayRenderers() const
 {
   QList<DictionaryRenderer*> renderers;
 
@@ -233,7 +233,7 @@ QList<DictionaryRenderer*> OptionsController::friendlyTracksOverlayRenderers()
         if (QString(feed->feedName()).contains("friendly tracks", Qt::CaseInsensitive))
         {
           Renderer* renderer = feed->messagesOverlay()->renderer();
-          if (renderer)
+          if (renderer && renderer->rendererType() == RendererType::DictionaryRenderer)
             renderers.append(dynamic_cast<DictionaryRenderer*>(renderer));
         }
       }

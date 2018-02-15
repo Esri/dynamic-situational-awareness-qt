@@ -113,6 +113,9 @@ void TableOfContentsController::moveFromTo(int fromIndex, int toIndex)
   const int modelFromIndex = mappedIndex(fromIndex);
   const int modelToIndex = mappedIndex(toIndex);
 
+  if (modelFromIndex == -1 || modelToIndex == -1)
+    return;
+
   m_layerListModel->move(modelFromIndex, modelToIndex);
 }
 

@@ -83,7 +83,7 @@ private:
   int initialFormatIndex() const;
   bool showFriendlyTracksLabels();
   void setShowFriendlyTracksLabels(bool show);
-  Esri::ArcGISRuntime::DictionaryRenderer* friendlyOverlayRenderer();
+  QList<Esri::ArcGISRuntime::DictionaryRenderer*> friendlyTracksOverlayRenderers();
 };
 
 #endif // OPTIONSCONTROLLER_H

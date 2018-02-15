@@ -209,12 +209,12 @@ void DsaController::writeDefaultConditions()
 {
   QJsonArray allConditionsJson;
 
-  // Add a condition "Distress" when an object from the Friendly Tracks feed has attribute status911 = 1
+  // Add a condition "Distress" when an object from the Friendly Tracks Ground feed has attribute status911 = 1
   QJsonObject conditionJson;
   conditionJson.insert(AlertConstants::CONDITION_NAME, QStringLiteral("Distress"));
   conditionJson.insert(AlertConstants::CONDITION_LEVEL, static_cast<int>(AlertLevel::Critical));
   conditionJson.insert(AlertConstants::CONDITION_TYPE, AlertConstants::attributeEqualsAlertConditionType());
-  conditionJson.insert(AlertConstants::CONDITION_SOURCE, QStringLiteral("Friendly Tracks"));
+  conditionJson.insert(AlertConstants::CONDITION_SOURCE, QStringLiteral("Friendly Tracks Ground"));
   QJsonObject queryObject;
   queryObject.insert(AlertConstants::ATTRIBUTE_NAME, QStringLiteral("status911"));
   conditionJson.insert(AlertConstants::CONDITION_QUERY, queryObject);

@@ -186,7 +186,7 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
     m_messageFeeds->append(feed);
   }
 
-  const auto locationBroadcastConfig = properties[MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME].toJsonObject();
+  const auto locationBroadcastConfig = properties[MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME].toMap();
   if (locationBroadcastConfig.size() == 2)
   {
     m_locationBroadcast->setMessageType(locationBroadcastConfig.value(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE).toString());

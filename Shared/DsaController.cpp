@@ -209,12 +209,12 @@ void DsaController::writeDefaultConditions()
 {
   QJsonArray allConditionsJson;
 
-  // Add a condition "Distress" when an object from the Friendly Tracks Ground feed has attribute status911 = 1
+  // Add a condition "Distress" when an object from the Friendly Tracks Land feed has attribute status911 = 1
   QJsonObject conditionJson;
   conditionJson.insert(AlertConstants::CONDITION_NAME, QStringLiteral("Distress"));
   conditionJson.insert(AlertConstants::CONDITION_LEVEL, static_cast<int>(AlertLevel::Critical));
   conditionJson.insert(AlertConstants::CONDITION_TYPE, AlertConstants::attributeEqualsAlertConditionType());
-  conditionJson.insert(AlertConstants::CONDITION_SOURCE, QStringLiteral("Friendly Tracks Ground"));
+  conditionJson.insert(AlertConstants::CONDITION_SOURCE, QStringLiteral("Friendly Tracks - Land"));
   QJsonObject queryObject;
   queryObject.insert(AlertConstants::ATTRIBUTE_NAME, QStringLiteral("status911"));
   conditionJson.insert(AlertConstants::CONDITION_QUERY, queryObject);
@@ -240,15 +240,15 @@ void DsaController::writeDefaultMessageFeeds()
   cotMessageFeedJson.insert(MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT, QStringLiteral("draped"));
   messageFeedsJson.append(cotMessageFeedJson);
 
-  QJsonObject friendlyTracksGroundJson;
-  friendlyTracksGroundJson.insert(MessageFeedConstants::MESSAGE_FEEDS_NAME, QStringLiteral("Friendly Tracks Ground"));
-  friendlyTracksGroundJson.insert(MessageFeedConstants::MESSAGE_FEEDS_TYPE, QStringLiteral("position_report_ground"));
-  friendlyTracksGroundJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER, QStringLiteral("mil2525c"));
-  friendlyTracksGroundJson.insert(MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT, QStringLiteral("draped"));
-  messageFeedsJson.append(friendlyTracksGroundJson);
+  QJsonObject friendlyTracksLandJson;
+  friendlyTracksLandJson.insert(MessageFeedConstants::MESSAGE_FEEDS_NAME, QStringLiteral("Friendly Tracks - Land"));
+  friendlyTracksLandJson.insert(MessageFeedConstants::MESSAGE_FEEDS_TYPE, QStringLiteral("position_report_land"));
+  friendlyTracksLandJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER, QStringLiteral("mil2525c"));
+  friendlyTracksLandJson.insert(MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT, QStringLiteral("draped"));
+  messageFeedsJson.append(friendlyTracksLandJson);
 
   QJsonObject friendlyTracksAirJson;
-  friendlyTracksAirJson.insert(MessageFeedConstants::MESSAGE_FEEDS_NAME, QStringLiteral("Friendly Tracks Air"));
+  friendlyTracksAirJson.insert(MessageFeedConstants::MESSAGE_FEEDS_NAME, QStringLiteral("Friendly Tracks - Air"));
   friendlyTracksAirJson.insert(MessageFeedConstants::MESSAGE_FEEDS_TYPE, QStringLiteral("position_report_air"));
   friendlyTracksAirJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER, QStringLiteral("mil2525c"));
   friendlyTracksAirJson.insert(MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT, QStringLiteral("absolute"));
@@ -284,7 +284,7 @@ void DsaController::writeDefaultMessageFeeds()
   m_dsaSettings[MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME] = messageFeedsJson;
 
   QJsonObject locationBroadcastJson;
-  locationBroadcastJson.insert(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE, QStringLiteral("position_report_ground"));
+  locationBroadcastJson.insert(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE, QStringLiteral("position_report_land"));
   locationBroadcastJson.insert(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PORT, 45679);
   m_dsaSettings[MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME] = locationBroadcastJson;
 }

@@ -19,11 +19,11 @@ import Esri.DSA 1.0
 
 DsaPanel {
     id: alertsRoot
-    width: 272 * scaleFactor
     title: qsTr("Alerts")
     clip: true
 
     property int hightlightIndex: -1
+    property bool isMobile
 
     AlertListController {
         id: toolController
@@ -109,9 +109,17 @@ DsaPanel {
             bottom: parent.bottom
             margins: 8 * scaleFactor
         }
+        interactive: true
         model: toolController.alertListModel
         clip: true
-        spacing: 8 * scaleFactor
+        spacing: 5 * scaleFactor
+        highlight: Rectangle {
+            radius: 5 * scaleFactor
+            color: Material.accent
+            opacity: 0.5
+        }
+        highlightFollowsCurrentItem: isMobile
+        highlightMoveVelocity: 10000
 
         delegate: ListItemDelegate {
             width: parent.width
@@ -125,6 +133,7 @@ DsaPanel {
             imageVisible: true
             checkBoxVisible: false
             mainText: name
+            menuIconVisible: true
 
             Component.onCompleted: {
                 if (visible)
@@ -145,7 +154,16 @@ DsaPanel {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        alertMenu.open();
+                        alertsView.currentIndex = index;
+                        if (!isMobile) {
+                            alertMenu.open();
+                        } else {
+                            if (mobileMenu.isOpen) {
+                                mobileMenu.close();
+                            } else {
+                                mobileMenu.open();
+                            }
+                        }
                     }
                 }
 
@@ -220,6 +238,119 @@ DsaPanel {
 
         for (var i = 0; i < alertsView.count; ++i)
             toolController.setViewed(i);
+    }
+
+    Rectangle {
+        id: mobileMenu
+        property bool isOpen: y === alertsRoot.y + alertsRoot.height - height
+        property int closedY: alertsRoot.y + alertsRoot.height
+        property int openY: alertsRoot.y + alertsRoot.height - height - anchors.margins
+        anchors {
+            left: parent.left
+            right: parent.right
+            margins: 5 * scaleFactor
+        }
+        color: "transparent"
+        height: alertsRoot.height
+        y: closedY
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: mobileMenu.close()
+        }
+
+        Rectangle {
+            anchors {
+                fill: mobileActionColumn
+                margins: -10 * scaleFactor
+            }
+            color: Material.background
+            radius: 10 * scaleFactor
+            border {
+                color: Material.primary
+                width: 1 * scaleFactor
+            }
+        }
+
+        function open() {
+            if (y === openY)
+                return;
+
+            alertsView.highlightFollowsCurrentItem = true;
+            animateVertical.from = closedY;
+            animateVertical.to = openY;
+            animateVertical.start();
+        }
+
+        function close() {
+            if (y === closedY)
+                return;
+
+            alertsView.highlightFollowsCurrentItem = false;
+            animateVertical.from = openY;
+            animateVertical.to = closedY;
+            animateVertical.start();
+            alertsView.currentIndex = -1;
+        }
+
+        NumberAnimation {
+            id: animateVertical
+            target: mobileMenu
+            properties: "y"
+            duration: 250
+            easing.type: Easing.OutQuad
+        }
+
+        Column {
+            id: mobileActionColumn
+            anchors {
+                left: parent.left
+                right: parent.right
+                bottom: parent.bottom
+                margins: 10 * scaleFactor
+            }
+
+            spacing: 5 * scaleFactor
+
+            ListLabel {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: "Zoom to"
+                onTriggered: {
+                    toolController.zoomTo(alertsView.currentIndex);
+                    mobileMenu.close();
+                }
+            }
+
+            ListSeparator{}
+
+            ListLabel {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: alertsView.currentIndex === hightlightIndex ? "Highlight (off)" : "Highlight"
+                onTriggered: {
+                    if (hightlightIndex === alertsView.currentIndex) {
+                        toolController.highlight(alertsView.currentIndex, false);
+                        hightlightIndex = -1;
+                    }
+                    else {
+                        toolController.highlight(hightlightIndex, false);
+                        toolController.highlight(alertsView.currentIndex, true);
+                        hightlightIndex = alertsView.currentIndex;
+                    }
+                    mobileMenu.close();
+                }
+            }
+
+            ListSeparator{}
+
+            ListLabel {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: "Dismiss"
+                onTriggered: {
+                    toolController.dismiss(alertsView.currentIndex);
+                    mobileMenu.close();
+                }
+            }
+        }
     }
 
     Timer {

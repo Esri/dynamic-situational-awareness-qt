@@ -206,6 +206,7 @@ Handheld {
             }
             width: drawer.width
             visible: false
+            isMobile: true
 
             onClosed: visible = false;
         }
@@ -219,6 +220,7 @@ Handheld {
             }
             width: drawer.width
             visible: false
+            isMobile: true
 
             onClosed: visible = false;
         }

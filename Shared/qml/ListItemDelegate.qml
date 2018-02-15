@@ -22,9 +22,18 @@ Item {
     property bool imageVisible
     property alias checkBoxVisible: visibleCheckBox.visible
     property string mainText
+    property bool menuIconVisible: false
 
     Row {
+        anchors {
+            left: parent.left
+            right: parent.right
+            verticalCenter: parent.verticalCenter
+            margins: 5 * scaleFactor
+        }
+
         id: itemRow
+        width: parent.width
         spacing: 3 * scaleFactor
 
         CheckBox {
@@ -54,10 +63,10 @@ Item {
 
         Label {
             anchors.verticalCenter: parent.verticalCenter
-            elide: Text.ElideRight
-            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+            elide: Text.ElideMiddle
             text: mainText
             verticalAlignment: Text.AlignVCenter
+            width: menuIconVisible ? parent.width * 0.6 : parent.width
             color: Material.foreground
             font {
                 pixelSize: 14 * scaleFactor

@@ -195,7 +195,7 @@ Row {
         }
     }
 
-    // Add Local Data Tool
+    // Message Feeds
     ToolIcon {
         id: messageFeedsIcon
         iconSource: DsaResources.iconMessages

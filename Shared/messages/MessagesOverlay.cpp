@@ -19,14 +19,15 @@
 using namespace Esri::ArcGISRuntime;
 
 MessagesOverlay::MessagesOverlay(GeoView* geoView, QObject* parent) :
-  MessagesOverlay(geoView, nullptr, parent)
+  MessagesOverlay(geoView, nullptr, SurfacePlacement::Draped, parent)
 {
 }
 
-MessagesOverlay::MessagesOverlay(GeoView* geoView, Renderer* renderer, QObject* parent) :
+MessagesOverlay::MessagesOverlay(GeoView* geoView, Renderer* renderer, SurfacePlacement surfacePlacement, QObject* parent) :
   QObject(parent),
   m_geoView(geoView),
-  m_renderer(renderer)
+  m_renderer(renderer),
+  m_surfacePlacement(surfacePlacement)
 {
 }
 
@@ -46,6 +47,21 @@ void MessagesOverlay::setRenderer(Renderer* renderer)
   for (GraphicsOverlay* go : m_graphicsOverlays)
   {
     go->setRenderer(m_renderer);
+  }
+}
+
+SurfacePlacement MessagesOverlay::surfacePlacement() const
+{
+  return m_surfacePlacement;
+}
+
+void MessagesOverlay::setSurfacePlacement(SurfacePlacement surfacePlacement)
+{
+  m_surfacePlacement = surfacePlacement;
+
+  if (m_pointGraphicsOverlay)
+  {
+    m_pointGraphicsOverlay->setSceneProperties(LayerSceneProperties(m_surfacePlacement));
   }
 }
 
@@ -179,7 +195,7 @@ bool MessagesOverlay::addMessage(const Message& message)
       m_pointGraphicsOverlay = new GraphicsOverlay(this);
       m_pointGraphicsOverlay->setOverlayId(message.messageType());
       m_pointGraphicsOverlay->setRenderingMode(GraphicsRenderingMode::Dynamic);
-      m_pointGraphicsOverlay->setSceneProperties(LayerSceneProperties(SurfacePlacement::Relative));
+      m_pointGraphicsOverlay->setSceneProperties(LayerSceneProperties(m_surfacePlacement));
       m_pointGraphicsOverlay->setRenderer(m_renderer);
       m_pointGraphicsOverlay->setSelectionColor(Qt::red);
       m_graphicsOverlays.append(m_pointGraphicsOverlay);

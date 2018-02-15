@@ -192,11 +192,12 @@ int OptionsController::initialUnitIndex() const
 */
 bool OptionsController::showFriendlyTracksLabels()
 {
-  auto renderer = friendlyOverlayRenderer();
-  if (!renderer)
+  auto renderers = friendlyTracksOverlayRenderers();
+  if (renderers.isEmpty())
     return true;
 
-  return renderer->isTextVisible();
+  // just check the first renderer in the list to determine label visibility
+  return renderers[0]->isTextVisible();
 }
 
 /*
@@ -204,18 +205,21 @@ bool OptionsController::showFriendlyTracksLabels()
 */
 void OptionsController::setShowFriendlyTracksLabels(bool show)
 {
-  auto renderer = friendlyOverlayRenderer();
-  if (!renderer)
+  auto renderers = friendlyTracksOverlayRenderers();
+  if (renderers.isEmpty())
     return;
 
-  renderer->setTextVisible(show);
+  for (auto renderer : renderers)
+    renderer->setTextVisible(show);
 }
 
 /*
  \brief Returns the DictionaryRenderer from the friendly tracks MessageFeed.
 */
-DictionaryRenderer* OptionsController::friendlyOverlayRenderer()
+QList<DictionaryRenderer*> OptionsController::friendlyTracksOverlayRenderers() const
 {
+  QList<DictionaryRenderer*> renderers;
+
   // Obtain and cache the MessageFeedsController. Connect members and emit signals so properties update
   MessageFeedsController* messageController = Toolkit::ToolManager::instance().tool<MessageFeedsController>();
   if (messageController)
@@ -226,14 +230,15 @@ DictionaryRenderer* OptionsController::friendlyOverlayRenderer()
       for (int i = 0; i < messageFeedModel->count(); i++)
       {
         MessageFeed* feed = messageFeedModel->at(i);
-        if (QString(feed->feedName()).toLower() == "friendly tracks")
+        if (QString(feed->feedName()).contains("friendly tracks", Qt::CaseInsensitive))
         {
           Renderer* renderer = feed->messagesOverlay()->renderer();
-          if (renderer)
-            return dynamic_cast<DictionaryRenderer*>(renderer);
+          if (renderer && renderer->rendererType() == RendererType::DictionaryRenderer)
+            renderers.append(dynamic_cast<DictionaryRenderer*>(renderer));
         }
       }
     }
   }
-  return nullptr;
+
+  return renderers;
 }

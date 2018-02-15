@@ -21,6 +21,7 @@ namespace Esri {
   namespace ArcGISRuntime {
     class GeoView;
     class Renderer;
+    enum class SurfacePlacement;
   }
 }
 
@@ -67,6 +68,8 @@ public:
 
   bool isLocationBroadcastInDistress() const;
   void setLocationBroadcastInDistress(bool inDistress);
+
+  static Esri::ArcGISRuntime::SurfacePlacement toSurfacePlacement(const QString& surfacePlacement);
 
 signals:
   void locationBroadcastEnabledChanged();

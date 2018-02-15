@@ -24,6 +24,7 @@ namespace Esri
     class Renderer;
     class GraphicsOverlay;
     class Graphic;
+    enum class SurfacePlacement;
   }
 }
 
@@ -35,11 +36,15 @@ class MessagesOverlay : public QObject
 
 public:
   explicit MessagesOverlay(Esri::ArcGISRuntime::GeoView* geoView, QObject* parent = nullptr);
-  MessagesOverlay(Esri::ArcGISRuntime::GeoView* geoView, Esri::ArcGISRuntime::Renderer* renderer, QObject* parent = nullptr);
+  MessagesOverlay(Esri::ArcGISRuntime::GeoView* geoView, Esri::ArcGISRuntime::Renderer* renderer,
+                  Esri::ArcGISRuntime::SurfacePlacement surfacePlacement, QObject* parent = nullptr);
   ~MessagesOverlay();
 
   Esri::ArcGISRuntime::Renderer* renderer() const;
   void setRenderer(Esri::ArcGISRuntime::Renderer* renderer);
+
+  Esri::ArcGISRuntime::SurfacePlacement surfacePlacement() const;
+  void setSurfacePlacement(Esri::ArcGISRuntime::SurfacePlacement surfacePlacement);
 
   QList<Esri::ArcGISRuntime::GraphicsOverlay*> graphicsOverlays() const;
 
@@ -60,6 +65,7 @@ private:
 
   Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
   QPointer<Esri::ArcGISRuntime::Renderer> m_renderer;
+  Esri::ArcGISRuntime::SurfacePlacement m_surfacePlacement;
   QList<Esri::ArcGISRuntime::GraphicsOverlay*> m_graphicsOverlays;
 
   Esri::ArcGISRuntime::GraphicsOverlay* m_pointGraphicsOverlay = nullptr;

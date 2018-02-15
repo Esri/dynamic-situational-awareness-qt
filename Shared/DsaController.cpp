@@ -209,12 +209,12 @@ void DsaController::writeDefaultConditions()
 {
   QJsonArray allConditionsJson;
 
-  // Add a condition "Distress" when an object from the Friendly Tracks feed has attribute status911 = 1
+  // Add a condition "Distress" when an object from the Friendly Tracks Ground feed has attribute status911 = 1
   QJsonObject conditionJson;
   conditionJson.insert(AlertConstants::CONDITION_NAME, QStringLiteral("Distress"));
   conditionJson.insert(AlertConstants::CONDITION_LEVEL, static_cast<int>(AlertLevel::Critical));
   conditionJson.insert(AlertConstants::CONDITION_TYPE, AlertConstants::attributeEqualsAlertConditionType());
-  conditionJson.insert(AlertConstants::CONDITION_SOURCE, QStringLiteral("Friendly Tracks"));
+  conditionJson.insert(AlertConstants::CONDITION_SOURCE, QStringLiteral("Friendly Tracks Ground"));
   QJsonObject queryObject;
   queryObject.insert(AlertConstants::ATTRIBUTE_NAME, QStringLiteral("status911"));
   conditionJson.insert(AlertConstants::CONDITION_QUERY, queryObject);
@@ -230,11 +230,63 @@ void DsaController::writeDefaultConditions()
 void DsaController::writeDefaultMessageFeeds()
 {
   m_dsaSettings[MessageFeedConstants::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME] = QStringList { QString("45678"), QString("45679") };
-  m_dsaSettings[MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME] = QStringList { QString("Cursor-on-Target:cot:mil2525c"),
-      QString("Friendly Tracks:position_report:mil2525c"), QString("Contact Reports:spotrep:enemycontact1600.png"),
-      QString("Situation Reports:sitrep:sitrep1600.png"), QString("EOD Reports:eod:eod1600.png"),
-      QString("Sensor Observations:sensor_obs:sensorobs1600.png") };
-  m_dsaSettings[MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME] = QStringList { QString("position_report"), QString("45679") };
+
+  QJsonArray messageFeedsJson;
+
+  QJsonObject cotMessageFeedJson;
+  cotMessageFeedJson.insert(MessageFeedConstants::MESSAGE_FEEDS_NAME, QStringLiteral("SA Events"));
+  cotMessageFeedJson.insert(MessageFeedConstants::MESSAGE_FEEDS_TYPE, QStringLiteral("cot"));
+  cotMessageFeedJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER, QStringLiteral("mil2525c"));
+  cotMessageFeedJson.insert(MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT, QStringLiteral("draped"));
+  messageFeedsJson.append(cotMessageFeedJson);
+
+  QJsonObject friendlyTracksGroundJson;
+  friendlyTracksGroundJson.insert(MessageFeedConstants::MESSAGE_FEEDS_NAME, QStringLiteral("Friendly Tracks Ground"));
+  friendlyTracksGroundJson.insert(MessageFeedConstants::MESSAGE_FEEDS_TYPE, QStringLiteral("position_report_ground"));
+  friendlyTracksGroundJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER, QStringLiteral("mil2525c"));
+  friendlyTracksGroundJson.insert(MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT, QStringLiteral("draped"));
+  messageFeedsJson.append(friendlyTracksGroundJson);
+
+  QJsonObject friendlyTracksAirJson;
+  friendlyTracksAirJson.insert(MessageFeedConstants::MESSAGE_FEEDS_NAME, QStringLiteral("Friendly Tracks Air"));
+  friendlyTracksAirJson.insert(MessageFeedConstants::MESSAGE_FEEDS_TYPE, QStringLiteral("position_report_air"));
+  friendlyTracksAirJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER, QStringLiteral("mil2525c"));
+  friendlyTracksAirJson.insert(MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT, QStringLiteral("absolute"));
+  messageFeedsJson.append(friendlyTracksAirJson);
+
+  QJsonObject spotRepJson;
+  spotRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_NAME, QStringLiteral("Contact Reports"));
+  spotRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_TYPE, QStringLiteral("spotrep"));
+  spotRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER, QStringLiteral("enemycontact1600.png"));
+  spotRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT, QStringLiteral("draped"));
+  messageFeedsJson.append(spotRepJson);
+
+  QJsonObject sitRepJson;
+  sitRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_NAME, QStringLiteral("Situation Reports"));
+  sitRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_TYPE, QStringLiteral("sitrep"));
+  sitRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER, QStringLiteral("sitrep1600.png"));
+  sitRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT, QStringLiteral("draped"));
+  messageFeedsJson.append(sitRepJson);
+
+  QJsonObject eodReportsJson;
+  eodReportsJson.insert(MessageFeedConstants::MESSAGE_FEEDS_NAME, QStringLiteral("EOD Reports"));
+  eodReportsJson.insert(MessageFeedConstants::MESSAGE_FEEDS_TYPE, QStringLiteral("eod"));
+  eodReportsJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER, QStringLiteral("eod1600.png"));
+  eodReportsJson.insert(MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT, QStringLiteral("draped"));
+  messageFeedsJson.append(eodReportsJson);
+
+  QJsonObject sensorObsJson;
+  sensorObsJson.insert(MessageFeedConstants::MESSAGE_FEEDS_NAME, QStringLiteral("Sensor Observations"));
+  sensorObsJson.insert(MessageFeedConstants::MESSAGE_FEEDS_TYPE, QStringLiteral("sensor_obs"));
+  sensorObsJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER, QStringLiteral("sensorobs1600.png"));
+  sensorObsJson.insert(MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT, QStringLiteral("draped"));
+  messageFeedsJson.append(sensorObsJson);
+  m_dsaSettings[MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME] = messageFeedsJson;
+
+  QJsonObject locationBroadcastJson;
+  locationBroadcastJson.insert(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE, QStringLiteral("position_report_ground"));
+  locationBroadcastJson.insert(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PORT, 45679);
+  m_dsaSettings[MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME] = locationBroadcastJson;
 }
 
 /*! \brief internal

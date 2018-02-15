@@ -139,18 +139,20 @@ QString AlertConditionsController::toolName() const
  */
 void AlertConditionsController::setProperties(const QVariantMap& properties)
 {
-  const QVariant messageFeedsData = properties.value(MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME);
-  if (!messageFeedsData.isNull())
+  const auto messageFeeds = properties[MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME].toList();
+  if (!messageFeeds.isEmpty())
   {
-    m_messageFeedTypesToNames.clear();
-    const QStringList messageFeeds = messageFeedsData.toStringList();
-    for (const QString& messageFeed : messageFeeds)
+    const auto messageFeedsJson = QJsonArray::fromVariantList(messageFeeds);
+    for (const auto& messageFeed : messageFeedsJson)
     {
-      const QStringList& messageFeedConfig = messageFeed.split(":");
-      if (messageFeedConfig.size() != 3)
+      const auto messageFeedJsonObject = messageFeed.toObject();
+      if (messageFeedJsonObject.size() != 4)
         continue;
 
-      m_messageFeedTypesToNames.insert(messageFeedConfig.at(1), messageFeedConfig.at(0));
+      const auto feedName = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_NAME].toString();
+      const auto feedType = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_TYPE].toString();
+
+      m_messageFeedTypesToNames.insert(feedType, feedName);
     }
 
     onLayersChanged();

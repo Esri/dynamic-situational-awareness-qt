@@ -21,7 +21,13 @@ class MessageFeedConstants
 {
 public:
   static const QString LOCATION_BROADCAST_CONFIG_PROPERTYNAME;
+  static const QString LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE;
+  static const QString LOCATION_BROADCAST_CONFIG_PORT;
   static const QString MESSAGE_FEEDS_PROPERTYNAME;
+  static const QString MESSAGE_FEEDS_NAME;
+  static const QString MESSAGE_FEEDS_TYPE;
+  static const QString MESSAGE_FEEDS_RENDERER;
+  static const QString MESSAGE_FEEDS_PLACEMENT;
   static const QString MESSAGE_FEED_UDP_PORTS_PROPERTYNAME;
 };
 

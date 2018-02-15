@@ -29,6 +29,7 @@
 #include "PictureMarkerSymbol.h"
 
 #include <QUdpSocket>
+#include <QJsonArray>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -167,27 +168,29 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
   }
 
   // parse and add message feeds
-  const auto messageFeeds = properties[MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME].toStringList();
-  for (const auto& messageFeed : messageFeeds)
+  const auto messageFeeds = properties[MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME].toList();
+  const auto messageFeedsJson = QJsonArray::fromVariantList(messageFeeds);
+  for (const auto& messageFeed : messageFeedsJson)
   {
-    const auto& messageFeedConfig = messageFeed.split(":");
-    if (messageFeedConfig.size() != 3)
+    const auto messageFeedJsonObject = messageFeed.toObject();
+    if (messageFeedJsonObject.size() != 4)
       continue;
 
-    const auto feedName = messageFeedConfig[0];
-    const auto feedType = messageFeedConfig[1];
-    const auto rendererInfo = messageFeedConfig[2];
+    const auto feedName = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_NAME].toString();
+    const auto feedType = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_TYPE].toString();
+    const auto rendererInfo = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_RENDERER].toString();
+    const auto surfacePlacement = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT].toString();
 
-    MessagesOverlay* overlay = new MessagesOverlay(m_geoView, createRenderer(rendererInfo, this));
+    MessagesOverlay* overlay = new MessagesOverlay(m_geoView, createRenderer(rendererInfo, this), toSurfacePlacement(surfacePlacement), this);
     MessageFeed* feed = new MessageFeed(feedName, feedType, overlay, this);
     m_messageFeeds->append(feed);
   }
 
-  const auto locationBroadcastConfig = properties[MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME].toStringList();
+  const auto locationBroadcastConfig = properties[MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME].toJsonObject();
   if (locationBroadcastConfig.size() == 2)
   {
-    m_locationBroadcast->setMessageType(locationBroadcastConfig.at(0));
-    m_locationBroadcast->setUdpPort(locationBroadcastConfig.at(1).toInt());
+    m_locationBroadcast->setMessageType(locationBroadcastConfig.value(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE).toString());
+    m_locationBroadcast->setUdpPort(locationBroadcastConfig.value(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PORT).toInt());
   }
 }
 
@@ -282,6 +285,17 @@ void MessageFeedsController::setLocationBroadcastInDistress(bool inDistress)
   m_locationBroadcast->setInDistress(inDistress);
 
   emit locationBroadcastInDistressChanged();
+}
+
+SurfacePlacement MessageFeedsController::toSurfacePlacement(const QString& surfacePlacement)
+{
+  if (surfacePlacement.compare("relative", Qt::CaseInsensitive) == 0)
+    return SurfacePlacement::Relative;
+
+  if (surfacePlacement.compare("absolute", Qt::CaseInsensitive) == 0)
+    return SurfacePlacement::Absolute;
+
+  return SurfacePlacement::Draped; // default
 }
 
 /*!

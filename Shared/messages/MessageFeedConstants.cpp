@@ -12,6 +12,12 @@
 
 #include "MessageFeedConstants.h"
 
-const QString MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME = "LocationBroadcastConfig";
-const QString MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME = "MessageFeeds";
-const QString MessageFeedConstants::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME = "MessageFeedUdpPorts";
+const QString MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME = QStringLiteral("LocationBroadcastConfig");
+const QString MessageFeedConstants::LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE = QStringLiteral("messageType");
+const QString MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PORT = QStringLiteral("port");
+const QString MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME = QStringLiteral("MessageFeeds");
+const QString MessageFeedConstants::MESSAGE_FEEDS_NAME = QStringLiteral("name");
+const QString MessageFeedConstants::MESSAGE_FEEDS_TYPE= QStringLiteral("type");
+const QString MessageFeedConstants::MESSAGE_FEEDS_RENDERER = QStringLiteral("renderer");
+const QString MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT = QStringLiteral("placement");
+const QString MessageFeedConstants::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME = QStringLiteral("MessageFeedUdpPorts");

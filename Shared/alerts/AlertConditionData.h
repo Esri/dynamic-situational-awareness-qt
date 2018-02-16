@@ -33,7 +33,7 @@ public:
   ~AlertConditionData();
 
   AlertLevel level() const;
-  void setLevel(AlertLevel& level);
+  void setLevel(AlertLevel level);
 
   Esri::ArcGISRuntime::Point sourceLocation() const;
 

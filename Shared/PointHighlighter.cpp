@@ -143,6 +143,9 @@ void PointHighlighter::onGeoViewChanged()
   if (!geoview)
     return;
 
+  if (!geoview->graphicsOverlays())
+    return;
+
   m_highlightOverlay = new GraphicsOverlay(this);
   geoview->graphicsOverlays()->append(m_highlightOverlay);
 

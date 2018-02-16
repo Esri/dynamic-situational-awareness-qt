@@ -33,7 +33,7 @@ public:
   ~AlertConditionData();
 
   AlertLevel level() const;
-  void setLevel(AlertLevel& level);
+  void setLevel(AlertLevel level);
 
   Esri::ArcGISRuntime::Point sourceLocation() const;
 
@@ -49,7 +49,6 @@ public:
   void setViewed(bool viewed);
 
   bool isActive() const;
-  void setActive(bool active);
 
   AlertSource* source() const;
   AlertTarget* target() const;
@@ -73,6 +72,8 @@ private slots:
   void handleDataChanged();
 
 private:
+  void setActive(bool active);
+
   QString m_name;
   AlertLevel m_level = AlertLevel::Unknown;
   AlertSource* m_source = nullptr;

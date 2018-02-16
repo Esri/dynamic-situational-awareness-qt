@@ -154,13 +154,12 @@ void AlertListController::highlight(int rowIndex, bool showHighlight)
 
     m_highlightConnections.append(connect(conditionData->source(), &AlertSource::dataChanged, this, [this, conditionData]()
     {
-      if (conditionData)
-        m_highlighter->onPointChanged(conditionData->sourceLocation());
-    }));
+      if (!conditionData)
+        return;
 
-    m_highlightConnections.append(connect(conditionData, &AlertConditionData::activeChanged, this, [this, conditionData]()
-    {
-      if (!conditionData || !conditionData->isActive())
+      m_highlighter->onPointChanged(conditionData->sourceLocation());
+
+      if (!conditionData->isActive())
         m_highlighter->stopHighlight();
     }));
 

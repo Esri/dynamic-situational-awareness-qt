@@ -95,7 +95,6 @@ bool AlertListModel::addAlertConditionData(AlertConditionData* newConditionData)
 
   connect(newConditionData, &AlertConditionData::viewedChanged, this, handleDataChanged);
   connect(newConditionData, &AlertConditionData::dataChanged, this, handleDataChanged);
-  connect(newConditionData, &AlertConditionData::activeChanged, this, handleDataChanged);
 
   connect(newConditionData, &AlertConditionData::noLongerValid, this, [this, newConditionData]
   {

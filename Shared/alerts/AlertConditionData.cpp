@@ -190,7 +190,7 @@ void AlertConditionData::setViewed(bool viewed)
 }
 
 /*!
-  \brief Sets the active state for this condition data to \a active.
+  \internal Sets the active state for this condition data to \a active.
 
   \sa activeChanged
  */
@@ -200,7 +200,6 @@ void AlertConditionData::setActive(bool active)
     return;
 
   m_active = active;
-  emit activeChanged();
 }
 
 /*!

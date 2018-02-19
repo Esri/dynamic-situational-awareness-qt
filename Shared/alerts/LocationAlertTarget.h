@@ -13,8 +13,6 @@
 #ifndef LOCATIONALERTTARGET_H
 #define LOCATIONALERTTARGET_H
 
-#include <QVariant>
-
 #include "AlertTarget.h"
 
 #include "Point.h"
@@ -27,7 +25,7 @@ public:
   explicit LocationAlertTarget(QObject* parent = nullptr);
   ~LocationAlertTarget();
 
-  virtual QList<Esri::ArcGISRuntime::Geometry> targetGeometries(const Esri::ArcGISRuntime::Envelope& targetArea) const override;
+  QList<Esri::ArcGISRuntime::Geometry> targetGeometries(const Esri::ArcGISRuntime::Envelope& targetArea) const override;
   QVariant targetValue() const override;
 
 private:

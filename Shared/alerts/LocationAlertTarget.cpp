@@ -21,7 +21,7 @@ using namespace Esri::ArcGISRuntime;
 /*!
   \class LocationAlertTarget
   \inherits AlertTarget
-  \brief Represents a target based on the currnet location.
+  \brief Represents a target based on the current location.
 
   Changes to the underlying location will cause the \l AlertTarget::locationChanged
   signal to be emitted.

@@ -1032,7 +1032,7 @@ AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int
           if (!m_layerTargets.contains(featLayer->layerId()))
             m_layerTargets.insert(featLayer->layerId(), new FeatureLayerAlertTarget(featLayer));
 
-          targetDescription = featLayer->layerId();
+          targetDescription = featLayer->name();
           return m_layerTargets.value(featLayer->layerId(), nullptr);
         }
         else

@@ -165,13 +165,10 @@ void AlertListController::highlight(int rowIndex, bool showHighlight)
 
     for (AlertFilter* filter : m_filters)
     {
-      if (!filter)
-        continue;
-
       // when a filter changes, check whether it should exclude the alert: if so, stop the highlight
       m_highlightConnections.append(connect(filter, &AlertFilter::filterChanged, this, [this, conditionData, filter]()
       {
-        if (!conditionData || !filter)
+        if (!conditionData)
           return;
 
         if (!filter->passesFilter(conditionData))

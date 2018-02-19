@@ -859,6 +859,7 @@ DsaPanel {
         anchors {
             bottom: parent.bottom
             horizontalCenter: parent.horizontalCenter
+            margins: 8 * scaleFactor
         }
         text: "Create new"
         font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
@@ -878,5 +879,7 @@ DsaPanel {
         id: createNewWizard
         controller: toolController
         visible:  false
+        width: parent.width
+        height: parent.height
     }
 }

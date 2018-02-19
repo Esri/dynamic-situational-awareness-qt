@@ -60,6 +60,7 @@ public:
 signals:
   void alertListModelChanged();
   void allAlertsCountChanged();
+  void highlightStopped();
 
 private:
   AlertListProxyModel* m_alertsProxyModel = nullptr;

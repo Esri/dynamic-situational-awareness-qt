@@ -859,7 +859,7 @@ DsaPanel {
         text: "Create new"
         font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
         font.bold: checked
-        width: 64 * scaleFactor
+        width: 72 * scaleFactor
         background: Rectangle {
             color: Material.accent
             border.color: Material.foreground

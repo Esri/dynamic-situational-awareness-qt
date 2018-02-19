@@ -27,7 +27,8 @@ Menu {
         "Select type",
         "Select source feed",
         "Set query",
-        "Set target"]
+        "Set target",
+        "Review new condition"]
 
     property bool readyToAdd: geofenceReadyToAdd || attributeReadyToAdd || analysisReadyToAdd
 
@@ -82,7 +83,7 @@ Menu {
             right: parent.right
             margins: 8 * scaleFactor
         }
-        height: 256 * scaleFactor
+        height: 212 * scaleFactor
         currentIndex: 0
 
         ButtonGroup {
@@ -90,26 +91,67 @@ Menu {
         }
 
         onCurrentItemChanged: {
-            if (currentItem === namePage)
+            if (currentItem === conditionPage)
             {
                 if (levelGroup.checkedButton === null)
                     decrementCurrentIndex();
+                else
+                    summaryText.text = levelPage.getLevelText();
+
             }
-            if (currentItem === conditionPage)
+            else if (currentItem === namePage)
             {
-                if (newAlertName.length === 0)
-                    decrementCurrentIndex();
+                summaryText.text = levelPage.getLevelText() + conditionPage.getConditionTypeText() + namePage.getNameText();
             }
             else if (currentItem === sourcePage)
             {
+                if (newAlertName.length === 0)
+                    decrementCurrentIndex();
+                else
+                    summaryText.text = levelPage.getLevelText() + conditionPage.getConditionTypeText() + namePage.getNameText();
+            }
+            else if (currentItem === queryPage)
+            {
                 if (sourceCb.currentIndex === -1)
                     decrementCurrentIndex();
+                else
+                    summaryText.text = levelPage.getLevelText() + conditionPage.getConditionTypeText() + namePage.getNameText() +
+                            sourcePage.getSourceText();
+
+            }
+            else if (currentItem === targetPage)
+            {
+                if (sourceCb.currentIndex === -1)
+                    decrementCurrentIndex();
+                else
+                    summaryText.text = levelPage.getLevelText() + conditionPage.getConditionTypeText() + namePage.getNameText() +
+                            sourcePage.getSourceText() + queryPage.getQueryText();
+            }
+            else if (currentItem === reviewPage)
+            {
+                if (sourceCb.currentIndex === -1)
+                    decrementCurrentIndex();
+                else
+                    summaryText.text = levelPage.getLevelText() + conditionPage.getConditionTypeText() + namePage.getNameText() +
+                            sourcePage.getSourceText() + queryPage.getQueryText() + targetPage.getTargetText();
             }
         }
 
         // Alert level
         Item {
             id: levelPage
+            function getLevelText() {
+                var prefix = "Create a new ";
+                if (lowCB.checked)
+                    return prefix + "low priority";
+                else if (mediumCB.checked)
+                    return prefix + "medium priority";
+                else if (highCB.checked)
+                    return prefix + "high priority";
+                else if (criticalCB.checked)
+                    return prefix + "critical priority";
+            }
+
             Grid {
                 anchors {
                     horizontalCenter: parent.horizontalCenter
@@ -166,29 +208,19 @@ Menu {
             }
         }
 
-        // Condition Name
-        Item {
-            id: namePage
-            TextField {
-                id: newAlertName
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                    top: parent.top
-                    margins: 16 * scaleFactor
-                }
-                width: 256 * scaleFactor
-                color: Material.accent
-                font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
-                font.bold: true
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                placeholderText: "<enter name>"
-            }
-        }
-
         // Condition type
         Item {
             id: conditionPage
+
+            function getConditionTypeText() {
+                if (geofenceCB.checked)
+                    return " GeoFence alert";
+                else if(attributeCB.checked)
+                    return " Attribute alert";
+                else if(analysisCB.checked)
+                    return " Analysis alert";
+            }
+
             Column {
                 anchors {
                     horizontalCenter: parent.horizontalCenter
@@ -220,9 +252,38 @@ Menu {
             }
         }
 
+        // Condition Name
+        Item {
+            id: namePage
+
+            function getNameText() {
+                return " called " + newAlertName.text;
+            }
+
+            TextField {
+                id: newAlertName
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                    top: parent.top
+                    margins: 16 * scaleFactor
+                }
+                width: 256 * scaleFactor
+                color: Material.accent
+                font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
+                font.bold: true
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                placeholderText: "<enter name>"
+            }
+        }
+
         // Source feed
         Item {
             id: sourcePage
+            function getSourceText() {
+                return " when objects from " + sourceCb.currentText;
+            }
+
             ComboBox {
                 id: sourceCb
                 anchors {
@@ -240,6 +301,19 @@ Menu {
 
         // Query
         Item {
+            id: queryPage
+            function getQueryText() {
+                if (withinAreaRb.visible && withinAreaRb.checked) {
+                    return " are within area of";
+                }
+                else if (withinDistanceRb.visible && withinDistanceRb.checked) {
+                    return " are within " + withinDistanceSB.value + " m of";
+                }
+                else if (attributeFieldEdit.visible) {
+                    return "have attrribute " + attributeFieldEdit.text + " = ";
+                }
+            }
+
             Column {
                 anchors {
                     horizontalCenter: parent.horizontalCenter
@@ -253,10 +327,6 @@ Menu {
                 RadioButton {
                     id: withinAreaRb
                     visible: geofenceCB.checked
-                    anchors {
-                        left: parent.left
-                        right: parent.right
-                    }
                     text: "are within area of"
                     font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                     checked: true
@@ -328,18 +398,6 @@ Menu {
                         horizontalAlignment: Text.AlignLeft
                         verticalAlignment: Text.AlignVCenter
                     }
-
-                    TextField {
-                        id: attributeValueEdit
-                        color: Material.accent
-                        width: attributeFieldEdit.width
-                        font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                        font.bold: true
-                        horizontalAlignment: Text.AlignLeft
-                        verticalAlignment: Text.AlignVCenter
-
-                        placeholderText: "<enter value>"
-                    }
                 }
 
                 Text {
@@ -356,6 +414,18 @@ Menu {
 
         // Target
         Item {
+
+            id: targetPage
+
+            function getTargetText() {
+                if (allObjectRb.visible && allObjectRb.checked )
+                    return " object from " + targetCB.currentText;
+                else if (singleFeatureRb.visible && singleFeatureRb.checked)
+                    return "object [" + featureIdEdit.text + "] from " + targetCB.currentText;
+                else if (attributeValueEdit.visible)
+                    return attributeValueEdit.text;
+            }
+
             Column {
                 anchors {
                     horizontalCenter: parent.horizontalCenter
@@ -443,6 +513,40 @@ Menu {
                     currentIndex: -1
                 }
             }
+
+            TextField {
+                id: attributeValueEdit
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                    top: parent.top
+                    margins: 16 * scaleFactor
+                }
+                visible: attributeCB.checked
+                color: Material.accent
+                width: attributeFieldEdit.width
+                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                font.bold: true
+                horizontalAlignment: Text.AlignLeft
+                verticalAlignment: Text.AlignVCenter
+
+                placeholderText: "<enter value>"
+            }
+        }
+
+        // Review
+        Item {
+            id: reviewPage
+
+            Text {
+                text: summaryText.text
+                width: parent.width * 0.9
+                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                font.bold: true
+                wrapMode: Text.Wrap
+                elide: Text.ElideRight
+                color: Material.foreground
+                horizontalAlignment: Text.AlignHCenter
+            }
         }
     }
 
@@ -457,10 +561,26 @@ Menu {
         currentIndex: conditionFrame.currentIndex
     }
 
+    Text {
+        id: summaryText
+        anchors {
+            top: paageIndicator.bottom
+            horizontalCenter: parent.horizontalCenter
+            margins: 8 * scaleFactor
+        }
+        width: parent.width * 0.9
+        font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+        font.italic: true
+        wrapMode: Text.Wrap
+        elide: Text.ElideRight
+        color: Material.foreground
+        horizontalAlignment: Text.AlignHCenter
+    }
+
     Row {
         spacing: 32
         anchors {
-            top: paageIndicator.bottom
+            top: summaryText.bottom
             horizontalCenter: parent.horizontalCenter
             margins: 8 * scaleFactor
         }

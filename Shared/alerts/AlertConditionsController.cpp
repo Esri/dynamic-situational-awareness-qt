@@ -21,6 +21,7 @@
 #include "GeoElementAlertTarget.h"
 #include "GraphicsOverlayAlertTarget.h"
 #include "LocationAlertSource.h"
+#include "LocationAlertTarget.h"
 #include "MessageFeedConstants.h"
 #include "WithinAreaAlertCondition.h"
 #include "WithinDistanceAlertCondition.h"
@@ -98,7 +99,8 @@ AlertConditionsController::AlertConditionsController(QObject* parent /* = nullpt
   m_sourceNames(new QStringListModel(QStringList{AlertConstants::MY_LOCATION}, this)),
   m_targetNames(new QStringListModel(this)),
   m_levelNames(new QStringListModel(QStringList{"Low priority", "Moderate priority", "High priority", "Critical priority"},this)),
-  m_locationSource(new LocationAlertSource(this))
+  m_locationSource(new LocationAlertSource(this)),
+  m_locationTarget(new LocationAlertTarget(this))
 {
   Toolkit::ToolManager::instance().addTool(this);
 
@@ -1057,9 +1059,15 @@ AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int
       if (overlay->overlayId().isEmpty())
         continue;
 
-      const QString overlayIdOrName = m_messageFeedTypesToNames.value(overlay->overlayId(), overlay->overlayId());
-
       ++currIndex;
+
+      if (overlay->overlayId() == QStringLiteral("SCENEVIEWLOCATIONOVERLAY"))
+      {
+        targetDescription = AlertConstants::MY_LOCATION;
+        return m_locationTarget;
+      }
+
+      const QString overlayIdOrName = m_messageFeedTypesToNames.value(overlay->overlayId(), overlay->overlayId());
 
       if (currIndex == targetOverlayIndex)
       {

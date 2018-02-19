@@ -582,11 +582,6 @@ DsaPanel {
 
                     mainText: conditionName
 
-                    Component.onCompleted: {
-                        if (visible)
-                            toolController.setViewed(index);
-                    }
-
                     Image {
                         id: menuButton
                         anchors {

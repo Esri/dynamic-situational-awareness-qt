@@ -163,6 +163,22 @@ void AlertListController::highlight(int rowIndex, bool showHighlight)
         m_highlighter->stopHighlight();
     }));
 
+    for (AlertFilter* filter : m_filters)
+    {
+      // when a filter changes, check whether it should exclude the alert: if so, stop the highlight
+      m_highlightConnections.append(connect(filter, &AlertFilter::filterChanged, this, [this, conditionData, filter]()
+      {
+        if (!conditionData)
+          return;
+
+        if (!filter->passesFilter(conditionData))
+        {
+          m_highlighter->stopHighlight();
+          emit highlightStopped();
+        }
+      }));
+    }
+
     m_highlighter->onPointChanged(conditionData->sourceLocation());
     m_highlighter->startHighlight();
   }
@@ -174,6 +190,7 @@ void AlertListController::highlight(int rowIndex, bool showHighlight)
     m_highlightConnections.clear();
 
     m_highlighter->stopHighlight();
+    emit highlightStopped();
   }
 }
 

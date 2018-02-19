@@ -26,6 +26,9 @@ public:
   ~AlertFilter();
 
   virtual bool passesFilter(AlertConditionData* alertData) const = 0;
+
+signals:
+  void filterChanged();
 };
 
 #endif // ALERTFILTER_H

@@ -65,5 +65,9 @@ AlertLevel StatusAlertFilter::minLevel() const
  */
 void StatusAlertFilter::setMinLevel(AlertLevel minLevel)
 {
+  if (minLevel == m_minLevel)
+    return;
+
   m_minLevel = minLevel;
+  emit filterChanged();
 }

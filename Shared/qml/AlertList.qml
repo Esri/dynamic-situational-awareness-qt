@@ -31,85 +31,13 @@ DsaPanel {
         onHighlightStopped: hightlightIndex = -1;
     }
 
-    Row {
-        id: filtersRow
-        spacing: 8 * scaleFactor
-        anchors {
-            top: alertsRoot.titleBar.bottom
-            left: parent.left
-            right: parent.right
-            margins: 8 * scaleFactor
-        }
-
-        Label {
-            id: viewCountLabel
-
-            anchors.verticalCenter: parent.verticalCenter
-            elide: Text.ElideRight
-            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-            text: "Viewing " + alertsView.count + " of " + toolController.allAlertsCount
-            verticalAlignment: Text.AlignVCenter
-            color: Material.foreground
-            font {
-                pixelSize: 14 * scaleFactor
-                family: DsaStyles.fontFamily
-            }
-        }
-
-        Button {
-            id: clearAllFiltersButton
-
-            visible: alertsView.count < toolController.allAlertsCount
-            anchors.verticalCenter: parent.verticalCenter
-            text: "Clear filters"
-            font {
-                pixelSize: 12 * scaleFactor
-                family: DsaStyles.fontFamily
-            }
-
-            onClicked: {
-                levelFilter.currentIndex = 0;
-                toolController.clearAllFilters();
-            }
-        }
-    }
-
-    Row {
-        id: levelRow
-        spacing: 8 * scaleFactor
-        anchors {
-            top: filtersRow.bottom
-            left: parent.left
-            right: parent.right
-            margins: 8 * scaleFactor
-        }
-
-        Text {
-            anchors.verticalCenter: levelFilter.verticalCenter
-            verticalAlignment: Text.AlignVCenter
-            horizontalAlignment: Text.AlignHCenter
-            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-            color: "white"
-            text: "Minimum level"
-        }
-
-        ComboBox {
-            id: levelFilter
-            width: 128 * scaleFactor
-            model: ["Low", "Medium", "High", "Critical"]
-            currentIndex: 0
-            onCurrentIndexChanged: toolController.setMinLevel(currentIndex+1);
-            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-        }
-    }
-
     ListView {
         id: alertsView
         anchors {
-            top: levelRow.bottom
+            top: titleBar.bottom
             left: parent.left
             right: parent.right
-            bottom: parent.bottom
+            bottom: filtersRow.top
             margins: 8 * scaleFactor
         }
         interactive: true
@@ -215,6 +143,78 @@ DsaPanel {
                     }
                 }
             }
+        }
+    }
+
+    Row {
+        id: filtersRow
+        spacing: 8 * scaleFactor
+        anchors {
+            bottom: levelRow.top
+            left: parent.left
+            right: parent.right
+            margins: 8 * scaleFactor
+        }
+
+        Label {
+            id: viewCountLabel
+
+            anchors.verticalCenter: parent.verticalCenter
+            elide: Text.ElideRight
+            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+            text: "Viewing " + alertsView.count + " of " + toolController.allAlertsCount
+            verticalAlignment: Text.AlignVCenter
+            color: Material.foreground
+            font {
+                pixelSize: 14 * scaleFactor
+                family: DsaStyles.fontFamily
+            }
+        }
+
+        Button {
+            id: clearAllFiltersButton
+
+            visible: alertsView.count < toolController.allAlertsCount
+            anchors.verticalCenter: parent.verticalCenter
+            text: "Clear filters"
+            font {
+                pixelSize: 12 * scaleFactor
+                family: DsaStyles.fontFamily
+            }
+
+            onClicked: {
+                levelFilter.currentIndex = 0;
+                toolController.clearAllFilters();
+            }
+        }
+    }
+
+    Row {
+        id: levelRow
+        spacing: 8 * scaleFactor
+        anchors {
+            bottom: parent.bottom
+            left: parent.left
+            right: parent.right
+            margins: 8 * scaleFactor
+        }
+
+        Text {
+            anchors.verticalCenter: levelFilter.verticalCenter
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+            color: "white"
+            text: "Minimum level"
+        }
+
+        ComboBox {
+            id: levelFilter
+            width: 128 * scaleFactor
+            model: ["Low", "Medium", "High", "Critical"]
+            currentIndex: 0
+            onCurrentIndexChanged: toolController.setMinLevel(currentIndex+1);
+            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
         }
     }
 

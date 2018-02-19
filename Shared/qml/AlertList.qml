@@ -59,6 +59,7 @@ DsaPanel {
         Button {
             id: clearAllFiltersButton
 
+            visible: alertsView.count < toolController.allAlertsCount
             anchors.verticalCenter: parent.verticalCenter
             text: "Clear filters"
             font {

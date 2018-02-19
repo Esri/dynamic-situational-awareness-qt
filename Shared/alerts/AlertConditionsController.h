@@ -41,6 +41,7 @@ class AlertConditionData;
 class AlertConditionListModel;
 class AlertTarget;
 class LocationAlertSource;
+class LocationAlertTarget;
 
 class AlertConditionsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -116,6 +117,7 @@ private:
   bool m_pickMode = false;
   double m_tolerance = 5;
   LocationAlertSource* m_locationSource = nullptr;
+  LocationAlertTarget* m_locationTarget = nullptr;
   Esri::ArcGISRuntime::TaskWatcher m_identifyLayersWatcher;
   Esri::ArcGISRuntime::TaskWatcher m_identifyGraphicsWatcher;
   mutable QHash<QString,AlertTarget*> m_layerTargets;

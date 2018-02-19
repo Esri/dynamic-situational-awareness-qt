@@ -27,6 +27,8 @@ DsaPanel {
 
     AlertListController {
         id: toolController
+
+        onHighlightStopped: hightlightIndex = -1;
     }
 
     Row {

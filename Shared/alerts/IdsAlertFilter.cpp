@@ -55,7 +55,11 @@ bool IdsAlertFilter::passesFilter(AlertConditionData* conditionData) const
  */
 void IdsAlertFilter::addId(const QUuid& id)
 {
+  if (m_ids.contains(id))
+      return;
+
   m_ids.insert(id);
+  emit filterChanged();
 }
 
 /*!
@@ -63,6 +67,10 @@ void IdsAlertFilter::addId(const QUuid& id)
  */
 void IdsAlertFilter::clearIds()
 {
+  if (m_ids.isEmpty())
+    return;
+
   m_ids.clear();
+  emit filterChanged();
 }
 

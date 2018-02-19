@@ -876,5 +876,7 @@ DsaPanel {
         visible:  false
         width: parent.width
         height: parent.height
+        x: parent.x
+        y: parent.y
     }
 }

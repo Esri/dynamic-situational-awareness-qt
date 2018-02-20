@@ -36,5 +36,6 @@
         <file>DistressButton.qml</file>
         <file>DsaMessageDialog.qml</file>
         <file>DsaInputDialog.qml</file>
+        <file>AlertConditionsWizard.qml</file>
     </qresource>
 </RCC>

@@ -45,67 +45,22 @@ DsaPanel {
         }
     }
 
-    property bool readyToAdd: geofenceReadyToAdd || attributeReadyToAdd || analysisReadyToAdd
+//    property bool readyToAdd: geofenceReadyToAdd || attributeReadyToAdd || analysisReadyToAdd
 
-    property bool geofenceReadyToAdd:  geofenceConditionButton.checked && (levelCb.currentIndex !== -1 &&
-                                                                           sourceCb.currentIndex !== -1 &&
-                                                                           targetCB.currentIndex !== -1 &&
-                                                                           (featureIdEdit.text.length > 0 || allObjectRb.checked))
-    property bool attributeReadyToAdd: attributeConditionButton.checked && (levelCb.currentIndex !== -1 &&
-                                                                            sourceCb.currentIndex !== -1 &&
-                                                                            attributeFieldEdit.length > 0 &&
-                                                                            attributeValueEdit.length > 0)
-    property bool analysisReadyToAdd: analysisConditionButton.checked && (levelCb.currentIndex !== -1 &&
-                                                                          sourceCb.currentIndex !== -1 &&
-                                                                          targetCB.currentIndex !== -1 &&
-                                                                          (featureIdEdit.text.length > 0 || allObjectRb.checked))
-    Row {
-        id: newOrViewRow
-        spacing: 0
+//    property bool geofenceReadyToAdd:  geofenceConditionButton.checked && (levelCb.currentIndex !== -1 &&
+//                                                                           sourceCb.currentIndex !== -1 &&
+//                                                                           targetCB.currentIndex !== -1 &&
+//                                                                           (featureIdEdit.text.length > 0 || allObjectRb.checked))
+//    property bool attributeReadyToAdd: attributeConditionButton.checked && (levelCb.currentIndex !== -1 &&
+//                                                                            sourceCb.currentIndex !== -1 &&
+//                                                                            attributeFieldEdit.length > 0 &&
+//                                                                            attributeValueEdit.length > 0)
+//    property bool analysisReadyToAdd: analysisConditionButton.checked && (levelCb.currentIndex !== -1 &&
+//                                                                          sourceCb.currentIndex !== -1 &&
+//                                                                          targetCB.currentIndex !== -1 &&
+//                                                                          (featureIdEdit.text.length > 0 || allObjectRb.checked))
 
-        anchors {
-            margins: 8 * scaleFactor
-            left: parent.left
-            right: parent.right
-            top: titleBar.bottom
-        }
-
-        ButtonGroup {
-            id: newOrViewGroup
-        }
-
-        Button {
-            id: createNewModeButton
-            text: "Create new"
-            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-            font.bold: checked
-            width: (newOrViewRow.width - (newOrViewRow.anchors.margins * 2)) * 0.5
-            checked: true
-            checkable: true
-            ButtonGroup.group: newOrViewGroup
-            background: Rectangle {
-                color: createNewModeButton.checked ? Material.accent : Material.primary
-                border.color: Material.foreground
-            }
-        }
-
-        Button {
-            id: viewExistingModeButton
-            text: "View existing"
-            font.pixelSize: createNewModeButton.font.pixelSize
-            font.bold: checked
-            width: createNewModeButton.width
-            checked: false
-            checkable: true
-            ButtonGroup.group: newOrViewGroup
-            background: Rectangle {
-                color: viewExistingModeButton.checked ? Material.accent : Material.primary
-                border.color: Material.foreground
-            }
-        }
-    }
-
-    Column {
+    /* Column {
         clip: true
         spacing: 4 * scaleFactor
 
@@ -511,14 +466,13 @@ DsaPanel {
                 newAlertName.text = "";
             }
         }
-    }
+    }*/
 
     Text {
         id: conditionsListTitle
-        visible: viewExistingModeButton.checked
         anchors {
             margins: 8 * scaleFactor
-            top: newOrViewRow.bottom
+            top: titleBar.bottom
             horizontalCenter: parent.horizontalCenter
         }
         text: qsTr("Conditions")
@@ -532,12 +486,11 @@ DsaPanel {
         id: conditionsList
         property string currentName
         property int currentLevel
-        visible: viewExistingModeButton.checked
         clip: true
         anchors {
             margins: 8 * scaleFactor
             top: conditionsListTitle.bottom
-            bottom: parent.bottom
+            bottom: createNewConditionButton.top
             left: parent.left
             right: parent.right
         }
@@ -886,7 +839,7 @@ DsaPanel {
             top: conditionsListTitle.bottom
             margins: 15 * scaleFactor
         }
-        visible: conditionsList.count === 0 && viewExistingModeButton.checked
+        visible: conditionsList.count === 0
         text: "No Conditions.\n\nSelect 'Create New' to set up alert queries."
         color: Material.foreground
         horizontalAlignment: Text.AlignHCenter
@@ -894,5 +847,36 @@ DsaPanel {
             pixelSize: 12 * scaleFactor
             family: DsaStyles.fontFamily
         }
+    }
+
+    Button {
+        id: createNewConditionButton
+        anchors {
+            bottom: parent.bottom
+            horizontalCenter: parent.horizontalCenter
+            margins: 8 * scaleFactor
+        }
+        text: "Create new"
+        font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+        font.bold: checked
+        width: 72 * scaleFactor
+        background: Rectangle {
+            color: Material.accent
+            border.color: Material.foreground
+        }
+
+        onClicked: {
+            createNewWizard.visible = true;
+        }
+    }
+
+    AlertConditionsWizard {
+        id: createNewWizard
+        controller: toolController
+        visible:  false
+        width: parent.width
+        height: parent.height
+        x: parent.x
+        y: parent.y
     }
 }

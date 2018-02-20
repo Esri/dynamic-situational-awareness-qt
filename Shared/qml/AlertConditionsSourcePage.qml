@@ -42,7 +42,7 @@ Item {
         width: 256 * scaleFactor
         font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
         textRole: "display"
-        model: controller.sourceNames
+        model: toolController.sourceNames
         currentIndex: 0
     }
 }

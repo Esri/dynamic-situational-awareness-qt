@@ -19,25 +19,20 @@ import Esri.DSA 1.0
 
 DsaPanel {
     id: manageAlertsRoot
-    width: 272 * scaleFactor
     title: qsTr("Alert Conditions")
     clip: true
 
     property bool isMobile
+    property alias pickMode: toolController.pickMode
+
+    onPickModeChanged: {
+        if (isMobile && !pickMode)
+            createNewWizard.openAtPage(5);
+    }
 
     AlertConditionsController {
         id: toolController
-        active: manageAlertsRoot.visible
-        onPickedElement: {
-            for (var i = 0; i < targetCB.count; ++i) {
-                if (targetCB.textAt(i) === overlayName)
-                {
-                    targetCB.currentIndex = i;
-                    featureIdEdit.text = elementId;
-                    break;
-                }
-            }
-        }
+        active: isMobile ? manageAlertsRoot.visible || pickMode : manageAlertsRoot.visible
 
         onActiveChanged: {
             if (!active && manageAlertsRoot.visible)
@@ -449,7 +444,6 @@ DsaPanel {
 
     AlertConditionsWizard {
         id: createNewWizard
-        controller: toolController
         visible:  false
         width: parent.width
         height: parent.height

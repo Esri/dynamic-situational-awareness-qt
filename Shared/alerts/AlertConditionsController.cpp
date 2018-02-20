@@ -722,6 +722,9 @@ void AlertConditionsController::onIdentifyLayersCompleted(const QUuid& taskId, Q
       break;
     }
   }
+
+  if (!m_identifyGraphicsWatcher.isValid() || m_identifyGraphicsWatcher.isDone() || m_identifyGraphicsWatcher.isCanceled())
+    togglePickMode();
 }
 
 /*!
@@ -769,6 +772,9 @@ void AlertConditionsController::onIdentifyGraphicsOverlaysCompleted(const QUuid&
       break;
     }
   }
+
+  if (!m_identifyLayersWatcher.isValid() || m_identifyLayersWatcher.isDone() || m_identifyLayersWatcher.isCanceled())
+    togglePickMode();
 }
 
 void AlertConditionsController::handleNewAlertConditionData(AlertConditionData* newConditionData)

@@ -223,6 +223,13 @@ Handheld {
             isMobile: true
 
             onClosed: visible = false;
+
+            onPickModeChanged: {
+                if (pickMode)
+                    alertConditionsTool.width = 1
+                else
+                    alertConditionsTool.width = drawer.width;
+            }
         }
 
         MarkupTool {

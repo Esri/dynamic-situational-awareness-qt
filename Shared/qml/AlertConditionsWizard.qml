@@ -20,7 +20,11 @@ import Esri.DSA 1.0
 Menu {
     id: conditionsWizardRoot
 
-    property AlertConditionsController controller
+    function openAtPage(pageNumber) {
+        conditionFrame.setCurrentIndex(pageNumber);
+        open();
+    }
+
     property bool readyToAdd: conditionFrame.currentItem == reviewPage
 
     Text {

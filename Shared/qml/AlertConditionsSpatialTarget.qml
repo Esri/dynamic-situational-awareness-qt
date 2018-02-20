@@ -22,7 +22,7 @@ Item {
     id: targetPage
 
     property bool valid: targetCB.currentIndex !== -1 &&
-                                  (featureIdEdit.text.length > 0 || allObjectRb.checked)
+                         (featureIdEdit.text.length > 0 || allObjectRb.checked)
     property string instruction: "Set target"
     property alias targetIndex: targetCB.currentIndex
     property int targetFeatureId: singleFeatureRb.checked? Number(featureIdEdit.text) : -1
@@ -119,8 +119,24 @@ Item {
             font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
             width: 256 * scaleFactor
             textRole: "display"
-            model: controller.targetNames
+            model: toolController.targetNames
             currentIndex: -1
+        }
+    }
+
+    Connections {
+        target: toolController
+
+        onPickedElement: {
+            console.log("picked", overlayName, elementId);
+            for (var i = 0; i < targetCB.count; ++i) {
+                if (targetCB.textAt(i) === overlayName)
+                {
+                    targetCB.currentIndex = i;
+                    featureIdEdit.text = elementId;
+                    break;
+                }
+            }
         }
     }
 }

@@ -140,6 +140,18 @@ Menu {
         // Alert level
         Item {
             id: levelPage
+
+            function getLevel() {
+                if (lowCB.checked)
+                    return 1;
+                else if (mediumCB.checked)
+                    return 2;
+                else if (highCB.checked)
+                    return 3;
+                else if (criticalCB.checked)
+                    return 4;
+            }
+
             function getLevelText() {
                 var prefix = "Create a new ";
                 if (lowCB.checked)
@@ -593,6 +605,35 @@ Menu {
             toolName: "Create"
             onToolSelected: {
                 conditionsWizardRoot.close();
+                if (geofenceCB.checked) {
+                    if (withinDistanceRb.checked) {
+                        toolController.addWithinDistanceAlert(newAlertName.text,
+                                                              levelPage.getLevel(),
+                                                              sourceCb.currentText,
+                                                              withinDistanceSB.value,
+                                                              singleFeatureRb.checked ? Number(featureIdEdit.text) : -1,
+                                                                                        targetCB.currentIndex);
+                    } else if (withinAreaRb.checked) {
+                        toolController.addWithinAreaAlert(newAlertName.text,
+                                                          levelPage.getLevel(),
+                                                          sourceCb.currentText,
+                                                          singleFeatureRb.checked ? Number(featureIdEdit.text) : -1,
+                                                                                    targetCB.currentIndex);
+                    }
+                } else if (attributeCB.checked) {
+                    toolController.addAttributeEqualsAlert(newAlertName.text,
+                                                           levelPage.getLevel(),
+                                                           sourceCb.currentText,
+                                                           attributeFieldEdit.text,
+                                                           attributeValueEdit.text);
+                }
+
+                sourceCb.currentIndex = -1;
+                featureIdEdit.text = "";
+                targetCB.currentIndex = "";
+                attributeFieldEdit.text = "";
+                attributeValueEdit.text = "";
+                newAlertName.text = "";
             }
         }
 

@@ -241,7 +241,7 @@ bool AlertConditionsController::addWithinDistanceAlert(const QString& conditionN
       targetOverlayIndex < 0)
     return false;
 
-  AlertLevel level = static_cast<AlertLevel>(levelIndex + 1);
+  AlertLevel level = static_cast<AlertLevel>(levelIndex);
   if (level > AlertLevel::Critical)
     return false;
 
@@ -303,7 +303,7 @@ bool AlertConditionsController::addWithinAreaAlert(const QString& conditionName,
       targetOverlayIndex < 0)
     return false;
 
-  AlertLevel level = static_cast<AlertLevel>(levelIndex + 1);
+  AlertLevel level = static_cast<AlertLevel>(levelIndex);
   if (level > AlertLevel::Critical)
     return false;
 
@@ -362,7 +362,7 @@ bool AlertConditionsController::addAttributeEqualsAlert(const QString& condition
       targetValue.isNull())
     return false;
 
-  AlertLevel level = static_cast<AlertLevel>(levelIndex + 1);
+  AlertLevel level = static_cast<AlertLevel>(levelIndex);
   if (level > AlertLevel::Critical)
     return false;
 

@@ -32,7 +32,8 @@ using namespace Esri::ArcGISRuntime;
   \brief Constructor taking an optional \a parent.
  */
 LocationAlertSource::LocationAlertSource(QObject* parent):
-  AlertSource(parent)
+  AlertSource(parent),
+  m_location(0., 0., SpatialReference::wgs84())
 {
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::locationChanged, this, [this](const Point& location)
   {

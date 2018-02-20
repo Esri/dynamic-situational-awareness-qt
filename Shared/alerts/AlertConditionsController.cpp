@@ -1061,6 +1061,9 @@ AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int
 
       ++currIndex;
 
+      if (currIndex != targetOverlayIndex)
+        continue;
+
       if (overlay->overlayId() == QStringLiteral("SCENEVIEWLOCATIONOVERLAY"))
       {
         targetDescription = AlertConstants::MY_LOCATION;
@@ -1069,21 +1072,18 @@ AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int
 
       const QString overlayIdOrName = m_messageFeedTypesToNames.value(overlay->overlayId(), overlay->overlayId());
 
-      if (currIndex == targetOverlayIndex)
+      if (itemId == -1)
       {
-        if (itemId == -1)
-        {
-          if (!m_overlayTargets.contains(overlayIdOrName))
-            m_overlayTargets.insert(overlayIdOrName, new GraphicsOverlayAlertTarget(overlay));
+        if (!m_overlayTargets.contains(overlayIdOrName))
+          m_overlayTargets.insert(overlayIdOrName, new GraphicsOverlayAlertTarget(overlay));
 
-          targetDescription = overlayIdOrName;
-          return m_overlayTargets.value(overlayIdOrName, nullptr);
-        }
-        else
-        {
-          targetDescription = QString("%1 [%2]").arg(overlayIdOrName, QString::number(itemId));
-          return targetFromGraphicsOverlay(overlay, itemId);
-        }
+        targetDescription = overlayIdOrName;
+        return m_overlayTargets.value(overlayIdOrName, nullptr);
+      }
+      else
+      {
+        targetDescription = QString("%1 [%2]").arg(overlayIdOrName, QString::number(itemId));
+        return targetFromGraphicsOverlay(overlay, itemId);
       }
     }
   }

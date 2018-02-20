@@ -22,7 +22,7 @@ Item {
 
     property bool valid: attributeValueEdit.length > 0
     property string instruction: "Set target"
-    property alias attributeValue: attributeValue.text
+    property alias attributeValue: attributeValueEdit.text
 
     function text() {
         return attributeValueEdit.text;
@@ -40,7 +40,7 @@ Item {
             margins: 16 * scaleFactor
         }
         color: Material.accent
-        width: 256 * scaleFactor
+        width: parent.width * 0.75
         font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
         font.bold: true
         horizontalAlignment: Text.AlignLeft

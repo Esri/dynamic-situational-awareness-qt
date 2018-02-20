@@ -117,7 +117,7 @@ Item {
                 right: parent.right
             }
             font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-            width: 256 * scaleFactor
+            width: parent.width * 0.75
             textRole: "display"
             model: toolController.targetNames
             currentIndex: -1
@@ -128,7 +128,6 @@ Item {
         target: toolController
 
         onPickedElement: {
-            console.log("picked", overlayName, elementId);
             for (var i = 0; i < targetCB.count; ++i) {
                 if (targetCB.textAt(i) === overlayName)
                 {

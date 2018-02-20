@@ -39,7 +39,7 @@ Item {
             top: parent.top
             margins: 16 * scaleFactor
         }
-        width: 256 * scaleFactor
+        width: parent.width * 0.75
         font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
         textRole: "display"
         model: toolController.sourceNames

@@ -40,7 +40,7 @@ Menu {
         horizontalAlignment: Text.AlignHCenter
         font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
         color: Material.accent
-        text: "Create new Alert Condition"
+        text: "Create new Condition"
     }
 
     Text {
@@ -51,7 +51,7 @@ Menu {
             margins: 8 * scaleFactor
         }
         width: parent.width * 0.9
-        height: 32 * scaleFactor
+        height: 48 * scaleFactor
         font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
         font.italic: true
         wrapMode: Text.Wrap

@@ -26,7 +26,7 @@ DsaPanel {
     property alias pickMode: toolController.pickMode
 
     onPickModeChanged: {
-        if (isMobile && !pickMode)
+        if (!pickMode)
             createNewWizard.openAtPage(5);
     }
 
@@ -319,7 +319,7 @@ DsaPanel {
         text: "Create new"
         font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
         font.bold: checked
-        width: 72 * scaleFactor
+        width: 96 * scaleFactor
         background: Rectangle {
             color: Material.accent
             border.color: Material.foreground

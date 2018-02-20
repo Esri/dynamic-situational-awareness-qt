@@ -17,13 +17,9 @@ import QtQuick.Controls.Material 2.1
 import QtQuick.Window 2.2
 import Esri.DSA 1.0
 
-Menu {
+Rectangle {
     id: conditionsWizardRoot
-
-    function openAtPage(pageNumber) {
-        conditionFrame.setCurrentIndex(pageNumber);
-        open();
-    }
+    color: Material.primary
 
     property bool readyToAdd: conditionFrame.currentItem == reviewPage
 
@@ -183,7 +179,7 @@ Menu {
 
     Button {
         id: backButton
-        enabled: conditionFrame.currentIndex > 0
+        visible: conditionFrame.currentIndex > 0
         anchors {
             left: conditionFrame.left
             verticalCenter: pageIndicator.verticalCenter
@@ -209,7 +205,7 @@ Menu {
     }
 
     Button {
-        enabled: conditionFrame.currentIndex < (conditionFrame.count -1) && conditionFrame.currentItem.valid
+        visible: conditionFrame.currentIndex < (conditionFrame.count -1) && conditionFrame.currentItem.valid
         anchors {
             right: conditionFrame.right
             verticalCenter: pageIndicator.verticalCenter

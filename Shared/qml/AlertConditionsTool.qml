@@ -25,11 +25,6 @@ DsaPanel {
     property bool isMobile
     property alias pickMode: toolController.pickMode
 
-    onPickModeChanged: {
-        if (!pickMode)
-            createNewWizard.openAtPage(5);
-    }
-
     AlertConditionsController {
         id: toolController
         active: isMobile ? manageAlertsRoot.visible || pickMode : manageAlertsRoot.visible
@@ -445,9 +440,6 @@ DsaPanel {
     AlertConditionsWizard {
         id: createNewWizard
         visible:  false
-        width: parent.width
-        height: parent.height
-        x: parent.x
-        y: parent.y
+        anchors.fill: parent
     }
 }

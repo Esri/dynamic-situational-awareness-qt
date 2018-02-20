@@ -50,6 +50,10 @@ Item {
 
     }
 
+    ButtonGroup {
+        id: levelGroup
+    }
+
     Grid {
         anchors {
             horizontalCenter: parent.horizontalCenter
@@ -63,10 +67,8 @@ Item {
 
         Image {
             source: DsaResources.iconWarningGreen
-        }
-
-        ButtonGroup {
-            id: levelGroup
+            height: lowCB.height
+            width: height
         }
 
         RadioButton {
@@ -78,6 +80,8 @@ Item {
 
         Image {
             source: DsaResources.iconWarningOrange
+            height: lowCB.height
+            width: height
         }
 
         RadioButton {
@@ -89,6 +93,8 @@ Item {
 
         Image {
             source: DsaResources.iconWarningRed
+            height: lowCB.height
+            width: height
         }
 
         RadioButton {
@@ -100,6 +106,8 @@ Item {
 
         Image {
             source: DsaResources.iconWarningRedExclamation
+            height: lowCB.height
+            width: height
         }
 
         RadioButton {

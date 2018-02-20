@@ -41,11 +41,13 @@ Item {
         }
         color: Material.accent
         width: parent.width * 0.75
-        font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-        font.bold: true
+        font {
+            pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+            bold: true
+        }
+
         horizontalAlignment: Text.AlignLeft
         verticalAlignment: Text.AlignVCenter
-
         placeholderText: "<enter value>"
     }
 }

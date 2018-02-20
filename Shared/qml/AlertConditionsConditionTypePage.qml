@@ -30,9 +30,9 @@ Item {
     function text() {
         if (geofenceCB.checked)
             return " GeoFence alert";
-        else if(attributeCB.checked)
+        else if (attributeCB.checked)
             return " Attribute alert";
-        else if(analysisCB.checked)
+        else if (analysisCB.checked)
             return " Analysis alert";
     }
 

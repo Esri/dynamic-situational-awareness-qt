@@ -28,7 +28,7 @@ Item {
     property int targetFeatureId: singleFeatureRb.checked? Number(featureIdEdit.text) : -1
 
     function text() {
-        if (allObjectRb.checked )
+        if (allObjectRb.checked)
             return " object from " + targetCB.currentText;
         else if (singleFeatureRb.checked)
             return "object [" + featureIdEdit.text + "] from " + targetCB.currentText;
@@ -84,7 +84,6 @@ Item {
                 font.bold: true
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignVCenter
-
                 placeholderText: "<object ID>"
             }
 

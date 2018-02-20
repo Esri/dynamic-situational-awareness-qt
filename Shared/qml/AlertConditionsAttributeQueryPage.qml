@@ -55,11 +55,12 @@ Item {
             TextField {
                 id: attributeFieldEdit
                 color: Material.accent
-                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                font.bold: true
+                font {
+                    pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                    bold: true
+                }
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignVCenter
-
                 placeholderText: "<enter attribute name>"
             }
 

@@ -226,9 +226,9 @@ Handheld {
 
             onPickModeChanged: {
                 if (pickMode)
-                    alertConditionsTool.width = 1
+                    visible = false;
                 else
-                    alertConditionsTool.width = drawer.width;
+                    visible = true;
             }
         }
 

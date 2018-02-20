@@ -167,8 +167,10 @@ Rectangle {
                 text: "Create condition?"
                 anchors.centerIn: parent
                 width: parent.width * 0.75
-                font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
-                font.bold: true
+                font {
+                    pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
+                    bold: true
+                }
                 wrapMode: Text.Wrap
                 elide: Text.ElideRight
                 color: Material.foreground

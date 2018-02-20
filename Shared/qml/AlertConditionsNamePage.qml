@@ -41,8 +41,10 @@ Item {
         }
         width: parent.width * 0.75
         color: Material.accent
-        font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
-        font.bold: true
+        font {
+            pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
+            bold: true
+        }
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         placeholderText: "<enter name>"

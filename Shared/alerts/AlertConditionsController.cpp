@@ -907,7 +907,6 @@ bool AlertConditionsController::addConditionFromJson(const QJsonObject& json)
     return false;
 
   const int level = levelIt.value().toInt(0);
-  const int levelIndex = level -1; // account for 0 = Unknown
 
   const QString conditionName = findString(AlertConstants::CONDITION_NAME);
   if (conditionName.isEmpty())
@@ -960,7 +959,7 @@ bool AlertConditionsController::addConditionFromJson(const QJsonObject& json)
 
     if (isWithinArea)
     {
-      return addWithinAreaAlert(conditionName, levelIndex, sourceString, itemId, targetOverlayIndex );
+      return addWithinAreaAlert(conditionName, level, sourceString, itemId, targetOverlayIndex );
     }
     else if (isWithinDistance)
     {
@@ -968,7 +967,7 @@ bool AlertConditionsController::addConditionFromJson(const QJsonObject& json)
       if (distance == -1.0)
         return false;
 
-      return addWithinDistanceAlert(conditionName, levelIndex, sourceString, distance, itemId, targetOverlayIndex);
+      return addWithinDistanceAlert(conditionName, level, sourceString, distance, itemId, targetOverlayIndex);
     }
   }
 

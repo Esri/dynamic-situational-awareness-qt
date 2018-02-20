@@ -22,9 +22,14 @@ Item {
 
     property bool valid: sourceCb.currentIndex !== -1
     property string instruction: "Select source feed"
+    property alias sourceName: sourceCb.currentText
 
     function text() {
         return " when objects from " + sourceCb.currentText;
+    }
+
+    function clear() {
+        sourceCb.currentIndex = -1;
     }
 
     ComboBox {

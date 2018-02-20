@@ -22,9 +22,14 @@ Item {
 
     property bool valid: newAlertName.length > 0
     property string instruction: "Set name"
+    property alias conditionName: newAlertName.text
 
     function text() {
         return " called " + newAlertName.text;
+    }
+
+    function clear() {
+        newAlertName.text = "";
     }
 
     TextField {

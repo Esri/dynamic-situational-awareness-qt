@@ -22,6 +22,9 @@ Item {
 
     property bool valid: withinAreaRb.checked || withinDistanceSB.value > 0
     property string instruction: "Set query"
+    property bool isWithinDistance: withinDistanceRb.checked
+    property bool isWithinArea: withinAreaRb.checked
+    property real distance: withinDistanceSB.value
 
     function text() {
         if (withinAreaRb.checked) {
@@ -30,6 +33,11 @@ Item {
         else if (withinDistanceRb.checked) {
             return " are within " + withinDistanceSB.value + " m of";
         }
+    }
+
+    function clear() {
+        withinDistanceSB.value = 50;
+        withinAreaRb.checked = true;
     }
 
     Column {

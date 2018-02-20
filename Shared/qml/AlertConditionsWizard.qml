@@ -99,9 +99,16 @@ Menu {
             id: queryLoader
             property bool valid: item ? item.valid : false
             property string instruction: item ? item.instruction : ""
+
             function text () {
                 return item ? item.text() : "";
             }
+
+            function clear() {
+                if (item)
+                    item.clear();
+            }
+
             source: conditionPage.isGeoFence ? "qrc:/qml/AlertConditionsGeofenceQueryPage.qml" :
                                                "qrc:/qml/AlertConditionsAttributeQueryPage.qml"
         }
@@ -110,9 +117,16 @@ Menu {
             id: targetLoader
             property bool valid: item ? item.valid : false
             property string instruction: item ? item.instruction : ""
+
             function text () {
                 return item ? item.text() : "";
             }
+
+            function clear() {
+                if (item)
+                    item.clear();
+            }
+
             source: conditionPage.isGeoFence ? "qrc:/qml/AlertConditionsSpatialTarget.qml" :
                                                "qrc:/qml/AlertConditionsAttributeTarget.qml"
         }
@@ -126,6 +140,11 @@ Menu {
             function text() {
                 return reviewText.text;
             }
+
+            function clear() {
+                summaryText.text = "";
+            }
+
             Text {
                 id: reviewText
                 text: summaryText.text
@@ -183,35 +202,31 @@ Menu {
             toolName: "Create"
             onToolSelected: {
                 conditionsWizardRoot.close();
-                if (geofenceCB.checked) {
-                    if (withinDistanceRb.checked) {
-                        toolController.addWithinDistanceAlert(newAlertName.text,
+                if (conditionPage.isGeoFence) {
+                    if (queryLoader.item.isWithinDistance) {
+                        toolController.addWithinDistanceAlert(namePage.conditionName,
                                                               levelPage.getLevel(),
-                                                              sourceCb.currentText,
-                                                              withinDistanceSB.value,
-                                                              singleFeatureRb.checked ? Number(featureIdEdit.text) : -1,
-                                                                                        targetCB.currentIndex);
-                    } else if (withinAreaRb.checked) {
-                        toolController.addWithinAreaAlert(newAlertName.text,
+                                                              sourcePage.sourceName,
+                                                              queryLoader.item.distance,
+                                                              targetLoader.item.targetFeatureId,
+                                                              targetLoader.item.targetIndex);
+                    } else if (queryLoader.item.isWithinArea) {
+                        toolController.addWithinAreaAlert(namePage.conditionName,
                                                           levelPage.getLevel(),
-                                                          sourceCb.currentText,
-                                                          singleFeatureRb.checked ? Number(featureIdEdit.text) : -1,
-                                                                                    targetCB.currentIndex);
+                                                          sourcePage.sourceName,
+                                                          targetLoader.item.targetFeatureId,
+                                                          targetLoader.item.targetInde);
                     }
-                } else if (attributeCB.checked) {
-                    toolController.addAttributeEqualsAlert(newAlertName.text,
+                } else if (conditionPage.isAttribute) {
+                    toolController.addAttributeEqualsAlert(namePage.conditionName,
                                                            levelPage.getLevel(),
-                                                           sourceCb.currentText,
-                                                           attributeFieldEdit.text,
-                                                           attributeValueEdit.text);
+                                                           sourcePage.sourceName,
+                                                           queryLoader.item.attributeField,
+                                                           targetLoader.item.attributeValue);
                 }
 
-                sourceCb.currentIndex = -1;
-                featureIdEdit.text = "";
-                targetCB.currentIndex = "";
-                attributeFieldEdit.text = "";
-                attributeValueEdit.text = "";
-                newAlertName.text = "";
+                for (var i = 0; i < conditionFrame.count; ++i)
+                    conditionFrame.itemAt(i).clear();
             }
         }
 

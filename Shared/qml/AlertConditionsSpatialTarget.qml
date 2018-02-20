@@ -24,12 +24,19 @@ Item {
     property bool valid: targetCB.currentIndex !== -1 &&
                                   (featureIdEdit.text.length > 0 || allObjectRb.checked)
     property string instruction: "Set target"
+    property alias targetIndex: targetCB.currentIndex
+    property int targetFeatureId: singleFeatureRb.checked? Number(featureIdEdit.text) : -1
 
     function text() {
         if (allObjectRb.checked )
             return " object from " + targetCB.currentText;
         else if (singleFeatureRb.checked)
             return "object [" + featureIdEdit.text + "] from " + targetCB.currentText;
+    }
+
+    function clear() {
+        featureIdEdit.text = "";
+        targetCB.currentIndex = -1;
     }
 
     Column {

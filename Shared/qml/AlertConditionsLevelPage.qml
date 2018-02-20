@@ -46,6 +46,10 @@ Item {
             return prefix + "critical priority";
     }
 
+    function clear() {
+
+    }
+
     Grid {
         anchors {
             horizontalCenter: parent.horizontalCenter

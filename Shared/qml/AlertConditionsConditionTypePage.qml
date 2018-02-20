@@ -24,6 +24,9 @@ Item {
     property bool valid: geofenceCB.checked || attributeCB.checked || analysisCB.checked
     property string instruction: "Select type"
 
+    function clear() {
+    }
+
     function text() {
         if (geofenceCB.checked)
             return " GeoFence alert";

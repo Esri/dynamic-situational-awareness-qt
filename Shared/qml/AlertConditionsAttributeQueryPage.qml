@@ -22,9 +22,14 @@ Item {
 
     property bool valid: attributeFieldEdit.length > 0
     property string instruction: "Select priority"
+    property alias attributeField: attributeFieldEdit.text
 
     function text() {
         return "have attrribute " + attributeFieldEdit.text + " = ";
+    }
+
+    function clear() {
+        attributeFieldEdit.text = "";
     }
 
     Column {

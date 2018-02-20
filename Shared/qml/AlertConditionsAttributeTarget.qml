@@ -22,9 +22,14 @@ Item {
 
     property bool valid: attributeValueEdit.length > 0
     property string instruction: "Set target"
+    property alias attributeValue: attributeValue.text
 
     function text() {
         return attributeValueEdit.text;
+    }
+
+    function clear() {
+        attributeValueEdit.text = "";
     }
 
     TextField {

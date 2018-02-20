@@ -44,9 +44,26 @@ Menu {
     }
 
     Text {
-        id: instructionText
+        id: summaryText
         anchors {
             top: titleRow.bottom
+            horizontalCenter: parent.horizontalCenter
+            margins: 8 * scaleFactor
+        }
+        width: parent.width * 0.9
+        height: 32 * scaleFactor
+        font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+        font.italic: true
+        wrapMode: Text.Wrap
+        elide: Text.ElideRight
+        color: Material.foreground
+        horizontalAlignment: Text.AlignHCenter
+    }
+
+    Text {
+        id: instructionText
+        anchors {
+            top: summaryText.bottom
             margins: 8 * scaleFactor
             horizontalCenter: parent.horizontalCenter
         }
@@ -65,7 +82,7 @@ Menu {
             right: parent.right
             margins: 8 * scaleFactor
         }
-        height: 212 * scaleFactor
+        height: 190 * scaleFactor
         currentIndex: 0
 
         onCurrentItemChanged: {
@@ -151,9 +168,10 @@ Menu {
 
             Text {
                 id: reviewText
-                text: summaryText.text
-                width: parent.width * 0.9
-                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                text: "Create condition?"
+                anchors.centerIn: parent
+                width: parent.width * 0.75
+                font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
                 font.bold: true
                 wrapMode: Text.Wrap
                 elide: Text.ElideRight
@@ -163,37 +181,52 @@ Menu {
         }
     }
 
+    Button {
+        id: backButton
+        enabled: conditionFrame.currentIndex > 0
+        anchors {
+            left: conditionFrame.left
+            verticalCenter: pageIndicator.verticalCenter
+            margins: 8 * scaleFactor
+        }
+        height: 32 * scaleFactor
+        width: 64 * scaleFactor
+        text: "Back"
+        font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+
+        onClicked: conditionFrame.decrementCurrentIndex();
+    }
+
     PageIndicator {
-        id: paageIndicator
+        id: pageIndicator
         anchors {
             top: conditionFrame.bottom
             horizontalCenter: conditionFrame.horizontalCenter
         }
-
+        width: 64 * scaleFactor
         count: conditionFrame.count
         currentIndex: conditionFrame.currentIndex
     }
 
-    Text {
-        id: summaryText
+    Button {
+        enabled: conditionFrame.currentIndex < (conditionFrame.count -1) && conditionFrame.currentItem.valid
         anchors {
-            top: paageIndicator.bottom
-            horizontalCenter: parent.horizontalCenter
-            margins: 8 * scaleFactor
+            right: conditionFrame.right
+            verticalCenter: pageIndicator.verticalCenter
+            margins: 16 * scaleFactor
         }
-        width: parent.width * 0.9
+        height: 32 * scaleFactor
+        width: 64 * scaleFactor
+        text: "Next"
         font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-        font.italic: true
-        wrapMode: Text.Wrap
-        elide: Text.ElideRight
-        color: Material.foreground
-        horizontalAlignment: Text.AlignHCenter
+
+        onClicked: conditionFrame.incrementCurrentIndex();
     }
 
     Row {
         spacing: 32
         anchors {
-            top: summaryText.bottom
+            top: backButton.bottom
             horizontalCenter: parent.horizontalCenter
             margins: 8 * scaleFactor
         }

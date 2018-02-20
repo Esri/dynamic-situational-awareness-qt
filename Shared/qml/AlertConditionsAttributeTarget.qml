@@ -21,7 +21,7 @@ Item {
     id: targetPage
 
     property bool valid: attributeValueEdit.length > 0
-    property string instruction: "Set target"
+    property string instruction: "Set attribute value"
     property alias attributeValue: attributeValueEdit.text
 
     function text() {

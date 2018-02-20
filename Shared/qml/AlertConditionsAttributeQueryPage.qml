@@ -21,7 +21,7 @@ Item {
     id: queryPage
 
     property bool valid: attributeFieldEdit.length > 0
-    property string instruction: "Select priority"
+    property string instruction: "Select attribute"
     property alias attributeField: attributeFieldEdit.text
 
     function text() {

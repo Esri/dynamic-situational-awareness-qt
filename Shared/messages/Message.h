@@ -42,6 +42,7 @@ public:
   static const QString GEOMESSAGE_CONTROL_POINTS_NAME;
   static const QString GEOMESSAGE_UNIQUE_DESIGNATION_NAME;
   static const QString GEOMESSAGE_STATUS_911_NAME;
+  static const QString GEOMESSAGE_ENVIRONMENT_NAME;
 
   static const QString SIDC_NAME;
 

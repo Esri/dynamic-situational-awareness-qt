@@ -38,6 +38,7 @@ const QString Message::GEOMESSAGE_SIC_NAME{QStringLiteral("sic")};
 const QString Message::GEOMESSAGE_CONTROL_POINTS_NAME{QStringLiteral("_control_points")};
 const QString Message::GEOMESSAGE_UNIQUE_DESIGNATION_NAME{QStringLiteral("uniquedesignation")};
 const QString Message::GEOMESSAGE_STATUS_911_NAME{QStringLiteral("status911")};
+const QString Message::GEOMESSAGE_ENVIRONMENT_NAME{QStringLiteral("environment")};
 
 const QString Message::SIDC_NAME{QStringLiteral("sidc")};
 
@@ -225,6 +226,7 @@ Message Message::createFromGeoMessage(const QByteArray& message)
   QVariantMap attributes;
   QString wkidText;
   QString controlPointsText;
+  QString environmentText;
 
   bool inGeoMessageElement = false;
 
@@ -277,6 +279,10 @@ Message Message::createFromGeoMessage(const QByteArray& message)
       {
         controlPointsText = reader.readElementText();
       }
+      else if (QStringRef::compare(reader.name(), GEOMESSAGE_ENVIRONMENT_NAME, Qt::CaseInsensitive) == 0)
+      {
+        environmentText = reader.readElementText();
+      }
       else
       {
         attributes.insert(reader.name().toString(), reader.readElementText());
@@ -291,6 +297,11 @@ Message Message::createFromGeoMessage(const QByteArray& message)
     }
 
     reader.readNext();
+  }
+
+  if (!environmentText.isEmpty())
+  {
+    geoMessage.d->messageType += QString("_%1").arg(environmentText);
   }
 
   if (!controlPointsText.isEmpty())

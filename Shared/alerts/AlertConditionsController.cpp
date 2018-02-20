@@ -929,7 +929,7 @@ bool AlertConditionsController::addConditionFromJson(const QJsonObject& json)
     if (attributeName.isEmpty())
       return false;
 
-    return addAttributeEqualsAlert(conditionName, levelIndex, sourceString, attributeName, targetString );
+    return addAttributeEqualsAlert(conditionName, level, sourceString, attributeName, targetString );
   }
   else if (isWithinArea || isWithinDistance)
   {

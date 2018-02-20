@@ -222,7 +222,7 @@ DsaPanel {
         anchors {
             left: parent.left
             right: parent.right
-            top: levelRow.bottom
+            top: titleBar.bottom
             margins: 15 * scaleFactor
         }
         visible: alertsView.count === 0

@@ -241,7 +241,7 @@ bool AlertConditionsController::addWithinDistanceAlert(const QString& conditionN
       targetOverlayIndex < 0)
     return false;
 
-  AlertLevel level = static_cast<AlertLevel>(levelIndex + 1);
+  AlertLevel level = static_cast<AlertLevel>(levelIndex);
   if (level > AlertLevel::Critical)
     return false;
 
@@ -303,7 +303,7 @@ bool AlertConditionsController::addWithinAreaAlert(const QString& conditionName,
       targetOverlayIndex < 0)
     return false;
 
-  AlertLevel level = static_cast<AlertLevel>(levelIndex + 1);
+  AlertLevel level = static_cast<AlertLevel>(levelIndex);
   if (level > AlertLevel::Critical)
     return false;
 
@@ -362,7 +362,7 @@ bool AlertConditionsController::addAttributeEqualsAlert(const QString& condition
       targetValue.isNull())
     return false;
 
-  AlertLevel level = static_cast<AlertLevel>(levelIndex + 1);
+  AlertLevel level = static_cast<AlertLevel>(levelIndex);
   if (level > AlertLevel::Critical)
     return false;
 
@@ -722,6 +722,9 @@ void AlertConditionsController::onIdentifyLayersCompleted(const QUuid& taskId, Q
       break;
     }
   }
+
+  if (!m_identifyGraphicsWatcher.isValid() || m_identifyGraphicsWatcher.isDone() || m_identifyGraphicsWatcher.isCanceled())
+    togglePickMode();
 }
 
 /*!
@@ -769,6 +772,9 @@ void AlertConditionsController::onIdentifyGraphicsOverlaysCompleted(const QUuid&
       break;
     }
   }
+
+  if (!m_identifyLayersWatcher.isValid() || m_identifyLayersWatcher.isDone() || m_identifyLayersWatcher.isCanceled())
+    togglePickMode();
 }
 
 void AlertConditionsController::handleNewAlertConditionData(AlertConditionData* newConditionData)
@@ -907,7 +913,6 @@ bool AlertConditionsController::addConditionFromJson(const QJsonObject& json)
     return false;
 
   const int level = levelIt.value().toInt(0);
-  const int levelIndex = level -1; // account for 0 = Unknown
 
   const QString conditionName = findString(AlertConstants::CONDITION_NAME);
   if (conditionName.isEmpty())
@@ -930,7 +935,7 @@ bool AlertConditionsController::addConditionFromJson(const QJsonObject& json)
     if (attributeName.isEmpty())
       return false;
 
-    return addAttributeEqualsAlert(conditionName, levelIndex, sourceString, attributeName, targetString );
+    return addAttributeEqualsAlert(conditionName, level, sourceString, attributeName, targetString );
   }
   else if (isWithinArea || isWithinDistance)
   {
@@ -960,7 +965,7 @@ bool AlertConditionsController::addConditionFromJson(const QJsonObject& json)
 
     if (isWithinArea)
     {
-      return addWithinAreaAlert(conditionName, levelIndex, sourceString, itemId, targetOverlayIndex );
+      return addWithinAreaAlert(conditionName, level, sourceString, itemId, targetOverlayIndex );
     }
     else if (isWithinDistance)
     {
@@ -968,7 +973,7 @@ bool AlertConditionsController::addConditionFromJson(const QJsonObject& json)
       if (distance == -1.0)
         return false;
 
-      return addWithinDistanceAlert(conditionName, levelIndex, sourceString, distance, itemId, targetOverlayIndex);
+      return addWithinDistanceAlert(conditionName, level, sourceString, distance, itemId, targetOverlayIndex);
     }
   }
 

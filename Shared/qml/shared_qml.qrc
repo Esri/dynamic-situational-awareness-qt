@@ -36,5 +36,14 @@
         <file>DistressButton.qml</file>
         <file>DsaMessageDialog.qml</file>
         <file>DsaInputDialog.qml</file>
+        <file>AlertConditionsWizard.qml</file>
+        <file>AlertConditionsLevelPage.qml</file>
+        <file>AlertConditionsConditionTypePage.qml</file>
+        <file>AlertConditionsNamePage.qml</file>
+        <file>AlertConditionsSourcePage.qml</file>
+        <file>AlertConditionsGeofenceQueryPage.qml</file>
+        <file>AlertConditionsAttributeQueryPage.qml</file>
+        <file>AlertConditionsSpatialTarget.qml</file>
+        <file>AlertConditionsAttributeTarget.qml</file>
     </qresource>
 </RCC>

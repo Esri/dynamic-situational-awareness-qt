@@ -223,6 +223,13 @@ Handheld {
             isMobile: true
 
             onClosed: visible = false;
+
+            onPickModeChanged: {
+                if (pickMode)
+                    visible = false;
+                else
+                    visible = true;
+            }
         }
 
         MarkupTool {

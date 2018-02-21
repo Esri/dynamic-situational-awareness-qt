@@ -102,6 +102,7 @@ void DsaController::init(GeoView* geoView)
 
     connect(abstractTool, &Toolkit::AbstractTool::errorOccurred, this, &DsaController::onError);
     connect(abstractTool, &Toolkit::AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
+    connect(abstractTool, &Toolkit::AbstractTool::toolErrorOccurred, this, &DsaController::onToolError);
 
     // certain tools can conflict - for example, those which interact directly with the view
     if (!isConflictingTool(abstractTool->toolName()))
@@ -133,10 +134,22 @@ void DsaController::init(GeoView* geoView)
   }
 }
 
+/*! \brief Slot to handle an ArcGISRuntime Error \a e.
+ *
+ */
 void DsaController::onError(const Error& e)
 {
   qDebug() << "Error" << e.message() << e.additionalMessage();
   emit errorOccurred(e.message(), e.additionalMessage());
+}
+
+/*! \brief Slot to handle an \a errorMessage (with an \a additionalMessage) from an \l AbstractTool.
+ *
+ */
+void DsaController::onToolError(const QString& errorMessage, const QString& additionalMessage)
+{
+  qDebug() << "Error" << errorMessage << additionalMessage;
+  emit errorOccurred(errorMessage, additionalMessage);
 }
 
 void DsaController::onPropertyChanged(const QString& propertyName, const QVariant& propertyValue)

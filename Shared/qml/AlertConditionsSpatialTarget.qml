@@ -28,10 +28,14 @@ Item {
     property int targetFeatureId: singleFeatureRb.checked? Number(featureIdEdit.text) : -1
 
     function text() {
-        if (allObjectRb.checked)
+        if (allObjectRb.checked) {
             return " object from " + targetCB.currentText;
+        }
         else if (singleFeatureRb.checked)
-            return "object [" + featureIdEdit.text + "] from " + targetCB.currentText;
+        {
+            var msg = " object [%1] from ";
+            return msg.arg(featureIdEdit.text) + targetCB.currentText;
+        }
     }
 
     function clear() {
@@ -80,8 +84,10 @@ Item {
                 anchors.verticalCenter: singleFeatureRb.verticalCenter
                 validator: IntValidator{}
                 color: Material.accent
-                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                font.bold: true
+                font {
+                    pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                    bold: true
+                }
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignVCenter
                 placeholderText: "<object ID>"

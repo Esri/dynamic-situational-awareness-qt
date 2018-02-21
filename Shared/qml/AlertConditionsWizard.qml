@@ -48,8 +48,10 @@ Rectangle {
         }
         width: parent.width * 0.9
         height: 48 * scaleFactor
-        font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-        font.italic: true
+        font {
+            pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+            italic: true
+        }
         wrapMode: Text.Wrap
         elide: Text.ElideRight
         color: Material.foreground
@@ -236,7 +238,7 @@ Rectangle {
             iconSource: DsaResources.iconComplete
             toolName: "Create"
             onToolSelected: {
-                conditionsWizardRoot.close();
+                conditionsWizardRoot.visible = false;
                 if (conditionPage.isGeoFence) {
                     if (queryLoader.item.isWithinDistance) {
                         toolController.addWithinDistanceAlert(namePage.conditionName,
@@ -262,6 +264,7 @@ Rectangle {
 
                 for (var i = 0; i < conditionFrame.count; ++i)
                     conditionFrame.itemAt(i).clear();
+                conditionFrame.setCurrentIndex(0);
             }
         }
 
@@ -271,7 +274,10 @@ Rectangle {
             iconSource: DsaResources.iconClose
 
             onToolSelected: {
-                conditionsWizardRoot.close();
+                conditionsWizardRoot.visible = false;
+                for (var i = 0; i < conditionFrame.count; ++i)
+                    conditionFrame.itemAt(i).clear();
+                conditionFrame.setCurrentIndex(0);
             }
         }
     }

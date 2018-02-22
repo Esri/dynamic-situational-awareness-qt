@@ -345,7 +345,23 @@ Renderer* MessageFeedsController::createRenderer(const QString& rendererInfo, QO
   }
 
   // else default to simple renderer with picture marker symbol
-  PictureMarkerSymbol* symbol = new PictureMarkerSymbol(QImage(QString(":/Resources/icons/xhdpi/message/%1").arg(rendererInfo)), parent);
+  PictureMarkerSymbol* symbol = nullptr;
+  const QString qrcFile = QString(":/Resources/icons/xhdpi/message/%1").arg(rendererInfo);
+
+  if (QFile::exists(qrcFile))
+  {
+    symbol = new PictureMarkerSymbol(QImage(qrcFile), parent);
+  }
+  else
+  {
+    const QString dataFile = m_resourcePath + QString("/icons/%1").arg(rendererInfo);
+    if (QFile::exists(dataFile))
+      symbol = new PictureMarkerSymbol(QImage(dataFile), parent);
+  }
+
+  if (symbol == nullptr)
+    return nullptr;
+
   symbol->setWidth(40.0f);
   symbol->setHeight(40.0f);
   return new SimpleRenderer(symbol, parent);

@@ -27,6 +27,8 @@ public:
   static const QString MESSAGE_FEEDS_NAME;
   static const QString MESSAGE_FEEDS_TYPE;
   static const QString MESSAGE_FEEDS_RENDERER;
+  static const QString MESSAGE_FEEDS_RENDERER_STYLE;
+  static const QString MESSAGE_FEEDS_RENDERER_ICON;
   static const QString MESSAGE_FEEDS_PLACEMENT;
   static const QString MESSAGE_FEED_UDP_PORTS_PROPERTYNAME;
 };

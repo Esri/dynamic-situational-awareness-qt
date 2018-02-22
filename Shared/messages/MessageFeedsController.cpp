@@ -178,11 +178,19 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
 
     const auto feedName = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_NAME].toString();
     const auto feedType = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_TYPE].toString();
-    const auto rendererInfo = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_RENDERER].toString();
+    const auto rendererObject = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_RENDERER].toObject();
+    const auto rendererStyle = rendererObject[MessageFeedConstants::MESSAGE_FEEDS_RENDERER_STYLE].toString();
     const auto surfacePlacement = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT].toString();
 
-    MessagesOverlay* overlay = new MessagesOverlay(m_geoView, createRenderer(rendererInfo, this), toSurfacePlacement(surfacePlacement), this);
+    MessagesOverlay* overlay = new MessagesOverlay(m_geoView, createRenderer(rendererStyle, this), toSurfacePlacement(surfacePlacement), this);
     MessageFeed* feed = new MessageFeed(feedName, feedType, overlay, this);
+
+    auto findIconIt = rendererObject.find(MessageFeedConstants::MESSAGE_FEEDS_RENDERER_ICON);
+    if (findIconIt != rendererObject.end())
+    {
+      const auto rendererIcon = findIconIt.value().toString();
+    }
+
     m_messageFeeds->append(feed);
   }
 

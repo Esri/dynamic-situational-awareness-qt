@@ -27,7 +27,8 @@ public:
   {
     MessageFeedNameRole = Qt::DisplayRole,
     MessageFeedTypeRole = Qt::UserRole + 1,
-    MessageFeedVisibleRole
+    MessageFeedVisibleRole,
+    MessageFeedIconUrlRole
   };
 
   explicit MessageFeedListModel(QObject* parent = nullptr);

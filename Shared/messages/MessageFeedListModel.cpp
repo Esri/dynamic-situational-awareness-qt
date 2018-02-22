@@ -24,6 +24,7 @@ void MessageFeedListModel::setupRoles()
   m_roles[MessageFeedNameRole] = "feedName";
   m_roles[MessageFeedTypeRole] = "feedMessageType";
   m_roles[MessageFeedVisibleRole] = "feedVisible";
+  m_roles[MessageFeedIconUrlRole] = "iconUrl";
 }
 
 bool MessageFeedListModel::isEmpty() const
@@ -94,6 +95,8 @@ QVariant MessageFeedListModel::data(const QModelIndex& index, int role) const
     break;
   case MessageFeedVisibleRole:
     retVal = messageFeed->isFeedVisible();
+  case MessageFeedIconUrlRole:
+    retVal = messageFeed->iconUrl();
   default:
     break;
   }

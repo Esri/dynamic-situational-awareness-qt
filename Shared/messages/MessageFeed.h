@@ -40,6 +40,9 @@ public:
   MessagesOverlay* messagesOverlay() const;
   void setMessagesOverlay(MessagesOverlay* messagesOverlay);
 
+  QString iconUrl() const;
+  void setIconUrl(const QString& iconUrl);
+
 private:
   Q_DISABLE_COPY(MessageFeed)
 
@@ -49,6 +52,7 @@ private:
   QString m_feedMessageType;
   bool m_feedVisible = true;
   MessagesOverlay* m_messagesOverlay = nullptr;
+  QString m_iconUrl;
 };
 
 #endif // MESSAGEFEED_H

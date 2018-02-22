@@ -20,6 +20,7 @@ Item {
     property alias itemChecked: visibleCheckBox.checked
     property url imageUrl
     property bool imageVisible
+    property bool imageFrameVisible: true
     property alias checkBoxVisible: visibleCheckBox.visible
     property string mainText
     property bool menuIconVisible: false
@@ -49,7 +50,7 @@ Item {
             radius: 50 * scaleFactor
             width: 24 * scaleFactor
             height: width
-            color: Material.foreground
+            color: imageFrameVisible ? Material.foreground : Material.background
             visible: imageVisible
 
             Image {

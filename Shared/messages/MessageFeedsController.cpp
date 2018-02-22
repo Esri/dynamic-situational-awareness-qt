@@ -189,6 +189,14 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
     if (findIconIt != rendererObject.end())
     {
       const auto rendererIcon = findIconIt.value().toString();
+      if (!rendererIcon.isEmpty())
+      {
+
+        if (QFile::exists(QString(":/Resources/icons/xhdpi/message/%1").arg(rendererIcon)))
+          feed->setIconUrl(QString("qrc:/Resources/icons/xhdpi/message/%1").arg(rendererIcon));
+        else if (QFile::exists(m_resourcePath + QString("/icons/%1").arg(rendererIcon)))
+          feed->setIconUrl(QUrl::fromLocalFile(m_resourcePath + QString("/icons/%1").arg(rendererIcon)).toString());
+      }
     }
 
     m_messageFeeds->append(feed);

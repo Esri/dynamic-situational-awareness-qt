@@ -93,12 +93,11 @@ void DsaController::init(GeoView* geoView)
 
   m_cacheManager = new LayerCacheManager(this);
 
+  // connect all tool signals
   for(Toolkit::AbstractTool* abstractTool : Toolkit::ToolManager::instance())
   {
     if (!abstractTool)
       continue;
-
-    abstractTool->setProperties(m_dsaSettings);
 
     connect(abstractTool, &Toolkit::AbstractTool::errorOccurred, this, &DsaController::onError);
     connect(abstractTool, &Toolkit::AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
@@ -133,6 +132,15 @@ void DsaController::init(GeoView* geoView)
         candidateTool->setActive(false);
       }
     });
+  }
+
+  // set all tool properties
+  for(Toolkit::AbstractTool* abstractTool : Toolkit::ToolManager::instance())
+  {
+    if (!abstractTool)
+      continue;
+
+    abstractTool->setProperties(m_dsaSettings);
   }
 }
 

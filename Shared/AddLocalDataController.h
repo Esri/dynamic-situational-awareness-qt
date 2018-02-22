@@ -69,7 +69,7 @@ signals:
   void elevationSourceSelected(Esri::ArcGISRuntime::ElevationSource* source);
   void fileFilterListChanged();
   void layerCreated(int i, Esri::ArcGISRuntime::Layer* layer);
-  void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
+  void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage) const;
 
 private:
   QStringList determineFileFilters(const QString& fileType);

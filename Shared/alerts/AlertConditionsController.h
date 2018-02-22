@@ -84,7 +84,7 @@ signals:
   void conditionsListChanged();
   void pickModeChanged();
   void pickedElement(const QString& overlayName, int elementId);
-  void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
+  void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage) const;
 
 private slots:
   void onGeoviewChanged();

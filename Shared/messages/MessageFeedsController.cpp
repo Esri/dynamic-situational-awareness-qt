@@ -180,23 +180,19 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
     const auto feedType = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_TYPE].toString();
     const auto rendererObject = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_RENDERER].toObject();
     const auto rendererStyle = rendererObject[MessageFeedConstants::MESSAGE_FEEDS_RENDERER_STYLE].toString();
+    const auto rendererIcon = rendererObject[MessageFeedConstants::MESSAGE_FEEDS_RENDERER_ICON].toString();
     const auto surfacePlacement = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT].toString();
 
-    MessagesOverlay* overlay = new MessagesOverlay(m_geoView, createRenderer(rendererStyle, this), toSurfacePlacement(surfacePlacement), this);
+    MessagesOverlay* overlay = new MessagesOverlay(m_geoView, createRenderer(rendererStyle.isEmpty() ? rendererIcon : rendererStyle, this), toSurfacePlacement(surfacePlacement), this);
     MessageFeed* feed = new MessageFeed(feedName, feedType, overlay, this);
 
-    auto findIconIt = rendererObject.find(MessageFeedConstants::MESSAGE_FEEDS_RENDERER_ICON);
-    if (findIconIt != rendererObject.end())
+    if (!rendererIcon.isEmpty())
     {
-      const auto rendererIcon = findIconIt.value().toString();
-      if (!rendererIcon.isEmpty())
-      {
 
-        if (QFile::exists(QString(":/Resources/icons/xhdpi/message/%1").arg(rendererIcon)))
-          feed->setIconUrl(QString("qrc:/Resources/icons/xhdpi/message/%1").arg(rendererIcon));
-        else if (QFile::exists(m_resourcePath + QString("/icons/%1").arg(rendererIcon)))
-          feed->setIconUrl(QUrl::fromLocalFile(m_resourcePath + QString("/icons/%1").arg(rendererIcon)).toString());
-      }
+      if (QFile::exists(QString(":/Resources/icons/xhdpi/message/%1").arg(rendererIcon)))
+        feed->setIconUrl(QString("qrc:/Resources/icons/xhdpi/message/%1").arg(rendererIcon));
+      else if (QFile::exists(m_resourcePath + QString("/icons/%1").arg(rendererIcon)))
+        feed->setIconUrl(QUrl::fromLocalFile(m_resourcePath + QString("/icons/%1").arg(rendererIcon)).toString());
     }
 
     m_messageFeeds->append(feed);
@@ -320,8 +316,12 @@ SurfacePlacement MessageFeedsController::toSurfacePlacement(const QString& surfa
    \brief Creates and returns a renderer from the provided \a rendererInfo with an optional \a parent.
 
    The \a rendererInfo parameter can be the symbol specification type (i.e. "mil2525c_b2" or "mil2525d") or
-   it can be the name of an image file located in the ":/Resources/icons/xhdpi/message" path, such
+   it can be the name of an image file located:
+
+   \list
+    \li in the ":/Resources/icons/xhdpi/message" path, such
    as ":/Resources/icons/xhdpi/message/enemycontact1600.png".
+    \li in an "icons" sub-directory under the \l resourcePath directory
  */
 Renderer* MessageFeedsController::createRenderer(const QString& rendererInfo, QObject* parent) const
 {

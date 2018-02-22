@@ -275,8 +275,15 @@ void AddLocalDataController::addLayerFromPath(const QString& path, int layerInde
   QFileInfo fileInfo(path);
   if (!fileInfo.exists())
   {
-    emit toolErrorOccurred(QString("Failed to add %1").arg(fileInfo.fileName()), QString("File not found %1").arg(path));
-    return;
+    const QUrl testUrl(path);
+    if (testUrl.isLocalFile())
+      fileInfo = QFileInfo(testUrl.toLocalFile());
+
+    if (!fileInfo.exists())
+    {
+      emit toolErrorOccurred(QString("Failed to add %1").arg(fileInfo.fileName()), QString("File not found %1").arg(path));
+      return;
+    }
   }
 
   QStringList rasterExtensions{"img", "tif", "tiff", "i1", "dt0", "dt1", "dt2", "tc2", "geotiff", "hr1", "jpg", "jpeg", "jp2", "ntf", "png", "i21"};

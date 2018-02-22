@@ -102,7 +102,9 @@ void DsaController::init(GeoView* geoView)
 
     connect(abstractTool, &Toolkit::AbstractTool::errorOccurred, this, &DsaController::onError);
     connect(abstractTool, &Toolkit::AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
-    connect(abstractTool, &Toolkit::AbstractTool::toolErrorOccurred, this, &DsaController::onToolError);
+
+    if (abstractTool->metaObject()->indexOfSignal("toolErrorOccurred(QString,QString)") != -1)
+      connect(abstractTool, SIGNAL(toolErrorOccurred(QString,QString)), this, SLOT(onToolError(QString, QString)));
 
     // certain tools can conflict - for example, those which interact directly with the view
     if (!isConflictingTool(abstractTool->toolName()))

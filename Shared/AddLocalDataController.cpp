@@ -90,6 +90,12 @@ void AddLocalDataController::addPathToDirectoryList(const QString& path)
   if (m_dataPaths.contains(path))
     return;
 
+  if (!QFileInfo::exists(path))
+  {
+    emit toolErrorOccurred(QStringLiteral("Failed to add local data path"), QString("Could not find %1").arg(path));
+    return;
+  }
+
   m_dataPaths << path;
   emit propertyChanged(LOCAL_DATAPATHS_PROPERTYNAME, m_dataPaths);
 }

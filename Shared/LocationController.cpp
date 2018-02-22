@@ -14,6 +14,8 @@
 
 #include <QCompass>
 #include <QDir>
+#include <QFile>
+
 #include <cmath>
 
 #include "SceneQuickView.h"
@@ -259,6 +261,12 @@ void LocationController::setGpxFilePath(const QUrl& gpxFilePath)
   if (m_gpxFilePath == gpxFilePath)
     return;
 
+  if (!QFile::exists(gpxFilePath.toLocalFile()))
+  {
+    emit toolErrorOccurred(QString("GPX File missing: %1").arg(gpxFilePath.fileName()), QString("Could not find %1").arg(gpxFilePath.toLocalFile()));
+    return;
+  }
+
   initPositionInfoSource(true); // ignore m_simulated, we need to init the simulator now
 
   static_cast<GPXLocationSimulator*>(m_positionSource)->setGpxFile(gpxFilePath.toLocalFile());
@@ -272,7 +280,7 @@ void LocationController::setGpxFilePath(const QUrl& gpxFilePath)
 
   m_gpxFilePath = gpxFilePath;
   emit gpxFilePathChanged();
-  emit propertyChanged(GPX_FILE_PROPERTYNAME, m_gpxFilePath);
+  emit propertyChanged(GPX_FILE_PROPERTYNAME, m_gpxFilePath.toLocalFile());
 }
 
 void LocationController::setRelativeHeadingSceneView(SceneQuickView* sceneView)

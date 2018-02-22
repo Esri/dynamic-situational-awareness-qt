@@ -239,16 +239,25 @@ bool AlertConditionsController::addWithinDistanceAlert(const QString& conditionN
       sourceFeedName.isEmpty() ||
       distance < 0.0 ||
       targetOverlayIndex < 0)
+  {
+    emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QStringLiteral("Invalid inputs"));
     return false;
+  }
 
   AlertLevel level = static_cast<AlertLevel>(levelIndex);
   if (level > AlertLevel::Critical)
+  {
+    emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QStringLiteral("Invalid Alert Level"));
     return false;
+  }
 
   QString targetDescription;
   AlertTarget* target = targetFromItemIdAndIndex(itemId, targetOverlayIndex, targetDescription);
   if (!target)
+  {
+    emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QStringLiteral("Invalid Target"));
     return false;
+  }
 
   WithinDistanceAlertCondition* condition = new WithinDistanceAlertCondition(level, conditionName, distance, this);
   connect(condition, &WithinDistanceAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
@@ -266,6 +275,7 @@ bool AlertConditionsController::addWithinDistanceAlert(const QString& conditionN
     }
     else
     {
+      emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QString("Could not find source feed: %1").arg(sourceFeedName));
       delete condition;
       return false;
     }
@@ -301,16 +311,25 @@ bool AlertConditionsController::addWithinAreaAlert(const QString& conditionName,
   if (levelIndex < 0 ||
       sourceFeedName.isEmpty() ||
       targetOverlayIndex < 0)
+  {
+    emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QStringLiteral("Invalid inputs"));
     return false;
+  }
 
   AlertLevel level = static_cast<AlertLevel>(levelIndex);
   if (level > AlertLevel::Critical)
+  {
+    emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QStringLiteral("Invalid Alert Level"));
     return false;
+  }
 
   QString targetDescription;
   AlertTarget* target = targetFromItemIdAndIndex(itemId, targetOverlayIndex, targetDescription);
   if (!target)
+  {
+    emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QStringLiteral("Invalid Target"));
     return false;
+  }
 
   WithinAreaAlertCondition* condition = new WithinAreaAlertCondition(level, conditionName, this);
   connect(condition, &WithinAreaAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
@@ -328,6 +347,7 @@ bool AlertConditionsController::addWithinAreaAlert(const QString& conditionName,
     }
     else
     {
+      emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QString("Could not find source feed: %1").arg(sourceFeedName));
       delete condition;
       return false;
     }
@@ -360,17 +380,26 @@ bool AlertConditionsController::addAttributeEqualsAlert(const QString& condition
       sourceFeedName.isEmpty() ||
       attributeName.isEmpty() ||
       targetValue.isNull())
+  {
+    emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QStringLiteral("Invalid inputs"));
     return false;
+  }
 
   AlertLevel level = static_cast<AlertLevel>(levelIndex);
   if (level > AlertLevel::Critical)
+  {
+    emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QStringLiteral("Invalid Alert Level"));
     return false;
+  }
 
   AlertTarget* target = new FixedValueAlertTarget(targetValue, this);
 
   GraphicsOverlay* sourceOverlay = graphicsOverlayFromName(sourceFeedName);
   if (!sourceOverlay)
+  {
+    emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QString("Could not find source feed: %1").arg(sourceFeedName));
     return false;
+  }
 
   AttributeEqualsAlertCondition* condition = new AttributeEqualsAlertCondition(level, conditionName, attributeName, this);
   connect(condition, &AttributeEqualsAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);

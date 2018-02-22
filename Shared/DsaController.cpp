@@ -93,15 +93,17 @@ void DsaController::init(GeoView* geoView)
 
   m_cacheManager = new LayerCacheManager(this);
 
+  // connect all tool signals
   for(Toolkit::AbstractTool* abstractTool : Toolkit::ToolManager::instance())
   {
     if (!abstractTool)
       continue;
 
-    abstractTool->setProperties(m_dsaSettings);
-
     connect(abstractTool, &Toolkit::AbstractTool::errorOccurred, this, &DsaController::onError);
     connect(abstractTool, &Toolkit::AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
+
+    if (abstractTool->metaObject()->indexOfSignal("toolErrorOccurred(QString,QString)") != -1)
+      connect(abstractTool, SIGNAL(toolErrorOccurred(QString,QString)), this, SLOT(onToolError(QString, QString)));
 
     // certain tools can conflict - for example, those which interact directly with the view
     if (!isConflictingTool(abstractTool->toolName()))
@@ -131,12 +133,33 @@ void DsaController::init(GeoView* geoView)
       }
     });
   }
+
+  // set all tool properties
+  for(Toolkit::AbstractTool* abstractTool : Toolkit::ToolManager::instance())
+  {
+    if (!abstractTool)
+      continue;
+
+    abstractTool->setProperties(m_dsaSettings);
+  }
 }
 
+/*! \brief Slot to handle an ArcGISRuntime Error \a e.
+ *
+ */
 void DsaController::onError(const Error& e)
 {
   qDebug() << "Error" << e.message() << e.additionalMessage();
   emit errorOccurred(e.message(), e.additionalMessage());
+}
+
+/*! \brief Slot to handle an \a errorMessage (with an \a additionalMessage) from an \l AbstractTool.
+ *
+ */
+void DsaController::onToolError(const QString& errorMessage, const QString& additionalMessage)
+{
+  qDebug() << "Error" << errorMessage << additionalMessage;
+  emit errorOccurred(errorMessage, additionalMessage);
 }
 
 void DsaController::onPropertyChanged(const QString& propertyName, const QVariant& propertyValue)

@@ -65,20 +65,38 @@ void BasemapPickerController::onBasemapDataPathChanged()
   m_tileCacheModel->clear();
 
   QDir basemapsDir(m_basemapDataPath);
+  if (!basemapsDir.exists())
+  {
+    emit toolErrorOccurred(QString("Could not find Basemaps dir %1").arg(basemapsDir.dirName()), QString("Failed to find %1").arg(m_basemapDataPath));
+    return;
+  }
 
   basemapsDir.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
   basemapsDir.setNameFilters(QStringList{"*.tpk"});
 
   QFileInfoList list = basemapsDir.entryInfoList();
+  if (list.isEmpty())
+  {
+    emit toolErrorOccurred(QString("Empty Basemaps dir %1").arg(basemapsDir.dirName()), QString("No .tpk files in %1").arg(m_basemapDataPath));
+    return;
+  }
+
   int index = -1;
+  bool foundDefault = false;
   for (const QFileInfo& fInfo : list)
   {
     if (m_tileCacheModel->append(fInfo.filePath()))
       index++;
 
-    if(fInfo.completeBaseName().compare(m_defaultBasemap, Qt::CaseInsensitive) == 0)
+    if(!foundDefault && fInfo.completeBaseName().compare(m_defaultBasemap, Qt::CaseInsensitive) == 0)
+    {
       m_defaultBasemapIndex = index;
+      foundDefault = true;
+    }
   }
+
+  if (!foundDefault)
+    emit toolErrorOccurred(QString("Default Basemap not found: %1").arg(m_defaultBasemap), QString("Failed to find %1").arg(m_defaultBasemap));
 
   emit tileCacheModelChanged();
 }

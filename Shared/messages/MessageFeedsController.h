@@ -75,6 +75,7 @@ signals:
   void locationBroadcastEnabledChanged();
   void locationBroadcastFrequencyChanged();
   void locationBroadcastInDistressChanged();
+  void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage) const;
 
 private:
   Esri::ArcGISRuntime::Renderer* createRenderer(const QString& rendererInfo, QObject* parent = nullptr) const;

@@ -50,6 +50,7 @@ public:
 
 public slots:
   void onError(const Esri::ArcGISRuntime::Error& error);
+  void onToolError(const QString& errorMessage, const QString& additionalMessage);
 
 private slots:
   void onPropertyChanged(const QString& propertyName, const QVariant& propertyValue);

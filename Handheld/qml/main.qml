@@ -402,7 +402,7 @@ Handheld {
             msgDialog.open();
         }
         else {
-            msgDialog.informativeText += message + "\n"
+            msgDialog.informativeText += message + "\n";
         }
     }
 

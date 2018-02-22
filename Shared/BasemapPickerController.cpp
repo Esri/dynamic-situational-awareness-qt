@@ -96,7 +96,7 @@ void BasemapPickerController::onBasemapDataPathChanged()
   }
 
   if (!foundDefault)
-    emit toolErrorOccurred(QString("Deafault Basemap not found: %1").arg(m_defaultBasemap), QString("Failed to find %1").arg(m_defaultBasemap));
+    emit toolErrorOccurred(QString("Default Basemap not found: %1").arg(m_defaultBasemap), QString("Failed to find %1").arg(m_defaultBasemap));
 
   emit tileCacheModelChanged();
 }

@@ -280,7 +280,7 @@ void LocationController::setGpxFilePath(const QUrl& gpxFilePath)
 
   m_gpxFilePath = gpxFilePath;
   emit gpxFilePathChanged();
-  emit propertyChanged(GPX_FILE_PROPERTYNAME, m_gpxFilePath);
+  emit propertyChanged(GPX_FILE_PROPERTYNAME, m_gpxFilePath.toLocalFile());
 }
 
 void LocationController::setRelativeHeadingSceneView(SceneQuickView* sceneView)

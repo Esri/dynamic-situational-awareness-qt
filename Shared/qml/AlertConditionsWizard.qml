@@ -67,20 +67,33 @@ Rectangle {
         }
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        font.pixelSize: DsaStyles.toolFontPixelSize * scale.Factor
+        font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
         color: Material.accent
         text: conditionFrame.currentItem.instruction
     }
 
-    SwipeView {
-        id: conditionFrame
+    PageIndicator {
+        id: pageIndicator
         anchors {
             top: instructionText.bottom
+            horizontalCenter: conditionFrame.horizontalCenter
+            margins: 8 * scaleFactor
+        }
+        width: nextButton.width
+        count: conditionFrame.count
+        currentIndex: conditionFrame.currentIndex
+    }
+
+    SwipeView {
+        id: conditionFrame
+        clip: true
+        anchors {
+            top: pageIndicator.bottom
+            bottom: nextButton.top
             left: parent.left
             right: parent.right
             margins: 8 * scaleFactor
         }
-        height: 190 * scaleFactor
         currentIndex: 0
 
         onCurrentItemChanged: {
@@ -97,25 +110,30 @@ Rectangle {
         // Alert level
         AlertConditionsLevelPage {
             id: levelPage
+            visible: conditionFrame.currentIndex === 0
         }
 
         // Condition type
         AlertConditionsConditionTypePage {
             id: conditionPage
+            visible: conditionFrame.currentIndex === 1
         }
 
         // Condition Name
         AlertConditionsNamePage {
             id: namePage
+            visible: conditionFrame.currentIndex === 2
         }
 
         // Source feed
         AlertConditionsSourcePage {
             id: sourcePage
+            visible: conditionFrame.currentIndex === 3
         }
 
         Loader {
             id: queryLoader
+            visible: conditionFrame.currentIndex === 4
             property bool valid: item ? item.valid : false
             property string instruction: item ? item.instruction : ""
 
@@ -134,6 +152,7 @@ Rectangle {
 
         Loader {
             id: targetLoader
+            visible: conditionFrame.currentIndex === 5
             property bool valid: item ? item.valid : false
             property string instruction: item ? item.instruction : ""
 
@@ -153,6 +172,7 @@ Rectangle {
         // Review
         Item {
             id: reviewPage
+            visible: conditionFrame.currentIndex === 6
             property string instruction: "Review new condition"
             property bool valid: true
 
@@ -186,33 +206,23 @@ Rectangle {
         visible: conditionFrame.currentIndex > 0
         anchors {
             left: conditionFrame.left
-            verticalCenter: pageIndicator.verticalCenter
+            verticalCenter: nextButton.verticalCenter
             margins: 8 * scaleFactor
         }
-        height: 32 * scaleFactor
-        width: 64 * scaleFactor
+        height: nextButton.height
+        width: nextButton.width
         text: "Back"
         font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
 
         onClicked: conditionFrame.decrementCurrentIndex();
     }
 
-    PageIndicator {
-        id: pageIndicator
-        anchors {
-            top: conditionFrame.bottom
-            horizontalCenter: conditionFrame.horizontalCenter
-        }
-        width: 64 * scaleFactor
-        count: conditionFrame.count
-        currentIndex: conditionFrame.currentIndex
-    }
-
     Button {
+        id: nextButton
         visible: conditionFrame.currentIndex < (conditionFrame.count -1) && conditionFrame.currentItem.valid
         anchors {
             right: conditionFrame.right
-            verticalCenter: pageIndicator.verticalCenter
+            bottom: parent.bottom
             margins: 16 * scaleFactor
         }
         height: 32 * scaleFactor
@@ -223,62 +233,63 @@ Rectangle {
         onClicked: conditionFrame.incrementCurrentIndex();
     }
 
-    Row {
-        spacing: 32
+    ToolIcon {
+        id: createButton
         anchors {
-            top: backButton.bottom
-            horizontalCenter: parent.horizontalCenter
-            margins: 8 * scaleFactor
+            verticalCenter: nextButton.verticalCenter
+            right: conditionFrame.horizontalCenter
+            margins: 4 * scaleFactor
         }
-
-        ToolIcon {
-            id: createButton
-            enabled: readyToAdd
-            opacity: enabled ? 1.0 : 0.5
-            iconSource: DsaResources.iconComplete
-            toolName: "Create"
-            onToolSelected: {
-                conditionsWizardRoot.visible = false;
-                if (conditionPage.isGeoFence) {
-                    if (queryLoader.item.isWithinDistance) {
-                        toolController.addWithinDistanceAlert(namePage.conditionName,
-                                                              levelPage.getLevel(),
-                                                              sourcePage.sourceName,
-                                                              queryLoader.item.distance,
-                                                              targetLoader.item.targetFeatureId,
-                                                              targetLoader.item.targetIndex);
-                    } else if (queryLoader.item.isWithinArea) {
-                        toolController.addWithinAreaAlert(namePage.conditionName,
+        enabled: readyToAdd
+        opacity: enabled ? 1.0 : 0.5
+        iconSource: DsaResources.iconComplete
+        toolName: "Create"
+        onToolSelected: {
+            conditionsWizardRoot.visible = false;
+            if (conditionPage.isGeoFence) {
+                if (queryLoader.item.isWithinDistance) {
+                    toolController.addWithinDistanceAlert(namePage.conditionName,
                                                           levelPage.getLevel(),
                                                           sourcePage.sourceName,
+                                                          queryLoader.item.distance,
                                                           targetLoader.item.targetFeatureId,
-                                                          targetLoader.item.targetInde);
-                    }
-                } else if (conditionPage.isAttribute) {
-                    toolController.addAttributeEqualsAlert(namePage.conditionName,
-                                                           levelPage.getLevel(),
-                                                           sourcePage.sourceName,
-                                                           queryLoader.item.attributeField,
-                                                           targetLoader.item.attributeValue);
+                                                          targetLoader.item.targetIndex);
+                } else if (queryLoader.item.isWithinArea) {
+                    toolController.addWithinAreaAlert(namePage.conditionName,
+                                                      levelPage.getLevel(),
+                                                      sourcePage.sourceName,
+                                                      targetLoader.item.targetFeatureId,
+                                                      targetLoader.item.targetInde);
                 }
-
-                for (var i = 0; i < conditionFrame.count; ++i)
-                    conditionFrame.itemAt(i).clear();
-                conditionFrame.setCurrentIndex(0);
+            } else if (conditionPage.isAttribute) {
+                toolController.addAttributeEqualsAlert(namePage.conditionName,
+                                                       levelPage.getLevel(),
+                                                       sourcePage.sourceName,
+                                                       queryLoader.item.attributeField,
+                                                       targetLoader.item.attributeValue);
             }
+
+            for (var i = 0; i < conditionFrame.count; ++i)
+                conditionFrame.itemAt(i).clear();
+            conditionFrame.setCurrentIndex(0);
         }
+    }
 
-        ToolIcon {
-            id: cancelButton
-            toolName: "Cancel"
-            iconSource: DsaResources.iconClose
+    ToolIcon {
+        id: cancelButton
+        anchors {
+            verticalCenter: nextButton.verticalCenter
+            left: conditionFrame.horizontalCenter
+            margins: 4 * scaleFactor
+        }
+        toolName: "Cancel"
+        iconSource: DsaResources.iconClose
 
-            onToolSelected: {
-                conditionsWizardRoot.visible = false;
-                for (var i = 0; i < conditionFrame.count; ++i)
-                    conditionFrame.itemAt(i).clear();
-                conditionFrame.setCurrentIndex(0);
-            }
+        onToolSelected: {
+            conditionsWizardRoot.visible = false;
+            for (var i = 0; i < conditionFrame.count; ++i)
+                conditionFrame.itemAt(i).clear();
+            conditionFrame.setCurrentIndex(0);
         }
     }
 }

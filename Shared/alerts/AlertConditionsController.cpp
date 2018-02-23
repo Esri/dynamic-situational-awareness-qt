@@ -207,6 +207,10 @@ void AlertConditionsController::setActive(bool active)
 
   m_active = active;
   emit activeChanged();
+
+  // if the tool is currently in pick mode and becoming inactive, turn picking off
+  if (!m_active && pickMode())
+    togglePickMode();
 }
 
 /*!

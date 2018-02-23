@@ -24,10 +24,11 @@ DsaPanel {
 
     property bool isMobile
     property alias pickMode: toolController.pickMode
+    property bool  toolActive: toolController.active
 
     AlertConditionsController {
         id: toolController
-        active: isMobile ? manageAlertsRoot.visible || pickMode : manageAlertsRoot.visible
+        active: isMobile ? (manageAlertsRoot.visible || pickMode) : manageAlertsRoot.visible
 
         onActiveChanged: {
             if (!active && manageAlertsRoot.visible)

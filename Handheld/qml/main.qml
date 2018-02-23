@@ -225,6 +225,9 @@ Handheld {
             onClosed: visible = false;
 
             onPickModeChanged: {
+                if (!toolActive)
+                    return;
+
                 if (pickMode)
                     visible = false;
                 else

@@ -332,6 +332,37 @@ Vehicle {
                 }
             }
         }
+
+        Menu {
+            id: contextMenu
+            visible: contextMenuController.contextActive
+            x: contextMenuController.contextScreenPosition.x
+            y: contextMenuController.contextScreenPosition.y
+
+            ContextMenuController {
+                id: contextMenuController
+
+                onOptionsChanged: console.log(options.rowCount());
+            }
+
+            onVisibleChanged: {
+                if (!visible)
+                    contextMenuController.contextActive = visible;
+            }
+
+            Repeater {
+                id: optionsRepeater
+                model: contextMenuController.options
+
+                delegate: Button{
+                    text: display
+
+                    onClicked: {
+                        contextMenuController.selectOption(display);
+                    }
+                }
+            }
+        }
     }
 
     CoordinateConversion {

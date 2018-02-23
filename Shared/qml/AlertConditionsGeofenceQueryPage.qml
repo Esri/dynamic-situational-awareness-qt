@@ -72,6 +72,7 @@ Item {
                 anchors.verticalCenter: withinDistanceRb.verticalCenter
                 visible: withinDistanceRb.checked
                 font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                width: 128 * scaleFactor
                 editable: true
                 value: 50
                 from: 0

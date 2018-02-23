@@ -45,16 +45,8 @@ Item {
 
     Column {
         anchors {
-            horizontalCenter: parent.horizontalCenter
-            top: parent.top
+            fill: parent
             margins: 16 * scaleFactor
-        }
-        Text {
-            text: qsTr("the target")
-            color: Material.foreground
-            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-            horizontalAlignment: Text.AlignLeft
-            verticalAlignment: Text.AlignVCenter
         }
 
         ButtonGroup {
@@ -90,7 +82,8 @@ Item {
                 }
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignVCenter
-                placeholderText: "<object ID>"
+                placeholderText: "<ID>"
+                width: 64 * scaleFactor
             }
 
             Text {

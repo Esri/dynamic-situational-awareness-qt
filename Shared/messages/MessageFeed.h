@@ -39,8 +39,8 @@ public:
   MessagesOverlay* messagesOverlay() const;
   void setMessagesOverlay(MessagesOverlay* messagesOverlay);
 
-  QUrl iconUrl() const;
-  void setIconUrl(const QUrl& iconUrl);
+  QUrl thumbnailUrl() const;
+  void setThumbnailUrl(const QUrl& thumbnailUrl);
 
 private:
   Q_DISABLE_COPY(MessageFeed)
@@ -51,7 +51,7 @@ private:
   QString m_feedMessageType;
   bool m_feedVisible = true;
   MessagesOverlay* m_messagesOverlay = nullptr;
-  QUrl m_iconUrl;
+  QUrl m_thumbnailUrl;
 };
 
 #endif // MESSAGEFEED_H

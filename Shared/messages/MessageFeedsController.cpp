@@ -192,9 +192,9 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
     if (!rendererThumbnail.isEmpty())
     {
       if (QFile::exists(QString(":/Resources/icons/xhdpi/message/%1").arg(rendererThumbnail)))
-        feed->setIconUrl(QString("qrc:/Resources/icons/xhdpi/message/%1").arg(rendererThumbnail));
+        feed->setThumbnailUrl(QString("qrc:/Resources/icons/xhdpi/message/%1").arg(rendererThumbnail));
       else if (QFile::exists(m_resourcePath + QString("/icons/%1").arg(rendererThumbnail)))
-        feed->setIconUrl(QUrl::fromLocalFile(m_resourcePath + QString("/icons/%1").arg(rendererThumbnail)));
+        feed->setThumbnailUrl(QUrl::fromLocalFile(m_resourcePath + QString("/icons/%1").arg(rendererThumbnail)));
       else
         emit toolErrorOccurred(QString("Failed to find icon %1").arg(rendererThumbnail), QString("Could not find icon %1 for feed %2").arg(rendererThumbnail, feedName));
     }

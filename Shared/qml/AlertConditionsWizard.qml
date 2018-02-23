@@ -233,15 +233,6 @@ Rectangle {
         onClicked: conditionFrame.incrementCurrentIndex();
     }
 
-    //    Row {
-    //        id: reviewRow
-    //        spacing: 32
-    //        anchors {
-    //            bottom: parent.bottom
-    //            horizontalCenter: parent.horizontalCenter
-    //            margins: 8 * scaleFactor
-    //        }
-
     ToolIcon {
         id: createButton
         anchors {

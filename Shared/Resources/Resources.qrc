@@ -53,5 +53,6 @@
         <file>icons/xhdpi/distressIconGray.svg</file>
         <file>icons/xhdpi/distressIconRed.svg</file>
         <file>icons/xhdpi/message/friendlytracks.png</file>
+        <file>icons/xhdpi/message/friendlytracks-air.png</file>
     </qresource>
 </RCC>

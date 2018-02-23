@@ -258,7 +258,7 @@ void DsaController::writeDefaultMessageFeeds()
   friendlyTracksAirJson.insert(MessageFeedConstants::MESSAGE_FEEDS_TYPE, QStringLiteral("position_report_air"));
   QJsonObject friendlyTracksAirRenderJson;
   friendlyTracksAirRenderJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER_STYLE, QStringLiteral("mil2525c"));
-  friendlyTracksAirRenderJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER_ICON, QStringLiteral("friendlytracks.png"));
+  friendlyTracksAirRenderJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER_ICON, QStringLiteral("friendlytracks-air.png"));
   friendlyTracksAirJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER, friendlyTracksAirRenderJson);
   friendlyTracksAirJson.insert(MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT, QStringLiteral("absolute"));
   messageFeedsJson.append(friendlyTracksAirJson);

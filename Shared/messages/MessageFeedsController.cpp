@@ -196,6 +196,8 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
         feed->setIconUrl(QString("qrc:/Resources/icons/xhdpi/message/%1").arg(rendererIcon));
       else if (QFile::exists(m_resourcePath + QString("/icons/%1").arg(rendererIcon)))
         feed->setIconUrl(QUrl::fromLocalFile(m_resourcePath + QString("/icons/%1").arg(rendererIcon)));
+      else
+        emit toolErrorOccurred(QString("Failed to find icon %1").arg(rendererIcon), QString("Could not find icon %1 for feed %2").arg(rendererIcon, feedName));
     }
 
     m_messageFeeds->append(feed);

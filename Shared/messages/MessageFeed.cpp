@@ -83,12 +83,12 @@ void MessageFeed::updateOverlay()
     m_messagesOverlay->setVisible(m_feedVisible);
 }
 
-QString MessageFeed::iconUrl() const
+QUrl MessageFeed::iconUrl() const
 {
     return m_iconUrl;
 }
 
-void MessageFeed::setIconUrl(const QString& iconUrl)
+void MessageFeed::setIconUrl(const QUrl& iconUrl)
 {
     m_iconUrl = iconUrl;
 }

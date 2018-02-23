@@ -373,8 +373,19 @@ Vehicle {
     }
 
     onErrorOccurred: {
-        msgDialog.informativeText = message;
-        msgDialog.open();
+        // if the parent is null, the app is in a loading state and not yet ready to display errors
+        if (parent) {
+            msgDialog.informativeText = message;
+            msgDialog.open();
+        }
+        else {
+            msgDialog.informativeText += message + "\n"
+        }
+    }
+
+    onParentChanged: {
+        if (parent && msgDialog.informativeText.length > 0)
+            msgDialog.open();
     }
 
     Options {

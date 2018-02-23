@@ -28,6 +28,7 @@
 #include "SimpleRenderer.h"
 #include "PictureMarkerSymbol.h"
 
+#include <QFileInfo>
 #include <QUdpSocket>
 #include <QJsonArray>
 
@@ -174,7 +175,10 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
   {
     const auto messageFeedJsonObject = messageFeed.toObject();
     if (messageFeedJsonObject.size() != 4)
+    {
+      emit toolErrorOccurred(QStringLiteral("Invalid Message JSON recieved"), messageFeed.toString());
       continue;
+    }
 
     const auto feedName = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_NAME].toString();
     const auto feedType = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_TYPE].toString();
@@ -211,6 +215,12 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
  */
 void MessageFeedsController::setResourcePath(const QString& resourcePath)
 {
+  if (!QFileInfo::exists(resourcePath))
+  {
+    emit toolErrorOccurred(QStringLiteral("Resource path not found"), QString("Failed to find %1").arg(resourcePath));
+    return;
+  }
+
   if (resourcePath == m_resourcePath)
     return;
 
@@ -331,14 +341,32 @@ Renderer* MessageFeedsController::createRenderer(const QString& rendererInfo, QO
   if (rendererInfo.compare("mil2525c", Qt::CaseInsensitive) == 0)
   {
     if (!dictionarySymbolStyleMil2525c)
-      dictionarySymbolStyleMil2525c = new DictionarySymbolStyle("mil2525c_b2", m_resourcePath + "/styles/mil2525c_b2.stylx", parent);
+    {
+      const auto stylePath = m_resourcePath + "/styles/mil2525c_b2.stylx";
+      if (!QFileInfo::exists(stylePath))
+      {
+        emit toolErrorOccurred(QStringLiteral("mil2525c_b2.stylx not found"), QString("Could not find %1").arg(stylePath));
+        return nullptr;
+      }
+
+      dictionarySymbolStyleMil2525c = new DictionarySymbolStyle("mil2525c_b2", stylePath, parent);
+    }
 
     return new DictionaryRenderer(dictionarySymbolStyleMil2525c, parent);
   }
   else if (rendererInfo.compare("mil2525d", Qt::CaseInsensitive) == 0)
   {
     if (!dictionarySymbolStyleMil2525d)
+    {
+      const auto stylePath = m_resourcePath + "/styles/mil2525d.stylx";
+      if (!QFileInfo::exists(stylePath))
+      {
+        emit toolErrorOccurred(QStringLiteral("mil2525d.stylx not found"), QString("Could not find %1").arg(stylePath));
+        return nullptr;
+      }
+
       dictionarySymbolStyleMil2525d = new DictionarySymbolStyle("mil2525d", m_resourcePath + "/styles/mil2525d.stylx", parent);
+    }
 
     return new DictionaryRenderer(dictionarySymbolStyleMil2525d, parent);
   }

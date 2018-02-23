@@ -292,5 +292,4 @@ Rectangle {
             conditionFrame.setCurrentIndex(0);
         }
     }
-    //    }
 }

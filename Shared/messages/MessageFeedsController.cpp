@@ -174,7 +174,7 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
   for (const auto& messageFeed : messageFeedsJson)
   {
     const auto messageFeedJsonObject = messageFeed.toObject();
-    if (messageFeedJsonObject.size() != 4)
+    if (messageFeedJsonObject.size() < 4)
     {
       emit toolErrorOccurred(QStringLiteral("Invalid Message JSON recieved"), messageFeed.toString());
       continue;
@@ -182,22 +182,21 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
 
     const auto feedName = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_NAME].toString();
     const auto feedType = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_TYPE].toString();
-    const auto rendererObject = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_RENDERER].toObject();
-    const auto rendererStyle = rendererObject[MessageFeedConstants::MESSAGE_FEEDS_RENDERER_STYLE].toString();
-    const auto rendererIcon = rendererObject[MessageFeedConstants::MESSAGE_FEEDS_RENDERER_ICON].toString();
+    const auto rendererInfo = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_RENDERER].toString();
+    const auto rendererThumbnail = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL].toString();
     const auto surfacePlacement = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT].toString();
 
-    MessagesOverlay* overlay = new MessagesOverlay(m_geoView, createRenderer(rendererStyle.isEmpty() ? rendererIcon : rendererStyle, this), toSurfacePlacement(surfacePlacement), this);
+    MessagesOverlay* overlay = new MessagesOverlay(m_geoView, createRenderer(rendererInfo, this), toSurfacePlacement(surfacePlacement), this);
     MessageFeed* feed = new MessageFeed(feedName, feedType, overlay, this);
 
-    if (!rendererIcon.isEmpty())
+    if (!rendererThumbnail.isEmpty())
     {
-      if (QFile::exists(QString(":/Resources/icons/xhdpi/message/%1").arg(rendererIcon)))
-        feed->setIconUrl(QString("qrc:/Resources/icons/xhdpi/message/%1").arg(rendererIcon));
-      else if (QFile::exists(m_resourcePath + QString("/icons/%1").arg(rendererIcon)))
-        feed->setIconUrl(QUrl::fromLocalFile(m_resourcePath + QString("/icons/%1").arg(rendererIcon)));
+      if (QFile::exists(QString(":/Resources/icons/xhdpi/message/%1").arg(rendererThumbnail)))
+        feed->setIconUrl(QString("qrc:/Resources/icons/xhdpi/message/%1").arg(rendererThumbnail));
+      else if (QFile::exists(m_resourcePath + QString("/icons/%1").arg(rendererThumbnail)))
+        feed->setIconUrl(QUrl::fromLocalFile(m_resourcePath + QString("/icons/%1").arg(rendererThumbnail)));
       else
-        emit toolErrorOccurred(QString("Failed to find icon %1").arg(rendererIcon), QString("Could not find icon %1 for feed %2").arg(rendererIcon, feedName));
+        emit toolErrorOccurred(QString("Failed to find icon %1").arg(rendererThumbnail), QString("Could not find icon %1 for feed %2").arg(rendererThumbnail, feedName));
     }
 
     m_messageFeeds->append(feed);

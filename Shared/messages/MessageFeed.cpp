@@ -82,3 +82,13 @@ void MessageFeed::updateOverlay()
   if (m_messagesOverlay)
     m_messagesOverlay->setVisible(m_feedVisible);
 }
+
+QUrl MessageFeed::thumbnailUrl() const
+{
+    return m_thumbnailUrl;
+}
+
+void MessageFeed::setThumbnailUrl(const QUrl& thumbnailUrl)
+{
+    m_thumbnailUrl = thumbnailUrl;
+}

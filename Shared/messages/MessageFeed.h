@@ -14,8 +14,7 @@
 #define MESSAGEFEED_H
 
 #include <QObject>
-
-#include "Message.h"
+#include <QUrl>
 
 class MessagesOverlay;
 
@@ -40,6 +39,9 @@ public:
   MessagesOverlay* messagesOverlay() const;
   void setMessagesOverlay(MessagesOverlay* messagesOverlay);
 
+  QUrl thumbnailUrl() const;
+  void setThumbnailUrl(const QUrl& thumbnailUrl);
+
 private:
   Q_DISABLE_COPY(MessageFeed)
 
@@ -49,6 +51,7 @@ private:
   QString m_feedMessageType;
   bool m_feedVisible = true;
   MessagesOverlay* m_messagesOverlay = nullptr;
+  QUrl m_thumbnailUrl;
 };
 
 #endif // MESSAGEFEED_H

@@ -19,5 +19,6 @@ const QString MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME = QStringLiteral(
 const QString MessageFeedConstants::MESSAGE_FEEDS_NAME = QStringLiteral("name");
 const QString MessageFeedConstants::MESSAGE_FEEDS_TYPE= QStringLiteral("type");
 const QString MessageFeedConstants::MESSAGE_FEEDS_RENDERER = QStringLiteral("renderer");
+const QString MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL = QStringLiteral("thumbnail");
 const QString MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT = QStringLiteral("placement");
 const QString MessageFeedConstants::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME = QStringLiteral("MessageFeedUdpPorts");

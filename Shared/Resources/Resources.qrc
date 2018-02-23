@@ -24,6 +24,7 @@
         <file>icons/xhdpi/3D.png</file>
         <file>icons/xhdpi/message/enemycontact1600.png</file>
         <file>icons/xhdpi/message/eod1600.png</file>
+        <file>icons/xhdpi/message/saevents.png</file>
         <file>icons/xhdpi/message/sensorobs1600.png</file>
         <file>icons/xhdpi/message/sitrep1600.png</file>
         <file>icons/xhdpi/ic_menu_completedone_dark.png</file>
@@ -51,5 +52,7 @@
         <file>icons/xhdpi/warning_red_exclamation.png</file>
         <file>icons/xhdpi/distressIconGray.svg</file>
         <file>icons/xhdpi/distressIconRed.svg</file>
+        <file>icons/xhdpi/message/friendlytracks.png</file>
+        <file>icons/xhdpi/message/friendlytracks-air.png</file>
     </qresource>
 </RCC>

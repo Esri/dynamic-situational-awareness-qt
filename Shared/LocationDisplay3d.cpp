@@ -28,7 +28,7 @@ LocationDisplay3d::LocationDisplay3d(QObject* parent) :
   m_locationGraphic(new Graphic(this))
 {
   m_locationOverlay->setOverlayId(QStringLiteral("SCENEVIEWLOCATIONOVERLAY"));
-  m_locationOverlay->setSceneProperties(LayerSceneProperties(SurfacePlacement::Relative));
+  m_locationOverlay->setSceneProperties(LayerSceneProperties(SurfacePlacement::Draped));
   m_locationOverlay->setRenderingMode(GraphicsRenderingMode::Dynamic);
   m_locationOverlay->setVisible(false);
 

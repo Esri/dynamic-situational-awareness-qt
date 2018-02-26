@@ -306,26 +306,26 @@ void LocationController::updateGeoView()
   {
     geoView->graphicsOverlays()->append(m_locationDisplay3d->locationOverlay());
 
-    constexpr float symbolSize = 45.0;
+    constexpr float symbolScale = 20.0;
     constexpr double rangeMultiplier = 1.04; // the closer to 1.0, the smoother the transitions
     constexpr double maxRange = 10000000.0;
 
     const QUrl modelPath = modelSymbolPath();
 
-    ModelSceneSymbol* modelSceneSymbol = new ModelSceneSymbol(modelPath, this);
-    modelSceneSymbol->setWidth(symbolSize);
-    modelSceneSymbol->setDepth(symbolSize);
+    ModelSceneSymbol* modelSceneSymbol = new ModelSceneSymbol(modelPath, symbolScale, this);
+    modelSceneSymbol->setHeading(90.0f);
+    modelSceneSymbol->setAnchorPosition(SceneSymbolAnchorPosition::Bottom);
 
     DistanceCompositeSceneSymbol* distanceCompSymbol = new DistanceCompositeSceneSymbol(this);
     distanceCompSymbol->ranges()->append(new DistanceSymbolRange(modelSceneSymbol, 0.0, 1000.0, this));
 
-    float rangeSize = symbolSize;
+    float rangeScale = symbolScale;
     for (double i = 1000.0; i < maxRange; i *= rangeMultiplier)
     {
-      ModelSceneSymbol* rangeSym = new ModelSceneSymbol(modelPath, this);
-      rangeSize *= static_cast<float>(rangeMultiplier);
-      rangeSym->setWidth(rangeSize);
-      rangeSym->setDepth(rangeSize);
+      rangeScale *= static_cast<float>(rangeMultiplier);
+      ModelSceneSymbol* rangeSym = new ModelSceneSymbol(modelPath, rangeScale, this);
+      rangeSym->setHeading(90.0f);
+      rangeSym->setAnchorPosition(SceneSymbolAnchorPosition::Bottom);
 
       if (i * rangeMultiplier >= maxRange)
         distanceCompSymbol->ranges()->append(new DistanceSymbolRange(rangeSym, i, 0.0, this));
@@ -344,13 +344,15 @@ void LocationController::setIconDataPath(const QString& dataPath)
 
   m_iconDataPath = dataPath;
   emit propertyChanged(RESOURCE_DIRECTORY_PROPERTYNAME, m_iconDataPath);
+
+  updateGeoView();
 }
 
 QUrl LocationController::modelSymbolPath() const
 {
   // both files are needed: LocationDisplay.dae
-  // and navigation.png and both must be local (not resources)  
-  QString modelPath = m_iconDataPath + "/LocationDisplay.dae";
+  // and navigation.png and both must be local (not resources)
+  QString modelPath = m_iconDataPath + "/bradle.3ds";
   QString imagePath = m_iconDataPath + "/navigation.png";
 
   if (QFile::exists(modelPath) && QFile::exists(imagePath))

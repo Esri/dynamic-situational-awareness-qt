@@ -113,7 +113,7 @@ bool FollowPositionController::handleFollowInScene()
     if (!locationGraphic)
       return true;
 
-    OrbitGeoElementCameraController* followController = new OrbitGeoElementCameraController(locationGraphic, 1000.0, this);
+    OrbitGeoElementCameraController* followController = new OrbitGeoElementCameraController(locationGraphic, 500.0, this);
 
     if (m_mode == FollowMode::NorthUp)
     {

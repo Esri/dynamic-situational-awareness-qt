@@ -237,7 +237,7 @@ void LineOfSightController::onQueryFeaturesCompleted(QUuid taskId, FeatureQueryR
     if (feat == nullptr)
       continue;
 
-    GeoElementLineOfSight * lineOfSight = new GeoElementLineOfSight(m_locationGeoElement, feat, m_lineOfSightParent);
+    GeoElementLineOfSight * lineOfSight = new GeoElementLineOfSight(feat, m_locationGeoElement, m_lineOfSightParent);
     lineOfSight->setVisible(m_analysisVisible);
     m_lineOfSightOverlay->analyses()->append(lineOfSight);
   }

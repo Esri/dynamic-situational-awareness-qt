@@ -1,0 +1,84 @@
+// Copyright 2018 ESRI
+//
+// All rights reserved under the copyright laws of the United States
+// and applicable international laws, treaties, and conventions.
+//
+// You may freely redistribute and use this sample code, with or
+// without modification, provided you include the original copyright
+// notice and use restrictions.
+//
+// See the Sample code usage restrictions document for further information.
+//
+
+#ifndef VIEWSHEDLISTMODEL_H
+#define VIEWSHEDLISTMODEL_H
+
+#include <QAbstractListModel>
+
+namespace Esri {
+  namespace ArcGISRuntime {
+    class AnalysisOverlay;
+  }
+}
+
+class AbstractViewshed;
+
+class ViewshedListModel : public QAbstractListModel
+{
+  Q_OBJECT
+
+public:
+  enum ViewshedRoles
+  {
+    ViewshedNameRole = Qt::DisplayRole,
+    ViewshedVisibleRole = Qt::UserRole + 1,
+    ViewshedMinDistanceRole,
+    ViewshedMaxDistanceRole,
+    ViewshedHorizontalAngleRole,
+    ViewshedVerticalAngleRole,
+    ViewshedHeadingRole,
+    ViewshedPitchRole,
+    Viewshed360ModeRole
+  };
+
+  explicit ViewshedListModel(QObject* parent = nullptr);
+  ~ViewshedListModel() = default;
+
+  bool isEmpty() const;
+
+  void append(AbstractViewshed* viewshed);
+
+  AbstractViewshed* at(int index) const;
+
+  int indexOf(AbstractViewshed* viewshed) const;
+
+  bool removeOne(AbstractViewshed* viewshed);
+
+  void removeAt(int index);
+
+  void clear();
+
+  int count() const;
+
+  // QAbstractItemModel interface
+  int rowCount(const QModelIndex& = QModelIndex()) const override;
+  QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+  bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole) override;
+
+signals:
+  void viewshedAdded(int index);
+  void viewshedRemoved(AbstractViewshed* viewshed);
+
+protected:
+  QHash<int, QByteArray> roleNames() const override;
+
+private:
+  Q_DISABLE_COPY(ViewshedListModel)
+
+  void setupRoles();
+
+  QHash<int, QByteArray> m_roles;
+  QList<AbstractViewshed*> m_viewsheds;
+};
+
+#endif // VIEWSHEDLISTMODEL_H

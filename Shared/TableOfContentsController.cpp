@@ -11,7 +11,6 @@
 //
 
 #include <QFileInfo>
-#include <QSortFilterProxyModel>
 
 #include "GeoView.h"
 #include "FeatureLayer.h"

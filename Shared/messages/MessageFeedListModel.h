@@ -15,7 +15,6 @@
 
 #include <QAbstractListModel>
 
-class MessagesOverlay;
 class MessageFeed;
 
 class MessageFeedListModel : public QAbstractListModel

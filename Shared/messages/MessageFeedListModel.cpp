@@ -94,6 +94,7 @@ QVariant MessageFeedListModel::data(const QModelIndex& index, int role) const
     break;
   case MessageFeedVisibleRole:
     retVal = messageFeed->isFeedVisible();
+    break;
   default:
     break;
   }

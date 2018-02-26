@@ -16,16 +16,18 @@
 #include "ToolResourceProvider.h"
 #include "SceneQuickView.h"
 #include "LocationViewshed.h"
-#include "SimpleMarkerSceneSymbol.h"
 #include "GeoElementViewshed.h"
 #include "LocationController.h"
 #include "LocationDisplay3d.h"
+#include "PointViewshed.h"
+#include "GraphicViewshed.h"
+#include "ViewshedListModel.h"
 
 using namespace Esri::ArcGISRuntime;
 
-const QString AnalysisController::MAP_POINT_VIEWSHED_TYPE = QStringLiteral("Map Point");
-const QString AnalysisController::MY_LOCATION_VIEWSHED_TYPE = QStringLiteral("My Location");
-const QString AnalysisController::FRIENDLY_TRACK_VIEWSHED_TYPE = QStringLiteral("Friendly Track");
+//const QString AnalysisController::MAP_POINT_VIEWSHED_TYPE = QStringLiteral("Map Point");
+//const QString AnalysisController::MY_LOCATION_VIEWSHED_TYPE = QStringLiteral("My Location");
+//const QString AnalysisController::FRIENDLY_TRACK_VIEWSHED_TYPE = QStringLiteral("Friendly Track");
 
 static const QString s_headingAttribute{ QStringLiteral("heading") };
 static const QString s_pitchAttribute{ QStringLiteral("pitch") };
@@ -33,10 +35,7 @@ static const QString s_pitchAttribute{ QStringLiteral("pitch") };
 AnalysisController::AnalysisController(QObject *parent) :
   Toolkit::AbstractTool(parent),
   m_analysisOverlay(new AnalysisOverlay(this)),
-  m_viewsheds({nullptr, nullptr, nullptr}),
-  m_viewshedTypes({MAP_POINT_VIEWSHED_TYPE,
-                   MY_LOCATION_VIEWSHED_TYPE,
-                   FRIENDLY_TRACK_VIEWSHED_TYPE})
+  m_viewsheds(new ViewshedListModel(this))
 {
   Toolkit::ToolManager::instance().addTool(this);
 
@@ -48,6 +47,22 @@ AnalysisController::AnalysisController(QObject *parent) :
   connectMouseSignals();
 
   updateGeoView();
+
+  connect(m_viewsheds, &ViewshedListModel::viewshedRemoved, this, [this](AbstractViewshed* viewshed)
+  {
+    if (!viewshed)
+      return;
+
+    if (viewshed == m_locationDisplayViewshed)
+    {
+      m_locationDisplayViewshed = nullptr;
+      emit locationDisplayViewshedActiveChanged();
+    }
+
+    m_analysisOverlay->analyses()->removeOne(viewshed->viewshed());
+
+    delete viewshed;
+  });
 }
 
 AnalysisController::~AnalysisController()
@@ -60,7 +75,8 @@ void AnalysisController::updateGeoView()
   if (!sceneView)
     return;
 
-  sceneView->analysisOverlays()->append(m_analysisOverlay);
+  if (!sceneView->analysisOverlays()->contains(m_analysisOverlay))
+    sceneView->analysisOverlays()->append(m_analysisOverlay);
 }
 
 void AnalysisController::connectMouseSignals()
@@ -73,35 +89,37 @@ void AnalysisController::connectMouseSignals()
     if (!m_viewshedEnabled)
       return;
 
-    if (m_viewshedTypeIndex == 0)
+    switch (m_activeMode)
     {
-      updateMapPointViewshed(event);
-      return;
-    }
-
-    if (m_viewshedTypeIndex == 2)
-    {
-      updateFriendlyTrackViewshed(event);
-      return;
+    case AddMapPointViewshed:
+      addMapPointViewshed(event);
+      break;
+    case AddMessageFeedViewshed:
+      addMessageFeedViewshed(event);
+      break;
+    case EditMapPointViewshed:
+      break;
+    default:
+      break;
     }
   });
 }
 
-void AnalysisController::updateCurrentViewshed()
-{
-  auto viewshed = m_viewsheds[m_viewshedTypeIndex];
-  if (m_currentViewshed && m_currentViewshed == viewshed)
-    return;
+//void AnalysisController::updateCurrentViewshed()
+//{
+//  auto viewshed = m_viewsheds[m_viewshedTypeIndex];
+//  if (m_currentViewshed && m_currentViewshed == viewshed)
+//    return;
 
-  m_currentViewshed = viewshed;
+//  m_currentViewshed = viewshed;
 
-  if (m_viewshedTypeIndex == 1)
-    updateMyLocationViewshed();
+//  if (m_viewshedTypeIndex == 1)
+//    updateMyLocationViewshed();
 
-  emitAllChanged();
-}
+//  emitAllChanged();
+//}
 
-void AnalysisController::updateMapPointViewshed(QMouseEvent& event)
+void AnalysisController::addMapPointViewshed(QMouseEvent& event)
 {
   SceneView* sceneView = dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView());
   if (!sceneView)
@@ -110,64 +128,56 @@ void AnalysisController::updateMapPointViewshed(QMouseEvent& event)
   if (!m_graphicsOverlay)
   {
     m_graphicsOverlay = new GraphicsOverlay(this);
-    m_graphicsOverlay->setOverlayId("Analysis overlay");
+    m_graphicsOverlay->setOverlayId("Map point analysis overlay");
     sceneView->graphicsOverlays()->append(m_graphicsOverlay);
   }
 
-  if (!m_currentViewshed && !m_locationViewshedGraphic)
-  {
-    const Point pt = sceneView->screenToBaseSurface(event.x(), event.y());
+  Point pt = sceneView->screenToBaseSurface(event.x(), event.y());
 
-    auto locationViewshed = new LocationViewshed(pt, m_headingDefault, m_pitchDefault,
-                                                 m_horizontalAngleDefault, m_verticalAngleDefault,
-                                                 m_minDistanceDefault, m_maxDistanceDefault, this);
-    m_currentViewshed = locationViewshed;
-    m_viewsheds[m_viewshedTypeIndex] = locationViewshed;
-    locationViewshed->setVisible(m_viewshedVisibleDefault);
-    m_analysisOverlay->analyses()->append(locationViewshed);
+  auto pointViewshed = new PointViewshed(pt, m_graphicsOverlay, m_analysisOverlay, this);
+  pointViewshed->setName(QString("Viewshed %1").arg(QString::number(m_viewsheds->count() + 1)));
+  m_viewsheds->append(pointViewshed);
+  m_analysisOverlay->analyses()->append(pointViewshed->viewshed());
 
-    SimpleMarkerSceneSymbol* smss = SimpleMarkerSceneSymbol::cone(QColor("red"), 0.5, 70, this);
-    smss->setWidth(12);
-    m_locationViewshedGraphic = new Graphic(locationViewshed->location(), smss, this);
-    m_graphicsOverlay->graphics()->append(m_locationViewshedGraphic);
+//  if (!m_currentViewshed)
+//    return;
 
-    smss->setHeading(locationViewshed->heading()-180);
-    smss->setPitch(qAbs(locationViewshed->pitch()-180));
-  }
-
-  if (!m_currentViewshed)
-    return;
-
-  const Point pt = sceneView->screenToBaseSurface(event.x(), event.y());
-  static_cast<LocationViewshed*>(m_currentViewshed)->setLocation(pt);
-  m_locationViewshedGraphic->setGeometry(pt);
+//  const Point pt = sceneView->screenToBaseSurface(event.x(), event.y());
+//  static_cast<PointViewshed*>(m_currentViewshed)->setPoint(pt);
 }
 
-void AnalysisController::updateMyLocationViewshed()
+void AnalysisController::addLocationDisplayViewshed()
 {
+  if (m_locationDisplayViewshed)
+    return;
+
   SceneView* sceneView = dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView());
   if (!sceneView)
     return;
 
-  if (!m_currentViewshed)
+  LocationController* locationController = Toolkit::ToolManager::instance().tool<LocationController>();
+  if (locationController)
   {
-    LocationController* locationController = Toolkit::ToolManager::instance().tool<LocationController>();
-    if (locationController)
-    {
-      Graphic* locationGraphic = locationController->locationDisplay()->locationGraphic();
-      auto geoElementViewshed = new GeoElementViewshed(locationGraphic, m_horizontalAngleDefault, m_verticalAngleDefault,
-                                                       m_minDistanceDefault, m_maxDistanceDefault, 0.0, 0.0, this);
+    Graphic* locationGraphic = locationController->locationDisplay()->locationGraphic();
+    m_locationDisplayViewshed = new GraphicViewshed(locationGraphic, m_analysisOverlay, s_headingAttribute, s_pitchAttribute, this);
+    m_locationDisplayViewshed->setName(QString("Viewshed %1").arg(QString::number(m_viewsheds->count() + 1)));
+    m_locationDisplayViewshed->setOffsetZ(-5.0);
+    m_viewsheds->append(m_locationDisplayViewshed);
+    m_analysisOverlay->analyses()->append(m_locationDisplayViewshed->viewshed());
 
-      geoElementViewshed->setOffsetZ(5.0);
-      m_currentViewshed = geoElementViewshed;
-      m_viewsheds[m_viewshedTypeIndex] = geoElementViewshed;
-      geoElementViewshed->setVisible(m_viewshedVisibleDefault);
-      m_analysisOverlay->analyses()->append(geoElementViewshed);
-    }
+    emit locationDisplayViewshedActiveChanged();
   }
 }
 
-void AnalysisController::updateFriendlyTrackViewshed(QMouseEvent& event)
+void AnalysisController::removeLocationDisplayViewshed()
+{
+  if (!m_locationDisplayViewshed)
+    return;
+
+  m_viewsheds->removeOne(m_locationDisplayViewshed);
+}
+
+void AnalysisController::addMessageFeedViewshed(QMouseEvent& event)
 {
   if (!m_identifyConn)
   {
@@ -187,30 +197,28 @@ void AnalysisController::updateFriendlyTrackViewshed(QMouseEvent& event)
 
       Graphic* graphic = identifyResults[0]->graphics()[0];
 
-      if (m_currentViewshed)
-      {
-        GeoElement* geoElement = static_cast<GeoElementViewshed*>(m_currentViewshed)->geoElement();
-        if (qobject_cast<Graphic*>(geoElement) == graphic)
-        {
-          qDeleteAll(identifyResults); // TODO: should use the GraphicsOverlaysResultsManager from the IdentifyController instead
-          return;
-        }
+//      if (m_currentViewshed)
+//      {
+//        auto geoElementViewshed = dynamic_cast<GeoElementViewshed*>(m_currentViewshed->viewshed());
+//        if (geoElementViewshed && qobject_cast<Graphic*>(geoElementViewshed->geoElement()) == graphic)
+//        {
+//          qDeleteAll(identifyResults); // TODO: should use the GraphicsOverlaysResultsManager from the IdentifyController instead
+//          return;
+//        }
 
-        removeViewshed();
-      }
+//        removeViewshed();
+//      }
 
-      auto geoElementViewshed = new GeoElementViewshed(graphic, m_horizontalAngleDefault, m_verticalAngleDefault,
-                                                       m_minDistanceDefault, m_maxDistanceDefault,
-                                                       m_headingOffsetDefault, m_pitchOffsetDefault, this);
+//      auto geoElementViewshed = new GeoElementViewshed(graphic, m_horizontalAngleDefault, m_verticalAngleDefault,
+//                                                       m_minDistanceDefault, m_maxDistanceDefault,
+//                                                       m_headingOffsetDefault, m_pitchOffsetDefault, this);
+      auto messageFeedViewshed = new GraphicViewshed(graphic, m_analysisOverlay, QString(), QString(), this);
+      messageFeedViewshed->setName(QString("Viewshed %1").arg(QString::number(m_viewsheds->count() + 1)));
+      graphic->setParent(messageFeedViewshed);
 
-      geoElementViewshed->setOffsetZ(5.0);
-      m_currentViewshed = geoElementViewshed;
-      m_viewsheds[m_viewshedTypeIndex] = geoElementViewshed;
-      geoElementViewshed->setVisible(m_viewshedVisibleDefault);
-      m_analysisOverlay->analyses()->append(geoElementViewshed);
-
-      emit headingChanged();
-      emit pitchChanged();
+      messageFeedViewshed->setOffsetZ(5.0);
+      m_viewsheds->append(messageFeedViewshed);
+      m_analysisOverlay->analyses()->append(messageFeedViewshed->viewshed());
 
       qDeleteAll(identifyResults); // TODO: should use the GraphicsOverlaysResultsManager from the IdentifyController instead
     });
@@ -219,61 +227,19 @@ void AnalysisController::updateFriendlyTrackViewshed(QMouseEvent& event)
   m_identifyTaskWatcher = Toolkit::ToolResourceProvider::instance()->geoView()->identifyGraphicsOverlays(event.x(), event.y(), 5.0, false, 1);
 }
 
-void AnalysisController::createViewsheds360Offsets()
-{
-  if (!m_currentViewshed || m_viewshedTypeIndex != 1)
-    return;
+//void AnalysisController::removeViewshed()
+//{
+//  if (!m_currentViewshed)
+//    return;
 
-  GeoElement* geoElement = static_cast<GeoElementViewshed*>(m_currentViewshed)->geoElement();
+//  m_analysisOverlay->analyses()->removeOne(m_currentViewshed->viewshed());
 
-  auto geoElementViewshedOffset1 = new GeoElementViewshed(geoElement, 120.0, m_verticalAngleDefault,
-                                                          m_minDistanceDefault, m_maxDistanceDefault, 120.0, 0.0, this);
+//  delete m_currentViewshed;
+//  m_currentViewshed = nullptr;
+//  m_viewsheds[m_viewshedTypeIndex] = nullptr;
 
-  geoElementViewshedOffset1->setOffsetZ(5.0);
-  geoElementViewshedOffset1->setVisible(m_viewshedVisibleDefault);
-  m_analysisOverlay->analyses()->append(geoElementViewshedOffset1);
-  m_viewsheds360Offsets.append(geoElementViewshedOffset1);
-
-  auto geoElementViewshedOffset2 = new GeoElementViewshed(geoElement, 120.0, m_verticalAngleDefault,
-                                                          m_minDistanceDefault, m_maxDistanceDefault, 240.0, 0.0, this);
-
-  geoElementViewshedOffset2->setOffsetZ(5.0);
-  geoElementViewshedOffset2->setVisible(m_viewshedVisibleDefault);
-  m_analysisOverlay->analyses()->append(geoElementViewshedOffset2);
-  m_viewsheds360Offsets.append(geoElementViewshedOffset2);
-}
-
-void AnalysisController::removeViewshed()
-{
-  if (!m_currentViewshed)
-    return;
-
-  m_analysisOverlay->analyses()->removeOne(m_currentViewshed);
-
-  delete m_currentViewshed;
-  m_currentViewshed = nullptr;
-  m_viewsheds[m_viewshedTypeIndex] = nullptr;
-
-  if (m_viewshedTypeIndex == 0 && m_locationViewshedGraphic)
-  {
-    m_graphicsOverlay->graphics()->removeOne(m_locationViewshedGraphic);
-    delete m_locationViewshedGraphic;
-    m_locationViewshedGraphic = nullptr;
-  }
-  else if (m_viewshedTypeIndex == 1)
-  {
-    for (auto viewshed : m_viewsheds360Offsets)
-    {
-      m_analysisOverlay->analyses()->removeOne(viewshed);
-      delete viewshed;
-    }
-
-    m_viewsheds360Offsets.clear();
-    m_viewshed360Override = false;
-  }
-
-  emitAllChanged();
-}
+//  emitAllChanged();
+//}
 
 bool AnalysisController::isViewshedEnabled() const
 {
@@ -290,367 +256,210 @@ void AnalysisController::setViewshedEnabled(bool viewshedEnabled)
   emit viewshedEnabledChanged();
 }
 
-bool AnalysisController::isViewshedVisible() const
+bool AnalysisController::isLocationDisplayViewshedActive() const
 {
-  return m_currentViewshed ? m_currentViewshed->isVisible() : m_viewshedVisibleDefault;
+  return m_locationDisplayViewshed != nullptr;
 }
 
-void AnalysisController::setViewshedVisible(bool viewshedVisible)
+AnalysisController::AnalysisActiveMode AnalysisController::analysisActiveMode() const
 {
-  if (!m_viewshedEnabled)
+  return m_activeMode;
+}
+
+void AnalysisController::setAnalysisActiveMode(AnalysisActiveMode mode)
+{
+  if (m_activeMode == mode)
     return;
 
-  if (m_currentViewshed)
-  {
-    if (m_currentViewshed->isVisible() == viewshedVisible)
-      return;
+  m_activeMode = mode;
 
-    m_viewshedVisibleDefault = viewshedVisible;
-    m_currentViewshed->setVisible(viewshedVisible);
-
-    if (m_viewshedTypeIndex == 0 && m_locationViewshedGraphic)
-      m_locationViewshedGraphic->setVisible(viewshedVisible);
-
-    if (m_viewshedTypeIndex == 1)
-    {
-      for (auto viewshed : m_viewsheds360Offsets)
-      {
-        viewshed->setVisible(viewshedVisible && m_viewshed360Override);
-      }
-    }
-  }
-  else
-  {
-    if (m_viewshedVisibleDefault == viewshedVisible)
-      return;
-
-    m_viewshedVisibleDefault = viewshedVisible;
-  }
-
-  emit viewshedVisibleChanged();
+  emit analysisActiveModeChanged();
 }
 
-QStringList AnalysisController::viewshedTypes() const
+QAbstractListModel* AnalysisController::viewsheds() const
 {
-  return m_viewshedTypes;
+  return m_viewsheds;
 }
 
-int AnalysisController::viewshedTypeIndex() const
-{
-  return m_viewshedTypeIndex;
-}
-
-void AnalysisController::setViewshedTypeIndex(int index)
-{
-  if (m_viewshedTypeIndex == index)
-    return;
-
-  m_viewshedTypeIndex = index;
-
-  updateCurrentViewshed();
-
-  emit viewshedTypeIndexChanged();
-}
-
-double AnalysisController::minDistance() const
-{
-  return m_currentViewshed ? m_currentViewshed->minDistance() : m_minDistanceDefault;
-}
-
-void AnalysisController::setMinDistance(double minDistance)
-{
-  if (!m_viewshedEnabled)
-    return;
-
-  if (m_currentViewshed)
-  {
-    if (m_currentViewshed->minDistance() == minDistance)
-      return;
-
-    m_minDistanceDefault = minDistance;
-    m_currentViewshed->setMinDistance(minDistance);
-
-    if (m_viewshedTypeIndex == 1)
-    {
-      for (auto viewshed : m_viewsheds360Offsets)
-      {
-        viewshed->setMinDistance(minDistance);
-      }
-    }
-  }
-  else
-  {
-    if (m_minDistanceDefault == minDistance)
-      return;
-
-    m_minDistanceDefault = minDistance;
-  }
-
-  emit minDistanceChanged();
-}
-
-double AnalysisController::maxDistance() const
-{
-  return m_currentViewshed ? m_currentViewshed->maxDistance() : m_maxDistanceDefault;
-}
-
-void AnalysisController::setMaxDistance(double maxDistance)
-{
-  if (!m_viewshedEnabled)
-    return;
-
-  if (m_currentViewshed)
-  {
-    if (m_currentViewshed->maxDistance() == maxDistance)
-      return;
-
-    m_maxDistanceDefault = maxDistance;
-    m_currentViewshed->setMaxDistance(maxDistance);
-
-    if (m_viewshedTypeIndex == 1)
-    {
-      for (auto viewshed : m_viewsheds360Offsets)
-      {
-        viewshed->setMaxDistance(maxDistance);
-      }
-    }
-  }
-  else
-  {
-    if (m_maxDistanceDefault == maxDistance)
-      return;
-
-    m_maxDistanceDefault = maxDistance;
-  }
-
-  emit maxDistanceChanged();
-}
-
-double AnalysisController::horizontalAngle() const
-{
-  if (m_viewshed360Override && m_viewshedTypeIndex == 1)
-    return 360.0; // 360 viewshed override
-
-  return m_currentViewshed ? m_currentViewshed->horizontalAngle() : m_horizontalAngleDefault;
-}
-
-void AnalysisController::setHorizontalAngle(double horizontalAngle)
-{
-  if (!m_viewshedEnabled)
-    return;
-
-  if (m_currentViewshed)
-  {
-    if (m_currentViewshed->horizontalAngle() == horizontalAngle)
-      return;
-
-    m_horizontalAngleDefault = horizontalAngle;
-    m_currentViewshed->setHorizontalAngle(horizontalAngle);
-  }
-  else
-  {
-    if (m_horizontalAngleDefault == horizontalAngle)
-      return;
-
-    m_horizontalAngleDefault = horizontalAngle;
-  }
-
-  emit horizontalAngleChanged();
-}
-
-double AnalysisController::verticalAngle() const
-{
-  if (m_viewshed360Override && m_viewshedTypeIndex == 1)
-    return 90.0; // 360 viewshed override
-
-  return m_currentViewshed ? m_currentViewshed->verticalAngle() : m_verticalAngleDefault;
-}
-
-void AnalysisController::setVerticalAngle(double verticalAngle)
-{
-  if (!m_viewshedEnabled)
-    return;
-
-  if (m_currentViewshed)
-  {
-    if (m_currentViewshed->verticalAngle() == verticalAngle)
-      return;
-
-    m_verticalAngleDefault = verticalAngle;
-    m_currentViewshed->setVerticalAngle(verticalAngle);
-  }
-  else
-  {
-    if (m_verticalAngleDefault == verticalAngle)
-      return;
-
-    m_verticalAngleDefault = verticalAngle;
-  }
-
-  emit verticalAngleChanged();
-}
-
-double AnalysisController::heading() const
-{
-  if (!m_currentViewshed)
-    return m_headingDefault;
-
-  if (m_viewshedTypeIndex == 0)
-    return static_cast<LocationViewshed*>(m_currentViewshed)->heading();
-
-  if (m_viewshedTypeIndex == 2)
-    return static_cast<GeoElementViewshed*>(m_currentViewshed)->headingOffset();
-
-  return static_cast<GeoElementViewshed*>(m_currentViewshed)->geoElement()->attributes()->attributeValue(s_headingAttribute).toDouble();
-}
-
-void AnalysisController::setHeading(double heading)
-{
-  if (!m_viewshedEnabled)
-    return;
-
-  if (!m_currentViewshed)
-  {
-    if (m_headingDefault == heading)
-      return;
-
-    m_headingDefault = heading;
-  }
-  else if (m_viewshedTypeIndex == 0)
-  {
-    if (static_cast<LocationViewshed*>(m_currentViewshed)->heading() == heading)
-      return;
-
-    m_headingDefault = heading;
-    static_cast<LocationViewshed*>(m_currentViewshed)->setHeading(heading);
-
-    if (m_locationViewshedGraphic)
-    {
-      SimpleMarkerSceneSymbol* smss = static_cast<SimpleMarkerSceneSymbol*>(m_locationViewshedGraphic->symbol());
-      smss->setHeading(static_cast<LocationViewshed*>(m_currentViewshed)->heading()-180);
-    }
-  }
-  else if (m_viewshedTypeIndex == 2)
-  {
-    if (static_cast<GeoElementViewshed*>(m_currentViewshed)->headingOffset() == heading)
-      return;
-
-    m_headingOffsetDefault = heading;
-    static_cast<GeoElementViewshed*>(m_currentViewshed)->setHeadingOffset(heading);
-  }
-  else
-  {
-    auto attribs = static_cast<GeoElementViewshed*>(m_currentViewshed)->geoElement()->attributes();
-    if (attribs->attributeValue(s_headingAttribute).toDouble() == heading)
-      return;
-
-    attribs->replaceAttribute(s_headingAttribute, heading);
-  }
-
-  emit headingChanged();
-}
-
-double AnalysisController::pitch() const
-{
-  if (!m_currentViewshed)
-    return m_pitchDefault;
-
-  if (m_viewshedTypeIndex == 0)
-    return static_cast<LocationViewshed*>(m_currentViewshed)->pitch();
-
-  if (m_viewshedTypeIndex == 2)
-    return static_cast<GeoElementViewshed*>(m_currentViewshed)->pitchOffset();
-
-  return static_cast<GeoElementViewshed*>(m_currentViewshed)->geoElement()->attributes()->attributeValue(s_pitchAttribute).toDouble();
-}
-
-void AnalysisController::setPitch(double pitch)
-{
-  if (!m_viewshedEnabled)
-    return;
-
-  if (!m_currentViewshed)
-  {
-    if (m_pitchDefault == pitch)
-      return;
-
-    m_pitchDefault = pitch;
-  }
-  else if (m_viewshedTypeIndex == 0)
-  {
-    if (static_cast<LocationViewshed*>(m_currentViewshed)->pitch() == pitch)
-      return;
-
-    m_pitchDefault = pitch;
-    static_cast<LocationViewshed*>(m_currentViewshed)->setPitch(pitch);
-
-    if (m_locationViewshedGraphic)
-    {
-      SimpleMarkerSceneSymbol* smss = static_cast<SimpleMarkerSceneSymbol*>(m_locationViewshedGraphic->symbol());
-      smss->setPitch(static_cast<LocationViewshed*>(m_currentViewshed)->pitch());
-    }
-  }
-  else if (m_viewshedTypeIndex == 2)
-  {
-    if (static_cast<GeoElementViewshed*>(m_currentViewshed)->pitchOffset() == pitch)
-      return;
-
-    m_pitchOffsetDefault = pitch;
-    static_cast<GeoElementViewshed*>(m_currentViewshed)->setPitchOffset(pitch);
-  }
-  else
-  {
-    auto attribs = static_cast<GeoElementViewshed*>(m_currentViewshed)->geoElement()->attributes();
-    if (attribs->attributeValue(s_pitchAttribute).toDouble() == pitch)
-      return;
-
-    attribs->replaceAttribute(s_pitchAttribute, pitch);
-  }
-
-  emit pitchChanged();
-}
-
-bool AnalysisController::isViewshed360Override() const
-{
-  return m_viewshed360Override;
-}
-
-void AnalysisController::setViewshed360Override(bool viewshed360Override)
-{
-  if (!m_currentViewshed || m_viewshedTypeIndex != 1 ||
-      m_viewshed360Override == viewshed360Override)
-    return;
-
-  m_viewshed360Override = viewshed360Override;
-
-  emit viewshed360OverrideChanged();
-
-  if (m_viewshed360Override && m_viewsheds360Offsets.isEmpty())
-    createViewsheds360Offsets();
-
-  m_currentViewshed->setHorizontalAngle(120.0);
-  m_currentViewshed->setVerticalAngle(90.0);
-
-  emit horizontalAngleChanged();
-  emit verticalAngleChanged();
-
-  for (auto viewshed : m_viewsheds360Offsets)
-  {
-    viewshed->setVisible(m_currentViewshed->isVisible() && viewshed360Override);
-  }
-}
-
-void AnalysisController::emitAllChanged()
-{
-  emit viewshedVisibleChanged();
-  emit minDistanceChanged();
-  emit maxDistanceChanged();
-  emit horizontalAngleChanged();
-  emit verticalAngleChanged();
-  emit headingChanged();
-  emit pitchChanged();
-  emit viewshed360OverrideChanged();
-}
+//bool AnalysisController::isViewshedVisible() const
+//{
+//  return m_currentViewshed ? m_currentViewshed->isVisible() : false;
+//}
+
+//void AnalysisController::setViewshedVisible(bool viewshedVisible)
+//{
+//  if (!m_viewshedEnabled || !m_currentViewshed)
+//    return;
+
+//  if (m_currentViewshed->isVisible() == viewshedVisible)
+//    return;
+
+//  m_currentViewshed->setVisible(viewshedVisible);
+
+//  emit viewshedVisibleChanged();
+//}
+
+//QStringList AnalysisController::viewshedTypes() const
+//{
+//  return m_viewshedTypes;
+//}
+
+//int AnalysisController::viewshedTypeIndex() const
+//{
+//  return m_viewshedTypeIndex;
+//}
+
+//void AnalysisController::setViewshedTypeIndex(int index)
+//{
+//  if (m_viewshedTypeIndex == index)
+//    return;
+
+//  m_viewshedTypeIndex = index;
+
+//  updateCurrentViewshed();
+
+//  emit viewshedTypeIndexChanged();
+//}
+
+//double AnalysisController::minDistance() const
+//{
+//  return m_currentViewshed ? m_currentViewshed->minDistance() : NAN;
+//}
+
+//void AnalysisController::setMinDistance(double minDistance)
+//{
+//  if (!m_viewshedEnabled || !m_currentViewshed)
+//    return;
+
+//  if (m_currentViewshed->minDistance() == minDistance)
+//    return;
+
+//  m_currentViewshed->setMinDistance(minDistance);
+
+//  emit minDistanceChanged();
+//}
+
+//double AnalysisController::maxDistance() const
+//{
+//  return m_currentViewshed ? m_currentViewshed->maxDistance() : NAN;
+//}
+
+//void AnalysisController::setMaxDistance(double maxDistance)
+//{
+//  if (!m_viewshedEnabled || !m_currentViewshed)
+//    return;
+
+//  if (m_currentViewshed->maxDistance() == maxDistance)
+//    return;
+
+//  m_currentViewshed->setMaxDistance(maxDistance);
+
+//  emit maxDistanceChanged();
+//}
+
+//double AnalysisController::horizontalAngle() const
+//{
+//  return m_currentViewshed ? m_currentViewshed->horizontalAngle() : NAN;
+//}
+
+//void AnalysisController::setHorizontalAngle(double horizontalAngle)
+//{
+//  if (!m_viewshedEnabled || !m_currentViewshed)
+//    return;
+
+//  if (m_currentViewshed->horizontalAngle() == horizontalAngle)
+//    return;
+
+//  m_currentViewshed->setHorizontalAngle(horizontalAngle);
+
+//  emit horizontalAngleChanged();
+//}
+
+//double AnalysisController::verticalAngle() const
+//{
+//  return m_currentViewshed ? m_currentViewshed->verticalAngle() : NAN;
+//}
+
+//void AnalysisController::setVerticalAngle(double verticalAngle)
+//{
+//  if (!m_viewshedEnabled || !m_currentViewshed)
+//    return;
+
+//  if (m_currentViewshed->verticalAngle() == verticalAngle)
+//    return;
+
+//  m_currentViewshed->setVerticalAngle(verticalAngle);
+
+//  emit verticalAngleChanged();
+//}
+
+//double AnalysisController::heading() const
+//{
+//  return m_currentViewshed ? m_currentViewshed->heading() : NAN;
+//}
+
+//void AnalysisController::setHeading(double heading)
+//{
+//  if (!m_viewshedEnabled || !m_currentViewshed)
+//    return;
+
+//  if (m_currentViewshed->heading() == heading)
+//    return;
+
+//  m_currentViewshed->setHeading(heading);
+
+//  emit headingChanged();
+//}
+
+//double AnalysisController::pitch() const
+//{
+//  return m_currentViewshed ? m_currentViewshed->pitch() : NAN;
+//}
+
+//void AnalysisController::setPitch(double pitch)
+//{
+//  if (!m_viewshedEnabled || !m_currentViewshed)
+//    return;
+
+//  if (m_currentViewshed->pitch() == pitch)
+//    return;
+
+//  m_currentViewshed->setPitch(pitch);
+
+//  emit pitchChanged();
+//}
+
+//bool AnalysisController::isViewshed360Override() const
+//{
+//  return m_currentViewshed ? m_currentViewshed->is360Mode() : false;
+//}
+
+//void AnalysisController::setViewshed360Override(bool viewshed360Override)
+//{
+//  if (!m_viewshedEnabled || !m_currentViewshed)
+//    return;
+
+//  if (m_currentViewshed->is360Mode() == viewshed360Override)
+//    return;
+
+//  m_currentViewshed->set360Mode(viewshed360Override);
+
+//  emit viewshed360OverrideChanged();
+//  emit horizontalAngleChanged();
+//  emit verticalAngleChanged();
+//}
+
+//void AnalysisController::emitAllChanged()
+//{
+//  emit viewshedVisibleChanged();
+//  emit minDistanceChanged();
+//  emit maxDistanceChanged();
+//  emit horizontalAngleChanged();
+//  emit verticalAngleChanged();
+//  emit headingChanged();
+//  emit pitchChanged();
+//  emit viewshed360OverrideChanged();
+//}
 
 QString AnalysisController::toolName() const
 {

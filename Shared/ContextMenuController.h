@@ -32,6 +32,7 @@ class ContextMenuController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
   Q_PROPERTY(bool contextActive READ contextActive WRITE setContextActive NOTIFY contextActiveChanged)
   Q_PROPERTY(QPoint contextScreenPosition READ contextScreenPosition NOTIFY contextScreenPositionChanged)
   Q_PROPERTY(QAbstractItemModel* options READ options NOTIFY optionsChanged)
+  Q_PROPERTY(QString result READ result NOTIFY resultChanged)
 
 public:
 
@@ -49,10 +50,14 @@ public:
 
   Q_INVOKABLE void selectOption(const QString& option);
 
+  QString result() const;
+  void setResult(const QString &result);
+
 signals:
   void contextActiveChanged() const;
   void contextScreenPositionChanged() const;
   void optionsChanged() const;
+  void resultChanged() const;
 
 private slots:
   void onMousePressedAndHeld(QMouseEvent& event);
@@ -65,6 +70,7 @@ private:
   bool m_contextActive = false;
   QPoint m_contextScreenPosition{0, 0};
   QStringListModel* m_options;
+  QString m_result;
 };
 
 #endif // CONTEXTMENUCONTROLLER_H

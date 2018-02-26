@@ -343,6 +343,12 @@ Vehicle {
                 id: contextMenuController
 
                 onOptionsChanged: console.log(options.rowCount());
+
+                onResultChanged: {
+                    msgDialog.title = "Elevation"
+                    msgDialog.informativeText = contextMenuController.result;
+                    msgDialog.open();
+                }
             }
 
             onVisibleChanged: {

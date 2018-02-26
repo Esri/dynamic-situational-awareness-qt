@@ -14,6 +14,8 @@
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
+#include "SceneView.h"
+
 #include <QDebug>
 
 using namespace Esri::ArcGISRuntime;
@@ -100,6 +102,16 @@ void ContextMenuController::clearOptions()
   m_options->setStringList(QStringList());
 }
 
+QString ContextMenuController::result() const
+{
+  return m_result;
+}
+
+void ContextMenuController::setResult(const QString &result)
+{
+  m_result = result;
+}
+
 QStringListModel* ContextMenuController::options() const
 {
   return m_options;
@@ -107,8 +119,20 @@ QStringListModel* ContextMenuController::options() const
 
 void ContextMenuController::selectOption(const QString& option)
 {
-  qDebug() << option;
+
   setContextActive(false);
+
+  if (option == QStringLiteral("get elevation"))
+  {
+    SceneView* sceneView = dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView());
+    if (!sceneView)
+      return;
+
+    qDebug() << option;
+    m_result = QString::number(sceneView->screenToBaseSurface(m_contextScreenPosition.x(), m_contextScreenPosition.y()).z());
+    qDebug() << m_result;
+    emit resultChanged();
+  }
 }
 
 QPoint ContextMenuController::contextScreenPosition() const

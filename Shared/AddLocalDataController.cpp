@@ -27,6 +27,8 @@
 #include "LayerListModel.h"
 #include "Scene.h"
 #include "ShapefileFeatureTable.h"
+#include "SimpleRenderer.h"
+#include "SimpleMarkerSceneSymbol.h"
 #include "GeoPackage.h"
 #include "GeoPackageRaster.h"
 #include "GeoPackageFeatureTable.h"
@@ -579,7 +581,12 @@ void AddLocalDataController::createFeatureLayerShapefile(const QString& path, in
       return;
 
     if (featureLayer->featureTable()->hasZ() && featureLayer->featureTable()->geometryType() == GeometryType::Point)
+    {
+      SimpleMarkerSceneSymbol* symbol = new SimpleMarkerSceneSymbol(SimpleMarkerSceneSymbolStyle::Diamond, QColor("lightgreen"), 10.0, 7.5, 7.5, SceneSymbolAnchorPosition::Bottom, this);
+      Renderer* renderer = new SimpleRenderer(symbol, this);
       featureLayer->setSceneProperties(LayerSceneProperties(SurfacePlacement::Absolute));
+      featureLayer->setRenderer(renderer);
+    }
   });
 
   if (autoAdd)

@@ -307,8 +307,8 @@ void LocationController::updateGeoView()
     geoView->graphicsOverlays()->append(m_locationDisplay3d->locationOverlay());
 
     constexpr float symbolScale = 20.0;
-    constexpr double rangeMultiplier = 1.04; // the closer to 1.0, the smoother the transitions
-    constexpr double maxRange = 10000000.0;
+//    constexpr double rangeMultiplier = 1.04; // the closer to 1.0, the smoother the transitions
+//    constexpr double maxRange = 10000000.0;
 
     const QUrl modelPath = modelSymbolPath();
 
@@ -316,24 +316,24 @@ void LocationController::updateGeoView()
     modelSceneSymbol->setHeading(90.0f);
     modelSceneSymbol->setAnchorPosition(SceneSymbolAnchorPosition::Bottom);
 
-    DistanceCompositeSceneSymbol* distanceCompSymbol = new DistanceCompositeSceneSymbol(this);
-    distanceCompSymbol->ranges()->append(new DistanceSymbolRange(modelSceneSymbol, 0.0, 1000.0, this));
+//    DistanceCompositeSceneSymbol* distanceCompSymbol = new DistanceCompositeSceneSymbol(this);
+//    distanceCompSymbol->ranges()->append(new DistanceSymbolRange(modelSceneSymbol, 0.0, 1000.0, this));
 
-    float rangeScale = symbolScale;
-    for (double i = 1000.0; i < maxRange; i *= rangeMultiplier)
-    {
-      rangeScale *= static_cast<float>(rangeMultiplier);
-      ModelSceneSymbol* rangeSym = new ModelSceneSymbol(modelPath, rangeScale, this);
-      rangeSym->setHeading(90.0f);
-      rangeSym->setAnchorPosition(SceneSymbolAnchorPosition::Bottom);
+//    float rangeScale = symbolScale;
+//    for (double i = 1000.0; i < maxRange; i *= rangeMultiplier)
+//    {
+//      rangeScale *= static_cast<float>(rangeMultiplier);
+//      ModelSceneSymbol* rangeSym = new ModelSceneSymbol(modelPath, rangeScale, this);
+//      rangeSym->setHeading(90.0f);
+//      rangeSym->setAnchorPosition(SceneSymbolAnchorPosition::Bottom);
 
-      if (i * rangeMultiplier >= maxRange)
-        distanceCompSymbol->ranges()->append(new DistanceSymbolRange(rangeSym, i, 0.0, this));
-      else
-        distanceCompSymbol->ranges()->append(new DistanceSymbolRange(rangeSym, i, i * rangeMultiplier, this));
-    }
+//      if (i * rangeMultiplier >= maxRange)
+//        distanceCompSymbol->ranges()->append(new DistanceSymbolRange(rangeSym, i, 0.0, this));
+//      else
+//        distanceCompSymbol->ranges()->append(new DistanceSymbolRange(rangeSym, i, i * rangeMultiplier, this));
+//    }
 
-    m_locationDisplay3d->setDefaultSymbol(distanceCompSymbol);
+    m_locationDisplay3d->setDefaultSymbol(modelSceneSymbol);
   }
 }
 

@@ -290,6 +290,14 @@ void LineOfSightController::cancelTask()
 }
 
 /*!
+  \brief Returns the tool's Line of Sight Overlay.
+ */
+AnalysisOverlay* LineOfSightController::lineOfSightOverlay() const
+{
+  return m_lineOfSightOverlay;
+}
+
+/*!
   \brief Returns whether the results of Line of sight analysis should be visible.
  */
 bool LineOfSightController::analysisVisible() const

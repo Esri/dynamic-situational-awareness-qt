@@ -57,6 +57,8 @@ public:
   bool analysisVisible() const;
   void setAnalysisVisible(bool analysisVisible);
 
+  Esri::ArcGISRuntime::AnalysisOverlay* lineOfSightOverlay() const;
+
 signals:
   void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage) const;
   void overlayNamesChanged() const;

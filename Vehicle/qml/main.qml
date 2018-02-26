@@ -249,6 +249,16 @@ Vehicle {
             }
         }
 
+        LineOfSightTool {
+            id: lineOfSightTool
+            width: drawer.width
+            anchors {
+                right: parent.right
+                top: parent.top
+            }
+            visible: false
+        }
+
         PopupStackView {
             id: identifyResults
             anchors {

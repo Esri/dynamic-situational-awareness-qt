@@ -47,7 +47,6 @@ public:
   ~LineOfSightController();
 
   QString toolName() const override;
-  void setProperties(const QVariantMap &properties) override;
   void setActive(bool active) override;
 
   QAbstractItemModel* overlayNames() const;

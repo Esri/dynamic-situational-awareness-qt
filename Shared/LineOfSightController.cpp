@@ -44,6 +44,9 @@ struct FeatureQueryResultManager {
   }
 };
 
+/*!
+  \brief Constructor accepting an optional \a parent.
+ */
 LineOfSightController::LineOfSightController(QObject* parent):
   Toolkit::AbstractTool(parent),
   m_overlayNames(new QStringListModel(this)),
@@ -51,6 +54,7 @@ LineOfSightController::LineOfSightController(QObject* parent):
 {
   Toolkit::ToolManager::instance().addTool(this);
 
+  // connect to ToolResourceProvider signals
   auto resourecProvider = Toolkit::ToolResourceProvider::instance();
   connect(resourecProvider, &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]()
   {
@@ -64,31 +68,42 @@ LineOfSightController::LineOfSightController(QObject* parent):
   connect(resourecProvider, &Toolkit::ToolResourceProvider::locationChanged, this, &LineOfSightController::onLocationChanged);
 }
 
+/*!
+  \brief Destructor.
+ */
 LineOfSightController::~LineOfSightController()
 {
   cancelTask();
 }
 
+/*!
+  \brief Returns the name of this tool.
+ */
 QString LineOfSightController::toolName() const
 {
   return QStringLiteral("Line of sight");
 }
 
-void LineOfSightController::setProperties(const QVariantMap& properties)
-{
-}
-
+/*!
+  \brief Sets the tool to be \a active.
+ */
 void LineOfSightController::setActive(bool active)
 {
   if (m_active == active)
     return;
 
+  // if the tool is becoming inactive, cancel any outstanding tasks
   if (m_active)
     cancelTask();
 
   AbstractTool::setActive(active);
 }
 
+/*!
+  \brief Handle the new \a geoView.
+
+  Line of sight results will be added to this view.
+ */
 void LineOfSightController::onGeoViewChanged(GeoView* geoView)
 {
   if (m_geoView == geoView)
@@ -102,8 +117,15 @@ void LineOfSightController::onGeoViewChanged(GeoView* geoView)
   sceneView->analysisOverlays()->append(m_lineOfSightOverlay);
 }
 
+/*!
+  \brief Handle the new list of \a operationalLayers.
+
+  Any \l Esri::ArcGISRuntime::FeatureLayer objects will be added to the list of
+  \l overlayNames, to be used as the targets for Line of Sight analysis.
+ */
 void LineOfSightController::onOperationalLayersChanged(LayerListModel* operationalLayers)
 {
+  // if there are no layers, clear the overlays list
   if (!operationalLayers)
   {
     m_overlayNames->setStringList(QStringList());
@@ -112,6 +134,7 @@ void LineOfSightController::onOperationalLayersChanged(LayerListModel* operation
     return;
   }
 
+  // lambda to update the list of overlays
   auto updateNames = [this, operationalLayers]()
   {
     QStringList overlayNames;
@@ -130,6 +153,7 @@ void LineOfSightController::onOperationalLayersChanged(LayerListModel* operation
         if (!featLayer)
           continue;
 
+        // if the feature layer is not loaded, react to the loaded signal and update the list
         if (featLayer->loadStatus() != LoadStatus::Loaded)
         {
           connect(featLayer, &FeatureLayer::doneLoading, this, [this, operationalLayers]()
@@ -149,14 +173,22 @@ void LineOfSightController::onOperationalLayersChanged(LayerListModel* operation
     emit overlayNamesChanged();
   };
 
+  // update the list of overlays whenever layers are added/removed
   connect(operationalLayers, &LayerListModel::rowsInserted, this, updateNames);
   connect(operationalLayers, &LayerListModel::rowsRemoved, this, updateNames);
 
+  // call the lambda to set the initial list of overlay names
   updateNames();
 }
 
+/*!
+  \brief Handle the new \a location.
+
+  This will be the observer position for Line of Sight analysis.
+ */
 void LineOfSightController::onLocationChanged(const Point& location)
 {
+  // if the tool is not active, ignore
   if (!isActive())
     return;
 
@@ -169,6 +201,7 @@ void LineOfSightController::onLocationChanged(const Point& location)
   if (model == nullptr)
     return;
 
+  // update any existing Line of sight results with the new position
   const auto lineOfSightCount = model->rowCount();
   for (int i = 0; i < lineOfSightCount; ++i)
   {
@@ -184,25 +217,39 @@ void LineOfSightController::onLocationChanged(const Point& location)
   }
 }
 
+/*!
+  \brief Handle the set of features in \a featureQueryResult returned by task \a taskId.
+
+  This query is the set of all features within the selected overlay. The returned features will
+  be used as the targets for Line of Sight analysis.
+ */
 void LineOfSightController::onQueryFeaturesCompleted(QUuid taskId, FeatureQueryResult* featureQueryResult)
 {
+  // if the task ID does not match, ignore this result
   if (taskId != m_featuresTask.taskId())
     return;
 
+  // reset query/task tracking
   disconnect(m_queryFeaturesConnection);
   m_featuresTask = TaskWatcher();
 
   FeatureQueryResultManager resultsMgr(featureQueryResult);
 
+  // clear the QObject used as a parent for Line of Sight results
   if (m_lineOfSightParent)
   {
     delete m_lineOfSightParent;
     m_lineOfSightParent = nullptr;
   }
-
   m_lineOfSightParent = new QObject(this);
+
+  // create a local QObject to as as the parent for returned features
+  // These are only required within the scope of this method
   QObject localParent;
 
+
+  // For each feature, obtain a point location and use it as the target for a new
+  // LocationLineOfSight which will be added to the overlay.
   QList<Feature*> features = resultsMgr.m_results->iterator().features(&localParent);
   auto it = features.constBegin();
   auto itEnd = features.constEnd();
@@ -233,17 +280,28 @@ void LineOfSightController::onQueryFeaturesCompleted(QUuid taskId, FeatureQueryR
   }
 }
 
+/*!
+  \brief Internal.
+
+  Cancel the current feature query task.
+ */
 void LineOfSightController::cancelTask()
 {
   m_featuresTask.cancel();
   disconnect(m_queryFeaturesConnection);
 }
 
+/*!
+  \brief Returns whether the results of Line of sight analysis should be visible.
+ */
 bool LineOfSightController::analysisVisible() const
 {
   return m_analysisVisible;
 }
 
+/*!
+  \brief Sets whether the results of Line of sight analysis should be visible to \a analysisVisible.
+ */
 void LineOfSightController::setAnalysisVisible(bool analysisVisible)
 {
   if (analysisVisible == m_analysisVisible)
@@ -255,6 +313,7 @@ void LineOfSightController::setAnalysisVisible(bool analysisVisible)
   if (model == nullptr)
     return;
 
+  // update the visible state of any existing results
   const auto lineOfSightCount = model->rowCount();
   for (int i = 0; i < lineOfSightCount; ++i)
   {
@@ -272,16 +331,26 @@ void LineOfSightController::setAnalysisVisible(bool analysisVisible)
   emit analysisVisibleChanged();
 }
 
+/*!
+  \brief Returns the list of overlay names which are suitable for Line of sight analysis.
+ */
 QAbstractItemModel* LineOfSightController::overlayNames() const
 {
   return m_overlayNames;
 }
 
+/*!
+  \brief Select the overlay index (\a selectOverlayIndex) to use for Line of sight analysis.
+
+  The index refers to the overalys returned by \l overlayNames.
+ */
 void LineOfSightController::selectOverlayIndex(int selectOverlayIndex)
 {
+  // cancel any query tasks which are currently running
   if (m_featuresTask.isValid() && !m_featuresTask.isCanceled() && !m_featuresTask.isDone())
     cancelTask();
 
+  // clear the results of any existing analysis
   clearAnalysis();
 
   if (selectOverlayIndex > m_overlays.size() || selectOverlayIndex == -1)
@@ -295,6 +364,7 @@ void LineOfSightController::selectOverlayIndex(int selectOverlayIndex)
     return;
   }
 
+  // perform a query to retrieve all the features from the selected overlay. These will be the target features for Line of sight analysis.
   QueryParameters query;
   query.setWhereClause(QStringLiteral("1=1"));
   query.setReturnGeometry(true);
@@ -302,9 +372,14 @@ void LineOfSightController::selectOverlayIndex(int selectOverlayIndex)
   m_featuresTask = overlay->featureTable()->queryFeatures(query);
 }
 
+/*!
+  \brief Clears the current Line of sight analysis.
+ */
 void LineOfSightController::clearAnalysis()
 {
+  // remove all of the results from the overlay
   m_lineOfSightOverlay->analyses()->clear();
+  // delete the QObject used as the parent for the analysis
   if (m_lineOfSightParent)
   {
     delete m_lineOfSightParent;

@@ -40,7 +40,7 @@ Item {
             checked:  toolController.analysisVisible
 
             onCheckedChanged: {
-                if (checked !== toolController.analysisVisible)
+                if (checked !== toolController.isAnalysisVisible)
                     toolController.analysisVisible = checked;
             }
         }

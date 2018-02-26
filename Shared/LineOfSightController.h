@@ -25,6 +25,7 @@ namespace Esri
 namespace ArcGISRuntime
 {
   class AnalysisOverlay;
+  class GeoElement;
   class GeoView;
   class LayerListModel;
   class FeatureLayer;
@@ -39,7 +40,7 @@ class LineOfSightController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
   Q_OBJECT
 
   Q_PROPERTY(QAbstractItemModel* overlayNames READ overlayNames NOTIFY overlayNamesChanged)
-  Q_PROPERTY(bool analysisVisible READ analysisVisible WRITE setAnalysisVisible NOTIFY analysisVisibleChanged)
+  Q_PROPERTY(bool analysisVisible READ isAnalysisVisible WRITE setAnalysisVisible NOTIFY analysisVisibleChanged)
 
 public:
 
@@ -54,8 +55,8 @@ public:
   Q_INVOKABLE void selectOverlayIndex(int overlayIndex);
   Q_INVOKABLE void clearAnalysis();
 
-  bool analysisVisible() const;
-  void setAnalysisVisible(bool analysisVisible);
+  bool isAnalysisVisible() const;
+  void setAnalysisVisible(bool isAnalysisVisiblesVisible);
 
   Esri::ArcGISRuntime::AnalysisOverlay* lineOfSightOverlay() const;
 
@@ -67,13 +68,13 @@ signals:
 public slots:
   void onGeoViewChanged(Esri::ArcGISRuntime::GeoView* geoView);
   void onOperationalLayersChanged(Esri::ArcGISRuntime::LayerListModel* operationalLayers);
-  void onLocationChanged(const Esri::ArcGISRuntime::Point& location);
 
 private slots:
   void onQueryFeaturesCompleted(QUuid taskId, Esri::ArcGISRuntime::FeatureQueryResult* featureQueryResult);
 
 private:
   void cancelTask();
+  void getLocationGeoElement();
 
   QStringListModel* m_overlayNames;
   Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
@@ -81,7 +82,7 @@ private:
   Esri::ArcGISRuntime::AnalysisOverlay* m_lineOfSightOverlay = nullptr;
   QObject* m_lineOfSightParent = nullptr;
   Esri::ArcGISRuntime::TaskWatcher m_featuresTask;
-  Esri::ArcGISRuntime::Point m_location;
+  Esri::ArcGISRuntime::GeoElement* m_locationGeoElement = nullptr;
   QMetaObject::Connection m_queryFeaturesConnection;
   bool m_analysisVisible = true;
 };

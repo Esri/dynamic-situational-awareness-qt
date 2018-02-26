@@ -10,17 +10,19 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "LocationController.h"
+#include "LocationDisplay3d.h"
 #include "LineOfSightController.h"
 
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
 #include "AnalysisOverlay.h"
+#include "GeoElementLineOfSight.h"
 #include "GeoView.h"
 #include "GeometryEngine.h"
 #include "FeatureLayer.h"
 #include "LayerListModel.h"
-#include "LocationLineOfSight.h"
 #include "SceneView.h"
 
 #include <QStringListModel>
@@ -46,6 +48,13 @@ struct FeatureQueryResultManager {
 /*!
   \brief Constructor accepting an optional \a parent.
  */
+void LineOfSightController::getLocationGeoElement()
+{
+  LocationController* locationController = Toolkit::ToolManager::instance().tool<LocationController>();
+  if (locationController)
+    m_locationGeoElement = locationController->locationDisplay()->locationGraphic();
+}
+
 LineOfSightController::LineOfSightController(QObject* parent):
   Toolkit::AbstractTool(parent),
   m_overlayNames(new QStringListModel(this)),
@@ -63,8 +72,6 @@ LineOfSightController::LineOfSightController(QObject* parent):
   {
     onOperationalLayersChanged(Toolkit::ToolResourceProvider::instance()->operationalLayers());
   });
-
-  connect(resourecProvider, &Toolkit::ToolResourceProvider::locationChanged, this, &LineOfSightController::onLocationChanged);
 }
 
 /*!
@@ -181,42 +188,6 @@ void LineOfSightController::onOperationalLayersChanged(LayerListModel* operation
 }
 
 /*!
-  \brief Handle the new \a location.
-
-  This will be the observer position for Line of Sight analysis.
- */
-void LineOfSightController::onLocationChanged(const Point& location)
-{
-  // if the tool is not active, ignore
-  if (!isActive())
-    return;
-
-  if (m_location == location)
-    return;
-
-  m_location = location;
-
-  AnalysisListModel* model = m_lineOfSightOverlay->analyses();
-  if (model == nullptr)
-    return;
-
-  // update any existing Line of sight results with the new position
-  const auto lineOfSightCount = model->rowCount();
-  for (int i = 0; i < lineOfSightCount; ++i)
-  {
-    Analysis* analysis = model->at(i);
-    if (analysis == nullptr)
-      continue;
-
-    LocationLineOfSight* lineOfSight = qobject_cast<LocationLineOfSight*>(analysis);
-    if (!lineOfSight)
-      continue;
-
-    lineOfSight->setObserverLocation(m_location);
-  }
-}
-
-/*!
   \brief Handle the set of features in \a featureQueryResult returned by task \a taskId.
 
   This query is the set of all features within the selected overlay. The returned features will
@@ -233,6 +204,15 @@ void LineOfSightController::onQueryFeaturesCompleted(QUuid taskId, FeatureQueryR
   m_featuresTask = TaskWatcher();
 
   FeatureQueryResultManager resultsMgr(featureQueryResult);
+
+  if (!m_locationGeoElement)
+    getLocationGeoElement();
+
+  if (!m_locationGeoElement)
+  {
+    emit toolErrorOccurred(QStringLiteral("Failed to get location"), QStringLiteral("Unable to find My Location GeoElement for GeoElementLineOfSight"));
+    return;
+  }
 
   // clear the QObject used as a parent for Line of Sight results
   if (m_lineOfSightParent)
@@ -257,22 +237,7 @@ void LineOfSightController::onQueryFeaturesCompleted(QUuid taskId, FeatureQueryR
     if (feat == nullptr)
       continue;
 
-    const Geometry featGeometry = feat->geometry();
-    Point featLocation;
-
-    switch (featGeometry.geometryType())
-    {
-    case GeometryType::Point:
-      featLocation = featGeometry;
-      break;
-    default:
-      featLocation = featLocation.extent().center();
-      break;
-    }
-
-    const Point featLocationProj = GeometryEngine::instance()->project(featLocation, m_location.spatialReference());
-
-    LocationLineOfSight* lineOfSight = new LocationLineOfSight(m_location, featLocationProj, m_lineOfSightParent);
+    GeoElementLineOfSight * lineOfSight = new GeoElementLineOfSight(m_locationGeoElement, feat, m_lineOfSightParent);
     lineOfSight->setVisible(m_analysisVisible);
     m_lineOfSightOverlay->analyses()->append(lineOfSight);
   }
@@ -300,7 +265,7 @@ AnalysisOverlay* LineOfSightController::lineOfSightOverlay() const
 /*!
   \brief Returns whether the results of Line of sight analysis should be visible.
  */
-bool LineOfSightController::analysisVisible() const
+bool LineOfSightController::isAnalysisVisible() const
 {
   return m_analysisVisible;
 }
@@ -327,7 +292,7 @@ void LineOfSightController::setAnalysisVisible(bool analysisVisible)
     if (analysis == nullptr)
       continue;
 
-    LocationLineOfSight* lineOfSight = qobject_cast<LocationLineOfSight*>(analysis);
+    GeoElementLineOfSight* lineOfSight = qobject_cast<GeoElementLineOfSight*>(analysis);
     if (!lineOfSight)
       continue;
 

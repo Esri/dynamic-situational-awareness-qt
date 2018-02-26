@@ -19,7 +19,7 @@ import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.2
 
 Row {
     id: analysisToolRow
-    spacing: 10 * scaleFactor
+    spacing: 16 * scaleFactor
     visible: categoryToolbar.state === "analysis"
     onVisibleChanged: state = "clear"
 
@@ -28,6 +28,13 @@ Row {
             name: viewshedIcon.toolName
             PropertyChanges {
                 target: viewshedIcon
+                selected: true
+            }
+        },
+        State {
+            name: lineOfSightIcon.toolName
+            PropertyChanges {
+                target: lineOfSightIcon
                 selected: true
             }
         },
@@ -57,6 +64,29 @@ Row {
                 selected = false;
             } else {
                 analysisTool.visible = true;
+                lineOfSightTool.visible = false;
+            }
+        }
+    }
+
+    // Line of sight Tool
+    ToolIcon {
+        id: lineOfSightIcon
+        iconSource: DsaResources.iconLineOfSight
+        toolName: "Line of sight"
+        onToolSelected: {
+            if (selected)
+                analysisToolRow.state = "clear"
+            else
+                analysisToolRow.state = toolName;
+
+            if (lineOfSightTool.visible) {
+                lineOfSightTool.visible = false;
+                lineOfSightTool.state = "clear";
+                selected = false;
+            } else {
+                lineOfSightTool.visible = true;
+                analysisTool.visible = false;
             }
         }
     }

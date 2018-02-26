@@ -23,7 +23,6 @@
 #include "LocationLineOfSight.h"
 #include "SceneView.h"
 
-#include <QDebug>
 #include <QStringListModel>
 
 using namespace Esri::ArcGISRuntime;
@@ -246,7 +245,6 @@ void LineOfSightController::onQueryFeaturesCompleted(QUuid taskId, FeatureQueryR
   // create a local QObject to as as the parent for returned features
   // These are only required within the scope of this method
   QObject localParent;
-
 
   // For each feature, obtain a point location and use it as the target for a new
   // LocationLineOfSight which will be added to the overlay.

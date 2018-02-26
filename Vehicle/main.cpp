@@ -45,6 +45,7 @@
 #include "LocationTextController.h"
 #include "IdentifyController.h"
 #include "AlertConditionsController.h"
+#include "LineOfSightController.h"
 #include "ContextMenuController.h"
 #include "DsaResources.h"
 
@@ -144,6 +145,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<ViewedAlertsController>("Esri.DSA", 1, 0, "ViewedAlertsController");
   qmlRegisterType<LocationTextController>("Esri.DSA", 1, 0, "LocationTextController");
   qmlRegisterType<AlertConditionsController>("Esri.DSA", 1, 0, "AlertConditionsController");
+  qmlRegisterType<LineOfSightController>("Esri.DSA", 1, 0, "LineOfSightController");
   qmlRegisterType<ContextMenuController>("Esri.DSA", 1, 0, "ContextMenuController");
 
   // Register Toolkit Component Types

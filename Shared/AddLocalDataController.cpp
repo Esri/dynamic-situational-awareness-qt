@@ -329,6 +329,15 @@ void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path)
 
       connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
+      connect(featureLayer, &FeatureLayer::doneLoading, this, [this, featureLayer](Error loadError)
+      {
+        if (!loadError.isEmpty())
+          return;
+
+        if (featureLayer->featureTable()->hasZ() && featureLayer->featureTable()->geometryType() == GeometryType::Point)
+          featureLayer->setSceneProperties(LayerSceneProperties(SurfacePlacement::Absolute));
+      });
+
       if (operationalLayers)
         operationalLayers->append(featureLayer);
 
@@ -365,6 +374,15 @@ void AddLocalDataController::createFeatureLayerGeodatabaseWithId(const QString& 
     FeatureLayer* featureLayer = new FeatureLayer(gdb->geodatabaseFeatureTable(serviceLayerId), this);
     featureLayer->setVisible(visible);
     connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+
+    connect(featureLayer, &FeatureLayer::doneLoading, this, [this, featureLayer](Error loadError)
+    {
+      if (!loadError.isEmpty())
+        return;
+
+      if (featureLayer->featureTable()->hasZ() && featureLayer->featureTable()->geometryType() == GeometryType::Point)
+        featureLayer->setSceneProperties(LayerSceneProperties(SurfacePlacement::Absolute));
+    });
 
     if (autoAdd)
     {
@@ -411,6 +429,15 @@ void AddLocalDataController::createFeatureLayerGeoPackage(const QString& path, i
     FeatureLayer* featureLayer = new FeatureLayer(geoPackage->geoPackageFeatureTables().at(id), this);
     featureLayer->setVisible(visible);
     connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+
+    connect(featureLayer, &FeatureLayer::doneLoading, this, [this, featureLayer](Error loadError)
+    {
+      if (!loadError.isEmpty())
+        return;
+
+      if (featureLayer->featureTable()->hasZ() && featureLayer->featureTable()->geometryType() == GeometryType::Point)
+        featureLayer->setSceneProperties(LayerSceneProperties(SurfacePlacement::Absolute));
+    });
 
     if (autoAdd)
     {
@@ -497,6 +524,16 @@ void AddLocalDataController::createLayerGeoPackage(const QString& path)
     {
       FeatureLayer* featureLayer = new FeatureLayer(table, this);
       connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+
+      connect(featureLayer, &FeatureLayer::doneLoading, this, [this, featureLayer](Error loadError)
+      {
+        if (!loadError.isEmpty())
+          return;
+
+        if (featureLayer->featureTable()->hasZ() && featureLayer->featureTable()->geometryType() == GeometryType::Point)
+          featureLayer->setSceneProperties(LayerSceneProperties(SurfacePlacement::Absolute));
+      });
+
       if (operationalLayers)
         operationalLayers->append(featureLayer);
 
@@ -535,6 +572,15 @@ void AddLocalDataController::createFeatureLayerShapefile(const QString& path, in
   FeatureLayer* featureLayer = new FeatureLayer(shpFt, this);
   featureLayer->setVisible(visible);
   connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+
+  connect(featureLayer, &FeatureLayer::doneLoading, this, [this, featureLayer](Error loadError)
+  {
+    if (!loadError.isEmpty())
+      return;
+
+    if (featureLayer->featureTable()->hasZ() && featureLayer->featureTable()->geometryType() == GeometryType::Point)
+      featureLayer->setSceneProperties(LayerSceneProperties(SurfacePlacement::Absolute));
+  });
 
   if (autoAdd)
   {

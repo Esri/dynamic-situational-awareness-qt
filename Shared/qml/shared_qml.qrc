@@ -45,5 +45,6 @@
         <file>AlertConditionsAttributeQueryPage.qml</file>
         <file>AlertConditionsSpatialTarget.qml</file>
         <file>AlertConditionsAttributeTarget.qml</file>
+        <file>LineOfSightTool.qml</file>
     </qresource>
 </RCC>

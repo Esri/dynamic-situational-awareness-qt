@@ -75,7 +75,15 @@ QString ContextMenuController::toolName() const
 }
 
 /*!
-  \brief Handles a mouse-click event in the view - used to trigger identify graphics and features tasks.
+  \brief Handles a mouse-click event in the view - used to set the current context.
+
+  The context will be based upon:
+
+  \list
+    \li whether the clicked position is a valid Geographic location
+    \li whether a \l Esri::ArcGISRuntime::GeoElement was clicked on
+    \li whether a \l Esri::ArcGISRuntime::Graphic was clicked on
+  \endlist
  */
 void ContextMenuController::onMousePressedAndHeld(QMouseEvent& event)
 {
@@ -93,6 +101,7 @@ void ContextMenuController::onMousePressedAndHeld(QMouseEvent& event)
 
   setContextScreenPosition(event.pos());
 
+  // start tasks to determine the clicked location
   SceneView* sceneView = dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView());
   if (sceneView)
     m_screenToLocationTask = sceneView->screenToLocation(m_contextScreenPosition.x(), m_contextScreenPosition.y());
@@ -103,6 +112,7 @@ void ContextMenuController::onMousePressedAndHeld(QMouseEvent& event)
       setContextLocation(mapView->screenToLocation(m_contextScreenPosition.x(), m_contextScreenPosition.y()));
   }
 
+  // start tasks to determine whether a GeoElement was clicked on
   m_identifyGraphicsTask = geoView->identifyGraphicsOverlays(m_contextScreenPosition.x(), m_contextScreenPosition.y(), 5.0, false, 1);
   m_identifyFeaturesTask = geoView->identifyLayers(m_contextScreenPosition.x(), m_contextScreenPosition.y(), 5.0, false, 1);
 
@@ -110,6 +120,11 @@ void ContextMenuController::onMousePressedAndHeld(QMouseEvent& event)
   event.accept();
 }
 
+/*!
+  \internal.
+
+  Handle the result of an identify layers task.
+ */
 void ContextMenuController::onIdentifyLayersCompleted(const QUuid& taskId, QList<IdentifyLayerResult*> identifyResults)
 {
   if (taskId != m_identifyFeaturesTask.taskId())
@@ -145,6 +160,11 @@ void ContextMenuController::onIdentifyLayersCompleted(const QUuid& taskId, QList
   }
 }
 
+/*!
+  \internal.
+
+  Handle the result of an identify graphics overlays task.
+ */
 void ContextMenuController::onIdentifyGraphicsOverlaysCompleted(const QUuid& taskId, QList<IdentifyGraphicsOverlayResult*> identifyResults)
 {
   if (taskId != m_identifyGraphicsTask.taskId())
@@ -180,6 +200,12 @@ void ContextMenuController::onIdentifyGraphicsOverlaysCompleted(const QUuid& tas
   }
 }
 
+
+/*!
+  \internal.
+
+  Handle the result of a screen to location task.
+ */
 void ContextMenuController::onScreenToLocationCompleted(QUuid taskId, const Point& location)
 {
   if (taskId != m_screenToLocationTask.taskId())
@@ -189,6 +215,12 @@ void ContextMenuController::onScreenToLocationCompleted(QUuid taskId, const Poin
   setContextLocation(location);
 }
 
+
+/*!
+  \internal.
+
+  Update the context information for the clicked screen position.
+ */
 void ContextMenuController::setContextScreenPosition(const QPoint& contextScreenPosition)
 {
   if (m_contextScreenPosition == contextScreenPosition)
@@ -198,6 +230,11 @@ void ContextMenuController::setContextScreenPosition(const QPoint& contextScreen
   emit contextScreenPositionChanged();
 }
 
+/*!
+  \internal.
+
+  Update the context information for the clicked geographic location.
+ */
 void ContextMenuController::setContextLocation(const Point& location)
 {
   if (!location.isValid() || location.isEmpty())
@@ -217,7 +254,12 @@ void ContextMenuController::setContextLocation(const Point& location)
   addOption(VIEWSHED_OPTION);
 }
 
-void ContextMenuController::addOption(const QString &option)
+/*!
+  \internal.
+
+  Add \a option to the list of actions which are valid in this context.
+ */
+void ContextMenuController::addOption(const QString& option)
 {
   QStringList options = m_options->stringList();
   if (options.contains(option))
@@ -230,16 +272,29 @@ void ContextMenuController::addOption(const QString &option)
   setContextActive(true);
 }
 
+/*!
+  \internal.
+
+  Clear the list of actions which are valid in this context.
+ */
 void ContextMenuController::clearOptions()
 {
   m_options->setStringList(QStringList());
 }
 
+/*!
+  \brief Returns the title of the current context action.
+ */
 QString ContextMenuController::resultTitle() const
 {
   return m_resultTitle;
 }
 
+/*!
+  \internal
+
+  Sets the title of the current context action to \a resultTitle.
+ */
 void ContextMenuController::setResultTitle(const QString& resultTitle)
 {
   if (m_resultTitle == resultTitle)
@@ -249,6 +304,11 @@ void ContextMenuController::setResultTitle(const QString& resultTitle)
   emit resultTitleChanged();
 }
 
+/*!
+  \internal
+
+  Cancels any currently running tasks.
+ */
 void ContextMenuController::cancelTasks()
 {
   cancelIdentifyTasks();
@@ -256,6 +316,11 @@ void ContextMenuController::cancelTasks()
   m_screenToLocationTask = TaskWatcher();
 }
 
+/*!
+  \internal
+
+  Cancels any currently running identify tasks.
+ */
 void ContextMenuController::cancelIdentifyTasks()
 {
   m_identifyFeaturesTask.cancel();
@@ -264,22 +329,38 @@ void ContextMenuController::cancelIdentifyTasks()
   m_identifyGraphicsTask = TaskWatcher();
 }
 
+/*!
+  \internal
+
+  Returns the result of the current action (if applicable).
+ */
 QString ContextMenuController::result() const
 {
   return m_result;
 }
 
+/*!
+  \internal
+
+  Sets the result of the current action to \a result.
+ */
 void ContextMenuController::setResult(const QString& result)
 {
   m_result = result;
   emit resultChanged();
 }
 
+/*!
+  \brief Returns the current list of actions which can be performed for this context
+ */
 QStringListModel* ContextMenuController::options() const
 {
   return m_options;
 }
 
+/*!
+  \brief Selects the \a option to be run for the current context.
+ */
 void ContextMenuController::selectOption(const QString& option)
 {
   setContextActive(false);
@@ -325,16 +406,25 @@ void ContextMenuController::selectOption(const QString& option)
   }
 }
 
+/*!
+  \brief Returns the screen position for the current context.
+ */
 QPoint ContextMenuController::contextScreenPosition() const
 {
   return m_contextScreenPosition;
 }
 
+/*!
+  \brief Returns whether the current context is active or not.
+ */
 bool ContextMenuController::contextActive() const
 {
   return m_contextActive;
 }
 
+/*!
+  \brief Sets the active state of the current context to \a contextRequested.
+ */
 void ContextMenuController::setContextActive(bool contextRequested)
 {
   if (m_contextActive == contextRequested)

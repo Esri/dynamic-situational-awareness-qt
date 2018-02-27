@@ -41,10 +41,15 @@ Menu {
     Repeater {
         id: optionsRepeater
         model: contextMenuController.options
+        anchors.margins: 8 * scaleFactor
 
         delegate: Button{
+            anchors{
+                horizontalCenter: parent.horizontalCenter
+                margins: 4 * scaleFactor
+            }
             text: display
-
+            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
             onClicked: {
                 contextMenuController.selectOption(display);
             }

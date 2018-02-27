@@ -158,7 +158,7 @@ void AnalysisController::updateMyLocationViewshed()
       auto geoElementViewshed = new GeoElementViewshed(locationGraphic, m_horizontalAngleDefault, m_verticalAngleDefault,
                                                        m_minDistanceDefault, m_maxDistanceDefault, 0.0, 0.0, this);
 
-      geoElementViewshed->setOffsetZ(5.0);
+      geoElementViewshed->setOffsetZ(10.0);
       m_currentViewshed = geoElementViewshed;
       m_viewsheds[m_viewshedTypeIndex] = geoElementViewshed;
       geoElementViewshed->setVisible(m_viewshedVisibleDefault);
@@ -297,9 +297,6 @@ bool AnalysisController::isViewshedVisible() const
 
 void AnalysisController::setViewshedVisible(bool viewshedVisible)
 {
-  if (!m_viewshedEnabled)
-    return;
-
   if (m_currentViewshed)
   {
     if (m_currentViewshed->isVisible() == viewshedVisible)

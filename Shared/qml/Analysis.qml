@@ -21,6 +21,7 @@ DsaPanel {
     title: qsTr("Analysis")
 
     property bool isMobile
+    property alias controller: toolController
 
     // Create the controller
     AnalysisController {

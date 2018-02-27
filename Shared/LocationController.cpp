@@ -306,14 +306,16 @@ void LocationController::updateGeoView()
   {
     geoView->graphicsOverlays()->append(m_locationDisplay3d->locationOverlay());
 
-    constexpr float symbolScale = 20.0;
+    constexpr float symbolScale = 10.0;
 //    constexpr double rangeMultiplier = 1.04; // the closer to 1.0, the smoother the transitions
 //    constexpr double maxRange = 10000000.0;
 
     const QUrl modelPath = modelSymbolPath();
+    if (!QFileInfo::exists(modelPath.toLocalFile()))
+      return;
 
     ModelSceneSymbol* modelSceneSymbol = new ModelSceneSymbol(modelPath, symbolScale, this);
-    modelSceneSymbol->setHeading(90.0f);
+    modelSceneSymbol->setHeading(-88.0f);
     modelSceneSymbol->setAnchorPosition(SceneSymbolAnchorPosition::Bottom);
 
 //    DistanceCompositeSceneSymbol* distanceCompSymbol = new DistanceCompositeSceneSymbol(this);
@@ -352,7 +354,7 @@ QUrl LocationController::modelSymbolPath() const
 {
   // both files are needed: LocationDisplay.dae
   // and navigation.png and both must be local (not resources)
-  QString modelPath = m_iconDataPath + "/bradle.3ds";
+  QString modelPath = m_iconDataPath + "/Ford_Expedition_R_1.dae";
   QString imagePath = m_iconDataPath + "/navigation.png";
 
   if (QFile::exists(modelPath) && QFile::exists(imagePath))

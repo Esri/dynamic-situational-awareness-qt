@@ -19,23 +19,30 @@ import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.2
 
 Row {
     id: analysisToolRow
-    spacing: 16 * scaleFactor
+    spacing: 25 * scaleFactor
     visible: categoryToolbar.state === "analysis"
     onVisibleChanged: state = "clear"
 
     states: [
         State {
+            name: viewshed360Icon.toolName
+            PropertyChanges {
+                target: viewshed360Icon
+                selected: false
+            }
+        },
+        State {
             name: viewshedIcon.toolName
             PropertyChanges {
                 target: viewshedIcon
-                selected: true
+                selected: false
             }
         },
         State {
             name: lineOfSightIcon.toolName
             PropertyChanges {
                 target: lineOfSightIcon
-                selected: true
+                selected: false
             }
         },
         State {
@@ -46,6 +53,24 @@ Row {
             }
         }
     ]
+
+    // Viewshed 360 Tool
+    ToolIcon {
+        id: viewshed360Icon
+        iconSource: DsaResources.iconRotate
+        toolName: "360 Viewshed"
+        onToolSelected: {
+            analysisTool.controller.viewshedTypeIndex = 1;
+            analysisTool.controller.viewshed360Override = true;
+            if (selected) {
+                analysisTool.controller.viewshedVisible = false;
+                selected = false;
+            } else {
+                analysisTool.controller.viewshedVisible = true;
+                selected = true;
+            }
+        }
+    }
 
     // Viewshed Tool
     ToolIcon {

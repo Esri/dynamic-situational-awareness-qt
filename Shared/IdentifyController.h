@@ -50,6 +50,8 @@ public:
   bool busy() const;
   QVariantList popupManagers() const;
 
+  void showPopup(Esri::ArcGISRuntime::GeoElement* geoElement, const QString& popupTitle);
+
 private slots:
   void onMouseClicked(QMouseEvent& event);
   void onIdentifyLayersCompleted(const QUuid& taskId, QList<Esri::ArcGISRuntime::IdentifyLayerResult*> identifyResults);

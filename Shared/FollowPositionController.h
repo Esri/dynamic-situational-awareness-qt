@@ -21,6 +21,7 @@ namespace Esri {
 namespace ArcGISRuntime
 {
   class CameraController;
+  class GeoElement;
   class GeoView;
   class GraphicListModel;
 }}
@@ -52,6 +53,8 @@ public:
 
   // AbstractTool interface
   QString toolName() const override;
+
+  void setFollowing(Esri::ArcGISRuntime::GeoElement* elementToFollow);
 
 signals:
   void followModeChanged();

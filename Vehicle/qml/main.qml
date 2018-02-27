@@ -343,41 +343,8 @@ Vehicle {
             }
         }
 
-        Menu {
+        ContextMenu {
             id: contextMenu
-            visible: contextMenuController.contextActive
-            x: contextMenuController.contextScreenPosition.x
-            y: contextMenuController.contextScreenPosition.y
-
-            ContextMenuController {
-                id: contextMenuController
-
-                onOptionsChanged: console.log(options.rowCount());
-
-                onResultChanged: {
-                    msgDialog.title = "Elevation"
-                    msgDialog.informativeText = contextMenuController.result;
-                    msgDialog.open();
-                }
-            }
-
-            onVisibleChanged: {
-                if (!visible)
-                    contextMenuController.contextActive = visible;
-            }
-
-            Repeater {
-                id: optionsRepeater
-                model: contextMenuController.options
-
-                delegate: Button{
-                    text: display
-
-                    onClicked: {
-                        contextMenuController.selectOption(display);
-                    }
-                }
-            }
         }
     }
 
@@ -390,6 +357,16 @@ Vehicle {
         width: parent.width
         color: Material.primary
         textColor: Material.foreground
+
+        onVisibleChanged: {
+            if (!visible)
+                return;
+
+            if (mapToolRow.state !== "Convert XY") {
+                mapToolRow.state = "Convert XY";
+                categoryToolbar.state = "map";
+            }
+        }
     }
 
     About {
@@ -421,6 +398,7 @@ Vehicle {
 
     onErrorOccurred: {
         // if the parent is null, the app is in a loading state and not yet ready to display errors
+        msgDialog.title = "Error"
         if (parent) {
             msgDialog.informativeText = message;
             msgDialog.open();

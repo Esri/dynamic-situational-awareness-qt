@@ -103,44 +103,7 @@ void AnalysisController::updateCurrentViewshed()
 
 void AnalysisController::updateMapPointViewshed(QMouseEvent& event)
 {
-  SceneView* sceneView = dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView());
-  if (!sceneView)
-    return;
-
-  if (!m_graphicsOverlay)
-  {
-    m_graphicsOverlay = new GraphicsOverlay(this);
-    m_graphicsOverlay->setOverlayId("Analysis overlay");
-    sceneView->graphicsOverlays()->append(m_graphicsOverlay);
-  }
-
-  if (!m_currentViewshed && !m_locationViewshedGraphic)
-  {
-    const Point pt = sceneView->screenToBaseSurface(event.x(), event.y());
-
-    auto locationViewshed = new LocationViewshed(pt, m_headingDefault, m_pitchDefault,
-                                                 m_horizontalAngleDefault, m_verticalAngleDefault,
-                                                 m_minDistanceDefault, m_maxDistanceDefault, this);
-    m_currentViewshed = locationViewshed;
-    m_viewsheds[m_viewshedTypeIndex] = locationViewshed;
-    locationViewshed->setVisible(m_viewshedVisibleDefault);
-    m_analysisOverlay->analyses()->append(locationViewshed);
-
-    SimpleMarkerSceneSymbol* smss = SimpleMarkerSceneSymbol::cone(QColor("red"), 0.5, 70, this);
-    smss->setWidth(12);
-    m_locationViewshedGraphic = new Graphic(locationViewshed->location(), smss, this);
-    m_graphicsOverlay->graphics()->append(m_locationViewshedGraphic);
-
-    smss->setHeading(locationViewshed->heading()-180);
-    smss->setPitch(qAbs(locationViewshed->pitch()-180));
-  }
-
-  if (!m_currentViewshed)
-    return;
-
-  const Point pt = sceneView->screenToBaseSurface(event.x(), event.y());
-  static_cast<LocationViewshed*>(m_currentViewshed)->setLocation(pt);
-  m_locationViewshedGraphic->setGeometry(pt);
+  showMapPointViewshed(event.pos());
 }
 
 void AnalysisController::updateMyLocationViewshed()
@@ -655,4 +618,46 @@ void AnalysisController::emitAllChanged()
 QString AnalysisController::toolName() const
 {
   return QStringLiteral("analysis");
+}
+
+void AnalysisController::showMapPointViewshed(const QPoint& screenPos)
+{
+  SceneView* sceneView = dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView());
+  if (!sceneView)
+    return;
+
+  if (!m_graphicsOverlay)
+  {
+    m_graphicsOverlay = new GraphicsOverlay(this);
+    m_graphicsOverlay->setOverlayId("Analysis overlay");
+    sceneView->graphicsOverlays()->append(m_graphicsOverlay);
+  }
+
+  if (!m_currentViewshed && !m_locationViewshedGraphic)
+  {
+    const Point pt = sceneView->screenToBaseSurface(screenPos.x(), screenPos.y());
+
+    auto locationViewshed = new LocationViewshed(pt, m_headingDefault, m_pitchDefault,
+                                                 m_horizontalAngleDefault, m_verticalAngleDefault,
+                                                 m_minDistanceDefault, m_maxDistanceDefault, this);
+    m_currentViewshed = locationViewshed;
+    m_viewsheds[m_viewshedTypeIndex] = locationViewshed;
+    locationViewshed->setVisible(m_viewshedVisibleDefault);
+    m_analysisOverlay->analyses()->append(locationViewshed);
+
+    SimpleMarkerSceneSymbol* smss = SimpleMarkerSceneSymbol::cone(QColor("red"), 0.5, 70, this);
+    smss->setWidth(12);
+    m_locationViewshedGraphic = new Graphic(locationViewshed->location(), smss, this);
+    m_graphicsOverlay->graphics()->append(m_locationViewshedGraphic);
+
+    smss->setHeading(locationViewshed->heading()-180);
+    smss->setPitch(qAbs(locationViewshed->pitch()-180));
+  }
+
+  if (!m_currentViewshed)
+    return;
+
+  const Point pt = sceneView->screenToBaseSurface(screenPos.x(), screenPos.y());
+  static_cast<LocationViewshed*>(m_currentViewshed)->setLocation(pt);
+  m_locationViewshedGraphic->setGeometry(pt);
 }

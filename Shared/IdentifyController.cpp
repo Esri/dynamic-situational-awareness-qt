@@ -140,6 +140,17 @@ QVariantList IdentifyController::popupManagers() const
   return res;
 }
 
+void IdentifyController::showPopup(GeoElement* geoElement, const QString& popupTitle)
+{
+  if (!geoElement)
+    return;
+
+  m_popupManagers.clear();
+  emit popupManagersChanged();
+  addGeoElementPopup(geoElement, popupTitle);
+  emit popupManagersChanged();
+}
+
 /*!
   \brief Handles a mouse-click event in the view - used to trigger identify graphics and features tasks.
  */

@@ -12,6 +12,8 @@
 
 #include "FeatureQueryResultManager.h"
 
+#include "FeatureQueryResult.h"
+
 using namespace Esri::ArcGISRuntime;
 
 // RAII helper to ensure the QList<IdentifyLayerResult*> is deleted when we leave the scope

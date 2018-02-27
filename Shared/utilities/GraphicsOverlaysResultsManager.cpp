@@ -12,6 +12,8 @@
 
 #include "GraphicsOverlaysResultsManager.h"
 
+#include "IdentifyGraphicsOverlayResult.h"
+
 using namespace Esri::ArcGISRuntime;
 
 // RAII helper to ensure the QList<IdentifyGraphicsOverlayResult*> is deleted when we leave the scope

@@ -25,10 +25,6 @@
 
 using namespace Esri::ArcGISRuntime;
 
-//const QString AnalysisController::MAP_POINT_VIEWSHED_TYPE = QStringLiteral("Map Point");
-//const QString AnalysisController::MY_LOCATION_VIEWSHED_TYPE = QStringLiteral("My Location");
-//const QString AnalysisController::FRIENDLY_TRACK_VIEWSHED_TYPE = QStringLiteral("Friendly Track");
-
 static const QString s_headingAttribute{ QStringLiteral("heading") };
 static const QString s_pitchAttribute{ QStringLiteral("pitch") };
 
@@ -50,16 +46,14 @@ AnalysisController::AnalysisController(QObject *parent) :
 
   connect(m_viewsheds, &ViewshedListModel::viewshedRemoved, this, [this](AbstractViewshed* viewshed)
   {
-    if (!viewshed)
-      return;
+    viewshed->removeFromOverlay();
 
     if (viewshed == m_locationDisplayViewshed)
     {
       m_locationDisplayViewshed = nullptr;
+
       emit locationDisplayViewshedActiveChanged();
     }
-
-    m_analysisOverlay->analyses()->removeOne(viewshed->viewshed());
 
     delete viewshed;
   });
@@ -105,20 +99,6 @@ void AnalysisController::connectMouseSignals()
   });
 }
 
-//void AnalysisController::updateCurrentViewshed()
-//{
-//  auto viewshed = m_viewsheds[m_viewshedTypeIndex];
-//  if (m_currentViewshed && m_currentViewshed == viewshed)
-//    return;
-
-//  m_currentViewshed = viewshed;
-
-//  if (m_viewshedTypeIndex == 1)
-//    updateMyLocationViewshed();
-
-//  emitAllChanged();
-//}
-
 void AnalysisController::addMapPointViewshed(QMouseEvent& event)
 {
   SceneView* sceneView = dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView());
@@ -136,8 +116,11 @@ void AnalysisController::addMapPointViewshed(QMouseEvent& event)
 
   auto pointViewshed = new PointViewshed(pt, m_graphicsOverlay, m_analysisOverlay, this);
   pointViewshed->setName(QString("Viewshed %1").arg(QString::number(m_viewsheds->count() + 1)));
+  //m_currentViewshed = pointViewshed;
   m_viewsheds->append(pointViewshed);
   m_analysisOverlay->analyses()->append(pointViewshed->viewshed());
+
+  //emitAllChanged();
 
 //  if (!m_currentViewshed)
 //    return;
@@ -160,21 +143,16 @@ void AnalysisController::addLocationDisplayViewshed()
   {
     Graphic* locationGraphic = locationController->locationDisplay()->locationGraphic();
     m_locationDisplayViewshed = new GraphicViewshed(locationGraphic, m_analysisOverlay, s_headingAttribute, s_pitchAttribute, this);
-    m_locationDisplayViewshed->setName(QString("Viewshed %1").arg(QString::number(m_viewsheds->count() + 1)));
+    m_locationDisplayViewshed->setName(QStringLiteral("Location Display Viewshed"));
     m_locationDisplayViewshed->setOffsetZ(-5.0);
+    //m_currentViewshed = m_locationDisplayViewshed;
     m_viewsheds->append(m_locationDisplayViewshed);
     m_analysisOverlay->analyses()->append(m_locationDisplayViewshed->viewshed());
 
     emit locationDisplayViewshedActiveChanged();
+
+    //emitAllChanged();
   }
-}
-
-void AnalysisController::removeLocationDisplayViewshed()
-{
-  if (!m_locationDisplayViewshed)
-    return;
-
-  m_viewsheds->removeOne(m_locationDisplayViewshed);
 }
 
 void AnalysisController::addMessageFeedViewshed(QMouseEvent& event)
@@ -215,12 +193,15 @@ void AnalysisController::addMessageFeedViewshed(QMouseEvent& event)
       auto messageFeedViewshed = new GraphicViewshed(graphic, m_analysisOverlay, QString(), QString(), this);
       messageFeedViewshed->setName(QString("Viewshed %1").arg(QString::number(m_viewsheds->count() + 1)));
       graphic->setParent(messageFeedViewshed);
+      //m_currentViewshed = messageFeedViewshed;
 
       messageFeedViewshed->setOffsetZ(5.0);
       m_viewsheds->append(messageFeedViewshed);
       m_analysisOverlay->analyses()->append(messageFeedViewshed->viewshed());
 
       qDeleteAll(identifyResults); // TODO: should use the GraphicsOverlaysResultsManager from the IdentifyController instead
+
+      //emitAllChanged();
     });
   }
 
@@ -232,11 +213,22 @@ void AnalysisController::addMessageFeedViewshed(QMouseEvent& event)
 //  if (!m_currentViewshed)
 //    return;
 
+//  if (m_currentViewshed == m_locationDisplayViewshed)
+//  {
+//    m_locationDisplayViewshed = nullptr;
+
+//    emit locationDisplayViewshedActiveChanged();
+//  }
+
 //  m_analysisOverlay->analyses()->removeOne(m_currentViewshed->viewshed());
+//  m_viewsheds->removeOne(m_currentViewshed);
 
 //  delete m_currentViewshed;
-//  m_currentViewshed = nullptr;
-//  m_viewsheds[m_viewshedTypeIndex] = nullptr;
+
+//  if (m_viewsheds->count() > 0)
+//    m_currentViewshed = m_viewsheds->at(0);
+//  else
+//    m_currentViewshed = nullptr;
 
 //  emitAllChanged();
 //}
@@ -276,10 +268,10 @@ void AnalysisController::setAnalysisActiveMode(AnalysisActiveMode mode)
   emit analysisActiveModeChanged();
 }
 
-QAbstractListModel* AnalysisController::viewsheds() const
-{
-  return m_viewsheds;
-}
+//int AnalysisController::analysisType() const
+//{
+//  return m_currentViewshed ? m_currentViewshed->analysisType() : AbstractViewshed::NoType;
+//}
 
 //bool AnalysisController::isViewshedVisible() const
 //{
@@ -297,28 +289,6 @@ QAbstractListModel* AnalysisController::viewsheds() const
 //  m_currentViewshed->setVisible(viewshedVisible);
 
 //  emit viewshedVisibleChanged();
-//}
-
-//QStringList AnalysisController::viewshedTypes() const
-//{
-//  return m_viewshedTypes;
-//}
-
-//int AnalysisController::viewshedTypeIndex() const
-//{
-//  return m_viewshedTypeIndex;
-//}
-
-//void AnalysisController::setViewshedTypeIndex(int index)
-//{
-//  if (m_viewshedTypeIndex == index)
-//    return;
-
-//  m_viewshedTypeIndex = index;
-
-//  updateCurrentViewshed();
-
-//  emit viewshedTypeIndexChanged();
 //}
 
 //double AnalysisController::minDistance() const
@@ -429,12 +399,12 @@ QAbstractListModel* AnalysisController::viewsheds() const
 //  emit pitchChanged();
 //}
 
-//bool AnalysisController::isViewshed360Override() const
+//bool AnalysisController::isViewshed360Mode() const
 //{
 //  return m_currentViewshed ? m_currentViewshed->is360Mode() : false;
 //}
 
-//void AnalysisController::setViewshed360Override(bool viewshed360Override)
+//void AnalysisController::setViewshed360Mode(bool viewshed360Override)
 //{
 //  if (!m_viewshedEnabled || !m_currentViewshed)
 //    return;
@@ -444,13 +414,36 @@ QAbstractListModel* AnalysisController::viewsheds() const
 
 //  m_currentViewshed->set360Mode(viewshed360Override);
 
-//  emit viewshed360OverrideChanged();
+//  emit viewshed360ModeChanged();
 //  emit horizontalAngleChanged();
 //  emit verticalAngleChanged();
 //}
 
+//int AnalysisController::viewshedIndex() const
+//{
+//  return m_currentViewshed ? m_viewsheds->indexOf(m_currentViewshed) : -1;
+//}
+
+//void AnalysisController::setViewshedIndex(int index)
+//{
+//  if (m_viewshedIndex == index)
+//    return;
+
+//  m_viewshedIndex = index;
+
+//  m_currentViewshed = m_viewsheds->at(m_viewshedIndex);
+
+//  emitAllChanged();
+//}
+
+ViewshedListModel* AnalysisController::viewsheds() const
+{
+  return m_viewsheds;
+}
+
 //void AnalysisController::emitAllChanged()
 //{
+//  emit analysisTypeChanged();
 //  emit viewshedVisibleChanged();
 //  emit minDistanceChanged();
 //  emit maxDistanceChanged();
@@ -458,7 +451,8 @@ QAbstractListModel* AnalysisController::viewsheds() const
 //  emit verticalAngleChanged();
 //  emit headingChanged();
 //  emit pitchChanged();
-//  emit viewshed360OverrideChanged();
+//  emit viewshed360ModeChanged();
+//  emit viewshedIndexChanged();
 //}
 
 QString AnalysisController::toolName() const

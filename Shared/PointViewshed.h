@@ -45,6 +45,8 @@ public:
   double pitch() const override;
   void setPitch(double pitch) override;
 
+  AnalysisType analysisType() const override;
+
 protected:
   void update360Mode(bool is360Mode) override;
 

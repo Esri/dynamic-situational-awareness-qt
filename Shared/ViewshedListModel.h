@@ -27,6 +27,8 @@ class ViewshedListModel : public QAbstractListModel
 {
   Q_OBJECT
 
+  Q_PROPERTY(int count READ count NOTIFY countChanged)
+
 public:
   enum ViewshedRoles
   {
@@ -46,17 +48,17 @@ public:
 
   bool isEmpty() const;
 
-  void append(AbstractViewshed* viewshed);
+  Q_INVOKABLE void append(AbstractViewshed* viewshed);
 
-  AbstractViewshed* at(int index) const;
+  Q_INVOKABLE AbstractViewshed* at(int index) const;
 
-  int indexOf(AbstractViewshed* viewshed) const;
+  Q_INVOKABLE int indexOf(AbstractViewshed* viewshed) const;
 
-  bool removeOne(AbstractViewshed* viewshed);
+  Q_INVOKABLE bool removeOne(AbstractViewshed* viewshed);
 
-  void removeAt(int index);
+  Q_INVOKABLE void removeAt(int index);
 
-  void clear();
+  Q_INVOKABLE void clear();
 
   int count() const;
 
@@ -66,6 +68,7 @@ public:
   bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole) override;
 
 signals:
+  void countChanged();
   void viewshedAdded(int index);
   void viewshedRemoved(AbstractViewshed* viewshed);
 

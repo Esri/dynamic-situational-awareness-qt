@@ -20,6 +20,9 @@ ViewshedListModel::ViewshedListModel(QObject* parent) :
   QAbstractListModel(parent)
 {
   setupRoles();
+
+  connect(this, &ViewshedListModel::rowsInserted, this, &ViewshedListModel::countChanged);
+  connect(this, &ViewshedListModel::rowsRemoved, this, &ViewshedListModel::countChanged);
 }
 
 void ViewshedListModel::setupRoles()

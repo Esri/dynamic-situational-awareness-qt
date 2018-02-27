@@ -14,6 +14,8 @@
 #include "Viewshed.h"
 #include "AnalysisOverlay.h"
 
+#include <QDebug>
+
 using namespace Esri::ArcGISRuntime;
 
 AbstractViewshed::AbstractViewshed(Viewshed* viewshed, AnalysisOverlay* analysisOverlay, QObject* parent) :
@@ -25,10 +27,16 @@ AbstractViewshed::AbstractViewshed(Viewshed* viewshed, AnalysisOverlay* analysis
 
 AbstractViewshed::~AbstractViewshed()
 {
+}
+
+void AbstractViewshed::removeFromOverlay()
+{
   for (auto viewshed : m_viewsheds360Offsets)
   {
     m_analysisOverlay->analyses()->removeOne(viewshed);
   }
+
+  m_analysisOverlay->analyses()->removeOne(viewshed());
 }
 
 bool AbstractViewshed::isVisible() const
@@ -146,6 +154,16 @@ void AbstractViewshed::setVerticalAngle(double verticalAngle)
   m_viewshed->setVerticalAngle(verticalAngle);
 
   emit verticalAngleChanged();
+}
+
+bool AbstractViewshed::isHeadingEnabled() const
+{
+  return !m_is360Mode;
+}
+
+bool AbstractViewshed::isPitchEnabled() const
+{
+  return !m_is360Mode;
 }
 
 bool AbstractViewshed::is360Mode() const

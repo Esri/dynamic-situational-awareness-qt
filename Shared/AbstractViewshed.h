@@ -34,10 +34,24 @@ class AbstractViewshed : public QObject
   Q_PROPERTY(double verticalAngle READ verticalAngle WRITE setVerticalAngle NOTIFY verticalAngleChanged)
   Q_PROPERTY(double heading READ heading WRITE setHeading NOTIFY headingChanged)
   Q_PROPERTY(double pitch READ pitch WRITE setPitch NOTIFY pitchChanged)
+  Q_PROPERTY(bool headingEnabled READ isHeadingEnabled NOTIFY headingEnabledChanged)
+  Q_PROPERTY(bool pitchEnabled READ isPitchEnabled NOTIFY pitchEnabledChanged)
   Q_PROPERTY(bool is360Mode READ is360Mode WRITE set360Mode NOTIFY is360ModeChanged)
+  Q_PROPERTY(AnalysisType analysisType READ analysisType CONSTANT)
 
 public:
+  enum AnalysisType
+  {
+    NoType = 0,
+    PointViewshed,
+    GraphicViewshed
+  };
+
+  Q_ENUM(AnalysisType)
+
   ~AbstractViewshed();
+
+  Q_INVOKABLE void removeFromOverlay();
 
   virtual bool isVisible() const;
   virtual void setVisible(bool visible);
@@ -63,8 +77,13 @@ public:
   virtual double pitch() const = 0;
   virtual void setPitch(double pitch) = 0;
 
+  virtual bool isHeadingEnabled() const;
+  virtual bool isPitchEnabled() const;
+
   bool is360Mode() const;
   void set360Mode(bool is360Mode);
+
+  virtual AnalysisType analysisType() const = 0;
 
   Esri::ArcGISRuntime::Viewshed* viewshed() const;
 
@@ -79,6 +98,8 @@ signals:
   void verticalAngleChanged();
   void headingChanged();
   void pitchChanged();
+  void headingEnabledChanged();
+  void pitchEnabledChanged();
   void is360ModeChanged();
 
 protected:

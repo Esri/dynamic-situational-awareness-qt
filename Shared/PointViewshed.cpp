@@ -109,6 +109,11 @@ void PointViewshed::setPitch(double pitch)
   emit pitchChanged();
 }
 
+AbstractViewshed::AnalysisType PointViewshed::analysisType() const
+{
+  return AbstractViewshed::AnalysisType::PointViewshed;
+}
+
 void PointViewshed::update360Mode(bool is360Mode)
 {
   if (is360Mode && m_viewsheds360Offsets.isEmpty())
@@ -143,4 +148,7 @@ void PointViewshed::update360Mode(bool is360Mode)
   {
     viewshed->setVisible(isVisible() && is360Mode);
   }
+
+  emit headingEnabledChanged();
+  emit pitchEnabledChanged();
 }

@@ -100,6 +100,16 @@ void GraphicViewshed::setPitch(double pitch)
   emit pitchChanged();
 }
 
+bool GraphicViewshed::isHeadingEnabled() const
+{
+  return !is360Mode() && m_headingAttribute.isEmpty();
+}
+
+bool GraphicViewshed::isPitchEnabled() const
+{
+  return !is360Mode() && m_pitchAttribute.isEmpty();
+}
+
 double GraphicViewshed::offsetZ() const
 {
   return static_cast<GeoElementViewshed*>(m_viewshed)->offsetZ();
@@ -118,6 +128,11 @@ QString GraphicViewshed::headingAttribute() const
 QString GraphicViewshed::pitchAttribute() const
 {
   return m_pitchAttribute;
+}
+
+AbstractViewshed::AnalysisType GraphicViewshed::analysisType() const
+{
+  return AbstractViewshed::AnalysisType::GraphicViewshed;
 }
 
 void GraphicViewshed::update360Mode(bool is360Mode)
@@ -155,4 +170,7 @@ void GraphicViewshed::update360Mode(bool is360Mode)
   {
     viewshed->setVisible(isVisible() && is360Mode);
   }
+
+  emit headingEnabledChanged();
+  emit pitchEnabledChanged();
 }

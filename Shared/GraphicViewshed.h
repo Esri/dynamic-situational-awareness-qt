@@ -36,11 +36,16 @@ public:
   double pitch() const override;
   void setPitch(double pitch) override;
 
+  bool isHeadingEnabled() const override;
+  bool isPitchEnabled() const override;
+
   double offsetZ() const;
   void setOffsetZ(double offsetZ);
 
   QString headingAttribute() const;
   QString pitchAttribute() const;
+
+  AnalysisType analysisType() const override;
 
 protected:
   void update360Mode(bool is360Mode) override;

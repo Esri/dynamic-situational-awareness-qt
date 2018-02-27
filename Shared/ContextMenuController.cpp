@@ -217,9 +217,7 @@ void ContextMenuController::onScreenToLocationCompleted(QUuid taskId, const Poin
 
 
 /*!
-  \internal.
-
-  Update the context information for the clicked screen position.
+  \brief Update the context information for the clicked screen position.
  */
 void ContextMenuController::setContextScreenPosition(const QPoint& contextScreenPosition)
 {
@@ -231,9 +229,7 @@ void ContextMenuController::setContextScreenPosition(const QPoint& contextScreen
 }
 
 /*!
-  \internal.
-
-  Update the context information for the clicked geographic location.
+  \brief Update the context information for the clicked geographic location.
  */
 void ContextMenuController::setContextLocation(const Point& location)
 {
@@ -330,9 +326,15 @@ void ContextMenuController::cancelIdentifyTasks()
 }
 
 /*!
-  \internal
+  \brief Returns the geographic location for the current context.
+ */
+Esri::ArcGISRuntime::Point ContextMenuController::contextLocation() const
+{
+    return m_contextLocation;
+}
 
-  Returns the result of the current action (if applicable).
+/*!
+  \brief Returns the result of the current action (if applicable).
  */
 QString ContextMenuController::result() const
 {

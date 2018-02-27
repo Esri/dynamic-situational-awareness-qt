@@ -57,6 +57,7 @@ public:
   void setContextActive(bool contexActive);
 
   QPoint contextScreenPosition() const;
+  void setContextScreenPosition(const QPoint& contextScreenPosition);
 
   QStringListModel* options() const;
 
@@ -64,6 +65,9 @@ public:
 
   QString result() const;
   QString resultTitle() const;
+
+  Esri::ArcGISRuntime::Point contextLocation() const;
+  void setContextLocation(const Esri::ArcGISRuntime::Point& location);
 
 signals:
   void contextActiveChanged() const;
@@ -79,8 +83,6 @@ private slots:
   void onScreenToLocationCompleted(QUuid taskId, const Esri::ArcGISRuntime::Point& location);
 
 private:
-  void setContextScreenPosition(const QPoint& contextScreenPosition);
-  void setContextLocation(const Esri::ArcGISRuntime::Point& location);
   void addOption(const QString& option);
   void clearOptions();
   void setResult(const QString& result);

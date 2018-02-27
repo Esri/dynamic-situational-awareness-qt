@@ -10,16 +10,18 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-
 #include "AnalysisController.h"
+#include "GraphicsOverlaysResultsManager.h"
+#include "LocationController.h"
+#include "LocationDisplay3d.h"
+
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
+
 #include "SceneQuickView.h"
 #include "LocationViewshed.h"
 #include "SimpleMarkerSceneSymbol.h"
 #include "GeoElementViewshed.h"
-#include "LocationController.h"
-#include "LocationDisplay3d.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -135,29 +137,25 @@ void AnalysisController::updateFriendlyTrackViewshed(QMouseEvent& event)
   if (!m_identifyConn)
   {
     m_identifyConn = connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::identifyGraphicsOverlaysCompleted,
-                             this, [this](const QUuid& taskId, const QList<IdentifyGraphicsOverlayResult*>& identifyResults)
+                             this, [this](const QUuid& taskId, QList<IdentifyGraphicsOverlayResult*> identifyResults)
     {
       if (taskId != m_identifyTaskWatcher.taskId())
         return;
 
       m_identifyTaskWatcher = TaskWatcher();
 
-      if (!m_viewshedEnabled || identifyResults.isEmpty() || identifyResults[0]->graphics().isEmpty())
-      {
-        qDeleteAll(identifyResults); // TODO: should use the GraphicsOverlaysResultsManager from the IdentifyController instead
-        return;
-      }
+      GraphicsOverlaysResultsManager results(identifyResults);
 
-      Graphic* graphic = identifyResults[0]->graphics()[0];
+      if (!m_viewshedEnabled || results.m_results.isEmpty() || results.m_results[0]->graphics().isEmpty())
+        return;
+
+      Graphic* graphic = results.m_results[0]->graphics()[0];
 
       if (m_currentViewshed)
       {
         GeoElement* geoElement = static_cast<GeoElementViewshed*>(m_currentViewshed)->geoElement();
         if (qobject_cast<Graphic*>(geoElement) == graphic)
-        {
-          qDeleteAll(identifyResults); // TODO: should use the GraphicsOverlaysResultsManager from the IdentifyController instead
           return;
-        }
 
         removeViewshed();
       }
@@ -174,8 +172,6 @@ void AnalysisController::updateFriendlyTrackViewshed(QMouseEvent& event)
 
       emit headingChanged();
       emit pitchChanged();
-
-      qDeleteAll(identifyResults); // TODO: should use the GraphicsOverlaysResultsManager from the IdentifyController instead
     });
   }
 

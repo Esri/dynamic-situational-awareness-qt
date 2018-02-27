@@ -13,7 +13,9 @@
 #include "AnalysisController.h"
 #include "ContextMenuController.h"
 #include "FollowPositionController.h"
+#include "GraphicsOverlaysResultsManager.h"
 #include "IdentifyController.h"
+#include "LayerResultsManager.h"
 
 #include "CoordinateConversionController.h"
 #include "ToolManager.h"
@@ -23,38 +25,6 @@
 #include "SceneView.h"
 
 using namespace Esri::ArcGISRuntime;
-
-// RAII helper to ensure the QList<IdentifyLayerResult*> is deleted when we leave the scope
-struct LayerResultsManager {
-
-  QList<IdentifyLayerResult*>& m_results;
-
-  LayerResultsManager(QList<IdentifyLayerResult*>& results):
-    m_results(results)
-  {
-  }
-
-  ~LayerResultsManager()
-  {
-    qDeleteAll(m_results);
-  }
-};
-
-// RAII helper to ensure the QList<IdentifyGraphicsOverlayResult*> is deleted when we leave the scope
-struct GraphicsOverlaysResultsManager {
-
-  QList<IdentifyGraphicsOverlayResult*>& m_results;
-
-  GraphicsOverlaysResultsManager(QList<IdentifyGraphicsOverlayResult*>& results):
-    m_results(results)
-  {
-  }
-
-  ~GraphicsOverlaysResultsManager()
-  {
-    qDeleteAll(m_results);
-  }
-};
 
 const QString ContextMenuController::COORDINATES_OPTION = "Coordinates";
 const QString ContextMenuController::ELEVATION_OPTION = "Elevation";

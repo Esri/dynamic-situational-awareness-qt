@@ -10,6 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "FeatureQueryResultManager.h"
 #include "LocationController.h"
 #include "LocationDisplay3d.h"
 #include "LineOfSightController.h"
@@ -28,22 +29,6 @@
 #include <QStringListModel>
 
 using namespace Esri::ArcGISRuntime;
-
-// RAII helper to ensure the FeatureQueryResult* is deleted when we leave the scope
-struct FeatureQueryResultManager {
-
-  FeatureQueryResult* m_results;
-
-  FeatureQueryResultManager(FeatureQueryResult* results):
-    m_results(results)
-  {
-  }
-
-  ~FeatureQueryResultManager()
-  {
-    delete m_results;
-  }
-};
 
 /*!
   \brief Constructor accepting an optional \a parent.

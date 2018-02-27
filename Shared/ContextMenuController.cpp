@@ -22,8 +22,6 @@
 #include "MapView.h"
 #include "SceneView.h"
 
-#include <QDebug>
-
 using namespace Esri::ArcGISRuntime;
 
 // RAII helper to ensure the QList<IdentifyLayerResult*> is deleted when we leave the scope

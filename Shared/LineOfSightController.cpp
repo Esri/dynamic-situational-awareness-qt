@@ -228,7 +228,7 @@ void LineOfSightController::onQueryFeaturesCompleted(QUuid taskId, FeatureQueryR
 
   // For each feature, obtain a point location and use it as the target for a new
   // LocationLineOfSight which will be added to the overlay.
-  bool firstTime = true;
+//  bool firstTime = true;
   QList<Feature*> features = resultsMgr.m_results->iterator().features(&localParent);
   auto it = features.constBegin();
   auto itEnd = features.constEnd();
@@ -238,17 +238,17 @@ void LineOfSightController::onQueryFeaturesCompleted(QUuid taskId, FeatureQueryR
     if (feat == nullptr)
       continue;
 
-    if (firstTime)
-    {
-      firstTime = false;
+//    if (firstTime)
+//    {
+//      firstTime = false;
 
-      // Option 7
-      feat->featureTable()->featureLayer()->setSelectionColor(QColor(255, 0, 0, 100));
-      feat->featureTable()->featureLayer()->setSelectionWidth(100);
+//      // Option 7
+//      feat->featureTable()->featureLayer()->setSelectionColor(QColor(255, 0, 0, 100));
+//      feat->featureTable()->featureLayer()->setSelectionWidth(100);
 
-      // Option 6
-      feat->featureTable()->featureLayer()->selectFeatures(features);
-    }
+//      // Option 6
+//      feat->featureTable()->featureLayer()->selectFeatures(features);
+//    }
 
     GeoElementLineOfSight * lineOfSight = new GeoElementLineOfSight(feat, m_locationGeoElement, m_lineOfSightParent);
     lineOfSight->setVisible(m_analysisVisible);

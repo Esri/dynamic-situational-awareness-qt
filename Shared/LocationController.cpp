@@ -306,7 +306,7 @@ void LocationController::updateGeoView()
   {
     geoView->graphicsOverlays()->append(m_locationDisplay3d->locationOverlay());
 
-    constexpr float symbolScale = 10.0;
+    constexpr float symbolScale = 4.0;
 //    constexpr double rangeMultiplier = 1.04; // the closer to 1.0, the smoother the transitions
 //    constexpr double maxRange = 10000000.0;
 

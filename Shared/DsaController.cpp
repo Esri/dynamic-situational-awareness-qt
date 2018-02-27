@@ -93,15 +93,17 @@ void DsaController::init(GeoView* geoView)
 
   m_cacheManager = new LayerCacheManager(this);
 
+  // connect all tool signals
   for(Toolkit::AbstractTool* abstractTool : Toolkit::ToolManager::instance())
   {
     if (!abstractTool)
       continue;
 
-    abstractTool->setProperties(m_dsaSettings);
-
     connect(abstractTool, &Toolkit::AbstractTool::errorOccurred, this, &DsaController::onError);
     connect(abstractTool, &Toolkit::AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
+
+    if (abstractTool->metaObject()->indexOfSignal("toolErrorOccurred(QString,QString)") != -1)
+      connect(abstractTool, SIGNAL(toolErrorOccurred(QString,QString)), this, SLOT(onToolError(QString, QString)));
 
     // certain tools can conflict - for example, those which interact directly with the view
     if (!isConflictingTool(abstractTool->toolName()))
@@ -131,12 +133,33 @@ void DsaController::init(GeoView* geoView)
       }
     });
   }
+
+  // set all tool properties
+  for(Toolkit::AbstractTool* abstractTool : Toolkit::ToolManager::instance())
+  {
+    if (!abstractTool)
+      continue;
+
+    abstractTool->setProperties(m_dsaSettings);
+  }
 }
 
+/*! \brief Slot to handle an ArcGISRuntime Error \a e.
+ *
+ */
 void DsaController::onError(const Error& e)
 {
   qDebug() << "Error" << e.message() << e.additionalMessage();
   emit errorOccurred(e.message(), e.additionalMessage());
+}
+
+/*! \brief Slot to handle an \a errorMessage (with an \a additionalMessage) from an \l AbstractTool.
+ *
+ */
+void DsaController::onToolError(const QString& errorMessage, const QString& additionalMessage)
+{
+  qDebug() << "Error" << errorMessage << additionalMessage;
+  emit errorOccurred(errorMessage, additionalMessage);
 }
 
 void DsaController::onPropertyChanged(const QString& propertyName, const QVariant& propertyValue)
@@ -237,6 +260,7 @@ void DsaController::writeDefaultMessageFeeds()
   cotMessageFeedJson.insert(MessageFeedConstants::MESSAGE_FEEDS_NAME, QStringLiteral("SA Events"));
   cotMessageFeedJson.insert(MessageFeedConstants::MESSAGE_FEEDS_TYPE, QStringLiteral("cot"));
   cotMessageFeedJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER, QStringLiteral("mil2525c"));
+  cotMessageFeedJson.insert(MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("saevents.png"));
   cotMessageFeedJson.insert(MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT, QStringLiteral("draped"));
   messageFeedsJson.append(cotMessageFeedJson);
 
@@ -244,6 +268,7 @@ void DsaController::writeDefaultMessageFeeds()
   friendlyTracksLandJson.insert(MessageFeedConstants::MESSAGE_FEEDS_NAME, QStringLiteral("Friendly Tracks - Land"));
   friendlyTracksLandJson.insert(MessageFeedConstants::MESSAGE_FEEDS_TYPE, QStringLiteral("position_report_land"));
   friendlyTracksLandJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER, QStringLiteral("mil2525c"));
+  friendlyTracksLandJson.insert(MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("friendlytracks.png"));
   friendlyTracksLandJson.insert(MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT, QStringLiteral("draped"));
   messageFeedsJson.append(friendlyTracksLandJson);
 
@@ -251,12 +276,14 @@ void DsaController::writeDefaultMessageFeeds()
   friendlyTracksAirJson.insert(MessageFeedConstants::MESSAGE_FEEDS_NAME, QStringLiteral("Friendly Tracks - Air"));
   friendlyTracksAirJson.insert(MessageFeedConstants::MESSAGE_FEEDS_TYPE, QStringLiteral("position_report_air"));
   friendlyTracksAirJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER, QStringLiteral("mil2525c"));
+  friendlyTracksAirJson.insert(MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("friendlytracks-air.png"));
   friendlyTracksAirJson.insert(MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT, QStringLiteral("absolute"));
   messageFeedsJson.append(friendlyTracksAirJson);
 
   QJsonObject spotRepJson;
   spotRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_NAME, QStringLiteral("Contact Reports"));
   spotRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_TYPE, QStringLiteral("spotrep"));
+  spotRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("enemycontact1600.png"));
   spotRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER, QStringLiteral("enemycontact1600.png"));
   spotRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT, QStringLiteral("draped"));
   messageFeedsJson.append(spotRepJson);
@@ -264,6 +291,7 @@ void DsaController::writeDefaultMessageFeeds()
   QJsonObject sitRepJson;
   sitRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_NAME, QStringLiteral("Situation Reports"));
   sitRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_TYPE, QStringLiteral("sitrep"));
+  sitRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("sitrep1600.png"));
   sitRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER, QStringLiteral("sitrep1600.png"));
   sitRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT, QStringLiteral("draped"));
   messageFeedsJson.append(sitRepJson);
@@ -271,6 +299,7 @@ void DsaController::writeDefaultMessageFeeds()
   QJsonObject eodReportsJson;
   eodReportsJson.insert(MessageFeedConstants::MESSAGE_FEEDS_NAME, QStringLiteral("EOD Reports"));
   eodReportsJson.insert(MessageFeedConstants::MESSAGE_FEEDS_TYPE, QStringLiteral("eod"));
+  eodReportsJson.insert(MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("eod1600.png"));
   eodReportsJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER, QStringLiteral("eod1600.png"));
   eodReportsJson.insert(MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT, QStringLiteral("draped"));
   messageFeedsJson.append(eodReportsJson);
@@ -278,6 +307,7 @@ void DsaController::writeDefaultMessageFeeds()
   QJsonObject sensorObsJson;
   sensorObsJson.insert(MessageFeedConstants::MESSAGE_FEEDS_NAME, QStringLiteral("Sensor Observations"));
   sensorObsJson.insert(MessageFeedConstants::MESSAGE_FEEDS_TYPE, QStringLiteral("sensor_obs"));
+  sensorObsJson.insert(MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("sensorobs1600.png"));
   sensorObsJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER, QStringLiteral("sensorobs1600.png"));
   sensorObsJson.insert(MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT, QStringLiteral("draped"));
   messageFeedsJson.append(sensorObsJson);

@@ -65,6 +65,7 @@ class DsaResources : public QObject
   Q_PROPERTY(QUrl iconWarningOrange READ iconWarningOrange CONSTANT)
   Q_PROPERTY(QUrl iconWarningRed READ iconWarningRed CONSTANT)
   Q_PROPERTY(QUrl iconWarningRedExclamation READ iconWarningRedExclamation CONSTANT)
+  Q_PROPERTY(QUrl iconLineOfSight READ iconLineOfSight CONSTANT)
 
 public:
   DsaResources(QObject* parent = nullptr);
@@ -116,6 +117,7 @@ private:
   QUrl iconWarningOrange() const;
   QUrl iconWarningRed() const;
   QUrl iconWarningRedExclamation() const;
+  QUrl iconLineOfSight() const;
 };
 
 #endif // DSARESOURCES_H

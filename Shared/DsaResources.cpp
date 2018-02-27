@@ -245,3 +245,8 @@ QUrl DsaResources::iconWarningRedExclamation() const
 {
   return QStringLiteral("qrc:/Resources/icons/xhdpi/warning_red_exclamation.png");
 }
+
+QUrl DsaResources::iconLineOfSight() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/line_of_sight.png");
+}

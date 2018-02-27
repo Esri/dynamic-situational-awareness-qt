@@ -27,6 +27,8 @@
 #include "LayerListModel.h"
 #include "Scene.h"
 #include "ShapefileFeatureTable.h"
+#include "SimpleRenderer.h"
+#include "SimpleMarkerSceneSymbol.h"
 #include "GeoPackage.h"
 #include "GeoPackageRaster.h"
 #include "GeoPackageFeatureTable.h"
@@ -89,6 +91,12 @@ void AddLocalDataController::addPathToDirectoryList(const QString& path)
 {
   if (m_dataPaths.contains(path))
     return;
+
+  if (!QFileInfo::exists(path))
+  {
+    emit toolErrorOccurred(QStringLiteral("Failed to add local data path"), QString("Could not find %1").arg(path));
+    return;
+  }
 
   m_dataPaths << path;
   emit propertyChanged(LOCAL_DATAPATHS_PROPERTYNAME, m_dataPaths);
@@ -267,6 +275,19 @@ void AddLocalDataController::addItemAsLayer(const QList<int>& indices)
 void AddLocalDataController::addLayerFromPath(const QString& path, int layerIndex, bool visible, bool autoAdd)
 {
   QFileInfo fileInfo(path);
+  if (!fileInfo.exists())
+  {
+    const QUrl testUrl(path);
+    if (testUrl.isLocalFile())
+      fileInfo = QFileInfo(testUrl.toLocalFile());
+
+    if (!fileInfo.exists())
+    {
+      emit toolErrorOccurred(QString("Failed to add %1").arg(fileInfo.fileName()), QString("File not found %1").arg(path));
+      return;
+    }
+  }
+
   QStringList rasterExtensions{"img", "tif", "tiff", "i1", "dt0", "dt1", "dt2", "tc2", "geotiff", "hr1", "jpg", "jpeg", "jp2", "ntf", "png", "i21"};
 
   // determine the layer type
@@ -310,6 +331,15 @@ void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path)
 
       connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
+      connect(featureLayer, &FeatureLayer::doneLoading, this, [this, featureLayer](Error loadError)
+      {
+        if (!loadError.isEmpty())
+          return;
+
+        if (featureLayer->featureTable()->hasZ() && featureLayer->featureTable()->geometryType() == GeometryType::Point)
+          featureLayer->setSceneProperties(LayerSceneProperties(SurfacePlacement::Absolute));
+      });
+
       if (operationalLayers)
         operationalLayers->append(featureLayer);
 
@@ -346,6 +376,15 @@ void AddLocalDataController::createFeatureLayerGeodatabaseWithId(const QString& 
     FeatureLayer* featureLayer = new FeatureLayer(gdb->geodatabaseFeatureTable(serviceLayerId), this);
     featureLayer->setVisible(visible);
     connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+
+    connect(featureLayer, &FeatureLayer::doneLoading, this, [this, featureLayer](Error loadError)
+    {
+      if (!loadError.isEmpty())
+        return;
+
+      if (featureLayer->featureTable()->hasZ() && featureLayer->featureTable()->geometryType() == GeometryType::Point)
+        featureLayer->setSceneProperties(LayerSceneProperties(SurfacePlacement::Absolute));
+    });
 
     if (autoAdd)
     {
@@ -392,6 +431,15 @@ void AddLocalDataController::createFeatureLayerGeoPackage(const QString& path, i
     FeatureLayer* featureLayer = new FeatureLayer(geoPackage->geoPackageFeatureTables().at(id), this);
     featureLayer->setVisible(visible);
     connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+
+    connect(featureLayer, &FeatureLayer::doneLoading, this, [this, featureLayer](Error loadError)
+    {
+      if (!loadError.isEmpty())
+        return;
+
+      if (featureLayer->featureTable()->hasZ() && featureLayer->featureTable()->geometryType() == GeometryType::Point)
+        featureLayer->setSceneProperties(LayerSceneProperties(SurfacePlacement::Absolute));
+    });
 
     if (autoAdd)
     {
@@ -478,6 +526,16 @@ void AddLocalDataController::createLayerGeoPackage(const QString& path)
     {
       FeatureLayer* featureLayer = new FeatureLayer(table, this);
       connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+
+      connect(featureLayer, &FeatureLayer::doneLoading, this, [this, featureLayer](Error loadError)
+      {
+        if (!loadError.isEmpty())
+          return;
+
+        if (featureLayer->featureTable()->hasZ() && featureLayer->featureTable()->geometryType() == GeometryType::Point)
+          featureLayer->setSceneProperties(LayerSceneProperties(SurfacePlacement::Absolute));
+      });
+
       if (operationalLayers)
         operationalLayers->append(featureLayer);
 
@@ -516,6 +574,20 @@ void AddLocalDataController::createFeatureLayerShapefile(const QString& path, in
   FeatureLayer* featureLayer = new FeatureLayer(shpFt, this);
   featureLayer->setVisible(visible);
   connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+
+  connect(featureLayer, &FeatureLayer::doneLoading, this, [this, featureLayer](Error loadError)
+  {
+    if (!loadError.isEmpty())
+      return;
+
+    if (featureLayer->featureTable()->hasZ() && featureLayer->featureTable()->geometryType() == GeometryType::Point)
+    {
+      SimpleMarkerSceneSymbol* symbol = new SimpleMarkerSceneSymbol(SimpleMarkerSceneSymbolStyle::Diamond, QColor("lightgreen"), 10.0, 7.5, 7.5, SceneSymbolAnchorPosition::Bottom, this);
+      Renderer* renderer = new SimpleRenderer(symbol, this);
+      featureLayer->setSceneProperties(LayerSceneProperties(SurfacePlacement::Absolute));
+      featureLayer->setRenderer(renderer);
+    }
+  });
 
   if (autoAdd)
   {

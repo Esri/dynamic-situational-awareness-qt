@@ -70,7 +70,7 @@ Item {
 
         RadioButton {
             id: analysisCB
-            enabled: false
+            visible: false
             text: "Analysis"
             font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
             ButtonGroup.group: typeGroup

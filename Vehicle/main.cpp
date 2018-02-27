@@ -45,6 +45,7 @@
 #include "LocationTextController.h"
 #include "IdentifyController.h"
 #include "AlertConditionsController.h"
+#include "LineOfSightController.h"
 #include "ViewshedListModel.h"
 #include "AbstractViewshed.h"
 #include "DsaResources.h"
@@ -145,6 +146,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<ViewedAlertsController>("Esri.DSA", 1, 0, "ViewedAlertsController");
   qmlRegisterType<LocationTextController>("Esri.DSA", 1, 0, "LocationTextController");
   qmlRegisterType<AlertConditionsController>("Esri.DSA", 1, 0, "AlertConditionsController");
+  qmlRegisterType<LineOfSightController>("Esri.DSA", 1, 0, "LineOfSightController");
   qmlRegisterUncreatableType<ViewshedListModel>("Esri.DSA", 1, 0, "ViewshedListModel", "ViewshedListModel is not creatable");
   qmlRegisterUncreatableType<AbstractViewshed>("Esri.DSA", 1, 0, "AbstractViewshed", "AbstractViewshed is not creatable");
 

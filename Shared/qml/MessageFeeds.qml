@@ -50,6 +50,9 @@ DsaPanel {
             mainText: feedName
             itemChecked: feedVisible
             onItemCheckedChanged: feedVisible = itemChecked
+            imageUrl: thumbnailUrl
+            imageVisible: true
+            imageFrameVisible: false
         }
     }
 }

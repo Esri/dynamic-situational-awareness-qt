@@ -54,66 +54,86 @@ Item {
         id: levelGroup
     }
 
-    Grid {
+    Column {
+        id: col
         anchors {
-            horizontalCenter: parent.horizontalCenter
-            top: parent.top
-            margins: 16 * scaleFactor
+            fill: parent
+            margins: 4 * scaleFactor
         }
-        columns: 2
-        rows: 4
-        spacing: 10 * scaleFactor
-        leftPadding: 10 * scaleFactor
+        spacing: 6 * scaleFactor
+        leftPadding: parent.width * 0.25
 
-        Image {
-            source: DsaResources.iconWarningGreen
-            height: lowCB.height
-            width: height
-        }
+        Row {
+            Image {
+                id: lowIcon
+                source: DsaResources.iconWarningGreen
+                height: 28 * scaleFactor
+                width: height
+            }
 
-        RadioButton {
-            id: lowCB
-            text: "Low"
-            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-            ButtonGroup.group: levelGroup
-        }
+            RadioButton {
+                id: lowCB
 
-        Image {
-            source: DsaResources.iconWarningOrange
-            height: lowCB.height
-            width: height
+                text: "Low"
+                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                ButtonGroup.group: levelGroup
+                height: lowIcon.height
+                anchors.verticalCenter: lowIcon.verticalCenter
+            }
         }
 
-        RadioButton {
-            id: mediumCB
-            text: "Medium"
-            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-            ButtonGroup.group: levelGroup
+        Row {
+            Image {
+                id: mediumIcon
+                source: DsaResources.iconWarningOrange
+                height: lowIcon.height
+                width: height
+            }
+
+            RadioButton {
+                id: mediumCB
+                text: "Medium"
+                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                ButtonGroup.group: levelGroup
+                height: lowIcon.height
+                anchors.verticalCenter: mediumIcon.verticalCenter
+            }
         }
 
-        Image {
-            source: DsaResources.iconWarningRed
-            height: lowCB.height
-            width: height
+        Row {
+            Image {
+                id: highIcon
+                source: DsaResources.iconWarningRed
+                height: lowIcon.height
+                width: height
+            }
+
+            RadioButton {
+                id: highCB
+                text: "High"
+                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                ButtonGroup.group: levelGroup
+                height: lowIcon.height
+                anchors.verticalCenter: highIcon.verticalCenter
+            }
         }
 
-        RadioButton {
-            id: highCB
-            text: "High"
-            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-            ButtonGroup.group: levelGroup
-        }
+        Row {
+            id: critRow
+            Image {
+                id: criticalIcon
+                source: DsaResources.iconWarningRedExclamation
+                height: lowIcon.height
+                width: height
+            }
 
-        Image {
-            source: DsaResources.iconWarningRedExclamation
-            height: lowCB.height
-            width: height
-        }
-
-        RadioButton {
-            id: criticalCB
-            text: "Critical"
-            ButtonGroup.group: levelGroup
+            RadioButton {
+                id: criticalCB
+                text: "Critical"
+                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                ButtonGroup.group: levelGroup
+                anchors.verticalCenter: criticalIcon.verticalCenter
+            }
         }
     }
 }

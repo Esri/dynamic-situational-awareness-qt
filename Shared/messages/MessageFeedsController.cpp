@@ -28,6 +28,7 @@
 #include "SimpleRenderer.h"
 #include "PictureMarkerSymbol.h"
 
+#include <QFileInfo>
 #include <QUdpSocket>
 #include <QJsonArray>
 
@@ -173,16 +174,31 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
   for (const auto& messageFeed : messageFeedsJson)
   {
     const auto messageFeedJsonObject = messageFeed.toObject();
-    if (messageFeedJsonObject.size() != 4)
+    if (messageFeedJsonObject.size() < 4)
+    {
+      emit toolErrorOccurred(QStringLiteral("Invalid Message JSON recieved"), messageFeed.toString());
       continue;
+    }
 
     const auto feedName = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_NAME].toString();
     const auto feedType = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_TYPE].toString();
     const auto rendererInfo = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_RENDERER].toString();
+    const auto rendererThumbnail = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL].toString();
     const auto surfacePlacement = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT].toString();
 
     MessagesOverlay* overlay = new MessagesOverlay(m_geoView, createRenderer(rendererInfo, this), toSurfacePlacement(surfacePlacement), this);
     MessageFeed* feed = new MessageFeed(feedName, feedType, overlay, this);
+
+    if (!rendererThumbnail.isEmpty())
+    {
+      if (QFile::exists(QString(":/Resources/icons/xhdpi/message/%1").arg(rendererThumbnail)))
+        feed->setThumbnailUrl(QString("qrc:/Resources/icons/xhdpi/message/%1").arg(rendererThumbnail));
+      else if (QFile::exists(m_resourcePath + QString("/icons/%1").arg(rendererThumbnail)))
+        feed->setThumbnailUrl(QUrl::fromLocalFile(m_resourcePath + QString("/icons/%1").arg(rendererThumbnail)));
+      else
+        emit toolErrorOccurred(QString("Failed to find icon %1").arg(rendererThumbnail), QString("Could not find icon %1 for feed %2").arg(rendererThumbnail, feedName));
+    }
+
     m_messageFeeds->append(feed);
   }
 
@@ -200,6 +216,12 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
  */
 void MessageFeedsController::setResourcePath(const QString& resourcePath)
 {
+  if (!QFileInfo::exists(resourcePath))
+  {
+    emit toolErrorOccurred(QStringLiteral("Resource path not found"), QString("Failed to find %1").arg(resourcePath));
+    return;
+  }
+
   if (resourcePath == m_resourcePath)
     return;
 
@@ -304,8 +326,12 @@ SurfacePlacement MessageFeedsController::toSurfacePlacement(const QString& surfa
    \brief Creates and returns a renderer from the provided \a rendererInfo with an optional \a parent.
 
    The \a rendererInfo parameter can be the symbol specification type (i.e. "mil2525c_b2" or "mil2525d") or
-   it can be the name of an image file located in the ":/Resources/icons/xhdpi/message" path, such
+   it can be the name of an image file located in:
+
+   \list
+    \li the ":/Resources/icons/xhdpi/message" path, such
    as ":/Resources/icons/xhdpi/message/enemycontact1600.png".
+    \li an "icons" sub-directory under the \l resourcePath directory
  */
 Renderer* MessageFeedsController::createRenderer(const QString& rendererInfo, QObject* parent) const
 {
@@ -316,20 +342,54 @@ Renderer* MessageFeedsController::createRenderer(const QString& rendererInfo, QO
   if (rendererInfo.compare("mil2525c", Qt::CaseInsensitive) == 0)
   {
     if (!dictionarySymbolStyleMil2525c)
-      dictionarySymbolStyleMil2525c = new DictionarySymbolStyle("mil2525c_b2", m_resourcePath + "/styles/mil2525c_b2.stylx", parent);
+    {
+      const auto stylePath = m_resourcePath + "/styles/mil2525c_b2.stylx";
+      if (!QFileInfo::exists(stylePath))
+      {
+        emit toolErrorOccurred(QStringLiteral("mil2525c_b2.stylx not found"), QString("Could not find %1").arg(stylePath));
+        return nullptr;
+      }
+
+      dictionarySymbolStyleMil2525c = new DictionarySymbolStyle("mil2525c_b2", stylePath, parent);
+    }
 
     return new DictionaryRenderer(dictionarySymbolStyleMil2525c, parent);
   }
   else if (rendererInfo.compare("mil2525d", Qt::CaseInsensitive) == 0)
   {
     if (!dictionarySymbolStyleMil2525d)
+    {
+      const auto stylePath = m_resourcePath + "/styles/mil2525d.stylx";
+      if (!QFileInfo::exists(stylePath))
+      {
+        emit toolErrorOccurred(QStringLiteral("mil2525d.stylx not found"), QString("Could not find %1").arg(stylePath));
+        return nullptr;
+      }
+
       dictionarySymbolStyleMil2525d = new DictionarySymbolStyle("mil2525d", m_resourcePath + "/styles/mil2525d.stylx", parent);
+    }
 
     return new DictionaryRenderer(dictionarySymbolStyleMil2525d, parent);
   }
 
   // else default to simple renderer with picture marker symbol
-  PictureMarkerSymbol* symbol = new PictureMarkerSymbol(QImage(QString(":/Resources/icons/xhdpi/message/%1").arg(rendererInfo)), parent);
+  PictureMarkerSymbol* symbol = nullptr;
+  const QString qrcFile = QString(":/Resources/icons/xhdpi/message/%1").arg(rendererInfo);
+
+  if (QFile::exists(qrcFile))
+  {
+    symbol = new PictureMarkerSymbol(QImage(qrcFile), parent);
+  }
+  else
+  {
+    const QString dataFile = m_resourcePath + QString("/icons/%1").arg(rendererInfo);
+    if (QFile::exists(dataFile))
+      symbol = new PictureMarkerSymbol(QImage(dataFile), parent);
+  }
+
+  if (symbol == nullptr)
+    return nullptr;
+
   symbol->setWidth(40.0f);
   symbol->setHeight(40.0f);
   return new SimpleRenderer(symbol, parent);

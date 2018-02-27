@@ -38,8 +38,6 @@ void Handheld::componentComplete()
   m_sceneView = findChild<SceneQuickView*>("sceneView");
   connect(m_sceneView, &SceneQuickView::errorOccurred, m_controller, &DsaController::onError);
 
-  m_controller->init(m_sceneView);
-
   // connect to the DSA controller errors
   connect(m_controller, &DsaController::errorOccurred, this, [this]
           (const QString& message, const QString& additionalMessage)
@@ -47,6 +45,7 @@ void Handheld::componentComplete()
     emit errorOccurred(message, additionalMessage);
   });
 
+  m_controller->init(m_sceneView);
 
   // setup the connections from the view to the resource provider
   connect(m_sceneView, &SceneQuickView::spatialReferenceChanged,

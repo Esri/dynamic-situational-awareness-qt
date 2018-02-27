@@ -225,6 +225,9 @@ Handheld {
             onClosed: visible = false;
 
             onPickModeChanged: {
+                if (!toolActive)
+                    return;
+
                 if (pickMode)
                     visible = false;
                 else
@@ -255,6 +258,16 @@ Handheld {
                 visible = false;
                 analysisToolRow.state = "clear";
             }
+        }
+
+        LineOfSightTool {
+            id: lineOfSightTool
+            width: drawer.width
+            anchors {
+                right: parent.right
+                top: parent.top
+            }
+            visible: false
         }
 
         PopupStackView {
@@ -396,8 +409,19 @@ Handheld {
     }
 
     onErrorOccurred: {
-        msgDialog.informativeText = message;
-        msgDialog.open();
+        // if the parent is null, the app is in a loading state and not yet ready to display errors
+        if (parent) {
+            msgDialog.informativeText = message;
+            msgDialog.open();
+        }
+        else {
+            msgDialog.informativeText += message + "\n";
+        }
+    }
+
+    onParentChanged: {
+        if (parent && msgDialog.informativeText.length > 0)
+            msgDialog.open();
     }
 
     DsaMessageDialog {

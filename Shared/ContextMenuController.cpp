@@ -328,7 +328,7 @@ void ContextMenuController::cancelIdentifyTasks()
 /*!
   \brief Returns the geographic location for the current context.
  */
-Esri::ArcGISRuntime::Point ContextMenuController::contextLocation() const
+Point ContextMenuController::contextLocation() const
 {
     return m_contextLocation;
 }

@@ -28,7 +28,10 @@
 #include "Scene.h"
 #include "ShapefileFeatureTable.h"
 #include "SimpleRenderer.h"
+#include "SimpleMarkerSymbol.h"
 #include "SimpleMarkerSceneSymbol.h"
+#include "PictureMarkerSymbol.h"
+#include "CompositeSymbol.h"
 #include "GeoPackage.h"
 #include "GeoPackageRaster.h"
 #include "GeoPackageFeatureTable.h"
@@ -582,7 +585,22 @@ void AddLocalDataController::createFeatureLayerShapefile(const QString& path, in
 
     if (featureLayer->featureTable()->hasZ() && featureLayer->featureTable()->geometryType() == GeometryType::Point)
     {
-      SimpleMarkerSceneSymbol* symbol = new SimpleMarkerSceneSymbol(SimpleMarkerSceneSymbolStyle::Diamond, QColor("lightgreen"), 10.0, 7.5, 7.5, SceneSymbolAnchorPosition::Bottom, this);
+      // Option 1:
+      SimpleMarkerSceneSymbol* symbol = new SimpleMarkerSceneSymbol(SimpleMarkerSceneSymbolStyle::Sphere, QColor("yellow"), 10.0, 7.5, 7.5, SceneSymbolAnchorPosition::Bottom, this);
+
+      // Option 2:
+      //SimpleMarkerSymbol* symbol = new SimpleMarkerSymbol(SimpleMarkerSymbolStyle::Circle, QColor("yellow"), 10, this);
+
+      // Option 3:
+//      QList<Symbol*> symbols{
+//        new SimpleMarkerSymbol(SimpleMarkerSymbolStyle::Circle, QColor("orange"), 14, this),
+//        new SimpleMarkerSymbol(SimpleMarkerSymbolStyle::Circle, QColor("yellow"), 10, this)};
+//      CompositeSymbol* symbol = new CompositeSymbol(symbols, this);
+
+      // Option 4:
+      //PictureMarkerSymbol* symbol = new PictureMarkerSymbol(QUrl::fromLocalFile("C:\\Users\\luke8660\\Downloads\\lotr_eye.png"), this);
+//    PictureMarkerSymbol* symbol = new PictureMarkerSymbol(QUrl::fromLocalFile("C:\\Users\\luke8660\\ArcGIS\\Runtime\\UnitTests\\images\\RedShinyPin.png"), this);
+
       Renderer* renderer = new SimpleRenderer(symbol, this);
       featureLayer->setSceneProperties(LayerSceneProperties(SurfacePlacement::Absolute));
       featureLayer->setRenderer(renderer);

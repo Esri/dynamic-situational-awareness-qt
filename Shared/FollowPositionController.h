@@ -54,7 +54,7 @@ public:
   // AbstractTool interface
   QString toolName() const override;
 
-  void setFollowing(Esri::ArcGISRuntime::GeoElement* elementToFollow);
+  void followGeoElement(Esri::ArcGISRuntime::GeoElement* elementToFollow);
 
 signals:
   void followModeChanged();

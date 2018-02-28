@@ -63,7 +63,7 @@ QString FollowPositionController::toolName() const
   return QStringLiteral("follow position");
 }
 
-void FollowPositionController::setFollowing(GeoElement* elementToFollow)
+void FollowPositionController::followGeoElement(GeoElement* elementToFollow)
 {
   if (elementToFollow == nullptr)
     return;
@@ -74,7 +74,7 @@ void FollowPositionController::setFollowing(GeoElement* elementToFollow)
 
   m_mode = FollowMode::TrackUp;
 
-  OrbitGeoElementCameraController* followController = new OrbitGeoElementCameraController(elementToFollow, 2000., this);
+  OrbitGeoElementCameraController* followController = new OrbitGeoElementCameraController(elementToFollow, 2000.0, this);
   sceneView->setCameraController(followController);
 }
 

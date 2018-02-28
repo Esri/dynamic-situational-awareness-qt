@@ -78,8 +78,8 @@ signals:
 
 private slots:
   void onMousePressedAndHeld(QMouseEvent& event);
-  void onIdentifyLayersCompleted(const QUuid& taskId, QList<Esri::ArcGISRuntime::IdentifyLayerResult*> identifyResults);
-  void onIdentifyGraphicsOverlaysCompleted(const QUuid& taskId, QList<Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult*> identifyResults);
+  void onIdentifyLayersCompleted(const QUuid& taskId, const QList<Esri::ArcGISRuntime::IdentifyLayerResult*>& identifyResults);
+  void onIdentifyGraphicsOverlaysCompleted(const QUuid& taskId, const QList<Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult*>& identifyResults);
   void onScreenToLocationCompleted(QUuid taskId, const Esri::ArcGISRuntime::Point& location);
 
 private:

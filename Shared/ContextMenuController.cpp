@@ -125,7 +125,7 @@ void ContextMenuController::onMousePressedAndHeld(QMouseEvent& event)
 
   Handle the result of an identify layers task.
  */
-void ContextMenuController::onIdentifyLayersCompleted(const QUuid& taskId, QList<IdentifyLayerResult*> identifyResults)
+void ContextMenuController::onIdentifyLayersCompleted(const QUuid& taskId, const QList<IdentifyLayerResult*>& identifyResults)
 {
   if (taskId != m_identifyFeaturesTask.taskId())
     return;
@@ -144,19 +144,15 @@ void ContextMenuController::onIdentifyLayersCompleted(const QUuid& taskId, QList
       continue;
 
     const QList<GeoElement*> geoElements = res->geoElements();
-    for(GeoElement* g : geoElements)
-    {
-      if (g == nullptr)
-        continue;
+    if (geoElements.isEmpty())
+      continue;
 
-      cancelIdentifyTasks();
-      m_contextElement = g;
-      m_contextElement->setParent(this);
-      setResultTitle(res->layerContent()->name());
-      addOption(IDENTIFY_OPTION);
+    m_contextElement = geoElements.first();
+    m_contextElement->setParent(this);
+    setResultTitle(res->layerContent()->name());
+    addOption(IDENTIFY_OPTION);
 
-      return;
-    }
+    return;
   }
 }
 
@@ -165,7 +161,7 @@ void ContextMenuController::onIdentifyLayersCompleted(const QUuid& taskId, QList
 
   Handle the result of an identify graphics overlays task.
  */
-void ContextMenuController::onIdentifyGraphicsOverlaysCompleted(const QUuid& taskId, QList<IdentifyGraphicsOverlayResult*> identifyResults)
+void ContextMenuController::onIdentifyGraphicsOverlaysCompleted(const QUuid& taskId, const QList<IdentifyGraphicsOverlayResult*>& identifyResults)
 {
   if (taskId != m_identifyGraphicsTask.taskId())
     return;
@@ -183,20 +179,16 @@ void ContextMenuController::onIdentifyGraphicsOverlaysCompleted(const QUuid& tas
       continue;
 
     const QList<Graphic*> graphics = res->graphics();
-    for(Graphic* g : graphics)
-    {
-      if (g == nullptr)
-        continue;
+    if (graphics.isEmpty())
+      continue;
 
-      cancelIdentifyTasks();
-      m_contextElement = g;
-      m_contextElement->setParent(this);
-      setResultTitle(res->graphicsOverlay()->overlayId());
-      addOption(IDENTIFY_OPTION);
-      addOption(FOLLOW_OPTION);
+    m_contextElement = graphics.first();
+    m_contextElement->setParent(this);
+    setResultTitle(res->graphicsOverlay()->overlayId());
+    addOption(IDENTIFY_OPTION);
+    addOption(FOLLOW_OPTION);
 
-      return;
-    }
+    return;
   }
 }
 

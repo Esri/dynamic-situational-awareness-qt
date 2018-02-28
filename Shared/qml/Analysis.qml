@@ -23,14 +23,6 @@ DsaPanel {
     property bool isMobile
     property var currentViewshed: null
 
-    onCurrentViewshedChanged: {
-        if (currentViewshed) {
-            console.log("Current viewshed changed: ", currentViewshed.name);
-        } else {
-            console.log("Current viewshed changed: ", null);
-        }
-    }
-
     // Create the controller
     AnalysisController {
         id: toolController
@@ -43,7 +35,6 @@ DsaPanel {
 
     onVisibleChanged: {
         if (!isMobile) {
-            toolController.viewshedEnabled = visible;
             toolController.active = visible;
         }
     }
@@ -75,7 +66,7 @@ DsaPanel {
                     id: viewshedEnabledCheckbox
                     text: qsTr("Viewshed Enabled")
                     font.pixelSize: 14 * scaleFactor
-                    checked: toolController.viewshedEnabled
+                    checked: toolController.active
                     contentItem: Label {
                         text: viewshedEnabledCheckbox.text
                         font: viewshedEnabledCheckbox.font
@@ -86,7 +77,6 @@ DsaPanel {
                     }
 
                     onCheckedChanged: {
-                        toolController.viewshedEnabled = checked;
                         toolController.active = checked;
                     }
                 }
@@ -125,11 +115,19 @@ DsaPanel {
                 id: viewshedComboBox
                 width: parent.width
                 model: toolController.viewsheds
-                visible: model.count > 0
+                visible: count > 0
                 textRole: "name"
-                currentIndex: model.count - 1
                 onCurrentIndexChanged: {
-                    console.log("currentIndex", currentIndex);
+                    currentViewshed = model.at(currentIndex);
+                }
+
+                onCountChanged: {
+                    if (count == 1) {
+                        currentIndex = 0;
+                    } else if (currentIndex >= count) {
+                        currentIndex = count - 1;
+                    }
+
                     currentViewshed = model.at(currentIndex);
                 }
             }
@@ -198,7 +196,7 @@ DsaPanel {
             Column {
                 width: parent.width
                 height: 25 * scaleFactor
-                visible: toolController.viewshedEnabled && currentViewshed !== null
+                visible: toolController.active && currentViewshed !== null
 
                 Text {
                     id: distanceRangeLabel
@@ -252,7 +250,7 @@ DsaPanel {
             Column {
                 width: parent.width
                 height: 25 * scaleFactor
-                visible: toolController.viewshedEnabled && currentViewshed !== null && !currentViewshed.is360Mode
+                visible: toolController.active && currentViewshed !== null && !currentViewshed.is360Mode
 
                 Text {
                     id: horizintalAngleLabel
@@ -300,7 +298,7 @@ DsaPanel {
             Column {
                 width: parent.width
                 height: 25 * scaleFactor
-                visible: toolController.viewshedEnabled && currentViewshed !== null && !currentViewshed.is360Mode
+                visible: toolController.active && currentViewshed !== null && !currentViewshed.is360Mode
 
                 Text {
                     id: verticalAngleLabel
@@ -347,7 +345,7 @@ DsaPanel {
             Column {
                 width: parent.width
                 height: 25 * scaleFactor
-                visible: toolController.viewshedEnabled && currentViewshed !== null && currentViewshed.headingEnabled
+                visible: toolController.active && currentViewshed !== null && currentViewshed.headingEnabled
 
                 Text {
                     id: headingLabel
@@ -394,7 +392,7 @@ DsaPanel {
             Column {
                 width: parent.width
                 height: 25 * scaleFactor
-                visible: toolController.viewshedEnabled && currentViewshed !== null && currentViewshed.pitchEnabled
+                visible: toolController.active && currentViewshed !== null && currentViewshed.pitchEnabled
 
                 Text {
                     id: pitchLabel
@@ -413,13 +411,17 @@ DsaPanel {
                         anchors.verticalCenter: parent.verticalCenter
                         width:  parent.width * 0.66
                         orientation: Qt.Horizontal
-                        from: currentViewshed && currentViewshed.analysisType === AbstractViewshed.PointViewshed ? 0 : -90
-                        to: currentViewshed && currentViewshed.analysisType === AbstractViewshed.PointViewshed ? 179 : 90
+                        from: !currentViewshed ? NaN : currentViewshed.analysisType === AbstractViewshed.PointViewshed ? 0 : -90
+                        to: !currentViewshed ? NaN : currentViewshed.analysisType === AbstractViewshed.PointViewshed ? 179 : 90
                         value: currentViewshed ? currentViewshed.pitch : NaN
                         stepSize: 1
                         snapMode: Slider.SnapAlways
 
                         onValueChanged: {
+                            if (isNaN(to) || isNaN(from)) {
+                                return;
+                            }
+
                             if (currentViewshed) {
                                 currentViewshed.pitch = value;
                             }

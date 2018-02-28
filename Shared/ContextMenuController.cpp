@@ -386,7 +386,7 @@ void ContextMenuController::selectOption(const QString& option)
     if (!followTool)
       return;
 
-    followTool->setFollowing(m_contextElement);
+    followTool->followGeoElement(m_contextElement);
   }
   else if (option == COORDINATES_OPTION)
   {

@@ -353,6 +353,10 @@ Handheld {
                 }
             }
         }
+
+        ContextMenu {
+            id: contextMenu
+        }
     }
 
     CoordinateConversion {
@@ -364,6 +368,16 @@ Handheld {
         width: parent.width
         color: Material.primary
         textColor: Material.foreground
+
+        onVisibleChanged: {
+            if (!visible)
+                return;
+
+            if (mapToolRow.state !== "Convert XY") {
+                mapToolRow.state = "Convert XY";
+                categoryToolbar.state = "map";
+            }
+        }
     }
 
     CategoryToolbarRow {

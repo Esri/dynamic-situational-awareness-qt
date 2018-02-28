@@ -346,7 +346,7 @@ Renderer* MessageFeedsController::createRenderer(const QString& rendererInfo, QO
       const auto stylePath = m_resourcePath + "/styles/mil2525c_b2.stylx";
       if (!QFileInfo::exists(stylePath))
       {
-        emit toolErrorOccurred(QStringLiteral("mil2525c_b2.stylx not found"), QString("Could not find %1").arg(stylePath));
+        emit const_cast<MessageFeedsController*>(this)->toolErrorOccurred(QStringLiteral("mil2525c_b2.stylx not found"), QString("Could not find %1").arg(stylePath));
         return nullptr;
       }
 
@@ -362,7 +362,7 @@ Renderer* MessageFeedsController::createRenderer(const QString& rendererInfo, QO
       const auto stylePath = m_resourcePath + "/styles/mil2525d.stylx";
       if (!QFileInfo::exists(stylePath))
       {
-        emit toolErrorOccurred(QStringLiteral("mil2525d.stylx not found"), QString("Could not find %1").arg(stylePath));
+        emit const_cast<MessageFeedsController*>(this)->toolErrorOccurred(QStringLiteral("mil2525d.stylx not found"), QString("Could not find %1").arg(stylePath));
         return nullptr;
       }
 

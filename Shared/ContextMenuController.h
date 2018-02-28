@@ -70,11 +70,11 @@ public:
   void setContextLocation(const Esri::ArcGISRuntime::Point& location);
 
 signals:
-  void contextActiveChanged() const;
-  void contextScreenPositionChanged() const;
-  void optionsChanged() const;
-  void resultChanged() const;
-  void resultTitleChanged() const;
+  void contextActiveChanged();
+  void contextScreenPositionChanged();
+  void optionsChanged();
+  void resultChanged();
+  void resultTitleChanged();
 
 private slots:
   void onMousePressedAndHeld(QMouseEvent& event);

@@ -97,6 +97,7 @@ private:
   static const QString s_tilePackageData;
   static const QString LOCAL_DATAPATHS_PROPERTYNAME;
   static const QString DEFAULT_ELEVATION_PROPERTYNAME;
+  QString m_observerSymbology = "yellow";
 };
 
 #endif // ADDLOCALDATACONTROLLER_H

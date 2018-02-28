@@ -585,21 +585,19 @@ void AddLocalDataController::createFeatureLayerShapefile(const QString& path, in
 
     if (featureLayer->featureTable()->hasZ() && featureLayer->featureTable()->geometryType() == GeometryType::Point)
     {
-      // Option 1:
-//      SimpleMarkerSceneSymbol* symbol = new SimpleMarkerSceneSymbol(SimpleMarkerSceneSymbolStyle::Sphere, QColor("yellow"), 10.0, 7.5, 7.5, SceneSymbolAnchorPosition::Bottom, this);
-
-//       Option 2:
-//      SimpleMarkerSymbol* symbol = new SimpleMarkerSymbol(SimpleMarkerSymbolStyle::Circle, QColor("yellow"), 10, this);
-
-      // Option 3:
-      QList<Symbol*> symbols{
-        new SimpleMarkerSymbol(SimpleMarkerSymbolStyle::Circle, QColor("darkgray"), 14, this),
-        new SimpleMarkerSymbol(SimpleMarkerSymbolStyle::Circle, QColor("white"), 12, this),
-        new SimpleMarkerSymbol(SimpleMarkerSymbolStyle::Circle, QColor("yellow"), 10, this)};
-      CompositeSymbol* symbol = new CompositeSymbol(symbols, this);
-
-      // Option 4:
-//    PictureMarkerSymbol* symbol = new PictureMarkerSymbol(QUrl::fromLocalFile("C:\\Users\\luke8660\\ArcGIS\\Runtime\\UnitTests\\images\\RedShinyPin.png"), this);
+      Symbol* symbol = nullptr;
+      if (m_observerSymbology.endsWith(QStringLiteral(".png")))
+      {
+        symbol = new PictureMarkerSymbol(QUrl::fromLocalFile(m_observerSymbology), this);
+      }
+      else
+      {
+        QList<Symbol*> symbols{
+          new SimpleMarkerSymbol(SimpleMarkerSymbolStyle::Circle, QColor("darkgray"), 14, this),
+          new SimpleMarkerSymbol(SimpleMarkerSymbolStyle::Circle, QColor("white"), 12, this),
+          new SimpleMarkerSymbol(SimpleMarkerSymbolStyle::Circle, QColor(m_observerSymbology), 10, this)};
+        symbol = new CompositeSymbol(symbols, this);
+      }
 
       Renderer* renderer = new SimpleRenderer(symbol, this);
       featureLayer->setSceneProperties(LayerSceneProperties(SurfacePlacement::Absolute));
@@ -767,6 +765,9 @@ QString AddLocalDataController::toolName() const
 */
 void AddLocalDataController::setProperties(const QVariantMap& properties)
 {
+  if (properties.contains(QStringLiteral("ObserverSymbology")))
+    m_observerSymbology = properties.value(QStringLiteral("ObserverSymbology")).toString();
+
   const QStringList filePaths = properties[LOCAL_DATAPATHS_PROPERTYNAME].toStringList();
   if (filePaths.empty())
     return;

@@ -57,12 +57,12 @@ Row {
             else
                 analysisToolRow.state = toolName;
 
-            if (analysisTool.visible) {
-                analysisTool.visible = false;
+            if (viewshedTool.visible) {
+                viewshedTool.visible = false;
                 analysisToolRow.state = "clear";
                 selected = false;
             } else {
-                analysisTool.visible = true;
+                viewshedTool.visible = true;
                 lineOfSightTool.visible = false;
             }
         }
@@ -85,7 +85,7 @@ Row {
                 selected = false;
             } else {
                 lineOfSightTool.visible = true;
-                analysisTool.visible = false;
+                viewshedTool.visible = false;
             }
         }
     }

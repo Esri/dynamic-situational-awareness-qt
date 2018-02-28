@@ -21,7 +21,7 @@
 using namespace Esri::ArcGISRuntime;
 
 PointViewshed::PointViewshed(const Point& point, GraphicsOverlay* graphicsOverlay, AnalysisOverlay* analysisOverlay, QObject* parent) :
-  AbstractViewshed(new LocationViewshed(point, 0.0, 90.0, 120.0, 90.0, 5.0, 1000.0, parent), analysisOverlay, parent),
+  AbstractViewshed(new LocationViewshed(point, 0.0, 90.0, 120.0, 90.0, 30.0, 1000.0, parent), analysisOverlay, parent),
   m_graphicsOverlay(graphicsOverlay)
 {
   SimpleMarkerSceneSymbol* smss = SimpleMarkerSceneSymbol::cone(QColor("red"), 0.5, 70, parent);
@@ -40,12 +40,12 @@ PointViewshed::~PointViewshed()
 
 Point PointViewshed::point() const
 {
-  return static_cast<LocationViewshed*>(m_viewshed)->location();
+  return static_cast<LocationViewshed*>(viewshed())->location();
 }
 
 void PointViewshed::setPoint(const Point& point)
 {
-  static_cast<LocationViewshed*>(m_viewshed)->setLocation(point);
+  static_cast<LocationViewshed*>(viewshed())->setLocation(point);
   m_locationViewshedGraphic->setGeometry(point);
 
   for (auto viewshed : m_viewsheds360Offsets)
@@ -62,15 +62,15 @@ void PointViewshed::setVisible(bool visible)
 
 double PointViewshed::heading() const
 {
-  return static_cast<LocationViewshed*>(m_viewshed)->heading();
+  return static_cast<LocationViewshed*>(viewshed())->heading();
 }
 
 void PointViewshed::setHeading(double heading)
 {
-  if (static_cast<LocationViewshed*>(m_viewshed)->heading() == heading)
+  if (static_cast<LocationViewshed*>(viewshed())->heading() == heading)
     return;
 
-  static_cast<LocationViewshed*>(m_viewshed)->setHeading(heading);
+  static_cast<LocationViewshed*>(viewshed())->setHeading(heading);
 
   SimpleMarkerSceneSymbol* smss = static_cast<SimpleMarkerSceneSymbol*>(m_locationViewshedGraphic->symbol());
   smss->setHeading(heading - 180.0);
@@ -90,7 +90,7 @@ void PointViewshed::setHeading(double heading)
 
 double PointViewshed::pitch() const
 {
-  return static_cast<LocationViewshed*>(m_viewshed)->pitch();
+  return static_cast<LocationViewshed*>(viewshed())->pitch();
 }
 
 void PointViewshed::setPitch(double pitch)
@@ -98,10 +98,10 @@ void PointViewshed::setPitch(double pitch)
   if (is360Mode())
     return;
 
-  if (static_cast<LocationViewshed*>(m_viewshed)->pitch() == pitch)
+  if (static_cast<LocationViewshed*>(viewshed())->pitch() == pitch)
     return;
 
-  static_cast<LocationViewshed*>(m_viewshed)->setPitch(pitch);
+  static_cast<LocationViewshed*>(viewshed())->setPitch(pitch);
 
   SimpleMarkerSceneSymbol* smss = static_cast<SimpleMarkerSceneSymbol*>(m_locationViewshedGraphic->symbol());
   smss->setPitch(pitch);
@@ -136,9 +136,9 @@ void PointViewshed::update360Mode(bool is360Mode)
     m_viewsheds360Offsets.append(viewshedOffset2);
   }
 
-  m_viewshed->setHorizontalAngle(120.0);
-  m_viewshed->setVerticalAngle(90.0);
-  static_cast<LocationViewshed*>(m_viewshed)->setPitch(90.0);
+  viewshed()->setHorizontalAngle(120.0);
+  viewshed()->setVerticalAngle(90.0);
+  static_cast<LocationViewshed*>(viewshed())->setPitch(90.0);
 
   emit horizontalAngleChanged();
   emit verticalAngleChanged();

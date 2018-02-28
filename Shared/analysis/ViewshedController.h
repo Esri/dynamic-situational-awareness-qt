@@ -10,8 +10,8 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef ANALYSISCONTROLLER_H
-#define ANALYSISCONTROLLER_H
+#ifndef VIEWSHEDCONTROLLER_H
+#define VIEWSHEDCONTROLLER_H
 
 #include "AbstractTool.h"
 #include "TaskWatcher.h"
@@ -31,30 +31,30 @@ class ViewshedListModel;
 class GraphicViewshed;
 class QMouseEvent;
 
-class AnalysisController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+class ViewshedController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
   Q_OBJECT
 
   Q_PROPERTY(bool locationDisplayViewshedActive READ isLocationDisplayViewshedActive NOTIFY locationDisplayViewshedActiveChanged)
-  Q_PROPERTY(AnalysisActiveMode analysisActiveMode READ analysisActiveMode WRITE setAnalysisActiveMode NOTIFY analysisActiveModeChanged)
+  Q_PROPERTY(ViewshedActiveMode activeMode READ activeMode WRITE setActiveMode NOTIFY activeModeChanged)
   Q_PROPERTY(ViewshedListModel* viewsheds READ viewsheds CONSTANT)
 
 signals:
   void locationDisplayViewshedActiveChanged();
-  void analysisActiveModeChanged();
+  void activeModeChanged();
 
 public:
-  enum AnalysisActiveMode
+  enum ViewshedActiveMode
   {
     None = 0,
     AddMapPointViewshed,
     AddMessageFeedViewshed
   };
 
-  Q_ENUM(AnalysisActiveMode)
+  Q_ENUM(ViewshedActiveMode)
 
-  explicit AnalysisController(QObject* parent = nullptr);
-  ~AnalysisController();
+  explicit ViewshedController(QObject* parent = nullptr);
+  ~ViewshedController();
 
   Q_INVOKABLE void addLocationDisplayViewshed();
   void addMapPointViewshed(const Esri::ArcGISRuntime::Point& point);
@@ -62,8 +62,8 @@ public:
 
   bool isLocationDisplayViewshedActive() const;
 
-  AnalysisActiveMode analysisActiveMode() const;
-  void setAnalysisActiveMode(AnalysisActiveMode mode);
+  ViewshedActiveMode activeMode() const;
+  void setActiveMode(ViewshedActiveMode mode);
 
   ViewshedListModel* viewsheds() const;
 
@@ -79,10 +79,10 @@ private:
   ViewshedListModel* m_viewsheds = nullptr;
   GraphicViewshed* m_locationDisplayViewshed = nullptr;
 
-  AnalysisActiveMode m_activeMode = AnalysisActiveMode::None;
+  ViewshedActiveMode m_activeMode = ViewshedActiveMode::None;
 
   Esri::ArcGISRuntime::TaskWatcher m_identifyTaskWatcher;
   QMetaObject::Connection m_identifyConn;
 };
 
-#endif // ANALYSISCONTROLLER_H
+#endif // VIEWSHEDCONTROLLER_H

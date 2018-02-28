@@ -233,8 +233,8 @@ Vehicle {
             visible: false
         }
 
-        Analysis {
-            id: analysisTool
+        Viewshed {
+            id: viewshedTool
             anchors {
                 right: parent.right
                 top: parent.top
@@ -285,7 +285,7 @@ Vehicle {
                 // update state for each category
                 mapToolRow.state = "clear";
                 alertToolRow.state = "clear";
-                analysisTool.state = "clear";
+                viewshedTool.state = "clear";
                 reportToolRow.state = "clear";
                 markupToolRow.state = "clear";
             }
@@ -342,6 +342,10 @@ Vehicle {
                 }
             }
         }
+
+        ContextMenu {
+            id: contextMenu
+        }
     }
 
     CoordinateConversion {
@@ -353,6 +357,16 @@ Vehicle {
         width: parent.width
         color: Material.primary
         textColor: Material.foreground
+
+        onVisibleChanged: {
+            if (!visible)
+                return;
+
+            if (mapToolRow.state !== "Convert XY") {
+                mapToolRow.state = "Convert XY";
+                categoryToolbar.state = "map";
+            }
+        }
     }
 
     About {
@@ -384,6 +398,7 @@ Vehicle {
 
     onErrorOccurred: {
         // if the parent is null, the app is in a loading state and not yet ready to display errors
+        msgDialog.title = "Error"
         if (parent) {
             msgDialog.informativeText = message;
             msgDialog.open();

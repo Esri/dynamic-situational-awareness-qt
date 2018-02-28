@@ -21,7 +21,7 @@ using namespace Esri::ArcGISRuntime;
 
 GraphicViewshed::GraphicViewshed(Graphic* locationGraphic, AnalysisOverlay* analysisOverlay,
                                                  const QString& headingAttribute, const QString& pitchAttribute, QObject* parent) :
-  AbstractViewshed(new GeoElementViewshed(locationGraphic, 120.0, 90.0, 5.0, 1000.0, 0.0, 0.0, parent), analysisOverlay, parent),
+  AbstractViewshed(new GeoElementViewshed(locationGraphic, 120.0, 90.0, 30.0, 1000.0, 0.0, 0.0, parent), analysisOverlay, parent),
   m_locationGraphic(locationGraphic),
   m_headingAttribute(headingAttribute),
   m_pitchAttribute(pitchAttribute)
@@ -35,7 +35,7 @@ GraphicViewshed::~GraphicViewshed()
 double GraphicViewshed::heading() const
 {
   if (m_headingAttribute.isEmpty())
-    return static_cast<GeoElementViewshed*>(m_viewshed)->headingOffset();
+    return static_cast<GeoElementViewshed*>(viewshed())->headingOffset();
 
   return m_locationGraphic->attributes()->attributeValue(m_headingAttribute).toDouble();
 }
@@ -44,10 +44,10 @@ void GraphicViewshed::setHeading(double heading)
 {
   if (m_headingAttribute.isEmpty())
   {
-    if (static_cast<GeoElementViewshed*>(m_viewshed)->headingOffset() == heading)
+    if (static_cast<GeoElementViewshed*>(viewshed())->headingOffset() == heading)
       return;
 
-    static_cast<GeoElementViewshed*>(m_viewshed)->setHeadingOffset(heading);
+    static_cast<GeoElementViewshed*>(viewshed())->setHeadingOffset(heading);
 
     if (!m_viewsheds360Offsets.isEmpty())
     {
@@ -74,7 +74,7 @@ void GraphicViewshed::setHeading(double heading)
 double GraphicViewshed::pitch() const
 {
   if (m_pitchAttribute.isEmpty())
-    return static_cast<GeoElementViewshed*>(m_viewshed)->pitchOffset();
+    return static_cast<GeoElementViewshed*>(viewshed())->pitchOffset();
 
   return m_locationGraphic->attributes()->attributeValue(m_pitchAttribute).toDouble();
 }
@@ -83,10 +83,10 @@ void GraphicViewshed::setPitch(double pitch)
 {
   if (m_pitchAttribute.isEmpty())
   {
-    if (static_cast<GeoElementViewshed*>(m_viewshed)->pitchOffset() == pitch)
+    if (static_cast<GeoElementViewshed*>(viewshed())->pitchOffset() == pitch)
       return;
 
-    static_cast<GeoElementViewshed*>(m_viewshed)->setPitchOffset(pitch);
+    static_cast<GeoElementViewshed*>(viewshed())->setPitchOffset(pitch);
   }
   else
   {
@@ -112,12 +112,12 @@ bool GraphicViewshed::isPitchEnabled() const
 
 double GraphicViewshed::offsetZ() const
 {
-  return static_cast<GeoElementViewshed*>(m_viewshed)->offsetZ();
+  return static_cast<GeoElementViewshed*>(viewshed())->offsetZ();
 }
 
 void GraphicViewshed::setOffsetZ(double offsetZ)
 {
-  static_cast<GeoElementViewshed*>(m_viewshed)->setOffsetZ(offsetZ);
+  static_cast<GeoElementViewshed*>(viewshed())->setOffsetZ(offsetZ);
 }
 
 QString GraphicViewshed::headingAttribute() const
@@ -139,7 +139,7 @@ void GraphicViewshed::update360Mode(bool is360Mode)
 {
   if (is360Mode && m_viewsheds360Offsets.isEmpty())
   {
-    double headingOffset1 = static_cast<GeoElementViewshed*>(m_viewshed)->headingOffset() + 120.0;
+    double headingOffset1 = static_cast<GeoElementViewshed*>(viewshed())->headingOffset() + 120.0;
     if (headingOffset1 > 360)
       headingOffset1 -= 360;
 
@@ -160,8 +160,8 @@ void GraphicViewshed::update360Mode(bool is360Mode)
     m_viewsheds360Offsets.append(viewshedOffset2);
   }
 
-  m_viewshed->setHorizontalAngle(120.0);
-  m_viewshed->setVerticalAngle(90.0);
+  viewshed()->setHorizontalAngle(120.0);
+  viewshed()->setVerticalAngle(90.0);
 
   emit horizontalAngleChanged();
   emit verticalAngleChanged();

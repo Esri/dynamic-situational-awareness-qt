@@ -14,14 +14,10 @@
 #include "Viewshed.h"
 #include "AnalysisOverlay.h"
 
-#include <QDebug>
-
 using namespace Esri::ArcGISRuntime;
 
 AbstractViewshed::AbstractViewshed(Viewshed* viewshed, AnalysisOverlay* analysisOverlay, QObject* parent) :
-  QObject(parent),
-  m_viewshed(viewshed),
-  m_analysisOverlay(analysisOverlay)
+  AbstractAnalysis(viewshed, analysisOverlay, parent)
 {
 }
 
@@ -36,55 +32,33 @@ void AbstractViewshed::removeFromOverlay()
     m_analysisOverlay->analyses()->removeOne(viewshed);
   }
 
-  m_analysisOverlay->analyses()->removeOne(viewshed());
-}
-
-bool AbstractViewshed::isVisible() const
-{
-  return m_viewshed->isVisible();
+  AbstractAnalysis::removeFromOverlay();
 }
 
 void AbstractViewshed::setVisible(bool visible)
 {
-  if (m_viewshed->isVisible() == visible)
+  if (m_analysis->isVisible() == visible)
     return;
-
-  m_viewshed->setVisible(visible);
 
   for (auto viewshed : m_viewsheds360Offsets)
   {
     viewshed->setVisible(visible && m_is360Mode);
   }
 
-  emit visibleChanged();
-}
-
-QString AbstractViewshed::name() const
-{
-  return m_name;
-}
-
-void AbstractViewshed::setName(const QString& name)
-{
-  if (m_name == name)
-    return;
-
-  m_name = name;
-
-  emit nameChanged();
+  AbstractAnalysis::setVisible(visible);
 }
 
 double AbstractViewshed::minDistance() const
 {
-  return m_viewshed->minDistance();
+  return viewshed()->minDistance();
 }
 
 void AbstractViewshed::setMinDistance(double minDistance)
 {
-  if (m_viewshed->minDistance() == minDistance)
+  if (viewshed()->minDistance() == minDistance)
     return;
 
-  m_viewshed->setMinDistance(minDistance);
+  viewshed()->setMinDistance(minDistance);
 
   for (auto viewshed : m_viewsheds360Offsets)
   {
@@ -96,15 +70,15 @@ void AbstractViewshed::setMinDistance(double minDistance)
 
 double AbstractViewshed::maxDistance() const
 {
-  return m_viewshed->maxDistance();
+  return viewshed()->maxDistance();
 }
 
 void AbstractViewshed::setMaxDistance(double maxDistance)
 {
-  if (m_viewshed->maxDistance() == maxDistance)
+  if (viewshed()->maxDistance() == maxDistance)
     return;
 
-  m_viewshed->setMaxDistance(maxDistance);
+  viewshed()->setMaxDistance(maxDistance);
 
   for (auto viewshed : m_viewsheds360Offsets)
   {
@@ -119,7 +93,7 @@ double AbstractViewshed::horizontalAngle() const
   if (m_is360Mode)
     return 360.0; // 360 mode
 
-  return m_viewshed->horizontalAngle();
+  return viewshed()->horizontalAngle();
 }
 
 void AbstractViewshed::setHorizontalAngle(double horizontalAngle)
@@ -127,10 +101,10 @@ void AbstractViewshed::setHorizontalAngle(double horizontalAngle)
   if (m_is360Mode)
     return;
 
-  if (m_viewshed->horizontalAngle() == horizontalAngle)
+  if (viewshed()->horizontalAngle() == horizontalAngle)
     return;
 
-  m_viewshed->setHorizontalAngle(horizontalAngle);
+  viewshed()->setHorizontalAngle(horizontalAngle);
 
   emit horizontalAngleChanged();
 }
@@ -140,7 +114,7 @@ double AbstractViewshed::verticalAngle() const
   if (m_is360Mode)
     return 90.0; // 360 mode
 
-  return m_viewshed->verticalAngle();
+  return viewshed()->verticalAngle();
 }
 
 void AbstractViewshed::setVerticalAngle(double verticalAngle)
@@ -148,10 +122,10 @@ void AbstractViewshed::setVerticalAngle(double verticalAngle)
   if (m_is360Mode)
     return;
 
-  if (m_viewshed->verticalAngle() == verticalAngle)
+  if (viewshed()->verticalAngle() == verticalAngle)
     return;
 
-  m_viewshed->setVerticalAngle(verticalAngle);
+  viewshed()->setVerticalAngle(verticalAngle);
 
   emit verticalAngleChanged();
 }
@@ -185,10 +159,5 @@ void AbstractViewshed::set360Mode(bool is360Mode)
 
 Viewshed* AbstractViewshed::viewshed() const
 {
-  return m_viewshed;
-}
-
-AnalysisOverlay* AbstractViewshed::anlysisOverlay() const
-{
-  return m_analysisOverlay;
+  return static_cast<Viewshed*>(m_analysis);
 }

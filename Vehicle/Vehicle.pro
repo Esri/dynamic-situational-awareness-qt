@@ -25,7 +25,9 @@ include($$PWD/../Shared/arcgisruntime.pri)
 
 INCLUDEPATH += $$PWD/../Shared/ \
     $$PWD/../Shared/alerts \
-    $$PWD/../Shared/messages
+    $$PWD/../Shared/analysis \
+    $$PWD/../Shared/messages \
+    $$PWD/../Shared/utilities
 
 HEADERS += \
     AppInfo.h \
@@ -33,7 +35,9 @@ HEADERS += \
     VehicleStyles.h \
     $$PWD/../Shared/*.h \
     $$PWD/../Shared/alerts/*.h \
-    $$PWD/../Shared/messages/*.h
+    $$PWD/../Shared/analysis/*.h \
+    $$PWD/../Shared/messages/*.h \
+    $$PWD/../Shared/utilities/*.h
 
 SOURCES += \
     main.cpp \
@@ -41,7 +45,9 @@ SOURCES += \
     VehicleStyles.cpp \
     $$PWD/../Shared/*.cpp \
     $$PWD/../Shared/alerts/*.cpp \
-    $$PWD/../Shared/messages/*.cpp
+    $$PWD/../Shared/analysis/*.cpp \
+    $$PWD/../Shared/messages/*.cpp \
+    $$PWD/../Shared/utilities/*.cpp
 
 RESOURCES += \
     qml/qml.qrc \

@@ -11,27 +11,12 @@
 //
 
 #include "FeatureLayerAlertTarget.h"
+#include "FeatureQueryResultManager.h"
 #include "GeometryQuadtree.h"
 
 #include "FeatureLayer.h"
 
 using namespace Esri::ArcGISRuntime;
-
-struct FeatureQueryResultManager {
-
-  FeatureQueryResult* m_results;
-
-  FeatureQueryResultManager(FeatureQueryResult* results):
-    m_results(results)
-  {
-  }
-
-  ~FeatureQueryResultManager()
-  {
-    delete m_results;
-    m_results = nullptr;
-  }
-};
 
 /*!
   \class FeatureLayerAlertTarget

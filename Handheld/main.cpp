@@ -37,7 +37,7 @@
 #include "TableOfContentsController.h"
 #include "NavigationController.h"
 #include "MarkupController.h"
-#include "AnalysisController.h"
+#include "ViewshedController.h"
 #include "OptionsController.h"
 #include "HandheldStyles.h"
 #include "ViewedAlertsController.h"
@@ -46,6 +46,7 @@
 #include "DsaResources.h"
 #include "LocationTextController.h"
 #include "LineOfSightController.h"
+#include "ContextMenuController.h"
 
 #include "ArcGISRuntimeToolkit.h"
 #include "ArcGISCompassController.h"
@@ -134,7 +135,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<TableOfContentsController>("Esri.DSA", 1, 0, "TableOfContentsController");
   qmlRegisterType<NavigationController>("Esri.DSA", 1, 0, "NavigationController");
   qmlRegisterType<MarkupController>("Esri.DSA", 1, 0, "MarkupController");
-  qmlRegisterType<AnalysisController>("Esri.DSA", 1, 0, "AnalysisController");
+  qmlRegisterType<ViewshedController>("Esri.DSA", 1, 0, "ViewshedController");
   qmlRegisterType<OptionsController>("Esri.DSA", 1, 0, "OptionsController");
   qmlRegisterSingletonType<HandheldStyles>("Esri.DSA", 1, 0, "DsaStyles", &dsaStylesProvider);
   qmlRegisterSingletonType<DsaResources>("Esri.DSA", 1, 0, "DsaResources", &dsaResourcesProvider);
@@ -144,6 +145,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<LocationTextController>("Esri.DSA", 1, 0, "LocationTextController");
   qmlRegisterType<AlertConditionsController>("Esri.DSA", 1, 0, "AlertConditionsController");
   qmlRegisterType<LineOfSightController>("Esri.DSA", 1, 0, "LineOfSightController");
+  qmlRegisterType<ContextMenuController>("Esri.DSA", 1, 0, "ContextMenuController");
 
   // Register Toolkit Component Types
   ArcGISRuntimeToolkit::registerToolkitTypes();

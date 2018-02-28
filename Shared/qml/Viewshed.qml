@@ -16,20 +16,20 @@ import QtQuick.Controls.Material 2.2
 import Esri.DSA 1.0
 
 DsaPanel {
-    id: analysisRoot
+    id: viewshedRoot
     width: 272 * scaleFactor
-    title: qsTr("Analysis")
+    title: qsTr("Viewshed")
 
     property bool isMobile
     property var currentViewshed: null
 
     // Create the controller
-    AnalysisController {
+    ViewshedController {
         id: toolController
 
         onActiveChanged: {
-            if (!active && analysisRoot.visible)
-                analysisRoot.visible = false;
+            if (!active && viewshedRoot.visible)
+                viewshedRoot.visible = false;
         }
     }
 
@@ -40,7 +40,7 @@ DsaPanel {
     }
 
     ButtonGroup {
-        id: analysisActiveModeGroup
+        id: viewshedActiveModeGroup
     }
 
     Column {
@@ -93,13 +93,13 @@ DsaPanel {
             RadioButton {
                 text: "Add Map Point Viewshed"
                 font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                ButtonGroup.group: analysisActiveModeGroup
+                ButtonGroup.group: viewshedActiveModeGroup
 
                 onCheckedChanged: {
                     if (checked) {
-                        toolController.analysisActiveMode = AnalysisController.AddMapPointViewshed;
+                        toolController.activeMode = ViewshedController.AddMapPointViewshed;
                     } else {
-                        toolController.analysisActiveMode = AnalysisController.AddMessageFeedViewshed;
+                        toolController.activeMode = ViewshedController.AddMessageFeedViewshed;
                     }
                 }
             }
@@ -108,7 +108,7 @@ DsaPanel {
                 id: addMessageFeedViewshedButton
                 text: "Add Message Feed Viewshed"
                 font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                ButtonGroup.group: analysisActiveModeGroup
+                ButtonGroup.group: viewshedActiveModeGroup
             }
 
             ComboBox {
@@ -447,7 +447,6 @@ DsaPanel {
                 font.pixelSize: 14 * scaleFactor
                 onClicked: {
                     if (currentViewshed) {
-                        //                    currentViewshed.removeFromOverlay();
                         toolController.viewsheds.removeOne(currentViewshed);
                     }
                 }

@@ -10,7 +10,7 @@
         <file>NavigationTool.qml</file>
         <file>MarkupTool.qml</file>
         <file>Imports.qml</file>
-        <file>Analysis.qml</file>
+        <file>Viewshed.qml</file>
         <file>Options.qml</file>
         <file>CategoryIcon.qml</file>
         <file>CategoryToolbar.qml</file>
@@ -46,5 +46,6 @@
         <file>AlertConditionsSpatialTarget.qml</file>
         <file>AlertConditionsAttributeTarget.qml</file>
         <file>LineOfSightTool.qml</file>
+        <file>ContextMenu.qml</file>
     </qresource>
 </RCC>

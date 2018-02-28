@@ -10,18 +10,20 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-
-#include "AnalysisController.h"
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
-#include "SceneQuickView.h"
-#include "LocationViewshed.h"
-#include "GeoElementViewshed.h"
+#include "ViewshedController.h"
+#include "GraphicsOverlaysResultsManager.h"
 #include "LocationController.h"
 #include "LocationDisplay3d.h"
 #include "PointViewshed.h"
 #include "GraphicViewshed.h"
 #include "ViewshedListModel.h"
+
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
+
+#include "SceneQuickView.h"
+#include "LocationViewshed.h"
+#include "GeoElementViewshed.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -29,7 +31,7 @@ static const QString s_headingAttribute{ QStringLiteral("heading") };
 static const QString s_pitchAttribute{ QStringLiteral("pitch") };
 static int s_viewshedCount = 0;
 
-AnalysisController::AnalysisController(QObject *parent) :
+ViewshedController::ViewshedController(QObject *parent) :
   Toolkit::AbstractTool(parent),
   m_analysisOverlay(new AnalysisOverlay(this)),
   m_viewsheds(new ViewshedListModel(this))
@@ -60,11 +62,11 @@ AnalysisController::AnalysisController(QObject *parent) :
   });
 }
 
-AnalysisController::~AnalysisController()
+ViewshedController::~ViewshedController()
 {
 }
 
-void AnalysisController::updateGeoView()
+void ViewshedController::updateGeoView()
 {
   SceneView* sceneView = dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView());
   if (!sceneView)
@@ -74,7 +76,7 @@ void AnalysisController::updateGeoView()
     sceneView->analysisOverlays()->append(m_analysisOverlay);
 }
 
-void AnalysisController::connectMouseSignals()
+void ViewshedController::connectMouseSignals()
 {
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mouseClicked, this, [this](QMouseEvent& event)
   {
@@ -126,7 +128,7 @@ void AnalysisController::connectMouseSignals()
   });
 }
 
-void AnalysisController::addLocationDisplayViewshed()
+void ViewshedController::addLocationDisplayViewshed()
 {
   if (m_locationDisplayViewshed)
     return;
@@ -145,7 +147,7 @@ void AnalysisController::addLocationDisplayViewshed()
   emit locationDisplayViewshedActiveChanged();
 }
 
-void AnalysisController::addMapPointViewshed(const Esri::ArcGISRuntime::Point& point)
+void ViewshedController::addMapPointViewshed(const Esri::ArcGISRuntime::Point& point)
 {
   if (!m_graphicsOverlay)
   {
@@ -165,7 +167,7 @@ void AnalysisController::addMapPointViewshed(const Esri::ArcGISRuntime::Point& p
   m_viewsheds->append(pointViewshed);
 }
 
-void AnalysisController::addMessageFeedViewshed(Graphic* graphic)
+void ViewshedController::addMessageFeedViewshed(Graphic* graphic)
 {
   auto messageFeedViewshed = new GraphicViewshed(graphic, m_analysisOverlay, QString(), QString(), this);
   s_viewshedCount++;
@@ -177,32 +179,32 @@ void AnalysisController::addMessageFeedViewshed(Graphic* graphic)
   m_viewsheds->append(messageFeedViewshed);
 }
 
-bool AnalysisController::isLocationDisplayViewshedActive() const
+bool ViewshedController::isLocationDisplayViewshedActive() const
 {
   return m_locationDisplayViewshed != nullptr;
 }
 
-AnalysisController::AnalysisActiveMode AnalysisController::analysisActiveMode() const
+ViewshedController::ViewshedActiveMode ViewshedController::activeMode() const
 {
   return m_activeMode;
 }
 
-void AnalysisController::setAnalysisActiveMode(AnalysisActiveMode mode)
+void ViewshedController::setActiveMode(ViewshedActiveMode mode)
 {
   if (m_activeMode == mode)
     return;
 
   m_activeMode = mode;
 
-  emit analysisActiveModeChanged();
+  emit activeModeChanged();
 }
 
-ViewshedListModel* AnalysisController::viewsheds() const
+ViewshedListModel* ViewshedController::viewsheds() const
 {
   return m_viewsheds;
 }
 
-QString AnalysisController::toolName() const
+QString ViewshedController::toolName() const
 {
-  return QStringLiteral("analysis");
+  return QStringLiteral("viewshed");
 }

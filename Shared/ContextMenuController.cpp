@@ -411,7 +411,7 @@ QPoint ContextMenuController::contextScreenPosition() const
 /*!
   \brief Returns whether the current context is active or not.
  */
-bool ContextMenuController::contextActive() const
+bool ContextMenuController::isContextActive() const
 {
   return m_contextActive;
 }

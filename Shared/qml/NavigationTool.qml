@@ -75,6 +75,12 @@ Item {
                 followHud.enabled = selected;
                 locationController.locationVisible = selected;
             }
+
+            Component.onCompleted: {
+                selected = true;
+                followHud.enabled = true;
+                locationController.locationVisible = true;
+            }
         }
 
         OverlayButton {

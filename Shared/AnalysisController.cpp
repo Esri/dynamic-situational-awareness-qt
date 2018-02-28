@@ -137,7 +137,7 @@ void AnalysisController::updateFriendlyTrackViewshed(QMouseEvent& event)
   if (!m_identifyConn)
   {
     m_identifyConn = connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::identifyGraphicsOverlaysCompleted,
-                             this, [this](const QUuid& taskId, QList<IdentifyGraphicsOverlayResult*> identifyResults)
+                             this, [this](const QUuid& taskId, const QList<IdentifyGraphicsOverlayResult*>& identifyResults)
     {
       if (taskId != m_identifyTaskWatcher.taskId())
         return;

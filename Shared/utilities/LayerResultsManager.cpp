@@ -17,7 +17,7 @@
 using namespace Esri::ArcGISRuntime;
 
 // RAII helper to ensure the QList<IdentifyLayerResult*> is deleted when we leave the scope
-LayerResultsManager::LayerResultsManager(QList<Esri::ArcGISRuntime::IdentifyLayerResult *> &results):
+LayerResultsManager::LayerResultsManager(const QList<Esri::ArcGISRuntime::IdentifyLayerResult*>& results):
   m_results(results)
 {
 

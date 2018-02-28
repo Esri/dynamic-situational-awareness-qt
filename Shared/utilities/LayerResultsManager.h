@@ -25,9 +25,9 @@ namespace ArcGISRuntime
 
 struct LayerResultsManager {
 
-  QList<Esri::ArcGISRuntime::IdentifyLayerResult*>& m_results;
+  QList<Esri::ArcGISRuntime::IdentifyLayerResult*> m_results;
 
-  explicit LayerResultsManager(QList<Esri::ArcGISRuntime::IdentifyLayerResult*>& results);
+  explicit LayerResultsManager(const QList<Esri::ArcGISRuntime::IdentifyLayerResult*>& results);
   ~LayerResultsManager();
 };
 

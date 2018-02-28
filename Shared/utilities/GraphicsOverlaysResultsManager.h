@@ -25,9 +25,9 @@ namespace ArcGISRuntime
 
 struct GraphicsOverlaysResultsManager {
 
-  QList<Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult*>& m_results;
+  QList<Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult*> m_results;
 
-  explicit GraphicsOverlaysResultsManager(QList<Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult*>& results);
+  explicit GraphicsOverlaysResultsManager(const QList<Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult*>& results);
 
   ~GraphicsOverlaysResultsManager();
 };

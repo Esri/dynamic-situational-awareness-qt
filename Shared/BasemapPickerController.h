@@ -65,7 +65,7 @@ signals:
   void tileCacheModelChanged();
   void basemapsDataPathChanged();
   void basemapChanged(Esri::ArcGISRuntime::Basemap* basemap, QString name = "");
-  void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage) const;
+  void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
 
 private:
   TileCacheListModel* m_tileCacheModel;

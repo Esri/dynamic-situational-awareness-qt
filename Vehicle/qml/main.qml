@@ -360,6 +360,20 @@ Vehicle {
             fontSize: DsaStyles.toolFontPixelSize
             fontFamily: DsaStyles.fontFamily
             opacity: 0.75
+
+            onVisibleChanged: {
+                if (!visible)
+                    return;
+
+                if (mapToolRow.state !== "Convert XY") {
+                    mapToolRow.state = "Convert XY";
+                    categoryToolbar.state = "map";
+                }
+            }
+        }
+
+        ContextMenu {
+            id: contextMenu
         }
     }
 
@@ -392,6 +406,7 @@ Vehicle {
 
     onErrorOccurred: {
         // if the parent is null, the app is in a loading state and not yet ready to display errors
+        msgDialog.title = "Error"
         if (parent) {
             msgDialog.informativeText = message;
             msgDialog.open();

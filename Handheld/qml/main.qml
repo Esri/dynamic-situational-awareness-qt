@@ -371,6 +371,20 @@ Handheld {
             fontSize: DsaStyles.toolFontPixelSize
             fontFamily: DsaStyles.fontFamily
             opacity: 0.75
+
+            onVisibleChanged: {
+                if (!visible)
+                    return;
+
+                if (mapToolRow.state !== "Convert XY") {
+                    mapToolRow.state = "Convert XY";
+                    categoryToolbar.state = "map";
+                }
+            }
+        }
+
+        ContextMenu {
+            id: contextMenu
         }
     }
 

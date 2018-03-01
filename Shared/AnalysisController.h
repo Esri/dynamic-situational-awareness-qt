@@ -101,6 +101,8 @@ public:
 
   QString toolName() const override;
 
+  void showMapPointViewshed(const QPoint& screenPos);
+
 private:
   void updateGeoView();
   void connectMouseSignals();

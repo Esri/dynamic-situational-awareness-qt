@@ -24,8 +24,8 @@ namespace Esri {
 namespace ArcGISRuntime
 {
   class Camera;
-  class SceneView;
   class GeoView;
+  class SceneView;
 }}
 
 class NavigationController : public Esri::ArcGISRuntime::Toolkit::AbstractTool

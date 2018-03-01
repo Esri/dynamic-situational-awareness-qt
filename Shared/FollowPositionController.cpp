@@ -63,6 +63,21 @@ QString FollowPositionController::toolName() const
   return QStringLiteral("follow position");
 }
 
+void FollowPositionController::followGeoElement(GeoElement* elementToFollow)
+{
+  if (elementToFollow == nullptr)
+    return;
+
+  SceneView* sceneView = dynamic_cast<SceneView*>(m_geoView);
+  if (!sceneView)
+    return;
+
+  m_mode = FollowMode::TrackUp;
+
+  OrbitGeoElementCameraController* followController = new OrbitGeoElementCameraController(elementToFollow, 2000.0, this);
+  sceneView->setCameraController(followController);
+}
+
 void FollowPositionController::handleNewMode()
 {
   if (!m_geoView)
@@ -88,8 +103,8 @@ bool FollowPositionController::handleFollowInMap()
     return false;
 
   mapView->locationDisplay()->setAutoPanMode(m_mode == FollowMode::Disabled ?
-                                              LocationDisplayAutoPanMode::Off :
-                                              LocationDisplayAutoPanMode::Navigation );
+                                               LocationDisplayAutoPanMode::Off :
+                                               LocationDisplayAutoPanMode::Navigation );
   return true;
 }
 

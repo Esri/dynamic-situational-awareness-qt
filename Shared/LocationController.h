@@ -88,7 +88,7 @@ signals:
   void enabledChanged();
   void locationVisibleChanged();
   void simulatedChanged();
-  void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage) const;
+  void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
 
   // see setRelativeHeadingSceneView
   void relativeHeadingChanged(double relativeHeading);

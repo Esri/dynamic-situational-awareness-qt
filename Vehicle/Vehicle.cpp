@@ -57,6 +57,9 @@ void Vehicle::componentComplete()
   connect(m_sceneView, &SceneQuickView::mousePressed,
           ToolResourceProvider::instance(), &ToolResourceProvider::onMousePressed);
 
+  connect(m_sceneView, &SceneQuickView::mousePressedAndHeld,
+          ToolResourceProvider::instance(), &ToolResourceProvider::onMousePressedAndHeld);
+
   connect(m_sceneView, &SceneQuickView::mouseMoved,
           ToolResourceProvider::instance(), &ToolResourceProvider::onMouseMoved);
 

@@ -63,6 +63,9 @@ void Handheld::componentComplete()
   connect(m_sceneView, &SceneQuickView::mouseReleased,
           ToolResourceProvider::instance(), &ToolResourceProvider::onMouseReleased);
 
+  connect(m_sceneView, &SceneQuickView::mousePressedAndHeld,
+          ToolResourceProvider::instance(), &ToolResourceProvider::onMousePressedAndHeld);
+
   connect(m_sceneView, &SceneQuickView::identifyGraphicsOverlayCompleted,
           ToolResourceProvider::instance(), &ToolResourceProvider::onIdentifyGraphicsOverlayCompleted);
 

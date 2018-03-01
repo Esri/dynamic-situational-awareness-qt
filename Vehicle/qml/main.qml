@@ -119,7 +119,7 @@ Vehicle {
             id: currentLocation
             anchors {
                 bottom: sceneView.attributionTop
-                left: categoryToolbar.right
+                right: navTool.left
                 margins: 10 * scaleFactor
             }
         }
@@ -346,7 +346,7 @@ Vehicle {
         CoordinateConversion {
             id: coordinateConversion
             anchors {
-                bottom: currentLocation.top
+                bottom: sceneView.attributionTop
                 left: categoryToolbar.right
                 right: sceneView.horizontalCenter
                 margins: 10 * scaleFactor

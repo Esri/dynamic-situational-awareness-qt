@@ -34,6 +34,7 @@ class AbstractViewshed : public AbstractAnalysis
   Q_PROPERTY(bool headingEnabled READ isHeadingEnabled NOTIFY headingEnabledChanged)
   Q_PROPERTY(bool pitchEnabled READ isPitchEnabled NOTIFY pitchEnabledChanged)
   Q_PROPERTY(bool is360Mode READ is360Mode WRITE set360Mode NOTIFY is360ModeChanged)
+  Q_PROPERTY(double offsetZ READ offsetZ WRITE setOffsetZ NOTIFY offsetZChanged)
 
 public:
   ~AbstractViewshed();
@@ -66,6 +67,9 @@ public:
   bool is360Mode() const;
   void set360Mode(bool is360Mode);
 
+  virtual double offsetZ() const;
+  virtual void setOffsetZ(double offsetZ);
+
   Esri::ArcGISRuntime::Viewshed* viewshed() const;
 
 signals:
@@ -78,6 +82,7 @@ signals:
   void headingEnabledChanged();
   void pitchEnabledChanged();
   void is360ModeChanged();
+  void offsetZChanged();
 
 protected:
   AbstractViewshed(Esri::ArcGISRuntime::Viewshed* viewshed,

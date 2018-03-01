@@ -134,7 +134,12 @@ double GraphicViewshed::offsetZ() const
 
 void GraphicViewshed::setOffsetZ(double offsetZ)
 {
+  if (static_cast<GeoElementViewshed*>(viewshed())->offsetZ() == offsetZ)
+    return;
+
   static_cast<GeoElementViewshed*>(viewshed())->setOffsetZ(offsetZ);
+
+  emit offsetZChanged();
 }
 
 QString GraphicViewshed::headingAttribute() const

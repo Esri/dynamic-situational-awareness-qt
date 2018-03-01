@@ -41,8 +41,8 @@ public:
   bool isHeadingEnabled() const override;
   bool isPitchEnabled() const override;
 
-  double offsetZ() const;
-  void setOffsetZ(double offsetZ);
+  double offsetZ() const override;
+  void setOffsetZ(double offsetZ) override;
 
   QString headingAttribute() const;
   QString pitchAttribute() const;

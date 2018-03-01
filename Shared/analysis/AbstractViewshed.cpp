@@ -160,6 +160,15 @@ void AbstractViewshed::set360Mode(bool is360Mode)
   emit is360ModeChanged();
 }
 
+double AbstractViewshed::offsetZ() const
+{
+  return 0.0;
+}
+
+void AbstractViewshed::setOffsetZ(double)
+{
+}
+
 Viewshed* AbstractViewshed::viewshed() const
 {
   return static_cast<Viewshed*>(m_analysis);

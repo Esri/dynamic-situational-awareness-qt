@@ -444,6 +444,53 @@ DsaPanel {
                 }
             }
 
+            Column {
+                width: parent.width
+                height: 25 * scaleFactor
+                visible: toolController.active && currentViewshed !== null && currentViewshed.analysisType === AbstractViewshed.GraphicViewshed
+
+                Text {
+                    id: offsetZLabel
+                    width: 105 * scaleFactor
+                    text: qsTr("Offset Z")
+                    color: Material.foreground
+                    font.pixelSize: 14 * scaleFactor
+                }
+
+                Row {
+                    width: parent.width
+                    height: 25 * scaleFactor
+                    spacing: 5 * scaleFactor
+
+                    Slider {
+                        anchors.verticalCenter: parent.verticalCenter
+                        width:  parent.width * 0.66
+                        orientation: Qt.Horizontal
+                        from: -30
+                        to: 30
+                        value: currentViewshed ? currentViewshed.offsetZ : NaN
+                        stepSize: 1
+                        snapMode: Slider.SnapAlways
+
+                        onValueChanged: {
+                            if (currentViewshed) {
+                                currentViewshed.offsetZ = value;
+                            }
+                        }
+                    }
+
+                    Text {
+                        id: offsetZText
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 25 * scaleFactor
+                        horizontalAlignment: Text.AlignRight
+                        text: currentViewshed ? Math.round(currentViewshed.offsetZ) : ""
+                        color: Material.foreground
+                        font.pixelSize: 14 * scaleFactor
+                    }
+                }
+            }
+
             Button {
                 anchors.horizontalCenter: parent.horizontalCenter
                 visible: currentViewshed !== null

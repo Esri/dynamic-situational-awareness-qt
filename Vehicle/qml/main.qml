@@ -100,7 +100,7 @@ Vehicle {
             top: topToolbar.bottom
             left: parent.left
             right: parent.right
-            bottom: coordinateConversion.visible ? coordinateConversion.top : parent.bottom
+            bottom: parent.bottom
         }
         objectName: "sceneView"
 
@@ -119,7 +119,7 @@ Vehicle {
             id: currentLocation
             anchors {
                 bottom: sceneView.attributionTop
-                horizontalCenter: parent.horizontalCenter
+                left: categoryToolbar.right
                 margins: 10 * scaleFactor
             }
         }
@@ -342,17 +342,25 @@ Vehicle {
                 }
             }
         }
-    }
 
-    CoordinateConversion {
-        id: coordinateConversion
-        anchors.bottom: parent.bottom
-        objectName: "coordinateConversion"
-        visible: false
-        height: parent.height / 2
-        width: parent.width
-        color: Material.primary
-        textColor: Material.foreground
+        CoordinateConversion {
+            id: coordinateConversion
+            anchors {
+                bottom: currentLocation.top
+                left: categoryToolbar.right
+                right: sceneView.horizontalCenter
+                margins: 10 * scaleFactor
+            }
+
+            objectName: "coordinateConversion"
+            visible: false
+            highlightColor : Material.accent
+            textColor: Material.foreground
+            backgroundColor: Material.background
+            fontSize: DsaStyles.toolFontPixelSize
+            fontFamily: DsaStyles.fontFamily
+            opacity: 0.75
+        }
     }
 
     About {

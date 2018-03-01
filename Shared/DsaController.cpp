@@ -351,7 +351,7 @@ void DsaController::createDefaultSettings()
   m_dsaSettings["SimulateLocation"] = QStringLiteral("true");
   writeDefaultMessageFeeds();
   writeDefaultInitialLocation();
-  m_dsaSettings["CoordinateFormat"] = QStringLiteral("DMS");
+  m_dsaSettings["CoordinateFormat"] = QStringLiteral("MGRS");
   m_dsaSettings["UnitOfMeasurement"] = QStringLiteral("meters");
   m_dsaSettings["UseGpsForElevation"] = QStringLiteral("true");
   writeDefaultConditions();

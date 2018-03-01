@@ -112,7 +112,7 @@ Handheld {
             top: topToolbar.bottom
             left: parent.left
             right: parent.right
-            bottom: coordinateConversion.visible ? coordinateConversion.top : categoryToolbar.top
+            bottom: categoryToolbar.top
         }
         objectName: "sceneView"
 
@@ -131,7 +131,7 @@ Handheld {
             id: currentLocation
             anchors {
                 bottom: sceneView.attributionTop
-                horizontalCenter: parent.horizontalCenter
+                left: sceneView.left
                 margins: 10 * scaleFactor
             }
         }
@@ -353,17 +353,25 @@ Handheld {
                 }
             }
         }
-    }
 
-    CoordinateConversion {
-        id: coordinateConversion
-        anchors.bottom: parent.bottom
-        objectName: "coordinateConversion"
-        visible: false
-        height: parent.height / 2
-        width: parent.width
-        color: Material.primary
-        textColor: Material.foreground
+        CoordinateConversion {
+            id: coordinateConversion
+            anchors {
+                bottom: currentLocation.top
+                left: sceneView.left
+                right: navTool.left
+                margins: 10 * scaleFactor
+            }
+
+            objectName: "coordinateConversion"
+            visible: false
+            highlightColor : Material.accent
+            textColor: Material.foreground
+            backgroundColor: Material.background
+            fontSize: DsaStyles.toolFontPixelSize
+            fontFamily: DsaStyles.fontFamily
+            opacity: 0.75
+        }
     }
 
     CategoryToolbarRow {

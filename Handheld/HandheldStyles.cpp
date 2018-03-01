@@ -33,12 +33,12 @@ int HandheldStyles::titleFontPixelSize() const
 
 int HandheldStyles::primaryIconSize() const
 {
-  return 30;
+  return 35;
 }
 
 int HandheldStyles::secondaryIconSize() const
 {
-  return 30;
+  return 35;
 }
 
 int HandheldStyles::toolFontPixelSize() const

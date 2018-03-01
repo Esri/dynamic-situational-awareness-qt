@@ -69,6 +69,17 @@ Item {
         }
 
         OverlayButton {
+            iconUrl: DsaResources.iconRotate
+            onClicked: {
+                selected = !selected;
+                if (selected)
+                    navController.setRotation();
+                else
+                    navController.pan();
+            }
+        }
+
+        OverlayButton {
             iconUrl: DsaResources.iconGps
             onClicked: {
                 selected = !selected;
@@ -80,17 +91,6 @@ Item {
                 selected = true;
                 followHud.enabled = true;
                 locationController.locationVisible = true;
-            }
-        }
-
-        OverlayButton {
-            iconUrl: DsaResources.iconRotate
-            onClicked: {
-                selected = !selected;
-                if (selected)
-                    navController.setRotation();
-                else
-                    navController.pan();
             }
         }
     }

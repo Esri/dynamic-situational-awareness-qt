@@ -31,14 +31,14 @@ int HandheldStyles::titleFontPixelSize() const
   return 18;
 }
 
-int HandheldStyles::primaryIconSize() const
+int HandheldStyles::primaryIconSize()const
 {
-  return 30;
+  return 35;
 }
 
 int HandheldStyles::secondaryIconSize() const
 {
-  return 30;
+  return 35;
 }
 
 int HandheldStyles::toolFontPixelSize() const

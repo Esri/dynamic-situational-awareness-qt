@@ -117,6 +117,7 @@ Vehicle {
 
         CurrentLocation {
             id: currentLocation
+            visible: false
             anchors {
                 bottom: sceneView.attributionTop
                 horizontalCenter: parent.horizontalCenter

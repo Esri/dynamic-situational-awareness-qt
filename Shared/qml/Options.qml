@@ -74,7 +74,7 @@ Rectangle {
             // Toggle location/elevation overlay
             CheckBox {
                 text: "Show location and elevation"
-                checked: true
+                checked: false
                 onCheckedChanged: {
                     // update visibility of UI component
                     currentLocation.visible = checked;

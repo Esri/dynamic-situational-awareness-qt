@@ -89,12 +89,14 @@ DsaPanel {
             text: "Filter:"
             font.pixelSize: 12 * scaleFactor
             color: Material.foreground
+            visible: false
         }
 
         ComboBox {
             id: filter
             model: toolController.fileFilterList
             width: parent.width
+            visible: false
             onCurrentTextChanged: {
                 selectedItems = [];
                 toolController.refreshLocalDataModel(currentText);

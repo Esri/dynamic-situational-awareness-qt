@@ -31,7 +31,7 @@ int HandheldStyles::titleFontPixelSize() const
   return 18;
 }
 
-int HandheldStyles::primaryIconSize()const
+int HandheldStyles::primaryIconSize() const
 {
   return 35;
 }

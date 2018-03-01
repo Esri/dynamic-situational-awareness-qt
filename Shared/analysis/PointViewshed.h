@@ -54,7 +54,7 @@ private:
   Q_DISABLE_COPY(PointViewshed)
   PointViewshed() = delete;
 
-  Esri::ArcGISRuntime::GraphicsOverlay* m_graphicsOverlay = nullptr;
+  QPointer<Esri::ArcGISRuntime::GraphicsOverlay> m_graphicsOverlay;
   Esri::ArcGISRuntime::Graphic* m_locationViewshedGraphic = nullptr;
 };
 

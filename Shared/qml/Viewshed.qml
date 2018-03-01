@@ -98,8 +98,6 @@ DsaPanel {
                 onCheckedChanged: {
                     if (checked) {
                         toolController.activeMode = ViewshedController.AddMapPointViewshed;
-                    } else {
-                        toolController.activeMode = ViewshedController.AddMessageFeedViewshed;
                     }
                 }
             }
@@ -109,6 +107,12 @@ DsaPanel {
                 text: "Add Message Feed Viewshed"
                 font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 ButtonGroup.group: viewshedActiveModeGroup
+
+                onCheckedChanged: {
+                    if (checked) {
+                        toolController.activeMode = ViewshedController.AddMessageFeedViewshed;
+                    }
+                }
             }
 
             ComboBox {

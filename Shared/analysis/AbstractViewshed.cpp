@@ -27,9 +27,12 @@ AbstractViewshed::~AbstractViewshed()
 
 void AbstractViewshed::removeFromOverlay()
 {
-  for (auto viewshed : m_viewsheds360Offsets)
+  if (!m_analysisOverlay.isNull())
   {
-    m_analysisOverlay->analyses()->removeOne(viewshed);
+    for (auto viewshed : m_viewsheds360Offsets)
+    {
+      m_analysisOverlay->analyses()->removeOne(viewshed);
+    }
   }
 
   AbstractAnalysis::removeFromOverlay();

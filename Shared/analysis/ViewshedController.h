@@ -16,17 +16,15 @@
 #include "AbstractTool.h"
 #include "TaskWatcher.h"
 
-#include <QAbstractListModel>
-
 namespace Esri {
   namespace ArcGISRuntime {
+    class SceneView;
     class AnalysisOverlay;
     class GraphicsOverlay;
     class Graphic;
   }
 }
 
-//class AbstractViewshed;
 class ViewshedListModel;
 class GraphicViewshed;
 class QMouseEvent;
@@ -46,7 +44,7 @@ signals:
 public:
   enum ViewshedActiveMode
   {
-    None = 0,
+    NoActiveMode = 0,
     AddMapPointViewshed,
     AddMessageFeedViewshed
   };
@@ -55,6 +53,8 @@ public:
 
   explicit ViewshedController(QObject* parent = nullptr);
   ~ViewshedController();
+
+  void setSceneView(Esri::ArcGISRuntime::SceneView* sceneView);
 
   Q_INVOKABLE void addLocationDisplayViewshed();
   void addMapPointViewshed(const Esri::ArcGISRuntime::Point& point);
@@ -70,8 +70,9 @@ public:
   QString toolName() const override;
 
 private:
-  void updateGeoView();
   void connectMouseSignals();
+
+  Esri::ArcGISRuntime::SceneView* m_sceneView = nullptr;
 
   Esri::ArcGISRuntime::AnalysisOverlay* m_analysisOverlay = nullptr;
   Esri::ArcGISRuntime::GraphicsOverlay* m_graphicsOverlay = nullptr;
@@ -79,7 +80,7 @@ private:
   ViewshedListModel* m_viewsheds = nullptr;
   GraphicViewshed* m_locationDisplayViewshed = nullptr;
 
-  ViewshedActiveMode m_activeMode = ViewshedActiveMode::None;
+  ViewshedActiveMode m_activeMode = ViewshedActiveMode::NoActiveMode;
 
   Esri::ArcGISRuntime::TaskWatcher m_identifyTaskWatcher;
   QMetaObject::Connection m_identifyConn;

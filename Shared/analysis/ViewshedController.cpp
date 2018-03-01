@@ -40,15 +40,18 @@ ViewshedController::ViewshedController(QObject *parent) :
 
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]
   {
-    updateGeoView();
+    setSceneView(dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView()));
   });
 
   connectMouseSignals();
 
-  updateGeoView();
+  auto sceneView = dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView());
+  if (sceneView)
+    setSceneView(sceneView);
 
   connect(m_viewsheds, &ViewshedListModel::viewshedRemoved, this, [this](AbstractViewshed* viewshed)
   {
+    // remove viewshed from analysis overlay and delete object
     viewshed->removeFromOverlay();
 
     if (viewshed == m_locationDisplayViewshed)
@@ -66,32 +69,29 @@ ViewshedController::~ViewshedController()
 {
 }
 
-void ViewshedController::updateGeoView()
+void ViewshedController::setSceneView(SceneView* sceneView)
 {
-  SceneView* sceneView = dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView());
   if (!sceneView)
     return;
 
-  if (!sceneView->analysisOverlays()->contains(m_analysisOverlay))
-    sceneView->analysisOverlays()->append(m_analysisOverlay);
+  m_sceneView = sceneView;
+
+  if (!m_sceneView->analysisOverlays()->contains(m_analysisOverlay))
+    m_sceneView->analysisOverlays()->append(m_analysisOverlay);
 }
 
 void ViewshedController::connectMouseSignals()
 {
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mouseClicked, this, [this](QMouseEvent& event)
   {
-    if (!isActive())
-      return;
-
-    SceneView* sceneView = dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView());
-    if (!sceneView)
+    if (!isActive() || !m_sceneView)
       return;
 
     switch (m_activeMode)
     {
     case AddMapPointViewshed:
     {
-      const Point pt = sceneView->screenToBaseSurface(event.x(), event.y());
+      const Point pt = m_sceneView->screenToBaseSurface(event.x(), event.y());
       addMapPointViewshed(pt);
       break;
     }
@@ -107,15 +107,16 @@ void ViewshedController::connectMouseSignals()
 
           m_identifyTaskWatcher = TaskWatcher();
 
-          if (!isActive() || identifyResults.isEmpty() || identifyResults[0]->graphics().isEmpty())
+          // Create a RAII helper to ensure we clean up the results
+          GraphicsOverlaysResultsManager resultsManager(identifyResults);
+
+          if (!isActive() || resultsManager.m_results.isEmpty() || resultsManager.m_results[0]->graphics().isEmpty())
           {
-            qDeleteAll(identifyResults); // TODO: should use the GraphicsOverlaysResultsManager from the IdentifyController instead
             return;
           }
 
-          addMessageFeedViewshed(identifyResults[0]->graphics()[0]);
+          addMessageFeedViewshed(resultsManager.m_results[0]->graphics()[0]);
 
-          qDeleteAll(identifyResults); // TODO: should use the GraphicsOverlaysResultsManager from the IdentifyController instead
         });
       }
 
@@ -151,13 +152,12 @@ void ViewshedController::addMapPointViewshed(const Esri::ArcGISRuntime::Point& p
 {
   if (!m_graphicsOverlay)
   {
-    SceneView* sceneView = dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView());
-    if (!sceneView)
+    if (!m_sceneView)
       return;
 
     m_graphicsOverlay = new GraphicsOverlay(this);
     m_graphicsOverlay->setOverlayId("Map point analysis overlay");
-    sceneView->graphicsOverlays()->append(m_graphicsOverlay);
+    m_sceneView->graphicsOverlays()->append(m_graphicsOverlay);
   }
 
   auto pointViewshed = new PointViewshed(point, m_graphicsOverlay, m_analysisOverlay, this);

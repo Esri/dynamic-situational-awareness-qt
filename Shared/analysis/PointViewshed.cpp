@@ -18,6 +18,8 @@
 #include "Graphic.h"
 #include "GraphicsOverlay.h"
 
+#include <QPointer>
+
 using namespace Esri::ArcGISRuntime;
 
 PointViewshed::PointViewshed(const Point& point, GraphicsOverlay* graphicsOverlay, AnalysisOverlay* analysisOverlay, QObject* parent) :
@@ -35,7 +37,8 @@ PointViewshed::PointViewshed(const Point& point, GraphicsOverlay* graphicsOverla
 
 PointViewshed::~PointViewshed()
 {
-  m_graphicsOverlay->graphics()->removeOne(m_locationViewshedGraphic);
+  if (!m_graphicsOverlay.isNull())
+    m_graphicsOverlay->graphics()->removeOne(m_locationViewshedGraphic);
 }
 
 Point PointViewshed::point() const
@@ -116,7 +119,7 @@ AbstractViewshed::AnalysisType PointViewshed::analysisType() const
 
 void PointViewshed::update360Mode(bool is360Mode)
 {
-  if (is360Mode && m_viewsheds360Offsets.isEmpty())
+  if (is360Mode && m_viewsheds360Offsets.isEmpty() && !m_analysisOverlay.isNull())
   {
     double headingOffset1 = heading() + 120.0;
     if (headingOffset1 > 360)

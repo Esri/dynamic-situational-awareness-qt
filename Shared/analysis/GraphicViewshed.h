@@ -26,9 +26,11 @@ class GraphicViewshed : public AbstractViewshed
   Q_OBJECT
 
 public:
-  GraphicViewshed(Esri::ArcGISRuntime::Graphic* locationGraphic, Esri::ArcGISRuntime::AnalysisOverlay* analysisOverlay,
-                          const QString& headingAttribute, const QString& pitchAttribute, QObject* parent = nullptr);
+  GraphicViewshed(Esri::ArcGISRuntime::Graphic* graphic, Esri::ArcGISRuntime::AnalysisOverlay* analysisOverlay,
+                  const QString& headingAttribute, const QString& pitchAttribute, QObject* parent = nullptr);
   ~GraphicViewshed();
+
+  Esri::ArcGISRuntime::Graphic* graphic() const;
 
   double heading() const override;
   void setHeading(double heading) override;
@@ -54,7 +56,7 @@ private:
   Q_DISABLE_COPY(GraphicViewshed)
   GraphicViewshed() = delete;
 
-  Esri::ArcGISRuntime::Graphic* m_locationGraphic = nullptr;
+  QPointer<Esri::ArcGISRuntime::Graphic> m_graphic;
   QString m_headingAttribute;
   QString m_pitchAttribute;
 };

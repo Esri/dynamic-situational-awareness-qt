@@ -19,10 +19,10 @@
 
 using namespace Esri::ArcGISRuntime;
 
-GraphicViewshed::GraphicViewshed(Graphic* locationGraphic, AnalysisOverlay* analysisOverlay,
-                                                 const QString& headingAttribute, const QString& pitchAttribute, QObject* parent) :
-  AbstractViewshed(new GeoElementViewshed(locationGraphic, 120.0, 90.0, 30.0, 1000.0, 0.0, 0.0, parent), analysisOverlay, parent),
-  m_locationGraphic(locationGraphic),
+GraphicViewshed::GraphicViewshed(Graphic* graphic, AnalysisOverlay* analysisOverlay,
+                                 const QString& headingAttribute, const QString& pitchAttribute, QObject* parent) :
+  AbstractViewshed(new GeoElementViewshed(graphic, 120.0, 90.0, 30.0, 1000.0, 0.0, 0.0, parent), analysisOverlay, parent),
+  m_graphic(graphic),
   m_headingAttribute(headingAttribute),
   m_pitchAttribute(pitchAttribute)
 {
@@ -32,12 +32,20 @@ GraphicViewshed::~GraphicViewshed()
 {
 }
 
+Graphic* GraphicViewshed::graphic() const
+{
+  return m_graphic.data();
+}
+
 double GraphicViewshed::heading() const
 {
   if (m_headingAttribute.isEmpty())
     return static_cast<GeoElementViewshed*>(viewshed())->headingOffset();
 
-  return m_locationGraphic->attributes()->attributeValue(m_headingAttribute).toDouble();
+  if (m_graphic.isNull())
+    return NAN;
+
+  return m_graphic->attributes()->attributeValue(m_headingAttribute).toDouble();
 }
 
 void GraphicViewshed::setHeading(double heading)
@@ -61,7 +69,10 @@ void GraphicViewshed::setHeading(double heading)
   }
   else
   {
-    auto attributes = m_locationGraphic->attributes();
+    if (m_graphic.isNull())
+      return;
+
+    auto attributes = m_graphic->attributes();
     if (attributes->attributeValue(m_headingAttribute).toDouble() == heading)
       return;
 
@@ -76,7 +87,10 @@ double GraphicViewshed::pitch() const
   if (m_pitchAttribute.isEmpty())
     return static_cast<GeoElementViewshed*>(viewshed())->pitchOffset();
 
-  return m_locationGraphic->attributes()->attributeValue(m_pitchAttribute).toDouble();
+  if (m_graphic.isNull())
+    return NAN;
+
+  return m_graphic->attributes()->attributeValue(m_pitchAttribute).toDouble();
 }
 
 void GraphicViewshed::setPitch(double pitch)
@@ -90,7 +104,10 @@ void GraphicViewshed::setPitch(double pitch)
   }
   else
   {
-    auto attributes = m_locationGraphic->attributes();
+    if (m_graphic.isNull())
+      return;
+
+    auto attributes = m_graphic->attributes();
     if (attributes->attributeValue(m_pitchAttribute).toDouble() == pitch)
       return;
 
@@ -137,13 +154,14 @@ AbstractViewshed::AnalysisType GraphicViewshed::analysisType() const
 
 void GraphicViewshed::update360Mode(bool is360Mode)
 {
-  if (is360Mode && m_viewsheds360Offsets.isEmpty())
+  if (is360Mode && m_viewsheds360Offsets.isEmpty() &&
+      !m_analysisOverlay.isNull() && !m_graphic.isNull())
   {
     double headingOffset1 = static_cast<GeoElementViewshed*>(viewshed())->headingOffset() + 120.0;
     if (headingOffset1 > 360)
       headingOffset1 -= 360;
 
-    auto viewshedOffset1 = new GeoElementViewshed(m_locationGraphic, 120.0, verticalAngle(),
+    auto viewshedOffset1 = new GeoElementViewshed(m_graphic.data(), 120.0, verticalAngle(),
                                                   minDistance(), maxDistance(), headingOffset1, 0.0, this);
 
     viewshedOffset1->setOffsetZ(5.0);
@@ -151,7 +169,7 @@ void GraphicViewshed::update360Mode(bool is360Mode)
     m_analysisOverlay->analyses()->append(viewshedOffset1);
     m_viewsheds360Offsets.append(viewshedOffset1);
 
-    auto viewshedOffset2 = new GeoElementViewshed(m_locationGraphic, 120.0, verticalAngle(),
+    auto viewshedOffset2 = new GeoElementViewshed(m_graphic.data(), 120.0, verticalAngle(),
                                                   minDistance(), maxDistance(), headingOffset1 + 120.0, 0.0, this);
 
     viewshedOffset2->setOffsetZ(5.0);
@@ -162,6 +180,7 @@ void GraphicViewshed::update360Mode(bool is360Mode)
 
   viewshed()->setHorizontalAngle(120.0);
   viewshed()->setVerticalAngle(90.0);
+  setPitch(0.0);
 
   emit horizontalAngleChanged();
   emit verticalAngleChanged();

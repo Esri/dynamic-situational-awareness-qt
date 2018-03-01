@@ -14,6 +14,7 @@
 #define ABSTRACTANALYSIS_H
 
 #include <QObject>
+#include <QPointer>
 
 namespace Esri {
   namespace ArcGISRuntime {
@@ -54,7 +55,7 @@ public:
 
   Esri::ArcGISRuntime::Analysis* analysis() const;
 
-  Esri::ArcGISRuntime::AnalysisOverlay* anlysisOverlay() const;
+  Esri::ArcGISRuntime::AnalysisOverlay* analysisOverlay() const;
 
 signals:
   void visibleChanged();
@@ -66,7 +67,7 @@ protected:
                    QObject* parent = nullptr);
 
   Esri::ArcGISRuntime::Analysis* m_analysis = nullptr;
-  Esri::ArcGISRuntime::AnalysisOverlay* m_analysisOverlay = nullptr;
+  QPointer<Esri::ArcGISRuntime::AnalysisOverlay> m_analysisOverlay;
 
 private:
   Q_DISABLE_COPY(AbstractAnalysis)

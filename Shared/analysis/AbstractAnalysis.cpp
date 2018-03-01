@@ -29,7 +29,8 @@ AbstractAnalysis::~AbstractAnalysis()
 
 void AbstractAnalysis::removeFromOverlay()
 {
-  m_analysisOverlay->analyses()->removeOne(m_analysis);
+  if (!m_analysisOverlay.isNull())
+    m_analysisOverlay->analyses()->removeOne(m_analysis);
 }
 
 bool AbstractAnalysis::isVisible() const
@@ -67,7 +68,7 @@ Analysis* AbstractAnalysis::analysis() const
   return m_analysis;
 }
 
-AnalysisOverlay* AbstractAnalysis::anlysisOverlay() const
+AnalysisOverlay* AbstractAnalysis::analysisOverlay() const
 {
-  return m_analysisOverlay;
+  return m_analysisOverlay.data();
 }

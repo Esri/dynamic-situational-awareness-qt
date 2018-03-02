@@ -118,7 +118,7 @@ Vehicle {
         CurrentLocation {
             id: currentLocation
             anchors {
-                bottom: sceneView.attributionTop
+                bottom: followHud.bottom
                 right: navTool.left
                 margins: 10 * scaleFactor
             }
@@ -158,7 +158,7 @@ Vehicle {
             id: compass
             anchors {
                 horizontalCenter: navTool.horizontalCenter
-                bottom: sceneView.attributionTop
+                verticalCenter: followHud.verticalCenter
                 margins: 10 * scaleFactor
             }
             autoHideCompass: false
@@ -346,9 +346,9 @@ Vehicle {
         CoordinateConversion {
             id: coordinateConversion
             anchors {
-                bottom: sceneView.attributionTop
+                bottom: followHud.bottom
                 left: categoryToolbar.right
-                right: sceneView.horizontalCenter
+                right: followHud.left
                 margins: 10 * scaleFactor
             }
 

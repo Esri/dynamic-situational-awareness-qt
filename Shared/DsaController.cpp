@@ -31,6 +31,7 @@
 
 // Toolkit
 #include "AbstractTool.h"
+#include "CoordinateConversionConstants.h"
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 #include "LayerCacheManager.h"
@@ -351,7 +352,7 @@ void DsaController::createDefaultSettings()
   m_dsaSettings["SimulateLocation"] = QStringLiteral("true");
   writeDefaultMessageFeeds();
   writeDefaultInitialLocation();
-  m_dsaSettings["CoordinateFormat"] = QStringLiteral("DMS");
+  m_dsaSettings[Toolkit::CoordinateConversionConstants::COORDINATE_FORMAT_PROPERTY] = Toolkit::CoordinateConversionConstants::MGRS_FORMAT;
   m_dsaSettings["UnitOfMeasurement"] = QStringLiteral("meters");
   m_dsaSettings["UseGpsForElevation"] = QStringLiteral("true");
   writeDefaultConditions();

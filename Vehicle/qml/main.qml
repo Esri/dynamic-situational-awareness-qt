@@ -100,7 +100,7 @@ Vehicle {
             top: topToolbar.bottom
             left: parent.left
             right: parent.right
-            bottom: coordinateConversion.visible ? coordinateConversion.top : parent.bottom
+            bottom: parent.bottom
         }
         objectName: "sceneView"
 
@@ -118,8 +118,8 @@ Vehicle {
         CurrentLocation {
             id: currentLocation
             anchors {
-                bottom: sceneView.attributionTop
-                horizontalCenter: parent.horizontalCenter
+                bottom: followHud.bottom
+                right: navTool.left
                 margins: 10 * scaleFactor
             }
         }
@@ -158,7 +158,7 @@ Vehicle {
             id: compass
             anchors {
                 horizontalCenter: navTool.horizontalCenter
-                bottom: sceneView.attributionTop
+                verticalCenter: followHud.verticalCenter
                 margins: 10 * scaleFactor
             }
             autoHideCompass: false
@@ -343,29 +343,37 @@ Vehicle {
             }
         }
 
+        CoordinateConversion {
+            id: coordinateConversion
+            anchors {
+                bottom: followHud.bottom
+                left: categoryToolbar.right
+                right: followHud.left
+                margins: 10 * scaleFactor
+            }
+
+            objectName: "coordinateConversion"
+            visible: false
+            highlightColor : Material.accent
+            textColor: Material.foreground
+            backgroundColor: Material.background
+            fontSize: DsaStyles.toolFontPixelSize
+            fontFamily: DsaStyles.fontFamily
+            opacity: 0.75
+
+            onVisibleChanged: {
+                if (!visible)
+                    return;
+
+                if (mapToolRow.state !== "Convert XY") {
+                    mapToolRow.state = "Convert XY";
+                    categoryToolbar.state = "map";
+                }
+            }
+        }
+
         ContextMenu {
             id: contextMenu
-        }
-    }
-
-    CoordinateConversion {
-        id: coordinateConversion
-        anchors.bottom: parent.bottom
-        objectName: "coordinateConversion"
-        visible: false
-        height: parent.height / 2
-        width: parent.width
-        color: Material.primary
-        textColor: Material.foreground
-
-        onVisibleChanged: {
-            if (!visible)
-                return;
-
-            if (mapToolRow.state !== "Convert XY") {
-                mapToolRow.state = "Convert XY";
-                categoryToolbar.state = "map";
-            }
         }
     }
 

@@ -395,6 +395,7 @@ void ContextMenuController::selectOption(const QString& option)
       return;
 
     coordinateTool->setRunConversion(true);
+    coordinateTool->setCaptureMode(true);
     coordinateTool->setPointToConvert(m_contextLocation);
     coordinateTool->setActive(true);
   }

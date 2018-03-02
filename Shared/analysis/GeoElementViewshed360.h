@@ -10,27 +10,27 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef GRAPHICVIEWSHED_H
-#define GRAPHICVIEWSHED_H
+#ifndef GEOELEMENTVIEWSHED360_H
+#define GEOELEMENTVIEWSHED360_H
 
-#include "AbstractViewshed.h"
+#include "Viewshed360.h"
 
 namespace Esri {
   namespace ArcGISRuntime {
-    class Graphic;
+    class GeoElement;
   }
 }
 
-class GraphicViewshed : public AbstractViewshed
+class GeoElementViewshed360 : public Viewshed360
 {
   Q_OBJECT
 
 public:
-  GraphicViewshed(Esri::ArcGISRuntime::Graphic* graphic, Esri::ArcGISRuntime::AnalysisOverlay* analysisOverlay,
+  GeoElementViewshed360(Esri::ArcGISRuntime::GeoElement* geoElement, Esri::ArcGISRuntime::AnalysisOverlay* analysisOverlay,
                   const QString& headingAttribute, const QString& pitchAttribute, QObject* parent = nullptr);
-  ~GraphicViewshed();
+  ~GeoElementViewshed360();
 
-  Esri::ArcGISRuntime::Graphic* graphic() const;
+  Esri::ArcGISRuntime::GeoElement* geoElement() const;
 
   double heading() const override;
   void setHeading(double heading) override;
@@ -38,27 +38,26 @@ public:
   double pitch() const override;
   void setPitch(double pitch) override;
 
-  bool isHeadingEnabled() const override;
-  bool isPitchEnabled() const override;
-
   double offsetZ() const override;
   void setOffsetZ(double offsetZ) override;
 
+  bool isHeadingEnabled() const override;
+  bool isPitchEnabled() const override;
+  bool isOffsetZEnabled() const override;
+
   QString headingAttribute() const;
   QString pitchAttribute() const;
-
-  AnalysisType analysisType() const override;
 
 protected:
   void update360Mode(bool is360Mode) override;
 
 private:
-  Q_DISABLE_COPY(GraphicViewshed)
-  GraphicViewshed() = delete;
+  Q_DISABLE_COPY(GeoElementViewshed360)
+  GeoElementViewshed360() = delete;
 
-  QPointer<Esri::ArcGISRuntime::Graphic> m_graphic;
+  QPointer<Esri::ArcGISRuntime::GeoElement> m_geoElement;
   QString m_headingAttribute;
   QString m_pitchAttribute;
 };
 
-#endif // GRAPHICVIEWSHED_H
+#endif // GEOELEMENTVIEWSHED360_H

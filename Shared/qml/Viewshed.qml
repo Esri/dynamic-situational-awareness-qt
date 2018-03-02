@@ -21,7 +21,6 @@ DsaPanel {
     title: qsTr("Viewshed")
 
     property bool isMobile
-    property var currentViewshed: null
 
     // Create the controller
     ViewshedController {
@@ -91,26 +90,25 @@ DsaPanel {
             }
 
             RadioButton {
-                text: "Add Map Point Viewshed"
+                text: "Add Location Viewshed"
                 font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 ButtonGroup.group: viewshedActiveModeGroup
 
                 onCheckedChanged: {
                     if (checked) {
-                        toolController.activeMode = ViewshedController.AddMapPointViewshed;
+                        toolController.activeMode = ViewshedController.AddLocationViewshed360;
                     }
                 }
             }
 
             RadioButton {
-                id: addMessageFeedViewshedButton
-                text: "Add Message Feed Viewshed"
+                text: "Add GeoElement Viewshed"
                 font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 ButtonGroup.group: viewshedActiveModeGroup
 
                 onCheckedChanged: {
                     if (checked) {
-                        toolController.activeMode = ViewshedController.AddMessageFeedViewshed;
+                        toolController.activeMode = ViewshedController.AddGeoElementViewshed360;
                     }
                 }
             }
@@ -121,18 +119,9 @@ DsaPanel {
                 model: toolController.viewsheds
                 visible: count > 0
                 textRole: "name"
+                currentIndex: toolController.activeViewshedIndex
                 onCurrentIndexChanged: {
-                    currentViewshed = model.at(currentIndex);
-                }
-
-                onCountChanged: {
-                    if (count == 1) {
-                        currentIndex = 0;
-                    } else if (currentIndex >= count) {
-                        currentIndex = count - 1;
-                    }
-
-                    currentViewshed = model.at(currentIndex);
+                    toolController.activeViewshedIndex = currentIndex;
                 }
             }
 
@@ -140,13 +129,13 @@ DsaPanel {
                 width: parent.width
                 height: 25 * scaleFactor
                 spacing: 5 * scaleFactor
-                visible: currentViewshed !== null
+                visible: toolController.activeViewshedEnabled
 
                 CheckBox {
                     id: viewshedVisibleCheckbox
                     text: qsTr("Viewshed Visible")
                     font.pixelSize: 14 * scaleFactor
-                    checked: currentViewshed ? currentViewshed.visible : false
+                    checked: toolController.activeViewshedVisible
                     contentItem: Label {
                         text: viewshedVisibleCheckbox.text
                         font: viewshedVisibleCheckbox.font
@@ -157,9 +146,7 @@ DsaPanel {
                     }
 
                     onCheckedChanged: {
-                        if (currentViewshed) {
-                            currentViewshed.visible = checked;
-                        }
+                        toolController.activeViewshedVisible = checked;
                     }
                 }
             }
@@ -173,13 +160,13 @@ DsaPanel {
                 width: parent.width
                 height: 25 * scaleFactor
                 spacing: 5 * scaleFactor
-                visible: currentViewshed !== null
+                visible: toolController.activeViewshedEnabled
 
                 CheckBox {
                     id: viewshed360ModeCheckbox
                     text: qsTr("360 Mode")
                     font.pixelSize: 14 * scaleFactor
-                    checked: currentViewshed ? currentViewshed.is360Mode : false
+                    checked: toolController.activeViewshed360Mode
                     contentItem: Label {
                         text: viewshed360ModeCheckbox.text
                         font: viewshed360ModeCheckbox.font
@@ -190,9 +177,7 @@ DsaPanel {
                     }
 
                     onCheckedChanged: {
-                        if (currentViewshed) {
-                            currentViewshed.is360Mode = checked;
-                        }
+                        toolController.activeViewshed360Mode = checked;
                     }
                 }
             }
@@ -200,7 +185,7 @@ DsaPanel {
             Column {
                 width: parent.width
                 height: 25 * scaleFactor
-                visible: toolController.active && currentViewshed !== null
+                visible: toolController.activeViewshedEnabled
 
                 Text {
                     id: distanceRangeLabel
@@ -220,22 +205,18 @@ DsaPanel {
                         orientation: Qt.Horizontal
                         from: 1
                         to: 2000
-                        first.value: currentViewshed ? currentViewshed.minDistance : NaN
-                        second.value: currentViewshed ? currentViewshed.maxDistance : NaN
+                        first.value: toolController.activeViewshedMinDistance
+                        second.value: toolController.activeViewshedMaxDistance
                         stepSize: 10
                         snapMode: Slider.SnapAlways
                         width: parent.width * 0.66
 
                         first.onValueChanged: {
-                            if (currentViewshed) {
-                                currentViewshed.minDistance = first.value;
-                            }
+                            toolController.activeViewshedMinDistance = first.value;
                         }
 
                         second.onValueChanged: {
-                            if (currentViewshed) {
-                                currentViewshed.maxDistance = second.value;
-                            }
+                            toolController.activeViewshedMaxDistance = second.value;
                         }
                     }
 
@@ -244,7 +225,7 @@ DsaPanel {
                         anchors.verticalCenter: parent.verticalCenter
                         width: 70 * scaleFactor
                         horizontalAlignment: Text.AlignRight
-                        text: currentViewshed ? Math.round(currentViewshed.minDistance) + " - " + Math.round(currentViewshed.maxDistance) : ""
+                        text: Math.round(toolController.activeViewshedMinDistance) + " - " + Math.round(toolController.activeViewshedMaxDistance)
                         color: Material.foreground
                         font.pixelSize: 14 * scaleFactor
                     }
@@ -254,7 +235,7 @@ DsaPanel {
             Column {
                 width: parent.width
                 height: 25 * scaleFactor
-                visible: toolController.active && currentViewshed !== null && !currentViewshed.is360Mode
+                visible: toolController.activeViewshedEnabled && !toolController.activeViewshed360Mode
 
                 Text {
                     id: horizintalAngleLabel
@@ -276,14 +257,12 @@ DsaPanel {
                         orientation: Qt.Horizontal
                         from: 0
                         to: 120
-                        value: currentViewshed ? currentViewshed.horizontalAngle : NaN
+                        value: toolController.activeViewshedHorizontalAngle
                         stepSize: 1
                         snapMode: Slider.SnapAlways
 
                         onValueChanged: {
-                            if (currentViewshed) {
-                                currentViewshed.horizontalAngle = value;
-                            }
+                            toolController.activeViewshedHorizontalAngle = value;
                         }
                     }
 
@@ -292,7 +271,7 @@ DsaPanel {
                         anchors.verticalCenter: parent.verticalCenter
                         width: 25 * scaleFactor
                         horizontalAlignment: Text.AlignRight
-                        text: currentViewshed ? Math.round(currentViewshed.horizontalAngle) + "°" : ""
+                        text: Math.round(toolController.activeViewshedHorizontalAngle) + "°"
                         color: Material.foreground
                         font.pixelSize: 14 * scaleFactor
                     }
@@ -302,7 +281,7 @@ DsaPanel {
             Column {
                 width: parent.width
                 height: 25 * scaleFactor
-                visible: toolController.active && currentViewshed !== null && !currentViewshed.is360Mode
+                visible: toolController.activeViewshedEnabled && !toolController.activeViewshed360Mode
 
                 Text {
                     id: verticalAngleLabel
@@ -323,14 +302,12 @@ DsaPanel {
                         orientation: Qt.Horizontal
                         from: 0
                         to: 120
-                        value: currentViewshed ? currentViewshed.verticalAngle : NaN
+                        value: toolController.activeViewshedVerticalAngle
                         stepSize: 1
                         snapMode: Slider.SnapAlways
 
                         onValueChanged: {
-                            if (currentViewshed) {
-                                currentViewshed.verticalAngle = value;
-                            }
+                            toolController.activeViewshedVerticalAngle = value;
                         }
                     }
 
@@ -339,7 +316,7 @@ DsaPanel {
                         anchors.verticalCenter: parent.verticalCenter
                         width: 25 * scaleFactor
                         horizontalAlignment: Text.AlignRight
-                        text: currentViewshed ? Math.round(currentViewshed.verticalAngle) + "°" : ""
+                        text: Math.round(toolController.activeViewshedVerticalAngle) + "°"
                         color: Material.foreground
                         font.pixelSize: 14 * scaleFactor
                     }
@@ -349,7 +326,7 @@ DsaPanel {
             Column {
                 width: parent.width
                 height: 25 * scaleFactor
-                visible: toolController.active && currentViewshed !== null && currentViewshed.headingEnabled
+                visible: toolController.activeViewshedEnabled && toolController.activeViewshedHeadingEnabled
 
                 Text {
                     id: headingLabel
@@ -370,14 +347,12 @@ DsaPanel {
                         orientation: Qt.Horizontal
                         from: 0
                         to: 359
-                        value: currentViewshed ? currentViewshed.heading : NaN
+                        value: toolController.activeViewshedHeading
                         stepSize: 1
                         snapMode: Slider.SnapAlways
 
                         onValueChanged: {
-                            if (currentViewshed) {
-                                currentViewshed.heading = value;
-                            }
+                            toolController.activeViewshedHeading = value;
                         }
                     }
 
@@ -386,7 +361,7 @@ DsaPanel {
                         anchors.verticalCenter: parent.verticalCenter
                         width: 25 * scaleFactor
                         horizontalAlignment: Text.AlignRight
-                        text: currentViewshed ? Math.round(currentViewshed.heading) + "°" : ""
+                        text: Math.round(toolController.activeViewshedHeading) + "°"
                         color: Material.foreground
                         font.pixelSize: 14 * scaleFactor
                     }
@@ -396,7 +371,7 @@ DsaPanel {
             Column {
                 width: parent.width
                 height: 25 * scaleFactor
-                visible: toolController.active && currentViewshed !== null && currentViewshed.pitchEnabled
+                visible: toolController.activeViewshedEnabled && toolController.activeViewshedPitchEnabled
 
                 Text {
                     id: pitchLabel
@@ -415,9 +390,9 @@ DsaPanel {
                         anchors.verticalCenter: parent.verticalCenter
                         width:  parent.width * 0.66
                         orientation: Qt.Horizontal
-                        from: !currentViewshed ? NaN : currentViewshed.analysisType === AbstractViewshed.PointViewshed ? 0 : -90
-                        to: !currentViewshed ? NaN : currentViewshed.analysisType === AbstractViewshed.PointViewshed ? 179 : 90
-                        value: currentViewshed ? currentViewshed.pitch : NaN
+                        from: toolController.activeViewshedMinPitch
+                        to: toolController.activeViewshedMaxPitch
+                        value: toolController.activeViewshedPitch
                         stepSize: 1
                         snapMode: Slider.SnapAlways
 
@@ -426,9 +401,7 @@ DsaPanel {
                                 return;
                             }
 
-                            if (currentViewshed) {
-                                currentViewshed.pitch = value;
-                            }
+                            toolController.activeViewshedPitch = value;
                         }
                     }
 
@@ -437,7 +410,7 @@ DsaPanel {
                         anchors.verticalCenter: parent.verticalCenter
                         width: 25 * scaleFactor
                         horizontalAlignment: Text.AlignRight
-                        text: currentViewshed ? Math.round(currentViewshed.pitch) + "°" : ""
+                        text: Math.round(toolController.activeViewshedPitch) + "°"
                         color: Material.foreground
                         font.pixelSize: 14 * scaleFactor
                     }
@@ -447,7 +420,7 @@ DsaPanel {
             Column {
                 width: parent.width
                 height: 25 * scaleFactor
-                visible: toolController.active && currentViewshed !== null && currentViewshed.analysisType === AbstractViewshed.GraphicViewshed
+                visible: toolController.activeViewshedEnabled && toolController.activeViewshedOffsetZEnabled
 
                 Text {
                     id: offsetZLabel
@@ -468,14 +441,12 @@ DsaPanel {
                         orientation: Qt.Horizontal
                         from: -30
                         to: 30
-                        value: currentViewshed ? currentViewshed.offsetZ : NaN
+                        value: toolController.activeViewshedOffsetZ
                         stepSize: 1
                         snapMode: Slider.SnapAlways
 
                         onValueChanged: {
-                            if (currentViewshed) {
-                                currentViewshed.offsetZ = value;
-                            }
+                            toolController.activeViewshedOffsetZ = value;
                         }
                     }
 
@@ -484,7 +455,7 @@ DsaPanel {
                         anchors.verticalCenter: parent.verticalCenter
                         width: 25 * scaleFactor
                         horizontalAlignment: Text.AlignRight
-                        text: currentViewshed ? Math.round(currentViewshed.offsetZ) : ""
+                        text: Math.round(toolController.activeViewshedOffsetZ)
                         color: Material.foreground
                         font.pixelSize: 14 * scaleFactor
                     }
@@ -493,13 +464,11 @@ DsaPanel {
 
             Button {
                 anchors.horizontalCenter: parent.horizontalCenter
-                visible: currentViewshed !== null
+                visible: toolController.activeViewshedEnabled
                 text: qsTr("Remove Viewshed")
                 font.pixelSize: 14 * scaleFactor
                 onClicked: {
-                    if (currentViewshed) {
-                        toolController.viewsheds.removeOne(currentViewshed);
-                    }
+                    toolController.removeActiveViewshed();
                 }
             }
         }

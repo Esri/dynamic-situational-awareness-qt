@@ -11,7 +11,7 @@
 //
 
 #include "ViewshedListModel.h"
-#include "AbstractViewshed.h"
+#include "Viewshed360.h"
 #include "AnalysisOverlay.h"
 
 using namespace Esri::ArcGISRuntime;
@@ -43,7 +43,7 @@ bool ViewshedListModel::isEmpty() const
   return rowCount() == 0;
 }
 
-void ViewshedListModel::append(AbstractViewshed* viewshed)
+void ViewshedListModel::append(Viewshed360* viewshed)
 {
   if (!viewshed)
     return;
@@ -55,7 +55,7 @@ void ViewshedListModel::append(AbstractViewshed* viewshed)
   emit viewshedAdded(rowCount() - 1);
 }
 
-AbstractViewshed* ViewshedListModel::at(int index) const
+Viewshed360* ViewshedListModel::at(int index) const
 {
   if (index < 0 || (index + 1) > rowCount())
     return nullptr;
@@ -63,12 +63,12 @@ AbstractViewshed* ViewshedListModel::at(int index) const
   return m_viewsheds.at(index);
 }
 
-int ViewshedListModel::indexOf(AbstractViewshed* viewshed) const
+int ViewshedListModel::indexOf(Viewshed360* viewshed) const
 {
   return m_viewsheds.indexOf(viewshed);
 }
 
-bool ViewshedListModel::removeOne(AbstractViewshed* viewshed)
+bool ViewshedListModel::removeOne(Viewshed360* viewshed)
 {
   bool ret = false;
 
@@ -114,11 +114,6 @@ void ViewshedListModel::clear()
     emit viewshedRemoved(viewshed);
 }
 
-int ViewshedListModel::count() const
-{
-  return m_viewsheds.length();
-}
-
 int ViewshedListModel::rowCount(const QModelIndex&) const
 {
   return m_viewsheds.count();
@@ -131,7 +126,7 @@ QVariant ViewshedListModel::data(const QModelIndex& index, int role) const
 
   QVariant retVal;
 
-  AbstractViewshed* viewshed = at(index.row());
+  Viewshed360* viewshed = at(index.row());
   if (!viewshed)
     return retVal;
 
@@ -176,7 +171,7 @@ bool ViewshedListModel::setData(const QModelIndex& index, const QVariant& value,
   if (!index.isValid())
     return false;
 
-  AbstractViewshed* viewshed = at(index.row());
+  Viewshed360* viewshed = at(index.row());
   if (!viewshed)
     return false;
 
@@ -290,7 +285,7 @@ bool ViewshedListModel::setData(const QModelIndex& index, const QVariant& value,
   if (isDataChanged)
     emit dataChanged(index, index, QVector<int>{role});
 
-  return true;
+  return isDataChanged;
 }
 
 QHash<int, QByteArray> ViewshedListModel::roleNames() const

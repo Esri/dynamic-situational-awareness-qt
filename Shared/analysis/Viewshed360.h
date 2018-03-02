@@ -10,50 +10,59 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef ABSTRACTVIEWSHED_H
-#define ABSTRACTVIEWSHED_H
+#ifndef VIEWSHED360_H
+#define VIEWSHED360_H
 
-#include "AbstractAnalysis.h"
+#include <QObject>
+#include <QPointer>
 
 namespace Esri {
   namespace ArcGISRuntime {
     class Viewshed;
+    class AnalysisOverlay;
   }
 }
 
-class AbstractViewshed : public AbstractAnalysis
+class Viewshed360 : public QObject
 {
   Q_OBJECT
 
+  Q_PROPERTY(bool visible READ isVisible WRITE setVisible NOTIFY visibleChanged)
+  Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
   Q_PROPERTY(double minDistance READ minDistance WRITE setMinDistance NOTIFY minDistanceChanged)
   Q_PROPERTY(double maxDistance READ maxDistance WRITE setMaxDistance NOTIFY maxDistanceChanged)
   Q_PROPERTY(double horizontalAngle READ horizontalAngle WRITE setHorizontalAngle NOTIFY horizontalAngleChanged)
   Q_PROPERTY(double verticalAngle READ verticalAngle WRITE setVerticalAngle NOTIFY verticalAngleChanged)
   Q_PROPERTY(double heading READ heading WRITE setHeading NOTIFY headingChanged)
   Q_PROPERTY(double pitch READ pitch WRITE setPitch NOTIFY pitchChanged)
+  Q_PROPERTY(double offsetZ READ offsetZ WRITE setOffsetZ NOTIFY offsetZChanged)
   Q_PROPERTY(bool headingEnabled READ isHeadingEnabled NOTIFY headingEnabledChanged)
   Q_PROPERTY(bool pitchEnabled READ isPitchEnabled NOTIFY pitchEnabledChanged)
+  Q_PROPERTY(bool offsetZEnabled READ isOffsetZEnabled NOTIFY offsetZEnabledChanged)
   Q_PROPERTY(bool is360Mode READ is360Mode WRITE set360Mode NOTIFY is360ModeChanged)
-  Q_PROPERTY(double offsetZ READ offsetZ WRITE setOffsetZ NOTIFY offsetZChanged)
 
 public:
-  ~AbstractViewshed();
+  ~Viewshed360();
 
-  void removeFromOverlay() override;
+  void removeFromOverlay();
 
-  virtual void setVisible(bool visible) override;
+  bool isVisible() const;
+  virtual void setVisible(bool visible);
 
-  virtual double minDistance() const;
-  virtual void setMinDistance(double minDistance);
+  QString name() const;
+  void setName(const QString& name);
 
-  virtual double maxDistance() const;
-  virtual void setMaxDistance(double maxDistance);
+  double minDistance() const;
+  void setMinDistance(double minDistance);
 
-  virtual double horizontalAngle() const;
-  virtual void setHorizontalAngle(double horizontalAngle);
+  double maxDistance() const;
+  void setMaxDistance(double maxDistance);
 
-  virtual double verticalAngle() const;
-  virtual void setVerticalAngle(double verticalAngle);
+  double horizontalAngle() const;
+  void setHorizontalAngle(double horizontalAngle);
+
+  double verticalAngle() const;
+  void setVerticalAngle(double verticalAngle);
 
   virtual double heading() const = 0;
   virtual void setHeading(double heading) = 0;
@@ -61,31 +70,37 @@ public:
   virtual double pitch() const = 0;
   virtual void setPitch(double pitch) = 0;
 
+  virtual double offsetZ() const;
+  virtual void setOffsetZ(double offsetZ);
+
   virtual bool isHeadingEnabled() const;
   virtual bool isPitchEnabled() const;
+  virtual bool isOffsetZEnabled() const;
 
   bool is360Mode() const;
   void set360Mode(bool is360Mode);
 
-  virtual double offsetZ() const;
-  virtual void setOffsetZ(double offsetZ);
-
   Esri::ArcGISRuntime::Viewshed* viewshed() const;
 
+  Esri::ArcGISRuntime::AnalysisOverlay* analysisOverlay() const;
+
 signals:
+  void visibleChanged();
+  void nameChanged();
   void minDistanceChanged();
   void maxDistanceChanged();
   void horizontalAngleChanged();
   void verticalAngleChanged();
   void headingChanged();
   void pitchChanged();
+  void offsetZChanged();
   void headingEnabledChanged();
   void pitchEnabledChanged();
+  void offsetZEnabledChanged();
   void is360ModeChanged();
-  void offsetZChanged();
 
 protected:
-  AbstractViewshed(Esri::ArcGISRuntime::Viewshed* viewshed,
+  Viewshed360(Esri::ArcGISRuntime::Viewshed* viewshed,
                    Esri::ArcGISRuntime::AnalysisOverlay* analysisOverlay,
                    QObject* parent = nullptr);
 
@@ -94,10 +109,14 @@ protected:
   QList<Esri::ArcGISRuntime::Viewshed*> m_viewsheds360Offsets;
 
 private:
-  Q_DISABLE_COPY(AbstractViewshed)
-  AbstractViewshed() = delete;
+  Q_DISABLE_COPY(Viewshed360)
+  Viewshed360() = delete;
 
-  bool m_is360Mode = false;
+  QPointer<Esri::ArcGISRuntime::Viewshed> m_viewshed;
+  QPointer<Esri::ArcGISRuntime::AnalysisOverlay> m_analysisOverlay;
+
+  QString m_name;
+  bool m_is360Mode = true;
 };
 
-#endif // ABSTRACTVIEWSHED_H
+#endif // VIEWSHED360_H

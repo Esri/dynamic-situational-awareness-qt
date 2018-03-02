@@ -10,11 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef POINTVIEWSHED_H
-#define POINTVIEWSHED_H
+#ifndef LOCATIONVIEWSHED360_H
+#define LOCATIONVIEWSHED360_H
 
-#include "AbstractViewshed.h"
-#include "Point.h"
+#include "Viewshed360.h"
 
 namespace Esri {
   namespace ArcGISRuntime {
@@ -24,15 +23,15 @@ namespace Esri {
   }
 }
 
-class PointViewshed : public AbstractViewshed
+class LocationViewshed360 : public Viewshed360
 {
   Q_OBJECT
 
 public:
-  PointViewshed(const Esri::ArcGISRuntime::Point& point,
+  LocationViewshed360(const Esri::ArcGISRuntime::Point& point,
                 Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlay,
                 Esri::ArcGISRuntime::AnalysisOverlay* analysisOverlay, QObject* parent = nullptr);
-  ~PointViewshed();
+  ~LocationViewshed360();
 
   Esri::ArcGISRuntime::Point point() const;
   void setPoint(const Esri::ArcGISRuntime::Point& point);
@@ -45,17 +44,15 @@ public:
   double pitch() const override;
   void setPitch(double pitch) override;
 
-  AnalysisType analysisType() const override;
-
 protected:
   void update360Mode(bool is360Mode) override;
 
 private:
-  Q_DISABLE_COPY(PointViewshed)
-  PointViewshed() = delete;
+  Q_DISABLE_COPY(LocationViewshed360)
+  LocationViewshed360() = delete;
 
   QPointer<Esri::ArcGISRuntime::GraphicsOverlay> m_graphicsOverlay;
   Esri::ArcGISRuntime::Graphic* m_locationViewshedGraphic = nullptr;
 };
 
-#endif // POINTVIEWSHED_H
+#endif // LOCATIONVIEWSHED360_H

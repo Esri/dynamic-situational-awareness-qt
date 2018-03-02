@@ -378,7 +378,7 @@ void ContextMenuController::selectOption(const QString& option)
     if (!viewshedTool)
       return;
 
-    viewshedTool->addMapPointViewshed(m_contextLocation);
+    viewshedTool->addLocationViewshed360(m_contextLocation);
   }
   else if (option == FOLLOW_OPTION)
   {

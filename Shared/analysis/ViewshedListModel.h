@@ -21,13 +21,13 @@ namespace Esri {
   }
 }
 
-class AbstractViewshed;
+class Viewshed360;
 
 class ViewshedListModel : public QAbstractListModel
 {
   Q_OBJECT
 
-  Q_PROPERTY(int count READ count NOTIFY countChanged)
+  Q_PROPERTY(int count READ rowCount NOTIFY countChanged)
 
 public:
   enum ViewshedRoles
@@ -48,19 +48,17 @@ public:
 
   bool isEmpty() const;
 
-  Q_INVOKABLE void append(AbstractViewshed* viewshed);
+  Q_INVOKABLE void append(Viewshed360* viewshed);
 
-  Q_INVOKABLE AbstractViewshed* at(int index) const;
+  Q_INVOKABLE Viewshed360* at(int index) const;
 
-  Q_INVOKABLE int indexOf(AbstractViewshed* viewshed) const;
+  Q_INVOKABLE int indexOf(Viewshed360* viewshed) const;
 
-  Q_INVOKABLE bool removeOne(AbstractViewshed* viewshed);
+  Q_INVOKABLE bool removeOne(Viewshed360* viewshed);
 
   Q_INVOKABLE void removeAt(int index);
 
   Q_INVOKABLE void clear();
-
-  int count() const;
 
   // QAbstractItemModel interface
   int rowCount(const QModelIndex& = QModelIndex()) const override;
@@ -70,7 +68,7 @@ public:
 signals:
   void countChanged();
   void viewshedAdded(int index);
-  void viewshedRemoved(AbstractViewshed* viewshed);
+  void viewshedRemoved(Viewshed360* viewshed);
 
 protected:
   QHash<int, QByteArray> roleNames() const override;
@@ -81,7 +79,7 @@ private:
   void setupRoles();
 
   QHash<int, QByteArray> m_roles;
-  QList<AbstractViewshed*> m_viewsheds;
+  QList<Viewshed360*> m_viewsheds;
 };
 
 #endif // VIEWSHEDLISTMODEL_H

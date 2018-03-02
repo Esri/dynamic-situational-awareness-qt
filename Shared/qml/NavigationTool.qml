@@ -25,12 +25,13 @@ Item {
     }
     height: controlsColumn.height + 10 * scaleFactor
     width: controlsColumn.width + 10 * scaleFactor
+    property alias radius: backgroundRecatangle.radius
 
     Rectangle {
+        id: backgroundRecatangle
         anchors.fill: parent
         color: Material.primary
-        opacity: 0.5
-        radius: 5 * scaleFactor
+        opacity: parent.opacity
     }
 
     Column {

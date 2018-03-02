@@ -30,6 +30,8 @@ Vehicle {
     signal clearDialogAccepted();
     signal closeDialogAccepted();
     signal inputDialogAccepted(var input, var index);
+    property real hudOpacity: 0.75
+    property real hudRadius: 3 * scaleFactor
 
     LocationController {
         id: locationController
@@ -122,6 +124,8 @@ Vehicle {
                 right: navTool.left
                 margins: 10 * scaleFactor
             }
+            opacity: hudOpacity
+            radius: hudRadius
         }
 
         Rectangle {
@@ -152,6 +156,8 @@ Vehicle {
                 verticalCenter: parent.verticalCenter
                 right: sceneView.right
             }
+            opacity: hudOpacity
+            radius: hudRadius
         }
 
         ArcGISCompass {
@@ -359,7 +365,8 @@ Vehicle {
             backgroundColor: Material.background
             fontSize: DsaStyles.toolFontPixelSize
             fontFamily: DsaStyles.fontFamily
-            opacity: 0.75
+            opacity: hudOpacity
+            radius: hudRadius
 
             onVisibleChanged: {
                 if (!visible)

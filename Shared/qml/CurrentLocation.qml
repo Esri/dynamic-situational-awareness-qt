@@ -19,8 +19,9 @@ import Esri.DSA 1.0
 
 
 Item {
-    width: locationText.width
-    height: locationText.height
+    width: backgroundRecatangle.width
+    height: backgroundRecatangle.height
+    property alias radius: backgroundRecatangle.radius
 
     // Declare Controller Class
     LocationTextController {
@@ -29,13 +30,13 @@ Item {
 
     // Fill Rectangle to display behind text
     Rectangle {
+        id: backgroundRecatangle
         anchors {
             margins: -2 * scaleFactor
             fill: displayColumn
         }
         color: Material.primary
-        radius: 3 * scaleFactor
-        opacity: 0.75
+        opacity: parent.opacity
     }
 
     // Column that displays the location and elevation text

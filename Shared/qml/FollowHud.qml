@@ -17,7 +17,7 @@ import QtQuick.Controls.Material 2.2
 import QtQuick.Window 2.2
 import Esri.DSA 1.0
 
-Row {
+Item {
     id: followHudRoot
     function stopFollowing() {
         followPositionController.followMode = FollowPositionController.Disabled;
@@ -52,44 +52,64 @@ Row {
         }
     ]
 
-    spacing: 10 * scaleFactor
     visible: enabled
 
     onEnabledChanged: stopFollowing();
 
-    OverlayButton {
-        id: disableLocation
-        anchors.verticalCenter: parent.verticalCenter
-        iconUrl: DsaResources.iconFollowLocationOff
-        color: "transparent"
-        name: "Off"
-        onClicked: {
-            followHudRoot.state = name;
-            followPositionController.followMode = FollowPositionController.Disabled;
+    width: backgroundRecatangle.width
+    height: backgroundRecatangle.height
+    property alias radius: backgroundRecatangle.radius
+
+    Rectangle {
+        id: backgroundRecatangle
+        anchors {
+            fill: followHudRow
+
         }
+        color: Material.primary
+        opacity: parent.opacity
     }
 
-    OverlayButton {
-        id: followLocation
-        anchors.verticalCenter: parent.verticalCenter
-        iconUrl: DsaResources.iconFollowLocation
-        color: "transparent"
-        name: "Follow"
-        onClicked: {
-            followHudRoot.state = name;
-            followPositionController.followMode = FollowPositionController.TrackUp;
-        }
-    }
+    Row {
+        id: followHudRow
 
-    OverlayButton {
-        id: northUpLocation
-        anchors.verticalCenter: parent.verticalCenter
-        iconUrl: DsaResources.iconFollowLocationNorthUp
-        color: "transparent"
-        name: "North Up"
-        onClicked: {
-            followHudRoot.state = name;
-            followPositionController.followMode = FollowPositionController.NorthUp;
+        anchors.margins: 5 * scaleFactor
+        spacing: 10 * scaleFactor
+
+        OverlayButton {
+            id: disableLocation
+            anchors.verticalCenter: parent.verticalCenter
+            iconUrl: DsaResources.iconFollowLocationOff
+            color: "transparent"
+            name: "Off"
+            onClicked: {
+                followHudRoot.state = name;
+                followPositionController.followMode = FollowPositionController.Disabled;
+            }
+        }
+
+        OverlayButton {
+            id: followLocation
+            anchors.verticalCenter: parent.verticalCenter
+            iconUrl: DsaResources.iconFollowLocation
+            color: "transparent"
+            name: "Follow"
+            onClicked: {
+                followHudRoot.state = name;
+                followPositionController.followMode = FollowPositionController.TrackUp;
+            }
+        }
+
+        OverlayButton {
+            id: northUpLocation
+            anchors.verticalCenter: parent.verticalCenter
+            iconUrl: DsaResources.iconFollowLocationNorthUp
+            color: "transparent"
+            name: "North Up"
+            onClicked: {
+                followHudRoot.state = name;
+                followPositionController.followMode = FollowPositionController.NorthUp;
+            }
         }
     }
 }

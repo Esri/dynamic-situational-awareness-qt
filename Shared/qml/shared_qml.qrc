@@ -10,7 +10,7 @@
         <file>NavigationTool.qml</file>
         <file>MarkupTool.qml</file>
         <file>Imports.qml</file>
-        <file>Analysis.qml</file>
+        <file>Viewshed.qml</file>
         <file>Options.qml</file>
         <file>CategoryIcon.qml</file>
         <file>CategoryToolbar.qml</file>

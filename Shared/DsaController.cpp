@@ -61,7 +61,7 @@ DsaController::DsaController(QObject* parent):
                          QStringLiteral("identify"),
                          QStringLiteral("Markup Tool"),
                          QStringLiteral("CoordinateConversion"),
-                         QStringLiteral("analysis")}
+                         QStringLiteral("viewshed")}
 {
   // setup config settings
   setupConfig();

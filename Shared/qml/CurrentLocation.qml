@@ -19,8 +19,8 @@ import Esri.DSA 1.0
 
 
 Item {
-    width: locationText.width
-    height: locationText.height
+    width: backgroundRecatangle.width
+    height: backgroundRecatangle.height
     property alias radius: backgroundRecatangle.radius
 
     // Declare Controller Class

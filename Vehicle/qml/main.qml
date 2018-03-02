@@ -32,6 +32,7 @@ Vehicle {
     signal inputDialogAccepted(var input, var index);
     property real hudOpacity: 0.75
     property real hudRadius: 3 * scaleFactor
+    property real hudMargins: 5 * scaleFactor
 
     LocationController {
         id: locationController
@@ -120,23 +121,12 @@ Vehicle {
         CurrentLocation {
             id: currentLocation
             anchors {
-                bottom: followHud.bottom
+                bottom: sceneView.attributionTop
                 right: navTool.left
-                margins: 10 * scaleFactor
+                margins: hudMargins
             }
             opacity: hudOpacity
             radius: hudRadius
-        }
-
-        Rectangle {
-            anchors {
-                fill: followHud
-                margins: -5 * scaleFactor
-            }
-            visible: followHud.enabled
-            color: Material.primary
-            radius: 5 * scaleFactor
-            opacity: 0.5
         }
 
         FollowHud {
@@ -144,15 +134,17 @@ Vehicle {
             anchors {
                 bottom: sceneView.attributionTop
                 horizontalCenter: parent.horizontalCenter
-                margins: currentLocation.visible ? currentLocation.height + 25 * scaleFactor : 10 * scaleFactor
+                margins: hudMargins
             }
             enabled: false
+            opacity: hudOpacity
+            radius: hudRadius
         }
 
         NavigationTool {
             id: navTool
             anchors {
-                margins: 10 * scaleFactor
+                margins: hudMargins
                 verticalCenter: parent.verticalCenter
                 right: sceneView.right
             }
@@ -352,10 +344,10 @@ Vehicle {
         CoordinateConversion {
             id: coordinateConversion
             anchors {
-                bottom: followHud.bottom
+                bottom: sceneView.attributionTop
                 left: categoryToolbar.right
                 right: followHud.left
-                margins: 10 * scaleFactor
+                margins: hudMargins
             }
 
             objectName: "coordinateConversion"

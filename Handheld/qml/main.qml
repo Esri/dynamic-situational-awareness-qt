@@ -29,6 +29,10 @@ Handheld {
 
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
     property alias messageFeeds: messageFeedsTool
+    property real hudOpacity: 0.75
+    property real hudRadius: 3 * scaleFactor
+    property real hudMargins: 5 * scaleFactor
+
     signal clearDialogAccepted();
     signal closeDialogAccepted();
     signal inputDialogAccepted(var input, var index);
@@ -132,38 +136,33 @@ Handheld {
             anchors {
                 bottom: sceneView.attributionTop
                 left: sceneView.left
-                margins: 10 * scaleFactor
+                margins: hudMargins
             }
-        }
-
-        Rectangle {
-            anchors {
-                fill: followHud
-                margins: -5 * scaleFactor
-            }
-            visible: followHud.enabled
-            color: Material.primary
-            radius: 5 * scaleFactor
-            opacity: 0.5
+            radius: hudRadius
+            opacity: hudOpacity
         }
 
         FollowHud {
             id: followHud
             anchors {
-                bottom: sceneView.attributionTop
-                horizontalCenter: parent.horizontalCenter
-                margins: currentLocation.visible ? currentLocation.height + 25 * scaleFactor : 10 * scaleFactor
+                bottom: currentLocation.visible ? currentLocation.top : sceneView.attributionTop
+                left: sceneView.left
+                margins: hudMargins
             }
             enabled: false
+            opacity: hudOpacity
+            radius: hudRadius
         }
 
         NavigationTool {
             id: navTool
             anchors {
-                margins: 10 * scaleFactor
+                margins: hudMargins
                 verticalCenter: parent.verticalCenter
                 right: sceneView.right
             }
+            opacity: hudOpacity
+            radius: hudRadius
         }
 
         ArcGISCompass {
@@ -357,10 +356,10 @@ Handheld {
         CoordinateConversion {
             id: coordinateConversion
             anchors {
-                bottom: currentLocation.top
+                bottom: followHud.visible ? followHud.top : currentLocation.top
                 left: sceneView.left
                 right: navTool.left
-                margins: 10 * scaleFactor
+                margins: hudMargins
             }
 
             objectName: "coordinateConversion"
@@ -370,7 +369,8 @@ Handheld {
             backgroundColor: Material.background
             fontSize: DsaStyles.toolFontPixelSize
             fontFamily: DsaStyles.fontFamily
-            opacity: 0.75
+            opacity: hudOpacity
+            radius: hudRadius
 
             onVisibleChanged: {
                 if (!visible)

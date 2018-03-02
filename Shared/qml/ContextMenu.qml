@@ -22,6 +22,7 @@ Menu {
     visible: contextMenuController.contextActive
     x: contextMenuController.contextScreenPosition.x
     y: contextMenuController.contextScreenPosition.y
+    width: 110 * scaleFactor
 
     ContextMenuController {
         id: contextMenuController
@@ -43,14 +44,15 @@ Menu {
         model: contextMenuController.options
         anchors.margins: 8 * scaleFactor
 
-        delegate: Button{
+        delegate: ListLabel{
             anchors{
-                horizontalCenter: parent.horizontalCenter
+                left: parent.left
                 margins: 4 * scaleFactor
             }
             text: display
-            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-            onClicked: {
+            horizontalAlignment: Text.AlignLeft
+
+            onTriggered: {
                 contextMenuController.selectOption(display);
             }
         }

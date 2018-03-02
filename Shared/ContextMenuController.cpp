@@ -10,7 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "AnalysisController.h"
+#include "ViewshedController.h"
 #include "ContextMenuController.h"
 #include "FollowPositionController.h"
 #include "GraphicsOverlaysResultsManager.h"
@@ -374,11 +374,11 @@ void ContextMenuController::selectOption(const QString& option)
   }
   else if (option == VIEWSHED_OPTION)
   {
-    AnalysisController* analysisTool = Toolkit::ToolManager::instance().tool<AnalysisController>();
-    if (!analysisTool)
+    ViewshedController* viewshedTool = Toolkit::ToolManager::instance().tool<ViewshedController>();
+    if (!viewshedTool)
       return;
 
-    analysisTool->showMapPointViewshed(m_contextScreenPosition);
+    viewshedTool->addLocationViewshed360(m_contextLocation);
   }
   else if (option == FOLLOW_OPTION)
   {

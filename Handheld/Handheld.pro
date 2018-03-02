@@ -25,6 +25,7 @@ include($$PWD/../Shared/arcgisruntime.pri)
 
 INCLUDEPATH += $$PWD/../Shared/ \
     $$PWD/../Shared/alerts \
+    $$PWD/../Shared/analysis \
     $$PWD/../Shared/messages \
     $$PWD/../Shared/utilities
 
@@ -34,6 +35,7 @@ HEADERS += \
     HandheldStyles.h \
     $$PWD/../Shared/*.h \
     $$PWD/../Shared/alerts/*.h \
+    $$PWD/../Shared/analysis/*.h \
     $$PWD/../Shared/messages/*.h \
     $$PWD/../Shared/utilities/*.h
 
@@ -43,6 +45,7 @@ SOURCES += \
     HandheldStyles.cpp \
     $$PWD/../Shared/*.cpp \
     $$PWD/../Shared/alerts/*.cpp \
+    $$PWD/../Shared/analysis/*.cpp \
     $$PWD/../Shared/messages/*.cpp \
     $$PWD/../Shared/utilities/*.cpp
 

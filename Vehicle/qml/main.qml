@@ -233,8 +233,8 @@ Vehicle {
             visible: false
         }
 
-        Analysis {
-            id: analysisTool
+        Viewshed {
+            id: viewshedTool
             anchors {
                 right: parent.right
                 top: parent.top
@@ -285,7 +285,7 @@ Vehicle {
                 // update state for each category
                 mapToolRow.state = "clear";
                 alertToolRow.state = "clear";
-                analysisTool.state = "clear";
+                viewshedTool.state = "clear";
                 reportToolRow.state = "clear";
                 markupToolRow.state = "clear";
             }

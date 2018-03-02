@@ -15,7 +15,6 @@ import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
 import QtQuick.Window 2.2
 import Esri.DSA 1.0
-import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.2
 
 Row {
     id: analysisToolRow
@@ -58,12 +57,12 @@ Row {
             else
                 analysisToolRow.state = toolName;
 
-            if (analysisTool.visible) {
-                analysisTool.visible = false;
+            if (viewshedTool.visible) {
+                viewshedTool.visible = false;
                 analysisToolRow.state = "clear";
                 selected = false;
             } else {
-                analysisTool.visible = true;
+                viewshedTool.visible = true;
                 lineOfSightTool.visible = false;
             }
         }
@@ -86,7 +85,7 @@ Row {
                 selected = false;
             } else {
                 lineOfSightTool.visible = true;
-                analysisTool.visible = false;
+                viewshedTool.visible = false;
             }
         }
     }

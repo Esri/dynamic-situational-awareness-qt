@@ -24,6 +24,8 @@
 #include "MapView.h"
 #include "SceneView.h"
 
+#include <cmath>
+
 using namespace Esri::ArcGISRuntime;
 
 const QString ContextMenuController::COORDINATES_OPTION = "Coordinates";

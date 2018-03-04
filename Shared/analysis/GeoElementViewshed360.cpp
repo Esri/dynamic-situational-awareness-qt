@@ -201,6 +201,7 @@ void GeoElementViewshed360::update360Mode(bool is360Mode)
 
   emit horizontalAngleChanged();
   emit verticalAngleChanged();
+  emit pitchChanged();
 
   for (auto viewshed : m_viewsheds360Offsets)
   {

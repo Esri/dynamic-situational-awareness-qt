@@ -364,6 +364,7 @@ Handheld {
 
             objectName: "coordinateConversion"
             visible: false
+            geoView: sceneView
             highlightColor : Material.accent
             textColor: Material.foreground
             backgroundColor: Material.background

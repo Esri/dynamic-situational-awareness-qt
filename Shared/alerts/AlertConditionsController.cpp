@@ -141,6 +141,8 @@ QString AlertConditionsController::toolName() const
  */
 void AlertConditionsController::setProperties(const QVariantMap& properties)
 {
+  const auto conditionsData = properties[AlertConstants::ALERT_CONDITIONS_PROPERTYNAME];
+
   const auto messageFeeds = properties[MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME].toList();
   if (!messageFeeds.isEmpty())
   {
@@ -148,7 +150,8 @@ void AlertConditionsController::setProperties(const QVariantMap& properties)
     for (const auto& messageFeed : messageFeedsJson)
     {
       const auto messageFeedJsonObject = messageFeed.toObject();
-      if (messageFeedJsonObject.size() != 4)
+      if (!messageFeedJsonObject.contains(MessageFeedConstants::MESSAGE_FEEDS_NAME) ||
+          !messageFeedJsonObject.contains(MessageFeedConstants::MESSAGE_FEEDS_TYPE))
         continue;
 
       const auto feedName = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_NAME].toString();
@@ -160,7 +163,6 @@ void AlertConditionsController::setProperties(const QVariantMap& properties)
     onLayersChanged();
   }
 
-  const QVariant conditionsData = properties.value(AlertConstants::ALERT_CONDITIONS_PROPERTYNAME);
   if (conditionsData.isNull())
     return;
 

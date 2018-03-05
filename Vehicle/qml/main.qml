@@ -30,7 +30,7 @@ Vehicle {
     signal clearDialogAccepted();
     signal closeDialogAccepted();
     signal inputDialogAccepted(var input, var index);
-    property real hudOpacity: 0.75
+    property real hudOpacity: 0.9
     property real hudRadius: 3 * scaleFactor
     property real hudMargins: 5 * scaleFactor
 

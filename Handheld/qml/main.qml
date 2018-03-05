@@ -29,7 +29,7 @@ Handheld {
 
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
     property alias messageFeeds: messageFeedsTool
-    property real hudOpacity: 0.75
+    property real hudOpacity: 0.9
     property real hudRadius: 3 * scaleFactor
     property real hudMargins: 5 * scaleFactor
 

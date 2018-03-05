@@ -85,7 +85,10 @@ void GeoElementViewshed360::setHeading(double heading)
     if (attributes->attributeValue(m_headingAttribute).toDouble() == heading)
       return;
 
-    attributes->replaceAttribute(m_headingAttribute, heading);
+    if (attributes->containsAttribute(m_headingAttribute))
+      attributes->replaceAttribute(m_headingAttribute, heading);
+    else
+      attributes->insertAttribute(m_headingAttribute, heading);
   }
 
   emit headingChanged();
@@ -120,7 +123,10 @@ void GeoElementViewshed360::setPitch(double pitch)
     if (attributes->attributeValue(m_pitchAttribute).toDouble() == pitch)
       return;
 
-    attributes->replaceAttribute(m_pitchAttribute, pitch);
+    if (attributes->containsAttribute(m_pitchAttribute))
+      attributes->replaceAttribute(m_pitchAttribute, pitch);
+    else
+      attributes->insertAttribute(m_pitchAttribute, pitch);
   }
 
   emit pitchChanged();
@@ -201,7 +207,6 @@ void GeoElementViewshed360::update360Mode(bool is360Mode)
 
   emit horizontalAngleChanged();
   emit verticalAngleChanged();
-  emit pitchChanged();
 
   for (auto viewshed : m_viewsheds360Offsets)
   {

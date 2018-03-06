@@ -38,6 +38,13 @@ Row {
             }
         },
         State {
+            name: analysisListIcon.toolName
+            PropertyChanges {
+                target: analysisListIcon
+                selected: true
+            }
+        },
+        State {
             name: "clear"
             PropertyChanges {
                 target: viewshedIcon
@@ -64,6 +71,7 @@ Row {
             } else {
                 viewshedTool.visible = true;
                 lineOfSightTool.visible = false;
+                analysisListTool.visible = false;
             }
         }
     }
@@ -85,6 +93,30 @@ Row {
                 selected = false;
             } else {
                 lineOfSightTool.visible = true;
+                viewshedTool.visible = false;
+                analysisListTool.visible = false;
+            }
+        }
+    }
+
+    // Analysis List Tool
+    ToolIcon {
+        id: analysisListIcon
+        iconSource: DsaResources.iconListView
+        toolName: "List"
+        onToolSelected: {
+            if (selected)
+                analysisToolRow.state = "clear"
+            else
+                analysisToolRow.state = toolName;
+
+            if (analysisListTool.visible) {
+                analysisListTool.visible = false;
+                analysisListTool.state = "clear";
+                selected = false;
+            } else {
+                analysisListTool.visible = true;
+                lineOfSightTool.visible = false;
                 viewshedTool.visible = false;
             }
         }

@@ -47,5 +47,6 @@
         <file>AlertConditionsAttributeTarget.qml</file>
         <file>LineOfSightTool.qml</file>
         <file>ContextMenu.qml</file>
+        <file>AnalysisList.qml</file>
     </qresource>
 </RCC>

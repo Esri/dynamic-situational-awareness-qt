@@ -158,6 +158,8 @@ bool MessagesOverlay::addMessage(const Message& message)
           }
           break;
         }
+      default:
+          break;
       }
 
       break;

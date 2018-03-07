@@ -59,6 +59,8 @@ ContextMenuController::ContextMenuController(QObject* parent /* = nullptr */):
   // setup connection to handle the results of a screen to location task
   connect(resourceProvider, &Toolkit::ToolResourceProvider::screenToLocationCompleted,
           this, &ContextMenuController::onScreenToLocationCompleted);
+
+  m_active = true;
 }
 
 /*!
@@ -89,6 +91,9 @@ QString ContextMenuController::toolName() const
  */
 void ContextMenuController::onMousePressedAndHeld(QMouseEvent& event)
 {
+  if (!isActive())
+    return;
+
   // only consider left clicks (or taps) on the view.
   if (event.button() != Qt::MouseButton::LeftButton)
     return;

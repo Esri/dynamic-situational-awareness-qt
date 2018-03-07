@@ -63,30 +63,24 @@ void CombinedAnalysisListModel::setLineOfSightModel(AnalysisListModel* lineOfSig
 
 void CombinedAnalysisListModel::removeAt(int index)
 {
-  const int viewshedMaxIndex = viewshedCount();
-  const int lineOfSightMaxIndex = viewshedMaxIndex + lineOfSightCount();
-
-  if (index < viewshedMaxIndex && m_viewshedModel)
-    m_viewshedModel->removeAt(index);
-  else if (index < lineOfSightMaxIndex && m_lineOfSightModel)
-    m_lineOfSightModel->removeAt(index - viewshedMaxIndex);
+  if (isViewshed(index))
+    m_viewshedModel->removeAt(viewshedIndex(index));
+  else if (isLineOfSight(index))
+    m_lineOfSightModel->removeAt(lineOfSightIndex(index));
 }
 
 Point CombinedAnalysisListModel::locationAt(int index)
 {
-  const int viewshedMaxIndex = viewshedCount();
-  const int lineOfSightMaxIndex = viewshedMaxIndex + lineOfSightCount();
-
   Analysis* analysis = nullptr;
-  if (index < viewshedMaxIndex && m_viewshedModel)
+  if (isViewshed(index))
   {
-    Viewshed360* viewshed360 =  m_viewshedModel->at(index);
+    Viewshed360* viewshed360 =  m_viewshedModel->at(viewshedIndex(index));
     if (viewshed360 != nullptr)
       analysis = viewshed360->viewshed();
   }
-  else if (index < lineOfSightMaxIndex && m_lineOfSightModel)
+  else if (isLineOfSight(index))
   {
-    analysis = m_lineOfSightModel->at(index - viewshedMaxIndex);
+    analysis = m_lineOfSightModel->at(lineOfSightIndex(index));
   }
 
   if (analysis == nullptr)
@@ -141,31 +135,28 @@ QVariant CombinedAnalysisListModel::data(const QModelIndex& index, int role) con
   if (index.row() < 0 || index.row() >= rowCount(index))
     return QVariant();
 
-  const int viewshedMaxIndex = viewshedCount();
-  const int lineOfSightMaxIndex = viewshedMaxIndex + lineOfSightCount();
-
-  if (index.row() < viewshedMaxIndex && m_viewshedModel)
+  if (isViewshed(index.row()))
   {
     switch (role)
     {
     case AnalysisNameRole:
-      return m_viewshedModel->data(m_viewshedModel->index(index.row(), 0), ViewshedListModel::ViewshedRoles::ViewshedNameRole);
+      return m_viewshedModel->data(m_viewshedModel->index(viewshedIndex(index.row()), 0), ViewshedListModel::ViewshedRoles::ViewshedNameRole);
     case AnalysisVisibleRole:
-      return m_viewshedModel->data(m_viewshedModel->index(index.row(), 0), ViewshedListModel::ViewshedRoles::ViewshedVisibleRole);
+      return m_viewshedModel->data(m_viewshedModel->index(viewshedIndex(index.row()), 0), ViewshedListModel::ViewshedRoles::ViewshedVisibleRole);
     case AnalysisTypeRole:
       return QStringLiteral("viewshed");
     default:
       break;
     }
   }
-  else if (index.row() < lineOfSightMaxIndex && m_lineOfSightModel)
+  else if (isLineOfSight(index.row()))
   {
     switch (role)
     {
     case AnalysisNameRole:
-      return QString("Line of Sight %1").arg(QString::number(index.row() - viewshedMaxIndex));
+      return QString("Line of Sight %1").arg(QString::number(lineOfSightIndex(index.row())));
     case AnalysisVisibleRole:
-      return m_lineOfSightModel->data(m_lineOfSightModel->index(index.row() - viewshedMaxIndex, 0), AnalysisListModel::AnalysisRoles::AnalysisVisibleRole);
+      return m_lineOfSightModel->data(m_lineOfSightModel->index(lineOfSightIndex(index.row()), 0), AnalysisListModel::AnalysisRoles::AnalysisVisibleRole);
     case AnalysisTypeRole:
       return QStringLiteral("lineOfSight");
     default:
@@ -185,13 +176,10 @@ bool CombinedAnalysisListModel::setData(const QModelIndex& index, const QVariant
   if (analysisRole != CombinedAnalysisRoles::AnalysisVisibleRole)
     return false;
 
-  const int viewshedMaxIndex = viewshedCount();
-  const int lineOfSightMaxIndex = viewshedMaxIndex + lineOfSightCount();
-
-  if (index.row() < viewshedMaxIndex && m_viewshedModel)
-   return m_viewshedModel->setData(m_viewshedModel->index(index.row(), 0), value, ViewshedListModel::ViewshedRoles::ViewshedVisibleRole);
-  else if (index.row() < lineOfSightMaxIndex && m_lineOfSightModel)
-      return m_lineOfSightModel->setData(m_lineOfSightModel->index(index.row() - viewshedMaxIndex, 0), value, AnalysisListModel::AnalysisRoles::AnalysisVisibleRole);
+  if (isViewshed(index.row()))
+    return m_viewshedModel->setData(m_viewshedModel->index(viewshedIndex(index.row()), 0), value, ViewshedListModel::ViewshedRoles::ViewshedVisibleRole);
+  else if (isLineOfSight(index.row()))
+    return m_lineOfSightModel->setData(m_lineOfSightModel->index(lineOfSightIndex(index.row()), 0), value, AnalysisListModel::AnalysisRoles::AnalysisVisibleRole);
 
   return false;
 }
@@ -226,4 +214,24 @@ int CombinedAnalysisListModel::viewshedCount() const
 int CombinedAnalysisListModel::lineOfSightCount() const
 {
   return m_lineOfSightModel == nullptr ? 0 : m_lineOfSightModel->rowCount();
+}
+
+bool CombinedAnalysisListModel::isViewshed(int row) const
+{
+  return row < viewshedCount() && m_viewshedModel;
+}
+
+bool CombinedAnalysisListModel::isLineOfSight(int row) const
+{
+  return row < (lineOfSightCount() + viewshedCount()) && m_lineOfSightModel;
+}
+
+int CombinedAnalysisListModel::viewshedIndex(int row) const
+{
+  return row;
+}
+
+int CombinedAnalysisListModel::lineOfSightIndex(int row) const
+{
+  return row - viewshedCount();
 }

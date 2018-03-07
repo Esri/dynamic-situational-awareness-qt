@@ -19,10 +19,6 @@
 #include "ToolResourceProvider.h"
 
 #include "AnalysisOverlayListModel.h"
-#include "GeoElementLineOfSight.h"
-#include "GeoElementViewshed.h"
-#include "LocationLineOfSight.h"
-#include "LocationViewshed.h"
 #include "SceneView.h"
 
 using namespace Esri::ArcGISRuntime;

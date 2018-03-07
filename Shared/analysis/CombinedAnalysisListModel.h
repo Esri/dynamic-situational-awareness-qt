@@ -65,6 +65,10 @@ private:
   void connectAnalysisListModelSignals(QAbstractItemModel* analysisList);
   int viewshedCount() const;
   int lineOfSightCount() const;
+  bool isViewshed(int row) const;
+  bool isLineOfSight(int row) const;
+  int viewshedIndex(int row) const;
+  int lineOfSightIndex(int row) const;
 
   QHash<int, QByteArray> m_roles;
   ViewshedListModel* m_viewshedModel = nullptr;

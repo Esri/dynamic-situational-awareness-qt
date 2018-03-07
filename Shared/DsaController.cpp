@@ -39,6 +39,7 @@
 // Dsa apps
 #include "AlertLevel.h"
 #include "AlertConstants.h"
+#include "ContextMenuController.h"
 #include "DsaUtility.h"
 #include "DsaController.h"
 #include "MessageFeedConstants.h"
@@ -113,25 +114,57 @@ void DsaController::init(GeoView* geoView)
     // whenever a conflciting tool is activated, deactivate all of the other conflicting tools
     connect(abstractTool, &Toolkit::AbstractTool::activeChanged, this, [this, abstractTool]()
     {
-      if (!abstractTool->isActive())
-        return;
+      bool anyActive = false;
 
-      auto toolsIt = Toolkit::ToolManager::instance().begin();
-      auto toolsEnd = Toolkit::ToolManager::instance().end();
-      for (; toolsIt != toolsEnd; ++toolsIt)
+      // if this tool is becoming active, deactivate all conflicting tools
+      if (abstractTool->isActive())
       {
-        Toolkit::AbstractTool* candidateTool = *toolsIt;
-        if (!candidateTool)
-          continue;
+        anyActive = true;
+        auto toolsIt = Toolkit::ToolManager::instance().begin();
+        auto toolsEnd = Toolkit::ToolManager::instance().end();
+        for (; toolsIt != toolsEnd; ++toolsIt)
+        {
+          Toolkit::AbstractTool* candidateTool = *toolsIt;
+          if (!candidateTool)
+            continue;
 
-        if (candidateTool->toolName() == abstractTool->toolName())
-          continue;
+          if (candidateTool->toolName() == abstractTool->toolName())
+            continue;
 
-        if (!isConflictingTool(candidateTool->toolName()))
-          continue;
+          if (!isConflictingTool(candidateTool->toolName()))
+            continue;
 
-        candidateTool->setActive(false);
+          if (candidateTool->isActive())
+            candidateTool->setActive(false);
+        }
       }
+      // otherwise, if this tool is becoming deactivated, check if any of the conflicting tools are now active
+      else
+      {
+
+        auto toolsIt = Toolkit::ToolManager::instance().begin();
+        auto toolsEnd = Toolkit::ToolManager::instance().end();
+        for (; toolsIt != toolsEnd; ++toolsIt)
+        {
+          Toolkit::AbstractTool* candidateTool = *toolsIt;
+          if (!candidateTool)
+            continue;
+
+          if (!isConflictingTool(candidateTool->toolName()))
+            continue;
+
+          if (!candidateTool->isActive())
+            continue;
+
+          anyActive = true;
+          break;
+        }
+      }
+
+      // The context menu should only be active when the other tools which interact with the view are not
+      ContextMenuController* contextMenu = Toolkit::ToolManager::instance().tool<ContextMenuController>();
+      if (contextMenu && contextMenu->isActive() == anyActive)
+        contextMenu->setActive(!anyActive);
     });
   }
 

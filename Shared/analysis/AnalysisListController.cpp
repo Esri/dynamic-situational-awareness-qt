@@ -1,4 +1,4 @@
-// Copyright 2017 ESRI
+// Copyright 2018 ESRI
 //
 // All rights reserved under the copyright laws of the United States
 // and applicable international laws, treaties, and conventions.
@@ -41,7 +41,6 @@ AnalysisListController::AnalysisListController(QObject* parent):
 
 AnalysisListController::~AnalysisListController()
 {
-
 }
 
 QString AnalysisListController::toolName() const
@@ -65,7 +64,7 @@ void AnalysisListController::removeAt(int index)
     return;
 
   overlay->analyses()->removeOne(analysis);
-  analysis->deleteLater();
+  delete analysis;
 }
 
 void AnalysisListController::zoomTo(int index)
@@ -119,7 +118,7 @@ void AnalysisListController::zoomTo(int index)
 
 void AnalysisListController::onGeoViewChanged(GeoView* geoView)
 {
-  if (!geoView)
+  if (geoView == nullptr)
     return;
 
   SceneView* sceneView = dynamic_cast<SceneView*>(geoView);

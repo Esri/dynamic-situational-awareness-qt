@@ -132,6 +132,8 @@ DsaPanel {
                     return DsaResources.iconPolygon;
                 case TableOfContentsController.Raster:
                     return DsaResources.iconRaster;
+                default:
+                    return "";
                 }
             }
         }

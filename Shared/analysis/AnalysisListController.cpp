@@ -23,6 +23,9 @@
 
 using namespace Esri::ArcGISRuntime;
 
+/*!
+  \brief Constructor accepting an optional \a parent.
+ */
 AnalysisListController::AnalysisListController(QObject* parent):
   Toolkit::AbstractTool(parent),
   m_analysisList(new CombinedAnalysisListModel(this))
@@ -37,30 +40,53 @@ AnalysisListController::AnalysisListController(QObject* parent):
   onGeoViewChanged(Toolkit::ToolResourceProvider::instance()->geoView());
 }
 
+
+/*!
+  \brief Destructor.
+ */
 AnalysisListController::~AnalysisListController()
 {
 }
 
+
+/*!
+  \brief Returns the name of this tool.
+ */
 QString AnalysisListController::toolName() const
 {
   return QStringLiteral("Analysis List");
 }
 
+/*!
+  \brief Returns the list of analyses.
+ */
 QAbstractItemModel* AnalysisListController::analysisList() const
 {
   return m_analysisList;
 }
 
+/*!
+  \brief Removes the analysis at \a index from the list.
+ */
 void AnalysisListController::removeAt(int index)
 {
   m_analysisList->removeAt(index);
 }
 
+/*!
+  \brief Zooms the geoView to the locaction of the analysis at \a index in the list.
+ */
 void AnalysisListController::zoomTo(int index)
 {
   zoomToLocation(m_analysisList->locationAt(index));
 }
 
+/*!
+  \brief Updates the geoView in use by the tool to \a geoView.
+
+  \note Since this tool manages the list of scene analysis, the geoView
+  will only used if it is a \l Esri::ArcGISRuntime::SceneView.
+ */
 void AnalysisListController::onGeoViewChanged(GeoView* geoView)
 {
   if (geoView == nullptr)
@@ -72,6 +98,7 @@ void AnalysisListController::onGeoViewChanged(GeoView* geoView)
 
   m_sceneView = sceneView;
 
+  // handle changes to the list of analysis overlays used by the view
   auto handleAnalysisOverlaysChanged = [this]()
   {
     ViewshedController* viewshed = Toolkit::ToolManager::instance().tool<ViewshedController>();
@@ -89,6 +116,9 @@ void AnalysisListController::onGeoViewChanged(GeoView* geoView)
   handleAnalysisOverlaysChanged();
 }
 
+/*!
+  \internal
+ */
 void AnalysisListController::zoomToLocation(const Point& point)
 {
   if (m_sceneView == nullptr)

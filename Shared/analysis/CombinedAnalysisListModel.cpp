@@ -26,6 +26,9 @@
 
 using namespace Esri::ArcGISRuntime;
 
+/*!
+  \brief Constructor taking an optional \a parent.
+ */
 CombinedAnalysisListModel::CombinedAnalysisListModel(QObject* parent):
   QAbstractListModel(parent)
 {
@@ -34,10 +37,16 @@ CombinedAnalysisListModel::CombinedAnalysisListModel(QObject* parent):
   m_roles[AnalysisTypeRole] = "analysisType";
 }
 
+/*!
+  \brief Destructor.
+ */
 CombinedAnalysisListModel::~CombinedAnalysisListModel()
 {
 }
 
+/*!
+  \brief Sets the \l ViewshedListModel used by this tool to \a viewshedModel.
+ */
 void CombinedAnalysisListModel::setViewshedModel(QAbstractItemModel* viewshedModel)
 {
   if (viewshedModel == nullptr)
@@ -53,6 +62,9 @@ void CombinedAnalysisListModel::setViewshedModel(QAbstractItemModel* viewshedMod
   endResetModel();
 }
 
+/*!
+  \brief Sets the \l Esri::ArcGISRuntime::AnalysisListModel used by this tool to \a lineOfSightModel.
+ */
 void CombinedAnalysisListModel::setLineOfSightModel(AnalysisListModel* lineOfSightModel)
 {
   beginResetModel();
@@ -61,6 +73,9 @@ void CombinedAnalysisListModel::setLineOfSightModel(AnalysisListModel* lineOfSig
   endResetModel();
 }
 
+/*!
+  \brief Removes the analysis at \a index from the combined list.
+ */
 void CombinedAnalysisListModel::removeAt(int index)
 {
   if (isViewshed(index))
@@ -69,6 +84,9 @@ void CombinedAnalysisListModel::removeAt(int index)
     m_lineOfSightModel->removeAt(lineOfSightIndex(index));
 }
 
+/*!
+  \brief Returns the location used by the analysis at \a index.
+ */
 Point CombinedAnalysisListModel::locationAt(int index)
 {
   Analysis* analysis = nullptr;
@@ -125,11 +143,17 @@ Point CombinedAnalysisListModel::locationAt(int index)
   }
 }
 
+/*!
+  \brief Returns the number of rows in the combined list.
+ */
 int CombinedAnalysisListModel::rowCount(const QModelIndex&) const
 {
   return viewshedCount() + lineOfSightCount();
 }
 
+/*!
+  \brief Returns the data stored in the combined list at \a index under the \l CombinedAnalysisRoles \a role.
+ */
 QVariant CombinedAnalysisListModel::data(const QModelIndex& index, int role) const
 {
   if (index.row() < 0 || index.row() >= rowCount(index))
@@ -167,6 +191,11 @@ QVariant CombinedAnalysisListModel::data(const QModelIndex& index, int role) con
   return QVariant();
 }
 
+/*!
+  \brief Sets the data stored in the combined list at \a index under the \l CombinedAnalysisRoles \a role to \a value.
+
+  \note The  only editable role is \c CombinedAnalysisRoles::AnalysisVisibleRole.
+ */
 bool CombinedAnalysisListModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
   if (index.row() < 0 || index.row() >= rowCount(index))
@@ -184,17 +213,26 @@ bool CombinedAnalysisListModel::setData(const QModelIndex& index, const QVariant
   return false;
 }
 
+/*!
+  \internal
+ */
 QHash<int, QByteArray> CombinedAnalysisListModel::roleNames() const
 {
   return m_roles;
 }
 
+/*!
+  \internal
+ */
 void CombinedAnalysisListModel::handleUnderlyingDataChanged()
 {
   beginResetModel();
   endResetModel();
 }
 
+/*!
+  \internal
+ */
 void CombinedAnalysisListModel::connectAnalysisListModelSignals(QAbstractItemModel* analysisList)
 {
   if (analysisList == nullptr)
@@ -206,31 +244,49 @@ void CombinedAnalysisListModel::connectAnalysisListModelSignals(QAbstractItemMod
   connect(analysisList, &QAbstractItemModel::rowsRemoved, this, &CombinedAnalysisListModel::handleUnderlyingDataChanged);
 }
 
+/*!
+  \internal
+ */
 int CombinedAnalysisListModel::viewshedCount() const
 {
   return m_viewshedModel == nullptr ? 0 : m_viewshedModel->rowCount();
 }
 
+/*!
+  \internal
+ */
 int CombinedAnalysisListModel::lineOfSightCount() const
 {
   return m_lineOfSightModel == nullptr ? 0 : m_lineOfSightModel->rowCount();
 }
 
+/*!
+  \internal
+ */
 bool CombinedAnalysisListModel::isViewshed(int row) const
 {
   return row < viewshedCount() && m_viewshedModel;
 }
 
+/*!
+  \internal
+ */
 bool CombinedAnalysisListModel::isLineOfSight(int row) const
 {
   return row < (lineOfSightCount() + viewshedCount()) && m_lineOfSightModel;
 }
 
+/*!
+  \internal
+ */
 int CombinedAnalysisListModel::viewshedIndex(int row) const
 {
   return row;
 }
 
+/*!
+  \internal
+ */
 int CombinedAnalysisListModel::lineOfSightIndex(int row) const
 {
   return row - viewshedCount();

@@ -13,6 +13,8 @@
 #ifndef COMBINEDANALYSISLISTMODEL_H
 #define COMBINEDANALYSISLISTMODEL_H
 
+#include "Point.h"
+
 #include <QAbstractListModel>
 
 namespace Esri
@@ -22,9 +24,10 @@ namespace ArcGISRuntime
   class Analysis;
   class AnalysisListModel;
   class AnalysisOverlay;
-  class SceneView;
 }
 }
+
+class ViewshedListModel;
 
 class CombinedAnalysisListModel : public QAbstractListModel
 {
@@ -42,10 +45,11 @@ public:
   explicit CombinedAnalysisListModel(QObject* parent = nullptr);
   ~CombinedAnalysisListModel();
 
-  void setSceneView(Esri::ArcGISRuntime::SceneView* sceneView);
+  void setViewshedModel(QAbstractItemModel* viewshedModel);
+  void setLineOfSightModel(Esri::ArcGISRuntime::AnalysisListModel* lineOfSightModel);
 
-  Esri::ArcGISRuntime::Analysis* analysisAt(int row) const;
-  Esri::ArcGISRuntime::AnalysisOverlay* overlayAt(int row) const;
+  void removeAt(int index);
+  Esri::ArcGISRuntime::Point locationAt(int index);
 
   int rowCount(const QModelIndex &parent) const override;
   QVariant data(const QModelIndex &index, int role) const override;
@@ -58,10 +62,13 @@ private slots:
   void handleUnderlyingDataChanged();
 
 private:
-  void connectAnalysisListModelSignals(Esri::ArcGISRuntime::AnalysisListModel* analysisList);
+  void connectAnalysisListModelSignals(QAbstractItemModel* analysisList);
+  int viewshedCount() const;
+  int lineOfSightCount() const;
 
-  QHash<int, QByteArray>                  m_roles;
-  Esri::ArcGISRuntime::SceneView* m_sceneView = nullptr;
+  QHash<int, QByteArray> m_roles;
+  ViewshedListModel* m_viewshedModel = nullptr;
+  Esri::ArcGISRuntime::AnalysisListModel* m_lineOfSightModel = nullptr;
 };
 
 #endif // COMBINEDANALYSISLISTMODEL_H

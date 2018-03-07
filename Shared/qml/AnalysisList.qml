@@ -53,8 +53,9 @@ DsaPanel {
             width: parent.width
             height: 40 * scaleFactor
             itemChecked: analysisVisible
-
-            imageVisible: false
+            imageUrl: imageSourceForAnalysisType(analysisType)
+            imageVisible: true
+            imageFrameVisible: false
             menuIconVisible: true
             mainText: analysisName
             onItemCheckedChanged: {
@@ -119,22 +120,15 @@ DsaPanel {
                 }
             }
 
-            function imageSourceForAnalysisType(i){
-                var geomType = toolController.layerGeometryType(i);
-                switch (geomType) {
-                case TableOfContentsController.Unknown:
-                    return "";
-                case TableOfContentsController.Points:
-                    return DsaResources.iconPoint;
-                case TableOfContentsController.Polylines:
-                    return DsaResources.iconPolyline;
-                case TableOfContentsController.Polygons:
-                    return DsaResources.iconPolygon;
-                case TableOfContentsController.Raster:
-                    return DsaResources.iconRaster;
-                default:
-                    return "";
+            function imageSourceForAnalysisType(analysisType){
+
+                if (analysisType === "lineOfSight") {
+                    return DsaResources.iconLineOfSight;
+                } else if (analysisType === "viewshed") {
+                    return DsaResources.iconViewshed;
                 }
+
+                return "";
             }
         }
     }

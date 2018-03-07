@@ -11,11 +11,18 @@
 //
 
 #include "CombinedAnalysisListModel.h"
+#include "ViewshedListModel.h"
+#include "Viewshed360.h"
 
 #include "AnalysisListModel.h"
 #include "AnalysisOverlay.h"
 #include "AnalysisOverlayListModel.h"
+#include "GeoElementLineOfSight.h"
+#include "GeoElementViewshed.h"
+#include "LocationLineOfSight.h"
+#include "LocationViewshed.h"
 #include "SceneView.h"
+#include "Viewshed.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -31,148 +38,102 @@ CombinedAnalysisListModel::~CombinedAnalysisListModel()
 {
 }
 
-void CombinedAnalysisListModel::setSceneView(SceneView* sceneView)
+void CombinedAnalysisListModel::setViewshedModel(QAbstractItemModel* viewshedModel)
 {
-  beginResetModel();
-  m_sceneView = sceneView;
-  endResetModel();
-
-  AnalysisOverlayListModel* overlays = m_sceneView->analysisOverlays();
-  if (overlays == nullptr)
+  if (viewshedModel == nullptr)
     return;
 
-  connect(overlays, &AnalysisOverlayListModel::dataChanged, this, &CombinedAnalysisListModel::handleUnderlyingDataChanged);
-  connect(overlays, &AnalysisOverlayListModel::modelReset, this, &CombinedAnalysisListModel::handleUnderlyingDataChanged);
-  connect(overlays, &AnalysisOverlayListModel::rowsInserted, this, &CombinedAnalysisListModel::handleUnderlyingDataChanged);
-  connect(overlays, &AnalysisOverlayListModel::rowsRemoved, this, &CombinedAnalysisListModel::handleUnderlyingDataChanged);
+  auto castModel = qobject_cast<ViewshedListModel*>(viewshedModel);
+  if (castModel == nullptr)
+    return;
 
-  connect(overlays, &AnalysisOverlayListModel::analysisOverlayAdded, this, [this, overlays](int index)
-  {
-    AnalysisOverlay* overlay = overlays->at(index);
-    if (overlay == nullptr)
-      return;
-
-    connectAnalysisListModelSignals(overlay->analyses());
-  });
-
-  const int analysisCount = overlays->rowCount();
-  for (int i = 0; i < analysisCount; ++i)
-  {
-    AnalysisOverlay* overlay = overlays->at(i);
-    if (overlay == nullptr)
-      continue;
-
-    connectAnalysisListModelSignals(overlay->analyses());
-  }
+  beginResetModel();
+  m_viewshedModel = castModel;
+  connectAnalysisListModelSignals(m_viewshedModel);
+  endResetModel();
 }
 
-Analysis* CombinedAnalysisListModel::analysisAt(int row) const
+void CombinedAnalysisListModel::setLineOfSightModel(AnalysisListModel* lineOfSightModel)
 {
-  if (m_sceneView == nullptr)
-    return nullptr;
-
-  AnalysisOverlayListModel* overlays = m_sceneView->analysisOverlays();
-  if (overlays == nullptr)
-    return nullptr;
-
-  const int overlaysCount = overlays->rowCount();
-  int currentRow = 0;
-  for (int i = 0; i < overlaysCount; ++i)
-  {
-    AnalysisOverlay* overlay = overlays->at(i);
-    if (overlay == nullptr)
-      continue;
-
-    AnalysisListModel* analysisList = overlay->analyses();
-    if (analysisList == nullptr)
-      continue;
-
-    const int analysisCount = analysisList->rowCount();
-    for (int j = 0; j < analysisCount; ++j)
-    {
-      Analysis* analysis = analysisList->at(j);
-      if (!analysis)
-        continue;
-
-      if (currentRow == row)
-        return analysis;
-
-      currentRow++;
-    }
-  }
-
-  return nullptr;
+  beginResetModel();
+  m_lineOfSightModel = lineOfSightModel;
+  connectAnalysisListModelSignals(m_lineOfSightModel);
+  endResetModel();
 }
 
-AnalysisOverlay* CombinedAnalysisListModel::overlayAt(int row) const
+void CombinedAnalysisListModel::removeAt(int index)
 {
-  if (m_sceneView == nullptr)
-    return nullptr;
+  const int viewshedMaxIndex = viewshedCount();
+  const int lineOfSightMaxIndex = viewshedMaxIndex + lineOfSightCount();
 
-  AnalysisOverlayListModel* overlays = m_sceneView->analysisOverlays();
-  if (overlays == nullptr)
-    return nullptr;
+  if (index < viewshedMaxIndex && m_viewshedModel)
+    m_viewshedModel->removeAt(index);
+  else if (index < lineOfSightMaxIndex && m_lineOfSightModel)
+    m_lineOfSightModel->removeAt(index - viewshedMaxIndex);
+}
 
-  const int overlaysCount = overlays->rowCount();
-  int currentRow = 0;
-  for (int i = 0; i < overlaysCount; ++i)
+Point CombinedAnalysisListModel::locationAt(int index)
+{
+  const int viewshedMaxIndex = viewshedCount();
+  const int lineOfSightMaxIndex = viewshedMaxIndex + lineOfSightCount();
+
+  Analysis* analysis = nullptr;
+  if (index < viewshedMaxIndex && m_viewshedModel)
   {
-    AnalysisOverlay* overlay = overlays->at(i);
-    if (overlay == nullptr)
-      continue;
-
-    AnalysisListModel* analysisList = overlay->analyses();
-    if (analysisList == nullptr)
-      continue;
-
-    const int analysisCount = analysisList->rowCount();
-    for (int j = 0; j < analysisCount; ++j)
-    {
-      Analysis* analysis = analysisList->at(j);
-      if (!analysis)
-        continue;
-
-      if (currentRow == row)
-        return overlay;
-
-      currentRow++;
-    }
+    Viewshed360* viewshed360 =  m_viewshedModel->at(index);
+    if (viewshed360 != nullptr)
+      analysis = viewshed360->viewshed();
+  }
+  else if (index < lineOfSightMaxIndex && m_lineOfSightModel)
+  {
+    analysis = m_lineOfSightModel->at(index - viewshedMaxIndex);
   }
 
-  return nullptr;
+  if (analysis == nullptr)
+    return Point();
+
+  switch (analysis->analysisType())
+  {
+  case AnalysisType::LocationViewshed:
+  {
+    LocationViewshed* locationViewshed = qobject_cast<LocationViewshed*>(analysis);
+    if (locationViewshed == nullptr)
+      return Point();
+
+    return locationViewshed->location();
+  }
+  case AnalysisType::LocationLineOfSight:
+  {
+    LocationLineOfSight* locationLineOfSight = qobject_cast<LocationLineOfSight*>(analysis);
+    if (locationLineOfSight == nullptr)
+      return Point();
+
+    return locationLineOfSight->targetLocation();
+  }
+  case AnalysisType::GeoElementViewshed:
+  {
+    GeoElementViewshed* geoElementViewshed = qobject_cast<GeoElementViewshed*>(analysis);
+    if (geoElementViewshed == nullptr)
+      return Point();
+
+    return geoElementViewshed->geoElement()->geometry().extent().center();
+  }
+  case AnalysisType::GeoElementLineOfSight:
+  {
+    GeoElementLineOfSight* geoElementLineOfSight = qobject_cast<GeoElementLineOfSight*>(analysis);
+    if (geoElementLineOfSight == nullptr)
+      return Point();
+
+    return geoElementLineOfSight->targetGeoElement()->geometry().extent().center();
+  }
+  default:
+    return Point();
+  }
 }
 
 int CombinedAnalysisListModel::rowCount(const QModelIndex&) const
 {
-  if (m_sceneView == nullptr)
-    return 0;
-
-  AnalysisOverlayListModel* overlays = m_sceneView->analysisOverlays();
-  if (overlays == nullptr)
-    return 0;
-
-  const int overlaysCount = overlays->rowCount();
-  int totalAnalysis = 0;
-  for (int i = 0; i < overlaysCount; ++i)
-  {
-    AnalysisOverlay* overlay = overlays->at(i);
-    if (overlay == nullptr)
-      continue;
-
-    AnalysisListModel* analysisList = overlay->analyses();
-    if (analysisList == nullptr)
-      continue;
-
-    const int analysisCount = analysisList->rowCount();
-    for (int j = 0; j < analysisCount; ++j)
-    {
-      Analysis* analysis = analysisList->at(j);
-      if (analysis)
-        totalAnalysis++;
-    }
-  }
-
-  return totalAnalysis;
+  return viewshedCount() + lineOfSightCount();
 }
 
 QVariant CombinedAnalysisListModel::data(const QModelIndex& index, int role) const
@@ -180,20 +141,36 @@ QVariant CombinedAnalysisListModel::data(const QModelIndex& index, int role) con
   if (index.row() < 0 || index.row() >= rowCount(index))
     return QVariant();
 
-  Analysis* analysis = analysisAt(index.row());
-  if (analysis == nullptr)
-    return QVariant();
+  const int viewshedMaxIndex = viewshedCount();
+  const int lineOfSightMaxIndex = viewshedMaxIndex + lineOfSightCount();
 
-  switch (role)
+  if (index.row() < viewshedMaxIndex && m_viewshedModel)
   {
-  case AnalysisNameRole:
-    return QString("Analysis %1").arg(QString::number(index.row()));
-  case AnalysisVisibleRole:
-    return analysis->isVisible();
-  case AnalysisTypeRole:
-    return QVariant::fromValue(analysis->analysisType());
-  default:
-    break;
+    switch (role)
+    {
+    case AnalysisNameRole:
+      return m_viewshedModel->data(m_viewshedModel->index(index.row(), 0), ViewshedListModel::ViewshedRoles::ViewshedNameRole);
+    case AnalysisVisibleRole:
+      return m_viewshedModel->data(m_viewshedModel->index(index.row(), 0), ViewshedListModel::ViewshedRoles::ViewshedVisibleRole);
+    case AnalysisTypeRole:
+      return QStringLiteral("viewshed");
+    default:
+      break;
+    }
+  }
+  else if (index.row() < lineOfSightMaxIndex && m_lineOfSightModel)
+  {
+    switch (role)
+    {
+    case AnalysisNameRole:
+      return QString("Line of Sight %1").arg(QString::number(index.row() - viewshedMaxIndex));
+    case AnalysisVisibleRole:
+      return m_lineOfSightModel->data(m_lineOfSightModel->index(index.row() - viewshedMaxIndex, 0), AnalysisListModel::AnalysisRoles::AnalysisVisibleRole);
+    case AnalysisTypeRole:
+      return QStringLiteral("lineOfSight");
+    default:
+      break;
+    }
   }
 
   return QVariant();
@@ -208,13 +185,15 @@ bool CombinedAnalysisListModel::setData(const QModelIndex& index, const QVariant
   if (analysisRole != CombinedAnalysisRoles::AnalysisVisibleRole)
     return false;
 
-  Analysis* analysis = analysisAt(index.row());
-  if (analysis == nullptr)
-    return false;
+  const int viewshedMaxIndex = viewshedCount();
+  const int lineOfSightMaxIndex = viewshedMaxIndex + lineOfSightCount();
 
-  analysis->setVisible(value.toBool());
+  if (index.row() < viewshedMaxIndex && m_viewshedModel)
+   return m_viewshedModel->setData(m_viewshedModel->index(index.row(), 0), value, ViewshedListModel::ViewshedRoles::ViewshedVisibleRole);
+  else if (index.row() < lineOfSightMaxIndex && m_lineOfSightModel)
+      return m_lineOfSightModel->setData(m_lineOfSightModel->index(index.row() - viewshedMaxIndex, 0), value, AnalysisListModel::AnalysisRoles::AnalysisVisibleRole);
 
-  return true;
+  return false;
 }
 
 QHash<int, QByteArray> CombinedAnalysisListModel::roleNames() const
@@ -228,13 +207,23 @@ void CombinedAnalysisListModel::handleUnderlyingDataChanged()
   endResetModel();
 }
 
-void CombinedAnalysisListModel::connectAnalysisListModelSignals(AnalysisListModel* analysisList)
+void CombinedAnalysisListModel::connectAnalysisListModelSignals(QAbstractItemModel* analysisList)
 {
   if (analysisList == nullptr)
     return;
 
-  connect(analysisList, &AnalysisListModel::dataChanged, this, &CombinedAnalysisListModel::handleUnderlyingDataChanged);
-  connect(analysisList, &AnalysisListModel::modelReset, this, &CombinedAnalysisListModel::handleUnderlyingDataChanged);
-  connect(analysisList, &AnalysisListModel::rowsInserted, this, &CombinedAnalysisListModel::handleUnderlyingDataChanged);
-  connect(analysisList, &AnalysisListModel::rowsRemoved, this, &CombinedAnalysisListModel::handleUnderlyingDataChanged);
+  connect(analysisList, &QAbstractItemModel::dataChanged, this, &CombinedAnalysisListModel::handleUnderlyingDataChanged);
+  connect(analysisList, &QAbstractItemModel::modelReset, this, &CombinedAnalysisListModel::handleUnderlyingDataChanged);
+  connect(analysisList, &QAbstractItemModel::rowsInserted, this, &CombinedAnalysisListModel::handleUnderlyingDataChanged);
+  connect(analysisList, &QAbstractItemModel::rowsRemoved, this, &CombinedAnalysisListModel::handleUnderlyingDataChanged);
+}
+
+int CombinedAnalysisListModel::viewshedCount() const
+{
+  return m_viewshedModel == nullptr ? 0 : m_viewshedModel->rowCount();
+}
+
+int CombinedAnalysisListModel::lineOfSightCount() const
+{
+  return m_lineOfSightModel == nullptr ? 0 : m_lineOfSightModel->rowCount();
 }

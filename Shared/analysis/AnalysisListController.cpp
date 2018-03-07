@@ -12,6 +12,8 @@
 
 #include "AnalysisListController.h"
 #include "CombinedAnalysisListModel.h"
+#include "ViewshedController.h"
+#include "LineOfSightController.h"
 
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
@@ -55,65 +57,12 @@ QAbstractItemModel* AnalysisListController::analysisList() const
 
 void AnalysisListController::removeAt(int index)
 {
-  Analysis* analysis = m_analysisList->analysisAt(index);
-  if (analysis == nullptr)
-    return;
-
-  AnalysisOverlay* overlay = m_analysisList->overlayAt(index);
-  if (overlay == nullptr)
-    return;
-
-  overlay->analyses()->removeOne(analysis);
-  delete analysis;
+  m_analysisList->removeAt(index);
 }
 
 void AnalysisListController::zoomTo(int index)
 {
-  Analysis* analysis = m_analysisList->analysisAt(index);
-  if (analysis == nullptr)
-    return;
-
-  switch (analysis->analysisType())
-  {
-  case AnalysisType::LocationViewshed:
-  {
-    LocationViewshed* locationViewshed = qobject_cast<LocationViewshed*>(analysis);
-    if (locationViewshed == nullptr)
-      return;
-
-    zoomToLocation(locationViewshed->location());
-    break;
-  }
-  case AnalysisType::LocationLineOfSight:
-  {
-    LocationLineOfSight* locationLineOfSight = qobject_cast<LocationLineOfSight*>(analysis);
-    if (locationLineOfSight == nullptr)
-      return;
-
-    zoomToLocation(locationLineOfSight->targetLocation());
-    break;
-  }
-  case AnalysisType::GeoElementViewshed:
-  {
-    GeoElementViewshed* geoElementViewshed = qobject_cast<GeoElementViewshed*>(analysis);
-    if (geoElementViewshed == nullptr)
-      return;
-
-    zoomToLocation(geoElementViewshed->geoElement()->geometry().extent().center());
-    break;
-  }
-  case AnalysisType::GeoElementLineOfSight:
-  {
-    GeoElementLineOfSight* geoElementLineOfSight = qobject_cast<GeoElementLineOfSight*>(analysis);
-    if (geoElementLineOfSight == nullptr)
-      return;
-
-    zoomToLocation(geoElementLineOfSight->targetGeoElement()->geometry().extent().center());
-    break;
-  }
-  default:
-    return;
-  }
+  zoomToLocation(m_analysisList->locationAt(index));
 }
 
 void AnalysisListController::onGeoViewChanged(GeoView* geoView)
@@ -126,9 +75,22 @@ void AnalysisListController::onGeoViewChanged(GeoView* geoView)
     return;
 
   m_sceneView = sceneView;
-  m_analysisList->setSceneView(sceneView);
 
-  emit analysisListChanged();
+  auto handleAnalysisOverlaysChanged = [this]()
+  {
+    ViewshedController* viewshed = Toolkit::ToolManager::instance().tool<ViewshedController>();
+    if (viewshed != nullptr)
+      m_analysisList->setViewshedModel(viewshed->viewsheds());
+
+    LineOfSightController* lineOfSight = Toolkit::ToolManager::instance().tool<LineOfSightController>();
+    if (lineOfSight != nullptr)
+      m_analysisList->setLineOfSightModel(lineOfSight->lineOfSightOverlay()->analyses());
+
+    emit analysisListChanged();
+  };
+
+  connect(m_sceneView->analysisOverlays(), &AnalysisOverlayListModel::analysisOverlayAdded, this, handleAnalysisOverlaysChanged);
+  handleAnalysisOverlaysChanged();
 }
 
 void AnalysisListController::zoomToLocation(const Point& point)

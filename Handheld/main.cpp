@@ -98,11 +98,6 @@ int main(int argc, char *argv[])
 #endif
   QSettings::setDefaultFormat(kSettingsFormat);
 
-#ifdef Q_OS_WIN
-  // Force usage of OpenGL ES through ANGLE on Windows
-  QCoreApplication::setAttribute(Qt::AA_UseOpenGLES);
-#endif
-
   // Before initializing ArcGIS Runtime, first set the
   // ArcGIS Runtime license setting required for your application.
 

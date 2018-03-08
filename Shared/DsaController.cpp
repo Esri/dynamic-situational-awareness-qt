@@ -59,7 +59,8 @@ DsaController::DsaController(QObject* parent):
   connect(m_scene, &Scene::errorOccurred, this, &DsaController::onError);
 
   // set an elevation source
-  ArcGISTiledElevationSource* source = new ArcGISTiledElevationSource(QUrl(m_dsaSettings["DefaultElevationSource"].toString()), this);
+  TileCache* tileCache = new TileCache(m_dsaSettings["DefaultElevationSource"].toString(), this);
+  ArcGISTiledElevationSource* source = new ArcGISTiledElevationSource(tileCache, this);
   connect(source, &ArcGISTiledElevationSource::errorOccurred, this, &DsaController::onError);
   m_scene->baseSurface()->elevationSources()->append(source);
 }

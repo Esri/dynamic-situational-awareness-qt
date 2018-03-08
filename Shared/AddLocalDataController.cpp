@@ -32,6 +32,7 @@
 #include "GeoPackage.h"
 #include "GeoPackageRaster.h"
 #include "GeoPackageFeatureTable.h"
+#include "TileCache.h"
 
 #include "ToolResourceProvider.h"
 #include "ToolManager.h"
@@ -678,7 +679,8 @@ void AddLocalDataController::createSceneLayer(const QString& path, int layerInde
 */
 void AddLocalDataController::createTiledLayer(const QString& path, int layerIndex, bool visible, bool autoAdd)
 {
-  ArcGISTiledLayer* tiledLayer = new ArcGISTiledLayer(QUrl(path), this);
+  TileCache* tileCache = new TileCache(path, this);
+  ArcGISTiledLayer* tiledLayer = new ArcGISTiledLayer(tileCache, this);
   tiledLayer->setVisible(visible);
   connect(tiledLayer, &ArcGISTiledLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
@@ -710,7 +712,9 @@ void AddLocalDataController::createTiledLayer(const QString& path, int layerInde
  \endlist
 */void AddLocalDataController::createVectorTiledLayer(const QString& path, int layerIndex, bool visible, bool autoAdd)
 {
-  ArcGISVectorTiledLayer* vectorTiledLayer = new ArcGISVectorTiledLayer(QUrl(path), this);
+  VectorTileCache* tileCache = new VectorTileCache(path, this);
+  connect(tileCache, &VectorTileCache::errorOccurred, this, &AddLocalDataController::errorOccurred);
+  ArcGISVectorTiledLayer* vectorTiledLayer = new ArcGISVectorTiledLayer(tileCache, this);
   vectorTiledLayer->setVisible(visible);
   connect(vectorTiledLayer, &ArcGISVectorTiledLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
 

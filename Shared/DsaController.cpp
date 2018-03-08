@@ -15,19 +15,6 @@
 #include "Scene.h"
 #include "ElevationSource.h"
 #include "GeoView.h"
-#include "FeatureLayer.h"
-#include "RasterLayer.h"
-#include "Geodatabase.h"
-#include "GeodatabaseFeatureTable.h"
-#include "FeatureTable.h"
-#include "GeoPackage.h"
-#include "GeoPackageFeatureTable.h"
-#include "GeoPackageRaster.h"
-#include "ShapefileFeatureTable.h"
-#include "ArcGISSceneLayer.h"
-#include "ArcGISTiledLayer.h"
-#include "ArcGISVectorTiledLayer.h"
-#include "Raster.h"
 
 // Toolkit
 #include "AbstractTool.h"
@@ -46,6 +33,7 @@
 
 // Qt
 #include <QDir>
+#include <QFileInfo>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QSettings>
@@ -72,7 +60,8 @@ DsaController::DsaController(QObject* parent):
   connect(m_scene, &Scene::errorOccurred, this, &DsaController::onError);
 
   // set an elevation source
-  ArcGISTiledElevationSource* source = new ArcGISTiledElevationSource(QUrl(m_dsaSettings["DefaultElevationSource"].toString()), this);
+  TileCache* tileCache = new TileCache(m_dsaSettings["DefaultElevationSource"].toString(), this);
+  ArcGISTiledElevationSource* source = new ArcGISTiledElevationSource(tileCache, this);
   connect(source, &ArcGISTiledElevationSource::errorOccurred, this, &DsaController::onError);
   m_scene->baseSurface()->elevationSources()->append(source);
 }

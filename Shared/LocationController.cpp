@@ -156,7 +156,7 @@ void LocationController::setProperties(const QVariantMap& properties)
 {
   bool simulate = QString::compare(properties[SIMULATE_LOCATION_PROPERTYNAME].toString(), QString("true"), Qt::CaseInsensitive) == 0;
   setSimulated(simulate);
-  setGpxFilePath(QUrl::fromLocalFile(properties[GPX_FILE_PROPERTYNAME].toString()));
+  setGpxFilePath(properties[GPX_FILE_PROPERTYNAME].toString());
   setIconDataPath(properties[RESOURCE_DIRECTORY_PROPERTYNAME].toString());
 }
 
@@ -221,7 +221,7 @@ void LocationController::setSimulated(bool simulated)
 
   if (!m_gpxFilePath.isEmpty() && dynamic_cast<GPXLocationSimulator*>(m_positionSource))
   {
-    static_cast<GPXLocationSimulator*>(m_positionSource)->setGpxFile(m_gpxFilePath.toLocalFile());
+    static_cast<GPXLocationSimulator*>(m_positionSource)->setGpxFile(m_gpxFilePath);
   }
 
   if (isEnabled())
@@ -246,30 +246,25 @@ LocationDisplay3d* LocationController::locationDisplay() const
   return m_locationDisplay3d;
 }
 
-QUrl LocationController::gpxFilePath() const
+QString LocationController::gpxFilePath() const
 {
   return m_gpxFilePath;
 }
 
-QString LocationController::gpxFilePathAsString() const
-{
-  return m_gpxFilePath.toLocalFile();
-}
-
-void LocationController::setGpxFilePath(const QUrl& gpxFilePath)
+void LocationController::setGpxFilePath(const QString& gpxFilePath)
 {
   if (m_gpxFilePath == gpxFilePath)
     return;
 
-  if (!QFile::exists(gpxFilePath.toLocalFile()))
+  if (!QFile::exists(gpxFilePath))
   {
-    emit toolErrorOccurred(QString("GPX File missing: %1").arg(gpxFilePath.fileName()), QString("Could not find %1").arg(gpxFilePath.toLocalFile()));
+    emit toolErrorOccurred(QStringLiteral("GPX File missing"), QString("Could not find %1").arg(gpxFilePath));
     return;
   }
 
   initPositionInfoSource(true); // ignore m_simulated, we need to init the simulator now
 
-  static_cast<GPXLocationSimulator*>(m_positionSource)->setGpxFile(gpxFilePath.toLocalFile());
+  static_cast<GPXLocationSimulator*>(m_positionSource)->setGpxFile(gpxFilePath);
 
   if (isEnabled())
   {
@@ -280,7 +275,7 @@ void LocationController::setGpxFilePath(const QUrl& gpxFilePath)
 
   m_gpxFilePath = gpxFilePath;
   emit gpxFilePathChanged();
-  emit propertyChanged(GPX_FILE_PROPERTYNAME, m_gpxFilePath.toLocalFile());
+  emit propertyChanged(GPX_FILE_PROPERTYNAME, m_gpxFilePath);
 }
 
 void LocationController::setRelativeHeadingSceneView(SceneQuickView* sceneView)

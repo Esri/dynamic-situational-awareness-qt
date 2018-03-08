@@ -13,13 +13,10 @@
 #ifndef DSACONTROLLER_H
 #define DSACONTROLLER_H
 
-#include <QAbstractListModel>
-#include <QFile>
 #include <QObject>
 #include <QSettings>
 #include <QStringList>
 #include <QVariantMap>
-#include <QUrl>
 
 namespace Esri
 {

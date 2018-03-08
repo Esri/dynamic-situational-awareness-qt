@@ -13,10 +13,10 @@
 #ifndef LOCATIONCONTROLLER_H
 #define LOCATIONCONTROLLER_H
 
-#include <QUrl>
-
 #include "AbstractTool.h"
 #include "Point.h"
+
+#include <QString>
 
 namespace Esri {
 namespace ArcGISRuntime
@@ -37,8 +37,7 @@ class LocationController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
   Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled NOTIFY enabledChanged)
   Q_PROPERTY(bool locationVisible READ isLocationVisible WRITE setLocationVisible NOTIFY locationVisibleChanged)
   Q_PROPERTY(bool simulated READ isSimulated WRITE setSimulated NOTIFY simulatedChanged)
-  Q_PROPERTY(QUrl gpxFilePath READ gpxFilePath WRITE setGpxFilePath NOTIFY gpxFilePathChanged)
-  Q_PROPERTY(QString gpxFilePathAsString READ gpxFilePathAsString NOTIFY gpxFilePathChanged)
+  Q_PROPERTY(QString gpxFilePath READ gpxFilePath WRITE setGpxFilePath NOTIFY gpxFilePathChanged)
 
 public:
   static const QString SIMULATE_LOCATION_PROPERTYNAME;
@@ -64,14 +63,11 @@ public:
 
   LocationDisplay3d* locationDisplay() const;
 
-  QUrl gpxFilePath() const;
-  void setGpxFilePath(const QUrl& gpxFilePath);
+  QString gpxFilePath() const;
+  void setGpxFilePath(const QString& gpxFilePath);
 
   QString iconDataPath() const { return m_iconDataPath; }
   void setIconDataPath(const QString& dataPath);
-
-  // removes any file:// scheme if present
-  QString gpxFilePathAsString() const;
 
   // if using GraphicsRenderingMode::Dynamic for rendering, then we need to massage
   // the heading value to make sure it's correct when the scene is rotated.
@@ -109,7 +105,7 @@ private:
   double m_lastViewHeading = 0.0;
   double m_lastKnownHeading = 0.0;
   Esri::ArcGISRuntime::Point m_currentLocation;
-  QUrl m_gpxFilePath;
+  QString m_gpxFilePath;
   QString m_iconDataPath;
 };
 

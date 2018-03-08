@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
   // Register Toolkit Component Types
   ArcGISRuntimeToolkit::registerToolkitTypes();
 
-  // Intialize application view
+  // Initialize application view
   QQuickView view;
   view.setResizeMode(QQuickView::SizeRootObjectToView);
 

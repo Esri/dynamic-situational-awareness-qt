@@ -13,12 +13,10 @@
 #ifndef NAVIGATIONCONTROLLER_H
 #define NAVIGATIONCONTROLLER_H
 
-#include <QUrl>
-#include <QScreen>
-#include <QUuid>
-
 #include "AbstractTool.h"
 #include "Point.h"
+
+#include <QUuid>
 
 namespace Esri {
 namespace ArcGISRuntime

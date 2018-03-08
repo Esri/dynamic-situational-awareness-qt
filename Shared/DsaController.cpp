@@ -33,6 +33,7 @@
 
 // Qt
 #include <QDir>
+#include <QFileInfo>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QSettings>

@@ -13,8 +13,6 @@
 #ifndef FOLLOWPOSITIONCONTROLLER_H
 #define FOLLOWPOSITIONCONTROLLER_H
 
-#include <QUrl>
-
 #include "AbstractTool.h"
 
 namespace Esri {

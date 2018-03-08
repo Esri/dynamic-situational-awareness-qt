@@ -16,7 +16,6 @@
 #include <QObject>
 
 #include <QAbstractListModel>
-#include <QUrl>
 
 #include "AbstractTool.h"
 

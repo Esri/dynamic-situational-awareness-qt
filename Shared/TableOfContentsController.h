@@ -13,13 +13,10 @@
 #ifndef TABLEOFCONTENTSCONTROLLER_H
 #define TABLEOFCONTENTSCONTROLLER_H
 
-#include <QObject>
+#include "AbstractTool.h"
 
 #include <QAbstractItemModel>
 #include <QHash>
-#include <QUrl>
-
-#include "AbstractTool.h"
 
 namespace Esri
 {

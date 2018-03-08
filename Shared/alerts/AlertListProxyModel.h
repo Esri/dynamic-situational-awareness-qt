@@ -26,7 +26,7 @@ class AlertListProxyModel : public QSortFilterProxyModel
 
 public:
 
-  explicit AlertListProxyModel(AlertListModel* sourceModel, QObject* parent = nullptr);
+  AlertListProxyModel(AlertListModel* sourceModel, QObject* parent = nullptr);
   ~AlertListProxyModel();
 
   void applyFilter(const QList<AlertFilter*>& filters);

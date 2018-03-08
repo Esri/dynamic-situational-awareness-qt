@@ -69,7 +69,7 @@ AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
   // create file filter list
   m_fileFilterList = QStringList{allData(), rasterData(), geodatabaseData(),
       sceneLayerData(), tilePackageData(), shapefileData(), geopackageData()
-        /*, vectorTilePackageData()*/}; // VTPK is not supported in 3D
+      /*, vectorTilePackageData()*/}; // VTPK is not supported in 3D
   emit fileFilterListChanged();
   emit localDataModelChanged();
 }
@@ -277,15 +277,8 @@ void AddLocalDataController::addLayerFromPath(const QString& path, int layerInde
   QFileInfo fileInfo(path);
   if (!fileInfo.exists())
   {
-    const QUrl testUrl(path);
-    if (testUrl.isLocalFile())
-      fileInfo = QFileInfo(testUrl.toLocalFile());
-
-    if (!fileInfo.exists())
-    {
-      emit toolErrorOccurred(QString("Failed to add %1").arg(fileInfo.fileName()), QString("File not found %1").arg(path));
-      return;
-    }
+    emit toolErrorOccurred(QString("Failed to add %1").arg(fileInfo.fileName()), QString("File not found %1").arg(path));
+    return;
   }
 
   QStringList rasterExtensions{"img", "tif", "tiff", "i1", "dt0", "dt1", "dt2", "tc2", "geotiff", "hr1", "jpg", "jpeg", "jp2", "ntf", "png", "i21"};
@@ -652,7 +645,7 @@ void AddLocalDataController::createRasterLayer(const QString& path, int layerInd
 */
 void AddLocalDataController::createSceneLayer(const QString& path, int layerIndex, bool visible, bool autoAdd)
 {
-  ArcGISSceneLayer* sceneLayer = new ArcGISSceneLayer(QUrl(path), this);
+  ArcGISSceneLayer* sceneLayer = new ArcGISSceneLayer(QUrl::fromLocalFile(path), this);
   sceneLayer->setVisible(visible);
   connect(sceneLayer, &ArcGISSceneLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
 

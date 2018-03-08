@@ -252,7 +252,7 @@ void LayerCacheManager::layerToJson(Layer* layer)
   // Get Scene Layers
   auto sceneLayer = dynamic_cast<ArcGISSceneLayer*>(layer);
   if (sceneLayer)
-    layerPath = sceneLayer->url().toString();
+    layerPath = sceneLayer->url().toLocalFile();
 
 
   // Get TPKs

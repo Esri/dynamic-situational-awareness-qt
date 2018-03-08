@@ -252,18 +252,18 @@ void LayerCacheManager::layerToJson(Layer* layer)
   // Get Scene Layers
   auto sceneLayer = dynamic_cast<ArcGISSceneLayer*>(layer);
   if (sceneLayer)
-    layerPath = sceneLayer->url().toString();
+    layerPath = sceneLayer->url().toLocalFile();
 
 
   // Get TPKs
   auto tiledLayer = dynamic_cast<ArcGISTiledLayer*>(layer);
   if (tiledLayer)
-    layerPath = tiledLayer->url().toString();
+    layerPath = tiledLayer->tileCache() ? tiledLayer->tileCache()->path() : tiledLayer->url().toLocalFile();
 
   // Get VTPKs
   auto vectorTiledLayer = dynamic_cast<ArcGISVectorTiledLayer*>(layer);
   if (vectorTiledLayer)
-    layerPath = vectorTiledLayer->url().toString();
+    layerPath = vectorTiledLayer->vectorTileCache() ? vectorTiledLayer->vectorTileCache()->path() : vectorTiledLayer->url().toString();
 
   // add the layer to the layer list for caching
   QJsonObject layerJson;

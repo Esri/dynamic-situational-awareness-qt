@@ -29,11 +29,11 @@ class WithinAreaAlertConditionData : public AlertConditionData
   Q_OBJECT
 
 public:
-  explicit WithinAreaAlertConditionData(const QString& name,
-                                        AlertLevel level,
-                                        AlertSource* source,
-                                        AlertTarget* target,
-                                        QObject* parent = nullptr);
+  WithinAreaAlertConditionData(const QString& name,
+                               AlertLevel level,
+                               AlertSource* source,
+                               AlertTarget* target,
+                               QObject* parent = nullptr);
 
   ~WithinAreaAlertConditionData();
 

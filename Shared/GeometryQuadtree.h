@@ -33,10 +33,10 @@ class GeometryQuadtree : public QObject
   Q_OBJECT
 
 public:
-  explicit GeometryQuadtree(const Esri::ArcGISRuntime::Envelope& extent,
-                            const QList<Esri::ArcGISRuntime::GeoElement*>& geoElements,
-                            int maxLevels,
-                            QObject* parent = nullptr);
+  GeometryQuadtree(const Esri::ArcGISRuntime::Envelope& extent,
+                   const QList<Esri::ArcGISRuntime::GeoElement*>& geoElements,
+                   int maxLevels,
+                   QObject* parent = nullptr);
   ~GeometryQuadtree();
 
   void appendGeoElment(Esri::ArcGISRuntime::GeoElement* newGeoElement);

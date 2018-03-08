@@ -21,12 +21,12 @@ class WithinDistanceAlertConditionData : public AlertConditionData
   Q_OBJECT
 
 public:
-  explicit WithinDistanceAlertConditionData(const QString& name,
-                                            AlertLevel level,
-                                            AlertSource* source,
-                                            AlertTarget* target,
-                                            double distance,
-                                            QObject* parent = nullptr);
+  WithinDistanceAlertConditionData(const QString& name,
+                                   AlertLevel level,
+                                   AlertSource* source,
+                                   AlertTarget* target,
+                                   double distance,
+                                   QObject* parent = nullptr);
   ~WithinDistanceAlertConditionData();
 
   double distance() const;

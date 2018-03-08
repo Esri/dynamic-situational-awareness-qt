@@ -30,12 +30,12 @@ class AttributeEqualsAlertConditionData : public AlertConditionData
 
 public:
 
-  explicit AttributeEqualsAlertConditionData(const QString& name,
-                                             AlertLevel level,
-                                             AlertSource* source,
-                                             AlertTarget* target,
-                                             const QString& attributeName,
-                                             QObject* parent = nullptr);
+  AttributeEqualsAlertConditionData(const QString& name,
+                                    AlertLevel level,
+                                    AlertSource* source,
+                                    AlertTarget* target,
+                                    const QString& attributeName,
+                                    QObject* parent = nullptr);
 
   ~AttributeEqualsAlertConditionData();
 

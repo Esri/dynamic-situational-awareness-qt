@@ -29,7 +29,7 @@ class AlertConditionData : public QObject
   Q_OBJECT
 
 public:
-  explicit AlertConditionData(const QString& name, AlertLevel level, AlertSource* source, AlertTarget* target, QObject* parent = nullptr);
+  AlertConditionData(const QString& name, AlertLevel level, AlertSource* source, AlertTarget* target, QObject* parent = nullptr);
   ~AlertConditionData();
 
   AlertLevel level() const;

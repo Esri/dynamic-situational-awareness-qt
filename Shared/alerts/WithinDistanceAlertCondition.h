@@ -23,10 +23,10 @@ class WithinDistanceAlertCondition : public AlertCondition
 
 public:
 
-  explicit WithinDistanceAlertCondition(AlertLevel level,
-                                        const QString& name,
-                                        double distance,
-                                        QObject* parent = nullptr);
+  WithinDistanceAlertCondition(AlertLevel level,
+                               const QString& name,
+                               double distance,
+                               QObject* parent = nullptr);
 
   ~WithinDistanceAlertCondition();
 

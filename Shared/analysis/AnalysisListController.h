@@ -13,9 +13,12 @@
 #ifndef ANALYSISLISTCONTROLLER_H
 #define ANALYSISLISTCONTROLLER_H
 
-#include "AbstractTool.h"
 
+// Qt headers
 #include <QAbstractItemModel>
+
+// Other headers
+#include "AbstractTool.h"
 
 namespace Esri
 {
@@ -56,8 +59,8 @@ public slots:
 private:
   void zoomToLocation(const Esri::ArcGISRuntime::Point& location);
 
-  CombinedAnalysisListModel* m_analysisList;
-  Esri::ArcGISRuntime::SceneView* m_sceneView;
+  CombinedAnalysisListModel* m_analysisList = nullptr;
+  Esri::ArcGISRuntime::SceneView* m_sceneView = nullptr;
 };
 
 #endif // ANALYSISLISTCONTROLLER_H

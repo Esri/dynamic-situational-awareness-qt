@@ -10,36 +10,37 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "AddLocalDataController.h"
+
+// qt_cpp headers
+#include "ArcGISSceneLayer.h"
+#include "ArcGISTiledElevationSource.h"
+#include "ArcGISTiledLayer.h"
+#include "ArcGISVectorTiledLayer.h"
+#include "ElevationSource.h"
+#include "FeatureLayer.h"
+#include "GeoPackage.h"
+#include "GeoPackageFeatureTable.h"
+#include "GeoPackageRaster.h"
+#include "Geodatabase.h"
+#include "GeodatabaseFeatureTable.h"
+#include "LayerListModel.h"
+#include "Raster.h"
+#include "RasterElevationSource.h"
+#include "RasterLayer.h"
+#include "Scene.h"
+#include "ShapefileFeatureTable.h"
+#include "TileCache.h"
+
+// Qt headers
 #include <QDir>
 #include <QFileInfo>
 
-#include "ArcGISTiledLayer.h"
-#include "RasterLayer.h"
-#include "Raster.h"
-#include "FeatureLayer.h"
-#include "GeodatabaseFeatureTable.h"
-#include "ArcGISVectorTiledLayer.h"
-#include "ArcGISSceneLayer.h"
-#include "Geodatabase.h"
-#include "ElevationSource.h"
-#include "RasterElevationSource.h"
-#include "ArcGISTiledElevationSource.h"
-#include "LayerListModel.h"
-#include "Scene.h"
-#include "ShapefileFeatureTable.h"
-#include "SimpleRenderer.h"
-#include "SimpleMarkerSceneSymbol.h"
-#include "GeoPackage.h"
-#include "GeoPackageRaster.h"
-#include "GeoPackageFeatureTable.h"
-#include "TileCache.h"
-
-#include "ToolResourceProvider.h"
-#include "ToolManager.h"
-
-#include "DsaUtility.h"
-#include "AddLocalDataController.h"
+// Other headers
 #include "DataItemListModel.h"
+#include "DsaUtility.h"
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -576,10 +577,7 @@ void AddLocalDataController::createFeatureLayerShapefile(const QString& path, in
 
     if (featureLayer->featureTable()->hasZ() && featureLayer->featureTable()->geometryType() == GeometryType::Point)
     {
-      SimpleMarkerSceneSymbol* symbol = new SimpleMarkerSceneSymbol(SimpleMarkerSceneSymbolStyle::Diamond, QColor("lightgreen"), 10.0, 7.5, 7.5, SceneSymbolAnchorPosition::Bottom, this);
-      Renderer* renderer = new SimpleRenderer(symbol, this);
       featureLayer->setSceneProperties(LayerSceneProperties(SurfacePlacement::Absolute));
-      featureLayer->setRenderer(renderer);
     }
   });
 

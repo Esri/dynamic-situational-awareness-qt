@@ -12,6 +12,14 @@
 
 #include "AddLocalDataController.h"
 
+// example app headers
+#include "DataItemListModel.h"
+#include "DsaUtility.h"
+
+// toolkit headers
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
+
 // qt_cpp headers
 #include "ArcGISSceneLayer.h"
 #include "ArcGISTiledElevationSource.h"
@@ -35,14 +43,6 @@
 // Qt headers
 #include <QDir>
 #include <QFileInfo>
-
-
-
-// Other headers
-#include "DataItemListModel.h"
-#include "DsaUtility.h"
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
 
 using namespace Esri::ArcGISRuntime;
 

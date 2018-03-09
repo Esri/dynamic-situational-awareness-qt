@@ -56,6 +56,9 @@ void CombinedAnalysisListModel::setViewshedModel(QAbstractItemModel* viewshedMod
   if (castModel == nullptr)
     return;
 
+  if (m_viewshedModel == castModel)
+    return;
+
   beginResetModel();
   m_viewshedModel = castModel;
   connectAnalysisListModelSignals(m_viewshedModel);
@@ -67,6 +70,9 @@ void CombinedAnalysisListModel::setViewshedModel(QAbstractItemModel* viewshedMod
  */
 void CombinedAnalysisListModel::setLineOfSightModel(AnalysisListModel* lineOfSightModel)
 {
+  if (m_lineOfSightModel == lineOfSightModel)
+    return;
+
   beginResetModel();
   m_lineOfSightModel = lineOfSightModel;
   connectAnalysisListModelSignals(m_lineOfSightModel);

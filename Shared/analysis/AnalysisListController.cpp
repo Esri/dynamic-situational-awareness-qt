@@ -12,16 +12,18 @@
 
 #include "AnalysisListController.h"
 
+// example app headers
+#include "CombinedAnalysisListModel.h"
+#include "LineOfSightController.h"
+#include "ViewshedController.h"
+
+// toolkit headers
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
+
 // qt_cpp headers
 #include "AnalysisOverlayListModel.h"
 #include "SceneView.h"
-
-// Other headers
-#include "CombinedAnalysisListModel.h"
-#include "LineOfSightController.h"
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
-#include "ViewshedController.h"
 
 using namespace Esri::ArcGISRuntime;
 

@@ -11,15 +11,17 @@
 //
 
 #include "AnalysisListController.h"
-#include "CombinedAnalysisListModel.h"
-#include "ViewshedController.h"
-#include "LineOfSightController.h"
 
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
-
+// qt_cpp headers
 #include "AnalysisOverlayListModel.h"
 #include "SceneView.h"
+
+// Other headers
+#include "CombinedAnalysisListModel.h"
+#include "LineOfSightController.h"
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
+#include "ViewshedController.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -40,14 +42,12 @@ AnalysisListController::AnalysisListController(QObject* parent):
   onGeoViewChanged(Toolkit::ToolResourceProvider::instance()->geoView());
 }
 
-
 /*!
   \brief Destructor.
  */
 AnalysisListController::~AnalysisListController()
 {
 }
-
 
 /*!
   \brief Returns the name of this tool.

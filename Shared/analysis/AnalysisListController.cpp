@@ -21,7 +21,7 @@
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
-// qt_cpp headers
+// C++ API headers
 #include "AnalysisOverlayListModel.h"
 #include "SceneView.h"
 

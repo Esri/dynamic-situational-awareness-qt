@@ -99,11 +99,13 @@ Point GPXLocationSimulator::getNextPoint(QTime& time)
   const QXmlStreamAttributes attrs = m_gpxReader->attributes();
   const double x = attrs.value("lon").toString().toDouble();
   const double y = attrs.value("lat").toString().toDouble();
+  const auto wgs84 = SpatialReference::wgs84();
 
-  const Point point(x, y, SpatialReference::wgs84());
+  Point point(x, y, wgs84);
 
   // if the new point is the same as the old point then trash it and try to get another.
-  if (point == m_latestPoint)
+  // we don't have the z value yet, so compare without the z value
+  if (point == Point(m_latestPoint.x(), m_latestPoint.y(), wgs84))
   {
     m_gpxReader->readNext();
     return getNextPoint(time);
@@ -118,7 +120,8 @@ Point GPXLocationSimulator::getNextPoint(QTime& time)
     {
       if (m_gpxReader->name().compare(QString("ele"), Qt::CaseInsensitive) == 0)
       {
-        // TODO: do something with the elevation
+        const double z = m_gpxReader->readElementText().toDouble();
+        point = Point(x, y, z, wgs84);
       }
       else if (m_gpxReader->name().compare(QString("time"), Qt::CaseInsensitive) == 0)
       {

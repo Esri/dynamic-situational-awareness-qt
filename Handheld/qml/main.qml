@@ -269,6 +269,22 @@ Handheld {
             visible: false
         }
 
+        AnalysisList {
+            id: analysisListTool
+            anchors {
+                right: parent.right
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+            isMobile: false
+            onClosed: {
+                visible = false;
+                analysisToolRow.state = "clear";
+            }
+        }
+
         PopupStackView {
             id: identifyResults
             anchors {

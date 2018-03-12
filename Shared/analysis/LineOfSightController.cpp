@@ -57,6 +57,9 @@ LineOfSightController::LineOfSightController(QObject* parent):
   {
     onOperationalLayersChanged(Toolkit::ToolResourceProvider::instance()->operationalLayers());
   });
+
+  onGeoViewChanged(Toolkit::ToolResourceProvider::instance()->geoView());
+  onOperationalLayersChanged(Toolkit::ToolResourceProvider::instance()->operationalLayers());
 }
 
 /*!

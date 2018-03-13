@@ -11,22 +11,27 @@
 //
 
 #include "ViewshedController.h"
+
+// example app headers
+#include "GeoElementViewshed360.h"
 #include "GraphicsOverlaysResultsManager.h"
 #include "LocationController.h"
 #include "LocationDisplay3d.h"
 #include "LocationViewshed360.h"
-#include "GeoElementViewshed360.h"
 #include "ViewshedListModel.h"
 
+// toolkit headers
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
-#include "SceneQuickView.h"
-#include "LocationViewshed.h"
+// C++ API headers
 #include "GeoElementViewshed.h"
+#include "LocationViewshed.h"
+#include "SceneQuickView.h"
 #include "SimpleMarkerSceneSymbol.h"
 #include "SimpleRenderer.h"
 
+// STL headers
 #include <cmath>
 
 using namespace Esri::ArcGISRuntime;
@@ -182,6 +187,16 @@ void ViewshedController::addLocationViewshed360(const Esri::ArcGISRuntime::Point
     m_sceneView->graphicsOverlays()->append(m_graphicsOverlay);
   }
 
+  if (m_activeViewshed)
+  {
+    auto locViewshed = dynamic_cast<LocationViewshed360*>(m_activeViewshed);
+    if (locViewshed != nullptr)
+    {
+      locViewshed->setPoint(point);
+      return;
+    }
+  }
+
   auto locationViewshed360 = new LocationViewshed360(point, m_graphicsOverlay, m_analysisOverlay, this);
   s_viewshedCount++;
   locationViewshed360->setName(QString("Viewshed %1").arg(QString::number(s_viewshedCount)));
@@ -193,6 +208,8 @@ void ViewshedController::addLocationViewshed360(const Esri::ArcGISRuntime::Point
 
 void ViewshedController::addGeoElementViewshed360(GeoElement* geoElement)
 {
+  removeActiveViewshed();
+
   auto geoElementViewshed360 = new GeoElementViewshed360(geoElement, m_analysisOverlay, QString(), QString(), this);
   s_viewshedCount++;
   geoElementViewshed360->setName(QString("Viewshed %1").arg(QString::number(s_viewshedCount)));
@@ -221,7 +238,12 @@ void ViewshedController::setActiveMode(ViewshedActiveMode mode)
   if (m_activeMode == mode)
     return;
 
+  removeActiveViewshed();
+
   m_activeMode = mode;
+
+  if (m_activeMode == ViewshedActiveMode::AddMyLocationViewshed360)
+    addLocationDisplayViewshed();
 
   emit activeModeChanged();
 }
@@ -255,6 +277,11 @@ void ViewshedController::removeActiveViewshed()
     setActiveViewshedIndex(m_activeViewshedIndex - 1);
   else
     updateActiveViewshed();
+}
+
+void ViewshedController::finishActiveViewshed()
+{
+  setActiveViewshedIndex(-1);
 }
 
 bool ViewshedController::isActiveViewshedEnabled() const
@@ -341,6 +368,9 @@ void ViewshedController::setActiveViewshedHorizontalAngle(double horizontalAngle
   if (!m_activeViewshed)
     return;
 
+  if (m_activeViewshed->horizontalAngle() == horizontalAngle)
+    return;
+
   m_activeViewshed->setHorizontalAngle(horizontalAngle);
 }
 
@@ -352,6 +382,9 @@ double ViewshedController::activeViewshedVerticalAngle() const
 void ViewshedController::setActiveViewshedVerticalAngle(double verticalAngle)
 {
   if (!m_activeViewshed)
+    return;
+
+  if (m_activeViewshed->verticalAngle() == verticalAngle)
     return;
 
   m_activeViewshed->setVerticalAngle(verticalAngle);
@@ -367,6 +400,9 @@ void ViewshedController::setActiveViewshedHeading(double heading)
   if (!m_activeViewshed)
     return;
 
+  if (m_activeViewshed->heading() == heading)
+    return;
+
   m_activeViewshed->setHeading(heading);
 }
 
@@ -378,6 +414,9 @@ double ViewshedController::activeViewshedPitch() const
 void ViewshedController::setActiveViewshedPitch(double pitch)
 {
   if (!m_activeViewshed)
+    return;
+
+  if (m_activeViewshed->pitch() == pitch)
     return;
 
   m_activeViewshed->setPitch(pitch);

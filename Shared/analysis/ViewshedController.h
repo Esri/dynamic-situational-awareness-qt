@@ -13,9 +13,14 @@
 #ifndef VIEWSHEDCONTROLLER_H
 #define VIEWSHEDCONTROLLER_H
 
+
+// toolkit headers
 #include "AbstractTool.h"
+
+// C++ API headers
 #include "TaskWatcher.h"
 
+// Qt headers
 #include <QAbstractListModel>
 
 namespace Esri {
@@ -86,6 +91,7 @@ public:
   enum ViewshedActiveMode
   {
     NoActiveMode = 0,
+    AddMyLocationViewshed360,
     AddLocationViewshed360,
     AddGeoElementViewshed360
   };
@@ -116,6 +122,7 @@ public:
   // active viewshed methods
   Viewshed360* activeViewshed() const;
   Q_INVOKABLE void removeActiveViewshed();
+  Q_INVOKABLE void finishActiveViewshed();
 
   bool isActiveViewshedEnabled() const;
 

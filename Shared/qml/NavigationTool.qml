@@ -27,6 +27,12 @@ Item {
     width: controlsColumn.width + 10 * scaleFactor
     property alias radius: backgroundRecatangle.radius
 
+    function startFollowing() {
+        followingButton.selected = true;
+        followHud.enabled = true;
+        locationController.locationVisible = true;
+    }
+
     Rectangle {
         id: backgroundRecatangle
         anchors.fill: parent
@@ -70,6 +76,7 @@ Item {
         }
 
         OverlayButton {
+            id: followingButton
             iconUrl: DsaResources.iconGps
             onClicked: {
                 selected = !selected;

@@ -13,6 +13,7 @@
 #include "GPXLocationSimulator.h"
 #include <QXmlStreamReader>
 #include <QTimer>
+#include <cmath>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -99,13 +100,9 @@ Point GPXLocationSimulator::getNextPoint(QTime& time)
   const QXmlStreamAttributes attrs = m_gpxReader->attributes();
   const double x = attrs.value("lon").toString().toDouble();
   const double y = attrs.value("lat").toString().toDouble();
-  const auto wgs84 = SpatialReference::wgs84();
-
-  Point point(x, y, wgs84);
-
+  double z = NAN;
   // if the new point is the same as the old point then trash it and try to get another.
-  // we don't have the z value yet, so compare without the z value
-  if (point == Point(m_latestPoint.x(), m_latestPoint.y(), wgs84))
+  if (x == m_latestPoint.x() && y == m_latestPoint.y())
   {
     m_gpxReader->readNext();
     return getNextPoint(time);
@@ -120,8 +117,7 @@ Point GPXLocationSimulator::getNextPoint(QTime& time)
     {
       if (m_gpxReader->name().compare(QString("ele"), Qt::CaseInsensitive) == 0)
       {
-        const double z = m_gpxReader->readElementText().toDouble();
-        point = Point(x, y, z, wgs84);
+        z = m_gpxReader->readElementText().toDouble();
       }
       else if (m_gpxReader->name().compare(QString("time"), Qt::CaseInsensitive) == 0)
       {
@@ -136,7 +132,11 @@ Point GPXLocationSimulator::getNextPoint(QTime& time)
     m_gpxReader->readNext();
   }
 
-  return point;
+  m_latestPoint = std::isnan(z) ?
+        Point(x, y, SpatialReference::wgs84()) :
+        Point(x, y, z, SpatialReference::wgs84());
+
+  return m_latestPoint;
 }
 
 //

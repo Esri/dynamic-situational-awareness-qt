@@ -73,8 +73,6 @@ ViewshedController::ViewshedController(QObject* parent) :
     if (viewshed == m_locationDisplayViewshed)
     {
       m_locationDisplayViewshed = nullptr;
-
-      emit locationDisplayViewshedActiveChanged();
     }
   });
 }
@@ -161,8 +159,6 @@ void ViewshedController::addLocationDisplayViewshed()
   m_locationDisplayViewshed->setOffsetZ(c_defaultOffsetZ);
   m_analysisOverlay->analyses()->append(m_locationDisplayViewshed->viewshed());
   m_viewsheds->append(m_locationDisplayViewshed);
-
-  emit locationDisplayViewshedActiveChanged();
 
   setActiveViewshedIndex(m_viewsheds->rowCount() - 1);
 }
@@ -301,35 +297,7 @@ void ViewshedController::setActiveViewshedIndex(int index)
 
   m_activeViewshedIndex = index;
 
-  emit activeViewshedIndexChanged();
-
   updateActiveViewshed();
-}
-
-bool ViewshedController::isActiveViewshedVisible() const
-{
-  return m_activeViewshed ? m_activeViewshed->isVisible() : false;
-}
-
-void ViewshedController::setActiveViewshedVisible(bool visible)
-{
-  if (!m_activeViewshed)
-    return;
-
-  m_activeViewshed->setVisible(visible);
-}
-
-QString ViewshedController::activeViewshedName() const
-{
-  return m_activeViewshed ? m_activeViewshed->name() : QString();
-}
-
-void ViewshedController::setActiveViewshedName(const QString& name)
-{
-  if (!m_activeViewshed)
-    return;
-
-  m_activeViewshed->setName(name);
 }
 
 double ViewshedController::activeViewshedMinDistance() const
@@ -500,8 +468,6 @@ void ViewshedController::updateActiveViewshedSignals()
     return;
 
   // connect to Viewshed360 signals
-  m_activeViewshedConns << connect(m_activeViewshed, &Viewshed360::visibleChanged, this, &ViewshedController::activeViewshedVisibleChanged);
-  m_activeViewshedConns << connect(m_activeViewshed, &Viewshed360::nameChanged, this, &ViewshedController::activeViewshedNameChanged);
   m_activeViewshedConns << connect(m_activeViewshed, &Viewshed360::minDistanceChanged, this, &ViewshedController::activeViewshedMinDistanceChanged);
   m_activeViewshedConns << connect(m_activeViewshed, &Viewshed360::maxDistanceChanged, this, &ViewshedController::activeViewshedMaxDistanceChanged);
   m_activeViewshedConns << connect(m_activeViewshed, &Viewshed360::horizontalAngleChanged, this, &ViewshedController::activeViewshedHorizontalAngleChanged);
@@ -547,8 +513,6 @@ void ViewshedController::disconnectActiveViewshedSignals()
 void ViewshedController::emitActiveViewshedSignals()
 {
   emit activeViewshedEnabledChanged();
-  emit activeViewshedVisibleChanged();
-  emit activeViewshedNameChanged();
   emit activeViewshedMinDistanceChanged();
   emit activeViewshedMaxDistanceChanged();
   emit activeViewshedHorizontalAngleChanged();

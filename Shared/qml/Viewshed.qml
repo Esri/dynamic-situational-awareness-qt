@@ -13,463 +13,439 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
+import QtGraphicalEffects 1.0
 import Esri.DSA 1.0
 
-DsaPanel {
-    id: viewshedRoot
-    width: 272 * scaleFactor
-    title: qsTr("Viewshed")
+Item {
+    id: rootViewshed
 
-    property bool isMobile
+    signal myLocationModeSelected
 
-    // Create the controller
     ViewshedController {
         id: toolController
 
-        onActiveChanged: {
-            if (!active && viewshedRoot.visible)
-                viewshedRoot.visible = false;
+        active: rootViewshed.visible
+        activeMode: ViewshedController.AddLocationViewshed360
+
+        onActiveModeChanged: {
+            if (activeMode === ViewshedController.AddMyLocationViewshed360)
+                myLocationModeSelected();
         }
     }
 
-    onVisibleChanged: {
-        if (!isMobile) {
-            toolController.active = visible;
-        }
+    DropShadow {
+        anchors.fill: fill
+        horizontalOffset: -1 * scaleFactor
+        verticalOffset: 1 * scaleFactor
+        radius: 8 * scaleFactor
+        smooth: true
+        samples: 16
+        color: "#80000000"
+        source: fill
     }
 
-    ButtonGroup {
-        id: viewshedActiveModeGroup
-    }
-
-    Column {
+    Rectangle {
+        id: fill
         anchors {
-            top: titleBar.bottom
+            top: parent.top
+            bottom: finishToolbar.visible ? finishToolbar.bottom : viewshedTypeToolbar.bottom
             left: parent.left
             right: parent.right
-            bottom: parent.bottom
+        }
+        color: Material.background
+    }
+
+    Row {
+        id: viewshedTypeToolbar
+        visible: true
+
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+            margins: 8 * scaleFactor
+        }
+        height: myLocationMode.height + (anchors.margins * 2)
+        spacing: 16 * scaleFactor
+
+        Column {
+            anchors {
+                verticalCenter: parent.verticalCenter
+                margins: 8 * scaleFactor
+            }
+            id: myLocationMode
+
+            OverlayButton {
+                anchors.horizontalCenter: parent.horizontalCenter
+                iconUrl: DsaResources.iconFollowLocationOff
+                color: "transparent"
+                selected: toolController.activeMode === ViewshedController.AddMyLocationViewshed360;
+
+                onClicked: {
+                    if (toolController.activeMode !== ViewshedController.AddMyLocationViewshed360)
+                        toolController.activeMode = ViewshedController.AddMyLocationViewshed360;
+                    else
+                        toolController.activeMode = ViewshedController.NoActiveMode;
+                }
+            }
+
+            Text {
+                anchors.left: parent.left
+
+                font {
+                    family: DsaStyles.fontFamily
+                    pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                }
+
+                color: Material.foreground
+                text: "current\nposition"
+            }
+        }
+
+        Column {
+            id: feedsMode
+            anchors {
+                verticalCenter: parent.verticalCenter
+                margins: 8 * scaleFactor
+            }
+
+            OverlayButton {
+                iconUrl: DsaResources.iconGps
+                selected: toolController.activeMode === ViewshedController.AddGeoElementViewshed360;
+                anchors.horizontalCenter: parent.horizontalCenter
+                color: "transparent"
+                onClicked: {
+                    if (toolController.activeMode !== ViewshedController.AddGeoElementViewshed360)
+                        toolController.activeMode = ViewshedController.AddGeoElementViewshed360;
+                    else
+                        toolController.activeMode = ViewshedController.NoActiveMode;
+                }
+            }
+            Text {
+                anchors.horizontalCenter: parent.horizontalCenter
+                font {
+                    family: DsaStyles.fontFamily
+                    pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                }
+
+                color: Material.foreground
+
+                text: "track\nposition"
+            }
+        }
+
+        Column {
+            id: coordinateMode
+            anchors {
+                verticalCenter: parent.verticalCenter
+                margins: 8 * scaleFactor
+            }
+
+            OverlayButton {
+                iconUrl: DsaResources.iconCoordinateConversion
+                selected: toolController.activeMode === ViewshedController.AddLocationViewshed360;
+                anchors.horizontalCenter: parent.horizontalCenter
+                color: "transparent"
+                onClicked: {
+                    if (toolController.activeMode !== ViewshedController.AddLocationViewshed360)
+                        toolController.activeMode = ViewshedController.AddLocationViewshed360;
+                    else
+                        toolController.activeMode = ViewshedController.NoActiveMode;
+                }
+            }
+
+            Text {
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                font {
+                    family: DsaStyles.fontFamily
+                    pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                }
+
+                color: Material.foreground
+
+                text: "clicked\nlocation"
+            }
+        }
+
+        Column {
+            id: mode360
+            anchors {
+                verticalCenter: parent.verticalCenter
+                margins: 8 * scaleFactor
+            }
+
+            Switch {
+                id: control
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: DsaStyles.secondaryIconSize * scaleFactor
+                height: width
+
+                checked: toolController.activeViewshed360Mode
+
+                indicator: Rectangle {
+                    implicitWidth: parent.width * 0.75
+                    implicitHeight: parent.height * 0.4
+                    x: control.leftPadding
+                    y: parent.height / 2 - height / 2
+                    radius: 13
+                    color: control.checked ? Material.accent : "#ffffff"
+                    border.color: Material.background
+
+                    Rectangle {
+                        x: control.checked ? parent.width - width : 0
+                        width: height
+                        height: parent.height
+                        radius: height
+                        color: control.down ? "#cccccc" : "#ffffff"
+                        border.color: Material.background
+                    }
+                }
+
+                onCheckedChanged: {
+                    toolController.activeViewshed360Mode = checked;
+                }
+            }
+
+            Text {
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                font {
+                    family: DsaStyles.fontFamily
+                    pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                }
+
+                color: Material.foreground
+                text: qsTr("360 °")
+            }
+        }
+    }
+
+    Text {
+        id: distanceRangeLabel
+        visible: toolController.activeViewshedEnabled
+        anchors{
+            left: parent.left
+            top: viewshedTypeToolbar.bottom
+            margins: 8 * scaleFactor
+        }
+        text: qsTr("Distance\n(meters)")
+        color: Material.foreground
+        font {
+            family: DsaStyles.fontFamily
+            pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+        }
+        horizontalAlignment: Text.AlignHCenter
+    }
+
+    RangeSlider {
+        visible: toolController.activeViewshedEnabled
+        anchors{
+            left: distanceRangeLabel.right
+            right: distanceRangeText.left
+            margins: 8 * scaleFactor
+            verticalCenter: distanceRangeLabel.verticalCenter
+        }
+        orientation: Qt.Horizontal
+        from: 1
+        to: 2000
+        first.value: toolController.activeViewshedMinDistance
+        second.value: toolController.activeViewshedMaxDistance
+        stepSize: 10
+        snapMode: Slider.SnapAlways
+        width: parent.width * 0.66
+
+        first.onValueChanged: {
+            if (Math.round(toolController.activeViewshedMinDistance) !== second.value)
+                toolController.activeViewshedMinDistance = first.value;
+        }
+
+        second.onValueChanged: {
+            if (Math.round(toolController.activeViewshedMaxDistance) !== second.value)
+                toolController.activeViewshedMaxDistance = second.value;
+        }
+    }
+
+    Text {
+        id: distanceRangeText
+        visible: toolController.activeViewshedEnabled
+        anchors {
+            verticalCenter: distanceRangeLabel.verticalCenter
+            right: parent.right
+            margins: 8 * scaleFactor
+        }
+        horizontalAlignment: Text.AlignRight
+        text: Math.round(toolController.activeViewshedMinDistance) + " - " + Math.round(toolController.activeViewshedMaxDistance)
+        color: Material.foreground
+        font {
+            family: DsaStyles.fontFamily
+            pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+        }
+    }
+
+    ComboBox {
+        id: angleSelector
+        visible: !toolController.activeViewshed360Mode
+        anchors {
+            top: distanceRangeLabel.bottom
+            left: parent.left
+            margins: 8 * scaleFactor
+        }
+        height: 32 * scaleFactor
+        width: 100 * scaleFactor
+
+        property var allAnglesModel: ["Heading", "Horizontal Angle", "Vertical Angle", "Pitch"]
+        property var trackModel: ["Horizontal Angle", "Vertical Angle"]
+
+        model: toolController.activeMode === ViewshedController.AddMyLocationViewshed360 ? trackModel : allAnglesModel
+        font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+
+        background: Rectangle {
+            color: Material.primary
+            border.color: Material.accent
+            border.width: 1 * scaleFactor
+            radius: 2 * scaleFactor
+            anchors.fill: parent
+        }
+
+        delegate: ItemDelegate {
+            width: angleSelector.width
+            contentItem: Text {
+                text: modelData
+                color: highlighted ? Material.accent : Material.foreground
+                font: angleSelector.font
+                elide: Text.ElideRight
+                verticalAlignment: Text.AlignVCenter
+            }
+            highlighted: angleSelector.highlightedIndex === index
+        }
+    }
+
+    Slider {
+        id: angleSlider
+        visible: angleSelector.visible
+        anchors {
+            left: angleSelector.right
+            right: angleText.left
+            verticalCenter: angleSelector.verticalCenter
+            margins: 8 * scaleFactor
+        }
+        orientation: Qt.Horizontal
+        from: getMinAngle()
+        to: getMaxAngle()
+        value: getValue()
+        stepSize: 1
+        snapMode: Slider.SnapAlways
+
+        onValueChanged: {
+            if (angleSelector.currentText === "Heading") {
+                if (Math.round(toolController.activeViewshedHeading) !== value)
+                    toolController.activeViewshedHeading = value;
+            }
+            if (angleSelector.currentText === "Horizontal Angle") {
+                if (Math.round(toolController.activeViewshedHorizontalAngle) !== value)
+                    toolController.activeViewshedHorizontalAngle = value;
+            }
+            if (angleSelector.currentText === "Vertical Angle") {
+                if (Math.round(toolController.activeViewshedVerticalAngle) !== value)
+                    toolController.activeViewshedVerticalAngle = value;
+            }
+            if (angleSelector.currentText === "Pitch") {
+                if (Math.round(toolController.activeViewshedPitch) !== value)
+                    toolController.activeViewshedPitch = value;
+            }
+        }
+
+        function getMinAngle() {
+            if (angleSelector.currentText === "Pitch")
+                return toolController.activeViewshedMinPitch;
+
+            return 0;
+        }
+
+        function getMaxAngle() {
+            if (angleSelector.currentText === "Heading")
+                return 359;
+            else if (angleSelector.currentText === "Pitch")
+                return toolController.activeViewshedMaxPitch;
+
+            return 120;
+        }
+
+        function getValue() {
+            if (angleSelector.currentText === "Heading")
+                return Math.round(toolController.activeViewshedHeading);
+            if (angleSelector.currentText === "Horizontal Angle")
+                return Math.round(toolController.activeViewshedHorizontalAngle);
+            if (angleSelector.currentText === "Vertical Angle")
+                return Math.round(toolController.activeViewshedVerticalAngle);
+            if (angleSelector.currentText === "Pitch")
+                return Math.round(toolController.activeViewshedPitch);
+        }
+    }
+
+    Text {
+        id: angleText
+        visible: angleSelector.visible
+        anchors {
+            right: parent.right
+            verticalCenter: angleSelector.verticalCenter
+            margins: 8 * scaleFactor
+        }
+        width: 25 * scaleFactor
+        horizontalAlignment: Text.AlignLeft
+        verticalAlignment: Text.AlignVCenter
+        text: getAngleText()
+        color: Material.foreground
+        font {
+            family: DsaStyles.fontFamily
+            pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+        }
+
+        function getAngleText() {
+            if (angleSelector.currentIndex === 0)
+                return Math.round(toolController.activeViewshedHeading) + "°";
+            else if (angleSelector.currentIndex === 1)
+                return Math.round(toolController.activeViewshedHorizontalAngle) + "°";
+            else if (angleSelector.currentIndex === 2)
+                return Math.round(toolController.activeViewshedVerticalAngle) + "°";
+            else if (angleSelector.currentIndex === 3)
+                return Math.round(toolController.activeViewshedPitch) + "°";
+        }
+    }
+
+    Row {
+        id: finishToolbar
+        visible: toolController.activeViewshedEnabled
+
+        anchors {
+            top: angleSelector.visible ? angleSelector.bottom : distanceRangeLabel.bottom
+            left: parent.left
+            right: parent.right
             margins: 8 * scaleFactor
         }
 
-        Column {
-            width: parent.width
-            spacing: 5 * scaleFactor
+        spacing: 16 * scaleFactor
+        height: finishIcon.height + (anchors.margins * 2)
 
-            Row {
-                width: parent.width
-                height: 25 * scaleFactor
-                spacing: 5 * scaleFactor
-                visible: isMobile
-
-                CheckBox {
-                    id: viewshedEnabledCheckbox
-                    text: qsTr("Viewshed Enabled")
-                    font.pixelSize: 14 * scaleFactor
-                    checked: toolController.active
-                    contentItem: Label {
-                        text: viewshedEnabledCheckbox.text
-                        font: viewshedEnabledCheckbox.font
-                        verticalAlignment: Text.AlignVCenter
-                        horizontalAlignment: Text.AlignHCenter
-                        color: Material.foreground
-                        leftPadding: viewshedEnabledCheckbox.indicator.width + viewshedEnabledCheckbox.spacing
-                    }
-
-                    onCheckedChanged: {
-                        toolController.active = checked;
-                    }
-                }
-            }
-
-            Button {
-                anchors.horizontalCenter: parent.horizontalCenter
-                visible: !toolController.locationDisplayViewshedActive
-                text: qsTr("Add Location Display Viewshed")
-                font.pixelSize: 14 * scaleFactor
-                onClicked: toolController.addLocationDisplayViewshed()
-            }
-
-            RadioButton {
-                text: "Add Location Viewshed"
-                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                ButtonGroup.group: viewshedActiveModeGroup
-
-                onCheckedChanged: {
-                    if (checked) {
-                        toolController.activeMode = ViewshedController.AddLocationViewshed360;
-                    }
-                }
-            }
-
-            RadioButton {
-                text: "Add GeoElement Viewshed"
-                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                ButtonGroup.group: viewshedActiveModeGroup
-
-                onCheckedChanged: {
-                    if (checked) {
-                        toolController.activeMode = ViewshedController.AddGeoElementViewshed360;
-                    }
-                }
-            }
-
-            ComboBox {
-                id: viewshedComboBox
-                width: parent.width
-                model: toolController.viewsheds
-                visible: count > 0
-                textRole: "name"
-                currentIndex: toolController.activeViewshedIndex
-                onCurrentIndexChanged: {
-                    toolController.activeViewshedIndex = currentIndex;
-                }
-            }
-
-            Row {
-                width: parent.width
-                height: 25 * scaleFactor
-                spacing: 5 * scaleFactor
-                visible: toolController.activeViewshedEnabled
-
-                CheckBox {
-                    id: viewshedVisibleCheckbox
-                    text: qsTr("Viewshed Visible")
-                    font.pixelSize: 14 * scaleFactor
-                    checked: toolController.activeViewshedVisible
-                    contentItem: Label {
-                        text: viewshedVisibleCheckbox.text
-                        font: viewshedVisibleCheckbox.font
-                        verticalAlignment: Text.AlignVCenter
-                        horizontalAlignment: Text.AlignHCenter
-                        color: Material.foreground
-                        leftPadding: viewshedVisibleCheckbox.indicator.width + viewshedVisibleCheckbox.spacing
-                    }
-
-                    onCheckedChanged: {
-                        toolController.activeViewshedVisible = checked;
-                    }
-                }
+        ToolIcon {
+            id: finishIcon
+            anchors.verticalCenter: parent.verticalCenter
+            iconSource: DsaResources.iconComplete
+            toolName: "Finish"
+            onToolSelected: {
+                toolController.finishActiveViewshed();
+                toolController.activeMode = ViewshedController.NoActiveMode;
             }
         }
 
-        Column {
-            width: parent.width
-            spacing: 20 * scaleFactor
-
-            Row {
-                width: parent.width
-                height: 25 * scaleFactor
-                spacing: 5 * scaleFactor
-                visible: toolController.activeViewshedEnabled
-
-                CheckBox {
-                    id: viewshed360ModeCheckbox
-                    text: qsTr("360 Mode")
-                    font.pixelSize: 14 * scaleFactor
-                    checked: toolController.activeViewshed360Mode
-                    contentItem: Label {
-                        text: viewshed360ModeCheckbox.text
-                        font: viewshed360ModeCheckbox.font
-                        verticalAlignment: Text.AlignVCenter
-                        horizontalAlignment: Text.AlignHCenter
-                        color: Material.foreground
-                        leftPadding: viewshed360ModeCheckbox.indicator.width + viewshed360ModeCheckbox.spacing
-                    }
-
-                    onCheckedChanged: {
-                        toolController.activeViewshed360Mode = checked;
-                    }
-                }
-            }
-
-            Column {
-                width: parent.width
-                height: 25 * scaleFactor
-                visible: toolController.activeViewshedEnabled
-
-                Text {
-                    id: distanceRangeLabel
-                    width: 80 * scaleFactor
-                    text: qsTr("Distance (m)")
-                    color: Material.foreground
-                    font.pixelSize: 14 * scaleFactor
-                }
-
-                Row {
-                    width: parent.width
-                    height: 25 * scaleFactor
-                    spacing: 5 * scaleFactor
-
-                    RangeSlider {
-                        anchors.verticalCenter: parent.verticalCenter
-                        orientation: Qt.Horizontal
-                        from: 1
-                        to: 2000
-                        first.value: toolController.activeViewshedMinDistance
-                        second.value: toolController.activeViewshedMaxDistance
-                        stepSize: 10
-                        snapMode: Slider.SnapAlways
-                        width: parent.width * 0.66
-
-                        first.onValueChanged: {
-                            toolController.activeViewshedMinDistance = first.value;
-                        }
-
-                        second.onValueChanged: {
-                            toolController.activeViewshedMaxDistance = second.value;
-                        }
-                    }
-
-                    Text {
-                        id: distanceRangeText
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 70 * scaleFactor
-                        horizontalAlignment: Text.AlignRight
-                        text: Math.round(toolController.activeViewshedMinDistance) + " - " + Math.round(toolController.activeViewshedMaxDistance)
-                        color: Material.foreground
-                        font.pixelSize: 14 * scaleFactor
-                    }
-                }
-            }
-
-            Column {
-                width: parent.width
-                height: 25 * scaleFactor
-                visible: toolController.activeViewshedEnabled && !toolController.activeViewshed360Mode
-
-                Text {
-                    id: horizintalAngleLabel
-                    width: 105 * scaleFactor
-                    text: qsTr("Horizontal Angle")
-                    color: Material.foreground
-                    font.pixelSize: 14 * scaleFactor
-                }
-
-                Row {
-                    width: parent.width
-                    height: 25 * scaleFactor
-                    spacing: 5 * scaleFactor
-
-                    Slider {
-                        id: horizontalAngleSlider
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: parent.width * 0.66
-                        orientation: Qt.Horizontal
-                        from: 0
-                        to: 120
-                        value: toolController.activeViewshedHorizontalAngle
-                        stepSize: 1
-                        snapMode: Slider.SnapAlways
-
-                        onValueChanged: {
-                            toolController.activeViewshedHorizontalAngle = value;
-                        }
-                    }
-
-                    Text {
-                        id: horizontalAngleText
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 25 * scaleFactor
-                        horizontalAlignment: Text.AlignRight
-                        text: Math.round(toolController.activeViewshedHorizontalAngle) + "°"
-                        color: Material.foreground
-                        font.pixelSize: 14 * scaleFactor
-                    }
-                }
-            }
-
-            Column {
-                width: parent.width
-                height: 25 * scaleFactor
-                visible: toolController.activeViewshedEnabled && !toolController.activeViewshed360Mode
-
-                Text {
-                    id: verticalAngleLabel
-                    width: 105 * scaleFactor
-                    text: qsTr("Vertical Angle")
-                    color: Material.foreground
-                    font.pixelSize: 14 * scaleFactor
-                }
-
-                Row {
-                    width: parent.width
-                    height: 25 * scaleFactor
-                    spacing: 5 * scaleFactor
-
-                    Slider {
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: parent.width * 0.66
-                        orientation: Qt.Horizontal
-                        from: 0
-                        to: 120
-                        value: toolController.activeViewshedVerticalAngle
-                        stepSize: 1
-                        snapMode: Slider.SnapAlways
-
-                        onValueChanged: {
-                            toolController.activeViewshedVerticalAngle = value;
-                        }
-                    }
-
-                    Text {
-                        id: veriticalAngleText
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 25 * scaleFactor
-                        horizontalAlignment: Text.AlignRight
-                        text: Math.round(toolController.activeViewshedVerticalAngle) + "°"
-                        color: Material.foreground
-                        font.pixelSize: 14 * scaleFactor
-                    }
-                }
-            }
-
-            Column {
-                width: parent.width
-                height: 25 * scaleFactor
-                visible: toolController.activeViewshedEnabled && toolController.activeViewshedHeadingEnabled
-
-                Text {
-                    id: headingLabel
-                    width: 105 * scaleFactor
-                    text: qsTr("Heading")
-                    color: Material.foreground
-                    font.pixelSize: 14 * scaleFactor
-                }
-
-                Row {
-                    width: parent.width
-                    height: 25 * scaleFactor
-                    spacing: 5 * scaleFactor
-
-                    Slider {
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: parent.width * 0.66
-                        orientation: Qt.Horizontal
-                        from: 0
-                        to: 359
-                        value: toolController.activeViewshedHeading
-                        stepSize: 1
-                        snapMode: Slider.SnapAlways
-
-                        onValueChanged: {
-                            toolController.activeViewshedHeading = value;
-                        }
-                    }
-
-                    Text {
-                        id: headingText
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 25 * scaleFactor
-                        horizontalAlignment: Text.AlignRight
-                        text: Math.round(toolController.activeViewshedHeading) + "°"
-                        color: Material.foreground
-                        font.pixelSize: 14 * scaleFactor
-                    }
-                }
-            }
-
-            Column {
-                width: parent.width
-                height: 25 * scaleFactor
-                visible: toolController.activeViewshedEnabled && toolController.activeViewshedPitchEnabled
-
-                Text {
-                    id: pitchLabel
-                    width: 105 * scaleFactor
-                    text: qsTr("Pitch")
-                    color: Material.foreground
-                    font.pixelSize: 14 * scaleFactor
-                }
-
-                Row {
-                    width: parent.width
-                    height: 25 * scaleFactor
-                    spacing: 5 * scaleFactor
-
-                    Slider {
-                        anchors.verticalCenter: parent.verticalCenter
-                        width:  parent.width * 0.66
-                        orientation: Qt.Horizontal
-                        from: toolController.activeViewshedMinPitch
-                        to: toolController.activeViewshedMaxPitch
-                        value: toolController.activeViewshedPitch
-                        stepSize: 1
-                        snapMode: Slider.SnapAlways
-
-                        onValueChanged: {
-                            if (isNaN(to) || isNaN(from)) {
-                                return;
-                            }
-
-                            toolController.activeViewshedPitch = value;
-                        }
-                    }
-
-                    Text {
-                        id: pitchText
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 25 * scaleFactor
-                        horizontalAlignment: Text.AlignRight
-                        text: Math.round(toolController.activeViewshedPitch) + "°"
-                        color: Material.foreground
-                        font.pixelSize: 14 * scaleFactor
-                    }
-                }
-            }
-
-            Column {
-                width: parent.width
-                height: 25 * scaleFactor
-                visible: toolController.activeViewshedEnabled && toolController.activeViewshedOffsetZEnabled
-
-                Text {
-                    id: offsetZLabel
-                    width: 105 * scaleFactor
-                    text: qsTr("Offset Z")
-                    color: Material.foreground
-                    font.pixelSize: 14 * scaleFactor
-                }
-
-                Row {
-                    width: parent.width
-                    height: 25 * scaleFactor
-                    spacing: 5 * scaleFactor
-
-                    Slider {
-                        anchors.verticalCenter: parent.verticalCenter
-                        width:  parent.width * 0.66
-                        orientation: Qt.Horizontal
-                        from: -30
-                        to: 30
-                        value: toolController.activeViewshedOffsetZ
-                        stepSize: 1
-                        snapMode: Slider.SnapAlways
-
-                        onValueChanged: {
-                            toolController.activeViewshedOffsetZ = value;
-                        }
-                    }
-
-                    Text {
-                        id: offsetZText
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 25 * scaleFactor
-                        horizontalAlignment: Text.AlignRight
-                        text: Math.round(toolController.activeViewshedOffsetZ)
-                        color: Material.foreground
-                        font.pixelSize: 14 * scaleFactor
-                    }
-                }
-            }
-
-            Button {
-                anchors.horizontalCenter: parent.horizontalCenter
-                visible: toolController.activeViewshedEnabled
-                text: qsTr("Remove Viewshed")
-                font.pixelSize: 14 * scaleFactor
-                onClicked: {
-                    toolController.removeActiveViewshed();
-                }
+        ToolIcon {
+            anchors.verticalCenter: parent.verticalCenter
+            iconSource: DsaResources.iconClose
+            toolName: "Cancel"
+            onToolSelected: {
+                toolController.removeActiveViewshed();
+                toolController.activeMode = ViewshedController.NoActiveMode;
             }
         }
     }

@@ -240,10 +240,9 @@ Vehicle {
             }
             width: drawer.width
             visible: false
-            isMobile: false
-            onClosed: {
-                visible = false;
-                analysisToolRow.state = "clear";
+
+            onMyLocationModeSelected: {
+                navTool.startFollowing();
             }
         }
 

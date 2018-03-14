@@ -11,22 +11,27 @@
 //
 
 #include "ViewshedController.h"
+
+// example app headers
+#include "GeoElementViewshed360.h"
 #include "GraphicsOverlaysResultsManager.h"
 #include "LocationController.h"
 #include "LocationDisplay3d.h"
 #include "LocationViewshed360.h"
-#include "GeoElementViewshed360.h"
 #include "ViewshedListModel.h"
 
+// toolkit headers
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
-#include "SceneQuickView.h"
-#include "LocationViewshed.h"
+// C++ API headers
 #include "GeoElementViewshed.h"
+#include "LocationViewshed.h"
+#include "SceneQuickView.h"
 #include "SimpleMarkerSceneSymbol.h"
 #include "SimpleRenderer.h"
 
+// STL headers
 #include <cmath>
 
 using namespace Esri::ArcGISRuntime;
@@ -68,8 +73,6 @@ ViewshedController::ViewshedController(QObject* parent) :
     if (viewshed == m_locationDisplayViewshed)
     {
       m_locationDisplayViewshed = nullptr;
-
-      emit locationDisplayViewshedActiveChanged();
     }
   });
 }
@@ -157,8 +160,6 @@ void ViewshedController::addLocationDisplayViewshed()
   m_analysisOverlay->analyses()->append(m_locationDisplayViewshed->viewshed());
   m_viewsheds->append(m_locationDisplayViewshed);
 
-  emit locationDisplayViewshedActiveChanged();
-
   setActiveViewshedIndex(m_viewsheds->rowCount() - 1);
 }
 
@@ -182,6 +183,16 @@ void ViewshedController::addLocationViewshed360(const Esri::ArcGISRuntime::Point
     m_sceneView->graphicsOverlays()->append(m_graphicsOverlay);
   }
 
+  if (m_activeViewshed)
+  {
+    auto locViewshed = dynamic_cast<LocationViewshed360*>(m_activeViewshed);
+    if (locViewshed != nullptr)
+    {
+      locViewshed->setPoint(point);
+      return;
+    }
+  }
+
   auto locationViewshed360 = new LocationViewshed360(point, m_graphicsOverlay, m_analysisOverlay, this);
   s_viewshedCount++;
   locationViewshed360->setName(QString("Viewshed %1").arg(QString::number(s_viewshedCount)));
@@ -193,6 +204,8 @@ void ViewshedController::addLocationViewshed360(const Esri::ArcGISRuntime::Point
 
 void ViewshedController::addGeoElementViewshed360(GeoElement* geoElement)
 {
+  removeActiveViewshed();
+
   auto geoElementViewshed360 = new GeoElementViewshed360(geoElement, m_analysisOverlay, QString(), QString(), this);
   s_viewshedCount++;
   geoElementViewshed360->setName(QString("Viewshed %1").arg(QString::number(s_viewshedCount)));
@@ -221,7 +234,12 @@ void ViewshedController::setActiveMode(ViewshedActiveMode mode)
   if (m_activeMode == mode)
     return;
 
+  removeActiveViewshed();
+
   m_activeMode = mode;
+
+  if (m_activeMode == ViewshedActiveMode::AddMyLocationViewshed360)
+    addLocationDisplayViewshed();
 
   emit activeModeChanged();
 }
@@ -257,6 +275,11 @@ void ViewshedController::removeActiveViewshed()
     updateActiveViewshed();
 }
 
+void ViewshedController::finishActiveViewshed()
+{
+  setActiveViewshedIndex(-1);
+}
+
 bool ViewshedController::isActiveViewshedEnabled() const
 {
   return m_activeViewshed != nullptr;
@@ -274,35 +297,7 @@ void ViewshedController::setActiveViewshedIndex(int index)
 
   m_activeViewshedIndex = index;
 
-  emit activeViewshedIndexChanged();
-
   updateActiveViewshed();
-}
-
-bool ViewshedController::isActiveViewshedVisible() const
-{
-  return m_activeViewshed ? m_activeViewshed->isVisible() : false;
-}
-
-void ViewshedController::setActiveViewshedVisible(bool visible)
-{
-  if (!m_activeViewshed)
-    return;
-
-  m_activeViewshed->setVisible(visible);
-}
-
-QString ViewshedController::activeViewshedName() const
-{
-  return m_activeViewshed ? m_activeViewshed->name() : QString();
-}
-
-void ViewshedController::setActiveViewshedName(const QString& name)
-{
-  if (!m_activeViewshed)
-    return;
-
-  m_activeViewshed->setName(name);
 }
 
 double ViewshedController::activeViewshedMinDistance() const
@@ -341,6 +336,9 @@ void ViewshedController::setActiveViewshedHorizontalAngle(double horizontalAngle
   if (!m_activeViewshed)
     return;
 
+  if (m_activeViewshed->horizontalAngle() == horizontalAngle)
+    return;
+
   m_activeViewshed->setHorizontalAngle(horizontalAngle);
 }
 
@@ -352,6 +350,9 @@ double ViewshedController::activeViewshedVerticalAngle() const
 void ViewshedController::setActiveViewshedVerticalAngle(double verticalAngle)
 {
   if (!m_activeViewshed)
+    return;
+
+  if (m_activeViewshed->verticalAngle() == verticalAngle)
     return;
 
   m_activeViewshed->setVerticalAngle(verticalAngle);
@@ -367,6 +368,9 @@ void ViewshedController::setActiveViewshedHeading(double heading)
   if (!m_activeViewshed)
     return;
 
+  if (m_activeViewshed->heading() == heading)
+    return;
+
   m_activeViewshed->setHeading(heading);
 }
 
@@ -378,6 +382,9 @@ double ViewshedController::activeViewshedPitch() const
 void ViewshedController::setActiveViewshedPitch(double pitch)
 {
   if (!m_activeViewshed)
+    return;
+
+  if (m_activeViewshed->pitch() == pitch)
     return;
 
   m_activeViewshed->setPitch(pitch);
@@ -461,8 +468,6 @@ void ViewshedController::updateActiveViewshedSignals()
     return;
 
   // connect to Viewshed360 signals
-  m_activeViewshedConns << connect(m_activeViewshed, &Viewshed360::visibleChanged, this, &ViewshedController::activeViewshedVisibleChanged);
-  m_activeViewshedConns << connect(m_activeViewshed, &Viewshed360::nameChanged, this, &ViewshedController::activeViewshedNameChanged);
   m_activeViewshedConns << connect(m_activeViewshed, &Viewshed360::minDistanceChanged, this, &ViewshedController::activeViewshedMinDistanceChanged);
   m_activeViewshedConns << connect(m_activeViewshed, &Viewshed360::maxDistanceChanged, this, &ViewshedController::activeViewshedMaxDistanceChanged);
   m_activeViewshedConns << connect(m_activeViewshed, &Viewshed360::horizontalAngleChanged, this, &ViewshedController::activeViewshedHorizontalAngleChanged);
@@ -508,8 +513,6 @@ void ViewshedController::disconnectActiveViewshedSignals()
 void ViewshedController::emitActiveViewshedSignals()
 {
   emit activeViewshedEnabledChanged();
-  emit activeViewshedVisibleChanged();
-  emit activeViewshedNameChanged();
   emit activeViewshedMinDistanceChanged();
   emit activeViewshedMaxDistanceChanged();
   emit activeViewshedHorizontalAngleChanged();

@@ -252,10 +252,9 @@ Handheld {
             }
             width: drawer.width
             visible: false
-            isMobile: true
-            onClosed: {
-                visible = false;
-                analysisToolRow.state = "clear";
+
+            onMyLocationModeSelected: {
+                navTool.startFollowing();
             }
         }
 
@@ -278,7 +277,7 @@ Handheld {
             }
             width: drawer.width
             visible: false
-            isMobile: false
+            isMobile: true
             onClosed: {
                 visible = false;
                 analysisToolRow.state = "clear";

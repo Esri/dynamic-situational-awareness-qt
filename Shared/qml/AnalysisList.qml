@@ -169,7 +169,7 @@ DsaPanel {
             if (y === openY)
                 return;
 
-            analysisRoot.highlightFollowsCurrentItem = true;
+            analysisList.highlightFollowsCurrentItem = true;
             animateVertical.from = closedY;
             animateVertical.to = openY;
             animateVertical.start();
@@ -179,11 +179,11 @@ DsaPanel {
             if (y === closedY)
                 return;
 
-            analysisRoot.highlightFollowsCurrentItem = false;
+            analysisList.highlightFollowsCurrentItem = false;
             animateVertical.from = openY;
             animateVertical.to = closedY;
             animateVertical.start();
-            analysisRoot.currentIndex = -1;
+            analysisList.currentIndex = -1;
         }
 
         NumberAnimation {

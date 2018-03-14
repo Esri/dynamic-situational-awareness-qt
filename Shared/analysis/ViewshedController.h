@@ -13,9 +13,14 @@
 #ifndef VIEWSHEDCONTROLLER_H
 #define VIEWSHEDCONTROLLER_H
 
+
+// toolkit headers
 #include "AbstractTool.h"
+
+// C++ API headers
 #include "TaskWatcher.h"
 
+// Qt headers
 #include <QAbstractListModel>
 
 namespace Esri {
@@ -36,15 +41,11 @@ class ViewshedController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
   Q_OBJECT
 
-  Q_PROPERTY(bool locationDisplayViewshedActive READ isLocationDisplayViewshedActive NOTIFY locationDisplayViewshedActiveChanged)
   Q_PROPERTY(ViewshedActiveMode activeMode READ activeMode WRITE setActiveMode NOTIFY activeModeChanged)
   Q_PROPERTY(QAbstractListModel* viewsheds READ viewsheds CONSTANT)
 
   // active viewshed properties
   Q_PROPERTY(bool activeViewshedEnabled READ isActiveViewshedEnabled NOTIFY activeViewshedEnabledChanged)
-  Q_PROPERTY(int activeViewshedIndex READ activeViewshedIndex WRITE setActiveViewshedIndex NOTIFY activeViewshedIndexChanged)
-  Q_PROPERTY(bool activeViewshedVisible READ isActiveViewshedVisible WRITE setActiveViewshedVisible NOTIFY activeViewshedVisibleChanged)
-  Q_PROPERTY(QString activeViewshedName READ activeViewshedName WRITE setActiveViewshedName NOTIFY activeViewshedNameChanged)
   Q_PROPERTY(double activeViewshedMinDistance READ activeViewshedMinDistance WRITE setActiveViewshedMinDistance NOTIFY activeViewshedMinDistanceChanged)
   Q_PROPERTY(double activeViewshedMaxDistance READ activeViewshedMaxDistance WRITE setActiveViewshedMaxDistance NOTIFY activeViewshedMaxDistanceChanged)
   Q_PROPERTY(double activeViewshedHorizontalAngle READ activeViewshedHorizontalAngle WRITE setActiveViewshedHorizontalAngle NOTIFY activeViewshedHorizontalAngleChanged)
@@ -60,14 +61,10 @@ class ViewshedController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
   Q_PROPERTY(bool activeViewshed360Mode READ isActiveViewshed360Mode WRITE setActiveViewshed360Mode NOTIFY activeViewshed360ModeChanged)
 
 signals:
-  void locationDisplayViewshedActiveChanged();
   void activeModeChanged();
 
   // active viewshed signals
   void activeViewshedEnabledChanged();
-  void activeViewshedIndexChanged();
-  void activeViewshedVisibleChanged();
-  void activeViewshedNameChanged();
   void activeViewshedMinDistanceChanged();
   void activeViewshedMaxDistanceChanged();
   void activeViewshedHorizontalAngleChanged();
@@ -86,6 +83,7 @@ public:
   enum ViewshedActiveMode
   {
     NoActiveMode = 0,
+    AddMyLocationViewshed360,
     AddLocationViewshed360,
     AddGeoElementViewshed360
   };
@@ -100,7 +98,7 @@ public:
 
   void setSceneView(Esri::ArcGISRuntime::SceneView* sceneView);
 
-  Q_INVOKABLE void addLocationDisplayViewshed();
+  void addLocationDisplayViewshed();
   void addLocationViewshed360(const Esri::ArcGISRuntime::Point& point);
   void addGeoElementViewshed360(Esri::ArcGISRuntime::GeoElement* geoElement);
 
@@ -116,17 +114,12 @@ public:
   // active viewshed methods
   Viewshed360* activeViewshed() const;
   Q_INVOKABLE void removeActiveViewshed();
+  Q_INVOKABLE void finishActiveViewshed();
 
   bool isActiveViewshedEnabled() const;
 
   int activeViewshedIndex() const;
   void setActiveViewshedIndex(int index);
-
-  bool isActiveViewshedVisible() const;
-  void setActiveViewshedVisible(bool visible);
-
-  QString activeViewshedName() const;
-  void setActiveViewshedName(const QString& name);
 
   double activeViewshedMinDistance() const;
   void setActiveViewshedMinDistance(double minDistance);

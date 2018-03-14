@@ -13,6 +13,13 @@
 #ifndef OPTIONSCONTROLLER_H
 #define OPTIONSCONTROLLER_H
 
+
+// toolkit headers
+#include "AbstractTool.h"
+
+// Qt headers
+#include <QObject>
+
 namespace Esri {
 namespace ArcGISRuntime {
 class DictionaryRenderer;
@@ -21,8 +28,6 @@ class DictionaryRenderer;
 
 class LocationTextController;
 
-#include "AbstractTool.h"
-#include <QObject>
 
 class OptionsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -34,6 +39,7 @@ class OptionsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
   Q_PROPERTY(int initialFormatIndex READ initialFormatIndex NOTIFY initialFormatIndexChanged)
   Q_PROPERTY(int initialUnitIndex READ initialUnitIndex NOTIFY initialUnitIndexChanged)
   Q_PROPERTY(bool showFriendlyTracksLabels READ showFriendlyTracksLabels WRITE setShowFriendlyTracksLabels NOTIFY showFriendlyTracksLabelsChanged)
+  Q_PROPERTY(QString userName READ userName WRITE setUserName NOTIFY userNameChanged)
 
 public:
   explicit OptionsController(QObject* parent = nullptr);
@@ -44,6 +50,9 @@ public:
   Q_INVOKABLE void setCoordinateFormat(const QString& format);
   Q_INVOKABLE void setUnitOfMeasurement(const QString& unit);
 
+  QString userName() const;
+  void setUserName(const QString &userName);
+
 signals:
   void coordinateFormatsChanged();
   void useGpsForElevationChanged();
@@ -51,6 +60,7 @@ signals:
   void initialUnitIndexChanged();
   void initialFormatIndexChanged();
   void showFriendlyTracksLabelsChanged();
+  void userNameChanged();
 
 private:
   static const QString COORDINATE_FORMAT_PROPERTYNAME;
@@ -73,6 +83,7 @@ private:
   QString m_coordinateFormat;
   QStringList m_coordinateFormatOptions;
   QStringList m_units;
+  QString m_userName;
 
   void getUpdatedTools();
   QStringList coordinateFormats() const;

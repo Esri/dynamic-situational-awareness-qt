@@ -13,9 +13,14 @@
 #ifndef LOCATIONBROADCAST_H
 #define LOCATIONBROADCAST_H
 
+
+// example app headers
 #include "Message.h"
+
+// C++ API headers
 #include "Point.h"
 
+// Qt headers
 #include <QObject>
 
 class MessageSender;
@@ -53,6 +58,9 @@ public:
 
   Message message() const;
 
+  QString userName() const;
+  void setUserName(const QString& userName);
+
 signals:
   void messageChanged();
 
@@ -63,6 +71,7 @@ private:
   void broadcastLocation();
   void removeBroadcast();
 
+  QString m_userName;
   bool m_enabled = true;
   Esri::ArcGISRuntime::Point m_location;
   bool m_useCurrentLocation = true;

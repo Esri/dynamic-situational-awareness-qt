@@ -10,30 +10,33 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-// API
-#include "ArcGISTiledElevationSource.h"
-#include "Scene.h"
-#include "ElevationSource.h"
-#include "GeoView.h"
+#include "DsaController.h"
 
-// Toolkit
+// example app headers
+#include "AlertConstants.h"
+#include "AlertLevel.h"
+#include "AppConstants.h"
+#include "ContextMenuController.h"
+#include "DsaUtility.h"
+#include "LayerCacheManager.h"
+#include "MessageFeedConstants.h"
+
+// toolkit headers
 #include "AbstractTool.h"
 #include "CoordinateConversionConstants.h"
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
-#include "LayerCacheManager.h"
 
-// Dsa apps
-#include "AlertLevel.h"
-#include "AlertConstants.h"
-#include "ContextMenuController.h"
-#include "DsaUtility.h"
-#include "DsaController.h"
-#include "MessageFeedConstants.h"
+// C++ API headers
+#include "ArcGISTiledElevationSource.h"
+#include "ElevationSource.h"
+#include "GeoView.h"
+#include "Scene.h"
 
-// Qt
+// Qt headers
 #include <QDir>
 #include <QFileInfo>
+#include <QHostInfo>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QSettings>
@@ -363,6 +366,7 @@ void DsaController::createDefaultSettings()
 {
   // setup the defaults
   m_dsaSettings["RootDataDirectory"] = DsaUtility::dataPath();
+  m_dsaSettings[AppConstants::USERNAME_PROPERTYNAME] = QHostInfo::localHostName();
   m_dsaSettings["BasemapDirectory"] = QString("%1/BasemapData").arg(m_dsaSettings["RootDataDirectory"].toString());
   m_dsaSettings["ElevationDirectory"] = QString("%1/ElevationData").arg(m_dsaSettings["RootDataDirectory"].toString());
   m_dsaSettings["SimulationDirectory"] = QString("%1/SimulationData").arg(m_dsaSettings["RootDataDirectory"].toString());

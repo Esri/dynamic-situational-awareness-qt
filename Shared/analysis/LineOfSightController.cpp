@@ -257,7 +257,7 @@ AnalysisOverlay* LineOfSightController::lineOfSightOverlay() const
 }
 
 /*!
-  \brief Creates a new Line of sight from the apps current location to the target \a geoElement.
+  \brief Creates a new Line of sight from the app's current location to the target \a geoElement.
  */
 void LineOfSightController::lineOfSightFromLocationToGeoElement(GeoElement* geoElement)
 {
@@ -277,7 +277,7 @@ void LineOfSightController::lineOfSightFromLocationToGeoElement(GeoElement* geoE
   }
 
   // create a Line of sight from the feature to the current location
-  GeoElementLineOfSight * lineOfSight = new GeoElementLineOfSight(m_locationGeoElement, geoElement, m_lineOfSightParent);
+  GeoElementLineOfSight* lineOfSight = new GeoElementLineOfSight(m_locationGeoElement, geoElement, m_lineOfSightParent);
   lineOfSight->setVisible(true);
   m_lineOfSightOverlay->analyses()->append(lineOfSight);
 }

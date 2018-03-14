@@ -10,22 +10,27 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "LineOfSightController.h"
+
+// example app headers
 #include "FeatureQueryResultManager.h"
 #include "LocationController.h"
 #include "LocationDisplay3d.h"
-#include "LineOfSightController.h"
 
+// toolkit headers
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
+// C++ API headers
 #include "AnalysisOverlay.h"
+#include "FeatureLayer.h"
 #include "GeoElementLineOfSight.h"
 #include "GeoView.h"
 #include "GeometryEngine.h"
-#include "FeatureLayer.h"
 #include "LayerListModel.h"
 #include "SceneView.h"
 
+// Qt headers
 #include <QStringListModel>
 
 using namespace Esri::ArcGISRuntime;
@@ -214,8 +219,8 @@ void LineOfSightController::onQueryFeaturesCompleted(QUuid taskId, FeatureQueryR
   // These are only required within the scope of this method
   QObject localParent;
 
-  // For each feature, obtain a point location and use it as the target for a new
-  // LocationLineOfSight which will be added to the overlay.
+  // For each feature, obtain a point location and use it as the observer for a new
+  // GeoElementLineOfSight which will be added to the overlay.
   QList<Feature*> features = resultsMgr.m_results->iterator().features(&localParent);
   auto it = features.constBegin();
   auto itEnd = features.constEnd();
@@ -225,7 +230,8 @@ void LineOfSightController::onQueryFeaturesCompleted(QUuid taskId, FeatureQueryR
     if (feat == nullptr)
       continue;
 
-    GeoElementLineOfSight * lineOfSight = new GeoElementLineOfSight(m_locationGeoElement, feat, m_lineOfSightParent);
+    // create a Line of sight from the feature to the current location
+    GeoElementLineOfSight * lineOfSight = new GeoElementLineOfSight(feat, m_locationGeoElement, m_lineOfSightParent);
     lineOfSight->setVisible(m_analysisVisible);
     m_lineOfSightOverlay->analyses()->append(lineOfSight);
   }

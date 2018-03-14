@@ -103,23 +103,7 @@ void LocationDisplay3d::setPositionSource(QGeoPositionInfoSource* positionSource
 
     // display position 10m off the ground
     constexpr double elevatedZ = 10.0;
-
-    switch (pos.type())
-    {
-    case QGeoCoordinate::Coordinate2D:
-      m_lastKnownLocation = Point(pos.longitude(), pos.latitude(), elevatedZ, SpatialReference::wgs84());
-      break;
-    case QGeoCoordinate::Coordinate3D:
-    {
-      const int adjustedZ = std::isnan(pos.altitude()) || pos.altitude() == 0  ? elevatedZ : pos.altitude();
-      m_lastKnownLocation = Point(pos.longitude(), pos.latitude(), adjustedZ, SpatialReference::wgs84());
-      break;
-    }
-    case QGeoCoordinate::InvalidCoordinate:
-    default:
-      return;
-    }
-
+    m_lastKnownLocation = Point(pos.longitude(), pos.latitude(), elevatedZ, SpatialReference::wgs84());
     m_locationGraphic->setGeometry(m_lastKnownLocation);
 
     emit locationChanged(m_lastKnownLocation);

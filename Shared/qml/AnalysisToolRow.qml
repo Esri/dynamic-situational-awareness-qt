@@ -20,7 +20,7 @@ Row {
     id: analysisToolRow
     spacing: 16 * scaleFactor
     visible: categoryToolbar.state === "analysis"
-    onVisibleChanged: state = "clear"
+    onVisibleChanged: analysisToolRow.state = "clear"
 
     states: [
         State {
@@ -29,12 +29,28 @@ Row {
                 target: viewshedIcon
                 selected: true
             }
+            PropertyChanges {
+                target: lineOfSightIcon
+                selected: false
+            }
+            PropertyChanges {
+                target: analysisListIcon
+                selected: false
+            }
         },
         State {
             name: lineOfSightIcon.toolName
             PropertyChanges {
                 target: lineOfSightIcon
                 selected: true
+            }
+            PropertyChanges {
+                target: viewshedIcon
+                selected: false
+            }
+            PropertyChanges {
+                target: analysisListIcon
+                selected: false
             }
         },
         State {
@@ -43,11 +59,27 @@ Row {
                 target: analysisListIcon
                 selected: true
             }
+            PropertyChanges {
+                target: viewshedIcon
+                selected: false
+            }
+            PropertyChanges {
+                target: lineOfSightIcon
+                selected: false
+            }
         },
         State {
             name: "clear"
             PropertyChanges {
                 target: viewshedIcon
+                selected: false
+            }
+            PropertyChanges {
+                target: lineOfSightIcon
+                selected: false
+            }
+            PropertyChanges {
+                target: analysisListIcon
                 selected: false
             }
         }
@@ -58,21 +90,19 @@ Row {
         id: viewshedIcon
         iconSource: DsaResources.iconViewshed
         toolName: "Viewshed"
-        onToolSelected: {
-            if (selected)
-                analysisToolRow.state = "clear"
-            else
-                analysisToolRow.state = toolName;
 
-            if (viewshedTool.visible) {
-                viewshedTool.visible = false;
-                analysisToolRow.state = "clear";
+        onToolSelected: {
+            if (selected ) {
+                analysisToolRow.state = "clear"
                 selected = false;
-            } else {
-                viewshedTool.visible = true;
-                lineOfSightTool.visible = false;
-                analysisListTool.visible = false;
             }
+            else {
+                analysisToolRow.state = toolName;
+            }
+        }
+
+        onSelectedChanged: {
+            viewshedTool.visible = selected;
         }
     }
 
@@ -82,20 +112,17 @@ Row {
         iconSource: DsaResources.iconLineOfSight
         toolName: "Line of sight"
         onToolSelected: {
-            if (selected)
+            if (selected ) {
                 analysisToolRow.state = "clear"
-            else
-                analysisToolRow.state = toolName;
-
-            if (lineOfSightTool.visible) {
-                lineOfSightTool.visible = false;
-                lineOfSightTool.state = "clear";
                 selected = false;
-            } else {
-                lineOfSightTool.visible = true;
-                viewshedTool.visible = false;
-                analysisListTool.visible = false;
             }
+            else {
+                analysisToolRow.state = toolName;
+            }
+        }
+
+        onSelectedChanged: {
+            lineOfSightTool.visible = selected;
         }
     }
 
@@ -105,20 +132,17 @@ Row {
         iconSource: DsaResources.iconListView
         toolName: "List"
         onToolSelected: {
-            if (selected)
+            if (selected ) {
                 analysisToolRow.state = "clear"
-            else
-                analysisToolRow.state = toolName;
-
-            if (analysisListTool.visible) {
-                analysisListTool.visible = false;
-                analysisListTool.state = "clear";
                 selected = false;
-            } else {
-                analysisListTool.visible = true;
-                lineOfSightTool.visible = false;
-                viewshedTool.visible = false;
             }
+            else {
+                analysisToolRow.state = toolName;
+            }
+        }
+
+        onSelectedChanged: {
+            analysisListTool.visible = selected;
         }
     }
 }

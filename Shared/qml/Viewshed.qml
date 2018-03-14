@@ -293,7 +293,11 @@ Item {
         }
         height: 32 * scaleFactor
         width: 100 * scaleFactor
-        model: ["Heading", "Horizontal Angle", "Vertical Angle", "Pitch"]
+
+        property var allAnglesModel: ["Heading", "Horizontal Angle", "Vertical Angle", "Pitch"]
+        property var trackModel: ["Horizontal Angle", "Vertical Angle"]
+
+        model: toolController.activeMode === ViewshedController.AddMyLocationViewshed360 ? trackModel : allAnglesModel
         font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
 
         background: Rectangle {
@@ -334,48 +338,48 @@ Item {
         snapMode: Slider.SnapAlways
 
         onValueChanged: {
-            if (angleSelector.currentIndex === 0) {
+            if (angleSelector.currentText === "Heading") {
                 if (Math.round(toolController.activeViewshedHeading) !== value)
                     toolController.activeViewshedHeading = value;
             }
-            if (angleSelector.currentIndex === 1) {
+            if (angleSelector.currentText === "Horizontal Angle") {
                 if (Math.round(toolController.activeViewshedHorizontalAngle) !== value)
                     toolController.activeViewshedHorizontalAngle = value;
             }
-            if (angleSelector.currentIndex === 2) {
+            if (angleSelector.currentText === "Vertical Angle") {
                 if (Math.round(toolController.activeViewshedVerticalAngle) !== value)
                     toolController.activeViewshedVerticalAngle = value;
             }
-            if (angleSelector.currentIndex === 3) {
+            if (angleSelector.currentText === "Pitch") {
                 if (Math.round(toolController.activeViewshedPitch) !== value)
                     toolController.activeViewshedPitch = value;
             }
         }
 
         function getMinAngle() {
-            if (angleSelector.currentIndex === 3)
+            if (angleSelector.currentText === "Pitch")
                 return toolController.activeViewshedMinPitch;
 
             return 0;
         }
 
         function getMaxAngle() {
-            if (angleSelector.currentIndex === 0)
+            if (angleSelector.currentText === "Heading")
                 return 359;
-            else if (angleSelector.currentIndex === 3)
+            else if (angleSelector.currentText === "Pitch")
                 return toolController.activeViewshedMaxPitch;
 
             return 120;
         }
 
         function getValue() {
-            if (angleSelector.currentIndex === 0)
+            if (angleSelector.currentText === "Heading")
                 return Math.round(toolController.activeViewshedHeading);
-            if (angleSelector.currentIndex === 1)
+            if (angleSelector.currentText === "Horizontal Angle")
                 return Math.round(toolController.activeViewshedHorizontalAngle);
-            if (angleSelector.currentIndex === 2)
+            if (angleSelector.currentText === "Vertical Angle")
                 return Math.round(toolController.activeViewshedVerticalAngle);
-            if (angleSelector.currentIndex === 3)
+            if (angleSelector.currentText === "Pitch")
                 return Math.round(toolController.activeViewshedPitch);
         }
     }

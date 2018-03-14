@@ -18,7 +18,7 @@ import Esri.DSA 1.0
 
 Row {
     id: analysisToolRow
-    spacing: 16 * scaleFactor
+    spacing: 48 * scaleFactor
     visible: categoryToolbar.state === "analysis"
     onVisibleChanged: analysisToolRow.state = "clear"
 
@@ -89,7 +89,7 @@ Row {
     ToolIcon {
         id: viewshedIcon
         iconSource: DsaResources.iconViewshed
-        toolName: "Viewshed"
+        toolName: "Add Viewshed"
 
         onToolSelected: {
             if (selected ) {
@@ -110,7 +110,7 @@ Row {
     ToolIcon {
         id: lineOfSightIcon
         iconSource: DsaResources.iconLineOfSight
-        toolName: "Line of sight"
+        toolName: "Add Line of sight"
         onToolSelected: {
             if (selected ) {
                 analysisToolRow.state = "clear"

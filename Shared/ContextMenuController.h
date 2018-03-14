@@ -13,11 +13,15 @@
 #ifndef CONTEXTMENUCONTROLLER_H
 #define CONTEXTMENUCONTROLLER_H
 
+
+// toolkit headers
 #include "AbstractTool.h"
 
+// C++ API headers
 #include "Point.h"
 #include "TaskWatcher.h"
 
+// Qt headers
 #include <QMouseEvent>
 #include <QStringListModel>
 
@@ -46,6 +50,7 @@ public:
   static const QString ELEVATION_OPTION;
   static const QString FOLLOW_OPTION;
   static const QString IDENTIFY_OPTION;
+  static const QString LINE_OF_SIGHT_OPTION;
   static const QString VIEWSHED_OPTION;
 
   explicit ContextMenuController(QObject* parent = nullptr);

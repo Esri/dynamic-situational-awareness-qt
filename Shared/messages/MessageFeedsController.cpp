@@ -11,26 +11,32 @@
 //
 
 #include "MessageFeedsController.h"
+
+// example app headers
+#include "AppConstants.h"
+#include "LocationBroadcast.h"
 #include "Message.h"
-#include "MessagesOverlay.h"
-#include "MessageListener.h"
-#include "MessageFeedListModel.h"
 #include "MessageFeed.h"
 #include "MessageFeedConstants.h"
+#include "MessageFeedListModel.h"
+#include "MessageListener.h"
 #include "MessageSender.h"
-#include "LocationBroadcast.h"
+#include "MessagesOverlay.h"
 
-#include "ToolResourceProvider.h"
+// toolkit headers
 #include "ToolManager.h"
+#include "ToolResourceProvider.h"
 
-#include "DictionarySymbolStyle.h"
+// C++ API headers
 #include "DictionaryRenderer.h"
-#include "SimpleRenderer.h"
+#include "DictionarySymbolStyle.h"
 #include "PictureMarkerSymbol.h"
+#include "SimpleRenderer.h"
 
+// Qt headers
 #include <QFileInfo>
-#include <QUdpSocket>
 #include <QJsonArray>
+#include <QUdpSocket>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -152,11 +158,16 @@ QString MessageFeedsController::toolName() const
      \li MESSAGE_FEED_UDP_PORTS_PROPERTYNAME - The UDP ports for listening to message feeds.
      \li MESSAGE_FEEDS_PROPERTYNAME - A list of message feed configurations.
      \li LOCATION_BROADCAST_CONFIG_PROPERTYNAME - The location broadcast configuration details.
+     \li \c UserName - the name of the user to be broadcast.
    \endlist
  */
 void MessageFeedsController::setProperties(const QVariantMap& properties)
 {
   setResourcePath(properties[RESOURCE_DIRECTORY_PROPERTYNAME].toString());
+
+  auto userNameFindIt = properties.find(AppConstants::USERNAME_PROPERTYNAME);
+  if (userNameFindIt != properties.end())
+    m_locationBroadcast->setUserName(userNameFindIt.value().toString());
 
   // parse and add message listeners on specified UDP ports
   const auto messageFeedUdpPorts = properties[MessageFeedConstants::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME].toStringList();

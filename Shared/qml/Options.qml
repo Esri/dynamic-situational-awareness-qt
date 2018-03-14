@@ -199,6 +199,35 @@ Rectangle {
                     onCurrentTextChanged: optionsController.setUnitOfMeasurement(currentText)
                 }
             }
+
+            Row {
+                height: 40 * scaleFactor
+                spacing: 5 * scaleFactor
+
+                Text {
+                    text: "User name"
+                    color: Material.foreground
+                    font {
+                        pixelSize: 10 * scaleFactor
+                        family: DsaStyles.fontFamily
+                    }
+                }
+
+                TextField {
+                    width: 50 * scaleFactor
+                    text: optionsController.userName
+                    color: Material.foreground
+                    font {
+                        pixelSize: 10 * scaleFactor
+                        family: DsaStyles.fontFamily
+                    }
+
+                    onAccepted: {
+                        if (optionsController.userName !== text)
+                            optionsController.userName = text;
+                    }
+                }
+            }
         }
     }
 

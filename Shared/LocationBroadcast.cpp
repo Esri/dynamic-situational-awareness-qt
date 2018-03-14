@@ -11,13 +11,17 @@
 //
 
 #include "LocationBroadcast.h"
+
+// example app headers
 #include "MessageSender.h"
 
+// toolkit headers
 #include "ToolResourceProvider.h"
 
-#include <QUdpSocket>
+// Qt headers
 #include <QHostInfo>
 #include <QTimer>
+#include <QUdpSocket>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -51,7 +55,8 @@ static const QString s_locationBroadcastSic{QStringLiteral("SFGPEVAL-------")};
    \sa setUdpPort
  */
 LocationBroadcast::LocationBroadcast(QObject* parent) :
-  QObject(parent)
+  QObject(parent),
+  m_userName(QHostInfo::localHostName())
 {
 }
 
@@ -339,7 +344,7 @@ void LocationBroadcast::broadcastLocation()
     m_message.setSymbolId(s_locationBroadcastSic);
 
     attribs.insert(Message::GEOMESSAGE_SIC_NAME, s_locationBroadcastSic);
-    attribs.insert(Message::GEOMESSAGE_UNIQUE_DESIGNATION_NAME, QHostInfo::localHostName());
+    attribs.insert(Message::GEOMESSAGE_UNIQUE_DESIGNATION_NAME, m_userName);
     const int status911 = m_inDistress ? 1 : 0;
     attribs.insert(Message::GEOMESSAGE_STATUS_911_NAME, status911);
     m_message.setAttributes(attribs);
@@ -377,6 +382,32 @@ void LocationBroadcast::removeBroadcast()
 
     if (m_messageSender)
       m_messageSender->sendMessage(m_message.toGeoMessage());
+  }
+}
+
+/*!
+   \brief Returns the user name for the location broadcast.
+ */
+QString LocationBroadcast::userName() const
+{
+  return m_userName;
+}
+
+/*!
+   \brief Sets the user name for the location broadcast to \a userName.
+ */
+void LocationBroadcast::setUserName(const QString& userName)
+{
+  if (userName == m_userName)
+    return;
+
+  m_userName = userName;
+
+  if (!m_message.isEmpty())
+  {
+    QVariantMap attribs = m_message.attributes();
+    attribs.insert(Message::GEOMESSAGE_UNIQUE_DESIGNATION_NAME, m_userName);
+    m_message.setAttributes(attribs);
   }
 }
 

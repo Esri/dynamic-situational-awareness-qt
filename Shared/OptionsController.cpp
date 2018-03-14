@@ -11,13 +11,20 @@
 //
 
 #include "OptionsController.h"
-#include "ToolResourceProvider.h"
-#include "ToolManager.h"
+
+// example app headers
+#include "AppConstants.h"
 #include "LocationTextController.h"
-#include "MessageFeedsController.h"
-#include "MessagesOverlay.h"
 #include "MessageFeed.h"
 #include "MessageFeedListModel.h"
+#include "MessageFeedsController.h"
+#include "MessagesOverlay.h"
+
+// toolkit headers
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
+
+// C++ API headers
 #include "DictionaryRenderer.h"
 
 using namespace Esri::ArcGISRuntime;
@@ -105,6 +112,10 @@ void OptionsController::setProperties(const QVariantMap& properties)
   m_initialFormatIndex = m_coordinateFormatOptions.indexOf(m_coordinateFormat);
   emit initialFormatIndex();
 
+  auto userNameFindIt = properties.find(AppConstants::USERNAME_PROPERTYNAME);
+  if (userNameFindIt != properties.end())
+    setUserName(userNameFindIt.value().toString());
+
   // get access to the various tool controllers
   getUpdatedTools();
 }
@@ -167,6 +178,27 @@ void OptionsController::setUnitOfMeasurement(const QString& unit)
     return;
 
   m_locationTextController->setUnitOfMeasurement(unit);
+}
+
+/*
+ \brief Returns the user name for the app.
+ */
+QString OptionsController::userName() const
+{
+  return m_userName;
+}
+
+/*
+ \brief Sets the \a userName for the app.
+ */
+void OptionsController::setUserName(const QString& userName)
+{
+  if (userName == m_userName)
+    return;
+
+  m_userName = userName;
+  emit userNameChanged();
+  emit propertyChanged(AppConstants::USERNAME_PROPERTYNAME, m_userName);
 }
 
 /*

@@ -13,11 +13,15 @@
 #ifndef LINEOFSIGHTCONTROLLER_H
 #define LINEOFSIGHTCONTROLLER_H
 
+
+// toolkit headers
 #include "AbstractTool.h"
 
+// C++ API headers
 #include "Point.h"
 #include "TaskWatcher.h"
 
+// Qt headers
 #include <QAbstractItemModel>
 
 namespace Esri
@@ -59,6 +63,8 @@ public:
   void setAnalysisVisible(bool isAnalysisVisiblesVisible);
 
   Esri::ArcGISRuntime::AnalysisOverlay* lineOfSightOverlay() const;
+
+  void lineOfSightFromLocationToGeoElement(Esri::ArcGISRuntime::GeoElement* geoElement);
 
 signals:
   void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);

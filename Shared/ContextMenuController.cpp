@@ -10,20 +10,26 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "ViewshedController.h"
 #include "ContextMenuController.h"
+
+// example app headers
 #include "FollowPositionController.h"
 #include "GraphicsOverlaysResultsManager.h"
 #include "IdentifyController.h"
 #include "LayerResultsManager.h"
+#include "LineOfSightController.h"
+#include "ViewshedController.h"
 
+// toolkit headers
 #include "CoordinateConversionController.h"
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
+// C++ API headers
 #include "MapView.h"
 #include "SceneView.h"
 
+// STL headers
 #include <cmath>
 
 using namespace Esri::ArcGISRuntime;
@@ -32,6 +38,7 @@ const QString ContextMenuController::COORDINATES_OPTION = "Coordinates";
 const QString ContextMenuController::ELEVATION_OPTION = "Elevation";
 const QString ContextMenuController::FOLLOW_OPTION = "Follow";
 const QString ContextMenuController::IDENTIFY_OPTION = "Identify";
+const QString ContextMenuController::LINE_OF_SIGHT_OPTION = "Line of sight";
 const QString ContextMenuController::VIEWSHED_OPTION = "Viewshed";
 
 /*!
@@ -159,6 +166,9 @@ void ContextMenuController::onIdentifyLayersCompleted(const QUuid& taskId, const
     setResultTitle(res->layerContent()->name());
     addOption(IDENTIFY_OPTION);
 
+    if (m_contextElement->geometry().geometryType() == GeometryType::Point)
+      addOption(LINE_OF_SIGHT_OPTION);
+
     return;
   }
 }
@@ -194,6 +204,9 @@ void ContextMenuController::onIdentifyGraphicsOverlaysCompleted(const QUuid& tas
     setResultTitle(res->graphicsOverlay()->overlayId());
     addOption(IDENTIFY_OPTION);
     addOption(FOLLOW_OPTION);
+
+    if (m_contextElement->geometry().geometryType() == GeometryType::Point)
+      addOption(LINE_OF_SIGHT_OPTION);
 
     return;
   }
@@ -405,6 +418,14 @@ void ContextMenuController::selectOption(const QString& option)
     coordinateTool->setCaptureMode(true);
     coordinateTool->setPointToConvert(m_contextLocation);
     coordinateTool->setActive(true);
+  }
+  else if (option == LINE_OF_SIGHT_OPTION)
+  {
+    LineOfSightController* lineOfSightTool = Toolkit::ToolManager::instance().tool<LineOfSightController>();
+    if (!lineOfSightTool)
+      return;
+
+    lineOfSightTool->lineOfSightFromLocationToGeoElement(m_contextElement);
   }
 }
 

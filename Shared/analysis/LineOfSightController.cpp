@@ -257,6 +257,32 @@ AnalysisOverlay* LineOfSightController::lineOfSightOverlay() const
 }
 
 /*!
+  \brief Creates a new Line of sight from the apps current location to the target \a geoElement.
+ */
+void LineOfSightController::lineOfSightFromLocationToGeoElement(GeoElement* geoElement)
+{
+  if (!geoElement)
+  {
+    emit toolErrorOccurred(QStringLiteral("Invalid Line Of Sight target"), QStringLiteral("Null GeoElement"));
+    return;
+  }
+
+  if (!m_locationGeoElement)
+    getLocationGeoElement();
+
+  if (!m_locationGeoElement)
+  {
+    emit toolErrorOccurred(QStringLiteral("Failed to get location"), QStringLiteral("Unable to find My Location GeoElement for GeoElementLineOfSight"));
+    return;
+  }
+
+  // create a Line of sight from the feature to the current location
+  GeoElementLineOfSight * lineOfSight = new GeoElementLineOfSight(m_locationGeoElement, geoElement, m_lineOfSightParent);
+  lineOfSight->setVisible(true);
+  m_lineOfSightOverlay->analyses()->append(lineOfSight);
+}
+
+/*!
   \brief Returns whether the results of Line of sight analysis should be visible.
  */
 bool LineOfSightController::isAnalysisVisible() const

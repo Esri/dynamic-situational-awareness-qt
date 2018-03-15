@@ -13,7 +13,6 @@
 #ifndef LINEOFSIGHTCONTROLLER_H
 #define LINEOFSIGHTCONTROLLER_H
 
-
 // toolkit headers
 #include "AbstractTool.h"
 
@@ -45,6 +44,7 @@ class LineOfSightController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 
   Q_PROPERTY(QAbstractItemModel* overlayNames READ overlayNames NOTIFY overlayNamesChanged)
   Q_PROPERTY(bool analysisVisible READ isAnalysisVisible WRITE setAnalysisVisible NOTIFY analysisVisibleChanged)
+  Q_PROPERTY(int visibleByCount READ visibleByCount NOTIFY visibleByCountChanged)
 
 public:
 
@@ -66,10 +66,13 @@ public:
 
   void lineOfSightFromLocationToGeoElement(Esri::ArcGISRuntime::GeoElement* geoElement);
 
+  int visibleByCount() const;
+
 signals:
   void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
   void overlayNamesChanged();
   void analysisVisibleChanged();
+  void visibleByCountChanged();
 
 public slots:
   void onGeoViewChanged(Esri::ArcGISRuntime::GeoView* geoView);
@@ -81,6 +84,7 @@ private slots:
 private:
   void cancelTask();
   void getLocationGeoElement();
+  void setVisibleByCount(int visibleByCount);
 
   QStringListModel* m_overlayNames;
   Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
@@ -91,6 +95,8 @@ private:
   Esri::ArcGISRuntime::GeoElement* m_locationGeoElement = nullptr;
   QMetaObject::Connection m_queryFeaturesConnection;
   bool m_analysisVisible = true;
+  int m_visibleByCount = 0;
+  QList<QMetaObject::Connection> m_visibleByConnections;
 };
 
 #endif // LINEOFSIGHTCONTROLLER_H

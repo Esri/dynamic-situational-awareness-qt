@@ -45,6 +45,20 @@ void LineOfSightController::getLocationGeoElement()
     m_locationGeoElement = locationController->locationDisplay()->locationGraphic();
 }
 
+int LineOfSightController::visibleByCount() const
+{
+  return m_visibleByCount;
+}
+
+void LineOfSightController::setVisibleByCount(int visibleByCount)
+{
+  if (m_visibleByCount == visibleByCount)
+    return;
+
+  m_visibleByCount = visibleByCount;
+  emit visibleByCountChanged();
+}
+
 LineOfSightController::LineOfSightController(QObject* parent):
   Toolkit::AbstractTool(parent),
   m_overlayNames(new QStringListModel(this)),
@@ -207,6 +221,12 @@ void LineOfSightController::onQueryFeaturesCompleted(QUuid taskId, FeatureQueryR
     return;
   }
 
+  for (const auto& conn : m_visibleByConnections)
+    disconnect(conn);
+
+  m_visibleByConnections.clear();
+  setVisibleByCount(0);
+
   // clear the QObject used as a parent for Line of Sight results
   if (m_lineOfSightParent)
   {
@@ -234,6 +254,32 @@ void LineOfSightController::onQueryFeaturesCompleted(QUuid taskId, FeatureQueryR
     GeoElementLineOfSight * lineOfSight = new GeoElementLineOfSight(feat, m_locationGeoElement, m_lineOfSightParent);
     lineOfSight->setVisible(m_analysisVisible);
     m_lineOfSightOverlay->analyses()->append(lineOfSight);
+
+    m_visibleByConnections.append(connect(lineOfSight, &GeoElementLineOfSight::targetVisibilityChanged, this, [this]()
+    {
+      int visibleCount = 0;
+      AnalysisListModel* losList = m_lineOfSightOverlay->analyses();
+      const int count = losList->rowCount();
+      for (int i = 0; i < count; ++i)
+      {
+        Analysis* analysis = losList->at(i);
+        if (!analysis)
+          continue;
+
+        GeoElementLineOfSight* lineOfSight = qobject_cast<GeoElementLineOfSight*>(analysis);
+        if (!lineOfSight)
+          continue;
+
+        // don't count Line of Sight from the current location
+        if (lineOfSight->observerGeoElement() == m_locationGeoElement)
+          continue;
+
+        if (lineOfSight->targetVisibility() == LineOfSightTargetVisibility::Visible)
+          visibleCount += 1;
+      }
+
+      setVisibleByCount(visibleCount);
+    }));
   }
 }
 
@@ -370,6 +416,13 @@ void LineOfSightController::clearAnalysis()
 {
   // remove all of the results from the overlay
   m_lineOfSightOverlay->analyses()->clear();
+
+  for (const auto& conn : m_visibleByConnections)
+    disconnect(conn);
+
+  m_visibleByConnections.clear();
+  setVisibleByCount(0);
+
   // delete the QObject used as the parent for the analysis
   if (m_lineOfSightParent)
   {

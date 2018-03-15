@@ -379,7 +379,7 @@ void DsaController::createDefaultSettings()
   writeDefaultMessageFeeds();
   writeDefaultInitialLocation();
   m_dsaSettings[Toolkit::CoordinateConversionConstants::COORDINATE_FORMAT_PROPERTY] = Toolkit::CoordinateConversionConstants::MGRS_FORMAT;
-  m_dsaSettings["UnitOfMeasurement"] = QStringLiteral("meters");
+  m_dsaSettings[AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME] = AppConstants::UNIT_METERS;
   m_dsaSettings["UseGpsForElevation"] = QStringLiteral("true");
   writeDefaultConditions();
 }

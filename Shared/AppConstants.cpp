@@ -13,3 +13,6 @@
 #include "AppConstants.h"
 
 const QString AppConstants::USERNAME_PROPERTYNAME = "UserName";
+const QString AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME = QStringLiteral("UnitOfMeasurement");
+const QString AppConstants::UNIT_METERS = QStringLiteral("meters");
+const QString AppConstants::UNIT_FEET = QStringLiteral("feet");

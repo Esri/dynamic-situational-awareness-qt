@@ -21,6 +21,7 @@
 #include "MessagesOverlay.h"
 
 // toolkit headers
+#include "CoordinateConversionConstants.h"
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
@@ -29,28 +30,23 @@
 
 using namespace Esri::ArcGISRuntime;
 
-const QString OptionsController::COORDINATE_FORMAT_PROPERTYNAME = QStringLiteral("CoordinateFormat");
-const QString OptionsController::UNIT_OF_MEASUREMENT_PROPERTYNAME = QStringLiteral("UnitOfMeasurement");
-const QString OptionsController::DMS = QStringLiteral("DMS");
-const QString OptionsController::DD = QStringLiteral("DD");
-const QString OptionsController::DDM = QStringLiteral("DDM");
-const QString OptionsController::UTM = QStringLiteral("UTM");
-const QString OptionsController::MGRS = QStringLiteral("MGRS");
-const QString OptionsController::USNG = QStringLiteral("USNG");
-const QString OptionsController::GeoRef = QStringLiteral("GEOREF");
-const QString OptionsController::Gars = QStringLiteral("GARS");
-const QString OptionsController::Meters = QStringLiteral("meters");
-const QString OptionsController::Feet = QStringLiteral("feet");
-
 /*
  \brief Constructor that takes an optional \a parent.
  */
 OptionsController::OptionsController(QObject* parent) :
-  Toolkit::AbstractTool(parent)
+  Toolkit::AbstractTool(parent),
+  m_coordinateFormatOptions{Toolkit::CoordinateConversionConstants::DEGREES_MINUTES_SECONDS_FORMAT,
+                            Toolkit::CoordinateConversionConstants::DECIMAL_DEGREES_FORMAT,
+                            Toolkit::CoordinateConversionConstants::DEGREES_DECIMAL_MINUTES_FORMAT,
+                            Toolkit::CoordinateConversionConstants::UTM_FORMAT,
+                            Toolkit::CoordinateConversionConstants::MGRS_FORMAT,
+                            Toolkit::CoordinateConversionConstants::USNG_FORMAT,
+                            Toolkit::CoordinateConversionConstants::GEOREF_FORMAT,
+                            Toolkit::CoordinateConversionConstants::GARS_FORMAT},
+  m_units{AppConstants::UNIT_METERS,
+          AppConstants::UNIT_FEET}
 {
   Toolkit::ToolManager::instance().addTool(this);
-  m_coordinateFormatOptions << DMS << DD << DDM << UTM << MGRS << USNG << GeoRef << Gars;
-  m_units << Meters << Feet;
   emit unitsChanged();
   emit coordinateFormatsChanged();
 }
@@ -98,13 +94,13 @@ QString OptionsController::toolName() const
 void OptionsController::setProperties(const QVariantMap& properties)
 {
   // access tool properties from the config
-  m_coordinateFormat = properties[COORDINATE_FORMAT_PROPERTYNAME].toString();
+  m_coordinateFormat = properties[Toolkit::CoordinateConversionConstants::COORDINATE_FORMAT_PROPERTY].toString();
   if (m_coordinateFormat.isEmpty())
-    m_coordinateFormat = DMS;
+    m_coordinateFormat = Toolkit::CoordinateConversionConstants::DEGREES_MINUTES_SECONDS_FORMAT;
 
-  m_unitOfMeasurement = properties[UNIT_OF_MEASUREMENT_PROPERTYNAME].toString();
+  m_unitOfMeasurement = properties[AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME].toString();
   if (m_unitOfMeasurement.isEmpty())
-    m_unitOfMeasurement = Meters;
+    m_unitOfMeasurement = AppConstants::UNIT_METERS;
 
   // update properties
   m_initialUnitIndex = m_units.indexOf(m_unitOfMeasurement);

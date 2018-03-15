@@ -50,16 +50,6 @@ int LineOfSightController::visibleByCount() const
   return m_visibleByCount;
 }
 
-int LineOfSightController::notVisibleByCount() const
-{
-  return m_notVisibleByCount;
-}
-
-int LineOfSightController::unknownCount()
-{
-  return m_unknownCount;
-}
-
 void LineOfSightController::setVisibleByCount(int visibleByCount)
 {
   if (m_visibleByCount == visibleByCount)
@@ -67,24 +57,6 @@ void LineOfSightController::setVisibleByCount(int visibleByCount)
 
   m_visibleByCount = visibleByCount;
   emit visibleByCountChanged();
-}
-
-void LineOfSightController::setNotVisibleByCount(int notVisibleByCount)
-{
-  if (m_notVisibleByCount == notVisibleByCount)
-    return;
-
-  m_notVisibleByCount = notVisibleByCount;
-  emit notVisibleByCountChanged();
-}
-
-void LineOfSightController::setUnknownCount(int unknownCount)
-{
-  if (m_unknownCount == unknownCount)
-    return;
-
-  m_unknownCount = unknownCount;
-  emit unknownCountChanged();
 }
 
 LineOfSightController::LineOfSightController(QObject* parent):
@@ -254,7 +226,6 @@ void LineOfSightController::onQueryFeaturesCompleted(QUuid taskId, FeatureQueryR
 
   m_visibleByConnections.clear();
   setVisibleByCount(0);
-  setNotVisibleByCount(0);
 
   // clear the QObject used as a parent for Line of Sight results
   if (m_lineOfSightParent)
@@ -287,8 +258,6 @@ void LineOfSightController::onQueryFeaturesCompleted(QUuid taskId, FeatureQueryR
     m_visibleByConnections.append(connect(lineOfSight, &GeoElementLineOfSight::targetVisibilityChanged, this, [this]()
     {
       int visibleCount = 0;
-      int notVisibleByCount = 0;
-      int unknownCount = 0;
       AnalysisListModel* losList = m_lineOfSightOverlay->analyses();
       const int count = losList->rowCount();
       for (int i = 0; i < count; ++i)
@@ -307,15 +276,9 @@ void LineOfSightController::onQueryFeaturesCompleted(QUuid taskId, FeatureQueryR
 
         if (lineOfSight->targetVisibility() == LineOfSightTargetVisibility::Visible)
           visibleCount += 1;
-        else if (lineOfSight->targetVisibility() == LineOfSightTargetVisibility::Obstructed)
-          notVisibleByCount += 1;
-        else
-          unknownCount += 1;
       }
 
       setVisibleByCount(visibleCount);
-      setNotVisibleByCount(notVisibleByCount);
-      setUnknownCount(unknownCount);
     }));
   }
 }
@@ -459,8 +422,6 @@ void LineOfSightController::clearAnalysis()
 
   m_visibleByConnections.clear();
   setVisibleByCount(0);
-  setNotVisibleByCount(0);
-  setUnknownCount(0);
 
   // delete the QObject used as the parent for the analysis
   if (m_lineOfSightParent)

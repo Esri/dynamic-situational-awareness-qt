@@ -123,12 +123,13 @@ Item {
 
         font {
             family: DsaStyles.fontFamily
-            pixelSize: DsaStyles.toolFontPixelSize
-            bold: true
+            pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+            italic: true
         }
-        color: Material.foreground
+        color: Material.accent
         verticalAlignment: Text.AlignVCenter
 
-        text: "# Visible by: " + toolController.visibleByCount
+        text: "Visible by <b>" + toolController.visibleByCount + ( toolController.visibleByCount === 1 ? "</b> Observer" :
+                                                                                                         "</b> Observers")
     }
 }

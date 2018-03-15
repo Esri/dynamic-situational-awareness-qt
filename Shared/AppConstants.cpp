@@ -10,6 +10,6 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "AppConstants.h".h"
+#include "AppConstants.h"
 
 const QString AppConstants::USERNAME_PROPERTYNAME = "UserName";

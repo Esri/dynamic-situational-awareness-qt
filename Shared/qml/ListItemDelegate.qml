@@ -50,7 +50,7 @@ Item {
             radius: 50 * scaleFactor
             width: 24 * scaleFactor
             height: width
-            color: imageFrameVisible ? Material.foreground : Material.background
+            color: imageFrameVisible ? Material.foreground : "transparent"
             visible: imageVisible
 
             Image {

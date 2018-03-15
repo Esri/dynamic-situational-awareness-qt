@@ -47,7 +47,7 @@ public:
   // QAbstractItemModel interface
   int rowCount(const QModelIndex& parent = QModelIndex()) const override;
   QVariant data(const QModelIndex& index, int role) const override;
-  bool setData(const QModelIndex& index, const QVariant& value, int role);
+  bool setData(const QModelIndex& index, const QVariant& value, int role) override;
 
 protected:
   QHash<int, QByteArray> roleNames() const override;

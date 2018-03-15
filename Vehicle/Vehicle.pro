@@ -14,7 +14,7 @@
 TARGET = DSA_Vehicle_Qt
 TEMPLATE = app
 
-QT += core gui opengl network positioning sensors qml quick xml svg charts widgets
+QT += core gui opengl network positioning sensors qml quick xml svg
 CONFIG += c++11
 
 # uncomment this line to use a local toolkit build

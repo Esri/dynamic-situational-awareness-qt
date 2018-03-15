@@ -214,7 +214,7 @@ Rectangle {
                 }
 
                 TextField {
-                    width: 50 * scaleFactor
+                    width: 128 * scaleFactor
                     text: optionsController.userName
                     color: Material.foreground
                     font {

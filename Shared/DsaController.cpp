@@ -190,9 +190,26 @@ void DsaController::onToolError(const QString& errorMessage, const QString& addi
 
 void DsaController::onPropertyChanged(const QString& propertyName, const QVariant& propertyValue)
 {
+  if (m_dsaSettings.value(propertyName) == propertyValue)
+    return;
+
   m_dsaSettings.insert(propertyName, propertyValue);
   // save the settings
   saveSettings();
+
+  // inform tools of the change
+  auto it = Toolkit::ToolManager::instance().begin();
+  auto itEnd = Toolkit::ToolManager::instance().end();
+  for (;it != itEnd; ++it)
+  {
+    Toolkit::AbstractTool* tool = *it;
+    if (!tool)
+      continue;
+
+    disconnect(tool, &Toolkit::AbstractTool::propertyChanged,this, &DsaController::onPropertyChanged);
+    tool->setProperties(m_dsaSettings);
+    connect(tool, &Toolkit::AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
+  }
 }
 
 void DsaController::setupConfig()
@@ -379,7 +396,7 @@ void DsaController::createDefaultSettings()
   writeDefaultMessageFeeds();
   writeDefaultInitialLocation();
   m_dsaSettings[Toolkit::CoordinateConversionConstants::COORDINATE_FORMAT_PROPERTY] = Toolkit::CoordinateConversionConstants::MGRS_FORMAT;
-  m_dsaSettings["UnitOfMeasurement"] = QStringLiteral("meters");
+  m_dsaSettings[AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME] = AppConstants::UNIT_METERS;
   m_dsaSettings["UseGpsForElevation"] = QStringLiteral("true");
   writeDefaultConditions();
 }

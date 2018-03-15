@@ -20,6 +20,9 @@
 class AppConstants {
 public:
   static const QString USERNAME_PROPERTYNAME;
+  static const QString UNIT_OF_MEASUREMENT_PROPERTYNAME;
+  static const QString UNIT_METERS;
+  static const QString UNIT_FEET;
 };
 
 #endif // APPCONSTANTS_H

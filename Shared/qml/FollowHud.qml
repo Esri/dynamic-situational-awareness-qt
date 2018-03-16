@@ -27,6 +27,10 @@ Item {
 
     FollowPositionController {
         id: followPositionController
+        onFollowModeChanged: {
+            if (followPositionController.followMode === FollowPositionController.Disabled)
+                followHud.state = disableLocation.name;
+        }
     }
 
     state: disableLocation.name

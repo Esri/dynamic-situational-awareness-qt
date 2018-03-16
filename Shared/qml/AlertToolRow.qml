@@ -22,12 +22,12 @@ Row {
     spacing: 10 * scaleFactor
     visible: categoryToolbar.state === "alerts"
     onVisibleChanged: {
-        state = "clear"
-        if (visible)
-        {
+        if (visible) {
             viewAlertIcon.selected = true;
             alertToolRow.state = viewAlertIcon.toolName;
             alertsTool.visible = true;
+        } else {
+            state = "clear";
         }
     }
 
@@ -51,6 +51,18 @@ Row {
             PropertyChanges {
                 target: viewAlertIcon
                 selected: false
+            }
+            PropertyChanges {
+                target: createAlertIcon
+                selected: false
+            }
+            PropertyChanges {
+                target: alertConditionsTool
+                visible: false
+            }
+            PropertyChanges {
+                target: alertsTool
+                visible: false
             }
         }
     ]

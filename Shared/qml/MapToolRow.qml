@@ -46,10 +46,6 @@ Row {
                 target: tocIcon
                 selected: selected
             }
-            PropertyChanges {
-                target: identifyIcon
-                selected: selected
-            }
         },
         State {
             name: messageFeedsIcon.toolName
@@ -157,6 +153,7 @@ Row {
         id: identifyIcon
         iconSource: DsaResources.iconAboutMap
         toolName: "Query"
+        visible: false
         onToolSelected: {
             if (selected) {
                 selected = false;

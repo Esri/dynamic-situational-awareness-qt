@@ -26,6 +26,7 @@ Item {
     property string instruction: "Set target"
     property alias targetIndex: targetCB.currentIndex
     property int targetFeatureId: singleFeatureRb.checked? Number(featureIdEdit.text) : -1
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     function text() {
         if (allObjectRb.checked) {

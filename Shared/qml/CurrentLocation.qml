@@ -22,6 +22,7 @@ Item {
     width: backgroundRecatangle.width
     height: backgroundRecatangle.height
     property alias radius: backgroundRecatangle.radius
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     // Declare Controller Class
     LocationTextController {

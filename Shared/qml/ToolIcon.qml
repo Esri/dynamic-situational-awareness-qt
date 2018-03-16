@@ -12,10 +12,12 @@
 
 import QtQuick 2.9
 import QtQuick.Controls 2.2
+import QtQuick.Window 2.2
 import Esri.DSA 1.0
 import QtQuick.Controls.Material 2.2
 
 Item {
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
     anchors.verticalCenter: parent.verticalCenter
     width: DsaStyles.primaryIconSize * scaleFactor
     height: width
@@ -23,6 +25,7 @@ Item {
     property alias toolName: toolText.text
     property bool selected: false
     signal toolSelected()
+    property color labelColor: Material.foreground
 
     Column {
         anchors.fill: parent
@@ -39,7 +42,7 @@ Item {
             id: toolText
             anchors.horizontalCenter: parent.horizontalCenter
             text: toolName
-            color: Material.foreground
+            color: labelColor
             font {
                 family: DsaStyles.fontFamily
                 pixelSize: DsaStyles.toolFontPixelSize * scaleFactor

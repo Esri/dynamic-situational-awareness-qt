@@ -19,6 +19,8 @@ import Esri.DSA 1.0
 
 Item {
     id: followHudRoot
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+
     function stopFollowing() {
         followPositionController.followMode = FollowPositionController.Disabled;
     }

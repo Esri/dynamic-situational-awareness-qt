@@ -23,6 +23,7 @@ Item {
     property bool valid: attributeFieldEdit.length > 0
     property string instruction: "Select attribute"
     property alias attributeField: attributeFieldEdit.text
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     function text() {
         return "have attrribute " + attributeFieldEdit.text + " = ";

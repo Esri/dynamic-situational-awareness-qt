@@ -12,6 +12,7 @@
 
 import QtQuick 2.9
 import QtQuick.Controls 2.2
+import QtQuick.Window 2.2
 import Esri.DSA 1.0
 import QtQuick.Controls.Material 2.2
 
@@ -21,6 +22,7 @@ Item {
     property alias iconSource: image.source
     property string categoryName
     property bool selected: false
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
     signal categorySelected()
 
     Column {

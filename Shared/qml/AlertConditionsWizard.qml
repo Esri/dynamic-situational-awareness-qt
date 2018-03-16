@@ -22,6 +22,7 @@ Rectangle {
     color: Material.primary
 
     property bool readyToAdd: conditionFrame.currentItem == reviewPage
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     Text {
         id: titleRow
@@ -244,6 +245,8 @@ Rectangle {
         opacity: enabled ? 1.0 : 0.5
         iconSource: DsaResources.iconComplete
         toolName: "Create"
+        visible: reviewText.visible
+        labelColor: Material.accent
         onToolSelected: {
             conditionsWizardRoot.visible = false;
             if (conditionPage.isGeoFence) {

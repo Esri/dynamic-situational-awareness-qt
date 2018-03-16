@@ -25,6 +25,7 @@ Item {
     property bool isWithinDistance: withinDistanceRb.checked
     property bool isWithinArea: withinAreaRb.checked
     property real distance: withinDistanceSB.value
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     function text() {
         if (withinAreaRb.checked) {

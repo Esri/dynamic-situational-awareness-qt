@@ -19,6 +19,7 @@ import Esri.DSA 1.0
 
 Item {
     id: rootLineOfSight
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     LineOfSightController {
         id: toolController

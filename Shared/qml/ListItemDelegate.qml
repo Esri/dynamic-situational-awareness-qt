@@ -24,6 +24,7 @@ Item {
     property alias checkBoxVisible: visibleCheckBox.visible
     property string mainText
     property bool menuIconVisible: false
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     Row {
         anchors {

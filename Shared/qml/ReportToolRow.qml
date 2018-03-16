@@ -19,6 +19,7 @@ import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.2
 
 Row {
     id: reportToolRow
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
     spacing: 10 * scaleFactor
     visible: categoryToolbar.state === "reports"
     onVisibleChanged: state = "clear"

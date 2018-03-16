@@ -19,6 +19,8 @@ import Esri.DSA 1.0
 
 Rectangle {
     id: optionsRoot
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+
     color: Material.primary
 
     // Add the Options Controller Class

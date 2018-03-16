@@ -18,6 +18,7 @@ import QtQuick.Window 2.2
 import Esri.DSA 1.0
 
 Rectangle {
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
     width: toolController.unviewedCount > 0 ?
                (toolController.unviewedCount > 9 ? 16 * scaleFactor
                                                  : 12 * scaleFactor)

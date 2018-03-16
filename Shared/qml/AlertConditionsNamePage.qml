@@ -23,6 +23,7 @@ Item {
     property bool valid: newAlertName.length > 0
     property string instruction: "Set name"
     property alias conditionName: newAlertName.text
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     function text() {
         return " called " + newAlertName.text;

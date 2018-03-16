@@ -19,6 +19,8 @@ import Esri.DSA 1.0
 
 Menu {
     id: contextMenu
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+
     visible: contextMenuController.contextActive
     x: contextMenuController.contextScreenPosition.x
     y: contextMenuController.contextScreenPosition.y

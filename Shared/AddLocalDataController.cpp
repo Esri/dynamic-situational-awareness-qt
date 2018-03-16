@@ -20,7 +20,7 @@
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
-// qt_cpp headers
+// C++ API headers
 #include "ArcGISSceneLayer.h"
 #include "ArcGISTiledElevationSource.h"
 #include "ArcGISTiledLayer.h"
@@ -748,6 +748,19 @@ void AddLocalDataController::setProperties(const QVariantMap& properties)
 {
   const QStringList filePaths = properties[LOCAL_DATAPATHS_PROPERTYNAME].toStringList();
   if (filePaths.empty())
+    return;
+
+  bool anyNewPaths = false;
+  for (const QString& path : filePaths)
+  {
+    if (m_dataPaths.contains(path))
+      continue;
+
+    anyNewPaths = true;
+    break;
+  }
+
+  if (!anyNewPaths)
     return;
 
   for (const QString& filePath : filePaths)

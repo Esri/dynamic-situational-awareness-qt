@@ -196,6 +196,21 @@ void DsaController::onPropertyChanged(const QString& propertyName, const QVarian
   m_dsaSettings.insert(propertyName, propertyValue);
   // save the settings
   saveSettings();
+
+  // inform tools of the change
+  auto it = Toolkit::ToolManager::instance().begin();
+  auto itEnd = Toolkit::ToolManager::instance().end();
+  for (;it != itEnd; ++it)
+  {
+    Toolkit::AbstractTool* tool = *it;
+    if (!tool)
+      continue;
+
+    disconnect(tool, &Toolkit::AbstractTool::propertyChanged,this, &DsaController::onPropertyChanged);
+    tool->setProperties(m_dsaSettings);
+    connect(tool, &Toolkit::AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
+  }
+
 }
 
 void DsaController::setupConfig()

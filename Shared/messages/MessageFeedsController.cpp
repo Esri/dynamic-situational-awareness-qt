@@ -169,48 +169,56 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
   if (userNameFindIt != properties.end())
     m_locationBroadcast->setUserName(userNameFindIt.value().toString());
 
-  // parse and add message listeners on specified UDP ports
-  const auto messageFeedUdpPorts = properties[MessageFeedConstants::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME].toStringList();
-  for (const auto& udpPort : messageFeedUdpPorts)
+  // only add message listeners at startup
+  if (m_messageListeners.isEmpty())
   {
-    QUdpSocket* udpSocket = new QUdpSocket(this);
-    udpSocket->bind(udpPort.toInt(), QUdpSocket::DontShareAddress | QUdpSocket::ReuseAddressHint);
+    // parse and add message listeners on specified UDP ports
+    const auto messageFeedUdpPorts = properties[MessageFeedConstants::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME].toStringList();
+    for (const auto& udpPort : messageFeedUdpPorts)
+    {
+      QUdpSocket* udpSocket = new QUdpSocket(this);
+      udpSocket->bind(udpPort.toInt(), QUdpSocket::DontShareAddress | QUdpSocket::ReuseAddressHint);
 
-    addMessageListener(new MessageListener(udpSocket, this));
+      addMessageListener(new MessageListener(udpSocket, this));
+    }
   }
 
-  // parse and add message feeds
-  const auto messageFeeds = properties[MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME].toList();
-  const auto messageFeedsJson = QJsonArray::fromVariantList(messageFeeds);
-  for (const auto& messageFeed : messageFeedsJson)
+  // only setup message feeds at startup
+  if (m_messageFeeds->rowCount() == 0)
   {
-    const auto messageFeedJsonObject = messageFeed.toObject();
-    if (messageFeedJsonObject.size() < 4)
+    // parse and add message feeds
+    const auto messageFeeds = properties[MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME].toList();
+    const auto messageFeedsJson = QJsonArray::fromVariantList(messageFeeds);
+    for (const auto& messageFeed : messageFeedsJson)
     {
-      emit toolErrorOccurred(QStringLiteral("Invalid Message JSON recieved"), messageFeed.toString());
-      continue;
+      const auto messageFeedJsonObject = messageFeed.toObject();
+      if (messageFeedJsonObject.size() < 4)
+      {
+        emit toolErrorOccurred(QStringLiteral("Invalid Message JSON recieved"), messageFeed.toString());
+        continue;
+      }
+
+      const auto feedName = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_NAME].toString();
+      const auto feedType = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_TYPE].toString();
+      const auto rendererInfo = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_RENDERER].toString();
+      const auto rendererThumbnail = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL].toString();
+      const auto surfacePlacement = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT].toString();
+
+      MessagesOverlay* overlay = new MessagesOverlay(m_geoView, createRenderer(rendererInfo, this), toSurfacePlacement(surfacePlacement), this);
+      MessageFeed* feed = new MessageFeed(feedName, feedType, overlay, this);
+
+      if (!rendererThumbnail.isEmpty())
+      {
+        if (QFile::exists(QString(":/Resources/icons/xhdpi/message/%1").arg(rendererThumbnail)))
+          feed->setThumbnailUrl(QString("qrc:/Resources/icons/xhdpi/message/%1").arg(rendererThumbnail));
+        else if (QFile::exists(m_resourcePath + QString("/icons/%1").arg(rendererThumbnail)))
+          feed->setThumbnailUrl(QUrl::fromLocalFile(m_resourcePath + QString("/icons/%1").arg(rendererThumbnail)));
+        else
+          emit toolErrorOccurred(QString("Failed to find icon %1").arg(rendererThumbnail), QString("Could not find icon %1 for feed %2").arg(rendererThumbnail, feedName));
+      }
+
+      m_messageFeeds->append(feed);
     }
-
-    const auto feedName = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_NAME].toString();
-    const auto feedType = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_TYPE].toString();
-    const auto rendererInfo = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_RENDERER].toString();
-    const auto rendererThumbnail = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL].toString();
-    const auto surfacePlacement = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT].toString();
-
-    MessagesOverlay* overlay = new MessagesOverlay(m_geoView, createRenderer(rendererInfo, this), toSurfacePlacement(surfacePlacement), this);
-    MessageFeed* feed = new MessageFeed(feedName, feedType, overlay, this);
-
-    if (!rendererThumbnail.isEmpty())
-    {
-      if (QFile::exists(QString(":/Resources/icons/xhdpi/message/%1").arg(rendererThumbnail)))
-        feed->setThumbnailUrl(QString("qrc:/Resources/icons/xhdpi/message/%1").arg(rendererThumbnail));
-      else if (QFile::exists(m_resourcePath + QString("/icons/%1").arg(rendererThumbnail)))
-        feed->setThumbnailUrl(QUrl::fromLocalFile(m_resourcePath + QString("/icons/%1").arg(rendererThumbnail)));
-      else
-        emit toolErrorOccurred(QString("Failed to find icon %1").arg(rendererThumbnail), QString("Could not find icon %1 for feed %2").arg(rendererThumbnail, feedName));
-    }
-
-    m_messageFeeds->append(feed);
   }
 
   const auto locationBroadcastConfig = properties[MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME].toMap();

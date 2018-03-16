@@ -12,23 +12,28 @@
 
 #include "NavigationController.h"
 
-#include "Camera.h"
-#include "Map.h"
-#include "SceneView.h"
-#include "Scene.h"
-#include "GlobeCameraController.h"
-#include "OrbitLocationCameraController.h"
-#include "OrbitGeoElementCameraController.h"
-
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
-#include "GeometryEngine.h"
+// example app headers
 #include "DsaUtility.h"
 
+// toolkit headers
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
+
+// C++ API headers
+#include "Camera.h"
+#include "GeometryEngine.h"
+#include "GlobeCameraController.h"
+#include "Map.h"
+#include "OrbitGeoElementCameraController.h"
+#include "OrbitLocationCameraController.h"
+#include "Scene.h"
+#include "SceneView.h"
+
+// Qt headers
+#include <QGuiApplication>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QScreen>
-#include <QGuiApplication>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -79,34 +84,72 @@ void NavigationController::setProperties(const QVariantMap& properties)
   if (initialLocation.isEmpty())
     return;
 
+  bool propertiesChanged = false;
+
   // set the initial center Point from JSON if it is found
   auto centerIt = initialLocation.find("center");
   if (centerIt != initialLocation.constEnd())
   {
     const QJsonValue centerVal = centerIt.value();
     const QJsonDocument centerDoc = QJsonDocument(centerVal.toObject());
-    m_initialCenter = Point::fromJson(centerDoc.toJson(QJsonDocument::JsonFormat::Compact));
+    const auto newCenter = Point::fromJson(centerDoc.toJson(QJsonDocument::JsonFormat::Compact));
+    if (!m_initialCenter.equalsWithTolerance(newCenter, 0.0))
+    {
+      propertiesChanged = true;
+      m_initialCenter = newCenter;
+    }
   }
 
   // set the initial distance from JSON if it is found (if not default to the existing value)
   auto distanceIt = initialLocation.find("distance");
   if (distanceIt != initialLocation.constEnd())
-    m_initialDistance = distanceIt.value().toDouble(m_initialDistance);
+  {
+    const auto newDistance = distanceIt.value().toDouble(m_initialDistance);
+    if (m_initialDistance != newDistance)
+    {
+      propertiesChanged = true;
+      m_initialDistance = newDistance;
+    }
+  }
 
   // set the initial heading from JSON if it is found (if not default to the existing value)
   auto headingIt = initialLocation.find("heading");
   if (distanceIt != initialLocation.constEnd())
-    m_initialHeading = headingIt.value().toDouble(m_initialHeading);
+  {
+    const auto newHeading = headingIt.value().toDouble(m_initialHeading);
+    if (m_initialHeading != newHeading)
+    {
+      propertiesChanged = true;
+      m_initialHeading = newHeading;
+    }
+  }
 
   // set the initial pitch from JSON if it is found (if not default to the existing value)
   auto pitchIt = initialLocation.find("pitch");
   if (pitchIt != initialLocation.constEnd())
-    m_initialPitch = pitchIt.value().toDouble(m_initialPitch);
+  {
+    const auto newPitch = pitchIt.value().toDouble(m_initialPitch);
+    if (m_initialPitch != newPitch)
+    {
+      propertiesChanged = true;
+      m_initialPitch = newPitch;
+    }
+  }
 
   // set the initial roll from JSON if it is found (if not default to the existing value)
   auto rollIt = initialLocation.find("roll");
   if (rollIt != initialLocation.constEnd())
-    m_initialRoll = rollIt.value().toDouble(m_initialRoll);
+  {
+    const auto newRoll = rollIt.value().toDouble(m_initialRoll);
+    if (m_initialRoll != newRoll)
+    {
+      propertiesChanged = true;
+      m_initialRoll = newRoll;
+    }
+  }
+
+  if (!propertiesChanged)
+    return;
 
   setInitialLocation();
 }

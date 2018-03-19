@@ -3,19 +3,19 @@
 
 // Qt
 #include <QAbstractListModel>
-#include <QObject>
-#include <QList>
-#include <QVariantMap>
 #include <QHash>
+#include <QList>
+#include <QObject>
 #include <QPointer>
+#include <QVariantMap>
 
 // Runtime SDK
 #include "GeoElement.h"
+#include "GeometryTypes.h"
+#include "Point.h"
 #include "SceneQuickView.h"
 #include "Scene.h"
-#include "Point.h"
 #include "TaskWatcher.h"
-#include "GeometryTypes.h"
 
 // DSA
 #include "AlertCondition.h"

@@ -12,24 +12,29 @@
 
 #include "LocationController.h"
 
+// example app headers
+#include "GPXLocationSimulator.h"
+#include "LocationDisplay3d.h"
+
+// toolkit headers
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
+
+// C++ API headers
+#include "DistanceCompositeSceneSymbol.h"
+#include "GraphicsOverlay.h"
+#include "ModelSceneSymbol.h"
+#include "Point.h"
+#include "SceneQuickView.h"
+#include "SimpleRenderer.h"
+
+// Qt headers
 #include <QCompass>
 #include <QDir>
 #include <QFile>
 
+// STL headers
 #include <cmath>
-
-#include "SceneQuickView.h"
-#include "Point.h"
-#include "GraphicsOverlay.h"
-#include "ModelSceneSymbol.h"
-#include "DistanceCompositeSceneSymbol.h"
-#include "SimpleRenderer.h"
-
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
-#include "LocationDisplay3d.h"
-
-#include "GPXLocationSimulator.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -301,7 +306,7 @@ void LocationController::updateGeoView()
   {
     geoView->graphicsOverlays()->append(m_locationDisplay3d->locationOverlay());
 
-    constexpr float symbolSize = 45.0;
+    constexpr float symbolSize = 25.0;
     constexpr double rangeMultiplier = 1.04; // the closer to 1.0, the smoother the transitions
     constexpr double maxRange = 10000000.0;
 

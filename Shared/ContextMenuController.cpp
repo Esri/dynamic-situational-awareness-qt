@@ -118,12 +118,19 @@ void ContextMenuController::onMousePressedAndHeld(QMouseEvent& event)
   // start tasks to determine the clicked location
   SceneView* sceneView = dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView());
   if (sceneView)
+  {
     m_screenToLocationTask = sceneView->screenToLocation(m_contextScreenPosition.x(), m_contextScreenPosition.y());
+    m_contextBaseSurfaceLocation = sceneView->screenToBaseSurface(m_contextScreenPosition.x(), m_contextScreenPosition.y());
+  }
   else
   {
     MapView* mapView = dynamic_cast<MapView*>(Toolkit::ToolResourceProvider::instance()->geoView());
     if (mapView)
-      setContextLocation(mapView->screenToLocation(m_contextScreenPosition.x(), m_contextScreenPosition.y()));
+    {
+      const Point p = mapView->screenToLocation(m_contextScreenPosition.x(), m_contextScreenPosition.y());
+      setContextLocation(p);
+      m_contextBaseSurfaceLocation = p;
+    }
   }
 
   // start tasks to determine whether a GeoElement was clicked on
@@ -399,7 +406,7 @@ void ContextMenuController::selectOption(const QString& option)
       return;
 
     viewshedTool->setActiveMode(ViewshedController::ViewshedActiveMode::AddLocationViewshed360);
-    viewshedTool->addLocationViewshed360(m_contextLocation);
+    viewshedTool->addLocationViewshed360(m_contextBaseSurfaceLocation);
     viewshedTool->finishActiveViewshed();
     viewshedTool->setActiveMode(ViewshedController::ViewshedActiveMode::NoActiveMode);
   }

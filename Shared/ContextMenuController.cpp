@@ -398,7 +398,10 @@ void ContextMenuController::selectOption(const QString& option)
     if (!viewshedTool)
       return;
 
+    viewshedTool->setActiveMode(ViewshedController::ViewshedActiveMode::AddLocationViewshed360);
     viewshedTool->addLocationViewshed360(m_contextLocation);
+    viewshedTool->finishActiveViewshed();
+    viewshedTool->setActiveMode(ViewshedController::ViewshedActiveMode::NoActiveMode);
   }
   else if (option == FOLLOW_OPTION)
   {

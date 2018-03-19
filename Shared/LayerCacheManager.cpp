@@ -43,6 +43,7 @@
 #include <QJsonObject>
 
 const QString LayerCacheManager::LAYERS_PROPERTYNAME = "Layers";
+const QString LayerCacheManager::ELEVATION_PROPERTYNAME = "DefaultElevationSource";
 const QString LayerCacheManager::layerPathKey = "path";
 const QString LayerCacheManager::layerVisibleKey = "visible";
 const QString LayerCacheManager::layerTypeKey = "type";
@@ -167,6 +168,14 @@ void LayerCacheManager::setProperties(const QVariantMap& properties)
   };
 
   m_initialLoadCompleted = true;
+
+  // Add the default elevation source
+  const QVariant elevationData = properties.value(ELEVATION_PROPERTYNAME);
+  QStringList pathList = elevationData.toStringList();
+  if (pathList.length() > 1)
+    m_localDataController->createElevationSourceFromRasters(pathList);
+  else
+    m_localDataController->createElevationSourceFromTpk(elevationData.toString());
 }
 
 /*

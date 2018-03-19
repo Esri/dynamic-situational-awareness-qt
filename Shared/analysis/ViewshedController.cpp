@@ -13,6 +13,7 @@
 #include "ViewshedController.h"
 
 // example app headers
+#include "DsaUtility.h"
 #include "GeoElementViewshed360.h"
 #include "GraphicsOverlaysResultsManager.h"
 #include "LocationController.h"
@@ -26,7 +27,9 @@
 
 // C++ API headers
 #include "GeoElementViewshed.h"
+#include "GlobeCameraController.h"
 #include "LocationViewshed.h"
+#include "OrbitLocationCameraController.h"
 #include "SceneQuickView.h"
 #include "SimpleMarkerSceneSymbol.h"
 #include "SimpleRenderer.h"
@@ -95,6 +98,7 @@ void ViewshedController::setSceneView(SceneView* sceneView)
 void ViewshedController::connectMouseSignals()
 {
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mouseClicked, this, &ViewshedController::onMouseClicked);
+  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mouseMoved, this, &ViewshedController::onMouseMoved);
 }
 
 void ViewshedController::onMouseClicked(QMouseEvent& event)
@@ -142,6 +146,27 @@ void ViewshedController::onMouseClicked(QMouseEvent& event)
   default:
     break;
   }
+}
+
+void ViewshedController::onMouseMoved(QMouseEvent& event)
+{
+  if (!isActive() || !m_sceneView)
+    return;
+
+  if (m_activeMode != ViewshedActiveMode::AddLocationViewshed360)
+    return;
+
+  if (!m_activeViewshed)
+    return;
+
+  auto locViewshed = dynamic_cast<LocationViewshed360*>(m_activeViewshed);
+  if (!locViewshed)
+    return;
+
+  const Point point = m_sceneView->screenToBaseSurface(event.x(), event.y());
+  locViewshed->setPoint(point);
+
+  event.accept();
 }
 
 void ViewshedController::addLocationDisplayViewshed()
@@ -199,6 +224,22 @@ void ViewshedController::addLocationViewshed360(const Esri::ArcGISRuntime::Point
   m_analysisOverlay->analyses()->append(locationViewshed360->viewshed());
   m_viewsheds->append(locationViewshed360);
 
+  if (m_followCamCtrllr)
+  {
+    delete m_followCamCtrllr;
+    m_followCamCtrllr = nullptr;
+  }
+
+  if (m_sceneView)
+  {
+    const double currDistance = DsaUtility::distance3D(m_sceneView->currentViewpointCamera().location(), point);
+    m_followCamCtrllr = new OrbitLocationCameraController(point, currDistance, this);
+    m_followCamCtrllr->setCameraHeadingOffsetInteractive(false);
+    m_followCamCtrllr->setCameraPitchOffsetInteractive(false);
+
+    m_sceneView->setCameraController(m_followCamCtrllr);
+  }
+
   setActiveViewshedIndex(m_viewsheds->rowCount() - 1);
 }
 
@@ -235,6 +276,21 @@ void ViewshedController::setActiveMode(ViewshedActiveMode mode)
     return;
 
   removeActiveViewshed();
+
+  // re-enable view panning
+  if (m_sceneView && m_activeMode == ViewshedActiveMode::AddLocationViewshed360)
+  {
+    if (!m_navCamCtrllr)
+      m_navCamCtrllr = new GlobeCameraController(this);
+
+    m_sceneView->setCameraController(m_navCamCtrllr);
+
+    if (m_followCamCtrllr)
+    {
+      delete m_followCamCtrllr;
+      m_followCamCtrllr = nullptr;
+    }
+  }
 
   m_activeMode = mode;
 

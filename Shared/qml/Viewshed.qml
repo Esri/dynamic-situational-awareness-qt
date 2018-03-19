@@ -184,7 +184,7 @@ Item {
                 }
 
                 color: Material.foreground
-                text: "follow\nmouse"
+                text: "follow\ntouch"
             }
         }
 
@@ -256,7 +256,7 @@ Item {
             verticalCenter: distanceRangeLabel.verticalCenter
         }
         orientation: Qt.Horizontal
-        from: 1
+        from: 0
         to: 2000
         first.value: toolController.activeViewshedMinDistance
         second.value: toolController.activeViewshedMaxDistance

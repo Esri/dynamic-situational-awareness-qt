@@ -11,16 +11,19 @@
 //
 
 #include "GeoElementViewshed360.h"
-#include "GeoElementViewshed.h"
+
+// C++ API headers
 #include "AnalysisOverlay.h"
 #include "AttributeListModel.h"
+#include "GeoElementViewshed.h"
 
+// STL headers
 #include <cmath>
 
 constexpr double c_defaultPitch = 0.0;
 constexpr double c_defaultHorizontalAngle = 120.0;
 constexpr double c_defaultVerticalAngle = 90.0;
-constexpr double c_defaultMinDistance = 30.0;
+constexpr double c_defaultMinDistance = 0.0;
 constexpr double c_defaultMaxDistance = 500.0;
 constexpr double c_defaultOffsetZ = 5.0;
 

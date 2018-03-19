@@ -11,18 +11,22 @@
 //
 
 #include "LocationViewshed360.h"
-#include "LocationViewshed.h"
-#include "Point.h"
+
+// example app headers
+#include "ViewshedController.h"
+
+// C++ API headers
 #include "AnalysisOverlay.h"
 #include "Graphic.h"
 #include "GraphicsOverlay.h"
-#include "ViewshedController.h"
+#include "LocationViewshed.h"
+#include "Point.h"
 
 constexpr double c_defaultHeading = 0.0;
 constexpr double c_defaultPitch = 90.0;
 constexpr double c_defaultHorizontalAngle = 120.0;
 constexpr double c_defaultVerticalAngle = 90.0;
-constexpr double c_defaultMinDistance = 30.0;
+constexpr double c_defaultMinDistance = 0.0;
 constexpr double c_defaultMaxDistance = 500.0;
 
 using namespace Esri::ArcGISRuntime;
@@ -121,6 +125,11 @@ void LocationViewshed360::setPitch(double pitch)
 void LocationViewshed360::update360Mode(bool is360Mode)
 {
   auto overlay = analysisOverlay();
+
+  if (!is360Mode)
+    m_locationViewshedGraphic->attributes()->replaceAttribute(ViewshedController::VIEWSHED_PITCH_ATTRIBUTE, pitch());
+  else
+    m_locationViewshedGraphic->attributes()->replaceAttribute(ViewshedController::VIEWSHED_PITCH_ATTRIBUTE, 180.0);
 
   if (is360Mode && m_viewsheds360Offsets.isEmpty() && overlay)
   {

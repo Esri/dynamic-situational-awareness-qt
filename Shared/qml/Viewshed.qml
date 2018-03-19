@@ -164,7 +164,7 @@ Item {
 
                 color: Material.foreground
 
-                text: "clicked\nlocation"
+                text: "follow\nmouse"
             }
         }
 

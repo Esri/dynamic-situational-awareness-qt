@@ -27,8 +27,10 @@ namespace Esri {
   namespace ArcGISRuntime {
     class SceneView;
     class AnalysisOverlay;
-    class GraphicsOverlay;
     class GeoElement;
+    class GlobeCameraController;
+    class GraphicsOverlay;
+    class OrbitLocationCameraController;
   }
 }
 
@@ -154,6 +156,7 @@ public:
 
 public slots:
   void onMouseClicked(QMouseEvent& event);
+  void onMouseMoved(QMouseEvent& event);
 
 private:
   void connectMouseSignals();
@@ -167,6 +170,8 @@ private:
 
   Esri::ArcGISRuntime::AnalysisOverlay* m_analysisOverlay = nullptr;
   Esri::ArcGISRuntime::GraphicsOverlay* m_graphicsOverlay = nullptr;
+  Esri::ArcGISRuntime::OrbitLocationCameraController* m_followCamCtrllr = nullptr;
+  Esri::ArcGISRuntime::GlobeCameraController* m_navCamCtrllr = nullptr;
 
   ViewshedListModel* m_viewsheds = nullptr;
   Viewshed360* m_activeViewshed = nullptr;

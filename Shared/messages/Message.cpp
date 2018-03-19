@@ -10,6 +10,8 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "pch.hpp"
+
 #include "Message.h"
 #include "Point.h"
 #include "Message_p.h"

@@ -51,7 +51,6 @@ DsaController::DsaController(QObject* parent):
   m_scene(new Scene(this)),
   m_jsonFormat(QSettings::registerFormat("json", &readJsonFile, &writeJsonFile)),
   m_conflictingToolNames{QStringLiteral("Alert Conditions"),
-                         QStringLiteral("identify"),
                          QStringLiteral("Markup Tool"),
                          QStringLiteral("CoordinateConversion"),
                          QStringLiteral("viewshed")}

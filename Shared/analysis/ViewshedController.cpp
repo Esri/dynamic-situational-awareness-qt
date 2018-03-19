@@ -197,8 +197,7 @@ void ViewshedController::addLocationViewshed360(const Esri::ArcGISRuntime::Point
 
     m_graphicsOverlay = new GraphicsOverlay(this);
     m_graphicsOverlay->setOverlayId(QStringLiteral("LocationViewshed360 graphics overlay"));
-    SimpleMarkerSceneSymbol* smss = SimpleMarkerSceneSymbol::cone(QColor("red"), 0.5, 70.0, this);
-    smss->setWidth(c_defaultConeWidth);
+    SimpleMarkerSceneSymbol* smss = SimpleMarkerSceneSymbol::cone(QColor("red"), 16, 32.0, this);
     smss->setAnchorPosition(SceneSymbolAnchorPosition::Bottom);
     SimpleRenderer* renderer = new SimpleRenderer(smss, this);
     const QString headingExpression = QString("[%1]").arg(VIEWSHED_HEADING_ATTRIBUTE);

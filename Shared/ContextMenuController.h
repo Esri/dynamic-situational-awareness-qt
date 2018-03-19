@@ -101,6 +101,7 @@ private:
   QString m_result;
   QString m_resultTitle;
   Esri::ArcGISRuntime::Point m_contextLocation;
+  Esri::ArcGISRuntime::Point m_contextBaseSurfaceLocation;
   Esri::ArcGISRuntime::TaskWatcher m_identifyFeaturesTask;
   Esri::ArcGISRuntime::TaskWatcher m_identifyGraphicsTask;
   Esri::ArcGISRuntime::TaskWatcher m_screenToLocationTask;

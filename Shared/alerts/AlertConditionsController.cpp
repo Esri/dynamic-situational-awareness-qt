@@ -612,7 +612,7 @@ void AlertConditionsController::onLayersChanged()
       else
       {
         newTargetList.append(featLayer->name());
-        existingLayerIds.append(featLayer->layerId());
+        existingLayerIds.append(featLayer->name());
       }
     }
   }
@@ -1078,11 +1078,11 @@ AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int
       {
         if (itemId == -1)
         {
-          if (!m_layerTargets.contains(featLayer->layerId()))
-            m_layerTargets.insert(featLayer->layerId(), new FeatureLayerAlertTarget(featLayer));
+          if (!m_layerTargets.contains(featLayer->name()))
+            m_layerTargets.insert(featLayer->name(), new FeatureLayerAlertTarget(featLayer));
 
-          targetDescription = featLayer->layerId();
-          return m_layerTargets.value(featLayer->layerId(), nullptr);
+          targetDescription = featLayer->name();
+          return m_layerTargets.value(featLayer->name(), nullptr);
         }
         else
         {

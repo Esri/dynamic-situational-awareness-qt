@@ -66,7 +66,6 @@ Item {
             font {
                 family: DsaStyles.fontFamily
                 pixelSize: 16 * scaleFactor
-                //bold: true
             }
             color: Material.foreground
             text: "Add new viewshed to:"

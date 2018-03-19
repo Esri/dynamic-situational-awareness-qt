@@ -206,7 +206,10 @@ Vehicle {
             width: drawer.width
             visible: false
             isMobile: false
-            onClosed: visible = false;
+            onClosed: {
+                visible = false;
+                alertToolRow.state = "clear";
+            }
         }
 
         AlertConditionsTool {
@@ -219,7 +222,10 @@ Vehicle {
             width: drawer.width
             visible: false
             isMobile: false
-            onClosed: visible = false;
+            onClosed: {
+                visible = false;
+                alertToolRow.state = "clear";
+            }
         }
 
         MarkupTool {

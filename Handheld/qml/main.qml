@@ -206,8 +206,10 @@ Handheld {
             width: drawer.width
             visible: false
             isMobile: true
-
-            onClosed: visible = false;
+            onClosed: {
+                visible = false;
+                alertToolRow.state = "clear";
+            }
         }
 
         AlertConditionsTool {
@@ -220,8 +222,10 @@ Handheld {
             width: drawer.width
             visible: false
             isMobile: true
-
-            onClosed: visible = false;
+            onClosed: {
+                visible = false;
+                alertToolRow.state = "clear";
+            }
 
             onPickModeChanged: {
                 if (!toolActive)

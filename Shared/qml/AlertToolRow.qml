@@ -21,13 +21,15 @@ Row {
     id: alertToolRow
     spacing: 10 * scaleFactor
     visible: categoryToolbar.state === "alerts"
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+
     onVisibleChanged: {
-        state = "clear"
-        if (visible)
-        {
+        if (visible) {
             viewAlertIcon.selected = true;
             alertToolRow.state = viewAlertIcon.toolName;
             alertsTool.visible = true;
+        } else {
+            state = "clear";
         }
     }
 
@@ -51,6 +53,18 @@ Row {
             PropertyChanges {
                 target: viewAlertIcon
                 selected: false
+            }
+            PropertyChanges {
+                target: createAlertIcon
+                selected: false
+            }
+            PropertyChanges {
+                target: alertConditionsTool
+                visible: false
+            }
+            PropertyChanges {
+                target: alertsTool
+                visible: false
             }
         }
     ]

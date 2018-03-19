@@ -19,6 +19,7 @@ import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.2
 
 Row {
     id: mapToolRow
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
     spacing: 10 * scaleFactor
     visible: categoryToolbar.state === "map"
     onVisibleChanged: state = "clear"
@@ -44,10 +45,6 @@ Row {
             }
             PropertyChanges {
                 target: tocIcon
-                selected: selected
-            }
-            PropertyChanges {
-                target: identifyIcon
                 selected: selected
             }
         },
@@ -157,6 +154,7 @@ Row {
         id: identifyIcon
         iconSource: DsaResources.iconAboutMap
         toolName: "Query"
+        visible: false
         onToolSelected: {
             if (selected) {
                 selected = false;

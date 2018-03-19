@@ -17,6 +17,8 @@ import QtQuick.Window 2.2
 import Esri.DSA 1.0
 
 Label {
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+
     font {
         family: DsaStyles.fontFamily
         pixelSize: 16 * scaleFactor

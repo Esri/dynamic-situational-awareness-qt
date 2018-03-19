@@ -18,7 +18,9 @@ import Esri.DSA 1.0
 
 Row {
     id: analysisToolRow
-    spacing: 48 * scaleFactor
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+
+    spacing: 18 * scaleFactor
     visible: categoryToolbar.state === "analysis"
     onVisibleChanged: analysisToolRow.state = "clear"
 
@@ -89,7 +91,7 @@ Row {
     ToolIcon {
         id: viewshedIcon
         iconSource: DsaResources.iconViewshed
-        toolName: "Add Viewshed"
+        toolName: "Viewshed"
 
         onToolSelected: {
             if (selected ) {
@@ -110,7 +112,7 @@ Row {
     ToolIcon {
         id: lineOfSightIcon
         iconSource: DsaResources.iconLineOfSight
-        toolName: "Add Line of sight"
+        toolName: "Line of sight"
         onToolSelected: {
             if (selected ) {
                 analysisToolRow.state = "clear"
@@ -130,7 +132,7 @@ Row {
     ToolIcon {
         id: analysisListIcon
         iconSource: DsaResources.iconListView
-        toolName: "List"
+        toolName: "View List"
         onToolSelected: {
             if (selected ) {
                 analysisToolRow.state = "clear"

@@ -19,12 +19,13 @@ import Esri.DSA 1.0
 
 DsaPanel {
     id: manageAlertsRoot
-    title: qsTr("Alert Conditions")
     clip: true
+    title: qsTr("Alert Conditions")
 
     property bool isMobile
     property alias pickMode: toolController.pickMode
     property bool  toolActive: toolController.active
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     AlertConditionsController {
         id: toolController
@@ -36,20 +37,6 @@ DsaPanel {
         }
     }
 
-    Text {
-        id: conditionsListTitle
-        anchors {
-            margins: 8 * scaleFactor
-            top: titleBar.bottom
-            horizontalCenter: parent.horizontalCenter
-        }
-        text: qsTr("Conditions")
-        color: Material.foreground
-        font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
-        horizontalAlignment: Text.AlignRight
-        verticalAlignment: Text.AlignVCenter
-    }
-
     ListView {
         id: conditionsList
         property string currentName
@@ -57,7 +44,7 @@ DsaPanel {
         clip: true
         anchors {
             margins: 8 * scaleFactor
-            top: conditionsListTitle.bottom
+            top: titleBar.bottom
             bottom: createNewConditionButton.top
             left: parent.left
             right: parent.right
@@ -427,7 +414,7 @@ DsaPanel {
         anchors {
             left: parent.left
             right: parent.right
-            top: conditionsListTitle.bottom
+            top: titleBar.bottom
             margins: 15 * scaleFactor
         }
         visible: conditionsList.count === 0

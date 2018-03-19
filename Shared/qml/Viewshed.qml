@@ -13,11 +13,13 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
+import QtQuick.Window 2.2
 import QtGraphicalEffects 1.0
 import Esri.DSA 1.0
 
 Item {
     id: rootViewshed
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     signal myLocationModeSelected
 
@@ -53,6 +55,21 @@ Item {
             right: parent.right
         }
         color: Material.background
+
+        Text {
+            anchors {
+                horizontalCenter: parent.horizontalCenter
+                top: parent.top
+                margins: 2 * scaleFactor
+            }
+
+            font {
+                family: DsaStyles.fontFamily
+                pixelSize: 16 * scaleFactor
+            }
+            color: Material.foreground
+            text: "Add new viewshed to:"
+        }
     }
 
     Row {
@@ -63,6 +80,7 @@ Item {
             top: parent.top
             left: parent.left
             right: parent.right
+            topMargin: 18 * scaleFactor
             margins: 8 * scaleFactor
         }
         height: myLocationMode.height + (anchors.margins * 2)
@@ -91,6 +109,7 @@ Item {
 
             Text {
                 anchors.left: parent.left
+                horizontalAlignment: Text.AlignHCenter
 
                 font {
                     family: DsaStyles.fontFamily
@@ -98,7 +117,7 @@ Item {
                 }
 
                 color: Material.foreground
-                text: "current\nposition"
+                text: "Current\nPosition"
             }
         }
 
@@ -122,7 +141,8 @@ Item {
                 }
             }
             Text {
-                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.left: parent.left
+                horizontalAlignment: Text.AlignHCenter
                 font {
                     family: DsaStyles.fontFamily
                     pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
@@ -130,7 +150,7 @@ Item {
 
                 color: Material.foreground
 
-                text: "track\nposition"
+                text: "Track\nPosition"
             }
         }
 
@@ -155,7 +175,8 @@ Item {
             }
 
             Text {
-                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.left: parent.left
+                horizontalAlignment: Text.AlignHCenter
 
                 font {
                     family: DsaStyles.fontFamily
@@ -163,7 +184,6 @@ Item {
                 }
 
                 color: Material.foreground
-
                 text: "follow\nmouse"
             }
         }
@@ -178,7 +198,7 @@ Item {
             Switch {
                 id: control
                 anchors.horizontalCenter: parent.horizontalCenter
-                width: DsaStyles.secondaryIconSize * scaleFactor
+                width: DsaStyles.secondaryIconSize * 1.25 * scaleFactor
                 height: width
 
                 checked: toolController.activeViewshed360Mode
@@ -201,22 +221,11 @@ Item {
                         border.color: Material.background
                     }
                 }
+                text: "360 °"
 
                 onCheckedChanged: {
                     toolController.activeViewshed360Mode = checked;
                 }
-            }
-
-            Text {
-                anchors.horizontalCenter: parent.horizontalCenter
-
-                font {
-                    family: DsaStyles.fontFamily
-                    pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                }
-
-                color: Material.foreground
-                text: qsTr("360 °")
             }
         }
     }
@@ -292,7 +301,7 @@ Item {
             margins: 8 * scaleFactor
         }
         height: 32 * scaleFactor
-        width: 100 * scaleFactor
+        width: 125 * scaleFactor
 
         property var allAnglesModel: ["Heading", "Horizontal Angle", "Vertical Angle", "Pitch"]
         property var trackModel: ["Horizontal Angle", "Vertical Angle"]

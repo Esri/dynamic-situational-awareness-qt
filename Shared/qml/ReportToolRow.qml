@@ -19,29 +19,16 @@ import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.2
 
 Row {
     id: reportToolRow
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
     spacing: 10 * scaleFactor
     visible: categoryToolbar.state === "reports"
     onVisibleChanged: state = "clear"
 
     states: [
         State {
-            name: enemyIcon.toolName
+            name: contactIcon.toolName
             PropertyChanges {
-                target: enemyIcon
-                selected: true
-            }
-        },
-        State {
-            name: sigactIcon.toolName
-            PropertyChanges {
-                target: sigactIcon
-                selected: true
-            }
-        },
-        State {
-            name: cotIcon.toolName
-            PropertyChanges {
-                target: cotIcon
+                target: contactIcon
                 selected: true
             }
         },
@@ -49,50 +36,24 @@ Row {
         State {
             name: "clear"
             PropertyChanges {
-                target: cotIcon
-                selected: false
-            }
-            PropertyChanges {
-                target: enemyIcon
-                selected: false
-            }
-            PropertyChanges {
-                target: sigactIcon
+                target: contactIcon
                 selected: false
             }
         }
     ]
 
-    // Enemy Tool
+    // Contact Tool
     ToolIcon {
-        id: enemyIcon
+        id: contactIcon
         iconSource: DsaResources.iconCreateReport
-        toolName: "Enemy"
+        toolName: "Contact"
         onToolSelected: {
-            reportToolRow.state = toolName;
-            console.log("send Enemy report");
-        }
-    }
+            if (selected)
+                reportToolRow.state = "clear";
+            else
+                reportToolRow.state = toolName;
 
-    // SIGACT Tool
-    ToolIcon {
-        id: sigactIcon
-        iconSource: DsaResources.iconCreateReport
-        toolName: "SIGACT"
-        onToolSelected: {
-            reportToolRow.state = toolName;
-            console.log("send SIGACT report");
-        }
-    }
-
-    // CoT Tool
-    ToolIcon {
-        id: cotIcon
-        iconSource: DsaResources.iconCreateReport
-        toolName: "CoT"
-        onToolSelected: {
-            reportToolRow.state = toolName;
-            console.log("send CoT report");
+            console.log("send Contact report");
         }
     }
 }

@@ -17,6 +17,7 @@ import QtQuick.Window 2.2
 import Esri.DSA 1.0
 
 Rectangle {
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
     anchors.horizontalCenter: parent.horizontalCenter
     width: parent.width * 0.8
     height: 2 * scaleFactor

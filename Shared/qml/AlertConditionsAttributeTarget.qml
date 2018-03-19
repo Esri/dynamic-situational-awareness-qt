@@ -23,6 +23,7 @@ Item {
     property bool valid: attributeValueEdit.length > 0
     property string instruction: "Set attribute value"
     property alias attributeValue: attributeValueEdit.text
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     function text() {
         return attributeValueEdit.text;

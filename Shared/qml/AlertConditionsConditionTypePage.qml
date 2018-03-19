@@ -23,6 +23,7 @@ Item {
     property alias type : typeGroup.checkedButton
     property bool valid: geofenceCB.checked || attributeCB.checked || analysisCB.checked
     property string instruction: "Select type"
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     function clear() {
     }

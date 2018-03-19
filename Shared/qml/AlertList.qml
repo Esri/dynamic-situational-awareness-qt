@@ -19,7 +19,7 @@ import Esri.DSA 1.0
 
 DsaPanel {
     id: alertsRoot
-    title: qsTr("Alerts")
+    title: qsTr("Active Alerts")
     clip: true
 
     property int hightlightIndex: -1

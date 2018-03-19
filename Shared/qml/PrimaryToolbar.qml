@@ -13,6 +13,7 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
+import QtQuick.Window 2.2
 import Esri.DSA 1.0
 import QtQuick.Controls.Material 2.2
 
@@ -21,6 +22,7 @@ ToolBar {
     property int marginWidth: 5 * scaleFactor
     property int imageWidth: 36 * scaleFactor
     property bool menuVisible
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     Row {
         anchors {

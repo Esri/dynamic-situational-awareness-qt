@@ -22,6 +22,7 @@ Item {
 
     property bool valid: levelGroup.checkedButton !== null
     property string instruction: "Select priority"
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     function getLevel() {
         if (lowCB.checked)
@@ -92,10 +93,11 @@ Item {
 
             RadioButton {
                 id: mediumCB
-                text: "Medium"
+                text: "Moderate"
                 font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 ButtonGroup.group: levelGroup
                 height: lowIcon.height
+                checked: true
                 anchors.verticalCenter: mediumIcon.verticalCenter
             }
         }

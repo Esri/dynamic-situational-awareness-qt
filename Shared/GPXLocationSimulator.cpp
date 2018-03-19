@@ -25,7 +25,7 @@ GPXLocationSimulator::GPXLocationSimulator(QObject* parent) :
   m_angleOffset(0.0, -90.0, 0.0, 90.0)
 {
   connectSignals();
-  setUpdateInterval(20);
+  setUpdateInterval(500);
 }
 
 //

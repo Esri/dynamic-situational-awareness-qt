@@ -12,35 +12,35 @@
 
 #include "LayerCacheManager.h"
 
-// Runtime API
+// example app headers
+#include "AddLocalDataController.h"
+
+// toolkit headers
+#include "AbstractTool.h"
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
+
+// C++ API headers
+#include "ArcGISSceneLayer.h"
+#include "ArcGISTiledLayer.h"
+#include "ArcGISVectorTiledLayer.h"
 #include "FeatureLayer.h"
-#include "RasterLayer.h"
-#include "Geodatabase.h"
-#include "GeodatabaseFeatureTable.h"
 #include "FeatureTable.h"
 #include "GeoPackage.h"
 #include "GeoPackageFeatureTable.h"
 #include "GeoPackageRaster.h"
-#include "ShapefileFeatureTable.h"
-#include "ArcGISSceneLayer.h"
-#include "ArcGISTiledLayer.h"
-#include "ArcGISVectorTiledLayer.h"
+#include "Geodatabase.h"
+#include "GeodatabaseFeatureTable.h"
 #include "Raster.h"
+#include "RasterLayer.h"
 #include "Scene.h"
+#include "ShapefileFeatureTable.h"
 
-// Toolkit
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
-#include "AbstractTool.h"
-
-// DSA
-#include "AddLocalDataController.h"
-
-// Qt
+// Qt headers
 #include <QDebug>
+#include <QDir>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QDir>
 
 const QString LayerCacheManager::LAYERS_PROPERTYNAME = "Layers";
 const QString LayerCacheManager::layerPathKey = "path";
@@ -118,6 +118,9 @@ QString LayerCacheManager::toolName() const
  */
 void LayerCacheManager::setProperties(const QVariantMap& properties)
 {
+  if (m_initialLoadCompleted)
+    return;
+
   if (!m_localDataController)
     return;
 

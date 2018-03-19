@@ -10,14 +10,16 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "AlertConditionsController.h"
+
+// example app headers
+#include "AlertConditionData.h"
+#include "AlertConditionListModel.h"
 #include "AlertConstants.h"
 #include "AlertListModel.h"
 #include "AttributeEqualsAlertCondition.h"
-#include "FixedValueAlertTarget.h"
-#include "AlertConditionData.h"
-#include "AlertConditionListModel.h"
-#include "AlertConditionsController.h"
 #include "FeatureLayerAlertTarget.h"
+#include "FixedValueAlertTarget.h"
 #include "GeoElementAlertTarget.h"
 #include "GraphicsOverlayAlertTarget.h"
 #include "LocationAlertSource.h"
@@ -26,17 +28,20 @@
 #include "WithinAreaAlertCondition.h"
 #include "WithinDistanceAlertCondition.h"
 
+// toolkit headers
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
+// C++ API headers
 #include "ArcGISFeatureTable.h"
+#include "FeatureLayer.h"
 #include "GeoView.h"
 #include "GraphicsOverlay.h"
 #include "GraphicsOverlayListModel.h"
-#include "FeatureLayer.h"
 #include "Layer.h"
 #include "LayerListModel.h"
 
+// Qt headers
 #include <QEventLoop>
 #include <QJsonArray>
 #include <QJsonObject>
@@ -166,14 +171,16 @@ void AlertConditionsController::setProperties(const QVariantMap& properties)
   if (conditionsData.isNull())
     return;
 
-  m_storedConditions.clear();
-
   const auto conditionsList = conditionsData.toList();
   if (conditionsList.isEmpty())
     return;
 
   QJsonArray conditionsJsonArray = QJsonArray::fromVariantList(conditionsList);
   if (conditionsJsonArray.isEmpty())
+    return;
+
+  // only update stored connections at startup
+  if (!m_storedConditions.isEmpty() || m_conditions->rowCount() > 0)
     return;
 
   auto it = conditionsJsonArray.constBegin();
@@ -605,7 +612,7 @@ void AlertConditionsController::onLayersChanged()
       else
       {
         newTargetList.append(featLayer->name());
-        existingLayerIds.append(featLayer->layerId());
+        existingLayerIds.append(featLayer->name());
       }
     }
   }
@@ -1071,11 +1078,11 @@ AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int
       {
         if (itemId == -1)
         {
-          if (!m_layerTargets.contains(featLayer->layerId()))
-            m_layerTargets.insert(featLayer->layerId(), new FeatureLayerAlertTarget(featLayer));
+          if (!m_layerTargets.contains(featLayer->name()))
+            m_layerTargets.insert(featLayer->name(), new FeatureLayerAlertTarget(featLayer));
 
-          targetDescription = featLayer->layerId();
-          return m_layerTargets.value(featLayer->layerId(), nullptr);
+          targetDescription = featLayer->name();
+          return m_layerTargets.value(featLayer->name(), nullptr);
         }
         else
         {

@@ -224,7 +224,7 @@ Rectangle {
                         family: DsaStyles.fontFamily
                     }
 
-                    onAccepted: {
+                    onTextEdited: {
                         if (optionsController.userName !== text)
                             optionsController.userName = text;
                     }

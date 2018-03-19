@@ -10,8 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "AlertCondition.h"
 #include "AlertConditionData.h"
+
+// example app headers
+#include "AlertCondition.h"
 #include "AlertSource.h"
 #include "AlertTarget.h"
 
@@ -307,6 +309,8 @@ void AlertConditionData::setConditionEnabled(bool enabled)
   // if the condition has been re-enabled, we need to re-apply the query to see if it should now become active
   if (enabled)
     handleDataChanged();
+  else // make sure we do not highlight inactive conditions
+     highlight(false);
 
   emit dataChanged();
 }

@@ -185,8 +185,7 @@ Item {
                 }
 
                 color: Material.foreground
-
-                text: "Clicked\nLocation"
+                text: "follow\nmouse"
             }
         }
 

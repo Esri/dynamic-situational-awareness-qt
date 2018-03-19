@@ -67,7 +67,8 @@ LocationBroadcast::LocationBroadcast(QObject* parent) :
 LocationBroadcast::LocationBroadcast(const QString& messageType, int udpPort, QObject* parent) :
   QObject(parent),
   m_messageType(messageType),
-  m_udpPort(udpPort)
+  m_udpPort(udpPort),
+  m_userName(QHostInfo::localHostName())
 {
   update();
 }

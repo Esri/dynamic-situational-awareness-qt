@@ -10,6 +10,8 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "pch.hpp"
+
 #include "AbstractSketchTool.h"
 
 #include "GeoView.h"
@@ -21,6 +23,7 @@
 #include "PolylineBuilder.h"
 #include "Graphic.h"
 #include "PointBuilder.h"
+#include "Point.h"
 #include "PolygonBuilder.h"
 #include "MultipointBuilder.h"
 

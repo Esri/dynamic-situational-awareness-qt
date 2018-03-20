@@ -10,6 +10,8 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "pch.hpp"
+
 #include "MessageFeedConstants.h"
 
 const QString MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME = QStringLiteral("LocationBroadcastConfig");

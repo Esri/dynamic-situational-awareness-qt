@@ -5,9 +5,7 @@
 #include <QList>
 
 #include "AbstractTool.h"
-#include "Geometry.h"
 #include "GeometryTypes.h"
-#include "Point.h"
 
 namespace Esri {
   namespace ArcGISRuntime {
@@ -16,6 +14,8 @@ namespace Esri {
     class GeometryBuilder;
     class Graphic;
     class Symbol;
+    class Geometry;
+    class Point;
   }
 }
 

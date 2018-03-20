@@ -55,6 +55,11 @@ RESOURCES += \
     ../Shared/Resources/application.qrc \
     ../Shared/qml/shared_qml.qrc
 
+!android {
+  PRECOMPILED_HEADER = $$PWD/../Shared/pch.hpp
+  CONFIG += precompile_header
+}
+
 #-------------------------------------------------------------------------------
 
 QML_IMPORT_PATH += $$PWD/../Shared/qml

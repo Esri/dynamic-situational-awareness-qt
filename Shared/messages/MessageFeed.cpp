@@ -10,6 +10,8 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "pch.hpp"
+
 #include "MessageFeed.h"
 #include "MessagesOverlay.h"
 #include "MessageListener.h"

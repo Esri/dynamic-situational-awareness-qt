@@ -10,6 +10,8 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "pch.hpp"
+
 #include "Viewshed360.h"
 #include "Viewshed.h"
 #include "AnalysisOverlay.h"

@@ -129,7 +129,7 @@ Item {
             }
 
             OverlayButton {
-                iconUrl: DsaResources.iconMessages
+                iconUrl: DsaResources.iconPin
                 selected: toolController.activeMode === ViewshedController.AddGeoElementViewshed360;
                 anchors.horizontalCenter: parent.horizontalCenter
                 color: "transparent"
@@ -150,7 +150,7 @@ Item {
 
                 color: Material.foreground
 
-                text: "Message\nFeed"
+                text: "Map\nElement"
             }
         }
 

@@ -189,6 +189,11 @@ QUrl DsaResources::iconMessages() const
   return QStringLiteral("qrc:/Resources/icons/xhdpi/Real_Time_Feeds.png");
 }
 
+QUrl DsaResources::iconPin() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/pin.png");
+}
+
 QUrl DsaResources::iconPoint() const
 {
   return QStringLiteral("qrc:/Resources/icons/xhdpi/Point.png");

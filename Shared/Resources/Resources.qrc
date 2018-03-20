@@ -63,5 +63,6 @@
         <file>icons/xhdpi/ic_menu_usecurrentlocation_dark_d.png</file>
         <file>icons/xhdpi/View_Alert_Conditions.png</file>
         <file>icons/xhdpi/View_Alerts.png</file>
+        <file>icons/xhdpi/pin.png</file>
     </qresource>
 </RCC>

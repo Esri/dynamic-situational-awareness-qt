@@ -278,6 +278,21 @@ Vehicle {
             }
         }
 
+        ContactReportTool {
+            id: contactReportTool
+            anchors {
+                right: parent.right
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+            onClosed: {
+                visible = false;
+                reportToolRow.state = "clear";
+            }
+        }
+
         PopupStackView {
             id: identifyResults
             anchors {

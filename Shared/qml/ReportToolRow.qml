@@ -48,12 +48,16 @@ Row {
         iconSource: DsaResources.iconCreateReport
         toolName: "Contact"
         onToolSelected: {
-            if (selected)
+            if (selected) {
                 reportToolRow.state = "clear";
+                selected = false;
+            }
             else
                 reportToolRow.state = toolName;
+        }
 
-            console.log("send Contact report");
+        onSelectedChanged: {
+            contactReportTool.visible = selected;
         }
     }
 }

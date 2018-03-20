@@ -53,5 +53,8 @@
         <file>ContactReportUnitPage.qml</file>
         <file>ContactReportSizePage.qml</file>
         <file>ContactReportActivityPage.qml</file>
+        <file>ContactReportLocationPage.qml</file>
+        <file>ContactReportEnemyUnitPage.qml</file>
+        <file>ContactReportObservedTimePage.qml</file>
     </qresource>
 </RCC>

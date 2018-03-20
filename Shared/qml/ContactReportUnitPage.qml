@@ -42,5 +42,10 @@ Item {
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         text: toolController.unitName;
+
+        onTextChanged: {
+            if (toolController.unitName !== text)
+                toolController.unitName = text;
+        }
     }
 }

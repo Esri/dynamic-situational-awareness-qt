@@ -26,12 +26,21 @@ Item {
     property string instruction: "Date/Time observed"
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
-    property string observedTime: calendar.selectedDate.getFullYear() + "-"
+    property date observedTime: null
+
+    property string observedTimeString: calendar.selectedDate.getFullYear() + "-"
                                   + (calendar.selectedDate.getMonth()+1)  + "-"
                                   + calendar.selectedDate.getDate() + " "
                                   + hoursTumbler.currentIndex + ":"
                                   + minutesTumbler.currentIndex + ":"
                                   + secondsTumbler.currentIndex;
+
+    onObservedTimeStringChanged: {
+        observedTime = calendar.selectedDate;
+        observedTime.setHours(hoursTumbler.currentIndex);
+        observedTime.setMinutes(minutesTumbler.currentIndex);
+        observedTime.setSeconds(secondsTumbler.currentIndex);
+    }
 
     onVisibleChanged: {
         if (!visible)

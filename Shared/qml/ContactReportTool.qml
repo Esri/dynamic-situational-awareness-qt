@@ -189,7 +189,11 @@ DsaPanel {
         toolName: "Create"
         labelColor: Material.accent
         onToolSelected: {
-
+            toolController.sendReport(sizePage.size,
+                                      locationPage.locationDescription,
+                                      enemyUnitPage.enemyUnit,
+                                      observedTimePage.observedTime,
+                                      "");
         }
     }
 

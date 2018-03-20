@@ -28,8 +28,6 @@
 #include "ToolResourceProvider.h"
 
 // C++ API headers
-#include "ArcGISTiledElevationSource.h"
-#include "ElevationSource.h"
 #include "GeoView.h"
 #include "Scene.h"
 

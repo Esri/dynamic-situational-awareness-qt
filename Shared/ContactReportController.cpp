@@ -64,6 +64,15 @@ void ContactReportController::setProperties(const QVariantMap& properties)
   auto findUserNameIt = properties.find(AppConstants::USERNAME_PROPERTYNAME);
   if (findUserNameIt != properties.end())
     setUnitName(findUserNameIt.value().toString());
+
+  auto findPortIt = properties.find(QStringLiteral("port"));
+  if (findPortIt != properties.end())
+  {
+    bool ok = false;
+    int newPort = findPortIt.value().toInt(&ok);
+    if (ok)
+      setUdpPort(newPort);
+  }
 }
 
 QString ContactReportController::unitName() const
@@ -145,6 +154,14 @@ void ContactReportController::sendReport(const QString& size,
 int ContactReportController::udpPort() const
 {
   return m_udpPort;
+}
+
+void ContactReportController::setUdpPort(int port)
+{
+  if (port == m_udpPort)
+    return;
+
+  m_udpPort = port;
 }
 
 void ContactReportController::onGeoViewChanged(GeoView* geoView)

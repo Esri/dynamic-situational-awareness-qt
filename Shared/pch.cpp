@@ -1,4 +1,4 @@
-// Copyright 2017 ESRI
+// Copyright 2018 ESRI
 //
 // All rights reserved under the copyright laws of the United States
 // and applicable international laws, treaties, and conventions.
@@ -11,21 +11,3 @@
 //
 
 #include "pch.hpp"
-
-#include "DrawOrderLayerListModel.h"
-
-DrawOrderLayerListModel::DrawOrderLayerListModel(QObject* parent):
-  QSortFilterProxyModel(parent)
-{
-  sort(0);
-}
-
-DrawOrderLayerListModel::~DrawOrderLayerListModel()
-{
-
-}
-
-bool DrawOrderLayerListModel::lessThan(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const
-{
-  return sourceLeft.row() > sourceRight.row();
-}

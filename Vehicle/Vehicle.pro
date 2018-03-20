@@ -57,6 +57,11 @@ RESOURCES += \
 
 QML_IMPORT_PATH += $$PWD/../Shared/qml
 
+!android {
+  PRECOMPILED_HEADER = $$PWD/../Shared/pch.hpp
+  CONFIG += precompile_header
+}
+
 #-------------------------------------------------------------------------------
 
 win32 {

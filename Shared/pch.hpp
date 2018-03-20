@@ -1,4 +1,5 @@
-
+#ifndef DSA_PCH_HPP
+#define DSA_PCH_HPP
 
 // example app headers
 #include "AlertCondition.h"
@@ -26,16 +27,5 @@
 #include <QObject>
 #include <QPointer>
 #include <QVariantMap>
-
-#ifndef DSA_PCH_HPP
-#define DSA_PCH_HPP
-
-// Qt
-
-// Runtime SDK
-
-// DSA
-
-// Toolkit
 
 #endif // DSA_PCH_HPP

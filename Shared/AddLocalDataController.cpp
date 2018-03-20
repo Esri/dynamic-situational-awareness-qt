@@ -213,7 +213,6 @@ void AddLocalDataController::createElevationSourceFromTpk(const QString& path)
 
       connect(source, &ArcGISTiledElevationSource::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
-      source->setParent(this);
       auto scene = Toolkit::ToolResourceProvider::instance()->scene();
       if (scene)
         scene->baseSurface()->elevationSources()->append(source);
@@ -235,7 +234,6 @@ void AddLocalDataController::createElevationSourceFromRasters(const QStringList&
 
   connect(source, &RasterElevationSource::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
-  source->setParent(this);
   auto scene = Toolkit::ToolResourceProvider::instance()->scene();
   if (scene)
     scene->baseSurface()->elevationSources()->append(source);

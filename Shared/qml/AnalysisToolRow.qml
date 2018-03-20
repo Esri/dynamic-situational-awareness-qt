@@ -112,7 +112,7 @@ Row {
     ToolIcon {
         id: lineOfSightIcon
         iconSource: DsaResources.iconLineOfSight
-        toolName: "Line of sight"
+        toolName: "Line of Sight"
         onToolSelected: {
             if (selected ) {
                 analysisToolRow.state = "clear"

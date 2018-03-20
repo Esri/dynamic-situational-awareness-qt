@@ -95,7 +95,7 @@ Item {
 
             OverlayButton {
                 anchors.horizontalCenter: parent.horizontalCenter
-                iconUrl: DsaResources.iconFollowLocationOff
+                iconUrl: DsaResources.iconCurrentLocation
                 color: "transparent"
                 selected: toolController.activeMode === ViewshedController.AddMyLocationViewshed360;
 
@@ -129,7 +129,7 @@ Item {
             }
 
             OverlayButton {
-                iconUrl: DsaResources.iconGps
+                iconUrl: DsaResources.iconMessages
                 selected: toolController.activeMode === ViewshedController.AddGeoElementViewshed360;
                 anchors.horizontalCenter: parent.horizontalCenter
                 color: "transparent"
@@ -150,7 +150,7 @@ Item {
 
                 color: Material.foreground
 
-                text: "Track\nPosition"
+                text: "Message\nFeed"
             }
         }
 
@@ -162,7 +162,7 @@ Item {
             }
 
             OverlayButton {
-                iconUrl: DsaResources.iconCoordinateConversion
+                iconUrl: DsaResources.iconTouch
                 selected: toolController.activeMode === ViewshedController.AddLocationViewshed360;
                 anchors.horizontalCenter: parent.horizontalCenter
                 color: "transparent"
@@ -175,7 +175,7 @@ Item {
             }
 
             Text {
-                anchors.left: parent.left
+                anchors.horizontalCenter: parent.horizontalCenter
                 horizontalAlignment: Text.AlignHCenter
 
                 font {
@@ -184,7 +184,7 @@ Item {
                 }
 
                 color: Material.foreground
-                text: "follow\ntouch"
+                text: "Follow\nTouch"
             }
         }
 

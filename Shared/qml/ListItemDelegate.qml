@@ -25,6 +25,7 @@ Item {
     property string mainText
     property bool menuIconVisible: false
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+    property color imageFrameColor: Material.foreground
 
     Row {
         anchors {
@@ -51,7 +52,7 @@ Item {
             radius: 50 * scaleFactor
             width: 24 * scaleFactor
             height: width
-            color: imageFrameVisible ? Material.foreground : "transparent"
+            color: imageFrameVisible ? imageFrameColor : "transparent"
             visible: imageVisible
 
             Image {

@@ -26,6 +26,8 @@ class DsaResources : public QObject
   Q_PROPERTY(QUrl iconAdd READ iconAdd CONSTANT)
   Q_PROPERTY(QUrl iconAddLayer READ iconAddLayer CONSTANT)
   Q_PROPERTY(QUrl iconAlert READ iconAlert CONSTANT)
+  Q_PROPERTY(QUrl iconAlertConditionList READ iconAlertConditionList CONSTANT)
+  Q_PROPERTY(QUrl iconAlertList READ iconAlertList CONSTANT)
   Q_PROPERTY(QUrl iconAppLogo READ iconAppLogo CONSTANT)
   Q_PROPERTY(QUrl iconChooseBasemap READ iconChooseBasemap CONSTANT)
   Q_PROPERTY(QUrl iconClose READ iconClose CONSTANT)
@@ -33,14 +35,17 @@ class DsaResources : public QObject
   Q_PROPERTY(QUrl iconComplete READ iconComplete CONSTANT)
   Q_PROPERTY(QUrl iconCoordinateConversion READ iconCoordinateConversion CONSTANT)
   Q_PROPERTY(QUrl iconCreateReport READ iconCreateReport CONSTANT)
+  Q_PROPERTY(QUrl iconCurrentLocation READ iconCurrentLocation CONSTANT)
   Q_PROPERTY(QUrl iconDistressGray READ iconDistressGray CONSTANT)
   Q_PROPERTY(QUrl iconDistressRed READ iconDistressRed CONSTANT)
   Q_PROPERTY(QUrl iconDraw READ iconDraw CONSTANT)
   Q_PROPERTY(QUrl iconDrawer READ iconDrawer CONSTANT)
+  Q_PROPERTY(QUrl iconDsaHome READ iconDsaHome CONSTANT)
   Q_PROPERTY(QUrl iconFollowLocation READ iconFollowLocation CONSTANT)
   Q_PROPERTY(QUrl iconFollowLocationNorthUp READ iconFollowLocationNorthUp CONSTANT)
   Q_PROPERTY(QUrl iconFollowLocationOff READ iconFollowLocationOff CONSTANT)
   Q_PROPERTY(QUrl iconGps READ iconGps CONSTANT)
+  Q_PROPERTY(QUrl iconGpsOff READ iconGpsOff CONSTANT)
   Q_PROPERTY(QUrl iconHome READ iconHome CONSTANT)
   Q_PROPERTY(QUrl iconLayers READ iconLayers CONSTANT)
   Q_PROPERTY(QUrl iconLineWidth READ iconLineWidth CONSTANT)
@@ -53,11 +58,13 @@ class DsaResources : public QObject
   Q_PROPERTY(QUrl iconPolyline READ iconPolyline CONSTANT)
   Q_PROPERTY(QUrl iconRaster READ iconRaster CONSTANT)
   Q_PROPERTY(QUrl iconRemove READ iconRemove CONSTANT)
+  Q_PROPERTY(QUrl iconReport READ iconReport CONSTANT)
   Q_PROPERTY(QUrl iconRotate READ iconRotate CONSTANT)
   Q_PROPERTY(QUrl iconSendMap READ iconSendMap CONSTANT)
   Q_PROPERTY(QUrl iconSettings READ iconSettings CONSTANT)
   Q_PROPERTY(QUrl iconSketch READ iconSketch CONSTANT)
   Q_PROPERTY(QUrl iconTools READ iconTools CONSTANT)
+  Q_PROPERTY(QUrl iconTouch READ iconTouch CONSTANT)
   Q_PROPERTY(QUrl iconTrash READ iconTrash CONSTANT)
   Q_PROPERTY(QUrl iconViewshed READ iconViewshed CONSTANT)
   Q_PROPERTY(QUrl iconZoomTo READ iconZoomTo CONSTANT)
@@ -78,6 +85,8 @@ private:
   QUrl iconAdd() const;
   QUrl iconAddLayer() const;
   QUrl iconAlert() const;
+  QUrl iconAlertConditionList() const;
+  QUrl iconAlertList() const;
   QUrl iconAppLogo() const;
   QUrl iconChooseBasemap() const;
   QUrl iconClose() const;
@@ -85,14 +94,17 @@ private:
   QUrl iconComplete() const;
   QUrl iconCoordinateConversion() const;
   QUrl iconCreateReport() const;
+  QUrl iconCurrentLocation() const;
   QUrl iconDistressGray() const;
   QUrl iconDistressRed() const;
   QUrl iconDraw() const;
   QUrl iconDrawer() const;
+  QUrl iconDsaHome() const;
   QUrl iconFollowLocation() const;
   QUrl iconFollowLocationNorthUp() const;
   QUrl iconFollowLocationOff() const;
   QUrl iconGps() const;
+  QUrl iconGpsOff() const;
   QUrl iconHome() const;
   QUrl iconLayers() const;
   QUrl iconLineWidth() const;
@@ -105,11 +117,13 @@ private:
   QUrl iconPolyline() const;
   QUrl iconRaster() const;
   QUrl iconRemove() const;
+  QUrl iconReport() const;
   QUrl iconRotate() const;
   QUrl iconSendMap() const;
   QUrl iconSettings() const;
   QUrl iconSketch() const;
   QUrl iconTools() const;
+  QUrl iconTouch() const;
   QUrl iconTrash() const;
   QUrl iconViewshed() const;
   QUrl iconZoomTo() const;

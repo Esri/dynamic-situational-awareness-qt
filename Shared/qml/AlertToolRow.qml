@@ -72,7 +72,7 @@ Row {
     // View Alert Tool
     ToolIcon {
         id: viewAlertIcon
-        iconSource: DsaResources.iconListView
+        iconSource: DsaResources.iconAlertList
         toolName: "View"
         onToolSelected: {
             alertConditionsTool.visible = false;
@@ -89,7 +89,7 @@ Row {
     // Create Alert Tool
     ToolIcon {
         id: createAlertIcon
-        iconSource: DsaResources.iconDraw
+        iconSource: DsaResources.iconAlertConditionList
         toolName: "Conditions"
         onToolSelected: {
             alertsTool.visible = false;

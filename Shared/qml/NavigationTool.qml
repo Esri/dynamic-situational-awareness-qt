@@ -79,7 +79,7 @@ Item {
 
         OverlayButton {
             id: followingButton
-            iconUrl: DsaResources.iconGps
+            iconUrl: selected ? DsaResources.iconGps : DsaResources.iconGpsOff
             onClicked: {
                 selected = !selected;
                 followHud.enabled = selected;

@@ -50,6 +50,7 @@ private slots:
 
 private:
   static const QString LAYERS_PROPERTYNAME;
+  static const QString ELEVATION_PROPERTYNAME;
   static const QString layerPathKey;
   static const QString layerVisibleKey;
   static const QString layerTypeKey;

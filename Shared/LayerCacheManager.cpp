@@ -45,6 +45,7 @@
 #include <QJsonObject>
 
 const QString LayerCacheManager::LAYERS_PROPERTYNAME = "Layers";
+const QString LayerCacheManager::ELEVATION_PROPERTYNAME = "DefaultElevationSource";
 const QString LayerCacheManager::layerPathKey = "path";
 const QString LayerCacheManager::layerVisibleKey = "visible";
 const QString LayerCacheManager::layerTypeKey = "type";
@@ -169,6 +170,27 @@ void LayerCacheManager::setProperties(const QVariantMap& properties)
   };
 
   m_initialLoadCompleted = true;
+
+  // Add the default elevation source
+  const QVariant elevationData = properties.value(ELEVATION_PROPERTYNAME);
+  const QStringList pathList = elevationData.toStringList();
+
+  // If size is 1, it could be a TPK or raster
+  if (pathList.length() == 1)
+  {
+    // Get the string
+    const QString elevationSource = pathList.at(0);
+    QFileInfo elevationSourceInfo(elevationSource);
+
+    // Check if TPK or not
+    if (elevationSourceInfo.suffix().toLower() == "tpk")
+      m_localDataController->createElevationSourceFromTpk(elevationSource);
+    else
+      m_localDataController->createElevationSourceFromRasters(QStringList{elevationSource});
+  }
+  // If more than 1, it is a list of rasters
+  else if (pathList.length() > 1)
+    m_localDataController->createElevationSourceFromRasters(pathList);
 }
 
 /*

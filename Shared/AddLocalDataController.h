@@ -61,6 +61,8 @@ public:
   void createSceneLayer(const QString& path, int layerIndex = -1, bool visible = true, bool autoAdd = true);
   void createTiledLayer(const QString& path, int layerIndex = -1, bool visible = true, bool autoAdd = true);
   void createVectorTiledLayer(const QString& path, int layerIndex = -1, bool visible = true, bool autoAdd = true);
+  void createElevationSourceFromTpk(const QString& path);
+  void createElevationSourceFromRasters(const QStringList& paths);
   QStringList dataPaths() const { return m_dataPaths; }
 
 signals:

@@ -176,32 +176,7 @@ void AddLocalDataController::addItemAsElevationSource(const QList<int>& indices)
 
     if (dataItemType == DataType::TilePackage)
     {
-      TileCache* tileCache = new TileCache(dataItemPath, this);
-
-      connect(tileCache, &TileCache::doneLoading, this, [this, tileCache](Error error)
-      {
-        if (!error.isEmpty())
-          return;
-
-        // Check if the tiles are LERC encoded
-        if (tileCache->tileInfo().format() == TileImageFormat::LERC)
-        {
-          // create the source from the tiled source
-          ArcGISTiledElevationSource* source = new ArcGISTiledElevationSource(tileCache, this);
-
-          connect(source, &ArcGISTiledElevationSource::errorOccurred, this, &AddLocalDataController::errorOccurred);
-
-          source->setParent(this);
-          auto scene = Toolkit::ToolResourceProvider::instance()->scene();
-          if (scene)
-            scene->baseSurface()->elevationSources()->append(source);
-
-          emit elevationSourceSelected(source);
-          emit propertyChanged(DEFAULT_ELEVATION_PROPERTYNAME, tileCache->path());
-        }
-      });
-
-      tileCache->load();
+      createElevationSourceFromTpk(dataItemPath);
     }
     else if (dataItemType == DataType::Raster)
     {
@@ -215,17 +190,57 @@ void AddLocalDataController::addItemAsElevationSource(const QList<int>& indices)
   if (dataPaths.isEmpty())
     return;
 
-  RasterElevationSource* source = new RasterElevationSource(dataPaths, this);
+  createElevationSourceFromRasters(dataPaths);
+
+  emit propertyChanged(DEFAULT_ELEVATION_PROPERTYNAME, dataPaths);
+}
+
+/*
+ \brief Adds the provided TPK \a path as an elevation source.
+*/
+void AddLocalDataController::createElevationSourceFromTpk(const QString& path)
+{
+  TileCache* tileCache = new TileCache(path, this);
+
+  connect(tileCache, &TileCache::doneLoading, this, [this, tileCache](Error error)
+  {
+    if (!error.isEmpty())
+      return;
+
+    // Check if the tiles are LERC encoded
+    if (tileCache->tileInfo().format() == TileImageFormat::LERC)
+    {
+      // create the source from the tiled source
+      ArcGISTiledElevationSource* source = new ArcGISTiledElevationSource(tileCache, this);
+
+      connect(source, &ArcGISTiledElevationSource::errorOccurred, this, &AddLocalDataController::errorOccurred);
+
+      auto scene = Toolkit::ToolResourceProvider::instance()->scene();
+      if (scene)
+        scene->baseSurface()->elevationSources()->append(source);
+
+      emit elevationSourceSelected(source);
+      emit propertyChanged(DEFAULT_ELEVATION_PROPERTYNAME, tileCache->path());
+    }
+  });
+
+  tileCache->load();
+}
+
+/*
+ \brief Adds the provided Raster \a paths as an elevation source.
+*/
+void AddLocalDataController::createElevationSourceFromRasters(const QStringList& paths)
+{
+  RasterElevationSource* source = new RasterElevationSource(paths, this);
 
   connect(source, &RasterElevationSource::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
-  source->setParent(this);
   auto scene = Toolkit::ToolResourceProvider::instance()->scene();
   if (scene)
     scene->baseSurface()->elevationSources()->append(source);
 
   emit elevationSourceSelected(source);
-  emit propertyChanged(DEFAULT_ELEVATION_PROPERTYNAME, dataPaths);
 }
 
 /*

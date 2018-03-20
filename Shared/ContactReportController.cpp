@@ -17,6 +17,7 @@
 
 // example app headers
 #include "AppConstants.h"
+#include "Message.h"
 
 // toolkit headers
 #include "ToolManager.h"
@@ -141,6 +142,9 @@ void ContactReportController::sendReport(const QString& size,
                                          const QDateTime& observedTime,
                                          const QString& equipment)
 {
+  if (m_udpPort == -1)
+    return;
+
   if (m_unitName.isEmpty() || m_controlPoint.isEmpty())
     return;
 
@@ -149,6 +153,35 @@ void ContactReportController::sendReport(const QString& size,
 
   if (size.isEmpty() || enemyUnitDescription.isEmpty())
     return;
+
+  Message contactReport = Message(Message::MessageAction::Update, m_controlPoint);
+  contactReport.setMessageId(QUuid::createUuid().toString());
+  contactReport.setMessageType(QStringLiteral("spotrep"));
+//  contactReport.setSymbolId(s_locationBroadcastSic);
+
+  QVariantMap attribs;
+  attribs.insert(QStringLiteral("_control_points"), controlPoint());
+  attribs.insert(QStringLiteral("datetimesubmitted"), QDateTime().toString(Qt::ISODate));
+  attribs.insert(QStringLiteral("uniquedesignation"), unitName());
+  attribs.insert(QStringLiteral("equipment"), equipment);
+  attribs.insert(QStringLiteral("activity"), "activity");
+  attribs.insert(QStringLiteral("location"), locationDescription);
+  attribs.insert(QStringLiteral("size"), size);
+  attribs.insert(QStringLiteral("timeobserved"), observedTime.toString(Qt::ISODate));
+  attribs.insert(QStringLiteral("unit"), enemyUnitDescription);
+//  <xs:element type="xs:string" name="_id"/>
+//      <xs:element type="xs:integer" name="_wkid"/>
+//      <xs:element type="xs:string" name="equipment"/>
+//      <xs:element type="xs:string" name="activity"/>
+//      <xs:element type="xs:string" name="location"/>
+//      <xs:element type="xs:string" name="size"/>
+//      <xs:element type="xs:string" name="unit"/>
+//      <xs:element type="xs:string" name="activity_cat"/>
+//      <xs:element type="xs:string" name="unit_cat"/>
+//      <xs:element type="xs:string" name="equip_cat"/>
+//      <xs:element type="xs:integer" name="size_cat"/>
+//      <xs:element type="xs:string" name="timeobserved"/>
+      contactReport.setAttributes(attribs);
 }
 
 int ContactReportController::udpPort() const

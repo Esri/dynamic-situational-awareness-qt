@@ -10,9 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "pch.hpp"
-
 #include "ViewshedController.h"
+
+// PCH header
+#include "pch.hpp"
 
 // example app headers
 #include "DsaUtility.h"
@@ -234,8 +235,11 @@ void ViewshedController::addLocationViewshed360(const Esri::ArcGISRuntime::Point
 
   if (m_sceneView)
   {
-    const double currDistance = DsaUtility::distance3D(m_sceneView->currentViewpointCamera().location(), point);
-    m_followCamCtrllr = new OrbitLocationCameraController(point, currDistance, this);
+    const Camera currCam = m_sceneView->currentViewpointCamera();
+    const double currDistance = DsaUtility::distance3D(currCam.location(), currCam.location());
+    m_followCamCtrllr = new OrbitLocationCameraController(currCam.location(), currDistance, this);
+    m_followCamCtrllr->setCameraPitchOffset(currCam.pitch());
+    m_followCamCtrllr->setCameraHeadingOffset(currCam.heading());
     m_followCamCtrllr->setCameraHeadingOffsetInteractive(false);
     m_followCamCtrllr->setCameraPitchOffsetInteractive(false);
 

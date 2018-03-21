@@ -100,7 +100,7 @@ Item {
                 id: pickButton
                 enabled: singleFeatureRb.checked
                 selected: toolController.pickMode
-                iconUrl: DsaResources.iconGps
+                iconUrl: DsaResources.iconTouch
                 opacity: enabled ? 1.0 : 0.8
                 anchors.verticalCenter: featureIdEdit.verticalCenter
                 onClicked: {

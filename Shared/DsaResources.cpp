@@ -50,7 +50,17 @@ QUrl DsaResources::iconAddLayer() const
 
 QUrl DsaResources::iconAlert() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_failedlayer.png");
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/Alert.png");
+}
+
+QUrl DsaResources::iconAlertConditionList() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/View_Alert_Conditions.png");
+}
+
+QUrl DsaResources::iconAlertList() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/View_Alerts.png");
 }
 
 QUrl DsaResources::iconAppLogo() const
@@ -88,14 +98,20 @@ QUrl DsaResources::iconCreateReport() const
   return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_editmap_dark_d-2.png");
 }
 
+QUrl DsaResources::iconCurrentLocation() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_usecurrentlocation_dark_d.png");
+}
+
+
 QUrl DsaResources::iconDistressGray() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/distressIconGray.svg");
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/distressIconGray.png");
 }
 
 QUrl DsaResources::iconDistressRed() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/distressIconRed.svg");
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/distressIconRed.png");
 }
 
 QUrl DsaResources::iconDraw() const
@@ -106,6 +122,11 @@ QUrl DsaResources::iconDraw() const
 QUrl DsaResources::iconDrawer() const
 {
   return QStringLiteral("qrc:/Resources/icons/xhdpi/drawer_large.png");
+}
+
+QUrl DsaResources::iconDsaHome() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/dsa_home.png");
 }
 
 QUrl DsaResources::iconFollowLocation() const
@@ -126,6 +147,11 @@ QUrl DsaResources::iconFollowLocationOff() const
 QUrl DsaResources::iconGps() const
 {
   return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_gpsondontfollow_dark.png");
+}
+
+QUrl DsaResources::iconGpsOff() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/GPS_Off.png");
 }
 
 QUrl DsaResources::iconHome() const
@@ -160,22 +186,27 @@ QUrl DsaResources::iconMenu() const
 
 QUrl DsaResources::iconMessages() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_messages_dark.png");
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/Real_Time_Feeds.png");
+}
+
+QUrl DsaResources::iconPin() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/pin.png");
 }
 
 QUrl DsaResources::iconPoint() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_pointlayer_light.png");
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/Point.png");
 }
 
 QUrl DsaResources::iconPolygon() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_polygonlayer_light.png");
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/Polygon.png");
 }
 
 QUrl DsaResources::iconPolyline() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_linelayer_light.png");
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/Polyline.png");
 }
 
 QUrl DsaResources::iconRaster() const
@@ -188,9 +219,14 @@ QUrl DsaResources::iconRemove() const
   return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_subtract_dark_d.png");
 }
 
+QUrl DsaResources::iconReport() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/Create_Report.png");
+}
+
 QUrl DsaResources::iconRotate() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_refresh_dark.png");
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/Rotate_Mode.png");
 }
 
 QUrl DsaResources::iconSendMap() const
@@ -213,6 +249,11 @@ QUrl DsaResources::iconTools() const
   return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_tooloverflow_dark_d.png");
 }
 
+QUrl DsaResources::iconTouch() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/Touch.png");
+}
+
 QUrl DsaResources::iconTrash() const
 {
   return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_trash_dark_d.png");
@@ -220,7 +261,7 @@ QUrl DsaResources::iconTrash() const
 
 QUrl DsaResources::iconViewshed() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_video_dark_d.png");
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/Viewshed_Tool.png");
 }
 
 QUrl DsaResources::iconZoomTo() const

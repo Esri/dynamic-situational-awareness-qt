@@ -41,23 +41,46 @@ Menu {
             contextMenuController.contextActive = visible;
     }
 
-    Column {
-        spacing: 8 * scaleFactor
+    Repeater {
+        id: optionsRepeater
+        model: contextMenuController.options
+        delegate: Rectangle {
 
-        Repeater {
-            id: optionsRepeater
-            model: contextMenuController.options
-            delegate: ListLabel{
-                anchors{
-                    left: parent.left
+            color: "transparent"
+            width: 100 * scaleFactor
+            height: 32 * scaleFactor
+
+            Label {
+                anchors {
+                    fill: parent
                     margins: 8 * scaleFactor
                 }
-                text: display
-                horizontalAlignment: Text.AlignLeft
 
-                onTriggered: {
-                    contextMenuController.selectOption(display);
+                font {
+                    family: DsaStyles.fontFamily
+                    pixelSize: 16 * scaleFactor
                 }
+                color: Material.foreground
+                text: display
+            }
+
+            Rectangle {
+                anchors {
+                    bottom: parent.bottom
+                    left: parent.left
+                    right: parent.right
+                    leftMargin: 8 * scaleFactor
+                    rightMargin: leftMargin
+                }
+
+                height: 1 * scaleFactor
+                color: Material.foreground
+            }
+
+            MouseArea {
+                anchors.fill: parent
+
+                onClicked: contextMenuController.selectOption(display);
             }
         }
     }

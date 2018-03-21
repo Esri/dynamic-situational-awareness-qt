@@ -104,7 +104,6 @@ DsaPanel {
                     width: 125 * scaleFactor
 
                     Column {
-                        anchors.margins: 10 * scaleFactor
                         width: parent.width
                         spacing: 10 * scaleFactor
                         leftPadding: 10 * scaleFactor

@@ -41,21 +41,23 @@ Menu {
             contextMenuController.contextActive = visible;
     }
 
-    Repeater {
-        id: optionsRepeater
-        model: contextMenuController.options
-        anchors.margins: 8 * scaleFactor
+    Column {
+        spacing: 8 * scaleFactor
 
-        delegate: ListLabel{
-            anchors{
-                left: parent.left
-                margins: 4 * scaleFactor
-            }
-            text: display
-            horizontalAlignment: Text.AlignLeft
+        Repeater {
+            id: optionsRepeater
+            model: contextMenuController.options
+            delegate: ListLabel{
+                anchors{
+                    left: parent.left
+                    margins: 8 * scaleFactor
+                }
+                text: display
+                horizontalAlignment: Text.AlignLeft
 
-            onTriggered: {
-                contextMenuController.selectOption(display);
+                onTriggered: {
+                    contextMenuController.selectOption(display);
+                }
             }
         }
     }

@@ -26,6 +26,10 @@ Item {
 
     property alias unitName: unitTextField.text
 
+    function clear() {
+
+    }
+
     TextField {
         id: unitTextField
         anchors {

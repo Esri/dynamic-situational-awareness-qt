@@ -18,6 +18,7 @@
 // example app headers
 #include "AppConstants.h"
 #include "Message.h"
+#include "MessageSender.h"
 
 // toolkit headers
 #include "ToolManager.h"
@@ -32,6 +33,7 @@
 // Qt headers
 #include <QDateTime>
 #include <QHostInfo>
+#include <QUdpSocket>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -157,7 +159,7 @@ void ContactReportController::sendReport(const QString& size,
   Message contactReport = Message(Message::MessageAction::Update, m_controlPoint);
   contactReport.setMessageId(QUuid::createUuid().toString());
   contactReport.setMessageType(QStringLiteral("spotrep"));
-//  contactReport.setSymbolId(s_locationBroadcastSic);
+  //  contactReport.setSymbolId(s_locationBroadcastSic);
 
   QVariantMap attribs;
   attribs.insert(QStringLiteral("_control_points"), controlPoint());
@@ -169,19 +171,30 @@ void ContactReportController::sendReport(const QString& size,
   attribs.insert(QStringLiteral("size"), size);
   attribs.insert(QStringLiteral("timeobserved"), observedTime.toString(Qt::ISODate));
   attribs.insert(QStringLiteral("unit"), enemyUnitDescription);
-//  <xs:element type="xs:string" name="_id"/>
-//      <xs:element type="xs:integer" name="_wkid"/>
-//      <xs:element type="xs:string" name="equipment"/>
-//      <xs:element type="xs:string" name="activity"/>
-//      <xs:element type="xs:string" name="location"/>
-//      <xs:element type="xs:string" name="size"/>
-//      <xs:element type="xs:string" name="unit"/>
-//      <xs:element type="xs:string" name="activity_cat"/>
-//      <xs:element type="xs:string" name="unit_cat"/>
-//      <xs:element type="xs:string" name="equip_cat"/>
-//      <xs:element type="xs:integer" name="size_cat"/>
-//      <xs:element type="xs:string" name="timeobserved"/>
-      contactReport.setAttributes(attribs);
+  //  <xs:element type="xs:string" name="_id"/>
+  //      <xs:element type="xs:integer" name="_wkid"/>
+  //      <xs:element type="xs:string" name="equipment"/>
+  //      <xs:element type="xs:string" name="activity"/>
+  //      <xs:element type="xs:string" name="location"/>
+  //      <xs:element type="xs:string" name="size"/>
+  //      <xs:element type="xs:string" name="unit"/>
+  //      <xs:element type="xs:string" name="activity_cat"/>
+  //      <xs:element type="xs:string" name="unit_cat"/>
+  //      <xs:element type="xs:string" name="equip_cat"/>
+  //      <xs:element type="xs:integer" name="size_cat"/>
+  //      <xs:element type="xs:string" name="timeobserved"/>
+  contactReport.setAttributes(attribs);
+
+  if (!m_messageSender)
+  {
+    m_messageSender = new MessageSender(this);
+
+    QUdpSocket* udpSocket = new QUdpSocket(m_messageSender);
+    udpSocket->connectToHost(QHostAddress::Broadcast, m_udpPort, QIODevice::WriteOnly);
+    m_messageSender->setDevice(udpSocket);
+  }
+
+  m_messageSender->sendMessage(contactReport.toGeoMessage());
 }
 
 int ContactReportController::udpPort() const

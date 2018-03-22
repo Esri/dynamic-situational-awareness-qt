@@ -27,6 +27,10 @@ Item {
     property alias controlPoint: controlPointTextField.text
     property alias locationDescription: enemyLocationField.text
 
+    function clear() {
+        enemyLocationField.text = "";
+    }
+
     TextField {
         id: controlPointTextField
         anchors {
@@ -130,6 +134,6 @@ Item {
             family: DsaStyles.fontFamily
         }
 
-        onClicked: enemyActivityField.text = "";
+        onClicked: clear();
     }
 }

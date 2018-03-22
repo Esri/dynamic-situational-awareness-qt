@@ -124,7 +124,7 @@ DsaPanel {
             }
 
             function clear() {
-                summaryText.text = "";
+
             }
 
             Text {
@@ -162,7 +162,7 @@ DsaPanel {
 
     Button {
         id: nextButton
-        visible: reportFrame.currentIndex < (reportFrame.count -1) && reportFrame.currentItem.valid
+        visible: reportFrame.currentIndex < (reportFrame.count) && reportFrame.currentItem.valid
         anchors {
             right: reportFrame.right
             bottom: parent.bottom
@@ -189,11 +189,16 @@ DsaPanel {
         toolName: "Create"
         labelColor: Material.accent
         onToolSelected: {
+
             toolController.sendReport(sizePage.size,
                                       locationPage.locationDescription,
                                       enemyUnitPage.enemyUnit,
                                       observedTimePage.observedTime,
                                       "");
+
+            for (var i = 0; i < reportFrame.count; ++i)
+                reportFrame.itemAt(i).clear();
+            reportFrame.setCurrentIndex(0);
         }
     }
 
@@ -208,7 +213,7 @@ DsaPanel {
         iconSource: DsaResources.iconClose
 
         onToolSelected: {
-            for (var i = 0; i < conditionFrame.count; ++i)
+            for (var i = 0; i < reportFrame.count; ++i)
                 reportFrame.itemAt(i).clear();
             reportFrame.setCurrentIndex(0);
         }

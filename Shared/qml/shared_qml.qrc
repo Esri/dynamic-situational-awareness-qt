@@ -49,7 +49,6 @@
         <file>ContextMenu.qml</file>
         <file>AnalysisList.qml</file>
         <file>ContactReportTool.qml</file>
-        <file>ContactReportDatePage.qml</file>
         <file>ContactReportUnitPage.qml</file>
         <file>ContactReportSizePage.qml</file>
         <file>ContactReportActivityPage.qml</file>

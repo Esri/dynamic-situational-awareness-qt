@@ -27,6 +27,9 @@ Item {
     property string size: smallButton.checked ? "small" :
                                                 (mediumButton.checked ? "medium" : "large")
 
+    function clear() {
+    }
+
     Column {
         anchors {
             horizontalCenter: parent.horizontalCenter

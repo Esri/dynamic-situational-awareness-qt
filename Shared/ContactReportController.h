@@ -28,6 +28,8 @@ namespace ArcGISRuntime
 }
 }
 
+class MessageSender;
+
 class QDateTime;
 class QMouseEvent;
 
@@ -84,7 +86,8 @@ private:
   Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
   QString m_unitName;
   Esri::ArcGISRuntime::Point m_controlPoint;
-  int m_udpPort = -1;
+  MessageSender* m_messageSender = nullptr;
+  int m_udpPort = 45679;
   bool m_pickMode = false;
 
   QMetaObject::Connection m_mouseClickConnection;

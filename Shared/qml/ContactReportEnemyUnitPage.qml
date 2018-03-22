@@ -26,6 +26,10 @@ Item {
 
     property alias enemyUnit: enemyUnitField.text
 
+    function clear() {
+        enemyUnitField.text = "";
+    }
+
     TextEdit {
         id: enemyUnitField
         clip: true
@@ -92,6 +96,6 @@ Item {
             family: DsaStyles.fontFamily
         }
 
-        onClicked: enemyActivityField.text = "";
+        onClicked: clear();
     }
 }

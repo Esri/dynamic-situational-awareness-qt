@@ -22,11 +22,11 @@ import Esri.DSA 1.0
 Item {
     id: observedTimePage
 
-    property bool valid: observedTime.length > 0
+    property bool valid: observedTimeString.length > 0
     property string instruction: "Date/Time observed"
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
-    property date observedTime: null
+    property date observedTime: new Date();
 
     property string observedTimeString: calendar.selectedDate.getFullYear() + "-"
                                   + (calendar.selectedDate.getMonth()+1)  + "-"
@@ -34,6 +34,13 @@ Item {
                                   + hoursTumbler.currentIndex + ":"
                                   + minutesTumbler.currentIndex + ":"
                                   + secondsTumbler.currentIndex;
+
+    function clear() {
+        var currentDate = new Date();
+        hoursTumbler.currentIndex = currentDate.getHours();
+        minutesTumbler.currentIndex = currentDate.getMinutes();
+        secondsTumbler.currentIndex = currentDate.getSeconds();
+    }
 
     onObservedTimeStringChanged: {
         observedTime = calendar.selectedDate;
@@ -46,10 +53,7 @@ Item {
         if (!visible)
             return;
 
-        var currentDate = new Date();
-        hoursTumbler.currentIndex = currentDate.getHours();
-        minutesTumbler.currentIndex = currentDate.getMinutes();
-        secondsTumbler.currentIndex = currentDate.getSeconds();
+        clear();
     }
 
     Calendar {
@@ -58,10 +62,13 @@ Item {
         maximumDate: new Date()
 
         anchors {
-            horizontalCenter: parent.horizontalCenter
+            left: parent.left
+            right: parent.right
             top: parent.top
             margins: 16 * scaleFactor
         }
+
+        height: parent.height * 0.5
 
         style: CalendarStyle {
             gridVisible: false
@@ -81,13 +88,13 @@ Item {
 
                 Rectangle {
                     width: parent.width
-                    height: 1
+                    height: 1 * scaleFactor
                     color: Material.background
                     anchors.bottom: parent.bottom
                 }
 
                 Rectangle {
-                    width: 1
+                    width: 1 * scaleFactor
                     height: parent.height
                     color: Material.background
                     anchors.right: parent.right

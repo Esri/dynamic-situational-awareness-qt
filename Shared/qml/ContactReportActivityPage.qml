@@ -26,6 +26,10 @@ Item {
 
     property alias enemyActivity: enemyActivityField.text
 
+    function clear() {
+        enemyActivity = "";
+    }
+
     TextEdit {
         id: enemyActivityField
         clip: true
@@ -92,6 +96,6 @@ Item {
             family: DsaStyles.fontFamily
         }
 
-        onClicked: enemyActivityField.text = "";
+        onClicked: clear();
     }
 }

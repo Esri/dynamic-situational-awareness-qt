@@ -44,43 +44,11 @@ Menu {
     Repeater {
         id: optionsRepeater
         model: contextMenuController.options
-        delegate: Rectangle {
-
-            color: "transparent"
-            width: 100 * scaleFactor
-            height: 32 * scaleFactor
-
-            Label {
-                anchors {
-                    fill: parent
-                    margins: 8 * scaleFactor
-                }
-
-                font {
-                    family: DsaStyles.fontFamily
-                    pixelSize: 16 * scaleFactor
-                }
-                color: Material.foreground
-                text: display
-            }
-
-            Rectangle {
-                anchors {
-                    bottom: parent.bottom
-                    left: parent.left
-                    right: parent.right
-                    leftMargin: 8 * scaleFactor
-                    rightMargin: leftMargin
-                }
-
-                height: 1 * scaleFactor
-                color: Material.foreground
-            }
-
-            MouseArea {
-                anchors.fill: parent
-
-                onClicked: contextMenuController.selectOption(display);
+        delegate: ListLabel {
+            text: display
+            separatorVisible: index !== contextMenuController.options.rowCount() - 1
+            onTriggered: {
+                contextMenuController.selectOption(display);
             }
         }
     }

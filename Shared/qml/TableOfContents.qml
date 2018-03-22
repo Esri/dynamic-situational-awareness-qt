@@ -104,13 +104,12 @@ DsaPanel {
                     width: 125 * scaleFactor
 
                     Column {
-                        anchors.margins: 10 * scaleFactor
                         width: parent.width
                         spacing: 10 * scaleFactor
-                        leftPadding: 10 * scaleFactor
 
                         ListLabel {
                             text: "Zoom to"
+                            separatorVisible: visible
                             onTriggered: {
                                 vehicleMenu.close();
                                 tocRoot.closed();
@@ -120,6 +119,7 @@ DsaPanel {
 
                         ListLabel {
                             text: "Remove"
+                            separatorVisible: moveUpLabel.visible || moveDownLabel.visible
                             onTriggered: {
                                 vehicleMenu.close()
                                 toolController.removeAt(layersList.currentIndex);
@@ -127,8 +127,10 @@ DsaPanel {
                         }
 
                         ListLabel {
+                            id: moveUpLabel
                             text: "Move up"
                             visible: layersList.currentIndex !== 0
+                            separatorVisible: layersList.currentIndex !== layersList.count -1
                             onTriggered: {
                                 vehicleMenu.close()
                                 toolController.moveUp(layersList.currentIndex);
@@ -136,8 +138,10 @@ DsaPanel {
                         }
 
                         ListLabel {
+                            id: moveDownLabel
                             text: "Move down"
                             visible: layersList.currentIndex + 1 !== layersList.count
+                            separatorVisible: false
                             onTriggered: {
                                 vehicleMenu.close()
                                 toolController.moveDown(layersList.currentIndex);
@@ -248,8 +252,6 @@ DsaPanel {
                 }
             }
 
-            ListSeparator{}
-
             ListLabel {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: "Remove"
@@ -257,10 +259,6 @@ DsaPanel {
                     toolController.removeAt(layersList.currentIndex);
                     mobileMenu.close()
                 }
-            }
-
-            ListSeparator {
-                visible: layersList.currentIndex !== 0
             }
 
             ListLabel {
@@ -273,10 +271,6 @@ DsaPanel {
                 }
             }
 
-            ListSeparator {
-                visible: layersList.currentIndex + 1 !== layersList.count
-            }
-
             ListLabel {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: "Move down"
@@ -287,11 +281,10 @@ DsaPanel {
                 }
             }
 
-            ListSeparator{}
-
             ListLabel {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: "Cancel"
+                separatorVisible: false
                 onTriggered: {
                     mobileMenu.close();
                 }

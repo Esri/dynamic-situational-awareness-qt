@@ -30,6 +30,10 @@ Item {
     function clear() {
     }
 
+    function text() {
+        return "size:" + size;
+    }
+
     Column {
         anchors {
             horizontalCenter: parent.horizontalCenter

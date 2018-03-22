@@ -10,9 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "pch.hpp"
-
 #include "DsaController.h"
+
+// PCH header
+#include "pch.hpp"
 
 // example app headers
 #include "AlertConstants.h"
@@ -354,6 +355,10 @@ void DsaController::writeDefaultMessageFeeds()
   locationBroadcastJson.insert(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE, QStringLiteral("position_report_land"));
   locationBroadcastJson.insert(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PORT, 45679);
   m_dsaSettings[MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME] = locationBroadcastJson;
+
+  QJsonObject conditionReportJson;
+  conditionReportJson.insert(MessageFeedConstants::CONTACT_REPORT_CONFIG_PORT, 45679);
+  m_dsaSettings[MessageFeedConstants::CONTACT_REPORT_CONFIG_PROPERTYNAME] = conditionReportJson;
 }
 
 /*! \brief internal

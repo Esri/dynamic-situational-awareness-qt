@@ -30,6 +30,10 @@ Item {
         enemyActivity = "";
     }
 
+    function text() {
+        return "activity:" + enemyActivityField.text;
+    }
+
     TextEdit {
         id: enemyActivityField
         clip: true

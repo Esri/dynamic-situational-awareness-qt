@@ -30,6 +30,10 @@ Item {
         enemyUnitField.text = "";
     }
 
+    function text() {
+        return "unit:" + enemyUnitField.text;
+    }
+
     TextEdit {
         id: enemyUnitField
         clip: true

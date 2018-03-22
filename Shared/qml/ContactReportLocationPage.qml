@@ -31,6 +31,10 @@ Item {
         enemyLocationField.text = "";
     }
 
+    function text() {
+        return "location:" + controlPointTextField.text;
+    }
+
     TextField {
         id: controlPointTextField
         anchors {

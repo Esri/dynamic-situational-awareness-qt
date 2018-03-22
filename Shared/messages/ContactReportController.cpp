@@ -18,6 +18,7 @@
 // example app headers
 #include "AppConstants.h"
 #include "Message.h"
+#include "MessageFeedConstants.h"
 #include "MessageSender.h"
 
 // toolkit headers
@@ -68,8 +69,9 @@ void ContactReportController::setProperties(const QVariantMap& properties)
   if (findUserNameIt != properties.end())
     setUnitName(findUserNameIt.value().toString());
 
-  auto findPortIt = properties.find(QStringLiteral("port"));
-  if (findPortIt != properties.end())
+  const auto contactReportConfig = properties[MessageFeedConstants::CONTACT_REPORT_CONFIG_PROPERTYNAME].toMap();
+  auto findPortIt = contactReportConfig.find(MessageFeedConstants::CONTACT_REPORT_CONFIG_PORT);
+  if (findPortIt != contactReportConfig.end())
   {
     bool ok = false;
     int newPort = findPortIt.value().toInt(&ok);

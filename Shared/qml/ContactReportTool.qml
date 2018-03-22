@@ -118,6 +118,7 @@ DsaPanel {
             visible: reportFrame.currentIndex === 6
             property string instruction: "Create contact report"
             property bool valid: true
+            clip: true
 
             function text() {
                 return reviewText.text;
@@ -127,19 +128,52 @@ DsaPanel {
 
             }
 
+            onVisibleChanged: {
+                if (!visible)
+                    return;
+
+                var newText = "";
+                for (var i = 0; i < reportFrame.currentIndex; ++i)
+                    newText += reportFrame.itemAt(i).text() + "\n";
+                summaryText.text = newText;
+            }
+
             Text {
                 id: reviewText
                 text: "Create report?"
-                anchors.centerIn: parent
+                anchors {
+                    top: parent.top
+                    left: parent.left
+                }
                 width: parent.width * 0.75
                 font {
                     pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
                     bold: true
+                    family: DsaStyles.fontFamily
                 }
                 wrapMode: Text.Wrap
                 elide: Text.ElideRight
                 color: Material.foreground
                 horizontalAlignment: Text.AlignHCenter
+            }
+
+            Text {
+                id: summaryText
+                anchors {
+                    top: reviewText.bottom
+                    left: parent.left
+                    bottom: parent.bottom
+                    margins: 8 * scaleFactor
+                }
+                width: parent.width * 0.75
+                font {
+                    pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                    family: DsaStyles.fontFamily
+                }
+                wrapMode: Text.Wrap
+                elide: Text.ElideRight
+                color: Material.foreground
+                horizontalAlignment: Text.AlignLeft
             }
         }
     }
@@ -162,7 +196,7 @@ DsaPanel {
 
     Button {
         id: nextButton
-        visible: reportFrame.currentIndex < (reportFrame.count) && reportFrame.currentItem.valid
+        visible: reportFrame.currentIndex < (reportFrame.count -1) && reportFrame.currentItem.valid
         anchors {
             right: reportFrame.right
             bottom: parent.bottom

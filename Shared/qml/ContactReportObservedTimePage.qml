@@ -42,6 +42,10 @@ Item {
         secondsTumbler.currentIndex = currentDate.getSeconds();
     }
 
+    function text() {
+        return "observed:" + observedTimeString;
+    }
+
     onObservedTimeStringChanged: {
         observedTime = calendar.selectedDate;
         observedTime.setHours(hoursTumbler.currentIndex);

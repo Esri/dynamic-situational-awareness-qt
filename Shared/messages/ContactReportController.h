@@ -87,7 +87,7 @@ private:
   QString m_unitName;
   Esri::ArcGISRuntime::Point m_controlPoint;
   MessageSender* m_messageSender = nullptr;
-  int m_udpPort = 45679;
+  int m_udpPort = -1;
   bool m_pickMode = false;
 
   QMetaObject::Connection m_mouseClickConnection;

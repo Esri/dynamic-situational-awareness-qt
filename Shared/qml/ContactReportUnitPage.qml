@@ -30,6 +30,10 @@ Item {
 
     }
 
+    function text() {
+        return "unique designation:" + unitTextField.text;
+    }
+
     TextField {
         id: unitTextField
         anchors {

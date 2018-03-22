@@ -99,7 +99,6 @@ DsaPanel {
                         anchors.margins: 10 * scaleFactor
                         width: parent.width
                         spacing: 10 * scaleFactor
-                        leftPadding: 10 * scaleFactor
 
                         ListLabel {
                             text: "Zoom to"
@@ -111,6 +110,7 @@ DsaPanel {
 
                         ListLabel {
                             text: "Remove"
+                            separatorVisible: false
                             onTriggered: {
                                 vehicleMenu.close()
                                 toolController.removeAt(analysisList.currentIndex);
@@ -216,8 +216,6 @@ DsaPanel {
                 }
             }
 
-            ListSeparator{}
-
             ListLabel {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: "Remove"
@@ -227,10 +225,9 @@ DsaPanel {
                 }
             }
 
-            ListSeparator{}
-
             ListLabel {
                 anchors.horizontalCenter: parent.horizontalCenter
+                separatorVisible: false
                 text: "Cancel"
                 onTriggered: {
                     mobileMenu.close();

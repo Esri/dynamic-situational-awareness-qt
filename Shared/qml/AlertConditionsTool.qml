@@ -126,10 +126,8 @@ DsaPanel {
                             width: 125 * scaleFactor
 
                             Column {
-                                anchors.margins: 10 * scaleFactor
                                 width: parent.width
                                 spacing: 10 * scaleFactor
-                                leftPadding: 10 * scaleFactor
 
                                 ListLabel {
                                     text: "Edit"
@@ -141,6 +139,7 @@ DsaPanel {
 
                                 ListLabel {
                                     text: "Delete"
+                                    separatorVisible: false
                                     onTriggered: {
                                         conditionMenu.close();
                                         toolController.removeConditionAt(index);
@@ -397,11 +396,10 @@ DsaPanel {
                 }
             }
 
-            ListSeparator{}
-
             ListLabel {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: "Delete"
+                separatorVisible: false
                 onTriggered: {
                     toolController.removeConditionAt(conditionsList.currentIndex);
                     mobileMenu.close(true);

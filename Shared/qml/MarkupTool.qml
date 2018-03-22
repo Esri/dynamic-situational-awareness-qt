@@ -204,6 +204,7 @@ Item {
 
     SecondaryToolbar {
         id: drawPane
+        width: 75 * scaleFactor
         property bool sketchInProgress: false
 
         Row {
@@ -213,20 +214,20 @@ Item {
 
             ToolIcon {
                 anchors.verticalCenter: parent.verticalCenter
-                iconSource: DsaResources.iconComplete
-                toolName: "Finish Sketch"
+                iconSource: DsaResources.iconSendMap
+                toolName: "Share"
                 onToolSelected: appRoot.showInputDialog("Sketch name", "ex: Sketch 1")
             }
 
-            ToolIcon {
-                anchors.verticalCenter: parent.verticalCenter
-                iconSource: DsaResources.iconClose
-                toolName: "Cancel Sketch"
-                onToolSelected: {
-                    markupController.clearCurrentSketch();
-                    drawPane.sketchInProgress = false;
-                }
-            }
+//            ToolIcon {
+//                anchors.verticalCenter: parent.verticalCenter
+//                iconSource: DsaResources.iconClose
+//                toolName: "Cancel Sketch"
+//                onToolSelected: {
+//                    markupController.clearCurrentSketch();
+//                    drawPane.sketchInProgress = false;
+//                }
+//            }
         }
     }
 

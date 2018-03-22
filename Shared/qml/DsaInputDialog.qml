@@ -28,27 +28,41 @@ Dialog {
     x: appRoot.width / 2 - width / 2
     y: appRoot.height / 2 - height / 2
     width: 250 * scaleFactor
-    height: 100 * scaleFactor
-    standardButtons: Dialog.Ok
+    height: 120 * scaleFactor
+    standardButtons: Dialog.Ok | Dialog.Cancel
 
-    Row {
+    Column {
         width: parent.width
-        spacing: 5 * scaleFactor
+        spacing: 10 * scaleFactor
 
         Label {
-            id: inputLabelText
-            anchors.verticalCenter: parent.verticalCenter
-            width: parent.width * 0.4
+            anchors.horizontalCenter: parent.horizontalCenter
             font {
                 family: DsaStyles.fontFamily
-                pixelSize: 12 * scaleFactor
+                pixelSize: 14 * scaleFactor
             }
+            text: "Send Sketch"
         }
 
-        TextField {
-            id: nameText
-            anchors.verticalCenter: parent.verticalCenter
-            width: parent.width * 0.6
+        Row {
+            width: parent.width
+            spacing: 5 * scaleFactor
+
+            Label {
+                id: inputLabelText
+                anchors.verticalCenter: parent.verticalCenter
+                width: parent.width * 0.4
+                font {
+                    family: DsaStyles.fontFamily
+                    pixelSize: 12 * scaleFactor
+                }
+            }
+
+            TextField {
+                id: nameText
+                anchors.verticalCenter: parent.verticalCenter
+                width: parent.width * 0.6
+            }
         }
     }
 

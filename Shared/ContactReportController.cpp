@@ -159,11 +159,10 @@ void ContactReportController::sendReport(const QString& size,
   Message contactReport = Message(Message::MessageAction::Update, m_controlPoint);
   contactReport.setMessageId(QUuid::createUuid().toString());
   contactReport.setMessageType(QStringLiteral("spotrep"));
-  //  contactReport.setSymbolId(s_locationBroadcastSic);
 
   QVariantMap attribs;
   attribs.insert(QStringLiteral("_control_points"), controlPoint());
-  attribs.insert(QStringLiteral("datetimesubmitted"), QDateTime().toString(Qt::ISODate));
+  attribs.insert(QStringLiteral("datetimesubmitted"), QDateTime::currentDateTime().toString(Qt::ISODate));
   attribs.insert(QStringLiteral("uniquedesignation"), unitName());
   attribs.insert(QStringLiteral("equipment"), equipment);
   attribs.insert(QStringLiteral("activity"), "activity");

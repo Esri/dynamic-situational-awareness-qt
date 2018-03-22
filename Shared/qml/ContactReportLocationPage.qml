@@ -25,7 +25,7 @@ Item {
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     property alias controlPoint: controlPointTextField.text
-    property alias locationDescription: locationDescription.text
+    property alias locationDescription: enemyLocationField.text
 
     TextField {
         id: controlPointTextField

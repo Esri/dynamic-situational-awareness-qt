@@ -28,10 +28,18 @@ Item {
 
     function clear() {
         enemyUnitField.text = "";
+
+        if (visible)
+            enemyUnitField.forceActiveFocus();
     }
 
     function text() {
         return "unit:" + enemyUnitField.text;
+    }
+
+    onVisibleChanged: {
+        if (visible)
+            enemyUnitField.forceActiveFocus();
     }
 
     TextEdit {

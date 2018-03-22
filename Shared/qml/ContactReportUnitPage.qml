@@ -27,7 +27,6 @@ Item {
     property alias unitName: unitTextField.text
 
     function clear() {
-
     }
 
     function text() {

@@ -29,10 +29,18 @@ Item {
 
     function clear() {
         enemyLocationField.text = "";
+
+        if (visible)
+            enemyLocationField.forceActiveFocus();
     }
 
     function text() {
         return "location:" + controlPointTextField.text;
+    }
+
+    onVisibleChanged: {
+        if (visible)
+            enemyLocationField.forceActiveFocus();
     }
 
     TextField {

@@ -28,10 +28,18 @@ Item {
 
     function clear() {
         enemyActivity = "";
+
+        if (visible)
+            enemyActivityField.forceActiveFocus();
     }
 
     function text() {
         return "activity:" + enemyActivityField.text;
+    }
+
+    onVisibleChanged: {
+        if (visible)
+            enemyActivityField.forceActiveFocus();
     }
 
     TextEdit {

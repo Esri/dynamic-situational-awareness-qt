@@ -10,27 +10,33 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
-#include "AlertConditionData.h"
 #include "AlertListController.h"
+
+// example app headers
+#include "AlertConditionData.h"
 #include "AlertListModel.h"
 #include "AlertListProxyModel.h"
 #include "AlertSource.h"
-#include "PointHighlighter.h"
 #include "DsaUtility.h"
 #include "IdsAlertFilter.h"
+#include "PointHighlighter.h"
 #include "StatusAlertFilter.h"
 
+// toolkit headers
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
+// C++ API headers
 #include "GeoView.h"
 #include "GraphicsOverlay.h"
 #include "SceneView.h"
 #include "SimpleMarkerSceneSymbol.h"
 #include "SimpleRenderer.h"
 
+// Qt headers
 #include <QTimer>
 
 using namespace Esri::ArcGISRuntime;
@@ -303,7 +309,7 @@ void AlertListController::flashAll(bool highlight)
   for (int i = 0; i < modelSize; ++i)
   {
     AlertConditionData* alert = model->alertAt(i);
-    if (!alert || !alert->isActive())
+    if (!alert || !alert->isActive() || !alert->isConditionEnabled())
       continue;
 
     alert->highlight(highlight);

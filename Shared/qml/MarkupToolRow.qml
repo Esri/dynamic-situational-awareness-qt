@@ -20,7 +20,7 @@ import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.2
 Row {
     id: markupToolRow
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
-    spacing: 10 * scaleFactor
+    spacing: 5 * scaleFactor
     visible: categoryToolbar.state === "markup"
     onVisibleChanged: {
         if (visible) {

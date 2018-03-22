@@ -30,7 +30,7 @@ CategoryToolbar {
         CategoryIcon {
             id: homeIcon
             anchors.verticalCenter: parent.verticalCenter
-            iconSource: DsaResources.iconHome
+            iconSource: DsaResources.iconDsaHome
             categoryName: "home"
             onCategorySelected: categoryToolbar.state = categoryName
         }
@@ -46,7 +46,7 @@ CategoryToolbar {
         CategoryIcon {
             id: reportsIcon
             anchors.verticalCenter: parent.verticalCenter
-            iconSource: DsaResources.iconCreateReport
+            iconSource: DsaResources.iconReport
             categoryName: "reports"
             onCategorySelected: categoryToolbar.state = categoryName
         }

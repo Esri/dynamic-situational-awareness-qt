@@ -47,7 +47,7 @@ Menu {
         delegate: Rectangle {
 
             color: "transparent"
-            width: 100 * scaleFactor
+            width: 128 * scaleFactor
             height: 32 * scaleFactor
 
             Label {

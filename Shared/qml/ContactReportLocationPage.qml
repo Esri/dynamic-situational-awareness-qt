@@ -39,7 +39,7 @@ Item {
         id: controlPointTextField
         anchors {
             left: enemyLocationField.left
-            right: pickButton.left
+            right: enemyLocationField.right
             margins: 16 * scaleFactor
         }
         width: parent.width * 0.75
@@ -59,16 +59,31 @@ Item {
         id: pickButton
 
         anchors {
-            right: enemyLocationField.right
-            verticalCenter: controlPointTextField.verticalCenter
+            top: controlPointTextField.bottom
+            right: parent.horizontalCenter
         }
 
         selected: toolController.pickMode
-        iconUrl: DsaResources.iconGps
+        iconUrl: DsaResources.iconTouch
         opacity: enabled ? 1.0 : 0.8
 
         onClicked: {
             toolController.togglePickMode();
+        }
+    }
+
+    OverlayButton {
+        id: myLocationButton
+
+        anchors {
+            top: controlPointTextField.bottom
+            left: parent.horizontalCenter
+        }
+
+        iconUrl: DsaResources.iconGps
+
+        onClicked: {
+            toolController.setFromMyLocation();
         }
     }
 
@@ -77,7 +92,7 @@ Item {
         clip: true
         anchors {
             horizontalCenter: parent.horizontalCenter
-            top: controlPointTextField.bottom
+            top: pickButton.bottom
             margins: 16 * scaleFactor
         }
         width: parent.width * 0.75

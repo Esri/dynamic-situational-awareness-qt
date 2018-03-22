@@ -20,6 +20,7 @@
 #include "Message.h"
 #include "MessageFeedConstants.h"
 #include "MessageSender.h"
+#include "PointHighlighter.h"
 
 // toolkit headers
 #include "ToolManager.h"
@@ -40,7 +41,8 @@ using namespace Esri::ArcGISRuntime;
 
 ContactReportController::ContactReportController(QObject* parent):
   Toolkit::AbstractTool(parent),
-  m_unitName(QHostInfo::localDomainName())
+  m_unitName(QHostInfo::localDomainName()),
+  m_highlighter(new PointHighlighter(this))
 {
   Toolkit::ToolManager::instance().addTool(this);
 
@@ -51,6 +53,9 @@ ContactReportController::ContactReportController(QObject* parent):
     onGeoViewChanged(Toolkit::ToolResourceProvider::instance()->geoView());
   });
   onGeoViewChanged(resourecProvider->geoView());
+
+  connect(this, &ContactReportController::activeChanged, this, &ContactReportController::onUpdateControlPointHightlight);
+  connect(this, &ContactReportController::controlPointChanged, this, &ContactReportController::onUpdateControlPointHightlight);
 }
 
 ContactReportController::~ContactReportController()
@@ -87,6 +92,9 @@ QString ContactReportController::unitName() const
 
 QString ContactReportController::controlPoint() const
 {
+  if (!m_controlPointSet)
+    return QString();
+
   return CoordinateFormatter::toLatitudeLongitude(m_controlPoint, LatitudeLongitudeFormat::DecimalDegrees, 3);
 }
 
@@ -106,8 +114,13 @@ void ContactReportController::setControlPoint(const Point& controlPoint)
     return;
 
   m_controlPoint = controlPoint;
+  m_controlPointSet = true;
 
   emit controlPointChanged();
+
+  m_highlighter->stopHighlight();
+  m_highlighter->onPointChanged(m_controlPoint);
+  onUpdateControlPointHightlight();
 }
 
 bool ContactReportController::pickMode() const
@@ -137,7 +150,22 @@ void ContactReportController::setPickMode(bool pickMode)
 
 void ContactReportController::togglePickMode()
 {
+  disconnect(m_myLocationConnection);
   setPickMode(!m_pickMode);
+}
+
+void ContactReportController::setFromMyLocation()
+{
+  if (pickMode())
+    togglePickMode();
+
+  auto resourceProvider = Toolkit::ToolResourceProvider::instance();
+
+  m_myLocationConnection = connect(resourceProvider, &Toolkit::ToolResourceProvider::locationChanged, this, [this](const Point& location)
+  {
+    disconnect(m_myLocationConnection);
+    setControlPoint(location);
+  });
 }
 
 void ContactReportController::sendReport(const QString& size,
@@ -146,6 +174,11 @@ void ContactReportController::sendReport(const QString& size,
                                          const QDateTime& observedTime,
                                          const QString& equipment)
 {
+  m_controlPointSet = false;
+  onUpdateControlPointHightlight();
+  if (pickMode())
+    togglePickMode();
+
   if (m_udpPort == -1)
     return;
 
@@ -198,6 +231,14 @@ void ContactReportController::sendReport(const QString& size,
   m_messageSender->sendMessage(contactReport.toGeoMessage());
 }
 
+void ContactReportController::cancelReport()
+{
+  m_controlPointSet = false;
+  onUpdateControlPointHightlight();
+  if (pickMode())
+    togglePickMode();
+}
+
 int ContactReportController::udpPort() const
 {
   return m_udpPort;
@@ -233,6 +274,8 @@ void ContactReportController::onMouseClicked(QMouseEvent& event)
   if (!m_geoView)
     return;
 
+  togglePickMode();
+
   SceneView* sceneView = dynamic_cast<SceneView*>(m_geoView);
   if (sceneView)
   {
@@ -248,4 +291,12 @@ void ContactReportController::onMouseClicked(QMouseEvent& event)
   }
 
   event.accept();
+}
+
+void ContactReportController::onUpdateControlPointHightlight()
+{
+  if (isActive() && m_controlPointSet)
+    m_highlighter->startHighlight();
+  else
+    m_highlighter->stopHighlight();
 }

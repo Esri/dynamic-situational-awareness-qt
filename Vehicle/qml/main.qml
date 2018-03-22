@@ -292,6 +292,13 @@ Vehicle {
                 visible = false;
                 reportToolRow.state = "clear";
             }
+
+            onVisibleChanged: {
+                if (!visible)
+                    return;
+
+                categoryToolbar.state = "reports";
+            }
         }
 
         PopupStackView {

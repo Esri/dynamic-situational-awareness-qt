@@ -35,6 +35,8 @@ DsaPanel {
         onActiveChanged: {
             if (!active && contactReportRoot.visible)
                 contactReportRoot.visible = false;
+            else if (active && !contactReportRoot.visible)
+                contactReportRoot.visible = true;
         }
     }
 
@@ -250,6 +252,7 @@ DsaPanel {
             for (var i = 0; i < reportFrame.count; ++i)
                 reportFrame.itemAt(i).clear();
             reportFrame.setCurrentIndex(0);
+            toolController.cancelReport();
         }
     }
 

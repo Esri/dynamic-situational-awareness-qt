@@ -10,11 +10,13 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "pch.hpp"
-
 #include "ContextMenuController.h"
 
+// PCH header
+#include "pch.hpp"
+
 // example app headers
+#include "ContactReportController.h"
 #include "FollowPositionController.h"
 #include "GraphicsOverlaysResultsManager.h"
 #include "IdentifyController.h"
@@ -42,6 +44,7 @@ const QString ContextMenuController::FOLLOW_OPTION = "Follow";
 const QString ContextMenuController::IDENTIFY_OPTION = "Identify";
 const QString ContextMenuController::LINE_OF_SIGHT_OPTION = "Line of sight";
 const QString ContextMenuController::VIEWSHED_OPTION = "Viewshed";
+const QString ContextMenuController::CONTACT_REPORT_OPTION = "Contact report";
 
 /*!
   \brief Constructor accepting an optional \a parent.
@@ -269,6 +272,7 @@ void ContextMenuController::setContextLocation(const Point& location)
 
   addOption(ELEVATION_OPTION);
   addOption(VIEWSHED_OPTION);
+  addOption(CONTACT_REPORT_OPTION);
 }
 
 /*!
@@ -438,6 +442,15 @@ void ContextMenuController::selectOption(const QString& option)
       return;
 
     lineOfSightTool->lineOfSightFromLocationToGeoElement(m_contextElement);
+  }
+  else if (option == CONTACT_REPORT_OPTION)
+  {
+    ContactReportController* contactReportTool = Toolkit::ToolManager::instance().tool<ContactReportController>();
+    if (!contactReportTool)
+      return;
+
+    contactReportTool->setControlPoint(m_contextLocation);
+    contactReportTool->setActive(true);
   }
 }
 

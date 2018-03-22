@@ -29,6 +29,7 @@ namespace ArcGISRuntime
 }
 
 class MessageSender;
+class PointHighlighter;
 
 class QDateTime;
 class QMouseEvent;
@@ -60,11 +61,17 @@ public:
 
   Q_INVOKABLE void togglePickMode();
 
+  Q_INVOKABLE void setFromMyLocation();
+
   Q_INVOKABLE void sendReport(const QString& size,
                               const QString& locationDescription,
                               const QString& enemyUnitDescription,
                               const QDateTime& observedTime,
                               const QString& equipment);
+
+  Q_INVOKABLE void cancelReport();
+
+  void setControlPoint(const Esri::ArcGISRuntime::Point& controlPoint);
 
   int udpPort() const;
   void setUdpPort(int port);
@@ -79,18 +86,21 @@ public slots:
 
 private slots:
   void onMouseClicked(QMouseEvent& event);
+  void onUpdateControlPointHightlight();
 
 private:
-  void setControlPoint(const Esri::ArcGISRuntime::Point& controlPoint);
 
   Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
   QString m_unitName;
   Esri::ArcGISRuntime::Point m_controlPoint;
   MessageSender* m_messageSender = nullptr;
+  PointHighlighter* m_highlighter = nullptr;
+  bool m_controlPointSet = false;
   int m_udpPort = -1;
   bool m_pickMode = false;
 
   QMetaObject::Connection m_mouseClickConnection;
+  QMetaObject::Connection m_myLocationConnection;
 };
 
 #endif // CONTACTREPORTCONTROLLER_H

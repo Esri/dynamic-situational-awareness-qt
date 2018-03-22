@@ -15,7 +15,6 @@ class MarkupController : public AbstractSketchTool
   Q_PROPERTY(bool is3d READ is3d NOTIFY is3dChanged)
   Q_PROPERTY(bool drawModeEnabled READ drawModeEnabled WRITE setDrawModeEnabled NOTIFY drawModeEnabledChanged)
   Q_PROPERTY(double drawingAltitude READ drawingAltitude WRITE setDrawingAltitude NOTIFY drawingAltitudeChanged)
-  Q_PROPERTY(bool sketching READ isSketching WRITE setSketching NOTIFY sketchingChanged)
 
 public:
   explicit MarkupController(QObject* parent = nullptr);
@@ -33,9 +32,6 @@ public:
 
   void setDrawingAltitude(double altitude);
   double drawingAltitude() const;
-
-  void setSketching(bool isSketching);
-  bool isSketching() const;
 
   bool drawModeEnabled() const;
   void setDrawModeEnabled(bool enabled);
@@ -64,7 +60,6 @@ private:
   bool m_isDrawing = false;
   bool m_drawModeEnabled = true;
   bool m_is3d = false;
-  bool m_isSketching = false;
   QColor m_color = QColor("black");
   float m_width = 8.0f;
 };

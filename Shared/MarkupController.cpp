@@ -81,26 +81,11 @@ double MarkupController::drawingAltitude() const
 void MarkupController::setColor(const QColor& color)
 {
   m_color = color;
-
-  if (!m_isSketching)
-    return;
-
-  if (!m_sketchSymbol)
-    return;
-
-  auto lineSym = dynamic_cast<SimpleLineSymbol*>(sketchSymbol());
-  if (!lineSym)
-    return;
-
-  lineSym->setColor(m_color);
 }
 
 void MarkupController::setWidth(float width)
 {
   m_width = width;
-
-  if (!m_isSketching)
-    return;
 
   if (!m_sketchSymbol)
     return;
@@ -338,23 +323,10 @@ void MarkupController::clearGraphics()
   m_sketchOverlay->graphics()->clear();
 }
 
-void MarkupController::setSketching(bool isSketching)
-{
-  m_isSketching = isSketching;
-}
-
 void MarkupController::clearCurrentSketch()
 {
-  if (!m_isSketching)
-    return;
-
   if (!m_sketchOverlay)
     return;
 
   m_sketchOverlay->graphics()->removeAt(m_sketchOverlay->graphics()->size() - 1);
-}
-
-bool MarkupController::isSketching() const
-{
-  return m_isSketching;
 }

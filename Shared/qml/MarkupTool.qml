@@ -62,7 +62,6 @@ Item {
         onSketchCompleted: drawPane.sketchInProgress = true
         active: rootMarkup.visible
         drawModeEnabled: rootMarkup.visible
-        sketching: drawPane.sketchInProgress
 
         onActiveChanged: {
             if (!active)

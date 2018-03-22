@@ -290,7 +290,7 @@ Vehicle {
             isMobile: false
             onClosed: {
                 visible = false;
-                reportToolRow.state = "clear";
+                reportToolRow.state = reportToolRow.clearState;
             }
 
             onVisibleChanged: {
@@ -298,6 +298,9 @@ Vehicle {
                     return;
 
                 categoryToolbar.state = "reports";
+
+                if (reportToolRow.state !== reportToolRow.contactState)
+                    reportToolRow.state = reportToolRow.contactState;
             }
         }
 

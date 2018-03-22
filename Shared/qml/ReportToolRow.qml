@@ -24,6 +24,9 @@ Row {
     visible: categoryToolbar.state === "reports"
     onVisibleChanged: state = "clear"
 
+    property alias contactState: contactIcon.toolName
+    property string clearState: "clear"
+
     states: [
         State {
             name: contactIcon.toolName
@@ -34,7 +37,7 @@ Row {
         },
 
         State {
-            name: "clear"
+            name: clearState
             PropertyChanges {
                 target: contactIcon
                 selected: false
@@ -49,7 +52,7 @@ Row {
         toolName: "Contact"
         onToolSelected: {
             if (selected) {
-                reportToolRow.state = "clear";
+                reportToolRow.state = clearState;
                 selected = false;
             }
             else

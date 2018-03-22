@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "LayerCacheManager.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "LayerCacheManager.h"
 
 // example app headers
 #include "AddLocalDataController.h"

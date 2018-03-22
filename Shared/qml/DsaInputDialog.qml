@@ -24,6 +24,7 @@ Dialog {
     property alias inputPlaceholderText: nameText.placeholderText
     property alias userInputText: nameText.text
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+    property alias titleText: titleLabel.text
     visible: false
     x: appRoot.width / 2 - width / 2
     y: appRoot.height / 2 - height / 2
@@ -36,12 +37,13 @@ Dialog {
         spacing: 10 * scaleFactor
 
         Label {
+            id: titleLabel
             anchors.horizontalCenter: parent.horizontalCenter
             font {
                 family: DsaStyles.fontFamily
-                pixelSize: 14 * scaleFactor
+                pixelSize: 16 * scaleFactor
+                bold: true
             }
-            text: "Send Sketch"
         }
 
         Row {

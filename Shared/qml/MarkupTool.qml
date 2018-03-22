@@ -26,7 +26,7 @@ Item {
     property alias markupEnabled: markupController.drawModeEnabled
 
     // Modifying this array will change the initial available colors
-    property var drawColors: ["#000000", "#ffffff", "#F44336", "#03a9f4", "#fff176"]
+    property var drawColors: ["red", "gold", "limegreen", "cyan", "purple", "magenta"]
 
     // state strings
     property string drawState: "draw"
@@ -44,8 +44,7 @@ Item {
         target: appRoot
         onClearDialogAccepted: markupController.clearGraphics()
         onInputDialogAccepted: {
-            markupController.setName(input.length > 0 ? input : "sketch " + index);
-            drawPane.sketchInProgress = false;
+            // handle whether we are sending or saving
         }
     }
 
@@ -204,7 +203,6 @@ Item {
 
     SecondaryToolbar {
         id: drawPane
-        width: 75 * scaleFactor
         property bool sketchInProgress: false
 
         Row {
@@ -216,18 +214,18 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 iconSource: DsaResources.iconSendMap
                 toolName: "Share"
-                onToolSelected: appRoot.showInputDialog("Sketch name", "ex: Sketch 1")
+                onToolSelected: appRoot.showInputDialog("Share Sketch", "Sketch name", "ex: Sketch 1");
             }
 
-//            ToolIcon {
-//                anchors.verticalCenter: parent.verticalCenter
-//                iconSource: DsaResources.iconClose
-//                toolName: "Cancel Sketch"
-//                onToolSelected: {
-//                    markupController.clearCurrentSketch();
-//                    drawPane.sketchInProgress = false;
-//                }
-//            }
+            ToolIcon {
+                anchors.verticalCenter: parent.verticalCenter
+                iconSource: DsaResources.iconSave
+                toolName: "Save"
+                onToolSelected: {
+                    appRoot.showInputDialog("Save Sketch", "Sketch name", "ex: Sketch 1")
+                    // TODO - Save as .markup to OperationalLayers folder
+                }
+            }
         }
     }
 
@@ -289,8 +287,8 @@ Item {
             orientation: ListView.Horizontal
             model: colorModel
             height: 25 * scaleFactor
-            width: Qt.platform.os === "android" ? parent.width : 175 * scaleFactor
-            spacing: 5 * scaleFactor
+            width: parent.width
+            spacing: 8 * scaleFactor
             currentIndex: 0
             clip: true
             snapMode: ListView.SnapOneItem
@@ -302,10 +300,6 @@ Item {
                     width: height
                     radius: 100 * scaleFactor
                     color: drawColors[index]
-                    border {
-                        color: Material.accent
-                        width: 0.50 * scaleFactor
-                    }
 
                     Image {
                         anchors.centerIn: parent
@@ -335,43 +329,6 @@ Item {
 
             ListModel {
                 id: colorModel
-            }
-        }
-
-        // button for adding new colors
-        RoundButton {
-            id: addButton
-            anchors {
-                margins: 5 * scaleFactor
-                left: colorView.right
-                top: colorTitle.bottom
-            }
-            visible: Qt.platform.os !== "android" // ColorDialog does not scale properly on Android
-            height: 20 * scaleFactor
-            width: height
-            opacity: 0.95
-
-            background: Rectangle {
-                implicitWidth: parent.width
-                implicitHeight: implicitWidth
-                opacity: enabled ? 1 : 0.3
-                radius: addButton.radius
-                color: Material.accent
-
-                Image {
-                    anchors.centerIn: parent
-                    width: 16 * scaleFactor
-                    height: width
-                    source: DsaResources.iconAdd
-                }
-            }
-
-            onClicked: {
-                if (!newColorDialog.visible) {
-                    colorDialogVisibleChanged(true);
-                    newColorDialog.open();
-                }
-
             }
         }
     }

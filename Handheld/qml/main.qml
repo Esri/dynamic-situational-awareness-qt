@@ -288,6 +288,42 @@ Handheld {
             }
         }
 
+        ContactReportTool {
+            id: contactReportTool
+            anchors {
+                right: parent.right
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+            isMobile: true
+            onClosed: {
+                visible = false;
+                reportToolRow.state = reportToolRow.clearState;
+            }
+
+            onVisibleChanged: {
+                if (!visible)
+                    return;
+
+                categoryToolbar.state = "reports";
+
+                if (reportToolRow.state !== reportToolRow.contactState)
+                    reportToolRow.state = reportToolRow.contactState;
+            }
+
+            onPickModeChanged: {
+                if (!toolActive)
+                    return;
+
+                if (pickMode)
+                    visible = false;
+                else
+                    visible = true;
+            }
+        }
+
         PopupStackView {
             id: identifyResults
             anchors {

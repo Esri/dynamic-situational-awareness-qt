@@ -235,6 +235,9 @@ DsaPanel {
             for (var i = 0; i < reportFrame.count; ++i)
                 reportFrame.itemAt(i).clear();
             reportFrame.setCurrentIndex(0);
+
+            if (isMobile)
+                contactReportRoot.visible = false;
         }
     }
 
@@ -253,6 +256,9 @@ DsaPanel {
                 reportFrame.itemAt(i).clear();
             reportFrame.setCurrentIndex(0);
             toolController.cancelReport();
+
+            if (isMobile)
+                contactReportRoot.visible = false;
         }
     }
 

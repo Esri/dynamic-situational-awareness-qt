@@ -66,6 +66,7 @@ public:
   Q_INVOKABLE void sendReport(const QString& size,
                               const QString& locationDescription,
                               const QString& enemyUnitDescription,
+                              const QString& activity,
                               const QDateTime& observedTime,
                               const QString& equipment);
 

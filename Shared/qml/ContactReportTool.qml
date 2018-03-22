@@ -229,6 +229,7 @@ DsaPanel {
             toolController.sendReport(sizePage.size,
                                       locationPage.locationDescription,
                                       enemyUnitPage.enemyUnit,
+                                      activityPage.enemyActivity,
                                       observedTimePage.observedTime,
                                       "");
 

@@ -171,6 +171,7 @@ void ContactReportController::setFromMyLocation()
 void ContactReportController::sendReport(const QString& size,
                                          const QString& locationDescription,
                                          const QString& enemyUnitDescription,
+                                         const QString& activity,
                                          const QDateTime& observedTime,
                                          const QString& equipment)
 {
@@ -200,23 +201,11 @@ void ContactReportController::sendReport(const QString& size,
   attribs.insert(QStringLiteral("datetimesubmitted"), QDateTime::currentDateTime().toString(Qt::ISODate));
   attribs.insert(QStringLiteral("uniquedesignation"), unitName());
   attribs.insert(QStringLiteral("equipment"), equipment);
-  attribs.insert(QStringLiteral("activity"), "activity");
+  attribs.insert(QStringLiteral("activity"), activity);
   attribs.insert(QStringLiteral("location"), locationDescription);
   attribs.insert(QStringLiteral("size"), size);
   attribs.insert(QStringLiteral("timeobserved"), observedTime.toString(Qt::ISODate));
   attribs.insert(QStringLiteral("unit"), enemyUnitDescription);
-  //  <xs:element type="xs:string" name="_id"/>
-  //      <xs:element type="xs:integer" name="_wkid"/>
-  //      <xs:element type="xs:string" name="equipment"/>
-  //      <xs:element type="xs:string" name="activity"/>
-  //      <xs:element type="xs:string" name="location"/>
-  //      <xs:element type="xs:string" name="size"/>
-  //      <xs:element type="xs:string" name="unit"/>
-  //      <xs:element type="xs:string" name="activity_cat"/>
-  //      <xs:element type="xs:string" name="unit_cat"/>
-  //      <xs:element type="xs:string" name="equip_cat"/>
-  //      <xs:element type="xs:integer" name="size_cat"/>
-  //      <xs:element type="xs:string" name="timeobserved"/>
   contactReport.setAttributes(attribs);
 
   if (!m_messageSender)

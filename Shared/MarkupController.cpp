@@ -208,15 +208,12 @@ void MarkupController::init()
       mouseEvent.accept();
 
     // create a new graphic that corresponds to a new Part of the GeometryBuilder
-    if (!m_isSketching)
-    {
-      clear();
-      m_currentPartIndex = 0;
-      Graphic* partGraphic = new Graphic(this);
-      partGraphic->setSymbol(updatedSymbol());
-      m_partOutlineGraphics.append(partGraphic);
-      m_sketchOverlay->graphics()->append(partGraphic);
-    }
+    clear();
+    m_currentPartIndex = 0;
+    Graphic* partGraphic = new Graphic(this);
+    partGraphic->setSymbol(updatedSymbol());
+    m_partOutlineGraphics.append(partGraphic);
+    m_sketchOverlay->graphics()->append(partGraphic);
     m_currentPartIndex = addPart();
 
     Point pressedPoint(normalizedPoint(mouseEvent.x(), mouseEvent.y()));

@@ -117,7 +117,7 @@ Item {
                 }
 
                 color: Material.foreground
-                text: "Current\nPosition"
+                text: "Current\nLocation"
             }
         }
 

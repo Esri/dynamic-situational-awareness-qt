@@ -107,7 +107,6 @@ DsaPanel {
                         anchors.margins: 10 * scaleFactor
                         width: parent.width
                         spacing: 10 * scaleFactor
-                        leftPadding: 10 * scaleFactor
 
                         ListLabel {
                             text: "Zoom to"
@@ -135,6 +134,7 @@ DsaPanel {
 
                         ListLabel {
                             text: "Dismiss"
+                            separatorVisible: false
                             onTriggered: {
                                 alertMenu.close();
                                 toolController.dismiss(index);
@@ -324,8 +324,6 @@ DsaPanel {
                 }
             }
 
-            ListSeparator{}
-
             ListLabel {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: alertsView.currentIndex === hightlightIndex ? "Highlight (off)" : "Highlight"
@@ -343,11 +341,10 @@ DsaPanel {
                 }
             }
 
-            ListSeparator{}
-
             ListLabel {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: "Dismiss"
+                separatorVisible: false
                 onTriggered: {
                     toolController.dismiss(alertsView.currentIndex);
                     mobileMenu.close();

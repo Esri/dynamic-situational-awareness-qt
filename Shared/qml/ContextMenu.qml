@@ -46,6 +46,7 @@ Menu {
         model: contextMenuController.options
         delegate: ListLabel {
             text: display
+            separatorVisible: index !== contextMenuController.options.rowCount() - 1
             onTriggered: {
                 contextMenuController.selectOption(display);
             }

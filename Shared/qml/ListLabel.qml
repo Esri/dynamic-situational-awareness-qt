@@ -18,25 +18,36 @@ import Esri.DSA 1.0
 
 Item {
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
-    property string text: ""
+    property alias text: label.text
+    property alias separatorVisible: separator.visible
     signal triggered()
 
-    width: 105 * scaleFactor
+    width: parent.width
     height: 32 * scaleFactor
 
     Label {
-        anchors {
-            left: parent.left
-            verticalCenter: parent.verticalCenter
-            leftMargin: 8 * scaleFactor
-        }
+        id: label
+        anchors.centerIn: parent
 
         font {
             family: DsaStyles.fontFamily
             pixelSize: 16 * scaleFactor
         }
         color: Material.foreground
-        text: parent.text
+    }
+
+    Rectangle {
+        id: separator
+        anchors {
+            bottom: parent.bottom
+            left: parent.left
+            right: parent.right
+            leftMargin: 8 * scaleFactor
+            rightMargin: 8 * scaleFactor
+        }
+
+        height: 1 * scaleFactor
+        color: Material.foreground
     }
 
     MouseArea {

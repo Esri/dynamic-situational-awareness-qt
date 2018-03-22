@@ -14,7 +14,7 @@
 TARGET = DSA_Handheld_Qt
 TEMPLATE = app
 
-QT += core gui opengl network positioning sensors qml quick xml svg
+QT += core gui opengl network positioning sensors qml quick xml
 CONFIG += c++11
 
 # uncomment this line to use a local toolkit build

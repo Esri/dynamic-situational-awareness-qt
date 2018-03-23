@@ -10,12 +10,15 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "pch.hpp"
-
 #include "PointHighlighter.h"
 
+// PCH header
+#include "pch.hpp"
+
+// toolkit headers
 #include "ToolResourceProvider.h"
 
+// C++ API headers
 #include "GeoView.h"
 #include "Graphic.h"
 #include "GraphicListModel.h"
@@ -23,6 +26,7 @@
 #include "Point.h"
 #include "SimpleMarkerSceneSymbol.h"
 
+// Qt headers
 #include <QTimer>
 
 using namespace Esri::ArcGISRuntime;
@@ -57,8 +61,16 @@ void PointHighlighter::startHighlight()
   Graphic* highlightGraphic = new Graphic(m_point, m_highlightSymbol, this);
   m_highlightOverlay->graphics()->append(highlightGraphic);
 
+  if (m_highlightTimer)
+  {
+    disconnect(m_timerConnection);
+    m_highlightTimer->stop();
+    delete m_highlightTimer;
+    m_highlightTimer = nullptr;
+  }
+
   m_highlightTimer = new QTimer(this);
-  connect(m_highlightTimer, &QTimer::timeout, this, [this]()
+  m_timerConnection = connect(m_highlightTimer, &QTimer::timeout, this, [this]()
   {
     if (!m_highlightSymbol)
     {
@@ -121,6 +133,7 @@ void PointHighlighter::stopHighlight()
 
   if (m_highlightTimer)
   {
+    disconnect(m_timerConnection);
     m_highlightTimer->stop();
     delete m_highlightTimer;
     m_highlightTimer = nullptr;

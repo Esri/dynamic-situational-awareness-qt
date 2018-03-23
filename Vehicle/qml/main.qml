@@ -278,6 +278,32 @@ Vehicle {
             }
         }
 
+        ContactReportTool {
+            id: contactReportTool
+            anchors {
+                right: parent.right
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+            isMobile: false
+            onClosed: {
+                visible = false;
+                reportToolRow.state = reportToolRow.clearState;
+            }
+
+            onVisibleChanged: {
+                if (!visible)
+                    return;
+
+                categoryToolbar.state = "reports";
+
+                if (reportToolRow.state !== reportToolRow.contactState)
+                    reportToolRow.state = reportToolRow.contactState;
+            }
+        }
+
         PopupStackView {
             id: identifyResults
             anchors {

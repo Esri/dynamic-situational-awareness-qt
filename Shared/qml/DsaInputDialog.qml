@@ -41,7 +41,7 @@ Dialog {
             anchors.horizontalCenter: parent.horizontalCenter
             font {
                 family: DsaStyles.fontFamily
-                pixelSize: 16 * scaleFactor
+                pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
                 bold: true
             }
         }

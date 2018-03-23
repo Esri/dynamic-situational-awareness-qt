@@ -15,7 +15,6 @@ import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
 import QtGraphicalEffects 1.0
 import QtQuick.Window 2.2
-import QtQuick.Dialogs 1.2 as Dialogs1
 import Esri.DSA 1.0
 
 Item {
@@ -24,9 +23,6 @@ Item {
 
     // expose properties to be used by other tools
     property alias markupEnabled: markupController.drawModeEnabled
-
-    // Modifying this array will change the initial available colors
-    property var drawColors: ["red", "gold", "limegreen", "cyan", "purple", "magenta"]
 
     // state strings
     property string drawState: "draw"
@@ -42,7 +38,7 @@ Item {
 
     Connections {
         target: appRoot
-        onClearDialogAccepted: markupController.clearGraphics()
+        onClearDialogAccepted: markupController.deleteAllGraphics()
         onInputDialogAccepted: {
             // handle whether we are sending or saving
         }
@@ -58,7 +54,6 @@ Item {
 
     MarkupController {
         id: markupController
-
         onSketchCompleted: drawPane.sketchInProgress = true
         active: rootMarkup.visible
         drawModeEnabled: rootMarkup.visible
@@ -213,7 +208,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 iconSource: DsaResources.iconSendMap
                 toolName: "Share"
-                onToolSelected: appRoot.showInputDialog("Share Sketch", "Sketch name", "ex: Sketch 1");
+                onToolSelected: appRoot.showInputDialog("Share Markup", "Markup name", "ex: Markup 1");
             }
 
             ToolIcon {
@@ -221,7 +216,7 @@ Item {
                 iconSource: DsaResources.iconSave
                 toolName: "Save"
                 onToolSelected: {
-                    appRoot.showInputDialog("Save Sketch", "Sketch name", "ex: Sketch 1")
+                    appRoot.showInputDialog("Save Markup", "Markup name", "ex: Markup 1")
                     // TODO - Save as .markup to OperationalLayers folder
                 }
             }
@@ -298,7 +293,7 @@ Item {
                     height: DsaStyles.mainToolbarHeight * 0.45
                     width: height
                     radius: 100 * scaleFactor
-                    color: drawColors[index]
+                    color: markupController.colors[index]
 
                     Image {
                         anchors.centerIn: parent
@@ -339,18 +334,6 @@ Item {
         // TODO
     }
 
-    Dialogs1.ColorDialog {
-        id: newColorDialog
-        title: "Choose a Draw Color"
-
-        onAccepted: {
-            colorDialogVisibleChanged(false);
-            drawColors.push(color);
-            colorModel.append({"selected": false});
-            colorView.positionViewAtEnd();
-        }
-    }
-
     // calls into C++ to create a new SimpleLineSymbol with the desired color
     function selectColor(colorRectangle) {
         colorModel.setProperty(colorView.currentIndex, "selected", false);
@@ -359,10 +342,10 @@ Item {
 
     // initialize the ListModel with the initial draw colors
     Component.onCompleted: {
-        for (var i = 0; i < drawColors.length; i++)
-            colorModel.append({"drawColor": drawColors[i], "selected": false});
+        for (var i = 0; i < markupController.colors.length; i++)
+            colorModel.append({"drawColor": markupController.colors[i], "selected": false});
 
-        markupController.setColor(drawColors[0]);
+        markupController.setColor(markupController.colors[0]);
         colorModel.setProperty(colorView.currentIndex, "selected", true);
     }
 }

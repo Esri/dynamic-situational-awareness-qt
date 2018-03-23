@@ -33,6 +33,11 @@ int HandheldStyles::titleFontPixelSize() const
   return 18;
 }
 
+int HandheldStyles::secondaryTitleFontPixelSize() const
+{
+  return 16;
+}
+
 int HandheldStyles::primaryIconSize() const
 {
   return 30;

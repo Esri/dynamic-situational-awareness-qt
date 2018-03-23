@@ -15,6 +15,7 @@ class MarkupController : public AbstractSketchTool
   Q_PROPERTY(bool is3d READ is3d NOTIFY is3dChanged)
   Q_PROPERTY(bool drawModeEnabled READ drawModeEnabled WRITE setDrawModeEnabled NOTIFY drawModeEnabledChanged)
   Q_PROPERTY(double drawingAltitude READ drawingAltitude WRITE setDrawingAltitude NOTIFY drawingAltitudeChanged)
+  Q_PROPERTY(QStringList colors READ colors CONSTANT)
 
 public:
   explicit MarkupController(QObject* parent = nullptr);
@@ -26,9 +27,7 @@ public:
   Q_INVOKABLE void deleteSelectedGraphics();
   Q_INVOKABLE void deleteAllGraphics();
   Q_INVOKABLE void setName(const QString& name);
-  Q_INVOKABLE void clearGraphics();
   Q_INVOKABLE void setActive(bool active) override;
-  Q_INVOKABLE void clearCurrentSketch();
 
   void setDrawingAltitude(double altitude);
   double drawingAltitude() const;
@@ -53,6 +52,7 @@ private:
   void init();
   void updateSketch() override;
   Esri::ArcGISRuntime::Symbol* updatedSymbol();
+  QStringList colors();
 
   static const QString nameAttribute;
   int m_currentPartIndex = 0;

@@ -33,6 +33,11 @@ int VehicleStyles::titleFontPixelSize() const
   return 24;
 }
 
+int VehicleStyles::secondaryTitleFontPixelSize() const
+{
+  return 16;
+}
+
 int VehicleStyles::primaryIconSize() const
 {
   return 42;

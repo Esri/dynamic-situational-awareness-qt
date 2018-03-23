@@ -80,21 +80,18 @@ double MarkupController::drawingAltitude() const
 // creates a new LineSymbol rather than updating the current one so previously drawn sketches stay the same color
 void MarkupController::setColor(const QColor& color)
 {
+  if (m_color == color)
+    return;
+
   m_color = color;
 }
 
 void MarkupController::setWidth(float width)
 {
+  if (m_width == width)
+    return;
+
   m_width = width;
-
-  if (!m_sketchSymbol)
-    return;
-
-  auto lineSym = dynamic_cast<SimpleLineSymbol*>(sketchSymbol());
-  if (!lineSym)
-    return;
-
-  lineSym->setWidth(m_width);
 }
 
 Symbol* MarkupController::updatedSymbol()
@@ -315,18 +312,7 @@ void MarkupController::setName(const QString& name)
   graphic->attributes()->insertAttribute(nameAttribute, name);
 }
 
-void MarkupController::clearGraphics()
+QStringList MarkupController::colors()
 {
-  if (!m_sketchOverlay)
-    return;
-
-  m_sketchOverlay->graphics()->clear();
-}
-
-void MarkupController::clearCurrentSketch()
-{
-  if (!m_sketchOverlay)
-    return;
-
-  m_sketchOverlay->graphics()->removeAt(m_sketchOverlay->graphics()->size() - 1);
+  return QStringList{"red", "gold", "limegreen", "cyan", "purple", "magenta"};
 }

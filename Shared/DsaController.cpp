@@ -53,7 +53,6 @@ DsaController::DsaController(QObject* parent):
   m_jsonFormat(QSettings::registerFormat("json", &readJsonFile, &writeJsonFile)),
   m_conflictingToolNames{QStringLiteral("Alert Conditions"),
                          QStringLiteral("Markup Tool"),
-                         QStringLiteral("CoordinateConversion"),
                          QStringLiteral("viewshed")}
 {
   // setup config settings

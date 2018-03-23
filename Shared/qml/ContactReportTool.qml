@@ -226,7 +226,7 @@ DsaPanel {
         labelColor: Material.accent
         onToolSelected: {
 
-            toolController.sendReport(sizePage.size,
+            toolController.broadcastReport(sizePage.size,
                                       locationPage.locationDescription,
                                       enemyUnitPage.enemyUnit,
                                       activityPage.enemyActivity,

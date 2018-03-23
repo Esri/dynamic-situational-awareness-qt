@@ -39,6 +39,9 @@
 
 using namespace Esri::ArcGISRuntime;
 
+/*!
+  \brief Constructor accepting an optional \a parent.
+ */
 ContactReportController::ContactReportController(QObject* parent):
   Toolkit::AbstractTool(parent),
   m_unitName(QHostInfo::localDomainName()),
@@ -58,16 +61,32 @@ ContactReportController::ContactReportController(QObject* parent):
   connect(this, &ContactReportController::controlPointChanged, this, &ContactReportController::onUpdateControlPointHightlight);
 }
 
+/*!
+  \brief Destructor.
+ */
 ContactReportController::~ContactReportController()
 {
 
 }
 
+/*!
+  \brief Returns the name of this tool - \c "Contact Report".
+ */
 QString ContactReportController::toolName() const
 {
   return QStringLiteral("Contact Report");
 }
 
+/*! \brief Sets any values in \a properties which are relevant for the contact report controller.
+ *
+ * This tool will use the following key/value pairs in the \a properties map if they are set:
+ *
+ * \list
+ *  \li \c ContactReportConfig. A JSON object describing options for the contact reprot including
+ * the \c port.
+ *  \li \c UserName. The user name (unique designation) for contact reports.
+ * \endList
+ */
 void ContactReportController::setProperties(const QVariantMap& properties)
 {
   auto findUserNameIt = properties.find(AppConstants::USERNAME_PROPERTYNAME);
@@ -85,11 +104,17 @@ void ContactReportController::setProperties(const QVariantMap& properties)
   }
 }
 
+/*!
+  \brief Returns the name of the unit (unique designation) making the contact report.
+ */
 QString ContactReportController::unitName() const
 {
   return m_unitName;
 }
 
+/*!
+  \brief Returns the control point location of the contact report in decimal degrees.
+ */
 QString ContactReportController::controlPoint() const
 {
   if (!m_controlPointSet)
@@ -98,6 +123,9 @@ QString ContactReportController::controlPoint() const
   return CoordinateFormatter::toLatitudeLongitude(m_controlPoint, LatitudeLongitudeFormat::DecimalDegrees, 3);
 }
 
+/*!
+  \brief Sets the name of the unit making this contact report to \a unitName.
+ */
 void ContactReportController::setUnitName(const QString& unitName)
 {
   if (unitName == m_unitName)
@@ -108,6 +136,9 @@ void ContactReportController::setUnitName(const QString& unitName)
   emit unitNameChanged();
 }
 
+/*!
+  \brief Sets the control point location for this contact report to \a controlPoint.
+ */
 void ContactReportController::setControlPoint(const Point& controlPoint)
 {
   if (m_controlPoint == controlPoint)
@@ -123,11 +154,18 @@ void ContactReportController::setControlPoint(const Point& controlPoint)
   onUpdateControlPointHightlight();
 }
 
+/*!
+  \brief Returns whether the tool is in pick mode. If \c true,
+  the tool will use clicks in the geoView to update the \l controlPoint.
+ */
 bool ContactReportController::pickMode() const
 {
   return m_pickMode;
 }
 
+/*!
+  \brief Sets the pick mode of the tool to \a pickMode.
+ */
 void ContactReportController::setPickMode(bool pickMode)
 {
   if (m_pickMode == pickMode)
@@ -148,12 +186,21 @@ void ContactReportController::setPickMode(bool pickMode)
   emit pickModeChanged();
 }
 
+/*!
+  \brief Toggle the current state of \l pickMode.
+ */
 void ContactReportController::togglePickMode()
 {
   disconnect(m_myLocationConnection);
   setPickMode(!m_pickMode);
 }
 
+/*!
+  \brief Sets the control point location for the contact report to the current
+  location of the app.
+
+  \note The location will be set when the next location update is recieved.
+ */
 void ContactReportController::setFromMyLocation()
 {
   if (pickMode())
@@ -168,7 +215,27 @@ void ContactReportController::setFromMyLocation()
   });
 }
 
-void ContactReportController::sendReport(const QString& size,
+/*!
+  \brief Broadcasts the contact reprot over the current \l udpPort.
+
+  The report will include the attributes:
+  \list
+    \li \a size. The size of the enemy unit.
+    \li \a locationDescription. The location of the enemy activity or event observed.
+    \li \a enemyUnitDescription. Description of the enemy unit.
+    \li \a activity. Date and time of observation.
+    \li \a equipment. Equipment of unit observed.
+  \endlist
+
+  In addition, the report will include the following pre-defined attributes:
+  \list
+    \li \l controlPoint. The control point location of the observation in decimal degrees.
+    \li Date and time submitted. The system time that this method was called.
+    \li \l unitName. The name/unique designation of the unit making the report.
+  \list
+
+ */
+void ContactReportController::broadcastReport(const QString& size,
                                          const QString& locationDescription,
                                          const QString& enemyUnitDescription,
                                          const QString& activity,
@@ -220,6 +287,9 @@ void ContactReportController::sendReport(const QString& size,
   m_messageSender->sendMessage(contactReport.toGeoMessage());
 }
 
+/*!
+  \brief Cancels the current report.
+ */
 void ContactReportController::cancelReport()
 {
   m_controlPointSet = false;
@@ -228,11 +298,17 @@ void ContactReportController::cancelReport()
     togglePickMode();
 }
 
+/*!
+  \brief Returns the udp port over which to broadcast contact reports.
+ */
 int ContactReportController::udpPort() const
 {
   return m_udpPort;
 }
 
+/*!
+  \brief Sets the udp port over which to broadcast contact reports to \a port.
+ */
 void ContactReportController::setUdpPort(int port)
 {
   if (port == m_udpPort)
@@ -241,6 +317,9 @@ void ContactReportController::setUdpPort(int port)
   m_udpPort = port;
 }
 
+/*!
+  \brief Sets the geoView to be used by the tool to \a geoView.
+ */
 void ContactReportController::onGeoViewChanged(GeoView* geoView)
 {
   if (m_geoView == geoView)
@@ -249,6 +328,9 @@ void ContactReportController::onGeoViewChanged(GeoView* geoView)
   m_geoView = geoView;
 }
 
+/*!
+  \internal.
+ */
 void ContactReportController::onMouseClicked(QMouseEvent& event)
 {
   if (!isActive())
@@ -282,6 +364,9 @@ void ContactReportController::onMouseClicked(QMouseEvent& event)
   event.accept();
 }
 
+/*!
+  \internal.
+ */
 void ContactReportController::onUpdateControlPointHightlight()
 {
   if (isActive() && m_controlPointSet)

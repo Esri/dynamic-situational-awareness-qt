@@ -63,7 +63,7 @@ public:
 
   Q_INVOKABLE void setFromMyLocation();
 
-  Q_INVOKABLE void sendReport(const QString& size,
+  Q_INVOKABLE void broadcastReport(const QString& size,
                               const QString& locationDescription,
                               const QString& enemyUnitDescription,
                               const QString& activity,

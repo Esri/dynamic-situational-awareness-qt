@@ -38,7 +38,7 @@ Item {
 
     Connections {
         target: appRoot
-        onClearDialogAccepted: markupController.deleteAllGraphics()
+        onClearDialogAccepted: markupController.deleteAllGraphics();
         onInputDialogAccepted: {
             // handle whether we are sending or saving
         }
@@ -342,10 +342,11 @@ Item {
 
     // initialize the ListModel with the initial draw colors
     Component.onCompleted: {
-        for (var i = 0; i < markupController.colors.length; i++)
-            colorModel.append({"drawColor": markupController.colors[i], "selected": false});
+        var colors = markupController.colors;
+        for (var i = 0; i < colors.length; i++)
+            colorModel.append({"drawColor": colors[i], "selected": false});
 
-        markupController.setColor(markupController.colors[0]);
+        markupController.setColor(colors[0]);
         colorModel.setProperty(colorView.currentIndex, "selected", true);
     }
 }

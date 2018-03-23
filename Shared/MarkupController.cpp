@@ -312,7 +312,9 @@ void MarkupController::setName(const QString& name)
   graphic->attributes()->insertAttribute(nameAttribute, name);
 }
 
-QStringList MarkupController::colors()
+QStringList MarkupController::colors() const
 {
-  return QStringList{"red", "gold", "limegreen", "cyan", "purple", "magenta"};
+  return QStringList{QStringLiteral("red"), QStringLiteral("gold"),
+        QStringLiteral("limegreen"), QStringLiteral("cyan"),
+        QStringLiteral("purple"), QStringLiteral("magenta")};
 }

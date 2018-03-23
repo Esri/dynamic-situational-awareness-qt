@@ -52,7 +52,7 @@ private:
   void init();
   void updateSketch() override;
   Esri::ArcGISRuntime::Symbol* updatedSymbol();
-  QStringList colors();
+  QStringList colors() const;
 
   static const QString nameAttribute;
   int m_currentPartIndex = 0;

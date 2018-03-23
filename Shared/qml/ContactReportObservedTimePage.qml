@@ -29,11 +29,11 @@ Item {
     property date observedTime: new Date();
 
     property string observedTimeString: calendar.selectedDate.getFullYear() + "-"
-                                  + (calendar.selectedDate.getMonth()+1)  + "-"
-                                  + calendar.selectedDate.getDate() + " "
-                                  + hoursTumbler.currentIndex + ":"
-                                  + minutesTumbler.currentIndex + ":"
-                                  + secondsTumbler.currentIndex;
+                                        + (calendar.selectedDate.getMonth()+1)  + "-"
+                                        + calendar.selectedDate.getDate() + " "
+                                        + hoursTumbler.currentIndex + ":"
+                                        + minutesTumbler.currentIndex + ":"
+                                        + secondsTumbler.currentIndex;
 
     function clear() {
         var currentDate = new Date();
@@ -75,6 +75,84 @@ Item {
         height: parent.height * 0.5
 
         style: CalendarStyle {
+
+            navigationBar: Rectangle {
+                color: Material.background
+                height: dateText.height * 2
+                border {
+                    width: 1 * scaleFactor
+                    color: Material.foreground
+                }
+
+                Button {
+                    id: previousMonth
+                    anchors{
+                        verticalCenter: parent.verticalCenter
+                        left: parent.left
+                    }
+                    width: parent.height
+                    height: width
+                    text: "<"
+                    font {
+                        pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                        family: DsaStyles.fontFamily
+                    }
+                    onClicked: control.showPreviousMonth()
+                }
+
+                Label {
+                    id: dateText
+                    anchors{
+                        verticalCenter: parent.verticalCenter
+                        left: previousMonth.right
+                        leftMargin: 2 * scaleFactor
+                        right: nextMonth.left
+                        rightMargin: 2 * scaleFactor
+                    }
+                    text: styleData.title
+                    font {
+                        pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                        family: DsaStyles.fontFamily
+                    }
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    fontSizeMode: Text.Fit
+                    color: Material.foreground
+                }
+
+                Button {
+                    id: nextMonth
+                    anchors{
+                        verticalCenter: parent.verticalCenter
+                        right: parent.right
+                    }
+                    width: parent.height
+                    height: width
+                    text: ">"
+                    font {
+                        pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                        family: DsaStyles.fontFamily
+                    }
+                    onClicked: control.showNextMonth()
+                }
+            }
+
+            dayOfWeekDelegate: Rectangle {
+                color: Material.background
+                height: dayOfWeekText.height * 2
+
+                Label {
+                    id: dayOfWeekText
+                    anchors.centerIn: parent
+                    text: Qt.locale().dayName(styleData.dayOfWeek, control.dayOfWeekFormat)
+                    color: Material.foreground
+                    font {
+                        pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                        family: DsaStyles.fontFamily
+                    }
+                }
+            }
+
             gridVisible: false
             dayDelegate: Rectangle {
                 color: styleData.selected ? Material.accent :
@@ -136,6 +214,8 @@ Item {
             id: hoursTumbler
             model: 23
             delegate: delegateComponent
+            width: 16 * scaleFactor
+            height: 64 * scaleFactor
         }
 
         Text {
@@ -146,6 +226,9 @@ Item {
                 pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 family: DsaStyles.fontFamily
             }
+            width: hoursTumbler.width
+            height: hoursTumbler.height
+            verticalAlignment: Text.AlignVCenter
         }
 
         Tumbler {
@@ -153,6 +236,8 @@ Item {
             anchors.verticalCenter: hoursTumbler.verticalCenter
             model: 59
             delegate: delegateComponent
+            width: hoursTumbler.width
+            height: hoursTumbler.height
         }
 
         Text {
@@ -163,6 +248,9 @@ Item {
                 pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 family: DsaStyles.fontFamily
             }
+            width: hoursTumbler.width
+            height: hoursTumbler.height
+            verticalAlignment: Text.AlignVCenter
         }
 
         Tumbler {
@@ -170,6 +258,8 @@ Item {
             anchors.verticalCenter: hoursTumbler.verticalCenter
             model: 59
             delegate: delegateComponent
+            width: hoursTumbler.width
+            height: hoursTumbler.height
         }
     }
 }

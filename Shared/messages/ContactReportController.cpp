@@ -199,7 +199,7 @@ void ContactReportController::togglePickMode()
   \brief Sets the control point location for the contact report to the current
   location of the app.
 
-  \note The location will be set when the next location update is recieved.
+  \note The location will be set when the next location update is received.
  */
 void ContactReportController::setFromMyLocation()
 {
@@ -299,7 +299,7 @@ void ContactReportController::cancelReport()
 }
 
 /*!
-  \brief Returns the udp port over which to broadcast contact reports.
+  \brief Returns the UDP port over which to broadcast contact reports.
  */
 int ContactReportController::udpPort() const
 {
@@ -307,7 +307,7 @@ int ContactReportController::udpPort() const
 }
 
 /*!
-  \brief Sets the udp port over which to broadcast contact reports to \a port.
+  \brief Sets the UDP port over which to broadcast contact reports to \a port.
  */
 void ContactReportController::setUdpPort(int port)
 {

@@ -41,6 +41,7 @@ Item {
         onClearDialogAccepted: markupController.deleteAllGraphics();
         onInputDialogAccepted: {
             // handle whether we are sending or saving
+            markupController.saveMarkup();
         }
     }
 

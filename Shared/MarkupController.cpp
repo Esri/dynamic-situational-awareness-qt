@@ -31,7 +31,10 @@
 #include "GeometryTypes.h"
 #include "GeometryEngine.h"
 
+#include "MarkupUtility.h"
+
 #include <QCursor>
+#include <QJsonObject>
 
 const QString MarkupController::nameAttribute = QStringLiteral("name");
 
@@ -317,4 +320,9 @@ QStringList MarkupController::colors() const
   return QStringList{QStringLiteral("red"), QStringLiteral("gold"),
         QStringLiteral("limegreen"), QStringLiteral("cyan"),
         QStringLiteral("purple"), QStringLiteral("magenta")};
+}
+
+void MarkupController::saveMarkup()
+{
+  MarkupUtility::graphicsToJson(sketchOverlay(), "Markup");
 }

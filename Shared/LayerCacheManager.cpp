@@ -40,7 +40,6 @@
 #include "ShapefileFeatureTable.h"
 
 // Qt headers
-#include <QDebug>
 #include <QDir>
 #include <QJsonDocument>
 #include <QJsonObject>

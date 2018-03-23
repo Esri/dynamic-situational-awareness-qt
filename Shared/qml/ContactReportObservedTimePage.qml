@@ -86,12 +86,12 @@ Item {
 
                 Button {
                     id: previousMonth
-                    width: parent.height
-                    height: width
                     anchors{
                         verticalCenter: parent.verticalCenter
                         left: parent.left
                     }
+                    width: parent.height
+                    height: width
                     text: "<"
                     font {
                         pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
@@ -99,8 +99,16 @@ Item {
                     }
                     onClicked: control.showPreviousMonth()
                 }
+
                 Label {
                     id: dateText
+                    anchors{
+                        verticalCenter: parent.verticalCenter
+                        left: previousMonth.right
+                        leftMargin: 2 * scaleFactor
+                        right: nextMonth.left
+                        rightMargin: 2 * scaleFactor
+                    }
                     text: styleData.title
                     font {
                         pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
@@ -109,21 +117,17 @@ Item {
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                     fontSizeMode: Text.Fit
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: previousMonth.right
-                    anchors.leftMargin: 2
-                    anchors.right: nextMonth.left
-                    anchors.rightMargin: 2
                     color: Material.foreground
                 }
+
                 Button {
                     id: nextMonth
-                    width: parent.height
-                    height: width
                     anchors{
                         verticalCenter: parent.verticalCenter
                         right: parent.right
                     }
+                    width: parent.height
+                    height: width
                     text: ">"
                     font {
                         pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
@@ -136,15 +140,16 @@ Item {
             dayOfWeekDelegate: Rectangle {
                 color: Material.background
                 height: dayOfWeekText.height * 2
+
                 Label {
                     id: dayOfWeekText
+                    anchors.centerIn: parent
                     text: Qt.locale().dayName(styleData.dayOfWeek, control.dayOfWeekFormat)
                     color: Material.foreground
                     font {
                         pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                         family: DsaStyles.fontFamily
                     }
-                    anchors.centerIn: parent
                 }
             }
 

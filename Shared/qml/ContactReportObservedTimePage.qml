@@ -12,7 +12,7 @@
 //
 
 import QtQuick 2.6
-import QtQuick.Controls 1.4
+import QtQuick.Controls 1.4 as Qt1
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls 2.1
 import QtQuick.Controls.Material 2.1
@@ -60,7 +60,7 @@ Item {
         clear();
     }
 
-    Calendar {
+    Qt1.Calendar {
         id: calendar
         minimumDate: new Date(2018, 0, 1)
         maximumDate: new Date()

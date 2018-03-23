@@ -47,12 +47,12 @@ ContactReportController::ContactReportController(QObject* parent):
   Toolkit::ToolManager::instance().addTool(this);
 
   // connect to ToolResourceProvider signals
-  auto resourecProvider = Toolkit::ToolResourceProvider::instance();
-  connect(resourecProvider, &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]()
+  auto resourceProvider = Toolkit::ToolResourceProvider::instance();
+  connect(resourceProvider, &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]()
   {
     onGeoViewChanged(Toolkit::ToolResourceProvider::instance()->geoView());
   });
-  onGeoViewChanged(resourecProvider->geoView());
+  onGeoViewChanged(resourceProvider->geoView());
 
   connect(this, &ContactReportController::activeChanged, this, &ContactReportController::onUpdateControlPointHightlight);
   connect(this, &ContactReportController::controlPointChanged, this, &ContactReportController::onUpdateControlPointHightlight);

@@ -44,7 +44,7 @@ using namespace Esri::ArcGISRuntime;
  */
 ContactReportController::ContactReportController(QObject* parent):
   Toolkit::AbstractTool(parent),
-  m_unitName(QHostInfo::localDomainName()),
+  m_unitName(QHostInfo::localHostName()),
   m_highlighter(new PointHighlighter(this))
 {
   Toolkit::ToolManager::instance().addTool(this);

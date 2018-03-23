@@ -80,36 +80,18 @@ double MarkupController::drawingAltitude() const
 // creates a new LineSymbol rather than updating the current one so previously drawn sketches stay the same color
 void MarkupController::setColor(const QColor& color)
 {
+  if (m_color == color)
+    return;
+
   m_color = color;
-
-  if (!m_isSketching)
-    return;
-
-  if (!m_sketchSymbol)
-    return;
-
-  auto lineSym = dynamic_cast<SimpleLineSymbol*>(sketchSymbol());
-  if (!lineSym)
-    return;
-
-  lineSym->setColor(m_color);
 }
 
 void MarkupController::setWidth(float width)
 {
+  if (m_width == width)
+    return;
+
   m_width = width;
-
-  if (!m_isSketching)
-    return;
-
-  if (!m_sketchSymbol)
-    return;
-
-  auto lineSym = dynamic_cast<SimpleLineSymbol*>(sketchSymbol());
-  if (!lineSym)
-    return;
-
-  lineSym->setWidth(m_width);
 }
 
 Symbol* MarkupController::updatedSymbol()
@@ -208,15 +190,12 @@ void MarkupController::init()
       mouseEvent.accept();
 
     // create a new graphic that corresponds to a new Part of the GeometryBuilder
-    if (!m_isSketching)
-    {
-      clear();
-      m_currentPartIndex = 0;
-      Graphic* partGraphic = new Graphic(this);
-      partGraphic->setSymbol(updatedSymbol());
-      m_partOutlineGraphics.append(partGraphic);
-      m_sketchOverlay->graphics()->append(partGraphic);
-    }
+    clear();
+    m_currentPartIndex = 0;
+    Graphic* partGraphic = new Graphic(this);
+    partGraphic->setSymbol(updatedSymbol());
+    m_partOutlineGraphics.append(partGraphic);
+    m_sketchOverlay->graphics()->append(partGraphic);
     m_currentPartIndex = addPart();
 
     Point pressedPoint(normalizedPoint(mouseEvent.x(), mouseEvent.y()));
@@ -333,31 +312,9 @@ void MarkupController::setName(const QString& name)
   graphic->attributes()->insertAttribute(nameAttribute, name);
 }
 
-void MarkupController::clearGraphics()
+QStringList MarkupController::colors() const
 {
-  if (!m_sketchOverlay)
-    return;
-
-  m_sketchOverlay->graphics()->clear();
-}
-
-void MarkupController::setSketching(bool isSketching)
-{
-  m_isSketching = isSketching;
-}
-
-void MarkupController::clearCurrentSketch()
-{
-  if (!m_isSketching)
-    return;
-
-  if (!m_sketchOverlay)
-    return;
-
-  m_sketchOverlay->graphics()->removeAt(m_sketchOverlay->graphics()->size() - 1);
-}
-
-bool MarkupController::isSketching() const
-{
-  return m_isSketching;
+  return QStringList{QStringLiteral("red"), QStringLiteral("gold"),
+        QStringLiteral("limegreen"), QStringLiteral("cyan"),
+        QStringLiteral("purple"), QStringLiteral("magenta")};
 }

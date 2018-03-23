@@ -24,31 +24,47 @@ Dialog {
     property alias inputPlaceholderText: nameText.placeholderText
     property alias userInputText: nameText.text
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+    property alias titleText: titleLabel.text
     visible: false
     x: appRoot.width / 2 - width / 2
     y: appRoot.height / 2 - height / 2
     width: 250 * scaleFactor
-    height: 100 * scaleFactor
-    standardButtons: Dialog.Ok
+    height: 120 * scaleFactor
+    standardButtons: Dialog.Ok | Dialog.Cancel
 
-    Row {
+    Column {
         width: parent.width
-        spacing: 5 * scaleFactor
+        spacing: 10 * scaleFactor
 
         Label {
-            id: inputLabelText
-            anchors.verticalCenter: parent.verticalCenter
-            width: parent.width * 0.4
+            id: titleLabel
+            anchors.horizontalCenter: parent.horizontalCenter
             font {
                 family: DsaStyles.fontFamily
-                pixelSize: 12 * scaleFactor
+                pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
+                bold: true
             }
         }
 
-        TextField {
-            id: nameText
-            anchors.verticalCenter: parent.verticalCenter
-            width: parent.width * 0.6
+        Row {
+            width: parent.width
+            spacing: 5 * scaleFactor
+
+            Label {
+                id: inputLabelText
+                anchors.verticalCenter: parent.verticalCenter
+                width: parent.width * 0.4
+                font {
+                    family: DsaStyles.fontFamily
+                    pixelSize: 12 * scaleFactor
+                }
+            }
+
+            TextField {
+                id: nameText
+                anchors.verticalCenter: parent.verticalCenter
+                width: parent.width * 0.6
+            }
         }
     }
 

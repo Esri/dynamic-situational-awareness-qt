@@ -513,14 +513,13 @@ Vehicle {
 
     DsaInputDialog {
         id: inputDialog
-        property int i: 1
         onAccepted: {
-            i++;
-            inputDialogAccepted(inputDialog.userInputText, i);
+            inputDialogAccepted(inputDialog.userInputText, inputDialog.titleText);
         }
     }
 
-    function showInputDialog(labelText, placeholderText) {
+    function showInputDialog(titleText, labelText, placeholderText) {
+        inputDialog.titleText = titleText;
         inputDialog.inputLabel = labelText;
         inputDialog.inputPlaceholderText = placeholderText;
         inputDialog.open();

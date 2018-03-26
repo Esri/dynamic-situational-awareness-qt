@@ -40,9 +40,8 @@ Item {
         target: appRoot
         onClearDialogAccepted: markupController.deleteAllGraphics();
         onInputDialogAccepted: {
-            // handle whether we are sending or saving
             markupController.setName(input)
-            markupController.saveMarkup();
+            markupController.shareMarkup();
         }
     }
 

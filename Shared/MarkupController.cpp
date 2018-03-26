@@ -323,7 +323,7 @@ QStringList MarkupController::colors() const
   return m_markupUtility->colors();
 }
 
-void MarkupController::saveMarkup()
+void MarkupController::shareMarkup()
 {
   m_markupUtility->graphicsToJson(sketchOverlay());
 }

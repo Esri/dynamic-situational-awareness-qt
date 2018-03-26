@@ -1,7 +1,6 @@
 #ifndef ABSTRACTSKETCHTOOL_H
 #define ABSTRACTSKETCHTOOL_H
 
-#include <QColor>
 #include <QList>
 
 #include "AbstractTool.h"

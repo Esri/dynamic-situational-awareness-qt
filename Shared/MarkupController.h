@@ -39,6 +39,7 @@ public:
   int sketchCount() const;
   QString toolName() const override;
   Esri::ArcGISRuntime::GeometryType geometryType() const override;
+  QColor currentColor() const;
 
 signals:
   void is3dChanged();

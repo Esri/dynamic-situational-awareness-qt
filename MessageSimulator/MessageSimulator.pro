@@ -18,10 +18,11 @@ QT += qml quick
 CONFIG += c++11
 
 INCLUDEPATH += \
-    $$PWD/../Shared/messages
+    $$PWD/../Shared/messages \
+    $$PWD/../Shared/utilities
 
 HEADERS += \
-    $$PWD/../Shared/messages/MessageSender.h \
+    $$PWD/../Shared/utilities/DataSender.h \
     MessageSimulatorController.h \
     AbstractMessageParser.h \
     CoTMessageParser.h \
@@ -29,7 +30,7 @@ HEADERS += \
     SimulatedMessageListModel.h
 
 SOURCES += main.cpp \
-    $$PWD/../Shared/messages/MessageSender.cpp \
+    $$PWD/../Shared/utilities/DataSender.cpp \
     AbstractMessageParser.cpp \
     CoTMessageParser.cpp \
     MessageSimulatorController.cpp \

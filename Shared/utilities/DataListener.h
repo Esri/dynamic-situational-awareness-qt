@@ -10,21 +10,21 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef MESSAGELISTENER_H
-#define MESSAGELISTENER_H
+#ifndef DATALISTENER_H
+#define DATALISTENER_H
 
 #include <QObject>
 #include <QIODevice>
 #include <QPointer>
 
-class MessageListener : public QObject
+class DataListener : public QObject
 {
   Q_OBJECT
 
 public:
-  explicit MessageListener(QObject* parent = nullptr);
-  explicit MessageListener(QIODevice* device, QObject* parent = nullptr);
-  ~MessageListener();
+  explicit DataListener(QObject* parent = nullptr);
+  explicit DataListener(QIODevice* device, QObject* parent = nullptr);
+  ~DataListener();
 
   void setDevice(QIODevice* device);
   QIODevice* device() const;
@@ -33,10 +33,10 @@ public:
   void setEnabled(bool enabled);
 
 signals:
-  void messageReceived(const QByteArray& message);
+  void dataReceived(const QByteArray& data);
 
 private:
-  Q_DISABLE_COPY(MessageListener)
+  Q_DISABLE_COPY(DataListener)
 
   void connectDevice();
   void disconnectDevice();
@@ -49,4 +49,4 @@ private:
   bool m_enabled = true;
 };
 
-#endif // MESSAGELISTENER_H
+#endif // DATALISTENER_H

@@ -14,7 +14,6 @@
 
 #include "MessageFeed.h"
 #include "MessagesOverlay.h"
-#include "MessageListener.h"
 
 MessageFeed::MessageFeed(QObject* parent) :
   QObject(parent)

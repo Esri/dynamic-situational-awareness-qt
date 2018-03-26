@@ -19,7 +19,7 @@
 #include "AppConstants.h"
 #include "Message.h"
 #include "MessageFeedConstants.h"
-#include "MessageSender.h"
+#include "DataSender.h"
 #include "PointHighlighter.h"
 
 // toolkit headers
@@ -275,16 +275,16 @@ void ContactReportController::broadcastReport(const QString& size,
   attribs.insert(QStringLiteral("unit"), enemyUnitDescription);
   contactReport.setAttributes(attribs);
 
-  if (!m_messageSender)
+  if (!m_dataSender)
   {
-    m_messageSender = new MessageSender(this);
+    m_dataSender = new DataSender(this);
 
-    QUdpSocket* udpSocket = new QUdpSocket(m_messageSender);
+    QUdpSocket* udpSocket = new QUdpSocket(m_dataSender);
     udpSocket->connectToHost(QHostAddress::Broadcast, m_udpPort, QIODevice::WriteOnly);
-    m_messageSender->setDevice(udpSocket);
+    m_dataSender->setDevice(udpSocket);
   }
 
-  m_messageSender->sendMessage(contactReport.toGeoMessage());
+  m_dataSender->sendData(contactReport.toGeoMessage());
 }
 
 /*!

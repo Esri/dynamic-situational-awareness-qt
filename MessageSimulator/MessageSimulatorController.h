@@ -19,7 +19,7 @@
 #include <QUrl>
 #include <QAbstractListModel>
 
-class MessageSender;
+class DataSender;
 class AbstractMessageParser;
 class SimulatedMessageListModel;
 
@@ -98,7 +98,7 @@ private:
 
   static float timeUnitToSeconds(TimeUnit timeUnit);
 
-  MessageSender* m_messageSender = nullptr;
+  DataSender* m_dataSender = nullptr;
   AbstractMessageParser* m_messageParser = nullptr;
   SimulatedMessageListModel* m_messages = nullptr;
 

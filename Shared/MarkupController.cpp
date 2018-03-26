@@ -318,3 +318,8 @@ QStringList MarkupController::colors() const
         QStringLiteral("limegreen"), QStringLiteral("cyan"),
         QStringLiteral("purple"), QStringLiteral("magenta")};
 }
+
+QColor MarkupController::currentColor() const
+{
+  return m_color;
+}

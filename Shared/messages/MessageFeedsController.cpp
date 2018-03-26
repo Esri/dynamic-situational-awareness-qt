@@ -21,8 +21,8 @@
 #include "MessageFeed.h"
 #include "MessageFeedConstants.h"
 #include "MessageFeedListModel.h"
-#include "MessageListener.h"
-#include "MessageSender.h"
+#include "DataListener.h"
+#include "DataSender.h"
 #include "MessagesOverlay.h"
 
 // toolkit headers
@@ -87,28 +87,28 @@ QAbstractListModel* MessageFeedsController::messageFeeds() const
    \brief Returns the list of message listener objects that exist for
    the message feeds.
  */
-QList<MessageListener*> MessageFeedsController::messageListeners() const
+QList<DataListener*> MessageFeedsController::dataListeners() const
 {
-  return m_messageListeners;
+  return m_dataListeners;
 }
 
 /*!
-   \brief Adds and registers a message listener object to be used by the message feeds.
+   \brief Adds and registers a data listener object to be used by the message feeds.
 
    \list
-     \li \a messageListener - The message listener object to add to the controller.
+     \li \a dataListener - The data listener object to add to the controller.
    \endlist
  */
-void MessageFeedsController::addMessageListener(MessageListener* messageListener)
+void MessageFeedsController::addDataListener(DataListener* dataListener)
 {
-  if (!messageListener)
+  if (!dataListener)
     return;
 
-  m_messageListeners.append(messageListener);
+  m_dataListeners.append(dataListener);
 
-  connect(messageListener, &MessageListener::messageReceived, this, [this](const QByteArray& message)
+  connect(dataListener, &DataListener::dataReceived, this, [this](const QByteArray& data)
   {
-    Message m = Message::create(message);
+    Message m = Message::create(data);
     if (m.isEmpty())
       return;
 
@@ -127,20 +127,20 @@ void MessageFeedsController::addMessageListener(MessageListener* messageListener
 }
 
 /*!
-   \brief Removes a message listener object from the controller.
+   \brief Removes a data listener object from the controller.
 
    \list
-     \li \a messageListener - The message listener object to remove from the controller.
+     \li \a dataListener - The data listener object to remove from the controller.
    \endlist
  */
-void MessageFeedsController::removeMessageListener(MessageListener* messageListener)
+void MessageFeedsController::removeDataListener(DataListener* dataListener)
 {
-  if (!messageListener)
+  if (!dataListener)
     return;
 
-  m_messageListeners.removeOne(messageListener);
+  m_dataListeners.removeOne(dataListener);
 
-  disconnect(messageListener, &MessageListener::messageReceived, this, nullptr);
+  disconnect(dataListener, &DataListener::dataReceived, this, nullptr);
 }
 
 /*!
@@ -172,7 +172,7 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
     m_locationBroadcast->setUserName(userNameFindIt.value().toString());
 
   // only add message listeners at startup
-  if (m_messageListeners.isEmpty())
+  if (m_dataListeners.isEmpty())
   {
     // parse and add message listeners on specified UDP ports
     const auto messageFeedUdpPorts = properties[MessageFeedConstants::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME].toStringList();
@@ -181,7 +181,7 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
       QUdpSocket* udpSocket = new QUdpSocket(this);
       udpSocket->bind(udpPort.toInt(), QUdpSocket::DontShareAddress | QUdpSocket::ReuseAddressHint);
 
-      addMessageListener(new MessageListener(udpSocket, this));
+      addDataListener(new DataListener(udpSocket, this));
     }
   }
 

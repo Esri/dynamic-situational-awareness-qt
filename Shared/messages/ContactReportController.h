@@ -28,7 +28,7 @@ namespace ArcGISRuntime
 }
 }
 
-class MessageSender;
+class DataSender;
 class PointHighlighter;
 
 class QDateTime;
@@ -94,7 +94,7 @@ private:
   Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
   QString m_unitName;
   Esri::ArcGISRuntime::Point m_controlPoint;
-  MessageSender* m_messageSender = nullptr;
+  DataSender* m_dataSender = nullptr;
   PointHighlighter* m_highlighter = nullptr;
   bool m_controlPointSet = false;
   int m_udpPort = -1;

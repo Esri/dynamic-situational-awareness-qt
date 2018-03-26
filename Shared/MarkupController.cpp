@@ -31,7 +31,10 @@
 #include "GeometryTypes.h"
 #include "GeometryEngine.h"
 
+#include "MarkupUtility.h"
+
 #include <QCursor>
+#include <QJsonObject>
 
 const QString MarkupController::nameAttribute = QStringLiteral("name");
 
@@ -39,7 +42,8 @@ const QString MarkupController::nameAttribute = QStringLiteral("name");
 using namespace Esri::ArcGISRuntime;
 
 MarkupController::MarkupController(QObject* parent):
-  AbstractSketchTool(parent)
+  AbstractSketchTool(parent),
+  m_markupUtility(new MarkupUtility(parent))
 {
   Toolkit::ToolManager::instance().addTool(this);
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, &MarkupController::updateGeoView);
@@ -303,18 +307,23 @@ GeometryType MarkupController::geometryType() const
   return GeometryType::Polyline;
 }
 
-void MarkupController::setName(const QString& name)
+void MarkupController::setOverlayName(const QString& name)
 {
   if (!m_sketchOverlay)
     return;
 
-  const auto graphic = m_sketchOverlay->graphics()->last();
-  graphic->attributes()->insertAttribute(nameAttribute, name);
+  if (m_sketchOverlay->overlayId() == name)
+    return;
+
+  m_sketchOverlay->setOverlayId(name.length() > 0 ? name : "Markup");
 }
 
 QStringList MarkupController::colors() const
 {
-  return QStringList{QStringLiteral("red"), QStringLiteral("gold"),
-        QStringLiteral("limegreen"), QStringLiteral("cyan"),
-        QStringLiteral("purple"), QStringLiteral("magenta")};
+  return m_markupUtility->colors();
+}
+
+void MarkupController::shareMarkup()
+{
+  m_markupUtility->graphicsToJson(sketchOverlay());
 }

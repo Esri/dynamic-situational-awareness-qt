@@ -40,7 +40,8 @@ Item {
         target: appRoot
         onClearDialogAccepted: markupController.deleteAllGraphics();
         onInputDialogAccepted: {
-            // handle whether we are sending or saving
+            markupController.setOverlayName(input)
+            markupController.shareMarkup();
         }
     }
 
@@ -209,16 +210,6 @@ Item {
                 iconSource: DsaResources.iconSendMap
                 toolName: "Share"
                 onToolSelected: appRoot.showInputDialog("Share Markup", "Markup name", "ex: Markup 1");
-            }
-
-            ToolIcon {
-                anchors.verticalCenter: parent.verticalCenter
-                iconSource: DsaResources.iconSave
-                toolName: "Save"
-                onToolSelected: {
-                    appRoot.showInputDialog("Save Markup", "Markup name", "ex: Markup 1")
-                    // TODO - Save as .markup to OperationalLayers folder
-                }
             }
         }
     }

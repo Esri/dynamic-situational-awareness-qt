@@ -1,3 +1,15 @@
+// Copyright 2017 ESRI
+//
+// All rights reserved under the copyright laws of the United States
+// and applicable international laws, treaties, and conventions.
+//
+// You may freely redistribute and use this sample code, with or
+// without modification, provided you include the original copyright
+// notice and use restrictions.
+//
+// See the Sample code usage restrictions document for further information.
+//
+
 #ifndef MARKUPCONTROLLER_H
 #define MARKUPCONTROLLER_H
 
@@ -7,6 +19,8 @@
 #include <QColor>
 
 #include "GeometryTypes.h"
+
+class MarkupUtility;
 
 class MarkupController : public AbstractSketchTool
 {
@@ -26,8 +40,9 @@ public:
   Q_INVOKABLE void setSurfacePlacement(int placementEnum);
   Q_INVOKABLE void deleteSelectedGraphics();
   Q_INVOKABLE void deleteAllGraphics();
-  Q_INVOKABLE void setName(const QString& name);
+  Q_INVOKABLE void setOverlayName(const QString& name);
   Q_INVOKABLE void setActive(bool active) override;
+  Q_INVOKABLE void shareMarkup();
 
   void setDrawingAltitude(double altitude);
   double drawingAltitude() const;
@@ -62,6 +77,7 @@ private:
   bool m_is3d = false;
   QColor m_color = QColor("black");
   float m_width = 8.0f;
+  MarkupUtility* m_markupUtility;
 };
 
 #endif // MARKUPCONTROLLER_H

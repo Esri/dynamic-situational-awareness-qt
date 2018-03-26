@@ -13,11 +13,8 @@
 // PCH header
 #include "pch.hpp"
 
-#include "MarkupUtility.h"
-
 // example app headers
-
-// toolkit headers
+#include "MarkupUtility.h"
 
 // C++ API headers
 #include "GraphicsOverlay.h"
@@ -28,7 +25,6 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QString>
-#include <QDebug>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -67,7 +63,7 @@ void MarkupUtility::setProperties(const QVariantMap& properties)
 }
 
 /*
- \brief Convers the input \a graphicsOverlay to \c .markup JSON.
+ \brief Converts the input \a graphicsOverlay to \c .markup JSON.
  */
 QJsonObject MarkupUtility::graphicsToJson(GraphicsOverlay* graphicsOverlay)
 {
@@ -111,11 +107,12 @@ QJsonObject MarkupUtility::graphicsToJson(GraphicsOverlay* graphicsOverlay)
   // add the name of the sharer
   markupJson["sharedBy"] = m_username;
 
-  qDebug() << markupJson;
-
   return markupJson;
 }
 
+/*
+ \brief Returns a list of colors to be used in the Markup tool.
+*/
 QStringList MarkupUtility::colors() const
 {
   return QStringList{QStringLiteral("#ff0000"), QStringLiteral("#ffd700"),

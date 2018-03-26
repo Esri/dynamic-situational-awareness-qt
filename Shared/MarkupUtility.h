@@ -22,13 +22,26 @@ class GraphicsOverlay;
 class QJsonObject;
 class QString;
 
-class MarkupUtility
+#include "AbstractTool.h"
+
+class MarkupUtility : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
+  Q_OBJECT
 
 public:
-  static QJsonObject graphicsToJson(Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlay, const QString& name);
+  explicit MarkupUtility(QObject* parent = nullptr);
+  ~MarkupUtility();
+
+  QString toolName() const override;
+  void setProperties(const QVariantMap& properties) override;
+
+  QJsonObject graphicsToJson(Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlay);
+  QStringList colors() const;
 
 private:
+  static const QString USERNAME_PROPERTYNAME;
+  QString m_username;
+  QString m_port;
 };
 
 #endif // MARKUPUTILITY_H

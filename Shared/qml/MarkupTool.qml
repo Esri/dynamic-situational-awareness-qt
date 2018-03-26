@@ -41,6 +41,7 @@ Item {
         onClearDialogAccepted: markupController.deleteAllGraphics();
         onInputDialogAccepted: {
             // handle whether we are sending or saving
+            markupController.setName(input)
             markupController.saveMarkup();
         }
     }
@@ -199,6 +200,7 @@ Item {
     SecondaryToolbar {
         id: drawPane
         property bool sketchInProgress: false
+        width: 75 * scaleFactor
 
         Row {
             anchors.centerIn: parent
@@ -210,16 +212,6 @@ Item {
                 iconSource: DsaResources.iconSendMap
                 toolName: "Share"
                 onToolSelected: appRoot.showInputDialog("Share Markup", "Markup name", "ex: Markup 1");
-            }
-
-            ToolIcon {
-                anchors.verticalCenter: parent.verticalCenter
-                iconSource: DsaResources.iconSave
-                toolName: "Save"
-                onToolSelected: {
-                    appRoot.showInputDialog("Save Markup", "Markup name", "ex: Markup 1")
-                    // TODO - Save as .markup to OperationalLayers folder
-                }
             }
         }
     }

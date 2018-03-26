@@ -21,6 +21,7 @@
 
 // C++ API headers
 #include "GraphicsOverlay.h"
+#include "SimpleLineSymbol.h"
 
 // Qt headers
 #include <QJsonDocument>
@@ -31,8 +32,48 @@
 
 using namespace Esri::ArcGISRuntime;
 
-QJsonObject MarkupUtility::graphicsToJson(GraphicsOverlay* graphicsOverlay, const QString& name)
+const QString MarkupUtility::USERNAME_PROPERTYNAME = "UserName";
+
+/*
+ \brief Constructor that takes an optional \a parent.
+ */
+MarkupUtility::MarkupUtility(QObject *parent) :
+  Toolkit::AbstractTool(parent)
 {
+  Toolkit::ToolManager::instance().addTool(this);
+}
+
+/*
+ \brief Destructor
+ */
+MarkupUtility::~MarkupUtility()
+{
+}
+
+/*
+ \brief Returns the tool's name
+ */
+QString MarkupUtility::toolName() const
+{
+  return QStringLiteral("Markup Utility");
+}
+
+/*
+ \brief Sets \a properties from the configuration file
+ */
+void MarkupUtility::setProperties(const QVariantMap& properties)
+{
+  m_username = properties[USERNAME_PROPERTYNAME].toString();
+}
+
+/*
+ \brief Convers the input \a graphicsOverlay to \c .markup JSON.
+ */
+QJsonObject MarkupUtility::graphicsToJson(GraphicsOverlay* graphicsOverlay)
+{
+  // get the sceneview instance
+  SceneView* sceneView = dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView());
+
   // create the markup
   QJsonObject markup;
   QJsonArray elements;
@@ -44,30 +85,41 @@ QJsonObject MarkupUtility::graphicsToJson(GraphicsOverlay* graphicsOverlay, cons
     element["geometry"] = QJsonValue(geomDoc.object());
     element["filled"] = false;
     element["arrow"] = false;
-    element["color"] = 0; // TODO - get color index
+    SimpleLineSymbol* sls = dynamic_cast<SimpleLineSymbol*>(graphic->symbol());
+    element["color"] = sls ? colors().indexOf(sls->color().name()) : 0;
     QJsonValue value(element);
     elements.append(value);
   }
   markup["elements"] = elements;
   markup["version"] = "1.0";
-  markup["name"] = name;
+  markup["name"] = graphicsOverlay->overlayId();
 
   // create the markup item json
   QJsonObject markupJson;
+
   // set center
-  markupJson["scale"] = 10000; // TODO - get scale
+  markupJson["scale"] = sceneView ? (int)sceneView->currentViewpointCamera().location().z() : -1;
   markupJson["version"] = "1.0";
-  QJsonDocument centerDoc = QJsonDocument::fromJson(Point(0,0,SpatialReference(3857)).toJson().toUtf8());
-  markupJson["center"] = QJsonValue(centerDoc.object()); // TODO - get center of scene/graphics
+  QJsonDocument centerDoc = sceneView ?
+        QJsonDocument::fromJson(sceneView->currentViewpointCamera().location().toJson().toUtf8()) :
+        QJsonDocument();
+  markupJson["center"] = sceneView ? QJsonValue(centerDoc.object()) : -1;
 
   // add the markups to the markup item json
   markupJson["markup"] = markup;
 
   // add the name of the sharer
-  markupJson["sharedBy"] = "Lucas"; // TODO - get name from options
+  markupJson["sharedBy"] = m_username;
 
   qDebug() << markupJson;
 
   return markupJson;
+}
+
+QStringList MarkupUtility::colors() const
+{
+  return QStringList{QStringLiteral("#ff0000"), QStringLiteral("#ffd700"),
+        QStringLiteral("#32cd32"), QStringLiteral("#00ffff"),
+        QStringLiteral("#800080"), QStringLiteral("#ff00ff")};
 }
 

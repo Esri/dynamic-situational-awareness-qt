@@ -20,6 +20,8 @@
 
 #include "GeometryTypes.h"
 
+class MarkupUtility;
+
 class MarkupController : public AbstractSketchTool
 {
   Q_OBJECT
@@ -75,6 +77,7 @@ private:
   bool m_is3d = false;
   QColor m_color = QColor("black");
   float m_width = 8.0f;
+  MarkupUtility* m_markupUtility;
 };
 
 #endif // MARKUPCONTROLLER_H

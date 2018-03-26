@@ -20,7 +20,6 @@ class GraphicsOverlay;
 }
 
 class QJsonObject;
-class QString;
 
 #include "AbstractTool.h"
 
@@ -39,9 +38,20 @@ public:
   QStringList colors() const;
 
 private:
+  static const QString ARROW;
+  static const QString CENTER;
+  static const QString COLOR;
+  static const QString ELEMENTS;
+  static const QString FILLED;
+  static const QString GEOMETRY;
+  static const QString MARKUP;
+  static const QString NAME;
+  static const QString SCALE;
+  static const QString SHAREDBY;
   static const QString USERNAME_PROPERTYNAME;
-  QString m_username;
-  QString m_port;
+  static const QString VERSION;
+  static const QString VERSIONNUMBER;
+  QString m_username;  
 };
 
 #endif // MARKUPUTILITY_H

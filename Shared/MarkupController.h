@@ -40,7 +40,7 @@ public:
   Q_INVOKABLE void setSurfacePlacement(int placementEnum);
   Q_INVOKABLE void deleteSelectedGraphics();
   Q_INVOKABLE void deleteAllGraphics();
-  Q_INVOKABLE void setName(const QString& name);
+  Q_INVOKABLE void setOverlayName(const QString& name);
   Q_INVOKABLE void setActive(bool active) override;
   Q_INVOKABLE void shareMarkup();
 

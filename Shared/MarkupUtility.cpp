@@ -28,7 +28,19 @@
 
 using namespace Esri::ArcGISRuntime;
 
-const QString MarkupUtility::USERNAME_PROPERTYNAME = "UserName";
+const QString MarkupUtility::ARROW = QStringLiteral("arrow");
+const QString MarkupUtility::CENTER = QStringLiteral("center");
+const QString MarkupUtility::COLOR = QStringLiteral("color");
+const QString MarkupUtility::ELEMENTS = QStringLiteral("elements");
+const QString MarkupUtility::FILLED = QStringLiteral("filled");
+const QString MarkupUtility::GEOMETRY = QStringLiteral("geometry");
+const QString MarkupUtility::MARKUP = QStringLiteral("markup");
+const QString MarkupUtility::NAME = QStringLiteral("name");
+const QString MarkupUtility::SCALE = QStringLiteral("scale");
+const QString MarkupUtility::SHAREDBY = QStringLiteral("shareBy");
+const QString MarkupUtility::USERNAME_PROPERTYNAME = QStringLiteral("UserName");
+const QString MarkupUtility::VERSION = QStringLiteral("version");
+const QString MarkupUtility::VERSIONNUMBER = QStringLiteral("1.0");
 
 /*
  \brief Constructor that takes an optional \a parent.
@@ -73,39 +85,40 @@ QJsonObject MarkupUtility::graphicsToJson(GraphicsOverlay* graphicsOverlay)
   // create the markup
   QJsonObject markup;
   QJsonArray elements;
-  for (int i = 0; i < graphicsOverlay->graphics()->size(); i++)
+  const int graphicCount = graphicsOverlay->graphics()->size();
+  for (int i = 0; i < graphicCount; i++)
   {
     Graphic* graphic = graphicsOverlay->graphics()->at(i);
     QJsonObject element;
     QJsonDocument geomDoc = QJsonDocument::fromJson(graphic->geometry().toJson().toUtf8());
-    element["geometry"] = QJsonValue(geomDoc.object());
-    element["filled"] = false;
-    element["arrow"] = false;
+    element[GEOMETRY] = QJsonValue(geomDoc.object());
+    element[FILLED] = false;
+    element[ARROW] = false;
     SimpleLineSymbol* sls = dynamic_cast<SimpleLineSymbol*>(graphic->symbol());
-    element["color"] = sls ? colors().indexOf(sls->color().name()) : 0;
+    element[COLOR] = sls ? colors().indexOf(sls->color().name()) : 0;
     QJsonValue value(element);
     elements.append(value);
   }
-  markup["elements"] = elements;
-  markup["version"] = "1.0";
-  markup["name"] = graphicsOverlay->overlayId();
+  markup[ELEMENTS] = elements;
+  markup[VERSION] = VERSIONNUMBER;
+  markup[NAME] = graphicsOverlay->overlayId();
 
   // create the markup item json
   QJsonObject markupJson;
 
   // set center
-  markupJson["scale"] = sceneView ? (int)sceneView->currentViewpointCamera().location().z() : -1;
-  markupJson["version"] = "1.0";
+  markupJson[SCALE] = sceneView ? (int)sceneView->currentViewpointCamera().location().z() : -1;
+  markupJson[VERSION] = "1.0";
   QJsonDocument centerDoc = sceneView ?
         QJsonDocument::fromJson(sceneView->currentViewpointCamera().location().toJson().toUtf8()) :
         QJsonDocument();
-  markupJson["center"] = sceneView ? QJsonValue(centerDoc.object()) : -1;
+  markupJson[CENTER] = sceneView ? QJsonValue(centerDoc.object()) : -1;
 
   // add the markups to the markup item json
-  markupJson["markup"] = markup;
+  markupJson[MARKUP] = markup;
 
   // add the name of the sharer
-  markupJson["sharedBy"] = m_username;
+  markupJson[SHAREDBY] = m_username;
 
   return markupJson;
 }

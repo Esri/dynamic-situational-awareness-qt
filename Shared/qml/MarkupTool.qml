@@ -40,7 +40,7 @@ Item {
         target: appRoot
         onClearDialogAccepted: markupController.deleteAllGraphics();
         onInputDialogAccepted: {
-            markupController.setName(input)
+            markupController.setOverlayName(input)
             markupController.shareMarkup();
         }
     }
@@ -199,7 +199,6 @@ Item {
     SecondaryToolbar {
         id: drawPane
         property bool sketchInProgress: false
-        width: 75 * scaleFactor
 
         Row {
             anchors.centerIn: parent

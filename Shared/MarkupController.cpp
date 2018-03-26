@@ -307,7 +307,7 @@ GeometryType MarkupController::geometryType() const
   return GeometryType::Polyline;
 }
 
-void MarkupController::setName(const QString& name)
+void MarkupController::setOverlayName(const QString& name)
 {
   if (!m_sketchOverlay)
     return;

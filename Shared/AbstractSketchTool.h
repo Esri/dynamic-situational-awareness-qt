@@ -39,6 +39,8 @@ public:
   void insertPointInPart(int partIndex, int pointIndex, const Esri::ArcGISRuntime::Point& drawPoint);
   Esri::ArcGISRuntime::Point normalizedPoint(double x, double y);
 
+  Esri::ArcGISRuntime::GraphicsOverlay* sketchOverlay() const;
+
   // Functions that should be from the SketchEditor
   void setSketchSymbol(Esri::ArcGISRuntime::Symbol* symbol);
   Esri::ArcGISRuntime::Symbol* sketchSymbol();

@@ -162,3 +162,8 @@ void AbstractSketchTool::insertPointInPart(int partIndex, int pointIndex, const 
 
   updateSketch();
 }
+
+GraphicsOverlay* AbstractSketchTool::sketchOverlay() const
+{
+  return m_sketchOverlay;
+}

@@ -327,3 +327,8 @@ void MarkupController::shareMarkup()
 {
   m_markupUtility->graphicsToJson(sketchOverlay());
 }
+
+QColor MarkupController::currentColor() const
+{
+  return m_color;
+}

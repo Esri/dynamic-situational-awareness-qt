@@ -15,7 +15,7 @@
 #include "LocationBroadcast.h"
 
 // example app headers
-#include "MessageSender.h"
+#include "DataSender.h"
 
 // toolkit headers
 #include "ToolResourceProvider.h"
@@ -289,20 +289,20 @@ void LocationBroadcast::update()
   if (m_messageType.isEmpty() || m_udpPort == -1)
     return;
 
-  if (m_messageSender)
+  if (m_dataSender)
   {
-    delete m_messageSender;
-    m_messageSender = nullptr;
+    delete m_dataSender;
+    m_dataSender = nullptr;
     m_timer = nullptr;
   }
 
-  m_messageSender = new MessageSender(this);
+  m_dataSender = new DataSender(this);
 
-  QUdpSocket* udpSocket = new QUdpSocket(m_messageSender);
+  QUdpSocket* udpSocket = new QUdpSocket(m_dataSender);
   udpSocket->connectToHost(QHostAddress::Broadcast, m_udpPort, QIODevice::WriteOnly);
-  m_messageSender->setDevice(udpSocket);
+  m_dataSender->setDevice(udpSocket);
 
-  m_timer = new QTimer(m_messageSender);
+  m_timer = new QTimer(m_dataSender);
   connect(m_timer, &QTimer::timeout, this, [this]
   {
     broadcastLocation();
@@ -334,7 +334,7 @@ void LocationBroadcast::update()
  */
 void LocationBroadcast::broadcastLocation()
 {
-  if (!m_enabled || !m_messageSender || m_location.isEmpty())
+  if (!m_enabled || !m_dataSender || m_location.isEmpty())
     return;
 
   if (m_message.isEmpty())
@@ -365,7 +365,7 @@ void LocationBroadcast::broadcastLocation()
 
   emit messageChanged();
 
-  m_messageSender->sendMessage(m_message.toGeoMessage());
+  m_dataSender->sendData(m_message.toGeoMessage());
 }
 
 /*!
@@ -383,8 +383,8 @@ void LocationBroadcast::removeBroadcast()
 
     emit messageChanged();
 
-    if (m_messageSender)
-      m_messageSender->sendMessage(m_message.toGeoMessage());
+    if (m_dataSender)
+      m_dataSender->sendData(m_message.toGeoMessage());
   }
 }
 

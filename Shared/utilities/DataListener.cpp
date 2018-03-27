@@ -12,28 +12,28 @@
 
 #include "pch.hpp"
 
-#include "MessageListener.h"
+#include "DataListener.h"
 
 #include <QUdpSocket>
 
-MessageListener::MessageListener(QObject* parent) :
+DataListener::DataListener(QObject* parent) :
   QObject(parent)
 {
 }
 
-MessageListener::MessageListener(QIODevice* device, QObject *parent) :
+DataListener::DataListener(QIODevice* device, QObject *parent) :
   QObject(parent),
   m_device(device)
 {
   connectDevice();
 }
 
-MessageListener::~MessageListener()
+DataListener::~DataListener()
 {
   disconnectDevice();
 }
 
-void MessageListener::setDevice(QIODevice* device)
+void DataListener::setDevice(QIODevice* device)
 {
   disconnectDevice();
 
@@ -41,17 +41,17 @@ void MessageListener::setDevice(QIODevice* device)
   connectDevice();
 }
 
-QIODevice* MessageListener::device() const
+QIODevice* DataListener::device() const
 {
   return m_device.data();
 }
 
-bool MessageListener::isEnabled() const
+bool DataListener::isEnabled() const
 {
   return m_enabled;
 }
 
-void MessageListener::setEnabled(bool enabled)
+void DataListener::setEnabled(bool enabled)
 {
   if (m_enabled == enabled)
     return;
@@ -64,7 +64,7 @@ void MessageListener::setEnabled(bool enabled)
   m_enabled = enabled;
 }
 
-void MessageListener::connectDevice()
+void DataListener::connectDevice()
 {
   disconnectDevice();
 
@@ -77,12 +77,12 @@ void MessageListener::connectDevice()
     {
       // if bytes were not processed as UDP datagram then
       // read bytes directly from the device
-      emit messageReceived(m_device->readAll());
+      emit dataReceived(m_device->readAll());
     }
   });
 }
 
-void MessageListener::disconnectDevice()
+void DataListener::disconnectDevice()
 {
   if (m_deviceConn)
     disconnect(m_deviceConn);
@@ -92,7 +92,7 @@ void MessageListener::disconnectDevice()
   processUdpDatagrams();
 }
 
-bool MessageListener::processUdpDatagrams()
+bool DataListener::processUdpDatagrams()
 {
   QUdpSocket* udpSocket = qobject_cast<QUdpSocket*>(m_device);
   if (udpSocket)
@@ -105,7 +105,7 @@ bool MessageListener::processUdpDatagrams()
       QByteArray datagram;
       datagram.resize(udpSocket->pendingDatagramSize());
       udpSocket->readDatagram(datagram.data(), datagram.size());
-      emit messageReceived(datagram.data());
+      emit dataReceived(datagram.data());
     }
 
     return true;

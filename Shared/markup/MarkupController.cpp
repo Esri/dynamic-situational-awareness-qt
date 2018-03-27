@@ -32,6 +32,7 @@
 #include "GeometryEngine.h"
 
 #include "MarkupUtility.h"
+#include "MarkupBroadcast.h"
 
 #include <QCursor>
 #include <QJsonObject>
@@ -43,7 +44,8 @@ using namespace Esri::ArcGISRuntime;
 
 MarkupController::MarkupController(QObject* parent):
   AbstractSketchTool(parent),
-  m_markupUtility(new MarkupUtility(parent))
+  m_markupUtility(new MarkupUtility(parent)),
+  m_markupBroadcast(new MarkupBroadcast(parent))
 {
   Toolkit::ToolManager::instance().addTool(this);
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, &MarkupController::updateGeoView);
@@ -325,7 +327,14 @@ QStringList MarkupController::colors() const
 
 void MarkupController::shareMarkup()
 {
-  m_markupUtility->graphicsToJson(sketchOverlay());
+  if (!m_markupUtility)
+    return;
+
+  if (!m_markupBroadcast)
+    return;
+
+  QJsonObject markupJson = m_markupUtility->graphicsToJson(sketchOverlay());
+  m_markupBroadcast->broadcastMarkup(markupJson);
 }
 
 QColor MarkupController::currentColor() const

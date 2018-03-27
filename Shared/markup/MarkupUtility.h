@@ -51,7 +51,7 @@ private:
   static const QString USERNAME_PROPERTYNAME;
   static const QString VERSION;
   static const QString VERSIONNUMBER;
-  QString m_username;  
+  QString m_username;
 };
 
 #endif // MARKUPUTILITY_H

@@ -396,6 +396,9 @@ void DsaController::createDefaultSettings()
   m_dsaSettings[Toolkit::CoordinateConversionConstants::COORDINATE_FORMAT_PROPERTY] = Toolkit::CoordinateConversionConstants::MGRS_FORMAT;
   m_dsaSettings[AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME] = AppConstants::UNIT_METERS;
   m_dsaSettings["UseGpsForElevation"] = QStringLiteral("true");
+  QJsonObject markupJson;
+  markupJson.insert(QStringLiteral("port"), 12345);
+  m_dsaSettings[QStringLiteral("MarkupConfig")] = markupJson;
   writeDefaultConditions();
 }
 

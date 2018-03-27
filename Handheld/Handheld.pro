@@ -27,7 +27,8 @@ INCLUDEPATH += $$PWD/../Shared/ \
     $$PWD/../Shared/alerts \
     $$PWD/../Shared/analysis \
     $$PWD/../Shared/messages \
-    $$PWD/../Shared/utilities
+    $$PWD/../Shared/utilities \
+    $$PWD/../Shared/markup
 
 HEADERS += \
     AppInfo.h \
@@ -37,7 +38,8 @@ HEADERS += \
     $$PWD/../Shared/alerts/*.h \
     $$PWD/../Shared/analysis/*.h \
     $$PWD/../Shared/messages/*.h \
-    $$PWD/../Shared/utilities/*.h
+    $$PWD/../Shared/utilities/*.h \
+    $$PWD/../Shared/markup/*.h
 
 SOURCES += \
     main.cpp \
@@ -47,7 +49,8 @@ SOURCES += \
     $$PWD/../Shared/alerts/*.cpp \
     $$PWD/../Shared/analysis/*.cpp \
     $$PWD/../Shared/messages/*.cpp \
-    $$PWD/../Shared/utilities/*.cpp
+    $$PWD/../Shared/utilities/*.cpp \
+    $$PWD/../Shared/markup/*.cpp
 
 RESOURCES += \
     qml/qml.qrc \

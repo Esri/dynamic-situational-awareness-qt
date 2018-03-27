@@ -132,4 +132,3 @@ QStringList MarkupUtility::colors() const
         QStringLiteral("#32cd32"), QStringLiteral("#00ffff"),
         QStringLiteral("#800080"), QStringLiteral("#ff00ff")};
 }
-

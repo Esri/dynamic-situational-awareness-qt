@@ -56,7 +56,7 @@ MarkupController::MarkupController(QObject* parent):
 
   connect(m_markupBroadcast, &MarkupBroadcast::dataReceived, this, [this](const QJsonDocument& json)
   {
-    qDebug() << json;
+    Q_UNUSED(json) // TODO - convert JSON to Feature Collection Layer, prompt user to add, add as layer to layer list
   });
 }
 

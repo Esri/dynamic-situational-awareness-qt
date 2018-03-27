@@ -23,7 +23,6 @@
 // Qt headers
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QJsonArray>
 #include <QString>
 #include <QUdpSocket>
 

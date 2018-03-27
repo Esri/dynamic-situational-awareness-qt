@@ -36,6 +36,7 @@
 
 #include <QCursor>
 #include <QJsonObject>
+#include <QJsonDocument>
 
 const QString MarkupController::nameAttribute = QStringLiteral("name");
 
@@ -52,6 +53,11 @@ MarkupController::MarkupController(QObject* parent):
 
   updateGeoView();
   updatedSymbol();
+
+  connect(m_markupBroadcast, &MarkupBroadcast::dataReceived, this, [this](const QJsonDocument& json)
+  {
+    qDebug() << json;
+  });
 }
 
 MarkupController::~MarkupController()

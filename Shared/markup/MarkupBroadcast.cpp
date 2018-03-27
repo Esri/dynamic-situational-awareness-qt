@@ -45,9 +45,8 @@ MarkupBroadcast::MarkupBroadcast(QObject *parent) :
 
   connect(m_dataListener, &DataListener::dataReceived, this, [this](const QByteArray& data)
   {
-    //qDebug() << data.data();
     QJsonDocument markupJson = QJsonDocument::fromJson(data);
-    qDebug() << markupJson;
+    emit this->dataReceived(markupJson);
   });
 }
 

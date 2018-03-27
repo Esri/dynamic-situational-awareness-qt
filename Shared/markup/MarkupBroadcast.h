@@ -14,6 +14,7 @@
 #define MARKUPBROADCAST_H
 
 class QJsonObject;
+class QJsonDocument;
 class DataSender;
 class DataListener;
 
@@ -31,6 +32,9 @@ public:
   void setProperties(const QVariantMap& properties) override;
 
   void broadcastMarkup(const QJsonObject& json);
+
+signals:
+  void dataReceived(const QJsonDocument& json);
 
 private:
   void updateDataSender();

@@ -84,7 +84,7 @@ QAbstractListModel* MessageFeedsController::messageFeeds() const
 }
 
 /*!
-   \brief Returns the list of message listener objects that exist for
+   \brief Returns the list of data listener objects that exist for
    the message feeds.
  */
 QList<DataListener*> MessageFeedsController::dataListeners() const
@@ -171,10 +171,10 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
   if (userNameFindIt != properties.end())
     m_locationBroadcast->setUserName(userNameFindIt.value().toString());
 
-  // only add message listeners at startup
+  // only add data listeners at startup
   if (m_dataListeners.isEmpty())
   {
-    // parse and add message listeners on specified UDP ports
+    // parse and add data listeners on specified UDP ports
     const auto messageFeedUdpPorts = properties[MessageFeedConstants::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME].toStringList();
     for (const auto& udpPort : messageFeedUdpPorts)
     {

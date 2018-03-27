@@ -32,9 +32,11 @@
 #include "GeometryEngine.h"
 
 #include "MarkupUtility.h"
+#include "MarkupBroadcast.h"
 
 #include <QCursor>
 #include <QJsonObject>
+#include <QJsonDocument>
 
 const QString MarkupController::nameAttribute = QStringLiteral("name");
 
@@ -43,13 +45,19 @@ using namespace Esri::ArcGISRuntime;
 
 MarkupController::MarkupController(QObject* parent):
   AbstractSketchTool(parent),
-  m_markupUtility(new MarkupUtility(parent))
+  m_markupUtility(new MarkupUtility(parent)),
+  m_markupBroadcast(new MarkupBroadcast(parent))
 {
   Toolkit::ToolManager::instance().addTool(this);
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, &MarkupController::updateGeoView);
 
   updateGeoView();
   updatedSymbol();
+
+  connect(m_markupBroadcast, &MarkupBroadcast::dataReceived, this, [this](const QJsonDocument& json)
+  {
+    Q_UNUSED(json) // TODO - convert JSON to Feature Collection Layer, prompt user to add, add as layer to layer list
+  });
 }
 
 MarkupController::~MarkupController()
@@ -325,7 +333,14 @@ QStringList MarkupController::colors() const
 
 void MarkupController::shareMarkup()
 {
-  m_markupUtility->graphicsToJson(sketchOverlay());
+  if (!m_markupUtility)
+    return;
+
+  if (!m_markupBroadcast)
+    return;
+
+  QJsonObject markupJson = m_markupUtility->graphicsToJson(sketchOverlay());
+  m_markupBroadcast->broadcastMarkup(markupJson);
 }
 
 QColor MarkupController::currentColor() const

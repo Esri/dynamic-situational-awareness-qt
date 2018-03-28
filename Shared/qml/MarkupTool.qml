@@ -63,6 +63,13 @@ Item {
             if (!active)
                 rootMarkup.visible = false;
         }
+
+        onMarkupReceived: {
+            markupDialog.title = "Markup Received";
+            markupDialog.path = filePath;
+            markupDialog.informativeText = "%1 has sent you a markup. Would you like to view it now?".arg(sharedBy)
+            markupDialog.open();
+        }
     }
 
     state: clearState

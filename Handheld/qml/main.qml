@@ -552,4 +552,11 @@ Handheld {
         inputDialog.inputPlaceholderText = placeholderText;
         inputDialog.open();
     }
+
+    DsaYesNoDialog {
+        id: markupDialog
+        property string path
+
+        onAccepted: console.log("Add markup as layer", path);
+    }
 }

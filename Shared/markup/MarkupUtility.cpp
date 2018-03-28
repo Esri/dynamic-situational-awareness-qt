@@ -15,6 +15,7 @@
 
 // example app headers
 #include "MarkupUtility.h"
+#include "MarkupLayer.h"
 
 // C++ API headers
 #include "GraphicsOverlay.h"
@@ -132,9 +133,9 @@ QJsonObject MarkupUtility::graphicsToJson(GraphicsOverlay* graphicsOverlay)
 }
 
 /*
- \brief Returns a FeatureCollectionLayer for the input \a json.
+ \brief Returns a MarkupLayer for the input \a json.
 */
-FeatureCollectionLayer* MarkupUtility::jsonToFeatures(const QString& json)
+MarkupLayer* MarkupUtility::createMarkupLayer(const QString& json)
 {
   const QJsonDocument markupDoc = QJsonDocument::fromJson(json.toUtf8());
   const QJsonObject markupJson = markupDoc.object();
@@ -178,11 +179,11 @@ FeatureCollectionLayer* MarkupUtility::jsonToFeatures(const QString& json)
   // Add the table to a Collection
   FeatureCollection* featureCollection = new FeatureCollection(QList<FeatureCollectionTable*>{table}, this);
 
-  // Add the Collection to a Layer
-  FeatureCollectionLayer* featureCollectionLayer = new FeatureCollectionLayer(featureCollection, this);
-  featureCollectionLayer->setName(markupJson.value(MARKUP).toObject().value(NAME).toString());
+  // Create a MarkupLayer
+  MarkupLayer* markupLayer = new MarkupLayer(featureCollection, this);
+  markupLayer->setName(markupJson.value(MARKUP).toObject().value(NAME).toString());
 
-  return featureCollectionLayer;
+  return markupLayer;
 }
 
 /*
@@ -200,6 +201,6 @@ QStringList MarkupUtility::colors() const
 */
 SimpleLineSymbol* MarkupUtility::createLineSymbolFromColor(int index)
 {
-  SimpleLineSymbol* sls = new SimpleLineSymbol(SimpleLineSymbolStyle::Solid, QColor(colors().at(index)), 18.0f, this);
+  SimpleLineSymbol* sls = new SimpleLineSymbol(SimpleLineSymbolStyle::Solid, QColor(colors().at(index)), 12.0f, this);
   return sls;
 }

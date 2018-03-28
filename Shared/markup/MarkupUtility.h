@@ -13,15 +13,19 @@
 #ifndef MARKUPUTILITY_H
 #define MARKUPUTILITY_H
 
+// C++ API
 namespace Esri {
 namespace ArcGISRuntime {
 class GraphicsOverlay;
-class FeatureCollectionLayer;
 class SimpleLineSymbol;
 class Feature;
 }
 }
 
+// Toolkit
+class MarkupLayer;
+
+// Qt
 class QJsonObject;
 
 #include <QHash>
@@ -41,7 +45,7 @@ public:
   void setProperties(const QVariantMap& properties) override;
 
   QJsonObject graphicsToJson(Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlay);
-  Esri::ArcGISRuntime::FeatureCollectionLayer* jsonToFeatures(const QString& json);
+  MarkupLayer* createMarkupLayer(const QString& json);
   QStringList colors() const;
 
 private:

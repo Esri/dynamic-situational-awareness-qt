@@ -18,6 +18,7 @@
 #include "DataItemListModel.h"
 #include "DsaUtility.h"
 #include "MarkupUtility.h"
+#include "MarkupLayer.h"
 
 // toolkit headers
 #include "ToolManager.h"
@@ -268,11 +269,14 @@ void AddLocalDataController::createMarkupLayer(const QString& path, int layerInd
     if (!markupUtility)
       return;
 
-    FeatureCollectionLayer* markupLayer = markupUtility->jsonToFeatures(stream.readAll());
+    MarkupLayer* markupLayer = markupUtility->createMarkupLayer(stream.readAll());
+    if (!markupLayer)
+      return;
+
+    markupLayer->setPath(path);
 
     auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
-    if (markupLayer)
-      operationalLayers->append(markupLayer);
+    operationalLayers->append(markupLayer);
   }
 }
 

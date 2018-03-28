@@ -266,7 +266,6 @@ void LayerCacheManager::layerToJson(Layer* layer)
   if (sceneLayer)
     layerPath = sceneLayer->url().toLocalFile();
 
-
   // Get TPKs
   auto tiledLayer = dynamic_cast<ArcGISTiledLayer*>(layer);
   if (tiledLayer)

@@ -63,6 +63,7 @@ public:
   void createVectorTiledLayer(const QString& path, int layerIndex = -1, bool visible = true, bool autoAdd = true);
   void createElevationSourceFromTpk(const QString& path);
   void createElevationSourceFromRasters(const QStringList& paths);
+  void createMarkupLayer(const QString& path, int layerIndex = -1, bool visible = true, bool autoAdd = true);
   QStringList dataPaths() const { return m_dataPaths; }
 
 signals:
@@ -84,6 +85,7 @@ private:
   static const QString sceneLayerData() { return s_sceneLayerData; }
   static const QString vectorTilePackageData() { return s_vectorTilePackageData; }
   static const QString tilePackageData() { return s_tilePackageData; }
+  static const QString markupData() { return s_markupData; }
 
 private:
   DataItemListModel* m_localDataModel;
@@ -97,6 +99,7 @@ private:
   static const QString s_sceneLayerData;
   static const QString s_vectorTilePackageData;
   static const QString s_tilePackageData;
+  static const QString s_markupData;
   static const QString LOCAL_DATAPATHS_PROPERTYNAME;
   static const QString DEFAULT_ELEVATION_PROPERTYNAME;
 };

@@ -124,6 +124,8 @@ DataItemListModel::DataItem::DataItem(const QString& fullPath):
     dataType = DataType::SceneLayerPackage;
   else if (fileExtension.compare("vtpk", Qt::CaseInsensitive) == 0)
     dataType = DataType::VectorTilePackage;
+  else if (fileExtension.compare("markup", Qt::CaseInsensitive) == 0)
+    dataType = DataType::Markup;
   else if (rasterExtensions.contains(fileExtension.toLower()))
     dataType = DataType::Raster;
   else

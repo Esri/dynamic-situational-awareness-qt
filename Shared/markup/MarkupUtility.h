@@ -17,10 +17,15 @@ namespace Esri {
 namespace ArcGISRuntime {
 class GraphicsOverlay;
 class FeatureCollectionLayer;
+class SimpleLineSymbol;
+class Feature;
 }
 }
 
 class QJsonObject;
+
+#include <QHash>
+#include <QPair>
 
 #include "AbstractTool.h"
 
@@ -36,7 +41,7 @@ public:
   void setProperties(const QVariantMap& properties) override;
 
   QJsonObject graphicsToJson(Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlay);
-  Esri::ArcGISRuntime::FeatureCollectionLayer* jsonToFeatures(const QJsonObject& json);
+  Esri::ArcGISRuntime::FeatureCollectionLayer* jsonToFeatures(const QString& json);
   QStringList colors() const;
 
 private:
@@ -54,6 +59,8 @@ private:
   static const QString VERSION;
   static const QString VERSIONNUMBER;
   QString m_username;
+  Esri::ArcGISRuntime::SimpleLineSymbol* createLineSymbolFromColor(int index);
+  QHash<QUuid, QPair<Esri::ArcGISRuntime::Feature*, Esri::ArcGISRuntime::SimpleLineSymbol*>> m_featureHash;
 };
 
 #endif // MARKUPUTILITY_H

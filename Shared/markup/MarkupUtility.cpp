@@ -19,12 +19,20 @@
 // C++ API headers
 #include "GraphicsOverlay.h"
 #include "SimpleLineSymbol.h"
+#include "FeatureCollection.h"
+#include "FeatureCollectionLayer.h"
+#include "FeatureCollectionTable.h"
+#include "Feature.h"
+#include "SimpleLineSymbol.h"
+#include "SimpleRenderer.h"
 
 // Qt headers
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QString>
+#include <QHash>
+#include <QDebug>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -126,9 +134,55 @@ QJsonObject MarkupUtility::graphicsToJson(GraphicsOverlay* graphicsOverlay)
 /*
  \brief Returns a FeatureCollectionLayer for the input \a json.
 */
-FeatureCollectionLayer* MarkupUtility::jsonToFeatures(const QJsonObject& json)
+FeatureCollectionLayer* MarkupUtility::jsonToFeatures(const QString& json)
 {
-  return nullptr;
+  const QJsonDocument markupDoc = QJsonDocument::fromJson(json.toUtf8());
+  const QJsonObject markupJson = markupDoc.object();
+
+  // Create the FeatureCollectionTable
+  FeatureCollectionTable* table = new FeatureCollectionTable(QList<Field>{}, GeometryType::Polyline, SpatialReference(4326), true, false, this);
+  SimpleRenderer* defaultRenderer = new SimpleRenderer(this);
+  defaultRenderer->setSymbol(new SimpleLineSymbol(SimpleLineSymbolStyle::Solid, QColor("red"), 12.0f, this));
+  table->setRenderer(defaultRenderer);
+
+  // Clear Hash to keep track of features/symbols added to the table
+  m_featureHash.clear();
+
+  // Connect to know when addFeature successfully completes
+  connect(table, &FeatureCollectionTable::addFeatureCompleted, this, [this, table](QUuid id, bool success)
+  {
+    if (!success || !m_featureHash.contains(id))
+      return;
+
+    auto pair = m_featureHash.value(id);
+    table->setSymbolOverride(pair.first, pair.second);
+  });
+
+  // Loop through the markup elements and add them as Features to the table
+  QJsonArray markupElements = markupJson.value(MARKUP).toObject().value(ELEMENTS).toArray();
+  if (markupElements.isEmpty())
+    return nullptr;
+
+  int markupSize = markupElements.size();
+  for (int i = 0; i < markupSize; i++)
+  {
+    const QJsonObject element = markupElements.at(i).toObject();
+    Feature* feature = table->createFeature(table);
+    const QString geomString = QString(QJsonDocument(element.value(GEOMETRY).toObject()).toJson(QJsonDocument::Compact));
+    feature->setGeometry(Geometry::fromJson(geomString));
+    QUuid id = table->addFeature(feature).taskId();
+    auto symbol = createLineSymbolFromColor(element.value(COLOR).toInt());
+    m_featureHash[id] = QPair<Feature*, SimpleLineSymbol*>(feature, symbol);
+  }
+
+  // Add the table to a Collection
+  FeatureCollection* featureCollection = new FeatureCollection(QList<FeatureCollectionTable*>{table}, this);
+
+  // Add the Collection to a Layer
+  FeatureCollectionLayer* featureCollectionLayer = new FeatureCollectionLayer(featureCollection, this);
+  featureCollectionLayer->setName(markupJson.value(MARKUP).toObject().value(NAME).toString());
+
+  return featureCollectionLayer;
 }
 
 /*
@@ -141,3 +195,11 @@ QStringList MarkupUtility::colors() const
         QStringLiteral("#800080"), QStringLiteral("#ff00ff")};
 }
 
+/*
+ \brief Returns a new SimpleLineSymbol for the specified \a index in the \l colors() list.
+*/
+SimpleLineSymbol* MarkupUtility::createLineSymbolFromColor(int index)
+{
+  SimpleLineSymbol* sls = new SimpleLineSymbol(SimpleLineSymbolStyle::Solid, QColor(colors().at(index)), 18.0f, this);
+  return sls;
+}

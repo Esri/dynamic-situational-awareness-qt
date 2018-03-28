@@ -17,6 +17,7 @@
 
 // example app headers
 #include "AddLocalDataController.h"
+#include "MarkupLayer.h"
 
 // toolkit headers
 #include "AbstractTool.h"
@@ -275,6 +276,11 @@ void LayerCacheManager::layerToJson(Layer* layer)
   auto vectorTiledLayer = dynamic_cast<ArcGISVectorTiledLayer*>(layer);
   if (vectorTiledLayer)
     layerPath = vectorTiledLayer->vectorTileCache() ? vectorTiledLayer->vectorTileCache()->path() : vectorTiledLayer->url().toString();
+
+  // Get Markups
+  auto markupLayer = dynamic_cast<MarkupLayer*>(layer);
+  if (markupLayer)
+    layerPath = markupLayer->path();
 
   // add the layer to the layer list for caching
   QJsonObject layerJson;

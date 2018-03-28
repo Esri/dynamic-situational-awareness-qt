@@ -274,6 +274,7 @@ void AddLocalDataController::createMarkupLayer(const QString& path, int layerInd
       return;
 
     markupLayer->setPath(path);
+    connect(markupLayer, &MarkupLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
     auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
     operationalLayers->append(markupLayer);

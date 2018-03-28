@@ -16,6 +16,7 @@
 namespace Esri {
 namespace ArcGISRuntime {
 class GraphicsOverlay;
+class FeatureCollectionLayer;
 }
 }
 
@@ -35,6 +36,7 @@ public:
   void setProperties(const QVariantMap& properties) override;
 
   QJsonObject graphicsToJson(Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlay);
+  Esri::ArcGISRuntime::FeatureCollectionLayer* jsonToFeatures(const QJsonObject& json);
   QStringList colors() const;
 
 private:

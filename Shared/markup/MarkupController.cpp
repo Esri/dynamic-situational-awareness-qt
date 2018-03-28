@@ -30,6 +30,7 @@
 #include "SimpleLineSymbol.h"
 #include "GeometryTypes.h"
 #include "GeometryEngine.h"
+#include "FeatureCollectionLayer.h"
 
 #include "MarkupUtility.h"
 #include "MarkupBroadcast.h"
@@ -37,9 +38,10 @@
 #include <QCursor>
 #include <QJsonObject>
 #include <QJsonDocument>
-
-const QString MarkupController::nameAttribute = QStringLiteral("name");
-
+#include <QJsonValue>
+#include <QFile>
+#include <QIODevice>
+#include <QTextStream>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -54,9 +56,14 @@ MarkupController::MarkupController(QObject* parent):
   updateGeoView();
   updatedSymbol();
 
-  connect(m_markupBroadcast, &MarkupBroadcast::dataReceived, this, [this](const QJsonDocument& json)
+  connect(m_markupBroadcast, &MarkupBroadcast::markupReceived, this, [this](const QString& fileName, const QString& sharedBy)
   {
-    Q_UNUSED(json) // TODO - convert JSON to Feature Collection Layer, prompt user to add, add as layer to layer list
+    qDebug() << "markup written to" << fileName << "by" << sharedBy;
+    emit this->markupReceived(fileName, sharedBy);
+
+    // show prompt - XYZ has sent you a new markup. Would you like to view?
+    // yes - add as layer, zoom to
+    // no - do nothing
   });
 }
 

@@ -65,6 +65,7 @@ signals:
   void drawingAltitudeChanged();
   void sketchCompleted();
   void sketchingChanged();
+  void markupReceived(const QString& filePath, const QString& sharedBy);
 
 private:
   void updateGeoView();
@@ -73,7 +74,6 @@ private:
   Esri::ArcGISRuntime::Symbol* updatedSymbol();
   QStringList colors() const;
 
-  static const QString nameAttribute;
   int m_currentPartIndex = 0;
   double m_drawingAltitude = 10.0;
   bool m_isDrawing = false;

@@ -31,6 +31,9 @@ using namespace Esri::ArcGISRuntime;
 const QString MarkupBroadcast::MARKUPCONFIG_PROPERTYNAME = QStringLiteral("MarkupConfig");
 const QString MarkupBroadcast::UDPPORT_PROPERTYNAME = QStringLiteral("port");
 const QString MarkupBroadcast::USERNAME_PROPERTYNAME = QStringLiteral("UserName");
+const QString MarkupBroadcast::NAMEKEY = QStringLiteral("name");
+const QString MarkupBroadcast::MARKUPKEY = QStringLiteral("markup");
+const QString MarkupBroadcast::SHAREDBYKEY = QStringLiteral("sharedBy");
 
 /*
  \brief Constructor that takes an optional \a parent.
@@ -45,7 +48,23 @@ MarkupBroadcast::MarkupBroadcast(QObject *parent) :
   connect(m_dataListener, &DataListener::dataReceived, this, [this](const QByteArray& data)
   {
     QJsonDocument markupJson = QJsonDocument::fromJson(data);
-    emit this->dataReceived(markupJson);
+
+    // TODO ignore if from same username
+    // TODO get operational data path from properties
+    // write the JSON to disk
+    const QJsonObject markupObject = markupJson.object();
+    const QString sharedBy = markupObject.value(SHAREDBYKEY).toString();
+    const QString markupName = markupObject.value(MARKUPKEY).toObject().value(NAMEKEY).toString();
+    const QString markupFileName = QString("C:/Users/luca6804/ArcGIS/Runtime/Data/DSA/OperationalData/%1.markup").arg(markupName);
+    QFile markupFile(markupFileName);
+    if (markupFile.open(QIODevice::ReadWrite))
+    {
+      QTextStream stream(&markupFile);
+      QString strJson(markupJson.toJson(QJsonDocument::Compact));
+      stream << strJson << endl;
+    }
+
+    emit this->markupReceived(markupFileName, sharedBy);
   });
 }
 

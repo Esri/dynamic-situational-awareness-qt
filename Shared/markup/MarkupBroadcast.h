@@ -34,7 +34,7 @@ public:
   void broadcastMarkup(const QJsonObject& json);
 
 signals:
-  void dataReceived(const QJsonDocument& json);
+  void markupReceived(const QString& filePath, const QString& sharedBy);
 
 private:
   void updateDataSender();
@@ -43,6 +43,9 @@ private:
   static const QString MARKUPCONFIG_PROPERTYNAME;
   static const QString UDPPORT_PROPERTYNAME;
   static const QString USERNAME_PROPERTYNAME;
+  static const QString MARKUPKEY;
+  static const QString NAMEKEY;
+  static const QString SHAREDBYKEY;
   QString m_username;
   DataSender* m_dataSender;
   DataListener* m_dataListener;

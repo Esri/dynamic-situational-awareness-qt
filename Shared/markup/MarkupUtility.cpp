@@ -37,7 +37,7 @@ const QString MarkupUtility::GEOMETRY = QStringLiteral("geometry");
 const QString MarkupUtility::MARKUP = QStringLiteral("markup");
 const QString MarkupUtility::NAME = QStringLiteral("name");
 const QString MarkupUtility::SCALE = QStringLiteral("scale");
-const QString MarkupUtility::SHAREDBY = QStringLiteral("shareBy");
+const QString MarkupUtility::SHAREDBY = QStringLiteral("sharedBy");
 const QString MarkupUtility::USERNAME_PROPERTYNAME = QStringLiteral("UserName");
 const QString MarkupUtility::VERSION = QStringLiteral("version");
 const QString MarkupUtility::VERSIONNUMBER = QStringLiteral("1.0");
@@ -121,6 +121,14 @@ QJsonObject MarkupUtility::graphicsToJson(GraphicsOverlay* graphicsOverlay)
   markupJson[SHAREDBY] = m_username;
 
   return markupJson;
+}
+
+/*
+ \brief Returns a FeatureCollectionLayer for the input \a json.
+*/
+FeatureCollectionLayer* MarkupUtility::jsonToFeatures(const QJsonObject& json)
+{
+  return nullptr;
 }
 
 /*

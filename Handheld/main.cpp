@@ -58,14 +58,9 @@
 #include <QSettings>
 
 // STL headers
-#include <Windows.h>
-
 #ifdef Q_OS_WIN
+#include <Windows.h>
 #endif
-
-
-
-
 
 //------------------------------------------------------------------------------
 

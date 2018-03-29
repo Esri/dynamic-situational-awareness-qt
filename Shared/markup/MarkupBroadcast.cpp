@@ -25,6 +25,8 @@
 #include <QJsonObject>
 #include <QString>
 #include <QUdpSocket>
+#include <QFileInfo>
+#include <QDateTime>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -57,8 +59,15 @@ MarkupBroadcast::MarkupBroadcast(QObject *parent) :
 //      return;
 
     const QString markupName = markupObject.value(MARKUPKEY).toObject().value(NAMEKEY).toString();
-    const QString markupFileName = QString("%1/OperationalData/%2.markup").arg(m_rootDataDirectory, markupName);
+    QString markupFileName = QString("%1/OperationalData/%2.markup").arg(m_rootDataDirectory, markupName);
     qDebug() << "writing to this file:" << markupFileName;
+    QFileInfo fileInfo(markupFileName);
+    if (fileInfo.exists())
+    {
+      qDebug() << "file exists";
+      markupFileName = QString("%1_%2").arg(markupFileName, QString::number(QDateTime::currentDateTime().currentMSecsSinceEpoch()));
+    }
+
     QFile markupFile(markupFileName);
     if (markupFile.open(QIODevice::ReadWrite))
     {

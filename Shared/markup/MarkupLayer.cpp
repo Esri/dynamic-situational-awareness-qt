@@ -15,6 +15,7 @@
 
 // example app headers
 #include "MarkupLayer.h"
+#include "MarkupConstants.h"
 
 // C++ API headers
 #include "GraphicsOverlay.h"
@@ -36,19 +37,6 @@
 #include <QHash>
 
 using namespace Esri::ArcGISRuntime;
-
-const QString MarkupLayer::ARROW = QStringLiteral("arrow");
-const QString MarkupLayer::CENTER = QStringLiteral("center");
-const QString MarkupLayer::COLOR = QStringLiteral("color");
-const QString MarkupLayer::ELEMENTS = QStringLiteral("elements");
-const QString MarkupLayer::FILLED = QStringLiteral("filled");
-const QString MarkupLayer::GEOMETRY = QStringLiteral("geometry");
-const QString MarkupLayer::MARKUP = QStringLiteral("markup");
-const QString MarkupLayer::NAME = QStringLiteral("name");
-const QString MarkupLayer::SCALE = QStringLiteral("scale");
-const QString MarkupLayer::SHAREDBY = QStringLiteral("sharedBy");
-const QString MarkupLayer::VERSION = QStringLiteral("version");
-const QString MarkupLayer::VERSIONNUMBER = QStringLiteral("1.0");
 
 /*
  \internal
@@ -79,20 +67,20 @@ MarkupLayer::MarkupLayer(const QString& json, FeatureCollection* featureCollecti
   });
 
   // Loop through the markup elements and add them as Features to the table
-  QJsonArray markupElements = markupJson.value(MARKUP).toObject().value(ELEMENTS).toArray();
+  QJsonArray markupElements = markupJson.value(MarkupConstants::MARKUP).toObject().value(MarkupConstants::ELEMENTS).toArray();
   int markupSize = markupElements.size();
   for (int i = 0; i < markupSize; i++)
   {
     const QJsonObject element = markupElements.at(i).toObject();
     Feature* feature = table->createFeature(table);
-    const QString geomString = QString(QJsonDocument(element.value(GEOMETRY).toObject()).toJson(QJsonDocument::Compact));
+    const QString geomString = QString(QJsonDocument(element.value(MarkupConstants::GEOMETRY).toObject()).toJson(QJsonDocument::Compact));
     feature->setGeometry(Geometry::fromJson(geomString));
     QUuid id = table->addFeature(feature).taskId();
-    SimpleLineSymbol* sls = new SimpleLineSymbol(SimpleLineSymbolStyle::Solid, QColor(MarkupLayer::colors().at(element.value(COLOR).toInt())), 12.0f, parent);
+    SimpleLineSymbol* sls = new SimpleLineSymbol(SimpleLineSymbolStyle::Solid, QColor(MarkupLayer::colors().at(element.value(MarkupConstants::COLOR).toInt())), 12.0f, parent);
     m_featureHash[id] = QPair<Feature*, SimpleLineSymbol*>(feature, sls);
   }
 
-  setName(markupJson.value(MARKUP).toObject().value(NAME).toString());
+  setName(markupJson.value(MarkupConstants::MARKUP).toObject().value(MarkupConstants::NAME).toString());
 }
 
 /*
@@ -127,6 +115,14 @@ QString MarkupLayer::toJson() const
 }
 
 /*
+ \brief Returns the FeatureCollection used by this layer.
+*/
+FeatureCollection* MarkupLayer::featureCollection()
+{
+  return m_featureCollection;
+}
+
+/*
  \brief Converts the input \a graphicsOverlay to \c .markup JSON.
  */
 MarkupLayer* MarkupLayer::createFromGraphics(GraphicsOverlay* graphicsOverlay, const QString& authorName, QObject* parent)
@@ -143,34 +139,34 @@ MarkupLayer* MarkupLayer::createFromGraphics(GraphicsOverlay* graphicsOverlay, c
     Graphic* graphic = graphicsOverlay->graphics()->at(i);
     QJsonObject element;
     QJsonDocument geomDoc = QJsonDocument::fromJson(graphic->geometry().toJson().toUtf8());
-    element[GEOMETRY] = QJsonValue(geomDoc.object());
-    element[FILLED] = false;
-    element[ARROW] = false;
+    element[MarkupConstants::GEOMETRY] = QJsonValue(geomDoc.object());
+    element[MarkupConstants::FILLED] = false;
+    element[MarkupConstants::ARROW] = false;
     SimpleLineSymbol* sls = dynamic_cast<SimpleLineSymbol*>(graphic->symbol());
-    element[COLOR] = sls ? colors().indexOf(sls->color().name()) : 0;
+    element[MarkupConstants::COLOR] = sls ? colors().indexOf(sls->color().name()) : 0;
     QJsonValue value(element);
     elements.append(value);
   }
-  markup[ELEMENTS] = elements;
-  markup[VERSION] = VERSIONNUMBER;
-  markup[NAME] = graphicsOverlay->overlayId();
+  markup[MarkupConstants::ELEMENTS] = elements;
+  markup[MarkupConstants::VERSION] = MarkupConstants::VERSIONNUMBER;
+  markup[MarkupConstants::NAME] = graphicsOverlay->overlayId();
 
   // create the markup item json
   QJsonObject markupJson;
 
   // set center
-  markupJson[SCALE] = sceneView ? (int)sceneView->currentViewpointCamera().location().z() : -1;
-  markupJson[VERSION] = "1.0";
+  markupJson[MarkupConstants::SCALE] = sceneView ? (int)sceneView->currentViewpointCamera().location().z() : -1;
+  markupJson[MarkupConstants::VERSION] = "1.0";
   QJsonDocument centerDoc = sceneView ?
         QJsonDocument::fromJson(sceneView->currentViewpointCamera().location().toJson().toUtf8()) :
         QJsonDocument();
-  markupJson[CENTER] = sceneView ? QJsonValue(centerDoc.object()) : -1;
+  markupJson[MarkupConstants::CENTER] = sceneView ? QJsonValue(centerDoc.object()) : -1;
 
   // add the markups to the markup item json
-  markupJson[MARKUP] = markup;
+  markupJson[MarkupConstants::MARKUP] = markup;
 
   // add the name of the sharer
-  markupJson[SHAREDBY] = authorName;
+  markupJson[MarkupConstants::SHAREDBY] = authorName;
 
   return MarkupLayer::createFromJson(QJsonDocument(markupJson).toJson(QJsonDocument::Compact), parent);
 }
@@ -193,6 +189,14 @@ MarkupLayer* MarkupLayer::createFromJson(const QString& json, QObject* parent)
   MarkupLayer* markupLayer = new MarkupLayer(json, featureCollection, parent);
 
   return markupLayer;
+}
+
+/*
+ \brief Creates a new MarkupLayer from a \a path to a \c .markup JSON file.
+*/
+MarkupLayer* MarkupLayer::createFromPath(const QString& path)
+{
+
 }
 
 /*

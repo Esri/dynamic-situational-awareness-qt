@@ -53,7 +53,6 @@ MarkupController::MarkupController(QObject* parent):
 
   connect(m_markupBroadcast, &MarkupBroadcast::markupReceived, this, [this](const QString& fileName, const QString& sharedBy)
   {
-    qDebug() << "markup written to" << fileName << "by" << sharedBy;
     emit this->markupReceived(fileName, sharedBy);
 
     // show prompt - XYZ has sent you a new markup. Would you like to view?
@@ -333,7 +332,7 @@ void MarkupController::setOverlayName(const QString& name)
   if (m_sketchOverlay->overlayId() == name)
     return;
 
-  QString overlayId = name.length() > 0 ? name : QString("Markup_%1").arg(QDateTime::currentDateTime().currentMSecsSinceEpoch());
+  QString overlayId = name.length() > 0 ? name : "Markup";
   m_sketchOverlay->setOverlayId(overlayId);
 }
 

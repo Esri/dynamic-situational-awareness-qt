@@ -256,7 +256,16 @@ void AddLocalDataController::createElevationSourceFromRasters(const QStringList&
 }
 
 /*
- \brief Adds the the markup from the provided \a path as a FeatureCollectionLayer.
+ \brief Adds the the markup from the provided path as a MarkupLayer.
+
+ \list
+   \li \a path - The path to the local data source.
+   \li \a layerIndex - The index for which the layer will be added to the operational layer list.
+   \li \a visible - Whether the layer should be visible by default.
+   \li \a autoAdd - Whether the layer will be automatically added to the operational layer list.
+        If \c false, it will not add automatically. Instead, a signal will emit once the Layer has
+        been constructed.
+ \endlist
 */
 void AddLocalDataController::createMarkupLayer(const QString& path, int layerIndex, bool visible, bool autoAdd)
 {

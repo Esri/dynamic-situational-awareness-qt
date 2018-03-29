@@ -69,7 +69,7 @@ MarkupLayer::MarkupLayer(const QString& json, FeatureCollection* featureCollecti
 
   // Loop through the markup elements and add them as Features to the table
   QJsonArray markupElements = markupJson.value(MarkupConstants::MARKUP).toObject().value(MarkupConstants::ELEMENTS).toArray();
-  int markupSize = markupElements.size();
+  const int markupSize = markupElements.size();
   for (int i = 0; i < markupSize; i++)
   {
     const QJsonObject element = markupElements.at(i).toObject();

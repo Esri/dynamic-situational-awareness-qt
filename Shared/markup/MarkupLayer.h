@@ -29,7 +29,8 @@ class Feature;
 // Qt
 #include <QHash>
 
-class MarkupLayer : public Esri::ArcGISRuntime::FeatureCollectionLayer, public Esri::ArcGISRuntime::JsonSerializable
+class MarkupLayer : public Esri::ArcGISRuntime::FeatureCollectionLayer,
+                    public Esri::ArcGISRuntime::JsonSerializable
 {
   Q_OBJECT
 

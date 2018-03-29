@@ -36,7 +36,7 @@ Handheld {
     signal clearDialogAccepted();
     signal closeDialogAccepted();
     signal inputDialogAccepted(var input, var index);
-    signal markupLayerReceived(var path);
+    signal markupLayerReceived(var path, var overlayVisible);
 
     LocationController {
         id: locationController
@@ -558,6 +558,7 @@ Handheld {
         id: markupDialog
         property string path
 
-        onAccepted: markupLayerReceived(path);
+        onAccepted: markupLayerReceived(path, true);
+        onRejected: markupLayerReceived(path, false);
     }
 }

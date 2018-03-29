@@ -26,7 +26,7 @@ Dialog {
     x: appRoot.width / 2 - width / 2
     y: appRoot.height / 2 - height / 2
     width: 250 * scaleFactor
-    height: 125 * scaleFactor
+    height: 140 * scaleFactor
     standardButtons: Dialog.Yes | Dialog.No
 
     property alias informativeText: label.text

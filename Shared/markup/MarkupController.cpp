@@ -54,10 +54,11 @@ MarkupController::MarkupController(QObject* parent):
   connect(m_markupBroadcast, &MarkupBroadcast::markupReceived, this, [this](const QString& fileName, const QString& sharedBy)
   {
     emit this->markupReceived(fileName, sharedBy);
+  });
 
-    // show prompt - XYZ has sent you a new markup. Would you like to view?
-    // yes - add as layer, zoom to
-    // no - do nothing
+  connect(m_markupBroadcast, &MarkupBroadcast::markupSent, this, [this](const QString& fileName)
+  {
+    emit this->markupSent(fileName);
   });
 }
 

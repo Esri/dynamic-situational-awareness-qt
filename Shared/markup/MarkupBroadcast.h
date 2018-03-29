@@ -35,6 +35,7 @@ public:
 
 signals:
   void markupReceived(const QString& filePath, const QString& sharedBy);
+  void markupSent(const QString& filePath);
 
 private:
   void updateDataSender();

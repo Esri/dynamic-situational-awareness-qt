@@ -43,7 +43,8 @@ public:
     Points = 0,
     Polylines = 1,
     Polygons = 2,
-    Raster = 3
+    Raster = 3,
+    FreehandMarkup = 4
   };
   Q_ENUM(LayerGeometryType)
 

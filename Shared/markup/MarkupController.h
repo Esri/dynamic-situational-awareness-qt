@@ -65,6 +65,7 @@ signals:
   void sketchCompleted();
   void sketchingChanged();
   void markupReceived(const QString& filePath, const QString& sharedBy);
+  void markupSent(const QString& filePath);
 
 private:
   void updateGeoView();

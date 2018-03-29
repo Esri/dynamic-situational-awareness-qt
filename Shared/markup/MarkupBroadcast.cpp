@@ -18,8 +18,6 @@
 #include "DataSender.h"
 #include "DataListener.h"
 
-// C++ API headers
-
 // Qt headers
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -55,13 +53,10 @@ MarkupBroadcast::MarkupBroadcast(QObject *parent) :
     // write the JSON to disk
     const QJsonObject markupObject = markupJson.object();
     const QString sharedBy = markupObject.value(SHAREDBYKEY).toString();
-//    if (m_username == sharedBy) // don't process the markup if it is the one that you sent
-//      return;
 
     const QString markupName = markupObject.value(MARKUPKEY).toObject().value(NAMEKEY).toString();
     const QString markupFolderName = QString("%1/OperationalData").arg(m_rootDataDirectory);
     QString markupFileName = QString("%1/%2.markup").arg(markupFolderName, markupName);
-    qDebug() << "writing to this file:" << markupFileName;
     QFileInfo fileInfo(markupFileName);
     if (fileInfo.exists())
       markupFileName = QString("%1/%2_%3.markup").arg(markupFolderName, markupName, QString::number(QDateTime::currentDateTime().currentMSecsSinceEpoch()));
@@ -73,11 +68,11 @@ MarkupBroadcast::MarkupBroadcast(QObject *parent) :
       QString strJson(markupJson.toJson(QJsonDocument::Compact));
       stream << strJson << endl;
 
-      emit this->markupReceived(markupFileName, sharedBy);
-    }
-    else
-    {
-      qDebug() << "failed to write markup to disk";
+      // process the markup differently if it is the one that you sent
+      if (m_username == sharedBy)
+        emit this->markupSent(markupFileName);
+      else
+        emit this->markupReceived(markupFileName, sharedBy);
     }
   });
 }

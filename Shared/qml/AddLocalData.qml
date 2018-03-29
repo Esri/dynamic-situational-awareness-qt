@@ -32,7 +32,7 @@ DsaPanel {
 
     Connections {
         target: appRoot
-        onMarkupLayerReceived: toolController.createMarkupLayer(path)
+        onMarkupLayerReceived: toolController.createMarkupLayer(path, -1, overlayVisible);
     }
 
     // Declare the ListView, which will display the list of files

@@ -43,6 +43,9 @@ Item {
             markupController.setOverlayName(input)
             markupController.shareMarkup();
         }
+        onMarkupLayerReceived: {
+            markupController.deleteAllGraphics();
+        }
     }
 
     onVisibleChanged: {
@@ -68,6 +71,13 @@ Item {
             markupDialog.title = "Markup Received";
             markupDialog.path = filePath;
             markupDialog.informativeText = "%1 has sent you a markup. Would you like to view it now?".arg(sharedBy)
+            markupDialog.open();
+        }
+
+        onMarkupSent: {
+            markupDialog.title = "Markup Shared";
+            markupDialog.path = filePath;
+            markupDialog.informativeText = "The shared markup has been added as an overlay. Would you like to view it now?";
             markupDialog.open();
         }
     }

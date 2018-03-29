@@ -58,6 +58,8 @@ private:
   QString m_path;
   QString m_json;
   QString m_username;
+  Esri::ArcGISRuntime::Point m_center;
+  double m_point;
   Esri::ArcGISRuntime::FeatureCollection* m_featureCollection = nullptr;
   QHash<QUuid, QPair<Esri::ArcGISRuntime::Feature*, Esri::ArcGISRuntime::SimpleLineSymbol*>> m_featureHash;
 };

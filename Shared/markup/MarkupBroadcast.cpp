@@ -59,14 +59,12 @@ MarkupBroadcast::MarkupBroadcast(QObject *parent) :
 //      return;
 
     const QString markupName = markupObject.value(MARKUPKEY).toObject().value(NAMEKEY).toString();
-    QString markupFileName = QString("%1/OperationalData/%2.markup").arg(m_rootDataDirectory, markupName);
+    const QString markupFolderName = QString("%1/OperationalData").arg(m_rootDataDirectory);
+    QString markupFileName = QString("%1/%2.markup").arg(markupFolderName, markupName);
     qDebug() << "writing to this file:" << markupFileName;
     QFileInfo fileInfo(markupFileName);
     if (fileInfo.exists())
-    {
-      qDebug() << "file exists";
-      markupFileName = QString("%1_%2").arg(markupFileName, QString::number(QDateTime::currentDateTime().currentMSecsSinceEpoch()));
-    }
+      markupFileName = QString("%1/%2_%3.markup").arg(markupFolderName, markupName, QString::number(QDateTime::currentDateTime().currentMSecsSinceEpoch()));
 
     QFile markupFile(markupFileName);
     if (markupFile.open(QIODevice::ReadWrite))

@@ -1,13 +1,13 @@
 # Overview
 The repo contains [Qt](http://qt.io) projects for dynamic situational awareness applications that can be run from within the Qt Creator IDE.
 
-### Quick start
+## Quick start
 
- - If you just want to grab the latest code and build the project, these are the quick steps:
+If you just want to grab the latest code and build the project, these are the quick steps:
  
- * git clone https://github.com/ArcGIS/dynamic-situational-awareness-qt.git
- * cd dynamic-situational-awareness-qt
- * git clone https://github.com/Esri/arcgis-runtime-toolkit-qt.git
+ * `git clone https://github.com/ArcGIS/dynamic-situational-awareness-qt.git`
+ * `cd dynamic-situational-awareness-qt`
+ * `git clone https://github.com/Esri/arcgis-runtime-toolkit-qt.git`
  * Enable `CONFIG += ToolkitBuildUsePrefix` in projects
  * Open `DSA.pro` with Qt Creator, configure the projects and build.
 

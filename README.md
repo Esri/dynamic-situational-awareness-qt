@@ -85,7 +85,7 @@ $ git merge upstream/master
 git clone https://github.com/Esri/arcgis-runtime-toolkit-qt arcgis-runtime-toolkit-qt
 ```
 
-- To avoid any conflicts with the toolkit library, set `CONFIG += ToolkitBuildUsePrefix` in the toolkit and DSA projects.
+- To avoid any conflicts with the toolkit library from the SDK install, set `CONFIG += ToolkitBuildUsePrefix` in the toolkit and DSA projects. The setting already exists in the projects but is commented out by default.
 
 ## Open a project file in Qt Creator
 Start Qt Creator. When the IDE opens to the Welcome screen, click on the **Open Project** button and browse to a project file (.pro) within your forked repo location.

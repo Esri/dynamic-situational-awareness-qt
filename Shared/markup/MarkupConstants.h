@@ -10,34 +10,16 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef MARKUPUTILITY_H
-#define MARKUPUTILITY_H
+#ifndef MARKUPCONSTANTS_H
+#define MARKUPCONSTANTS_H
 
-namespace Esri {
-namespace ArcGISRuntime {
-class GraphicsOverlay;
-}
-}
 
-class QJsonObject;
+// Qt headers
+#include <QString>
 
-#include "AbstractTool.h"
-
-class MarkupUtility : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+class MarkupConstants
 {
-  Q_OBJECT
-
 public:
-  explicit MarkupUtility(QObject* parent = nullptr);
-  ~MarkupUtility();
-
-  QString toolName() const override;
-  void setProperties(const QVariantMap& properties) override;
-
-  QJsonObject graphicsToJson(Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlay);
-  QStringList colors() const;
-
-private:
   static const QString ARROW;
   static const QString CENTER;
   static const QString COLOR;
@@ -51,7 +33,7 @@ private:
   static const QString USERNAME_PROPERTYNAME;
   static const QString VERSION;
   static const QString VERSIONNUMBER;
-  QString m_username;
 };
 
-#endif // MARKUPUTILITY_H
+
+#endif // MARKUPCONSTANTS_H

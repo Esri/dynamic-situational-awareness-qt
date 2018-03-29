@@ -164,6 +164,8 @@ DsaPanel {
                     return DsaResources.iconPolygon;
                 case TableOfContentsController.Raster:
                     return DsaResources.iconRaster;
+                case TableOfContentsController.FreehandMarkup:
+                    return DsaResources.iconSketch;
                 }
             }
         }

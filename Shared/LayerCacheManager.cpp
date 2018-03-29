@@ -17,6 +17,7 @@
 
 // example app headers
 #include "AddLocalDataController.h"
+#include "MarkupLayer.h"
 
 // toolkit headers
 #include "AbstractTool.h"
@@ -95,6 +96,7 @@ LayerCacheManager::LayerCacheManager(QObject* parent) :
   if (m_scene)
   {
     connect(m_scene->operationalLayers(), &LayerListModel::dataChanged, this, &LayerCacheManager::onLayerListChanged); // layer objects have been added or changed
+    connect(m_scene->operationalLayers(), &LayerListModel::layerAdded, this, &LayerCacheManager::onLayerListChanged); // layer objects have been added
     connect(m_scene->operationalLayers(), &LayerListModel::layerRemoved, this, &LayerCacheManager::onLayerListChanged); // layer has been removed
     connect(m_scene->operationalLayers(), &LayerListModel::layoutChanged, this, &LayerCacheManager::onLayerListChanged); // order changed
     connect(m_scene->operationalLayers(), &LayerListModel::modelReset, this, &LayerCacheManager::onLayerListChanged); // order changed
@@ -266,7 +268,6 @@ void LayerCacheManager::layerToJson(Layer* layer)
   if (sceneLayer)
     layerPath = sceneLayer->url().toLocalFile();
 
-
   // Get TPKs
   auto tiledLayer = dynamic_cast<ArcGISTiledLayer*>(layer);
   if (tiledLayer)
@@ -276,6 +277,11 @@ void LayerCacheManager::layerToJson(Layer* layer)
   auto vectorTiledLayer = dynamic_cast<ArcGISVectorTiledLayer*>(layer);
   if (vectorTiledLayer)
     layerPath = vectorTiledLayer->vectorTileCache() ? vectorTiledLayer->vectorTileCache()->path() : vectorTiledLayer->url().toString();
+
+  // Get Markups
+  auto markupLayer = dynamic_cast<MarkupLayer*>(layer);
+  if (markupLayer)
+    layerPath = markupLayer->path();
 
   // add the layer to the layer list for caching
   QJsonObject layerJson;

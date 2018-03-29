@@ -8,7 +8,6 @@ If you just want to grab the latest code and build the project, these are the qu
  * `git clone https://github.com/ArcGIS/dynamic-situational-awareness-qt.git`
  * `cd dynamic-situational-awareness-qt`
  * `git clone https://github.com/Esri/arcgis-runtime-toolkit-qt.git`
- * Enable `CONFIG += ToolkitBuildUsePrefix` in projects.
  * Open `DSA.pro` with Qt Creator, configure the projects and build.
 
 # Prerequisites
@@ -94,8 +93,6 @@ $ git merge upstream/master
 # from the base of the repo
 git clone https://github.com/Esri/arcgis-runtime-toolkit-qt arcgis-runtime-toolkit-qt
 ```
-
-- To avoid any conflicts with the toolkit library from the SDK install, set `CONFIG += ToolkitBuildUsePrefix` in the toolkit and DSA projects. The setting already exists in the projects but is commented out by default.
 
 ## Open a project file in Qt Creator
 Start Qt Creator. When the IDE opens to the Welcome screen, click on the **Open Project** button and browse to a project file (.pro) within your forked repo location.

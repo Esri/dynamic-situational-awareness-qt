@@ -91,7 +91,7 @@ $ git merge upstream/master
 
 ```
 # from the base of the repo
-git clone https://github.com/Esri/arcgis-runtime-toolkit-qt arcgis-runtime-toolkit-qt
+git clone https://github.com/Esri/arcgis-runtime-toolkit-qt
 ```
 
 ## Open a project file in Qt Creator

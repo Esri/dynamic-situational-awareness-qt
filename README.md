@@ -5,6 +5,7 @@ The repo contains [Qt](http://qt.io) projects for dynamic situational awareness 
 * ArcGIS Runtime SDK for Qt 100.2.1
 * Qt SDK 5.9.2 or higher
 * Qt Creator
+* ArcGIS Runtime SDK for Qt C++ Plugin [(details)](https://github.com/Esri/arcgis-runtime-toolkit-qt)
 * For Windows: Microsoft Visual C++ Compiler 14.0 
 * For more information, please visit the [System Requirements](https://developers.arcgis.com/qt/quartz/qml/guide/arcgis-runtime-sdk-for-qt-system-requirements.htm) page.
 
@@ -74,6 +75,18 @@ $ git checkout master
 ```
 $ git merge upstream/master
 ```
+
+### Setup the [ArcGIS Runtime SDK C++ Toolkit](https://github.com/Esri/arcgis-runtime-toolkit-qt) as a build dependency.
+
+- This is an optional step but allows you to build with the latest version of the toolkit
+
+```
+# from the base of the repo
+git clone https://github.com/Esri/arcgis-runtime-toolkit-qt arcgis-runtime-toolkit-qt
+```
+
+- To avoid any conflicts with the toolkit library, set `CONFIG += ToolkitBuildUsePrefix` in the toolkit and DSA projects.
+
 ## Open a project file in Qt Creator
 Start Qt Creator. When the IDE opens to the Welcome screen, click on the **Open Project** button and browse to a project file (.pro) within your forked repo location.
 Configure the project and run the sample.

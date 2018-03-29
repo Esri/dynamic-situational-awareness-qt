@@ -229,6 +229,11 @@ QUrl DsaResources::iconRotate() const
   return QStringLiteral("qrc:/Resources/icons/xhdpi/Rotate_Mode.png");
 }
 
+QUrl DsaResources::iconSave() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/save.png");
+}
+
 QUrl DsaResources::iconSendMap() const
 {
   return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_sendmap_dark_d.png");

@@ -13,9 +13,12 @@
 #ifndef POINTHIGHLIGHTER_H
 #define POINTHIGHLIGHTER_H
 
-#include <QObject>
 
+// C++ API headers
 #include "Point.h"
+
+// Qt headers
+#include <QObject>
 
 namespace Esri
 {
@@ -50,6 +53,7 @@ private:
   Esri::ArcGISRuntime::SimpleMarkerSceneSymbol* m_highlightSymbol = nullptr;
   Esri::ArcGISRuntime::Point m_point;
   QTimer* m_highlightTimer = nullptr;
+  QMetaObject::Connection m_timerConnection;
 };
 
 #endif // POINTHIGHLIGHTER_H

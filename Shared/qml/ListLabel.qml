@@ -16,15 +16,39 @@ import QtQuick.Controls.Material 2.2
 import QtQuick.Window 2.2
 import Esri.DSA 1.0
 
-Label {
+Item {
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+    property alias text: label.text
+    property alias separatorVisible: separator.visible
+    signal triggered()
 
-    font {
-        family: DsaStyles.fontFamily
-        pixelSize: 16 * scaleFactor
+    width: parent.width
+    height: 32 * scaleFactor
+
+    Label {
+        id: label
+        anchors.centerIn: parent
+
+        font {
+            family: DsaStyles.fontFamily
+            pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
+        }
+        color: Material.foreground
     }
-    color: Material.foreground
-    signal triggered();
+
+    Rectangle {
+        id: separator
+        anchors {
+            bottom: parent.bottom
+            left: parent.left
+            right: parent.right
+            leftMargin: 8 * scaleFactor
+            rightMargin: 8 * scaleFactor
+        }
+
+        height: 1 * scaleFactor
+        color: Material.foreground
+    }
 
     MouseArea {
         anchors.fill: parent

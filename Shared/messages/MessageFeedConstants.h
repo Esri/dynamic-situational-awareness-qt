@@ -13,6 +13,8 @@
 #ifndef MESSAGEFEEDCONSTANTS_H
 #define MESSAGEFEEDCONSTANTS_H
 
+
+// Qt headers
 #include <QString>
 
 class MessageData;
@@ -20,6 +22,8 @@ class MessageData;
 class MessageFeedConstants
 {
 public:
+  static const QString CONTACT_REPORT_CONFIG_PROPERTYNAME;
+  static const QString CONTACT_REPORT_CONFIG_PORT;
   static const QString LOCATION_BROADCAST_CONFIG_PROPERTYNAME;
   static const QString LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE;
   static const QString LOCATION_BROADCAST_CONFIG_PORT;

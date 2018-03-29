@@ -52,6 +52,7 @@ public:
   static const QString IDENTIFY_OPTION;
   static const QString LINE_OF_SIGHT_OPTION;
   static const QString VIEWSHED_OPTION;
+  static const QString CONTACT_REPORT_OPTION;
 
   explicit ContextMenuController(QObject* parent = nullptr);
   ~ContextMenuController();

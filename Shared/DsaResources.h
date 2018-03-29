@@ -61,6 +61,7 @@ class DsaResources : public QObject
   Q_PROPERTY(QUrl iconRemove READ iconRemove CONSTANT)
   Q_PROPERTY(QUrl iconReport READ iconReport CONSTANT)
   Q_PROPERTY(QUrl iconRotate READ iconRotate CONSTANT)
+  Q_PROPERTY(QUrl iconSave READ iconSave CONSTANT)
   Q_PROPERTY(QUrl iconSendMap READ iconSendMap CONSTANT)
   Q_PROPERTY(QUrl iconSettings READ iconSettings CONSTANT)
   Q_PROPERTY(QUrl iconSketch READ iconSketch CONSTANT)
@@ -121,6 +122,7 @@ private:
   QUrl iconRemove() const;
   QUrl iconReport() const;
   QUrl iconRotate() const;
+  QUrl iconSave() const;
   QUrl iconSendMap() const;
   QUrl iconSettings() const;
   QUrl iconSketch() const;

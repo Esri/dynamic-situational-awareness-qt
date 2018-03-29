@@ -10,9 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "pch.hpp"
-
 #include "DsaController.h"
+
+// PCH header
+#include "pch.hpp"
 
 // example app headers
 #include "AlertConstants.h"
@@ -52,7 +53,6 @@ DsaController::DsaController(QObject* parent):
   m_jsonFormat(QSettings::registerFormat("json", &readJsonFile, &writeJsonFile)),
   m_conflictingToolNames{QStringLiteral("Alert Conditions"),
                          QStringLiteral("Markup Tool"),
-                         QStringLiteral("CoordinateConversion"),
                          QStringLiteral("viewshed")}
 {
   // setup config settings
@@ -354,6 +354,10 @@ void DsaController::writeDefaultMessageFeeds()
   locationBroadcastJson.insert(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE, QStringLiteral("position_report_land"));
   locationBroadcastJson.insert(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PORT, 45679);
   m_dsaSettings[MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME] = locationBroadcastJson;
+
+  QJsonObject conditionReportJson;
+  conditionReportJson.insert(MessageFeedConstants::CONTACT_REPORT_CONFIG_PORT, 45679);
+  m_dsaSettings[MessageFeedConstants::CONTACT_REPORT_CONFIG_PROPERTYNAME] = conditionReportJson;
 }
 
 /*! \brief internal
@@ -392,6 +396,9 @@ void DsaController::createDefaultSettings()
   m_dsaSettings[Toolkit::CoordinateConversionConstants::COORDINATE_FORMAT_PROPERTY] = Toolkit::CoordinateConversionConstants::MGRS_FORMAT;
   m_dsaSettings[AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME] = AppConstants::UNIT_METERS;
   m_dsaSettings["UseGpsForElevation"] = QStringLiteral("true");
+  QJsonObject markupJson;
+  markupJson.insert(QStringLiteral("port"), 12345);
+  m_dsaSettings[QStringLiteral("MarkupConfig")] = markupJson;
   writeDefaultConditions();
 }
 

@@ -1,7 +1,6 @@
 #ifndef ABSTRACTSKETCHTOOL_H
 #define ABSTRACTSKETCHTOOL_H
 
-#include <QColor>
 #include <QList>
 
 #include "AbstractTool.h"
@@ -39,6 +38,8 @@ public:
   void selectPartByIndex(int partIndex);
   void insertPointInPart(int partIndex, int pointIndex, const Esri::ArcGISRuntime::Point& drawPoint);
   Esri::ArcGISRuntime::Point normalizedPoint(double x, double y);
+
+  Esri::ArcGISRuntime::GraphicsOverlay* sketchOverlay() const;
 
   // Functions that should be from the SketchEditor
   void setSketchSymbol(Esri::ArcGISRuntime::Symbol* symbol);

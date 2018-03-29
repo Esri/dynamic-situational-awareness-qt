@@ -23,7 +23,7 @@
 // Qt headers
 #include <QObject>
 
-class MessageSender;
+class DataSender;
 class QTimer;
 
 class LocationBroadcast : public QObject
@@ -80,7 +80,7 @@ private:
   int m_frequency = 3000;
   bool m_inDistress = false;
 
-  MessageSender* m_messageSender = nullptr;
+  DataSender* m_dataSender = nullptr;
   Message m_message;
   QTimer* m_timer = nullptr;
 

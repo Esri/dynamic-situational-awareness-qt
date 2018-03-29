@@ -11,7 +11,7 @@
 //
 
 #include "MessageSimulatorController.h"
-#include "MessageSender.h"
+#include "DataSender.h"
 #include "CoTMessageParser.h"
 #include "SimulatedMessage.h"
 #include "SimulatedMessageListModel.h"
@@ -20,7 +20,7 @@
 
 MessageSimulatorController::MessageSimulatorController(QObject* parent) :
   QObject(parent),
-  m_messageSender(new MessageSender(this)),
+  m_dataSender(new DataSender(this)),
   m_messages(new SimulatedMessageListModel(this))
 {
   connect(&m_timer, &QTimer::timeout, this, [this]
@@ -58,7 +58,7 @@ MessageSimulatorController::MessageSimulatorController(QObject* parent) :
       return;
     }
 
-    if (m_messageSender->sendMessage(messageBytes) == -1)
+    if (m_dataSender->sendData(messageBytes) == -1)
     {
       emit errorOccurred(tr("Failed to send message"));
       return;
@@ -67,10 +67,10 @@ MessageSimulatorController::MessageSimulatorController(QObject* parent) :
     m_messagesSent++;
   });
 
-  connect(m_messageSender, &MessageSender::messageSent, this, [this](const QByteArray& message)
+  connect(m_dataSender, &DataSender::dataSent, this, [this](const QByteArray& data)
   {
     // create a simulated message to be added to the messages model
-    SimulatedMessage* cotMessage = SimulatedMessage::createFromCoTMessage(message, this);
+    SimulatedMessage* cotMessage = SimulatedMessage::createFromCoTMessage(data, this);
     if (!cotMessage)
     {
       emit errorOccurred(tr("Failed to create simulated CoT message"));
@@ -199,7 +199,7 @@ void MessageSimulatorController::startSimulation(const QUrl& file)
   // create UDP connection to broadcast address with specified port
   m_udpSocket = new QUdpSocket(this);
   m_udpSocket->connectToHost(QHostAddress::Broadcast, m_port, QIODevice::WriteOnly);
-  m_messageSender->setDevice(m_udpSocket);
+  m_dataSender->setDevice(m_udpSocket);
 
   if (m_messageParser)
     delete m_messageParser;
@@ -270,7 +270,7 @@ void MessageSimulatorController::stopSimulation()
 
 void MessageSimulatorController::sendMessage(const QString& message)
 {
-  m_messageSender->sendMessage(message.toUtf8());
+  m_dataSender->sendData(message.toUtf8());
 }
 
 void MessageSimulatorController::saveSettings()

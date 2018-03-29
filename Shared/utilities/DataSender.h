@@ -10,35 +10,35 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef MESSAGESENDER_H
-#define MESSAGESENDER_H
+#ifndef DATASENDER_H
+#define DATASENDER_H
 
 #include <QObject>
 #include <QPointer>
 
 class QIODevice;
 
-class MessageSender : public QObject
+class DataSender : public QObject
 {
   Q_OBJECT
 
 public:
-  explicit MessageSender(QObject* parent = nullptr);
-  explicit MessageSender(QIODevice* device, QObject* parent = nullptr);
-  ~MessageSender();
+  explicit DataSender(QObject* parent = nullptr);
+  explicit DataSender(QIODevice* device, QObject* parent = nullptr);
+  ~DataSender();
 
   void setDevice(QIODevice* device);
   QIODevice* device() const;
 
-  qint64 sendMessage(const QByteArray& message);
+  qint64 sendData(const QByteArray& data);
 
 signals:
-  void messageSent(const QByteArray& message);
+  void dataSent(const QByteArray& data);
 
 private:
-  Q_DISABLE_COPY(MessageSender)
+  Q_DISABLE_COPY(DataSender)
 
   QPointer<QIODevice> m_device;
 };
 
-#endif // MESSAGESENDER_H
+#endif // DATASENDER_H

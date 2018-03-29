@@ -22,7 +22,10 @@ Row {
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
     spacing: 10 * scaleFactor
     visible: categoryToolbar.state === "map"
-    onVisibleChanged: state = "clear"
+    onVisibleChanged: {
+        tableOfContentsTool.visible = false;
+        state = "clear";
+    }
     property alias tocIconSelected: tocIcon.selected
 
     states: [
@@ -144,7 +147,7 @@ Row {
             }
             PropertyChanges {
                 target: tocIcon
-                selected: selected
+                selected: false
             }
         }
     ]

@@ -26,7 +26,7 @@ namespace Esri {
 }
 
 class MessageFeedListModel;
-class MessageListener;
+class DataListener;
 class LocationBroadcast;
 
 class MessageFeedsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
@@ -48,9 +48,9 @@ public:
 
   QAbstractListModel* messageFeeds() const;
 
-  QList<MessageListener*> messageListeners() const;
-  void addMessageListener(MessageListener* messageListener);
-  void removeMessageListener(MessageListener* messageListener);
+  QList<DataListener*> dataListeners() const;
+  void addDataListener(DataListener* dataListener);
+  void removeDataListener(DataListener* dataListener);
 
   QString toolName() const override;
   void setProperties(const QVariantMap& properties) override;
@@ -83,7 +83,7 @@ private:
   Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
 
   MessageFeedListModel* m_messageFeeds = nullptr;
-  QList<MessageListener*> m_messageListeners;
+  QList<DataListener*> m_dataListeners;
   QString m_resourcePath;
   LocationBroadcast* m_locationBroadcast = nullptr;
 };

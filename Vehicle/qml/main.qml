@@ -278,6 +278,32 @@ Vehicle {
             }
         }
 
+        ContactReportTool {
+            id: contactReportTool
+            anchors {
+                right: parent.right
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+            isMobile: false
+            onClosed: {
+                visible = false;
+                reportToolRow.state = reportToolRow.clearState;
+            }
+
+            onVisibleChanged: {
+                if (!visible)
+                    return;
+
+                categoryToolbar.state = "reports";
+
+                if (reportToolRow.state !== reportToolRow.contactState)
+                    reportToolRow.state = reportToolRow.contactState;
+            }
+        }
+
         PopupStackView {
             id: identifyResults
             anchors {
@@ -487,14 +513,13 @@ Vehicle {
 
     DsaInputDialog {
         id: inputDialog
-        property int i: 1
         onAccepted: {
-            i++;
-            inputDialogAccepted(inputDialog.userInputText, i);
+            inputDialogAccepted(inputDialog.userInputText, inputDialog.titleText);
         }
     }
 
-    function showInputDialog(labelText, placeholderText) {
+    function showInputDialog(titleText, labelText, placeholderText) {
+        inputDialog.titleText = titleText;
         inputDialog.inputLabel = labelText;
         inputDialog.inputPlaceholderText = placeholderText;
         inputDialog.open();

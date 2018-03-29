@@ -10,6 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
 #include "LayerCacheManager.h"
@@ -39,7 +40,6 @@
 #include "ShapefileFeatureTable.h"
 
 // Qt headers
-#include <QDebug>
 #include <QDir>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -131,25 +131,8 @@ void LayerCacheManager::setProperties(const QVariantMap& properties)
     return;
 
   const QVariant layersData = properties.value(LAYERS_PROPERTYNAME);
-  if (layersData.isNull())
-  {
-    m_initialLoadCompleted = true;
-    return;
-  }
-
   const auto layersList = layersData.toList();
-  if (layersList.isEmpty())
-  {
-    m_initialLoadCompleted = true;
-    return;
-  }
-
   m_inputLayerJsonArray = QJsonArray::fromVariantList(layersList);
-  if (m_inputLayerJsonArray.isEmpty())
-  {
-    m_initialLoadCompleted = true;
-    return;
-  }
 
   auto it = m_inputLayerJsonArray.constBegin();
   auto itEnd = m_inputLayerJsonArray.constEnd();
@@ -168,8 +151,6 @@ void LayerCacheManager::setProperties(const QVariantMap& properties)
 
     layerIndex++;
   };
-
-  m_initialLoadCompleted = true;
 
   // Add the default elevation source
   const QVariant elevationData = properties.value(ELEVATION_PROPERTYNAME);
@@ -190,7 +171,11 @@ void LayerCacheManager::setProperties(const QVariantMap& properties)
   }
   // If more than 1, it is a list of rasters
   else if (pathList.length() > 1)
+  {
     m_localDataController->createElevationSourceFromRasters(pathList);
+  }
+
+  m_initialLoadCompleted = true;
 }
 
 /*

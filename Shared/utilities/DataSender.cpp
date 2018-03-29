@@ -10,41 +10,41 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "MessageSender.h"
+#include "DataSender.h"
 
 #include <QUdpSocket>
 
-MessageSender::MessageSender(QObject* parent) :
+DataSender::DataSender(QObject* parent) :
   QObject(parent)
 {
 }
 
-MessageSender::MessageSender(QIODevice* device, QObject *parent) :
+DataSender::DataSender(QIODevice* device, QObject *parent) :
   QObject(parent),
   m_device(device)
 {
 }
 
-MessageSender::~MessageSender()
+DataSender::~DataSender()
 {
 }
 
-void MessageSender::setDevice(QIODevice* device)
+void DataSender::setDevice(QIODevice* device)
 {
   m_device = device;
 }
 
-QIODevice* MessageSender::device() const
+QIODevice* DataSender::device() const
 {
   return m_device.data();
 }
 
-qint64 MessageSender::sendMessage(const QByteArray& message)
+qint64 DataSender::sendData(const QByteArray& data)
 {
   // write the bytes to be sent to the device
-  qint64 bytesWritten = m_device->write(message);
+  qint64 bytesWritten = m_device->write(data);
   if (bytesWritten != -1)
-    emit messageSent(message);
+    emit dataSent(data);
 
   return bytesWritten;
 }

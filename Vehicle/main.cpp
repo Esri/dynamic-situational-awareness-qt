@@ -10,53 +10,63 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
-#include <QSettings>
-#include <QGuiApplication>
-#include <QQuickView>
-#include <QCommandLineParser>
-#include <QDir>
-#include <QMessageBox>
-#include <QQmlEngine>
-#include <QObject>
+// example app headers
+#include "AddLocalDataController.h"
+#include "AlertConditionsController.h"
+#include "AlertListController.h"
+#include "AnalysisListController.h"
+#include "AppInfo.h"
+#include "BasemapPickerController.h"
+#include "ContactReportController.h"
+#include "ContextMenuController.h"
+#include "DsaResources.h"
+#include "FollowPositionController.h"
+#include "IdentifyController.h"
+#include "LineOfSightController.h"
+#include "LocationController.h"
+#include "LocationTextController.h"
+#include "MarkupController.h"
+#include "MessageFeedsController.h"
+#include "NavigationController.h"
+#include "OptionsController.h"
+#include "TableOfContentsController.h"
+#include "Vehicle.h"
+#include "VehicleStyles.h"
+#include "ViewedAlertsController.h"
+#include "ViewshedController.h"
 
-#ifdef Q_OS_WIN
-#include <Windows.h>
-#endif
-
-#include "ArcGISRuntimeEnvironment.h"
+// toolkit headers
+#include "ArcGISCompassController.h"
 #include "ArcGISRuntimeToolkit.h"
 
+// C++ API headers
+#include "ArcGISRuntimeEnvironment.h"
 #include "PopupManager.h"
 #include "SceneQuickView.h"
 
-#include "AlertListController.h"
-#include "BasemapPickerController.h"
-#include "AddLocalDataController.h"
-#include "FollowPositionController.h"
-#include "LocationController.h"
-#include "MessageFeedsController.h"
-#include "TableOfContentsController.h"
-#include "NavigationController.h"
-#include "MarkupController.h"
-#include "ViewshedController.h"
-#include "OptionsController.h"
-#include "VehicleStyles.h"
-#include "ViewedAlertsController.h"
-#include "LocationTextController.h"
-#include "IdentifyController.h"
-#include "AlertConditionsController.h"
-#include "LineOfSightController.h"
-#include "ContextMenuController.h"
-#include "AnalysisListController.h"
-#include "DsaResources.h"
+// Qt headers
+#include <QCommandLineParser>
+#include <QDir>
+#include <QGuiApplication>
+#include <QMessageBox>
+#include <QObject>
+#include <QQmlEngine>
+#include <QQuickView>
+#include <QSettings>
 
-#include "ArcGISRuntimeToolkit.h"
-#include "ArcGISCompassController.h"
+// STL headers
+#include <Windows.h>
 
-#include "AppInfo.h"
-#include "Vehicle.h"
+#ifdef Q_OS_WIN
+#endif
+
+
+
+
+
 
 //------------------------------------------------------------------------------
 
@@ -151,6 +161,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<LineOfSightController>("Esri.DSA", 1, 0, "LineOfSightController");
   qmlRegisterType<ContextMenuController>("Esri.DSA", 1, 0, "ContextMenuController");
   qmlRegisterType<AnalysisListController>("Esri.DSA", 1, 0, "AnalysisListController");
+  qmlRegisterType<ContactReportController>("Esri.DSA", 1, 0, "ContactReportController");
 
   // Register Toolkit Component Types
   ArcGISRuntimeToolkit::registerToolkitTypes();

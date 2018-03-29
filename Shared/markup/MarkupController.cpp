@@ -31,7 +31,12 @@
 #include "GeometryTypes.h"
 #include "GeometryEngine.h"
 
+#include "MarkupUtility.h"
+#include "MarkupBroadcast.h"
+
 #include <QCursor>
+#include <QJsonObject>
+#include <QJsonDocument>
 
 const QString MarkupController::nameAttribute = QStringLiteral("name");
 
@@ -39,13 +44,20 @@ const QString MarkupController::nameAttribute = QStringLiteral("name");
 using namespace Esri::ArcGISRuntime;
 
 MarkupController::MarkupController(QObject* parent):
-  AbstractSketchTool(parent)
+  AbstractSketchTool(parent),
+  m_markupUtility(new MarkupUtility(parent)),
+  m_markupBroadcast(new MarkupBroadcast(parent))
 {
   Toolkit::ToolManager::instance().addTool(this);
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, &MarkupController::updateGeoView);
 
   updateGeoView();
   updatedSymbol();
+
+  connect(m_markupBroadcast, &MarkupBroadcast::dataReceived, this, [this](const QJsonDocument& json)
+  {
+    Q_UNUSED(json) // TODO - convert JSON to Feature Collection Layer, prompt user to add, add as layer to layer list
+  });
 }
 
 MarkupController::~MarkupController()
@@ -80,36 +92,18 @@ double MarkupController::drawingAltitude() const
 // creates a new LineSymbol rather than updating the current one so previously drawn sketches stay the same color
 void MarkupController::setColor(const QColor& color)
 {
+  if (m_color == color)
+    return;
+
   m_color = color;
-
-  if (!m_isSketching)
-    return;
-
-  if (!m_sketchSymbol)
-    return;
-
-  auto lineSym = dynamic_cast<SimpleLineSymbol*>(sketchSymbol());
-  if (!lineSym)
-    return;
-
-  lineSym->setColor(m_color);
 }
 
 void MarkupController::setWidth(float width)
 {
+  if (m_width == width)
+    return;
+
   m_width = width;
-
-  if (!m_isSketching)
-    return;
-
-  if (!m_sketchSymbol)
-    return;
-
-  auto lineSym = dynamic_cast<SimpleLineSymbol*>(sketchSymbol());
-  if (!lineSym)
-    return;
-
-  lineSym->setWidth(m_width);
 }
 
 Symbol* MarkupController::updatedSymbol()
@@ -208,15 +202,12 @@ void MarkupController::init()
       mouseEvent.accept();
 
     // create a new graphic that corresponds to a new Part of the GeometryBuilder
-    if (!m_isSketching)
-    {
-      clear();
-      m_currentPartIndex = 0;
-      Graphic* partGraphic = new Graphic(this);
-      partGraphic->setSymbol(updatedSymbol());
-      m_partOutlineGraphics.append(partGraphic);
-      m_sketchOverlay->graphics()->append(partGraphic);
-    }
+    clear();
+    m_currentPartIndex = 0;
+    Graphic* partGraphic = new Graphic(this);
+    partGraphic->setSymbol(updatedSymbol());
+    m_partOutlineGraphics.append(partGraphic);
+    m_sketchOverlay->graphics()->append(partGraphic);
     m_currentPartIndex = addPart();
 
     Point pressedPoint(normalizedPoint(mouseEvent.x(), mouseEvent.y()));
@@ -324,40 +315,35 @@ GeometryType MarkupController::geometryType() const
   return GeometryType::Polyline;
 }
 
-void MarkupController::setName(const QString& name)
+void MarkupController::setOverlayName(const QString& name)
 {
   if (!m_sketchOverlay)
     return;
 
-  const auto graphic = m_sketchOverlay->graphics()->last();
-  graphic->attributes()->insertAttribute(nameAttribute, name);
-}
-
-void MarkupController::clearGraphics()
-{
-  if (!m_sketchOverlay)
+  if (m_sketchOverlay->overlayId() == name)
     return;
 
-  m_sketchOverlay->graphics()->clear();
+  m_sketchOverlay->setOverlayId(name.length() > 0 ? name : "Markup");
 }
 
-void MarkupController::setSketching(bool isSketching)
+QStringList MarkupController::colors() const
 {
-  m_isSketching = isSketching;
+  return m_markupUtility->colors();
 }
 
-void MarkupController::clearCurrentSketch()
+void MarkupController::shareMarkup()
 {
-  if (!m_isSketching)
+  if (!m_markupUtility)
     return;
 
-  if (!m_sketchOverlay)
+  if (!m_markupBroadcast)
     return;
 
-  m_sketchOverlay->graphics()->removeAt(m_sketchOverlay->graphics()->size() - 1);
+  QJsonObject markupJson = m_markupUtility->graphicsToJson(sketchOverlay());
+  m_markupBroadcast->broadcastMarkup(markupJson);
 }
 
-bool MarkupController::isSketching() const
+QColor MarkupController::currentColor() const
 {
-  return m_isSketching;
+  return m_color;
 }

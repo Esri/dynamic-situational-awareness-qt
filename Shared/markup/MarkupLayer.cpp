@@ -169,13 +169,13 @@ MarkupLayer* MarkupLayer::createFromGraphics(GraphicsOverlay* graphicsOverlay, c
   // add the name of the sharer
   markupJson[MarkupConstants::SHAREDBY] = authorName;
 
-  return MarkupLayer::createFromJson(QJsonDocument(markupJson).toJson(QJsonDocument::Compact), parent);
+  return MarkupLayer::fromJson(QJsonDocument(markupJson).toJson(QJsonDocument::Compact), parent);
 }
 
 /*
  \brief Returns a MarkupLayer for the input \a json.
 */
-MarkupLayer* MarkupLayer::createFromJson(const QString& json, QObject* parent)
+MarkupLayer* MarkupLayer::fromJson(const QString& json, QObject* parent)
 {
   // Create the FeatureCollectionTable
   FeatureCollectionTable* table = new FeatureCollectionTable(QList<Field>{}, GeometryType::Polyline, SpatialReference(4326), true, false, parent);
@@ -205,7 +205,7 @@ MarkupLayer* MarkupLayer::createFromPath(const QString& path, QObject* parent)
   QTextStream stream(&markupFile);
 
   // Create the Layer
-  MarkupLayer* markupLayer = MarkupLayer::createFromJson(stream.readAll(), parent);
+  MarkupLayer* markupLayer = MarkupLayer::fromJson(stream.readAll(), parent);
   markupLayer->setPath(path);
 
   return markupLayer;
@@ -219,4 +219,21 @@ QStringList MarkupLayer::colors()
   return QStringList{QStringLiteral("#ff0000"), QStringLiteral("#ffd700"),
         QStringLiteral("#32cd32"), QStringLiteral("#00ffff"),
         QStringLiteral("#800080"), QStringLiteral("#ff00ff")};
+}
+
+
+/*!
+  \brief Gets the unknown JSON of this object.
+*/
+QJsonObject MarkupLayer::unknownJson() const
+{
+  return QJsonObject();
+}
+
+/*!
+  \brief Gets the unsupported JSON of this object.
+*/
+QJsonObject MarkupLayer::unsupportedJson() const
+{
+  return QJsonObject();
 }

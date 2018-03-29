@@ -22,18 +22,21 @@ class Feature;
 }
 }
 
+// Runtime API
 #include "FeatureCollectionLayer.h"
+#include "JsonSerializable.h"
+
+// Qt
 #include <QHash>
 
-class MarkupLayer : public Esri::ArcGISRuntime::FeatureCollectionLayer
+class MarkupLayer : public Esri::ArcGISRuntime::FeatureCollectionLayer, public Esri::ArcGISRuntime::JsonSerializable
 {
   Q_OBJECT
 
 public:
   ~MarkupLayer();
 
-  // factory create methods
-  static MarkupLayer* createFromJson(const QString& json, QObject* parent = nullptr);
+  // helper create methods
   static MarkupLayer* createFromPath(const QString& path, QObject* parent = nullptr);
   static MarkupLayer* createFromGraphics(Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlay, const QString& authorName, QObject* parent = nullptr);
 
@@ -41,9 +44,13 @@ public:
 
   void setPath(const QString& path);
   QString path() const;
-
-  QString toJson() const;
   Esri::ArcGISRuntime::FeatureCollection* featureCollection();
+
+  // JSON Serializable
+  static MarkupLayer* fromJson(const QString& json, QObject* parent = nullptr);
+  QString toJson() const override;
+  QJsonObject unknownJson() const override;
+  QJsonObject unsupportedJson() const override;
 
 private:
   MarkupLayer(const QString& json, Esri::ArcGISRuntime::FeatureCollection* featureCollection, QObject* parent = nullptr);

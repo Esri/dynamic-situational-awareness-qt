@@ -20,6 +20,7 @@ include($$PWD/resolvelocaltoolkit.pri)
   # local toolkit found
   include($$CppToolkitLocation/ArcGISRuntimeToolkit.pri) {
     message("Using local C++ toolkit: $$CppToolkitLocation")
+    DEFINES += QTRUNTIME_TOOLKIT_STATIC_BUILD
   }
 }
 else {

@@ -10,7 +10,7 @@ CONFIG += ordered
 include($$PWD/Shared/build/resolvelocaltoolkit.pri)
 message($$CppToolkitLocation)
 !isEmpty(CppToolkitLocation) {
-  SUBDIRS += $$CppToolkitLocation/ArcGISRuntimeToolkit.pro
+  SUBDIRS += $$CppToolkitLocation/ArcGISRuntimeToolkit_StaticLib.pro
 }
 
 SUBDIRS += \

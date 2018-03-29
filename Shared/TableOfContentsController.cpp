@@ -210,6 +210,8 @@ TableOfContentsController::LayerGeometryType TableOfContentsController::layerGeo
   }
   case LayerType::RasterLayer:
     return LayerGeometryType::Raster;
+  case LayerType::FeatureCollectionLayer:
+    return LayerGeometryType::FreehandMarkup;
   default:
     return LayerGeometryType::Unknown;
   }

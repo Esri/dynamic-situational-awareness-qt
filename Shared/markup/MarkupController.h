@@ -16,13 +16,10 @@
 #include "AbstractTool.h"
 #include "AbstractSketchTool.h"
 
-class MarkupUtility;
-
 #include <QColor>
 
 #include "GeometryTypes.h"
 
-class MarkupUtility;
 class MarkupBroadcast;
 
 class MarkupController : public AbstractSketchTool
@@ -37,6 +34,8 @@ class MarkupController : public AbstractSketchTool
 public:
   explicit MarkupController(QObject* parent = nullptr);
   ~MarkupController();
+
+  void setProperties(const QVariantMap& properties) override;
 
   Q_INVOKABLE void setColor(const QColor& color);
   Q_INVOKABLE void setWidth(float width);
@@ -65,6 +64,8 @@ signals:
   void drawingAltitudeChanged();
   void sketchCompleted();
   void sketchingChanged();
+  void markupReceived(const QString& filePath, const QString& sharedBy);
+  void markupSent(const QString& filePath);
 
 private:
   void updateGeoView();
@@ -73,15 +74,15 @@ private:
   Esri::ArcGISRuntime::Symbol* updatedSymbol();
   QStringList colors() const;
 
-  static const QString nameAttribute;
+  static const QString USERNAME_PROPERTYNAME;
   int m_currentPartIndex = 0;
   double m_drawingAltitude = 10.0;
   bool m_isDrawing = false;
   bool m_drawModeEnabled = true;
   bool m_is3d = false;
   QColor m_color = QColor("black");
+  QString m_username;
   float m_width = 8.0f;
-  MarkupUtility* m_markupUtility = nullptr;
   MarkupBroadcast* m_markupBroadcast = nullptr;
 };
 

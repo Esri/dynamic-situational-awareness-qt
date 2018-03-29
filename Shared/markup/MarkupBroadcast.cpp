@@ -18,19 +18,23 @@
 #include "DataSender.h"
 #include "DataListener.h"
 
-// C++ API headers
-
 // Qt headers
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QString>
 #include <QUdpSocket>
+#include <QFileInfo>
+#include <QDateTime>
 
 using namespace Esri::ArcGISRuntime;
 
 const QString MarkupBroadcast::MARKUPCONFIG_PROPERTYNAME = QStringLiteral("MarkupConfig");
+const QString MarkupBroadcast::ROOTDATA_PROPERTYNAME = QStringLiteral("RootDataDirectory");
 const QString MarkupBroadcast::UDPPORT_PROPERTYNAME = QStringLiteral("port");
 const QString MarkupBroadcast::USERNAME_PROPERTYNAME = QStringLiteral("UserName");
+const QString MarkupBroadcast::NAMEKEY = QStringLiteral("name");
+const QString MarkupBroadcast::MARKUPKEY = QStringLiteral("markup");
+const QString MarkupBroadcast::SHAREDBYKEY = QStringLiteral("sharedBy");
 
 /*
  \brief Constructor that takes an optional \a parent.
@@ -45,7 +49,31 @@ MarkupBroadcast::MarkupBroadcast(QObject *parent) :
   connect(m_dataListener, &DataListener::dataReceived, this, [this](const QByteArray& data)
   {
     QJsonDocument markupJson = QJsonDocument::fromJson(data);
-    emit this->dataReceived(markupJson);
+
+    // write the JSON to disk
+    const QJsonObject markupObject = markupJson.object();
+    const QString sharedBy = markupObject.value(SHAREDBYKEY).toString();
+
+    const QString markupName = markupObject.value(MARKUPKEY).toObject().value(NAMEKEY).toString();
+    const QString markupFolderName = QString("%1/OperationalData").arg(m_rootDataDirectory);
+    QString markupFileName = QString("%1/%2.markup").arg(markupFolderName, markupName);
+    QFileInfo fileInfo(markupFileName);
+    if (fileInfo.exists())
+      markupFileName = QString("%1/%2_%3.markup").arg(markupFolderName, markupName, QString::number(QDateTime::currentDateTime().currentMSecsSinceEpoch()));
+
+    QFile markupFile(markupFileName);
+    if (markupFile.open(QIODevice::ReadWrite))
+    {
+      QTextStream stream(&markupFile);
+      QString strJson(markupJson.toJson(QJsonDocument::Compact));
+      stream << strJson << endl;
+
+      // process the markup differently if it is the one that you sent
+      if (m_username == sharedBy)
+        emit this->markupSent(markupFileName);
+      else
+        emit this->markupReceived(markupFileName, sharedBy);
+    }
   });
 }
 
@@ -71,6 +99,8 @@ void MarkupBroadcast::setProperties(const QVariantMap& properties)
 {
   m_username = properties[USERNAME_PROPERTYNAME].toString();
 
+  m_rootDataDirectory = properties[ROOTDATA_PROPERTYNAME].toString();
+
   const auto markupPortConfig = properties[MARKUPCONFIG_PROPERTYNAME].toMap();
   auto findPortIt = markupPortConfig.find(UDPPORT_PROPERTYNAME);
   if (findPortIt != markupPortConfig.end())
@@ -87,12 +117,12 @@ void MarkupBroadcast::setProperties(const QVariantMap& properties)
 /*!
    \brief Broadcasts the markup JSON over a UDP port.
  */
-void MarkupBroadcast::broadcastMarkup(const QJsonObject& json)
+void MarkupBroadcast::broadcastMarkup(const QString& json)
 {
   if (!m_dataSender)
     return;
 
-  m_dataSender->sendData(QJsonDocument(json).toJson());
+  m_dataSender->sendData(json.toUtf8());
 }
 
 /*

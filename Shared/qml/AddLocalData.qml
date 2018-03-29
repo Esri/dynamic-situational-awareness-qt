@@ -30,6 +30,11 @@ DsaPanel {
         id: toolController
     }
 
+    Connections {
+        target: appRoot
+        onMarkupLayerReceived: toolController.createMarkupLayer(path, -1, overlayVisible);
+    }
+
     // Declare the ListView, which will display the list of files
     ListView {
         id: localDataList

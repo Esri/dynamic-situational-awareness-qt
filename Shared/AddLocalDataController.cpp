@@ -17,6 +17,7 @@
 // example app headers
 #include "DataItemListModel.h"
 #include "DsaUtility.h"
+#include "MarkupLayer.h"
 
 // toolkit headers
 #include "ToolManager.h"
@@ -41,17 +42,24 @@
 #include "Scene.h"
 #include "ShapefileFeatureTable.h"
 #include "TileCache.h"
+#include "FeatureCollection.h"
+#include "FeatureCollectionLayer.h"
+#include "FeatureCollectionTable.h"
 
 // Qt headers
 #include <QDir>
 #include <QFileInfo>
+#include <QFile>
+#include <QTextStream>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 using namespace Esri::ArcGISRuntime;
 
 const QString AddLocalDataController::LOCAL_DATAPATHS_PROPERTYNAME = "LocalDataPaths";
 const QString AddLocalDataController::DEFAULT_ELEVATION_PROPERTYNAME = "DefaultElevationSource";
 
-const QString AddLocalDataController::s_allData = QStringLiteral("All Data (*.geodatabase *.tpk *.shp *.gpkg *.mmpk *.slpk *.vtpk *.img *.tif *.tiff *.i1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr)");
+const QString AddLocalDataController::s_allData = QStringLiteral("All Data (*.geodatabase *.tpk *.shp *.gpkg *.mmpk *.slpk *.vtpk *.img *.tif *.tiff *.i1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr *.markup)");
 const QString AddLocalDataController::s_rasterData = QStringLiteral("Raster Files (*.img *.tif *.tiff *.I1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr)");
 const QString AddLocalDataController::s_geodatabaseData = QStringLiteral("Geodatabase (*.geodatabase)");
 const QString AddLocalDataController::s_shapefileData = QStringLiteral("Shapefile (*.shp)");
@@ -59,6 +67,7 @@ const QString AddLocalDataController::s_geopackageData = QStringLiteral("GeoPack
 const QString AddLocalDataController::s_sceneLayerData = QStringLiteral("Scene Layer Package (*.slpk)");
 const QString AddLocalDataController::s_vectorTilePackageData = QStringLiteral("Vector Tile Package (*.vtpk)");
 const QString AddLocalDataController::s_tilePackageData = QStringLiteral("Tile Package (*.tpk)");
+const QString AddLocalDataController::s_markupData = QStringLiteral("Markup (*.markup)");
 
 /*
  \brief Constructor that takes an optional \a parent.
@@ -74,7 +83,8 @@ AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
 
   // create file filter list
   m_fileFilterList = QStringList{allData(), rasterData(), geodatabaseData(),
-      sceneLayerData(), tilePackageData(), shapefileData(), geopackageData()
+      sceneLayerData(), tilePackageData(), shapefileData(), geopackageData(),
+      markupData()
       /*, vectorTilePackageData()*/}; // VTPK is not supported in 3D
   emit fileFilterListChanged();
   emit localDataModelChanged();
@@ -151,12 +161,14 @@ QStringList AddLocalDataController::determineFileFilters(const QString& fileType
     fileFilter << "*.slpk";
   else if (fileType == vectorTilePackageData())
     fileFilter << "*.vtpk";
+  else if (fileType == markupData())
+    fileFilter << "*.markup";
   else if (fileType == rasterData())
     fileFilter = rasterExtensions;
   else
   {
     fileFilter = rasterExtensions;
-    fileFilter << "*.geodatabase" << "*.tpk" << "*.shp" << "*.gpkg" << "*.slpk"/* << "*.vtpk"*/; // VTPK is not supported in 3D
+    fileFilter << "*.geodatabase" << "*.tpk" << "*.shp" << "*.gpkg" << "*.slpk" << "*.markup"/* << "*.vtpk"*/; // VTPK is not supported in 3D
   }
 
   return fileFilter;
@@ -244,6 +256,38 @@ void AddLocalDataController::createElevationSourceFromRasters(const QStringList&
 }
 
 /*
+ \brief Adds the the markup from the provided path as a MarkupLayer.
+
+ \list
+   \li \a path - The path to the local data source.
+   \li \a layerIndex - The index for which the layer will be added to the operational layer list.
+   \li \a visible - Whether the layer should be visible by default.
+   \li \a autoAdd - Whether the layer will be automatically added to the operational layer list.
+        If \c false, it will not add automatically. Instead, a signal will emit once the Layer has
+        been constructed.
+ \endlist
+*/
+void AddLocalDataController::createMarkupLayer(const QString& path, int layerIndex, bool visible, bool autoAdd)
+{
+  MarkupLayer* markupLayer = MarkupLayer::createFromPath(path, this);
+  if (!markupLayer)
+    return;
+
+  markupLayer->setVisible(visible);
+  connect(markupLayer, &MarkupLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+
+  if (autoAdd)
+  {
+    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+    operationalLayers->append(markupLayer);
+  }
+  else
+    emit layerCreated(layerIndex, markupLayer);
+
+  Q_UNUSED(layerIndex)
+}
+
+/*
  \brief Adds the provided \a indices from the list model as layers.
  */
 void AddLocalDataController::addItemAsLayer(const QList<int>& indices)
@@ -274,6 +318,9 @@ void AddLocalDataController::addItemAsLayer(const QList<int>& indices)
       break;
     case DataType::VectorTilePackage:
       createVectorTiledLayer(dataItemPath);
+      break;
+    case DataType::Markup:
+      createMarkupLayer(dataItemPath);
       break;
     default:
       break;
@@ -319,6 +366,8 @@ void AddLocalDataController::addLayerFromPath(const QString& path, int layerInde
     createSceneLayer(path, layerIndex, visible, autoAdd);
   else if (fileExtension.compare("vtpk", Qt::CaseInsensitive) == 0)
     createVectorTiledLayer(path, layerIndex, visible, autoAdd);
+  else if (fileExtension.compare("markup", Qt::CaseInsensitive) == 0)
+    createMarkupLayer(path, layerIndex, visible, autoAdd);
   else if (rasterExtensions.contains(fileExtension.toLower()))
     createRasterLayer(path, layerIndex, visible, autoAdd);
 }

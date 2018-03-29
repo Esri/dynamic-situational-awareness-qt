@@ -27,6 +27,7 @@ enum class DataType
   VectorTilePackage,
   SceneLayerPackage,
   Shapefile,
+  Markup,
   GeoPackage,
   All,
   Unknown = -1

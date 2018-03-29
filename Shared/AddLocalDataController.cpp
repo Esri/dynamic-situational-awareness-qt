@@ -17,7 +17,6 @@
 // example app headers
 #include "DataItemListModel.h"
 #include "DsaUtility.h"
-#include "MarkupUtility.h"
 #include "MarkupLayer.h"
 
 // toolkit headers
@@ -262,23 +261,28 @@ void AddLocalDataController::createElevationSourceFromRasters(const QStringList&
 void AddLocalDataController::createMarkupLayer(const QString& path, int layerIndex, bool visible, bool autoAdd)
 {
   QFile markupFile(path);
-  if (markupFile.open(QIODevice::ReadOnly))
+  if (!markupFile.open(QIODevice::ReadOnly))
+    return;
+
+  QTextStream stream(&markupFile);
+
+  MarkupLayer* markupLayer = MarkupLayer::createFromJson(stream.readAll(), this);
+  if (!markupLayer)
+    return;
+
+  markupLayer->setPath(path);
+  markupLayer->setVisible(visible);
+  connect(markupLayer, &MarkupLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+
+  if (autoAdd)
   {
-    QTextStream stream(&markupFile);
-    MarkupUtility* markupUtility = Toolkit::ToolManager::instance().tool<MarkupUtility>();
-    if (!markupUtility)
-      return;
-
-    MarkupLayer* markupLayer = markupUtility->createMarkupLayer(stream.readAll());
-    if (!markupLayer)
-      return;
-
-    markupLayer->setPath(path);
-    connect(markupLayer, &MarkupLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
-
     auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
     operationalLayers->append(markupLayer);
   }
+  else
+    emit layerCreated(layerIndex, markupLayer);
+
+  Q_UNUSED(layerIndex)
 }
 
 /*

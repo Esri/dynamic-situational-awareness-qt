@@ -63,7 +63,7 @@ public:
   void createVectorTiledLayer(const QString& path, int layerIndex = -1, bool visible = true, bool autoAdd = true);
   void createElevationSourceFromTpk(const QString& path);
   void createElevationSourceFromRasters(const QStringList& paths);
-  void createMarkupLayer(const QString& path, int layerIndex = -1, bool visible = true, bool autoAdd = true);
+  Q_INVOKABLE void createMarkupLayer(const QString& path, int layerIndex = -1, bool visible = true, bool autoAdd = true);
   QStringList dataPaths() const { return m_dataPaths; }
 
 signals:

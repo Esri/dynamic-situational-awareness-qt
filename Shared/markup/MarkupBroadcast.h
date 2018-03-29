@@ -31,7 +31,7 @@ public:
   QString toolName() const override;
   void setProperties(const QVariantMap& properties) override;
 
-  void broadcastMarkup(const QJsonObject& json);
+  void broadcastMarkup(const QString& json);
 
 signals:
   void markupReceived(const QString& filePath, const QString& sharedBy);
@@ -41,12 +41,14 @@ private:
   void updateDataListener();
 
   static const QString MARKUPCONFIG_PROPERTYNAME;
+  static const QString ROOTDATA_PROPERTYNAME;
   static const QString UDPPORT_PROPERTYNAME;
   static const QString USERNAME_PROPERTYNAME;
   static const QString MARKUPKEY;
   static const QString NAMEKEY;
   static const QString SHAREDBYKEY;
   QString m_username;
+  QString m_rootDataDirectory;
   DataSender* m_dataSender;
   DataListener* m_dataListener;
   int m_udpPort = -1;

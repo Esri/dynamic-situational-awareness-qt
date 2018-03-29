@@ -32,22 +32,17 @@
 #include "GeometryEngine.h"
 #include "FeatureCollectionLayer.h"
 
-#include "MarkupUtility.h"
+#include "MarkupLayer.h"
 #include "MarkupBroadcast.h"
 
 #include <QCursor>
-#include <QJsonObject>
-#include <QJsonDocument>
-#include <QJsonValue>
-#include <QFile>
-#include <QIODevice>
-#include <QTextStream>
 
 using namespace Esri::ArcGISRuntime;
 
+const QString MarkupController::USERNAME_PROPERTYNAME = "UserName";
+
 MarkupController::MarkupController(QObject* parent):
   AbstractSketchTool(parent),
-  m_markupUtility(new MarkupUtility(parent)),
   m_markupBroadcast(new MarkupBroadcast(parent))
 {
   Toolkit::ToolManager::instance().addTool(this);
@@ -69,6 +64,14 @@ MarkupController::MarkupController(QObject* parent):
 
 MarkupController::~MarkupController()
 {
+}
+
+/*
+ \brief Sets \a properties from the configuration file
+ */
+void MarkupController::setProperties(const QVariantMap& properties)
+{
+  m_username = properties.value(USERNAME_PROPERTYNAME).toString();
 }
 
 void MarkupController::setActive(bool active)
@@ -330,24 +333,22 @@ void MarkupController::setOverlayName(const QString& name)
   if (m_sketchOverlay->overlayId() == name)
     return;
 
-  m_sketchOverlay->setOverlayId(name.length() > 0 ? name : "Markup");
+  QString overlayId = name.length() > 0 ? name : QString("Markup_%1").arg(QDateTime::currentDateTime().currentMSecsSinceEpoch());
+  m_sketchOverlay->setOverlayId(overlayId);
 }
 
 QStringList MarkupController::colors() const
 {
-  return m_markupUtility->colors();
+  return MarkupLayer::colors();
 }
 
 void MarkupController::shareMarkup()
 {
-  if (!m_markupUtility)
-    return;
-
   if (!m_markupBroadcast)
     return;
 
-  QJsonObject markupJson = m_markupUtility->graphicsToJson(sketchOverlay());
-  m_markupBroadcast->broadcastMarkup(markupJson);
+  MarkupLayer* markupLayer = MarkupLayer::createFromGraphics(sketchOverlay(), m_username, this);
+  m_markupBroadcast->broadcastMarkup(markupLayer->toJson());
 }
 
 QColor MarkupController::currentColor() const

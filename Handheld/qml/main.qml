@@ -36,6 +36,7 @@ Handheld {
     signal clearDialogAccepted();
     signal closeDialogAccepted();
     signal inputDialogAccepted(var input, var index);
+    signal markupLayerReceived(var path);
 
     LocationController {
         id: locationController
@@ -557,6 +558,6 @@ Handheld {
         id: markupDialog
         property string path
 
-        onAccepted: console.log("Add markup as layer", path);
+        onAccepted: markupLayerReceived(path);
     }
 }

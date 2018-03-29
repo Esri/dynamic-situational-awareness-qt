@@ -29,6 +29,7 @@
 using namespace Esri::ArcGISRuntime;
 
 const QString MarkupBroadcast::MARKUPCONFIG_PROPERTYNAME = QStringLiteral("MarkupConfig");
+const QString MarkupBroadcast::ROOTDATA_PROPERTYNAME = QStringLiteral("RootDataDirectory");
 const QString MarkupBroadcast::UDPPORT_PROPERTYNAME = QStringLiteral("port");
 const QString MarkupBroadcast::USERNAME_PROPERTYNAME = QStringLiteral("UserName");
 const QString MarkupBroadcast::NAMEKEY = QStringLiteral("name");
@@ -49,22 +50,28 @@ MarkupBroadcast::MarkupBroadcast(QObject *parent) :
   {
     QJsonDocument markupJson = QJsonDocument::fromJson(data);
 
-    // TODO ignore if from same username
-    // TODO get operational data path from properties
     // write the JSON to disk
     const QJsonObject markupObject = markupJson.object();
     const QString sharedBy = markupObject.value(SHAREDBYKEY).toString();
+//    if (m_username == sharedBy) // don't process the markup if it is the one that you sent
+//      return;
+
     const QString markupName = markupObject.value(MARKUPKEY).toObject().value(NAMEKEY).toString();
-    const QString markupFileName = QString("C:/Users/luca6804/ArcGIS/Runtime/Data/DSA/OperationalData/%1.markup").arg(markupName);
+    const QString markupFileName = QString("%1/OperationalData/%2.markup").arg(m_rootDataDirectory, markupName);
+    qDebug() << "writing to this file:" << markupFileName;
     QFile markupFile(markupFileName);
     if (markupFile.open(QIODevice::ReadWrite))
     {
       QTextStream stream(&markupFile);
       QString strJson(markupJson.toJson(QJsonDocument::Compact));
       stream << strJson << endl;
-    }
 
-    emit this->markupReceived(markupFileName, sharedBy);
+      emit this->markupReceived(markupFileName, sharedBy);
+    }
+    else
+    {
+      qDebug() << "failed to write markup to disk";
+    }
   });
 }
 
@@ -90,6 +97,8 @@ void MarkupBroadcast::setProperties(const QVariantMap& properties)
 {
   m_username = properties[USERNAME_PROPERTYNAME].toString();
 
+  m_rootDataDirectory = properties[ROOTDATA_PROPERTYNAME].toString();
+
   const auto markupPortConfig = properties[MARKUPCONFIG_PROPERTYNAME].toMap();
   auto findPortIt = markupPortConfig.find(UDPPORT_PROPERTYNAME);
   if (findPortIt != markupPortConfig.end())
@@ -106,12 +115,12 @@ void MarkupBroadcast::setProperties(const QVariantMap& properties)
 /*!
    \brief Broadcasts the markup JSON over a UDP port.
  */
-void MarkupBroadcast::broadcastMarkup(const QJsonObject& json)
+void MarkupBroadcast::broadcastMarkup(const QString& json)
 {
   if (!m_dataSender)
     return;
 
-  m_dataSender->sendData(QJsonDocument(json).toJson());
+  m_dataSender->sendData(json.toUtf8());
 }
 
 /*

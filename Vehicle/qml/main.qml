@@ -27,12 +27,14 @@ Vehicle {
 
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
     property alias messageFeeds: messageFeedsTool
-    signal clearDialogAccepted();
-    signal closeDialogAccepted();
-    signal inputDialogAccepted(var input, var index);
     property real hudOpacity: 0.9
     property real hudRadius: 3 * scaleFactor
     property real hudMargins: 5 * scaleFactor
+
+    signal clearDialogAccepted();
+    signal closeDialogAccepted();
+    signal inputDialogAccepted(var input, var index);
+    signal markupLayerReceived(var path);
 
     LocationController {
         id: locationController
@@ -529,6 +531,6 @@ Vehicle {
         id: markupDialog
         property string path
 
-        onAccepted: console.log("Add markup as layer", path);
+        onAccepted: markupLayerReceived(path);
     }
 }

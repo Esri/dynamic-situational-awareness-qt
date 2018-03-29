@@ -35,6 +35,7 @@
 #include <QJsonArray>
 #include <QString>
 #include <QHash>
+#include <QFile>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -194,9 +195,20 @@ MarkupLayer* MarkupLayer::createFromJson(const QString& json, QObject* parent)
 /*
  \brief Creates a new MarkupLayer from a \a path to a \c .markup JSON file.
 */
-MarkupLayer* MarkupLayer::createFromPath(const QString& path)
+MarkupLayer* MarkupLayer::createFromPath(const QString& path, QObject* parent)
 {
+  // Read the input file
+  QFile markupFile(path);
+  if (!markupFile.open(QIODevice::ReadOnly))
+    return nullptr;
 
+  QTextStream stream(&markupFile);
+
+  // Create the Layer
+  MarkupLayer* markupLayer = MarkupLayer::createFromJson(stream.readAll(), parent);
+  markupLayer->setPath(path);
+
+  return markupLayer;
 }
 
 /*

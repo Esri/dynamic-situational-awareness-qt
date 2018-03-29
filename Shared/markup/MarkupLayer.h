@@ -34,7 +34,7 @@ public:
 
   // factory create methods
   static MarkupLayer* createFromJson(const QString& json, QObject* parent = nullptr);
-  static MarkupLayer* createFromPath(const QString& path);
+  static MarkupLayer* createFromPath(const QString& path, QObject* parent = nullptr);
   static MarkupLayer* createFromGraphics(Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlay, const QString& authorName, QObject* parent = nullptr);
 
   static QStringList colors();

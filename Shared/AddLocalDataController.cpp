@@ -260,17 +260,10 @@ void AddLocalDataController::createElevationSourceFromRasters(const QStringList&
 */
 void AddLocalDataController::createMarkupLayer(const QString& path, int layerIndex, bool visible, bool autoAdd)
 {
-  QFile markupFile(path);
-  if (!markupFile.open(QIODevice::ReadOnly))
-    return;
-
-  QTextStream stream(&markupFile);
-
-  MarkupLayer* markupLayer = MarkupLayer::createFromJson(stream.readAll(), this);
+  MarkupLayer* markupLayer = MarkupLayer::createFromPath(path, this);
   if (!markupLayer)
     return;
 
-  markupLayer->setPath(path);
   markupLayer->setVisible(visible);
   connect(markupLayer, &MarkupLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
 

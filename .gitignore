@@ -37,3 +37,6 @@ Makefile*
 # QtCtreator CMake
 CMakeLists.txt.user*
 
+# Local ArcGIS Toolkit Repo
+arcgis-runtime-toolkit-qt
+

@@ -11,7 +11,9 @@
 #  See the Sample code usage restrictions document for further information.
 #-------------------------------------------------
 
-include($$PWD/resolvesdkinstall.pri)
+equals($$QtRuntimeSdkPath, "") {
+  include($$PWD/resolvesdkinstall.pri)
+}
 
 CONFIG(deployment): DEFINES += DEPLOYMENT_BUILD
 

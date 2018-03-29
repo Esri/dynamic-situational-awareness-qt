@@ -21,8 +21,8 @@ CONFIG += c++11
 #CONFIG += LocalToolkitBuild ToolkitBuildUsePrefix
 
 ARCGIS_RUNTIME_VERSION = 100.2.1
-include($$PWD/../Shared/arcgisruntime.pri)
-include($$PWD/../Shared/arcgisruntimecpptoolkit.pri)
+include($$PWD/../Shared/build/arcgisruntime.pri)
+include($$PWD/../Shared/build/arcgisruntimecpptoolkit.pri)
 
 INCLUDEPATH += $$PWD/../Shared/ \
     $$PWD/../Shared/alerts \

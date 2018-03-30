@@ -22,7 +22,12 @@ CONFIG(deployment): DEFINES += DEPLOYMENT_BUILD
 }
 
 ios: {
-  !include($$QtRuntimeSdkPath/sdk/toolkit/Plugin/ArcGISRuntimeToolkitPlugin.pri) {
-    message("Error. Cannot locate PRI file to import Toolkit as a plugin")
+  include(resolvelocaltoolkit.pri)
+  !isEmpty(CppToolkitLocation) {
+    include($$CppToolkitLocation/../ArcGISRuntimeToolkitPlugin.pri)
+  } else {
+    !include($$QtRuntimeSdkPath/sdk/toolkit/Plugin/ArcGISRuntimeToolkitPlugin.pri) {
+      message("Error. Cannot locate PRI file to import Toolkit as a plugin")
+    }
   }
 }

@@ -48,7 +48,6 @@ const QString ViewshedController::VIEWSHED_PITCH_ATTRIBUTE = QStringLiteral("pit
 static int s_viewshedCount = 0;
 
 constexpr double c_defaultOffsetZ = 5.0;
-constexpr double c_defaultConeWidth = 12.0;
 constexpr double c_defaultIdentifyTolerance = 5.0;
 
 ViewshedController::ViewshedController(QObject* parent) :

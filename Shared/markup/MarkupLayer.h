@@ -46,6 +46,7 @@ public:
   void setPath(const QString& path);
   QString path() const;
   Esri::ArcGISRuntime::FeatureCollection* featureCollection();
+  QString author() const;
 
   // JSON Serializable
   static MarkupLayer* fromJson(const QString& json, QObject* parent = nullptr);
@@ -58,9 +59,7 @@ private:
 
   QString m_path;
   QString m_json;
-  QString m_username;
-  Esri::ArcGISRuntime::Point m_center;
-  double m_point;
+  QString m_author;
   Esri::ArcGISRuntime::FeatureCollection* m_featureCollection = nullptr;
   QHash<QUuid, QPair<Esri::ArcGISRuntime::Feature*, Esri::ArcGISRuntime::SimpleLineSymbol*>> m_featureHash;
 };

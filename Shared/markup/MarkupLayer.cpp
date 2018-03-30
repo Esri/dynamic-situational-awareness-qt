@@ -82,6 +82,7 @@ MarkupLayer::MarkupLayer(const QString& json, FeatureCollection* featureCollecti
   }
 
   setName(markupJson.value(MarkupConstants::MARKUP).toObject().value(MarkupConstants::NAME).toString());
+  m_author = markupJson.value(MarkupConstants::SHAREDBY).toString();
 }
 
 /*
@@ -177,8 +178,11 @@ MarkupLayer* MarkupLayer::createFromGraphics(GraphicsOverlay* graphicsOverlay, c
 */
 MarkupLayer* MarkupLayer::fromJson(const QString& json, QObject* parent)
 {
+  bool useZ = json.contains(R"("hasZ":true)");
+  bool useM = json.contains(R"("hasM":true)");
+
   // Create the FeatureCollectionTable
-  FeatureCollectionTable* table = new FeatureCollectionTable(QList<Field>{}, GeometryType::Polyline, SpatialReference(4326), true, false, parent);
+  FeatureCollectionTable* table = new FeatureCollectionTable(QList<Field>{}, GeometryType::Polyline, SpatialReference(4326), useZ, useM, parent);
   SimpleRenderer* defaultRenderer = new SimpleRenderer(parent);
   defaultRenderer->setSymbol(new SimpleLineSymbol(SimpleLineSymbolStyle::Solid, QColor("red"), 12.0f, parent));
   table->setRenderer(defaultRenderer);
@@ -236,4 +240,12 @@ QJsonObject MarkupLayer::unknownJson() const
 QJsonObject MarkupLayer::unsupportedJson() const
 {
   return QJsonObject();
+}
+
+/*!
+  \brief Gets the author of the Markup.
+*/
+QString MarkupLayer::author() const
+{
+  return m_author;
 }

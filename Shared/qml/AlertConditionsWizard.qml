@@ -147,7 +147,7 @@ Rectangle {
                     item.clear();
             }
 
-            source: conditionPage.isGeoFence ? "qrc:/qml/AlertConditionsGeofenceQueryPage.qml" :
+            source: conditionPage.isSpatial ? "qrc:/qml/AlertConditionsSpatialQueryPage.qml" :
                                                "qrc:/qml/AlertConditionsAttributeQueryPage.qml"
         }
 
@@ -166,7 +166,7 @@ Rectangle {
                     item.clear();
             }
 
-            source: conditionPage.isGeoFence ? "qrc:/qml/AlertConditionsSpatialTarget.qml" :
+            source: conditionPage.isSpatial ? "qrc:/qml/AlertConditionsSpatialTarget.qml" :
                                                "qrc:/qml/AlertConditionsAttributeTarget.qml"
         }
 
@@ -249,7 +249,7 @@ Rectangle {
         labelColor: Material.accent
         onToolSelected: {
             conditionsWizardRoot.visible = false;
-            if (conditionPage.isGeoFence) {
+            if (conditionPage.isSpatial) {
                 if (queryLoader.item.isWithinDistance) {
                     toolController.addWithinDistanceAlert(namePage.conditionName,
                                                           levelPage.getLevel(),

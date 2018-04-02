@@ -62,7 +62,7 @@ Item {
         }
 
         Row {
-            visible: conditionPage.isGeoFence || conditionPage.isAnalysis
+            visible: conditionPage.isSpatial || conditionPage.isAnalysis
             spacing: 8 * scaleFactor
             RadioButton {
                 id: singleFeatureRb

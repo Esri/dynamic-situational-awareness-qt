@@ -41,7 +41,7 @@
         <file>AlertConditionsConditionTypePage.qml</file>
         <file>AlertConditionsNamePage.qml</file>
         <file>AlertConditionsSourcePage.qml</file>
-        <file>AlertConditionsGeofenceQueryPage.qml</file>
+        <file>AlertConditionsSpatialQueryPage.qml</file>
         <file>AlertConditionsAttributeQueryPage.qml</file>
         <file>AlertConditionsSpatialTarget.qml</file>
         <file>AlertConditionsAttributeTarget.qml</file>

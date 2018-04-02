@@ -21,7 +21,7 @@ Item {
     id: conditionPage
 
     property alias type : typeGroup.checkedButton
-    property bool valid: geofenceCB.checked || attributeCB.checked || analysisCB.checked
+    property bool valid: spatialCB.checked || attributeCB.checked || analysisCB.checked
     property string instruction: "Select type"
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
@@ -29,15 +29,15 @@ Item {
     }
 
     function text() {
-        if (geofenceCB.checked)
-            return " GeoFence alert";
+        if (spatialCB.checked)
+            return " Spatial alert";
         else if (attributeCB.checked)
             return " Attribute alert";
         else if (analysisCB.checked)
             return " Analysis alert";
     }
 
-    property alias isGeoFence: geofenceCB.checked
+    property alias isSpatial: spatialCB.checked
     property alias isAttribute: attributeCB.checked
     property alias isAnalysis: analysisCB.checked
 
@@ -55,8 +55,8 @@ Item {
         }
 
         RadioButton {
-            id: geofenceCB
-            text: "GeoFence"
+            id: spatialCB
+            text: "Spatial"
             font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
             checked: true
             ButtonGroup.group: typeGroup

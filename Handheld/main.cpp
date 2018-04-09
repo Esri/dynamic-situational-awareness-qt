@@ -10,7 +10,6 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-
 // PCH header
 #include "pch.hpp"
 

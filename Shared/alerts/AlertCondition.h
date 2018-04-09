@@ -74,7 +74,7 @@ public:
 
 signals:
   void noLongerValid();
-  void newConditionData(AlertConditionData* newConditionData);
+  void newConditionData(Dsa::Alerts::AlertConditionData* newConditionData);
   void conditionChanged();
   void conditionEnabledChanged();
 

@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "LocationAlertSource.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "LocationAlertSource.h"
 
 // toolkit headers
 #include "ToolResourceProvider.h"

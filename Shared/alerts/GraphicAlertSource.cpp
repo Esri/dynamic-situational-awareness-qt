@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "GraphicAlertSource.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "GraphicAlertSource.h"
 
 // C++ API headers
 #include "AttributeListModel.h"

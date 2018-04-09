@@ -13,14 +13,11 @@
 #ifndef VEHICLE_H
 #define VEHICLE_H
 
-
 // Qt headers
 #include <QQuickItem>
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
+namespace Esri {
+namespace ArcGISRuntime {
 class SceneQuickView;
 }
 }

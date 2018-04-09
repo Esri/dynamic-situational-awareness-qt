@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "LocationController.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "LocationController.h"
 
 // example app headers
 #include "GPXLocationSimulator.h"

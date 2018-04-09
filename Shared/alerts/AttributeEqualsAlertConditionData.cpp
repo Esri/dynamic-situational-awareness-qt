@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "AttributeEqualsAlertConditionData.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "AttributeEqualsAlertConditionData.h"
 
 // example app headers
 #include "AlertSource.h"

@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "AlertTarget.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "AlertTarget.h"
 
 namespace Dsa
 {

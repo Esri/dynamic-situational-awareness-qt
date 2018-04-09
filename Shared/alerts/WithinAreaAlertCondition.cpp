@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "WithinAreaAlertCondition.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "WithinAreaAlertCondition.h"
 
 // example app headers
 #include "GraphicAlertSource.h"

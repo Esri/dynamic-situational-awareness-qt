@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "FeatureLayerAlertTarget.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "FeatureLayerAlertTarget.h"
 
 // example app headers
 #include "FeatureQueryResultManager.h"

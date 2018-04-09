@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "DsaController.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "DsaController.h"
 
 // example app headers
 #include "AlertConstants.h"

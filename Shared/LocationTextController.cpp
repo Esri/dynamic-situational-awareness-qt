@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "LocationTextController.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "LocationTextController.h"
 
 // toolkit headers
 #include "ToolManager.h"

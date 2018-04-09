@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "LineOfSightController.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "LineOfSightController.h"
 
 // example app headers
 #include "FeatureQueryResultManager.h"

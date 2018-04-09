@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "GPXLocationSimulator.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "GPXLocationSimulator.h"
 
 // Qt headers
 #include <QTimer>

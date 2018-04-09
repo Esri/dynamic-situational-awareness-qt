@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "FeatureQueryResultManager.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "FeatureQueryResultManager.h"
 
 // C++ API headers
 #include "FeatureQueryResult.h"

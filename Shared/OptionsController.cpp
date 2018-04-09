@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "OptionsController.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "OptionsController.h"
 
 // example app headers
 #include "AppConstants.h"

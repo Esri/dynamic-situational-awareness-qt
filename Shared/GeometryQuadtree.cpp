@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "GeometryQuadtree.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "GeometryQuadtree.h"
 
 // C++ API headers
 #include "Envelope.h"

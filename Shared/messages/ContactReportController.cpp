@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "ContactReportController.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "ContactReportController.h"
 
 // example app headers
 #include "AppConstants.h"

@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "LocationBroadcast.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "LocationBroadcast.h"
 
 // example app headers
 #include "DataSender.h"

@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "GraphicsOverlayAlertTarget.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "GraphicsOverlayAlertTarget.h"
 
 // example app headers
 #include "GeometryQuadtree.h"

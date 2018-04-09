@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "AlertConstants.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "AlertConstants.h"
 
 // example app headers
 #include "AttributeEqualsAlertCondition.h"

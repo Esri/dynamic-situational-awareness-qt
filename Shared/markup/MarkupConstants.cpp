@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "MarkupConstants.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "MarkupConstants.h"
 
 namespace Dsa {
 namespace Markup {

@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "IdentifyController.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "IdentifyController.h"
 
 // example app headers
 #include "GraphicsOverlaysResultsManager.h"

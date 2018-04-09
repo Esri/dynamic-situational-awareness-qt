@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "DsaUtility.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "DsaUtility.h"
 
 // Qt headers
 #include <QDir>

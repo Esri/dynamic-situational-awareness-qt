@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "MarkupController.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "MarkupController.h"
 
 // example app headers
 #include "MarkupBroadcast.h"

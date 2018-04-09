@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "PointHighlighter.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "PointHighlighter.h"
 
 // toolkit headers
 #include "ToolResourceProvider.h"

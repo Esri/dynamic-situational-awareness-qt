@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "MessageFeed.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "MessageFeed.h"
 
 // example app headers
 #include "MessagesOverlay.h"

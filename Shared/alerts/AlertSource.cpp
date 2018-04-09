@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "AlertSource.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "AlertSource.h"
 
 using namespace Esri::ArcGISRuntime;
 

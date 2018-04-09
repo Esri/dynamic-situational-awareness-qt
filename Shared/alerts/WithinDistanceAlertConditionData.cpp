@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "WithinDistanceAlertConditionData.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "WithinDistanceAlertConditionData.h"
 
 // example app headers
 #include "AlertSource.h"

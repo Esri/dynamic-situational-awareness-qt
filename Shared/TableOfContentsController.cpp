@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "TableOfContentsController.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "TableOfContentsController.h"
 
 // example app headers
 #include "DrawOrderLayerListModel.h"

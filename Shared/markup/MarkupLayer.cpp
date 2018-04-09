@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "MarkupLayer.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "MarkupLayer.h"
 
 // example app headers
 #include "MarkupConstants.h"

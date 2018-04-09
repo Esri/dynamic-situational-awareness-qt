@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "DataListener.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "DataListener.h"
 
 // Qt headers
 #include <QUdpSocket>

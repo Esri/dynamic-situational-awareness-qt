@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "StatusAlertFilter.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "StatusAlertFilter.h"
 
 // example app headers
 #include "AlertFilter.h"

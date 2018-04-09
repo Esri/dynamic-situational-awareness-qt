@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "FollowPositionController.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "FollowPositionController.h"
 
 // toolkit headers
 #include "ToolManager.h"

@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "MessageFeedListModel.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "MessageFeedListModel.h"
 
 // example app headers
 #include "MessageFeed.h"

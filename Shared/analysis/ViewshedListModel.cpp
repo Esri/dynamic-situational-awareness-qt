@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "ViewshedListModel.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "ViewshedListModel.h"
 
 // example app headers
 #include "Viewshed360.h"

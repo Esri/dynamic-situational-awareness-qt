@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "AbstractSketchTool.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "AbstractSketchTool.h"
 
 // C++ API headers
 #include "GeoView.h"

@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "GeoElementAlertTarget.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "GeoElementAlertTarget.h"
 
 // C++ API headers
 #include "GeoElement.h"

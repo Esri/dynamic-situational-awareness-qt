@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "BasemapPickerController.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "BasemapPickerController.h"
 
 // example app headers
 #include "TileCacheListModel.h"

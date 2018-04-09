@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "LayerResultsManager.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "LayerResultsManager.h"
 
 // C++ API headers
 #include "IdentifyLayerResult.h"

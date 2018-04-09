@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "VehicleStyles.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "VehicleStyles.h"
 
 namespace Dsa {
 namespace Vehicle {

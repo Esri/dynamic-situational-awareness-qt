@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "Vehicle.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "Vehicle.h"
 
 // example app headers
 #include "DsaController.h"

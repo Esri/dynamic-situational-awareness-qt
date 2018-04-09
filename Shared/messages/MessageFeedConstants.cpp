@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "MessageFeedConstants.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "MessageFeedConstants.h"
 
 namespace Dsa {
 namespace Messages {

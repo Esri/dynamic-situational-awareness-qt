@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "AppConstants.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "AppConstants.h"
 
 namespace Dsa {
 

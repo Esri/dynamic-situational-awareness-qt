@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "AddLocalDataController.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "AddLocalDataController.h"
 
 // example app headers
 #include "DataItemListModel.h"

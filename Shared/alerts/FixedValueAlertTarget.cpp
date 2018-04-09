@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "FixedValueAlertTarget.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "FixedValueAlertTarget.h"
 
 // C++ API headers
 #include "GeoElement.h"

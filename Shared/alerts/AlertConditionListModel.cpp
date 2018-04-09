@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "AlertConditionListModel.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "AlertConditionListModel.h"
 
 // example app headers
 #include "AlertCondition.h"

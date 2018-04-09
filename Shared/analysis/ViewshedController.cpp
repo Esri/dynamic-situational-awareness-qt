@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "ViewshedController.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "ViewshedController.h"
 
 // example app headers
 #include "DsaUtility.h"

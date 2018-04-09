@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "Handheld.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "Handheld.h"
 
 // example app headers
 #include "DsaController.h"

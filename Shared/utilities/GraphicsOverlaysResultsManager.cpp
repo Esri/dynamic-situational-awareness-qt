@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "GraphicsOverlaysResultsManager.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "GraphicsOverlaysResultsManager.h"
 
 // C++ API headers
 #include "IdentifyGraphicsOverlayResult.h"

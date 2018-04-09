@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "CombinedAnalysisListModel.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "CombinedAnalysisListModel.h"
 
 // example app headers
 #include "Viewshed360.h"

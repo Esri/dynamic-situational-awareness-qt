@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "TileCacheListModel.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "TileCacheListModel.h"
 
 // C++ API headers
 #include "TileCache.h"

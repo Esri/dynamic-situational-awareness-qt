@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "HandheldStyles.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "HandheldStyles.h"
 
 namespace Dsa {
 namespace Handheld {

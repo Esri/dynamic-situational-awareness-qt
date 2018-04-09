@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "ViewedAlertsController.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "ViewedAlertsController.h"
 
 // example app headers
 #include "AlertConditionData.h"

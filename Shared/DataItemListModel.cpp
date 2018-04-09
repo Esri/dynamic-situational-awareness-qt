@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "DataItemListModel.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "DataItemListModel.h"
 
 // Qt headers
 #include <QAbstractListModel>

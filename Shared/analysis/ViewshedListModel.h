@@ -73,7 +73,7 @@ public:
 signals:
   void countChanged();
   void viewshedAdded(int index);
-  void viewshedRemoved(Viewshed360* viewshed);
+  void viewshedRemoved(Dsa::Analysis::Viewshed360* viewshed);
 
 protected:
   QHash<int, QByteArray> roleNames() const override;

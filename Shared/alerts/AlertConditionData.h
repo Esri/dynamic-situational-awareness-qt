@@ -25,11 +25,11 @@
 #include <QString>
 #include <QUuid>
 
-class AlertSource;
-class AlertTarget;
-
 namespace Dsa {
 namespace Alerts {
+
+class AlertSource;
+class AlertTarget;
 
 class AlertConditionData : public QObject
 {

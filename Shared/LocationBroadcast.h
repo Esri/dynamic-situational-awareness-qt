@@ -23,8 +23,12 @@
 // Qt headers
 #include <QObject>
 
-class DataSender;
 class QTimer;
+
+namespace Dsa {
+namespace Utilities {
+class DataSender;
+}
 
 class LocationBroadcast : public QObject
 {
@@ -56,7 +60,7 @@ public:
   bool isInDistress() const;
   void setInDistress(bool inDistress);
 
-  Message message() const;
+  Messages::Message message() const;
 
   QString userName() const;
   void setUserName(const QString& userName);
@@ -80,11 +84,13 @@ private:
   int m_frequency = 3000;
   bool m_inDistress = false;
 
-  DataSender* m_dataSender = nullptr;
-  Message m_message;
+  Utilities::DataSender* m_dataSender = nullptr;
+  Messages::Message m_message;
   QTimer* m_timer = nullptr;
 
   QMetaObject::Connection m_locationChangedConn;
 };
+
+} // Dsa
 
 #endif // LOCATIONBROADCAST_H

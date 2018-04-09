@@ -10,34 +10,37 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "MarkupLayer.h"
+
 // PCH header
 #include "pch.hpp"
 
 // example app headers
-#include "MarkupLayer.h"
 #include "MarkupConstants.h"
 
 // C++ API headers
-#include "GraphicsOverlay.h"
-#include "SimpleLineSymbol.h"
+#include "Feature.h"
 #include "FeatureCollection.h"
 #include "FeatureCollectionLayer.h"
 #include "FeatureCollectionTable.h"
-#include "Feature.h"
+#include "Field.h"
+#include "GraphicsOverlay.h"
+#include "Polyline.h"
 #include "SimpleLineSymbol.h"
 #include "SimpleRenderer.h"
-#include "Polyline.h"
-#include "Field.h"
 
 // Qt headers
+#include <QFile>
+#include <QHash>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QJsonArray>
 #include <QString>
-#include <QHash>
-#include <QFile>
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
+namespace Markup {
 
 /*
  \internal
@@ -249,3 +252,6 @@ QString MarkupLayer::author() const
 {
   return m_author;
 }
+
+} // Markup
+} // Dsa

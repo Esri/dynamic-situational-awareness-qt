@@ -10,9 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "pch.hpp"
-
 #include "AnalysisListController.h"
+
+// PCH header
+#include "pch.hpp"
 
 // example app headers
 #include "CombinedAnalysisListModel.h"
@@ -28,6 +29,9 @@
 #include "SceneView.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
+namespace Analysis {
 
 /*!
   \brief Constructor accepting an optional \a parent.
@@ -134,3 +138,6 @@ void AnalysisListController::zoomToLocation(const Point& point)
 
   m_sceneView->setViewpointCamera(newCam, 1.0);
 }
+
+} // Analysis
+} // Dsa

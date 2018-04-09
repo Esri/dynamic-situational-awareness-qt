@@ -13,17 +13,21 @@
 #ifndef HANDHELD_H
 #define HANDHELD_H
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
+
+// Qt headers
+#include <QQuickItem>
+
+namespace Esri {
+namespace ArcGISRuntime {
 class SceneQuickView;
 }
 }
 
-#include <QQuickItem>
+namespace Dsa {
 
 class DsaController;
+
+namespace Handheld {
 
 class Handheld : public QQuickItem
 {
@@ -42,5 +46,8 @@ private:
   Esri::ArcGISRuntime::SceneQuickView*    m_sceneView = nullptr;
   DsaController*                          m_controller = nullptr;
 };
+
+} // Handheld
+} // Dsa
 
 #endif // HANDHELD_H

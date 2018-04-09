@@ -13,16 +13,19 @@
 #ifndef FOLLOWPOSITIONCONTROLLER_H
 #define FOLLOWPOSITIONCONTROLLER_H
 
+
+// toolkit headers
 #include "AbstractTool.h"
 
 namespace Esri {
-namespace ArcGISRuntime
-{
+namespace ArcGISRuntime {
   class CameraController;
   class GeoElement;
   class GeoView;
   class GraphicListModel;
 }}
+
+namespace Dsa {
 
 class FollowPositionController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -70,5 +73,7 @@ private:
   FollowMode m_mode = FollowMode::Disabled;
   Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
 };
+
+} // Dsa
 
 #endif // FOLLOWPOSITIONCONTROLLER_H

@@ -13,10 +13,16 @@
 #ifndef IDSALERTFILTER_H
 #define IDSALERTFILTER_H
 
+
+// example app headers
 #include "AlertFilter.h"
 
+// Qt headers
 #include <QSet>
 #include <QUuid>
+
+namespace Dsa {
+namespace Alerts {
 
 class AlertConditionData;
 
@@ -36,5 +42,8 @@ public:
 private:
   QSet<QUuid> m_ids;
 };
+
+} // Alerts
+} // Dsa
 
 #endif // IDSALERTFILTER_H

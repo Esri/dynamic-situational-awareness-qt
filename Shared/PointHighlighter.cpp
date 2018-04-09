@@ -31,6 +31,8 @@
 
 using namespace Esri::ArcGISRuntime;
 
+namespace Dsa {
+
 PointHighlighter::PointHighlighter(QObject* parent):
   QObject(parent)
 {
@@ -167,3 +169,5 @@ void PointHighlighter::onGeoViewChanged()
   m_highlightSymbol = new SimpleMarkerSceneSymbol(
         SimpleMarkerSceneSymbolStyle::Sphere, Qt::red, 1.0, 1.0, 1.0, SceneSymbolAnchorPosition::Center, this);
 }
+
+} // Dsa

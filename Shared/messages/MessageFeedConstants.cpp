@@ -15,6 +15,9 @@
 // PCH header
 #include "pch.hpp"
 
+namespace Dsa {
+namespace Messages {
+
 const QString MessageFeedConstants::CONTACT_REPORT_CONFIG_PROPERTYNAME = QStringLiteral("ContactReportConfig");
 const QString MessageFeedConstants::CONTACT_REPORT_CONFIG_PORT = QStringLiteral("port");
 const QString MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME = QStringLiteral("LocationBroadcastConfig");
@@ -27,3 +30,6 @@ const QString MessageFeedConstants::MESSAGE_FEEDS_RENDERER = QStringLiteral("ren
 const QString MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL = QStringLiteral("thumbnail");
 const QString MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT = QStringLiteral("placement");
 const QString MessageFeedConstants::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME = QStringLiteral("MessageFeedUdpPorts");
+
+} // Messages
+} // Dsa

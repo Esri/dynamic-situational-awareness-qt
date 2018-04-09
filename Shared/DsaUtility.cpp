@@ -10,16 +10,20 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "pch.hpp"
-
 #include "DsaUtility.h"
 
+// PCH header
+#include "pch.hpp"
+
+// Qt headers
 #include <QDir>
 #include <QFileInfo>
-#include <QtMath>
 #include <QStandardPaths>
+#include <QtMath>
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 QString DsaUtility::dataPath()
 {
@@ -69,3 +73,5 @@ QVector3D DsaUtility::toCartesianPoint(const Point& point)
 
   return QVector3D(radCosLat * std::sin(xRadians), radius * std::sin(yRadians), radCosLat * std::cos(xRadians));
 }
+
+} // Dsa

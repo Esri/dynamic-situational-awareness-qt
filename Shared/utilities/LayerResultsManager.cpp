@@ -10,13 +10,18 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "pch.hpp"
-
 #include "LayerResultsManager.h"
 
+// PCH header
+#include "pch.hpp"
+
+// C++ API headers
 #include "IdentifyLayerResult.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
+namespace Utilities {
 
 // RAII helper to ensure the QList<IdentifyLayerResult*> is deleted when we leave the scope
 LayerResultsManager::LayerResultsManager(const QList<Esri::ArcGISRuntime::IdentifyLayerResult*>& results):
@@ -29,3 +34,6 @@ LayerResultsManager::~LayerResultsManager()
 {
   qDeleteAll(m_results);
 }
+
+} // Utilities
+} // Dsa

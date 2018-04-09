@@ -38,6 +38,8 @@
 
 using namespace Esri::ArcGISRuntime;
 
+namespace Dsa {
+
 const QString ContextMenuController::COORDINATES_OPTION = "Coordinates";
 const QString ContextMenuController::ELEVATION_OPTION = "Elevation";
 const QString ContextMenuController::FOLLOW_OPTION = "Follow";
@@ -156,7 +158,7 @@ void ContextMenuController::onIdentifyLayersCompleted(const QUuid& taskId, const
   if (taskId != m_identifyFeaturesTask.taskId())
     return;
 
-  LayerResultsManager resultsManager(identifyResults);
+  Utilities::LayerResultsManager resultsManager(identifyResults);
 
   m_identifyFeaturesTask = TaskWatcher();
 
@@ -195,7 +197,7 @@ void ContextMenuController::onIdentifyGraphicsOverlaysCompleted(const QUuid& tas
   if (taskId != m_identifyGraphicsTask.taskId())
     return;
 
-  GraphicsOverlaysResultsManager resultsManager(identifyResults);
+  Utilities::GraphicsOverlaysResultsManager resultsManager(identifyResults);
 
   m_identifyGraphicsTask = TaskWatcher();
 
@@ -407,14 +409,14 @@ void ContextMenuController::selectOption(const QString& option)
   }
   else if (option == VIEWSHED_OPTION)
   {
-    ViewshedController* viewshedTool = Toolkit::ToolManager::instance().tool<ViewshedController>();
+    Analysis::ViewshedController* viewshedTool = Toolkit::ToolManager::instance().tool<Analysis::ViewshedController>();
     if (!viewshedTool)
       return;
 
-    viewshedTool->setActiveMode(ViewshedController::ViewshedActiveMode::AddLocationViewshed360);
+    viewshedTool->setActiveMode(Analysis::ViewshedController::ViewshedActiveMode::AddLocationViewshed360);
     viewshedTool->addLocationViewshed360(m_contextBaseSurfaceLocation);
     viewshedTool->finishActiveViewshed();
-    viewshedTool->setActiveMode(ViewshedController::ViewshedActiveMode::NoActiveMode);
+    viewshedTool->setActiveMode(Analysis::ViewshedController::ViewshedActiveMode::NoActiveMode);
   }
   else if (option == FOLLOW_OPTION)
   {
@@ -437,7 +439,7 @@ void ContextMenuController::selectOption(const QString& option)
   }
   else if (option == LINE_OF_SIGHT_OPTION)
   {
-    LineOfSightController* lineOfSightTool = Toolkit::ToolManager::instance().tool<LineOfSightController>();
+    Analysis::LineOfSightController* lineOfSightTool = Toolkit::ToolManager::instance().tool<Analysis::LineOfSightController>();
     if (!lineOfSightTool)
       return;
 
@@ -445,7 +447,7 @@ void ContextMenuController::selectOption(const QString& option)
   }
   else if (option == CONTACT_REPORT_OPTION)
   {
-    ContactReportController* contactReportTool = Toolkit::ToolManager::instance().tool<ContactReportController>();
+    Dsa::Messages::ContactReportController* contactReportTool = Toolkit::ToolManager::instance().tool<Dsa::Messages::ContactReportController>();
     if (!contactReportTool)
       return;
 
@@ -481,3 +483,5 @@ void ContextMenuController::setContextActive(bool contextRequested)
   m_contextActive = contextRequested;
   emit contextActiveChanged();
 }
+
+} // Dsa

@@ -26,8 +26,9 @@ class DictionaryRenderer;
 }
 }
 
-class LocationTextController;
+namespace Dsa {
 
+class LocationTextController;
 
 class OptionsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -83,5 +84,7 @@ private:
   void setShowFriendlyTracksLabels(bool show);
   QList<Esri::ArcGISRuntime::DictionaryRenderer*> friendlyTracksOverlayRenderers() const;
 };
+
+} // Dsa
 
 #endif // OPTIONSCONTROLLER_H

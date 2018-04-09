@@ -10,12 +10,16 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "CombinedAnalysisListModel.h"
+
+// PCH header
 #include "pch.hpp"
 
-#include "CombinedAnalysisListModel.h"
-#include "ViewshedListModel.h"
+// example app headers
 #include "Viewshed360.h"
+#include "ViewshedListModel.h"
 
+// C++ API headers
 #include "AnalysisListModel.h"
 #include "AnalysisOverlay.h"
 #include "AnalysisOverlayListModel.h"
@@ -27,6 +31,9 @@
 #include "Viewshed.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
+namespace Analysis {
 
 /*!
   \brief Constructor taking an optional \a parent.
@@ -97,7 +104,7 @@ void CombinedAnalysisListModel::removeAt(int index)
  */
 Point CombinedAnalysisListModel::locationAt(int index)
 {
-  Analysis* analysis = nullptr;
+  Esri::ArcGISRuntime::Analysis* analysis = nullptr;
   if (isViewshed(index))
   {
     Viewshed360* viewshed360 =  m_viewshedModel->at(viewshedIndex(index));
@@ -299,3 +306,6 @@ int CombinedAnalysisListModel::lineOfSightIndex(int row) const
 {
   return row - viewshedCount();
 }
+
+} // Analysis
+} // Dsa

@@ -13,15 +13,14 @@
 #ifndef ALERTCONDITION_H
 #define ALERTCONDITION_H
 
+
+// example app headers
 #include "AlertLevel.h"
 
+// Qt headers
 #include <QList>
 #include <QObject>
 #include <QVariantMap>
-
-class AlertConditionData;
-class AlertSource;
-class AlertTarget;
 
 namespace Esri
 {
@@ -30,6 +29,13 @@ namespace ArcGISRuntime
 class GraphicsOverlay;
 }
 }
+
+namespace Dsa {
+namespace Alerts {
+
+class AlertConditionData;
+class AlertSource;
+class AlertTarget;
 
 class AlertCondition : public QObject
 {
@@ -80,5 +86,8 @@ private:
   QString m_sourceDescription;
   QString m_targetDescription;
 };
+
+} // Alerts
+} // Dsa
 
 #endif // ALERTCONDITIONDATA_H

@@ -10,13 +10,21 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "ViewshedListModel.h"
+
+// PCH header
 #include "pch.hpp"
 
-#include "ViewshedListModel.h"
+// example app headers
 #include "Viewshed360.h"
+
+// C++ API headers
 #include "AnalysisOverlay.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
+namespace Analysis {
 
 ViewshedListModel::ViewshedListModel(QObject* parent) :
   QAbstractListModel(parent)
@@ -294,3 +302,6 @@ QHash<int, QByteArray> ViewshedListModel::roleNames() const
 {
   return m_roles;
 }
+
+} // Analysis
+} // Dsa

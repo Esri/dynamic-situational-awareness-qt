@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "ViewshedController.h"
+
 // PCH header
 #include "pch.hpp"
-
-#include "ViewshedController.h"
 
 // example app headers
 #include "DsaUtility.h"
@@ -41,6 +41,9 @@
 #include <cmath>
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
+namespace Analysis {
 
 const QString ViewshedController::VIEWSHED_HEADING_ATTRIBUTE = QStringLiteral("heading");
 const QString ViewshedController::VIEWSHED_PITCH_ATTRIBUTE = QStringLiteral("pitch");
@@ -129,7 +132,7 @@ void ViewshedController::onMouseClicked(QMouseEvent& event)
         m_identifyTaskWatcher = TaskWatcher();
 
         // Create a RAII helper to ensure we clean up the results
-        GraphicsOverlaysResultsManager resultsManager(identifyResults);
+        Utilities::GraphicsOverlaysResultsManager resultsManager(identifyResults);
 
         if (!isActive() || resultsManager.m_results.isEmpty() || resultsManager.m_results[0]->graphics().isEmpty())
         {
@@ -588,3 +591,6 @@ void ViewshedController::emitActiveViewshedSignals()
   emit activeViewshedOffsetZEnabledChanged();
   emit activeViewshed360ModeChanged();
 }
+
+} // Analysis
+} // Dsa

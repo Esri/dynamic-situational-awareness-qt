@@ -13,21 +13,23 @@
 #ifndef ALERTCONDITIONSCONTROLLER_H
 #define ALERTCONDITIONSCONTROLLER_H
 
+
+// toolkit headers
 #include "AbstractTool.h"
 
+// C++ API headers
 #include "TaskWatcher.h"
 
-#include <QJsonObject>
+// Qt headers
 #include <QHash>
+#include <QJsonObject>
 #include <QStringListModel>
 
 class QMouseEvent;
 class QStringList;
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
+namespace Esri {
+namespace ArcGISRuntime {
 class IdentifyLayerResult;
 class IdentifyGraphicsOverlayResult;
 class FeatureLayer;
@@ -35,6 +37,9 @@ class FeatureTable;
 class GraphicsOverlay;
 }
 }
+
+namespace Dsa {
+namespace Alerts {
 
 class AlertCondition;
 class AlertConditionData;
@@ -130,5 +135,8 @@ private:
   QMetaObject::Connection m_identifyLayersConnection;
   QMetaObject::Connection m_identifyGraphicsConnection;
 };
+
+} // Alerts
+} // Dsa
 
 #endif // ALERTCONDITIONSCONTROLLER_H

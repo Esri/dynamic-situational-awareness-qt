@@ -10,9 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "pch.hpp"
-
 #include "LocationViewshed360.h"
+
+// PCH header
+#include "pch.hpp"
 
 // example app headers
 #include "ViewshedController.h"
@@ -24,14 +25,17 @@
 #include "LocationViewshed.h"
 #include "Point.h"
 
+using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
+namespace Analysis {
+
 constexpr double c_defaultHeading = 0.0;
 constexpr double c_defaultPitch = 90.0;
 constexpr double c_defaultHorizontalAngle = 120.0;
 constexpr double c_defaultVerticalAngle = 90.0;
 constexpr double c_defaultMinDistance = 0.0;
 constexpr double c_defaultMaxDistance = 500.0;
-
-using namespace Esri::ArcGISRuntime;
 
 LocationViewshed360::LocationViewshed360(const Point& point, GraphicsOverlay* graphicsOverlay, AnalysisOverlay* analysisOverlay, QObject* parent) :
   Viewshed360(new LocationViewshed(point, c_defaultHeading, c_defaultPitch, c_defaultHorizontalAngle,
@@ -170,3 +174,6 @@ void LocationViewshed360::update360Mode(bool is360Mode)
   emit headingEnabledChanged();
   emit pitchEnabledChanged();
 }
+
+} // Analysis
+} // Dsa

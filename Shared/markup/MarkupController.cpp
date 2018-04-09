@@ -10,34 +10,43 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "MarkupController.h"
+
+// PCH header
 #include "pch.hpp"
 
-#include "MarkupController.h"
-#include "ToolResourceProvider.h"
-#include "ToolManager.h"
-
-#include "GeoView.h"
-#include "SceneQuickView.h"
-#include "Scene.h"
-#include "MapQuickView.h"
-#include "Map.h"
-#include "GraphicsOverlay.h"
-#include "Graphic.h"
-#include "MultipartBuilder.h"
-#include "PolylineBuilder.h"
-#include "PartCollection.h"
-#include "Symbol.h"
-#include "SimpleLineSymbol.h"
-#include "GeometryTypes.h"
-#include "GeometryEngine.h"
-#include "FeatureCollectionLayer.h"
-
-#include "MarkupLayer.h"
+// example app headers
 #include "MarkupBroadcast.h"
+#include "MarkupLayer.h"
 
+// toolkit headers
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
+
+// C++ API headers
+#include "FeatureCollectionLayer.h"
+#include "GeoView.h"
+#include "GeometryEngine.h"
+#include "GeometryTypes.h"
+#include "Graphic.h"
+#include "GraphicsOverlay.h"
+#include "Map.h"
+#include "MapQuickView.h"
+#include "MultipartBuilder.h"
+#include "PartCollection.h"
+#include "PolylineBuilder.h"
+#include "Scene.h"
+#include "SceneQuickView.h"
+#include "SimpleLineSymbol.h"
+#include "Symbol.h"
+
+// Qt headers
 #include <QCursor>
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
+namespace Markup {
 
 const QString MarkupController::USERNAME_PROPERTYNAME = "UserName";
 
@@ -355,3 +364,6 @@ QColor MarkupController::currentColor() const
 {
   return m_color;
 }
+
+} // Markup
+} // Dsa

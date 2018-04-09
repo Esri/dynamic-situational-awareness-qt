@@ -13,15 +13,18 @@
 #ifndef GRAPHICSOVERLAYSRESULTSMANAGER_H
 #define GRAPHICSOVERLAYSRESULTSMANAGER_H
 
+
+// Qt headers
 #include <QList>
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
+namespace Esri {
+namespace ArcGISRuntime {
   class IdentifyGraphicsOverlayResult;
 }
 }
+
+namespace Dsa {
+namespace Utilities {
 
 struct GraphicsOverlaysResultsManager {
 
@@ -31,5 +34,8 @@ struct GraphicsOverlaysResultsManager {
 
   ~GraphicsOverlaysResultsManager();
 };
+
+} // Utilities
+} // Dsa
 
 #endif // GRAPHICSOVERLAYSRESULTSMANAGER_H

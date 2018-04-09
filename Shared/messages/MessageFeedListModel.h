@@ -13,7 +13,12 @@
 #ifndef MESSAGEFEEDLISTMODEL_H
 #define MESSAGEFEEDLISTMODEL_H
 
+
+// Qt headers
 #include <QAbstractListModel>
+
+namespace Dsa {
+namespace Messages {
 
 class MessageFeed;
 
@@ -62,5 +67,8 @@ private:
   QStringList m_messageTypes;
   QList<MessageFeed*> m_messageFeeds;
 };
+
+} // Messages
+} // Dsa
 
 #endif // MESSAGEFEEDLISTMODEL_H

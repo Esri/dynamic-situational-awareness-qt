@@ -10,13 +10,21 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "WithinDistanceAlertCondition.h"
+
+// PCH header
 #include "pch.hpp"
 
+// example app headers
 #include "AlertConstants.h"
-#include "WithinDistanceAlertCondition.h"
 #include "WithinDistanceAlertConditionData.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa
+{
+namespace Alerts
+{
 
 /*!
   \class WithinDistanceAlertCondition
@@ -101,3 +109,6 @@ QString WithinDistanceAlertCondition::queryString() const
 {
   return QString("is within %1 %2 of").arg(QString::number(m_distance), AlertConstants::METERS);
 }
+
+} // Alerts
+} // Dsa

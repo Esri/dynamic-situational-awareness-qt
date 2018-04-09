@@ -13,21 +13,23 @@
 #ifndef BASEMAPPICKERCONTROLLER_H
 #define BASEMAPPICKERCONTROLLER_H
 
-#include <QObject>
 
-#include <QAbstractListModel>
-
+// toolkit headers
 #include "AbstractTool.h"
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
+// Qt headers
+#include <QAbstractListModel>
+#include <QObject>
+
+namespace Esri {
+namespace ArcGISRuntime {
   class Basemap;
 }
 }
 
 class QStringListModel;
+
+namespace Dsa {
 
 class TileCacheListModel;
 
@@ -75,5 +77,7 @@ private:
 private:
   void findBasemaps();
 };
+
+} // Dsa
 
 #endif // BASEMAPPICKERCONTROLLER_H

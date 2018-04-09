@@ -10,13 +10,18 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "pch.hpp"
-
 #include "GraphicsOverlaysResultsManager.h"
 
+// PCH header
+#include "pch.hpp"
+
+// C++ API headers
 #include "IdentifyGraphicsOverlayResult.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
+namespace Utilities {
 
 // RAII helper to ensure the QList<IdentifyGraphicsOverlayResult*> is deleted when we leave the scope
 GraphicsOverlaysResultsManager::GraphicsOverlaysResultsManager(const QList<Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult*>& results):
@@ -29,3 +34,6 @@ GraphicsOverlaysResultsManager::~GraphicsOverlaysResultsManager()
 {
   qDeleteAll(m_results);
 }
+
+} // Utilities
+} // Dsa

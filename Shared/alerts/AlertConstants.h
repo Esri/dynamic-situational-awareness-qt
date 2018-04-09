@@ -13,7 +13,12 @@
 #ifndef ALERTCONSTANTS_H
 #define ALERTCONSTANTS_H
 
+
+// Qt headers
 #include <QString>
+
+namespace Dsa {
+namespace Alerts {
 
 class AlertConstants {
 public:
@@ -32,5 +37,8 @@ public:
   static QString withinAreaAlertConditionType();
   static QString withinDistanceAlertConditionType();
 };
+
+} // Alerts
+} // Dsa
 
 #endif // ALERTCONSTANTS_H

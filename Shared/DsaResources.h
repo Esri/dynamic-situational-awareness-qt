@@ -13,8 +13,12 @@
 #ifndef DSARESOURCES_H
 #define DSARESOURCES_H
 
+
+// Qt headers
 #include <QObject>
 #include <QUrl>
+
+namespace Dsa {
 
 class DsaResources : public QObject
 {
@@ -137,5 +141,7 @@ private:
   QUrl iconWarningRedExclamation() const;
   QUrl iconLineOfSight() const;
 };
+
+} // Dsa
 
 #endif // DSARESOURCES_H

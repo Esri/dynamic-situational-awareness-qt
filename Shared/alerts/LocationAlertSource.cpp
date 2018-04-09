@@ -10,13 +10,20 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "pch.hpp"
-
 #include "LocationAlertSource.h"
 
+// PCH header
+#include "pch.hpp"
+
+// toolkit headers
 #include "ToolResourceProvider.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa
+{
+namespace Alerts
+{
 
 /*!
   \class LocationAlertSource
@@ -78,3 +85,6 @@ void LocationAlertSource::setSelected(bool)
 {
   // do not select the location display
 }
+
+} // Alerts
+} // Dsa

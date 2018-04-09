@@ -13,8 +13,15 @@
 #ifndef WITHINDISTANCEALERTCONDITIONDATA_H
 #define WITHINDISTANCEALERTCONDITIONDATA_H
 
+
+// example app headers
 #include "AlertConditionData.h"
+
+// C++ API headers
 #include "Geometry.h"
+
+namespace Dsa {
+namespace Alerts {
 
 class WithinDistanceAlertConditionData : public AlertConditionData
 {
@@ -37,5 +44,8 @@ private:
   double m_distance = 0.0;
   double m_moveDistance = 0.0;
 };
+
+} // Alerts
+} // Dsa
 
 #endif // WITHINDISTANCEALERTCONDITIONDATA_H

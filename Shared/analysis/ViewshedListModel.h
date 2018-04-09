@@ -13,6 +13,8 @@
 #ifndef VIEWSHEDLISTMODEL_H
 #define VIEWSHEDLISTMODEL_H
 
+
+// Qt headers
 #include <QAbstractListModel>
 
 namespace Esri {
@@ -20,6 +22,9 @@ namespace Esri {
     class AnalysisOverlay;
   }
 }
+
+namespace Dsa {
+namespace Analysis {
 
 class Viewshed360;
 
@@ -81,5 +86,8 @@ private:
   QHash<int, QByteArray> m_roles;
   QList<Viewshed360*> m_viewsheds;
 };
+
+} // Analysis
+} // Dsa
 
 #endif // VIEWSHEDLISTMODEL_H

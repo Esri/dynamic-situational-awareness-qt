@@ -10,14 +10,23 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "pch.hpp"
-
-#include "AlertConditionData.h"
 #include "AlertListModel.h"
 
+// PCH header
+#include "pch.hpp"
+
+// example app headers
+#include "AlertConditionData.h"
+
+// Qt headers
 #include <QUuid>
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa
+{
+namespace Alerts
+{
 
 /*!
   \class AlertListModel
@@ -258,3 +267,6 @@ QHash<int, QByteArray> AlertListModel::roleNames() const
 {
   return m_roles;
 }
+
+} // Alerts
+} // Dsa

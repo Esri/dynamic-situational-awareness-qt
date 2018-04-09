@@ -10,9 +10,12 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "DsaResources.h"
+
+// PCH header
 #include "pch.hpp"
 
-#include "DsaResources.h"
+namespace Dsa {
 
 DsaResources::DsaResources(QObject* parent):
   QObject(parent)
@@ -298,3 +301,5 @@ QUrl DsaResources::iconLineOfSight() const
 {
   return QStringLiteral("qrc:/Resources/icons/xhdpi/line_of_sight.png");
 }
+
+} // Dsa

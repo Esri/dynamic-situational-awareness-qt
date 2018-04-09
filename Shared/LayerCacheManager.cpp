@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "LayerCacheManager.h"
+
 // PCH header
 #include "pch.hpp"
-
-#include "LayerCacheManager.h"
 
 // example app headers
 #include "AddLocalDataController.h"
@@ -44,6 +44,8 @@
 #include <QDir>
 #include <QJsonDocument>
 #include <QJsonObject>
+
+namespace Dsa {
 
 const QString LayerCacheManager::LAYERS_PROPERTYNAME = "Layers";
 const QString LayerCacheManager::ELEVATION_PROPERTYNAME = "DefaultElevationSource";
@@ -279,7 +281,7 @@ void LayerCacheManager::layerToJson(Layer* layer)
     layerPath = vectorTiledLayer->vectorTileCache() ? vectorTiledLayer->vectorTileCache()->path() : vectorTiledLayer->url().toString();
 
   // Get Markups
-  auto markupLayer = dynamic_cast<MarkupLayer*>(layer);
+  auto markupLayer = dynamic_cast<Markup::MarkupLayer*>(layer);
   if (markupLayer)
     layerPath = markupLayer->path();
 
@@ -329,3 +331,5 @@ QJsonArray LayerCacheManager::layerJson() const
 {
   return m_layers;
 }
+
+} // Dsa

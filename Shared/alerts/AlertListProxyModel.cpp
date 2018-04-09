@@ -10,12 +10,20 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "AlertListProxyModel.h"
+
+// PCH header
 #include "pch.hpp"
 
+// example app headers
 #include "AlertConditionData.h"
 #include "AlertFilter.h"
 #include "AlertListModel.h"
-#include "AlertListProxyModel.h"
+
+namespace Dsa
+{
+namespace Alerts
+{
 
 /*!
   \class AlertListProxyModel
@@ -136,3 +144,6 @@ bool AlertListProxyModel::passesAllQueries(int sourceRow) const
   // if it currently satisfies its underlying condition
   return conditionData->matchesQuery();
 }
+
+} // Alerts
+} // Dsa

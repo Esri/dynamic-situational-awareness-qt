@@ -13,6 +13,7 @@
 #ifndef LINEOFSIGHTCONTROLLER_H
 #define LINEOFSIGHTCONTROLLER_H
 
+
 // toolkit headers
 #include "AbstractTool.h"
 
@@ -23,10 +24,8 @@
 // Qt headers
 #include <QAbstractItemModel>
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
+namespace Esri {
+namespace ArcGISRuntime {
   class AnalysisOverlay;
   class GeoElement;
   class GeoView;
@@ -37,6 +36,9 @@ namespace ArcGISRuntime
 }
 
 class QStringListModel;
+
+namespace Dsa {
+namespace Analysis {
 
 class LineOfSightController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -98,5 +100,8 @@ private:
   int m_visibleByCount = 0;
   QList<QMetaObject::Connection> m_visibleByConnections;
 };
+
+} // Analysis
+} // Dsa
 
 #endif // LINEOFSIGHTCONTROLLER_H

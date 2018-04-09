@@ -10,9 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "pch.hpp"
-
 #include "OptionsController.h"
+
+// PCH header
+#include "pch.hpp"
 
 // example app headers
 #include "AppConstants.h"
@@ -31,6 +32,8 @@
 #include "DictionaryRenderer.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 /*
  \brief Constructor that takes an optional \a parent.
@@ -251,15 +254,15 @@ QList<DictionaryRenderer*> OptionsController::friendlyTracksOverlayRenderers() c
   QList<DictionaryRenderer*> renderers;
 
   // Obtain and cache the MessageFeedsController. Connect members and emit signals so properties update
-  MessageFeedsController* messageController = Toolkit::ToolManager::instance().tool<MessageFeedsController>();
+  Messages::MessageFeedsController* messageController = Toolkit::ToolManager::instance().tool<Messages::MessageFeedsController>();
   if (messageController)
   {
-    MessageFeedListModel* messageFeedModel = dynamic_cast<MessageFeedListModel*>(messageController->messageFeeds());
+    Messages::MessageFeedListModel* messageFeedModel = dynamic_cast<Messages::MessageFeedListModel*>(messageController->messageFeeds());
     if (messageFeedModel)
     {
       for (int i = 0; i < messageFeedModel->count(); i++)
       {
-        MessageFeed* feed = messageFeedModel->at(i);
+        Messages::MessageFeed* feed = messageFeedModel->at(i);
         if (QString(feed->feedName()).contains("friendly tracks", Qt::CaseInsensitive))
         {
           Renderer* renderer = feed->messagesOverlay()->renderer();
@@ -272,3 +275,5 @@ QList<DictionaryRenderer*> OptionsController::friendlyTracksOverlayRenderers() c
 
   return renderers;
 }
+
+} // Dsa

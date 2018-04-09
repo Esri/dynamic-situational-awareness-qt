@@ -10,10 +10,18 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "StatusAlertFilter.h"
+
+// PCH header
 #include "pch.hpp"
 
+// example app headers
 #include "AlertFilter.h"
-#include "StatusAlertFilter.h"
+
+namespace Dsa
+{
+namespace Alerts
+{
 
 /*!
   \class StatusAlertFilter
@@ -73,3 +81,6 @@ void StatusAlertFilter::setMinLevel(AlertLevel minLevel)
   m_minLevel = minLevel;
   emit filterChanged();
 }
+
+} // Alerts
+} // Dsa

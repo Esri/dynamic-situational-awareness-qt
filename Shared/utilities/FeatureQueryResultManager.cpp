@@ -10,13 +10,18 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "pch.hpp"
-
 #include "FeatureQueryResultManager.h"
 
+// PCH header
+#include "pch.hpp"
+
+// C++ API headers
 #include "FeatureQueryResult.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
+namespace Utilities {
 
 // RAII helper to ensure the QList<IdentifyLayerResult*> is deleted when we leave the scope
 FeatureQueryResultManager::FeatureQueryResultManager(FeatureQueryResult* results):
@@ -29,3 +34,6 @@ FeatureQueryResultManager::~FeatureQueryResultManager()
 {
   delete m_results;
 }
+
+} // Utilities
+} // Dsa

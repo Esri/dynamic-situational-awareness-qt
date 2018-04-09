@@ -10,9 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "pch.hpp"
-
 #include "AddLocalDataController.h"
+
+// PCH header
+#include "pch.hpp"
 
 // example app headers
 #include "DataItemListModel.h"
@@ -29,6 +30,9 @@
 #include "ArcGISTiledLayer.h"
 #include "ArcGISVectorTiledLayer.h"
 #include "ElevationSource.h"
+#include "FeatureCollection.h"
+#include "FeatureCollectionLayer.h"
+#include "FeatureCollectionTable.h"
 #include "FeatureLayer.h"
 #include "GeoPackage.h"
 #include "GeoPackageFeatureTable.h"
@@ -42,19 +46,19 @@
 #include "Scene.h"
 #include "ShapefileFeatureTable.h"
 #include "TileCache.h"
-#include "FeatureCollection.h"
-#include "FeatureCollectionLayer.h"
-#include "FeatureCollectionTable.h"
 
 // Qt headers
 #include <QDir>
-#include <QFileInfo>
 #include <QFile>
-#include <QTextStream>
+#include <QFileInfo>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QTextStream>
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa
+{
 
 const QString AddLocalDataController::LOCAL_DATAPATHS_PROPERTYNAME = "LocalDataPaths";
 const QString AddLocalDataController::DEFAULT_ELEVATION_PROPERTYNAME = "DefaultElevationSource";
@@ -269,12 +273,12 @@ void AddLocalDataController::createElevationSourceFromRasters(const QStringList&
 */
 void AddLocalDataController::createMarkupLayer(const QString& path, int layerIndex, bool visible, bool autoAdd)
 {
-  MarkupLayer* markupLayer = MarkupLayer::createFromPath(path, this);
+  Markup::MarkupLayer* markupLayer = Markup::MarkupLayer::createFromPath(path, this);
   if (!markupLayer)
     return;
 
   markupLayer->setVisible(visible);
-  connect(markupLayer, &MarkupLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+  connect(markupLayer, &Markup::MarkupLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
   if (autoAdd)
   {
@@ -834,3 +838,5 @@ void AddLocalDataController::setProperties(const QVariantMap& properties)
 
   refreshLocalDataModel();
 }
+
+} // Dsa

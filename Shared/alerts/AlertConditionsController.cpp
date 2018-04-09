@@ -10,9 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "pch.hpp"
-
 #include "AlertConditionsController.h"
+
+// PCH header
+#include "pch.hpp"
 
 // example app headers
 #include "AlertConditionData.h"
@@ -24,6 +25,8 @@
 #include "FixedValueAlertTarget.h"
 #include "GeoElementAlertTarget.h"
 #include "GraphicsOverlayAlertTarget.h"
+#include "GraphicsOverlaysResultsManager.h"
+#include "LayerResultsManager.h"
 #include "LocationAlertSource.h"
 #include "LocationAlertTarget.h"
 #include "MessageFeedConstants.h"
@@ -50,35 +53,10 @@
 
 using namespace Esri::ArcGISRuntime;
 
-struct ResultsManager {
-
-  QList<IdentifyLayerResult*>& m_results;
-
-  ResultsManager(QList<IdentifyLayerResult*>& results):
-    m_results(results)
-  {
-  }
-
-  ~ResultsManager()
-  {
-    qDeleteAll(m_results);
-  }
-};
-
-struct GraphicsResultsManager {
-
-  QList<IdentifyGraphicsOverlayResult*>& m_results;
-
-  GraphicsResultsManager(QList<IdentifyGraphicsOverlayResult*>& results):
-    m_results(results)
-  {
-  }
-
-  ~GraphicsResultsManager()
-  {
-    qDeleteAll(m_results);
-  }
-};
+namespace Dsa
+{
+namespace Alerts
+{
 
 /*!
   \class AlertConditionsController
@@ -150,19 +128,19 @@ void AlertConditionsController::setProperties(const QVariantMap& properties)
 {
   const auto conditionsData = properties[AlertConstants::ALERT_CONDITIONS_PROPERTYNAME];
 
-  const auto messageFeeds = properties[MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME].toList();
+  const auto messageFeeds = properties[Messages::MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME].toList();
   if (!messageFeeds.isEmpty())
   {
     const auto messageFeedsJson = QJsonArray::fromVariantList(messageFeeds);
     for (const auto& messageFeed : messageFeedsJson)
     {
       const auto messageFeedJsonObject = messageFeed.toObject();
-      if (!messageFeedJsonObject.contains(MessageFeedConstants::MESSAGE_FEEDS_NAME) ||
-          !messageFeedJsonObject.contains(MessageFeedConstants::MESSAGE_FEEDS_TYPE))
+      if (!messageFeedJsonObject.contains(Messages::MessageFeedConstants::MESSAGE_FEEDS_NAME) ||
+          !messageFeedJsonObject.contains(Messages::MessageFeedConstants::MESSAGE_FEEDS_TYPE))
         continue;
 
-      const auto feedName = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_NAME].toString();
-      const auto feedType = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_TYPE].toString();
+      const auto feedName = messageFeedJsonObject[Messages::MessageFeedConstants::MESSAGE_FEEDS_NAME].toString();
+      const auto feedType = messageFeedJsonObject[Messages::MessageFeedConstants::MESSAGE_FEEDS_TYPE].toString();
 
       m_messageFeedTypesToNames.insert(feedType, feedName);
     }
@@ -713,7 +691,7 @@ void AlertConditionsController::onIdentifyLayersCompleted(const QUuid& taskId, Q
   if (taskId != m_identifyLayersWatcher.taskId())
     return;
 
-  ResultsManager resultsManager(identifyResults);
+  Utilities::LayerResultsManager resultsManager(identifyResults);
 
   if (!isActive())
     return;
@@ -781,7 +759,7 @@ void AlertConditionsController::onIdentifyGraphicsOverlaysCompleted(const QUuid&
   if (taskId != m_identifyGraphicsWatcher.taskId())
     return;
 
-  GraphicsResultsManager resultsManager(identifyResults);
+  Utilities::GraphicsOverlaysResultsManager resultsManager(identifyResults);
 
   if (!isActive())
     return;
@@ -1271,3 +1249,5 @@ QStringList AlertConditionsController::realtimeFeedNames() const
   return m_messageFeedTypesToNames.values();
 }
 
+} // Alerts
+} // Dsa

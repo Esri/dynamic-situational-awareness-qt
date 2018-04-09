@@ -10,16 +10,25 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "WithinAreaAlertCondition.h"
+
+// PCH header
 #include "pch.hpp"
 
+// example app headers
 #include "GraphicAlertSource.h"
-#include "WithinAreaAlertCondition.h"
 #include "WithinAreaAlertConditionData.h"
 
-#include "GraphicsOverlay.h"
+// C++ API headers
 #include "GraphicListModel.h"
+#include "GraphicsOverlay.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa
+{
+namespace Alerts
+{
 
 /*!
   \class WithinAreaAlertCondition
@@ -85,3 +94,6 @@ QString WithinAreaAlertCondition::isWithinQueryString()
 {
   return QStringLiteral("is within");
 }
+
+} // Alerts
+} // Dsa

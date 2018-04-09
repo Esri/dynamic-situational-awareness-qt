@@ -10,9 +10,13 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "VehicleStyles.h"
+
+// PCH header
 #include "pch.hpp"
 
-#include "VehicleStyles.h"
+namespace Dsa {
+namespace Vehicle {
 
 VehicleStyles::VehicleStyles(QObject* parent):
   QObject(parent)
@@ -62,3 +66,6 @@ int VehicleStyles::categoryToolbarWidth() const
 {
   return 56;
 }
+
+} // Vehicle
+} // Dsa

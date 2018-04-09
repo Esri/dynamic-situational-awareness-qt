@@ -17,6 +17,8 @@
 // Qt headers
 #include <QString>
 
+namespace Dsa {
+
 class AppConstants {
 public:
   static const QString USERNAME_PROPERTYNAME;
@@ -24,5 +26,7 @@ public:
   static const QString UNIT_METERS;
   static const QString UNIT_FEET;
 };
+
+} // Dsa
 
 #endif // APPCONSTANTS_H

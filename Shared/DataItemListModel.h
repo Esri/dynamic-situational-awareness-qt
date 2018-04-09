@@ -13,11 +13,15 @@
 #ifndef DATAITEMLISTMODEL_H
 #define DATAITEMLISTMODEL_H
 
+
+// Qt headers
 #include <QAbstractListModel>
 #include <QByteArray>
+#include <QFileInfo>
 #include <QHash>
 #include <QList>
-#include <QFileInfo>
+
+namespace Dsa {
 
 enum class DataType
 {
@@ -77,5 +81,7 @@ private:
   QHash<int, QByteArray> m_roles;
   QList<DataItem> m_dataItems;
 };
+
+} // Dsa
 
 #endif // DATAITEMLISTMODEL_H

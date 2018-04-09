@@ -10,10 +10,18 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "AlertConditionListModel.h"
+
+// PCH header
 #include "pch.hpp"
 
+// example app headers
 #include "AlertCondition.h"
-#include "AlertConditionListModel.h"
+
+namespace Dsa
+{
+namespace Alerts
+{
 
 AlertConditionListModel::AlertConditionListModel(QObject* parent):
   QAbstractListModel(parent)
@@ -167,3 +175,6 @@ QHash<int, QByteArray> AlertConditionListModel::roleNames() const
 {
   return m_roles;
 }
+
+} // Alerts
+} // Dsa

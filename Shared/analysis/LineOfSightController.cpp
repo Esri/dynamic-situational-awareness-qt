@@ -10,9 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "pch.hpp"
-
 #include "LineOfSightController.h"
+
+// PCH header
+#include "pch.hpp"
 
 // example app headers
 #include "FeatureQueryResultManager.h"
@@ -36,6 +37,9 @@
 #include <QStringListModel>
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
+namespace Analysis {
 
 /*!
   \brief Constructor accepting an optional \a parent.
@@ -212,7 +216,7 @@ void LineOfSightController::onQueryFeaturesCompleted(QUuid taskId, FeatureQueryR
   disconnect(m_queryFeaturesConnection);
   m_featuresTask = TaskWatcher();
 
-  FeatureQueryResultManager resultsMgr(featureQueryResult);
+  Utilities::FeatureQueryResultManager resultsMgr(featureQueryResult);
 
   if (!m_locationGeoElement)
     getLocationGeoElement();
@@ -264,7 +268,7 @@ void LineOfSightController::onQueryFeaturesCompleted(QUuid taskId, FeatureQueryR
       const int count = losList->rowCount();
       for (int i = 0; i < count; ++i)
       {
-        Analysis* analysis = losList->at(i);
+        Esri::ArcGISRuntime::Analysis* analysis = losList->at(i);
         if (!analysis)
           continue;
 
@@ -356,7 +360,7 @@ void LineOfSightController::setAnalysisVisible(bool analysisVisible)
   const auto lineOfSightCount = model->rowCount();
   for (int i = 0; i < lineOfSightCount; ++i)
   {
-    Analysis* analysis = model->at(i);
+    Esri::ArcGISRuntime::Analysis* analysis = model->at(i);
     if (analysis == nullptr)
       continue;
 
@@ -432,3 +436,6 @@ void LineOfSightController::clearAnalysis()
     m_lineOfSightParent = nullptr;
   }
 }
+
+} // Analysis
+} // Dsa

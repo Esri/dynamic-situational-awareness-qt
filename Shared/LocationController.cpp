@@ -10,9 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "pch.hpp"
-
 #include "LocationController.h"
+
+// PCH header
+#include "pch.hpp"
 
 // example app headers
 #include "GPXLocationSimulator.h"
@@ -39,6 +40,8 @@
 #include <cmath>
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 const QString LocationController::SIMULATE_LOCATION_PROPERTYNAME = "SimulateLocation";
 const QString LocationController::GPX_FILE_PROPERTYNAME = "GpxFile";
@@ -388,3 +391,5 @@ QUrl LocationController::modelSymbolPath() const
 
   return QUrl::fromLocalFile(modelPath);
 }
+
+} // Dsa

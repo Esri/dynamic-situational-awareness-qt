@@ -10,19 +10,20 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "pch.hpp"
-
 #include "MessageFeedsController.h"
+
+// PCH header
+#include "pch.hpp"
 
 // example app headers
 #include "AppConstants.h"
+#include "DataListener.h"
+#include "DataSender.h"
 #include "LocationBroadcast.h"
 #include "Message.h"
 #include "MessageFeed.h"
 #include "MessageFeedConstants.h"
 #include "MessageFeedListModel.h"
-#include "DataListener.h"
-#include "DataSender.h"
 #include "MessagesOverlay.h"
 
 // toolkit headers
@@ -41,6 +42,9 @@
 #include <QUdpSocket>
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
+namespace Messages {
 
 const QString MessageFeedsController::RESOURCE_DIRECTORY_PROPERTYNAME = "ResourceDirectory";
 
@@ -87,7 +91,7 @@ QAbstractListModel* MessageFeedsController::messageFeeds() const
    \brief Returns the list of data listener objects that exist for
    the message feeds.
  */
-QList<DataListener*> MessageFeedsController::dataListeners() const
+QList<Utilities::DataListener*> MessageFeedsController::dataListeners() const
 {
   return m_dataListeners;
 }
@@ -99,14 +103,14 @@ QList<DataListener*> MessageFeedsController::dataListeners() const
      \li \a dataListener - The data listener object to add to the controller.
    \endlist
  */
-void MessageFeedsController::addDataListener(DataListener* dataListener)
+void MessageFeedsController::addDataListener(Utilities::DataListener* dataListener)
 {
   if (!dataListener)
     return;
 
   m_dataListeners.append(dataListener);
 
-  connect(dataListener, &DataListener::dataReceived, this, [this](const QByteArray& data)
+  connect(dataListener, &Utilities::DataListener::dataReceived, this, [this](const QByteArray& data)
   {
     Message m = Message::create(data);
     if (m.isEmpty())
@@ -133,14 +137,14 @@ void MessageFeedsController::addDataListener(DataListener* dataListener)
      \li \a dataListener - The data listener object to remove from the controller.
    \endlist
  */
-void MessageFeedsController::removeDataListener(DataListener* dataListener)
+void MessageFeedsController::removeDataListener(Utilities::DataListener* dataListener)
 {
   if (!dataListener)
     return;
 
   m_dataListeners.removeOne(dataListener);
 
-  disconnect(dataListener, &DataListener::dataReceived, this, nullptr);
+  disconnect(dataListener, &Utilities::DataListener::dataReceived, this, nullptr);
 }
 
 /*!
@@ -181,7 +185,7 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
       QUdpSocket* udpSocket = new QUdpSocket(this);
       udpSocket->bind(udpPort.toInt(), QUdpSocket::DontShareAddress | QUdpSocket::ReuseAddressHint);
 
-      addDataListener(new DataListener(udpSocket, this));
+      addDataListener(new Utilities::DataListener(udpSocket, this));
     }
   }
 
@@ -452,3 +456,6 @@ Renderer* MessageFeedsController::createRenderer(const QString& rendererInfo, QO
   \fn void MessageFeedsController::locationBroadcastInDistressChanged();
   \brief Signal emitted when the \l locationBroadcastInDistress property changes.
  */
+
+} // Messages
+} // Dsa

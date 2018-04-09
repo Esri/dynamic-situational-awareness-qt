@@ -13,7 +13,12 @@
 #ifndef ALERTFILTER_H
 #define ALERTFILTER_H
 
+
+// Qt headers
 #include <QObject>
+
+namespace Dsa {
+namespace Alerts {
 
 class AlertConditionData;
 
@@ -30,5 +35,8 @@ public:
 signals:
   void filterChanged();
 };
+
+} // Alerts
+} // Dsa
 
 #endif // ALERTFILTER_H

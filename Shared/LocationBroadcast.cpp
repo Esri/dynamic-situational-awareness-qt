@@ -10,9 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "pch.hpp"
-
 #include "LocationBroadcast.h"
+
+// PCH header
+#include "pch.hpp"
 
 // example app headers
 #include "DataSender.h"
@@ -26,6 +27,8 @@
 #include <QUdpSocket>
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 // friendly symbol ID for our location broadcast
 static const QString s_locationBroadcastSic{QStringLiteral("SFGPEVAL-------")};
@@ -268,7 +271,7 @@ void LocationBroadcast::setInDistress(bool inDistress)
 /*!
    \brief Returns the message that is being broadcasted.
  */
-Message LocationBroadcast::message() const
+Messages::Message LocationBroadcast::message() const
 {
   return m_message;
 }
@@ -296,7 +299,7 @@ void LocationBroadcast::update()
     m_timer = nullptr;
   }
 
-  m_dataSender = new DataSender(this);
+  m_dataSender = new Utilities::DataSender(this);
 
   QUdpSocket* udpSocket = new QUdpSocket(m_dataSender);
   udpSocket->connectToHost(QHostAddress::Broadcast, m_udpPort, QIODevice::WriteOnly);
@@ -341,15 +344,15 @@ void LocationBroadcast::broadcastLocation()
   {
     QVariantMap attribs;
 
-    m_message = Message(Message::MessageAction::Update, m_location);
+    m_message = Messages::Message(Messages::Message::MessageAction::Update, m_location);
     m_message.setMessageId(QUuid::createUuid().toString());
     m_message.setMessageType(m_messageType);
     m_message.setSymbolId(s_locationBroadcastSic);
 
-    attribs.insert(Message::GEOMESSAGE_SIC_NAME, s_locationBroadcastSic);
-    attribs.insert(Message::GEOMESSAGE_UNIQUE_DESIGNATION_NAME, m_userName);
+    attribs.insert(Messages::Message::GEOMESSAGE_SIC_NAME, s_locationBroadcastSic);
+    attribs.insert(Messages::Message::GEOMESSAGE_UNIQUE_DESIGNATION_NAME, m_userName);
     const int status911 = m_inDistress ? 1 : 0;
-    attribs.insert(Message::GEOMESSAGE_STATUS_911_NAME, status911);
+    attribs.insert(Messages::Message::GEOMESSAGE_STATUS_911_NAME, status911);
     m_message.setAttributes(attribs);
   }
   else
@@ -359,7 +362,7 @@ void LocationBroadcast::broadcastLocation()
     QVariantMap attribs = m_message.attributes();
 
     const int status911 = m_inDistress ? 1 : 0;
-    attribs.insert(Message::GEOMESSAGE_STATUS_911_NAME, status911);
+    attribs.insert(Messages::Message::GEOMESSAGE_STATUS_911_NAME, status911);
     m_message.setAttributes(attribs);
   }
 
@@ -379,7 +382,7 @@ void LocationBroadcast::removeBroadcast()
 {
   if (!m_message.isEmpty())
   {
-    m_message.setMessageAction(Message::MessageAction::Remove);
+    m_message.setMessageAction(Messages::Message::MessageAction::Remove);
 
     emit messageChanged();
 
@@ -409,7 +412,7 @@ void LocationBroadcast::setUserName(const QString& userName)
   if (!m_message.isEmpty())
   {
     QVariantMap attribs = m_message.attributes();
-    attribs.insert(Message::GEOMESSAGE_UNIQUE_DESIGNATION_NAME, m_userName);
+    attribs.insert(Messages::Message::GEOMESSAGE_UNIQUE_DESIGNATION_NAME, m_userName);
     m_message.setAttributes(attribs);
   }
 }
@@ -418,3 +421,5 @@ void LocationBroadcast::setUserName(const QString& userName)
   \fn void LocationBroadcast::messageChanged();
   \brief Signal emitted when the message for this location broadcast changes.
  */
+
+} // Dsa

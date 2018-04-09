@@ -13,7 +13,12 @@
 #ifndef VEHICLESTYLES_H
 #define VEHICLESTYLES_H
 
+
+// Qt headers
 #include <QObject>
+
+namespace Dsa {
+namespace Vehicle {
 
 class VehicleStyles : public QObject
 {
@@ -42,5 +47,8 @@ private:
   int mainToolbarHeight() const;
   int categoryToolbarWidth() const;
 };
+
+} // Vehicle
+} // Dsa
 
 #endif // VEHICLESTYLES_H

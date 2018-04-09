@@ -10,9 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "pch.hpp"
-
 #include "GeoElementViewshed360.h"
+
+// PCH header
+#include "pch.hpp"
 
 // C++ API headers
 #include "AnalysisOverlay.h"
@@ -22,14 +23,17 @@
 // STL headers
 #include <cmath>
 
+using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
+namespace Analysis {
+
 constexpr double c_defaultPitch = 0.0;
 constexpr double c_defaultHorizontalAngle = 120.0;
 constexpr double c_defaultVerticalAngle = 90.0;
 constexpr double c_defaultMinDistance = 0.0;
 constexpr double c_defaultMaxDistance = 500.0;
 constexpr double c_defaultOffsetZ = 5.0;
-
-using namespace Esri::ArcGISRuntime;
 
 GeoElementViewshed360::GeoElementViewshed360(GeoElement* geoElement, AnalysisOverlay* analysisOverlay,
                                              const QString& headingAttribute, const QString& pitchAttribute, QObject* parent) :
@@ -221,3 +225,6 @@ void GeoElementViewshed360::update360Mode(bool is360Mode)
   emit headingEnabledChanged();
   emit pitchEnabledChanged();
 }
+
+} // Analysis
+} // Dsa

@@ -13,7 +13,12 @@
 #ifndef HANDHELDSTYLES_H
 #define HANDHELDSTYLES_H
 
+
+// Qt headers
 #include <QObject>
+
+namespace Dsa {
+namespace Handheld {
 
 class HandheldStyles : public QObject
 {
@@ -42,5 +47,8 @@ private:
   int mainToolbarHeight() const;
   int categoryToolbarWidth() const;
 };
+
+} // Handheld
+} // Dsa
 
 #endif // HANDHELDSTYLES_H

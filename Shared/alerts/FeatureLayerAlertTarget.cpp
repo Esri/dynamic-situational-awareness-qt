@@ -10,15 +10,24 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "FeatureLayerAlertTarget.h"
+
+// PCH header
 #include "pch.hpp"
 
-#include "FeatureLayerAlertTarget.h"
+// example app headers
 #include "FeatureQueryResultManager.h"
 #include "GeometryQuadtree.h"
 
+// C++ API headers
 #include "FeatureLayer.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa
+{
+namespace Alerts
+{
 
 /*!
   \class FeatureLayerAlertTarget
@@ -104,7 +113,7 @@ QVariant FeatureLayerAlertTarget::targetValue() const
 void FeatureLayerAlertTarget::handleQueryFeaturesCompleted(QUuid, FeatureQueryResult* queryResults)
 {
   // Store the results in a RAII manager to ensure they are cleaned up
-  FeatureQueryResultManager results(queryResults);
+  Utilities::FeatureQueryResultManager results(queryResults);
   if (!results.m_results)
   {
     emit dataChanged();
@@ -155,3 +164,6 @@ void FeatureLayerAlertTarget::rebuildQuadtree()
   if (elements.size() > 1)
     m_quadtree = new GeometryQuadtree(m_FeatureLayer->fullExtent(), elements, 8, this);
 }
+
+} // Alerts
+} // Dsa

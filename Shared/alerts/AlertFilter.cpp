@@ -10,9 +10,15 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "AlertFilter.h"
+
+// PCH header
 #include "pch.hpp"
 
-#include "AlertFilter.h"
+namespace Dsa
+{
+namespace Alerts
+{
 
 /*!
   \class AlertFilter
@@ -39,3 +45,6 @@ AlertFilter::~AlertFilter()
 {
 
 }
+
+} // Alerts
+} // Dsa

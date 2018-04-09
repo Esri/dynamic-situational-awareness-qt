@@ -10,16 +10,25 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "Message.h"
+
+// PCH header
 #include "pch.hpp"
 
-#include "Message.h"
-#include "Point.h"
+// example app headers
 #include "Message_p.h"
+
+// C++ API headers
+#include "Point.h"
 #include "PolygonBuilder.h"
 #include "PolylineBuilder.h"
 
-#include <QXmlStreamReader>
+// Qt headers
 #include <QDomDocument>
+#include <QXmlStreamReader>
+
+namespace Dsa {
+namespace Messages {
 
 const QString Message::COT_ROOT_ELEMENT_NAME{QStringLiteral("events")};
 const QString Message::COT_ELEMENT_NAME{QStringLiteral("event")};
@@ -610,3 +619,6 @@ MessageData::MessageData(const MessageData& other) :
 MessageData::~MessageData()
 {
 }
+
+} // Messages
+} // Dsa

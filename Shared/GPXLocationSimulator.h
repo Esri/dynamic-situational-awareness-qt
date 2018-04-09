@@ -13,17 +13,26 @@
 #ifndef GPXLOCATIONSIMULATOR_H
 #define GPXLOCATIONSIMULATOR_H
 
-#include <QFile>
-#include <QLineF>
-#include <QTime>
-#include <QPointF>
-#include <QGeoPositionInfoSource>
-#include <memory>
-#include "Point.h"
+
+// C++ API headers
 #include "LineSegment.h"
+#include "Point.h"
+
+// Qt headers
+#include <QFile>
+#include <QGeoPositionInfoSource>
+#include <QLineF>
+#include <QPointF>
+#include <QTime>
+
+// STL headers
+#include <memory>
 
 class QXmlStreamReader;
 class QTimer;
+
+namespace Dsa {
+
 class GPXLocationSimulator : public QGeoPositionInfoSource
 {
   Q_OBJECT
@@ -95,5 +104,7 @@ private:
 private slots:
   void handleTimerEvent();
 };
+
+} // Dsa
 
 #endif // GPXLOCATIONSIMULATOR_H

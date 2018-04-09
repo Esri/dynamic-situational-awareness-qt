@@ -13,14 +13,12 @@
 #ifndef ALERTLISTCONTROLLER_H
 #define ALERTLISTCONTROLLER_H
 
-#include <QAbstractListModel>
 
+// toolkit headers
 #include "AbstractTool.h"
 
-class AlertFilter;
-class AlertListProxyModel;
-class IdsAlertFilter;
-class StatusAlertFilter;
+// Qt headers
+#include <QAbstractListModel>
 
 namespace Esri {
 namespace ArcGISRuntime
@@ -29,7 +27,16 @@ namespace ArcGISRuntime
   class SimpleMarkerSceneSymbol;
 }}
 
+namespace Dsa {
+
 class PointHighlighter;
+
+namespace Alerts {
+
+class AlertFilter;
+class AlertListProxyModel;
+class IdsAlertFilter;
+class StatusAlertFilter;
 
 class AlertListController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -71,5 +78,8 @@ private:
 
   QList<QMetaObject::Connection> m_highlightConnections;
 };
+
+} // Alerts
+} // Dsa
 
 #endif // ALERTLISTCONTROLLER_H

@@ -17,6 +17,9 @@
 // Qt headers
 #include <QString>
 
+namespace Dsa {
+namespace Markup {
+
 class MarkupConstants
 {
 public:
@@ -35,5 +38,6 @@ public:
   static const QString VERSIONNUMBER;
 };
 
-
+} // Markup
+} // Dsa
 #endif // MARKUPCONSTANTS_H

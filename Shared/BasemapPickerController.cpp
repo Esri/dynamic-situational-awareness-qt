@@ -10,20 +10,28 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "BasemapPickerController.h"
+
+// PCH header
 #include "pch.hpp"
 
-#include <QDir>
+// example app headers
+#include "TileCacheListModel.h"
 
-#include "ArcGISTiledLayer.h"
-#include "Basemap.h"
-
+// toolkit headers
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
-#include "BasemapPickerController.h"
-#include "TileCacheListModel.h"
+// C++ API headers
+#include "ArcGISTiledLayer.h"
+#include "Basemap.h"
+
+// Qt headers
+#include <QDir>
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 const QString BasemapPickerController::DEFAULT_BASEMAP_PROPERTYNAME = "DefaultBasemap";
 const QString BasemapPickerController::BASEMAP_DIRECTORY_PROPERTYNAME = "BasemapDirectory";
@@ -153,3 +161,5 @@ void BasemapPickerController::setProperties(const QVariantMap& properties)
     selectInitialBasemap();
   }
 }
+
+} // Dsa

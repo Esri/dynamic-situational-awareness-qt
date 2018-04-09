@@ -13,7 +13,12 @@
 #ifndef MESSAGE_P_H
 #define MESSAGE_P_H
 
+
+// example app headers
 #include "Message.h"
+
+namespace Dsa {
+namespace Messages {
 
 class MessageData : public QSharedData
 {
@@ -31,5 +36,8 @@ public:
   QString messageType;
   QString symbolId;
 };
+
+} // Messages
+} // Dsa
 
 #endif // MESSAGE_P_H

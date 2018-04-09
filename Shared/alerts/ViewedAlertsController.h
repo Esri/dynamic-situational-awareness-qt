@@ -13,11 +13,16 @@
 #ifndef VIEWEDALERTSCONTROLLER_H
 #define VIEWEDALERTSCONTROLLER_H
 
+
+// toolkit headers
+#include "AbstractTool.h"
+
+// Qt headers
+#include <QAbstractListModel>
 #include <QObject>
 
-#include <QAbstractListModel>
-
-#include "AbstractTool.h"
+namespace Dsa {
+namespace Alerts {
 
 class AlertListProxyModel;
 class StatusAlertFilter;
@@ -46,5 +51,8 @@ private slots:
 private:
   mutable int m_cachedCount = -1;
 };
+
+} // Alerts
+} // Dsa
 
 #endif // VIEWEDALERTSCONTROLLER_H

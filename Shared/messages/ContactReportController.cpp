@@ -17,9 +17,9 @@
 
 // example app headers
 #include "AppConstants.h"
+#include "DataSender.h"
 #include "Message.h"
 #include "MessageFeedConstants.h"
-#include "DataSender.h"
 #include "PointHighlighter.h"
 
 // toolkit headers
@@ -38,6 +38,11 @@
 #include <QUdpSocket>
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa
+{
+namespace Messages
+{
 
 /*!
   \brief Constructor accepting an optional \a parent.
@@ -277,7 +282,7 @@ void ContactReportController::broadcastReport(const QString& size,
 
   if (!m_dataSender)
   {
-    m_dataSender = new DataSender(this);
+    m_dataSender = new Utilities::DataSender(this);
 
     QUdpSocket* udpSocket = new QUdpSocket(m_dataSender);
     udpSocket->connectToHost(QHostAddress::Broadcast, m_udpPort, QIODevice::WriteOnly);
@@ -374,3 +379,6 @@ void ContactReportController::onUpdateControlPointHightlight()
   else
     m_highlighter->stopHighlight();
 }
+
+} // Messages
+} // Dsa

@@ -10,9 +10,12 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "DrawOrderLayerListModel.h"
+
+// PCH header
 #include "pch.hpp"
 
-#include "DrawOrderLayerListModel.h"
+namespace Dsa {
 
 DrawOrderLayerListModel::DrawOrderLayerListModel(QObject* parent):
   QSortFilterProxyModel(parent)
@@ -29,3 +32,5 @@ bool DrawOrderLayerListModel::lessThan(const QModelIndex& sourceLeft, const QMod
 {
   return sourceLeft.row() > sourceRight.row();
 }
+
+} // Dsa

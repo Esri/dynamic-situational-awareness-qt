@@ -13,8 +13,11 @@
 #ifndef MESSAGEFEEDSCONTROLLER_H
 #define MESSAGEFEEDSCONTROLLER_H
 
+
+// toolkit headers
 #include "AbstractTool.h"
 
+// Qt headers
 #include <QAbstractListModel>
 
 namespace Esri {
@@ -25,9 +28,17 @@ namespace Esri {
   }
 }
 
-class MessageFeedListModel;
+namespace Dsa {
+
+namespace Utilities {
 class DataListener;
+}
+
 class LocationBroadcast;
+
+namespace Messages {
+
+class MessageFeedListModel;
 
 class MessageFeedsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -48,9 +59,9 @@ public:
 
   QAbstractListModel* messageFeeds() const;
 
-  QList<DataListener*> dataListeners() const;
-  void addDataListener(DataListener* dataListener);
-  void removeDataListener(DataListener* dataListener);
+  QList<Utilities::DataListener*> dataListeners() const;
+  void addDataListener(Utilities::DataListener* dataListener);
+  void removeDataListener(Utilities::DataListener* dataListener);
 
   QString toolName() const override;
   void setProperties(const QVariantMap& properties) override;
@@ -83,9 +94,12 @@ private:
   Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
 
   MessageFeedListModel* m_messageFeeds = nullptr;
-  QList<DataListener*> m_dataListeners;
+  QList<Utilities::DataListener*> m_dataListeners;
   QString m_resourcePath;
   LocationBroadcast* m_locationBroadcast = nullptr;
 };
+
+} // Messages
+} // Dsa
 
 #endif // MESSAGEFEEDSCONTROLLER_H

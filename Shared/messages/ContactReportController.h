@@ -20,19 +20,24 @@
 // C++ API headers
 #include "Point.h"
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
+class QDateTime;
+class QMouseEvent;
+
+namespace Esri {
+namespace ArcGISRuntime {
   class GeoView;
 }
 }
 
+namespace Dsa {
+
+namespace Utilities {
 class DataSender;
+}
+
 class PointHighlighter;
 
-class QDateTime;
-class QMouseEvent;
+namespace Messages {
 
 class ContactReportController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -94,7 +99,7 @@ private:
   Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
   QString m_unitName;
   Esri::ArcGISRuntime::Point m_controlPoint;
-  DataSender* m_dataSender = nullptr;
+  Utilities::DataSender* m_dataSender = nullptr;
   PointHighlighter* m_highlighter = nullptr;
   bool m_controlPointSet = false;
   int m_udpPort = -1;
@@ -103,5 +108,8 @@ private:
   QMetaObject::Connection m_mouseClickConnection;
   QMetaObject::Connection m_myLocationConnection;
 };
+
+} // Messages
+} // Dsa
 
 #endif // CONTACTREPORTCONTROLLER_H

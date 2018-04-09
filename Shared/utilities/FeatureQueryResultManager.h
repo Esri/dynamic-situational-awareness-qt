@@ -13,15 +13,18 @@
 #ifndef FEATUREQUERYRESULTSMANAGER_H
 #define FEATUREQUERYRESULTSMANAGER_H
 
+
+// Qt headers
 #include <QList>
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
+namespace Esri {
+namespace ArcGISRuntime {
   class FeatureQueryResult;
 }
 }
+
+namespace Dsa {
+namespace Utilities {
 
 struct FeatureQueryResultManager {
 
@@ -31,5 +34,8 @@ struct FeatureQueryResultManager {
 
   ~FeatureQueryResultManager();
 };
+
+} // Utilities
+} // Dsa
 
 #endif // FEATUREQUERYRESULTSMANAGER_H

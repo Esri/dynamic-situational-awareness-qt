@@ -10,15 +10,23 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "MessagesOverlay.h"
+
+// PCH header
 #include "pch.hpp"
 
-#include "MessagesOverlay.h"
-#include "GeoView.h"
-#include "Renderer.h"
-#include "GraphicsOverlay.h"
+// example app headers
 #include "Message.h"
 
+// C++ API headers
+#include "GeoView.h"
+#include "GraphicsOverlay.h"
+#include "Renderer.h"
+
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
+namespace Messages {
 
 MessagesOverlay::MessagesOverlay(GeoView* geoView, QObject* parent) :
   MessagesOverlay(geoView, nullptr, SurfacePlacement::Draped, parent)
@@ -265,3 +273,6 @@ void MessagesOverlay::setVisible(bool visible)
   if (m_linePolygonGraphicsOverlay)
     m_linePolygonGraphicsOverlay->setVisible(visible);
 }
+
+} // Messages
+} // Dsa

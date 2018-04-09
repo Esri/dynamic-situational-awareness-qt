@@ -10,15 +10,24 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "pch.hpp"
-
-#include "GeometryQuadtree.h"
 #include "GraphicsOverlayAlertTarget.h"
 
-#include "GraphicsOverlay.h"
+// PCH header
+#include "pch.hpp"
+
+// example app headers
+#include "GeometryQuadtree.h"
+
+// C++ API headers
 #include "GraphicListModel.h"
+#include "GraphicsOverlay.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa
+{
+namespace Alerts
+{
 
 /*!
   \class GraphicsOverlayAlertTarget
@@ -155,3 +164,5 @@ void GraphicsOverlayAlertTarget::rebuildQuadtree()
     m_quadtree = new GeometryQuadtree(m_graphicsOverlay->extent(), elements, 8, this);
 }
 
+} // Alerts
+} // Dsa

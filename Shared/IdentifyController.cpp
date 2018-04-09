@@ -10,15 +10,20 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "IdentifyController.h"
+
+// PCH header
 #include "pch.hpp"
 
+// example app headers
 #include "GraphicsOverlaysResultsManager.h"
-#include "IdentifyController.h"
 #include "LayerResultsManager.h"
 
+// toolkit headers
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
+// C++ API headers
 #include "GeoElement.h"
 #include "GeoView.h"
 #include "Graphic.h"
@@ -26,6 +31,8 @@
 #include "PopupManager.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 /*!
   \brief Constructor accepting an optional \a parent.
@@ -170,7 +177,7 @@ void IdentifyController::onIdentifyLayersCompleted(const QUuid& taskId, QList<Id
     return;
 
   // Create a RAII helper to ensure we clean up the results
-  LayerResultsManager resultsManager(identifyResults);
+  Utilities::LayerResultsManager resultsManager(identifyResults);
 
   m_layersWatcher = TaskWatcher();
   emit busyChanged();
@@ -213,7 +220,7 @@ void IdentifyController::onIdentifyGraphicsOverlaysCompleted(const QUuid& taskId
     return;
 
   // Create a RAII helper to ensure we clean up the results
-  GraphicsOverlaysResultsManager resultsManager(identifyResults);
+  Utilities::GraphicsOverlaysResultsManager resultsManager(identifyResults);
 
   m_graphicsOverlaysWatcher = TaskWatcher();
   emit busyChanged();
@@ -266,3 +273,5 @@ bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QStrin
 
   return true;
 }
+
+} // Dsa

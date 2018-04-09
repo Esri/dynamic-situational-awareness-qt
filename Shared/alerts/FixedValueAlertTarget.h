@@ -13,9 +13,15 @@
 #ifndef FIXEDVALUEALERTTARGET_H
 #define FIXEDVALUEALERTTARGET_H
 
+
+// example app headers
+#include "AlertTarget.h"
+
+// Qt headers
 #include <QVariant>
 
-#include "AlertTarget.h"
+namespace Dsa {
+namespace Alerts {
 
 class FixedValueAlertTarget : public AlertTarget
 {
@@ -31,5 +37,8 @@ public:
 private:
   QVariant m_value;
 };
+
+} // Alerts
+} // Dsa
 
 #endif // FIXEDVALUEALERTTARGET_H

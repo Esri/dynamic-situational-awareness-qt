@@ -13,7 +13,12 @@
 #ifndef LOCATIONALERTSOURCE_H
 #define LOCATIONALERTSOURCE_H
 
+
+// example app headers
 #include "AlertSource.h"
+
+namespace Dsa {
+namespace Alerts {
 
 class LocationAlertSource : public AlertSource
 {
@@ -31,5 +36,8 @@ private:
   Esri::ArcGISRuntime::Point m_location;
 
 };
+
+} // Alerts
+} // Dsa
 
 #endif // LOCATIONALERTSOURCE_H

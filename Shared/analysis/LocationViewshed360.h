@@ -13,6 +13,8 @@
 #ifndef LOCATIONVIEWSHED360_H
 #define LOCATIONVIEWSHED360_H
 
+
+// example app headers
 #include "Viewshed360.h"
 
 namespace Esri {
@@ -22,6 +24,9 @@ namespace Esri {
     class Graphic;
   }
 }
+
+namespace Dsa {
+namespace Analysis {
 
 class LocationViewshed360 : public Viewshed360
 {
@@ -54,5 +59,8 @@ private:
   QPointer<Esri::ArcGISRuntime::GraphicsOverlay> m_graphicsOverlay;
   Esri::ArcGISRuntime::Graphic* m_locationViewshedGraphic = nullptr;
 };
+
+} // Analysis
+} // Dsa
 
 #endif // LOCATIONVIEWSHED360_H

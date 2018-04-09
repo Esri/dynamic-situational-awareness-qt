@@ -13,9 +13,15 @@
 #ifndef LOCATIONALERTTARGET_H
 #define LOCATIONALERTTARGET_H
 
+
+// example app headers
 #include "AlertTarget.h"
 
+// C++ API headers
 #include "Point.h"
+
+namespace Dsa {
+namespace Alerts {
 
 class LocationAlertTarget : public AlertTarget
 {
@@ -31,5 +37,8 @@ public:
 private:
   Esri::ArcGISRuntime::Point m_location;
 };
+
+} // Alerts
+} // Dsa
 
 #endif // LOCATIONALERTTARGET_H

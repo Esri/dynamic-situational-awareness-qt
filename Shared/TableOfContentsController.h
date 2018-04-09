@@ -13,19 +13,22 @@
 #ifndef TABLEOFCONTENTSCONTROLLER_H
 #define TABLEOFCONTENTSCONTROLLER_H
 
+
+// toolkit headers
 #include "AbstractTool.h"
 
+// Qt headers
 #include <QAbstractItemModel>
 #include <QHash>
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
+namespace Esri {
+namespace ArcGISRuntime {
   class Layer;
   class LayerListModel;
 }
 }
+
+namespace Dsa {
 
 class DrawOrderLayerListModel;
 
@@ -77,5 +80,7 @@ private:
   QHash<Esri::ArcGISRuntime::Layer*, QMetaObject::Connection> m_layerConnections;
   DrawOrderLayerListModel* m_drawOrderModel = nullptr;
 };
+
+} // Dsa
 
 #endif // TABLEOFCONTENTSCONTROLLER_H

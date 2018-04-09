@@ -10,16 +10,23 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "AlertCondition.h"
+
+// PCH header
 #include "pch.hpp"
 
-#include "AlertCondition.h"
+// example app headers
 #include "AlertConditionData.h"
 #include "GraphicAlertSource.h"
 
-#include "GraphicsOverlay.h"
+// C++ API headers
 #include "GraphicListModel.h"
+#include "GraphicsOverlay.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
+namespace Alerts {
 
 /*!
   \class AlertCondition
@@ -255,3 +262,6 @@ void AlertCondition::setConditionEnabled(bool enabled)
   m_enabled = enabled;
   emit conditionEnabledChanged();
 }
+
+} // Alerts
+} // Dsa

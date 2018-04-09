@@ -13,9 +13,15 @@
 #ifndef WITHINDISTANCEALERTCONDITION_H
 #define WITHINDISTANCEALERTCONDITION_H
 
+
+// example app headers
 #include "AlertCondition.h"
 
+// Qt headers
 #include <QObject>
+
+namespace Dsa {
+namespace Alerts {
 
 class WithinDistanceAlertCondition : public AlertCondition
 {
@@ -42,5 +48,8 @@ public:
 private:
   double m_distance;
 };
+
+} // Alerts
+} // Dsa
 
 #endif // WITHINDISTANCEALERTCONDITION_H

@@ -1,10 +1,15 @@
 #ifndef ABSTRACTSKETCHTOOL_H
 #define ABSTRACTSKETCHTOOL_H
 
-#include <QList>
 
+// toolkit headers
 #include "AbstractTool.h"
+
+// C++ API headers
 #include "GeometryTypes.h"
+
+// Qt headers
+#include <QList>
 
 namespace Esri {
   namespace ArcGISRuntime {
@@ -17,6 +22,9 @@ namespace Esri {
     class Point;
   }
 }
+
+namespace Dsa {
+namespace Markup {
 
 class AbstractSketchTool : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -57,5 +65,8 @@ protected:
   // members that should be from the SketchEditor
   Esri::ArcGISRuntime::Symbol* m_sketchSymbol = nullptr;
 };
+
+} // Markup
+} // Dsa
 
 #endif // ABSTRACTSKETCHTOOL_H

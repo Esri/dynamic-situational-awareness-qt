@@ -10,9 +10,13 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+#include "HandheldStyles.h"
+
+// PCH header
 #include "pch.hpp"
 
-#include "HandheldStyles.h"
+namespace Dsa {
+namespace Handheld {
 
 HandheldStyles::HandheldStyles(QObject* parent):
   QObject(parent)
@@ -62,3 +66,6 @@ int HandheldStyles::categoryToolbarWidth() const
 {
   return 42;
 }
+
+} // Handheld
+} // Dsa

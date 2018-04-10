@@ -13,15 +13,15 @@
 #ifndef DSACONTROLLER_H
 #define DSACONTROLLER_H
 
+// Qt headers
+#include <QJsonArray>
 #include <QObject>
 #include <QSettings>
 #include <QStringList>
 #include <QVariantMap>
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
+namespace Esri {
+namespace ArcGISRuntime {
   class Error;
   class Scene;
   class GeoView;
@@ -29,9 +29,9 @@ namespace ArcGISRuntime
 }
 }
 
-class LayerCacheManager;
+namespace Dsa {
 
-#include <QJsonArray>
+class LayerCacheManager;
 
 class DsaController : public QObject
 {
@@ -74,5 +74,7 @@ private:
   QSettings::Format m_jsonFormat;
   QStringList m_conflictingToolNames;
 };
+
+} // Dsa
 
 #endif // DSACONTROLLER_H

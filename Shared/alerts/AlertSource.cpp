@@ -10,11 +10,14 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
 #include "AlertSource.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 /*!
   \class AlertSource
@@ -40,3 +43,5 @@ AlertSource::~AlertSource()
 {
   emit noLongerValid();
 }
+
+} // Dsa

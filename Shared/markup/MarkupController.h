@@ -13,12 +13,19 @@
 #ifndef MARKUPCONTROLLER_H
 #define MARKUPCONTROLLER_H
 
-#include "AbstractTool.h"
+// example app headers
 #include "AbstractSketchTool.h"
 
+// toolkit headers
+#include "AbstractTool.h"
+
+// C++ API headers
+#include "GeometryTypes.h"
+
+// Qt headers
 #include <QColor>
 
-#include "GeometryTypes.h"
+namespace Dsa {
 
 class MarkupBroadcast;
 
@@ -85,5 +92,7 @@ private:
   float m_width = 8.0f;
   MarkupBroadcast* m_markupBroadcast = nullptr;
 };
+
+} // Dsa
 
 #endif // MARKUPCONTROLLER_H

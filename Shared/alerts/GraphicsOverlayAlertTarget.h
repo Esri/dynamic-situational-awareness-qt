@@ -13,16 +13,17 @@
 #ifndef GRAPHICSOVERLAYALERTTARGET_H
 #define GRAPHICSOVERLAYALERTTARGET_H
 
+// example app headers
 #include "AlertTarget.h"
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
+namespace Esri {
+namespace ArcGISRuntime {
 class Graphic;
 class GraphicsOverlay;
 }
 }
+
+namespace Dsa {
 
 class GeometryQuadtree;
 
@@ -45,5 +46,7 @@ private:
   GeometryQuadtree* m_quadtree = nullptr;
   QList<QMetaObject::Connection> m_graphicConnections;
 };
+
+} // Dsa
 
 #endif // GRAPHICSOVERLAYALERTTARGET_H

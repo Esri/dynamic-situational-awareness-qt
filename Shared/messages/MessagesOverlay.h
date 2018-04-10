@@ -13,6 +13,7 @@
 #ifndef MESSAGESOVERLAY_H
 #define MESSAGESOVERLAY_H
 
+// Qt headers
 #include <QObject>
 #include <QPointer>
 
@@ -27,6 +28,8 @@ namespace Esri
     enum class SurfacePlacement;
   }
 }
+
+namespace Dsa {
 
 class Message;
 
@@ -73,5 +76,7 @@ private:
 
   QHash<QString, Esri::ArcGISRuntime::Graphic*> m_existingGraphics;
 };
+
+} // Dsa
 
 #endif // MESSAGESOVERLAY_H

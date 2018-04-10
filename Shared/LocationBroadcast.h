@@ -13,7 +13,6 @@
 #ifndef LOCATIONBROADCAST_H
 #define LOCATIONBROADCAST_H
 
-
 // example app headers
 #include "Message.h"
 
@@ -23,8 +22,11 @@
 // Qt headers
 #include <QObject>
 
-class DataSender;
 class QTimer;
+
+namespace Dsa {
+
+class DataSender;
 
 class LocationBroadcast : public QObject
 {
@@ -86,5 +88,7 @@ private:
 
   QMetaObject::Connection m_locationChangedConn;
 };
+
+} // Dsa
 
 #endif // LOCATIONBROADCAST_H

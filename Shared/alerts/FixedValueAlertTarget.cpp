@@ -10,14 +10,18 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
 #include "FixedValueAlertTarget.h"
 
-#include "Geometry.h"
+// C++ API headers
 #include "GeoElement.h"
+#include "Geometry.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 /*!
   \class FixedValueAlertTarget
@@ -63,3 +67,5 @@ QVariant FixedValueAlertTarget::targetValue() const
 {
   return m_value;
 }
+
+} // Dsa

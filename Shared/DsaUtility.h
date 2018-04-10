@@ -13,12 +13,16 @@
 #ifndef UTILITY_H
 #define UTILITY_H
 
+// C++ API headers
 #include "Point.h"
 
-#include <QObject>
+// Qt headers
 #include <QList>
+#include <QObject>
 #include <QString>
 #include <QVector3D>
+
+namespace Dsa {
 
 class DsaUtility
 {
@@ -29,5 +33,7 @@ public:
   static double distance3D(const Esri::ArcGISRuntime::Point& from, const Esri::ArcGISRuntime::Point& to);
   static QVector3D toCartesianPoint(const Esri::ArcGISRuntime::Point& point);
 };
+
+} // Dsa
 
 #endif // UTILITY_H

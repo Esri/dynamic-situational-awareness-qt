@@ -10,19 +10,23 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
+#include "DataItemListModel.h"
+
+// Qt headers
 #include <QAbstractListModel>
 #include <QByteArray>
+#include <QDir>
+#include <QFileInfo>
 #include <QHash>
+#include <QList>
 #include <QModelIndex>
 #include <QObject>
 #include <QVariant>
-#include <QFileInfo>
-#include <QDir>
-#include <QList>
 
-#include "DataItemListModel.h"
+namespace Dsa {
 
 DataItemListModel::DataItemListModel(QObject* parent) :
   QAbstractListModel(parent)
@@ -131,3 +135,5 @@ DataItemListModel::DataItem::DataItem(const QString& fullPath):
   else
     dataType = DataType::Unknown;
 }
+
+} // Dsa

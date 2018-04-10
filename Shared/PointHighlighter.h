@@ -13,23 +13,22 @@
 #ifndef POINTHIGHLIGHTER_H
 #define POINTHIGHLIGHTER_H
 
-
 // C++ API headers
 #include "Point.h"
 
 // Qt headers
 #include <QObject>
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
+namespace Esri {
+namespace ArcGISRuntime {
 class GraphicsOverlay;
 class SimpleMarkerSceneSymbol;
 }
 }
 
 class QTimer;
+
+namespace Dsa {
 
 class PointHighlighter : public QObject
 {
@@ -55,5 +54,7 @@ private:
   QTimer* m_highlightTimer = nullptr;
   QMetaObject::Connection m_timerConnection;
 };
+
+} // Dsa
 
 #endif // POINTHIGHLIGHTER_H

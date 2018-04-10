@@ -13,17 +13,18 @@
 #ifndef TILECACHE_LISTMODEL_H
 #define TILECACHE_LISTMODEL_H
 
+// Qt headers
 #include <QAbstractListModel>
 #include <QList>
 #include <QMap>
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
+namespace Esri {
+namespace ArcGISRuntime {
   class TileCache;
 }
 }
+
+namespace Dsa {
 
 class TileCacheListModel : public QAbstractListModel
 {
@@ -58,5 +59,7 @@ private:
   QList<Esri::ArcGISRuntime::TileCache*>  m_tileCacheData;
   QMap<QString, QUrl>                     m_thumbnailUrls;
 };
+
+} // Dsa
 
 #endif // TILECACHE_LISTMODEL_H

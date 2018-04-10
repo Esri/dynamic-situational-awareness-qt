@@ -10,6 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
 #include "OptionsController.h"
@@ -31,6 +32,8 @@
 #include "DictionaryRenderer.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 /*
  \brief Constructor that takes an optional \a parent.
@@ -272,3 +275,5 @@ QList<DictionaryRenderer*> OptionsController::friendlyTracksOverlayRenderers() c
 
   return renderers;
 }
+
+} // Dsa

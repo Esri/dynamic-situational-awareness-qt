@@ -13,7 +13,6 @@
 #ifndef VIEWSHEDCONTROLLER_H
 #define VIEWSHEDCONTROLLER_H
 
-
 // toolkit headers
 #include "AbstractTool.h"
 
@@ -22,6 +21,8 @@
 
 // Qt headers
 #include <QAbstractListModel>
+
+class QMouseEvent;
 
 namespace Esri {
   namespace ArcGISRuntime {
@@ -34,10 +35,11 @@ namespace Esri {
   }
 }
 
+namespace Dsa {
+
 class ViewshedListModel;
 class Viewshed360;
 class GeoElementViewshed360;
-class QMouseEvent;
 
 class ViewshedController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -185,5 +187,7 @@ private:
 
   QList<QMetaObject::Connection> m_activeViewshedConns;
 };
+
+} // Dsa
 
 #endif // VIEWSHEDCONTROLLER_H

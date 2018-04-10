@@ -10,15 +10,21 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
-#include "AlertConditionData.h"
-#include "AlertListModel.h"
 #include "ViewedAlertsController.h"
 
+// example app headers
+#include "AlertConditionData.h"
+#include "AlertListModel.h"
+
+// toolkit headers
 #include "ToolManager.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 /*!
   \class ViewedAlertsController
@@ -114,3 +120,6 @@ int ViewedAlertsController::unviewedCount() const
 
   return m_cachedCount;
 }
+
+
+} // Dsa

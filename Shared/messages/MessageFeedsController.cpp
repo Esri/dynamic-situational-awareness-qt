@@ -10,19 +10,20 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
 #include "MessageFeedsController.h"
 
 // example app headers
 #include "AppConstants.h"
+#include "DataListener.h"
+#include "DataSender.h"
 #include "LocationBroadcast.h"
 #include "Message.h"
 #include "MessageFeed.h"
 #include "MessageFeedConstants.h"
 #include "MessageFeedListModel.h"
-#include "DataListener.h"
-#include "DataSender.h"
 #include "MessagesOverlay.h"
 
 // toolkit headers
@@ -41,6 +42,8 @@
 #include <QUdpSocket>
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 const QString MessageFeedsController::RESOURCE_DIRECTORY_PROPERTYNAME = "ResourceDirectory";
 
@@ -452,3 +455,5 @@ Renderer* MessageFeedsController::createRenderer(const QString& rendererInfo, QO
   \fn void MessageFeedsController::locationBroadcastInDistressChanged();
   \brief Signal emitted when the \l locationBroadcastInDistress property changes.
  */
+
+} // Dsa

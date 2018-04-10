@@ -10,14 +10,21 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
 #include "GPXLocationSimulator.h"
-#include <QXmlStreamReader>
+
+// Qt headers
 #include <QTimer>
+#include <QXmlStreamReader>
+
+// STL headers
 #include <cmath>
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 // Default ctor.  To use simulation user must set gpx file the update interval
 GPXLocationSimulator::GPXLocationSimulator(QObject* parent) :
@@ -395,3 +402,5 @@ double GPXLocationSimulator::heading(const Esri::ArcGISRuntime::LineSegment& seg
   const auto endPoint = segment.endPoint();
   return m_angleOffset.angleTo(QLineF(startPoint.x(), startPoint.y(), endPoint.x(), endPoint.y()));
 }
+
+} // Dsa

@@ -13,11 +13,13 @@
 #ifndef GEOMETRYQUADTREE_H
 #define GEOMETRYQUADTREE_H
 
-#include <memory>
-
+// Qt headers
 #include <QHash>
 #include <QList>
 #include <QObject>
+
+// STL headers
+#include <memory>
 
 namespace Esri {
 namespace ArcGISRuntime {
@@ -27,6 +29,8 @@ class Geometry;
 class Point;
 }
 }
+
+namespace Dsa {
 
 class GeometryQuadtree : public QObject
 {
@@ -60,5 +64,7 @@ private:
   QHash<int, Esri::ArcGISRuntime::GeoElement*> m_elementStorage;
   int m_nextKey = 0;
 };
+
+} // Dsa
 
 #endif // GEOMETRYQUADTREE_H

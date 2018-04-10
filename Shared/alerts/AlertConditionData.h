@@ -13,13 +13,19 @@
 #ifndef ALERTCONDITIONDATA_H
 #define ALERTCONDITIONDATA_H
 
+
+// example app headers
 #include "AlertLevel.h"
 
+// C++ API headers
 #include "Point.h"
 
+// Qt headers
 #include <QObject>
 #include <QString>
 #include <QUuid>
+
+namespace Dsa {
 
 class AlertSource;
 class AlertTarget;
@@ -85,5 +91,7 @@ private:
   bool m_queryOutOfDate = true;
   mutable bool m_cachedQueryResult = false;
 };
+
+} // Dsa
 
 #endif // ALERTCONDITIONDATA_H

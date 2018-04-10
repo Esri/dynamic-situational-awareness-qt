@@ -45,6 +45,8 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
+namespace Dsa {
+
 const QString LayerCacheManager::LAYERS_PROPERTYNAME = "Layers";
 const QString LayerCacheManager::ELEVATION_PROPERTYNAME = "DefaultElevationSource";
 const QString LayerCacheManager::layerPathKey = "path";
@@ -329,3 +331,5 @@ QJsonArray LayerCacheManager::layerJson() const
 {
   return m_layers;
 }
+
+} // Dsa

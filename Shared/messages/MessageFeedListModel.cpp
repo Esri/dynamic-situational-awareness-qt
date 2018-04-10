@@ -10,10 +10,15 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
 #include "MessageFeedListModel.h"
+
+// example app headers
 #include "MessageFeed.h"
+
+namespace Dsa {
 
 MessageFeedListModel::MessageFeedListModel(QObject* parent) :
   QAbstractListModel(parent)
@@ -173,3 +178,5 @@ int MessageFeedListModel::count() const
 {
   return m_messageFeeds.length();
 }
+
+} // Dsa

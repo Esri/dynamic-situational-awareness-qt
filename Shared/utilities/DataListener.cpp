@@ -10,11 +10,15 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
 #include "DataListener.h"
 
+// Qt headers
 #include <QUdpSocket>
+
+namespace Dsa {
 
 DataListener::DataListener(QObject* parent) :
   QObject(parent)
@@ -113,3 +117,5 @@ bool DataListener::processUdpDatagrams()
 
   return false;
 }
+
+} // Dsa

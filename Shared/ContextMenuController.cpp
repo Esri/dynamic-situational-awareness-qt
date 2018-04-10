@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "ContextMenuController.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "ContextMenuController.h"
 
 // example app headers
 #include "ContactReportController.h"
@@ -37,6 +37,8 @@
 #include <cmath>
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 const QString ContextMenuController::COORDINATES_OPTION = "Coordinates";
 const QString ContextMenuController::ELEVATION_OPTION = "Elevation";
@@ -445,7 +447,7 @@ void ContextMenuController::selectOption(const QString& option)
   }
   else if (option == CONTACT_REPORT_OPTION)
   {
-    ContactReportController* contactReportTool = Toolkit::ToolManager::instance().tool<ContactReportController>();
+    Dsa::ContactReportController* contactReportTool = Toolkit::ToolManager::instance().tool<Dsa::ContactReportController>();
     if (!contactReportTool)
       return;
 
@@ -481,3 +483,5 @@ void ContextMenuController::setContextActive(bool contextRequested)
   m_contextActive = contextRequested;
   emit contextActiveChanged();
 }
+
+} // Dsa

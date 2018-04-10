@@ -13,18 +13,24 @@
 #ifndef NAVIGATIONCONTROLLER_H
 #define NAVIGATIONCONTROLLER_H
 
+// toolkit headers
 #include "AbstractTool.h"
+
+// C++ API headers
 #include "Point.h"
 
+// Qt headers
 #include <QUuid>
 
 namespace Esri {
-namespace ArcGISRuntime
-{
+namespace ArcGISRuntime {
   class Camera;
   class GeoView;
   class SceneView;
-}}
+}
+}
+
+namespace Dsa {
 
 class NavigationController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -108,6 +114,6 @@ private:
   double m_cameraMoveDistance = 1000.0;
 };
 
-
+} // Dsa
 
 #endif // NAVIGATIONCONTROLLER_H

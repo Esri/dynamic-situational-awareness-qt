@@ -10,6 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
 #include "NavigationController.h"
@@ -38,6 +39,8 @@
 #include <QScreen>
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 const QString NavigationController::INITIAL_LOCATION_PROPERTYNAME = "InitialLocation";
 
@@ -452,3 +455,5 @@ Point NavigationController::initialCenter() const
 {
   return m_initialCenter;
 }
+
+} // Dsa

@@ -10,15 +10,20 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
 #include "LocationAlertTarget.h"
 
+// toolkit headers
 #include "ToolResourceProvider.h"
 
+// C++ API headers
 #include "GeometryEngine.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 /*!
   \class LocationAlertTarget
@@ -76,3 +81,6 @@ QVariant LocationAlertTarget::targetValue() const
 {
   return QVariant();
 }
+
+
+} // Dsa

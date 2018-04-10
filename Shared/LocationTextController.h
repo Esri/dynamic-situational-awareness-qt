@@ -13,6 +13,9 @@
 #ifndef LOCATIONTEXTCONTROLLER_H
 #define LOCATIONTEXTCONTROLLER_H
 
+// toolkit headers
+#include "AbstractTool.h"
+
 namespace Esri {
 namespace ArcGISRuntime {
 class Point;
@@ -20,7 +23,7 @@ class Surface;
 }
 }
 
-#include "AbstractTool.h"
+namespace Dsa {
 
 class LocationTextController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -81,5 +84,7 @@ private:
   bool m_useGpsForElevation = false;
   QString m_unitOfMeasurement;
 };
+
+} // Dsa
 
 #endif // LOCATIONTEXTCONTROLLER_H

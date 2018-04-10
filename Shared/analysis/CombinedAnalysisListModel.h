@@ -13,22 +13,21 @@
 #ifndef COMBINEDANALYSISLISTMODEL_H
 #define COMBINEDANALYSISLISTMODEL_H
 
-
-// qt_cpp headers
+// C++ API headers
 #include "Point.h"
 
 // Qt headers
 #include <QAbstractListModel>
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
+namespace Esri {
+namespace ArcGISRuntime {
   class Analysis;
   class AnalysisListModel;
   class AnalysisOverlay;
 }
 }
+
+namespace Dsa {
 
 class ViewshedListModel;
 
@@ -77,5 +76,7 @@ private:
   ViewshedListModel* m_viewshedModel = nullptr;
   Esri::ArcGISRuntime::AnalysisListModel* m_lineOfSightModel = nullptr;
 };
+
+} // Dsa
 
 #endif // COMBINEDANALYSISLISTMODEL_H

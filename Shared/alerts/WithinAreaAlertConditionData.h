@@ -13,6 +13,7 @@
 #ifndef WITHINAREAALERTCONDITIONDATA_H
 #define WITHINAREAALERTCONDITIONDATA_H
 
+// example app headers
 #include "AlertConditionData.h"
 
 namespace Esri
@@ -23,6 +24,8 @@ class GeoElement;
 class Graphic;
 }
 }
+
+namespace Dsa {
 
 class WithinAreaAlertConditionData : public AlertConditionData
 {
@@ -39,5 +42,7 @@ public:
 
   bool matchesQuery() const override;
 };
+
+} // Dsa
 
 #endif // WITHINAREAALERTCONDITIONDATA_H

@@ -42,6 +42,8 @@
 
 using namespace Esri::ArcGISRuntime;
 
+namespace Dsa {
+
 const QString ViewshedController::VIEWSHED_HEADING_ATTRIBUTE = QStringLiteral("heading");
 const QString ViewshedController::VIEWSHED_PITCH_ATTRIBUTE = QStringLiteral("pitch");
 
@@ -588,3 +590,5 @@ void ViewshedController::emitActiveViewshedSignals()
   emit activeViewshedOffsetZEnabledChanged();
   emit activeViewshed360ModeChanged();
 }
+
+} // Dsa

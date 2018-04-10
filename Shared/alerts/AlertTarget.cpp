@@ -10,9 +10,12 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
 #include "AlertTarget.h"
+
+namespace Dsa {
 
 /*!
   \class AlertTarget
@@ -38,3 +41,5 @@ AlertTarget::~AlertTarget()
 {
   emit noLongerValid();
 }
+
+} // Dsa

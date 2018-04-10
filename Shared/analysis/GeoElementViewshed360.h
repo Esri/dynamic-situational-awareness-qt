@@ -13,6 +13,8 @@
 #ifndef GEOELEMENTVIEWSHED360_H
 #define GEOELEMENTVIEWSHED360_H
 
+
+// example app headers
 #include "Viewshed360.h"
 
 namespace Esri {
@@ -20,6 +22,8 @@ namespace Esri {
     class GeoElement;
   }
 }
+
+namespace Dsa {
 
 class GeoElementViewshed360 : public Viewshed360
 {
@@ -59,5 +63,7 @@ private:
   QString m_headingAttribute;
   QString m_pitchAttribute;
 };
+
+} // Dsa
 
 #endif // GEOELEMENTVIEWSHED360_H

@@ -13,16 +13,17 @@
 #ifndef ATTRIBUTEEQUALSALERTCONDITIONDATA_H
 #define ATTRIBUTEEQUALSALERTCONDITIONDATA_H
 
+// example app headers
 #include "AlertConditionData.h"
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
+namespace Esri {
+namespace ArcGISRuntime {
 class GeoElement;
 class Graphic;
 }
 }
+
+namespace Dsa {
 
 class AttributeEqualsAlertConditionData : public AlertConditionData
 {
@@ -46,5 +47,7 @@ public:
 private:
   QString m_attributeName;
 };
+
+} // Dsa
 
 #endif // ATTRIBUTEEQUALSALERTCONDITIONDATA_H

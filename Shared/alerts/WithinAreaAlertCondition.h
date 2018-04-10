@@ -13,9 +13,13 @@
 #ifndef WITHINAREAALERTCONDITION_H
 #define WITHINAREAALERTCONDITION_H
 
+// example app headers
 #include "AlertCondition.h"
 
+// Qt headers
 #include <QObject>
+
+namespace Dsa {
 
 class WithinAreaAlertCondition : public AlertCondition
 {
@@ -35,5 +39,7 @@ public:
 
   static QString isWithinQueryString();
 };
+
+} // Dsa
 
 #endif // WITHINAREAALERTCONDITION_H

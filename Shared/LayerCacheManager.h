@@ -13,6 +13,12 @@
 #ifndef LAYERCACHEMANAGER_H
 #define LAYERCACHEMANAGER_H
 
+// toolkit headers
+#include "AbstractTool.h"
+
+// Qt headers
+#include <QJsonArray>
+
 namespace Esri {
 namespace ArcGISRuntime {
 class Layer;
@@ -20,11 +26,10 @@ class Scene;
 }
 }
 
+namespace Dsa {
+
 class TableOfContentsController;
 class AddLocalDataController;
-
-#include "AbstractTool.h"
-#include <QJsonArray>
 
 class LayerCacheManager : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -65,5 +70,7 @@ private:
   Esri::ArcGISRuntime::Scene* m_scene;
   QHash<int, Esri::ArcGISRuntime::Layer*> m_initialLayerCache;
 };
+
+} // Dsa
 
 #endif // LAYERCACHEMANAGER_H

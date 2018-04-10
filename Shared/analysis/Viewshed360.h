@@ -13,6 +13,7 @@
 #ifndef VIEWSHED360_H
 #define VIEWSHED360_H
 
+// Qt headers
 #include <QObject>
 #include <QPointer>
 
@@ -22,6 +23,8 @@ namespace Esri {
     class AnalysisOverlay;
   }
 }
+
+namespace Dsa {
 
 class Viewshed360 : public QObject
 {
@@ -118,5 +121,7 @@ private:
   QString m_name;
   bool m_is360Mode = true;
 };
+
+} // Dsa
 
 #endif // VIEWSHED360_H

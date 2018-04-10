@@ -10,17 +10,26 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
-#include "SceneQuickView.h"
-
-#include "DsaController.h"
 #include "Vehicle.h"
-#include "ToolResourceProvider.h"
+
+// example app headers
+#include "DsaController.h"
+
+// toolkit headers
 #include "ToolManager.h"
+#include "ToolResourceProvider.h"
+
+// C++ API headers
+#include "SceneQuickView.h"
 
 using namespace Esri::ArcGISRuntime;
 using namespace Esri::ArcGISRuntime::Toolkit;
+
+namespace Dsa {
+namespace Vehicle {
 
 Vehicle::Vehicle(QQuickItem* parent /* = nullptr */):
   QQuickItem(parent),
@@ -91,3 +100,6 @@ void Vehicle::componentComplete()
   // Set scene to scene view
   m_sceneView->setArcGISScene(m_controller->scene());
 }
+
+} // Vehicle
+} // Dsa

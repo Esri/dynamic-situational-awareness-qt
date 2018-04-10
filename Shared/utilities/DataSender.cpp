@@ -12,7 +12,10 @@
 
 #include "DataSender.h"
 
+// Qt headers
 #include <QUdpSocket>
+
+namespace Dsa {
 
 DataSender::DataSender(QObject* parent) :
   QObject(parent)
@@ -48,3 +51,5 @@ qint64 DataSender::sendData(const QByteArray& data)
 
   return bytesWritten;
 }
+
+} // Dsa

@@ -177,7 +177,7 @@ void IdentifyController::onIdentifyLayersCompleted(const QUuid& taskId, QList<Id
     return;
 
   // Create a RAII helper to ensure we clean up the results
-  Utilities::LayerResultsManager resultsManager(identifyResults);
+  LayerResultsManager resultsManager(identifyResults);
 
   m_layersWatcher = TaskWatcher();
   emit busyChanged();
@@ -220,7 +220,7 @@ void IdentifyController::onIdentifyGraphicsOverlaysCompleted(const QUuid& taskId
     return;
 
   // Create a RAII helper to ensure we clean up the results
-  Utilities::GraphicsOverlaysResultsManager resultsManager(identifyResults);
+  GraphicsOverlaysResultsManager resultsManager(identifyResults);
 
   m_graphicsOverlaysWatcher = TaskWatcher();
   emit busyChanged();

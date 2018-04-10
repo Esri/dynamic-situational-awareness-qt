@@ -24,7 +24,6 @@ namespace Esri {
 }
 
 namespace Dsa {
-namespace Analysis {
 
 class GeoElementViewshed360 : public Viewshed360
 {
@@ -65,7 +64,6 @@ private:
   QString m_pitchAttribute;
 };
 
-} // Analysis
 } // Dsa
 
 #endif // GEOELEMENTVIEWSHED360_H

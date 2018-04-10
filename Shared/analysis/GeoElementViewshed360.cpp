@@ -26,7 +26,6 @@
 using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
-namespace Analysis {
 
 constexpr double c_defaultPitch = 0.0;
 constexpr double c_defaultHorizontalAngle = 120.0;
@@ -226,5 +225,4 @@ void GeoElementViewshed360::update360Mode(bool is360Mode)
   emit pitchEnabledChanged();
 }
 
-} // Analysis
 } // Dsa

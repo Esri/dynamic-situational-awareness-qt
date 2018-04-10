@@ -13,7 +13,6 @@
 #ifndef LAYERRESULTSMANAGER_H
 #define LAYERRESULTSMANAGER_H
 
-
 // Qt headers
 #include <QList>
 
@@ -24,7 +23,6 @@ namespace ArcGISRuntime {
 }
 
 namespace Dsa {
-namespace Utilities {
 
 struct LayerResultsManager {
 
@@ -34,7 +32,6 @@ struct LayerResultsManager {
   ~LayerResultsManager();
 };
 
-} // Utilities
 } // Dsa
 
 #endif // LAYERRESULTSMANAGER_H

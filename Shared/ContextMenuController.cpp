@@ -158,7 +158,7 @@ void ContextMenuController::onIdentifyLayersCompleted(const QUuid& taskId, const
   if (taskId != m_identifyFeaturesTask.taskId())
     return;
 
-  Utilities::LayerResultsManager resultsManager(identifyResults);
+  LayerResultsManager resultsManager(identifyResults);
 
   m_identifyFeaturesTask = TaskWatcher();
 
@@ -197,7 +197,7 @@ void ContextMenuController::onIdentifyGraphicsOverlaysCompleted(const QUuid& tas
   if (taskId != m_identifyGraphicsTask.taskId())
     return;
 
-  Utilities::GraphicsOverlaysResultsManager resultsManager(identifyResults);
+  GraphicsOverlaysResultsManager resultsManager(identifyResults);
 
   m_identifyGraphicsTask = TaskWatcher();
 
@@ -409,14 +409,14 @@ void ContextMenuController::selectOption(const QString& option)
   }
   else if (option == VIEWSHED_OPTION)
   {
-    Analysis::ViewshedController* viewshedTool = Toolkit::ToolManager::instance().tool<Analysis::ViewshedController>();
+    ViewshedController* viewshedTool = Toolkit::ToolManager::instance().tool<ViewshedController>();
     if (!viewshedTool)
       return;
 
-    viewshedTool->setActiveMode(Analysis::ViewshedController::ViewshedActiveMode::AddLocationViewshed360);
+    viewshedTool->setActiveMode(ViewshedController::ViewshedActiveMode::AddLocationViewshed360);
     viewshedTool->addLocationViewshed360(m_contextBaseSurfaceLocation);
     viewshedTool->finishActiveViewshed();
-    viewshedTool->setActiveMode(Analysis::ViewshedController::ViewshedActiveMode::NoActiveMode);
+    viewshedTool->setActiveMode(ViewshedController::ViewshedActiveMode::NoActiveMode);
   }
   else if (option == FOLLOW_OPTION)
   {
@@ -439,7 +439,7 @@ void ContextMenuController::selectOption(const QString& option)
   }
   else if (option == LINE_OF_SIGHT_OPTION)
   {
-    Analysis::LineOfSightController* lineOfSightTool = Toolkit::ToolManager::instance().tool<Analysis::LineOfSightController>();
+    LineOfSightController* lineOfSightTool = Toolkit::ToolManager::instance().tool<LineOfSightController>();
     if (!lineOfSightTool)
       return;
 
@@ -447,7 +447,7 @@ void ContextMenuController::selectOption(const QString& option)
   }
   else if (option == CONTACT_REPORT_OPTION)
   {
-    Dsa::Messages::ContactReportController* contactReportTool = Toolkit::ToolManager::instance().tool<Dsa::Messages::ContactReportController>();
+    Dsa::ContactReportController* contactReportTool = Toolkit::ToolManager::instance().tool<Dsa::ContactReportController>();
     if (!contactReportTool)
       return;
 

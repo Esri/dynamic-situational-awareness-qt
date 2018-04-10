@@ -26,7 +26,6 @@
 #include <QUuid>
 
 namespace Dsa {
-namespace Alerts {
 
 class AlertSource;
 class AlertTarget;
@@ -93,7 +92,6 @@ private:
   mutable bool m_cachedQueryResult = false;
 };
 
-} // Alerts
 } // Dsa
 
 #endif // ALERTCONDITIONDATA_H

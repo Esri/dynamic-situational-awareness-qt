@@ -24,10 +24,7 @@
 
 using namespace Esri::ArcGISRuntime;
 
-namespace Dsa
-{
-namespace Alerts
-{
+namespace Dsa {
 
 /*!
   \class GraphicsOverlayAlertTarget
@@ -164,5 +161,4 @@ void GraphicsOverlayAlertTarget::rebuildQuadtree()
     m_quadtree = new GeometryQuadtree(m_graphicsOverlay->extent(), elements, 8, this);
 }
 
-} // Alerts
 } // Dsa

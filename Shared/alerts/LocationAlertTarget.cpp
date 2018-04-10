@@ -23,10 +23,7 @@
 
 using namespace Esri::ArcGISRuntime;
 
-namespace Dsa
-{
-namespace Alerts
-{
+namespace Dsa {
 
 /*!
   \class LocationAlertTarget
@@ -85,5 +82,5 @@ QVariant LocationAlertTarget::targetValue() const
   return QVariant();
 }
 
-} // Alerts
+
 } // Dsa

@@ -13,7 +13,6 @@
 #ifndef POINTHIGHLIGHTER_H
 #define POINTHIGHLIGHTER_H
 
-
 // C++ API headers
 #include "Point.h"
 

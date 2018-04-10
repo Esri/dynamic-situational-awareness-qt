@@ -13,7 +13,6 @@
 #ifndef ATTRIBUTEEQUALSALERTCONDITIONDATA_H
 #define ATTRIBUTEEQUALSALERTCONDITIONDATA_H
 
-
 // example app headers
 #include "AlertConditionData.h"
 
@@ -25,7 +24,6 @@ class Graphic;
 }
 
 namespace Dsa {
-namespace Alerts {
 
 class AttributeEqualsAlertConditionData : public AlertConditionData
 {
@@ -50,7 +48,6 @@ private:
   QString m_attributeName;
 };
 
-} // Alerts
 } // Dsa
 
 #endif // ATTRIBUTEEQUALSALERTCONDITIONDATA_H

@@ -32,7 +32,6 @@
 using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
-namespace Markup {
 
 AbstractSketchTool::AbstractSketchTool(QObject* parent) :
   AbstractTool(parent),
@@ -173,5 +172,4 @@ GraphicsOverlay* AbstractSketchTool::sketchOverlay() const
   return m_sketchOverlay;
 }
 
-} // Markup
 } // Dsa

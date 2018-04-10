@@ -13,7 +13,6 @@
 #ifndef LINEOFSIGHTCONTROLLER_H
 #define LINEOFSIGHTCONTROLLER_H
 
-
 // toolkit headers
 #include "AbstractTool.h"
 
@@ -38,7 +37,6 @@ namespace ArcGISRuntime {
 class QStringListModel;
 
 namespace Dsa {
-namespace Analysis {
 
 class LineOfSightController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -101,7 +99,6 @@ private:
   QList<QMetaObject::Connection> m_visibleByConnections;
 };
 
-} // Analysis
 } // Dsa
 
 #endif // LINEOFSIGHTCONTROLLER_H

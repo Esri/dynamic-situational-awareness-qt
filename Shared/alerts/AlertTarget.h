@@ -13,7 +13,6 @@
 #ifndef ALERTTARGET_H
 #define ALERTTARGET_H
 
-
 // Qt headers
 #include <QObject>
 #include <QVariant>
@@ -28,7 +27,6 @@ namespace ArcGISRuntime
 }
 
 namespace Dsa {
-namespace Alerts {
 
 class AlertTarget : public QObject
 {
@@ -46,7 +44,6 @@ signals:
   void dataChanged();
 };
 
-} // Alerts
 } // Dsa
 
 #endif // ALERTTARGET_H

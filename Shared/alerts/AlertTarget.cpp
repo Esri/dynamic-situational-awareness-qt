@@ -15,10 +15,7 @@
 
 #include "AlertTarget.h"
 
-namespace Dsa
-{
-namespace Alerts
-{
+namespace Dsa {
 
 /*!
   \class AlertTarget
@@ -45,5 +42,4 @@ AlertTarget::~AlertTarget()
   emit noLongerValid();
 }
 
-} // Alerts
 } // Dsa

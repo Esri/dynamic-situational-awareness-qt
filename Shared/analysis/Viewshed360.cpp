@@ -22,7 +22,6 @@
 using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
-namespace Analysis {
 
 Viewshed360::Viewshed360(Viewshed* viewshed, AnalysisOverlay* analysisOverlay, QObject* parent) :
   QObject(parent),
@@ -223,5 +222,4 @@ AnalysisOverlay* Viewshed360::analysisOverlay() const
   return m_analysisOverlay.data();
 }
 
-} // Analysis
 } // Dsa

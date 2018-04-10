@@ -21,10 +21,7 @@
 
 using namespace Esri::ArcGISRuntime;
 
-namespace Dsa
-{
-namespace Alerts
-{
+namespace Dsa {
 
 /*!
   \class FixedValueAlertTarget
@@ -71,5 +68,4 @@ QVariant FixedValueAlertTarget::targetValue() const
   return m_value;
 }
 
-} // Alerts
 } // Dsa

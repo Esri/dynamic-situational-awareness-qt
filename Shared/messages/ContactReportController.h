@@ -13,7 +13,6 @@
 #ifndef CONTACTREPORTCONTROLLER_H
 #define CONTACTREPORTCONTROLLER_H
 
-
 // toolkit headers
 #include "AbstractTool.h"
 
@@ -31,13 +30,9 @@ namespace ArcGISRuntime {
 
 namespace Dsa {
 
-namespace Utilities {
 class DataSender;
-}
 
 class PointHighlighter;
-
-namespace Messages {
 
 class ContactReportController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -99,7 +94,7 @@ private:
   Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
   QString m_unitName;
   Esri::ArcGISRuntime::Point m_controlPoint;
-  Utilities::DataSender* m_dataSender = nullptr;
+  DataSender* m_dataSender = nullptr;
   PointHighlighter* m_highlighter = nullptr;
   bool m_controlPointSet = false;
   int m_udpPort = -1;
@@ -109,7 +104,6 @@ private:
   QMetaObject::Connection m_myLocationConnection;
 };
 
-} // Messages
 } // Dsa
 
 #endif // CONTACTREPORTCONTROLLER_H

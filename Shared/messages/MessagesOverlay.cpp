@@ -26,7 +26,6 @@
 using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
-namespace Messages {
 
 MessagesOverlay::MessagesOverlay(GeoView* geoView, QObject* parent) :
   MessagesOverlay(geoView, nullptr, SurfacePlacement::Draped, parent)
@@ -274,5 +273,4 @@ void MessagesOverlay::setVisible(bool visible)
     m_linePolygonGraphicsOverlay->setVisible(visible);
 }
 
-} // Messages
 } // Dsa

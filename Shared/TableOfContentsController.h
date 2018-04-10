@@ -13,7 +13,6 @@
 #ifndef TABLEOFCONTENTSCONTROLLER_H
 #define TABLEOFCONTENTSCONTROLLER_H
 
-
 // toolkit headers
 #include "AbstractTool.h"
 

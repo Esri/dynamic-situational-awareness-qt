@@ -18,10 +18,7 @@
 // example app headers
 #include "AlertFilter.h"
 
-namespace Dsa
-{
-namespace Alerts
-{
+namespace Dsa {
 
 /*!
   \class StatusAlertFilter
@@ -82,5 +79,5 @@ void StatusAlertFilter::setMinLevel(AlertLevel minLevel)
   emit filterChanged();
 }
 
-} // Alerts
+
 } // Dsa

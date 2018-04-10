@@ -43,7 +43,6 @@
 using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
-namespace Analysis {
 
 const QString ViewshedController::VIEWSHED_HEADING_ATTRIBUTE = QStringLiteral("heading");
 const QString ViewshedController::VIEWSHED_PITCH_ATTRIBUTE = QStringLiteral("pitch");
@@ -132,7 +131,7 @@ void ViewshedController::onMouseClicked(QMouseEvent& event)
         m_identifyTaskWatcher = TaskWatcher();
 
         // Create a RAII helper to ensure we clean up the results
-        Utilities::GraphicsOverlaysResultsManager resultsManager(identifyResults);
+        GraphicsOverlaysResultsManager resultsManager(identifyResults);
 
         if (!isActive() || resultsManager.m_results.isEmpty() || resultsManager.m_results[0]->graphics().isEmpty())
         {
@@ -592,5 +591,4 @@ void ViewshedController::emitActiveViewshedSignals()
   emit activeViewshed360ModeChanged();
 }
 
-} // Analysis
 } // Dsa

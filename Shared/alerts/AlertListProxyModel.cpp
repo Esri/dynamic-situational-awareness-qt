@@ -20,10 +20,7 @@
 #include "AlertFilter.h"
 #include "AlertListModel.h"
 
-namespace Dsa
-{
-namespace Alerts
-{
+namespace Dsa {
 
 /*!
   \class AlertListProxyModel
@@ -145,5 +142,4 @@ bool AlertListProxyModel::passesAllQueries(int sourceRow) const
   return conditionData->matchesQuery();
 }
 
-} // Alerts
 } // Dsa

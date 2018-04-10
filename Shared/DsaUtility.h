@@ -13,7 +13,6 @@
 #ifndef UTILITY_H
 #define UTILITY_H
 
-
 // C++ API headers
 #include "Point.h"
 

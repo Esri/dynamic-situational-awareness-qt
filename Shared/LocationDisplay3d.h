@@ -13,7 +13,6 @@
 #ifndef LOCATIONDISPLAY3D_H
 #define LOCATIONDISPLAY3D_H
 
-
 // C++ API headers
 #include "Point.h"
 

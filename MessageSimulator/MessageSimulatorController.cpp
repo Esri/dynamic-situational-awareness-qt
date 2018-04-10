@@ -23,7 +23,7 @@
 
 MessageSimulatorController::MessageSimulatorController(QObject* parent) :
   QObject(parent),
-  m_dataSender(new Dsa::Utilities::DataSender(this)),
+  m_dataSender(new Dsa::DataSender(this)),
   m_messages(new SimulatedMessageListModel(this))
 {
   connect(&m_timer, &QTimer::timeout, this, [this]
@@ -70,7 +70,7 @@ MessageSimulatorController::MessageSimulatorController(QObject* parent) :
     m_messagesSent++;
   });
 
-  connect(m_dataSender, &Dsa::Utilities::DataSender::dataSent, this, [this](const QByteArray& data)
+  connect(m_dataSender, &Dsa::DataSender::dataSent, this, [this](const QByteArray& data)
   {
     // create a simulated message to be added to the messages model
     SimulatedMessage* cotMessage = SimulatedMessage::createFromCoTMessage(data, this);

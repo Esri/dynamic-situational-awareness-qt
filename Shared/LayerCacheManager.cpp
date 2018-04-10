@@ -281,7 +281,7 @@ void LayerCacheManager::layerToJson(Layer* layer)
     layerPath = vectorTiledLayer->vectorTileCache() ? vectorTiledLayer->vectorTileCache()->path() : vectorTiledLayer->url().toString();
 
   // Get Markups
-  auto markupLayer = dynamic_cast<Markup::MarkupLayer*>(layer);
+  auto markupLayer = dynamic_cast<MarkupLayer*>(layer);
   if (markupLayer)
     layerPath = markupLayer->path();
 

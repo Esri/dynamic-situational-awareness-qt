@@ -13,7 +13,6 @@
 #ifndef TILECACHE_LISTMODEL_H
 #define TILECACHE_LISTMODEL_H
 
-
 // Qt headers
 #include <QAbstractListModel>
 #include <QList>

@@ -13,7 +13,6 @@
 #ifndef CONTEXTMENUCONTROLLER_H
 #define CONTEXTMENUCONTROLLER_H
 
-
 // toolkit headers
 #include "AbstractTool.h"
 

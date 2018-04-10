@@ -18,7 +18,6 @@
 #include <QString>
 
 namespace Dsa {
-namespace Alerts {
 
 class AlertConstants {
 public:
@@ -38,7 +37,6 @@ public:
   static QString withinDistanceAlertConditionType();
 };
 
-} // Alerts
 } // Dsa
 
 #endif // ALERTCONSTANTS_H

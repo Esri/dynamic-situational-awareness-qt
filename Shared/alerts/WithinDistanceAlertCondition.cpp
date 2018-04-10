@@ -21,10 +21,7 @@
 
 using namespace Esri::ArcGISRuntime;
 
-namespace Dsa
-{
-namespace Alerts
-{
+namespace Dsa {
 
 /*!
   \class WithinDistanceAlertCondition
@@ -110,5 +107,5 @@ QString WithinDistanceAlertCondition::queryString() const
   return QString("is within %1 %2 of").arg(QString::number(m_distance), AlertConstants::METERS);
 }
 
-} // Alerts
+
 } // Dsa

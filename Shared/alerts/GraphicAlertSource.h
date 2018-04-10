@@ -13,7 +13,6 @@
 #ifndef GRAPHICALERTSOURCE_H
 #define GRAPHICALERTSOURCE_H
 
-
 // example app headers
 #include "AlertSource.h"
 
@@ -24,7 +23,6 @@ class Graphic;
 }
 
 namespace Dsa {
-namespace Alerts {
 
 class GraphicAlertSource : public AlertSource
 {
@@ -43,7 +41,6 @@ private:
   Esri::ArcGISRuntime::Graphic* m_graphic = nullptr;
 };
 
-} // Alerts
 } // Dsa
 
 #endif // GRAPHICALERTSOURCE_H

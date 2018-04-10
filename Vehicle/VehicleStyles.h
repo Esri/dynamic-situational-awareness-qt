@@ -13,7 +13,6 @@
 #ifndef VEHICLESTYLES_H
 #define VEHICLESTYLES_H
 
-
 // Qt headers
 #include <QObject>
 

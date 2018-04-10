@@ -22,9 +22,7 @@
 #include <QUrl>
 
 namespace Dsa {
-namespace Utilities {
 class DataSender;
-}
 }
 
 class AbstractMessageParser;
@@ -105,7 +103,7 @@ private:
 
   static float timeUnitToSeconds(TimeUnit timeUnit);
 
-  Dsa::Utilities::DataSender* m_dataSender = nullptr;
+  Dsa::DataSender* m_dataSender = nullptr;
   AbstractMessageParser* m_messageParser = nullptr;
   SimulatedMessageListModel* m_messages = nullptr;
 

@@ -16,7 +16,6 @@
 #include "MarkupConstants.h"
 
 namespace Dsa {
-namespace Markup {
 
 const QString MarkupConstants::ARROW = QStringLiteral("arrow");
 const QString MarkupConstants::CENTER = QStringLiteral("center");
@@ -31,5 +30,4 @@ const QString MarkupConstants::SHAREDBY = QStringLiteral("sharedBy");
 const QString MarkupConstants::VERSION = QStringLiteral("version");
 const QString MarkupConstants::VERSIONNUMBER = QStringLiteral("1.0");
 
-} // Markup
 } // Dsa

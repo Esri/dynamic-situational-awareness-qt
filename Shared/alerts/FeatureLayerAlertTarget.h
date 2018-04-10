@@ -13,7 +13,6 @@
 #ifndef FEATURELAYERALERTTARGET_H
 #define FEATURELAYERALERTTARGET_H
 
-
 // example app headers
 #include "AlertTarget.h"
 
@@ -31,8 +30,6 @@ class FeatureQueryResult;
 namespace Dsa {
 
 class GeometryQuadtree;
-
-namespace Alerts {
 
 class FeatureLayerAlertTarget : public AlertTarget
 {
@@ -57,7 +54,6 @@ private:
   mutable QList<Esri::ArcGISRuntime::Geometry> m_geomCache;
 };
 
-} // Alerts
 } // Dsa
 
 #endif // FEATURELAYERALERTTARGET_H

@@ -13,7 +13,6 @@
 #ifndef VIEWSHEDCONTROLLER_H
 #define VIEWSHEDCONTROLLER_H
 
-
 // toolkit headers
 #include "AbstractTool.h"
 
@@ -37,7 +36,6 @@ namespace Esri {
 }
 
 namespace Dsa {
-namespace Analysis {
 
 class ViewshedListModel;
 class Viewshed360;
@@ -190,7 +188,6 @@ private:
   QList<QMetaObject::Connection> m_activeViewshedConns;
 };
 
-} // Analysis
 } // Dsa
 
 #endif // VIEWSHEDCONTROLLER_H

@@ -24,10 +24,7 @@
 
 using namespace Esri::ArcGISRuntime;
 
-namespace Dsa
-{
-namespace Alerts
-{
+namespace Dsa {
 
 /*!
   \class FeatureLayerAlertTarget
@@ -113,7 +110,7 @@ QVariant FeatureLayerAlertTarget::targetValue() const
 void FeatureLayerAlertTarget::handleQueryFeaturesCompleted(QUuid, FeatureQueryResult* queryResults)
 {
   // Store the results in a RAII manager to ensure they are cleaned up
-  Utilities::FeatureQueryResultManager results(queryResults);
+  FeatureQueryResultManager results(queryResults);
   if (!results.m_results)
   {
     emit dataChanged();
@@ -165,5 +162,4 @@ void FeatureLayerAlertTarget::rebuildQuadtree()
     m_quadtree = new GeometryQuadtree(m_FeatureLayer->fullExtent(), elements, 8, this);
 }
 
-} // Alerts
 } // Dsa

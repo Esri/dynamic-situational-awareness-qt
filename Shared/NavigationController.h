@@ -13,7 +13,6 @@
 #ifndef NAVIGATIONCONTROLLER_H
 #define NAVIGATIONCONTROLLER_H
 
-
 // toolkit headers
 #include "AbstractTool.h"
 

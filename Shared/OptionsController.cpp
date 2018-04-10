@@ -254,15 +254,15 @@ QList<DictionaryRenderer*> OptionsController::friendlyTracksOverlayRenderers() c
   QList<DictionaryRenderer*> renderers;
 
   // Obtain and cache the MessageFeedsController. Connect members and emit signals so properties update
-  Messages::MessageFeedsController* messageController = Toolkit::ToolManager::instance().tool<Messages::MessageFeedsController>();
+  MessageFeedsController* messageController = Toolkit::ToolManager::instance().tool<MessageFeedsController>();
   if (messageController)
   {
-    Messages::MessageFeedListModel* messageFeedModel = dynamic_cast<Messages::MessageFeedListModel*>(messageController->messageFeeds());
+    MessageFeedListModel* messageFeedModel = dynamic_cast<MessageFeedListModel*>(messageController->messageFeeds());
     if (messageFeedModel)
     {
       for (int i = 0; i < messageFeedModel->count(); i++)
       {
-        Messages::MessageFeed* feed = messageFeedModel->at(i);
+        MessageFeed* feed = messageFeedModel->at(i);
         if (QString(feed->feedName()).contains("friendly tracks", Qt::CaseInsensitive))
         {
           Renderer* renderer = feed->messagesOverlay()->renderer();

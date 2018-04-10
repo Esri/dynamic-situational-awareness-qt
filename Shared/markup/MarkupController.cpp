@@ -46,7 +46,6 @@
 using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
-namespace Markup {
 
 const QString MarkupController::USERNAME_PROPERTYNAME = "UserName";
 
@@ -365,5 +364,4 @@ QColor MarkupController::currentColor() const
   return m_color;
 }
 
-} // Markup
 } // Dsa

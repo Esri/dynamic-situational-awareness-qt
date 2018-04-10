@@ -31,7 +31,6 @@ class GraphicsOverlay;
 }
 
 namespace Dsa {
-namespace Alerts {
 
 class AlertConditionData;
 class AlertSource;
@@ -74,7 +73,7 @@ public:
 
 signals:
   void noLongerValid();
-  void newConditionData(Dsa::Alerts::AlertConditionData* newConditionData);
+  void newConditionData(Dsa::AlertConditionData* newConditionData);
   void conditionChanged();
   void conditionEnabledChanged();
 
@@ -87,7 +86,6 @@ private:
   QString m_targetDescription;
 };
 
-} // Alerts
 } // Dsa
 
 #endif // ALERTCONDITIONDATA_H

@@ -1,7 +1,6 @@
 #ifndef ABSTRACTSKETCHTOOL_H
 #define ABSTRACTSKETCHTOOL_H
 
-
 // toolkit headers
 #include "AbstractTool.h"
 
@@ -24,7 +23,6 @@ namespace Esri {
 }
 
 namespace Dsa {
-namespace Markup {
 
 class AbstractSketchTool : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -66,7 +64,6 @@ protected:
   Esri::ArcGISRuntime::Symbol* m_sketchSymbol = nullptr;
 };
 
-} // Markup
 } // Dsa
 
 #endif // ABSTRACTSKETCHTOOL_H

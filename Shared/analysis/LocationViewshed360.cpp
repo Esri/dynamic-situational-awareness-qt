@@ -28,7 +28,6 @@
 using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
-namespace Analysis {
 
 constexpr double c_defaultHeading = 0.0;
 constexpr double c_defaultPitch = 90.0;
@@ -175,5 +174,4 @@ void LocationViewshed360::update360Mode(bool is360Mode)
   emit pitchEnabledChanged();
 }
 
-} // Analysis
 } // Dsa

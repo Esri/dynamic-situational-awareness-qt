@@ -13,7 +13,6 @@
 #ifndef ATTRIBUTEEQUALSALERTCONDITION_H
 #define ATTRIBUTEEQUALSALERTCONDITION_H
 
-
 // example app headers
 #include "AlertCondition.h"
 
@@ -21,7 +20,6 @@
 #include <QObject>
 
 namespace Dsa {
-namespace Alerts {
 
 class AttributeEqualsAlertCondition : public AlertCondition
 {
@@ -46,7 +44,6 @@ private:
   QString m_attributeName;
 };
 
-} // Alerts
 } // Dsa
 
 #endif // ATTRIBUTEEQUALSALERTCONDITION_H

@@ -18,10 +18,7 @@
 // Qt headers
 #include <QUdpSocket>
 
-namespace Dsa
-{
-namespace Utilities
-{
+namespace Dsa {
 
 DataListener::DataListener(QObject* parent) :
   QObject(parent)
@@ -121,5 +118,4 @@ bool DataListener::processUdpDatagrams()
   return false;
 }
 
-} // Utilities
 } // Dsa

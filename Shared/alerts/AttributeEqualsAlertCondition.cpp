@@ -21,10 +21,7 @@
 
 using namespace Esri::ArcGISRuntime;
 
-namespace Dsa
-{
-namespace Alerts
-{
+namespace Dsa {
 
 /*!
   \class AttributeEqualsAlertCondition
@@ -98,5 +95,4 @@ QString AttributeEqualsAlertCondition::attributeNameFromQueryComponents(const QV
   return queryMap.value(AlertConstants::ATTRIBUTE_NAME).toString();
 }
 
-} // Alerts
 } // Dsa

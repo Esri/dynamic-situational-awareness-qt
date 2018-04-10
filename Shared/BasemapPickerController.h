@@ -13,7 +13,6 @@
 #ifndef BASEMAPPICKERCONTROLLER_H
 #define BASEMAPPICKERCONTROLLER_H
 
-
 // toolkit headers
 #include "AbstractTool.h"
 

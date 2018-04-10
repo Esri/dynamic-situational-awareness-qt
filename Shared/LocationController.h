@@ -13,7 +13,6 @@
 #ifndef LOCATIONCONTROLLER_H
 #define LOCATIONCONTROLLER_H
 
-
 // toolkit headers
 #include "AbstractTool.h"
 

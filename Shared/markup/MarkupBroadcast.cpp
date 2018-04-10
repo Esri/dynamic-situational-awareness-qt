@@ -29,10 +29,7 @@
 
 using namespace Esri::ArcGISRuntime;
 
-namespace Dsa
-{
-namespace Markup
-{
+namespace Dsa {
 
 const QString MarkupBroadcast::MARKUPCONFIG_PROPERTYNAME = QStringLiteral("MarkupConfig");
 const QString MarkupBroadcast::ROOTDATA_PROPERTYNAME = QStringLiteral("RootDataDirectory");
@@ -47,12 +44,12 @@ const QString MarkupBroadcast::SHAREDBYKEY = QStringLiteral("sharedBy");
  */
 MarkupBroadcast::MarkupBroadcast(QObject *parent) :
   Toolkit::AbstractTool(parent),
-  m_dataSender(new Utilities::DataSender(parent)),
-  m_dataListener(new Utilities::DataListener(parent))
+  m_dataSender(new DataSender(parent)),
+  m_dataListener(new DataListener(parent))
 {
   Toolkit::ToolManager::instance().addTool(this);
 
-  connect(m_dataListener, &Utilities::DataListener::dataReceived, this, [this](const QByteArray& data)
+  connect(m_dataListener, &DataListener::dataReceived, this, [this](const QByteArray& data)
   {
     QJsonDocument markupJson = QJsonDocument::fromJson(data);
 
@@ -157,5 +154,4 @@ void MarkupBroadcast::updateDataListener()
   m_dataListener->setDevice(udpSocket);
 }
 
-} // Markup
 } // Dsa

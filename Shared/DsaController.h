@@ -13,7 +13,6 @@
 #ifndef DSACONTROLLER_H
 #define DSACONTROLLER_H
 
-
 // Qt headers
 #include <QJsonArray>
 #include <QObject>

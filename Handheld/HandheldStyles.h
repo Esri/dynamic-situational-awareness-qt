@@ -13,7 +13,6 @@
 #ifndef HANDHELDSTYLES_H
 #define HANDHELDSTYLES_H
 
-
 // Qt headers
 #include <QObject>
 

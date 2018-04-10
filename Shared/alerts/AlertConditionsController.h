@@ -39,7 +39,6 @@ class GraphicsOverlay;
 }
 
 namespace Dsa {
-namespace Alerts {
 
 class AlertCondition;
 class AlertConditionData;
@@ -136,7 +135,6 @@ private:
   QMetaObject::Connection m_identifyGraphicsConnection;
 };
 
-} // Alerts
 } // Dsa
 
 #endif // ALERTCONDITIONSCONTROLLER_H

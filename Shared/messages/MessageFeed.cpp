@@ -19,7 +19,6 @@
 #include "MessagesOverlay.h"
 
 namespace Dsa {
-namespace Messages {
 
 MessageFeed::MessageFeed(QObject* parent) :
   QObject(parent)
@@ -100,5 +99,4 @@ void MessageFeed::setThumbnailUrl(const QUrl& thumbnailUrl)
     m_thumbnailUrl = thumbnailUrl;
 }
 
-} // Messages
 } // Dsa

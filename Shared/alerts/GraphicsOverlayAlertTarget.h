@@ -13,7 +13,6 @@
 #ifndef GRAPHICSOVERLAYALERTTARGET_H
 #define GRAPHICSOVERLAYALERTTARGET_H
 
-
 // example app headers
 #include "AlertTarget.h"
 
@@ -27,8 +26,6 @@ class GraphicsOverlay;
 namespace Dsa {
 
 class GeometryQuadtree;
-
-namespace Alerts {
 
 class GraphicsOverlayAlertTarget : public AlertTarget
 {
@@ -50,7 +47,6 @@ private:
   QList<QMetaObject::Connection> m_graphicConnections;
 };
 
-} // Alerts
 } // Dsa
 
 #endif // GRAPHICSOVERLAYALERTTARGET_H

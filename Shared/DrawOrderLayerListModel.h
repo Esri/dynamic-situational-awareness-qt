@@ -13,7 +13,6 @@
 #ifndef DRAWORDERLAYERLISTMODEL_H
 #define DRAWORDERLAYERLISTMODEL_H
 
-
 // Qt headers
 #include <QSortFilterProxyModel>
 

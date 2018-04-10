@@ -19,7 +19,6 @@
 #include "MessageFeed.h"
 
 namespace Dsa {
-namespace Messages {
 
 MessageFeedListModel::MessageFeedListModel(QObject* parent) :
   QAbstractListModel(parent)
@@ -180,5 +179,4 @@ int MessageFeedListModel::count() const
   return m_messageFeeds.length();
 }
 
-} // Messages
 } // Dsa

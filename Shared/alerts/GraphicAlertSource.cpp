@@ -22,10 +22,7 @@
 
 using namespace Esri::ArcGISRuntime;
 
-namespace Dsa
-{
-namespace Alerts
-{
+namespace Dsa {
 
 /*!
   \class GraphicAlertSource
@@ -88,5 +85,4 @@ void GraphicAlertSource::setSelected(bool selected)
   m_graphic->setSelected(selected);
 }
 
-} // Alerts
 } // Dsa

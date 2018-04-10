@@ -40,7 +40,6 @@
 using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
-namespace Markup {
 
 /*
  \internal
@@ -253,5 +252,4 @@ QString MarkupLayer::author() const
   return m_author;
 }
 
-} // Markup
 } // Dsa

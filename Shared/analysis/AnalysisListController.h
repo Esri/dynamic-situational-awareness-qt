@@ -13,7 +13,6 @@
 #ifndef ANALYSISLISTCONTROLLER_H
 #define ANALYSISLISTCONTROLLER_H
 
-
 // toolkit headers
 #include "AbstractTool.h"
 
@@ -29,7 +28,6 @@ namespace ArcGISRuntime {
 }
 
 namespace Dsa {
-namespace Analysis {
 
 class CombinedAnalysisListModel;
 
@@ -64,7 +62,6 @@ private:
   Esri::ArcGISRuntime::SceneView* m_sceneView = nullptr;
 };
 
-} // Analysis
 } // Dsa
 
 #endif // ANALYSISLISTCONTROLLER_H

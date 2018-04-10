@@ -13,7 +13,6 @@
 #ifndef COMBINEDANALYSISLISTMODEL_H
 #define COMBINEDANALYSISLISTMODEL_H
 
-
 // C++ API headers
 #include "Point.h"
 
@@ -29,7 +28,6 @@ namespace ArcGISRuntime {
 }
 
 namespace Dsa {
-namespace Analysis {
 
 class ViewshedListModel;
 
@@ -79,7 +77,6 @@ private:
   Esri::ArcGISRuntime::AnalysisListModel* m_lineOfSightModel = nullptr;
 };
 
-} // Analysis
 } // Dsa
 
 #endif // COMBINEDANALYSISLISTMODEL_H

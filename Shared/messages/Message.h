@@ -13,7 +13,6 @@
 #ifndef MESSAGE_H
 #define MESSAGE_H
 
-
 // C++ API headers
 #include "Geometry.h"
 
@@ -22,7 +21,6 @@
 #include <QVariantMap>
 
 namespace Dsa {
-namespace Messages {
 
 class MessageData;
 
@@ -111,7 +109,6 @@ private:
 
 Q_DECLARE_METATYPE(Message::MessageAction)
 
-} // Messages
 } // Dsa
 
 #endif // MESSAGE_H

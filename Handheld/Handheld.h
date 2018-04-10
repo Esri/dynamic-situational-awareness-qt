@@ -13,7 +13,6 @@
 #ifndef HANDHELD_H
 #define HANDHELD_H
 
-
 // Qt headers
 #include <QQuickItem>
 

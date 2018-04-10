@@ -13,7 +13,6 @@
 #ifndef LAYERCACHEMANAGER_H
 #define LAYERCACHEMANAGER_H
 
-
 // toolkit headers
 #include "AbstractTool.h"
 

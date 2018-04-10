@@ -13,7 +13,6 @@
 #ifndef OPTIONSCONTROLLER_H
 #define OPTIONSCONTROLLER_H
 
-
 // toolkit headers
 #include "AbstractTool.h"
 

@@ -25,10 +25,7 @@
 
 using namespace Esri::ArcGISRuntime;
 
-namespace Dsa
-{
-namespace Alerts
-{
+namespace Dsa {
 
 /*!
   \class WithinAreaAlertCondition
@@ -95,5 +92,5 @@ QString WithinAreaAlertCondition::isWithinQueryString()
   return QStringLiteral("is within");
 }
 
-} // Alerts
+
 } // Dsa

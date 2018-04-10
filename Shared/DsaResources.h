@@ -13,7 +13,6 @@
 #ifndef DSARESOURCES_H
 #define DSARESOURCES_H
 
-
 // Qt headers
 #include <QObject>
 #include <QUrl>

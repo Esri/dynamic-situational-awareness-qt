@@ -13,7 +13,6 @@
 #ifndef ALERTLISTCONTROLLER_H
 #define ALERTLISTCONTROLLER_H
 
-
 // toolkit headers
 #include "AbstractTool.h"
 
@@ -30,8 +29,6 @@ namespace ArcGISRuntime
 namespace Dsa {
 
 class PointHighlighter;
-
-namespace Alerts {
 
 class AlertFilter;
 class AlertListProxyModel;
@@ -79,7 +76,6 @@ private:
   QList<QMetaObject::Connection> m_highlightConnections;
 };
 
-} // Alerts
 } // Dsa
 
 #endif // ALERTLISTCONTROLLER_H

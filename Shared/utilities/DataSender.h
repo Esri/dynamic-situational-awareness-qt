@@ -13,7 +13,6 @@
 #ifndef DATASENDER_H
 #define DATASENDER_H
 
-
 // Qt headers
 #include <QObject>
 #include <QPointer>
@@ -21,7 +20,6 @@
 class QIODevice;
 
 namespace Dsa {
-namespace Utilities {
 
 class DataSender : public QObject
 {
@@ -46,7 +44,6 @@ private:
   QPointer<QIODevice> m_device;
 };
 
-} // Utilities
 } // Dsa
 
 #endif // DATASENDER_H

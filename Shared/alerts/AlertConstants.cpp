@@ -20,10 +20,7 @@
 #include "WithinAreaAlertCondition.h"
 #include "WithinDistanceAlertCondition.h"
 
-namespace Dsa
-{
-namespace Alerts
-{
+namespace Dsa {
 
 const QString AlertConstants::ALERT_CONDITIONS_PROPERTYNAME = "Conditions";
 const QString AlertConstants::ATTRIBUTE_NAME = "attribute_name";
@@ -51,5 +48,4 @@ QString AlertConstants::withinDistanceAlertConditionType()
   return WithinDistanceAlertCondition::staticMetaObject.className();
 }
 
-} // Alerts
 } // Dsa

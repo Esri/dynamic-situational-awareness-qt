@@ -271,7 +271,7 @@ void LocationBroadcast::setInDistress(bool inDistress)
 /*!
    \brief Returns the message that is being broadcasted.
  */
-Messages::Message LocationBroadcast::message() const
+Message LocationBroadcast::message() const
 {
   return m_message;
 }
@@ -299,7 +299,7 @@ void LocationBroadcast::update()
     m_timer = nullptr;
   }
 
-  m_dataSender = new Utilities::DataSender(this);
+  m_dataSender = new DataSender(this);
 
   QUdpSocket* udpSocket = new QUdpSocket(m_dataSender);
   udpSocket->connectToHost(QHostAddress::Broadcast, m_udpPort, QIODevice::WriteOnly);
@@ -344,15 +344,15 @@ void LocationBroadcast::broadcastLocation()
   {
     QVariantMap attribs;
 
-    m_message = Messages::Message(Messages::Message::MessageAction::Update, m_location);
+    m_message = Message(Message::MessageAction::Update, m_location);
     m_message.setMessageId(QUuid::createUuid().toString());
     m_message.setMessageType(m_messageType);
     m_message.setSymbolId(s_locationBroadcastSic);
 
-    attribs.insert(Messages::Message::GEOMESSAGE_SIC_NAME, s_locationBroadcastSic);
-    attribs.insert(Messages::Message::GEOMESSAGE_UNIQUE_DESIGNATION_NAME, m_userName);
+    attribs.insert(Message::GEOMESSAGE_SIC_NAME, s_locationBroadcastSic);
+    attribs.insert(Message::GEOMESSAGE_UNIQUE_DESIGNATION_NAME, m_userName);
     const int status911 = m_inDistress ? 1 : 0;
-    attribs.insert(Messages::Message::GEOMESSAGE_STATUS_911_NAME, status911);
+    attribs.insert(Message::GEOMESSAGE_STATUS_911_NAME, status911);
     m_message.setAttributes(attribs);
   }
   else
@@ -362,7 +362,7 @@ void LocationBroadcast::broadcastLocation()
     QVariantMap attribs = m_message.attributes();
 
     const int status911 = m_inDistress ? 1 : 0;
-    attribs.insert(Messages::Message::GEOMESSAGE_STATUS_911_NAME, status911);
+    attribs.insert(Message::GEOMESSAGE_STATUS_911_NAME, status911);
     m_message.setAttributes(attribs);
   }
 
@@ -382,7 +382,7 @@ void LocationBroadcast::removeBroadcast()
 {
   if (!m_message.isEmpty())
   {
-    m_message.setMessageAction(Messages::Message::MessageAction::Remove);
+    m_message.setMessageAction(Message::MessageAction::Remove);
 
     emit messageChanged();
 
@@ -412,7 +412,7 @@ void LocationBroadcast::setUserName(const QString& userName)
   if (!m_message.isEmpty())
   {
     QVariantMap attribs = m_message.attributes();
-    attribs.insert(Messages::Message::GEOMESSAGE_UNIQUE_DESIGNATION_NAME, m_userName);
+    attribs.insert(Message::GEOMESSAGE_UNIQUE_DESIGNATION_NAME, m_userName);
     m_message.setAttributes(attribs);
   }
 }

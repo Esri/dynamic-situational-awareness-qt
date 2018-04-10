@@ -18,10 +18,7 @@
 // example app headers
 #include "AlertConditionData.h"
 
-namespace Dsa
-{
-namespace Alerts
-{
+namespace Dsa {
 
 /*!
   \class IdsAlertFilter
@@ -84,5 +81,4 @@ void IdsAlertFilter::clearIds()
   emit filterChanged();
 }
 
-} // Alerts
 } // Dsa

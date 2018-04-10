@@ -13,7 +13,6 @@
 #ifndef FOLLOWPOSITIONCONTROLLER_H
 #define FOLLOWPOSITIONCONTROLLER_H
 
-
 // toolkit headers
 #include "AbstractTool.h"
 

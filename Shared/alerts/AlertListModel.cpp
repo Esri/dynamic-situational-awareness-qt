@@ -23,10 +23,7 @@
 
 using namespace Esri::ArcGISRuntime;
 
-namespace Dsa
-{
-namespace Alerts
-{
+namespace Dsa {
 
 /*!
   \class AlertListModel
@@ -268,5 +265,4 @@ QHash<int, QByteArray> AlertListModel::roleNames() const
   return m_roles;
 }
 
-} // Alerts
 } // Dsa

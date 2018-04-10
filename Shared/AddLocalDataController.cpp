@@ -273,12 +273,12 @@ void AddLocalDataController::createElevationSourceFromRasters(const QStringList&
 */
 void AddLocalDataController::createMarkupLayer(const QString& path, int layerIndex, bool visible, bool autoAdd)
 {
-  Markup::MarkupLayer* markupLayer = Markup::MarkupLayer::createFromPath(path, this);
+  MarkupLayer* markupLayer = MarkupLayer::createFromPath(path, this);
   if (!markupLayer)
     return;
 
   markupLayer->setVisible(visible);
-  connect(markupLayer, &Markup::MarkupLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+  connect(markupLayer, &MarkupLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
   if (autoAdd)
   {

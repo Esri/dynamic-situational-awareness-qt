@@ -28,7 +28,6 @@
 #include <QXmlStreamReader>
 
 namespace Dsa {
-namespace Messages {
 
 const QString Message::COT_ROOT_ELEMENT_NAME{QStringLiteral("events")};
 const QString Message::COT_ELEMENT_NAME{QStringLiteral("event")};
@@ -620,5 +619,4 @@ MessageData::~MessageData()
 {
 }
 
-} // Messages
 } // Dsa

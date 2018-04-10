@@ -13,7 +13,6 @@
 #ifndef IDENTIFYFEATURESCONTROLLER_H
 #define IDENTIFYFEATURESCONTROLLER_H
 
-
 // toolkit headers
 #include "AbstractTool.h"
 

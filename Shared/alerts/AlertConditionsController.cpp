@@ -53,10 +53,7 @@
 
 using namespace Esri::ArcGISRuntime;
 
-namespace Dsa
-{
-namespace Alerts
-{
+namespace Dsa {
 
 /*!
   \class AlertConditionsController
@@ -128,19 +125,19 @@ void AlertConditionsController::setProperties(const QVariantMap& properties)
 {
   const auto conditionsData = properties[AlertConstants::ALERT_CONDITIONS_PROPERTYNAME];
 
-  const auto messageFeeds = properties[Messages::MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME].toList();
+  const auto messageFeeds = properties[MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME].toList();
   if (!messageFeeds.isEmpty())
   {
     const auto messageFeedsJson = QJsonArray::fromVariantList(messageFeeds);
     for (const auto& messageFeed : messageFeedsJson)
     {
       const auto messageFeedJsonObject = messageFeed.toObject();
-      if (!messageFeedJsonObject.contains(Messages::MessageFeedConstants::MESSAGE_FEEDS_NAME) ||
-          !messageFeedJsonObject.contains(Messages::MessageFeedConstants::MESSAGE_FEEDS_TYPE))
+      if (!messageFeedJsonObject.contains(MessageFeedConstants::MESSAGE_FEEDS_NAME) ||
+          !messageFeedJsonObject.contains(MessageFeedConstants::MESSAGE_FEEDS_TYPE))
         continue;
 
-      const auto feedName = messageFeedJsonObject[Messages::MessageFeedConstants::MESSAGE_FEEDS_NAME].toString();
-      const auto feedType = messageFeedJsonObject[Messages::MessageFeedConstants::MESSAGE_FEEDS_TYPE].toString();
+      const auto feedName = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_NAME].toString();
+      const auto feedType = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_TYPE].toString();
 
       m_messageFeedTypesToNames.insert(feedType, feedName);
     }
@@ -691,7 +688,7 @@ void AlertConditionsController::onIdentifyLayersCompleted(const QUuid& taskId, Q
   if (taskId != m_identifyLayersWatcher.taskId())
     return;
 
-  Utilities::LayerResultsManager resultsManager(identifyResults);
+  LayerResultsManager resultsManager(identifyResults);
 
   if (!isActive())
     return;
@@ -759,7 +756,7 @@ void AlertConditionsController::onIdentifyGraphicsOverlaysCompleted(const QUuid&
   if (taskId != m_identifyGraphicsWatcher.taskId())
     return;
 
-  Utilities::GraphicsOverlaysResultsManager resultsManager(identifyResults);
+  GraphicsOverlaysResultsManager resultsManager(identifyResults);
 
   if (!isActive())
     return;
@@ -1249,5 +1246,4 @@ QStringList AlertConditionsController::realtimeFeedNames() const
   return m_messageFeedTypesToNames.values();
 }
 
-} // Alerts
 } // Dsa

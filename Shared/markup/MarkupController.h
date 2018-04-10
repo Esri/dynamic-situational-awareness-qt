@@ -13,7 +13,6 @@
 #ifndef MARKUPCONTROLLER_H
 #define MARKUPCONTROLLER_H
 
-
 // example app headers
 #include "AbstractSketchTool.h"
 
@@ -27,7 +26,6 @@
 #include <QColor>
 
 namespace Dsa {
-namespace Markup {
 
 class MarkupBroadcast;
 
@@ -95,7 +93,6 @@ private:
   MarkupBroadcast* m_markupBroadcast = nullptr;
 };
 
-} // Markup
 } // Dsa
 
 #endif // MARKUPCONTROLLER_H

@@ -13,7 +13,6 @@
 #ifndef ADDLOCALDATACONTROLLER_H
 #define ADDLOCALDATACONTROLLER_H
 
-
 // toolkit headers
 #include "AbstractTool.h"
 

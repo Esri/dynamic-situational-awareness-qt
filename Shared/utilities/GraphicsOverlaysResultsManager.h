@@ -13,7 +13,6 @@
 #ifndef GRAPHICSOVERLAYSRESULTSMANAGER_H
 #define GRAPHICSOVERLAYSRESULTSMANAGER_H
 
-
 // Qt headers
 #include <QList>
 
@@ -24,7 +23,6 @@ namespace ArcGISRuntime {
 }
 
 namespace Dsa {
-namespace Utilities {
 
 struct GraphicsOverlaysResultsManager {
 
@@ -35,7 +33,6 @@ struct GraphicsOverlaysResultsManager {
   ~GraphicsOverlaysResultsManager();
 };
 
-} // Utilities
 } // Dsa
 
 #endif // GRAPHICSOVERLAYSRESULTSMANAGER_H

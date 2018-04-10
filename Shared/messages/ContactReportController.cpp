@@ -39,10 +39,7 @@
 
 using namespace Esri::ArcGISRuntime;
 
-namespace Dsa
-{
-namespace Messages
-{
+namespace Dsa {
 
 /*!
   \brief Constructor accepting an optional \a parent.
@@ -282,7 +279,7 @@ void ContactReportController::broadcastReport(const QString& size,
 
   if (!m_dataSender)
   {
-    m_dataSender = new Utilities::DataSender(this);
+    m_dataSender = new DataSender(this);
 
     QUdpSocket* udpSocket = new QUdpSocket(m_dataSender);
     udpSocket->connectToHost(QHostAddress::Broadcast, m_udpPort, QIODevice::WriteOnly);
@@ -380,5 +377,4 @@ void ContactReportController::onUpdateControlPointHightlight()
     m_highlighter->stopHighlight();
 }
 
-} // Messages
 } // Dsa

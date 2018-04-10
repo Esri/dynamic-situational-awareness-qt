@@ -13,7 +13,6 @@
 #ifndef GEOELEMENTALERTTARGET_H
 #define GEOELEMENTALERTTARGET_H
 
-
 // example app headers
 #include "AlertTarget.h"
 
@@ -24,7 +23,6 @@ class GeoElement;
 }
 
 namespace Dsa {
-namespace Alerts {
 
 class GeoElementAlertTarget : public AlertTarget
 {
@@ -41,7 +39,6 @@ private:
   Esri::ArcGISRuntime::GeoElement* m_geoElement = nullptr;
 };
 
-} // Alerts
 } // Dsa
 
 #endif // GEOELEMENTALERTTARGET_H

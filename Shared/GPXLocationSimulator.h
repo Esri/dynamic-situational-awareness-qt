@@ -13,7 +13,6 @@
 #ifndef GPXLOCATIONSIMULATOR_H
 #define GPXLOCATIONSIMULATOR_H
 
-
 // C++ API headers
 #include "LineSegment.h"
 #include "Point.h"

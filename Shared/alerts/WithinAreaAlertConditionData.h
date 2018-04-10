@@ -13,7 +13,6 @@
 #ifndef WITHINAREAALERTCONDITIONDATA_H
 #define WITHINAREAALERTCONDITIONDATA_H
 
-
 // example app headers
 #include "AlertConditionData.h"
 
@@ -27,7 +26,6 @@ class Graphic;
 }
 
 namespace Dsa {
-namespace Alerts {
 
 class WithinAreaAlertConditionData : public AlertConditionData
 {
@@ -45,7 +43,6 @@ public:
   bool matchesQuery() const override;
 };
 
-} // Alerts
 } // Dsa
 
 #endif // WITHINAREAALERTCONDITIONDATA_H

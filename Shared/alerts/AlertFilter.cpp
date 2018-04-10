@@ -15,10 +15,7 @@
 
 #include "AlertFilter.h"
 
-namespace Dsa
-{
-namespace Alerts
-{
+namespace Dsa {
 
 /*!
   \class AlertFilter
@@ -46,5 +43,5 @@ AlertFilter::~AlertFilter()
 
 }
 
-} // Alerts
+
 } // Dsa

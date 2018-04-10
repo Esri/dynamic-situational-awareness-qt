@@ -26,7 +26,6 @@
 using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
-namespace Alerts {
 
 /*!
   \class AlertCondition
@@ -263,5 +262,4 @@ void AlertCondition::setConditionEnabled(bool enabled)
   emit conditionEnabledChanged();
 }
 
-} // Alerts
 } // Dsa

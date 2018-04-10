@@ -18,7 +18,6 @@
 #include <QObject>
 
 namespace Dsa {
-namespace Alerts {
 
 class AlertConditionData;
 
@@ -36,7 +35,6 @@ signals:
   void filterChanged();
 };
 
-} // Alerts
 } // Dsa
 
 #endif // ALERTFILTER_H

@@ -13,12 +13,10 @@
 #ifndef LOCATIONALERTSOURCE_H
 #define LOCATIONALERTSOURCE_H
 
-
 // example app headers
 #include "AlertSource.h"
 
 namespace Dsa {
-namespace Alerts {
 
 class LocationAlertSource : public AlertSource
 {
@@ -37,7 +35,6 @@ private:
 
 };
 
-} // Alerts
 } // Dsa
 
 #endif // LOCATIONALERTSOURCE_H

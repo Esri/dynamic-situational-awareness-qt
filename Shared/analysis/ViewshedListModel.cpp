@@ -24,7 +24,6 @@
 using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
-namespace Analysis {
 
 ViewshedListModel::ViewshedListModel(QObject* parent) :
   QAbstractListModel(parent)
@@ -303,5 +302,4 @@ QHash<int, QByteArray> ViewshedListModel::roleNames() const
   return m_roles;
 }
 
-} // Analysis
 } // Dsa

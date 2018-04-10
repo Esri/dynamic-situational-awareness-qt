@@ -13,7 +13,6 @@
 #ifndef APPCONSTANTS_H
 #define APPCONSTANTS_H
 
-
 // Qt headers
 #include <QString>
 

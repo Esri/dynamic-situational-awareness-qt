@@ -17,10 +17,7 @@
 
 using namespace Esri::ArcGISRuntime;
 
-namespace Dsa
-{
-namespace Alerts
-{
+namespace Dsa {
 
 /*!
   \class AlertSource
@@ -47,5 +44,4 @@ AlertSource::~AlertSource()
   emit noLongerValid();
 }
 
-} // Alerts
 } // Dsa

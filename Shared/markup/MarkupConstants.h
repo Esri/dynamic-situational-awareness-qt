@@ -13,12 +13,10 @@
 #ifndef MARKUPCONSTANTS_H
 #define MARKUPCONSTANTS_H
 
-
 // Qt headers
 #include <QString>
 
 namespace Dsa {
-namespace Markup {
 
 class MarkupConstants
 {
@@ -38,6 +36,5 @@ public:
   static const QString VERSIONNUMBER;
 };
 
-} // Markup
 } // Dsa
 #endif // MARKUPCONSTANTS_H

@@ -44,7 +44,6 @@
 using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
-namespace Messages {
 
 const QString MessageFeedsController::RESOURCE_DIRECTORY_PROPERTYNAME = "ResourceDirectory";
 
@@ -91,7 +90,7 @@ QAbstractListModel* MessageFeedsController::messageFeeds() const
    \brief Returns the list of data listener objects that exist for
    the message feeds.
  */
-QList<Utilities::DataListener*> MessageFeedsController::dataListeners() const
+QList<DataListener*> MessageFeedsController::dataListeners() const
 {
   return m_dataListeners;
 }
@@ -103,14 +102,14 @@ QList<Utilities::DataListener*> MessageFeedsController::dataListeners() const
      \li \a dataListener - The data listener object to add to the controller.
    \endlist
  */
-void MessageFeedsController::addDataListener(Utilities::DataListener* dataListener)
+void MessageFeedsController::addDataListener(DataListener* dataListener)
 {
   if (!dataListener)
     return;
 
   m_dataListeners.append(dataListener);
 
-  connect(dataListener, &Utilities::DataListener::dataReceived, this, [this](const QByteArray& data)
+  connect(dataListener, &DataListener::dataReceived, this, [this](const QByteArray& data)
   {
     Message m = Message::create(data);
     if (m.isEmpty())
@@ -137,14 +136,14 @@ void MessageFeedsController::addDataListener(Utilities::DataListener* dataListen
      \li \a dataListener - The data listener object to remove from the controller.
    \endlist
  */
-void MessageFeedsController::removeDataListener(Utilities::DataListener* dataListener)
+void MessageFeedsController::removeDataListener(DataListener* dataListener)
 {
   if (!dataListener)
     return;
 
   m_dataListeners.removeOne(dataListener);
 
-  disconnect(dataListener, &Utilities::DataListener::dataReceived, this, nullptr);
+  disconnect(dataListener, &DataListener::dataReceived, this, nullptr);
 }
 
 /*!
@@ -185,7 +184,7 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
       QUdpSocket* udpSocket = new QUdpSocket(this);
       udpSocket->bind(udpPort.toInt(), QUdpSocket::DontShareAddress | QUdpSocket::ReuseAddressHint);
 
-      addDataListener(new Utilities::DataListener(udpSocket, this));
+      addDataListener(new DataListener(udpSocket, this));
     }
   }
 
@@ -457,5 +456,4 @@ Renderer* MessageFeedsController::createRenderer(const QString& rendererInfo, QO
   \brief Signal emitted when the \l locationBroadcastInDistress property changes.
  */
 
-} // Messages
 } // Dsa

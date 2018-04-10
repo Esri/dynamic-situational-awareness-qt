@@ -13,7 +13,6 @@
 #ifndef GEOMETRYQUADTREE_H
 #define GEOMETRYQUADTREE_H
 
-
 // Qt headers
 #include <QHash>
 #include <QList>

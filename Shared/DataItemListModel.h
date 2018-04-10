@@ -13,7 +13,6 @@
 #ifndef DATAITEMLISTMODEL_H
 #define DATAITEMLISTMODEL_H
 
-
 // Qt headers
 #include <QAbstractListModel>
 #include <QByteArray>

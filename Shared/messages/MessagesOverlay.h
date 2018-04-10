@@ -13,7 +13,6 @@
 #ifndef MESSAGESOVERLAY_H
 #define MESSAGESOVERLAY_H
 
-
 // Qt headers
 #include <QObject>
 #include <QPointer>
@@ -31,7 +30,6 @@ namespace Esri
 }
 
 namespace Dsa {
-namespace Messages {
 
 class Message;
 
@@ -79,7 +77,6 @@ private:
   QHash<QString, Esri::ArcGISRuntime::Graphic*> m_existingGraphics;
 };
 
-} // Messages
 } // Dsa
 
 #endif // MESSAGESOVERLAY_H

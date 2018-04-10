@@ -33,7 +33,6 @@
 using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
-namespace Analysis {
 
 /*!
   \brief Constructor taking an optional \a parent.
@@ -104,7 +103,7 @@ void CombinedAnalysisListModel::removeAt(int index)
  */
 Point CombinedAnalysisListModel::locationAt(int index)
 {
-  Esri::ArcGISRuntime::Analysis* analysis = nullptr;
+  Analysis* analysis = nullptr;
   if (isViewshed(index))
   {
     Viewshed360* viewshed360 =  m_viewshedModel->at(viewshedIndex(index));
@@ -307,5 +306,4 @@ int CombinedAnalysisListModel::lineOfSightIndex(int row) const
   return row - viewshedCount();
 }
 
-} // Analysis
 } // Dsa

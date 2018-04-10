@@ -18,10 +18,7 @@
 // example app headers
 #include "AlertCondition.h"
 
-namespace Dsa
-{
-namespace Alerts
-{
+namespace Dsa {
 
 AlertConditionListModel::AlertConditionListModel(QObject* parent):
   QAbstractListModel(parent)
@@ -176,5 +173,4 @@ QHash<int, QByteArray> AlertConditionListModel::roleNames() const
   return m_roles;
 }
 
-} // Alerts
 } // Dsa

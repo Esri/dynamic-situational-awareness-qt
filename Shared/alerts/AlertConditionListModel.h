@@ -19,7 +19,6 @@
 #include <QList>
 
 namespace Dsa {
-namespace Alerts {
 
 class AlertCondition;
 
@@ -61,7 +60,6 @@ private:
   QList<AlertCondition*> m_conditions;
 };
 
-} // Alerts
 } // Dsa
 
 #endif // ALERTCONDITION_LISTMODEL_H

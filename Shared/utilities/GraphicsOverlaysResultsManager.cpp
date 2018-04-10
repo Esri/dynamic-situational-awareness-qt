@@ -21,7 +21,6 @@
 using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
-namespace Utilities {
 
 // RAII helper to ensure the QList<IdentifyGraphicsOverlayResult*> is deleted when we leave the scope
 GraphicsOverlaysResultsManager::GraphicsOverlaysResultsManager(const QList<Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult*>& results):
@@ -35,5 +34,4 @@ GraphicsOverlaysResultsManager::~GraphicsOverlaysResultsManager()
   qDeleteAll(m_results);
 }
 
-} // Utilities
 } // Dsa

@@ -13,9 +13,7 @@
 #ifndef ALERTLEVEL_H
 #define ALERTLEVEL_H
 
-
 namespace Dsa {
-namespace Alerts {
 
 enum class AlertLevel : unsigned int
 {
@@ -26,7 +24,6 @@ enum class AlertLevel : unsigned int
   Critical
 };
 
-} // Alerts
 } // Dsa
 
 #endif // ALERTLEVEL_H

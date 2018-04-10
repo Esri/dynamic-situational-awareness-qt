@@ -267,7 +267,7 @@ void LineOfSightController::onQueryFeaturesCompleted(QUuid taskId, FeatureQueryR
       const int count = losList->rowCount();
       for (int i = 0; i < count; ++i)
       {
-       Analysis* analysis = losList->at(i);
+        Analysis* analysis = losList->at(i);
         if (!analysis)
           continue;
 

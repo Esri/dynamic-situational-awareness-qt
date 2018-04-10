@@ -13,19 +13,21 @@
 #ifndef ADDLOCALDATACONTROLLER_H
 #define ADDLOCALDATACONTROLLER_H
 
+// toolkit headers
+#include "AbstractTool.h"
+
+// Qt headers
 #include <QAbstractListModel>
 #include <QStringList>
 
-#include "AbstractTool.h"
-
-namespace Esri
-{
-namespace ArcGISRuntime
-{
+namespace Esri {
+namespace ArcGISRuntime {
   class Layer;
   class ElevationSource;
 }
 }
+
+namespace Dsa {
 
 class DataItemListModel;
 
@@ -103,5 +105,7 @@ private:
   static const QString LOCAL_DATAPATHS_PROPERTYNAME;
   static const QString DEFAULT_ELEVATION_PROPERTYNAME;
 };
+
+} // Dsa
 
 #endif // ADDLOCALDATACONTROLLER_H

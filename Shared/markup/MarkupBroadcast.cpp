@@ -13,20 +13,23 @@
 // PCH header
 #include "pch.hpp"
 
-// example app headers
 #include "MarkupBroadcast.h"
-#include "DataSender.h"
+
+// example app headers
 #include "DataListener.h"
+#include "DataSender.h"
 
 // Qt headers
+#include <QDateTime>
+#include <QFileInfo>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QString>
 #include <QUdpSocket>
-#include <QFileInfo>
-#include <QDateTime>
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 const QString MarkupBroadcast::MARKUPCONFIG_PROPERTYNAME = QStringLiteral("MarkupConfig");
 const QString MarkupBroadcast::ROOTDATA_PROPERTYNAME = QStringLiteral("RootDataDirectory");
@@ -159,3 +162,5 @@ void MarkupBroadcast::updateDataListener()
   udpSocket->bind(m_udpPort, QUdpSocket::DontShareAddress | QUdpSocket::ReuseAddressHint);
   m_dataListener->setDevice(udpSocket);
 }
+
+} // Dsa

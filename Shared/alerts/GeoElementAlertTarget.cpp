@@ -10,15 +10,19 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
 #include "GeoElementAlertTarget.h"
 
+// C++ API headers
+#include "GeoElement.h"
 #include "Geometry.h"
 #include "GeometryEngine.h"
-#include "GeoElement.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 /*!
   \class GeoElementAlertTarget
@@ -65,3 +69,5 @@ QVariant GeoElementAlertTarget::targetValue() const
 {
   return QVariant();
 }
+
+} // Dsa

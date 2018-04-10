@@ -13,8 +13,12 @@
 #ifndef ALERTCONDITION_LISTMODEL_H
 #define ALERTCONDITION_LISTMODEL_H
 
+
+// Qt headers
 #include <QAbstractListModel>
 #include <QList>
+
+namespace Dsa {
 
 class AlertCondition;
 
@@ -55,5 +59,7 @@ private:
   QHash<int, QByteArray> m_roles;
   QList<AlertCondition*> m_conditions;
 };
+
+} // Dsa
 
 #endif // ALERTCONDITION_LISTMODEL_H

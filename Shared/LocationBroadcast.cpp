@@ -10,6 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
 #include "LocationBroadcast.h"
@@ -26,6 +27,8 @@
 #include <QUdpSocket>
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 // friendly symbol ID for our location broadcast
 static const QString s_locationBroadcastSic{QStringLiteral("SFGPEVAL-------")};
@@ -418,3 +421,5 @@ void LocationBroadcast::setUserName(const QString& userName)
   \fn void LocationBroadcast::messageChanged();
   \brief Signal emitted when the message for this location broadcast changes.
  */
+
+} // Dsa

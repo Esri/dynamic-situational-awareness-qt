@@ -10,17 +10,23 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
-#include "AlertSource.h"
-#include "AlertTarget.h"
 #include "WithinAreaAlertConditionData.h"
 
+// example app headers
+#include "AlertSource.h"
+#include "AlertTarget.h"
+
+// C++ API headers
 #include "GeoElement.h"
 #include "GeometryEngine.h"
 #include "Point.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 /*!
   \class WithinAreaAlertConditionData
@@ -87,3 +93,6 @@ bool WithinAreaAlertConditionData::matchesQuery() const
 
   return false;
 }
+
+
+} // Dsa

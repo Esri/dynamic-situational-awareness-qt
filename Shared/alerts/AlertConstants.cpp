@@ -10,12 +10,17 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
 #include "AlertConstants.h"
+
+// example app headers
 #include "AttributeEqualsAlertCondition.h"
 #include "WithinAreaAlertCondition.h"
 #include "WithinDistanceAlertCondition.h"
+
+namespace Dsa {
 
 const QString AlertConstants::ALERT_CONDITIONS_PROPERTYNAME = "Conditions";
 const QString AlertConstants::ATTRIBUTE_NAME = "attribute_name";
@@ -42,3 +47,5 @@ QString AlertConstants::withinDistanceAlertConditionType()
 {
   return WithinDistanceAlertCondition::staticMetaObject.className();
 }
+
+} // Dsa

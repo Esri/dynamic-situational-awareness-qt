@@ -10,10 +10,12 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "MarkupConstants.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "MarkupConstants.h"
+
+namespace Dsa {
 
 const QString MarkupConstants::ARROW = QStringLiteral("arrow");
 const QString MarkupConstants::CENTER = QStringLiteral("center");
@@ -28,3 +30,4 @@ const QString MarkupConstants::SHAREDBY = QStringLiteral("sharedBy");
 const QString MarkupConstants::VERSION = QStringLiteral("version");
 const QString MarkupConstants::VERSIONNUMBER = QStringLiteral("1.0");
 
+} // Dsa

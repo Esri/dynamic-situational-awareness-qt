@@ -9,17 +9,23 @@
 //
 // See the Sample code usage restrictions document for further information.
 //
+
+// PCH header
 #include "pch.hpp"
 
+#include "TileCacheListModel.h"
+
+// C++ API headers
+#include "TileCache.h"
+
+// Qt headers
 #include <QFileInfo>
 #include <QTemporaryFile>
 #include <QUrl>
 
-#include "TileCache.h"
-
-#include "TileCacheListModel.h"
-
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 /*!
   \class TileCacheListModel
@@ -193,3 +199,5 @@ void TileCacheListModel::clear()
   m_tileCacheData.clear();
   endResetModel();
 }
+
+} // Dsa

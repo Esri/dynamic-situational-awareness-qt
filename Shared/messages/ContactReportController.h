@@ -13,26 +13,26 @@
 #ifndef CONTACTREPORTCONTROLLER_H
 #define CONTACTREPORTCONTROLLER_H
 
-
 // toolkit headers
 #include "AbstractTool.h"
 
 // C++ API headers
 #include "Point.h"
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
+class QDateTime;
+class QMouseEvent;
+
+namespace Esri {
+namespace ArcGISRuntime {
   class GeoView;
 }
 }
 
-class DataSender;
-class PointHighlighter;
+namespace Dsa {
 
-class QDateTime;
-class QMouseEvent;
+class DataSender;
+
+class PointHighlighter;
 
 class ContactReportController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -103,5 +103,7 @@ private:
   QMetaObject::Connection m_mouseClickConnection;
   QMetaObject::Connection m_myLocationConnection;
 };
+
+} // Dsa
 
 #endif // CONTACTREPORTCONTROLLER_H

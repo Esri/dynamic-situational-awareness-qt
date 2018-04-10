@@ -10,17 +10,27 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
 #include "LocationDisplay3d.h"
-#include "GraphicsOverlay.h"
-#include "SimpleRenderer.h"
+
+// example app headers
 #include "GPXLocationSimulator.h"
 
+// C++ API headers
+#include "GraphicsOverlay.h"
+#include "SimpleRenderer.h"
+
+// Qt headers
 #include <QCompass>
+
+// STL headers
 #include <cmath>
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 static const QString s_headingAttribute{"heading"};
 
@@ -253,3 +263,5 @@ void LocationDisplay3d::postLastKnownLocationUpdate()
 
   emit locationChanged(m_lastKnownLocation);
 }
+
+} // Dsa

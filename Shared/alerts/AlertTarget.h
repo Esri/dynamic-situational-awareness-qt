@@ -13,6 +13,7 @@
 #ifndef ALERTTARGET_H
 #define ALERTTARGET_H
 
+// Qt headers
 #include <QObject>
 #include <QVariant>
 
@@ -24,6 +25,8 @@ namespace ArcGISRuntime
   class Geometry;
 }
 }
+
+namespace Dsa {
 
 class AlertTarget : public QObject
 {
@@ -40,5 +43,7 @@ signals:
   void noLongerValid();
   void dataChanged();
 };
+
+} // Dsa
 
 #endif // ALERTTARGET_H

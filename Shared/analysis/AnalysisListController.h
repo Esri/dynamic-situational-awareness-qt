@@ -13,22 +13,21 @@
 #ifndef ANALYSISLISTCONTROLLER_H
 #define ANALYSISLISTCONTROLLER_H
 
+// toolkit headers
+#include "AbstractTool.h"
 
 // Qt headers
 #include <QAbstractItemModel>
 
-// Other headers
-#include "AbstractTool.h"
-
-namespace Esri
-{
-namespace ArcGISRuntime
-{
+namespace Esri {
+namespace ArcGISRuntime {
   class GeoView;
   class Point;
   class SceneView;
 }
 }
+
+namespace Dsa {
 
 class CombinedAnalysisListModel;
 
@@ -62,5 +61,7 @@ private:
   CombinedAnalysisListModel* m_analysisList = nullptr;
   Esri::ArcGISRuntime::SceneView* m_sceneView = nullptr;
 };
+
+} // Dsa
 
 #endif // ANALYSISLISTCONTROLLER_H

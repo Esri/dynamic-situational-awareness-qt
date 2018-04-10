@@ -13,15 +13,18 @@
 #ifndef IDENTIFYFEATURESCONTROLLER_H
 #define IDENTIFYFEATURESCONTROLLER_H
 
+// toolkit headers
+#include "AbstractTool.h"
+
+// C++ API headers
+#include "TaskWatcher.h"
+
+// Qt headers
 #include <QMouseEvent>
 #include <QObject>
 
-#include "AbstractTool.h"
-
-namespace Esri
-{
-namespace ArcGISRuntime
-{
+namespace Esri {
+namespace ArcGISRuntime {
 class GeoElement;
 class IdentifyGraphicsOverlayResult;
 class IdentifyLayerResult;
@@ -29,7 +32,7 @@ class PopupManager;
 }
 }
 
-#include "TaskWatcher.h"
+namespace Dsa {
 
 class IdentifyController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -69,5 +72,7 @@ private:
   Esri::ArcGISRuntime::TaskWatcher m_graphicsOverlaysWatcher;
   QList<Esri::ArcGISRuntime::PopupManager*> m_popupManagers;
 };
+
+} // Dsa
 
 #endif // IDENTIFYFEATURESCONTROLLER_H

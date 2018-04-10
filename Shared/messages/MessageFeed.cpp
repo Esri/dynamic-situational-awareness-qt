@@ -10,10 +10,15 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
 #include "MessageFeed.h"
+
+// example app headers
 #include "MessagesOverlay.h"
+
+namespace Dsa {
 
 /*!
   \class MessageFeed
@@ -129,7 +134,7 @@ void MessageFeed::updateOverlay()
  */
 QUrl MessageFeed::thumbnailUrl() const
 {
-    return m_thumbnailUrl;
+  return m_thumbnailUrl;
 }
 
 /*!
@@ -137,5 +142,7 @@ QUrl MessageFeed::thumbnailUrl() const
  */
 void MessageFeed::setThumbnailUrl(const QUrl& thumbnailUrl)
 {
-    m_thumbnailUrl = thumbnailUrl;
+  m_thumbnailUrl = thumbnailUrl;
 }
+
+} // Dsa

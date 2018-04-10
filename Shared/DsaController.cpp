@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "DsaController.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "DsaController.h"
 
 // example app headers
 #include "AlertConstants.h"
@@ -43,6 +43,8 @@
 #include <QSettings>
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 bool readJsonFile(QIODevice& device, QSettings::SettingsMap& map);
 bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map);
@@ -490,3 +492,4 @@ bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map)
   return writtenBytes != -1;
 }
 
+} // Dsa

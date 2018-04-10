@@ -10,20 +10,24 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
+#include "FollowPositionController.h"
+
+// toolkit headers
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
+
+// C++ API headers
 #include "GlobeCameraController.h"
 #include "MapView.h"
 #include "OrbitGeoElementCameraController.h"
 #include "SceneView.h"
 
-#include "FollowPositionController.h"
-
-#include "ToolResourceProvider.h"
-#include "ToolManager.h"
-
 using namespace Esri::ArcGISRuntime;
 
+namespace Dsa {
 
 /*!
   \class FollowPositionController
@@ -34,6 +38,7 @@ using namespace Esri::ArcGISRuntime;
 /*!
   \brief Constructor taking an optional \a parent.
  */
+
 FollowPositionController::FollowPositionController(QObject* parent) :
   Toolkit::AbstractTool(parent)
 {
@@ -211,3 +216,5 @@ GraphicListModel* FollowPositionController::locationGraphicsModel() const
 
   return nullptr;
 }
+
+} // Dsa

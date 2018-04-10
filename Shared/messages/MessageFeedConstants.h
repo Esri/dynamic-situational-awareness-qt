@@ -13,9 +13,10 @@
 #ifndef MESSAGEFEEDCONSTANTS_H
 #define MESSAGEFEEDCONSTANTS_H
 
-
 // Qt headers
 #include <QString>
+
+namespace Dsa {
 
 class MessageData;
 
@@ -36,5 +37,6 @@ public:
   static const QString MESSAGE_FEED_UDP_PORTS_PROPERTYNAME;
 };
 
+} // Dsa
 
 #endif // MESSAGEFEEDCONSTANTS_H

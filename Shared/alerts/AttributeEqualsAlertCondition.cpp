@@ -10,13 +10,18 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
-#include "AlertConstants.h"
 #include "AttributeEqualsAlertCondition.h"
+
+// example app headers
+#include "AlertConstants.h"
 #include "AttributeEqualsAlertConditionData.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 /*!
   \class AttributeEqualsAlertCondition
@@ -89,3 +94,5 @@ QString AttributeEqualsAlertCondition::attributeNameFromQueryComponents(const QV
 {
   return queryMap.value(AlertConstants::ATTRIBUTE_NAME).toString();
 }
+
+} // Dsa

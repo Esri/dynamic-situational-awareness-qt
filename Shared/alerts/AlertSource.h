@@ -13,10 +13,14 @@
 #ifndef ALERTSOURCE_H
 #define ALERTSOURCE_H
 
+// C++ API headers
 #include "Point.h"
 
+// Qt headers
 #include <QObject>
 #include <QVariant>
+
+namespace Dsa {
 
 class AlertSource : public QObject
 {
@@ -35,5 +39,7 @@ signals:
   void dataChanged();
   void noLongerValid();
 };
+
+} // Dsa
 
 #endif // ALERTSOURCE_H

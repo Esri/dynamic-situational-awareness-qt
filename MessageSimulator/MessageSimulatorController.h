@@ -13,13 +13,18 @@
 #ifndef MESSAGESIMULATORCONTROLLER_H
 #define MESSAGESIMULATORCONTROLLER_H
 
-#include <QObject>
-#include <QUdpSocket>
-#include <QTimer>
-#include <QUrl>
-#include <QAbstractListModel>
 
+// Qt headers
+#include <QAbstractListModel>
+#include <QObject>
+#include <QTimer>
+#include <QUdpSocket>
+#include <QUrl>
+
+namespace Dsa {
 class DataSender;
+}
+
 class AbstractMessageParser;
 class SimulatedMessageListModel;
 
@@ -98,7 +103,7 @@ private:
 
   static float timeUnitToSeconds(TimeUnit timeUnit);
 
-  DataSender* m_dataSender = nullptr;
+  Dsa::DataSender* m_dataSender = nullptr;
   AbstractMessageParser* m_messageParser = nullptr;
   SimulatedMessageListModel* m_messages = nullptr;
 

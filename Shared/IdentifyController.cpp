@@ -10,15 +10,20 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
-#include "GraphicsOverlaysResultsManager.h"
 #include "IdentifyController.h"
+
+// example app headers
+#include "GraphicsOverlaysResultsManager.h"
 #include "LayerResultsManager.h"
 
+// toolkit headers
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
+// C++ API headers
 #include "GeoElement.h"
 #include "GeoView.h"
 #include "Graphic.h"
@@ -26,6 +31,8 @@
 #include "PopupManager.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 /*!
   \class IdentifyController
@@ -275,3 +282,5 @@ bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QStrin
 
   return true;
 }
+
+} // Dsa

@@ -13,15 +13,16 @@
 #ifndef LAYERRESULTSMANAGER_H
 #define LAYERRESULTSMANAGER_H
 
+// Qt headers
 #include <QList>
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
+namespace Esri {
+namespace ArcGISRuntime {
   class IdentifyLayerResult;
 }
 }
+
+namespace Dsa {
 
 struct LayerResultsManager {
 
@@ -30,5 +31,7 @@ struct LayerResultsManager {
   explicit LayerResultsManager(const QList<Esri::ArcGISRuntime::IdentifyLayerResult*>& results);
   ~LayerResultsManager();
 };
+
+} // Dsa
 
 #endif // LAYERRESULTSMANAGER_H

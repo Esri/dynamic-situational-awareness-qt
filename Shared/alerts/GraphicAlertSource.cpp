@@ -10,15 +10,19 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
 #include "GraphicAlertSource.h"
 
+// C++ API headers
 #include "AttributeListModel.h"
 #include "Envelope.h"
 #include "Graphic.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 /*!
   \class GraphicAlertSource
@@ -80,3 +84,5 @@ void GraphicAlertSource::setSelected(bool selected)
 {
   m_graphic->setSelected(selected);
 }
+
+} // Dsa

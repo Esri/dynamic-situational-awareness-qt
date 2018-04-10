@@ -10,16 +10,16 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "ContactReportController.h"
-
 // PCH header
 #include "pch.hpp"
 
+#include "ContactReportController.h"
+
 // example app headers
 #include "AppConstants.h"
+#include "DataSender.h"
 #include "Message.h"
 #include "MessageFeedConstants.h"
-#include "DataSender.h"
 #include "PointHighlighter.h"
 
 // toolkit headers
@@ -38,6 +38,8 @@
 #include <QUdpSocket>
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 /*!
   \class ContactReportController
@@ -380,3 +382,5 @@ void ContactReportController::onUpdateControlPointHightlight()
   else
     m_highlighter->stopHighlight();
 }
+
+} // Dsa

@@ -41,6 +41,8 @@
 
 using namespace Esri::ArcGISRuntime;
 
+namespace Dsa {
+
 /*!
   \class AlertListController
   \inherits Toolkit::AbstractTool
@@ -315,3 +317,5 @@ void AlertListController::flashAll(bool highlight)
     alert->highlight(highlight);
   }
 }
+
+} // Dsa

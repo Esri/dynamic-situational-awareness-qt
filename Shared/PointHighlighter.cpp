@@ -10,10 +10,10 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "PointHighlighter.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "PointHighlighter.h"
 
 // toolkit headers
 #include "ToolResourceProvider.h"
@@ -30,6 +30,8 @@
 #include <QTimer>
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 /*!
   \class PointHighlighter
@@ -162,7 +164,7 @@ void PointHighlighter::stopHighlight()
 }
 
 /*!
-  \brief React to a a change to the goeView for highlighting.
+  \brief React to a change to the goeView for highlighting.
  */
 void PointHighlighter::onGeoViewChanged()
 {
@@ -191,3 +193,5 @@ void PointHighlighter::onGeoViewChanged()
   m_highlightSymbol = new SimpleMarkerSceneSymbol(
         SimpleMarkerSceneSymbolStyle::Sphere, Qt::red, 1.0, 1.0, 1.0, SceneSymbolAnchorPosition::Center, this);
 }
+
+} // Dsa

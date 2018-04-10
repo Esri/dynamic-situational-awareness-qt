@@ -10,13 +10,17 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
 #include "LayerResultsManager.h"
 
+// C++ API headers
 #include "IdentifyLayerResult.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 /*!
   \struct FeatureQueryResultManager
@@ -40,3 +44,5 @@ LayerResultsManager::~LayerResultsManager()
 {
   qDeleteAll(m_results);
 }
+
+} // Dsa

@@ -10,6 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
 #include "LineOfSightController.h"
@@ -36,6 +37,8 @@
 #include <QStringListModel>
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 /*!
   \class LineOfSightController
@@ -455,3 +458,5 @@ void LineOfSightController::clearAnalysis()
     m_lineOfSightParent = nullptr;
   }
 }
+
+} // Dsa

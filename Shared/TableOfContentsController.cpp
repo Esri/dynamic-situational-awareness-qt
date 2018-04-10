@@ -10,23 +10,31 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
-#include <QFileInfo>
+#include "TableOfContentsController.h"
 
-#include "GeoView.h"
-#include "FeatureLayer.h"
-#include "LayerListModel.h"
-#include "RasterLayer.h"
+// example app headers
+#include "DrawOrderLayerListModel.h"
+#include "DsaUtility.h"
 
+// toolkit headers
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
-#include "DsaUtility.h"
-#include "DrawOrderLayerListModel.h"
-#include "TableOfContentsController.h"
+// C++ API headers
+#include "FeatureLayer.h"
+#include "GeoView.h"
+#include "LayerListModel.h"
+#include "RasterLayer.h"
+
+// Qt headers
+#include <QFileInfo>
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 /*!
   \class TableOfContentsController
@@ -289,3 +297,5 @@ int TableOfContentsController::mappedIndex(int index) const
   const QModelIndex sourceIndex = m_drawOrderModel->mapToSource(m_drawOrderModel->index(index, 0));
   return sourceIndex.row();
 }
+
+} // Dsa

@@ -13,17 +13,20 @@
 #ifndef VEHICLE_H
 #define VEHICLE_H
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
+// Qt headers
+#include <QQuickItem>
+
+namespace Esri {
+namespace ArcGISRuntime {
 class SceneQuickView;
 }
 }
 
-#include <QQuickItem>
+namespace Dsa {
 
 class DsaController;
+
+namespace Vehicle {
 
 class Vehicle : public QQuickItem
 {
@@ -43,5 +46,8 @@ private:
   Esri::ArcGISRuntime::SceneQuickView*    m_sceneView = nullptr;
   DsaController*                          m_controller = nullptr;
 };
+
+} // Vehicle
+} // Dsa
 
 #endif // VEHICLE_H

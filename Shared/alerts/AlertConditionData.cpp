@@ -10,6 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
 #include "AlertConditionData.h"
@@ -20,6 +21,8 @@
 #include "AlertTarget.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 /*!
   \class AlertConditionData
@@ -329,3 +332,5 @@ bool AlertConditionData::isActive() const
 
   return m_active;
 }
+
+} // Dsa

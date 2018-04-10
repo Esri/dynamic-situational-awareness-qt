@@ -13,8 +13,11 @@
 #ifndef STATUSALERTFILTER_H
 #define STATUSALERTFILTER_H
 
+// example app headers
 #include "AlertConditionData.h"
 #include "AlertFilter.h"
+
+namespace Dsa {
 
 class AlertConditionData;
 
@@ -34,5 +37,7 @@ public:
 private:
   AlertLevel m_minLevel = AlertLevel::Low;
 };
+
+} // Dsa
 
 #endif // STATUSALERTFILTER_H

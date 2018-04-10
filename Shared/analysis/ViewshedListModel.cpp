@@ -10,13 +10,20 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
 #include "ViewshedListModel.h"
+
+// example app headers
 #include "Viewshed360.h"
+
+// C++ API headers
 #include "AnalysisOverlay.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 /*!
   \class ViewshedListModel
@@ -354,3 +361,5 @@ QHash<int, QByteArray> ViewshedListModel::roleNames() const
 {
   return m_roles;
 }
+
+} // Dsa

@@ -10,17 +10,23 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
 #include "LocationTextController.h"
 
-#include "CoordinateFormatter.h"
+// toolkit headers
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
+
+// C++ API headers
+#include "CoordinateFormatter.h"
 #include "Scene.h"
 #include "Surface.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 // constant strings used for properties in the config file
 const QString LocationTextController::COORDINATE_FORMAT_PROPERTYNAME = QStringLiteral("CoordinateFormat");
@@ -293,3 +299,5 @@ void LocationTextController::setUnitOfMeasurement(const QString& unit)
   emit propertyChanged(UNIT_OF_MEASUREMENT_PROPERTYNAME, unit);
   emit unitOfMeasurementChanged();
 }
+
+} // Dsa

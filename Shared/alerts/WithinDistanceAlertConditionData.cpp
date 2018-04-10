@@ -10,20 +10,27 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
 #include "WithinDistanceAlertConditionData.h"
+
+// example app headers
 #include "AlertSource.h"
 #include "AlertTarget.h"
 
+// C++ API headers
 #include "GeoElement.h"
 #include "GeometryEngine.h"
 #include "Graphic.h"
 #include "Point.h"
 
+// STL headers
 #include <cmath>
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 /*!
   \class WithinDistanceAlertConditionData
@@ -118,3 +125,6 @@ bool WithinDistanceAlertConditionData::matchesQuery() const
 
   return false;
 }
+
+
+} // Dsa

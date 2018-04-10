@@ -10,11 +10,16 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
 #include "AppConstants.h"
+
+namespace Dsa {
 
 const QString AppConstants::USERNAME_PROPERTYNAME = "UserName";
 const QString AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME = QStringLiteral("UnitOfMeasurement");
 const QString AppConstants::UNIT_METERS = QStringLiteral("meters");
 const QString AppConstants::UNIT_FEET = QStringLiteral("feet");
+
+} // Dsa

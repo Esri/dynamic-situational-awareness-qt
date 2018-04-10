@@ -10,18 +10,23 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
 #include "GeometryQuadtree.h"
 
+// C++ API headers
 #include "Envelope.h"
 #include "GeoElement.h"
 #include "GeometryEngine.h"
 #include "Point.h"
 
+// Qt headers
 #include <QSet>
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 /*!
   \internal
@@ -645,3 +650,5 @@ void GeometryQuadtree::QuadTree::removeId(int index)
       m_br->removeId(index);
   }
 }
+
+} // Dsa

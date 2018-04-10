@@ -10,6 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
 #include "AlertConditionsController.h"
@@ -24,6 +25,8 @@
 #include "FixedValueAlertTarget.h"
 #include "GeoElementAlertTarget.h"
 #include "GraphicsOverlayAlertTarget.h"
+#include "GraphicsOverlaysResultsManager.h"
+#include "LayerResultsManager.h"
 #include "LocationAlertSource.h"
 #include "LocationAlertTarget.h"
 #include "MessageFeedConstants.h"
@@ -50,35 +53,7 @@
 
 using namespace Esri::ArcGISRuntime;
 
-struct ResultsManager {
-
-  QList<IdentifyLayerResult*>& m_results;
-
-  ResultsManager(QList<IdentifyLayerResult*>& results):
-    m_results(results)
-  {
-  }
-
-  ~ResultsManager()
-  {
-    qDeleteAll(m_results);
-  }
-};
-
-struct GraphicsResultsManager {
-
-  QList<IdentifyGraphicsOverlayResult*>& m_results;
-
-  GraphicsResultsManager(QList<IdentifyGraphicsOverlayResult*>& results):
-    m_results(results)
-  {
-  }
-
-  ~GraphicsResultsManager()
-  {
-    qDeleteAll(m_results);
-  }
-};
+namespace Dsa {
 
 /*!
   \class AlertConditionsController
@@ -713,7 +688,7 @@ void AlertConditionsController::onIdentifyLayersCompleted(const QUuid& taskId, Q
   if (taskId != m_identifyLayersWatcher.taskId())
     return;
 
-  ResultsManager resultsManager(identifyResults);
+  LayerResultsManager resultsManager(identifyResults);
 
   if (!isActive())
     return;
@@ -781,7 +756,7 @@ void AlertConditionsController::onIdentifyGraphicsOverlaysCompleted(const QUuid&
   if (taskId != m_identifyGraphicsWatcher.taskId())
     return;
 
-  GraphicsResultsManager resultsManager(identifyResults);
+  GraphicsOverlaysResultsManager resultsManager(identifyResults);
 
   if (!isActive())
     return;
@@ -1271,3 +1246,4 @@ QStringList AlertConditionsController::realtimeFeedNames() const
   return m_messageFeedTypesToNames.values();
 }
 
+} // Dsa

@@ -13,19 +13,21 @@
 #ifndef FEATURELAYERALERTTARGET_H
 #define FEATURELAYERALERTTARGET_H
 
+// example app headers
 #include "AlertTarget.h"
 
+// Qt headers
 #include <QUuid>
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
+namespace Esri {
+namespace ArcGISRuntime {
 class Feature;
 class FeatureLayer;
 class FeatureQueryResult;
 }
 }
+
+namespace Dsa {
 
 class GeometryQuadtree;
 
@@ -51,5 +53,7 @@ private:
   QList<Esri::ArcGISRuntime::Feature*> m_features;
   mutable QList<Esri::ArcGISRuntime::Geometry> m_geomCache;
 };
+
+} // Dsa
 
 #endif // FEATURELAYERALERTTARGET_H

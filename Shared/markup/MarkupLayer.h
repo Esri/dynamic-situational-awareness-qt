@@ -13,6 +13,13 @@
 #ifndef MARKUPLAYER_H
 #define MARKUPLAYER_H
 
+// C++ API headers
+#include "FeatureCollectionLayer.h"
+#include "JsonSerializable.h"
+
+// Qt headers
+#include <QHash>
+
 namespace Esri {
 namespace ArcGISRuntime {
 class FeatureCollection;
@@ -22,12 +29,7 @@ class Feature;
 }
 }
 
-// Runtime API
-#include "FeatureCollectionLayer.h"
-#include "JsonSerializable.h"
-
-// Qt
-#include <QHash>
+namespace Dsa {
 
 class MarkupLayer : public Esri::ArcGISRuntime::FeatureCollectionLayer,
                     public Esri::ArcGISRuntime::JsonSerializable
@@ -63,5 +65,7 @@ private:
   Esri::ArcGISRuntime::FeatureCollection* m_featureCollection = nullptr;
   QHash<QUuid, QPair<Esri::ArcGISRuntime::Feature*, Esri::ArcGISRuntime::SimpleLineSymbol*>> m_featureHash;
 };
+
+} // Dsa
 
 #endif // MARKUPLAYER_H

@@ -10,15 +10,22 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
 #include "MessagesOverlay.h"
-#include "GeoView.h"
-#include "Renderer.h"
-#include "GraphicsOverlay.h"
+
+// example app headers
 #include "Message.h"
 
+// C++ API headers
+#include "GeoView.h"
+#include "GraphicsOverlay.h"
+#include "Renderer.h"
+
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 /*!
   \class MessagesOverlay
@@ -26,7 +33,6 @@ using namespace Esri::ArcGISRuntime;
   \brief Manages a set of \l Esri::ArcGISRuntime::GraphicsOverlay objects
   for displaying message a feed.
  */
-
 
 /*!
   \brief Constructor taking a \a geoView and an optional \a parent.
@@ -309,3 +315,5 @@ void MessagesOverlay::setVisible(bool visible)
   if (m_linePolygonGraphicsOverlay)
     m_linePolygonGraphicsOverlay->setVisible(visible);
 }
+
+} // Dsa

@@ -13,9 +13,12 @@
 #ifndef DATALISTENER_H
 #define DATALISTENER_H
 
-#include <QObject>
+// Qt headers
 #include <QIODevice>
+#include <QObject>
 #include <QPointer>
+
+namespace Dsa {
 
 class DataListener : public QObject
 {
@@ -48,5 +51,7 @@ private:
 
   bool m_enabled = true;
 };
+
+} // Dsa
 
 #endif // DATALISTENER_H

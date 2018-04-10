@@ -13,8 +13,11 @@
 #ifndef MESSAGEFEED_H
 #define MESSAGEFEED_H
 
+// Qt headers
 #include <QObject>
 #include <QUrl>
+
+namespace Dsa {
 
 class MessagesOverlay;
 
@@ -53,5 +56,7 @@ private:
   MessagesOverlay* m_messagesOverlay = nullptr;
   QUrl m_thumbnailUrl;
 };
+
+} // Dsa
 
 #endif // MESSAGEFEED_H

@@ -10,10 +10,12 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "MessageFeedConstants.h"
-
 // PCH header
 #include "pch.hpp"
+
+#include "MessageFeedConstants.h"
+
+namespace Dsa {
 
 const QString MessageFeedConstants::CONTACT_REPORT_CONFIG_PROPERTYNAME = QStringLiteral("ContactReportConfig");
 const QString MessageFeedConstants::CONTACT_REPORT_CONFIG_PORT = QStringLiteral("port");
@@ -27,3 +29,5 @@ const QString MessageFeedConstants::MESSAGE_FEEDS_RENDERER = QStringLiteral("ren
 const QString MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL = QStringLiteral("thumbnail");
 const QString MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT = QStringLiteral("placement");
 const QString MessageFeedConstants::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME = QStringLiteral("MessageFeedUdpPorts");
+
+} // Dsa

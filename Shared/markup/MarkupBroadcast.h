@@ -13,12 +13,17 @@
 #ifndef MARKUPBROADCAST_H
 #define MARKUPBROADCAST_H
 
+// toolkit headers
+#include "AbstractTool.h"
+
 class QJsonObject;
 class QJsonDocument;
+
+namespace Dsa
+{
+
 class DataSender;
 class DataListener;
-
-#include "AbstractTool.h"
 
 class MarkupBroadcast : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -54,5 +59,7 @@ private:
   DataListener* m_dataListener;
   int m_udpPort = -1;
 };
+
+} // Dsa
 
 #endif // MARKUPBROADCAST_H

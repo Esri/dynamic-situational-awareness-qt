@@ -10,24 +10,28 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
 #include "AbstractSketchTool.h"
 
+// C++ API headers
 #include "GeoView.h"
-#include "MapView.h"
-#include "SceneView.h"
 #include "GeometryBuilder.h"
 #include "GeometryTypes.h"
-#include "MultipartBuilder.h"
-#include "PolylineBuilder.h"
 #include "Graphic.h"
-#include "PointBuilder.h"
-#include "Point.h"
-#include "PolygonBuilder.h"
+#include "MapView.h"
+#include "MultipartBuilder.h"
 #include "MultipointBuilder.h"
+#include "Point.h"
+#include "PointBuilder.h"
+#include "PolygonBuilder.h"
+#include "PolylineBuilder.h"
+#include "SceneView.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 /*!
   \class AbstractSketchTool
@@ -214,3 +218,5 @@ GraphicsOverlay* AbstractSketchTool::sketchOverlay() const
 {
   return m_sketchOverlay;
 }
+
+} // Dsa

@@ -13,7 +13,10 @@
 #ifndef DRAWORDERLAYERLISTMODEL_H
 #define DRAWORDERLAYERLISTMODEL_H
 
+// Qt headers
 #include <QSortFilterProxyModel>
+
+namespace Dsa {
 
 class DrawOrderLayerListModel : public QSortFilterProxyModel
 {
@@ -26,5 +29,7 @@ public:
 protected:
   bool lessThan(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const override;
 };
+
+} // Dsa
 
 #endif // DRAWORDERLAYERLISTMODEL_H

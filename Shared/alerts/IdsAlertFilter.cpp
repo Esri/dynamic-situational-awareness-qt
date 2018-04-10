@@ -10,10 +10,15 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
-#include "AlertConditionData.h"
 #include "IdsAlertFilter.h"
+
+// example app headers
+#include "AlertConditionData.h"
+
+namespace Dsa {
 
 /*!
   \class IdsAlertFilter
@@ -76,3 +81,4 @@ void IdsAlertFilter::clearIds()
   emit filterChanged();
 }
 
+} // Dsa

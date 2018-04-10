@@ -13,13 +13,14 @@
 #ifndef LOCATIONDISPLAY3D_H
 #define LOCATIONDISPLAY3D_H
 
-#include <QObject>
-
+// C++ API headers
 #include "Point.h"
 
+// Qt headers
+#include <QObject>
+
 namespace Esri {
-namespace ArcGISRuntime
-{
+namespace ArcGISRuntime {
   class Graphic;
   class GraphicsOverlay;
   class Symbol;
@@ -28,6 +29,8 @@ namespace ArcGISRuntime
 
 class QGeoPositionInfoSource;
 class QCompass;
+
+namespace Dsa {
 
 class LocationDisplay3d : public QObject
 {
@@ -76,5 +79,7 @@ private:
   QMetaObject::Connection m_positionUpdateConnection;
   QMetaObject::Connection m_headingConnection;
 };
+
+} // Dsa
 
 #endif // LOCATIONDISPLAY3D_H

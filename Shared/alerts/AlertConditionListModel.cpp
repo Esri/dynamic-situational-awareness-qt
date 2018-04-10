@@ -10,10 +10,15 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
-#include "AlertCondition.h"
 #include "AlertConditionListModel.h"
+
+// example app headers
+#include "AlertCondition.h"
+
+namespace Dsa {
 
 /*!
   \class AlertConditionListModel
@@ -202,3 +207,5 @@ QHash<int, QByteArray> AlertConditionListModel::roleNames() const
 {
   return m_roles;
 }
+
+} // Dsa

@@ -10,15 +10,21 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+// PCH header
 #include "pch.hpp"
 
 #include "FeatureLayerAlertTarget.h"
+
+// example app headers
 #include "FeatureQueryResultManager.h"
 #include "GeometryQuadtree.h"
 
+// C++ API headers
 #include "FeatureLayer.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 /*!
   \class FeatureLayerAlertTarget
@@ -155,3 +161,5 @@ void FeatureLayerAlertTarget::rebuildQuadtree()
   if (elements.size() > 1)
     m_quadtree = new GeometryQuadtree(m_FeatureLayer->fullExtent(), elements, 8, this);
 }
+
+} // Dsa

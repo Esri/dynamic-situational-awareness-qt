@@ -13,9 +13,12 @@
 #ifndef ALERTLISTPROXYMODEL_H
 #define ALERTLISTPROXYMODEL_H
 
-#include <QSortFilterProxyModel>
-#include <QList>
+// Qt headers
 #include <QHash>
+#include <QList>
+#include <QSortFilterProxyModel>
+
+namespace Dsa {
 
 class AlertFilter;
 class AlertListModel;
@@ -42,5 +45,7 @@ private:
   QList<AlertFilter*> m_filters;
   mutable QHash<int, bool> m_rowsInModel;
 };
+
+} // Dsa
 
 #endif // ALERTLISTPROXYMODEL_H

@@ -13,8 +13,10 @@
 #ifndef MESSAGEFEEDSCONTROLLER_H
 #define MESSAGEFEEDSCONTROLLER_H
 
+// toolkit headers
 #include "AbstractTool.h"
 
+// Qt headers
 #include <QAbstractListModel>
 
 namespace Esri {
@@ -25,9 +27,13 @@ namespace Esri {
   }
 }
 
-class MessageFeedListModel;
+namespace Dsa {
+
 class DataListener;
+
 class LocationBroadcast;
+
+class MessageFeedListModel;
 
 class MessageFeedsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -87,5 +93,7 @@ private:
   QString m_resourcePath;
   LocationBroadcast* m_locationBroadcast = nullptr;
 };
+
+} // Dsa
 
 #endif // MESSAGEFEEDSCONTROLLER_H

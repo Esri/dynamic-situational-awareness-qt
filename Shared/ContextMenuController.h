@@ -13,7 +13,6 @@
 #ifndef CONTEXTMENUCONTROLLER_H
 #define CONTEXTMENUCONTROLLER_H
 
-
 // toolkit headers
 #include "AbstractTool.h"
 
@@ -25,15 +24,15 @@
 #include <QMouseEvent>
 #include <QStringListModel>
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
+namespace Esri {
+namespace ArcGISRuntime {
   class GeoElement;
   class IdentifyGraphicsOverlayResult;
   class IdentifyLayerResult;
 }
 }
+
+namespace Dsa {
 
 class ContextMenuController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -108,5 +107,7 @@ private:
   Esri::ArcGISRuntime::TaskWatcher m_screenToLocationTask;
   Esri::ArcGISRuntime::GeoElement* m_contextElement = nullptr;
 };
+
+} // Dsa
 
 #endif // CONTEXTMENUCONTROLLER_H

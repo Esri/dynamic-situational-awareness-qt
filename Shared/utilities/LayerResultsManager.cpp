@@ -18,13 +18,24 @@
 
 using namespace Esri::ArcGISRuntime;
 
-// RAII helper to ensure the QList<IdentifyLayerResult*> is deleted when we leave the scope
+/*!
+  \struct FeatureQueryResultManager
+  \brief RAII helper to ensure the list of \l Esri::ArcGISRuntime::IdentifyLayerResult* objects
+  is deleted when we leave the scope.
+ */
+
+/*!
+  \brief Constructor taking a list of  \l Esri::ArcGISRuntime::IdentifyLayerResult \a results.
+ */
 LayerResultsManager::LayerResultsManager(const QList<Esri::ArcGISRuntime::IdentifyLayerResult*>& results):
   m_results(results)
 {
 
 }
 
+/*!
+  \brief Destructor.
+ */
 LayerResultsManager::~LayerResultsManager()
 {
   qDeleteAll(m_results);

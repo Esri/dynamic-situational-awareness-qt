@@ -29,11 +29,21 @@
 using namespace Esri::ArcGISRuntime;
 
 /*!
+  \class CombinedAnalysisListModel
+  \inherits QAbstractListModel
+  \brief A Model which manages the list of both line of sight and viewshed analyses.
+
+  \sa Esri::ArcGISRuntime::AnalysisListModel
+  \sa ViewshedListModel
+  */
+
+/*!
   \brief Constructor taking an optional \a parent.
  */
 CombinedAnalysisListModel::CombinedAnalysisListModel(QObject* parent):
   QAbstractListModel(parent)
 {
+  // setup the role names for accessing data i the model from a QQuick view
   m_roles[AnalysisNameRole] = "analysisName";
   m_roles[AnalysisVisibleRole] = "analysisVisible";
   m_roles[AnalysisTypeRole] = "analysisType";
@@ -167,7 +177,7 @@ QVariant CombinedAnalysisListModel::data(const QModelIndex& index, int role) con
   if (index.row() < 0 || index.row() >= rowCount(index))
     return QVariant();
 
-  if (isViewshed(index.row()))
+  if (isViewshed(index.row())) // returns the specified role data for a viewshed
   {
     switch (role)
     {
@@ -181,7 +191,7 @@ QVariant CombinedAnalysisListModel::data(const QModelIndex& index, int role) con
       break;
     }
   }
-  else if (isLineOfSight(index.row()))
+  else if (isLineOfSight(index.row())) // returns the specified role data for a line of sight
   {
     switch (role)
     {
@@ -246,6 +256,7 @@ void CombinedAnalysisListModel::connectAnalysisListModelSignals(QAbstractItemMod
   if (analysisList == nullptr)
     return;
 
+  // react to changes in the supplied model
   connect(analysisList, &QAbstractItemModel::dataChanged, this, &CombinedAnalysisListModel::handleUnderlyingDataChanged);
   connect(analysisList, &QAbstractItemModel::modelReset, this, &CombinedAnalysisListModel::handleUnderlyingDataChanged);
   connect(analysisList, &QAbstractItemModel::rowsInserted, this, &CombinedAnalysisListModel::handleUnderlyingDataChanged);
@@ -273,6 +284,7 @@ int CombinedAnalysisListModel::lineOfSightCount() const
  */
 bool CombinedAnalysisListModel::isViewshed(int row) const
 {
+  // determine whether the supplied row is within the range of the viewshed model
   return row < viewshedCount() && m_viewshedModel;
 }
 
@@ -281,6 +293,7 @@ bool CombinedAnalysisListModel::isViewshed(int row) const
  */
 bool CombinedAnalysisListModel::isLineOfSight(int row) const
 {
+  // determine whether the supplied row is within the range of the line of sight model
   return row < (lineOfSightCount() + viewshedCount()) && m_lineOfSightModel;
 }
 

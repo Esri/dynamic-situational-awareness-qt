@@ -39,7 +39,14 @@
 
 using namespace Esri::ArcGISRuntime;
 
-/*
+/*!
+  \class MarkupLayer
+  \inherits Esri::ArcGISRuntime::FeatureCollectionLayer
+  \brief This type represents a feature collection layer, which can be created
+  either from graphics or from the information contained in a JSON file.
+ */
+
+/*!
  \internal
  \brief Constructor that takes a \a featureCollection and an optional \a parent.
  */
@@ -85,14 +92,14 @@ MarkupLayer::MarkupLayer(const QString& json, FeatureCollection* featureCollecti
   m_author = markupJson.value(MarkupConstants::SHAREDBY).toString();
 }
 
-/*
+/*!
  \brief Destructor
  */
 MarkupLayer::~MarkupLayer()
 {
 }
 
-/*
+/*!
  \brief Sets the layer path to \a path.
 */
 void MarkupLayer::setPath(const QString& path)
@@ -100,7 +107,7 @@ void MarkupLayer::setPath(const QString& path)
   m_path = path;
 }
 
-/*
+/*!
  \brief Returns the layer path.
 */
 QString MarkupLayer::path() const
@@ -108,7 +115,7 @@ QString MarkupLayer::path() const
   return m_path;
 }
 
-/*
+/*!
  \brief Returns the JSON string in \c .markup format.
 */
 QString MarkupLayer::toJson() const
@@ -116,7 +123,7 @@ QString MarkupLayer::toJson() const
   return m_json;
 }
 
-/*
+/*!
  \brief Returns the FeatureCollection used by this layer.
 */
 FeatureCollection* MarkupLayer::featureCollection()
@@ -124,7 +131,7 @@ FeatureCollection* MarkupLayer::featureCollection()
   return m_featureCollection;
 }
 
-/*
+/*!
  \brief Converts the input \a graphicsOverlay to \c .markup JSON.
  */
 MarkupLayer* MarkupLayer::createFromGraphics(GraphicsOverlay* graphicsOverlay, const QString& authorName, QObject* parent)
@@ -173,7 +180,7 @@ MarkupLayer* MarkupLayer::createFromGraphics(GraphicsOverlay* graphicsOverlay, c
   return MarkupLayer::fromJson(QJsonDocument(markupJson).toJson(QJsonDocument::Compact), parent);
 }
 
-/*
+/*!
  \brief Returns a MarkupLayer for the input \a json.
 */
 MarkupLayer* MarkupLayer::fromJson(const QString& json, QObject* parent)
@@ -196,7 +203,7 @@ MarkupLayer* MarkupLayer::fromJson(const QString& json, QObject* parent)
   return markupLayer;
 }
 
-/*
+/*!
  \brief Creates a new MarkupLayer from a \a path to a \c .markup JSON file.
 */
 MarkupLayer* MarkupLayer::createFromPath(const QString& path, QObject* parent)
@@ -215,7 +222,7 @@ MarkupLayer* MarkupLayer::createFromPath(const QString& path, QObject* parent)
   return markupLayer;
 }
 
-/*
+/*!
  \brief Returns a list of colors to be used in the Markup tool.
 */
 QStringList MarkupLayer::colors()

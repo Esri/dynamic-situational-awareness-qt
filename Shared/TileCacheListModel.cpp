@@ -21,6 +21,17 @@
 
 using namespace Esri::ArcGISRuntime;
 
+/*!
+  \class TileCacheListModel
+  \inherits QAbstractListModel
+  \brief A model responsible for storing the list of
+  \l Esri::ArcGISRuntime::TileCache files available for
+  use as basemaps in the app.
+ */
+
+/*!
+  \brief Constructor for a model taking an optional \a parent.
+ */
 TileCacheListModel::TileCacheListModel(QObject* parent):
   QAbstractListModel(parent)
 {
@@ -29,11 +40,19 @@ TileCacheListModel::TileCacheListModel(QObject* parent):
   m_roles[TileCacheThumbnaulUrlRole] = "thumbnailUrl";
 }
 
+/*!
+  \brief Destructor.
+ */
 TileCacheListModel::~TileCacheListModel()
 {
 
 }
 
+/*!
+  \brief Adds the tile cache at \a pathToTileCache to the list.
+
+  Returns whether the file was successfully added.
+ */
 bool TileCacheListModel::append(const QString& pathToTileCache)
 {
   QFileInfo fileInfo(pathToTileCache);
@@ -88,6 +107,9 @@ bool TileCacheListModel::append(const QString& pathToTileCache)
   return true;
 }
 
+/*!
+  \brief Returns the tile cache at \a row in the list.
+ */
 TileCache* TileCacheListModel::tileCacheAt(int row) const
 {
   if (m_tileCacheData.size() <= row)
@@ -96,11 +118,19 @@ TileCache* TileCacheListModel::tileCacheAt(int row) const
   return m_tileCacheData.at(row);
 }
 
+/*!
+  \brief Returns the number of tile caches in the model.
+ */
 int TileCacheListModel::rowCount(const QModelIndex&) const
 {
   return m_tileCacheData.size();
 }
 
+/*!
+  \brief Returns the data stored under \a role at \a index in the model.
+
+  The role should make use of the \l TileCacheRoles enum.
+ */
 QVariant TileCacheListModel::data(const QModelIndex& index, int role) const
 {
   if (index.row() < 0 || index.row() >= rowCount(index))
@@ -132,11 +162,19 @@ QVariant TileCacheListModel::data(const QModelIndex& index, int role) const
   return QVariant();
 }
 
+/*!
+  \brief Returns the hash of role names used by the model.
+
+  The roles are based on the \l DataItemRoles enum.
+ */
 QHash<int, QByteArray> TileCacheListModel::roleNames() const
 {
   return m_roles;
 }
 
+/*!
+  \brief Returns the name of the tile cache at \a row in the list.
+ */
 QString TileCacheListModel::tileCacheNameAt(int row) const
 {
   if (m_tileCacheData.size() <= row)
@@ -145,6 +183,9 @@ QString TileCacheListModel::tileCacheNameAt(int row) const
   return QFileInfo(m_tileCacheData.at(row)->path()).completeBaseName();
 }
 
+/*!
+  \brief Clears the model.
+ */
 void TileCacheListModel::clear()
 {
   beginResetModel();

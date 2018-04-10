@@ -19,7 +19,17 @@
 
 using namespace Esri::ArcGISRuntime;
 
-// Default ctor.  To use simulation user must set gpx file the update interval
+/*!
+  \class GPXLocationSimulator
+  \inherits QGeoPositionInfoSource
+  \brief A class for simulating a position source from a GPX file.
+ */
+
+/*!
+  \brief Constructor taking an optional \a parent.
+
+  To use simulation user must set gpx file the update interval
+ */
 GPXLocationSimulator::GPXLocationSimulator(QObject* parent) :
   QGeoPositionInfoSource(parent),
   m_gpxReader(new QXmlStreamReader()),
@@ -30,9 +40,15 @@ GPXLocationSimulator::GPXLocationSimulator(QObject* parent) :
   setUpdateInterval(500);
 }
 
-//
-// Populates the necessary components to run a gps simulation
-//
+/*!
+  \brief Constructor which populates the necessary components to run a gps simulation.
+
+  \list
+    \li \a gpxFileName - The path of the GPX file containing position data.
+    \li \a updateInterval - The update interval in milliseconds for position updates.
+    \li \a parent - An optional parent.
+  \endlist
+ */
 GPXLocationSimulator::GPXLocationSimulator(const QString& gpxFileName, int updateInterval, QObject* parent) :
   QGeoPositionInfoSource(parent),
   m_gpxReader(new QXmlStreamReader()),
@@ -48,16 +64,16 @@ GPXLocationSimulator::GPXLocationSimulator(const QString& gpxFileName, int updat
   }
 }
 
-//
-// dtor
-//
+/*!
+  \brief Destructor.
+ */
 GPXLocationSimulator::~GPXLocationSimulator()
 {
 }
 
-//
-// internal
-//
+/*!
+  \internal.
+ */
 void GPXLocationSimulator::connectSignals()
 {
   connect(m_timer, SIGNAL(timeout()), this, SLOT(handleTimerEvent()));
@@ -66,9 +82,9 @@ void GPXLocationSimulator::connectSignals()
           this, static_cast<void (QGeoPositionInfoSource::*)(QGeoPositionInfoSource::Error)>(&QGeoPositionInfoSource::error));
 }
 
-//
-// internal
-//
+/*!
+  \internal.
+ */
 bool GPXLocationSimulator::gotoNextPositionElement()
 {
   while (!m_gpxReader->atEnd() && !m_gpxReader->hasError())
@@ -87,12 +103,12 @@ bool GPXLocationSimulator::gotoNextPositionElement()
   return false;
 }
 
-//
-// Point GetNextPoint(QTime&) private method
-//   - Convert the current gpx position to Point and QTime parmeters.
-//
+/*!
+  \internal.
+ */
 Point GPXLocationSimulator::getNextPoint(QTime& time)
 {
+  // Convert the current gpx position to Point and QTime parmeters.
   if (!gotoNextPositionElement())
   {
     return Point();
@@ -141,12 +157,12 @@ Point GPXLocationSimulator::getNextPoint(QTime& time)
   return m_latestPoint;
 }
 
-//
-// startUpdates() Public Method:
-//   - Loads a GPX file into a stream reader
-//   - Fetches the first 3 coordinates
-//   - Starts a timer that performs interpolation and position updating
-//
+/*!
+  \brief Starts position updates.
+
+  Loads a GPX file into a stream reader, fetches the first 3 coordinates
+  and starts a timer that performs interpolation and position updating
+ */
 void GPXLocationSimulator::startUpdates()
 {
   if (isStarted())
@@ -164,55 +180,81 @@ void GPXLocationSimulator::startUpdates()
   m_isStarted = true;
 }
 
-void GPXLocationSimulator::requestUpdate(int timeout)
+/*!
+  \brief Requests an update.
+ */
+void GPXLocationSimulator::requestUpdate(int)
 {
-  Q_UNUSED(timeout)
   Q_UNIMPLEMENTED();
 }
 
+/*!
+  \brief Stop updates.
+ */
 void GPXLocationSimulator::stopUpdates()
 {
   m_timer->stop();
   m_isStarted = false;
 }
 
+/*!
+  \brief Returns whether the simulation is active.
+ */
 bool GPXLocationSimulator::isActive()
 {
   return m_timer->isActive();
 }
 
+/*!
+  \brief Returns whether the simulation is started.
+ */
 bool GPXLocationSimulator::isStarted()
 {
   return m_isStarted;
 }
 
+/*!
+  \brief Returns the last known position with the unused parameter \a fromSatellitePositioningMethodsOnly.
+ */
 QGeoPositionInfo GPXLocationSimulator::lastKnownPosition(bool fromSatellitePositioningMethodsOnly) const
 {
   Q_UNUSED(fromSatellitePositioningMethodsOnly)
   return m_lastKnownPosition;
 }
 
+/*!
+  \brief Returns the supported positioning methods.
+
+  For this source this will be \c QGeoPositionInfoSource::PositioningMethod::NoPositioningMethods.
+ */
 QGeoPositionInfoSource::PositioningMethods GPXLocationSimulator::supportedPositioningMethods() const
 {
   return QGeoPositionInfoSource::PositioningMethod::NoPositioningMethods;
 }
 
+/*!
+  \brief Returns the QGeoPositionInfoSource::Error.
+ */
 QGeoPositionInfoSource::Error GPXLocationSimulator::error() const
 {
   return m_lastError;
 }
 
+/*!
+  \brief Returns the minimum update interval in milliseconds.
+ */
 int GPXLocationSimulator::minimumUpdateInterval() const
 {
   return updateInterval();
 }
 
-//
-// handleTimerEvent() Slot:
-//   - increments the current time
-//   - fetches new positions from the gpx file as necessary
-//   - calculates and sets the current position and orientation
-//
+/*!
+  \internal.
+
+ increments the current time
+ fetches new positions from the gpx file as necessary
+ calculates and sets the current position and orientation
+ */
 void GPXLocationSimulator::handleTimerEvent()
 {
   // update the current time
@@ -251,11 +293,11 @@ void GPXLocationSimulator::handleTimerEvent()
   m_lastKnownPosition = qtPosition;
   emit positionUpdated(qtPosition);
   emit headingChanged(currentHeading);
-} // end HandleTimerEvent
+}
 
-//
-// Populates all the internal values necessary to start the simulation.
-//
+/*!
+  \internal.
+ */
 bool GPXLocationSimulator::initializeInterpolationValues()
 {
   // fetch the first 3 points from the gpx feed to populate the
@@ -281,13 +323,15 @@ bool GPXLocationSimulator::initializeInterpolationValues()
   return true;
 }
 
-//
-// implementation for smooth orientation transfer between segments.
-// the smoothing is spread across the final 10% of the current segment
-// and the first 10% of the next segment.
-//
+/*!
+  \internal.
+ */
 double GPXLocationSimulator::getInterpolatedHeading(const Point& currentPosition, double normalizedTime)
 {
+  // implementation for smooth orientation transfer between segments.
+  // the smoothing is spread across the final 10% of the current segment
+  // and the first 10% of the next segment.
+
   LineSegment segment;
 
   // interpolation of the first 10% of the segment
@@ -307,12 +351,14 @@ double GPXLocationSimulator::getInterpolatedHeading(const Point& currentPosition
   return heading(m_currentSegment);
 }
 
-//
-// fetch the next coordinate in the gpx file and updates all the
-// internal interpolation vars
-//
+/*!
+  \internal.
+ */
 bool GPXLocationSimulator::updateInterpolationParameters()
 {
+  // fetch the next coordinate in the gpx file and updates all the
+  // internal interpolation vars
+
   m_segmentStartTime = m_segmentEndTime;
   m_segmentEndTime = m_nextSegmentEndTime;
   Point newPt = getNextPoint(m_nextSegmentEndTime);
@@ -334,17 +380,19 @@ bool GPXLocationSimulator::updateInterpolationParameters()
   return true;
 }
 
-//
-// getter for the gpx file location
-//
+/*!
+  \brief Returns the gpx file location.
+ */
 QString GPXLocationSimulator::gpxFile()
 {
   return m_gpxFile.fileName();
 }
 
-//
-// setter for the gpx file location
-//
+/*!
+  \brief Sets the gpx file location to \a fileName.
+
+  Returns whether the file was succesfully read.
+ */
 bool GPXLocationSimulator::setGpxFile(const QString& fileName)
 {
   if (!QFile::exists(fileName))
@@ -372,23 +420,27 @@ bool GPXLocationSimulator::setGpxFile(const QString& fileName)
   return true;
 }
 
-//
-// getter for the playback multiplier
-//
+/*!
+  \brief Returns the playback multiplier.
+ */
 int GPXLocationSimulator::playbackMultiplier()
 {
   return m_playbackMultiplier;
 }
 
-//
-// setter for the playback modifier.  Used if
-// gpx timestamps are either too close or two far
-//
+/*!
+  \brief Sets the playback multiplier to \a val.
+
+  Used if gpx timestamps are either too close or two far
+ */
 void GPXLocationSimulator::setPlaybackMultiplier(int val)
 {
   m_playbackMultiplier = val;
 }
 
+/*!
+  \brief Returns the heading in degrees of the supplied \a segment.
+ */
 double GPXLocationSimulator::heading(const Esri::ArcGISRuntime::LineSegment& segment) const
 {
   const auto startPoint = segment.startPoint();

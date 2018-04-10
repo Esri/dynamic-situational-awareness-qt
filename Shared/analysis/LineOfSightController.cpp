@@ -38,7 +38,20 @@
 using namespace Esri::ArcGISRuntime;
 
 /*!
-  \brief Constructor accepting an optional \a parent.
+  \class LineOfSightController
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller for creating line of sight analysis.
+
+  This tool allows line of sight analysis to be created:
+
+  \list
+    \li From the objects in a feature layer to the current position.
+    \li From the current position to a supplied GeoElement.
+  \endlist
+ */
+
+/*!
+  \internal.
  */
 void LineOfSightController::getLocationGeoElement()
 {
@@ -47,11 +60,18 @@ void LineOfSightController::getLocationGeoElement()
     m_locationGeoElement = locationController->locationDisplay()->locationGraphic();
 }
 
+/*!
+  \brief Returns the number of line of sight analyses from features to the current position
+  which are unobstructed.
+ */
 int LineOfSightController::visibleByCount() const
 {
   return m_visibleByCount;
 }
 
+/*!
+  \internal.
+ */
 void LineOfSightController::setVisibleByCount(int visibleByCount)
 {
   if (m_visibleByCount == visibleByCount)
@@ -61,6 +81,9 @@ void LineOfSightController::setVisibleByCount(int visibleByCount)
   emit visibleByCountChanged();
 }
 
+/*!
+  \brief Constructor accepting an optional \a parent.
+ */
 LineOfSightController::LineOfSightController(QObject* parent):
   Toolkit::AbstractTool(parent),
   m_overlayNames(new QStringListModel(this)),

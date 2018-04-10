@@ -47,6 +47,32 @@ const QString ContextMenuController::VIEWSHED_OPTION = "Viewshed";
 const QString ContextMenuController::CONTACT_REPORT_OPTION = "Contact report";
 
 /*!
+  \class ContextMenuController
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller for displaying a Context menu.
+
+  When the user presses and hold the mouse, a number of tasks are started
+  to discover the current context for the app. Based on the result of these
+  operations a set of context specific operations are presented. For example,
+  the tool offers options such as:
+
+  \list
+    \li Identify.
+    \li Elevation.
+    \li Coordinates.
+    \li Contact Report.
+    \li Viewshed.
+    \li Line of sight.
+  \endlist
+
+  \sa ContactReportController
+  \sa IdentifyController
+  \sa ViewshedController
+  \sa LineOfSightController
+  \sa Toolkit::CoordinateConversionController
+ */
+
+/*!
   \brief Constructor accepting an optional \a parent.
  */
 ContextMenuController::ContextMenuController(QObject* parent /* = nullptr */):

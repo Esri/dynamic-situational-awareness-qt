@@ -44,6 +44,15 @@ const QString LocationController::SIMULATE_LOCATION_PROPERTYNAME = "SimulateLoca
 const QString LocationController::GPX_FILE_PROPERTYNAME = "GpxFile";
 const QString LocationController::RESOURCE_DIRECTORY_PROPERTYNAME = "ResourceDirectory";
 
+/*!
+  \class LocationController
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller for handling the apps current location.
+ */
+
+/*!
+  \brief Constructor for a model taking an optional \a parent.
+ */
 LocationController::LocationController(QObject* parent) :
   Toolkit::AbstractTool(parent),
   m_locationDisplay3d(new LocationDisplay3d(this))
@@ -56,10 +65,16 @@ LocationController::LocationController(QObject* parent) :
   updateGeoView();
 }
 
+/*!
+  \brief Destructor.
+ */
 LocationController::~LocationController()
 {
 }
 
+/*!
+  \internal.
+ */
 void LocationController::initPositionInfoSource(bool simulated)
 {
   if (simulated && dynamic_cast<GPXLocationSimulator*>(m_positionSource))
@@ -137,6 +152,9 @@ void LocationController::initPositionInfoSource(bool simulated)
   m_locationDisplay3d->setCompass(m_compass);
 }
 
+/*!
+  \internal.
+ */
 void LocationController::clearPositionInfoSource()
 {
   if (m_positionSource)
@@ -154,11 +172,24 @@ void LocationController::clearPositionInfoSource()
   }
 }
 
+/*!
+  \brief Returns the name of the tool - \c location"".
+ */
 QString LocationController::toolName() const
 {
   return QStringLiteral("location");
 }
 
+/*! \brief Sets any values in \a properties which are relevant for the location tool.
+ *
+ * This tool will use the following key/value pairs in the \a properties map if they are set:
+ *
+ * \list
+ *  \li SimulateLocation. Whether the app's location should be simulated.
+ *  \li GpxFile. The path of the GPX file for simulated positions.
+ *  \li ResourceDirectory. The directory containing icons for the location display.
+ * \endList
+ */
 void LocationController::setProperties(const QVariantMap& properties)
 {
   bool simulate = QString::compare(properties[SIMULATE_LOCATION_PROPERTYNAME].toString(), QString("true"), Qt::CaseInsensitive) == 0;
@@ -167,11 +198,17 @@ void LocationController::setProperties(const QVariantMap& properties)
   setIconDataPath(properties[RESOURCE_DIRECTORY_PROPERTYNAME].toString());
 }
 
+/*!
+  \brief Returns whether the tool is enabled.
+ */
 bool LocationController::isEnabled() const
 {
   return m_enabled;
 }
 
+/*!
+  \brief Sets the tool to be \a enabled.
+ */
 void LocationController::setEnabled(bool enabled)
 {
   if (m_enabled == enabled)
@@ -196,11 +233,17 @@ void LocationController::setEnabled(bool enabled)
   emit enabledChanged();
 }
 
+/*!
+  \brief Returns whether the location is visible.
+ */
 bool LocationController::isLocationVisible() const
 {
   return m_locationDisplay3d->isStarted();
 }
 
+/*!
+  \brief Sets whether the location is visible to \a isVisible.
+ */
 void LocationController::setLocationVisible(bool isVisible)
 {
   if (m_locationDisplay3d->isStarted() == isVisible)
@@ -214,11 +257,17 @@ void LocationController::setLocationVisible(bool isVisible)
   emit locationVisibleChanged();
 }
 
+/*!
+  \brief Returns whether the location is simulated.
+ */
 bool LocationController::isSimulated() const
 {
   return m_simulated;
 }
 
+/*!
+  \brief Sets whether the location is simulated to \a simulated.
+ */
 void LocationController::setSimulated(bool simulated)
 {
   if (m_simulated == simulated)
@@ -243,21 +292,33 @@ void LocationController::setSimulated(bool simulated)
   emit propertyChanged(SIMULATE_LOCATION_PROPERTYNAME, m_simulated);
 }
 
+/*!
+  \brief Returns the current location.
+ */
 Point LocationController::currentLocation() const
 {
   return m_currentLocation;
 }
 
+/*!
+  \brief Returns the location display for 3D apps.
+ */
 LocationDisplay3d* LocationController::locationDisplay() const
 {
   return m_locationDisplay3d;
 }
 
+/*!
+  \brief Returns the file path of the GPX file.
+ */
 QString LocationController::gpxFilePath() const
 {
   return m_gpxFilePath;
 }
 
+/*!
+  \brief Sets the file path of the GPX file to \a gpxFilePath.
+ */
 void LocationController::setGpxFilePath(const QString& gpxFilePath)
 {
   if (m_gpxFilePath == gpxFilePath)
@@ -285,6 +346,9 @@ void LocationController::setGpxFilePath(const QString& gpxFilePath)
   emit propertyChanged(GPX_FILE_PROPERTYNAME, m_gpxFilePath);
 }
 
+/*!
+  \brief Sets the \a sceneView to use for relative heading changes.
+ */
 void LocationController::setRelativeHeadingSceneView(SceneQuickView* sceneView)
 {
   connect(sceneView, &SceneQuickView::viewpointChanged, this, [this, sceneView]()
@@ -301,6 +365,9 @@ void LocationController::setRelativeHeadingSceneView(SceneQuickView* sceneView)
   });
 }
 
+/*!
+  \internal.
+ */
 void LocationController::updateGeoView()
 {
   GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
@@ -339,6 +406,9 @@ void LocationController::updateGeoView()
   }
 }
 
+/*!
+  \brief Sets the icon data path to \a dataPath.
+ */
 void LocationController::setIconDataPath(const QString& dataPath)
 {
   if (dataPath == m_iconDataPath)
@@ -348,6 +418,9 @@ void LocationController::setIconDataPath(const QString& dataPath)
   emit propertyChanged(RESOURCE_DIRECTORY_PROPERTYNAME, m_iconDataPath);
 }
 
+/*!
+  \brief Returns the URL of the model symbol used for location display.
+ */
 QUrl LocationController::modelSymbolPath() const
 {
   // both files are needed: LocationDisplay.dae

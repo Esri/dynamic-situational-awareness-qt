@@ -39,7 +39,13 @@ const QString LocationTextController::Gars = QStringLiteral("GARS");
 const QString LocationTextController::Meters = QStringLiteral("meters");
 const QString LocationTextController::Feet = QStringLiteral("feet");
 
-/*
+/*!
+  \class LocationTextController
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller for displaying the current location.
+ */
+
+/*!
  \brief Constructor that takes an optional \a parent.
  */
 LocationTextController::LocationTextController(QObject* parent) :
@@ -56,14 +62,14 @@ LocationTextController::LocationTextController(QObject* parent) :
           this, &LocationTextController::onLocationChanged);
 }
 
-/*
+/*!
  \brief Destructor
  */
 LocationTextController::~LocationTextController()
 {
 }
 
-/*
+/*!
  \brief Returns the Tool Name
  */
 QString LocationTextController::toolName() const
@@ -71,7 +77,7 @@ QString LocationTextController::toolName() const
   return QStringLiteral("Location Text");
 }
 
-/*
+/*!
  \brief Returns the location text string for display in QML
  */
 QString LocationTextController::currentLocationText() const
@@ -79,7 +85,7 @@ QString LocationTextController::currentLocationText() const
   return m_currentLocationText;
 }
 
-/*
+/*!
  \brief Returns the elevation text string for display in QML
  */
 QString LocationTextController::currentElevationText() const
@@ -87,7 +93,7 @@ QString LocationTextController::currentElevationText() const
   return m_currentElevationText;
 }
 
-/*
+/*!
  \brief Slot for Toolkit::ToolResourceProvider::locationChanged.
 
  Uses the provided \a pt to update the location and elevation text.
@@ -116,7 +122,7 @@ void LocationTextController::onLocationChanged(const Point& pt)
   }
 }
 
-/*
+/*!
  \brief Slot to obtain the Scene's base surface
  */
 void LocationTextController::onGeoViewChanged()
@@ -135,7 +141,7 @@ void LocationTextController::onGeoViewChanged()
   }
 }
 
-/*
+/*!
  \brief Set \a properties from the configuration file
  */
 void LocationTextController::setProperties(const QVariantMap& properties)
@@ -145,7 +151,7 @@ void LocationTextController::setProperties(const QVariantMap& properties)
   setUnitOfMeasurement(properties[UNIT_OF_MEASUREMENT_PROPERTYNAME].toString());
 }
 
-/*
+/*!
  \brief Changes the coordinate \a format
  */
 void LocationTextController::setCoordinateFormat(const QString& format)
@@ -225,7 +231,7 @@ void LocationTextController::setCoordinateFormat(const QString& format)
   }
 }
 
-/*
+/*!
  \brief Returns the current format to use
  */
 QString LocationTextController::coordinateFormat() const
@@ -233,7 +239,7 @@ QString LocationTextController::coordinateFormat() const
   return m_coordinateFormat;
 }
 
-/*
+/*!
  \brief Returns whether to use GPS for elevation. If false, it will use the Scene's Surface
  */
 bool LocationTextController::useGpsForElevation() const
@@ -241,8 +247,8 @@ bool LocationTextController::useGpsForElevation() const
   return m_useGpsForElevation;
 }
 
-/*
- \ brief Sets whether to \a useGps for elevation
+/*!
+ \brief Sets whether to \a useGps for elevation
  */
 void LocationTextController::setUseGpsForElevation(bool useGps)
 {
@@ -254,7 +260,7 @@ void LocationTextController::setUseGpsForElevation(bool useGps)
   emit useGpsForElevationChanged();
 }
 
-/*
+/*!
  \brief Formats the \a elevation text for display in QML
 */
 void LocationTextController::formatElevationText(double elevation)
@@ -267,7 +273,7 @@ void LocationTextController::formatElevationText(double elevation)
   emit currentElevationTextChanged();
 }
 
-/*
+/*!
  \brief Returns the current unit of measurement
 */
 QString LocationTextController::unitOfMeasurement() const
@@ -275,7 +281,7 @@ QString LocationTextController::unitOfMeasurement() const
   return m_unitOfMeasurement;
 }
 
-/*
+/*!
  \brief Sets the current \a unit of measurement
  */
 void LocationTextController::setUnitOfMeasurement(const QString& unit)

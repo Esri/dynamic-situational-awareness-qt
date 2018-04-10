@@ -36,7 +36,16 @@ const QString MarkupBroadcast::NAMEKEY = QStringLiteral("name");
 const QString MarkupBroadcast::MARKUPKEY = QStringLiteral("markup");
 const QString MarkupBroadcast::SHAREDBYKEY = QStringLiteral("sharedBy");
 
-/*
+/*!
+  \class MarkupBroadcast
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller for broadcasting markups.
+
+  \sa DataSender
+  \sa DataListener
+ */
+
+/*!
  \brief Constructor that takes an optional \a parent.
  */
 MarkupBroadcast::MarkupBroadcast(QObject *parent) :
@@ -77,14 +86,14 @@ MarkupBroadcast::MarkupBroadcast(QObject *parent) :
   });
 }
 
-/*
+/*!
  \brief Destructor
  */
 MarkupBroadcast::~MarkupBroadcast()
 {
 }
 
-/*
+/*!
  \brief Returns the tool's name
  */
 QString MarkupBroadcast::toolName() const
@@ -92,7 +101,7 @@ QString MarkupBroadcast::toolName() const
   return QStringLiteral("Markup Broadcast");
 }
 
-/*
+/*!
  \brief Sets \a properties from the configuration file
  */
 void MarkupBroadcast::setProperties(const QVariantMap& properties)
@@ -125,7 +134,7 @@ void MarkupBroadcast::broadcastMarkup(const QString& json)
   m_dataSender->sendData(json.toUtf8());
 }
 
-/*
+/*!
  \brief Updates the UDP Socket used for the DataSender.
  */
 void MarkupBroadcast::updateDataSender()
@@ -138,7 +147,7 @@ void MarkupBroadcast::updateDataSender()
   m_dataSender->setDevice(udpSocket);
 }
 
-/*
+/*!
  \brief Updates the UDP Socket used for the DataListener.
  */
 void MarkupBroadcast::updateDataListener()

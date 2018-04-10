@@ -40,6 +40,12 @@
 using namespace Esri::ArcGISRuntime;
 
 /*!
+  \class ContactReportController
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller for creating contact reports.
+ */
+
+/*!
   \brief Constructor accepting an optional \a parent.
  */
 ContactReportController::ContactReportController(QObject* parent):

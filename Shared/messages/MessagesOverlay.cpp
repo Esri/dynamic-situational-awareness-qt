@@ -20,11 +20,25 @@
 
 using namespace Esri::ArcGISRuntime;
 
+/*!
+  \class MessagesOverlay
+  \inherits QObject
+  \brief Manages a set of \l Esri::ArcGISRuntime::GraphicsOverlay objects
+  for displaying message a feed.
+ */
+
+
+/*!
+  \brief Constructor taking a \a geoView and an optional \a parent.
+ */
 MessagesOverlay::MessagesOverlay(GeoView* geoView, QObject* parent) :
   MessagesOverlay(geoView, nullptr, SurfacePlacement::Draped, parent)
 {
 }
 
+/*!
+  \brief Constructor taking a \a geoView, a \a renderer, a \a surfacePlacement mode and an optional \a parent.
+ */
 MessagesOverlay::MessagesOverlay(GeoView* geoView, Renderer* renderer, SurfacePlacement surfacePlacement, QObject* parent) :
   QObject(parent),
   m_geoView(geoView),
@@ -33,15 +47,24 @@ MessagesOverlay::MessagesOverlay(GeoView* geoView, Renderer* renderer, SurfacePl
 {
 }
 
+/*!
+  \brief Destructor.
+ */
 MessagesOverlay::~MessagesOverlay()
 {
 }
 
+/*!
+  \brief Returns the Esri:ArcGISRuntime::Renderer in use by the overlay.
+ */
 Renderer* MessagesOverlay::renderer() const
 {
   return m_renderer.data();
 }
 
+/*!
+  \brief Sets the Esri:ArcGISRuntime::Renderer for the overlay to \a renderer.
+ */
 void MessagesOverlay::setRenderer(Renderer* renderer)
 {
   m_renderer = renderer;
@@ -52,11 +75,17 @@ void MessagesOverlay::setRenderer(Renderer* renderer)
   }
 }
 
+/*!
+  \brief Returns the Esri:ArcGISRuntime::SurfacePlacement for the overlay.
+ */
 SurfacePlacement MessagesOverlay::surfacePlacement() const
 {
   return m_surfacePlacement;
 }
 
+/*!
+  \brief Sets the Esri:ArcGISRuntime::SurfacePlacement for the overlay to \a surfacePlacement.
+ */
 void MessagesOverlay::setSurfacePlacement(SurfacePlacement surfacePlacement)
 {
   m_surfacePlacement = surfacePlacement;
@@ -67,16 +96,25 @@ void MessagesOverlay::setSurfacePlacement(SurfacePlacement surfacePlacement)
   }
 }
 
+/*!
+  \brief Returns the list of Esri:ArcGISRuntime::GraphicsOverlay objects for the overlay.
+ */
 QList<GraphicsOverlay*> MessagesOverlay::graphicsOverlays() const
 {
   return m_graphicsOverlays;
 }
 
+/*!
+  \brief Returns the Esri:ArcGISRuntime::GeoView for the overlay.
+ */
 GeoView* MessagesOverlay::geoView() const
 {
   return m_geoView;
 }
 
+/*!
+  \brief Adds the \l Message \a message to the overlay. Returns whether adding was succesful.
+ */
 bool MessagesOverlay::addMessage(const Message& message)
 {
   const auto messageId = message.messageId();
@@ -245,6 +283,9 @@ bool MessagesOverlay::addMessage(const Message& message)
   return true;
 }
 
+/*!
+  \brief Returns whether the overlay is visible.
+ */
 bool MessagesOverlay::isVisible() const
 {
   // at this time, only one graphics overlay per message overlay
@@ -257,6 +298,9 @@ bool MessagesOverlay::isVisible() const
   return false;
 }
 
+/*!
+  \brief Sets the overlay to be \a visible.
+ */
 void MessagesOverlay::setVisible(bool visible)
 {
   if (m_pointGraphicsOverlay)

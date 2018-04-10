@@ -18,6 +18,27 @@
 
 using namespace Esri::ArcGISRuntime;
 
+/*!
+  \class Viewshed360
+  \inherits QObject
+  \brief Abstract class which represents a viewshed which can cover up to 360 degrees.
+
+  When in 360 degree mode the primary viewshed will be supplemented by 2 additional
+  viewsheds to complete the full arc, since a single viewshed can only cover 120 degrees.
+
+  \sa Esri::ArcGISRuntime::Viewshed
+  */
+
+/*!
+  \brief Constructor for a 360 degree viewshed.
+
+  \list
+    \li \a viewshed - The primary \l Esri::ArcGISRuntime::Viewshed. When in 360 degree mode this will be supplemented
+        by 2 additional viewsheds to complete the full arc, since a single viewshed can only cover 120 degrees.
+    \li \a analysisOverlay - The \l Esri::ArcGISRuntime::AnalysisOverlay which contains the viewshed(s).
+    \li \a parent - An optional parent.
+  \endlist
+ */
 Viewshed360::Viewshed360(Viewshed* viewshed, AnalysisOverlay* analysisOverlay, QObject* parent) :
   QObject(parent),
   m_viewshed(viewshed),
@@ -25,10 +46,16 @@ Viewshed360::Viewshed360(Viewshed* viewshed, AnalysisOverlay* analysisOverlay, Q
 {
 }
 
+/*!
+  \brief Destructor.
+ */
 Viewshed360::~Viewshed360()
 {
 }
 
+/*!
+  \brief Removes the viewshed from the \l \l Esri::ArcGISRuntime::AnalysisOverlay.
+ */
 void Viewshed360::removeFromOverlay()
 {
   if (m_analysisOverlay.isNull())
@@ -42,11 +69,17 @@ void Viewshed360::removeFromOverlay()
   m_analysisOverlay->analyses()->removeOne(m_viewshed);
 }
 
+/*!
+  \brief Returns whether the viewshed is visible.
+ */
 bool Viewshed360::isVisible() const
 {
   return m_viewshed->isVisible();
 }
 
+/*!
+  \brief Sets the viewshed to be \a visible.
+ */
 void Viewshed360::setVisible(bool visible)
 {
   if (m_viewshed->isVisible() == visible)
@@ -62,11 +95,17 @@ void Viewshed360::setVisible(bool visible)
   emit visibleChanged();
 }
 
+/*!
+  \brief Returns the name of the viewshed.
+ */
 QString Viewshed360::name() const
 {
   return m_name;
 }
 
+/*!
+  \brief Sets the name of the viewshed to \a name.
+ */
 void Viewshed360::setName(const QString& name)
 {
   if (m_name == name)
@@ -77,11 +116,17 @@ void Viewshed360::setName(const QString& name)
   emit nameChanged();
 }
 
+/*!
+  \brief Returns the minimum distance of the viewshed in meters.
+ */
 double Viewshed360::minDistance() const
 {
   return viewshed()->minDistance();
 }
 
+/*!
+  \brief Sets the minimum distance of the viewshed to \a minDistance meters.
+ */
 void Viewshed360::setMinDistance(double minDistance)
 {
   if (viewshed()->minDistance() == minDistance)
@@ -97,11 +142,17 @@ void Viewshed360::setMinDistance(double minDistance)
   emit minDistanceChanged();
 }
 
+/*!
+  \brief Returns the maximum distance of the viewshed in meters.
+ */
 double Viewshed360::maxDistance() const
 {
   return viewshed()->maxDistance();
 }
 
+/*!
+  \brief Sets the maximum distance of the viewshed to \a maxDistance meters.
+ */
 void Viewshed360::setMaxDistance(double maxDistance)
 {
   if (viewshed()->maxDistance() == maxDistance)
@@ -117,6 +168,9 @@ void Viewshed360::setMaxDistance(double maxDistance)
   emit maxDistanceChanged();
 }
 
+/*!
+  \brief Returns the horizontal angle of the viewshed in degrees.
+ */
 double Viewshed360::horizontalAngle() const
 {
   if (m_is360Mode)
@@ -128,6 +182,11 @@ double Viewshed360::horizontalAngle() const
   return viewshed()->horizontalAngle();
 }
 
+/*!
+  \brief Sets the horizontal angle of the viewshed to \a horizontalAngle degrees.
+
+  \note If the viewshed is set to be 360 degrees, this is ignored.
+ */
 void Viewshed360::setHorizontalAngle(double horizontalAngle)
 {
   if (m_is360Mode)
@@ -141,6 +200,9 @@ void Viewshed360::setHorizontalAngle(double horizontalAngle)
   emit horizontalAngleChanged();
 }
 
+/*!
+  \brief Returns the vertical angle of the viewshed in degrees.
+ */
 double Viewshed360::verticalAngle() const
 {
   if (m_is360Mode)
@@ -152,6 +214,11 @@ double Viewshed360::verticalAngle() const
   return viewshed()->verticalAngle();
 }
 
+/*!
+  \brief Sets the vertical angle of the viewshed to \a verticalAngle degrees.
+
+  \note If the viewshed is set to be 360 degrees, this is ignored.
+ */
 void Viewshed360::setVerticalAngle(double verticalAngle)
 {
   if (m_is360Mode)
@@ -165,36 +232,68 @@ void Viewshed360::setVerticalAngle(double verticalAngle)
   emit verticalAngleChanged();
 }
 
+/*!
+  \brief Returns the offset z value of the viewshed in meters.
+
+  The default value is \c 0.0.
+ */
 double Viewshed360::offsetZ() const
 {
   constexpr double offsetZDefault = 0.0;
   return offsetZDefault;
 }
 
+/*!
+  \brief Sets the offset z value of the viewshed in meters.
+
+  \note This method must be overriden to have any effect.
+ */
 void Viewshed360::setOffsetZ(double)
 {
 }
 
+/*!
+  \brief Returns whether heading is enabled for the viewshed.
+
+  Heading will not be used if the viewshed is in 360 degree mode.
+ */
 bool Viewshed360::isHeadingEnabled() const
 {
   return !m_is360Mode;
 }
 
+/*!
+  \brief Returns whether pitch is enabled for the viewshed.
+
+  Pitch will not be used if the viewshed is in 360 degree mode.
+ */
 bool Viewshed360::isPitchEnabled() const
 {
   return !m_is360Mode;
 }
 
+/*!
+  \brief Returns whether offset z is enabled for the viewshed.
+ */
 bool Viewshed360::isOffsetZEnabled() const
 {
   return false;
 }
 
+/*!
+  \brief Returns whether the viewshed is in 360 degree mode.
+ */
 bool Viewshed360::is360Mode() const
 {
   return m_is360Mode;
 }
 
+/*!
+  \brief Sets whether the viewshed is in 360 degree mode to \a is360Mode.
+
+  When in 360 degree mode the primary viewshed will be supplemented by 2 additional
+  viewsheds to complete the full arc, since a single viewshed can only cover 120 degrees.
+ */
 void Viewshed360::set360Mode(bool is360Mode)
 {
   if (m_is360Mode == is360Mode)
@@ -207,11 +306,17 @@ void Viewshed360::set360Mode(bool is360Mode)
   emit is360ModeChanged();
 }
 
+/*!
+  \brief Returns the primary \l Esri::ArcGISRuntime::Viewshed.
+ */
 Viewshed* Viewshed360::viewshed() const
 {
   return m_viewshed.data();
 }
 
+/*!
+  \brief Returns the \l Esri::ArcGISRuntime::AnalysisOverlay which contains the viewshed.
+ */
 AnalysisOverlay* Viewshed360::analysisOverlay() const
 {
   return m_analysisOverlay.data();

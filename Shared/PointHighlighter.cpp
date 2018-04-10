@@ -31,6 +31,15 @@
 
 using namespace Esri::ArcGISRuntime;
 
+/*!
+  \class PointHighlighter
+  \inherits QObject
+  \brief Class for managing an animated highlight graphic centered on a point.
+ */
+
+/*!
+  \brief Constructor taking an optional \a parent.
+ */
 PointHighlighter::PointHighlighter(QObject* parent):
   QObject(parent)
 {
@@ -40,16 +49,25 @@ PointHighlighter::PointHighlighter(QObject* parent):
   onGeoViewChanged();
 }
 
+/*!
+  \brief Destructor.
+ */
 PointHighlighter::~PointHighlighter()
 {
 
 }
 
+/*!
+  \brief React to change in the \a point to be highlighted.
+ */
 void PointHighlighter::onPointChanged(const Point& point)
 {
   m_point = point;
 }
 
+/*!
+  \brief Start the highlight.
+ */
 void PointHighlighter::startHighlight()
 {
   if (m_point.isEmpty())
@@ -119,6 +137,9 @@ void PointHighlighter::startHighlight()
   m_highlightTimer->start(10);
 }
 
+/*!
+  \brief Stop the highlight.
+ */
 void PointHighlighter::stopHighlight()
 {
   if (!m_highlightOverlay || !m_highlightOverlay->graphics() || m_highlightOverlay->graphics()->isEmpty())
@@ -140,6 +161,9 @@ void PointHighlighter::stopHighlight()
   }
 }
 
+/*!
+  \brief React to a a change to the goeView for highlighting.
+ */
 void PointHighlighter::onGeoViewChanged()
 {
   if (m_highlightOverlay)

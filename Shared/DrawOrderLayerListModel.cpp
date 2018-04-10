@@ -14,17 +14,33 @@
 
 #include "DrawOrderLayerListModel.h"
 
+/*!
+  \class DrawOrderLayerListModel
+  \inherits QSortFilterProxyModel
+  \brief A proxy model responsible for presenting layers in the
+  app in their draw order (e.g. the layer on top will be 1st in the list).
+ */
+
+/*!
+  \brief Constructor for a model taking an optional \a parent.
+ */
 DrawOrderLayerListModel::DrawOrderLayerListModel(QObject* parent):
   QSortFilterProxyModel(parent)
 {
   sort(0);
 }
 
+/*!
+  \brief Destructor.
+ */
 DrawOrderLayerListModel::~DrawOrderLayerListModel()
 {
 
 }
 
+/*!
+  \brief Returns whether \a soureLeft should be drawn before \a sourceRight.
+ */
 bool DrawOrderLayerListModel::lessThan(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const
 {
   return sourceLeft.row() > sourceRight.row();

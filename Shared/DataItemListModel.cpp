@@ -24,18 +24,34 @@
 
 #include "DataItemListModel.h"
 
+/*!
+  \class DataItemListModel
+  \inherits QAbstractListModel
+  \brief A model responsible for storing data items (local layers etc.) and reporting when they
+  change.
+ */
+
+/*!
+  \brief Constructor for a model taking an optional \a parent.
+ */
 DataItemListModel::DataItemListModel(QObject* parent) :
   QAbstractListModel(parent)
 {
   setupRoles();
 }
 
+/*!
+  \internal.
+ */
 void DataItemListModel::setupRoles()
 {
   m_roles[FullPathRole] = "fullPath";
   m_roles[FileNameRole] = "fileName";
 }
 
+/*!
+  \brief Adds a new local data item located at \a fullPath.
+ */
 void DataItemListModel::addDataItem(const QString& fullPath)
 {
   beginInsertRows(QModelIndex(), rowCount(), rowCount());
@@ -43,12 +59,20 @@ void DataItemListModel::addDataItem(const QString& fullPath)
   endInsertRows();
 }
 
+/*!
+  \brief Returns the number of data items in the model.
+ */
 int DataItemListModel::rowCount(const QModelIndex& parent) const
 {
   Q_UNUSED(parent);
   return m_dataItems.count();
 }
 
+/*!
+  \brief Returns the data stored under \a role at \a index in the model.
+
+  The role should make use of the \l DataItemRoles enum.
+ */
 QVariant DataItemListModel::data(const QModelIndex& index, int role) const
 {
   if (index.row() < 0 || index.row() >= m_dataItems.count())
@@ -73,11 +97,19 @@ QVariant DataItemListModel::data(const QModelIndex& index, int role) const
   return retVal;
 }
 
+/*!
+  \brief Returns the hash of role names used by the model.
+
+  The roles are based on the \l DataItemRoles enum.
+ */
 QHash<int, QByteArray> DataItemListModel::roleNames() const
 {
   return m_roles;
 }
 
+/*!
+  \brief Clears the model.
+ */
 void DataItemListModel::clear()
 {
   beginResetModel();
@@ -85,6 +117,9 @@ void DataItemListModel::clear()
   endResetModel();
 }
 
+/*!
+  \brief Returns the \l DataType of the item at \a index in the model.
+ */
 DataType DataItemListModel::getDataItemType(int index)
 {
   if (index >= m_dataItems.size())
@@ -93,6 +128,9 @@ DataType DataItemListModel::getDataItemType(int index)
   return m_dataItems.at(index).dataType;
 }
 
+/*!
+  \brief Returns the path of the item at \a index in the model.
+ */
 QString DataItemListModel::getDataItemPath(int index) const
 {
   if (index >= m_dataItems.size())
@@ -101,7 +139,10 @@ QString DataItemListModel::getDataItemPath(int index) const
   return m_dataItems.at(index).fullPath;
 }
 
-// c'tor for DataItem struct
+/*!
+  \internal.
+  c'tor for DataItem struct
+ */
 DataItemListModel::DataItem::DataItem(const QString& fullPath):
   fullPath(fullPath)
 {

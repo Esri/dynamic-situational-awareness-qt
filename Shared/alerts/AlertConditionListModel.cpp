@@ -15,6 +15,16 @@
 #include "AlertCondition.h"
 #include "AlertConditionListModel.h"
 
+/*!
+  \class AlertConditionListModel
+  \inherits QAbstractListModel
+  \brief A model responsible for storing \l AlertCondition objects and reporting when they
+  change.
+  */
+
+/*!
+  \brief Constructor for a model taking an optional \a parent.
+ */
 AlertConditionListModel::AlertConditionListModel(QObject* parent):
   QAbstractListModel(parent)
 {
@@ -24,11 +34,17 @@ AlertConditionListModel::AlertConditionListModel(QObject* parent):
   m_roles[AlertConditionListRoles::ConditionEnabled] = "conditionEnabled";
 }
 
+/*!
+  \brief Destructor.
+ */
 AlertConditionListModel::~AlertConditionListModel()
 {
 
 }
 
+/*!
+  \brief Adds a new \l AlertCondition \a condition to the model.
+ */
 bool AlertConditionListModel::addAlertCondition(AlertCondition* condition)
 {
   if (!condition)
@@ -63,11 +79,17 @@ bool AlertConditionListModel::addAlertCondition(AlertCondition* condition)
   return true;
 }
 
+/*!
+  \brief Return the \l AlertCondition at \a rowIndex.
+ */
 AlertCondition* AlertConditionListModel::conditionAt(int rowIndex) const
 {
   return m_conditions.value(rowIndex, nullptr);
 }
 
+/*!
+  \brief Removes condition at \a rowIndex from the model.
+ */
 void AlertConditionListModel::removeAt(int rowIndex)
 {
   AlertCondition* condition = conditionAt(rowIndex);
@@ -79,11 +101,19 @@ void AlertConditionListModel::removeAt(int rowIndex)
   endRemoveRows();
 }
 
+/*!
+  \brief Returns the number of condition objects in the model.
+ */
 int AlertConditionListModel::rowCount(const QModelIndex&) const
 {
   return m_conditions.size();
 }
 
+/*!
+  \brief Returns the data stored under \a role at \a index in the model.
+
+  The role should make use of the \l AlertConditionListRoles enum.
+ */
 QVariant AlertConditionListModel::data(const QModelIndex& index, int role) const
 {
   if (index.row() < 0 || index.row() > rowCount())
@@ -163,6 +193,11 @@ bool AlertConditionListModel::setData(const QModelIndex& index, const QVariant& 
   return valueSet;
 }
 
+/*!
+  \brief Returns the hash of role names used by the model.
+
+  The roles are based on the \l AlertListRoles enum.
+ */
 QHash<int, QByteArray> AlertConditionListModel::roleNames() const
 {
   return m_roles;

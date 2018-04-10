@@ -57,7 +57,13 @@ const QString LayerCacheManager::layerTypeRasterLayerGeoPackage = "RasterLayerGe
 
 using namespace Esri::ArcGISRuntime;
 
-/*
+/*!
+  \class LayerCacheManager
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller responsible for managing the layers in the app.
+ */
+
+/*!
  \brief Constructor that takes an optional \a parent.
  */
 LayerCacheManager::LayerCacheManager(QObject* parent) :
@@ -103,14 +109,14 @@ LayerCacheManager::LayerCacheManager(QObject* parent) :
   }
 }
 
-/*
+/*!
  \brief Destructor
  */
 LayerCacheManager::~LayerCacheManager()
 {
 }
 
-/*
+/*!
  \brief Returns the tool's name
  */
 QString LayerCacheManager::toolName() const
@@ -118,7 +124,7 @@ QString LayerCacheManager::toolName() const
   return QStringLiteral("Layer Cache Manager");
 }
 
-/*
+/*!
  \brief Sets \a properties from the configuration file
  */
 void LayerCacheManager::setProperties(const QVariantMap& properties)
@@ -180,7 +186,7 @@ void LayerCacheManager::setProperties(const QVariantMap& properties)
   m_initialLoadCompleted = true;
 }
 
-/*
+/*!
  \brief Creates a Layer from the provided \a jsonObject and adds at the given \a layerIndex.
 
   Obtain the output Layer through the \l jsonToLayerCompleted() signal.
@@ -205,7 +211,7 @@ void LayerCacheManager::jsonToLayer(const QJsonObject& jsonObject, const int lay
     m_localDataController->createRasterLayerGeoPackage(layerPath, layerIndex, layerId, layerVisible, false);
 }
 
-/*
+/*!
  \brief Updates the layer list cache with the provided \a layer.
 
  Obtain the updated JSON from \l layerJson() after layerJsonChanged() emits.
@@ -296,7 +302,7 @@ void LayerCacheManager::layerToJson(Layer* layer)
   emit layerJsonChanged();
 }
 
-/*
+/*!
  \brief Resets and recreates the layer JSON array and writes it to the app properties.
 */
 void LayerCacheManager::onLayerListChanged()
@@ -322,7 +328,7 @@ void LayerCacheManager::onLayerListChanged()
   emit propertyChanged(LAYERS_PROPERTYNAME, m_layers.toVariantList());
 }
 
-/*
+/*!
  \brief Returns the layer JSON array.
 */
 QJsonArray LayerCacheManager::layerJson() const

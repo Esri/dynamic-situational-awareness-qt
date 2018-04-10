@@ -43,7 +43,7 @@ DrawOrderLayerListModel::~DrawOrderLayerListModel()
 }
 
 /*!
-  \brief Returns whether \a soureLeft should be drawn before \a sourceRight.
+  \brief Returns whether \a soureLeft should be listed before \a sourceRight.
  */
 bool DrawOrderLayerListModel::lessThan(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const
 {

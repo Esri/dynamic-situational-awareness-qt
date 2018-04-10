@@ -53,7 +53,7 @@ const QString ContextMenuController::CONTACT_REPORT_OPTION = "Contact report";
   \inherits Toolkit::AbstractTool
   \brief Tool controller for displaying a Context menu.
 
-  When the user presses and hold the mouse, a number of tasks are started
+  When the user presses and holds the mouse, a number of tasks are started
   to discover the current context for the app. Based on the result of these
   operations a set of context specific operations are presented. For example,
   the tool offers options such as:
@@ -71,7 +71,7 @@ const QString ContextMenuController::CONTACT_REPORT_OPTION = "Contact report";
   \sa IdentifyController
   \sa ViewshedController
   \sa LineOfSightController
-  \sa Toolkit::CoordinateConversionController
+  \sa Esri::ArcGISRuntime::Toolkit::CoordinateConversionController
  */
 
 /*!

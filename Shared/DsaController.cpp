@@ -57,8 +57,8 @@ bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map);
   view (e.g. the \l Esri::ArcGISRuntime::GeoView) to the business logic of the app.
 
   For example, signals from the view are passed to the \l Toolkit::ToolResourceProvider
-  where they can be accessed by the list of \l Toolkit::AbstractTool objects stored in
-  the \l Toolkit::ToolManager.
+  where they can be accessed by the list of \l Esri::ArcGISRuntime::Toolkit::AbstractTool objects stored in
+  the \l Esri::ArcGISRuntime::Toolkit::ToolManager.
 
   This type is also responsible for reading and writing app configuratiom details to
   a JSON settings file. Information in the JSON file is sent to eacch tool as a set of
@@ -103,7 +103,7 @@ Esri::ArcGISRuntime::Scene* DsaController::scene() const
 /*!
   \brief Initialize the app with the Esri::ArcGISRuntime::GeoView \a geoView.
 
-  When this method is called, the various tools etc. in the app are connected.
+  When this method is called, the various tools etc. in the app are initialized.
  */
 void DsaController::init(GeoView* geoView)
 {
@@ -196,12 +196,12 @@ void DsaController::init(GeoView* geoView)
 }
 
 /*!
- * \brief Slot to handle an ArcGISRuntime Error \a e.
+ * \brief Slot to handle an ArcGISRuntime Error \a error.
  */
-void DsaController::onError(const Error& e)
+void DsaController::onError(const Error& error)
 {
-  qDebug() << "Error" << e.message() << e.additionalMessage();
-  emit errorOccurred(e.message(), e.additionalMessage());
+  qDebug() << "Error" << error.message() << error.additionalMessage();
+  emit errorOccurred(error.message(), error.additionalMessage());
 }
 
 /*!

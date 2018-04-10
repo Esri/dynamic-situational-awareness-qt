@@ -31,7 +31,7 @@ namespace Dsa {
  */
 
 /*!
-  \brief Returns the platform independant data path \c [HOME]/ArcGIS/Runtime/Data/DSA.
+  \brief Returns the platform independent data path \c [HOME]/ArcGIS/Runtime/Data/DSA.
  */
 QString DsaUtility::dataPath()
 {

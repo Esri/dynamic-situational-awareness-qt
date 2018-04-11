@@ -114,7 +114,13 @@ void ContextMenuController::onMousePressedAndHeld(QMouseEvent& event)
 
   cancelTasks();
   clearOptions();
-  m_contextElement = nullptr;
+  for(const auto& feats : qAsConst(m_contextFeatures))
+    qDeleteAll(feats);
+  m_contextFeatures.clear();
+
+  for(const auto& graphics : qAsConst(m_contextGraphics))
+    qDeleteAll(graphics);
+  m_contextGraphics.clear();
 
   GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
   if (!geoView)
@@ -171,20 +177,15 @@ void ContextMenuController::onIdentifyLayersCompleted(const QUuid& taskId, const
     if (!res)
       continue;
 
-    const QList<GeoElement*> geoElements = res->geoElements();
-    if (geoElements.isEmpty())
-      continue;
+    auto geoElements = res->geoElements();
+    for(GeoElement* geoElement : qAsConst(geoElements))
+      geoElement->setParent(this); // set the GeoElements to be managed by the tool
 
-    m_contextElement = geoElements.first();
-    m_contextElement->setParent(this);
-    setResultTitle(res->layerContent()->name());
-    addOption(IDENTIFY_OPTION);
-
-    if (m_contextElement->geometry().geometryType() == GeometryType::Point)
-      addOption(LINE_OF_SIGHT_OPTION);
-
-    return;
+    // add the geoElements to the context hash using the layer name as the key
+    m_contextFeatures.insert(res->layerContent()->name(), geoElements);
   }
+
+  processGeoElements();
 }
 
 /*!
@@ -213,17 +214,21 @@ void ContextMenuController::onIdentifyGraphicsOverlaysCompleted(const QUuid& tas
     if (graphics.isEmpty())
       continue;
 
-    m_contextElement = graphics.first();
-    m_contextElement->setParent(this);
-    setResultTitle(res->graphicsOverlay()->overlayId());
-    addOption(IDENTIFY_OPTION);
-    addOption(FOLLOW_OPTION);
+    QList<GeoElement*> geoElements;
+    auto gIt = graphics.begin();
+    auto gEnd = graphics.end();
+    for(; gIt != gEnd; ++gIt)
+    {
+      GeoElement* geoElement = *gIt;
+      geoElement->setParent(this); // set the GeoElements to be managed by the tool
+      geoElements.append(geoElement);
+    }
 
-    if (m_contextElement->geometry().geometryType() == GeometryType::Point)
-      addOption(LINE_OF_SIGHT_OPTION);
-
-    return;
+    // add the geoElements to the context hash using the overlay id as the key
+    m_contextGraphics.insert(res->graphicsOverlay()->overlayId(), geoElements);
   }
+
+  processGeoElements();
 }
 
 
@@ -353,6 +358,55 @@ void ContextMenuController::cancelIdentifyTasks()
 }
 
 /*!
+  \internal
+ */
+void ContextMenuController::processGeoElements()
+{
+  // if either of the identify tasks is still in progress, return.
+  if ((m_identifyFeaturesTask.isValid() && !m_identifyFeaturesTask.isDone()) ||
+      (m_identifyGraphicsTask.isValid() && !m_identifyGraphicsTask.isDone()))
+    return;
+
+  if (m_contextFeatures.isEmpty() && m_contextGraphics.isEmpty())
+    return;
+
+  // if we have at least 1 GeoElement, we can identify
+  addOption(IDENTIFY_OPTION);
+
+  int pointGraphicsCount = 0;
+  for (const auto& geoElements : qAsConst(m_contextGraphics))
+  {
+    for (GeoElement* geoElement : geoElements)
+    {
+      if (geoElement->geometry().geometryType() == GeometryType::Point)
+        pointGraphicsCount++;
+    }
+  }
+
+  if (pointGraphicsCount == 1) // if we have exactly 1 point graphic, we can follow it
+    addOption(FOLLOW_OPTION);
+
+  if (pointGraphicsCount > 0) // if we have at least 1 point geometry, we can perform LOS
+  {
+    addOption(LINE_OF_SIGHT_OPTION);
+    return;
+  }
+
+  // if were have 0 point graphics, check whether we have any point features
+  for (const auto& geoElements : qAsConst(m_contextFeatures))
+  {
+    for (GeoElement* geoElement : geoElements)
+    {
+      if (geoElement && geoElement->geometry().geometryType() == GeometryType::Point)
+      {
+        addOption(LINE_OF_SIGHT_OPTION);
+        return;
+      }
+    }
+  }
+}
+
+/*!
   \brief Returns the geographic location for the current context.
  */
 Point ContextMenuController::contextLocation() const
@@ -405,7 +459,9 @@ void ContextMenuController::selectOption(const QString& option)
     if (!identifyTool)
       return;
 
-    identifyTool->showPopup(m_contextElement, resultTitle());
+    auto combinedGeoElementsByTitle = m_contextGraphics;
+    combinedGeoElementsByTitle.unite(m_contextFeatures);
+    identifyTool->showPopups(combinedGeoElementsByTitle);
   }
   else if (option == VIEWSHED_OPTION)
   {
@@ -424,7 +480,18 @@ void ContextMenuController::selectOption(const QString& option)
     if (!followTool)
       return;
 
-    followTool->followGeoElement(m_contextElement);
+    // follow the 1st point graphic (should be only 1)
+    for(const auto& geoElements : qAsConst(m_contextGraphics))
+    {
+      for (GeoElement* geoElement : geoElements)
+      {
+        if (!geoElement || geoElement->geometry().geometryType() != GeometryType::Point)
+          continue;
+
+        followTool->followGeoElement(geoElement);
+        return;
+      }
+    }
   }
   else if (option == COORDINATES_OPTION)
   {
@@ -443,7 +510,25 @@ void ContextMenuController::selectOption(const QString& option)
     if (!lineOfSightTool)
       return;
 
-    lineOfSightTool->lineOfSightFromLocationToGeoElement(m_contextElement);
+    // perform LOS to each point geoElement found
+    // follow the 1st point graphic (should be only 1)
+    auto losFunc = [lineOfSightTool](const QHash<QString, QList<GeoElement*>>& geoElementsByTitle)
+    {
+      for(auto gIt = geoElementsByTitle.cbegin(); gIt != geoElementsByTitle.cend(); ++gIt)
+      {
+        const QList<GeoElement*>& geoElements = gIt.value();
+        for (GeoElement* geoElement : qAsConst(geoElements))
+        {
+          if (!geoElement || geoElement->geometry().geometryType() != GeometryType::Point)
+            continue;
+
+          lineOfSightTool->lineOfSightFromLocationToGeoElement(geoElement);
+        }
+      }
+    };
+
+    losFunc(m_contextGraphics);
+    losFunc(m_contextFeatures);
   }
   else if (option == CONTACT_REPORT_OPTION)
   {

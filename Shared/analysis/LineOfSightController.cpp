@@ -181,8 +181,12 @@ void LineOfSightController::onOperationalLayersChanged(LayerListModel* operation
         }
         else
         {
-          overlayNames.append(featLayer->name());
-          m_overlays.append(featLayer);
+          // Only point layers are suitable for Line of sight
+          if (featLayer->featureTable()->geometryType() == GeometryType::Point)
+          {
+            overlayNames.append(featLayer->name());
+            m_overlays.append(featLayer);
+          }
         }
       }
     }
@@ -385,8 +389,10 @@ QAbstractItemModel* LineOfSightController::overlayNames() const
   \brief Select the overlay index (\a selectOverlayIndex) to use for Line of sight analysis.
 
   The index refers to the overalys returned by \l overlayNames.
+
+  Returns whether the overlay was succesfully used to perform analysis.
  */
-void LineOfSightController::selectOverlayIndex(int selectOverlayIndex)
+bool LineOfSightController::selectOverlayIndex(int selectOverlayIndex)
 {
   // cancel any query tasks which are currently running
   if (m_featuresTask.isValid() && !m_featuresTask.isCanceled() && !m_featuresTask.isDone())
@@ -396,14 +402,24 @@ void LineOfSightController::selectOverlayIndex(int selectOverlayIndex)
   clearAnalysis();
 
   if (selectOverlayIndex > m_overlays.size() || selectOverlayIndex == -1)
-    return;
+    return false;
 
   FeatureLayer* overlay = m_overlays.at(selectOverlayIndex);
   if (!overlay)
   {
     emit toolErrorOccurred(QStringLiteral("Invalid Line of sight overlay selected"),
                            QString("The selected overlay index is invalid: %1").arg(QString::number(selectOverlayIndex)));
-    return;
+    return false;
+  }
+
+  constexpr int maxFeatures = 16; // Due to performance reasons, limit the number of features which can be used in the analysis
+  const int featuresCount = overlay->featureTable()->numberOfFeatures();
+  if (featuresCount > maxFeatures)
+  {
+    emit toolErrorOccurred(QString("There are too many points in this layer (%1).\n Please choose another one with %2 or fewer points.")
+                           .arg(QString::number(featuresCount), QString::number(maxFeatures)),
+                           QStringLiteral("For performance reasons, Line of Sight analysis is limited to a maximum number of features"));
+    return false;
   }
 
   // perform a query to retrieve all the features from the selected overlay. These will be the target features for Line of sight analysis.
@@ -412,6 +428,8 @@ void LineOfSightController::selectOverlayIndex(int selectOverlayIndex)
   query.setReturnGeometry(true);
   m_queryFeaturesConnection = connect(overlay->featureTable(), &FeatureTable::queryFeaturesCompleted, this, &LineOfSightController::onQueryFeaturesCompleted);
   m_featuresTask = overlay->featureTable()->queryFeatures(query);
+
+  return true;
 }
 
 /*!

@@ -56,7 +56,7 @@ public:
 
   QAbstractItemModel* overlayNames() const;
 
-  Q_INVOKABLE void selectOverlayIndex(int overlayIndex);
+  Q_INVOKABLE bool selectOverlayIndex(int overlayIndex);
   Q_INVOKABLE void clearAnalysis();
 
   bool isAnalysisVisible() const;

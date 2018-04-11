@@ -39,7 +39,7 @@ constexpr double c_defaultMaxDistance = 500.0;
 /*!
   \class LocationViewshed360
   \inherits Viewshed360
-  \brief This type represents a 360 degree viewshed centered upon the current Location.
+  \brief A 360 degree viewshed centered upon the current Location.
   */
 
 /*!
@@ -168,7 +168,7 @@ void LocationViewshed360::setPitch(double pitch)
 }
 
 /*!
-  \internal.
+  \internal
  */
 void LocationViewshed360::update360Mode(bool is360Mode)
 {

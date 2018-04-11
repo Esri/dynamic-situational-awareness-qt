@@ -37,7 +37,7 @@ MessageFeedListModel::MessageFeedListModel(QObject* parent) :
 }
 
 /*!
-  \internal.
+  \internal
  */
 void MessageFeedListModel::setupRoles()
 {

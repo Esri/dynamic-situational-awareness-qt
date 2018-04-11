@@ -29,13 +29,13 @@ namespace Dsa {
 /*!
   \class GPXLocationSimulator
   \inherits QGeoPositionInfoSource
-  \brief A class for simulating a position source from a GPX file.
+  \brief Position source simulator that reads from a GPX file.
  */
 
 /*!
   \brief Constructor taking an optional \a parent.
 
-  To use simulation user must set gpx file the update interval
+  To use simulation user must set GPX file the update interval
  */
 GPXLocationSimulator::GPXLocationSimulator(QObject* parent) :
   QGeoPositionInfoSource(parent),
@@ -48,7 +48,7 @@ GPXLocationSimulator::GPXLocationSimulator(QObject* parent) :
 }
 
 /*!
-  \brief Constructor which populates the necessary components to run a gps simulation.
+  \brief Constructor which populates the necessary components to run a GPS simulation.
 
   \list
     \li \a gpxFileName - The path of the GPX file containing position data.
@@ -79,7 +79,7 @@ GPXLocationSimulator::~GPXLocationSimulator()
 }
 
 /*!
-  \internal.
+  \internal
  */
 void GPXLocationSimulator::connectSignals()
 {
@@ -90,7 +90,7 @@ void GPXLocationSimulator::connectSignals()
 }
 
 /*!
-  \internal.
+  \internal
  */
 bool GPXLocationSimulator::gotoNextPositionElement()
 {
@@ -111,7 +111,7 @@ bool GPXLocationSimulator::gotoNextPositionElement()
 }
 
 /*!
-  \internal.
+  \internal
  */
 Point GPXLocationSimulator::getNextPoint(QTime& time)
 {
@@ -168,7 +168,7 @@ Point GPXLocationSimulator::getNextPoint(QTime& time)
   \brief Starts position updates.
 
   Loads a GPX file into a stream reader, fetches the first 3 coordinates
-  and starts a timer that performs interpolation and position updating
+  and starts a timer that performs interpolation and position updating.
  */
 void GPXLocationSimulator::startUpdates()
 {
@@ -196,7 +196,7 @@ void GPXLocationSimulator::requestUpdate(int)
 }
 
 /*!
-  \brief Stop updates.
+  \brief Stops updates.
  */
 void GPXLocationSimulator::stopUpdates()
 {
@@ -221,7 +221,9 @@ bool GPXLocationSimulator::isStarted()
 }
 
 /*!
-  \brief Returns the last known position with the unused parameter \a fromSatellitePositioningMethodsOnly.
+  \brief \brief Returns the last known position.
+
+  The parameter \a fromSatellitePositioningMethodsOnly is ignored.
  */
 QGeoPositionInfo GPXLocationSimulator::lastKnownPosition(bool fromSatellitePositioningMethodsOnly) const
 {
@@ -256,7 +258,7 @@ int GPXLocationSimulator::minimumUpdateInterval() const
 }
 
 /*!
-  \internal.
+  \internal
 
  increments the current time
  fetches new positions from the gpx file as necessary
@@ -303,7 +305,7 @@ void GPXLocationSimulator::handleTimerEvent()
 }
 
 /*!
-  \internal.
+  \internal
  */
 bool GPXLocationSimulator::initializeInterpolationValues()
 {
@@ -331,7 +333,7 @@ bool GPXLocationSimulator::initializeInterpolationValues()
 }
 
 /*!
-  \internal.
+  \internal
  */
 double GPXLocationSimulator::getInterpolatedHeading(const Point& currentPosition, double normalizedTime)
 {
@@ -359,7 +361,7 @@ double GPXLocationSimulator::getInterpolatedHeading(const Point& currentPosition
 }
 
 /*!
-  \internal.
+  \internal
  */
 bool GPXLocationSimulator::updateInterpolationParameters()
 {
@@ -388,7 +390,7 @@ bool GPXLocationSimulator::updateInterpolationParameters()
 }
 
 /*!
-  \brief Returns the gpx file location.
+  \brief Returns the GPX file location.
  */
 QString GPXLocationSimulator::gpxFile()
 {
@@ -396,7 +398,7 @@ QString GPXLocationSimulator::gpxFile()
 }
 
 /*!
-  \brief Sets the gpx file location to \a fileName.
+  \brief Sets the GPX file location to \a fileName.
 
   Returns whether the file was succesfully read.
  */
@@ -438,7 +440,7 @@ int GPXLocationSimulator::playbackMultiplier()
 /*!
   \brief Sets the playback multiplier to \a val.
 
-  Used if gpx timestamps are either too close or two far
+  Used if GPX timestamps are either too close or two far
  */
 void GPXLocationSimulator::setPlaybackMultiplier(int val)
 {

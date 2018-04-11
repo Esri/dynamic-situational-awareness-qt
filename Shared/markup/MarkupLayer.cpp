@@ -44,7 +44,7 @@ namespace Dsa {
 /*!
   \class MarkupLayer
   \inherits Esri::ArcGISRuntime::FeatureCollectionLayer
-  \brief This type represents a feature collection layer, which can be created
+  \brief A feature collection layer, which can be created
   either from graphics or from the information contained in a JSON file.
  */
 

@@ -56,7 +56,7 @@ using namespace Esri::ArcGISRuntime;
 
 /*!
   \class Message
-  \brief Represents a message shared between applications.
+  \brief A message shared between applications.
  */
 
 /*!
@@ -690,14 +690,14 @@ QByteArray Message::toGeoMessage() const
 }
 
 /*!
-  \internal.
+  \internal
  */
 MessageData::MessageData()
 {
 }
 
 /*!
-  \internal.
+  \internal
  */
 MessageData::MessageData(Message::MessageAction messageAction, const Geometry& geometry) :
   messageAction(messageAction),
@@ -706,7 +706,7 @@ MessageData::MessageData(Message::MessageAction messageAction, const Geometry& g
 }
 
 /*!
-  \internal.
+  \internal
  */
 MessageData::MessageData(const MessageData& other) :
   QSharedData(other),
@@ -721,7 +721,7 @@ MessageData::MessageData(const MessageData& other) :
 }
 
 /*!
-  \internal.
+  \internal
  */
 MessageData::~MessageData()
 {

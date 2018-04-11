@@ -96,7 +96,7 @@ void DataListener::setEnabled(bool enabled)
 }
 
 /*!
-  \internal.
+  \internal
  */
 void DataListener::connectDevice()
 {
@@ -117,7 +117,7 @@ void DataListener::connectDevice()
 }
 
 /*!
-  \internal.
+  \internal
  */
 void DataListener::disconnectDevice()
 {
@@ -130,7 +130,7 @@ void DataListener::disconnectDevice()
 }
 
 /*!
-  \internal.
+  \internal
  */
 bool DataListener::processUdpDatagrams()
 {

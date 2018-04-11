@@ -31,7 +31,7 @@ namespace Dsa {
 /*!
   \class DataItemListModel
   \inherits QAbstractListModel
-  \brief A model responsible for storing data items (local layers etc.) and reporting when they
+  \brief A model responsible for storing data items (such as local layers) and reporting when they
   change.
  */
 
@@ -45,7 +45,7 @@ DataItemListModel::DataItemListModel(QObject* parent) :
 }
 
 /*!
-  \internal.
+  \internal
  */
 void DataItemListModel::setupRoles()
 {
@@ -144,7 +144,7 @@ QString DataItemListModel::getDataItemPath(int index) const
 }
 
 /*!
-  \internal.
+  \internal
   c'tor for DataItem struct
  */
 DataItemListModel::DataItem::DataItem(const QString& fullPath):

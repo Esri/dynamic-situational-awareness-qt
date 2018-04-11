@@ -32,7 +32,7 @@ namespace Dsa {
 /*!
   \class FollowPositionController
   \inherits Toolkit::AbstractTool
-  \brief Tool controller for managing the follow navigation modes for the app.
+  \brief Tool controller for managing the follow navigation modes.
  */
 
 /*!
@@ -96,7 +96,7 @@ QString FollowPositionController::toolName() const
 }
 
 /*!
-  \brief Sets the app to folow the \l Esri::ArcGISRuntime::GeoElement \a elementToFollow.
+  \brief Sets the app to follow the \l Esri::ArcGISRuntime::GeoElement \a elementToFollow.
  */
 void FollowPositionController::followGeoElement(GeoElement* elementToFollow)
 {

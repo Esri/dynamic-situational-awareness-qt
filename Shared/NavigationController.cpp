@@ -76,7 +76,7 @@ NavigationController::~NavigationController()
 }
 
 /*!
-  \brief Returns the name of the tool.
+  \brief Returns the name of the tool - \c  "NavigationController".
  */
 QString NavigationController::toolName() const
 {
@@ -176,7 +176,7 @@ void NavigationController::setProperties(const QVariantMap& properties)
 }
 
 /*!
-  \internal.
+  \internal
  */
 void NavigationController::updateGeoView()
 {
@@ -222,7 +222,7 @@ void NavigationController::updateGeoView()
 }
 
 /*!
-  \internal.
+  \internal
  */
 void NavigationController::setInitialLocation()
 {
@@ -320,7 +320,7 @@ void NavigationController::setRotation()
 }
 
 /*!
-  \internal.
+  \internal
  */
 void NavigationController::zoom()
 {
@@ -406,7 +406,7 @@ void NavigationController::setCameraMoveDistance(double value)
 }
 
 /*!
-  \internal.
+  \internal
  */
 void NavigationController::setRotationInternal()
 {
@@ -421,7 +421,7 @@ void NavigationController::setRotationInternal()
 }
 
 /*!
-  \internal.
+  \internal
  */
 void NavigationController::set2DInternal()
 {
@@ -441,7 +441,7 @@ void NavigationController::set2DInternal()
 }
 
 /*!
-  \internal.
+  \internal
  */
 void NavigationController::center()
 {
@@ -454,7 +454,7 @@ void NavigationController::center()
 }
 
 /*!
-  \internal.
+  \internal
  */
 double NavigationController::currentCameraDistance(const Camera &currentCamera)
 {

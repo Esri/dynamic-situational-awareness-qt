@@ -36,7 +36,7 @@ namespace Dsa {
 /*!
   \class PointHighlighter
   \inherits QObject
-  \brief Class for managing an animated highlight graphic centered on a point.
+  \brief Manager for an animated highlight graphic centered on a point.
  */
 
 /*!
@@ -60,7 +60,7 @@ PointHighlighter::~PointHighlighter()
 }
 
 /*!
-  \brief React to change in the \a point to be highlighted.
+  \brief Handle changes in the \a point to be highlighted.
  */
 void PointHighlighter::onPointChanged(const Point& point)
 {
@@ -164,7 +164,7 @@ void PointHighlighter::stopHighlight()
 }
 
 /*!
-  \brief React to a change to the goeView for highlighting.
+  \brief Handle changes to the goeView for highlighting.
  */
 void PointHighlighter::onGeoViewChanged()
 {

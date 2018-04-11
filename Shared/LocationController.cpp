@@ -50,7 +50,7 @@ const QString LocationController::RESOURCE_DIRECTORY_PROPERTYNAME = "ResourceDir
 /*!
   \class LocationController
   \inherits Toolkit::AbstractTool
-  \brief Tool controller for handling the apps current location.
+  \brief Tool controller for handling the current location.
  */
 
 /*!
@@ -76,7 +76,7 @@ LocationController::~LocationController()
 }
 
 /*!
-  \internal.
+  \internal
  */
 void LocationController::initPositionInfoSource(bool simulated)
 {
@@ -156,7 +156,7 @@ void LocationController::initPositionInfoSource(bool simulated)
 }
 
 /*!
-  \internal.
+  \internal
  */
 void LocationController::clearPositionInfoSource()
 {
@@ -176,7 +176,7 @@ void LocationController::clearPositionInfoSource()
 }
 
 /*!
-  \brief Returns the name of the tool - \c location"".
+  \brief Returns the name of the tool - \c "location".
  */
 QString LocationController::toolName() const
 {
@@ -188,9 +188,9 @@ QString LocationController::toolName() const
  * This tool will use the following key/value pairs in the \a properties map if they are set:
  *
  * \list
- *  \li SimulateLocation. Whether the app's location should be simulated.
- *  \li GpxFile. The path of the GPX file for simulated positions.
- *  \li ResourceDirectory. The directory containing icons for the location display.
+ *  \li \c SimulateLocation - Whether the app's location should be simulated.
+ *  \li \c GpxFile - The path of the GPX file for simulated positions.
+ *  \li \c ResourceDirectory - The directory containing icons for the location display.
  * \endList
  */
 void LocationController::setProperties(const QVariantMap& properties)
@@ -369,7 +369,7 @@ void LocationController::setRelativeHeadingSceneView(SceneQuickView* sceneView)
 }
 
 /*!
-  \internal.
+  \internal
  */
 void LocationController::updateGeoView()
 {

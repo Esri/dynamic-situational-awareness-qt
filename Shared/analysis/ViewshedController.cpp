@@ -126,7 +126,7 @@ void ViewshedController::setSceneView(SceneView* sceneView)
 }
 
 /*!
-  \internal.
+  \internal
  */
 void ViewshedController::connectMouseSignals()
 {
@@ -135,7 +135,7 @@ void ViewshedController::connectMouseSignals()
 }
 
 /*!
-  \brief React to the mouse click \a event.
+  \brief Handler for the mouse click \a event.
 
   Depending on the active mode (e.g. type of viewshed that the tool is creating)
   the event will be handled differently.
@@ -201,7 +201,7 @@ void ViewshedController::onMouseClicked(QMouseEvent& event)
 
   This event will only be handled if the active mode is \c AddLocationViewshed360 mode.
   In this mode, when there is already an existing location viewshed, it's position will
-  be updared to follow the current mouse position.
+  be updated to follow the current mouse position.
  */
 void ViewshedController::onMouseMoved(QMouseEvent& event)
 {
@@ -731,7 +731,7 @@ void ViewshedController::setActiveViewshed360Mode(bool is360Mode)
 }
 
 /*!
-  \internal.
+  \internal
  */
 void ViewshedController::updateActiveViewshedSignals()
 {
@@ -755,7 +755,7 @@ void ViewshedController::updateActiveViewshedSignals()
 }
 
 /*!
-  \internal.
+  \internal
  */
 void ViewshedController::updateActiveViewshed()
 {
@@ -774,7 +774,7 @@ void ViewshedController::updateActiveViewshed()
 }
 
 /*!
-  \internal.
+  \internal
  */
 void ViewshedController::disconnectActiveViewshedSignals()
 {
@@ -790,7 +790,7 @@ void ViewshedController::disconnectActiveViewshedSignals()
 }
 
 /*!
-  \internal.
+  \internal
  */
 void ViewshedController::emitActiveViewshedSignals()
 {

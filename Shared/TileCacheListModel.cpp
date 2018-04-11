@@ -30,7 +30,7 @@ namespace Dsa {
 /*!
   \class TileCacheListModel
   \inherits QAbstractListModel
-  \brief A model responsible for storing the list of
+  \brief A model for storing the list of
   \l Esri::ArcGISRuntime::TileCache files available for
   use as basemaps in the app.
  */

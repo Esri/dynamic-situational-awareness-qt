@@ -23,7 +23,7 @@ namespace Dsa {
 /*!
   \class AlertConditionListModel
   \inherits QAbstractListModel
-  \brief A model responsible for storing \l AlertCondition objects and reporting when they
+  \brief A model for storing \l AlertCondition objects and reporting when they
   change.
   */
 

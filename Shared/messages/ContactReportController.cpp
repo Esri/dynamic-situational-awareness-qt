@@ -337,7 +337,7 @@ void ContactReportController::onGeoViewChanged(GeoView* geoView)
 }
 
 /*!
-  \internal.
+  \internal
  */
 void ContactReportController::onMouseClicked(QMouseEvent& event)
 {
@@ -373,7 +373,7 @@ void ContactReportController::onMouseClicked(QMouseEvent& event)
 }
 
 /*!
-  \internal.
+  \internal
  */
 void ContactReportController::onUpdateControlPointHightlight()
 {

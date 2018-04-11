@@ -92,7 +92,7 @@ void OptionsController::getUpdatedTools()
 }
 
 /*!
- \brief Returns the tool name.
+ \brief Returns the tool name - \c "Options Tool".
  */
 QString OptionsController::toolName() const
 {
@@ -100,7 +100,7 @@ QString OptionsController::toolName() const
 }
 
 /*!
- \brief Sets \a properties from the configuration file
+ \brief Sets \a properties from the configuration file.
  */
 void OptionsController::setProperties(const QVariantMap& properties)
 {
@@ -128,7 +128,7 @@ void OptionsController::setProperties(const QVariantMap& properties)
 }
 
 /*!
- \brief Returns the coordinate format list for display in the combo box
+ \brief Returns the coordinate format list for display in the combo box.
  */
 QStringList OptionsController::coordinateFormats() const
 {
@@ -136,7 +136,7 @@ QStringList OptionsController::coordinateFormats() const
 }
 
 /*!
- \brief Sets the current coordinate \a format to be used
+ \brief Sets the current coordinate \a format to be used.
  */
 void OptionsController::setCoordinateFormat(const QString& format)
 {
@@ -147,7 +147,7 @@ void OptionsController::setCoordinateFormat(const QString& format)
 }
 
 /*!
- \brief Returns whether to use GPS for elevation for display
+ \brief Returns whether to use GPS for elevation for display.
  */
 bool OptionsController::useGpsForElevation() const
 {
@@ -158,7 +158,7 @@ bool OptionsController::useGpsForElevation() const
 }
 
 /*!
- \brief Sets whether to \a useGps for elevation display
+ \brief Sets whether to \a useGps for elevation display.
  */
 void OptionsController::setUseGpsForElevation(bool useGps)
 {
@@ -169,7 +169,7 @@ void OptionsController::setUseGpsForElevation(bool useGps)
 }
 
 /*!
- \brief Returns the unit of measurement list for display
+ \brief Returns the unit of measurement list for display.
  */
 QStringList OptionsController::units() const
 {
@@ -177,7 +177,7 @@ QStringList OptionsController::units() const
 }
 
 /*!
- \brief Sets the \a unit of measurement
+ \brief Sets the \a unit of measurement.
  */
 void OptionsController::setUnitOfMeasurement(const QString& unit)
 {
@@ -210,7 +210,7 @@ void OptionsController::setUserName(const QString& userName)
 
 /*!
  \brief Returns the initial index.
-  This is used to set the initial index in the combo box to match the controller
+  This is used to set the initial index in the combo box to match the controller.
   */
 int OptionsController::initialFormatIndex() const
 {
@@ -218,8 +218,9 @@ int OptionsController::initialFormatIndex() const
 }
 
 /*!
- \brief Returns the initial index.
-  This is used to set the initial index in the combo box to match the controller
+ \brief Returns the initial index of the list of units.
+
+  This is used to set the initial index in the combo box to match the controller.
   */
 int OptionsController::initialUnitIndex() const
 {

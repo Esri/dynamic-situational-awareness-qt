@@ -26,7 +26,7 @@ namespace Dsa {
 /*!
   \class Viewshed360
   \inherits QObject
-  \brief Abstract class which represents a viewshed which can cover up to 360 degrees.
+  \brief A viewshed which can cover up to 360 degrees.
 
   When in 360 degree mode the primary viewshed will be supplemented by 2 additional
   viewsheds to complete the full arc, since a single viewshed can only cover 120 degrees.
@@ -83,7 +83,7 @@ bool Viewshed360::isVisible() const
 }
 
 /*!
-  \brief Sets the viewshed to be \a visible.
+  \brief Sets whether the viewshed is visible to \a visible.
  */
 void Viewshed360::setVisible(bool visible)
 {
@@ -238,7 +238,7 @@ void Viewshed360::setVerticalAngle(double verticalAngle)
 }
 
 /*!
-  \brief Returns the offset z value of the viewshed in meters.
+  \brief Returns the offset Z value of the viewshed in meters.
 
   The default value is \c 0.0.
  */
@@ -251,7 +251,7 @@ double Viewshed360::offsetZ() const
 /*!
   \brief Sets the offset z value of the viewshed in meters.
 
-  \note This method must be overriden to have any effect.
+  This method must be overriden to have any effect.
  */
 void Viewshed360::setOffsetZ(double)
 {

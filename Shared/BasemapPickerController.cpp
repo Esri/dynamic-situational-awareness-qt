@@ -89,7 +89,7 @@ void BasemapPickerController::setDefaultBasemap(const QString& defaultBasemap)
 }
 
 /*!
-  \brief Reacts to changes to the basemap data path.
+  \brief Handle changes to the basemap data path.
 
   When the path is changed, a list of tile cache files (.tpk) located
   in the directory is built up.

@@ -222,7 +222,7 @@ void MarkupController::setDrawModeEnabled(bool enabled)
 }
 
 /*!
- \internal.
+ \internal
  */
 void MarkupController::init()
 {
@@ -322,7 +322,7 @@ void MarkupController::init()
 }
 
 /*!
- \internal.
+ \internal
  */
 void MarkupController::updateSketch()
 {
@@ -340,7 +340,7 @@ void MarkupController::updateSketch()
 }
 
 /*!
- \internal.
+ \internal
  */
 void MarkupController::updateGeoView()
 {

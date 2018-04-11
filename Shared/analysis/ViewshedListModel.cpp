@@ -45,7 +45,7 @@ ViewshedListModel::ViewshedListModel(QObject* parent) :
 }
 
 /*!
-  \internal.
+  \internal
  */
 void ViewshedListModel::setupRoles()
 {

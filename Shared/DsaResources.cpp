@@ -39,7 +39,7 @@ DsaResources::~DsaResources()
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "2D" icon.
  */
 QUrl DsaResources::icon2d() const
 {
@@ -47,7 +47,7 @@ QUrl DsaResources::icon2d() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "3D" icon.
  */
 QUrl DsaResources::icon3d() const
 {
@@ -55,7 +55,7 @@ QUrl DsaResources::icon3d() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "About Map" icon.
  */
 QUrl DsaResources::iconAboutMap() const
 {
@@ -63,7 +63,7 @@ QUrl DsaResources::iconAboutMap() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Add" icon.
  */
 QUrl DsaResources::iconAdd() const
 {
@@ -71,7 +71,7 @@ QUrl DsaResources::iconAdd() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Add Layer" icon.
  */
 QUrl DsaResources::iconAddLayer() const
 {
@@ -79,7 +79,7 @@ QUrl DsaResources::iconAddLayer() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Alert" icon.
  */
 QUrl DsaResources::iconAlert() const
 {
@@ -87,7 +87,7 @@ QUrl DsaResources::iconAlert() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Alert Condition List" icon.
  */
 QUrl DsaResources::iconAlertConditionList() const
 {
@@ -95,7 +95,7 @@ QUrl DsaResources::iconAlertConditionList() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Alert List" icon.
  */
 QUrl DsaResources::iconAlertList() const
 {
@@ -103,7 +103,7 @@ QUrl DsaResources::iconAlertList() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "App Logo" icon.
  */
 QUrl DsaResources::iconAppLogo() const
 {
@@ -111,7 +111,7 @@ QUrl DsaResources::iconAppLogo() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Choose Basemap" icon.
  */
 QUrl DsaResources::iconChooseBasemap() const
 {
@@ -119,7 +119,7 @@ QUrl DsaResources::iconChooseBasemap() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Close" icon.
  */
 QUrl DsaResources::iconClose() const
 {
@@ -127,7 +127,7 @@ QUrl DsaResources::iconClose() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Color Palette" icon.
  */
 QUrl DsaResources::iconColorPalette() const
 {
@@ -135,7 +135,7 @@ QUrl DsaResources::iconColorPalette() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Complete" icon.
  */
 QUrl DsaResources::iconComplete() const
 {
@@ -143,7 +143,7 @@ QUrl DsaResources::iconComplete() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Coordinate Conversion" icon.
  */
 QUrl DsaResources::iconCoordinateConversion() const
 {
@@ -151,7 +151,7 @@ QUrl DsaResources::iconCoordinateConversion() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Create Report" icon.
  */
 QUrl DsaResources::iconCreateReport() const
 {
@@ -159,7 +159,7 @@ QUrl DsaResources::iconCreateReport() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Current Location" icon.
  */
 QUrl DsaResources::iconCurrentLocation() const
 {
@@ -167,7 +167,7 @@ QUrl DsaResources::iconCurrentLocation() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Distress (Gray)" icon.
  */
 QUrl DsaResources::iconDistressGray() const
 {
@@ -175,7 +175,7 @@ QUrl DsaResources::iconDistressGray() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Distress (Red)" icon.
  */
 QUrl DsaResources::iconDistressRed() const
 {
@@ -183,7 +183,7 @@ QUrl DsaResources::iconDistressRed() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Draw" icon.
  */
 QUrl DsaResources::iconDraw() const
 {
@@ -191,7 +191,7 @@ QUrl DsaResources::iconDraw() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Drawer" icon.
  */
 QUrl DsaResources::iconDrawer() const
 {
@@ -199,7 +199,7 @@ QUrl DsaResources::iconDrawer() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Dsa Home" icon.
  */
 QUrl DsaResources::iconDsaHome() const
 {
@@ -207,7 +207,7 @@ QUrl DsaResources::iconDsaHome() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Follow Location" icon.
  */
 QUrl DsaResources::iconFollowLocation() const
 {
@@ -215,7 +215,7 @@ QUrl DsaResources::iconFollowLocation() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Follow Location (North Up)" icon.
  */
 QUrl DsaResources::iconFollowLocationNorthUp() const
 {
@@ -223,7 +223,7 @@ QUrl DsaResources::iconFollowLocationNorthUp() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Follow Location (Off)" icon.
  */
 QUrl DsaResources::iconFollowLocationOff() const
 {
@@ -231,7 +231,7 @@ QUrl DsaResources::iconFollowLocationOff() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "GPS" icon.
  */
 QUrl DsaResources::iconGps() const
 {
@@ -239,7 +239,7 @@ QUrl DsaResources::iconGps() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "GPS (Off)" icon.
  */
 QUrl DsaResources::iconGpsOff() const
 {
@@ -247,7 +247,7 @@ QUrl DsaResources::iconGpsOff() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Home" icon.
  */
 QUrl DsaResources::iconHome() const
 {
@@ -255,7 +255,7 @@ QUrl DsaResources::iconHome() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Layers" icon.
  */
 QUrl DsaResources::iconLayers() const
 {
@@ -263,7 +263,7 @@ QUrl DsaResources::iconLayers() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Line Width" icon.
  */
 QUrl DsaResources::iconLineWidth() const
 {
@@ -271,7 +271,7 @@ QUrl DsaResources::iconLineWidth() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "List View" icon.
  */
 QUrl DsaResources::iconListView() const
 {
@@ -279,20 +279,23 @@ QUrl DsaResources::iconListView() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Map" icon.
  */
 QUrl DsaResources::iconMap() const
 {
   return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_mapview_dark_d.png");
 }
 
+/*!
+  \brief Returns the URL to the "Menu" icon.
+ */
 QUrl DsaResources::iconMenu() const
 {
   return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_overflowcirclessmall_dark_d.png");
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Messages" icon.
  */
 QUrl DsaResources::iconMessages() const
 {
@@ -300,7 +303,7 @@ QUrl DsaResources::iconMessages() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Pin" icon.
  */
 QUrl DsaResources::iconPin() const
 {
@@ -308,7 +311,7 @@ QUrl DsaResources::iconPin() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Point" icon.
  */
 QUrl DsaResources::iconPoint() const
 {
@@ -316,7 +319,7 @@ QUrl DsaResources::iconPoint() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Polygon" icon.
  */
 QUrl DsaResources::iconPolygon() const
 {
@@ -324,7 +327,7 @@ QUrl DsaResources::iconPolygon() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Polyline" icon.
  */
 QUrl DsaResources::iconPolyline() const
 {
@@ -332,7 +335,7 @@ QUrl DsaResources::iconPolyline() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Raster" icon.
  */
 QUrl DsaResources::iconRaster() const
 {
@@ -340,7 +343,7 @@ QUrl DsaResources::iconRaster() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Remove" icon.
  */
 QUrl DsaResources::iconRemove() const
 {
@@ -348,7 +351,7 @@ QUrl DsaResources::iconRemove() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Report" icon.
  */
 QUrl DsaResources::iconReport() const
 {
@@ -356,7 +359,7 @@ QUrl DsaResources::iconReport() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Rotate" icon.
  */
 QUrl DsaResources::iconRotate() const
 {
@@ -364,7 +367,7 @@ QUrl DsaResources::iconRotate() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Save" icon.
  */
 QUrl DsaResources::iconSave() const
 {
@@ -372,7 +375,7 @@ QUrl DsaResources::iconSave() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Send Map" icon.
  */
 QUrl DsaResources::iconSendMap() const
 {
@@ -380,7 +383,7 @@ QUrl DsaResources::iconSendMap() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Settings" icon.
  */
 QUrl DsaResources::iconSettings() const
 {
@@ -388,7 +391,7 @@ QUrl DsaResources::iconSettings() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Sketch" icon.
  */
 QUrl DsaResources::iconSketch() const
 {
@@ -396,7 +399,7 @@ QUrl DsaResources::iconSketch() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Tools" icon.
  */
 QUrl DsaResources::iconTools() const
 {
@@ -404,7 +407,7 @@ QUrl DsaResources::iconTools() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Touch" icon.
  */
 QUrl DsaResources::iconTouch() const
 {
@@ -412,7 +415,7 @@ QUrl DsaResources::iconTouch() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Trash" icon.
  */
 QUrl DsaResources::iconTrash() const
 {
@@ -420,7 +423,7 @@ QUrl DsaResources::iconTrash() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Viewshed" icon.
  */
 QUrl DsaResources::iconViewshed() const
 {
@@ -428,7 +431,7 @@ QUrl DsaResources::iconViewshed() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Zoom To" icon.
  */
 QUrl DsaResources::iconZoomTo() const
 {
@@ -436,7 +439,7 @@ QUrl DsaResources::iconZoomTo() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Warning (Green)" icon.
  */
 QUrl DsaResources::iconWarningGreen() const
 {
@@ -444,7 +447,7 @@ QUrl DsaResources::iconWarningGreen() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Warning (Orange)" icon.
  */
 QUrl DsaResources::iconWarningOrange() const
 {
@@ -452,7 +455,7 @@ QUrl DsaResources::iconWarningOrange() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Warning (Red)" icon.
  */
 QUrl DsaResources::iconWarningRed() const
 {
@@ -460,7 +463,7 @@ QUrl DsaResources::iconWarningRed() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Warning (Red Exclamation)" icon.
  */
 QUrl DsaResources::iconWarningRedExclamation() const
 {
@@ -468,7 +471,7 @@ QUrl DsaResources::iconWarningRedExclamation() const
 }
 
 /*!
-  \brief Returns an icon URL.
+  \brief Returns the URL to the "Line Of Sight" icon.
  */
 QUrl DsaResources::iconLineOfSight() const
 {

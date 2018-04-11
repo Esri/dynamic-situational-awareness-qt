@@ -53,15 +53,15 @@ bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map);
 /*!
   \class DsaController
   \inherits QObject
-  \brief This is the controller for the Dsa app. It is responsible for connecting the
-  view (e.g. the \l Esri::ArcGISRuntime::GeoView) to the business logic of the app.
+  \brief This is the controller for the DSA app. It is responsible for connecting the
+  view (such as the \l Esri::ArcGISRuntime::GeoView) to the business logic of the app.
 
   For example, signals from the view are passed to the \l Toolkit::ToolResourceProvider
   where they can be accessed by the list of \l Esri::ArcGISRuntime::Toolkit::AbstractTool objects stored in
   the \l Esri::ArcGISRuntime::Toolkit::ToolManager.
 
-  This type is also responsible for reading and writing app configuratiom details to
-  a JSON settings file. Information in the JSON file is sent to eacch tool as a set of
+  This type is also responsible for reading and writing app configuration details to
+  a JSON settings file. Information in the JSON file is sent to each tool as a set of
   properties.
  */
 
@@ -103,7 +103,7 @@ Scene* DsaController::scene() const
 /*!
   \brief Initialize the app with the Esri::ArcGISRuntime::GeoView \a geoView.
 
-  When this method is called, the various tools etc. in the app are initialized.
+  When this method is called, the various tools in the app are initialized.
  */
 void DsaController::init(GeoView* geoView)
 {
@@ -214,7 +214,7 @@ void DsaController::onToolError(const QString& errorMessage, const QString& addi
 }
 
 /*!
- * \brief Handles a change to the \a propertyName to the new value \l propertyValue.
+ * \brief Slot to handle a change to the \a propertyName to the new value \l propertyValue.
  */
 void DsaController::onPropertyChanged(const QString& propertyName, const QVariant& propertyValue)
 {

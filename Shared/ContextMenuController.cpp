@@ -181,7 +181,7 @@ void ContextMenuController::onMousePressedAndHeld(QMouseEvent& event)
 }
 
 /*!
-  \internal.
+  \internal
 
   Handle the result of an identify layers task.
  */
@@ -215,7 +215,7 @@ void ContextMenuController::onIdentifyLayersCompleted(const QUuid& taskId, const
 }
 
 /*!
-  \internal.
+  \internal
 
   Handle the result of an identify graphics overlays task.
  */
@@ -259,7 +259,7 @@ void ContextMenuController::onIdentifyGraphicsOverlaysCompleted(const QUuid& tas
 
 
 /*!
-  \internal.
+  \internal
 
   Handle the result of a screen to location task.
  */
@@ -309,7 +309,7 @@ void ContextMenuController::setContextLocation(const Point& location)
 }
 
 /*!
-  \internal.
+  \internal
 
   Add \a option to the list of actions which are valid in this context.
  */
@@ -327,7 +327,7 @@ void ContextMenuController::addOption(const QString& option)
 }
 
 /*!
-  \internal.
+  \internal
 
   Clear the list of actions which are valid in this context.
  */

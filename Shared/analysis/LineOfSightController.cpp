@@ -54,7 +54,7 @@ namespace Dsa {
  */
 
 /*!
-  \internal.
+  \internal
  */
 void LineOfSightController::getLocationGeoElement()
 {
@@ -73,7 +73,7 @@ int LineOfSightController::visibleByCount() const
 }
 
 /*!
-  \internal.
+  \internal
  */
 void LineOfSightController::setVisibleByCount(int visibleByCount)
 {

@@ -31,7 +31,7 @@ namespace Dsa {
  */
 
 /*!
-  \brief Returns the platform independent data path \c [HOME]/ArcGIS/Runtime/Data/DSA.
+  \brief Returns the platform independent data path to \c [HOME]/ArcGIS/Runtime/Data/DSA.
  */
 QString DsaUtility::dataPath()
 {
@@ -63,7 +63,7 @@ Point DsaUtility::montereyCA()
 /*!
   \brief Returns the distance in meters between the \a from and \a to points.
 
-  \note Assumes both points are in the same Spatial Reference.
+  \note Assumes both points are in the same spatial reference.
  */
 double DsaUtility::distance3D(const Point& from, const Point& to)
 {
@@ -76,7 +76,7 @@ double DsaUtility::distance3D(const Point& from, const Point& to)
 }
 
 /*!
-  \brief Returns \a point as a cartesian point.
+  \brief Returns \a point as a Cartesian point.
  */
 QVector3D DsaUtility::toCartesianPoint(const Point& point)
 {

@@ -37,7 +37,7 @@ static const QString s_headingAttribute{"heading"};
 /*!
   \class LocationDisplay3d
   \inherits QObject
-  \brief Class for managing the display of the apps location in 3D.
+  \brief Class for managing the display of the current location in 3D.
 
   The position is displayed as a \l Esri::ArcGISRuntime::Graphic in
   a \l Esri::ArcGISRuntime::GraphicsOverlay.
@@ -252,7 +252,7 @@ void LocationDisplay3d::setDefaultSymbol(Symbol* defaultSymbol)
 }
 
 /*!
-  \internal.
+  \internal
  */
 void LocationDisplay3d::postLastKnownLocationUpdate()
 {

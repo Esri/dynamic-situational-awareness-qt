@@ -147,7 +147,7 @@ void AnalysisListController::zoomToLocation(const Point& point)
   if (m_sceneView == nullptr)
     return;
 
-  // create a new Camera (using the existing heading, pucth etc.) focused on the supplied point
+  // create a new Camera (using the existing heading, pitch etc.) focused on the supplied point
   const Camera currentCam = m_sceneView->currentViewpointCamera();
   constexpr double targetDistance = 1500.0;
   const Camera newCam(point, targetDistance, currentCam.heading(), currentCam.pitch(), currentCam.roll());

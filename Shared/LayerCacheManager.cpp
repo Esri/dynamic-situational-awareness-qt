@@ -331,7 +331,7 @@ void LayerCacheManager::onLayerListChanged()
 }
 
 /*!
- \brief Returns the layer JSON array.
+ \brief Returns the LayerCacheManager's list of layers as a JSON array.
 */
 QJsonArray LayerCacheManager::layerJson() const
 {

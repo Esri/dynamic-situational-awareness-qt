@@ -37,7 +37,7 @@ constexpr double c_defaultOffsetZ = 5.0;
 /*!
   \class GeoElementViewshed360
   \inherits Viewshed360
-  \brief This type represents a 360 degree viewshed centered upon a GeoElement
+  \brief A 360 degree viewshed centered upon a GeoElement.
 
   \sa Esri::ArcGISRuntime::GeoElement
   */
@@ -195,7 +195,7 @@ double GeoElementViewshed360::offsetZ() const
 }
 
 /*!
-  \brief Sets the offset z value to \a offsetZ meters.
+  \brief Sets the offset Z value to \a offsetZ meters.
  */
 void GeoElementViewshed360::setOffsetZ(double offsetZ)
 {
@@ -228,7 +228,7 @@ bool GeoElementViewshed360::isPitchEnabled() const
 }
 
 /*!
-  \brief Returns whether offset z is enabled for the viewshed.
+  \brief Returns whether offset Z is enabled for the viewshed.
 
   \note For this type, the value is always \c true.
  */

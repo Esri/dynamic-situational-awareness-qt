@@ -119,7 +119,7 @@ void MessageFeed::setMessagesOverlay(MessagesOverlay* messagesOverlay)
 }
 
 /*!
-  \internal.
+  \internal
  */
 void MessageFeed::updateOverlay()
 {

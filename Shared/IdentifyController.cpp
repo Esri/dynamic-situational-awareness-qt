@@ -37,7 +37,7 @@ namespace Dsa {
 /*!
   \class IdentifyController
   \inherits Toolkit::AbstractTool
-  \brief Tool comntroller for identifying GeoElements.
+  \brief Tool controller for identifying GeoElements.
  */
 
 /*!

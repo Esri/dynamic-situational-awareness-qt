@@ -54,6 +54,7 @@ public:
   QVariantList popupManagers() const;
 
   void showPopup(Esri::ArcGISRuntime::GeoElement* geoElement, const QString& popupTitle);
+  void showPopups(const QHash<QString, QList<Esri::ArcGISRuntime::GeoElement*>>& geoElementsByTitle);
 
 private slots:
   void onMouseClicked(QMouseEvent& event);

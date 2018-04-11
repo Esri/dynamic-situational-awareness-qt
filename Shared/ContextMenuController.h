@@ -94,6 +94,7 @@ private:
   void setResultTitle(const QString& resultTitle);
   void cancelTasks();
   void cancelIdentifyTasks();
+  void processGeoElements();
 
   bool m_contextActive = false;
   QPoint m_contextScreenPosition{0, 0};
@@ -105,7 +106,8 @@ private:
   Esri::ArcGISRuntime::TaskWatcher m_identifyFeaturesTask;
   Esri::ArcGISRuntime::TaskWatcher m_identifyGraphicsTask;
   Esri::ArcGISRuntime::TaskWatcher m_screenToLocationTask;
-  Esri::ArcGISRuntime::GeoElement* m_contextElement = nullptr;
+  QHash<QString, QList<Esri::ArcGISRuntime::GeoElement*>> m_contextFeatures;
+  QHash<QString, QList<Esri::ArcGISRuntime::GeoElement*>> m_contextGraphics;
 };
 
 } // Dsa

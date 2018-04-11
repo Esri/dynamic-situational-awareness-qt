@@ -131,6 +131,32 @@ void IdentifyController::showPopup(GeoElement* geoElement, const QString& popupT
 }
 
 /*!
+  \brief Show popups for all of the \a geoElementsByTitle.
+
+  A popup will be created for each \l Esri::ArcGISRuntime::GeoElement in the QHash,
+  with the string key as the title.
+ */
+void IdentifyController::showPopups(const QHash<QString, QList<GeoElement*>>& geoElementsByTitle)
+{
+  if (geoElementsByTitle.isEmpty())
+    return;
+
+  m_popupManagers.clear();
+  emit popupManagersChanged();
+
+  auto it = geoElementsByTitle.cbegin();
+  auto itEnd = geoElementsByTitle.cend();
+  for (; it != itEnd; ++it)
+  {
+    const QString& popupTitle = it.key();
+    for (GeoElement* geoElement : qAsConst(it.value()))
+      addGeoElementPopup(geoElement, popupTitle);
+  }
+
+  emit popupManagersChanged();
+}
+
+/*!
   \brief Handles a mouse-click event in the view - used to trigger identify graphics and features tasks.
  */
 void IdentifyController::onMouseClicked(QMouseEvent& event)

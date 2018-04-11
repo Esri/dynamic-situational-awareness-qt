@@ -107,8 +107,8 @@ private:
   QSharedDataPointer<MessageData> d;
 };
 
-Q_DECLARE_METATYPE(Message::MessageAction)
-
 } // Dsa
+
+Q_DECLARE_METATYPE(Dsa::Message::MessageAction)
 
 #endif // MESSAGE_H

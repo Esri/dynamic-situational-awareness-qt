@@ -58,7 +58,7 @@ FollowPositionController::~FollowPositionController()
 }
 
 /*!
-  \brief Initialises the tool with a \a geoView.
+  \brief Initializes the tool with a \a geoView.
  */
 void FollowPositionController::init(GeoView* geoView)
 {

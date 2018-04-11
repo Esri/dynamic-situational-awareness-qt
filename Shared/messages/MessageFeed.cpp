@@ -88,7 +88,7 @@ bool MessageFeed::isFeedVisible() const
 }
 
 /*!
-  \brief Setsthis whether this message feed is visible to \a feedVisible.
+  \brief Sets whether this message feed is visible to \a feedVisible.
  */
 void MessageFeed::setFeedVisible(bool feedVisible)
 {

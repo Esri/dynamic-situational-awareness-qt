@@ -59,7 +59,7 @@ Viewshed360::~Viewshed360()
 }
 
 /*!
-  \brief Removes the viewshed from the \l \l Esri::ArcGISRuntime::AnalysisOverlay.
+  \brief Removes the viewshed from the \l Esri::ArcGISRuntime::AnalysisOverlay.
  */
 void Viewshed360::removeFromOverlay()
 {
@@ -122,7 +122,7 @@ void Viewshed360::setName(const QString& name)
 }
 
 /*!
-  \brief Returns the minimum distance of the viewshed in meters.
+  \brief Returns the minimum distance in meters from the observer at which visibility will be evaluated.
  */
 double Viewshed360::minDistance() const
 {
@@ -130,7 +130,7 @@ double Viewshed360::minDistance() const
 }
 
 /*!
-  \brief Sets the minimum distance of the viewshed to \a minDistance meters.
+  \brief Sets the minimum distance in meters from the observer at which visibility will be evaluated to \a minDistance meters.
  */
 void Viewshed360::setMinDistance(double minDistance)
 {
@@ -148,7 +148,7 @@ void Viewshed360::setMinDistance(double minDistance)
 }
 
 /*!
-  \brief Returns the maximum distance of the viewshed in meters.
+  \brief Returns the maximum distance in meters from the observer at which visibility will be evaluated.
  */
 double Viewshed360::maxDistance() const
 {
@@ -156,7 +156,7 @@ double Viewshed360::maxDistance() const
 }
 
 /*!
-  \brief Sets the maximum distance of the viewshed to \a maxDistance meters.
+  \brief Sets the maximum distance in meters from the observer at which visibility will be evaluated to \a maxDistance meters.
  */
 void Viewshed360::setMaxDistance(double maxDistance)
 {
@@ -174,7 +174,7 @@ void Viewshed360::setMaxDistance(double maxDistance)
 }
 
 /*!
-  \brief Returns the horizontal angle of the viewshed in degrees.
+  \brief Returns the horizontal angle in degrees of the observer's field of vision.
  */
 double Viewshed360::horizontalAngle() const
 {
@@ -188,7 +188,7 @@ double Viewshed360::horizontalAngle() const
 }
 
 /*!
-  \brief Sets the horizontal angle of the viewshed to \a horizontalAngle degrees.
+  \brief Sets the horizontal angle in degrees of the observer's field of vision to \a horizontalAngle.
 
   \note If the viewshed is set to be 360 degrees, this is ignored.
  */
@@ -206,7 +206,7 @@ void Viewshed360::setHorizontalAngle(double horizontalAngle)
 }
 
 /*!
-  \brief Returns the vertical angle of the viewshed in degrees.
+  \brief Returns the vertical angle in degrees of the observer's field of vision.
  */
 double Viewshed360::verticalAngle() const
 {
@@ -220,7 +220,7 @@ double Viewshed360::verticalAngle() const
 }
 
 /*!
-  \brief Sets the vertical angle of the viewshed to \a verticalAngle degrees.
+  \brief Sets the vertical angle in degrees of the observer's field of vision to \a verticalAngle.
 
   \note If the viewshed is set to be 360 degrees, this is ignored.
  */

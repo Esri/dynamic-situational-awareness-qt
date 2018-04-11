@@ -46,10 +46,10 @@ constexpr double c_defaultOffsetZ = 5.0;
   \brief Constructor for a 360 degree viewshed centered upon a GeoElement.
 
   \list
-    \li \a geoElement - The \l Esri::ArcGISRuntime::GeoElement which the viewshehd will be centered upon.
+    \li \a geoElement - The \l Esri::ArcGISRuntime::GeoElement which the viewshed will be centered upon.
     \li \a analysisOverlay - The \l Esri::ArcGISRuntime::AnalysisOverlay which contains the viewshed.
-    \li \a headingAttribute - the name of the heading attribute in degrees.
-    \li \a pitchAttribute - the name of the pitch attribute in degrees.
+    \li \a headingAttribute - the name of the heading attribute.
+    \li \a pitchAttribute - the name of the pitch attribute.
     \li \a parent - An optional parent.
   \endlist
  */

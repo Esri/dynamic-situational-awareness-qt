@@ -119,7 +119,7 @@ GeoView* MessagesOverlay::geoView() const
 }
 
 /*!
-  \brief Adds the \l Message \a message to the overlay. Returns whether adding was succesful.
+  \brief Adds the \l Message \a message to the overlay. Returns whether adding was successful.
  */
 bool MessagesOverlay::addMessage(const Message& message)
 {

@@ -164,7 +164,7 @@ void ViewshedListModel::clear()
 }
 
 /*!
-  \brief Returns the num ber of rows in the model.
+  \brief Returns the number of rows in the model.
  */
 int ViewshedListModel::rowCount(const QModelIndex&) const
 {

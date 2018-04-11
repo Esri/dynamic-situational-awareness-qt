@@ -71,7 +71,7 @@ struct GeometryQuadtree::QuadTree
   \brief This class builds a Quadtree spatial structure covering a set of
   \l Esri::ArcGISRuntime::GeoElement objects.
 
-  The tree then allows geometric tests for candifate intersections against
+  The tree then allows geometric tests for candidate intersections against
   query geometries.
  */
 

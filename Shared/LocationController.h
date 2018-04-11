@@ -42,7 +42,7 @@ class LocationController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 
   Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled NOTIFY enabledChanged)
   Q_PROPERTY(bool locationVisible READ isLocationVisible WRITE setLocationVisible NOTIFY locationVisibleChanged)
-  Q_PROPERTY(bool simulated READ isSimulated WRITE setSimulated NOTIFY simulatedChanged)
+  Q_PROPERTY(bool simulationEnabled READ isSimulationEnabled WRITE setSimulationEnabled NOTIFY simulationEnabledChanged)
   Q_PROPERTY(QString gpxFilePath READ gpxFilePath WRITE setGpxFilePath NOTIFY gpxFilePathChanged)
 
 public:
@@ -62,8 +62,8 @@ public:
   bool isLocationVisible() const;
   void setLocationVisible(bool isVisible);
 
-  bool isSimulated() const;
-  void setSimulated(bool isSimulated);
+  bool isSimulationEnabled() const;
+  void setSimulationEnabled(bool isSimulationEnabled);
 
   Esri::ArcGISRuntime::Point currentLocation() const;
 
@@ -89,7 +89,7 @@ signals:
   void gpxFilePathChanged();
   void enabledChanged();
   void locationVisibleChanged();
-  void simulatedChanged();
+  void simulationEnabledChanged();
   void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
 
   // see setRelativeHeadingSceneView
@@ -99,7 +99,7 @@ private slots:
   void updateGeoView();
 
 private:
-  void initPositionInfoSource(bool isSimulated);
+  void initPositionInfoSource(bool isSimulationEnabled);
   void clearPositionInfoSource();
   QUrl modelSymbolPath() const;
 

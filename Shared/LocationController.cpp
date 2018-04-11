@@ -196,7 +196,7 @@ QString LocationController::toolName() const
 void LocationController::setProperties(const QVariantMap& properties)
 {
   bool simulate = QString::compare(properties[SIMULATE_LOCATION_PROPERTYNAME].toString(), QString("true"), Qt::CaseInsensitive) == 0;
-  setSimulated(simulate);
+  setSimulationEnabled(simulate);
   setGpxFilePath(properties[GPX_FILE_PROPERTYNAME].toString());
   setIconDataPath(properties[RESOURCE_DIRECTORY_PROPERTYNAME].toString());
 }
@@ -245,14 +245,14 @@ bool LocationController::isLocationVisible() const
 }
 
 /*!
-  \brief Sets whether the location is visible to \a isVisible.
+  \brief Sets whether the location is visible to \a visible.
  */
-void LocationController::setLocationVisible(bool isVisible)
+void LocationController::setLocationVisible(bool visible)
 {
-  if (m_locationDisplay3d->isStarted() == isVisible)
+  if (m_locationDisplay3d->isStarted() == visible)
     return;
 
-  if (isVisible)
+  if (visible)
     m_locationDisplay3d->start();
   else
     m_locationDisplay3d->stop();
@@ -263,7 +263,7 @@ void LocationController::setLocationVisible(bool isVisible)
 /*!
   \brief Returns whether the location is simulated.
  */
-bool LocationController::isSimulated() const
+bool LocationController::isSimulationEnabled() const
 {
   return m_simulated;
 }
@@ -271,7 +271,7 @@ bool LocationController::isSimulated() const
 /*!
   \brief Sets whether the location is simulated to \a simulated.
  */
-void LocationController::setSimulated(bool simulated)
+void LocationController::setSimulationEnabled(bool simulated)
 {
   if (m_simulated == simulated)
     return;
@@ -291,7 +291,7 @@ void LocationController::setSimulated(bool simulated)
   }
 
   m_simulated = simulated;
-  emit simulatedChanged();
+  emit simulationEnabledChanged();
   emit propertyChanged(SIMULATE_LOCATION_PROPERTYNAME, m_simulated);
 }
 

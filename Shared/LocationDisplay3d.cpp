@@ -100,7 +100,7 @@ bool LocationDisplay3d::isStarted() const
 }
 
 /*!
-  \brief Returns whether the position source for the location.
+  \brief Returns the position source for the location display.
  */
 QGeoPositionInfoSource* LocationDisplay3d::positionSource() const
 {
@@ -108,7 +108,7 @@ QGeoPositionInfoSource* LocationDisplay3d::positionSource() const
 }
 
 /*!
-  \brief Sets the position source for the location to \a positionSource.
+  \brief Sets the position source for the location display to \a positionSource.
  */
 void LocationDisplay3d::setPositionSource(QGeoPositionInfoSource* positionSource)
 {
@@ -168,7 +168,7 @@ void LocationDisplay3d::setPositionSource(QGeoPositionInfoSource* positionSource
 }
 
 /*!
-  \brief Returns the compass for the location.
+  \brief Returns the compass for the location display.
  */
 QCompass* LocationDisplay3d::compass() const
 {
@@ -176,7 +176,7 @@ QCompass* LocationDisplay3d::compass() const
 }
 
 /*!
-  \brief Sets the compass for the location to \a compass.
+  \brief Sets the compass for the location display to \a compass.
  */
 void LocationDisplay3d::setCompass(QCompass* compass)
 {

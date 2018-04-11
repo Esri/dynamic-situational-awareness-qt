@@ -37,7 +37,7 @@ namespace Dsa {
   \inherits Toolkit::AbstractTool
   \brief Tool controller for working with the list of Analysis objects.
 
-  Analyses are the result of either a viewshed or line of sight opertaion.
+  Analyses are the result of either a viewshed or line of sight operation.
 
   This tool presents the list of currently active analyses and allows these to
   be removed, set visible etc.

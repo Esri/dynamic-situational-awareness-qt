@@ -391,7 +391,7 @@ QAbstractListModel* ViewshedController::viewsheds() const
 }
 
 /*!
-  \brief Returns the name of this tool.
+  \brief Returns the name of this tool - \c "viewshed".
  */
 QString ViewshedController::toolName() const
 {

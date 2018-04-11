@@ -95,7 +95,7 @@ DsaController::~DsaController()
 /*!
   \brief Returns the Esri::ArcGISRuntime::Scene used by the app.
  */
-Esri::ArcGISRuntime::Scene* DsaController::scene() const
+Scene* DsaController::scene() const
 {
   return m_scene;
 }

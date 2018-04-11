@@ -77,7 +77,7 @@ MessageFeedsController::~MessageFeedsController()
 }
 
 /*!
-  \brief Sets the GeoView for the MessageOverlay objects to \a geoView.
+  \brief Sets the GeoView for the MessagesOverlay objects to \a geoView.
  */
 void MessageFeedsController::setGeoView(GeoView* geoView)
 {
@@ -165,10 +165,10 @@ QString MessageFeedsController::toolName() const
 
   Applicable properties are:
   \list
-    \li RESOURCE_DIRECTORY_PROPERTYNAME - The resource directory where symbol style files are located.
-    \li MESSAGE_FEED_UDP_PORTS_PROPERTYNAME - The UDP ports for listening to message feeds.
-    \li MESSAGE_FEEDS_PROPERTYNAME - A list of message feed configurations.
-    \li LOCATION_BROADCAST_CONFIG_PROPERTYNAME - The location broadcast configuration details.
+    \li \c ResourceDirectory - The resource directory where symbol style files are located.
+    \li \c MessageFeedUdpPorts - The UDP ports for listening to message feeds.
+    \li \c MessageFeeds - A list of message feed configurations.
+    \li \c LocationBroadcastConfig - The location broadcast configuration details.
     \li \c UserName - the name of the user to be broadcast.
   \endlist
  */

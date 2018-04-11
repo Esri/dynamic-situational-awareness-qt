@@ -144,9 +144,7 @@ void IdentifyController::showPopups(const QHash<QString, QList<GeoElement*>>& ge
   m_popupManagers.clear();
   emit popupManagersChanged();
 
-  auto it = geoElementsByTitle.cbegin();
-  auto itEnd = geoElementsByTitle.cend();
-  for (; it != itEnd; ++it)
+  for (auto it = geoElementsByTitle.cbegin(); it != geoElementsByTitle.cend(); ++it)
   {
     const QString& popupTitle = it.key();
     for (GeoElement* geoElement : qAsConst(it.value()))

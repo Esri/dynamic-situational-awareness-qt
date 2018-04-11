@@ -177,11 +177,9 @@ void ContextMenuController::onIdentifyLayersCompleted(const QUuid& taskId, const
     if (!res)
       continue;
 
-    QList<GeoElement*> geoElements = res->geoElements();
-    auto gIt = geoElements.begin();
-    auto gEnd = geoElements.end();
-    for(; gIt != gEnd; ++gIt)
-      (*gIt)->setParent(this); // set the GeoElements to be managed by the tool
+    auto geoElements = res->geoElements();
+    for(GeoElement* geoElement : qAsConst(geoElements))
+      geoElement->setParent(this); // set the GeoElements to be managed by the tool
 
     // add the geoElements to the context hash using the layer name as the key
     m_contextFeatures.insert(res->layerContent()->name(), geoElements);
@@ -367,7 +365,7 @@ void ContextMenuController::processGeoElements()
   // if either of the identify tasks is still in progress, return.
   if ((m_identifyFeaturesTask.isValid() && !m_identifyFeaturesTask.isDone()) ||
       (m_identifyGraphicsTask.isValid() && !m_identifyGraphicsTask.isDone()))
-      return;
+    return;
 
   if (m_contextFeatures.isEmpty() && m_contextGraphics.isEmpty())
     return;
@@ -376,12 +374,9 @@ void ContextMenuController::processGeoElements()
   addOption(IDENTIFY_OPTION);
 
   int pointGraphicsCount = 0;
-  auto gIt = m_contextGraphics.cbegin();
-  auto gEnd = m_contextGraphics.cend();
-  for (; gIt != gEnd; ++gIt)
+  for (const auto& geoElements : qAsConst(m_contextGraphics))
   {
-    const QList<GeoElement*>& geoElements = gIt.value();
-    for (GeoElement* geoElement : qAsConst(geoElements))
+    for (GeoElement* geoElement : geoElements)
     {
       if (geoElement->geometry().geometryType() == GeometryType::Point)
         pointGraphicsCount++;
@@ -398,12 +393,9 @@ void ContextMenuController::processGeoElements()
   }
 
   // if were have 0 point graphics, check whether we have any point features
-  auto fIt = m_contextFeatures.cbegin();
-  auto fEnd = m_contextFeatures.cend();
-  for (; fIt != fEnd; ++fIt)
+  for (const auto& geoElements : qAsConst(m_contextFeatures))
   {
-    const QList<GeoElement*>& geoElements = fIt.value();
-    for (GeoElement* geoElement : qAsConst(geoElements))
+    for (GeoElement* geoElement : geoElements)
     {
       if (geoElement && geoElement->geometry().geometryType() == GeometryType::Point)
       {
@@ -489,12 +481,9 @@ void ContextMenuController::selectOption(const QString& option)
       return;
 
     // follow the 1st point graphic (should be only 1)
-    auto gIt = m_contextGraphics.cbegin();
-    auto gEnd = m_contextGraphics.cend();
-    for(; gIt != gEnd; ++gIt)
+    for(const auto& geoElements : qAsConst(m_contextGraphics))
     {
-      const QList<GeoElement*>& geoElements = gIt.value();
-      for (GeoElement* geoElement : qAsConst(geoElements))
+      for (GeoElement* geoElement : geoElements)
       {
         if (!geoElement || geoElement->geometry().geometryType() != GeometryType::Point)
           continue;
@@ -525,9 +514,7 @@ void ContextMenuController::selectOption(const QString& option)
     // follow the 1st point graphic (should be only 1)
     auto losFunc = [lineOfSightTool](const QHash<QString, QList<GeoElement*>>& geoElementsByTitle)
     {
-      auto gIt = geoElementsByTitle.cbegin();
-      auto gEnd = geoElementsByTitle.cend();
-      for(; gIt != gEnd; ++gIt)
+      for(auto gIt = geoElementsByTitle.cbegin(); gIt != geoElementsByTitle.cend(); ++gIt)
       {
         const QList<GeoElement*>& geoElements = gIt.value();
         for (GeoElement* geoElement : qAsConst(geoElements))

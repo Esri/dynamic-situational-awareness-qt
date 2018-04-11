@@ -48,7 +48,13 @@ namespace Dsa {
 const QString MessageFeedsController::RESOURCE_DIRECTORY_PROPERTYNAME = "ResourceDirectory";
 
 /*!
-   \brief Constructs a default MessageFeedsController with an optional \a parent.
+  \class MessageFeedsController
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller for working with the list of message feeds.
+ */
+
+/*!
+  \brief Constructs a default MessageFeedsController with an optional \a parent.
  */
 MessageFeedsController::MessageFeedsController(QObject* parent) :
   Toolkit::AbstractTool(parent),
@@ -64,14 +70,14 @@ MessageFeedsController::MessageFeedsController(QObject* parent) :
 }
 
 /*!
-   \brief Destructor
+  \brief Destructor
  */
 MessageFeedsController::~MessageFeedsController()
 {
 }
 
 /*!
-   \brief Sets the GeoView for the MessageOverlay objects to \a geoView.
+  \brief Sets the GeoView for the MessagesOverlay objects to \a geoView.
  */
 void MessageFeedsController::setGeoView(GeoView* geoView)
 {
@@ -79,7 +85,7 @@ void MessageFeedsController::setGeoView(GeoView* geoView)
 }
 
 /*!
-   \brief Returns the message feeds list model.
+  \brief Returns the message feeds list model.
  */
 QAbstractListModel* MessageFeedsController::messageFeeds() const
 {
@@ -96,11 +102,11 @@ QList<DataListener*> MessageFeedsController::dataListeners() const
 }
 
 /*!
-   \brief Adds and registers a data listener object to be used by the message feeds.
+  \brief Adds and registers a data listener object to be used by the message feeds.
 
-   \list
-     \li \a dataListener - The data listener object to add to the controller.
-   \endlist
+  \list
+    \li \a dataListener - The data listener object to add to the controller.
+  \endlist
  */
 void MessageFeedsController::addDataListener(DataListener* dataListener)
 {
@@ -130,11 +136,11 @@ void MessageFeedsController::addDataListener(DataListener* dataListener)
 }
 
 /*!
-   \brief Removes a data listener object from the controller.
+  \brief Removes a data listener object from the controller.
 
-   \list
-     \li \a dataListener - The data listener object to remove from the controller.
-   \endlist
+  \list
+    \li \a dataListener - The data listener object to remove from the controller.
+  \endlist
  */
 void MessageFeedsController::removeDataListener(DataListener* dataListener)
 {
@@ -147,7 +153,7 @@ void MessageFeedsController::removeDataListener(DataListener* dataListener)
 }
 
 /*!
-   \brief Returns the name of the message feeds controller.
+  \brief Returns the name of the message feeds controller.
  */
 QString MessageFeedsController::toolName() const
 {
@@ -155,16 +161,16 @@ QString MessageFeedsController::toolName() const
 }
 
 /*!
-   \brief Sets \a properties for configuring the message feeds controller.
+  \brief Sets \a properties for configuring the message feeds controller.
 
-   Applicable properties are:
-   \list
-     \li RESOURCE_DIRECTORY_PROPERTYNAME - The resource directory where symbol style files are located.
-     \li MESSAGE_FEED_UDP_PORTS_PROPERTYNAME - The UDP ports for listening to message feeds.
-     \li MESSAGE_FEEDS_PROPERTYNAME - A list of message feed configurations.
-     \li LOCATION_BROADCAST_CONFIG_PROPERTYNAME - The location broadcast configuration details.
-     \li \c UserName - the name of the user to be broadcast.
-   \endlist
+  Applicable properties are:
+  \list
+    \li \c ResourceDirectory - The resource directory where symbol style files are located.
+    \li \c MessageFeedUdpPorts - The UDP ports for listening to message feeds.
+    \li \c MessageFeeds - A list of message feed configurations.
+    \li \c LocationBroadcastConfig - The location broadcast configuration details.
+    \li \c UserName - the name of the user to be broadcast.
+  \endlist
  */
 void MessageFeedsController::setProperties(const QVariantMap& properties)
 {
@@ -236,7 +242,7 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
 }
 
 /*!
-   \brief Sets the data path to be used for symbol style resources as \a resourcePath.
+  \brief Sets the data path to be used for symbol style resources as \a resourcePath.
  */
 void MessageFeedsController::setResourcePath(const QString& resourcePath)
 {
@@ -260,9 +266,9 @@ LocationBroadcast* MessageFeedsController::locationBroadcast() const
 }
 
 /*!
-   \brief Returns \c true if the location broadcast is enabled.
+  \brief Returns \c true if the location broadcast is enabled.
 
-   \sa LocationBroadcast::isEnabled
+  \sa LocationBroadcast::isEnabled
  */
 bool MessageFeedsController::isLocationBroadcastEnabled() const
 {
@@ -270,9 +276,9 @@ bool MessageFeedsController::isLocationBroadcastEnabled() const
 }
 
 /*!
-   \brief Sets whether the location broadcast is \a enabled.
+  \brief Sets whether the location broadcast is \a enabled.
 
-   \sa LocationBroadcast::setEnabled
+  \sa LocationBroadcast::setEnabled
  */
 void MessageFeedsController::setLocationBroadcastEnabled(bool enabled)
 {
@@ -285,9 +291,9 @@ void MessageFeedsController::setLocationBroadcastEnabled(bool enabled)
 }
 
 /*!
-   \brief Returns the location broadcast frequency.
+  \brief Returns the location broadcast frequency.
 
-   \sa LocationBroadcast::frequency
+  \sa LocationBroadcast::frequency
  */
 int MessageFeedsController::locationBroadcastFrequency() const
 {
@@ -295,9 +301,9 @@ int MessageFeedsController::locationBroadcastFrequency() const
 }
 
 /*!
-   \brief Sets the location broadcast message frequency to \a frequency.
+  \brief Sets the location broadcast message frequency to \a frequency.
 
-   \sa LocationBroadcast::setFrequency
+  \sa LocationBroadcast::setFrequency
  */
 void MessageFeedsController::setLocationBroadcastFrequency(int frequency)
 {
@@ -310,8 +316,8 @@ void MessageFeedsController::setLocationBroadcastFrequency(int frequency)
 }
 
 /*!
-   \brief Returns \c true if the location broadcast reports
-   message status as being in distress.
+  \brief Returns \c true if the location broadcast reports
+  message status as being in distress.
  */
 bool MessageFeedsController::isLocationBroadcastInDistress() const
 {
@@ -319,10 +325,10 @@ bool MessageFeedsController::isLocationBroadcastInDistress() const
 }
 
 /*!
-   \brief Sets the location broadcast to report
-   message status as being in distress to \a inDistress.
+  \brief Sets the location broadcast to report
+  message status as being in distress to \a inDistress.
 
-   \sa LocationBroadcast::setInDistress
+  \sa LocationBroadcast::setInDistress
  */
 void MessageFeedsController::setLocationBroadcastInDistress(bool inDistress)
 {
@@ -346,15 +352,15 @@ SurfacePlacement MessageFeedsController::toSurfacePlacement(const QString& surfa
 }
 
 /*!
-   \internal
-   \brief Creates and returns a renderer from the provided \a rendererInfo with an optional \a parent.
+  \internal
+  \brief Creates and returns a renderer from the provided \a rendererInfo with an optional \a parent.
 
-   The \a rendererInfo parameter can be the symbol specification type (i.e. "mil2525c_b2" or "mil2525d") or
-   it can be the name of an image file located in:
+  The \a rendererInfo parameter can be the symbol specification type (i.e. "mil2525c_b2" or "mil2525d") or
+  it can be the name of an image file located in:
 
-   \list
+  \list
     \li the ":/Resources/icons/xhdpi/message" path, such
-   as ":/Resources/icons/xhdpi/message/enemycontact1600.png".
+    as ":/Resources/icons/xhdpi/message/enemycontact1600.png".
     \li an "icons" sub-directory under the \l resourcePath directory
  */
 Renderer* MessageFeedsController::createRenderer(const QString& rendererInfo, QObject* parent) const

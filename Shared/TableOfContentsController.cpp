@@ -36,6 +36,17 @@ using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
 
+/*!
+  \class TableOfContentsController
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller for managing the table of contents for operational layers.
+
+  \sa Esri::ArcGISRuntime::LayerListModel
+ */
+
+/*!
+  \brief Constructor taking an optional \a parent.
+ */
 TableOfContentsController::TableOfContentsController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent)
 {
@@ -48,15 +59,24 @@ TableOfContentsController::TableOfContentsController(QObject* parent /* = nullpt
   updateLayerListModel();
 }
 
+/*!
+  \brief Destructor.
+ */
 TableOfContentsController::~TableOfContentsController()
 {
 }
 
+/*!
+  \brief Returns the list of operational layers in draw order.
+ */
 QAbstractItemModel* TableOfContentsController::layerListModel() const
 {
   return m_drawOrderModel;
 }
 
+/*!
+  \brief Zoom to the layer at \a layerIndex in the list.
+ */
 void TableOfContentsController::zoomTo(int layerIndex)
 {
   if (!m_layerListModel)
@@ -78,6 +98,9 @@ void TableOfContentsController::zoomTo(int layerIndex)
   geoView->setViewpoint(Viewpoint(layer->fullExtent()));
 }
 
+/*!
+  \brief Remove the layer at \a layerIndex in the list.
+ */
 void TableOfContentsController::removeAt(int layerIndex)
 {
   if (!m_layerListModel)
@@ -88,6 +111,9 @@ void TableOfContentsController::removeAt(int layerIndex)
   m_layerListModel->removeAt(modelIndex);
 }
 
+/*!
+  \brief Move the layer at \a layerIndex in the list down.
+ */
 void TableOfContentsController::moveDown(int layerIndex)
 {
   if (!m_layerListModel)
@@ -101,6 +127,9 @@ void TableOfContentsController::moveDown(int layerIndex)
   m_layerListModel->move(modelIndex, modelIndex - 1);
 }
 
+/*!
+  \brief Move the layer at \a layerIndex in the list up.
+ */
 void TableOfContentsController::moveUp(int layerIndex)
 {
   if (!m_layerListModel)
@@ -114,6 +143,9 @@ void TableOfContentsController::moveUp(int layerIndex)
   m_layerListModel->move(modelIndex, modelIndex + 1);
 }
 
+/*!
+  \brief Move the layer at \a fromIndex to the new position \a toIndex.
+ */
 void TableOfContentsController::moveFromTo(int fromIndex, int toIndex)
 {
   if (!m_layerListModel)
@@ -128,6 +160,9 @@ void TableOfContentsController::moveFromTo(int fromIndex, int toIndex)
   m_layerListModel->move(modelFromIndex, modelToIndex);
 }
 
+/*!
+  \brief Return an alternate name for the layer at \a layerIndex in the list.
+ */
 QString TableOfContentsController::alternateName(int layerIndex)
 {
   const QString unknownName("????");
@@ -160,6 +195,9 @@ QString TableOfContentsController::alternateName(int layerIndex)
   return rasterFile.baseName();
 }
 
+/*!
+  \brief Returns the geometry type of the layer at \a layerIndex in the list.
+ */
 TableOfContentsController::LayerGeometryType TableOfContentsController::layerGeometryType(int layerIndex)
 {
   if (!m_layerListModel)
@@ -225,11 +263,17 @@ TableOfContentsController::LayerGeometryType TableOfContentsController::layerGeo
   }
 }
 
+/*!
+  \brief Return the name of the tool - \c "table of contents".
+ */
 QString TableOfContentsController::toolName() const
 {
   return QStringLiteral("table of contents");
 }
 
+/*!
+  \brief Update the list of operational layers used by the app.
+ */
 void TableOfContentsController::updateLayerListModel()
 {
   auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
@@ -242,6 +286,9 @@ void TableOfContentsController::updateLayerListModel()
   }
 }
 
+/*!
+  \brief Returns the operational layer index of the layer at \a index in the draw order model.
+ */
 int TableOfContentsController::mappedIndex(int index) const
 {
   if (!m_layerListModel || !m_drawOrderModel)

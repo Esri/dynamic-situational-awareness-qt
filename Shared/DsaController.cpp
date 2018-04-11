@@ -49,6 +49,25 @@ namespace Dsa {
 bool readJsonFile(QIODevice& device, QSettings::SettingsMap& map);
 bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map);
 
+
+/*!
+  \class DsaController
+  \inherits QObject
+  \brief This is the controller for the DSA app. It is responsible for connecting the
+  view (such as the \l Esri::ArcGISRuntime::GeoView) to the business logic of the app.
+
+  For example, signals from the view are passed to the \l Toolkit::ToolResourceProvider
+  where they can be accessed by the list of \l Esri::ArcGISRuntime::Toolkit::AbstractTool objects stored in
+  the \l Esri::ArcGISRuntime::Toolkit::ToolManager.
+
+  This type is also responsible for reading and writing app configuration details to
+  a JSON settings file. Information in the JSON file is sent to each tool as a set of
+  properties.
+ */
+
+/*!
+  \brief Constructor for a model taking an optional \a parent.
+ */
 DsaController::DsaController(QObject* parent):
   QObject(parent),
   m_scene(new Scene(this)),
@@ -64,17 +83,28 @@ DsaController::DsaController(QObject* parent):
   connect(m_scene, &Scene::errorOccurred, this, &DsaController::onError);
 }
 
+/*!
+  \brief Destructor.
+ */
 DsaController::~DsaController()
 {
   // save the settings
   saveSettings();
 }
 
-Esri::ArcGISRuntime::Scene* DsaController::scene() const
+/*!
+  \brief Returns the Esri::ArcGISRuntime::Scene used by the app.
+ */
+Scene* DsaController::scene() const
 {
   return m_scene;
 }
 
+/*!
+  \brief Initialize the app with the Esri::ArcGISRuntime::GeoView \a geoView.
+
+  When this method is called, the various tools in the app are initialized.
+ */
 void DsaController::init(GeoView* geoView)
 {
   Toolkit::ToolResourceProvider::instance()->setScene(m_scene);
@@ -165,17 +195,17 @@ void DsaController::init(GeoView* geoView)
   }
 }
 
-/*! \brief Slot to handle an ArcGISRuntime Error \a e.
- *
+/*!
+ * \brief Slot to handle an ArcGISRuntime Error \a error.
  */
-void DsaController::onError(const Error& e)
+void DsaController::onError(const Error& error)
 {
-  qDebug() << "Error" << e.message() << e.additionalMessage();
-  emit errorOccurred(e.message(), e.additionalMessage());
+  qDebug() << "Error" << error.message() << error.additionalMessage();
+  emit errorOccurred(error.message(), error.additionalMessage());
 }
 
-/*! \brief Slot to handle an \a errorMessage (with an \a additionalMessage) from an \l AbstractTool.
- *
+/*!
+ * \brief Slot to handle an \a errorMessage (with an \a additionalMessage) from an \l AbstractTool.
  */
 void DsaController::onToolError(const QString& errorMessage, const QString& additionalMessage)
 {
@@ -183,6 +213,9 @@ void DsaController::onToolError(const QString& errorMessage, const QString& addi
   emit errorOccurred(errorMessage, additionalMessage);
 }
 
+/*!
+ * \brief Slot to handle a change to the \a propertyName to the new value \l propertyValue.
+ */
 void DsaController::onPropertyChanged(const QString& propertyName, const QVariant& propertyValue)
 {
   if (m_dsaSettings.value(propertyName) == propertyValue)
@@ -208,6 +241,9 @@ void DsaController::onPropertyChanged(const QString& propertyName, const QVarian
 
 }
 
+/*!
+ * \internal
+ */
 void DsaController::setupConfig()
 {
   // create the default settings map

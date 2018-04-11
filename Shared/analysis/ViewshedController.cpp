@@ -52,6 +52,26 @@ static int s_viewshedCount = 0;
 constexpr double c_defaultOffsetZ = 5.0;
 constexpr double c_defaultIdentifyTolerance = 5.0;
 
+/*!
+  \class ViewshedController
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller for creating viewshed analysis.
+
+  This tool allows viewshed analysis to be created:
+
+  \list
+    \li From the app's current position.
+    \li From a supplied tap location.
+    \li From a supplied GeoElement.
+  \endlist
+
+  In addition, viewsheds can be either normal (up to 120 degrees of arc)
+  or 360 degree mode.
+ */
+
+/*!
+  \brief Constructor accepting an optional \a parent.
+ */
 ViewshedController::ViewshedController(QObject* parent) :
   Toolkit::AbstractTool(parent),
   m_analysisOverlay(new AnalysisOverlay(this)),
@@ -84,10 +104,16 @@ ViewshedController::ViewshedController(QObject* parent) :
   });
 }
 
+/*!
+  \brief Destructor.
+ */
 ViewshedController::~ViewshedController()
 {
 }
 
+/*!
+  \brief Sets the \l Esri::ArcGISRuntime::SceneView to \a sceneView.
+ */
 void ViewshedController::setSceneView(SceneView* sceneView)
 {
   if (!sceneView)
@@ -99,12 +125,26 @@ void ViewshedController::setSceneView(SceneView* sceneView)
     m_sceneView->analysisOverlays()->append(m_analysisOverlay);
 }
 
+/*!
+  \internal
+ */
 void ViewshedController::connectMouseSignals()
 {
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mouseClicked, this, &ViewshedController::onMouseClicked);
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mouseMoved, this, &ViewshedController::onMouseMoved);
 }
 
+/*!
+  \brief Handler for the mouse click \a event.
+
+  Depending on the active mode (e.g. type of viewshed that the tool is creating)
+  the event will be handled differently.
+
+  In \c AddLocationViewshed360 mode, a new location viewshed will be created at the clicked position.
+
+  In \c AddGeoElementViewshed360 mode, an identify operation will be started to find a suitable graphic
+  for the viewshed.
+ */
 void ViewshedController::onMouseClicked(QMouseEvent& event)
 {
   if (!isActive() || !m_sceneView)
@@ -122,9 +162,11 @@ void ViewshedController::onMouseClicked(QMouseEvent& event)
   {
     if (!m_identifyConn)
     {
+      // connect to the completion of the identify operation.
       m_identifyConn = connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::identifyGraphicsOverlaysCompleted,
                                this, [this](const QUuid& taskId, const QList<IdentifyGraphicsOverlayResult*>& identifyResults)
       {
+        // if the task ID does not match the current task, return.
         if (taskId != m_identifyTaskWatcher.taskId())
           return;
 
@@ -138,12 +180,14 @@ void ViewshedController::onMouseClicked(QMouseEvent& event)
           return;
         }
 
+        // create a viewshed centered upon the 1st graphic retrieved.
         auto graphic = resultsManager.m_results[0]->graphics()[0];
         graphic->setParent(nullptr);
         addGeoElementViewshed360(graphic);
       });
     }
 
+    // start an identify graphics overlays task at the clicked position.
     m_identifyTaskWatcher = m_sceneView->identifyGraphicsOverlays(event.x(), event.y(), c_defaultIdentifyTolerance, false, 1);
     break;
   }
@@ -152,6 +196,13 @@ void ViewshedController::onMouseClicked(QMouseEvent& event)
   }
 }
 
+/*!
+  \brief React to the mouse moved \a event.
+
+  This event will only be handled if the active mode is \c AddLocationViewshed360 mode.
+  In this mode, when there is already an existing location viewshed, it's position will
+  be updated to follow the current mouse position.
+ */
 void ViewshedController::onMouseMoved(QMouseEvent& event)
 {
   if (!isActive() || !m_sceneView)
@@ -173,6 +224,9 @@ void ViewshedController::onMouseMoved(QMouseEvent& event)
   event.accept();
 }
 
+/*!
+  \brief Add a new viewshed centered upon the app's current position.
+ */
 void ViewshedController::addLocationDisplayViewshed()
 {
   if (m_locationDisplayViewshed)
@@ -192,6 +246,9 @@ void ViewshedController::addLocationDisplayViewshed()
   setActiveViewshedIndex(m_viewsheds->rowCount() - 1);
 }
 
+/*!
+  \brief Add a new viewshed centered upon the supplied \a point.
+ */
 void ViewshedController::addLocationViewshed360(const Esri::ArcGISRuntime::Point& point)
 {
   if (!m_graphicsOverlay)
@@ -199,6 +256,8 @@ void ViewshedController::addLocationViewshed360(const Esri::ArcGISRuntime::Point
     if (!m_sceneView)
       return;
 
+    // create a graphics overlay and use a renderer to display a red cone symbol indicating
+    // the orientation of the viewshed (not used in 360 degree mode).
     m_graphicsOverlay = new GraphicsOverlay(this);
     m_graphicsOverlay->setOverlayId(QStringLiteral("LocationViewshed360 graphics overlay"));
     SimpleMarkerSceneSymbol* smss = SimpleMarkerSceneSymbol::cone(QColor("red"), 16, 32.0, this);
@@ -228,6 +287,7 @@ void ViewshedController::addLocationViewshed360(const Esri::ArcGISRuntime::Point
   m_analysisOverlay->analyses()->append(locationViewshed360->viewshed());
   m_viewsheds->append(locationViewshed360);
 
+  // clear any existing camera contollers.
   if (m_followCamCtrllr)
   {
     delete m_followCamCtrllr;
@@ -236,6 +296,8 @@ void ViewshedController::addLocationViewshed360(const Esri::ArcGISRuntime::Point
 
   if (m_sceneView)
   {
+    // set the scene to use a OrbitLocationCameraController so that panning in the view does not cause
+    // navigation - but can instead be used for exploratory analysis (see onMouseMoved).
     const Camera currCam = m_sceneView->currentViewpointCamera();
     const double currDistance = DsaUtility::distance3D(currCam.location(), currCam.location());
     m_followCamCtrllr = new OrbitLocationCameraController(currCam.location(), currDistance, this);
@@ -250,6 +312,9 @@ void ViewshedController::addLocationViewshed360(const Esri::ArcGISRuntime::Point
   setActiveViewshedIndex(m_viewsheds->rowCount() - 1);
 }
 
+/*!
+  \brief Add a new viewshed centered upon the supplied \a geoElement.
+ */
 void ViewshedController::addGeoElementViewshed360(GeoElement* geoElement)
 {
   removeActiveViewshed();
@@ -267,16 +332,26 @@ void ViewshedController::addGeoElementViewshed360(GeoElement* geoElement)
   setActiveViewshedIndex(m_viewsheds->rowCount() - 1);
 }
 
+/*!
+  \brief Returns whether a viewshed exists for the app's current position.
+ */
 bool ViewshedController::isLocationDisplayViewshedActive() const
 {
   return m_locationDisplayViewshed != nullptr;
 }
 
+/*!
+  \brief Returns the active mode for the tool - that is the kind of viewshed
+  which will be created.
+ */
 ViewshedController::ViewshedActiveMode ViewshedController::activeMode() const
 {
   return m_activeMode;
 }
 
+/*!
+  \brief Sets the active mode for the tool to \a mode.
+ */
 void ViewshedController::setActiveMode(ViewshedActiveMode mode)
 {
   if (m_activeMode == mode)
@@ -307,22 +382,33 @@ void ViewshedController::setActiveMode(ViewshedActiveMode mode)
   emit activeModeChanged();
 }
 
+/*!
+  \brief Returns a model containing the current list of viewsheds.
+ */
 QAbstractListModel* ViewshedController::viewsheds() const
 {
   return m_viewsheds;
 }
 
+/*!
+  \brief Returns the name of this tool - \c "viewshed".
+ */
 QString ViewshedController::toolName() const
 {
   return QStringLiteral("viewshed");
 }
 
-// active viewshed methods
+/*!
+  \brief Returns the active viewshed.
+ */
 Viewshed360* ViewshedController::activeViewshed() const
 {
   return m_activeViewshed;
 }
 
+/*!
+  \brief Removes the active viewshed.
+ */
 void ViewshedController::removeActiveViewshed()
 {
   if (!m_activeViewshed)
@@ -338,21 +424,37 @@ void ViewshedController::removeActiveViewshed()
     updateActiveViewshed();
 }
 
+/*!
+  \brief Finishes the active viewshed.
+
+  Once a viewshed has been "finished" it can no longer be edited by this tool.
+ */
 void ViewshedController::finishActiveViewshed()
 {
   setActiveViewshedIndex(-1);
 }
 
+/*!
+  \brief Returns whether there is an active viewshed.
+ */
 bool ViewshedController::isActiveViewshedEnabled() const
 {
   return m_activeViewshed != nullptr;
 }
 
+/*!
+  \brief Returns the index of the active viewshed.
+
+  If there is no active viewshed this will be \c -1.
+ */
 int ViewshedController::activeViewshedIndex() const
 {
   return m_activeViewshedIndex;
 }
 
+/*!
+  \brief Sets the index of the active viewshed to \a index.
+ */
 void ViewshedController::setActiveViewshedIndex(int index)
 {
   if (m_activeViewshedIndex == index)
@@ -363,11 +465,21 @@ void ViewshedController::setActiveViewshedIndex(int index)
   updateActiveViewshed();
 }
 
+/*!
+  \brief Returns the minimum distance of the active viewshed in meters.
+
+  If there is no active viewshed this will be \c NAN.
+ */
 double ViewshedController::activeViewshedMinDistance() const
 {
   return m_activeViewshed ? m_activeViewshed->minDistance() : NAN;
 }
 
+/*!
+  \brief Sets the minimum distance of the active viewshed to \a minDistance meters.
+
+  If there is no active viewshed this will be ignored.
+ */
 void ViewshedController::setActiveViewshedMinDistance(double minDistance)
 {
   if (!m_activeViewshed)
@@ -376,11 +488,21 @@ void ViewshedController::setActiveViewshedMinDistance(double minDistance)
   m_activeViewshed->setMinDistance(minDistance);
 }
 
+/*!
+  \brief Returns the maximum distance of the active viewshed in meters.
+
+  If there is no active viewshed this will be \c NAN.
+ */
 double ViewshedController::activeViewshedMaxDistance() const
 {
   return m_activeViewshed ? m_activeViewshed->maxDistance() : NAN;
 }
 
+/*!
+  \brief Sets the maximum distance of the active viewshed to \a maxDistance meters.
+
+  If there is no active viewshed this will be ignored.
+ */
 void ViewshedController::setActiveViewshedMaxDistance(double maxDistance)
 {
   if (!m_activeViewshed)
@@ -389,11 +511,21 @@ void ViewshedController::setActiveViewshedMaxDistance(double maxDistance)
   m_activeViewshed->setMaxDistance(maxDistance);
 }
 
+/*!
+  \brief Returns the horizontal angle of the active viewshed in degrees.
+
+  If there is no active viewshed this will be \c NAN.
+ */
 double ViewshedController::activeViewshedHorizontalAngle() const
 {
   return m_activeViewshed ? m_activeViewshed->horizontalAngle() : NAN;
 }
 
+/*!
+  \brief Sets the horizontal angle of the active viewshed to \a horizontalAngle degrees.
+
+  If there is no active viewshed this will be ignored.
+ */
 void ViewshedController::setActiveViewshedHorizontalAngle(double horizontalAngle)
 {
   if (!m_activeViewshed)
@@ -405,11 +537,21 @@ void ViewshedController::setActiveViewshedHorizontalAngle(double horizontalAngle
   m_activeViewshed->setHorizontalAngle(horizontalAngle);
 }
 
+/*!
+  \brief Returns the vertical angle of the active viewshed in degrees.
+
+  If there is no active viewshed this will be \c NAN.
+ */
 double ViewshedController::activeViewshedVerticalAngle() const
 {
   return m_activeViewshed ? m_activeViewshed->verticalAngle() : NAN;
 }
 
+/*!
+  \brief Sets the vertical angle of the active viewshed to \a verticalAngle degrees.
+
+  If there is no active viewshed this will be ignored.
+ */
 void ViewshedController::setActiveViewshedVerticalAngle(double verticalAngle)
 {
   if (!m_activeViewshed)
@@ -421,11 +563,21 @@ void ViewshedController::setActiveViewshedVerticalAngle(double verticalAngle)
   m_activeViewshed->setVerticalAngle(verticalAngle);
 }
 
+/*!
+  \brief Returns the heading of the active viewshed in degrees.
+
+  If there is no active viewshed this will be \c NAN.
+ */
 double ViewshedController::activeViewshedHeading() const
 {
   return m_activeViewshed ? m_activeViewshed->heading() : NAN;
 }
 
+/*!
+  \brief Sets the heading of the active viewshed to \a heading degrees.
+
+  If there is no active viewshed this will be ignored.
+ */
 void ViewshedController::setActiveViewshedHeading(double heading)
 {
   if (!m_activeViewshed)
@@ -437,11 +589,21 @@ void ViewshedController::setActiveViewshedHeading(double heading)
   m_activeViewshed->setHeading(heading);
 }
 
+/*!
+  \brief Returns the pitch of the active viewshed in degrees.
+
+  If there is no active viewshed this will be \c NAN.
+ */
 double ViewshedController::activeViewshedPitch() const
 {
   return m_activeViewshed ? m_activeViewshed->pitch() : NAN;
 }
 
+/*!
+  \brief Sets the pitch of the active viewshed to \a pitch degrees.
+
+  If there is no active viewshed this will be ignored.
+ */
 void ViewshedController::setActiveViewshedPitch(double pitch)
 {
   if (!m_activeViewshed)
@@ -453,6 +615,11 @@ void ViewshedController::setActiveViewshedPitch(double pitch)
   m_activeViewshed->setPitch(pitch);
 }
 
+/*!
+  \brief Returns the minimum pitch of the active viewshed in degrees.
+
+  If there is no active viewshed this will be \c NAN.
+ */
 double ViewshedController::activeViewshedMinPitch() const
 {
   if (!m_activeViewshed)
@@ -467,6 +634,11 @@ double ViewshedController::activeViewshedMinPitch() const
   return minPitchGeoElementViewshed;
 }
 
+/*!
+  \brief Returns the maximum pitch of the active viewshed in degrees.
+
+  If there is no active viewshed this will be \c NAN.
+ */
 double ViewshedController::activeViewshedMaxPitch() const
 {
   if (!m_activeViewshed)
@@ -481,12 +653,22 @@ double ViewshedController::activeViewshedMaxPitch() const
   return maxPitchGeoElementViewshed;
 }
 
+/*!
+  \brief Returns the offset z of the active viewshed in meters.
+
+  If there is no active viewshed this will be \c 0.0.
+ */
 double ViewshedController::activeViewshedOffsetZ() const
 {
   constexpr double offsetZDefault = 0.0;
   return m_activeViewshed ? m_activeViewshed->offsetZ() : offsetZDefault;
 }
 
+/*!
+  \brief Sets the offset z of the active viewshed to \a offsetZ meters.
+
+  If there is no active viewshed this will be ignored.
+ */
 void ViewshedController::setActiveViewshedOffsetZ(double offsetZ)
 {
   if (!m_activeViewshed)
@@ -495,26 +677,51 @@ void ViewshedController::setActiveViewshedOffsetZ(double offsetZ)
   m_activeViewshed->setOffsetZ(offsetZ);
 }
 
+/*!
+  \brief Returns whether heading is enabled for the active viewshed.
+
+  If there is no active viewshed this will be \c false.
+ */
 bool ViewshedController::isActiveViewshedHeadingEnabled() const
 {
   return m_activeViewshed ? m_activeViewshed->isHeadingEnabled() : false;
 }
 
+/*!
+  \brief Returns whether pitch is enabled for the active viewshed.
+
+  If there is no active viewshed this will be \c false.
+ */
 bool ViewshedController::isActiveViewshedPitchEnabled() const
 {
   return m_activeViewshed ? m_activeViewshed->isPitchEnabled() : false;
 }
 
+/*!
+  \brief Returns whether offset z is enabled for the active viewshed.
+
+  If there is no active viewshed this will be \c false.
+ */
 bool ViewshedController::isActiveViewshedOffsetZEnabled() const
 {
   return m_activeViewshed ? m_activeViewshed->isOffsetZEnabled() : false;
 }
 
+/*!
+  \brief Returns whether the active viewshed is in 360 degree mode.
+
+  If there is no active viewshed this will be \c true.
+ */
 bool ViewshedController::isActiveViewshed360Mode() const
 {
   return m_activeViewshed ? m_activeViewshed->is360Mode() : true;
 }
 
+/*!
+  \brief Sets the whether the active viewshed is in 360 degree mode to \a is360Mode.
+
+  If there is no active viewshed this will be ignored.
+ */
 void ViewshedController::setActiveViewshed360Mode(bool is360Mode)
 {
   if (!m_activeViewshed)
@@ -523,6 +730,9 @@ void ViewshedController::setActiveViewshed360Mode(bool is360Mode)
   m_activeViewshed->set360Mode(is360Mode);
 }
 
+/*!
+  \internal
+ */
 void ViewshedController::updateActiveViewshedSignals()
 {
   disconnectActiveViewshedSignals();
@@ -544,6 +754,9 @@ void ViewshedController::updateActiveViewshedSignals()
   m_activeViewshedConns << connect(m_activeViewshed, &Viewshed360::is360ModeChanged, this, &ViewshedController::activeViewshed360ModeChanged);
 }
 
+/*!
+  \internal
+ */
 void ViewshedController::updateActiveViewshed()
 {
   if (m_activeViewshedIndex == -1)
@@ -560,6 +773,9 @@ void ViewshedController::updateActiveViewshed()
   emitActiveViewshedSignals();
 }
 
+/*!
+  \internal
+ */
 void ViewshedController::disconnectActiveViewshedSignals()
 {
   if (!m_activeViewshedConns.isEmpty())
@@ -573,6 +789,9 @@ void ViewshedController::disconnectActiveViewshedSignals()
   }
 }
 
+/*!
+  \internal
+ */
 void ViewshedController::emitActiveViewshedSignals()
 {
   emit activeViewshedEnabledChanged();

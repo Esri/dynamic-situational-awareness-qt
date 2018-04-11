@@ -20,12 +20,25 @@
 
 namespace Dsa {
 
+/*!
+  \class MessageFeedListModel
+  \inherits QAbstractListModel
+  \brief A model responsible for storing \l MessageFeed objects and reporting when they
+  change.
+ */
+
+/*!
+  \brief Constructor for a model taking an optional \a parent.
+ */
 MessageFeedListModel::MessageFeedListModel(QObject* parent) :
   QAbstractListModel(parent)
 {
   setupRoles();
 }
 
+/*!
+  \internal
+ */
 void MessageFeedListModel::setupRoles()
 {
   m_roles[MessageFeedNameRole] = "feedName";
@@ -34,11 +47,17 @@ void MessageFeedListModel::setupRoles()
   m_roles[MessageFeedThumbnailUrlRole] = "thumbnailUrl";
 }
 
+/*!
+  \brief Returns whether the model is empty.
+ */
 bool MessageFeedListModel::isEmpty() const
 {
   return rowCount() == 0;
 }
 
+/*!
+  \brief Adds a new \l MessageFeed \a messageFeed to the model.
+ */
 void MessageFeedListModel::append(MessageFeed* messageFeed)
 {
   if (!messageFeed)
@@ -50,6 +69,9 @@ void MessageFeedListModel::append(MessageFeed* messageFeed)
   endInsertRows();
 }
 
+/*!
+  \brief Return the \l MessageFeed at \a index.
+ */
 MessageFeed* MessageFeedListModel::at(int index) const
 {
   if (index < 0 || (index + 1) > rowCount())
@@ -58,6 +80,11 @@ MessageFeed* MessageFeedListModel::at(int index) const
   return m_messageFeeds.at(index);
 }
 
+/*!
+  \brief Returns a \l MessageFeed of the supplied \a type if one is found.
+
+  If no feed of the supplied type is found, returns \c nullptr.
+ */
 MessageFeed* MessageFeedListModel::messageFeedByType(const QString& type) const
 {
   int index = m_messageTypes.indexOf(type);
@@ -67,6 +94,9 @@ MessageFeed* MessageFeedListModel::messageFeedByType(const QString& type) const
   return m_messageFeeds[index];
 }
 
+/*!
+  \brief Clears the model.
+ */
 void MessageFeedListModel::clear()
 {
   beginResetModel();
@@ -75,12 +105,19 @@ void MessageFeedListModel::clear()
   endResetModel();
 }
 
-// QAbstractItemModel interface
+/*!
+  \brief Returns the number of message feed objects in the model.
+ */
 int MessageFeedListModel::rowCount(const QModelIndex&) const
 {
   return m_messageFeeds.count();
 }
 
+/*!
+  \brief Returns the data stored under \a role at \a index in the model.
+
+  The role should make use of the \l MessageFeedRoles enum.
+ */
 QVariant MessageFeedListModel::data(const QModelIndex& index, int role) const
 {
   if (index.row() < 0 || index.row() >= m_messageFeeds.count())
@@ -113,6 +150,13 @@ QVariant MessageFeedListModel::data(const QModelIndex& index, int role) const
   return retVal;
 }
 
+/*!
+  \brief Sets the data stored under \a role at \a index in the model to \a value.
+
+  The role should make use of the \l MessageFeedRoles enum.
+
+  Return \c true if the data was successfully set and \c false otherwise.
+ */
 bool MessageFeedListModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
   if (!index.isValid())
@@ -169,11 +213,19 @@ bool MessageFeedListModel::setData(const QModelIndex& index, const QVariant& val
   return true;
 }
 
+/*!
+  \brief Returns the hash of role names used by the model.
+
+  The roles are based on the \l AlertListRoles enum.
+ */
 QHash<int, QByteArray> MessageFeedListModel::roleNames() const
 {
   return m_roles;
 }
 
+/*!
+  \brief Returns the number of rows in the model.
+ */
 int MessageFeedListModel::count() const
 {
   return m_messageFeeds.length();

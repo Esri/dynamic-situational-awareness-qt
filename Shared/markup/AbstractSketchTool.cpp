@@ -33,6 +33,15 @@ using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
 
+/*!
+  \class AbstractSketchTool
+  \inherits Toolkit::AbstractTool
+  \brief Abstract tool controller for working with sketches/markups.
+ */
+
+/*!
+  \brief Constructor taking an optional \a parent.
+ */
 AbstractSketchTool::AbstractSketchTool(QObject* parent) :
   AbstractTool(parent),
   m_sketchOverlay(new GraphicsOverlay(this))
@@ -40,10 +49,16 @@ AbstractSketchTool::AbstractSketchTool(QObject* parent) :
   m_sketchOverlay->setOverlayId("Sketch overlay");
 }
 
+/*!
+  \brief Destructor.
+ */
 AbstractSketchTool::~AbstractSketchTool()
 {
 }
 
+/*!
+  \brief Start a new \l Esri::ArcGISRuntime::PolylineBuilder for sketch geometry.
+ */
 void AbstractSketchTool::initGeometryBuilder()
 {
   if (!m_geoView)
@@ -53,6 +68,9 @@ void AbstractSketchTool::initGeometryBuilder()
     m_geometryBuilder = new PolylineBuilder(m_geoView->spatialReference(), this);
 }
 
+/*!
+  \brief Return the \l Esri::ArcGISRuntime::Geometry for the current sketch.
+ */
 Geometry AbstractSketchTool::builderGeometry() const
 {
   if (m_geometryBuilder)
@@ -61,16 +79,25 @@ Geometry AbstractSketchTool::builderGeometry() const
   return Geometry();
 }
 
+/*!
+  \brief Sets the \l Esri::ArcGISRuntime::Symbol for the current sketch to \a symbol.
+ */
 void AbstractSketchTool::setSketchSymbol(Symbol* symbol)
 {
   m_sketchSymbol = symbol;
 }
 
+/*!
+  \brief Returns the \l Esri::ArcGISRuntime::Symbol for the current sketch.
+ */
 Symbol* AbstractSketchTool::sketchSymbol()
 {
   return m_sketchSymbol;
 }
 
+/*!
+  \brief Clears the current sketch.
+ */
 void AbstractSketchTool::clear()
 {
   if (!m_geometryBuilder)
@@ -83,7 +110,10 @@ void AbstractSketchTool::clear()
   }
 }
 
-// converts screen coordinates from screen to a Point in coordinates of the map (2D) or base surface (3D)
+/*!
+  \brief Converts the  screen coordinate (\a x, \a y) to an \l Esri::ArcGISRuntime::Point
+  in coordinates of the map (2D) or base surface (3D).
+ */
 Point AbstractSketchTool::normalizedPoint(double x, double y)
 {
   if (!m_geoView)
@@ -97,6 +127,9 @@ Point AbstractSketchTool::normalizedPoint(double x, double y)
   return Point(x, y);
 }
 
+/*!
+  \brief Selects the part in the current sketch geometry at \a partIndex.
+ */
 void AbstractSketchTool::selectPartByIndex(int partIndex)
 {
   // clear selection
@@ -116,13 +149,18 @@ void AbstractSketchTool::selectPartByIndex(int partIndex)
     m_partOutlineGraphics.at(partIndex)->setSelected(true);
 }
 
+/*!
+  \brief Replaces the current sketch geometry with \a geometry.
+ */
 void AbstractSketchTool::replaceGeometry(Geometry geometry)
 {
   m_geometryBuilder->replaceGeometry(geometry);
   updateSketch();
 }
 
-// checks whether the builder inherits from MultipartBuilder
+/*!
+  \brief Returns whether the builder inherits from \l Esri::ArcGISRuntime::MultipartBuilder.
+ */
 bool AbstractSketchTool::isMultiPartBuilder() const
 {
   if (!m_geometryBuilder)
@@ -132,7 +170,9 @@ bool AbstractSketchTool::isMultiPartBuilder() const
   return (type == GeometryBuilderType::PolygonBuilder || type == GeometryBuilderType::PolylineBuilder);
 }
 
-// Adds a new Part to the Builder. Returns the index of the added Part or -1 if invalid operation
+/*!
+  \brief Adds a new Part to the Builder. Returns the index of the added Part or \c -1 if invalid operation
+ */
 int AbstractSketchTool::addPart()
 {
   if (!m_geometryBuilder || !isMultiPartBuilder())
@@ -144,6 +184,10 @@ int AbstractSketchTool::addPart()
   return multipartBuilder->parts()->size() - 1;
 }
 
+/*!
+  \brief Inserts a new \l Esri::ArcGISRuntime::Point \a drawPoint in the sketch at \a partIndex, \a pointIndex.
+  Returns the index of the added Part or \c -1 if this is an invalid operation.
+ */
 void AbstractSketchTool::insertPointInPart(int partIndex, int pointIndex, const Point& drawPoint)
 {
   if (!m_geometryBuilder)
@@ -167,6 +211,9 @@ void AbstractSketchTool::insertPointInPart(int partIndex, int pointIndex, const 
   updateSketch();
 }
 
+/*!
+  \brief Returns \l Esri::ArcGISRuntime::GraphicsOverlay for the sketch.
+ */
 GraphicsOverlay* AbstractSketchTool::sketchOverlay() const
 {
   return m_sketchOverlay;

@@ -35,7 +35,13 @@ using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
 
-/*
+/*!
+  \class OptionsController
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller for setting various options for the app.
+ */
+
+/*!
  \brief Constructor that takes an optional \a parent.
  */
 OptionsController::OptionsController(QObject* parent) :
@@ -56,14 +62,14 @@ OptionsController::OptionsController(QObject* parent) :
   emit coordinateFormatsChanged();
 }
 
-/*
+/*!
  \brief Destructor
  */
 OptionsController::~OptionsController()
 {
 }
 
-/*
+/*!
  \brief Obtains the update tool from the tool manager and sets up connections to the various signals.
  */
 void OptionsController::getUpdatedTools()
@@ -85,16 +91,16 @@ void OptionsController::getUpdatedTools()
   }
 }
 
-/*
- \brief Returns the tool name.
+/*!
+ \brief Returns the tool name - \c "Options Tool".
  */
 QString OptionsController::toolName() const
 {
   return "Options Tool";
 }
 
-/*
- \brief Sets \a properties from the configuration file
+/*!
+ \brief Sets \a properties from the configuration file.
  */
 void OptionsController::setProperties(const QVariantMap& properties)
 {
@@ -121,16 +127,16 @@ void OptionsController::setProperties(const QVariantMap& properties)
   getUpdatedTools();
 }
 
-/*
- \brief Returns the coordinate format list for display in the combo box
+/*!
+ \brief Returns the coordinate format list for display in the combo box.
  */
 QStringList OptionsController::coordinateFormats() const
 {
   return m_coordinateFormatOptions;
 }
 
-/*
- \brief Sets the current coordinate \a format to be used
+/*!
+ \brief Sets the current coordinate \a format to be used.
  */
 void OptionsController::setCoordinateFormat(const QString& format)
 {
@@ -140,8 +146,8 @@ void OptionsController::setCoordinateFormat(const QString& format)
   m_locationTextController->setCoordinateFormat(format);
 }
 
-/*
- \brief Returns whether to use GPS for elevation for display
+/*!
+ \brief Returns whether to use GPS for elevation for display.
  */
 bool OptionsController::useGpsForElevation() const
 {
@@ -151,8 +157,8 @@ bool OptionsController::useGpsForElevation() const
   return m_locationTextController->useGpsForElevation();
 }
 
-/*
- \brief Sets whether to \a useGps for elevation display
+/*!
+ \brief Sets whether to \a useGps for elevation display.
  */
 void OptionsController::setUseGpsForElevation(bool useGps)
 {
@@ -162,16 +168,16 @@ void OptionsController::setUseGpsForElevation(bool useGps)
   m_locationTextController->setUseGpsForElevation(useGps);
 }
 
-/*
- \brief Returns the unit of measurement list for display
+/*!
+ \brief Returns the unit of measurement list for display.
  */
 QStringList OptionsController::units() const
 {
   return m_units;
 }
 
-/*
- \brief Sets the \a unit of measurement
+/*!
+ \brief Sets the \a unit of measurement.
  */
 void OptionsController::setUnitOfMeasurement(const QString& unit)
 {
@@ -181,7 +187,7 @@ void OptionsController::setUnitOfMeasurement(const QString& unit)
   m_locationTextController->setUnitOfMeasurement(unit);
 }
 
-/*
+/*!
  \brief Returns the user name for the app.
  */
 QString OptionsController::userName() const
@@ -189,7 +195,7 @@ QString OptionsController::userName() const
   return m_userName;
 }
 
-/*
+/*!
  \brief Sets the \a userName for the app.
  */
 void OptionsController::setUserName(const QString& userName)
@@ -202,25 +208,26 @@ void OptionsController::setUserName(const QString& userName)
   emit propertyChanged(AppConstants::USERNAME_PROPERTYNAME, m_userName);
 }
 
-/*
+/*!
  \brief Returns the initial index.
-  This is used to set the initial index in the combo box to match the controller
+  This is used to set the initial index in the combo box to match the controller.
   */
 int OptionsController::initialFormatIndex() const
 {
   return m_initialFormatIndex;
 }
 
-/*
- \brief Returns the initial index.
-  This is used to set the initial index in the combo box to match the controller
+/*!
+ \brief Returns the initial index of the list of units.
+
+  This is used to set the initial index in the combo box to match the controller.
   */
 int OptionsController::initialUnitIndex() const
 {
   return m_initialUnitIndex;
 }
 
-/*
+/*!
  \brief Returns whether the friendly tracks labels show.
 */
 bool OptionsController::showFriendlyTracksLabels()
@@ -233,7 +240,7 @@ bool OptionsController::showFriendlyTracksLabels()
   return renderers[0]->isTextVisible();
 }
 
-/*
+/*!
  \brief Sets whether the friendly tracks labels \a show.
 */
 void OptionsController::setShowFriendlyTracksLabels(bool show)
@@ -246,7 +253,7 @@ void OptionsController::setShowFriendlyTracksLabels(bool show)
     renderer->setTextVisible(show);
 }
 
-/*
+/*!
  \brief Returns the DictionaryRenderer from the friendly tracks MessageFeed.
 */
 QList<DictionaryRenderer*> OptionsController::friendlyTracksOverlayRenderers() const

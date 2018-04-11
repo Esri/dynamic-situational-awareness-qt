@@ -42,8 +42,17 @@ using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
 
+/*!
+  \class NavigationController
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller for handling navigation for the app.
+ */
+
 const QString NavigationController::INITIAL_LOCATION_PROPERTYNAME = "InitialLocation";
 
+/*!
+  \brief Constructor taking an optional \a parent.
+ */
 NavigationController::NavigationController(QObject* parent) :
   Toolkit::AbstractTool(parent),
   m_initialCenter(DsaUtility::montereyCA())
@@ -59,16 +68,23 @@ NavigationController::NavigationController(QObject* parent) :
   setInitialLocation();
 }
 
+/*!
+  \brief Destructor.
+ */
 NavigationController::~NavigationController()
 {
 }
 
+/*!
+  \brief Returns the name of the tool - \c  "NavigationController".
+ */
 QString NavigationController::toolName() const
 {
   return QStringLiteral("NavigationController");
 }
 
-/* \brief Sets any values in \a properties which are relevant for the navigation controller.
+/*!
+ * \brief Sets any values in \a properties which are relevant for the navigation controller.
  *
  * This tool will use the following key/value pairs from the \a properties map if they are set:
  * \list
@@ -159,6 +175,9 @@ void NavigationController::setProperties(const QVariantMap& properties)
   setInitialLocation();
 }
 
+/*!
+  \internal
+ */
 void NavigationController::updateGeoView()
 {
   m_geoView = Toolkit::ToolResourceProvider::instance()->geoView();
@@ -202,6 +221,9 @@ void NavigationController::updateGeoView()
   }
 }
 
+/*!
+  \internal
+ */
 void NavigationController::setInitialLocation()
 {
   Scene* scene = Toolkit::ToolResourceProvider::instance()->scene();
@@ -222,6 +244,9 @@ void NavigationController::setInitialLocation()
   map->setInitialViewpoint(initViewpoint);
 }
 
+/*!
+  \brief Zoom the app to the initial location.
+ */
 void NavigationController::zoomToInitialLocation()
 {
   Viewpoint initViewpoint;
@@ -238,6 +263,9 @@ void NavigationController::zoomToInitialLocation()
   m_geoView->setViewpoint(initViewpoint, 1.f);
 }
 
+/*!
+  \brief Zoom in.
+ */
 void NavigationController::zoomIn()
 {
   m_currentMode = Mode::Zoom;
@@ -248,6 +276,9 @@ void NavigationController::zoomIn()
   center();
 }
 
+/*!
+  \brief Zoom out.
+ */
 void NavigationController::zoomOut()
 {
   m_currentMode = Mode::Zoom;
@@ -258,13 +289,18 @@ void NavigationController::zoomOut()
   center();
 }
 
+/*!
+  \brief Tilt the (3D) view to a 2D perspective.
+ */
 void NavigationController::set2D()
 {
   m_currentMode = Mode::Tilt;
   center();
 }
 
-
+/*!
+  \brief Switch the app to the default panning navogation mode.
+ */
 void NavigationController::pan()
 {
   if (!m_sceneView)
@@ -274,13 +310,18 @@ void NavigationController::pan()
   m_sceneView->setCameraController(globeCameraController);
 }
 
+/*!
+  \brief Sets the app to rotation mode.
+ */
 void NavigationController::setRotation()
 {
   m_currentMode = Mode::Rotate;
   center();
 }
 
-
+/*!
+  \internal
+ */
 void NavigationController::zoom()
 {
   // get the current camera
@@ -316,19 +357,25 @@ void NavigationController::zoom()
   }
 }
 
-// getter for vertical
+/*!
+  \brief Returns whether the camera is vertical.
+ */
 bool NavigationController::isVertical() const
 {
   return m_isCameraVertical;
 }
 
-// getter for zoom factor
+/*!
+  \brief Returns the zoom factor.
+ */
 double NavigationController::zoomFactor() const
 {
   return m_zoomFactor;
 }
 
-// setter for zooom factor
+/*!
+  \brief Sets the zoom factor to \a value.
+ */
 void NavigationController::setZoomFactor(double value)
 {
   if (value == m_zoomFactor)
@@ -338,13 +385,17 @@ void NavigationController::setZoomFactor(double value)
   emit zoomFactorChanged();
 }
 
-// getter for zoom factor
+/*!
+  \brief Returns the camera move distance in meters.
+ */
 double NavigationController::cameraMoveDistance() const
 {
   return m_cameraMoveDistance;
 }
 
-// setter for zooom factor
+/*!
+  \brief Sets the camera move distance to \a value meters.
+ */
 void NavigationController::setCameraMoveDistance(double value)
 {
   if (value == m_cameraMoveDistance)
@@ -354,6 +405,9 @@ void NavigationController::setCameraMoveDistance(double value)
   emit cameraMoveDistanceChanged();
 }
 
+/*!
+  \internal
+ */
 void NavigationController::setRotationInternal()
 {
   // get the current camera
@@ -366,6 +420,9 @@ void NavigationController::setRotationInternal()
   m_sceneView->setCameraController(orbitController);
 }
 
+/*!
+  \internal
+ */
 void NavigationController::set2DInternal()
 {
   if (m_is3d)
@@ -383,6 +440,9 @@ void NavigationController::set2DInternal()
   }
 }
 
+/*!
+  \internal
+ */
 void NavigationController::center()
 {
   if (!m_sceneView)
@@ -393,6 +453,9 @@ void NavigationController::center()
   m_sceneView->screenToLocation(m_sceneView->widthInPixels() * 0.5, m_sceneView->heightInPixels() * 0.5);
 }
 
+/*!
+  \internal
+ */
 double NavigationController::currentCameraDistance(const Camera &currentCamera)
 {
   if (currentCamera.isEmpty())
@@ -401,56 +464,86 @@ double NavigationController::currentCameraDistance(const Camera &currentCamera)
   return DsaUtility::distance3D(currentCamera.location(), m_currentCenter);
 }
 
+/*!
+  \brief Returns the initial roll in degrees.
+ */
 double NavigationController::initialRoll() const
 {
   return m_initialRoll;
 }
 
+/*!
+  \brief Sets the initial roll to \a initialRoll degrees.
+ */
 void NavigationController::setInitialRoll(double initialRoll)
 {
   m_initialRoll = initialRoll;
   setInitialLocation();
 }
 
+/*!
+  \brief Returns the initial pitch in degrees.
+ */
 double NavigationController::initialPitch() const
 {
   return m_initialPitch;
 }
 
+/*!
+  \brief Sets the initial pitch to \a initialPitch degrees.
+ */
 void NavigationController::setInitialPitch(double initialPitch)
 {
   m_initialPitch = initialPitch;
   setInitialLocation();
 }
 
+/*!
+  \brief Returns the initial heading in degrees.
+ */
 double NavigationController::initialHeading() const
 {
   return m_initialHeading;
 }
 
+/*!
+  \brief Sets the initial heading to \a initialHeading degrees.
+ */
 void NavigationController::setInitialHeading(double initialHeading)
 {
   m_initialHeading = initialHeading;
   setInitialLocation();
 }
 
+/*!
+  \brief Returns the initial distance in meters.
+ */
 double NavigationController::initialDistance() const
 {
   return m_initialDistance;
 }
 
+/*!
+  \brief Sets the initial distance to \a initialDistance meters.
+ */
 void NavigationController::setInitialDistance(double initialDistance)
 {
   m_initialDistance = initialDistance;
   setInitialLocation();
 }
 
+/*!
+  \brief Sets the initial center to \a initialCenter.
+ */
 void NavigationController::setInitialCenter(const Point& initialCenter)
 {
   m_initialCenter = initialCenter;
   setInitialLocation();
 }
 
+/*!
+  \brief Returns the initial center.
+ */
 Point NavigationController::initialCenter() const
 {
   return m_initialCenter;

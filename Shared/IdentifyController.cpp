@@ -35,6 +35,12 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
+  \class IdentifyController
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller for identifying GeoElements.
+ */
+
+/*!
   \brief Constructor accepting an optional \a parent.
  */
 IdentifyController::IdentifyController(QObject* parent /* = nullptr */):
@@ -119,6 +125,9 @@ QVariantList IdentifyController::popupManagers() const
   return res;
 }
 
+/*!
+  \brief Show the popup for \a geoElement with the title \a popupTitle.
+ */
 void IdentifyController::showPopup(GeoElement* geoElement, const QString& popupTitle)
 {
   if (!geoElement)

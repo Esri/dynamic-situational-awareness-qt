@@ -29,6 +29,16 @@ using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
 
+/*!
+  \class FollowPositionController
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller for managing the follow navigation modes.
+ */
+
+/*!
+  \brief Constructor taking an optional \a parent.
+ */
+
 FollowPositionController::FollowPositionController(QObject* parent) :
   Toolkit::AbstractTool(parent)
 {
@@ -40,10 +50,16 @@ FollowPositionController::FollowPositionController(QObject* parent) :
   updateGeoView();
 }
 
+/*!
+  \brief Destructor.
+ */
 FollowPositionController::~FollowPositionController()
 {
 }
 
+/*!
+  \brief Initializes the tool with a \a geoView.
+ */
 void FollowPositionController::init(GeoView* geoView)
 {
   m_geoView = geoView;
@@ -51,6 +67,9 @@ void FollowPositionController::init(GeoView* geoView)
   handleNewMode();
 }
 
+/*!
+  \brief Sets the follow mode for the tool to \a followMode.
+ */
 void FollowPositionController::setFollowMode(FollowPositionController::FollowMode followMode)
 {
   if (m_mode == followMode)
@@ -60,16 +79,25 @@ void FollowPositionController::setFollowMode(FollowPositionController::FollowMod
   handleNewMode();
 }
 
+/*!
+  \brief Returns the follow mode for the tool.
+ */
 FollowPositionController::FollowMode FollowPositionController::followMode() const
 {
   return m_mode;
 }
 
+/*!
+  \brief Returns the name of the tool - c "follow position".
+ */
 QString FollowPositionController::toolName() const
 {
   return QStringLiteral("follow position");
 }
 
+/*!
+  \brief Sets the app to follow the \l Esri::ArcGISRuntime::GeoElement \a elementToFollow.
+ */
 void FollowPositionController::followGeoElement(GeoElement* elementToFollow)
 {
   if (elementToFollow == nullptr)
@@ -85,6 +113,9 @@ void FollowPositionController::followGeoElement(GeoElement* elementToFollow)
   sceneView->setCameraController(followController);
 }
 
+/*!
+  \internal
+ */
 void FollowPositionController::handleNewMode()
 {
   if (!m_geoView)
@@ -96,6 +127,9 @@ void FollowPositionController::handleNewMode()
     emit followModeChanged();
 }
 
+/*!
+  \internal
+ */
 void FollowPositionController::updateGeoView()
 {
   GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
@@ -103,6 +137,9 @@ void FollowPositionController::updateGeoView()
     init(geoView);
 }
 
+/*!
+  \internal
+ */
 bool FollowPositionController::handleFollowInMap()
 {
   MapView* mapView = dynamic_cast<MapView*>(m_geoView);
@@ -115,6 +152,9 @@ bool FollowPositionController::handleFollowInMap()
   return true;
 }
 
+/*!
+  \internal
+ */
 bool FollowPositionController::handleFollowInScene()
 {
   SceneView* sceneView = dynamic_cast<SceneView*>(m_geoView);
@@ -149,6 +189,9 @@ bool FollowPositionController::handleFollowInScene()
   return true;
 }
 
+/*!
+  \internal
+ */
 GraphicListModel* FollowPositionController::locationGraphicsModel() const
 {
   if (!m_geoView)

@@ -66,7 +66,17 @@ struct GeometryQuadtree::QuadTree
 };
 
 /*!
-  \brief Constructor taking the \a extent of the Quadtree, the list of \a geoElements
+  \class GeometryQuadtree
+  \inherits QObject
+  \brief A Quadtree spatial structure covering a set of
+  \l Esri::ArcGISRuntime::GeoElement objects.
+
+  The tree then allows geometric tests for candidate intersections against
+  query geometries.
+ */
+
+/*!
+  \brief Constructor taking the \a extent of the quadtree, the list of \a geoElements
   which the tree should include, the \a maxLevels for the tree and an optional \a parent.
  */
 GeometryQuadtree::GeometryQuadtree(const Envelope& extent,

@@ -20,11 +20,23 @@
 
 namespace Dsa {
 
+/*!
+  \class DataListener
+  \inherits QObject
+  \brief Utility class for listening on a UDP socket.
+ */
+
+/*!
+  \brief Constructor taking an optional \a parent.
+ */
 DataListener::DataListener(QObject* parent) :
   QObject(parent)
 {
 }
 
+/*!
+  \brief Constructor taking a QIODevice (\a device) and an optional \a parent.
+ */
 DataListener::DataListener(QIODevice* device, QObject *parent) :
   QObject(parent),
   m_device(device)
@@ -32,11 +44,17 @@ DataListener::DataListener(QIODevice* device, QObject *parent) :
   connectDevice();
 }
 
+/*!
+  \brief Destructor.
+ */
 DataListener::~DataListener()
 {
   disconnectDevice();
 }
 
+/*!
+  \brief Sets the QIODevice to \a device.
+ */
 void DataListener::setDevice(QIODevice* device)
 {
   disconnectDevice();
@@ -45,16 +63,25 @@ void DataListener::setDevice(QIODevice* device)
   connectDevice();
 }
 
+/*!
+  \brief Returns the current QIODevice.
+ */
 QIODevice* DataListener::device() const
 {
   return m_device.data();
 }
 
+/*!
+  \brief Returns whether the data listener is enabled.
+ */
 bool DataListener::isEnabled() const
 {
   return m_enabled;
 }
 
+/*!
+  \brief Sets the data listener to be \a enabled.
+ */
 void DataListener::setEnabled(bool enabled)
 {
   if (m_enabled == enabled)
@@ -68,6 +95,9 @@ void DataListener::setEnabled(bool enabled)
   m_enabled = enabled;
 }
 
+/*!
+  \internal
+ */
 void DataListener::connectDevice()
 {
   disconnectDevice();
@@ -86,6 +116,9 @@ void DataListener::connectDevice()
   });
 }
 
+/*!
+  \internal
+ */
 void DataListener::disconnectDevice()
 {
   if (m_deviceConn)
@@ -96,6 +129,9 @@ void DataListener::disconnectDevice()
   processUdpDatagrams();
 }
 
+/*!
+  \internal
+ */
 bool DataListener::processUdpDatagrams()
 {
   QUdpSocket* udpSocket = qobject_cast<QUdpSocket*>(m_device);

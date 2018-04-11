@@ -33,6 +33,20 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
+  \class AnalysisListController
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller for working with the list of Analysis objects.
+
+  Analyses are the result of either a viewshed or line of sight operation.
+
+  This tool presents the list of currently active analyses and allows these to
+  be removed, set visible etc.
+
+  \sa LineOfSightController
+  \sa ViewshedController
+  */
+
+/*!
   \brief Constructor accepting an optional \a parent.
  */
 AnalysisListController::AnalysisListController(QObject* parent):
@@ -41,6 +55,7 @@ AnalysisListController::AnalysisListController(QObject* parent):
 {
   Toolkit::ToolManager::instance().addTool(this);
 
+  // update the geoView used by the tool as required
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]()
   {
     onGeoViewChanged(Toolkit::ToolResourceProvider::instance()->geoView());
@@ -119,6 +134,7 @@ void AnalysisListController::onGeoViewChanged(GeoView* geoView)
     emit analysisListChanged();
   };
 
+  // react to changes in the sceneView's analysis overlays list
   connect(m_sceneView->analysisOverlays(), &AnalysisOverlayListModel::analysisOverlayAdded, this, handleAnalysisOverlaysChanged);
   handleAnalysisOverlaysChanged();
 }
@@ -131,6 +147,7 @@ void AnalysisListController::zoomToLocation(const Point& point)
   if (m_sceneView == nullptr)
     return;
 
+  // create a new Camera (using the existing heading, pitch etc.) focused on the supplied point
   const Camera currentCam = m_sceneView->currentViewpointCamera();
   constexpr double targetDistance = 1500.0;
   const Camera newCam(point, targetDistance, currentCam.heading(), currentCam.pitch(), currentCam.roll());

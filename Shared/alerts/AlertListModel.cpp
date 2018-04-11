@@ -30,7 +30,7 @@ namespace Dsa {
   \inherits QAbstractListModel
   \brief A model responsible for storing \l AlertConditionData objects and reporting when they
   change.
-  */
+ */
 
 /*!
   \brief Static method to return a singleton instance of the model.
@@ -117,7 +117,7 @@ bool AlertListModel::addAlertConditionData(AlertConditionData* newConditionData)
 }
 
 /*!
-  \brief Removes \l conditionData from the model.
+  \brief Removes \a conditionData from the model.
  */
 void AlertListModel::removeAlert(AlertConditionData* conditionData)
 {

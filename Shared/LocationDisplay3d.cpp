@@ -34,6 +34,18 @@ namespace Dsa {
 
 static const QString s_headingAttribute{"heading"};
 
+/*!
+  \class LocationDisplay3d
+  \inherits QObject
+  \brief Class for managing the display of the current location in 3D.
+
+  The position is displayed as a \l Esri::ArcGISRuntime::Graphic in
+  a \l Esri::ArcGISRuntime::GraphicsOverlay.
+ */
+
+/*!
+  \brief Constructor taking an optional \a parent.
+ */
 LocationDisplay3d::LocationDisplay3d(QObject* parent) :
   QObject(parent),
   m_locationOverlay(new GraphicsOverlay(this)),
@@ -48,10 +60,16 @@ LocationDisplay3d::LocationDisplay3d(QObject* parent) :
   m_locationOverlay->graphics()->append(m_locationGraphic);
 }
 
+/*!
+  \brief Destructor.
+ */
 LocationDisplay3d::~LocationDisplay3d()
 {
 }
 
+/*!
+  \brief Starts the location display.
+ */
 void LocationDisplay3d::start()
 {
   if (m_geoPositionInfoSource)
@@ -62,6 +80,9 @@ void LocationDisplay3d::start()
   m_isStarted = true;
 }
 
+/*!
+  \brief Stops the location display.
+ */
 void LocationDisplay3d::stop()
 {
   m_locationOverlay->setVisible(false);
@@ -70,16 +91,25 @@ void LocationDisplay3d::stop()
   m_isStarted = false;
 }
 
+/*!
+  \brief Returns whether the location display is started.
+ */
 bool LocationDisplay3d::isStarted() const
 {
   return m_isStarted;
 }
 
+/*!
+  \brief Returns the position source for the location display.
+ */
 QGeoPositionInfoSource* LocationDisplay3d::positionSource() const
 {
   return m_geoPositionInfoSource;
 }
 
+/*!
+  \brief Sets the position source for the location display to \a positionSource.
+ */
 void LocationDisplay3d::setPositionSource(QGeoPositionInfoSource* positionSource)
 {
   m_geoPositionInfoSource = positionSource;
@@ -137,11 +167,17 @@ void LocationDisplay3d::setPositionSource(QGeoPositionInfoSource* positionSource
     m_geoPositionInfoSource->startUpdates();
 }
 
+/*!
+  \brief Returns the compass for the location display.
+ */
 QCompass* LocationDisplay3d::compass() const
 {
   return m_compass;
 }
 
+/*!
+  \brief Sets the compass for the location display to \a compass.
+ */
 void LocationDisplay3d::setCompass(QCompass* compass)
 {
   m_compass = compass;
@@ -169,21 +205,33 @@ void LocationDisplay3d::setCompass(QCompass* compass)
   m_compass->start();
 }
 
+/*!
+  \brief Returns the overlay for the location display.
+ */
 GraphicsOverlay* LocationDisplay3d::locationOverlay() const
 {
   return m_locationOverlay;
 }
 
+/*!
+  \brief Returns the graphic for the location display.
+ */
 Graphic* LocationDisplay3d::locationGraphic() const
 {
   return m_locationGraphic;
 }
 
+/*!
+  \brief Returns the default symbol for the location display.
+ */
 Symbol* LocationDisplay3d::defaultSymbol() const
 {
   return m_defaultSymbol;
 }
 
+/*!
+  \brief Sets the default symbol for the location display to \a defaultSymbol.
+ */
 void LocationDisplay3d::setDefaultSymbol(Symbol* defaultSymbol)
 {
   m_defaultSymbol = defaultSymbol;
@@ -203,6 +251,9 @@ void LocationDisplay3d::setDefaultSymbol(Symbol* defaultSymbol)
   }
 }
 
+/*!
+  \internal
+ */
 void LocationDisplay3d::postLastKnownLocationUpdate()
 {
   if (m_lastKnownLocation.isEmpty())

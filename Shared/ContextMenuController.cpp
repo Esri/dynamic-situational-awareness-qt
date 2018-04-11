@@ -49,6 +49,32 @@ const QString ContextMenuController::VIEWSHED_OPTION = "Viewshed";
 const QString ContextMenuController::CONTACT_REPORT_OPTION = "Contact report";
 
 /*!
+  \class ContextMenuController
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller for displaying a Context menu.
+
+  When the user presses and holds the mouse, a number of tasks are started
+  to discover the current context for the app. Based on the result of these
+  operations a set of context specific operations are presented. For example,
+  the tool offers options such as:
+
+  \list
+    \li Identify.
+    \li Elevation.
+    \li Coordinates.
+    \li Contact Report.
+    \li Viewshed.
+    \li Line of sight.
+  \endlist
+
+  \sa ContactReportController
+  \sa IdentifyController
+  \sa ViewshedController
+  \sa LineOfSightController
+  \sa Esri::ArcGISRuntime::Toolkit::CoordinateConversionController
+ */
+
+/*!
   \brief Constructor accepting an optional \a parent.
  */
 ContextMenuController::ContextMenuController(QObject* parent /* = nullptr */):
@@ -155,7 +181,7 @@ void ContextMenuController::onMousePressedAndHeld(QMouseEvent& event)
 }
 
 /*!
-  \internal.
+  \internal
 
   Handle the result of an identify layers task.
  */
@@ -189,7 +215,7 @@ void ContextMenuController::onIdentifyLayersCompleted(const QUuid& taskId, const
 }
 
 /*!
-  \internal.
+  \internal
 
   Handle the result of an identify graphics overlays task.
  */
@@ -233,7 +259,7 @@ void ContextMenuController::onIdentifyGraphicsOverlaysCompleted(const QUuid& tas
 
 
 /*!
-  \internal.
+  \internal
 
   Handle the result of a screen to location task.
  */
@@ -283,7 +309,7 @@ void ContextMenuController::setContextLocation(const Point& location)
 }
 
 /*!
-  \internal.
+  \internal
 
   Add \a option to the list of actions which are valid in this context.
  */
@@ -301,7 +327,7 @@ void ContextMenuController::addOption(const QString& option)
 }
 
 /*!
-  \internal.
+  \internal
 
   Clear the list of actions which are valid in this context.
  */

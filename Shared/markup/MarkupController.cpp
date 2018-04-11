@@ -49,6 +49,15 @@ namespace Dsa {
 
 const QString MarkupController::USERNAME_PROPERTYNAME = "UserName";
 
+/*!
+  \class MarkupController
+  \inherits AbstractSketchTool
+  \brief Tool controller for creating markups.
+ */
+
+/*!
+  \brief Constructor taking an optional \a parent.
+ */
 MarkupController::MarkupController(QObject* parent):
   AbstractSketchTool(parent),
   m_markupBroadcast(new MarkupBroadcast(parent))
@@ -70,11 +79,14 @@ MarkupController::MarkupController(QObject* parent):
   });
 }
 
+/*!
+ \brief Destructor.
+ */
 MarkupController::~MarkupController()
 {
 }
 
-/*
+/*!
  \brief Sets \a properties from the configuration file
  */
 void MarkupController::setProperties(const QVariantMap& properties)
@@ -82,6 +94,9 @@ void MarkupController::setProperties(const QVariantMap& properties)
   m_username = properties.value(USERNAME_PROPERTYNAME).toString();
 }
 
+/*!
+ \brief Sets the tool to be \a active.
+ */
 void MarkupController::setActive(bool active)
 {
   if (m_active == active || !m_geoView)
@@ -94,6 +109,9 @@ void MarkupController::setActive(bool active)
   emit activeChanged();
 }
 
+/*!
+ \brief Sets the drawing altitude to \a altitude.
+ */
 void MarkupController::setDrawingAltitude(double altitude)
 {
   if (m_drawingAltitude == altitude)
@@ -102,12 +120,17 @@ void MarkupController::setDrawingAltitude(double altitude)
   m_drawingAltitude = altitude;
 }
 
+/*!
+ \brief Returns the drawing altitude.
+ */
 double MarkupController::drawingAltitude() const
 {
   return m_drawingAltitude;
 }
 
-// creates a new LineSymbol rather than updating the current one so previously drawn sketches stay the same color
+/*!
+ \brief Sets the color for the markup to \a color.
+ */
 void MarkupController::setColor(const QColor& color)
 {
   if (m_color == color)
@@ -116,6 +139,9 @@ void MarkupController::setColor(const QColor& color)
   m_color = color;
 }
 
+/*!
+ \brief Sets the width for the markup to \a width.
+ */
 void MarkupController::setWidth(float width)
 {
   if (m_width == width)
@@ -124,6 +150,9 @@ void MarkupController::setWidth(float width)
   m_width = width;
 }
 
+/*!
+ \brief Returns a new \l Esri::ArcGISRuntime::Symbol using the current color and width.
+ */
 Symbol* MarkupController::updatedSymbol()
 {
   m_sketchSymbol = new SimpleLineSymbol(SimpleLineSymbolStyle::Solid, m_color, m_width, this);
@@ -134,11 +163,19 @@ Symbol* MarkupController::updatedSymbol()
   return m_sketchSymbol;
 }
 
+/*!
+ \brief Sets the surface placement mode for the markup to \a placementEnum.
+
+ \sa Esri::ArcGISRuntime::SurfacePlacement
+ */
 void MarkupController::setSurfacePlacement(int placementEnum)
 {
   m_sketchOverlay->setSceneProperties(LayerSceneProperties(static_cast<SurfacePlacement>(placementEnum)));
 }
 
+/*!
+ \brief Deletes the selected graphics.
+ */
 void MarkupController::deleteSelectedGraphics()
 {
   if (m_sketchOverlay->selectedGraphics().isEmpty())
@@ -156,6 +193,9 @@ void MarkupController::deleteSelectedGraphics()
   }
 }
 
+/*!
+ \brief Deletes all graphics.
+ */
 void MarkupController::deleteAllGraphics()
 {
   // remove graphics from view
@@ -170,6 +210,9 @@ void MarkupController::deleteAllGraphics()
   m_currentPartIndex = 0;
 }
 
+/*!
+ \brief Sets whether drawing is enabled to \a enabled.
+ */
 void MarkupController::setDrawModeEnabled(bool enabled)
 {
   if (m_drawModeEnabled == enabled)
@@ -178,6 +221,9 @@ void MarkupController::setDrawModeEnabled(bool enabled)
   m_drawModeEnabled = enabled;
 }
 
+/*!
+ \internal
+ */
 void MarkupController::init()
 {
   initGeometryBuilder();
@@ -275,9 +321,12 @@ void MarkupController::init()
   });
 }
 
-// to be called whenever the GeometryBuilder is modified. It will update the Geometry of the Graphic being sketched
+/*!
+ \internal
+ */
 void MarkupController::updateSketch()
 {
+  // to be called whenever the GeometryBuilder is modified. It will update the Geometry of the Graphic being sketched
   MultipartBuilder* multipartBuilder = static_cast<MultipartBuilder*>(m_geometryBuilder);
 
   // get simplified geometry
@@ -290,6 +339,9 @@ void MarkupController::updateSketch()
   graphic->setGeometry(simplifiedLine);
 }
 
+/*!
+ \internal
+ */
 void MarkupController::updateGeoView()
 {
   GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
@@ -308,31 +360,49 @@ void MarkupController::updateGeoView()
   init();
 }
 
+/*!
+ \brief Returns whether the app is 3D.
+ */
 bool MarkupController::is3d() const
 {
   return m_is3d;
 }
 
+/*!
+ \brief Returns the number of sketches.
+ */
 int MarkupController::sketchCount() const
 {
   return m_partOutlineGraphics.size();
 }
 
+/*!
+ \brief Returns whether drawing is enabled.
+ */
 bool MarkupController::drawModeEnabled() const
 {
   return m_drawModeEnabled;
 }
 
+/*!
+ \brief Returns the name of this tool.
+ */
 QString MarkupController::toolName() const
 {
   return "Markup Tool";
 }
 
+/*!
+ \brief Returns the type of geometry. This will always be \c Polyline.
+ */
 GeometryType MarkupController::geometryType() const
 {
   return GeometryType::Polyline;
 }
 
+/*!
+ \brief Sets the overlay name to \a name.
+ */
 void MarkupController::setOverlayName(const QString& name)
 {
   if (!m_sketchOverlay)
@@ -345,11 +415,17 @@ void MarkupController::setOverlayName(const QString& name)
   m_sketchOverlay->setOverlayId(overlayId);
 }
 
+/*!
+ \brief Returns the list of colors available for markups.
+ */
 QStringList MarkupController::colors() const
 {
   return MarkupLayer::colors();
 }
 
+/*!
+ \brief Creates and braodcasts a new \l MarkupLayer from the current sketch.
+ */
 void MarkupController::shareMarkup()
 {
   if (!m_markupBroadcast)
@@ -359,6 +435,9 @@ void MarkupController::shareMarkup()
   m_markupBroadcast->broadcastMarkup(markupLayer->toJson());
 }
 
+/*!
+ \brief Returns the current markup color.
+ */
 QColor MarkupController::currentColor() const
 {
   return m_color;

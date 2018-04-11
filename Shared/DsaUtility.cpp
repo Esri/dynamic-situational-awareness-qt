@@ -25,6 +25,14 @@ using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
 
+/*!
+  \class DsaUtility
+  \brief Static helper class with a variety of utility methods for the Dsa app.
+ */
+
+/*!
+  \brief Returns the platform independent data path to \c [HOME]/ArcGIS/Runtime/Data/DSA.
+ */
 QString DsaUtility::dataPath()
 {
   QDir dataDir;
@@ -44,11 +52,19 @@ QString DsaUtility::dataPath()
   return dataDir.exists() ? dataDir.absolutePath() : "";
 }
 
+/*!
+  \brief Returns an \Esri::ArcGISRuntime::Point in Montery, California.
+ */
 Point DsaUtility::montereyCA()
 {
   return Point(-121.9, 36.6, SpatialReference::wgs84());
 }
 
+/*!
+  \brief Returns the distance in meters between the \a from and \a to points.
+
+  \note Assumes both points are in the same spatial reference.
+ */
 double DsaUtility::distance3D(const Point& from, const Point& to)
 {
   const QVector3D fromCartesian = toCartesianPoint(from);
@@ -59,6 +75,9 @@ double DsaUtility::distance3D(const Point& from, const Point& to)
   return result.length();
 }
 
+/*!
+  \brief Returns \a point as a Cartesian point.
+ */
 QVector3D DsaUtility::toCartesianPoint(const Point& point)
 {
   // convert degrees (lat/long) to radians

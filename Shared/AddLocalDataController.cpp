@@ -73,7 +73,13 @@ const QString AddLocalDataController::s_vectorTilePackageData = QStringLiteral("
 const QString AddLocalDataController::s_tilePackageData = QStringLiteral("Tile Package (*.tpk)");
 const QString AddLocalDataController::s_markupData = QStringLiteral("Markup (*.markup)");
 
-/*
+/*!
+  \class AddLocalDataController
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller for adding local data to the app.
+ */
+
+/*!
  \brief Constructor that takes an optional \a parent.
  */
 AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
@@ -94,7 +100,7 @@ AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
   emit localDataModelChanged();
 }
 
-/*
+/*!
  \brief Returns the local data model associated with the controller.
  */
 QAbstractListModel* AddLocalDataController::localDataModel() const
@@ -102,7 +108,7 @@ QAbstractListModel* AddLocalDataController::localDataModel() const
   return m_localDataModel;
 }
 
-/*
+/*!
  \brief Adds the provided \a path to the directory list.
 
  The directory list contains all of the directories that will be searched for local data.
@@ -122,7 +128,7 @@ void AddLocalDataController::addPathToDirectoryList(const QString& path)
   emit propertyChanged(LOCAL_DATAPATHS_PROPERTYNAME, m_dataPaths);
 }
 
-/*
+/*!
  \brief Refreshes the local data model with a given \a fileType.
  */
 void AddLocalDataController::refreshLocalDataModel(const QString& fileType)
@@ -145,7 +151,7 @@ void AddLocalDataController::refreshLocalDataModel(const QString& fileType)
   }
 }
 
-/*
+/*!
  \brief Returns the file filter string list for filtering data from the QDir entrylist
  */
 QStringList AddLocalDataController::determineFileFilters(const QString& fileType)
@@ -178,7 +184,7 @@ QStringList AddLocalDataController::determineFileFilters(const QString& fileType
   return fileFilter;
 }
 
-/*
+/*!
  \brief Adds the provided \a indices from the list model as elevation sources to the Scene.
  */
 void AddLocalDataController::addItemAsElevationSource(const QList<int>& indices)
@@ -211,7 +217,7 @@ void AddLocalDataController::addItemAsElevationSource(const QList<int>& indices)
   emit propertyChanged(DEFAULT_ELEVATION_PROPERTYNAME, dataPaths);
 }
 
-/*
+/*!
  \brief Adds the provided TPK \a path as an elevation source.
 */
 void AddLocalDataController::createElevationSourceFromTpk(const QString& path)
@@ -243,7 +249,7 @@ void AddLocalDataController::createElevationSourceFromTpk(const QString& path)
   tileCache->load();
 }
 
-/*
+/*!
  \brief Adds the provided Raster \a paths as an elevation source.
 */
 void AddLocalDataController::createElevationSourceFromRasters(const QStringList& paths)
@@ -259,7 +265,7 @@ void AddLocalDataController::createElevationSourceFromRasters(const QStringList&
   emit elevationSourceSelected(source);
 }
 
-/*
+/*!
  \brief Adds the the markup from the provided path as a MarkupLayer.
 
  \list
@@ -291,7 +297,7 @@ void AddLocalDataController::createMarkupLayer(const QString& path, int layerInd
   Q_UNUSED(layerIndex)
 }
 
-/*
+/*!
  \brief Adds the provided \a indices from the list model as layers.
  */
 void AddLocalDataController::addItemAsLayer(const QList<int>& indices)
@@ -332,7 +338,7 @@ void AddLocalDataController::addItemAsLayer(const QList<int>& indices)
   }
 }
 
-/*
+/*!
  \brief Determines data type from the given \a path, and calls the appropriate helper.
 
  \list
@@ -376,7 +382,7 @@ void AddLocalDataController::addLayerFromPath(const QString& path, int layerInde
     createRasterLayer(path, layerIndex, visible, autoAdd);
 }
 
-/*
+/*!
  \brief Creates a Geodatabase from the given \a path, and creates a FeatureLayer for each table in the Geodatabase.
  */
 void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path)
@@ -416,7 +422,7 @@ void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path)
   gdb->load();
 }
 
-/*
+/*!
  \brief Creates a FeatureLayer with the feature table at the given id of a Geodatabase
 
  \list
@@ -470,7 +476,7 @@ void AddLocalDataController::createFeatureLayerGeodatabaseWithId(const QString& 
   gdb->load();
 }
 
-/*
+/*!
  \brief Creates a FeatureLayer with the feature table at the given index of a GeoPackage
 
  \list
@@ -524,7 +530,7 @@ void AddLocalDataController::createFeatureLayerGeoPackage(const QString& path, i
   geoPackage->load();
 }
 
-/*
+/*!
  \brief Creates a RasterLayer with the raster at the given index of a GeoPackage
 
  \list
@@ -572,7 +578,7 @@ void AddLocalDataController::createRasterLayerGeoPackage(const QString& path, in
   geoPackage->load();
 }
 
-/*
+/*!
  \brief Creates a GeoPackage from the given \a path, and adds a Layer for each table and raster in the GeoPackage
  */
 void AddLocalDataController::createLayerGeoPackage(const QString& path)
@@ -623,7 +629,7 @@ void AddLocalDataController::createLayerGeoPackage(const QString& path)
   geoPackage->load();
 }
 
-/*
+/*!
  \brief Creates a FeatureLayer with the provided shapefile path.
 
  \list
@@ -668,7 +674,7 @@ void AddLocalDataController::createFeatureLayerShapefile(const QString& path, in
   }
 }
 
-/*
+/*!
  \brief Creates a Rasterlayer with the provided raster path.
 
  \list
@@ -702,7 +708,7 @@ void AddLocalDataController::createRasterLayer(const QString& path, int layerInd
   }
 }
 
-/*
+/*!
  \brief Creates an ArcGISSceneLayer with the provided scene layer package path.
 
  \list
@@ -735,7 +741,7 @@ void AddLocalDataController::createSceneLayer(const QString& path, int layerInde
   }
 }
 
-/*
+/*!
  \brief Creates an ArcGISTiledLayer with the provided TPK path.
 
  \list
@@ -769,7 +775,7 @@ void AddLocalDataController::createTiledLayer(const QString& path, int layerInde
   }
 }
 
-/*
+/*!
  \brief Creates an ArcGISVectorTiledLayer with the provided VTPK path.
 
  \list
@@ -803,7 +809,7 @@ void AddLocalDataController::createTiledLayer(const QString& path, int layerInde
   }
 }
 
-/*
+/*!
  \brief Returns the tool's name.
 */
 QString AddLocalDataController::toolName() const

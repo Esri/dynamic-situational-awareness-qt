@@ -42,6 +42,12 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
+  \class ContactReportController
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller for creating contact reports.
+ */
+
+/*!
   \brief Constructor accepting an optional \a parent.
  */
 ContactReportController::ContactReportController(QObject* parent):
@@ -331,7 +337,7 @@ void ContactReportController::onGeoViewChanged(GeoView* geoView)
 }
 
 /*!
-  \internal.
+  \internal
  */
 void ContactReportController::onMouseClicked(QMouseEvent& event)
 {
@@ -367,7 +373,7 @@ void ContactReportController::onMouseClicked(QMouseEvent& event)
 }
 
 /*!
-  \internal.
+  \internal
  */
 void ContactReportController::onUpdateControlPointHightlight()
 {

@@ -80,7 +80,11 @@ Item {
         textRole: "display"
 
         onCurrentIndexChanged: {
-            toolController.selectOverlayIndex(currentIndex);
+            if (currentIndex === -1)
+                return;
+
+            if (!toolController.selectOverlayIndex(currentIndex))
+                currentIndex = -1;
         }
 
         Text {

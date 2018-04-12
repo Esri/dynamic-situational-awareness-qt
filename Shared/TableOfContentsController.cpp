@@ -25,6 +25,7 @@
 
 // C++ API headers
 #include "FeatureLayer.h"
+#include "FeatureCollectionLayer.h"
 #include "GeoView.h"
 #include "LayerListModel.h"
 #include "RasterLayer.h"
@@ -125,6 +126,8 @@ void TableOfContentsController::moveDown(int layerIndex)
     return;
 
   m_layerListModel->move(modelIndex, modelIndex - 1);
+
+  refreshLayerOrder();
 }
 
 /*!
@@ -141,6 +144,8 @@ void TableOfContentsController::moveUp(int layerIndex)
     return;
 
   m_layerListModel->move(modelIndex, modelIndex + 1);
+
+  refreshLayerOrder();
 }
 
 /*!
@@ -158,6 +163,8 @@ void TableOfContentsController::moveFromTo(int fromIndex, int toIndex)
     return;
 
   m_layerListModel->move(modelFromIndex, modelToIndex);
+
+  refreshLayerOrder();
 }
 
 /*!
@@ -296,6 +303,26 @@ int TableOfContentsController::mappedIndex(int index) const
 
   const QModelIndex sourceIndex = m_drawOrderModel->mapToSource(m_drawOrderModel->index(index, 0));
   return sourceIndex.row();
+}
+
+/*!
+  \internal
+ */
+void TableOfContentsController::refreshLayerOrder()
+{
+  // To avoid an re-ordering issue which affects FeatureCollectionLayers in 3D view
+  // these types of layers are removed and re-added at the desired index
+  const int layerCount = m_layerListModel->rowCount();
+  for (int i = 0; i < layerCount; ++i)
+  {
+    Layer* layer = m_layerListModel->at(i);
+    FeatureCollectionLayer* featCollectionLyr = qobject_cast<FeatureCollectionLayer*>(layer);
+    if (!featCollectionLyr)
+      continue;
+
+    m_layerListModel->removeAt(i);
+    m_layerListModel->insert(i, layer);
+  }
 }
 
 } // Dsa

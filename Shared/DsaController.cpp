@@ -43,6 +43,7 @@
 #include <QSettings>
 
 using namespace Esri::ArcGISRuntime;
+using Esri::ArcGISRuntime::Toolkit::ToolManager;
 
 namespace Dsa {
 
@@ -81,6 +82,14 @@ DsaController::DsaController(QObject* parent):
   m_dataPath = m_dsaSettings["RootDataDirectory"].toString();
 
   connect(m_scene, &Scene::errorOccurred, this, &DsaController::onError);
+
+  // as tools are added, set the properties
+  connect(&ToolManager::instance(), &ToolManager::toolAdded, this,
+          [this](Esri::ArcGISRuntime::Toolkit::AbstractTool* tool)
+  {
+    if (tool)
+      tool->setProperties(m_dsaSettings);
+  });
 }
 
 /*!
@@ -183,15 +192,6 @@ void DsaController::init(GeoView* geoView)
       if (contextMenu && contextMenu->isActive() == anyActive)
         contextMenu->setActive(!anyActive);
     });
-  }
-
-  // set all tool properties
-  for(Toolkit::AbstractTool* abstractTool : Toolkit::ToolManager::instance())
-  {
-    if (!abstractTool)
-      continue;
-
-    abstractTool->setProperties(m_dsaSettings);
   }
 }
 

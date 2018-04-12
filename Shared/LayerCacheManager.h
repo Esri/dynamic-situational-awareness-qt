@@ -66,8 +66,8 @@ private:
   QJsonArray m_layers;
   QJsonArray m_inputLayerJsonArray;
   bool m_initialLoadCompleted = false;
-  AddLocalDataController* m_localDataController;
-  Esri::ArcGISRuntime::Scene* m_scene;
+  AddLocalDataController* m_localDataController = nullptr;
+  Esri::ArcGISRuntime::Scene* m_scene  = nullptr;
   QHash<int, Esri::ArcGISRuntime::Layer*> m_initialLayerCache;
 };
 

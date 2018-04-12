@@ -13,7 +13,7 @@
 // PCH header
 #include "pch.hpp"
 
-#include "ContactReportController.h"
+#include "ObservationReportController.h"
 
 // example app headers
 #include "AppConstants.h"

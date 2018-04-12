@@ -280,7 +280,7 @@ Vehicle {
             }
         }
 
-        ContactReportTool {
+        ObservationReportTool {
             id: contactReportTool
             anchors {
                 right: parent.right

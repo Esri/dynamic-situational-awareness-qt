@@ -20,7 +20,7 @@
 #include "AnalysisListController.h"
 #include "AppInfo.h"
 #include "BasemapPickerController.h"
-#include "ContactReportController.h"
+#include "ObservationReportController.h"
 #include "ContextMenuController.h"
 #include "DsaResources.h"
 #include "FollowPositionController.h"

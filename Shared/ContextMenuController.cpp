@@ -16,7 +16,7 @@
 #include "ContextMenuController.h"
 
 // example app headers
-#include "ContactReportController.h"
+#include "ObservationReportController.h"
 #include "FollowPositionController.h"
 #include "GraphicsOverlaysResultsManager.h"
 #include "IdentifyController.h"

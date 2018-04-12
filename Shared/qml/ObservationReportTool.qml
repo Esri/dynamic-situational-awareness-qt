@@ -79,37 +79,37 @@ DsaPanel {
         currentIndex: 0
 
         // Date and time of report
-        ContactReportUnitPage {
+        ObservationReportObservedByPage {
             id: unitPage
             visible: reportFrame.currentIndex === 0
         }
 
         // Size of enemy unit
-        ContactReportSizePage {
+        ObservationReportSizePage {
             id: sizePage
             visible: reportFrame.currentIndex === 1
         }
 
         // Activity
-        ContactReportActivityPage {
+        ObservationReportActivityPage {
             id: activityPage
             visible: reportFrame.currentIndex === 2
         }
 
         // Location
-        ContactReportLocationPage {
+        ObservationReportLocationPage {
             id: locationPage
             visible: reportFrame.currentIndex === 3
         }
 
         // Enemy Unit
-        ContactReportEnemyUnitPage {
+        ObservationReportDescriptionPage {
             id: enemyUnitPage
             visible: reportFrame.currentIndex === 4
         }
 
         // Observed Time
-        ContactReportObservedTimePage {
+        ObservationReportObservedTimePage {
             id: observedTimePage
             visible: reportFrame.currentIndex === 5
         }

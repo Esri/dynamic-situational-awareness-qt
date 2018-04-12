@@ -262,7 +262,7 @@ Rectangle {
                                                       levelPage.getLevel(),
                                                       sourcePage.sourceName,
                                                       targetLoader.item.targetFeatureId,
-                                                      targetLoader.item.targetInde);
+                                                      targetLoader.item.targetIndex);
                 }
             } else if (conditionPage.isAttribute) {
                 toolController.addAttributeEqualsAlert(namePage.conditionName,

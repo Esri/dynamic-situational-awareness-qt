@@ -107,7 +107,7 @@ private:
   QCompass* m_compass = nullptr;
   LocationDisplay3d* m_locationDisplay3d = nullptr;
   bool m_enabled = false;
-  bool m_simulated = false;
+  bool m_simulated = true;
   double m_lastViewHeading = 0.0;
   double m_lastKnownHeading = 0.0;
   Esri::ArcGISRuntime::Point m_currentLocation;

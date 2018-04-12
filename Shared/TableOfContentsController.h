@@ -74,6 +74,7 @@ public slots:
 
 private:
   int mappedIndex(int index) const;
+  void refreshLayerOrder();
 
   Esri::ArcGISRuntime::LayerListModel* m_layerListModel = nullptr;
   QHash<Esri::ArcGISRuntime::Layer*, QMetaObject::Connection> m_layerConnections;

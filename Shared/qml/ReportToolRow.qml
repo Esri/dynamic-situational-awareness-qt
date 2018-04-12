@@ -24,14 +24,14 @@ Row {
     visible: categoryToolbar.state === "reports"
     onVisibleChanged: state = "clear"
 
-    property alias contactState: contactIcon.toolName
+    property alias observationState: observationIcon.toolName
     property string clearState: "clear"
 
     states: [
         State {
-            name: contactIcon.toolName
+            name: observationIcon.toolName
             PropertyChanges {
-                target: contactIcon
+                target: observationIcon
                 selected: true
             }
         },
@@ -39,17 +39,17 @@ Row {
         State {
             name: clearState
             PropertyChanges {
-                target: contactIcon
+                target: observationIcon
                 selected: false
             }
         }
     ]
 
-    // Contact Tool
+    // Observation Tool
     ToolIcon {
-        id: contactIcon
+        id: observationIcon
         iconSource: DsaResources.iconCreateReport
-        toolName: "Contact"
+        toolName: "Observation"
         onToolSelected: {
             if (selected) {
                 reportToolRow.state = clearState;
@@ -60,7 +60,7 @@ Row {
         }
 
         onSelectedChanged: {
-            contactReportTool.visible = selected;
+            observationReportTool.visible = selected;
         }
     }
 }

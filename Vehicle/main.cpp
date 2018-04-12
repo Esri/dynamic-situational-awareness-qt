@@ -155,7 +155,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<Dsa::LineOfSightController>("Esri.DSA", 1, 0, "LineOfSightController");
   qmlRegisterType<Dsa::ContextMenuController>("Esri.DSA", 1, 0, "ContextMenuController");
   qmlRegisterType<Dsa::AnalysisListController>("Esri.DSA", 1, 0, "AnalysisListController");
-  qmlRegisterType<Dsa::ContactReportController>("Esri.DSA", 1, 0, "ContactReportController");
+  qmlRegisterType<Dsa::ObservationReportController>("Esri.DSA", 1, 0, "ObservationReportController");
 
   // Register Toolkit Component Types
   ArcGISRuntimeToolkit::registerToolkitTypes();

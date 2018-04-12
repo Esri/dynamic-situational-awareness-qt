@@ -18,32 +18,32 @@ import QtQuick.Window 2.2
 import Esri.DSA 1.0
 
 Item {
-    id: enemyUnitPage
+    id: descriptionPage
 
-    property bool valid: enemyUnitField.length > 0
-    property string instruction: "Enemy unit"
+    property bool valid: descriptionField.length > 0
+    property string instruction: "Description of who is performing activity"
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
-    property alias enemyUnit: enemyUnitField.text
+    property alias enemyUnit: descriptionField.text
 
     function clear() {
-        enemyUnitField.text = "";
+        descriptionField.text = "";
 
         if (visible)
-            enemyUnitField.forceActiveFocus();
+            descriptionField.forceActiveFocus();
     }
 
     function text() {
-        return "unit:" + enemyUnitField.text;
+        return "description:" + descriptionField.text;
     }
 
     onVisibleChanged: {
         if (visible)
-            enemyUnitField.forceActiveFocus();
+            descriptionField.forceActiveFocus();
     }
 
     TextEdit {
-        id: enemyUnitField
+        id: descriptionField
         clip: true
         anchors {
             horizontalCenter: parent.horizontalCenter
@@ -80,7 +80,7 @@ Item {
 
         Text {
             anchors.centerIn: parent
-            visible: enemyUnitField.text.length === 0
+            visible: descriptionField.text.length === 0
             font {
                 pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 family: DsaStyles.fontFamily
@@ -91,14 +91,14 @@ Item {
             verticalAlignment: Text.AlignVCenter
             color: Material.accent
 
-            text: "<enemy unit description>"
+            text: "<enter description>"
         }
     }
 
     Button {
         anchors {
-            top : enemyUnitField.bottom
-            right: enemyUnitField.right
+            top : descriptionField.bottom
+            right: descriptionField.right
             margins: 4 * scaleFactor
         }
         text: "clear"

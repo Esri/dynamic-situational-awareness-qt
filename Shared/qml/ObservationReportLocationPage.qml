@@ -21,17 +21,17 @@ Item {
     id: reportDatePage
 
     property bool valid: controlPointTextField.length > 0
-    property string instruction: "Location"
+    property string instruction: "Location of observation"
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     property alias controlPoint: controlPointTextField.text
-    property alias locationDescription: enemyLocationField.text
+    property alias locationDescription: locationField.text
 
     function clear() {
-        enemyLocationField.text = "";
+        locationField.text = "";
 
         if (visible)
-            enemyLocationField.forceActiveFocus();
+            locationField.forceActiveFocus();
     }
 
     function text() {
@@ -40,14 +40,14 @@ Item {
 
     onVisibleChanged: {
         if (visible)
-            enemyLocationField.forceActiveFocus();
+            locationField.forceActiveFocus();
     }
 
     TextField {
         id: controlPointTextField
         anchors {
-            left: enemyLocationField.left
-            right: enemyLocationField.right
+            left: locationField.left
+            right: locationField.right
             margins: 16 * scaleFactor
         }
         width: parent.width * 0.75
@@ -60,47 +60,54 @@ Item {
         verticalAlignment: Text.AlignVCenter
         text: toolController.controlPoint;
 
-        placeholderText: "<lat long of enemy>"
+        placeholderText: "<lat long of observation>"
     }
 
-    OverlayButton {
-        id: pickButton
 
+    Row {
+        id: pickRow
         anchors {
             top: controlPointTextField.bottom
-            right: parent.horizontalCenter
+            horizontalCenter: parent.horizontalCenter
+            margins: 8 * scaleFactor
         }
 
-        selected: toolController.pickMode
-        iconUrl: DsaResources.iconTouch
-        opacity: enabled ? 1.0 : 0.8
+        width: parent.width * 0.5
 
-        onClicked: {
-            toolController.togglePickMode();
+        spacing: 16 * scaleFactor
+
+        ToolIcon {
+            id: pickButton
+
+            selected: toolController.pickMode
+            toolName: "From Map"
+            iconSource: DsaResources.iconTouch
+            opacity: enabled ? 1.0 : 0.8
+
+            onToolSelected: {
+                toolController.togglePickMode();
+            }
         }
-    }
 
-    OverlayButton {
-        id: myLocationButton
+        ToolIcon {
+            id: myLocationButton
 
-        anchors {
-            top: controlPointTextField.bottom
-            left: parent.horizontalCenter
-        }
+            toolName: "My Location"
+            iconSource: DsaResources.iconGps
+            opacity: enabled ? 1.0 : 0.8
 
-        iconUrl: DsaResources.iconGps
-
-        onClicked: {
-            toolController.setFromMyLocation();
+            onToolSelected: {
+                toolController.setFromMyLocation();
+            }
         }
     }
 
     TextEdit {
-        id: enemyLocationField
+        id: locationField
         clip: true
         anchors {
             horizontalCenter: parent.horizontalCenter
-            top: pickButton.bottom
+            top: pickRow.bottom
             margins: 16 * scaleFactor
         }
         width: parent.width * 0.75
@@ -133,7 +140,7 @@ Item {
 
         Text {
             anchors.centerIn: parent
-            visible: enemyLocationField.text.length === 0
+            visible: locationField.text.length === 0
             font {
                 pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 family: DsaStyles.fontFamily
@@ -150,8 +157,8 @@ Item {
 
     Button {
         anchors {
-            top : enemyLocationField.bottom
-            right: enemyLocationField.right
+            top : locationField.bottom
+            right: locationField.right
             margins: 4 * scaleFactor
         }
         text: "clear"

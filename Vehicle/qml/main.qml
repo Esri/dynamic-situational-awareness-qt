@@ -281,7 +281,7 @@ Vehicle {
         }
 
         ObservationReportTool {
-            id: contactReportTool
+            id: observationReportTool
             anchors {
                 right: parent.right
                 top: parent.top
@@ -301,8 +301,8 @@ Vehicle {
 
                 categoryToolbar.state = "reports";
 
-                if (reportToolRow.state !== reportToolRow.contactState)
-                    reportToolRow.state = reportToolRow.contactState;
+                if (reportToolRow.state !== reportToolRow.observationState)
+                    reportToolRow.state = reportToolRow.observationState;
             }
         }
 

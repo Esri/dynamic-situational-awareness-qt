@@ -18,25 +18,25 @@ import QtQuick.Window 2.2
 import Esri.DSA 1.0
 
 DsaPanel {
-    id: contactReportRoot
+    id: observationReportRoot
     clip: true
-    title: qsTr("Contact Report")
+    title: qsTr("Observation Report")
 
     property bool isMobile
     property alias pickMode: toolController.pickMode
     property bool  toolActive: toolController.active
     property bool readyToAdd: reportFrame.currentItem == reviewPage
 
-    ContactReportController {
+    ObservationReportController {
         id: toolController
 
-        active: isMobile ? (contactReportRoot.visible || pickMode) : contactReportRoot.visible
+        active: isMobile ? (observationReportRoot.visible || pickMode) : observationReportRoot.visible
 
         onActiveChanged: {
-            if (!active && contactReportRoot.visible)
-                contactReportRoot.visible = false;
-            else if (active && !contactReportRoot.visible)
-                contactReportRoot.visible = true;
+            if (!active && observationReportRoot.visible)
+                observationReportRoot.visible = false;
+            else if (active && !observationReportRoot.visible)
+                observationReportRoot.visible = true;
         }
     }
 
@@ -78,13 +78,13 @@ DsaPanel {
         }
         currentIndex: 0
 
-        // Date and time of report
+        // Observed by
         ObservationReportObservedByPage {
-            id: unitPage
+            id: observedByPage
             visible: reportFrame.currentIndex === 0
         }
 
-        // Size of enemy unit
+        // Size of object observed or number of items
         ObservationReportSizePage {
             id: sizePage
             visible: reportFrame.currentIndex === 1
@@ -102,9 +102,9 @@ DsaPanel {
             visible: reportFrame.currentIndex === 3
         }
 
-        // Enemy Unit
+        // Description of who is performing activity
         ObservationReportDescriptionPage {
-            id: enemyUnitPage
+            id: descriptionPage
             visible: reportFrame.currentIndex === 4
         }
 
@@ -118,7 +118,7 @@ DsaPanel {
         Item {
             id: reviewPage
             visible: reportFrame.currentIndex === 6
-            property string instruction: "Create contact report"
+            property string instruction: "Create observation report"
             property bool valid: true
             clip: true
 
@@ -228,8 +228,8 @@ DsaPanel {
 
             toolController.broadcastReport(sizePage.size,
                                       locationPage.locationDescription,
-                                      enemyUnitPage.enemyUnit,
-                                      activityPage.enemyActivity,
+                                      descriptionPage.enemyUnit,
+                                      activityPage.activity,
                                       observedTimePage.observedTime,
                                       "");
 
@@ -238,7 +238,7 @@ DsaPanel {
             reportFrame.setCurrentIndex(0);
 
             if (isMobile)
-                contactReportRoot.visible = false;
+                observationReportRoot.visible = false;
         }
     }
 
@@ -259,7 +259,7 @@ DsaPanel {
             toolController.cancelReport();
 
             if (isMobile)
-                contactReportRoot.visible = false;
+                observationReportRoot.visible = false;
         }
     }
 

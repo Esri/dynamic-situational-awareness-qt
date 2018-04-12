@@ -21,53 +21,93 @@ Item {
     id: reportDatePage
 
     property bool valid: size.length > 0
-    property string instruction: "Size of enemy unit"
+    property string instruction: "Size of object observed/number of items"
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
-    property string size: smallButton.checked ? "small" :
-                                                (mediumButton.checked ? "medium" : "large")
+    property alias size: sizeField.text
 
     function clear() {
+        size = "";
+
+        if (visible)
+            sizeField.forceActiveFocus();
     }
 
     function text() {
-        return "size:" + size;
+        return "size:" + sizeField.text;
     }
 
-    Column {
+    onVisibleChanged: {
+        if (visible)
+            sizeField.forceActiveFocus();
+    }
+
+    TextEdit {
+        id: sizeField
+        clip: true
         anchors {
             horizontalCenter: parent.horizontalCenter
             top: parent.top
             margins: 16 * scaleFactor
         }
-        spacing: 10 * scaleFactor
-        leftPadding: 10 * scaleFactor
+        width: parent.width * 0.75
+        height: parent.height * 0.50
+        color: Material.foreground
+        font {
+            pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+            family: DsaStyles.fontFamily
+        }
+        horizontalAlignment: Text.AlignLeft
+        verticalAlignment: Text.AlignTop
+        padding: 4 * scaleFactor
+        wrapMode: Text.Wrap
+        selectByKeyboard: true
+        selectByMouse: true
 
-        ButtonGroup {
-            id: sizeGroup
+        onTextChanged: {
+            if (length > 250)
+                remove(250, length -1);
         }
 
-        RadioButton {
-            id: smallButton
-            text: "Small"
-            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-            checked: true
-            ButtonGroup.group: sizeGroup
+        Rectangle {
+            anchors.fill: parent
+            border {
+                color: Material.accent
+                width: 1 * scaleFactor
+            }
+            color: "transparent"
         }
 
-        RadioButton {
-            id: mediumButton
-            text: "Medium"
-            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-            ButtonGroup.group: sizeGroup
+        Text {
+            anchors.centerIn: parent
+            visible: sizeField.text.length === 0
+            font {
+                pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                family: DsaStyles.fontFamily
+                italic: true
+            }
+            opacity: 0.5
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            color: Material.accent
+
+            text: "<enter size>"
+        }
+    }
+
+    Button {
+        anchors {
+            top : sizeField.bottom
+            right: sizeField.right
+            margins: 4 * scaleFactor
+        }
+        text: "clear"
+
+        font {
+            pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+            family: DsaStyles.fontFamily
         }
 
-        RadioButton {
-            id: largeButton
-            visible: true
-            text: "Large"
-            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-            ButtonGroup.group: sizeGroup
-        }
+        onClicked: clear();
     }
 }

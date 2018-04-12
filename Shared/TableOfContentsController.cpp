@@ -310,7 +310,7 @@ int TableOfContentsController::mappedIndex(int index) const
  */
 void TableOfContentsController::refreshLayerOrder()
 {
-  // To avoid an re-ordering issue which affects FeatureCollectionLayers in 3D view
+  // To avoid a re-ordering issue which affects FeatureCollectionLayers in 3D view
   // these types of layers are removed and re-added at the desired index
   const int layerCount = m_layerListModel->rowCount();
   for (int i = 0; i < layerCount; ++i)

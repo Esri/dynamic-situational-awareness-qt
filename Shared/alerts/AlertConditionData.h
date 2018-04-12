@@ -1,4 +1,4 @@
-// Copyright 2017 ESRI
+// Copyright 2018 ESRI
 //
 // All rights reserved under the copyright laws of the United States
 // and applicable international laws, treaties, and conventions.
@@ -12,7 +12,6 @@
 
 #ifndef ALERTCONDITIONDATA_H
 #define ALERTCONDITIONDATA_H
-
 
 // example app headers
 #include "AlertLevel.h"

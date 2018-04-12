@@ -17,28 +17,21 @@ import QtQuick.Window 2.2
 import Esri.DSA 1.0
 
 Item {
-    id: conditionPage
+    id: reportDatePage
 
-    property alias type : typeGroup.checkedButton
-    property bool valid: spatialCB.checked || attributeCB.checked || analysisCB.checked
-    property string instruction: "Select type"
+    property bool valid: size.length > 0
+    property string instruction: "Size of enemy unit"
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+
+    property string size: smallButton.checked ? "small" :
+                                                (mediumButton.checked ? "medium" : "large")
 
     function clear() {
     }
 
     function text() {
-        if (spatialCB.checked)
-            return " Spatial alert";
-        else if (attributeCB.checked)
-            return " Attribute alert";
-        else if (analysisCB.checked)
-            return " Analysis alert";
+        return "size:" + size;
     }
-
-    property alias isSpatial: spatialCB.checked
-    property alias isAttribute: attributeCB.checked
-    property alias isAnalysis: analysisCB.checked
 
     Column {
         anchors {
@@ -50,30 +43,30 @@ Item {
         leftPadding: 10 * scaleFactor
 
         ButtonGroup {
-            id: typeGroup
+            id: sizeGroup
         }
 
         RadioButton {
-            id: spatialCB
-            text: "Spatial"
+            id: smallButton
+            text: "Small"
             font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
             checked: true
-            ButtonGroup.group: typeGroup
+            ButtonGroup.group: sizeGroup
         }
 
         RadioButton {
-            id: attributeCB
-            text: "Attribute"
+            id: mediumButton
+            text: "Medium"
             font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-            ButtonGroup.group: typeGroup
+            ButtonGroup.group: sizeGroup
         }
 
         RadioButton {
-            id: analysisCB
-            visible: false
-            text: "Analysis"
+            id: largeButton
+            visible: true
+            text: "Large"
             font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-            ButtonGroup.group: typeGroup
+            ButtonGroup.group: sizeGroup
         }
     }
 }

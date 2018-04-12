@@ -48,13 +48,13 @@
         <file>LineOfSightTool.qml</file>
         <file>ContextMenu.qml</file>
         <file>AnalysisList.qml</file>
-        <file>ContactReportTool.qml</file>
-        <file>ContactReportUnitPage.qml</file>
-        <file>ContactReportSizePage.qml</file>
-        <file>ContactReportActivityPage.qml</file>
-        <file>ContactReportLocationPage.qml</file>
-        <file>ContactReportEnemyUnitPage.qml</file>
-        <file>ContactReportObservedTimePage.qml</file>
+        <file>ObservationReportTool.qml</file>
+        <file>ObservationReportObservedByPage.qml</file>
+        <file>ObservationReportSizePage.qml</file>
+        <file>ObservationReportActivityPage.qml</file>
+        <file>ObservationReportLocationPage.qml</file>
+        <file>ObservationReportDescriptionPage.qml</file>
+        <file>ObservationReportObservedTimePage.qml</file>
         <file>DsaYesNoDialog.qml</file>
     </qresource>
 </RCC>

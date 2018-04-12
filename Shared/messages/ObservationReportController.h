@@ -10,8 +10,8 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef CONTACTREPORTCONTROLLER_H
-#define CONTACTREPORTCONTROLLER_H
+#ifndef OBSERVATIONREPORTCONTROLLER_H
+#define OBSERVATIONREPORTCONTROLLER_H
 
 // toolkit headers
 #include "AbstractTool.h"
@@ -34,25 +34,25 @@ class DataSender;
 
 class PointHighlighter;
 
-class ContactReportController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+class ObservationReportController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
   Q_OBJECT
 
-  Q_PROPERTY(QString unitName READ unitName WRITE setUnitName NOTIFY unitNameChanged)
+  Q_PROPERTY(QString observedBy READ observedBy WRITE setObservedBy NOTIFY observedByChanged)
   Q_PROPERTY(QString controlPoint READ controlPoint NOTIFY controlPointChanged)
   Q_PROPERTY(bool pickMode READ pickMode WRITE setPickMode NOTIFY pickModeChanged)
 
 public:
 
-  explicit ContactReportController(QObject* parent = nullptr);
-  ~ContactReportController();
+  explicit ObservationReportController(QObject* parent = nullptr);
+  ~ObservationReportController();
 
   QString toolName() const override;
 
   void setProperties(const QVariantMap& properties) override;
 
-  QString unitName() const;
-  void setUnitName(const QString& unitName);
+  QString observedBy() const;
+  void setObservedBy(const QString& observedBy);
 
   QString controlPoint() const;
 
@@ -65,7 +65,7 @@ public:
 
   Q_INVOKABLE void broadcastReport(const QString& size,
                               const QString& locationDescription,
-                              const QString& enemyUnitDescription,
+                              const QString& description,
                               const QString& activity,
                               const QDateTime& observedTime,
                               const QString& equipment);
@@ -78,7 +78,7 @@ public:
   void setUdpPort(int port);
 
 signals:
-  void unitNameChanged();
+  void observedByChanged();
   void controlPointChanged();
   void pickModeChanged();
 
@@ -92,7 +92,7 @@ private slots:
 private:
 
   Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
-  QString m_unitName;
+  QString m_observedBy;
   Esri::ArcGISRuntime::Point m_controlPoint;
   DataSender* m_dataSender = nullptr;
   PointHighlighter* m_highlighter = nullptr;
@@ -106,4 +106,4 @@ private:
 
 } // Dsa
 
-#endif // CONTACTREPORTCONTROLLER_H
+#endif // OBSERVATIONREPORTCONTROLLER_H

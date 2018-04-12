@@ -13,7 +13,7 @@
 // PCH header
 #include "pch.hpp"
 
-#include "ContactReportController.h"
+#include "ObservationReportController.h"
 
 // example app headers
 #include "AppConstants.h"
@@ -42,17 +42,17 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class ContactReportController
+  \class ObservationReportController
   \inherits Toolkit::AbstractTool
-  \brief Tool controller for creating contact reports.
+  \brief Tool controller for creating observation reports.
  */
 
 /*!
   \brief Constructor accepting an optional \a parent.
  */
-ContactReportController::ContactReportController(QObject* parent):
+ObservationReportController::ObservationReportController(QObject* parent):
   Toolkit::AbstractTool(parent),
-  m_unitName(QHostInfo::localHostName()),
+  m_observedBy(QHostInfo::localHostName()),
   m_highlighter(new PointHighlighter(this))
 {
   Toolkit::ToolManager::instance().addTool(this);
@@ -65,45 +65,45 @@ ContactReportController::ContactReportController(QObject* parent):
   });
   onGeoViewChanged(resourceProvider->geoView());
 
-  connect(this, &ContactReportController::activeChanged, this, &ContactReportController::onUpdateControlPointHightlight);
-  connect(this, &ContactReportController::controlPointChanged, this, &ContactReportController::onUpdateControlPointHightlight);
+  connect(this, &ObservationReportController::activeChanged, this, &ObservationReportController::onUpdateControlPointHightlight);
+  connect(this, &ObservationReportController::controlPointChanged, this, &ObservationReportController::onUpdateControlPointHightlight);
 }
 
 /*!
   \brief Destructor.
  */
-ContactReportController::~ContactReportController()
+ObservationReportController::~ObservationReportController()
 {
 
 }
 
 /*!
-  \brief Returns the name of this tool - \c "Contact Report".
+  \brief Returns the name of this tool - \c "Observation Report".
  */
-QString ContactReportController::toolName() const
+QString ObservationReportController::toolName() const
 {
-  return QStringLiteral("Contact Report");
+  return QStringLiteral("Observation Report");
 }
 
-/*! \brief Sets any values in \a properties which are relevant for the contact report controller.
+/*! \brief Sets any values in \a properties which are relevant for the observation report controller.
  *
  * This tool will use the following key/value pairs in the \a properties map if they are set:
  *
  * \list
- *  \li \c ContactReportConfig. A JSON object describing options for the contact reprot including
+ *  \li \c ObservationReportConfig. A JSON object describing options for the observation report including
  * the \c port.
- *  \li \c UserName. The user name (unique designation) for contact reports.
+ *  \li \c UserName. The user name (observed by) for observation reports.
  * \endList
  */
-void ContactReportController::setProperties(const QVariantMap& properties)
+void ObservationReportController::setProperties(const QVariantMap& properties)
 {
   auto findUserNameIt = properties.find(AppConstants::USERNAME_PROPERTYNAME);
   if (findUserNameIt != properties.end())
-    setUnitName(findUserNameIt.value().toString());
+    setObservedBy(findUserNameIt.value().toString());
 
-  const auto contactReportConfig = properties[MessageFeedConstants::CONTACT_REPORT_CONFIG_PROPERTYNAME].toMap();
-  auto findPortIt = contactReportConfig.find(MessageFeedConstants::CONTACT_REPORT_CONFIG_PORT);
-  if (findPortIt != contactReportConfig.end())
+  const auto observationReportConfig = properties[MessageFeedConstants::OBSERVATION_REPORT_CONFIG_PROPERTYNAME].toMap();
+  auto findPortIt = observationReportConfig.find(MessageFeedConstants::OBSERVATION_REPORT_CONFIG_PORT);
+  if (findPortIt != observationReportConfig.end())
   {
     bool ok = false;
     int newPort = findPortIt.value().toInt(&ok);
@@ -113,17 +113,17 @@ void ContactReportController::setProperties(const QVariantMap& properties)
 }
 
 /*!
-  \brief Returns the name of the unit (unique designation) making the contact report.
+  \brief Returns the name of the unit making the observation report.
  */
-QString ContactReportController::unitName() const
+QString ObservationReportController::observedBy() const
 {
-  return m_unitName;
+  return m_observedBy;
 }
 
 /*!
-  \brief Returns the control point location of the contact report in decimal degrees.
+  \brief Returns the control point location of the observation report in decimal degrees.
  */
-QString ContactReportController::controlPoint() const
+QString ObservationReportController::controlPoint() const
 {
   if (!m_controlPointSet)
     return QString();
@@ -132,22 +132,22 @@ QString ContactReportController::controlPoint() const
 }
 
 /*!
-  \brief Sets the name of the unit making this contact report to \a unitName.
+  \brief Sets the name of the unit making this observation report to \a unitName.
  */
-void ContactReportController::setUnitName(const QString& unitName)
+void ObservationReportController::setObservedBy(const QString& observedBy)
 {
-  if (unitName == m_unitName)
+  if (observedBy == m_observedBy)
     return;
 
-  m_unitName = unitName;
+  m_observedBy = observedBy;
 
-  emit unitNameChanged();
+  emit observedByChanged();
 }
 
 /*!
-  \brief Sets the control point location for this contact report to \a controlPoint.
+  \brief Sets the control point location for this observation report to \a controlPoint.
  */
-void ContactReportController::setControlPoint(const Point& controlPoint)
+void ObservationReportController::setControlPoint(const Point& controlPoint)
 {
   if (m_controlPoint == controlPoint)
     return;
@@ -166,7 +166,7 @@ void ContactReportController::setControlPoint(const Point& controlPoint)
   \brief Returns whether the tool is in pick mode. If \c true,
   the tool will use clicks in the geoView to update the \l controlPoint.
  */
-bool ContactReportController::pickMode() const
+bool ObservationReportController::pickMode() const
 {
   return m_pickMode;
 }
@@ -174,7 +174,7 @@ bool ContactReportController::pickMode() const
 /*!
   \brief Sets the pick mode of the tool to \a pickMode.
  */
-void ContactReportController::setPickMode(bool pickMode)
+void ObservationReportController::setPickMode(bool pickMode)
 {
   if (m_pickMode == pickMode)
     return;
@@ -184,7 +184,7 @@ void ContactReportController::setPickMode(bool pickMode)
   if (m_pickMode)
   {
     m_mouseClickConnection = connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mouseClicked,
-                                     this, &ContactReportController::onMouseClicked);
+                                     this, &ObservationReportController::onMouseClicked);
   }
   else
   {
@@ -197,19 +197,19 @@ void ContactReportController::setPickMode(bool pickMode)
 /*!
   \brief Toggle the current state of \l pickMode.
  */
-void ContactReportController::togglePickMode()
+void ObservationReportController::togglePickMode()
 {
   disconnect(m_myLocationConnection);
   setPickMode(!m_pickMode);
 }
 
 /*!
-  \brief Sets the control point location for the contact report to the current
+  \brief Sets the control point location for the observation report to the current
   location of the app.
 
   \note The location will be set when the next location update is received.
  */
-void ContactReportController::setFromMyLocation()
+void ObservationReportController::setFromMyLocation()
 {
   if (pickMode())
     togglePickMode();
@@ -228,10 +228,11 @@ void ContactReportController::setFromMyLocation()
 
   The report will include the attributes:
   \list
-    \li \a size. The size of the enemy unit.
-    \li \a locationDescription. The location of the enemy activity or event observed.
-    \li \a enemyUnitDescription. Description of the enemy unit.
-    \li \a activity. Date and time of observation.
+    \li \a size. Size of object observed or number of items.
+    \li \a locationDescription. The location of the observation.
+    \li \a description. Description of who is performing activity (can be ‘Unknown’).
+    \li \a activity. The activity observed.
+    \li \a observedTime. Date and time of observation.
     \li \a equipment. Equipment of unit observed.
   \endlist
 
@@ -243,9 +244,9 @@ void ContactReportController::setFromMyLocation()
   \list
 
  */
-void ContactReportController::broadcastReport(const QString& size,
+void ObservationReportController::broadcastReport(const QString& size,
                                          const QString& locationDescription,
-                                         const QString& enemyUnitDescription,
+                                         const QString& description,
                                          const QString& activity,
                                          const QDateTime& observedTime,
                                          const QString& equipment)
@@ -258,30 +259,30 @@ void ContactReportController::broadcastReport(const QString& size,
   if (m_udpPort == -1)
     return;
 
-  if (m_unitName.isEmpty() || m_controlPoint.isEmpty())
+  if (m_observedBy.isEmpty() || m_controlPoint.isEmpty())
     return;
 
   if (observedTime.isNull() || !observedTime.isValid())
     return;
 
-  if (size.isEmpty() || enemyUnitDescription.isEmpty())
+  if (size.isEmpty() || description.isEmpty())
     return;
 
-  Message contactReport = Message(Message::MessageAction::Update, m_controlPoint);
-  contactReport.setMessageId(QUuid::createUuid().toString());
-  contactReport.setMessageType(QStringLiteral("spotrep"));
+  Message observationReport = Message(Message::MessageAction::Update, m_controlPoint);
+  observationReport.setMessageId(QUuid::createUuid().toString());
+  observationReport.setMessageType(QStringLiteral("spotrep"));
 
   QVariantMap attribs;
   attribs.insert(QStringLiteral("_control_points"), controlPoint());
   attribs.insert(QStringLiteral("datetimesubmitted"), QDateTime::currentDateTime().toString(Qt::ISODate));
-  attribs.insert(QStringLiteral("uniquedesignation"), unitName());
+  attribs.insert(QStringLiteral("uniquedesignation"), m_observedBy);
   attribs.insert(QStringLiteral("equipment"), equipment);
   attribs.insert(QStringLiteral("activity"), activity);
   attribs.insert(QStringLiteral("location"), locationDescription);
   attribs.insert(QStringLiteral("size"), size);
   attribs.insert(QStringLiteral("timeobserved"), observedTime.toString(Qt::ISODate));
-  attribs.insert(QStringLiteral("unit"), enemyUnitDescription);
-  contactReport.setAttributes(attribs);
+  attribs.insert(QStringLiteral("unit"), description);
+  observationReport.setAttributes(attribs);
 
   if (!m_dataSender)
   {
@@ -292,13 +293,13 @@ void ContactReportController::broadcastReport(const QString& size,
     m_dataSender->setDevice(udpSocket);
   }
 
-  m_dataSender->sendData(contactReport.toGeoMessage());
+  m_dataSender->sendData(observationReport.toGeoMessage());
 }
 
 /*!
   \brief Cancels the current report.
  */
-void ContactReportController::cancelReport()
+void ObservationReportController::cancelReport()
 {
   m_controlPointSet = false;
   onUpdateControlPointHightlight();
@@ -307,17 +308,17 @@ void ContactReportController::cancelReport()
 }
 
 /*!
-  \brief Returns the UDP port over which to broadcast contact reports.
+  \brief Returns the UDP port over which to broadcast observation reports.
  */
-int ContactReportController::udpPort() const
+int ObservationReportController::udpPort() const
 {
   return m_udpPort;
 }
 
 /*!
-  \brief Sets the UDP port over which to broadcast contact reports to \a port.
+  \brief Sets the UDP port over which to broadcast observation reports to \a port.
  */
-void ContactReportController::setUdpPort(int port)
+void ObservationReportController::setUdpPort(int port)
 {
   if (port == m_udpPort)
     return;
@@ -328,7 +329,7 @@ void ContactReportController::setUdpPort(int port)
 /*!
   \brief Sets the geoView to be used by the tool to \a geoView.
  */
-void ContactReportController::onGeoViewChanged(GeoView* geoView)
+void ObservationReportController::onGeoViewChanged(GeoView* geoView)
 {
   if (m_geoView == geoView)
     return;
@@ -339,7 +340,7 @@ void ContactReportController::onGeoViewChanged(GeoView* geoView)
 /*!
   \internal
  */
-void ContactReportController::onMouseClicked(QMouseEvent& event)
+void ObservationReportController::onMouseClicked(QMouseEvent& event)
 {
   if (!isActive())
     return;
@@ -375,7 +376,7 @@ void ContactReportController::onMouseClicked(QMouseEvent& event)
 /*!
   \internal
  */
-void ContactReportController::onUpdateControlPointHightlight()
+void ObservationReportController::onUpdateControlPointHightlight()
 {
   if (isActive() && m_controlPointSet)
     m_highlighter->startHighlight();

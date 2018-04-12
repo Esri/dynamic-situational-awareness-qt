@@ -20,87 +20,34 @@ import Esri.DSA 1.0
 Item {
     id: reportDatePage
 
-    property bool valid: controlPointTextField.length > 0
-    property string instruction: "Location"
+    property bool valid: size.length > 0
+    property string instruction: "Size of object observed/number of items"
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
-    property alias controlPoint: controlPointTextField.text
-    property alias locationDescription: enemyLocationField.text
+    property alias size: sizeField.text
 
     function clear() {
-        enemyLocationField.text = "";
+        size = "";
 
         if (visible)
-            enemyLocationField.forceActiveFocus();
+            sizeField.forceActiveFocus();
     }
 
     function text() {
-        return "location:" + controlPointTextField.text;
+        return "size:" + sizeField.text;
     }
 
     onVisibleChanged: {
         if (visible)
-            enemyLocationField.forceActiveFocus();
-    }
-
-    TextField {
-        id: controlPointTextField
-        anchors {
-            left: enemyLocationField.left
-            right: enemyLocationField.right
-            margins: 16 * scaleFactor
-        }
-        width: parent.width * 0.75
-        color: Material.accent
-        font {
-            pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-            family: DsaStyles.fontFamily
-        }
-        horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignVCenter
-        text: toolController.controlPoint;
-
-        placeholderText: "<lat long of enemy>"
-    }
-
-    OverlayButton {
-        id: pickButton
-
-        anchors {
-            top: controlPointTextField.bottom
-            right: parent.horizontalCenter
-        }
-
-        selected: toolController.pickMode
-        iconUrl: DsaResources.iconTouch
-        opacity: enabled ? 1.0 : 0.8
-
-        onClicked: {
-            toolController.togglePickMode();
-        }
-    }
-
-    OverlayButton {
-        id: myLocationButton
-
-        anchors {
-            top: controlPointTextField.bottom
-            left: parent.horizontalCenter
-        }
-
-        iconUrl: DsaResources.iconGps
-
-        onClicked: {
-            toolController.setFromMyLocation();
-        }
+            sizeField.forceActiveFocus();
     }
 
     TextEdit {
-        id: enemyLocationField
+        id: sizeField
         clip: true
         anchors {
             horizontalCenter: parent.horizontalCenter
-            top: pickButton.bottom
+            top: parent.top
             margins: 16 * scaleFactor
         }
         width: parent.width * 0.75
@@ -133,7 +80,7 @@ Item {
 
         Text {
             anchors.centerIn: parent
-            visible: enemyLocationField.text.length === 0
+            visible: sizeField.text.length === 0
             font {
                 pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 family: DsaStyles.fontFamily
@@ -144,14 +91,14 @@ Item {
             verticalAlignment: Text.AlignVCenter
             color: Material.accent
 
-            text: "<enter location description>"
+            text: "<enter size>"
         }
     }
 
     Button {
         anchors {
-            top : enemyLocationField.bottom
-            right: enemyLocationField.right
+            top : sizeField.bottom
+            right: sizeField.right
             margins: 4 * scaleFactor
         }
         text: "clear"

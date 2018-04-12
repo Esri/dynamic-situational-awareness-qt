@@ -289,8 +289,8 @@ Handheld {
             }
         }
 
-        ContactReportTool {
-            id: contactReportTool
+        ObservationReportTool {
+            id: observationReportTool
             anchors {
                 right: parent.right
                 top: parent.top
@@ -310,8 +310,8 @@ Handheld {
 
                 categoryToolbar.state = "reports";
 
-                if (reportToolRow.state !== reportToolRow.contactState)
-                    reportToolRow.state = reportToolRow.contactState;
+                if (reportToolRow.state !== reportToolRow.observationState)
+                    reportToolRow.state = reportToolRow.observationState;
             }
 
             onPickModeChanged: {

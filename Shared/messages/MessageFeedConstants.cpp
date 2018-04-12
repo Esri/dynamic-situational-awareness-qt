@@ -10,6 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+
 // PCH header
 #include "pch.hpp"
 
@@ -17,8 +18,8 @@
 
 namespace Dsa {
 
-const QString MessageFeedConstants::CONTACT_REPORT_CONFIG_PROPERTYNAME = QStringLiteral("ContactReportConfig");
-const QString MessageFeedConstants::CONTACT_REPORT_CONFIG_PORT = QStringLiteral("port");
+const QString MessageFeedConstants::OBSERVATION_REPORT_CONFIG_PROPERTYNAME = QStringLiteral("ObservationReportConfig");
+const QString MessageFeedConstants::OBSERVATION_REPORT_CONFIG_PORT = QStringLiteral("port");
 const QString MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME = QStringLiteral("LocationBroadcastConfig");
 const QString MessageFeedConstants::LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE = QStringLiteral("messageType");
 const QString MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PORT = QStringLiteral("port");

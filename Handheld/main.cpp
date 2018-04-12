@@ -10,6 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+
 // PCH header
 #include "pch.hpp"
 
@@ -20,7 +21,7 @@
 #include "AnalysisListController.h"
 #include "AppInfo.h"
 #include "BasemapPickerController.h"
-#include "ContactReportController.h"
+#include "ObservationReportController.h"
 #include "ContextMenuController.h"
 #include "DsaResources.h"
 #include "FollowPositionController.h"
@@ -154,7 +155,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<Dsa::LineOfSightController>("Esri.DSA", 1, 0, "LineOfSightController");
   qmlRegisterType<Dsa::ContextMenuController>("Esri.DSA", 1, 0, "ContextMenuController");
   qmlRegisterType<Dsa::AnalysisListController>("Esri.DSA", 1, 0, "AnalysisListController");
-  qmlRegisterType<Dsa::ContactReportController>("Esri.DSA", 1, 0, "ContactReportController");
+  qmlRegisterType<Dsa::ObservationReportController>("Esri.DSA", 1, 0, "ObservationReportController");
 
   // Register Toolkit Component Types
   ArcGISRuntimeToolkit::registerToolkitTypes();

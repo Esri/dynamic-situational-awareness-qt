@@ -19,21 +19,21 @@ import Esri.DSA 1.0
 Item {
     id: reportDatePage
 
-    property bool valid: unitName.length > 0
-    property string instruction: "Unit making report"
+    property bool valid: observedBy.length > 0
+    property string instruction: "Observed By"
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
-    property alias unitName: unitTextField.text
+    property alias observedBy: observedByTextField.text
 
     function clear() {
     }
 
     function text() {
-        return "unique designation:" + unitTextField.text;
+        return "observed by:" + observedByTextField.text;
     }
 
     TextField {
-        id: unitTextField
+        id: observedByTextField
         anchors {
             horizontalCenter: parent.horizontalCenter
             top: parent.top
@@ -47,11 +47,11 @@ Item {
         }
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
-        text: toolController.unitName;
+        text: toolController.observedBy;
 
         onTextChanged: {
-            if (toolController.unitName !== text)
-                toolController.unitName = text;
+            if (toolController.observedBy !== text)
+                toolController.observedBy = text;
         }
     }
 }

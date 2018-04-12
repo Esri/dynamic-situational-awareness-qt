@@ -10,13 +10,14 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+
 // PCH header
 #include "pch.hpp"
 
 #include "ContextMenuController.h"
 
 // example app headers
-#include "ContactReportController.h"
+#include "ObservationReportController.h"
 #include "FollowPositionController.h"
 #include "GraphicsOverlaysResultsManager.h"
 #include "IdentifyController.h"
@@ -46,7 +47,7 @@ const QString ContextMenuController::FOLLOW_OPTION = "Follow";
 const QString ContextMenuController::IDENTIFY_OPTION = "Identify";
 const QString ContextMenuController::LINE_OF_SIGHT_OPTION = "Line of sight";
 const QString ContextMenuController::VIEWSHED_OPTION = "Viewshed";
-const QString ContextMenuController::CONTACT_REPORT_OPTION = "Contact report";
+const QString ContextMenuController::OBSERVATION_REPORT_OPTION = "Observation";
 
 /*!
   \class ContextMenuController
@@ -305,7 +306,7 @@ void ContextMenuController::setContextLocation(const Point& location)
 
   addOption(ELEVATION_OPTION);
   addOption(VIEWSHED_OPTION);
-  addOption(CONTACT_REPORT_OPTION);
+  addOption(OBSERVATION_REPORT_OPTION);
 }
 
 /*!
@@ -556,14 +557,14 @@ void ContextMenuController::selectOption(const QString& option)
     losFunc(m_contextGraphics);
     losFunc(m_contextFeatures);
   }
-  else if (option == CONTACT_REPORT_OPTION)
+  else if (option == OBSERVATION_REPORT_OPTION)
   {
-    Dsa::ContactReportController* contactReportTool = Toolkit::ToolManager::instance().tool<Dsa::ContactReportController>();
-    if (!contactReportTool)
+    Dsa::ObservationReportController* observationReportTool = Toolkit::ToolManager::instance().tool<Dsa::ObservationReportController>();
+    if (!observationReportTool)
       return;
 
-    contactReportTool->setControlPoint(m_contextLocation);
-    contactReportTool->setActive(true);
+    observationReportTool->setControlPoint(m_contextLocation);
+    observationReportTool->setActive(true);
   }
 }
 

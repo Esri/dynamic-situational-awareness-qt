@@ -19,30 +19,30 @@ import Esri.DSA 1.0
 Item {
     id: reportDatePage
 
-    property bool valid: enemyActivity.length > 0
-    property string instruction: "Enemy activity"
+    property bool valid: activity.length > 0
+    property string instruction: "Activity observed"
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
-    property alias enemyActivity: enemyActivityField.text
+    property alias activity: activityField.text
 
     function clear() {
-        enemyActivity = "";
+        activity = "";
 
         if (visible)
-            enemyActivityField.forceActiveFocus();
+            activityField.forceActiveFocus();
     }
 
     function text() {
-        return "activity:" + enemyActivityField.text;
+        return "activity:" + activityField.text;
     }
 
     onVisibleChanged: {
         if (visible)
-            enemyActivityField.forceActiveFocus();
+            activityField.forceActiveFocus();
     }
 
     TextEdit {
-        id: enemyActivityField
+        id: activityField
         clip: true
         anchors {
             horizontalCenter: parent.horizontalCenter
@@ -79,7 +79,7 @@ Item {
 
         Text {
             anchors.centerIn: parent
-            visible: enemyActivityField.text.length === 0
+            visible: activityField.text.length === 0
             font {
                 pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 family: DsaStyles.fontFamily
@@ -90,14 +90,14 @@ Item {
             verticalAlignment: Text.AlignVCenter
             color: Material.accent
 
-            text: "<enter enemy activity>"
+            text: "<enter activity>"
         }
     }
 
     Button {
         anchors {
-            top : enemyActivityField.bottom
-            right: enemyActivityField.right
+            top : activityField.bottom
+            right: activityField.right
             margins: 4 * scaleFactor
         }
         text: "clear"

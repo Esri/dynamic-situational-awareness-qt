@@ -10,6 +10,7 @@
 // See the Sample code usage restrictions document for further information.
 //
 
+
 // PCH header
 #include "pch.hpp"
 
@@ -393,9 +394,9 @@ void DsaController::writeDefaultMessageFeeds()
   locationBroadcastJson.insert(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PORT, 45679);
   m_dsaSettings[MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME] = locationBroadcastJson;
 
-  QJsonObject conditionReportJson;
-  conditionReportJson.insert(MessageFeedConstants::CONTACT_REPORT_CONFIG_PORT, 45679);
-  m_dsaSettings[MessageFeedConstants::CONTACT_REPORT_CONFIG_PROPERTYNAME] = conditionReportJson;
+  QJsonObject observationReportJson;
+  observationReportJson.insert(MessageFeedConstants::OBSERVATION_REPORT_CONFIG_PORT, 45679);
+  m_dsaSettings[MessageFeedConstants::OBSERVATION_REPORT_CONFIG_PROPERTYNAME] = observationReportJson;
 }
 
 /*! \brief internal

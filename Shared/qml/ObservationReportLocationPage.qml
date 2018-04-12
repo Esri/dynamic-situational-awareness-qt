@@ -17,36 +17,96 @@ import QtQuick.Window 2.2
 import Esri.DSA 1.0
 
 Item {
-    id: enemyUnitPage
+    id: reportDatePage
 
-    property bool valid: enemyUnitField.length > 0
-    property string instruction: "Enemy unit"
+    property bool valid: controlPointTextField.length > 0
+    property string instruction: "Location of observation"
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
-    property alias enemyUnit: enemyUnitField.text
+    property alias controlPoint: controlPointTextField.text
+    property alias locationDescription: locationField.text
 
     function clear() {
-        enemyUnitField.text = "";
+        locationField.text = "";
 
         if (visible)
-            enemyUnitField.forceActiveFocus();
+            locationField.forceActiveFocus();
     }
 
     function text() {
-        return "unit:" + enemyUnitField.text;
+        return "location:" + controlPointTextField.text;
     }
 
     onVisibleChanged: {
         if (visible)
-            enemyUnitField.forceActiveFocus();
+            locationField.forceActiveFocus();
+    }
+
+    TextField {
+        id: controlPointTextField
+        anchors {
+            left: locationField.left
+            right: locationField.right
+            margins: 16 * scaleFactor
+        }
+        width: parent.width * 0.75
+        color: Material.accent
+        font {
+            pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+            family: DsaStyles.fontFamily
+        }
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+        text: toolController.controlPoint;
+
+        placeholderText: "<lat long of observation>"
+    }
+
+
+    Row {
+        id: pickRow
+        anchors {
+            top: controlPointTextField.bottom
+            horizontalCenter: parent.horizontalCenter
+            margins: 8 * scaleFactor
+        }
+
+        width: parent.width * 0.5
+
+        spacing: 16 * scaleFactor
+
+        ToolIcon {
+            id: pickButton
+
+            selected: toolController.pickMode
+            toolName: "From Map"
+            iconSource: DsaResources.iconTouch
+            opacity: enabled ? 1.0 : 0.8
+
+            onToolSelected: {
+                toolController.togglePickMode();
+            }
+        }
+
+        ToolIcon {
+            id: myLocationButton
+
+            toolName: "My Location"
+            iconSource: DsaResources.iconGps
+            opacity: enabled ? 1.0 : 0.8
+
+            onToolSelected: {
+                toolController.setFromMyLocation();
+            }
+        }
     }
 
     TextEdit {
-        id: enemyUnitField
+        id: locationField
         clip: true
         anchors {
             horizontalCenter: parent.horizontalCenter
-            top: parent.top
+            top: pickRow.bottom
             margins: 16 * scaleFactor
         }
         width: parent.width * 0.75
@@ -79,7 +139,7 @@ Item {
 
         Text {
             anchors.centerIn: parent
-            visible: enemyUnitField.text.length === 0
+            visible: locationField.text.length === 0
             font {
                 pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 family: DsaStyles.fontFamily
@@ -90,14 +150,14 @@ Item {
             verticalAlignment: Text.AlignVCenter
             color: Material.accent
 
-            text: "<enemy unit description>"
+            text: "<enter location description>"
         }
     }
 
     Button {
         anchors {
-            top : enemyUnitField.bottom
-            right: enemyUnitField.right
+            top : locationField.bottom
+            right: locationField.right
             margins: 4 * scaleFactor
         }
         text: "clear"

@@ -93,6 +93,15 @@ void CombinedAnalysisListModel::setLineOfSightModel(AnalysisListModel* lineOfSig
 
   beginResetModel();
   m_lineOfSightModel = lineOfSightModel;
+
+  // persist a unique index for each Line of sight as they are added - to be used to construct a name
+  connect(m_lineOfSightModel, &AnalysisListModel::analysisAdded, this, [this](int index)
+  {
+    Analysis* addedAnalysis = m_lineOfSightModel->at(index);
+    if (addedAnalysis)
+      m_lineOfSightIndices.insert(addedAnalysis, m_lineOfSightIndices.count() + 1);
+  });
+
   connectAnalysisListModelSignals(m_lineOfSightModel);
   endResetModel();
 }
@@ -202,7 +211,11 @@ QVariant CombinedAnalysisListModel::data(const QModelIndex& index, int role) con
     switch (role)
     {
     case AnalysisNameRole:
-      return QString("Line of Sight %1").arg(QString::number(lineOfSightIndex(index.row())));
+    {
+      Analysis* losPtr = m_lineOfSightModel->at(lineOfSightIndex(index.row()));
+      if (losPtr)
+        return QString("Line of sight %1").arg(m_lineOfSightIndices.value(losPtr));
+    }
     case AnalysisVisibleRole:
       return m_lineOfSightModel->data(m_lineOfSightModel->index(lineOfSightIndex(index.row()), 0), AnalysisListModel::AnalysisRoles::AnalysisVisibleRole);
     case AnalysisTypeRole:

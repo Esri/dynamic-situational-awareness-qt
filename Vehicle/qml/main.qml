@@ -252,6 +252,10 @@ Vehicle {
             onMyLocationModeSelected: {
                 navTool.startFollowing();
             }
+
+            onClosed: {
+                analysisToolRow.state = "clear";
+            }
         }
 
         LineOfSightTool {

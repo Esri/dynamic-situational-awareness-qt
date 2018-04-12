@@ -63,6 +63,7 @@ class ViewshedController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
   Q_PROPERTY(bool activeViewshedPitchEnabled READ isActiveViewshedPitchEnabled NOTIFY activeViewshedPitchEnabledChanged)
   Q_PROPERTY(bool activeViewshedOffsetZEnabled READ isActiveViewshedOffsetZEnabled NOTIFY activeViewshedOffsetZEnabledChanged)
   Q_PROPERTY(bool activeViewshed360Mode READ isActiveViewshed360Mode WRITE setActiveViewshed360Mode NOTIFY activeViewshed360ModeChanged)
+  Q_PROPERTY(bool locationDisplayViewshedActive READ isLocationDisplayViewshedActive NOTIFY locationDisplayViewshedActiveChanged)
 
 signals:
   void activeModeChanged();
@@ -82,6 +83,7 @@ signals:
   void activeViewshedPitchEnabledChanged();
   void activeViewshedOffsetZEnabledChanged();
   void activeViewshed360ModeChanged();
+  void locationDisplayViewshedActiveChanged();
 
 public:
   enum ViewshedActiveMode
@@ -121,9 +123,6 @@ public:
   Q_INVOKABLE void finishActiveViewshed();
 
   bool isActiveViewshedEnabled() const;
-
-  int activeViewshedIndex() const;
-  void setActiveViewshedIndex(int index);
 
   double activeViewshedMinDistance() const;
   void setActiveViewshedMinDistance(double minDistance);
@@ -179,7 +178,6 @@ private:
   Viewshed360* m_activeViewshed = nullptr;
   GeoElementViewshed360* m_locationDisplayViewshed = nullptr;
 
-  int m_activeViewshedIndex = -1;
   ViewshedActiveMode m_activeMode = ViewshedActiveMode::NoActiveMode;
 
   Esri::ArcGISRuntime::TaskWatcher m_identifyTaskWatcher;

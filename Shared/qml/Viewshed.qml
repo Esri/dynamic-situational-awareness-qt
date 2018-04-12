@@ -22,6 +22,7 @@ Item {
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     signal myLocationModeSelected
+    signal closed
 
     ViewshedController {
         id: toolController
@@ -97,6 +98,8 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 iconUrl: DsaResources.iconCurrentLocation
                 color: "transparent"
+                opacity: enabled ? 1 : 0.5
+                enabled: !toolController.locationDisplayViewshedActive
                 selected: toolController.activeMode === ViewshedController.AddMyLocationViewshed360;
 
                 onClicked: {
@@ -445,6 +448,7 @@ Item {
             onToolSelected: {
                 toolController.finishActiveViewshed();
                 toolController.activeMode = ViewshedController.NoActiveMode;
+                closed();
             }
         }
 
@@ -455,6 +459,7 @@ Item {
             onToolSelected: {
                 toolController.removeActiveViewshed();
                 toolController.activeMode = ViewshedController.NoActiveMode;
+                closed();
             }
         }
     }

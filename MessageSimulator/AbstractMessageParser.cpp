@@ -11,6 +11,12 @@
 //
 
 #include "AbstractMessageParser.h"
+#include "CoTMessageParser.h"
+#include "GeoMessageParser.h"
+#include "SimulatedMessage.h"
+
+#include <QFile>
+#include <QXmlStreamReader>
 
 AbstractMessageParser::AbstractMessageParser(const QString& filePath, QObject* parent) :
   QObject(parent),
@@ -20,6 +26,36 @@ AbstractMessageParser::AbstractMessageParser(const QString& filePath, QObject* p
 
 AbstractMessageParser::~AbstractMessageParser()
 {
+}
+
+AbstractMessageParser* AbstractMessageParser::createMessageParser(const QString& filePath, QObject* parent)
+{
+  QFile file(filePath);
+  if (!file.open(QFile::ReadOnly | QFile::Text))
+  {
+    return nullptr;
+  }
+
+  QXmlStreamReader reader(&file);
+  if (!reader.readNextStartElement() && !reader.isStartElement())
+    return nullptr;
+
+  const QString elementName = reader.name().toString();
+  reader.clear();
+  file.close();
+
+  if (elementName.compare(SimulatedMessage::COT_ROOT_ELEMENT_NAME, Qt::CaseInsensitive) == 0 ||
+      elementName.compare(SimulatedMessage::COT_ELEMENT_NAME, Qt::CaseInsensitive) == 0)
+  {
+    return new CoTMessageParser(filePath, parent);
+  }
+  else if (elementName.compare(SimulatedMessage::GEOMESSAGE_ROOT_ELEMENT_NAME, Qt::CaseInsensitive) == 0 ||
+      elementName.compare(SimulatedMessage::GEOMESSAGE_ELEMENT_NAME, Qt::CaseInsensitive) == 0)
+  {
+    return new GeoMessageParser(filePath, parent);
+  }
+
+  return nullptr;
 }
 
 QString AbstractMessageParser::filePath() const

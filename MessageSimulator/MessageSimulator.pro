@@ -14,7 +14,7 @@
 TARGET = DSA_MessageSimulator_Qt
 TEMPLATE = app
 
-QT += qml quick
+QT += qml quick xml
 CONFIG += c++11
 
 INCLUDEPATH += \
@@ -27,7 +27,8 @@ HEADERS += \
     AbstractMessageParser.h \
     CoTMessageParser.h \
     SimulatedMessage.h \
-    SimulatedMessageListModel.h
+    SimulatedMessageListModel.h \
+    GeoMessageParser.h
 
 SOURCES += main.cpp \
     $$PWD/../Shared/utilities/DataSender.cpp \
@@ -35,7 +36,8 @@ SOURCES += main.cpp \
     CoTMessageParser.cpp \
     MessageSimulatorController.cpp \
     SimulatedMessage.cpp \
-    SimulatedMessageListModel.cpp
+    SimulatedMessageListModel.cpp \
+    GeoMessageParser.cpp
 
 RESOURCES += qml/qml.qrc \
     Resources/application.qrc

@@ -16,17 +16,15 @@ ApplicationWindow {
     MessageSimulatorController {
         id: messageSimulatorController
 
-        onSimulationStartedChanged: {
-            loggingPage.loggingText += "\n" + (simulationStarted ? qsTr("Started ") : qsTr("Stopped ")) + new Date().toLocaleString();
-            if (simulationStarted) {
+        onSimulationStateChanged: {
+            var simulationStateStr = simulationState === MessageSimulatorController.Running ? qsTr("running ") :
+                                                                                              simulationState === MessageSimulatorController.Paused ?
+                                                                                                  qsTr("paused ") : qsTr("stopped ")
+            loggingPage.loggingText += "\n Simulation " + simulationState + new Date().toLocaleString();
+
+            if (simulationState === MessageSimulatorController.Running) {
                 loggingPage.loggingText += "\n" + qsTr("UDP broadcast port: ") + port;
                 loggingPage.loggingText += "\n" + qsTr("Sending ") + messageFrequency + qsTr(" message per ") + messageSimulatorController.fromTimeUnit(timeUnit);
-            }
-        }
-
-        onSimulationPausedChanged: {
-            if (simulationStarted) {
-                loggingPage.loggingText += "\n" + (simulationPaused ? qsTr("Paused ") : qsTr("Resumed ")) + new Date().toLocaleString();
             }
         }
 
@@ -100,7 +98,8 @@ ApplicationWindow {
             bottom:indicator.top
             margins: 16 * scaleFactor
         }
-        enabled: messageSimulatorController.simulationStarted
+        enabled: messageSimulatorController.simulationState === MessageSimulatorController.Running ||
+                 messageSimulatorController.simulationState === MessageSimulatorController.Paused
         text: qsTr("stop")
         font.bold: true
         font.pixelSize: startButton.font.pixelSize
@@ -119,15 +118,18 @@ ApplicationWindow {
             margins: 16 * scaleFactor
         }
         enabled: settingsPage.xmlFilePath.length > 0 && settingsPage.port.length > 0
-        text: messageSimulatorController.simulationPaused ? qsTr("resume") :
-                                                            messageSimulatorController.simulationStarted ? qsTr("pause") : qsTr("start")
+        text: messageSimulatorController.simulationState === MessageSimulatorController.Paused ?
+                  qsTr("resume") :
+                  messageSimulatorController.simulationState === MessageSimulatorController.Running ?
+                      qsTr("pause") :
+                      qsTr("start")
         font.bold: true
         font.pixelSize: 14 * scaleFactor
 
         onClicked: {
-            if (messageSimulatorController.simulationPaused) {
+            if (messageSimulatorController.simulationState === MessageSimulatorController.Paused) {
                 messageSimulatorController.resumeSimulation();
-            } else if (messageSimulatorController.simulationStarted) {
+            } else if (messageSimulatorController.simulationState === MessageSimulatorController.Running) {
                 messageSimulatorController.pauseSimulation();
             } else {
                 messageSimulatorController.startSimulation(settingsPage.xmlFilePath);

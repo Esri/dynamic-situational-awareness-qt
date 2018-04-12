@@ -20,9 +20,20 @@ class SimulatedMessage : public QObject
   Q_OBJECT
 
 public:
+  static const QString COT_ROOT_ELEMENT_NAME;
+  static const QString COT_ELEMENT_NAME;
+  static const QString COT_TYPE_NAME;
+  static const QString COT_UID_NAME;
+
+  static const QString GEOMESSAGE_ROOT_ELEMENT_NAME;
+  static const QString GEOMESSAGE_ELEMENT_NAME;
+  static const QString GEOMESSAGE_ID_NAME;
+  static const QString GEOMESSAGE_SIC_NAME;
+
   enum class MessageFormat
   {
     CoT = 0,
+    GeoMessage = 1,
     Unknown = -1
   };
 
@@ -30,7 +41,9 @@ public:
   SimulatedMessage(MessageFormat messageFormat, const QString& messageId, const QString& messageAction, const QString& symbolId, QObject* parent = nullptr);
   ~SimulatedMessage();
 
+  static SimulatedMessage* create(const QByteArray& message, QObject* parent = nullptr);
   static SimulatedMessage* createFromCoTMessage(const QByteArray& message, QObject* parent = nullptr);
+  static SimulatedMessage* createFromGeoMessage(const QByteArray& message, QObject* parent = nullptr);
 
   MessageFormat messageFormat() const;
   void setMessageFormat(MessageFormat messageFormat);

@@ -10,21 +10,21 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#include "CoTMessageParser.h"
+#include "GeoMessageParser.h"
 #include "SimulatedMessage.h"
 
-CoTMessageParser::CoTMessageParser(const QString& filePath, QObject* parent) :
+GeoMessageParser::GeoMessageParser(const QString& filePath, QObject* parent) :
   AbstractMessageParser(filePath, parent)
 {
 }
 
-CoTMessageParser::~CoTMessageParser()
+GeoMessageParser::~GeoMessageParser()
 {
   // close and clear device
   reset();
 }
 
-QByteArray CoTMessageParser::nextMessage()
+QByteArray GeoMessageParser::nextMessage()
 {
   if (!m_isParsing)
   {
@@ -59,9 +59,9 @@ QByteArray CoTMessageParser::nextMessage()
     if (m_reader.isEndElement())
     {
       streamWriter.writeEndElement();
-      if (m_reader.name().compare(SimulatedMessage::COT_ELEMENT_NAME, Qt::CaseInsensitive) == 0)
+      if (m_reader.name().compare(SimulatedMessage::GEOMESSAGE_ELEMENT_NAME, Qt::CaseInsensitive) == 0)
       {
-        // finished reading single CoT element
+        // finished reading single GeoMessage element
         readingMessage = false;
         m_reader.readNext();
         break;
@@ -71,9 +71,9 @@ QByteArray CoTMessageParser::nextMessage()
     {
       const QString elementName = m_reader.name().toString();
 
-      if (!readingMessage && elementName.compare(SimulatedMessage::COT_ELEMENT_NAME, Qt::CaseInsensitive) != 0)
+      if (!readingMessage && elementName.compare(SimulatedMessage::GEOMESSAGE_ELEMENT_NAME, Qt::CaseInsensitive) != 0)
       {
-        // begin reading single CoT element
+        // begin reading single GeoMessage element
         m_reader.readNext();
         continue;
       }
@@ -107,7 +107,7 @@ QByteArray CoTMessageParser::nextMessage()
   return message;
 }
 
-void CoTMessageParser::reset()
+void GeoMessageParser::reset()
 {
   // close and reset device and parser
   if (m_device.isOpen())
@@ -118,7 +118,7 @@ void CoTMessageParser::reset()
   m_isParsing = false;
 }
 
-bool CoTMessageParser::atEnd() const
+bool GeoMessageParser::atEnd() const
 {
   return m_reader.atEnd();
 }

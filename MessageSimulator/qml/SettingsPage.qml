@@ -32,7 +32,7 @@ Rectangle {
                     margins: 8 * scaleFactor
                 }
 
-                enabled: !messageSimulatorController.simulationPaused && !messageSimulatorController.simulationStarted
+                enabled: messageSimulatorController.simulationState === MessageSimulatorController.Stopped
                 text: "message\nfile"
                 font.bold: true
                 width: 64 * scaleFactor
@@ -90,7 +90,7 @@ Rectangle {
                     margins: 8 * scaleFactor
                     right: parent.right
                 }
-                enabled: !messageSimulatorController.simulationPaused && !messageSimulatorController.simulationStarted
+                enabled: messageSimulatorController.simulationState === MessageSimulatorController.Stopped
                 text: messageSimulatorController.port !== -1 ? messageSimulatorController.port : ""
                 placeholderText: "8888"
                 height: portLabel.height
@@ -117,7 +117,7 @@ Rectangle {
                     verticalCenter: parent.verticalCenter
                     margins: 30 * scaleFactor
                 }
-                enabled: !messageSimulatorController.simulationStarted
+                enabled: messageSimulatorController.simulationState !== MessageSimulatorController.Running
                 orientation: Qt.Horizontal
                 from: 1
                 to: 500
@@ -156,7 +156,7 @@ Rectangle {
                 }
                 height: 30 * scaleFactor
                 width: 100 * scaleFactor
-                enabled: !messageSimulatorController.simulationStarted
+                enabled: messageSimulatorController.simulationState !== MessageSimulatorController.Running
 
                 onCurrentTextChanged: {
                     var timeUnit = messageSimulatorController.toTimeUnit(currentText);

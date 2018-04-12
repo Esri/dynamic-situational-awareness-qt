@@ -33,8 +33,7 @@ class MessageSimulatorController : public QObject
   Q_OBJECT
 
   Q_PROPERTY(QUrl simulationFile READ simulationFile NOTIFY simulationFileChanged)
-  Q_PROPERTY(bool simulationStarted READ isSimulationStarted NOTIFY simulationStartedChanged)
-  Q_PROPERTY(bool simulationPaused READ isSimulationPaused NOTIFY simulationPausedChanged)
+  Q_PROPERTY(SimulationState simulationState READ simulationState NOTIFY simulationStateChanged)
   Q_PROPERTY(int port READ port WRITE setPort NOTIFY portChanged)
   Q_PROPERTY(bool simulationLooped READ isSimulationLooped WRITE setSimulationLooped NOTIFY simulationLoopedChanged)
   Q_PROPERTY(float messageFrequency READ messageFrequency WRITE setMessageFrequency NOTIFY messageFrequencyChanged)
@@ -49,7 +48,15 @@ public:
     Hours = 2
   };
 
+  enum class SimulationState
+  {
+    Running = 0,
+    Stopped = 1,
+    Paused = 2
+  };
+
   Q_ENUM(TimeUnit)
+  Q_ENUM(SimulationState)
 
   explicit MessageSimulatorController(QObject* parent = nullptr);
   ~MessageSimulatorController();
@@ -63,8 +70,7 @@ public:
   void setMessageFrequency(float messageFrequency);
   float messageFrequency() const;
 
-  bool isSimulationStarted() const;
-  bool isSimulationPaused() const;
+  SimulationState simulationState() const;
 
   bool isSimulationLooped() const;
   void setSimulationLooped(bool simulationLooped);
@@ -86,8 +92,7 @@ public:
 
 signals:
   void simulationFileChanged();
-  void simulationStartedChanged();
-  void simulationPausedChanged();
+  void simulationStateChanged();
   void portChanged();
   void simulationLoopedChanged();
   void messageFrequencyChanged();
@@ -117,8 +122,7 @@ private:
   qint64 m_messagesSent = 0;
 
   bool m_simulationLooped = true;
-  bool m_simulationStarted = false;
-  bool m_simulationPaused = false;
+  SimulationState m_simulationState = SimulationState::Stopped;
 
   TimeUnit m_timeUnit = TimeUnit::Seconds;
 };

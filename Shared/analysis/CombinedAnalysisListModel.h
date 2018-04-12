@@ -75,6 +75,7 @@ private:
   QHash<int, QByteArray> m_roles;
   ViewshedListModel* m_viewshedModel = nullptr;
   Esri::ArcGISRuntime::AnalysisListModel* m_lineOfSightModel = nullptr;
+  QHash<Esri::ArcGISRuntime::Analysis*, int> m_lineOfSightIndices;
 };
 
 } // Dsa

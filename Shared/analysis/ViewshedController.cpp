@@ -100,6 +100,7 @@ ViewshedController::ViewshedController(QObject* parent) :
     if (viewshed == m_locationDisplayViewshed)
     {
       m_locationDisplayViewshed = nullptr;
+      emit locationDisplayViewshedActiveChanged();
     }
   });
 }
@@ -243,7 +244,9 @@ void ViewshedController::addLocationDisplayViewshed()
   m_analysisOverlay->analyses()->append(m_locationDisplayViewshed->viewshed());
   m_viewsheds->append(m_locationDisplayViewshed);
 
-  setActiveViewshedIndex(m_viewsheds->rowCount() - 1);
+  m_activeViewshed = m_locationDisplayViewshed;
+  emit locationDisplayViewshedActiveChanged();
+  updateActiveViewshed();
 }
 
 /*!
@@ -309,7 +312,8 @@ void ViewshedController::addLocationViewshed360(const Esri::ArcGISRuntime::Point
     m_sceneView->setCameraController(m_followCamCtrllr);
   }
 
-  setActiveViewshedIndex(m_viewsheds->rowCount() - 1);
+  m_activeViewshed = locationViewshed360;
+  updateActiveViewshed();
 }
 
 /*!
@@ -329,7 +333,8 @@ void ViewshedController::addGeoElementViewshed360(GeoElement* geoElement)
   m_analysisOverlay->analyses()->append(geoElementViewshed360->viewshed());
   m_viewsheds->append(geoElementViewshed360);
 
-  setActiveViewshedIndex(m_viewsheds->rowCount() - 1);
+  m_activeViewshed = geoElementViewshed360;
+  updateActiveViewshed();
 }
 
 /*!
@@ -415,13 +420,9 @@ void ViewshedController::removeActiveViewshed()
     return;
 
   m_viewsheds->removeOne(m_activeViewshed);
+  m_activeViewshed = nullptr;
 
-  if (m_viewsheds->isEmpty())
-    setActiveViewshedIndex(-1);
-  else if (m_activeViewshedIndex >= m_viewsheds->rowCount())
-    setActiveViewshedIndex(m_activeViewshedIndex - 1);
-  else
-    updateActiveViewshed();
+  updateActiveViewshed();
 }
 
 /*!
@@ -431,7 +432,7 @@ void ViewshedController::removeActiveViewshed()
  */
 void ViewshedController::finishActiveViewshed()
 {
-  setActiveViewshedIndex(-1);
+  m_activeViewshed = nullptr;
 }
 
 /*!
@@ -440,29 +441,6 @@ void ViewshedController::finishActiveViewshed()
 bool ViewshedController::isActiveViewshedEnabled() const
 {
   return m_activeViewshed != nullptr;
-}
-
-/*!
-  \brief Returns the index of the active viewshed.
-
-  If there is no active viewshed this will be \c -1.
- */
-int ViewshedController::activeViewshedIndex() const
-{
-  return m_activeViewshedIndex;
-}
-
-/*!
-  \brief Sets the index of the active viewshed to \a index.
- */
-void ViewshedController::setActiveViewshedIndex(int index)
-{
-  if (m_activeViewshedIndex == index)
-    return;
-
-  m_activeViewshedIndex = index;
-
-  updateActiveViewshed();
 }
 
 /*!
@@ -759,15 +737,12 @@ void ViewshedController::updateActiveViewshedSignals()
  */
 void ViewshedController::updateActiveViewshed()
 {
-  if (m_activeViewshedIndex == -1)
+  if (!m_activeViewshed)
   {
     disconnectActiveViewshedSignals();
-    m_activeViewshed = nullptr;
     emitActiveViewshedSignals();
     return;
   }
-
-  m_activeViewshed = m_viewsheds->at(m_activeViewshedIndex);
 
   updateActiveViewshedSignals();
   emitActiveViewshedSignals();

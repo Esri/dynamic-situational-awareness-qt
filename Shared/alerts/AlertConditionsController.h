@@ -13,7 +13,6 @@
 #ifndef ALERTCONDITIONSCONTROLLER_H
 #define ALERTCONDITIONSCONTROLLER_H
 
-
 // toolkit headers
 #include "AbstractTool.h"
 

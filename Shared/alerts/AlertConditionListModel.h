@@ -13,7 +13,6 @@
 #ifndef ALERTCONDITION_LISTMODEL_H
 #define ALERTCONDITION_LISTMODEL_H
 
-
 // Qt headers
 #include <QAbstractListModel>
 #include <QList>

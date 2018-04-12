@@ -13,7 +13,6 @@
 #ifndef ALERTCONDITION_H
 #define ALERTCONDITION_H
 
-
 // example app headers
 #include "AlertLevel.h"
 

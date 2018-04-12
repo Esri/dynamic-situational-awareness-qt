@@ -13,7 +13,6 @@
 #ifndef ALERTFILTER_H
 #define ALERTFILTER_H
 
-
 // Qt headers
 #include <QObject>
 

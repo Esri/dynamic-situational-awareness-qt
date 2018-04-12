@@ -13,7 +13,6 @@
 #ifndef ALERTCONSTANTS_H
 #define ALERTCONSTANTS_H
 
-
 // Qt headers
 #include <QString>
 

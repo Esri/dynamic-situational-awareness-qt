@@ -13,7 +13,6 @@
 #ifndef GEOELEMENTVIEWSHED360_H
 #define GEOELEMENTVIEWSHED360_H
 
-
 // example app headers
 #include "Viewshed360.h"
 

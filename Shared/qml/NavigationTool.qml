@@ -37,7 +37,7 @@ Item {
     Rectangle {
         id: backgroundRecatangle
         anchors.fill: parent
-        color: Material.primary
+        color: Material.background
         opacity: parent.opacity
     }
 

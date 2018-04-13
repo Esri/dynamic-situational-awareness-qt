@@ -319,3 +319,19 @@ void AlertListController::flashAll(bool highlight)
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void AlertListController::alertListModelChanged();
+  \brief Signal emitted when the alert list model changes.
+ */
+
+/*!
+  \fn void AlertListController::allAlertsCountChanged();
+  \brief Signal emitted when the alert count changes.
+ */
+
+/*!
+  \fn void AlertListController::highlightStopped();
+  \brief Signal emitted highlighting has stopped.
+ */

@@ -178,6 +178,41 @@ Handheld {
             height: width
         }
 
+        CoordinateConversion {
+            id: coordinateConversion
+            anchors {
+                bottom: followHud.visible ? followHud.top : currentLocation.top
+                left: sceneView.left
+                right: navTool.left
+                margins: hudMargins
+            }
+
+            objectName: "coordinateConversion"
+            visible: false
+            geoView: sceneView
+            highlightColor : Material.accent
+            textColor: Material.foreground
+            backgroundColor: Material.background
+            fontSize: DsaStyles.toolFontPixelSize
+            fontFamily: DsaStyles.fontFamily
+            backgroundOpacity: hudOpacity
+            radius: hudRadius
+
+            onVisibleChanged: {
+                if (!visible)
+                    return;
+
+                if (mapToolRow.state !== "Convert XY") {
+                    mapToolRow.state = "Convert XY";
+                    categoryToolbar.state = "map";
+                }
+            }
+        }
+
+        ContextMenu {
+            id: contextMenu
+        }
+
         TableOfContents {
             id: tableOfContentsTool
             anchors {
@@ -348,7 +383,7 @@ Handheld {
             width: parent.width
             height: parent.height - topToolbar.height
             edge: Qt.BottomEdge
-            interactive: false
+            interactive: y >= topToolbar.height
 
             onClosed: {
                 // update state for each category
@@ -410,41 +445,6 @@ Handheld {
                     onClosed: drawer.close();
                 }
             }
-        }
-
-        CoordinateConversion {
-            id: coordinateConversion
-            anchors {
-                bottom: followHud.visible ? followHud.top : currentLocation.top
-                left: sceneView.left
-                right: navTool.left
-                margins: hudMargins
-            }
-
-            objectName: "coordinateConversion"
-            visible: false
-            geoView: sceneView
-            highlightColor : Material.accent
-            textColor: Material.foreground
-            backgroundColor: Material.background
-            fontSize: DsaStyles.toolFontPixelSize
-            fontFamily: DsaStyles.fontFamily
-            opacity: hudOpacity
-            radius: hudRadius
-
-            onVisibleChanged: {
-                if (!visible)
-                    return;
-
-                if (mapToolRow.state !== "Convert XY") {
-                    mapToolRow.state = "Convert XY";
-                    categoryToolbar.state = "map";
-                }
-            }
-        }
-
-        ContextMenu {
-            id: contextMenu
         }
     }
 

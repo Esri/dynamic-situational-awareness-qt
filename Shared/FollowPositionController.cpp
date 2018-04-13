@@ -218,3 +218,11 @@ GraphicListModel* FollowPositionController::locationGraphicsModel() const
 }
 
 } // Dsa
+
+// Signal Documentation
+
+/*!
+  \fn void FollowPositionController::followModeChanged();
+
+  \brief Signal emitted when the follow mode changes.
+ */

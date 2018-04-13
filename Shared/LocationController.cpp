@@ -466,3 +466,43 @@ QUrl LocationController::modelSymbolPath() const
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void LocationController::locationChanged(const Esri::ArcGISRuntime::Point& newLocation);
+  \brief Signal emitted when the location changes to \a newLocation.
+ */
+
+/*!
+  \fn void LocationController::headingChanged(double newHeading);
+  \brief Signal emitted when the heading changes to \a newHeading.
+ */
+
+/*!
+  \fn void LocationController::gpxFilePathChanged();
+  \brief Signal emitted when GPX file path changes.
+ */
+
+/*!
+  \fn void LocationController::enabledChanged();
+  \brief Signal emitted when the enabled property changes.
+ */
+
+/*!
+  \fn void LocationController::locationVisibleChanged();
+  \brief Signal emitted when the locationVisible property changes.
+ */
+
+/*!
+  \fn void LocationController::simulationEnabledChanged();
+  \brief Signal emitted when simulationEnabled property changes.
+ */
+
+/*!
+  \fn void LocationController::toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
+  \brief Signal emitted when an error occurs.
+
+  An error \a message and \a additionalMessage are passed through as parameters, describing
+  the error that occurred.
+ */
+

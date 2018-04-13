@@ -13,10 +13,8 @@
 // PCH header
 #include "pch.hpp"
 
-#include "Message.h"
-
 // example app headers
-#include "Message_p.h"
+#include "Message.h"
 
 // C++ API headers
 #include "Point.h"

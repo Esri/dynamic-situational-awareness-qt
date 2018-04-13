@@ -326,3 +326,9 @@ void TableOfContentsController::refreshLayerOrder()
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void TableOfContentsController::layerListModelChanged();
+  \brief Signal emitted when the LayerListModel changes.
+ */

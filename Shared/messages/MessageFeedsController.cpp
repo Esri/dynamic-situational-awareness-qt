@@ -463,3 +463,27 @@ Renderer* MessageFeedsController::createRenderer(const QString& rendererInfo, QO
  */
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void MessageFeedsController::locationBroadcastEnabledChanged();
+  \brief Signal emitted when the locationBroadcastEnabled property changes.
+ */
+
+/*!
+  \fn void MessageFeedsController::locationBroadcastFrequencyChanged();
+  \brief Signal emitted when the locationBroadcastFrequency property changes.
+ */
+
+/*!
+  \fn void MessageFeedsController::locationBroadcastInDistressChanged();
+  \brief Signal emitted when the locationBroadcastInDistress property changes.
+ */
+
+/*!
+  \fn void MessageFeedsController::toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
+  \brief Signal emitted when an error occurs.
+
+  An error \a message and \a additionalMessage are passed through as parameters, describing
+  the error that occurred.
+ */

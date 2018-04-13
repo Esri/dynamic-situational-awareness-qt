@@ -444,3 +444,42 @@ QColor MarkupController::currentColor() const
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void MarkupController::markupSent(const QString& filePath);
+  \brief Signal emitted when a markup is sent with the specified \a filePath.
+ */
+
+/*!
+  \fn void MarkupController::markupReceived(const QString& filePath, const QString& sharedBy);
+  \brief Signal emitted when a markup is received.
+
+  The \a filePath to the JSON and the author that the markup was \a sharedBy are passed through
+  as parameters.
+ */
+
+/*!
+  \fn void MarkupController::sketchingChanged();
+  \brief Signal emitted when the sketching property changes.
+ */
+
+/*!
+  \fn void MarkupController::sketchCompleted();
+  \brief Signal emitted when a markup sketch is completed.
+ */
+
+/*!
+  \fn void MarkupController::drawingAltitudeChanged();
+  \brief Signal emitted when the drawing altitude property changes.
+ */
+
+/*!
+  \fn void MarkupController::drawModeEnabledChanged();
+  \brief Signal emitted when the draw mode enabled property changes.
+ */
+
+/*!
+  \fn void MarkupController::is3dChanged();
+  \brief Signal emitted when the is3d property changes.
+ */

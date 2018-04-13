@@ -328,3 +328,70 @@ AnalysisOverlay* Viewshed360::analysisOverlay() const
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void Viewshed360::is360ModeChanged();
+  \brief Signal emitted when the is360Mode property changes.
+ */
+
+/*!
+  \fn void Viewshed360::offsetZEnabledChanged();
+  \brief Signal emitted when the offsetZEnabled property changes.
+ */
+
+/*!
+  \fn void Viewshed360::pitchEnabledChanged();
+  \brief Signal emitted when the pitchEnabledChanged property changes.
+ */
+
+/*!
+  \fn void Viewshed360::headingEnabledChanged();
+  \brief Signal emitted when the headingEnabled property changes.
+ */
+
+/*!
+  \fn void Viewshed360::offsetZChanged();
+  \brief Signal emitted when the offsetZ property changes.
+ */
+
+/*!
+  \fn void Viewshed360::pitchChanged();
+  \brief Signal emitted when the pitch property changes.
+ */
+
+/*!
+  \fn void Viewshed360::headingChanged();
+  \brief Signal emitted when the heading property changes.
+ */
+
+/*!
+  \fn void Viewshed360::verticalAngleChanged();
+  \brief Signal emitted when the verticalAngle property changes.
+ */
+
+/*!
+  \fn void Viewshed360::horizontalAngleChanged();
+  \brief Signal emitted when the horizontalAngle property changes.
+ */
+
+/*!
+  \fn void Viewshed360::maxDistanceChanged();
+  \brief Signal emitted when the maxDistance property changes.
+ */
+
+/*!
+  \fn void Viewshed360::minDistanceChanged();
+  \brief Signal emitted when the minDistance property changes.
+ */
+
+/*!
+  \fn void Viewshed360::nameChanged();
+  \brief Signal emitted when the name property changes.
+ */
+
+/*!
+  \fn void Viewshed360::visibleChanged();
+  \brief Signal emitted when the visible property changes.
+ */
+

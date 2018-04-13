@@ -28,7 +28,7 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        color: Material.primary
+        color: Material.background
         opacity: 0.9
     }
 

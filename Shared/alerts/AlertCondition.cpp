@@ -263,3 +263,24 @@ void AlertCondition::setConditionEnabled(bool enabled)
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void AlertCondition::noLongerValid();
+  \brief Signal emitted when alert condition is no longer valid.
+ */
+
+/*!
+  \fn void AlertCondition::newConditionData(Dsa::AlertConditionData* newConditionData);
+  \brief Signal emitted when \a newConditionData is added to the alert condition.
+ */
+
+/*!
+  \fn void AlertCondition::conditionChanged();
+  \brief Signal emitted when the alert condition changes.
+ */
+
+/*!
+  \fn void AlertCondition::conditionEnabledChanged();
+  \brief Signal emitted when conditionEnabled property changes.
+ */

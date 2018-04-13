@@ -265,3 +265,15 @@ void LocationDisplay3d::postLastKnownLocationUpdate()
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void LocationDisplay3d::locationChanged(const Esri::ArcGISRuntime::Point& location);
+  \brief Signal emitted when the \a location changes.
+ */
+
+/*!
+  \fn void LocationDisplay3d::headingChanged();
+  \brief Signal emitted when the heading changes.
+ */
+

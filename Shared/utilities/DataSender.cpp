@@ -74,3 +74,9 @@ qint64 DataSender::sendData(const QByteArray& data)
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void DataSender::dataSent(const QByteArray& data);
+  \brief Signal emitted when \a data is sent as a byte array.
+ */

@@ -339,3 +339,17 @@ QJsonArray LayerCacheManager::layerJson() const
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void LayerCacheManager::layerJsonChanged();
+  \brief Signal emitted when the layer JSON changes.
+ */
+
+/*!
+  \fn void LayerCacheManager::jsonToLayerCompleted(Esri::ArcGISRuntime::Layer* layer);;
+  \brief Signal emitted when the deserialization from JSON to Layer completes.
+
+  The resulting \a layer is passed through as a parameter.
+ */
+

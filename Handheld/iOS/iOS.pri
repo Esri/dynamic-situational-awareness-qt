@@ -18,3 +18,5 @@ OTHER_FILES +=     $$PWD/Info.plist     $$PWD/Images.xcassets/AppIcon.appiconset
 
 QMAKE_INFO_PLIST = $$PWD/Info.plist
 
+ios_icon.files = $$files($$PWD/Images.xcassets/AppIcon.appiconset/Icon-*.png)
+QMAKE_BUNDLE_DATA += ios_icon

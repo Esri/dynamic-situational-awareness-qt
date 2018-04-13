@@ -458,3 +458,11 @@ double GPXLocationSimulator::heading(const Esri::ArcGISRuntime::LineSegment& seg
 }
 
 } // Dsa
+
+// Signal Documentation
+
+/*!
+  \fn void GPXLocationSimulator::headingChanged(double heading);
+
+  \brief Signal emitted when the \a heading changes.
+ */

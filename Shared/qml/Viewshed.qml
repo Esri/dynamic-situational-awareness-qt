@@ -224,11 +224,23 @@ Item {
                         border.color: Material.background
                     }
                 }
-                text: "360 °"
 
                 onCheckedChanged: {
                     toolController.activeViewshed360Mode = checked;
                 }
+            }
+
+            Text {
+                anchors.horizontalCenter: parent.horizontalCenter
+                horizontalAlignment: Text.AlignHCenter
+
+                font {
+                    family: DsaStyles.fontFamily
+                    pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                }
+
+                color: Material.foreground
+                text: "360 °"
             }
         }
     }

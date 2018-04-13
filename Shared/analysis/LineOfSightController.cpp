@@ -492,7 +492,7 @@ void LineOfSightController::clearAnalysis()
 
 /*!
   \fn void AnalysisListController::overlayNamesChanged();
-  \brief Signal emitted when the overlay names change.å
+  \brief Signal emitted when the overlay names change.
  */
 
 /*!

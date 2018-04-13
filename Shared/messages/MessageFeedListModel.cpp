@@ -25,6 +25,30 @@ namespace Dsa {
   \inherits QAbstractListModel
   \brief A model responsible for storing \l MessageFeed objects and reporting when they
   change.
+
+  The model returns data for the following roles:
+  \table
+    \header
+        \li Role
+        \li Type
+        \li Description
+    \row
+        \li feedName
+        \li QString
+        \li The name of the message feed.
+    \row
+        \li feedMessageType
+        \li QString
+        \li The type of message.
+    \row
+        \li feedVisible
+        \li bool
+        \li Whether the feed is visible.
+    \row
+        \li thumbnailUrl
+        \li QUrl
+        \li The URL to the Message's thumbnail.
+  \endtable
  */
 
 /*!

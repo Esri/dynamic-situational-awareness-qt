@@ -33,6 +33,26 @@ namespace Dsa {
   \brief A model for storing the list of
   \l Esri::ArcGISRuntime::TileCache files available for
   use as basemaps in the app.
+
+  The model returns data for the following roles:
+  \table
+    \header
+        \li Role
+        \li Type
+        \li Description
+    \row
+        \li title
+        \li QString
+        \li The title of the tile cache.
+    \row
+        \li fileName
+        \li QString
+        \li The file path to the tile cache.
+    \row
+        \li thumbnailUrl
+        \li QUrl
+        \li The URL to the thumbnail of the tile cache.
+  \endtable
  */
 
 /*!

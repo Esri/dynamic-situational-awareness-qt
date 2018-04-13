@@ -10,21 +10,21 @@
 // See the Sample code usage restrictions document for further information.
 //
 
-#ifndef COTMESSAGEPARSER_H
-#define COTMESSAGEPARSER_H
+#ifndef GEOMESSAGEPARSER_H
+#define GEOMESSAGEPARSER_H
 
 #include "AbstractMessageParser.h"
 
-#include <QXmlStreamReader>
 #include <QFile>
+#include <QXmlStreamReader>
 
-class CoTMessageParser : public AbstractMessageParser
+class GeoMessageParser : public AbstractMessageParser
 {
   Q_OBJECT
 
 public:
-  explicit CoTMessageParser(const QString& filePath, QObject* parent = nullptr);
-  ~CoTMessageParser();
+  explicit GeoMessageParser(const QString& filePath, QObject* parent = nullptr);
+  ~GeoMessageParser();
 
   QByteArray nextMessage() override;
 
@@ -33,12 +33,12 @@ public:
   bool atEnd() const override;
 
 private:
-  Q_DISABLE_COPY(CoTMessageParser)
-  CoTMessageParser() = delete;
+  Q_DISABLE_COPY(GeoMessageParser)
+  GeoMessageParser() = delete;
 
   QFile m_device;
   QXmlStreamReader m_reader;
   bool m_isParsing = false;
 };
 
-#endif // COTMESSAGEPARSER_H
+#endif // GEOMESSAGEPARSER_H

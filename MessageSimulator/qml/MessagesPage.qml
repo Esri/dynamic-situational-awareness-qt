@@ -3,6 +3,7 @@ import QtQuick.Controls.Material 2.2
 import QtQuick.Dialogs 1.0
 import QtQuick 2.7
 import QtQuick.Window 2.3
+import Esri.MessageSimulator 1.0
 
 Rectangle {
     id: messagesPage
@@ -20,7 +21,8 @@ Rectangle {
         }
         clip: true
 
-        model: messageSimulatorController.simulationStarted ? messageSimulatorController.messages : null
+        model: messageSimulatorController.simulationState === MessageSimulatorController.Running ?
+                   messageSimulatorController.messages : null
 
         header: Component {
             Rectangle {

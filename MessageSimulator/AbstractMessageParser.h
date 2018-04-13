@@ -22,6 +22,8 @@ class AbstractMessageParser : public QObject
 public:
   ~AbstractMessageParser();
 
+  static AbstractMessageParser* createMessageParser(const QString& filePath, QObject* parent = nullptr);
+
   virtual QByteArray nextMessage() = 0;
 
   virtual void reset() = 0;

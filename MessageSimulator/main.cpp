@@ -163,6 +163,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<MessageSimulatorController>("Esri.MessageSimulator", 1, 0, "MessageSimulatorController");
     qRegisterMetaType<MessageSimulatorController::TimeUnit>("MessageSimulatorController::TimeUnit");
+    qRegisterMetaType<MessageSimulatorController::SimulationState>("MessageSimulatorController::SimulationState");
 
     QQmlApplicationEngine engine;
     engine.load(QUrl(QLatin1String("qrc:/main.qml")));

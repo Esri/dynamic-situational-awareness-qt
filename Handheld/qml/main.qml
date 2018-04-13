@@ -195,7 +195,7 @@ Handheld {
             backgroundColor: Material.background
             fontSize: DsaStyles.toolFontPixelSize
             fontFamily: DsaStyles.fontFamily
-            opacity: hudOpacity
+            backgroundOpacity: hudOpacity
             radius: hudRadius
 
             onVisibleChanged: {

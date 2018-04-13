@@ -183,7 +183,7 @@ Vehicle {
             backgroundColor: Material.background
             fontSize: DsaStyles.toolFontPixelSize
             fontFamily: DsaStyles.fontFamily
-            opacity: hudOpacity
+            backgroundOpacity: hudOpacity
             radius: hudRadius
 
             onVisibleChanged: {
@@ -209,8 +209,7 @@ Vehicle {
                 bottom: sceneView.attributionTop
             }
             width: 56 * scaleFactor
-            appTitle: "DSA - V"
-            opacity: 0.75
+            appTitle: "DSA - V"            
 
             onSettingsClicked: optionsTool.visible = true;
             onAboutClicked: aboutTool.visible = true;

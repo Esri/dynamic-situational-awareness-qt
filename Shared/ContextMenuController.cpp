@@ -597,3 +597,36 @@ void ContextMenuController::setContextActive(bool contextRequested)
 }
 
 } // Dsa
+
+// Signal Documentation
+
+/*!
+  \fn void ContextMenuController::contextActiveChanged();
+
+  \brief Signal emitted when active state changes.
+ */
+
+/*!
+  \fn void ContextMenuController::contextScreenPositionChanged();
+
+  \brief Signal emitted when the screen position of the context menu changes.
+ */
+
+/*!
+  \fn void ContextMenuController::optionsChanged();
+
+  \brief Signal emitted when the current options of the context menu changes.
+ */
+
+/*!
+  \fn void ContextMenuController::resultChanged();
+
+  \brief Signal emitted when the results change.
+ */
+
+/*!
+  \fn void ContextMenuController::resultTitleChanged();
+
+  \brief Signal emitted when the result title changes.
+ */
+

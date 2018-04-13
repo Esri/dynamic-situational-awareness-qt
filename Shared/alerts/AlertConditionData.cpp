@@ -334,3 +334,29 @@ bool AlertConditionData::isActive() const
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void AlertConditionData::statusChanged();
+  \brief Signal emitted when the status changes.
+ */
+
+/*!
+  \fn void AlertConditionData::viewedChanged();
+  \brief Signal emitted when the alert condition data is viewed.
+ */
+
+/*!
+  \fn void AlertConditionData::dataChanged();
+  \brief Signal emitted when alert condition data changes.
+ */
+
+/*!
+  \fn void AlertConditionData::activeChanged();
+  \brief Signal emitted when the active state changes.
+ */
+
+/*!
+  \fn void AlertConditionData::noLongerValid();
+  \brief Signal emitted when alert condition data is no longer valid.
+ */

@@ -155,3 +155,9 @@ bool DataListener::processUdpDatagrams()
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void DataListener::dataReceived(const QByteArray& data);
+  \brief Signal emitted when \a data is received as a byte array.
+ */

@@ -786,3 +786,84 @@ void ViewshedController::emitActiveViewshedSignals()
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void ViewshedController::locationDisplayViewshedActiveChanged();
+  \brief Signal emitted when the LocationDisplay viewshed active property changes.
+ */
+
+/*!
+  \fn void ViewshedController::activeViewshed360ModeChanged();
+  \brief Signal emitted when the currently active viewshed is in 360 mode.
+ */
+
+/*!
+  \fn void ViewshedController::activeViewshedOffsetEnabledChanged();
+  \brief Signal emitted when the currently active viewshed changes whether offsets are enabled.
+ */
+
+/*!
+  \fn void ViewshedController::activeViewshedPitchEnabledChanged();
+  \brief Signal emitted when the currently active viewshed changes whether pitch is enabled.
+ */
+
+/*!
+  \fn void ViewshedController::activeViewshedHeadingEnabledChanged();
+  \brief Signal emitted when the currently active viewshed changes whether heading is enabled.
+ */
+
+/*!
+  \fn void ViewshedController::activeViewshedOffsetZChanged();
+  \brief Signal emitted when the currently active viewshed changes offset z-values.
+ */
+
+/*!
+  \fn void ViewshedController::activeViewshedMaxPitchChanged();
+  \brief Signal emitted when the currently active viewshed changes maximum pitch.
+ */
+
+/*!
+  \fn void ViewshedController::activeViewshedMinPitchChanged();
+  \brief Signal emitted when the currently active viewshed changes minimum pitch.
+ */
+
+/*!
+  \fn void ViewshedController::activeViewshedPitchChanged();
+  \brief Signal emitted when the currently active viewshed changes pitch.
+ */
+
+/*!
+  \fn void ViewshedController::activeViewshedHeadingChanged();
+  \brief Signal emitted when the currently active viewshed changes heading.
+ */
+
+/*!
+  \fn void ViewshedController::activeViewshedVerticalAngleChanged();
+  \brief Signal emitted when the currently active viewshed changes vertical angle.
+ */
+
+/*!
+  \fn void ViewshedController::activeViewshedHorizontalAngleChanged();
+  \brief Signal emitted when the currently active viewshed changes horizontal angle.
+ */
+
+/*!
+  \fn void ViewshedController::activeViewshedMaxDistanceChanged();
+  \brief Signal emitted when the currently active viewshed changes maximum distance.
+ */
+
+/*!
+  \fn void ViewshedController::activeViewshedMinDistanceChanged();
+  \brief Signal emitted when the currently active viewshed changes minimum distance.
+ */
+
+/*!
+  \fn void ViewshedController::activeViewshedEnabledChanged();
+  \brief Signal emitted when currently active viewshed enabled changes.
+ */
+
+/*!
+  \fn void ViewshedController::activeModeChanged();
+  \brief Signal emitted when the active mode changes.
+ */

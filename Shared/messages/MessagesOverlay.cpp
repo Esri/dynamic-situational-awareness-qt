@@ -317,3 +317,19 @@ void MessagesOverlay::setVisible(bool visible)
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void MessagesOverlay::graphicsOverlaysChanged();
+  \brief Signal emitted when the GraphicsOverlays associated with this MessagesOverlay change.
+ */
+
+/*!
+  \fn void MessagesOverlay::graphicsOverlaysChanged();
+  \brief Signal emitted when the visibility of the overlay changes.
+ */
+
+/*!
+  \fn void MessagesOverlay::errorOccurred(const QString& error);
+  \brief Signal emitted when an \a error occurs.
+ */

@@ -363,3 +363,19 @@ QHash<int, QByteArray> ViewshedListModel::roleNames() const
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void ViewshedListModel::countChanged();
+  \brief Signal emitted when the number of Viewsheds in the list model changes.
+ */
+
+/*!
+  \fn void ViewshedListModel::viewshedAdded(int index);
+  \brief Signal emitted when a Viewshed is added to the list model at the specified \a index.
+ */
+
+/*!
+  \fn void ViewshedListModel::viewshedRemoved(Dsa::Viewshed360* viewshed);
+  \brief Signal emitted when a \a viewshed is removed from the list model.
+ */

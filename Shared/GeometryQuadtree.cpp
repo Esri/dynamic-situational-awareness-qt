@@ -652,3 +652,10 @@ void GeometryQuadtree::QuadTree::removeId(int index)
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void GeometryQuadtree::treeChanged();
+  \brief Signal emitted when the quad tree changes.
+ */
+

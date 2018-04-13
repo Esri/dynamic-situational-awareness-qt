@@ -45,3 +45,14 @@ AlertSource::~AlertSource()
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void AlertSource::dataChanged();
+  \brief Signal emitted when alert source's data changes.
+ */
+
+/*!
+  \fn void AlertSource::noLongerValid();
+  \brief Signal emitted when the alert source is no longer valid.
+ */

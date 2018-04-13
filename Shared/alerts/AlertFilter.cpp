@@ -45,3 +45,9 @@ AlertFilter::~AlertFilter()
 
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void AlertFilter::filterChanged();
+  \brief Signal emitted when the filter changes.
+ */

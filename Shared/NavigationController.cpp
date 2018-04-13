@@ -550,3 +550,27 @@ Point NavigationController::initialCenter() const
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void NavigationController::verticalChanged();
+  \brief Signal emitted when \l isVertical changes.
+ */
+
+/*!
+  \fn void NavigationController::zoomFactorChanged();
+  \brief Signal emitted when the zoom factor changes.
+ */
+
+/*!
+  \fn void NavigationController::screenToLocationCompleted(QUuid taskId, Esri::ArcGISRuntime::Point location);
+  \brief Signal emitted when the screen to location operation completes.
+
+  The \a taskId and \a location are passed through as parameters.
+ */
+
+/*!
+  \fn void NavigationController::cameraMoveDistanceChanged();
+  \brief Signal emitted when the camera move distance changes.
+ */
+

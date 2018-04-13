@@ -308,3 +308,15 @@ bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QStrin
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void IdentifyController::busyChanged();
+  \brief Signal emitted when the busy property changes.
+ */
+
+/*!
+  \fn void IdentifyController::popupManagersChanged();
+  \brief Signal emitted when the popup managers change.
+ */
+

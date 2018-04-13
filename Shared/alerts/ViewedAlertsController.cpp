@@ -123,3 +123,9 @@ int ViewedAlertsController::unviewedCount() const
 
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void ViewedAlertsController::unviewedCountChanged();
+  \brief Signal emitted when the unviewed count changes.
+ */

@@ -141,6 +141,7 @@ Row {
         id: widthIcon
         iconSource: DsaResources.iconLineWidth
         toolName: "Width"
+        visible: false
         onToolSelected: {
             if (markupToolRow.state === toolName) {
                 selected = false;
@@ -158,6 +159,6 @@ Row {
         id: clearIcon
         iconSource: DsaResources.iconTrash
         toolName: "Clear All"
-        onToolSelected: appRoot.showClearDialog("Are you sure you want to clear all markups?")
+        onToolSelected: appRoot.showClearDialog("Are you sure you want to clear the current markup sketch?")
     }
 }

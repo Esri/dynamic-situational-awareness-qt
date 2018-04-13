@@ -101,7 +101,7 @@ Item {
 
             Text {
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: "Built with ArcGIS Runtime SDK for Qt 100.2.1"
+                text: "Built with ArcGIS Runtime SDK 100.2.1 for Qt"
                 color: Material.foreground
                 font {
                     pixelSize: 12 * scaleFactor

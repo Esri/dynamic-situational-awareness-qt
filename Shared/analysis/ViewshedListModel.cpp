@@ -30,6 +30,50 @@ namespace Dsa {
   \inherits QAbstractListModel
   \brief A model responsible for storing \l Viewshed360 objects and reporting when they
   change.
+
+  The model returns data for the following roles:
+  \table
+    \header
+        \li Role
+        \li Type
+        \li Description
+    \row
+        \li name
+        \li QString
+        \li The name of the viewshed.
+    \row
+        \li viewshedVisible
+        \li bool
+        \li Whether the viewshed is visible.
+    \row
+        \li minDistance
+        \li double
+        \li The minimum distance of the Viewshed.
+    \row
+        \li maxDistance
+        \li double
+        \li The maximum distance of the Viewshed.
+    \row
+        \li horizontalAngle
+        \li double
+        \li The horizontal angle of the Viewshed.
+    \row
+        \li verticalAngle
+        \li double
+        \li The vertical angle of the Viewshed.
+    \row
+        \li heading
+        \li double
+        \li The heading of the Viewshed.
+    \row
+        \li pitch
+        \li double
+        \li The pitch of the Viewshed.
+    \row
+        \li is360Mode
+        \li bool
+        \li Whether the Viewshed is in 360 mode.
+  \endtable
  */
 
 /*!

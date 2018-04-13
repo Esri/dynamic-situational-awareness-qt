@@ -33,6 +33,22 @@ namespace Dsa {
   \inherits QAbstractListModel
   \brief A model responsible for storing data items (such as local layers) and reporting when they
   change.
+
+  The model returns data for the following roles:
+  \table
+    \header
+        \li Role
+        \li Type
+        \li Description
+    \row
+        \li fullPath
+        \li QString
+        \li The full path to the data item.
+    \row
+        \li fileName
+        \li QString
+        \li The file name of the data item.
+  \endtable
  */
 
 /*!

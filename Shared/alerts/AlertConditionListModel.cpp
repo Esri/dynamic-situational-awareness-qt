@@ -25,6 +25,30 @@ namespace Dsa {
   \inherits QAbstractListModel
   \brief A model for storing \l AlertCondition objects and reporting when they
   change.
+
+  The model returns data for the following roles:
+  \table
+    \header
+        \li Role
+        \li Type
+        \li Description
+    \row
+        \li conditionName
+        \li QString
+        \li The name of the alert condition.
+    \row
+        \li level
+        \li int
+        \li The level of the alert.
+    \row
+        \li description
+        \li QString
+        \li The description of the alert condition.
+    \row
+        \li conditionEnabled
+        \li bool
+        \li Whether the alert condition is enabled.
+  \endtable
   */
 
 /*!

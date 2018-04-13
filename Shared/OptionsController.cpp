@@ -284,3 +284,39 @@ QList<DictionaryRenderer*> OptionsController::friendlyTracksOverlayRenderers() c
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void OptionsController::coordinateFormatsChanged();
+  \brief Signal emitted when the coordinateFormats property changes.
+ */
+
+/*!
+  \fn void OptionsController::useGpsForElevationChanged();
+  \brief Signal emitted when the useGpsForElevation property changes.
+ */
+
+/*!
+  \fn void OptionsController::unitsChanged();
+  \brief Signal emitted when the units property changes.
+ */
+
+/*!
+  \fn void OptionsController::initialUnitIndexChanged();
+  \brief Signal emitted when the initial unit index changes.
+ */
+
+/*!
+  \fn void OptionsController::initialFormatIndexChanged();
+  \brief Signal emitted when the initial coordinate format index changes.
+ */
+
+/*!
+  \fn void OptionsController::showFriendlyTracksLabelsChanged();
+  \brief Signal emitted when showFriendlyTracksLabels property changes.
+ */
+
+/*!
+  \fn void OptionsController::userNameChanged();
+  \brief Signal emitted when the userName property changes.
+ */

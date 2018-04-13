@@ -43,3 +43,15 @@ AlertTarget::~AlertTarget()
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void AlertTarget::noLongerValid();
+  \brief Signal emitted when alert target is no longer valid.
+ */
+
+/*!
+  \fn void AlertTarget::dataChanged();
+  \brief Signal emitted when alert target's data changes.
+ */
+

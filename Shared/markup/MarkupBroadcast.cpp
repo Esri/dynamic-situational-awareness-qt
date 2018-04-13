@@ -164,3 +164,17 @@ void MarkupBroadcast::updateDataListener()
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void MarkupBroadcast::markupReceived(const QString& filePath, const QString& sharedBy);
+  \brief Signal emitted when a markup is received.
+
+  The \a filePath to the JSON and the author that the markup was \a sharedBy are passed through
+  as parameters.
+ */
+
+/*!
+  \fn void MarkupBroadcast::markupSent(const QString& filePath);
+  \brief Signal emitted when a markup is sent with the specified \a filePath.
+ */

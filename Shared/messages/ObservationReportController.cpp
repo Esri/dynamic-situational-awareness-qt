@@ -386,3 +386,19 @@ void ObservationReportController::onUpdateControlPointHightlight()
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void ObservationReportController::observedByChanged();
+  \brief Signal emitted when the observedBy property changes.
+ */
+
+/*!
+  \fn void ObservationReportController::controlPointChanged();
+  \brief Signal emitted when the controlPoint property changes.
+ */
+
+/*!
+  \fn void ObservationReportController::pickModeChanged();
+  \brief Signal emitted when the pickMode property changes.
+ */

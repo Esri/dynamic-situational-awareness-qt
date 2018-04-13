@@ -846,3 +846,41 @@ void AddLocalDataController::setProperties(const QVariantMap& properties)
 }
 
 } // Dsa
+
+// Signal Documentation
+
+/*!
+  \fn void AddLocalDataController::localDataModelChanged();
+
+  \brief Signal emitted when the LocalDataModel associated with this class changes.
+ */
+
+/*!
+  \fn void AddLocalDataController::layerSelected(Esri::ArcGISRuntime::Layer* layer);
+
+  \brief Signal emitted when a \a layer is selected.
+ */
+
+/*!
+  \fn void AddLocalDataController::elevationSourceSelected(Esri::ArcGISRuntime::ElevationSource* source);
+
+  \brief Signal emitted when an elevation \a source is selected.
+ */
+
+/*!
+  \fn void AddLocalDataController::layerCreated(int i, Esri::ArcGISRuntime::Layer* layer);
+
+  \brief Signal emitted when a \a layer is created.
+
+  The index of the layer in the operational layer list is passed through as \a i.
+ */
+
+/*!
+  \fn void AddLocalDataController::toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
+
+  \brief Signal emitted when an error occurs.
+
+  An error \a message and \a additionalMessage are passed through as parameters, describing
+  the error that occurred.
+ */
+

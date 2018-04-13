@@ -156,3 +156,9 @@ void AnalysisListController::zoomToLocation(const Point& point)
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void AnalysisListController::analysisListChanged();
+  \brief Signal emitted when the analysis list changes.
+ */

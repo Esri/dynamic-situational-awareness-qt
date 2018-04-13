@@ -303,3 +303,33 @@ void LocationTextController::setUnitOfMeasurement(const QString& unit)
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void LocationTextController::currentLocationTextChanged();
+  \brief Signal emitted when the current location text changes.
+ */
+
+/*!
+  \fn void LocationTextController::currentElevationTextChanged();
+  \brief Signal emitted when the current elevation text changes.
+ */
+
+/*!
+  \fn void LocationTextController::useGpsForElevationChanged();
+  \brief Signal emitted when the \l useGpsForElevtion changes.
+
+  If \c true, GPS is used for elevation. If \c false, the Surface is used
+  for elevation.
+ */
+
+/*!
+  \fn void LocationTextController::unitOfMeasurementChanged();
+  \brief Signal emitted when the unit of measurement changes.
+ */
+
+/*!
+  \fn void LocationTextController::coordinateFormatChanged();
+  \brief Signal emitted when the coordinate format changes.
+ */
+

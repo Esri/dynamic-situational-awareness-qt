@@ -417,6 +417,7 @@ void LocationBroadcast::setUserName(const QString& userName)
   }
 }
 
+// Signal Documentation
 /*!
   \fn void LocationBroadcast::messageChanged();
   \brief Signal emitted when the message for this location broadcast changes.

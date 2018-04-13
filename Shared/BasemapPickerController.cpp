@@ -210,3 +210,35 @@ void BasemapPickerController::setProperties(const QVariantMap& properties)
 }
 
 } // Dsa
+
+// Signal Documentation
+
+/*!
+  \fn void BasemapPickerController::tileCacheModelChanged();
+
+  \brief Signal emitted when the TileCacheModel associated with this class changes.
+ */
+
+/*!
+  \fn void BasemapPickerController::basemapsDataPathChanged();
+
+  \brief Signal emitted when basemap data path changes.
+ */
+
+/*!
+  \fn void BasemapPickerController::basemapChanged(Esri::ArcGISRuntime::Basemap* basemap, QString name = "");
+
+  \brief Signal emitted when the current \a basemap changes.
+
+  The \a name of the basemap is passed through the signal as a parameter.
+ */
+
+/*!
+  \fn void BasemapPickerController::toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
+
+  \brief Signal emitted when an error occurs.
+
+  An error \a message and \a additionalMessage are passed through as parameters, describing
+  the error that occurred.
+ */
+

@@ -478,3 +478,27 @@ void LineOfSightController::clearAnalysis()
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void AnalysisListController::visibleByCountChanged();
+  \brief Signal emitted when the visibleByCount property changes.
+ */
+
+/*!
+  \fn void AnalysisListController::analysisVisibleChanged();
+  \brief Signal emitted when the analysisVisible property changes.
+ */
+
+/*!
+  \fn void AnalysisListController::overlayNamesChanged();
+  \brief Signal emitted when the overlay names change.å
+ */
+
+/*!
+  \fn void AnalysisListController::toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
+  \brief Signal emitted when an error occurs.
+
+  An error \a message and \a additionalMessage are passed through as parameters, describing
+  the error that occurred.
+ */

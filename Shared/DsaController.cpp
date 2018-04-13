@@ -494,3 +494,14 @@ bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map)
 }
 
 } // Dsa
+
+// Signal Documentation
+
+/*!
+  \fn void DsaController::contextActiveChangederrorOccurred(const QString& message, const QString& additionalMessage);
+
+  \brief Signal emitted when an error occurs.
+
+  An error \a message and \a additionalMessage are passed through as parameters, describing
+  the error that occurred.
+ */

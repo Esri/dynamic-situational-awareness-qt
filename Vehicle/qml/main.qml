@@ -166,6 +166,41 @@ Vehicle {
             height: width
         }
 
+        CoordinateConversion {
+            id: coordinateConversion
+            anchors {
+                bottom: sceneView.attributionTop
+                left: categoryToolbar.right
+                right: followHud.left
+                margins: hudMargins
+            }
+
+            objectName: "coordinateConversion"
+            visible: false
+            geoView: sceneView
+            highlightColor : Material.accent
+            textColor: Material.foreground
+            backgroundColor: Material.background
+            fontSize: DsaStyles.toolFontPixelSize
+            fontFamily: DsaStyles.fontFamily
+            opacity: hudOpacity
+            radius: hudRadius
+
+            onVisibleChanged: {
+                if (!visible)
+                    return;
+
+                if (mapToolRow.state !== "Convert XY") {
+                    mapToolRow.state = "Convert XY";
+                    categoryToolbar.state = "map";
+                }
+            }
+        }
+
+        ContextMenu {
+            id: contextMenu
+        }
+
         CategoryToolbarColumn {
             id: categoryToolbar
             anchors {
@@ -392,41 +427,6 @@ Vehicle {
                     onClosed: drawer.close();
                 }
             }
-        }
-
-        CoordinateConversion {
-            id: coordinateConversion
-            anchors {
-                bottom: sceneView.attributionTop
-                left: categoryToolbar.right
-                right: followHud.left
-                margins: hudMargins
-            }
-
-            objectName: "coordinateConversion"
-            visible: false
-            geoView: sceneView
-            highlightColor : Material.accent
-            textColor: Material.foreground
-            backgroundColor: Material.background
-            fontSize: DsaStyles.toolFontPixelSize
-            fontFamily: DsaStyles.fontFamily
-            opacity: hudOpacity
-            radius: hudRadius
-
-            onVisibleChanged: {
-                if (!visible)
-                    return;
-
-                if (mapToolRow.state !== "Convert XY") {
-                    mapToolRow.state = "Convert XY";
-                    categoryToolbar.state = "map";
-                }
-            }
-        }
-
-        ContextMenu {
-            id: contextMenu
         }
     }
 

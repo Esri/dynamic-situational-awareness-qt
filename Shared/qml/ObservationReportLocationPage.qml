@@ -71,9 +71,7 @@ Item {
             margins: 8 * scaleFactor
         }
 
-        width: parent.width * 0.5
-
-        spacing: 16 * scaleFactor
+        spacing: 20 * scaleFactor
 
         ToolIcon {
             id: pickButton

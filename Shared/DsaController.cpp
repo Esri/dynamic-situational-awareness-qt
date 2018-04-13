@@ -75,7 +75,8 @@ DsaController::DsaController(QObject* parent):
   m_jsonFormat(QSettings::registerFormat("json", &readJsonFile, &writeJsonFile)),
   m_conflictingToolNames{QStringLiteral("Alert Conditions"),
                          QStringLiteral("Markup Tool"),
-                         QStringLiteral("viewshed")}
+                         QStringLiteral("viewshed"),
+                         QStringLiteral("Observation Report")}
 {
   // setup config settings
   setupConfig();

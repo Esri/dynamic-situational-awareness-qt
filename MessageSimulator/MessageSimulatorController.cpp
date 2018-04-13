@@ -136,7 +136,8 @@ void MessageSimulatorController::setMessageFrequency(float messageFrequency)
     if (m_simulationState == SimulationState::Running)
     {
       float messageFrequencyInSeconds = (timeUnitToSeconds(m_timeUnit) / messageFrequency);
-      m_timer.start(messageFrequencyInSeconds * 1000.0f); // in ms
+      constexpr float millisecondsMultiplier = 1000.0f;
+      m_timer.start(messageFrequencyInSeconds * millisecondsMultiplier); // in ms
     }
 
     if (previousMessageFrequency != m_messageFrequency)

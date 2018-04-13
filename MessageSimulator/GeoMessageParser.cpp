@@ -87,7 +87,7 @@ QByteArray GeoMessageParser::nextMessage()
       }
       else
       {
-        streamWriter.writeStartElement(m_reader.prefix().toString()+ ":" + elementName);
+        streamWriter.writeStartElement(m_reader.prefix().toString() + ":" + elementName);
       }
 
       if (!m_reader.attributes().isEmpty())

@@ -26,11 +26,11 @@ public:
   explicit GeoMessageParser(const QString& filePath, QObject* parent = nullptr);
   ~GeoMessageParser();
 
-  virtual QByteArray nextMessage() override;
+  QByteArray nextMessage() override;
 
-  virtual void reset() override;
+  void reset() override;
 
-  virtual bool atEnd() const override;
+  bool atEnd() const override;
 
 private:
   Q_DISABLE_COPY(GeoMessageParser)

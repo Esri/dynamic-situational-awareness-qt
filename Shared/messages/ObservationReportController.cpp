@@ -114,6 +114,7 @@ void ObservationReportController::setProperties(const QVariantMap& properties)
 }
 
 /*!
+  \property ObservationReportController::observedBy
   \brief Returns the name of the unit making the observation report.
  */
 QString ObservationReportController::observedBy() const
@@ -122,6 +123,7 @@ QString ObservationReportController::observedBy() const
 }
 
 /*!
+  \property ObservationReportController::controlPoint
   \brief Returns the control point location of the observation report in decimal degrees.
  */
 QString ObservationReportController::controlPoint() const
@@ -164,6 +166,7 @@ void ObservationReportController::setControlPoint(const Point& controlPoint)
 }
 
 /*!
+  \property ObservationReportController::pickMode
   \brief Returns whether the tool is in pick mode. If \c true,
   the tool will use clicks in the geoView to update the \l controlPoint.
  */

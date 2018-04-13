@@ -91,6 +91,7 @@ AlertListController::~AlertListController()
 }
 
 /*!
+  \property AlertListController::alertListModel
   \brief Returns a model containing the filtered list of active alert condition data.
  */
 QAbstractItemModel* AlertListController::alertListModel() const
@@ -99,6 +100,7 @@ QAbstractItemModel* AlertListController::alertListModel() const
 }
 
 /*!
+  \property AlertListController::allAlertsCount
   \brief Returns the count of all alerts - ignoring any filters.
  */
 int AlertListController::allAlertsCount() const

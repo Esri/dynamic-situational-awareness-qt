@@ -99,6 +99,7 @@ void IdentifyController::setActive(bool active)
 }
 
 /*!
+  \property IdentifyController::busy
   \brief Returns whether the tool is busy or not (e.g. whether identify tasks are running).
  */
 bool IdentifyController::busy() const
@@ -108,6 +109,7 @@ bool IdentifyController::busy() const
 }
 
 /*!
+  \property IdentifyController::popupManagers
   \brief Returns a QVariantList of \l Esri::ArcGISRuntime::PopupManager which can be displayed in the view.
 
   For example, this can be passed to a \l PopupView or \l PopupStackView for display.

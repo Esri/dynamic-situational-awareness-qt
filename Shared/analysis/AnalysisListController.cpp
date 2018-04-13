@@ -80,6 +80,7 @@ QString AnalysisListController::toolName() const
 }
 
 /*!
+  \property ViewedAlertsController::analysisList
   \brief Returns the list of analyses.
  */
 QAbstractItemModel* AnalysisListController::analysisList() const

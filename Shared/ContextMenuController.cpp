@@ -338,6 +338,7 @@ void ContextMenuController::clearOptions()
 }
 
 /*!
+  \property ContextMenuController::resultTitle
   \brief Returns the title of the current context action.
  */
 QString ContextMenuController::resultTitle() const
@@ -442,6 +443,7 @@ Point ContextMenuController::contextLocation() const
 }
 
 /*!
+  \property ContextMenuController::result
   \brief Returns the result of the current action (if applicable).
  */
 QString ContextMenuController::result() const
@@ -461,6 +463,7 @@ void ContextMenuController::setResult(const QString& result)
 }
 
 /*!
+  \property ContextMenuController::options
   \brief Returns the current list of actions which can be performed for this context
  */
 QStringListModel* ContextMenuController::options() const
@@ -569,6 +572,7 @@ void ContextMenuController::selectOption(const QString& option)
 }
 
 /*!
+  \property ContextMenuController::contextScreenPosition
   \brief Returns the screen position for the current context.
  */
 QPoint ContextMenuController::contextScreenPosition() const
@@ -577,6 +581,7 @@ QPoint ContextMenuController::contextScreenPosition() const
 }
 
 /*!
+  \property ContextMenuController::contextActive
   \brief Returns whether the current context is active or not.
  */
 bool ContextMenuController::isContextActive() const

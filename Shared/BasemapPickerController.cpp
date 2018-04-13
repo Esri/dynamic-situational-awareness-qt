@@ -136,6 +136,7 @@ void BasemapPickerController::onBasemapDataPathChanged()
 }
 
 /*!
+  \property BasemapPickerController::localDataModel
   \brief Returns a model of the local tile cache files contained in the
   basemap data directory.
  */

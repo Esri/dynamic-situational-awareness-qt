@@ -68,6 +68,7 @@ TableOfContentsController::~TableOfContentsController()
 }
 
 /*!
+  \property TableOfContentsController::layerListModel
   \brief Returns the list of operational layers in draw order.
  */
 QAbstractItemModel* TableOfContentsController::layerListModel() const

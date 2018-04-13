@@ -85,6 +85,7 @@ void MessageFeedsController::setGeoView(GeoView* geoView)
 }
 
 /*!
+  \property MessageFeedsController::messageFeeds
   \brief Returns the message feeds list model.
  */
 QAbstractListModel* MessageFeedsController::messageFeeds() const
@@ -266,6 +267,7 @@ LocationBroadcast* MessageFeedsController::locationBroadcast() const
 }
 
 /*!
+  \property MessageFeedsController::locationBroadcastEnabled
   \brief Returns \c true if the location broadcast is enabled.
 
   \sa LocationBroadcast::isEnabled
@@ -291,6 +293,7 @@ void MessageFeedsController::setLocationBroadcastEnabled(bool enabled)
 }
 
 /*!
+  \property MessageFeedsController::locationBroadcastFrequency
   \brief Returns the location broadcast frequency.
 
   \sa LocationBroadcast::frequency
@@ -316,6 +319,7 @@ void MessageFeedsController::setLocationBroadcastFrequency(int frequency)
 }
 
 /*!
+  \property MessageFeedsController::locationBroadcastInDistress
   \brief Returns \c true if the location broadcast reports
   message status as being in distress.
  */

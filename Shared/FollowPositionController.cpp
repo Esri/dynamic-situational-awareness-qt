@@ -80,6 +80,7 @@ void FollowPositionController::setFollowMode(FollowPositionController::FollowMod
 }
 
 /*!
+  \property FollowPositionController::followMode
   \brief Returns the follow mode for the tool.
  */
 FollowPositionController::FollowMode FollowPositionController::followMode() const

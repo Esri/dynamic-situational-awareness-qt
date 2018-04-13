@@ -121,6 +121,7 @@ void MarkupController::setDrawingAltitude(double altitude)
 }
 
 /*!
+  \property MarkupController::drawingAltitude
  \brief Returns the drawing altitude.
  */
 double MarkupController::drawingAltitude() const
@@ -361,6 +362,7 @@ void MarkupController::updateGeoView()
 }
 
 /*!
+  \property MarkupController::is3d
  \brief Returns whether the app is 3D.
  */
 bool MarkupController::is3d() const
@@ -377,6 +379,7 @@ int MarkupController::sketchCount() const
 }
 
 /*!
+  \property MarkupController::drawModeEnabled
  \brief Returns whether drawing is enabled.
  */
 bool MarkupController::drawModeEnabled() const
@@ -416,6 +419,7 @@ void MarkupController::setOverlayName(const QString& name)
 }
 
 /*!
+  \property MarkupController::colors
  \brief Returns the list of colors available for markups.
  */
 QStringList MarkupController::colors() const

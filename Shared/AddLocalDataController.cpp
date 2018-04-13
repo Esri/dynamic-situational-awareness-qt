@@ -101,6 +101,7 @@ AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
 }
 
 /*!
+ \property AddLocalDataController::localDataModel
  \brief Returns the local data model associated with the controller.
  */
 QAbstractListModel* AddLocalDataController::localDataModel() const
@@ -152,6 +153,7 @@ void AddLocalDataController::refreshLocalDataModel(const QString& fileType)
 }
 
 /*!
+ \property AddLocalDataController::fileFilterList
  \brief Returns the file filter string list for filtering data from the QDir entrylist
  */
 QStringList AddLocalDataController::determineFileFilters(const QString& fileType)

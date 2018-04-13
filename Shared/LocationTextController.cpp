@@ -84,6 +84,7 @@ QString LocationTextController::toolName() const
 }
 
 /*!
+ \property LocationTextController::currentLocationText
  \brief Returns the location text string for display in QML.
  */
 QString LocationTextController::currentLocationText() const
@@ -92,6 +93,7 @@ QString LocationTextController::currentLocationText() const
 }
 
 /*!
+ \property LocationTextController::currentElevationText
  \brief Returns the elevation text string for display in QML.
  */
 QString LocationTextController::currentElevationText() const

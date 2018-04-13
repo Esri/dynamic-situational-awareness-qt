@@ -84,6 +84,7 @@ ViewedAlertsController::~ViewedAlertsController()
 }
 
 /*!
+  \property ViewedAlertsController::unviewedCount
   \brief Returns the number of alert condition data objects which are currently active
   and which have not been marked as viewed.
  */

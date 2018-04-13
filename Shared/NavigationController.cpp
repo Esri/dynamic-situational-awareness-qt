@@ -358,6 +358,7 @@ void NavigationController::zoom()
 }
 
 /*!
+  \property NavigationController::vertical
   \brief Returns whether the camera is vertical.
  */
 bool NavigationController::isVertical() const
@@ -366,6 +367,7 @@ bool NavigationController::isVertical() const
 }
 
 /*!
+  \property NavigationController::zoomFactor
   \brief Returns the zoom factor.
  */
 double NavigationController::zoomFactor() const
@@ -386,6 +388,7 @@ void NavigationController::setZoomFactor(double value)
 }
 
 /*!
+  \property NavigationController::cameraMoveDistance
   \brief Returns the camera move distance in meters.
  */
 double NavigationController::cameraMoveDistance() const

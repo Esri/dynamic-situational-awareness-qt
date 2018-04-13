@@ -128,6 +128,7 @@ void OptionsController::setProperties(const QVariantMap& properties)
 }
 
 /*!
+ \property OptionsController::coordinateFormats
  \brief Returns the coordinate format list for display in the combo box.
  */
 QStringList OptionsController::coordinateFormats() const
@@ -147,6 +148,7 @@ void OptionsController::setCoordinateFormat(const QString& format)
 }
 
 /*!
+  \property OptionsController::useGpsForElevation
  \brief Returns whether to use GPS for elevation for display.
  */
 bool OptionsController::useGpsForElevation() const
@@ -169,6 +171,7 @@ void OptionsController::setUseGpsForElevation(bool useGps)
 }
 
 /*!
+  \property OptionsController::units
  \brief Returns the unit of measurement list for display.
  */
 QStringList OptionsController::units() const
@@ -188,6 +191,7 @@ void OptionsController::setUnitOfMeasurement(const QString& unit)
 }
 
 /*!
+ \property OptionsController::userName
  \brief Returns the user name for the app.
  */
 QString OptionsController::userName() const
@@ -209,6 +213,7 @@ void OptionsController::setUserName(const QString& userName)
 }
 
 /*!
+  \property OptionsController::initialFormatIndex
  \brief Returns the initial index.
   This is used to set the initial index in the combo box to match the controller.
   */
@@ -218,6 +223,7 @@ int OptionsController::initialFormatIndex() const
 }
 
 /*!
+  \property OptionsController::initialUnitIndex
  \brief Returns the initial index of the list of units.
 
   This is used to set the initial index in the combo box to match the controller.
@@ -228,6 +234,7 @@ int OptionsController::initialUnitIndex() const
 }
 
 /*!
+  \property OptionsController::showFriendlyTracksLabels
  \brief Returns whether the friendly tracks labels show.
 */
 bool OptionsController::showFriendlyTracksLabels()

@@ -469,6 +469,7 @@ void AlertConditionsController::updateConditionLevel(int rowIndex, int level)
 }
 
 /*!
+  \property AlertConditionsController::sourceNames
   \brief Returns a QAbstractItemModel containing the list of
   names for creating condition sources.
 
@@ -480,6 +481,7 @@ QAbstractItemModel* AlertConditionsController::sourceNames() const
 }
 
 /*!
+  \property AlertConditionsController::targetNames
   \brief Returns a QAbstractItemModel containing the list of
   names for creating condition targets.
 
@@ -491,6 +493,7 @@ QAbstractItemModel* AlertConditionsController::targetNames() const
 }
 
 /*!
+  \property AlertConditionsController::levelNames
   \brief Returns a QAbstractItemModel containing the list of
   level names for creating condition targets.
 
@@ -502,6 +505,7 @@ QAbstractItemModel* AlertConditionsController::levelNames() const
 }
 
 /*!
+  \property AlertConditionsController::conditionsList
   \brief Returns a QAbstractItemModel containing the list of
   conditions.
 
@@ -513,6 +517,7 @@ QAbstractItemModel* AlertConditionsController::conditionsList() const
 }
 
 /*!
+  \property AlertConditionsController::pickMode
   \brief Returns whether the tool is in pick mode or not.
  */
 bool AlertConditionsController::pickMode() const

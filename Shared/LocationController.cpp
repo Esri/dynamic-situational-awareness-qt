@@ -202,6 +202,7 @@ void LocationController::setProperties(const QVariantMap& properties)
 }
 
 /*!
+  \property LocationController::enabled
   \brief Returns whether the tool is enabled.
  */
 bool LocationController::isEnabled() const
@@ -237,6 +238,7 @@ void LocationController::setEnabled(bool enabled)
 }
 
 /*!
+  \property LocationController::locationVisible
   \brief Returns whether the location is visible.
  */
 bool LocationController::isLocationVisible() const
@@ -261,6 +263,7 @@ void LocationController::setLocationVisible(bool visible)
 }
 
 /*!
+  \property LocationController::simulationEnabled
   \brief Returns whether the location is simulated.
  */
 bool LocationController::isSimulationEnabled() const
@@ -312,6 +315,7 @@ LocationDisplay3d* LocationController::locationDisplay() const
 }
 
 /*!
+  \property LocationController::gpxFilePath
   \brief Returns the file path of the GPX file.
  */
 QString LocationController::gpxFilePath() const

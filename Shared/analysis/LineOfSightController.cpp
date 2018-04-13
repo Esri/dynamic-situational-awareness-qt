@@ -64,6 +64,7 @@ void LineOfSightController::getLocationGeoElement()
 }
 
 /*!
+  \property LineOfSightController::visibleByCount
   \brief Returns the number of line of sight analyses from features to the current position
   which are unobstructed.
  */
@@ -361,6 +362,7 @@ void LineOfSightController::lineOfSightFromLocationToGeoElement(GeoElement* geoE
 }
 
 /*!
+  \property LineOfSightController::analysisVisible
   \brief Returns whether the results of Line of sight analysis should be visible.
  */
 bool LineOfSightController::isAnalysisVisible() const
@@ -401,6 +403,7 @@ void LineOfSightController::setAnalysisVisible(bool analysisVisible)
 }
 
 /*!
+  \property LineOfSightController::overlayNames
   \brief Returns the list of overlay names which are suitable for Line of sight analysis.
  */
 QAbstractItemModel* LineOfSightController::overlayNames() const

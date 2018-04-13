@@ -338,6 +338,7 @@ void ViewshedController::addGeoElementViewshed360(GeoElement* geoElement)
 }
 
 /*!
+  \property ViewshedController::locationDisplayViewshedActive
   \brief Returns whether a viewshed exists for the app's current position.
  */
 bool ViewshedController::isLocationDisplayViewshedActive() const
@@ -346,6 +347,7 @@ bool ViewshedController::isLocationDisplayViewshedActive() const
 }
 
 /*!
+  \property ViewshedController::activeMode
   \brief Returns the active mode for the tool - that is the kind of viewshed
   which will be created.
  */
@@ -388,6 +390,7 @@ void ViewshedController::setActiveMode(ViewshedActiveMode mode)
 }
 
 /*!
+  \property ViewshedController::viewsheds
   \brief Returns a model containing the current list of viewsheds.
  */
 QAbstractListModel* ViewshedController::viewsheds() const
@@ -436,6 +439,7 @@ void ViewshedController::finishActiveViewshed()
 }
 
 /*!
+  \property ViewshedController::activeViewshedEnabled
   \brief Returns whether there is an active viewshed.
  */
 bool ViewshedController::isActiveViewshedEnabled() const
@@ -444,6 +448,7 @@ bool ViewshedController::isActiveViewshedEnabled() const
 }
 
 /*!
+  \property ViewshedController::activeViewshedMinDistance
   \brief Returns the minimum distance of the active viewshed in meters.
 
   If there is no active viewshed this will be \c NAN.
@@ -467,6 +472,7 @@ void ViewshedController::setActiveViewshedMinDistance(double minDistance)
 }
 
 /*!
+  \property ViewshedController::activeViewshedMaxDistance
   \brief Returns the maximum distance of the active viewshed in meters.
 
   If there is no active viewshed this will be \c NAN.
@@ -490,6 +496,7 @@ void ViewshedController::setActiveViewshedMaxDistance(double maxDistance)
 }
 
 /*!
+  \property ViewshedController::activeViewshedHorizontalAngle
   \brief Returns the horizontal angle of the active viewshed in degrees.
 
   If there is no active viewshed this will be \c NAN.
@@ -516,6 +523,7 @@ void ViewshedController::setActiveViewshedHorizontalAngle(double horizontalAngle
 }
 
 /*!
+  \property ViewshedController::activeViewshedVerticalAngle
   \brief Returns the vertical angle of the active viewshed in degrees.
 
   If there is no active viewshed this will be \c NAN.
@@ -542,6 +550,7 @@ void ViewshedController::setActiveViewshedVerticalAngle(double verticalAngle)
 }
 
 /*!
+  \property ViewshedController::activeViewshedHeading
   \brief Returns the heading of the active viewshed in degrees.
 
   If there is no active viewshed this will be \c NAN.
@@ -568,6 +577,7 @@ void ViewshedController::setActiveViewshedHeading(double heading)
 }
 
 /*!
+  \property ViewshedController::activeViewshedPitch
   \brief Returns the pitch of the active viewshed in degrees.
 
   If there is no active viewshed this will be \c NAN.
@@ -594,6 +604,7 @@ void ViewshedController::setActiveViewshedPitch(double pitch)
 }
 
 /*!
+  \property ViewshedController::activeViewshedMinPitch
   \brief Returns the minimum pitch of the active viewshed in degrees.
 
   If there is no active viewshed this will be \c NAN.
@@ -613,6 +624,7 @@ double ViewshedController::activeViewshedMinPitch() const
 }
 
 /*!
+  \property ViewshedController::activeViewshedMaxPitch
   \brief Returns the maximum pitch of the active viewshed in degrees.
 
   If there is no active viewshed this will be \c NAN.
@@ -632,6 +644,7 @@ double ViewshedController::activeViewshedMaxPitch() const
 }
 
 /*!
+  \property ViewshedController::activeViewshedOffsetZ
   \brief Returns the offset z of the active viewshed in meters.
 
   If there is no active viewshed this will be \c 0.0.
@@ -656,6 +669,7 @@ void ViewshedController::setActiveViewshedOffsetZ(double offsetZ)
 }
 
 /*!
+  \property ViewshedController::activeViewshedHeadingEnabled
   \brief Returns whether heading is enabled for the active viewshed.
 
   If there is no active viewshed this will be \c false.
@@ -676,6 +690,7 @@ bool ViewshedController::isActiveViewshedPitchEnabled() const
 }
 
 /*!
+  \property ViewshedController::activeViewshedOffsetZEnabled
   \brief Returns whether offset z is enabled for the active viewshed.
 
   If there is no active viewshed this will be \c false.
@@ -686,6 +701,7 @@ bool ViewshedController::isActiveViewshedOffsetZEnabled() const
 }
 
 /*!
+  \property ViewshedController::isActiveViewshed360Mode
   \brief Returns whether the active viewshed is in 360 degree mode.
 
   If there is no active viewshed this will be \c true.

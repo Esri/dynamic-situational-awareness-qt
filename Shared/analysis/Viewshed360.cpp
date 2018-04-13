@@ -75,6 +75,7 @@ void Viewshed360::removeFromOverlay()
 }
 
 /*!
+  \property Viewshed360::visible
   \brief Returns whether the viewshed is visible.
  */
 bool Viewshed360::isVisible() const
@@ -101,6 +102,7 @@ void Viewshed360::setVisible(bool visible)
 }
 
 /*!
+  \property Viewshed360::name
   \brief Returns the name of the viewshed.
  */
 QString Viewshed360::name() const
@@ -122,6 +124,7 @@ void Viewshed360::setName(const QString& name)
 }
 
 /*!
+  \property Viewshed360::minDistance
   \brief Returns the minimum distance in meters from the observer at which visibility will be evaluated.
  */
 double Viewshed360::minDistance() const
@@ -148,6 +151,7 @@ void Viewshed360::setMinDistance(double minDistance)
 }
 
 /*!
+  \property Viewshed360::maxDistance
   \brief Returns the maximum distance in meters from the observer at which visibility will be evaluated.
  */
 double Viewshed360::maxDistance() const
@@ -174,6 +178,7 @@ void Viewshed360::setMaxDistance(double maxDistance)
 }
 
 /*!
+  \property Viewshed360::horizontalAngle
   \brief Returns the horizontal angle in degrees of the observer's field of vision.
  */
 double Viewshed360::horizontalAngle() const
@@ -206,6 +211,7 @@ void Viewshed360::setHorizontalAngle(double horizontalAngle)
 }
 
 /*!
+  \property Viewshed360::verticalAngle
   \brief Returns the vertical angle in degrees of the observer's field of vision.
  */
 double Viewshed360::verticalAngle() const
@@ -238,6 +244,7 @@ void Viewshed360::setVerticalAngle(double verticalAngle)
 }
 
 /*!
+  \property Viewshed360::offsetZ
   \brief Returns the offset Z value of the viewshed in meters.
 
   The default value is \c 0.0.
@@ -258,6 +265,7 @@ void Viewshed360::setOffsetZ(double)
 }
 
 /*!
+  \property Viewshed360::headingEnabled
   \brief Returns whether heading is enabled for the viewshed.
 
   Heading will not be used if the viewshed is in 360 degree mode.
@@ -268,6 +276,7 @@ bool Viewshed360::isHeadingEnabled() const
 }
 
 /*!
+  \property Viewshed360::pitchEnabled
   \brief Returns whether pitch is enabled for the viewshed.
 
   Pitch will not be used if the viewshed is in 360 degree mode.
@@ -278,6 +287,7 @@ bool Viewshed360::isPitchEnabled() const
 }
 
 /*!
+  \property Viewshed360::offsetEnabled
   \brief Returns whether offset z is enabled for the viewshed.
  */
 bool Viewshed360::isOffsetZEnabled() const
@@ -286,6 +296,7 @@ bool Viewshed360::isOffsetZEnabled() const
 }
 
 /*!
+  \property Viewshed360::is360Mode
   \brief Returns whether the viewshed is in 360 degree mode.
  */
 bool Viewshed360::is360Mode() const

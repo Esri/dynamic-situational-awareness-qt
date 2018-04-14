@@ -77,6 +77,11 @@ Item {
         id: viewshedTypeToolbar
         visible: true
 
+        onVisibleChanged: {
+            if (!visible)
+                toolController.activeMode = ViewshedController.NoActiveMode;
+        }
+
         anchors {
             top: parent.top
             left: parent.left

@@ -36,6 +36,11 @@ Item {
         }
     }
 
+    function cancelViewshed() {
+        toolController.removeActiveViewshed();
+        toolController.activeMode = ViewshedController.NoActiveMode;
+    }
+
     DropShadow {
         anchors.fill: fill
         horizontalOffset: -1 * scaleFactor
@@ -79,7 +84,7 @@ Item {
 
         onVisibleChanged: {
             if (!visible)
-                toolController.activeMode = ViewshedController.NoActiveMode;
+                cancelViewshed();
         }
 
         anchors {
@@ -474,8 +479,7 @@ Item {
             iconSource: DsaResources.iconClose
             toolName: "Cancel"
             onToolSelected: {
-                toolController.removeActiveViewshed();
-                toolController.activeMode = ViewshedController.NoActiveMode;
+                cancelViewshed();
                 closed();
             }
         }

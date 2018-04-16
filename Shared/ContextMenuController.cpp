@@ -63,12 +63,12 @@ const QString ContextMenuController::OBSERVATION_REPORT_OPTION = "Observation";
     \li Identify.
     \li Elevation.
     \li Coordinates.
-    \li Contact Report.
+    \li Observation Report.
     \li Viewshed.
     \li Line of sight.
   \endlist
 
-  \sa ContactReportController
+  \sa ObservationReportController
   \sa IdentifyController
   \sa ViewshedController
   \sa LineOfSightController

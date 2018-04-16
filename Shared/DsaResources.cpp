@@ -86,6 +86,39 @@ QUrl DsaResources::iconAlert() const
   return QStringLiteral("qrc:/Resources/icons/xhdpi/Alert.png");
 }
 
+
+/*!
+  \brief Returns the URL to the Critical Alert icon.
+ */
+QUrl DsaResources::iconAlertCritical() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/Alert_Critical.png");
+}
+
+/*!
+  \brief Returns the URL to the High Alert icon.
+ */
+QUrl DsaResources::iconAlertHigh() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/Alert_High.png");
+}
+
+/*!
+  \brief Returns the URL to the Low Alert icon.
+ */
+QUrl DsaResources::iconAlertLow() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/Alert_Low.png");
+}
+
+/*!
+  \brief Returns the URL to the Moderate Alert icon.
+ */
+QUrl DsaResources::iconAlertModerate() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/Alert_Moderate.png");
+}
+
 /*!
   \brief Returns the URL to the "Alert Condition List" icon.
  */
@@ -436,38 +469,6 @@ QUrl DsaResources::iconViewshed() const
 QUrl DsaResources::iconZoomTo() const
 {
   return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_zoomtofeature_light.png");
-}
-
-/*!
-  \brief Returns the URL to the "Warning (Green)" icon.
- */
-QUrl DsaResources::iconWarningGreen() const
-{
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/warning_green.png");
-}
-
-/*!
-  \brief Returns the URL to the "Warning (Orange)" icon.
- */
-QUrl DsaResources::iconWarningOrange() const
-{
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/warning_orange.png");
-}
-
-/*!
-  \brief Returns the URL to the "Warning (Red)" icon.
- */
-QUrl DsaResources::iconWarningRed() const
-{
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/warning_red.png");
-}
-
-/*!
-  \brief Returns the URL to the "Warning (Red Exclamation)" icon.
- */
-QUrl DsaResources::iconWarningRedExclamation() const
-{
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/warning_red_exclamation.png");
 }
 
 /*!

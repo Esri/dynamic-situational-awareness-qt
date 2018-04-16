@@ -73,10 +73,10 @@ class DsaResources : public QObject
   Q_PROPERTY(QUrl iconTrash READ iconTrash CONSTANT)
   Q_PROPERTY(QUrl iconViewshed READ iconViewshed CONSTANT)
   Q_PROPERTY(QUrl iconZoomTo READ iconZoomTo CONSTANT)
-  Q_PROPERTY(QUrl iconWarningGreen READ iconWarningGreen CONSTANT)
-  Q_PROPERTY(QUrl iconWarningOrange READ iconWarningOrange CONSTANT)
-  Q_PROPERTY(QUrl iconWarningRed READ iconWarningRed CONSTANT)
-  Q_PROPERTY(QUrl iconWarningRedExclamation READ iconWarningRedExclamation CONSTANT)
+  Q_PROPERTY(QUrl iconAlertCritical READ iconAlertCritical CONSTANT)
+  Q_PROPERTY(QUrl iconAlertHigh READ iconAlertHigh CONSTANT)
+  Q_PROPERTY(QUrl iconAlertLow READ iconAlertLow CONSTANT)
+  Q_PROPERTY(QUrl iconAlertModerate READ iconAlertModerate CONSTANT)
   Q_PROPERTY(QUrl iconLineOfSight READ iconLineOfSight CONSTANT)
 
 public:
@@ -90,6 +90,10 @@ private:
   QUrl iconAdd() const;
   QUrl iconAddLayer() const;
   QUrl iconAlert() const;
+  QUrl iconAlertCritical() const;
+  QUrl iconAlertHigh() const;
+  QUrl iconAlertLow() const;
+  QUrl iconAlertModerate() const;
   QUrl iconAlertConditionList() const;
   QUrl iconAlertList() const;
   QUrl iconAppLogo() const;
@@ -134,10 +138,6 @@ private:
   QUrl iconTrash() const;
   QUrl iconViewshed() const;
   QUrl iconZoomTo() const;
-  QUrl iconWarningGreen() const;
-  QUrl iconWarningOrange() const;
-  QUrl iconWarningRed() const;
-  QUrl iconWarningRedExclamation() const;
   QUrl iconLineOfSight() const;
 };
 

@@ -66,8 +66,8 @@ Item {
         Row {
             Image {
                 id: lowIcon
-                source: DsaResources.iconWarningGreen
-                height: 28 * scaleFactor
+                source: DsaResources.iconAlertLow
+                height: 24 * scaleFactor
                 width: height
             }
 
@@ -85,7 +85,7 @@ Item {
         Row {
             Image {
                 id: mediumIcon
-                source: DsaResources.iconWarningOrange
+                source: DsaResources.iconAlertModerate
                 height: lowIcon.height
                 width: height
             }
@@ -104,7 +104,7 @@ Item {
         Row {
             Image {
                 id: highIcon
-                source: DsaResources.iconWarningRed
+                source: DsaResources.iconAlertHigh
                 height: lowIcon.height
                 width: height
             }
@@ -123,7 +123,7 @@ Item {
             id: critRow
             Image {
                 id: criticalIcon
-                source: DsaResources.iconWarningRedExclamation
+                source: DsaResources.iconAlertCritical
                 height: lowIcon.height
                 width: height
             }

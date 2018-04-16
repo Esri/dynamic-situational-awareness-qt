@@ -75,12 +75,13 @@ DsaPanel {
                     itemChecked: conditionEnabled
                     menuIconVisible: true
                     imageUrl: level === 1 ?
-                                  DsaResources.iconWarningGreen
-                                : ( level === 2 ? DsaResources.iconWarningOrange
-                                                : ( level === 3 ? DsaResources.iconWarningRed
-                                                                : level === 4 ? DsaResources.iconWarningRedExclamation
+                                  DsaResources.iconAlertLow
+                                : ( level === 2 ? DsaResources.iconAlertModerate
+                                                : ( level === 3 ? DsaResources.iconAlertHigh
+                                                                : level === 4 ? DsaResources.iconAlertCritical
                                                                               : "") )
                     imageVisible: true
+                    imageFrameVisible: false
 
                     onItemCheckedChanged: {
                         if (conditionEnabled !== itemChecked)

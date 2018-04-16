@@ -437,13 +437,13 @@ Item {
         }
 
         function getAngleText() {
-            if (angleSelector.currentIndex === 0)
+            if (angleSelector.currentText === "Heading")
                 return Math.round(toolController.activeViewshedHeading) + "°";
-            else if (angleSelector.currentIndex === 1)
+            if (angleSelector.currentText === "Horizontal Angle")
                 return Math.round(toolController.activeViewshedHorizontalAngle) + "°";
-            else if (angleSelector.currentIndex === 2)
+            if (angleSelector.currentText === "Vertical Angle")
                 return Math.round(toolController.activeViewshedVerticalAngle) + "°";
-            else if (angleSelector.currentIndex === 3)
+            if (angleSelector.currentText === "Pitch")
                 return Math.round(toolController.activeViewshedPitch) + "°";
         }
     }

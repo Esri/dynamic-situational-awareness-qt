@@ -18,73 +18,6 @@ If you just want to grab the latest code and build the project, these are the qu
 * For Windows: Microsoft Visual C++ Compiler 14.0 
 * For more information, please visit the [System Requirements](https://developers.arcgis.com/qt/quartz/qml/guide/arcgis-runtime-sdk-for-qt-system-requirements.htm) page.
 
-## Fork the repo
-If you haven't already, fork [the repo](https://github.com/ArcGIS/dynamic-situational-awareness-qt/fork).
-
-## Clone the repo
-
-### Command line Git
-[Clone the ArcGIS Qt SDK Samples](https://help.github.com/articles/fork-a-repo#Step-2-clone-your-fork)
-
-Open your terminal, navigate to your working directory, use ```git clone``` to get a copy of the repo.
-
-```
-# Clone your fork of the repository into the current directory in terminal
-$ git clone https://github.com/YOUR-USERNAME/dynamic-situational-awareness-qt.git
-```
-
-## Configure remote upstream for your fork
-To sync changes you make in a fork with this repository, you must configure a remote that points to the upstream repository in Git.
-
-- Open a terminal (Mac users) or command prompt (Windows & Linux users)
-- List the current configured remote repository for your fork
-
-```
-$ git remote -v
-origin	https://github.com/YOUR_USERNAME/dynamic-situational-awareness-qt.git (fetch)
-origin	https://github.com/YOUR_USERNAME/dynamic-situational-awareness-qt.git (push)
-```
-
-- Specify a new remote upstream repository
-
-```
-$ git remote add upstream https://github.com/ArcGIS/dynamic-situational-awareness-qt.git
-```
-
-- Verify the new upstream repository
-
-```
-$ git remote -v
-
-origin	https://github.com/YOUR_USERNAME/dynamic-situational-awareness-qt.git (fetch)
-origin	https://github.com/YOUR_USERNAME/dynamic-situational-awareness-qt.git (push)
-upstream https://github.com/ArcGIS/dynamic-situational-awareness-qt.git (fetch)
-upstream https://github.com/ArcGIS/dynamic-situational-awareness-qt.git (push)
-```
-
-### Sync your fork
-Once you have set up a remote upstream you can keep your fork up to date with our samples repository by syncing your fork.
-
-- Open a terminal (Mac users) or command prompt (Windows & Linux users)
-- Change to the current working directory of your local repository
-- Fetch the branches and commits from the upstream repository.  Commits to ```master``` will be stored in a local branch, ```upstream/master```.
-
-```
-$ git fetch upstream
-```
-
-- Check out your forks local ```master``` branch
-
-```
-$ git checkout master
-```
-
-- Merge changes from ```upstream/master``` into  your local ```master``` branch which syncs your forks ```master``` branch with our samples repository.
-
-```
-$ git merge upstream/master
-```
-
 ### Setup the [ArcGIS Runtime SDK C++ Toolkit](https://github.com/Esri/arcgis-runtime-toolkit-qt) as a build dependency.
 
 - This is an optional step but allows you to build with the latest version of the toolkit
@@ -93,10 +26,6 @@ $ git merge upstream/master
 # from the base of the repo
 git clone https://github.com/Esri/arcgis-runtime-toolkit-qt
 ```
-
-## Open a project file in Qt Creator
-Start Qt Creator. When the IDE opens to the Welcome screen, click on the **Open Project** button and browse to a project file (.pro) within your forked repo location.
-Configure the project and run the sample.
 
 ## Resources
 
@@ -112,7 +41,7 @@ Find a bug or want to request a new feature?  Please let us know by submitting a
 Esri welcomes contributions from anyone and everyone. Please see our [guidelines for contributing](https://github.com/esri/contributing).
 
 ## Licensing
-Copyright 2017 Esri
+Copyright 2018 Esri
 
 
 Licensed under the Apache License, Version 2.0 (the "License");

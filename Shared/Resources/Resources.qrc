@@ -38,12 +38,8 @@
         <file>icons/xhdpi/ic_menu_aboutmap_dark.png</file>
         <file>icons/xhdpi/applogo.png</file>
         <file>icons/xhdpi/ic_menu_overflowcirclessmall_dark_d.png</file>
-        <file>icons/xhdpi/warning_green.png</file>
-        <file>icons/xhdpi/warning_orange.png</file>
-        <file>icons/xhdpi/warning_red.png</file>
         <file>icons/xhdpi/ic_menu_sketchlinepopover_dark_d.png</file>
         <file>icons/xhdpi/ic_menu_colorpalette_dark_d.png</file>
-        <file>icons/xhdpi/warning_red_exclamation.png</file>
         <file>icons/xhdpi/message/friendlytracks.png</file>
         <file>icons/xhdpi/message/friendlytracks-air.png</file>
         <file>icons/xhdpi/line_of_sight.png</file>
@@ -65,5 +61,9 @@
         <file>icons/xhdpi/View_Alerts.png</file>
         <file>icons/xhdpi/pin.png</file>
         <file>icons/xhdpi/save.png</file>
+        <file>icons/xhdpi/Alert_Critical.png</file>
+        <file>icons/xhdpi/Alert_High.png</file>
+        <file>icons/xhdpi/Alert_Low.png</file>
+        <file>icons/xhdpi/Alert_Moderate.png</file>
     </qresource>
 </RCC>

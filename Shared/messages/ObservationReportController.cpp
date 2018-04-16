@@ -228,7 +228,7 @@ void ObservationReportController::setFromMyLocation()
 }
 
 /*!
-  \brief Broadcasts the contact reprot over the current \l udpPort.
+  \brief Broadcasts the observation report over the current \l udpPort.
 
   The report will include the attributes:
   \list

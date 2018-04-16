@@ -466,7 +466,7 @@ Item {
             id: finishIcon
             anchors.verticalCenter: parent.verticalCenter
             iconSource: DsaResources.iconComplete
-            toolName: "Finish"
+            toolName: "Save"
             onToolSelected: {
                 toolController.finishActiveViewshed();
                 toolController.activeMode = ViewshedController.NoActiveMode;

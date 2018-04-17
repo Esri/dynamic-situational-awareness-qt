@@ -90,6 +90,8 @@ AlertListModel::~AlertListModel()
 
 /*!
   \brief Adds a new \l AlertConditionData \a newConditionData to the model.
+
+  Returns \c true on success, else \c false.
  */
 bool AlertListModel::addAlertConditionData(AlertConditionData* newConditionData)
 {

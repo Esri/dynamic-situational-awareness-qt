@@ -69,7 +69,7 @@ AlertLevel StatusAlertFilter::minLevel() const
 
 
 /*!
-  \brief Sets he minimum \l AlertLevel for the filter to \l minLevel.
+  \brief Sets he minimum \l AlertLevel for the filter to \a minLevel.
  */
 void StatusAlertFilter::setMinLevel(AlertLevel minLevel)
 {

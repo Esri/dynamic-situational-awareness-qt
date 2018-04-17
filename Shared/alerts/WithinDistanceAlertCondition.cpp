@@ -37,7 +37,7 @@ namespace Dsa {
 
 /*!
   \brief Constructor taking an \l AlertLevel (\a level) the \a name of the condition,
-  the threshold distance (in meters) and an optional \a parent.
+  the threshold \a distance (in meters) and an optional \a parent.
  */
 WithinDistanceAlertCondition::WithinDistanceAlertCondition(AlertLevel level,
                                                            const QString& name,
@@ -58,7 +58,7 @@ WithinDistanceAlertCondition::~WithinDistanceAlertCondition()
 }
 
 /*!
-  \brief Creates a new \l WithinDistanceAlertConditionData to track source and target objects.
+  \brief Creates a new \l WithinDistanceAlertConditionData to track \a source and \a target objects.
  */
 AlertConditionData* WithinDistanceAlertCondition::createData(AlertSource* source, AlertTarget* target)
 {

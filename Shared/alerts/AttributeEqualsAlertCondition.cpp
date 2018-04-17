@@ -34,8 +34,8 @@ namespace Dsa {
   */
 
 /*!
-  \brief Constructor taking an \l AlertLevel (\a level) the \a name of the condition and
-  an optional \a parent.
+  \brief Constructor taking an \l AlertLevel (\a level) the \a name of the condition,
+  an \a attributeName, and an optional \a parent.
  */
 AttributeEqualsAlertCondition::AttributeEqualsAlertCondition(AlertLevel level,
                                                              const QString& name,
@@ -56,7 +56,7 @@ AttributeEqualsAlertCondition::~AttributeEqualsAlertCondition()
 }
 
 /*!
-  \brief Creates a new \l AttributeEqualsAlertConditionData to track source and target objects.
+  \brief Creates a new \l AttributeEqualsAlertConditionData to track \a source and \a target objects.
  */
 AlertConditionData* AttributeEqualsAlertCondition::createData(AlertSource* source, AlertTarget* target)
 {

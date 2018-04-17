@@ -252,6 +252,8 @@ QVariant CombinedAnalysisListModel::data(const QModelIndex& index, int role) con
 /*!
   \brief Sets the data stored in the combined list at \a index under the \l CombinedAnalysisRoles \a role to \a value.
 
+  Returns \c true on success, else \c false.
+
   \note The  only editable role is \c CombinedAnalysisRoles::AnalysisVisibleRole.
  */
 bool CombinedAnalysisListModel::setData(const QModelIndex& index, const QVariant& value, int role)

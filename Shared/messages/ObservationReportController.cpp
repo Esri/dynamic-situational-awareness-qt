@@ -136,7 +136,7 @@ QString ObservationReportController::controlPoint() const
 }
 
 /*!
-  \brief Sets the name of the unit making this observation report to \a unitName.
+  \brief Sets the name of the unit making this observation report to \a observedBy.
  */
 void ObservationReportController::setObservedBy(const QString& observedBy)
 {

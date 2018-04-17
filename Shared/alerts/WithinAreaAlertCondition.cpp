@@ -60,7 +60,7 @@ WithinAreaAlertCondition::~WithinAreaAlertCondition()
 }
 
 /*!
-  \brief Creates a new \l WithinAreaAlertConditionData to track source and target objects.
+  \brief Creates a new \l WithinAreaAlertConditionData to track \a source and \a target objects.
  */
 AlertConditionData* WithinAreaAlertCondition::createData(AlertSource* source, AlertTarget* target)
 {

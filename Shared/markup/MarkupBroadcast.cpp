@@ -128,7 +128,7 @@ void MarkupBroadcast::setProperties(const QVariantMap& properties)
 }
 
 /*!
-   \brief Broadcasts the markup JSON over a UDP port.
+   \brief Broadcasts the markup JSON (\a json) over a UDP port.
  */
 void MarkupBroadcast::broadcastMarkup(const QString& json)
 {

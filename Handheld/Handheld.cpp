@@ -114,7 +114,7 @@ void Handheld::componentComplete()
 
 // Signal Documentation
 /*!
-  \fn void Dsa:Handheld::errorOccurred(const QString& message, const QString& additionalMessage)
+  \fn void Handheld::errorOccurred(const QString& message, const QString& additionalMessage)
   \brief Signal emitted when an error occurs.
 
   An error \a message and \a additionalMessage are passed through as parameters, describing

@@ -18,6 +18,7 @@
 // example app headers
 #include "DrawOrderLayerListModel.h"
 #include "DsaUtility.h"
+#include "MarkupLayer.h"
 
 // toolkit headers
 #include "ToolManager.h"
@@ -97,7 +98,15 @@ void TableOfContentsController::zoomTo(int layerIndex)
   if (!geoView)
     return;
 
-  geoView->setViewpoint(Viewpoint(layer->fullExtent()));
+  Envelope extent;
+
+  MarkupLayer* markupLayer = dynamic_cast<MarkupLayer*>(layer);
+  if (markupLayer)
+    extent = markupLayer->featureCollection()->tables()->at(0)->extent();
+  else
+    extent = layer->fullExtent();
+
+  geoView->setViewpoint(Viewpoint(extent));
 }
 
 /*!

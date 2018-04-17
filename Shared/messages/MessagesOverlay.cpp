@@ -161,6 +161,12 @@ bool MessagesOverlay::addMessage(const Message& message)
     return false;
   }
 
+  if (message.messageType() != messageType())
+  {
+    emit errorOccurred(QStringLiteral("Failed to add message - message type mismatch"));
+    return false;
+  }
+
   const auto symbolId = message.symbolId();
   const auto geometry = message.geometry();
   const auto messageAction = message.messageAction();

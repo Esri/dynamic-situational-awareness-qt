@@ -364,7 +364,7 @@ SurfacePlacement MessageFeedsController::toSurfacePlacement(const QString& surfa
 
   \list
     \li the ":/Resources/icons/xhdpi/message" path, such
-    as ":/Resources/icons/xhdpi/message/enemycontact1600.png".
+    as ":/Resources/icons/xhdpi/message/observation1600.png".
     \li an "icons" sub-directory under the \l resourcePath directory
  */
 Renderer* MessageFeedsController::createRenderer(const QString& rendererInfo, QObject* parent) const

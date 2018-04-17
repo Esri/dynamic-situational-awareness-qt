@@ -298,7 +298,7 @@ Item {
             delegate: Component {
 
                 Rectangle {
-                    height: DsaStyles.mainToolbarHeight * 0.45
+                    height: DsaStyles.mainToolbarHeight * 0.35
                     width: height
                     radius: 100 * scaleFactor
                     color: markupController.colors[index]

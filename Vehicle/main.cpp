@@ -111,24 +111,6 @@ int main(int argc, char *argv[])
   QCoreApplication::setAttribute(Qt::AA_UseOpenGLES);
 #endif
 
-  // Before initializing ArcGIS Runtime, first set the
-  // ArcGIS Runtime license setting required for your application.
-
-  // ArcGISRuntimeEnvironment::setLicense("Place license string in here");
-
-  //  use this code to check for initialization errors
-  //  QObject::connect(ArcGISRuntimeEnvironment::instance(), &ArcGISRuntimeEnvironment::errorOccurred, [](const Error& error){
-  //    QMessageBox msgBox;
-  //    msgBox.setText(error.message);
-  //    msgBox.exec();
-  //  });
-
-  //  if (ArcGISRuntimeEnvironment::initialize() == false)
-  //  {
-  //    application.quit();
-  //    return 1;
-  //  }
-
   // Register the map view for QML
   qmlRegisterType<SceneQuickView>("Esri.Vehicle", 1, 0, "SceneView");
   qRegisterMetaType<PopupManager*>("PopupManager*");

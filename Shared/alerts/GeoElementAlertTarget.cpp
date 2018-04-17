@@ -25,7 +25,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class GeoElementAlertTarget
+  \class Dsa::GeoElementAlertTarget
+  \inmodule Dsa
   \inherits AlertTarget
   \brief Represents a target based on a single \l Esri::ArcGISRuntime::GeoElement
   for an \l AlertCondition.

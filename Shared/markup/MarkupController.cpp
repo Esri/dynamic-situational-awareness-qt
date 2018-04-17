@@ -50,7 +50,8 @@ namespace Dsa {
 const QString MarkupController::USERNAME_PROPERTYNAME = "UserName";
 
 /*!
-  \class MarkupController
+  \class Dsa::MarkupController
+  \inmodule Dsa
   \inherits AbstractSketchTool
   \brief Tool controller for creating markups.
  */

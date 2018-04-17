@@ -53,7 +53,8 @@ const QString Message::SIDC_NAME{QStringLiteral("sidc")};
 using namespace Esri::ArcGISRuntime;
 
 /*!
-  \class Message
+  \class Dsa::Message
+  \inmodule Dsa
   \brief A message shared between applications.
  */
 

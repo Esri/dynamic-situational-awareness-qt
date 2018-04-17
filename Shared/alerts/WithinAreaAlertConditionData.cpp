@@ -29,7 +29,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class WithinAreaAlertConditionData
+  \class Dsa::WithinAreaAlertConditionData
+  \inmodule Dsa
   \inherits AlertConditionData
   \brief Represents the data to be tested as part of a spatial, within area condition.
 

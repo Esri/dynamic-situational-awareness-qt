@@ -34,7 +34,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class AbstractSketchTool
+  \class Dsa::AbstractSketchTool
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Abstract tool controller for working with sketches/markups.
  */

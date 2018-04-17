@@ -27,7 +27,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class GPXLocationSimulator
+  \class Dsa::GPXLocationSimulator
+  \inmodule Dsa
   \inherits QGeoPositionInfoSource
   \brief Position source simulator that reads from a GPX file.
  */
@@ -188,7 +189,7 @@ void GPXLocationSimulator::startUpdates()
 }
 
 /*!
-  \brief Requests an update.
+  \brief Requests an update, with a request timeout of \a timeout seconds.
  */
 void GPXLocationSimulator::requestUpdate(int)
 {

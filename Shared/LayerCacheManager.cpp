@@ -60,7 +60,8 @@ const QString LayerCacheManager::layerTypeRasterLayerGeoPackage = "RasterLayerGe
 using namespace Esri::ArcGISRuntime;
 
 /*!
-  \class LayerCacheManager
+  \class Dsa::LayerCacheManager
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller responsible for managing the layers in the app.
  */

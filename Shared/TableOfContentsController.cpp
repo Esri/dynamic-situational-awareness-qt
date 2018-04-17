@@ -38,7 +38,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class TableOfContentsController
+  \class Dsa::TableOfContentsController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for managing the table of contents for operational layers.
 

@@ -18,7 +18,8 @@
 namespace Dsa {
 
 /*!
-  \class AlertTarget
+  \class Dsa::AlertTarget
+  \inmodule Dsa
   \inherits QObject
   \brief Represents a target (e.g. an overlay or a real-time feed) for an \l AlertCondition.
 

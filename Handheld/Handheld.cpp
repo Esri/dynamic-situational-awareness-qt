@@ -37,10 +37,17 @@ Handheld::Handheld(QQuickItem* parent /* = nullptr */):
 {
 }
 
+/*!
+   \brief Destructor
+ */
 Handheld::~Handheld()
 {
 }
 
+
+/*!
+   \brief Connect SceneView signals.
+ */
 void Handheld::componentComplete()
 {
   QQuickItem::componentComplete();
@@ -101,13 +108,13 @@ void Handheld::componentComplete()
   m_sceneView->setArcGISScene(m_controller->scene());
 }
 
+
 } // Handheld
 } // Dsa
 
 // Signal Documentation
-
 /*!
-  \fn void Handheld::errorOccurred(const QString& message, const QString& additionalMessage);
+  \fn void Dsa:Handheld::errorOccurred(const QString& message, const QString& additionalMessage)
   \brief Signal emitted when an error occurs.
 
   An error \a message and \a additionalMessage are passed through as parameters, describing

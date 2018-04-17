@@ -23,7 +23,8 @@
 namespace Dsa {
 
 /*!
-  \class AlertListProxyModel
+  \class Dsa::AlertListProxyModel
+  \inmodule Dsa
   \inherits QSortFilterProxyModel
   \brief A proxy model responsible for filtering the list of \l AlertConditionData
   to show only those which are active and statisfy the current set of \l AlertFilter tests.

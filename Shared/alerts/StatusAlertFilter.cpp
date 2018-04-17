@@ -21,7 +21,8 @@
 namespace Dsa {
 
 /*!
-  \class StatusAlertFilter
+  \class Dsa::StatusAlertFilter
+  \inmodule Dsa
   \inherits AlertFilter
   \brief Represents a filter to be applied to an alert condition data
   in order to exclude conditions below a given \l AlertLevel.

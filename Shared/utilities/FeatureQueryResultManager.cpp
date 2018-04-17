@@ -23,7 +23,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \struct FeatureQueryResultManager
+  \class Dsa::FeatureQueryResultManager
+  \inmodule Dsa
   \brief RAII helper to ensure the \l Esri::ArcGISRuntime::FeatureQueryResult*
   is deleted when we leave the scope.
  */

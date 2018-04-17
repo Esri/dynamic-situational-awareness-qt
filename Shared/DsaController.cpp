@@ -52,7 +52,8 @@ bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map);
 
 
 /*!
-  \class DsaController
+  \class Dsa::DsaController
+  \inmodule Dsa
   \inherits QObject
   \brief This is the controller for the DSA app. It is responsible for connecting the
   view (such as the \l Esri::ArcGISRuntime::GeoView) to the business logic of the app.
@@ -499,7 +500,7 @@ bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map)
 // Signal Documentation
 
 /*!
-  \fn void DsaController::contextActiveChangederrorOccurred(const QString& message, const QString& additionalMessage);
+  \fn void DsaController::errorOccurred(const QString& message, const QString& additionalMessage);
 
   \brief Signal emitted when an error occurs.
 

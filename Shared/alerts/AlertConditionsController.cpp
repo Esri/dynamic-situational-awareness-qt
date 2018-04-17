@@ -56,7 +56,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class AlertConditionsController
+  \class Dsa::AlertConditionsController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for working with the conditions which can trigger alerts.
 
@@ -119,7 +120,7 @@ QString AlertConditionsController::toolName() const
  * \list
  *  \li Conditions. A list of JSON objects describing alert conditions to be added to the map.
  *  \li MessageFeeds. A list of real-time feeds to be used as condition sources.
- * \endList
+ * \endlist
  */
 void AlertConditionsController::setProperties(const QVariantMap& properties)
 {

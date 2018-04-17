@@ -44,7 +44,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class AlertListController
+  \class Dsa::AlertListController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for working with the list of condition data which can trigger alerts.
 
@@ -142,7 +143,7 @@ QString AlertListController::toolName() const
 
   \note Only one alert can be highlighted at a given time.
 
-  \sa PointHighlighter.
+  \sa PointHighlighter
  */
 void AlertListController::highlight(int rowIndex, bool showHighlight)
 {

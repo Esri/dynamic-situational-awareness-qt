@@ -21,7 +21,8 @@
 namespace Dsa {
 
 /*!
-  \class MessageFeed
+  \class Dsa::MessageFeed
+  \inmodule Dsa
   \inherits QObject
   \brief Represents a feed for a given message type which will be displayed on a
   \l MessageOverlay.
@@ -36,7 +37,7 @@ MessageFeed::MessageFeed(QObject* parent) :
 }
 
 /*!
-  \brief Constructor accepting a feed \a name, a message \a type and an optional \a parent.
+  \brief Constructor accepting a feed \a name, a message \a type, and \a overlay and an optional \a parent.
  */
 MessageFeed::MessageFeed(const QString& name, const QString& type, MessagesOverlay* overlay, QObject* parent) :
   QObject(parent),

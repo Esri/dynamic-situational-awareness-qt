@@ -24,7 +24,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class AttributeEqualsAlertCondition
+  \class Dsa::AttributeEqualsAlertCondition
+  \inmodule Dsa
   \inherits AlertCondition
   \brief Represents an attribute condition which will be coninuosly monitored and will
   trigger an alert when a source object's attribute matches the target value.

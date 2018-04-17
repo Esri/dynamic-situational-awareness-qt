@@ -35,7 +35,8 @@ namespace Dsa {
 static const QString s_headingAttribute{"heading"};
 
 /*!
-  \class LocationDisplay3d
+  \class Dsa::LocationDisplay3d
+  \inmodule Dsa
   \inherits QObject
   \brief Class for managing the display of the current location in 3D.
 

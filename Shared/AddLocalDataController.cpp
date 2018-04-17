@@ -74,7 +74,8 @@ const QString AddLocalDataController::s_tilePackageData = QStringLiteral("Tile P
 const QString AddLocalDataController::s_markupData = QStringLiteral("Markup (*.markup)");
 
 /*!
-  \class AddLocalDataController
+  \class Dsa::AddLocalDataController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for adding local data to the app.
  */
@@ -882,7 +883,8 @@ void AddLocalDataController::setProperties(const QVariantMap& properties)
 
   \brief Signal emitted when an error occurs.
 
-  An error \a message and \a additionalMessage are passed through as parameters, describing
+  An error \a errorMessage and \a additionalMessage are passed through as parameters, describing
   the error that occurred.
  */
+
 

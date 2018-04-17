@@ -29,7 +29,8 @@
 namespace Dsa {
 
 /*!
-  \class DataItemListModel
+  \class Dsa::DataItemListModel
+  \inmodule Dsa
   \inherits QAbstractListModel
   \brief A model responsible for storing data items (such as local layers) and reporting when they
   change.
@@ -81,6 +82,10 @@ void DataItemListModel::addDataItem(const QString& fullPath)
 
 /*!
   \brief Returns the number of data items in the model.
+
+  \list
+  \li \a parent - The parent object (unused).
+  \endlist
  */
 int DataItemListModel::rowCount(const QModelIndex& parent) const
 {
@@ -194,3 +199,4 @@ DataItemListModel::DataItem::DataItem(const QString& fullPath):
 }
 
 } // Dsa
+

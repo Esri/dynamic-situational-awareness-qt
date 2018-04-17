@@ -21,7 +21,8 @@
 namespace Dsa {
 
 /*!
-  \class AlertConditionListModel
+  \class Dsa::AlertConditionListModel
+  \inmodule Dsa
   \inherits QAbstractListModel
   \brief A model for storing \l AlertCondition objects and reporting when they
   change.
@@ -73,6 +74,8 @@ AlertConditionListModel::~AlertConditionListModel()
 
 /*!
   \brief Adds a new \l AlertCondition \a condition to the model.
+
+  Returns \c false if \a condition is nullptr, otherwise returns \c true.
  */
 bool AlertConditionListModel::addAlertCondition(AlertCondition* condition)
 {

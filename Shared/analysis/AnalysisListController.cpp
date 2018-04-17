@@ -33,7 +33,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class AnalysisListController
+  \class Dsa::AnalysisListController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for working with the list of Analysis objects.
 

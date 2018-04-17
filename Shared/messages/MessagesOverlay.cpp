@@ -28,7 +28,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class MessagesOverlay
+  \class Dsa::MessagesOverlay
+  \inmodule Dsa
   \inherits QObject
   \brief Manages a set of \l Esri::ArcGISRuntime::GraphicsOverlay objects
   for displaying message a feed.
@@ -325,7 +326,7 @@ void MessagesOverlay::setVisible(bool visible)
  */
 
 /*!
-  \fn void MessagesOverlay::graphicsOverlaysChanged();
+  \fn void MessagesOverlay::visibleChanged();
   \brief Signal emitted when the visibility of the overlay changes.
  */
 

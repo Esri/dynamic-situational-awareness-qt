@@ -35,7 +35,8 @@ constexpr double c_defaultMaxDistance = 500.0;
 constexpr double c_defaultOffsetZ = 5.0;
 
 /*!
-  \class GeoElementViewshed360
+  \class Dsa::GeoElementViewshed360
+  \inmodule Dsa
   \inherits Viewshed360
   \brief A 360 degree viewshed centered upon a GeoElement.
 

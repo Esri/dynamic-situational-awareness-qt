@@ -28,7 +28,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class TileCacheListModel
+  \class Dsa::TileCacheListModel
+  \inmodule Dsa
   \inherits QAbstractListModel
   \brief A model for storing the list of
   \l Esri::ArcGISRuntime::TileCache files available for
@@ -146,6 +147,11 @@ TileCache* TileCacheListModel::tileCacheAt(int row) const
 
 /*!
   \brief Returns the number of tile caches in the model.
+
+  /list
+  /li /a parent - The parent object.
+  /endlist
+
  */
 int TileCacheListModel::rowCount(const QModelIndex&) const
 {

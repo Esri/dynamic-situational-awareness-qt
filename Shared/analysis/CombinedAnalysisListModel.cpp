@@ -35,7 +35,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class CombinedAnalysisListModel
+  \class Dsa::CombinedAnalysisListModel
+  \inmodule Dsa
   \inherits QAbstractListModel
   \brief A Model which manages the list of both line of sight and viewshed analyses.
 

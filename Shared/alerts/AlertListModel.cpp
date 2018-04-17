@@ -26,7 +26,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class AlertListModel
+  \class Dsa::AlertListModel
+  \inmodule Dsa
   \inherits QAbstractListModel
   \brief A model responsible for storing \l AlertConditionData objects and reporting when they
   change.

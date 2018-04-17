@@ -48,7 +48,8 @@ namespace Dsa {
 const QString MessageFeedsController::RESOURCE_DIRECTORY_PROPERTYNAME = "ResourceDirectory";
 
 /*!
-  \class MessageFeedsController
+  \class Dsa::MessageFeedsController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for working with the list of message feeds.
  */
@@ -366,6 +367,7 @@ SurfacePlacement MessageFeedsController::toSurfacePlacement(const QString& surfa
     \li the ":/Resources/icons/xhdpi/message" path, such
     as ":/Resources/icons/xhdpi/message/observation1600.png".
     \li an "icons" sub-directory under the \l resourcePath directory
+  \endlist
  */
 Renderer* MessageFeedsController::createRenderer(const QString& rendererInfo, QObject* parent) const
 {
@@ -430,25 +432,6 @@ Renderer* MessageFeedsController::createRenderer(const QString& rendererInfo, QO
 }
 
 // Properties:
-/*!
-  \property MessageFeedsController::messageFeeds
-  \brief The message feeds list model (read-only).
-*/
-
-/*!
-  \property MessageFeedsController::locationBroadcastEnabled
-  \brief Whether the location broadcast is enabled or not.
-*/
-
-/*!
-  \property MessageFeedsController::locationBroadcastFrequency
-  \brief The location broadcast frequency.
-*/
-
-/*!
-  \property MessageFeedsController::locationBroadcastInDistress
-  \brief Whether the location broadcast reports message status as being in distress.
-*/
 
 // Signals:
 /*!
@@ -468,26 +451,10 @@ Renderer* MessageFeedsController::createRenderer(const QString& rendererInfo, QO
 
 } // Dsa
 
-// Signal Documentation
-/*!
-  \fn void MessageFeedsController::locationBroadcastEnabledChanged();
-  \brief Signal emitted when the locationBroadcastEnabled property changes.
- */
-
-/*!
-  \fn void MessageFeedsController::locationBroadcastFrequencyChanged();
-  \brief Signal emitted when the locationBroadcastFrequency property changes.
- */
-
-/*!
-  \fn void MessageFeedsController::locationBroadcastInDistressChanged();
-  \brief Signal emitted when the locationBroadcastInDistress property changes.
- */
-
 /*!
   \fn void MessageFeedsController::toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
   \brief Signal emitted when an error occurs.
 
-  An error \a message and \a additionalMessage are passed through as parameters, describing
+  An \a errorMessage and \a additionalMessage are passed through as parameters, describing
   the error that occurred.
  */

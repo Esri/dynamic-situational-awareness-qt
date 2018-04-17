@@ -25,7 +25,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class GraphicAlertSource
+  \class Dsa::GraphicAlertSource
+  \inmodule Dsa
   \inherits AlertSource
   \brief Represents a source based on a single \l Esri::ArcGISRuntime::Graphic
   for an \l AlertCondition.

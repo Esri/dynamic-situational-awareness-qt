@@ -18,7 +18,8 @@
 namespace Dsa {
 
 /*!
-  \class DrawOrderLayerListModel
+  \class Dsa::DrawOrderLayerListModel
+  \inmodule Dsa
   \inherits QSortFilterProxyModel
   \brief A proxy model responsible for presenting layers in the
   app in their draw order. The top layer is first in the list.

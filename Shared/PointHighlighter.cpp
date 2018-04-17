@@ -34,7 +34,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class PointHighlighter
+  \class Dsa::PointHighlighter
+  \inmodule Dsa
   \inherits QObject
   \brief Manager for an animated highlight graphic centered on a point.
  */

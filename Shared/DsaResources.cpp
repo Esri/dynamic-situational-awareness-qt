@@ -18,7 +18,8 @@
 namespace Dsa {
 
 /*!
-  \class DsaResources
+  \class Dsa::DsaResources
+  \inmodule Dsa
   \inherits QObject
   \brief Helper class which presents a series of resources such as icon URLs.
  */

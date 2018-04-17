@@ -28,9 +28,6 @@ using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
 
-/*!
-  \internal
- */
 struct GeometryQuadtree::QuadTree
 {
   explicit QuadTree(int level, double xMin, double xMax, double yMin, double yMax);
@@ -66,7 +63,8 @@ struct GeometryQuadtree::QuadTree
 };
 
 /*!
-  \class GeometryQuadtree
+  \class Dsa::GeometryQuadtree
+  \inmodule Dsa
   \inherits QObject
   \brief A Quadtree spatial structure covering a set of
   \l Esri::ArcGISRuntime::GeoElement objects.

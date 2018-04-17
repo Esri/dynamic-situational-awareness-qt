@@ -40,7 +40,8 @@ const QString MarkupBroadcast::MARKUPKEY = QStringLiteral("markup");
 const QString MarkupBroadcast::SHAREDBYKEY = QStringLiteral("sharedBy");
 
 /*!
-  \class MarkupBroadcast
+  \class Dsa::MarkupBroadcast
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for broadcasting markups.
 

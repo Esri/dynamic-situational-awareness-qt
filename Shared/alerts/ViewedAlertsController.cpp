@@ -27,7 +27,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class ViewedAlertsController
+  \class Dsa::ViewedAlertsController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for managing the count of unviewed, active alert condition data.
 

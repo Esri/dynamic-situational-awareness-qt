@@ -43,7 +43,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class NavigationController
+  \class Dsa::NavigationController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for handling navigation for the app.
  */
@@ -89,7 +90,7 @@ QString NavigationController::toolName() const
  * This tool will use the following key/value pairs from the \a properties map if they are set:
  * \list
  *  \li InitialLocation. A JSON description of a the starting location for the app.
- * \endList
+ * \endlist
  */
 void NavigationController::setProperties(const QVariantMap& properties)
 {

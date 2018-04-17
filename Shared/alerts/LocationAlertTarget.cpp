@@ -26,7 +26,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class LocationAlertTarget
+  \class Dsa::LocationAlertTarget
+  \inmodule Dsa
   \inherits AlertTarget
   \brief Represents a target based on the current location.
 

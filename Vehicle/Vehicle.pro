@@ -82,4 +82,5 @@ android {
 }
 
 DISTFILES += \
-    Resources/qtquickcontrols2.conf
+    Resources/qtquickcontrols2.conf \
+    ../qdoc/dsa-overview.qdoc

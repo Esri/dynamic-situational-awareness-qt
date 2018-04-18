@@ -26,7 +26,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class DsaUtility
+  \class Dsa::DsaUtility
+  \inmodule Dsa
   \brief Static helper class with a variety of utility methods for the Dsa app.
  */
 
@@ -53,7 +54,7 @@ QString DsaUtility::dataPath()
 }
 
 /*!
-  \brief Returns an \Esri::ArcGISRuntime::Point in Montery, California.
+  \brief Returns an \l Esri::ArcGISRuntime::Point in Monterey, California.
  */
 Point DsaUtility::montereyCA()
 {

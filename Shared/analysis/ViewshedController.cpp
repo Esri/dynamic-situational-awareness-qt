@@ -53,7 +53,8 @@ constexpr double c_defaultOffsetZ = 5.0;
 constexpr double c_defaultIdentifyTolerance = 5.0;
 
 /*!
-  \class ViewshedController
+  \class Dsa::ViewshedController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for creating viewshed analysis.
 

@@ -26,7 +26,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class ViewshedListModel
+  \class Dsa::ViewshedListModel
+  \inmodule Dsa
   \inherits QAbstractListModel
   \brief A model responsible for storing \l Viewshed360 objects and reporting when they
   change.

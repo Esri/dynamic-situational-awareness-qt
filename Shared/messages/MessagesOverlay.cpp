@@ -28,7 +28,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class MessagesOverlay
+  \class Dsa::MessagesOverlay
+  \inmodule Dsa
   \inherits QObject
   \brief Manages a \l Esri::ArcGISRuntime::GraphicsOverlay object
   for displaying message feed graphics.

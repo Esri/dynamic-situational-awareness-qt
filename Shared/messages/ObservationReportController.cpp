@@ -43,7 +43,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class ObservationReportController
+  \class Dsa::ObservationReportController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for creating observation reports.
  */
@@ -94,7 +95,7 @@ QString ObservationReportController::toolName() const
  *  \li \c ObservationReportConfig. A JSON object describing options for the observation report including
  * the \c port.
  *  \li \c UserName. The user name (observed by) for observation reports.
- * \endList
+ * \endlist
  */
 void ObservationReportController::setProperties(const QVariantMap& properties)
 {
@@ -135,7 +136,7 @@ QString ObservationReportController::controlPoint() const
 }
 
 /*!
-  \brief Sets the name of the unit making this observation report to \a unitName.
+  \brief Sets the name of the unit making this observation report to \a observedBy.
  */
 void ObservationReportController::setObservedBy(const QString& observedBy)
 {
@@ -232,7 +233,7 @@ void ObservationReportController::setFromMyLocation()
 
   The report will include the attributes:
   \list
-    \li \a size. Size of object observed or number of items.
+    \li \a size Size of object observed or number of items.
     \li \a locationDescription. The location of the observation.
     \li \a description. Description of who is performing activity (can be ‘Unknown’).
     \li \a activity. The activity observed.
@@ -245,7 +246,7 @@ void ObservationReportController::setFromMyLocation()
     \li \l controlPoint. The control point location of the observation in decimal degrees.
     \li Date and time submitted. The system time that this method was called.
     \li \l unitName. The name/unique designation of the unit making the report.
-  \list
+  \endlist
 
  */
 void ObservationReportController::broadcastReport(const QString& size,

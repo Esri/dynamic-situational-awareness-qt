@@ -41,7 +41,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class LineOfSightController
+  \class Dsa::LineOfSightController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for creating line of sight analysis.
 
@@ -403,7 +404,7 @@ void LineOfSightController::setAnalysisVisible(bool analysisVisible)
 }
 
 /*!
-  \property LineOfSightController::overlayNames
+  \property Dsa::LineOfSightController::overlayNames
   \brief Returns the list of overlay names which are suitable for Line of sight analysis.
  */
 QAbstractItemModel* LineOfSightController::overlayNames() const

@@ -24,7 +24,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class AttributeEqualsAlertCondition
+  \class Dsa::AttributeEqualsAlertCondition
+  \inmodule Dsa
   \inherits AlertCondition
   \brief Represents an attribute condition which will be coninuosly monitored and will
   trigger an alert when a source object's attribute matches the target value.
@@ -33,8 +34,8 @@ namespace Dsa {
   */
 
 /*!
-  \brief Constructor taking an \l AlertLevel (\a level) the \a name of the condition and
-  an optional \a parent.
+  \brief Constructor taking an \l AlertLevel (\a level) the \a name of the condition,
+  an \a attributeName, and an optional \a parent.
  */
 AttributeEqualsAlertCondition::AttributeEqualsAlertCondition(AlertLevel level,
                                                              const QString& name,
@@ -55,7 +56,7 @@ AttributeEqualsAlertCondition::~AttributeEqualsAlertCondition()
 }
 
 /*!
-  \brief Creates a new \l AttributeEqualsAlertConditionData to track source and target objects.
+  \brief Creates a new \l AttributeEqualsAlertConditionData to track \a source and \a target objects.
  */
 AlertConditionData* AttributeEqualsAlertCondition::createData(AlertSource* source, AlertTarget* target)
 {

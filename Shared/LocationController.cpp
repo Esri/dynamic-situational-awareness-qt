@@ -48,7 +48,8 @@ const QString LocationController::GPX_FILE_PROPERTYNAME = "GpxFile";
 const QString LocationController::RESOURCE_DIRECTORY_PROPERTYNAME = "ResourceDirectory";
 
 /*!
-  \class LocationController
+  \class Dsa::LocationController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for handling the current location.
  */
@@ -191,7 +192,7 @@ QString LocationController::toolName() const
  *  \li \c SimulateLocation - Whether the app's location should be simulated.
  *  \li \c GpxFile - The path of the GPX file for simulated positions.
  *  \li \c ResourceDirectory - The directory containing icons for the location display.
- * \endList
+ * \endlist
  */
 void LocationController::setProperties(const QVariantMap& properties)
 {
@@ -506,7 +507,7 @@ QUrl LocationController::modelSymbolPath() const
   \fn void LocationController::toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
   \brief Signal emitted when an error occurs.
 
-  An error \a message and \a additionalMessage are passed through as parameters, describing
+  An \a errorMessage and \a additionalMessage are passed through as parameters, describing
   the error that occurred.
  */
 

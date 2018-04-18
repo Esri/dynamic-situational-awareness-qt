@@ -28,7 +28,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class AlertCondition
+  \class Dsa::AlertCondition
+  \inmodule Dsa
   \inherits QObject
   \brief Represents a condition which will be coninuosly monitored and will
   trigger an alert when met.
@@ -65,7 +66,7 @@ AlertCondition::AlertCondition(const AlertLevel& level,
 /*!
   \brief Initializes the condition with a \a source and \a target with a \a sourceDescription and a \a targetDescription.
 
-  A new \a AlertConditionData will be created to track changes to the
+  A new \l AlertConditionData will be created to track changes to the
   source and target.
  */
 void AlertCondition::init(AlertSource* source, AlertTarget* target, const QString& sourceDescription, const QString& targetDescription)
@@ -82,7 +83,7 @@ void AlertCondition::init(AlertSource* source, AlertTarget* target, const QStrin
 /*!
   \brief Initializes the condition with a \a sourceFeed, \a sourceDescription, a \a target and a \a targetDescription.
 
-  A new \a AlertConditionData will be created for each \l Esri::ArcGISRuntime::Graphic
+  A new \l AlertConditionData will be created for each \l Esri::ArcGISRuntime::Graphic
   in the source feed, to track changes to the source and target.
  */
 void AlertCondition::init(GraphicsOverlay* sourceFeed, const QString& sourceDescription, AlertTarget* target, const QString& targetDescription)
@@ -234,7 +235,7 @@ QString AlertCondition::description() const
 /*!
   \brief Returns whether this condition is enabled.
 
-  When enabled is \false the condition will not be checked and no alerts will be raised.
+  When enabled is \c false the condition will not be checked and no alerts will be raised.
  */
 bool AlertCondition::isConditionEnabled() const
 {
@@ -244,7 +245,7 @@ bool AlertCondition::isConditionEnabled() const
 /*!
   \brief Sets this condition to be \a enabled.
 
-  When enabled is \false the condition will not be checked and no alerts will be raised.
+  When enabled is \c false the condition will not be checked and no alerts will be raised.
  */
 void AlertCondition::setConditionEnabled(bool enabled)
 {

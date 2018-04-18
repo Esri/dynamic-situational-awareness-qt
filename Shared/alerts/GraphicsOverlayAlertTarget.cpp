@@ -27,7 +27,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class GraphicsOverlayAlertTarget
+  \class Dsa::GraphicsOverlayAlertTarget
+  \inmodule Dsa
   \inherits AlertTarget
   \brief Represents a target based on an \l Esri::ArcGISRuntime::GraphicsOverlay
   for an \l AlertCondition.

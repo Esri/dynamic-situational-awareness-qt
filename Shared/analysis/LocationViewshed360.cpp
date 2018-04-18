@@ -37,7 +37,8 @@ constexpr double c_defaultMinDistance = 0.0;
 constexpr double c_defaultMaxDistance = 500.0;
 
 /*!
-  \class LocationViewshed360
+  \class Dsa::LocationViewshed360
+  \inmodule Dsa
   \inherits Viewshed360
   \brief A 360 degree viewshed centered upon the current Location.
   */

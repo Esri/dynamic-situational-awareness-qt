@@ -30,7 +30,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class FollowPositionController
+  \class Dsa::FollowPositionController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for managing the follow navigation modes.
  */

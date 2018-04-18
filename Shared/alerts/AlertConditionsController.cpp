@@ -56,7 +56,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class AlertConditionsController
+  \class Dsa::AlertConditionsController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for working with the conditions which can trigger alerts.
 
@@ -119,7 +120,7 @@ QString AlertConditionsController::toolName() const
  * \list
  *  \li Conditions. A list of JSON objects describing alert conditions to be added to the map.
  *  \li MessageFeeds. A list of real-time feeds to be used as condition sources.
- * \endList
+ * \endlist
  */
 void AlertConditionsController::setProperties(const QVariantMap& properties)
 {
@@ -354,8 +355,8 @@ bool AlertConditionsController::addWithinAreaAlert(const QString& conditionName,
     \li \a levelIndex. The \l AlertLevel for the condition.
     \li \a sourceFeedName. The name of the source feed
       (e.g. a \l Esri::ArcGISRuntime::GraphicsOverlay) used to create an \l AlertSource.
-    \li attributeName. The name of the attribute to query.
-    \li targetValue. The attribute value to check for.
+    \li \a attributeName. The name of the attribute to query.
+    \li \a targetValue. The attribute value to check for.
   \endlist
 
   Returns \c true if the condition was succesfully added
@@ -1284,6 +1285,6 @@ QStringList AlertConditionsController::realtimeFeedNames() const
   \fn void AlertConditionsController::toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
   \brief Signal emitted when an error occurs.
 
-  An error \a message and \a additionalMessage are passed through as parameters, describing
+  An \a errorMessage and \a additionalMessage are passed through as parameters, describing
   the error that occurred.
  */

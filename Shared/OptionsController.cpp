@@ -36,7 +36,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class OptionsController
+  \class Dsa::OptionsController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for setting various options for the app.
  */

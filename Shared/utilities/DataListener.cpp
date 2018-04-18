@@ -21,7 +21,8 @@
 namespace Dsa {
 
 /*!
-  \class DataListener
+  \class Dsa::DataListener
+  \inmodule Dsa
   \inherits QObject
   \brief Utility class for listening on a UDP socket.
  */

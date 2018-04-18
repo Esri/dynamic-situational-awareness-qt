@@ -37,10 +37,17 @@ Handheld::Handheld(QQuickItem* parent /* = nullptr */):
 {
 }
 
+/*!
+   \brief Destructor
+ */
 Handheld::~Handheld()
 {
 }
 
+
+/*!
+   \brief Apply scene to the SceneView.
+ */
 void Handheld::componentComplete()
 {
   QQuickItem::componentComplete();
@@ -105,9 +112,8 @@ void Handheld::componentComplete()
 } // Dsa
 
 // Signal Documentation
-
 /*!
-  \fn void Handheld::errorOccurred(const QString& message, const QString& additionalMessage);
+  \fn void Handheld::errorOccurred(const QString& message, const QString& additionalMessage)
   \brief Signal emitted when an error occurs.
 
   An error \a message and \a additionalMessage are passed through as parameters, describing

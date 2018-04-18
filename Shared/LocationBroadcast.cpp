@@ -34,7 +34,8 @@ namespace Dsa {
 static const QString s_locationBroadcastSic{QStringLiteral("SFGPEVAL-------")};
 
 /*!
-  \class LocationBroadcast
+  \class Dsa::LocationBroadcast
+  \inmodule Dsa
   \inherits QObject
   \brief Broadcasts location updates over a specified message type.
 
@@ -66,7 +67,7 @@ LocationBroadcast::LocationBroadcast(QObject* parent) :
 }
 
 /*!
-   \brief Constructs a LocationBroadcast object with \a messageType, \a updPort,
+   \brief Constructs a LocationBroadcast object with \a messageType, \a udpPort,
    and optional \a parent.
  */
 LocationBroadcast::LocationBroadcast(const QString& messageType, int udpPort, QObject* parent) :

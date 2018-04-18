@@ -1,0 +1,92 @@
+//==============================================================================
+//
+// COPYRIGHT 1995-2018 ESRI
+//
+// TRADE SECRETS: ESRI PROPRIETARY AND CONFIDENTIAL
+// Unpublished material - all rights reserved under the
+// Copyright Laws of the United States and applicable international
+// laws, treaties, and conventions.
+//
+// For additional information, contact:
+// Environmental Systems Research Institute, Inc.
+// Attn: Contracts and Legal Services Department
+// 380 New York Street
+// Redlands, California, 92373
+// USA
+//
+// email: contracts@esri.com
+//
+//------------------------------------------------------------------------------
+
+/*
+    dsa-overview.qdoc
+
+    This file defines intro pages that tie this API reference together. 
+    For details, visit http://doc.qt.io/qt-5/qdoc-index.html
+
+    The \title command on each page below corresponds to the HTML page title.
+ */
+ 
+    ////////////////////////////////////////////////////////////////////////
+    // HTML page definitions
+    ////////////////////////////////////////////////////////////////////////
+    
+/*!
+    \page index.html
+    \title Dynamic Situational Awareness example app
+    \inmodule Dsa
+
+    The Dynamic Situational Awareness app API Reference describes the details of all
+    public classes and members used to create this example app.
+
+    \generatelist annotatedclasses
+*/
+
+ /*!
+    \page cpp-class-list.html
+    \title C++ Class List
+    \inmodule Dsa
+
+    \brief All C++ classes with brief descriptions
+    (not including enumeration classes).
+    \generatelist annotatedclasses
+*/
+    ////////////////////////////////////////////////////////////////////////
+    // Namespace pages - not displayed in doc but needed to produce output.
+    ////////////////////////////////////////////////////////////////////////
+
+/*!
+  \namespace Dsa
+  \inmodule Dsa
+
+  \brief Contains DSA classes.
+*/
+
+/*!
+  \namespace Dsa::Handheld
+  \inmodule Dsa
+
+  \brief Contains DSA Handheld App classes.
+*/
+
+/*!
+  \namespace Dsa::Vehicle
+  \inmodule Dsa
+
+  \brief Contains DSA Vehicle App classes.
+*/
+
+
+/*!
+  \namespace Esri
+  \inmodule ArcGISQtCpp
+  \brief Contains Esri classes
+ */
+
+/*!
+  \namespace Esri::ArcGISRuntime
+  \inmodule ArcGISQtCpp
+
+  \brief Contains ArcGIS Runtime SDK for Qt classes.
+ */
+

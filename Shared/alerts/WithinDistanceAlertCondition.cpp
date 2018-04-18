@@ -24,7 +24,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class WithinDistanceAlertCondition
+  \class Dsa::WithinDistanceAlertCondition
+  \inmodule Dsa
   \inherits AlertCondition
   \brief Represents a spatial, "Geofence", condition which will be coninuosly monitored and will
   trigger an alert when a source object is within a threshold distance of a target object.
@@ -36,7 +37,7 @@ namespace Dsa {
 
 /*!
   \brief Constructor taking an \l AlertLevel (\a level) the \a name of the condition,
-  the threshold distance (in meters) and an optional \a parent.
+  the threshold \a distance (in meters) and an optional \a parent.
  */
 WithinDistanceAlertCondition::WithinDistanceAlertCondition(AlertLevel level,
                                                            const QString& name,
@@ -57,7 +58,7 @@ WithinDistanceAlertCondition::~WithinDistanceAlertCondition()
 }
 
 /*!
-  \brief Creates a new \l WithinDistanceAlertConditionData to track source and target objects.
+  \brief Creates a new \l WithinDistanceAlertConditionData to track \a source and \a target objects.
  */
 AlertConditionData* WithinDistanceAlertCondition::createData(AlertSource* source, AlertTarget* target)
 {

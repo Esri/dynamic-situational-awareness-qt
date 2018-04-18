@@ -20,7 +20,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class AlertSource
+  \class Dsa::AlertSource
+  \inmodule Dsa
   \inherits QObject
   \brief Represents a source (generally a real-time feed) for an \l AlertCondition.
 

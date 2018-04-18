@@ -50,7 +50,8 @@ const QString ContextMenuController::VIEWSHED_OPTION = "Viewshed";
 const QString ContextMenuController::OBSERVATION_REPORT_OPTION = "Observation";
 
 /*!
-  \class ContextMenuController
+  \class Dsa::ContextMenuController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for displaying a Context menu.
 
@@ -276,6 +277,10 @@ void ContextMenuController::onScreenToLocationCompleted(QUuid taskId, const Poin
 
 /*!
   \brief Update the context information for the clicked screen position.
+
+  \list
+  \li \a contextScreenPosition - The clicked screen position.
+  \endlist
  */
 void ContextMenuController::setContextScreenPosition(const QPoint& contextScreenPosition)
 {

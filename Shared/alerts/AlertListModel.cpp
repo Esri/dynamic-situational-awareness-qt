@@ -26,7 +26,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class AlertListModel
+  \class Dsa::AlertListModel
+  \inmodule Dsa
   \inherits QAbstractListModel
   \brief A model responsible for storing \l AlertConditionData objects and reporting when they
   change.
@@ -89,6 +90,8 @@ AlertListModel::~AlertListModel()
 
 /*!
   \brief Adds a new \l AlertConditionData \a newConditionData to the model.
+
+  Returns \c true on success, else \c false.
  */
 bool AlertListModel::addAlertConditionData(AlertConditionData* newConditionData)
 {

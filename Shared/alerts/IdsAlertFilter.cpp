@@ -21,7 +21,8 @@
 namespace Dsa {
 
 /*!
-  \class IdsAlertFilter
+  \class Dsa::IdsAlertFilter
+  \inmodule Dsa
   \inherits AlertFilter
   \brief Represents a filter to be applied to an alert condition data
   in order to exclude specific IDs.

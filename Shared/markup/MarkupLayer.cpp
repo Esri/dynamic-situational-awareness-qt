@@ -42,7 +42,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class MarkupLayer
+  \class Dsa::MarkupLayer
+  \inmodule Dsa
   \inherits Esri::ArcGISRuntime::FeatureCollectionLayer
   \brief A feature collection layer, which can be created
   either from graphics or from the information contained in a JSON file.

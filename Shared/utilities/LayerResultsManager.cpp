@@ -23,7 +23,7 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \struct FeatureQueryResultManager
+  \class Dsa::LayerResultsManager
   \brief RAII helper to ensure the list of \l Esri::ArcGISRuntime::IdentifyLayerResult* objects
   is deleted when we leave the scope.
  */

@@ -23,7 +23,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class LocationAlertSource
+  \class Dsa::LocationAlertSource
+  \inmodule Dsa
   \inherits AlertSource
   \brief Represents a source, based on a the current location of the device,
   for an \l AlertCondition.

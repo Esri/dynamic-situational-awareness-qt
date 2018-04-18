@@ -24,7 +24,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class AttributeEqualsAlertConditionData
+  \class Dsa::AttributeEqualsAlertConditionData
+  \inmodule Dsa
   \inherits AlertConditionData
   \brief Represents the data to be tested as part of a non-spatial, attribute condition.
 

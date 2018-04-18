@@ -37,7 +37,8 @@ const QString BasemapPickerController::DEFAULT_BASEMAP_PROPERTYNAME = "DefaultBa
 const QString BasemapPickerController::BASEMAP_DIRECTORY_PROPERTYNAME = "BasemapDirectory";
 
 /*!
-  \class BasemapPickerController
+  \class Dsa::BasemapPickerController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for setting a basemap for the app.
 
@@ -136,7 +137,7 @@ void BasemapPickerController::onBasemapDataPathChanged()
 }
 
 /*!
-  \property BasemapPickerController::localDataModel
+  \property Dsa::BasemapPickerController::tileCacheModel
   \brief Returns a model of the local tile cache files contained in the
   basemap data directory.
  */
@@ -189,7 +190,7 @@ QString BasemapPickerController::toolName() const
  * \list
  *  \li DefaultBasemap. The name of the default basemap to load.
  *  \li BasemapDirectory. The directory containing basemap data.
- * \endList
+ * \endlist
  */
 void BasemapPickerController::setProperties(const QVariantMap& properties)
 {
@@ -239,7 +240,7 @@ void BasemapPickerController::setProperties(const QVariantMap& properties)
 
   \brief Signal emitted when an error occurs.
 
-  An error \a message and \a additionalMessage are passed through as parameters, describing
+  An \a errorMessage and \a additionalMessage are passed through as parameters, describing
   the error that occurred.
  */
 

@@ -21,7 +21,8 @@
 namespace Dsa {
 
 /*!
-  \class MessageFeedListModel
+  \class Dsa::MessageFeedListModel
+  \inmodule Dsa
   \inherits QAbstractListModel
   \brief A model responsible for storing \l MessageFeed objects and reporting when they
   change.

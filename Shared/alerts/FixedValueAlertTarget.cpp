@@ -24,7 +24,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class FixedValueAlertTarget
+  \class Dsa::FixedValueAlertTarget
+  \inmodule Dsa
   \inherits AlertTarget
   \brief Represents a target based on a fixed value for an \l AlertCondition.
 

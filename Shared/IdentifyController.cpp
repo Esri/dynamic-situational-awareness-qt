@@ -35,7 +35,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class IdentifyController
+  \class Dsa::IdentifyController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for identifying GeoElements.
  */

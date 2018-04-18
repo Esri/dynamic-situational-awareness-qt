@@ -18,7 +18,8 @@
 namespace Dsa {
 
 /*!
-  \class DataSender
+  \class Dsa::DataSender
+  \inmodule Dsa
   \inherits QObject
   \brief Utility class for sending information over a UDP socket.
  */

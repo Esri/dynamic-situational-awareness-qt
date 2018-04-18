@@ -18,7 +18,8 @@
 namespace Dsa {
 
 /*!
-  \class AlertFilter
+  \class Dsa::AlertFilter
+  \inmodule Dsa
   \inherits QObject
   \brief Represents a filter to be applied to an alert condition data.
 

@@ -28,7 +28,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class WithinAreaAlertCondition
+  \class Dsa::WithinAreaAlertCondition
+  \inmodule Dsa
   \inherits AlertCondition
   \brief Represents a spatial, "Geofence", condition which will be coninuosly monitored and will
   trigger an alert when a source object is within the area of a target object.
@@ -59,7 +60,7 @@ WithinAreaAlertCondition::~WithinAreaAlertCondition()
 }
 
 /*!
-  \brief Creates a new \l WithinAreaAlertConditionData to track source and target objects.
+  \brief Creates a new \l WithinAreaAlertConditionData to track \a source and \a target objects.
  */
 AlertConditionData* WithinAreaAlertCondition::createData(AlertSource* source, AlertTarget* target)
 {

@@ -27,7 +27,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class FeatureLayerAlertTarget
+  \class Dsa::FeatureLayerAlertTarget
+  \inmodule Dsa
   \inherits AlertTarget
   \brief Represents a target based on an \l Esri::ArcGISRuntime::FeatureLayer
   for an \l AlertCondition.

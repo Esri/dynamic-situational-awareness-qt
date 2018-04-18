@@ -24,7 +24,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class Viewshed360
+  \class Dsa::Viewshed360
+  \inmodule Dsa
   \inherits QObject
   \brief A viewshed which can cover up to 360 degrees.
 

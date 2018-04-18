@@ -21,7 +21,8 @@
 namespace Dsa {
 
 /*!
-  \class StatusAlertFilter
+  \class Dsa::StatusAlertFilter
+  \inmodule Dsa
   \inherits AlertFilter
   \brief Represents a filter to be applied to an alert condition data
   in order to exclude conditions below a given \l AlertLevel.
@@ -68,7 +69,7 @@ AlertLevel StatusAlertFilter::minLevel() const
 
 
 /*!
-  \brief Sets he minimum \l AlertLevel for the filter to \l minLevel.
+  \brief Sets he minimum \l AlertLevel for the filter to \a minLevel.
  */
 void StatusAlertFilter::setMinLevel(AlertLevel minLevel)
 {

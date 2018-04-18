@@ -25,7 +25,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class AlertConditionData
+  \class Dsa::AlertConditionData
+  \inmodule Dsa
   \inherits QObject
   \brief Represents the data to be tested as part of a condition.
 
@@ -140,7 +141,7 @@ QString AlertConditionData::name() const
 }
 
 /*!
-  \brief Sets the name of this condition data to \l name.
+  \brief Sets the name of this condition data to \a name.
  */
 void AlertConditionData::setName(const QString& name)
 {
@@ -160,7 +161,7 @@ QUuid AlertConditionData::id() const
 }
 
 /*!
-  \brief Sets the ID of this condition data to \l id.
+  \brief Sets the ID of this condition data to \a id.
  */
 void AlertConditionData::setId(const QUuid& id)
 {

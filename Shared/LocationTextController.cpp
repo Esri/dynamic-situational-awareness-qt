@@ -46,7 +46,8 @@ const QString LocationTextController::Meters = QStringLiteral("meters");
 const QString LocationTextController::Feet = QStringLiteral("feet");
 
 /*!
-  \class LocationTextController
+  \class Dsa::LocationTextController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for displaying the current location.
  */

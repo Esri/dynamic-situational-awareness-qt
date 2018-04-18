@@ -40,7 +40,8 @@ class MessagesOverlay : public QObject
 public:
   explicit MessagesOverlay(Esri::ArcGISRuntime::GeoView* geoView, QObject* parent = nullptr);
   MessagesOverlay(Esri::ArcGISRuntime::GeoView* geoView, Esri::ArcGISRuntime::Renderer* renderer,
-                  Esri::ArcGISRuntime::SurfacePlacement surfacePlacement, QObject* parent = nullptr);
+                  const QString& messageType, Esri::ArcGISRuntime::SurfacePlacement surfacePlacement,
+                  QObject* parent = nullptr);
   ~MessagesOverlay();
 
   Esri::ArcGISRuntime::Renderer* renderer() const;
@@ -49,7 +50,10 @@ public:
   Esri::ArcGISRuntime::SurfacePlacement surfacePlacement() const;
   void setSurfacePlacement(Esri::ArcGISRuntime::SurfacePlacement surfacePlacement);
 
-  QList<Esri::ArcGISRuntime::GraphicsOverlay*> graphicsOverlays() const;
+  QString messageType() const;
+  void setMessageType(const QString& messageType);
+
+  Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlay() const;
 
   Esri::ArcGISRuntime::GeoView* geoView() const;
 
@@ -59,7 +63,6 @@ public:
   void setVisible(bool visible);
 
 signals:
-  void graphicsOverlaysChanged();
   void visibleChanged();
   void errorOccurred(const QString& error);
 
@@ -69,11 +72,8 @@ private:
   Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
   QPointer<Esri::ArcGISRuntime::Renderer> m_renderer;
   Esri::ArcGISRuntime::SurfacePlacement m_surfacePlacement;
-  QList<Esri::ArcGISRuntime::GraphicsOverlay*> m_graphicsOverlays;
 
-  Esri::ArcGISRuntime::GraphicsOverlay* m_pointGraphicsOverlay = nullptr;
-  Esri::ArcGISRuntime::GraphicsOverlay* m_linePolygonGraphicsOverlay = nullptr;
-
+  Esri::ArcGISRuntime::GraphicsOverlay* m_graphicsOverlay = nullptr;
   QHash<QString, Esri::ArcGISRuntime::Graphic*> m_existingGraphics;
 };
 

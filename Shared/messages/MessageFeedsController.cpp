@@ -216,7 +216,7 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
       const auto rendererThumbnail = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL].toString();
       const auto surfacePlacement = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT].toString();
 
-      MessagesOverlay* overlay = new MessagesOverlay(m_geoView, createRenderer(rendererInfo, this), toSurfacePlacement(surfacePlacement), this);
+      MessagesOverlay* overlay = new MessagesOverlay(m_geoView, createRenderer(rendererInfo, this), feedType, toSurfacePlacement(surfacePlacement), this);
       MessageFeed* feed = new MessageFeed(feedName, feedType, overlay, this);
 
       if (!rendererThumbnail.isEmpty())

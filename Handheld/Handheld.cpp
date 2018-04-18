@@ -46,7 +46,7 @@ Handheld::~Handheld()
 
 
 /*!
-   \brief Connect SceneView signals.
+   \brief Apply scene to the SceneView.
  */
 void Handheld::componentComplete()
 {
@@ -107,7 +107,6 @@ void Handheld::componentComplete()
   // Set scene to scene view
   m_sceneView->setArcGISScene(m_controller->scene());
 }
-
 
 } // Handheld
 } // Dsa

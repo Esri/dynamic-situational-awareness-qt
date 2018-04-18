@@ -883,7 +883,7 @@ void AddLocalDataController::setProperties(const QVariantMap& properties)
 
   \brief Signal emitted when an error occurs.
 
-  An error \a errorMessage and \a additionalMessage are passed through as parameters, describing
+  An \a errorMessage and \a additionalMessage are passed through as parameters, describing
   the error that occurred.
  */
 

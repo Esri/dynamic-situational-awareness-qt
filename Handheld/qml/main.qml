@@ -383,7 +383,7 @@ Handheld {
             width: parent.width
             height: parent.height - topToolbar.height
             edge: Qt.BottomEdge
-            interactive: visible
+            interactive: false
 
             onClosed: {
                 // update state for each category

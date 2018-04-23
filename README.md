@@ -40,10 +40,16 @@ git clone https://github.com/Esri/arcgis-runtime-toolkit-qt
 
 ## Resources
 
-* [ArcGIS Runtime QtSDK Resource Center](https://developers.arcgis.com/qt/latest/)
+* [ArcGIS Runtime Qt SDK Resource Center](https://developers.arcgis.com/qt/latest/)
 * [Qt and QML](http://www.qt.io/)
 * [ArcGIS Blog](http://blogs.esri.com/esri/arcgis/)
 * [twitter@esri](http://twitter.com/esri)
+
+## Pre-built Apps
+The compiled versions of the DSA app are made available for you to conveniently try out the app, and are not officially supported. Please note that these compiled versions of the app should not be used in production environments.
+
+- [Android](https://www.arcgis.com/home/item.html?id=76fdb565194d4dcc86bdd301131932ea)
+- [Windows](https://www.arcgis.com/home/item.html?id=6b32eec2db784d0da9e9d5b18ccefb76)
 
 ## Issues
 Find a bug or want to request a new feature?  Please let us know by submitting an issue.
@@ -53,7 +59,6 @@ Esri welcomes contributions from anyone and everyone. Please see our [guidelines
 
 ## Licensing
 Copyright 2018 Esri
-
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

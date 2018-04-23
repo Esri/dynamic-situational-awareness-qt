@@ -38,6 +38,9 @@ If you just want to grab the latest code and build the project, these are the qu
 git clone https://github.com/Esri/arcgis-runtime-toolkit-qt
 ```
 
+## Data
+The DSA app works with offline data. Demo data is available for Monterey, California [here](http://www.arcgis.com/home/item.html?id=82ce2d85e21c4326bc072d441b636e5e). Details for where to place the data are provided in the demo data's description. Alternatively, you can define your own data by modifying the app's configuration file.
+
 ## Resources
 
 * [ArcGIS Runtime Qt SDK Resource Center](https://developers.arcgis.com/qt/latest/)

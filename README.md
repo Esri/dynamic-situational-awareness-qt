@@ -19,6 +19,7 @@ If you just want to grab the latest code and build the project, these are the qu
  * `git clone https://github.com/ArcGIS/dynamic-situational-awareness-qt.git`
  * `cd dynamic-situational-awareness-qt`
  * `git clone https://github.com/Esri/arcgis-runtime-toolkit-qt.git`
+ * `cd arcgis-runtime-toolkit-qt`
  * `git checkout release/100.2.1`
  * Open `DSA.pro` with Qt Creator, configure the projects and build.
 

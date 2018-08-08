@@ -20,11 +20,12 @@ If you just want to grab the latest code and build the project, these are the qu
  * `cd dynamic-situational-awareness-qt`
  * `git clone https://github.com/Esri/arcgis-runtime-toolkit-qt.git`
  * `cd arcgis-runtime-toolkit-qt`
- * `git checkout release/100.2.1`
  * Open `DSA.pro` with Qt Creator, configure the projects and build.
 
+**Note:** There is a file path length limit when deploying the DSA apps to Android from Windows. The simplest way to workaround this is to shorten the folder name of the "Shadow Build Directory" in the Qt Creator Project settings.
+ 
 # Prerequisites
-* ArcGIS Runtime SDK for Qt 100.2.1 - NOTE currently, the DSA app MUST be built against version 100.2.1
+* ArcGIS Runtime SDK for Qt 100.3
 * Qt SDK 5.9.2 or higher
 * Qt Creator
 * ArcGIS Runtime SDK for Qt C++ Plugin [(details)](https://github.com/Esri/arcgis-runtime-toolkit-qt)
@@ -38,9 +39,7 @@ If you just want to grab the latest code and build the project, these are the qu
 ```
 # from the base of the repo
 git clone https://github.com/Esri/arcgis-runtime-toolkit-qt
-git checkout release/100.2.1
 ```
-(the release/100.2.1 branch is a snapshot which contains the latest version of the toolkit built against the 100.2.1 version of the ArcGIS Runtime SDK)
 
 ## Data
 The DSA app works with offline data. Demo data is available for Monterey, California [here](http://www.arcgis.com/home/item.html?id=82ce2d85e21c4326bc072d441b636e5e). Details for where to place the data are provided in the demo data's description. Alternatively, you can define your own data by modifying the app's configuration file.

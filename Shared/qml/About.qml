@@ -82,7 +82,7 @@ Item {
 
             Text {
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: "Version: 1.0.0"
+                text: "Version: %1".arg(Qt.application.version)
                 color: Material.foreground
                 font {
                     pixelSize: 12 * scaleFactor

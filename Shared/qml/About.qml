@@ -82,7 +82,7 @@ Item {
 
             Text {
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: "Version: 1.0.0"
+                text: "Version: %1".arg(Qt.application.version)
                 color: Material.foreground
                 font {
                     pixelSize: 12 * scaleFactor
@@ -105,7 +105,7 @@ Item {
 
             Text {
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: "Built with ArcGIS Runtime SDK 100.2.1 for Qt"
+                text: "Built with ArcGIS Runtime SDK 100.3 for Qt"
                 color: Material.foreground
                 font {
                     pixelSize: 12 * scaleFactor

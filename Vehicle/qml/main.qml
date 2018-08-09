@@ -21,8 +21,8 @@ import QtQuick.Window 2.2
 import QtQml.Models 2.2
 import Esri.DSA 1.0
 import Esri.Vehicle 1.0
-import Esri.ArcGISRuntime.Toolkit.Controls 100.2
-import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.2
+import Esri.ArcGISRuntime.Toolkit.Controls 100.3
+import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.3
 
 Vehicle {
     id: appRoot

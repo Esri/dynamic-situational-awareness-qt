@@ -22,7 +22,7 @@
 #define kOrganizationDomain             "myorganization.com"
 
 #define kApplicationName                "DSA_Handheld_Qt"
-#define kApplicationVersion             "1.0"
+#define kApplicationVersion             "1.1"
 #define kApplicationDescription         "Dynamic Situational Awareness - Handheld app"
 
 #define kApplicationSourceUrl           "qrc:/qml/main.qml"

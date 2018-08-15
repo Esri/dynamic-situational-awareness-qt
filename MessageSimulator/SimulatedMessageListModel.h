@@ -17,6 +17,7 @@
 #ifndef SIMULATEDMESSAGELISTMODEL_H
 #define SIMULATEDMESSAGELISTMODEL_H
 
+// Qt headers
 #include <QAbstractListModel>
 
 class SimulatedMessage;

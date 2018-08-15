@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -38,7 +39,6 @@ namespace Dsa {
 GraphicsOverlaysResultsManager::GraphicsOverlaysResultsManager(const QList<Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult*>& results):
   m_results(results)
 {
-
 }
 
 /*!

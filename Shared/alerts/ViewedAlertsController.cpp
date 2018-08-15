@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -126,7 +127,6 @@ int ViewedAlertsController::unviewedCount() const
 
   return m_cachedCount;
 }
-
 
 } // Dsa
 

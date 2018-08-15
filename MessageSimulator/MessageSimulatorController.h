@@ -17,7 +17,6 @@
 #ifndef MESSAGESIMULATORCONTROLLER_H
 #define MESSAGESIMULATORCONTROLLER_H
 
-
 // Qt headers
 #include <QAbstractListModel>
 #include <QObject>

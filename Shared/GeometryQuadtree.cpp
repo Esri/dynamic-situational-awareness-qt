@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -100,7 +101,6 @@ GeometryQuadtree::GeometryQuadtree(const Envelope& extent,
  */
 GeometryQuadtree::~GeometryQuadtree()
 {
-
 }
 
 /*!
@@ -332,7 +332,6 @@ GeometryQuadtree::QuadTree::QuadTree(int level, double xMin, double xMax, double
   m_yMin(yMin),
   m_yMax(yMax)
 {
-
 }
 
 /*!

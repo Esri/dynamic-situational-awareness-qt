@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -238,7 +239,6 @@ QStringList MarkupLayer::colors()
         QStringLiteral("#32cd32"), QStringLiteral("#00ffff"),
         QStringLiteral("#800080"), QStringLiteral("#ff00ff")};
 }
-
 
 /*!
   \brief Gets the unknown JSON of this object.

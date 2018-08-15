@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -38,7 +39,6 @@ namespace Dsa {
 IdsAlertFilter::IdsAlertFilter(QObject* parent):
   AlertFilter(parent)
 {
-
 }
 
 /*!
@@ -46,9 +46,7 @@ IdsAlertFilter::IdsAlertFilter(QObject* parent):
  */
 IdsAlertFilter::~IdsAlertFilter()
 {
-
 }
-
 
 /*!
   \brief Returns whether \a conditionData is not contained in the list of IDs

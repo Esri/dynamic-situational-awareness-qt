@@ -17,8 +17,10 @@
 #ifndef GEOMESSAGEPARSER_H
 #define GEOMESSAGEPARSER_H
 
+// example app headers
 #include "AbstractMessageParser.h"
 
+// Qt headers
 #include <QFile>
 #include <QXmlStreamReader>
 

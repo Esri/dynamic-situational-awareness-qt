@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -64,7 +65,6 @@ AlertCondition::AlertCondition(const AlertLevel& level,
   m_level(level),
   m_name(name)
 {
-
 }
 
 /*!

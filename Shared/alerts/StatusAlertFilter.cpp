@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -38,7 +39,6 @@ namespace Dsa {
 StatusAlertFilter::StatusAlertFilter(QObject* parent):
   AlertFilter(parent)
 {
-
 }
 
 /*!
@@ -46,7 +46,6 @@ StatusAlertFilter::StatusAlertFilter(QObject* parent):
  */
 StatusAlertFilter::~StatusAlertFilter()
 {
-
 }
 
 /*!
@@ -71,7 +70,6 @@ AlertLevel StatusAlertFilter::minLevel() const
   return m_minLevel;
 }
 
-
 /*!
   \brief Sets he minimum \l AlertLevel for the filter to \a minLevel.
  */
@@ -83,6 +81,5 @@ void StatusAlertFilter::setMinLevel(AlertLevel minLevel)
   m_minLevel = minLevel;
   emit filterChanged();
 }
-
 
 } // Dsa

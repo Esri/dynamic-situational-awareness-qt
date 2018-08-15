@@ -17,10 +17,12 @@
 #ifndef COTMESSAGEPARSER_H
 #define COTMESSAGEPARSER_H
 
+// example app headers
 #include "AbstractMessageParser.h"
 
-#include <QXmlStreamReader>
+// Qt headers
 #include <QFile>
+#include <QXmlStreamReader>
 
 class CoTMessageParser : public AbstractMessageParser
 {

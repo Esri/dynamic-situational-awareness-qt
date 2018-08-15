@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -89,7 +90,6 @@ AlertListModel::AlertListModel(QObject* parent):
  */
 AlertListModel::~AlertListModel()
 {
-
 }
 
 /*!
@@ -182,7 +182,6 @@ AlertConditionData* AlertListModel::alertAt(int rowIndex) const
   return m_alerts.value(rowIndex, nullptr);
 }
 
-
 /*!
   \brief Removes the \l AlertConditionData at \a rowIndex.
  */
@@ -196,7 +195,6 @@ void AlertListModel::removeAt(int rowIndex)
   m_alerts.removeAt(rowIndex);
   endRemoveRows();
 }
-
 
 /*!
   \brief Returns the number of condition data objects in the model.

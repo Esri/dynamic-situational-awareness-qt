@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -73,7 +74,6 @@ AlertConditionListModel::AlertConditionListModel(QObject* parent):
  */
 AlertConditionListModel::~AlertConditionListModel()
 {
-
 }
 
 /*!

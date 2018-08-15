@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -61,7 +62,6 @@ PointHighlighter::PointHighlighter(QObject* parent):
  */
 PointHighlighter::~PointHighlighter()
 {
-
 }
 
 /*!

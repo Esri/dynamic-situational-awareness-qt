@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -44,7 +45,6 @@ FixedValueAlertTarget::FixedValueAlertTarget(const QVariant& value, QObject* par
   AlertTarget(parent),
   m_value(value)
 {
-
 }
 
 /*!
@@ -52,7 +52,6 @@ FixedValueAlertTarget::FixedValueAlertTarget(const QVariant& value, QObject* par
  */
 FixedValueAlertTarget::~FixedValueAlertTarget()
 {
-
 }
 
 /*!

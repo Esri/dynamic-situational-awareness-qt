@@ -17,6 +17,7 @@
 #ifndef SIMULATEDMESSAGE_H
 #define SIMULATEDMESSAGE_H
 
+// Qt headers
 #include <QObject>
 
 class SimulatedMessage : public QObject

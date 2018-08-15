@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -274,7 +275,6 @@ void AlertListController::dismiss(int rowIndex)
   m_idsAlertFilter->addId(alert->id());
   m_alertsProxyModel->applyFilter(m_filters);
 }
-
 
 /*!
   \brief Sets the minimum \l AlertLevel for the current \l StatusAlertFilter to \a level.

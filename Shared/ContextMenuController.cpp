@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -13,7 +14,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  ******************************************************************************/
-
 
 // PCH header
 #include "pch.hpp"
@@ -263,7 +263,6 @@ void ContextMenuController::onIdentifyGraphicsOverlaysCompleted(const QUuid& tas
   processGeoElements();
 }
 
-
 /*!
   \internal
 
@@ -277,7 +276,6 @@ void ContextMenuController::onScreenToLocationCompleted(QUuid taskId, const Poin
   m_screenToLocationTask = TaskWatcher();
   setContextLocation(location);
 }
-
 
 /*!
   \brief Update the context information for the clicked screen position.

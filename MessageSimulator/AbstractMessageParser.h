@@ -17,6 +17,7 @@
 #ifndef ABSTRACTMESSAGEPARSER_H
 #define ABSTRACTMESSAGEPARSER_H
 
+// Qt headers
 #include <QObject>
 
 class AbstractMessageParser : public QObject

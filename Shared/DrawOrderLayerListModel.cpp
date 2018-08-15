@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -44,7 +45,6 @@ DrawOrderLayerListModel::DrawOrderLayerListModel(QObject* parent):
  */
 DrawOrderLayerListModel::~DrawOrderLayerListModel()
 {
-
 }
 
 /*!

@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -890,5 +891,4 @@ void AddLocalDataController::setProperties(const QVariantMap& properties)
   An \a errorMessage and \a additionalMessage are passed through as parameters, describing
   the error that occurred.
  */
-
 

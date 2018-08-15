@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -52,7 +53,6 @@ namespace Dsa {
 
 bool readJsonFile(QIODevice& device, QSettings::SettingsMap& map);
 bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map);
-
 
 /*!
   \class Dsa::DsaController

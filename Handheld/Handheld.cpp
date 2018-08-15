@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -47,7 +48,6 @@ Handheld::Handheld(QQuickItem* parent /* = nullptr */):
 Handheld::~Handheld()
 {
 }
-
 
 /*!
    \brief Apply scene to the SceneView.

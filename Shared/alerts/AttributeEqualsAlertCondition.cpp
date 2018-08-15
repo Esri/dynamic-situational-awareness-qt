@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -48,7 +49,6 @@ AttributeEqualsAlertCondition::AttributeEqualsAlertCondition(AlertLevel level,
   AlertCondition(level, name, parent),
   m_attributeName(attributeName)
 {
-
 }
 
 /*!
@@ -56,7 +56,6 @@ AttributeEqualsAlertCondition::AttributeEqualsAlertCondition(AlertLevel level,
  */
 AttributeEqualsAlertCondition::~AttributeEqualsAlertCondition()
 {
-
 }
 
 /*!

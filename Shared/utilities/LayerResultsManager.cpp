@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -38,7 +39,6 @@ namespace Dsa {
 LayerResultsManager::LayerResultsManager(const QList<Esri::ArcGISRuntime::IdentifyLayerResult*>& results):
   m_results(results)
 {
-
 }
 
 /*!

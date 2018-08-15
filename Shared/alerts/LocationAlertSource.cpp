@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -61,7 +62,6 @@ LocationAlertSource::LocationAlertSource(QObject* parent):
  */
 LocationAlertSource::~LocationAlertSource()
 {
-
 }
 
 /*!
@@ -87,6 +87,5 @@ void LocationAlertSource::setSelected(bool)
 {
   // do not select the location display
 }
-
 
 } // Dsa

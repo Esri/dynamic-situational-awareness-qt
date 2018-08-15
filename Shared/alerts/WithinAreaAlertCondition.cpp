@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -52,7 +53,6 @@ WithinAreaAlertCondition::WithinAreaAlertCondition(AlertLevel level,
                                                    QObject* parent):
   AlertCondition(level, name, parent)
 {
-
 }
 
 /*!
@@ -60,7 +60,6 @@ WithinAreaAlertCondition::WithinAreaAlertCondition(AlertLevel level,
  */
 WithinAreaAlertCondition::~WithinAreaAlertCondition()
 {
-
 }
 
 /*!
@@ -96,6 +95,5 @@ QString WithinAreaAlertCondition::isWithinQueryString()
 {
   return QStringLiteral("is within");
 }
-
 
 } // Dsa

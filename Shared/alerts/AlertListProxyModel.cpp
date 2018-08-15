@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -85,7 +86,6 @@ AlertListProxyModel::AlertListProxyModel(AlertListModel* sourceModel, QObject* p
  */
 AlertListProxyModel::~AlertListProxyModel()
 {
-
 }
 
 /*!
@@ -97,7 +97,6 @@ void AlertListProxyModel::applyFilter(const QList<AlertFilter*>& filters)
   m_rowsInModel.clear();
   invalidate();
 }
-
 
 /*!
   \brief Returns \c true if the condition data in the row indicated by \a sourceRow

@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -66,7 +67,6 @@ FeatureLayerAlertTarget::FeatureLayerAlertTarget(FeatureLayer* featureLayer):
  */
 FeatureLayerAlertTarget::~FeatureLayerAlertTarget()
 {
-
 }
 
 /*!

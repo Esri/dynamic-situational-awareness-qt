@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -90,7 +91,6 @@ QUrl DsaResources::iconAlert() const
 {
   return QStringLiteral("qrc:/Resources/icons/xhdpi/Alert.png");
 }
-
 
 /*!
   \brief Returns the URL to the Critical Alert icon.

@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -61,7 +62,6 @@ AttributeEqualsAlertConditionData::AttributeEqualsAlertConditionData(const QStri
   AlertConditionData(name, level, source, target, parent),
   m_attributeName(attributeName)
 {
-
 }
 
 /*!
@@ -69,7 +69,6 @@ AttributeEqualsAlertConditionData::AttributeEqualsAlertConditionData(const QStri
  */
 AttributeEqualsAlertConditionData::~AttributeEqualsAlertConditionData()
 {
-
 }
 
 /*!

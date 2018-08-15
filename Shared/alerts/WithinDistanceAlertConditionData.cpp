@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -70,7 +71,6 @@ WithinDistanceAlertConditionData::WithinDistanceAlertConditionData(const QString
   m_distance(distance),
   m_moveDistance(std::sqrt((m_distance * m_distance) + (m_distance * m_distance)))
 {
-
 }
 
 /*!
@@ -78,7 +78,6 @@ WithinDistanceAlertConditionData::WithinDistanceAlertConditionData(const QString
  */
 WithinDistanceAlertConditionData::~WithinDistanceAlertConditionData()
 {
-
 }
 
 /*!
@@ -130,6 +129,5 @@ bool WithinDistanceAlertConditionData::matchesQuery() const
 
   return false;
 }
-
 
 } // Dsa

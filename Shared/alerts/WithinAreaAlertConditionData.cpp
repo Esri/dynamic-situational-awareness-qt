@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -64,7 +65,6 @@ WithinAreaAlertConditionData::WithinAreaAlertConditionData(const QString& name,
                                                            QObject* parent):
   AlertConditionData(name, level, source, target, parent)
 {
-
 }
 
 /*!
@@ -72,7 +72,6 @@ WithinAreaAlertConditionData::WithinAreaAlertConditionData(const QString& name,
  */
 WithinAreaAlertConditionData::~WithinAreaAlertConditionData()
 {
-
 }
 
 /*!
@@ -98,6 +97,5 @@ bool WithinAreaAlertConditionData::matchesQuery() const
 
   return false;
 }
-
 
 } // Dsa

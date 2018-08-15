@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -79,7 +80,6 @@ ObservationReportController::ObservationReportController(QObject* parent):
  */
 ObservationReportController::~ObservationReportController()
 {
-
 }
 
 /*!

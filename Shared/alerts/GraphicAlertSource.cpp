@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -56,7 +57,6 @@ GraphicAlertSource::GraphicAlertSource(Graphic* graphic):
  */
 GraphicAlertSource::~GraphicAlertSource()
 {
-
 }
 
 /*!

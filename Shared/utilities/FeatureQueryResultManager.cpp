@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -39,7 +40,6 @@ namespace Dsa {
 FeatureQueryResultManager::FeatureQueryResultManager(FeatureQueryResult* results):
   m_results(results)
 {
-
 }
 
 /*!

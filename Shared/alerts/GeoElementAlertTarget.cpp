@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -54,7 +55,6 @@ GeoElementAlertTarget::GeoElementAlertTarget(GeoElement* geoElement):
  */
 GeoElementAlertTarget::~GeoElementAlertTarget()
 {
-
 }
 
 /*!

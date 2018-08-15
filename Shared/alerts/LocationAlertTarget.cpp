@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -60,7 +61,6 @@ LocationAlertTarget::LocationAlertTarget(QObject* parent):
  */
 LocationAlertTarget::~LocationAlertTarget()
 {
-
 }
 
 /*!
@@ -86,6 +86,5 @@ QVariant LocationAlertTarget::targetValue() const
 {
   return QVariant();
 }
-
 
 } // Dsa

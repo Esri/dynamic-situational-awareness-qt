@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -53,7 +54,6 @@ static const QString s_locationBroadcastSic{QStringLiteral("SFGPEVAL-------")};
   \sa setMessageType
   \sa setUdpPort
  */
-
 
 /*!
    \brief Constructs a default LocationBroadcast object with

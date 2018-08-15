@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -76,7 +77,6 @@ TileCacheListModel::TileCacheListModel(QObject* parent):
  */
 TileCacheListModel::~TileCacheListModel()
 {
-
 }
 
 /*!
@@ -129,7 +129,6 @@ bool TileCacheListModel::append(const QString& pathToTileCache)
       break;
     }
   });
-
 
   beginInsertRows(QModelIndex(), size, size);
   m_tileCacheData.append(tileCache);

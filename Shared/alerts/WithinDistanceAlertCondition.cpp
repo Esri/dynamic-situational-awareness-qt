@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -50,7 +51,6 @@ WithinDistanceAlertCondition::WithinDistanceAlertCondition(AlertLevel level,
   AlertCondition(level, name, parent),
   m_distance(distance)
 {
-
 }
 
 /*!
@@ -58,7 +58,6 @@ WithinDistanceAlertCondition::WithinDistanceAlertCondition(AlertLevel level,
  */
 WithinDistanceAlertCondition::~WithinDistanceAlertCondition()
 {
-
 }
 
 /*!
@@ -111,6 +110,5 @@ QString WithinDistanceAlertCondition::queryString() const
 {
   return QString("is within %1 %2 of").arg(QString::number(m_distance), AlertConstants::METERS);
 }
-
 
 } // Dsa

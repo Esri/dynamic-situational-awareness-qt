@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -141,7 +142,6 @@ void GeoElementViewshed360::setHeading(double heading)
 
   emit headingChanged();
 }
-
 
 /*!
   \brief Returns the pitch attribute of the \l Esri::ArcGISRuntime::GeoElement in degrees.

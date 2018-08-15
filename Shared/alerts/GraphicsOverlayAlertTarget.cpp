@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -80,7 +81,6 @@ GraphicsOverlayAlertTarget::GraphicsOverlayAlertTarget(GraphicsOverlay* graphics
  */
 GraphicsOverlayAlertTarget::~GraphicsOverlayAlertTarget()
 {
-
 }
 
 /*!

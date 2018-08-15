@@ -1,61 +1,81 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
+
+// PCH header
+#include "pch.hpp"
 
 #include "OptionsController.h"
-#include "ToolResourceProvider.h"
-#include "ToolManager.h"
+
+// example app headers
+#include "AppConstants.h"
 #include "LocationTextController.h"
-#include "MessageFeedsController.h"
-#include "MessagesOverlay.h"
 #include "MessageFeed.h"
 #include "MessageFeedListModel.h"
+#include "MessageFeedsController.h"
+#include "MessagesOverlay.h"
+
+// toolkit headers
+#include "CoordinateConversionConstants.h"
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
+
+// C++ API headers
 #include "DictionaryRenderer.h"
 
 using namespace Esri::ArcGISRuntime;
 
-const QString OptionsController::COORDINATE_FORMAT_PROPERTYNAME = QStringLiteral("CoordinateFormat");
-const QString OptionsController::UNIT_OF_MEASUREMENT_PROPERTYNAME = QStringLiteral("UnitOfMeasurement");
-const QString OptionsController::DMS = QStringLiteral("DMS");
-const QString OptionsController::DD = QStringLiteral("DD");
-const QString OptionsController::DDM = QStringLiteral("DDM");
-const QString OptionsController::UTM = QStringLiteral("UTM");
-const QString OptionsController::MGRS = QStringLiteral("MGRS");
-const QString OptionsController::USNG = QStringLiteral("USNG");
-const QString OptionsController::GeoRef = QStringLiteral("GEOREF");
-const QString OptionsController::Gars = QStringLiteral("GARS");
-const QString OptionsController::Meters = QStringLiteral("meters");
-const QString OptionsController::Feet = QStringLiteral("feet");
+namespace Dsa {
 
-/*
+/*!
+  \class Dsa::OptionsController
+  \inmodule Dsa
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller for setting various options for the app.
+ */
+
+/*!
  \brief Constructor that takes an optional \a parent.
  */
 OptionsController::OptionsController(QObject* parent) :
-  Toolkit::AbstractTool(parent)
+  Toolkit::AbstractTool(parent),
+  m_coordinateFormatOptions{Toolkit::CoordinateConversionConstants::DEGREES_MINUTES_SECONDS_FORMAT,
+                            Toolkit::CoordinateConversionConstants::DECIMAL_DEGREES_FORMAT,
+                            Toolkit::CoordinateConversionConstants::DEGREES_DECIMAL_MINUTES_FORMAT,
+                            Toolkit::CoordinateConversionConstants::UTM_FORMAT,
+                            Toolkit::CoordinateConversionConstants::MGRS_FORMAT,
+                            Toolkit::CoordinateConversionConstants::USNG_FORMAT,
+                            Toolkit::CoordinateConversionConstants::GEOREF_FORMAT,
+                            Toolkit::CoordinateConversionConstants::GARS_FORMAT},
+  m_units{AppConstants::UNIT_METERS,
+          AppConstants::UNIT_FEET}
 {
   Toolkit::ToolManager::instance().addTool(this);
-  m_coordinateFormatOptions << DMS << DD << DDM << UTM << MGRS << USNG << GeoRef << Gars;
-  m_units << Meters << Feet;
   emit unitsChanged();
   emit coordinateFormatsChanged();
 }
 
-/*
+/*!
  \brief Destructor
  */
 OptionsController::~OptionsController()
 {
 }
 
-/*
+/*!
  \brief Obtains the update tool from the tool manager and sets up connections to the various signals.
  */
 void OptionsController::getUpdatedTools()
@@ -77,27 +97,27 @@ void OptionsController::getUpdatedTools()
   }
 }
 
-/*
- \brief Returns the tool name.
+/*!
+ \brief Returns the tool name - \c "Options Tool".
  */
 QString OptionsController::toolName() const
 {
   return "Options Tool";
 }
 
-/*
- \brief Sets \a properties from the configuration file
+/*!
+ \brief Sets \a properties from the configuration file.
  */
 void OptionsController::setProperties(const QVariantMap& properties)
 {
   // access tool properties from the config
-  m_coordinateFormat = properties[COORDINATE_FORMAT_PROPERTYNAME].toString();
+  m_coordinateFormat = properties[Toolkit::CoordinateConversionConstants::COORDINATE_FORMAT_PROPERTY].toString();
   if (m_coordinateFormat.isEmpty())
-    m_coordinateFormat = DMS;
+    m_coordinateFormat = Toolkit::CoordinateConversionConstants::DEGREES_MINUTES_SECONDS_FORMAT;
 
-  m_unitOfMeasurement = properties[UNIT_OF_MEASUREMENT_PROPERTYNAME].toString();
+  m_unitOfMeasurement = properties[AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME].toString();
   if (m_unitOfMeasurement.isEmpty())
-    m_unitOfMeasurement = Meters;
+    m_unitOfMeasurement = AppConstants::UNIT_METERS;
 
   // update properties
   m_initialUnitIndex = m_units.indexOf(m_unitOfMeasurement);
@@ -105,20 +125,25 @@ void OptionsController::setProperties(const QVariantMap& properties)
   m_initialFormatIndex = m_coordinateFormatOptions.indexOf(m_coordinateFormat);
   emit initialFormatIndex();
 
+  auto userNameFindIt = properties.find(AppConstants::USERNAME_PROPERTYNAME);
+  if (userNameFindIt != properties.end())
+    setUserName(userNameFindIt.value().toString());
+
   // get access to the various tool controllers
   getUpdatedTools();
 }
 
-/*
- \brief Returns the coordinate format list for display in the combo box
+/*!
+ \property OptionsController::coordinateFormats
+ \brief Returns the coordinate format list for display in the combo box.
  */
 QStringList OptionsController::coordinateFormats() const
 {
   return m_coordinateFormatOptions;
 }
 
-/*
- \brief Sets the current coordinate \a format to be used
+/*!
+ \brief Sets the current coordinate \a format to be used.
  */
 void OptionsController::setCoordinateFormat(const QString& format)
 {
@@ -128,8 +153,9 @@ void OptionsController::setCoordinateFormat(const QString& format)
   m_locationTextController->setCoordinateFormat(format);
 }
 
-/*
- \brief Returns whether to use GPS for elevation for display
+/*!
+  \property OptionsController::useGpsForElevation
+ \brief Returns whether to use GPS for elevation for display.
  */
 bool OptionsController::useGpsForElevation() const
 {
@@ -139,8 +165,8 @@ bool OptionsController::useGpsForElevation() const
   return m_locationTextController->useGpsForElevation();
 }
 
-/*
- \brief Sets whether to \a useGps for elevation display
+/*!
+ \brief Sets whether to \a useGps for elevation display.
  */
 void OptionsController::setUseGpsForElevation(bool useGps)
 {
@@ -150,16 +176,17 @@ void OptionsController::setUseGpsForElevation(bool useGps)
   m_locationTextController->setUseGpsForElevation(useGps);
 }
 
-/*
- \brief Returns the unit of measurement list for display
+/*!
+  \property OptionsController::units
+ \brief Returns the unit of measurement list for display.
  */
 QStringList OptionsController::units() const
 {
   return m_units;
 }
 
-/*
- \brief Sets the \a unit of measurement
+/*!
+ \brief Sets the \a unit of measurement.
  */
 void OptionsController::setUnitOfMeasurement(const QString& unit)
 {
@@ -169,25 +196,51 @@ void OptionsController::setUnitOfMeasurement(const QString& unit)
   m_locationTextController->setUnitOfMeasurement(unit);
 }
 
-/*
+/*!
+ \property OptionsController::userName
+ \brief Returns the user name for the app.
+ */
+QString OptionsController::userName() const
+{
+  return m_userName;
+}
+
+/*!
+ \brief Sets the \a userName for the app.
+ */
+void OptionsController::setUserName(const QString& userName)
+{
+  if (userName == m_userName)
+    return;
+
+  m_userName = userName;
+  emit userNameChanged();
+  emit propertyChanged(AppConstants::USERNAME_PROPERTYNAME, m_userName);
+}
+
+/*!
+  \property OptionsController::initialFormatIndex
  \brief Returns the initial index.
-  This is used to set the initial index in the combo box to match the controller
+  This is used to set the initial index in the combo box to match the controller.
   */
 int OptionsController::initialFormatIndex() const
 {
   return m_initialFormatIndex;
 }
 
-/*
- \brief Returns the initial index.
-  This is used to set the initial index in the combo box to match the controller
+/*!
+  \property OptionsController::initialUnitIndex
+ \brief Returns the initial index of the list of units.
+
+  This is used to set the initial index in the combo box to match the controller.
   */
 int OptionsController::initialUnitIndex() const
 {
   return m_initialUnitIndex;
 }
 
-/*
+/*!
+  \property OptionsController::showFriendlyTracksLabels
  \brief Returns whether the friendly tracks labels show.
 */
 bool OptionsController::showFriendlyTracksLabels()
@@ -200,7 +253,7 @@ bool OptionsController::showFriendlyTracksLabels()
   return renderers[0]->isTextVisible();
 }
 
-/*
+/*!
  \brief Sets whether the friendly tracks labels \a show.
 */
 void OptionsController::setShowFriendlyTracksLabels(bool show)
@@ -213,7 +266,7 @@ void OptionsController::setShowFriendlyTracksLabels(bool show)
     renderer->setTextVisible(show);
 }
 
-/*
+/*!
  \brief Returns the DictionaryRenderer from the friendly tracks MessageFeed.
 */
 QList<DictionaryRenderer*> OptionsController::friendlyTracksOverlayRenderers() const
@@ -242,3 +295,41 @@ QList<DictionaryRenderer*> OptionsController::friendlyTracksOverlayRenderers() c
 
   return renderers;
 }
+
+} // Dsa
+
+// Signal Documentation
+/*!
+  \fn void OptionsController::coordinateFormatsChanged();
+  \brief Signal emitted when the coordinateFormats property changes.
+ */
+
+/*!
+  \fn void OptionsController::useGpsForElevationChanged();
+  \brief Signal emitted when the useGpsForElevation property changes.
+ */
+
+/*!
+  \fn void OptionsController::unitsChanged();
+  \brief Signal emitted when the units property changes.
+ */
+
+/*!
+  \fn void OptionsController::initialUnitIndexChanged();
+  \brief Signal emitted when the initial unit index changes.
+ */
+
+/*!
+  \fn void OptionsController::initialFormatIndexChanged();
+  \brief Signal emitted when the initial coordinate format index changes.
+ */
+
+/*!
+  \fn void OptionsController::showFriendlyTracksLabelsChanged();
+  \brief Signal emitted when showFriendlyTracksLabels property changes.
+ */
+
+/*!
+  \fn void OptionsController::userNameChanged();
+  \brief Signal emitted when the userName property changes.
+ */

@@ -1,86 +1,175 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
+
+// PCH header
+#include "pch.hpp"
 
 #include "MessagesOverlay.h"
-#include "GeoView.h"
-#include "Renderer.h"
-#include "GraphicsOverlay.h"
+
+// example app headers
 #include "Message.h"
+
+// C++ API headers
+#include "GeoView.h"
+#include "GraphicsOverlay.h"
+#include "Renderer.h"
 
 using namespace Esri::ArcGISRuntime;
 
+namespace Dsa {
+
+/*!
+  \class Dsa::MessagesOverlay
+  \inmodule Dsa
+  \inherits QObject
+  \brief Manages a \l Esri::ArcGISRuntime::GraphicsOverlay object
+  for displaying message feed graphics.
+
+  The overlay currently only supports messages containing a
+  point geometry type.
+ */
+
+/*!
+  \brief Constructor taking a \a geoView and an optional \a parent.
+ */
 MessagesOverlay::MessagesOverlay(GeoView* geoView, QObject* parent) :
-  MessagesOverlay(geoView, nullptr, SurfacePlacement::Draped, parent)
+  MessagesOverlay(geoView, nullptr, QString(), SurfacePlacement::Draped, parent)
 {
 }
 
-MessagesOverlay::MessagesOverlay(GeoView* geoView, Renderer* renderer, SurfacePlacement surfacePlacement, QObject* parent) :
+/*!
+  \brief Constructor taking a \a geoView, a \a renderer, a \a messageType,
+  a \a surfacePlacement mode and an optional \a parent.
+ */
+MessagesOverlay::MessagesOverlay(GeoView* geoView, Renderer* renderer, const QString& messageType,
+                                 SurfacePlacement surfacePlacement, QObject* parent) :
   QObject(parent),
   m_geoView(geoView),
   m_renderer(renderer),
-  m_surfacePlacement(surfacePlacement)
+  m_surfacePlacement(surfacePlacement),
+  m_graphicsOverlay(new GraphicsOverlay(this))
 {
+  m_graphicsOverlay->setOverlayId(messageType);
+  m_graphicsOverlay->setRenderingMode(GraphicsRenderingMode::Dynamic);
+  m_graphicsOverlay->setSceneProperties(LayerSceneProperties(m_surfacePlacement));
+  m_graphicsOverlay->setRenderer(m_renderer);
+  m_graphicsOverlay->setSelectionColor(Qt::red);
+  m_geoView->graphicsOverlays()->append(m_graphicsOverlay);
 }
 
+/*!
+  \brief Destructor.
+ */
 MessagesOverlay::~MessagesOverlay()
 {
 }
 
+/*!
+  \brief Returns the Esri:ArcGISRuntime::Renderer in use by the overlay.
+ */
 Renderer* MessagesOverlay::renderer() const
 {
   return m_renderer.data();
 }
 
+/*!
+  \brief Sets the Esri:ArcGISRuntime::Renderer for the overlay to \a renderer.
+ */
 void MessagesOverlay::setRenderer(Renderer* renderer)
 {
+  if (m_renderer == renderer)
+    return;
+
   m_renderer = renderer;
 
-  for (GraphicsOverlay* go : m_graphicsOverlays)
-  {
-    go->setRenderer(m_renderer);
-  }
+  m_graphicsOverlay->setRenderer(m_renderer);
 }
 
+/*!
+  \brief Returns the Esri:ArcGISRuntime::SurfacePlacement for the overlay.
+ */
 SurfacePlacement MessagesOverlay::surfacePlacement() const
 {
   return m_surfacePlacement;
 }
 
+/*!
+  \brief Sets the Esri:ArcGISRuntime::SurfacePlacement for the overlay to \a surfacePlacement.
+ */
 void MessagesOverlay::setSurfacePlacement(SurfacePlacement surfacePlacement)
 {
+  if (m_surfacePlacement == surfacePlacement)
+    return;
+
   m_surfacePlacement = surfacePlacement;
 
-  if (m_pointGraphicsOverlay)
-  {
-    m_pointGraphicsOverlay->setSceneProperties(LayerSceneProperties(m_surfacePlacement));
-  }
+  m_graphicsOverlay->setSceneProperties(LayerSceneProperties(m_surfacePlacement));
 }
 
-QList<GraphicsOverlay*> MessagesOverlay::graphicsOverlays() const
+/*!
+  \brief Returns the message type for the overlay.
+ */
+QString MessagesOverlay::messageType() const
 {
-  return m_graphicsOverlays;
+  return m_graphicsOverlay->overlayId();
 }
 
+/*!
+  \brief Sets the message type for the overlay to \a messageType.
+ */
+void MessagesOverlay::setMessageType(const QString& messageType)
+{
+  if (m_graphicsOverlay->overlayId() == messageType)
+    return;
+
+  m_graphicsOverlay->setOverlayId(messageType);
+}
+
+/*!
+  \brief Returns the Esri:ArcGISRuntime::GraphicsOverlay object for the overlay.
+ */
+GraphicsOverlay* MessagesOverlay::graphicsOverlay() const
+{
+  return m_graphicsOverlay;
+}
+
+/*!
+  \brief Returns the Esri:ArcGISRuntime::GeoView for the overlay.
+ */
 GeoView* MessagesOverlay::geoView() const
 {
   return m_geoView;
 }
 
+/*!
+  \brief Adds the \l Message \a message to the overlay. Returns whether adding was successful.
+ */
 bool MessagesOverlay::addMessage(const Message& message)
 {
   const auto messageId = message.messageId();
   if (messageId.isEmpty())
   {
     emit errorOccurred(QStringLiteral("Failed to add message - message ID is empty"));
+    return false;
+  }
+
+  if (message.messageType() != messageType())
+  {
+    emit errorOccurred(QStringLiteral("Failed to add message - message type mismatch"));
     return false;
   }
 
@@ -99,6 +188,12 @@ bool MessagesOverlay::addMessage(const Message& message)
     if (geometry.isEmpty())
     {
       emit errorOccurred(QStringLiteral("Failed to add message - geometry is empty"));
+      return false;
+    }
+
+    if (geometry.geometryType() != GeometryType::Point)
+    {
+      emit errorOccurred(QStringLiteral("Failed to add message - only point geometry types are supported"));
       return false;
     }
   }
@@ -137,31 +232,7 @@ bool MessagesOverlay::addMessage(const Message& message)
     }
     case Message::MessageAction::Remove:
     {
-      switch (geometry.geometryType())
-      {
-        case GeometryType::Point:
-        case GeometryType::Multipoint:
-        {
-          if (m_pointGraphicsOverlay)
-          {
-            m_pointGraphicsOverlay->graphics()->removeOne(graphic);
-          }
-          break;
-        }
-        case GeometryType::Envelope:
-        case GeometryType::Polygon:
-        case GeometryType::Polyline:
-        {
-          if (m_linePolygonGraphicsOverlay)
-          {
-            m_linePolygonGraphicsOverlay->graphics()->removeOne(graphic);
-          }
-          break;
-        }
-      default:
-          break;
-      }
-
+      m_graphicsOverlay->graphics()->removeOne(graphic);
       break;
     }
     default:
@@ -180,86 +251,42 @@ bool MessagesOverlay::addMessage(const Message& message)
 
   // add new graphic
   Graphic* graphic = new Graphic(geometry, message.attributes(), this);
-
-  switch (geometry.geometryType())
-  {
-  case GeometryType::Point:
-  case GeometryType::Multipoint:
-    if (!m_pointGraphicsOverlay)
-    {
-      if (!m_renderer || !m_geoView)
-      {
-        delete graphic;
-        return false;
-      }
-
-      // add point/multipoint geometry types to a dynamically-rendered graphics overlay
-      m_pointGraphicsOverlay = new GraphicsOverlay(this);
-      m_pointGraphicsOverlay->setOverlayId(message.messageType());
-      m_pointGraphicsOverlay->setRenderingMode(GraphicsRenderingMode::Dynamic);
-      m_pointGraphicsOverlay->setSceneProperties(LayerSceneProperties(m_surfacePlacement));
-      m_pointGraphicsOverlay->setRenderer(m_renderer);
-      m_pointGraphicsOverlay->setSelectionColor(Qt::red);
-      m_graphicsOverlays.append(m_pointGraphicsOverlay);
-      m_geoView->graphicsOverlays()->append(m_pointGraphicsOverlay);
-
-      emit graphicsOverlaysChanged();
-      emit visibleChanged();
-    }
-
-    m_pointGraphicsOverlay->graphics()->append(graphic);
-    break;
-  case GeometryType::Envelope:
-  case GeometryType::Polygon:
-  case GeometryType::Polyline:
-    if (!m_linePolygonGraphicsOverlay)
-    {
-      if (!m_renderer || !m_geoView)
-      {
-        delete graphic;
-        return false;
-      }
-
-      // add polygon/polyline geometry types to a statically-rendered graphics overlay
-      m_linePolygonGraphicsOverlay = new GraphicsOverlay(this);
-      m_linePolygonGraphicsOverlay->setRenderingMode(GraphicsRenderingMode::Static);
-      m_linePolygonGraphicsOverlay->setRenderer(m_renderer);
-      m_graphicsOverlays.append(m_linePolygonGraphicsOverlay);
-      m_geoView->graphicsOverlays()->append(m_linePolygonGraphicsOverlay);
-
-      emit graphicsOverlaysChanged();
-      emit visibleChanged();
-    }
-
-    m_linePolygonGraphicsOverlay->graphics()->append(graphic);
-    break;
-  default:
-    delete graphic;
-    return false;
-  }
-
+  m_graphicsOverlay->graphics()->append(graphic);
   m_existingGraphics.insert(messageId, graphic);
 
   return true;
 }
 
+/*!
+  \brief Returns whether the overlay is visible.
+ */
 bool MessagesOverlay::isVisible() const
 {
-  // at this time, only one graphics overlay per message overlay
-  // this could change later...
-  if (m_pointGraphicsOverlay)
-    return m_pointGraphicsOverlay->isVisible();
-  else if (m_linePolygonGraphicsOverlay)
-    return m_linePolygonGraphicsOverlay->isVisible();
-
-  return false;
+  return m_graphicsOverlay->isVisible();
 }
 
+/*!
+  \brief Sets the overlay to be \a visible.
+ */
 void MessagesOverlay::setVisible(bool visible)
 {
-  if (m_pointGraphicsOverlay)
-    m_pointGraphicsOverlay->setVisible(visible);
+  if (m_graphicsOverlay->isVisible() == visible)
+    return;
 
-  if (m_linePolygonGraphicsOverlay)
-    m_linePolygonGraphicsOverlay->setVisible(visible);
+  m_graphicsOverlay->setVisible(visible);
+
+  emit visibleChanged();
 }
+
+} // Dsa
+
+// Signal Documentation
+/*!
+  \fn void MessagesOverlay::visibleChanged();
+  \brief Signal emitted when the visibility of the overlay changes.
+ */
+
+/*!
+  \fn void MessagesOverlay::errorOccurred(const QString& error);
+  \brief Signal emitted when an \a error occurs.
+ */

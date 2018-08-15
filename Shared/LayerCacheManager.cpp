@@ -1,48 +1,59 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
+
+// PCH header
+#include "pch.hpp"
 
 #include "LayerCacheManager.h"
 
-// Runtime API
+// example app headers
+#include "AddLocalDataController.h"
+#include "MarkupLayer.h"
+
+// toolkit headers
+#include "AbstractTool.h"
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
+
+// C++ API headers
+#include "ArcGISSceneLayer.h"
+#include "ArcGISTiledLayer.h"
+#include "ArcGISVectorTiledLayer.h"
 #include "FeatureLayer.h"
-#include "RasterLayer.h"
-#include "Geodatabase.h"
-#include "GeodatabaseFeatureTable.h"
 #include "FeatureTable.h"
 #include "GeoPackage.h"
 #include "GeoPackageFeatureTable.h"
 #include "GeoPackageRaster.h"
-#include "ShapefileFeatureTable.h"
-#include "ArcGISSceneLayer.h"
-#include "ArcGISTiledLayer.h"
-#include "ArcGISVectorTiledLayer.h"
+#include "Geodatabase.h"
+#include "GeodatabaseFeatureTable.h"
 #include "Raster.h"
+#include "RasterLayer.h"
 #include "Scene.h"
+#include "ShapefileFeatureTable.h"
 
-// Toolkit
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
-#include "AbstractTool.h"
-
-// DSA
-#include "AddLocalDataController.h"
-
-// Qt
-#include <QDebug>
+// Qt headers
+#include <QDir>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QDir>
+
+namespace Dsa {
 
 const QString LayerCacheManager::LAYERS_PROPERTYNAME = "Layers";
+const QString LayerCacheManager::ELEVATION_PROPERTYNAME = "DefaultElevationSource";
 const QString LayerCacheManager::layerPathKey = "path";
 const QString LayerCacheManager::layerVisibleKey = "visible";
 const QString LayerCacheManager::layerTypeKey = "type";
@@ -53,7 +64,14 @@ const QString LayerCacheManager::layerTypeRasterLayerGeoPackage = "RasterLayerGe
 
 using namespace Esri::ArcGISRuntime;
 
-/*
+/*!
+  \class Dsa::LayerCacheManager
+  \inmodule Dsa
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller responsible for managing the layers in the app.
+ */
+
+/*!
  \brief Constructor that takes an optional \a parent.
  */
 LayerCacheManager::LayerCacheManager(QObject* parent) :
@@ -92,20 +110,21 @@ LayerCacheManager::LayerCacheManager(QObject* parent) :
   if (m_scene)
   {
     connect(m_scene->operationalLayers(), &LayerListModel::dataChanged, this, &LayerCacheManager::onLayerListChanged); // layer objects have been added or changed
+    connect(m_scene->operationalLayers(), &LayerListModel::layerAdded, this, &LayerCacheManager::onLayerListChanged); // layer objects have been added
     connect(m_scene->operationalLayers(), &LayerListModel::layerRemoved, this, &LayerCacheManager::onLayerListChanged); // layer has been removed
     connect(m_scene->operationalLayers(), &LayerListModel::layoutChanged, this, &LayerCacheManager::onLayerListChanged); // order changed
     connect(m_scene->operationalLayers(), &LayerListModel::modelReset, this, &LayerCacheManager::onLayerListChanged); // order changed
   }
 }
 
-/*
+/*!
  \brief Destructor
  */
 LayerCacheManager::~LayerCacheManager()
 {
 }
 
-/*
+/*!
  \brief Returns the tool's name
  */
 QString LayerCacheManager::toolName() const
@@ -113,11 +132,14 @@ QString LayerCacheManager::toolName() const
   return QStringLiteral("Layer Cache Manager");
 }
 
-/*
+/*!
  \brief Sets \a properties from the configuration file
  */
 void LayerCacheManager::setProperties(const QVariantMap& properties)
 {
+  if (m_initialLoadCompleted)
+    return;
+
   if (!m_localDataController)
     return;
 
@@ -125,25 +147,8 @@ void LayerCacheManager::setProperties(const QVariantMap& properties)
     return;
 
   const QVariant layersData = properties.value(LAYERS_PROPERTYNAME);
-  if (layersData.isNull())
-  {
-    m_initialLoadCompleted = true;
-    return;
-  }
-
   const auto layersList = layersData.toList();
-  if (layersList.isEmpty())
-  {
-    m_initialLoadCompleted = true;
-    return;
-  }
-
   m_inputLayerJsonArray = QJsonArray::fromVariantList(layersList);
-  if (m_inputLayerJsonArray.isEmpty())
-  {
-    m_initialLoadCompleted = true;
-    return;
-  }
 
   auto it = m_inputLayerJsonArray.constBegin();
   auto itEnd = m_inputLayerJsonArray.constEnd();
@@ -163,10 +168,33 @@ void LayerCacheManager::setProperties(const QVariantMap& properties)
     layerIndex++;
   };
 
+  // Add the default elevation source
+  const QVariant elevationData = properties.value(ELEVATION_PROPERTYNAME);
+  const QStringList pathList = elevationData.toStringList();
+
+  // If size is 1, it could be a TPK or raster
+  if (pathList.length() == 1)
+  {
+    // Get the string
+    const QString elevationSource = pathList.at(0);
+    QFileInfo elevationSourceInfo(elevationSource);
+
+    // Check if TPK or not
+    if (elevationSourceInfo.suffix().toLower() == "tpk")
+      m_localDataController->createElevationSourceFromTpk(elevationSource);
+    else
+      m_localDataController->createElevationSourceFromRasters(QStringList{elevationSource});
+  }
+  // If more than 1, it is a list of rasters
+  else if (pathList.length() > 1)
+  {
+    m_localDataController->createElevationSourceFromRasters(pathList);
+  }
+
   m_initialLoadCompleted = true;
 }
 
-/*
+/*!
  \brief Creates a Layer from the provided \a jsonObject and adds at the given \a layerIndex.
 
   Obtain the output Layer through the \l jsonToLayerCompleted() signal.
@@ -191,7 +219,7 @@ void LayerCacheManager::jsonToLayer(const QJsonObject& jsonObject, const int lay
     m_localDataController->createRasterLayerGeoPackage(layerPath, layerIndex, layerId, layerVisible, false);
 }
 
-/*
+/*!
  \brief Updates the layer list cache with the provided \a layer.
 
  Obtain the updated JSON from \l layerJson() after layerJsonChanged() emits.
@@ -252,18 +280,22 @@ void LayerCacheManager::layerToJson(Layer* layer)
   // Get Scene Layers
   auto sceneLayer = dynamic_cast<ArcGISSceneLayer*>(layer);
   if (sceneLayer)
-    layerPath = sceneLayer->url().toString();
-
+    layerPath = sceneLayer->url().toLocalFile();
 
   // Get TPKs
   auto tiledLayer = dynamic_cast<ArcGISTiledLayer*>(layer);
   if (tiledLayer)
-    layerPath = tiledLayer->url().toString();
+    layerPath = tiledLayer->tileCache() ? tiledLayer->tileCache()->path() : tiledLayer->url().toLocalFile();
 
   // Get VTPKs
   auto vectorTiledLayer = dynamic_cast<ArcGISVectorTiledLayer*>(layer);
   if (vectorTiledLayer)
-    layerPath = vectorTiledLayer->url().toString();
+    layerPath = vectorTiledLayer->vectorTileCache() ? vectorTiledLayer->vectorTileCache()->path() : vectorTiledLayer->url().toString();
+
+  // Get Markups
+  auto markupLayer = dynamic_cast<MarkupLayer*>(layer);
+  if (markupLayer)
+    layerPath = markupLayer->path();
 
   // add the layer to the layer list for caching
   QJsonObject layerJson;
@@ -278,7 +310,7 @@ void LayerCacheManager::layerToJson(Layer* layer)
   emit layerJsonChanged();
 }
 
-/*
+/*!
  \brief Resets and recreates the layer JSON array and writes it to the app properties.
 */
 void LayerCacheManager::onLayerListChanged()
@@ -304,10 +336,26 @@ void LayerCacheManager::onLayerListChanged()
   emit propertyChanged(LAYERS_PROPERTYNAME, m_layers.toVariantList());
 }
 
-/*
- \brief Returns the layer JSON array.
+/*!
+ \brief Returns the LayerCacheManager's list of layers as a JSON array.
 */
 QJsonArray LayerCacheManager::layerJson() const
 {
   return m_layers;
 }
+
+} // Dsa
+
+// Signal Documentation
+/*!
+  \fn void LayerCacheManager::layerJsonChanged();
+  \brief Signal emitted when the layer JSON changes.
+ */
+
+/*!
+  \fn void LayerCacheManager::jsonToLayerCompleted(Esri::ArcGISRuntime::Layer* layer);;
+  \brief Signal emitted when the deserialization from JSON to Layer completes.
+
+  The resulting \a layer is passed through as a parameter.
+ */
+

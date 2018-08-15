@@ -1,26 +1,34 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 #include "MessageSimulatorController.h"
-#include "MessageSender.h"
-#include "CoTMessageParser.h"
+
+// example app headers
+#include "AbstractMessageParser.h"
+#include "DataSender.h"
 #include "SimulatedMessage.h"
 #include "SimulatedMessageListModel.h"
 
+// Qt headers
 #include <QSettings>
 
 MessageSimulatorController::MessageSimulatorController(QObject* parent) :
   QObject(parent),
-  m_messageSender(new MessageSender(this)),
+  m_dataSender(new Dsa::DataSender(this)),
   m_messages(new SimulatedMessageListModel(this))
 {
   connect(&m_timer, &QTimer::timeout, this, [this]
@@ -58,7 +66,7 @@ MessageSimulatorController::MessageSimulatorController(QObject* parent) :
       return;
     }
 
-    if (m_messageSender->sendMessage(messageBytes) == -1)
+    if (m_dataSender->sendData(messageBytes) == -1)
     {
       emit errorOccurred(tr("Failed to send message"));
       return;
@@ -67,17 +75,17 @@ MessageSimulatorController::MessageSimulatorController(QObject* parent) :
     m_messagesSent++;
   });
 
-  connect(m_messageSender, &MessageSender::messageSent, this, [this](const QByteArray& message)
+  connect(m_dataSender, &Dsa::DataSender::dataSent, this, [this](const QByteArray& data)
   {
     // create a simulated message to be added to the messages model
-    SimulatedMessage* cotMessage = SimulatedMessage::createFromCoTMessage(message, this);
-    if (!cotMessage)
+    SimulatedMessage* simulatedMessage = SimulatedMessage::create(data, this);
+    if (!simulatedMessage)
     {
-      emit errorOccurred(tr("Failed to create simulated CoT message"));
+      emit errorOccurred(tr("Failed to create simulated message"));
       return;
     }
 
-    m_messages->append(cotMessage);
+    m_messages->append(simulatedMessage);
   });
 
   // load settings for the app if they exist
@@ -130,10 +138,11 @@ void MessageSimulatorController::setMessageFrequency(float messageFrequency)
     if (m_timer.isActive())
       m_timer.stop();
 
-    if (m_simulationStarted && !m_simulationPaused)
+    if (m_simulationState == SimulationState::Running)
     {
       float messageFrequencyInSeconds = (timeUnitToSeconds(m_timeUnit) / messageFrequency);
-      m_timer.start(messageFrequencyInSeconds * 1000.0f); // in ms
+      constexpr float millisecondsMultiplier = 1000.0f;
+      m_timer.start(messageFrequencyInSeconds * millisecondsMultiplier); // in ms
     }
 
     if (previousMessageFrequency != m_messageFrequency)
@@ -146,14 +155,9 @@ float MessageSimulatorController::messageFrequency() const
   return m_messageFrequency;
 }
 
-bool MessageSimulatorController::isSimulationStarted() const
+MessageSimulatorController::SimulationState MessageSimulatorController::simulationState() const
 {
-  return m_simulationStarted;
-}
-
-bool MessageSimulatorController::isSimulationPaused() const
-{
-  return m_simulationPaused;
+  return m_simulationState;
 }
 
 bool MessageSimulatorController::isSimulationLooped() const
@@ -199,13 +203,19 @@ void MessageSimulatorController::startSimulation(const QUrl& file)
   // create UDP connection to broadcast address with specified port
   m_udpSocket = new QUdpSocket(this);
   m_udpSocket->connectToHost(QHostAddress::Broadcast, m_port, QIODevice::WriteOnly);
-  m_messageSender->setDevice(m_udpSocket);
+  m_dataSender->setDevice(m_udpSocket);
 
   if (m_messageParser)
     delete m_messageParser;
 
-  // create a CoT message parser with specified input file
-  m_messageParser = new CoTMessageParser(file.toLocalFile(), this);
+  // create a message parser with specified input file
+  m_messageParser = AbstractMessageParser::createMessageParser(file.toLocalFile(), this);
+  if (!m_messageParser)
+  {
+    emit errorOccurred(tr("Failed to create message parser with input file"));
+    return;
+  }
+
   connect(m_messageParser, &AbstractMessageParser::errorOccurred, this, &MessageSimulatorController::errorOccurred);
 
   // clear the messages model
@@ -218,12 +228,11 @@ void MessageSimulatorController::startSimulation(const QUrl& file)
     emit simulationFileChanged();
   }
 
-  m_simulationStarted = true;
-  m_simulationPaused = false;
+  m_simulationState = SimulationState::Running;
   setMessageFrequency(m_messageFrequency);
   m_messagesSent = 0;
 
-  emit simulationStartedChanged();
+  emit simulationStateChanged();
 
   // save app settings for next time the app is launched
   saveSettings();
@@ -231,30 +240,28 @@ void MessageSimulatorController::startSimulation(const QUrl& file)
 
 void MessageSimulatorController::pauseSimulation()
 {
-  m_simulationPaused = true;
+  m_simulationState = SimulationState::Paused;
   m_timer.stop();
 
-  emit simulationPausedChanged();
+  emit simulationStateChanged();
 }
 
 void MessageSimulatorController::resumeSimulation()
 {
-  m_simulationPaused = false;
+  m_simulationState = SimulationState::Running;
   setMessageFrequency(m_messageFrequency);
 
-  emit simulationPausedChanged();
+  emit simulationStateChanged();
 }
 
 void MessageSimulatorController::stopSimulation()
 {
   // tear down the simulation
-  if (!m_simulationStarted)
+  if (m_simulationState == SimulationState::Stopped)
     return;
 
-  m_simulationPaused = false;
-
   m_timer.stop();
-  m_simulationStarted = false;
+  m_simulationState = SimulationState::Stopped;
 
   if (m_udpSocket)
   {
@@ -265,12 +272,12 @@ void MessageSimulatorController::stopSimulation()
     m_udpSocket = nullptr;
   }
 
-  emit simulationStartedChanged();
+  emit simulationStateChanged();
 }
 
 void MessageSimulatorController::sendMessage(const QString& message)
 {
-  m_messageSender->sendMessage(message.toUtf8());
+  m_dataSender->sendData(message.toUtf8());
 }
 
 void MessageSimulatorController::saveSettings()

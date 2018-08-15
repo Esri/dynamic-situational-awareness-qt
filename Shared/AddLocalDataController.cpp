@@ -1,51 +1,74 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
 
-#include <QDir>
-#include <QFileInfo>
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
-#include "ArcGISTiledLayer.h"
-#include "RasterLayer.h"
-#include "Raster.h"
-#include "FeatureLayer.h"
-#include "GeodatabaseFeatureTable.h"
-#include "ArcGISVectorTiledLayer.h"
+// PCH header
+#include "pch.hpp"
+
+#include "AddLocalDataController.h"
+
+// example app headers
+#include "DataItemListModel.h"
+#include "DsaUtility.h"
+#include "MarkupLayer.h"
+
+// toolkit headers
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
+
+// C++ API headers
 #include "ArcGISSceneLayer.h"
-#include "Geodatabase.h"
-#include "ElevationSource.h"
-#include "RasterElevationSource.h"
 #include "ArcGISTiledElevationSource.h"
+#include "ArcGISTiledLayer.h"
+#include "ArcGISVectorTiledLayer.h"
+#include "ElevationSource.h"
+#include "FeatureCollection.h"
+#include "FeatureCollectionLayer.h"
+#include "FeatureCollectionTable.h"
+#include "FeatureLayer.h"
+#include "GeoPackage.h"
+#include "GeoPackageFeatureTable.h"
+#include "GeoPackageRaster.h"
+#include "Geodatabase.h"
+#include "GeodatabaseFeatureTable.h"
 #include "LayerListModel.h"
+#include "Raster.h"
+#include "RasterElevationSource.h"
+#include "RasterLayer.h"
 #include "Scene.h"
 #include "ShapefileFeatureTable.h"
-#include "SimpleRenderer.h"
-#include "SimpleMarkerSceneSymbol.h"
-#include "GeoPackage.h"
-#include "GeoPackageRaster.h"
-#include "GeoPackageFeatureTable.h"
+#include "TileCache.h"
 
-#include "ToolResourceProvider.h"
-#include "ToolManager.h"
-
-#include "DsaUtility.h"
-#include "AddLocalDataController.h"
-#include "DataItemListModel.h"
+// Qt headers
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QTextStream>
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa
+{
 
 const QString AddLocalDataController::LOCAL_DATAPATHS_PROPERTYNAME = "LocalDataPaths";
 const QString AddLocalDataController::DEFAULT_ELEVATION_PROPERTYNAME = "DefaultElevationSource";
 
-const QString AddLocalDataController::s_allData = QStringLiteral("All Data (*.geodatabase *.tpk *.shp *.gpkg *.mmpk *.slpk *.vtpk *.img *.tif *.tiff *.i1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr)");
+const QString AddLocalDataController::s_allData = QStringLiteral("All Data (*.geodatabase *.tpk *.shp *.gpkg *.mmpk *.slpk *.vtpk *.img *.tif *.tiff *.i1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr *.markup)");
 const QString AddLocalDataController::s_rasterData = QStringLiteral("Raster Files (*.img *.tif *.tiff *.I1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr)");
 const QString AddLocalDataController::s_geodatabaseData = QStringLiteral("Geodatabase (*.geodatabase)");
 const QString AddLocalDataController::s_shapefileData = QStringLiteral("Shapefile (*.shp)");
@@ -53,8 +76,16 @@ const QString AddLocalDataController::s_geopackageData = QStringLiteral("GeoPack
 const QString AddLocalDataController::s_sceneLayerData = QStringLiteral("Scene Layer Package (*.slpk)");
 const QString AddLocalDataController::s_vectorTilePackageData = QStringLiteral("Vector Tile Package (*.vtpk)");
 const QString AddLocalDataController::s_tilePackageData = QStringLiteral("Tile Package (*.tpk)");
+const QString AddLocalDataController::s_markupData = QStringLiteral("Markup (*.markup)");
 
-/*
+/*!
+  \class Dsa::AddLocalDataController
+  \inmodule Dsa
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller for adding local data to the app.
+ */
+
+/*!
  \brief Constructor that takes an optional \a parent.
  */
 AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
@@ -68,13 +99,15 @@ AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
 
   // create file filter list
   m_fileFilterList = QStringList{allData(), rasterData(), geodatabaseData(),
-      sceneLayerData(), tilePackageData(), shapefileData(), geopackageData()
-        /*, vectorTilePackageData()*/}; // VTPK is not supported in 3D
+      sceneLayerData(), tilePackageData(), shapefileData(), geopackageData(),
+      markupData()
+      /*, vectorTilePackageData()*/}; // VTPK is not supported in 3D
   emit fileFilterListChanged();
   emit localDataModelChanged();
 }
 
-/*
+/*!
+ \property AddLocalDataController::localDataModel
  \brief Returns the local data model associated with the controller.
  */
 QAbstractListModel* AddLocalDataController::localDataModel() const
@@ -82,7 +115,7 @@ QAbstractListModel* AddLocalDataController::localDataModel() const
   return m_localDataModel;
 }
 
-/*
+/*!
  \brief Adds the provided \a path to the directory list.
 
  The directory list contains all of the directories that will be searched for local data.
@@ -102,7 +135,7 @@ void AddLocalDataController::addPathToDirectoryList(const QString& path)
   emit propertyChanged(LOCAL_DATAPATHS_PROPERTYNAME, m_dataPaths);
 }
 
-/*
+/*!
  \brief Refreshes the local data model with a given \a fileType.
  */
 void AddLocalDataController::refreshLocalDataModel(const QString& fileType)
@@ -125,7 +158,8 @@ void AddLocalDataController::refreshLocalDataModel(const QString& fileType)
   }
 }
 
-/*
+/*!
+ \property AddLocalDataController::fileFilterList
  \brief Returns the file filter string list for filtering data from the QDir entrylist
  */
 QStringList AddLocalDataController::determineFileFilters(const QString& fileType)
@@ -145,18 +179,20 @@ QStringList AddLocalDataController::determineFileFilters(const QString& fileType
     fileFilter << "*.slpk";
   else if (fileType == vectorTilePackageData())
     fileFilter << "*.vtpk";
+  else if (fileType == markupData())
+    fileFilter << "*.markup";
   else if (fileType == rasterData())
     fileFilter = rasterExtensions;
   else
   {
     fileFilter = rasterExtensions;
-    fileFilter << "*.geodatabase" << "*.tpk" << "*.shp" << "*.gpkg" << "*.slpk"/* << "*.vtpk"*/; // VTPK is not supported in 3D
+    fileFilter << "*.geodatabase" << "*.tpk" << "*.shp" << "*.gpkg" << "*.slpk" << "*.markup"/* << "*.vtpk"*/; // VTPK is not supported in 3D
   }
 
   return fileFilter;
 }
 
-/*
+/*!
  \brief Adds the provided \a indices from the list model as elevation sources to the Scene.
  */
 void AddLocalDataController::addItemAsElevationSource(const QList<int>& indices)
@@ -170,32 +206,7 @@ void AddLocalDataController::addItemAsElevationSource(const QList<int>& indices)
 
     if (dataItemType == DataType::TilePackage)
     {
-      TileCache* tileCache = new TileCache(dataItemPath, this);
-
-      connect(tileCache, &TileCache::doneLoading, this, [this, tileCache](Error error)
-      {
-        if (!error.isEmpty())
-          return;
-
-        // Check if the tiles are LERC encoded
-        if (tileCache->tileInfo().format() == TileImageFormat::LERC)
-        {
-          // create the source from the tiled source
-          ArcGISTiledElevationSource* source = new ArcGISTiledElevationSource(tileCache, this);
-
-          connect(source, &ArcGISTiledElevationSource::errorOccurred, this, &AddLocalDataController::errorOccurred);
-
-          source->setParent(this);
-          auto scene = Toolkit::ToolResourceProvider::instance()->scene();
-          if (scene)
-            scene->baseSurface()->elevationSources()->append(source);
-
-          emit elevationSourceSelected(source);
-          emit propertyChanged(DEFAULT_ELEVATION_PROPERTYNAME, tileCache->path());
-        }
-      });
-
-      tileCache->load();
+      createElevationSourceFromTpk(dataItemPath);
     }
     else if (dataItemType == DataType::Raster)
     {
@@ -209,20 +220,92 @@ void AddLocalDataController::addItemAsElevationSource(const QList<int>& indices)
   if (dataPaths.isEmpty())
     return;
 
-  RasterElevationSource* source = new RasterElevationSource(dataPaths, this);
+  createElevationSourceFromRasters(dataPaths);
+
+  emit propertyChanged(DEFAULT_ELEVATION_PROPERTYNAME, dataPaths);
+}
+
+/*!
+ \brief Adds the provided TPK \a path as an elevation source.
+*/
+void AddLocalDataController::createElevationSourceFromTpk(const QString& path)
+{
+  TileCache* tileCache = new TileCache(path, this);
+
+  connect(tileCache, &TileCache::doneLoading, this, [this, tileCache](Error error)
+  {
+    if (!error.isEmpty())
+      return;
+
+    // Check if the tiles are LERC encoded
+    if (tileCache->tileInfo().format() == TileImageFormat::LERC)
+    {
+      // create the source from the tiled source
+      ArcGISTiledElevationSource* source = new ArcGISTiledElevationSource(tileCache, this);
+
+      connect(source, &ArcGISTiledElevationSource::errorOccurred, this, &AddLocalDataController::errorOccurred);
+
+      auto scene = Toolkit::ToolResourceProvider::instance()->scene();
+      if (scene)
+        scene->baseSurface()->elevationSources()->append(source);
+
+      emit elevationSourceSelected(source);
+      emit propertyChanged(DEFAULT_ELEVATION_PROPERTYNAME, tileCache->path());
+    }
+  });
+
+  tileCache->load();
+}
+
+/*!
+ \brief Adds the provided Raster \a paths as an elevation source.
+*/
+void AddLocalDataController::createElevationSourceFromRasters(const QStringList& paths)
+{
+  RasterElevationSource* source = new RasterElevationSource(paths, this);
 
   connect(source, &RasterElevationSource::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
-  source->setParent(this);
   auto scene = Toolkit::ToolResourceProvider::instance()->scene();
   if (scene)
     scene->baseSurface()->elevationSources()->append(source);
 
   emit elevationSourceSelected(source);
-  emit propertyChanged(DEFAULT_ELEVATION_PROPERTYNAME, dataPaths);
 }
 
-/*
+/*!
+ \brief Adds the the markup from the provided path as a MarkupLayer.
+
+ \list
+   \li \a path - The path to the local data source.
+   \li \a layerIndex - The index for which the layer will be added to the operational layer list.
+   \li \a visible - Whether the layer should be visible by default.
+   \li \a autoAdd - Whether the layer will be automatically added to the operational layer list.
+        If \c false, it will not add automatically. Instead, a signal will emit once the Layer has
+        been constructed.
+ \endlist
+*/
+void AddLocalDataController::createMarkupLayer(const QString& path, int layerIndex, bool visible, bool autoAdd)
+{
+  MarkupLayer* markupLayer = MarkupLayer::createFromPath(path, this);
+  if (!markupLayer)
+    return;
+
+  markupLayer->setVisible(visible);
+  connect(markupLayer, &MarkupLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+
+  if (autoAdd)
+  {
+    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+    operationalLayers->append(markupLayer);
+  }
+  else
+    emit layerCreated(layerIndex, markupLayer);
+
+  Q_UNUSED(layerIndex)
+}
+
+/*!
  \brief Adds the provided \a indices from the list model as layers.
  */
 void AddLocalDataController::addItemAsLayer(const QList<int>& indices)
@@ -254,13 +337,16 @@ void AddLocalDataController::addItemAsLayer(const QList<int>& indices)
     case DataType::VectorTilePackage:
       createVectorTiledLayer(dataItemPath);
       break;
+    case DataType::Markup:
+      createMarkupLayer(dataItemPath);
+      break;
     default:
       break;
     }
   }
 }
 
-/*
+/*!
  \brief Determines data type from the given \a path, and calls the appropriate helper.
 
  \list
@@ -277,15 +363,8 @@ void AddLocalDataController::addLayerFromPath(const QString& path, int layerInde
   QFileInfo fileInfo(path);
   if (!fileInfo.exists())
   {
-    const QUrl testUrl(path);
-    if (testUrl.isLocalFile())
-      fileInfo = QFileInfo(testUrl.toLocalFile());
-
-    if (!fileInfo.exists())
-    {
-      emit toolErrorOccurred(QString("Failed to add %1").arg(fileInfo.fileName()), QString("File not found %1").arg(path));
-      return;
-    }
+    emit toolErrorOccurred(QString("Failed to add %1").arg(fileInfo.fileName()), QString("File not found %1").arg(path));
+    return;
   }
 
   QStringList rasterExtensions{"img", "tif", "tiff", "i1", "dt0", "dt1", "dt2", "tc2", "geotiff", "hr1", "jpg", "jpeg", "jp2", "ntf", "png", "i21"};
@@ -305,11 +384,13 @@ void AddLocalDataController::addLayerFromPath(const QString& path, int layerInde
     createSceneLayer(path, layerIndex, visible, autoAdd);
   else if (fileExtension.compare("vtpk", Qt::CaseInsensitive) == 0)
     createVectorTiledLayer(path, layerIndex, visible, autoAdd);
+  else if (fileExtension.compare("markup", Qt::CaseInsensitive) == 0)
+    createMarkupLayer(path, layerIndex, visible, autoAdd);
   else if (rasterExtensions.contains(fileExtension.toLower()))
     createRasterLayer(path, layerIndex, visible, autoAdd);
 }
 
-/*
+/*!
  \brief Creates a Geodatabase from the given \a path, and creates a FeatureLayer for each table in the Geodatabase.
  */
 void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path)
@@ -349,7 +430,7 @@ void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path)
   gdb->load();
 }
 
-/*
+/*!
  \brief Creates a FeatureLayer with the feature table at the given id of a Geodatabase
 
  \list
@@ -403,7 +484,7 @@ void AddLocalDataController::createFeatureLayerGeodatabaseWithId(const QString& 
   gdb->load();
 }
 
-/*
+/*!
  \brief Creates a FeatureLayer with the feature table at the given index of a GeoPackage
 
  \list
@@ -457,7 +538,7 @@ void AddLocalDataController::createFeatureLayerGeoPackage(const QString& path, i
   geoPackage->load();
 }
 
-/*
+/*!
  \brief Creates a RasterLayer with the raster at the given index of a GeoPackage
 
  \list
@@ -505,7 +586,7 @@ void AddLocalDataController::createRasterLayerGeoPackage(const QString& path, in
   geoPackage->load();
 }
 
-/*
+/*!
  \brief Creates a GeoPackage from the given \a path, and adds a Layer for each table and raster in the GeoPackage
  */
 void AddLocalDataController::createLayerGeoPackage(const QString& path)
@@ -556,7 +637,7 @@ void AddLocalDataController::createLayerGeoPackage(const QString& path)
   geoPackage->load();
 }
 
-/*
+/*!
  \brief Creates a FeatureLayer with the provided shapefile path.
 
  \list
@@ -582,10 +663,7 @@ void AddLocalDataController::createFeatureLayerShapefile(const QString& path, in
 
     if (featureLayer->featureTable()->hasZ() && featureLayer->featureTable()->geometryType() == GeometryType::Point)
     {
-      SimpleMarkerSceneSymbol* symbol = new SimpleMarkerSceneSymbol(SimpleMarkerSceneSymbolStyle::Diamond, QColor("lightgreen"), 10.0, 7.5, 7.5, SceneSymbolAnchorPosition::Bottom, this);
-      Renderer* renderer = new SimpleRenderer(symbol, this);
       featureLayer->setSceneProperties(LayerSceneProperties(SurfacePlacement::Absolute));
-      featureLayer->setRenderer(renderer);
     }
   });
 
@@ -604,7 +682,7 @@ void AddLocalDataController::createFeatureLayerShapefile(const QString& path, in
   }
 }
 
-/*
+/*!
  \brief Creates a Rasterlayer with the provided raster path.
 
  \list
@@ -638,7 +716,7 @@ void AddLocalDataController::createRasterLayer(const QString& path, int layerInd
   }
 }
 
-/*
+/*!
  \brief Creates an ArcGISSceneLayer with the provided scene layer package path.
 
  \list
@@ -652,7 +730,7 @@ void AddLocalDataController::createRasterLayer(const QString& path, int layerInd
 */
 void AddLocalDataController::createSceneLayer(const QString& path, int layerIndex, bool visible, bool autoAdd)
 {
-  ArcGISSceneLayer* sceneLayer = new ArcGISSceneLayer(QUrl(path), this);
+  ArcGISSceneLayer* sceneLayer = new ArcGISSceneLayer(QUrl::fromLocalFile(path), this);
   sceneLayer->setVisible(visible);
   connect(sceneLayer, &ArcGISSceneLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
@@ -671,7 +749,7 @@ void AddLocalDataController::createSceneLayer(const QString& path, int layerInde
   }
 }
 
-/*
+/*!
  \brief Creates an ArcGISTiledLayer with the provided TPK path.
 
  \list
@@ -685,7 +763,8 @@ void AddLocalDataController::createSceneLayer(const QString& path, int layerInde
 */
 void AddLocalDataController::createTiledLayer(const QString& path, int layerIndex, bool visible, bool autoAdd)
 {
-  ArcGISTiledLayer* tiledLayer = new ArcGISTiledLayer(QUrl(path), this);
+  TileCache* tileCache = new TileCache(path, this);
+  ArcGISTiledLayer* tiledLayer = new ArcGISTiledLayer(tileCache, this);
   tiledLayer->setVisible(visible);
   connect(tiledLayer, &ArcGISTiledLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
@@ -704,7 +783,7 @@ void AddLocalDataController::createTiledLayer(const QString& path, int layerInde
   }
 }
 
-/*
+/*!
  \brief Creates an ArcGISVectorTiledLayer with the provided VTPK path.
 
  \list
@@ -717,7 +796,9 @@ void AddLocalDataController::createTiledLayer(const QString& path, int layerInde
  \endlist
 */void AddLocalDataController::createVectorTiledLayer(const QString& path, int layerIndex, bool visible, bool autoAdd)
 {
-  ArcGISVectorTiledLayer* vectorTiledLayer = new ArcGISVectorTiledLayer(QUrl(path), this);
+  VectorTileCache* tileCache = new VectorTileCache(path, this);
+  connect(tileCache, &VectorTileCache::errorOccurred, this, &AddLocalDataController::errorOccurred);
+  ArcGISVectorTiledLayer* vectorTiledLayer = new ArcGISVectorTiledLayer(tileCache, this);
   vectorTiledLayer->setVisible(visible);
   connect(vectorTiledLayer, &ArcGISVectorTiledLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
@@ -736,7 +817,7 @@ void AddLocalDataController::createTiledLayer(const QString& path, int layerInde
   }
 }
 
-/*
+/*!
  \brief Returns the tool's name.
 */
 QString AddLocalDataController::toolName() const
@@ -753,8 +834,61 @@ void AddLocalDataController::setProperties(const QVariantMap& properties)
   if (filePaths.empty())
     return;
 
+  bool anyNewPaths = false;
+  for (const QString& path : filePaths)
+  {
+    if (m_dataPaths.contains(path))
+      continue;
+
+    anyNewPaths = true;
+    break;
+  }
+
+  if (!anyNewPaths)
+    return;
+
   for (const QString& filePath : filePaths)
     addPathToDirectoryList(filePath);
 
   refreshLocalDataModel();
 }
+
+} // Dsa
+
+// Signal Documentation
+
+/*!
+  \fn void AddLocalDataController::localDataModelChanged();
+
+  \brief Signal emitted when the LocalDataModel associated with this class changes.
+ */
+
+/*!
+  \fn void AddLocalDataController::layerSelected(Esri::ArcGISRuntime::Layer* layer);
+
+  \brief Signal emitted when a \a layer is selected.
+ */
+
+/*!
+  \fn void AddLocalDataController::elevationSourceSelected(Esri::ArcGISRuntime::ElevationSource* source);
+
+  \brief Signal emitted when an elevation \a source is selected.
+ */
+
+/*!
+  \fn void AddLocalDataController::layerCreated(int i, Esri::ArcGISRuntime::Layer* layer);
+
+  \brief Signal emitted when a \a layer is created.
+
+  The index of the layer in the operational layer list is passed through as \a i.
+ */
+
+/*!
+  \fn void AddLocalDataController::toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
+
+  \brief Signal emitted when an error occurs.
+
+  An \a errorMessage and \a additionalMessage are passed through as parameters, describing
+  the error that occurred.
+ */
+

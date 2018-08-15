@@ -1,32 +1,42 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 #ifndef LOCATIONCONTROLLER_H
 #define LOCATIONCONTROLLER_H
 
-#include <QUrl>
-
+// toolkit headers
 #include "AbstractTool.h"
+
+// C++ API headers
 #include "Point.h"
 
+// Qt headers
+#include <QString>
+
 namespace Esri {
-namespace ArcGISRuntime
-{
+namespace ArcGISRuntime {
   class SceneQuickView;
   class GraphicsOverlay;
 }}
 
 class QGeoPositionInfoSource;
 class QCompass;
+
+namespace Dsa {
+
 class GPXLocationSimulator;
 class LocationDisplay3d;
 
@@ -36,9 +46,8 @@ class LocationController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 
   Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled NOTIFY enabledChanged)
   Q_PROPERTY(bool locationVisible READ isLocationVisible WRITE setLocationVisible NOTIFY locationVisibleChanged)
-  Q_PROPERTY(bool simulated READ isSimulated WRITE setSimulated NOTIFY simulatedChanged)
-  Q_PROPERTY(QUrl gpxFilePath READ gpxFilePath WRITE setGpxFilePath NOTIFY gpxFilePathChanged)
-  Q_PROPERTY(QString gpxFilePathAsString READ gpxFilePathAsString NOTIFY gpxFilePathChanged)
+  Q_PROPERTY(bool simulationEnabled READ isSimulationEnabled WRITE setSimulationEnabled NOTIFY simulationEnabledChanged)
+  Q_PROPERTY(QString gpxFilePath READ gpxFilePath WRITE setGpxFilePath NOTIFY gpxFilePathChanged)
 
 public:
   static const QString SIMULATE_LOCATION_PROPERTYNAME;
@@ -57,21 +66,18 @@ public:
   bool isLocationVisible() const;
   void setLocationVisible(bool isVisible);
 
-  bool isSimulated() const;
-  void setSimulated(bool isSimulated);
+  bool isSimulationEnabled() const;
+  void setSimulationEnabled(bool isSimulationEnabled);
 
   Esri::ArcGISRuntime::Point currentLocation() const;
 
   LocationDisplay3d* locationDisplay() const;
 
-  QUrl gpxFilePath() const;
-  void setGpxFilePath(const QUrl& gpxFilePath);
+  QString gpxFilePath() const;
+  void setGpxFilePath(const QString& gpxFilePath);
 
   QString iconDataPath() const { return m_iconDataPath; }
   void setIconDataPath(const QString& dataPath);
-
-  // removes any file:// scheme if present
-  QString gpxFilePathAsString() const;
 
   // if using GraphicsRenderingMode::Dynamic for rendering, then we need to massage
   // the heading value to make sure it's correct when the scene is rotated.
@@ -87,7 +93,7 @@ signals:
   void gpxFilePathChanged();
   void enabledChanged();
   void locationVisibleChanged();
-  void simulatedChanged();
+  void simulationEnabledChanged();
   void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
 
   // see setRelativeHeadingSceneView
@@ -97,7 +103,7 @@ private slots:
   void updateGeoView();
 
 private:
-  void initPositionInfoSource(bool isSimulated);
+  void initPositionInfoSource(bool isSimulationEnabled);
   void clearPositionInfoSource();
   QUrl modelSymbolPath() const;
 
@@ -105,12 +111,14 @@ private:
   QCompass* m_compass = nullptr;
   LocationDisplay3d* m_locationDisplay3d = nullptr;
   bool m_enabled = false;
-  bool m_simulated = false;
+  bool m_simulated = true;
   double m_lastViewHeading = 0.0;
   double m_lastKnownHeading = 0.0;
   Esri::ArcGISRuntime::Point m_currentLocation;
-  QUrl m_gpxFilePath;
+  QString m_gpxFilePath;
   QString m_iconDataPath;
 };
+
+} // Dsa
 
 #endif // LOCATIONCONTROLLER_H

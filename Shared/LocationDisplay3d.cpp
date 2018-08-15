@@ -1,27 +1,57 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
+
+// PCH header
+#include "pch.hpp"
 
 #include "LocationDisplay3d.h"
-#include "GraphicsOverlay.h"
-#include "SimpleRenderer.h"
+
+// example app headers
 #include "GPXLocationSimulator.h"
 
+// C++ API headers
+#include "GraphicsOverlay.h"
+#include "SimpleRenderer.h"
+
+// Qt headers
 #include <QCompass>
+
+// STL headers
 #include <cmath>
 
 using namespace Esri::ArcGISRuntime;
 
+namespace Dsa {
+
 static const QString s_headingAttribute{"heading"};
 
+/*!
+  \class Dsa::LocationDisplay3d
+  \inmodule Dsa
+  \inherits QObject
+  \brief Class for managing the display of the current location in 3D.
+
+  The position is displayed as a \l Esri::ArcGISRuntime::Graphic in
+  a \l Esri::ArcGISRuntime::GraphicsOverlay.
+ */
+
+/*!
+  \brief Constructor taking an optional \a parent.
+ */
 LocationDisplay3d::LocationDisplay3d(QObject* parent) :
   QObject(parent),
   m_locationOverlay(new GraphicsOverlay(this)),
@@ -36,10 +66,16 @@ LocationDisplay3d::LocationDisplay3d(QObject* parent) :
   m_locationOverlay->graphics()->append(m_locationGraphic);
 }
 
+/*!
+  \brief Destructor.
+ */
 LocationDisplay3d::~LocationDisplay3d()
 {
 }
 
+/*!
+  \brief Starts the location display.
+ */
 void LocationDisplay3d::start()
 {
   if (m_geoPositionInfoSource)
@@ -50,6 +86,9 @@ void LocationDisplay3d::start()
   m_isStarted = true;
 }
 
+/*!
+  \brief Stops the location display.
+ */
 void LocationDisplay3d::stop()
 {
   m_locationOverlay->setVisible(false);
@@ -58,16 +97,25 @@ void LocationDisplay3d::stop()
   m_isStarted = false;
 }
 
+/*!
+  \brief Returns whether the location display is started.
+ */
 bool LocationDisplay3d::isStarted() const
 {
   return m_isStarted;
 }
 
+/*!
+  \brief Returns the position source for the location display.
+ */
 QGeoPositionInfoSource* LocationDisplay3d::positionSource() const
 {
   return m_geoPositionInfoSource;
 }
 
+/*!
+  \brief Sets the position source for the location display to \a positionSource.
+ */
 void LocationDisplay3d::setPositionSource(QGeoPositionInfoSource* positionSource)
 {
   m_geoPositionInfoSource = positionSource;
@@ -103,23 +151,7 @@ void LocationDisplay3d::setPositionSource(QGeoPositionInfoSource* positionSource
 
     // display position 10m off the ground
     constexpr double elevatedZ = 10.0;
-
-    switch (pos.type())
-    {
-    case QGeoCoordinate::Coordinate2D:
-      m_lastKnownLocation = Point(pos.longitude(), pos.latitude(), elevatedZ, SpatialReference::wgs84());
-      break;
-    case QGeoCoordinate::Coordinate3D:
-    {
-      const int adjustedZ = std::isnan(pos.altitude()) || pos.altitude() == 0  ? elevatedZ : pos.altitude();
-      m_lastKnownLocation = Point(pos.longitude(), pos.latitude(), adjustedZ, SpatialReference::wgs84());
-      break;
-    }
-    case QGeoCoordinate::InvalidCoordinate:
-    default:
-      return;
-    }
-
+    m_lastKnownLocation = Point(pos.longitude(), pos.latitude(), elevatedZ, SpatialReference::wgs84());
     m_locationGraphic->setGeometry(m_lastKnownLocation);
 
     emit locationChanged(m_lastKnownLocation);
@@ -141,11 +173,17 @@ void LocationDisplay3d::setPositionSource(QGeoPositionInfoSource* positionSource
     m_geoPositionInfoSource->startUpdates();
 }
 
+/*!
+  \brief Returns the compass for the location display.
+ */
 QCompass* LocationDisplay3d::compass() const
 {
   return m_compass;
 }
 
+/*!
+  \brief Sets the compass for the location display to \a compass.
+ */
 void LocationDisplay3d::setCompass(QCompass* compass)
 {
   m_compass = compass;
@@ -173,21 +211,33 @@ void LocationDisplay3d::setCompass(QCompass* compass)
   m_compass->start();
 }
 
+/*!
+  \brief Returns the overlay for the location display.
+ */
 GraphicsOverlay* LocationDisplay3d::locationOverlay() const
 {
   return m_locationOverlay;
 }
 
+/*!
+  \brief Returns the graphic for the location display.
+ */
 Graphic* LocationDisplay3d::locationGraphic() const
 {
   return m_locationGraphic;
 }
 
+/*!
+  \brief Returns the default symbol for the location display.
+ */
 Symbol* LocationDisplay3d::defaultSymbol() const
 {
   return m_defaultSymbol;
 }
 
+/*!
+  \brief Sets the default symbol for the location display to \a defaultSymbol.
+ */
 void LocationDisplay3d::setDefaultSymbol(Symbol* defaultSymbol)
 {
   m_defaultSymbol = defaultSymbol;
@@ -207,6 +257,9 @@ void LocationDisplay3d::setDefaultSymbol(Symbol* defaultSymbol)
   }
 }
 
+/*!
+  \internal
+ */
 void LocationDisplay3d::postLastKnownLocationUpdate()
 {
   if (m_lastKnownLocation.isEmpty())
@@ -216,3 +269,17 @@ void LocationDisplay3d::postLastKnownLocationUpdate()
 
   emit locationChanged(m_lastKnownLocation);
 }
+
+} // Dsa
+
+// Signal Documentation
+/*!
+  \fn void LocationDisplay3d::locationChanged(const Esri::ArcGISRuntime::Point& location);
+  \brief Signal emitted when the \a location changes.
+ */
+
+/*!
+  \fn void LocationDisplay3d::headingChanged();
+  \brief Signal emitted when the heading changes.
+ */
+

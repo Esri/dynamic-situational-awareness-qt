@@ -1,24 +1,37 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
+
+// PCH header
+#include "pch.hpp"
 
 #include "LocationTextController.h"
 
-#include "CoordinateFormatter.h"
+// toolkit headers
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
+
+// C++ API headers
+#include "CoordinateFormatter.h"
 #include "Scene.h"
 #include "Surface.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 // constant strings used for properties in the config file
 const QString LocationTextController::COORDINATE_FORMAT_PROPERTYNAME = QStringLiteral("CoordinateFormat");
@@ -37,7 +50,14 @@ const QString LocationTextController::Gars = QStringLiteral("GARS");
 const QString LocationTextController::Meters = QStringLiteral("meters");
 const QString LocationTextController::Feet = QStringLiteral("feet");
 
-/*
+/*!
+  \class Dsa::LocationTextController
+  \inmodule Dsa
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller for displaying the current location.
+ */
+
+/*!
  \brief Constructor that takes an optional \a parent.
  */
 LocationTextController::LocationTextController(QObject* parent) :
@@ -54,38 +74,40 @@ LocationTextController::LocationTextController(QObject* parent) :
           this, &LocationTextController::onLocationChanged);
 }
 
-/*
- \brief Destructor
+/*!
+ \brief Destructor.
  */
 LocationTextController::~LocationTextController()
 {
 }
 
-/*
- \brief Returns the Tool Name
+/*!
+ \brief Returns the Tool Name.
  */
 QString LocationTextController::toolName() const
 {
   return QStringLiteral("Location Text");
 }
 
-/*
- \brief Returns the location text string for display in QML
+/*!
+ \property LocationTextController::currentLocationText
+ \brief Returns the location text string for display in QML.
  */
 QString LocationTextController::currentLocationText() const
 {
   return m_currentLocationText;
 }
 
-/*
- \brief Returns the elevation text string for display in QML
+/*!
+ \property LocationTextController::currentElevationText
+ \brief Returns the elevation text string for display in QML.
  */
 QString LocationTextController::currentElevationText() const
 {
   return m_currentElevationText;
 }
 
-/*
+/*!
  \brief Slot for Toolkit::ToolResourceProvider::locationChanged.
 
  Uses the provided \a pt to update the location and elevation text.
@@ -114,8 +136,8 @@ void LocationTextController::onLocationChanged(const Point& pt)
   }
 }
 
-/*
- \brief Slot to obtain the Scene's base surface
+/*!
+ \brief Slot to obtain the Scene's base surface.
  */
 void LocationTextController::onGeoViewChanged()
 {
@@ -133,8 +155,8 @@ void LocationTextController::onGeoViewChanged()
   }
 }
 
-/*
- \brief Set \a properties from the configuration file
+/*!
+ \brief Set \a properties from the configuration file.
  */
 void LocationTextController::setProperties(const QVariantMap& properties)
 {
@@ -143,8 +165,8 @@ void LocationTextController::setProperties(const QVariantMap& properties)
   setUnitOfMeasurement(properties[UNIT_OF_MEASUREMENT_PROPERTYNAME].toString());
 }
 
-/*
- \brief Changes the coordinate \a format
+/*!
+ \brief Changes the coordinate \a format.
  */
 void LocationTextController::setCoordinateFormat(const QString& format)
 {
@@ -223,24 +245,26 @@ void LocationTextController::setCoordinateFormat(const QString& format)
   }
 }
 
-/*
- \brief Returns the current format to use
+/*!
+ \brief Returns the current format to use.
  */
 QString LocationTextController::coordinateFormat() const
 {
   return m_coordinateFormat;
 }
 
-/*
- \brief Returns whether to use GPS for elevation. If false, it will use the Scene's Surface
+/*!
+  \brief Returns whether to use GPS for elevation.
+
+  If false, it will use the Scene's Surface.
  */
 bool LocationTextController::useGpsForElevation() const
 {
   return m_useGpsForElevation;
 }
 
-/*
- \ brief Sets whether to \a useGps for elevation
+/*!
+ \brief Set whether to use GPS for elevation to \a useGps.
  */
 void LocationTextController::setUseGpsForElevation(bool useGps)
 {
@@ -252,8 +276,8 @@ void LocationTextController::setUseGpsForElevation(bool useGps)
   emit useGpsForElevationChanged();
 }
 
-/*
- \brief Formats the \a elevation text for display in QML
+/*!
+ \brief Formats the \a elevation text for display in QML.
 */
 void LocationTextController::formatElevationText(double elevation)
 {
@@ -265,16 +289,16 @@ void LocationTextController::formatElevationText(double elevation)
   emit currentElevationTextChanged();
 }
 
-/*
- \brief Returns the current unit of measurement
+/*!
+ \brief Returns the current unit of measurement.
 */
 QString LocationTextController::unitOfMeasurement() const
 {
   return m_unitOfMeasurement;
 }
 
-/*
- \brief Sets the current \a unit of measurement
+/*!
+ \brief Sets the current \a unit of measurement.
  */
 void LocationTextController::setUnitOfMeasurement(const QString& unit)
 {
@@ -285,3 +309,35 @@ void LocationTextController::setUnitOfMeasurement(const QString& unit)
   emit propertyChanged(UNIT_OF_MEASUREMENT_PROPERTYNAME, unit);
   emit unitOfMeasurementChanged();
 }
+
+} // Dsa
+
+// Signal Documentation
+/*!
+  \fn void LocationTextController::currentLocationTextChanged();
+  \brief Signal emitted when the current location text changes.
+ */
+
+/*!
+  \fn void LocationTextController::currentElevationTextChanged();
+  \brief Signal emitted when the current elevation text changes.
+ */
+
+/*!
+  \fn void LocationTextController::useGpsForElevationChanged();
+  \brief Signal emitted when the \l useGpsForElevtion changes.
+
+  If \c true, GPS is used for elevation. If \c false, the Surface is used
+  for elevation.
+ */
+
+/*!
+  \fn void LocationTextController::unitOfMeasurementChanged();
+  \brief Signal emitted when the unit of measurement changes.
+ */
+
+/*!
+  \fn void LocationTextController::coordinateFormatChanged();
+  \brief Signal emitted when the coordinate format changes.
+ */
+

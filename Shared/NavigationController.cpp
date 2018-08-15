@@ -1,39 +1,64 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
+
+// PCH header
+#include "pch.hpp"
 
 #include "NavigationController.h"
 
-#include "Camera.h"
-#include "Map.h"
-#include "SceneView.h"
-#include "Scene.h"
-#include "GlobeCameraController.h"
-#include "OrbitLocationCameraController.h"
-#include "OrbitGeoElementCameraController.h"
-
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
-#include "GeometryEngine.h"
+// example app headers
 #include "DsaUtility.h"
 
+// toolkit headers
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
+
+// C++ API headers
+#include "Camera.h"
+#include "GeometryEngine.h"
+#include "GlobeCameraController.h"
+#include "Map.h"
+#include "OrbitGeoElementCameraController.h"
+#include "OrbitLocationCameraController.h"
+#include "Scene.h"
+#include "SceneView.h"
+
+// Qt headers
+#include <QGuiApplication>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QScreen>
-#include <QGuiApplication>
 
 using namespace Esri::ArcGISRuntime;
 
+namespace Dsa {
+
+/*!
+  \class Dsa::NavigationController
+  \inmodule Dsa
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller for handling navigation for the app.
+ */
+
 const QString NavigationController::INITIAL_LOCATION_PROPERTYNAME = "InitialLocation";
 
+/*!
+  \brief Constructor taking an optional \a parent.
+ */
 NavigationController::NavigationController(QObject* parent) :
   Toolkit::AbstractTool(parent),
   m_initialCenter(DsaUtility::montereyCA())
@@ -49,21 +74,28 @@ NavigationController::NavigationController(QObject* parent) :
   setInitialLocation();
 }
 
+/*!
+  \brief Destructor.
+ */
 NavigationController::~NavigationController()
 {
 }
 
+/*!
+  \brief Returns the name of the tool - \c  "NavigationController".
+ */
 QString NavigationController::toolName() const
 {
   return QStringLiteral("NavigationController");
 }
 
-/* \brief Sets any values in \a properties which are relevant for the navigation controller.
+/*!
+ * \brief Sets any values in \a properties which are relevant for the navigation controller.
  *
  * This tool will use the following key/value pairs from the \a properties map if they are set:
  * \list
  *  \li InitialLocation. A JSON description of a the starting location for the app.
- * \endList
+ * \endlist
  */
 void NavigationController::setProperties(const QVariantMap& properties)
 {
@@ -79,38 +111,79 @@ void NavigationController::setProperties(const QVariantMap& properties)
   if (initialLocation.isEmpty())
     return;
 
+  bool propertiesChanged = false;
+
   // set the initial center Point from JSON if it is found
   auto centerIt = initialLocation.find("center");
   if (centerIt != initialLocation.constEnd())
   {
     const QJsonValue centerVal = centerIt.value();
     const QJsonDocument centerDoc = QJsonDocument(centerVal.toObject());
-    m_initialCenter = Point::fromJson(centerDoc.toJson(QJsonDocument::JsonFormat::Compact));
+    const auto newCenter = Point::fromJson(centerDoc.toJson(QJsonDocument::JsonFormat::Compact));
+    if (!m_initialCenter.equalsWithTolerance(newCenter, 0.0))
+    {
+      propertiesChanged = true;
+      m_initialCenter = newCenter;
+    }
   }
 
   // set the initial distance from JSON if it is found (if not default to the existing value)
   auto distanceIt = initialLocation.find("distance");
   if (distanceIt != initialLocation.constEnd())
-    m_initialDistance = distanceIt.value().toDouble(m_initialDistance);
+  {
+    const auto newDistance = distanceIt.value().toDouble(m_initialDistance);
+    if (m_initialDistance != newDistance)
+    {
+      propertiesChanged = true;
+      m_initialDistance = newDistance;
+    }
+  }
 
   // set the initial heading from JSON if it is found (if not default to the existing value)
   auto headingIt = initialLocation.find("heading");
   if (distanceIt != initialLocation.constEnd())
-    m_initialHeading = headingIt.value().toDouble(m_initialHeading);
+  {
+    const auto newHeading = headingIt.value().toDouble(m_initialHeading);
+    if (m_initialHeading != newHeading)
+    {
+      propertiesChanged = true;
+      m_initialHeading = newHeading;
+    }
+  }
 
   // set the initial pitch from JSON if it is found (if not default to the existing value)
   auto pitchIt = initialLocation.find("pitch");
   if (pitchIt != initialLocation.constEnd())
-    m_initialPitch = pitchIt.value().toDouble(m_initialPitch);
+  {
+    const auto newPitch = pitchIt.value().toDouble(m_initialPitch);
+    if (m_initialPitch != newPitch)
+    {
+      propertiesChanged = true;
+      m_initialPitch = newPitch;
+    }
+  }
 
   // set the initial roll from JSON if it is found (if not default to the existing value)
   auto rollIt = initialLocation.find("roll");
   if (rollIt != initialLocation.constEnd())
-    m_initialRoll = rollIt.value().toDouble(m_initialRoll);
+  {
+    const auto newRoll = rollIt.value().toDouble(m_initialRoll);
+    if (m_initialRoll != newRoll)
+    {
+      propertiesChanged = true;
+      m_initialRoll = newRoll;
+    }
+  }
+
+  if (!propertiesChanged)
+    return;
 
   setInitialLocation();
 }
 
+/*!
+  \internal
+ */
 void NavigationController::updateGeoView()
 {
   m_geoView = Toolkit::ToolResourceProvider::instance()->geoView();
@@ -154,6 +227,9 @@ void NavigationController::updateGeoView()
   }
 }
 
+/*!
+  \internal
+ */
 void NavigationController::setInitialLocation()
 {
   Scene* scene = Toolkit::ToolResourceProvider::instance()->scene();
@@ -174,6 +250,9 @@ void NavigationController::setInitialLocation()
   map->setInitialViewpoint(initViewpoint);
 }
 
+/*!
+  \brief Zoom the app to the initial location.
+ */
 void NavigationController::zoomToInitialLocation()
 {
   Viewpoint initViewpoint;
@@ -190,6 +269,9 @@ void NavigationController::zoomToInitialLocation()
   m_geoView->setViewpoint(initViewpoint, 1.f);
 }
 
+/*!
+  \brief Zoom in.
+ */
 void NavigationController::zoomIn()
 {
   m_currentMode = Mode::Zoom;
@@ -200,6 +282,9 @@ void NavigationController::zoomIn()
   center();
 }
 
+/*!
+  \brief Zoom out.
+ */
 void NavigationController::zoomOut()
 {
   m_currentMode = Mode::Zoom;
@@ -210,13 +295,18 @@ void NavigationController::zoomOut()
   center();
 }
 
+/*!
+  \brief Tilt the (3D) view to a 2D perspective.
+ */
 void NavigationController::set2D()
 {
   m_currentMode = Mode::Tilt;
   center();
 }
 
-
+/*!
+  \brief Switch the app to the default panning navogation mode.
+ */
 void NavigationController::pan()
 {
   if (!m_sceneView)
@@ -226,13 +316,18 @@ void NavigationController::pan()
   m_sceneView->setCameraController(globeCameraController);
 }
 
+/*!
+  \brief Sets the app to rotation mode.
+ */
 void NavigationController::setRotation()
 {
   m_currentMode = Mode::Rotate;
   center();
 }
 
-
+/*!
+  \internal
+ */
 void NavigationController::zoom()
 {
   // get the current camera
@@ -268,19 +363,27 @@ void NavigationController::zoom()
   }
 }
 
-// getter for vertical
+/*!
+  \property NavigationController::vertical
+  \brief Returns whether the camera is vertical.
+ */
 bool NavigationController::isVertical() const
 {
   return m_isCameraVertical;
 }
 
-// getter for zoom factor
+/*!
+  \property NavigationController::zoomFactor
+  \brief Returns the zoom factor.
+ */
 double NavigationController::zoomFactor() const
 {
   return m_zoomFactor;
 }
 
-// setter for zooom factor
+/*!
+  \brief Sets the zoom factor to \a value.
+ */
 void NavigationController::setZoomFactor(double value)
 {
   if (value == m_zoomFactor)
@@ -290,13 +393,18 @@ void NavigationController::setZoomFactor(double value)
   emit zoomFactorChanged();
 }
 
-// getter for zoom factor
+/*!
+  \property NavigationController::cameraMoveDistance
+  \brief Returns the camera move distance in meters.
+ */
 double NavigationController::cameraMoveDistance() const
 {
   return m_cameraMoveDistance;
 }
 
-// setter for zooom factor
+/*!
+  \brief Sets the camera move distance to \a value meters.
+ */
 void NavigationController::setCameraMoveDistance(double value)
 {
   if (value == m_cameraMoveDistance)
@@ -306,6 +414,9 @@ void NavigationController::setCameraMoveDistance(double value)
   emit cameraMoveDistanceChanged();
 }
 
+/*!
+  \internal
+ */
 void NavigationController::setRotationInternal()
 {
   // get the current camera
@@ -318,6 +429,9 @@ void NavigationController::setRotationInternal()
   m_sceneView->setCameraController(orbitController);
 }
 
+/*!
+  \internal
+ */
 void NavigationController::set2DInternal()
 {
   if (m_is3d)
@@ -335,6 +449,9 @@ void NavigationController::set2DInternal()
   }
 }
 
+/*!
+  \internal
+ */
 void NavigationController::center()
 {
   if (!m_sceneView)
@@ -345,6 +462,9 @@ void NavigationController::center()
   m_sceneView->screenToLocation(m_sceneView->widthInPixels() * 0.5, m_sceneView->heightInPixels() * 0.5);
 }
 
+/*!
+  \internal
+ */
 double NavigationController::currentCameraDistance(const Camera &currentCamera)
 {
   if (currentCamera.isEmpty())
@@ -353,57 +473,113 @@ double NavigationController::currentCameraDistance(const Camera &currentCamera)
   return DsaUtility::distance3D(currentCamera.location(), m_currentCenter);
 }
 
+/*!
+  \brief Returns the initial roll in degrees.
+ */
 double NavigationController::initialRoll() const
 {
   return m_initialRoll;
 }
 
+/*!
+  \brief Sets the initial roll to \a initialRoll degrees.
+ */
 void NavigationController::setInitialRoll(double initialRoll)
 {
   m_initialRoll = initialRoll;
   setInitialLocation();
 }
 
+/*!
+  \brief Returns the initial pitch in degrees.
+ */
 double NavigationController::initialPitch() const
 {
   return m_initialPitch;
 }
 
+/*!
+  \brief Sets the initial pitch to \a initialPitch degrees.
+ */
 void NavigationController::setInitialPitch(double initialPitch)
 {
   m_initialPitch = initialPitch;
   setInitialLocation();
 }
 
+/*!
+  \brief Returns the initial heading in degrees.
+ */
 double NavigationController::initialHeading() const
 {
   return m_initialHeading;
 }
 
+/*!
+  \brief Sets the initial heading to \a initialHeading degrees.
+ */
 void NavigationController::setInitialHeading(double initialHeading)
 {
   m_initialHeading = initialHeading;
   setInitialLocation();
 }
 
+/*!
+  \brief Returns the initial distance in meters.
+ */
 double NavigationController::initialDistance() const
 {
   return m_initialDistance;
 }
 
+/*!
+  \brief Sets the initial distance to \a initialDistance meters.
+ */
 void NavigationController::setInitialDistance(double initialDistance)
 {
   m_initialDistance = initialDistance;
   setInitialLocation();
 }
 
+/*!
+  \brief Sets the initial center to \a initialCenter.
+ */
 void NavigationController::setInitialCenter(const Point& initialCenter)
 {
   m_initialCenter = initialCenter;
   setInitialLocation();
 }
 
+/*!
+  \brief Returns the initial center.
+ */
 Point NavigationController::initialCenter() const
 {
   return m_initialCenter;
 }
+
+} // Dsa
+
+// Signal Documentation
+/*!
+  \fn void NavigationController::verticalChanged();
+  \brief Signal emitted when \l isVertical changes.
+ */
+
+/*!
+  \fn void NavigationController::zoomFactorChanged();
+  \brief Signal emitted when the zoom factor changes.
+ */
+
+/*!
+  \fn void NavigationController::screenToLocationCompleted(QUuid taskId, Esri::ArcGISRuntime::Point location);
+  \brief Signal emitted when the screen to location operation completes.
+
+  The \a taskId and \a location are passed through as parameters.
+ */
+
+/*!
+  \fn void NavigationController::cameraMoveDistanceChanged();
+  \brief Signal emitted when the camera move distance changes.
+ */
+

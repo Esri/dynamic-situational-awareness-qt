@@ -1,31 +1,32 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
 import QtGraphicalEffects 1.0
 import QtQuick.Window 2.2
-import QtQuick.Dialogs 1.2 as Dialogs1
 import Esri.DSA 1.0
 
 Item {
     id: rootMarkup
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     // expose properties to be used by other tools
     property alias markupEnabled: markupController.drawModeEnabled
-
-    // Modifying this array will change the initial available colors
-    property var drawColors: ["#000000", "#ffffff", "#F44336", "#03a9f4", "#fff176"]
 
     // state strings
     property string drawState: "draw"
@@ -41,10 +42,13 @@ Item {
 
     Connections {
         target: appRoot
-        onClearDialogAccepted: markupController.clearGraphics()
+        onClearDialogAccepted: markupController.deleteAllGraphics();
         onInputDialogAccepted: {
-            markupController.setName(input.length > 0 ? input : "sketch " + index);
-            drawPane.sketchInProgress = false;
+            markupController.setOverlayName(input)
+            markupController.shareMarkup();
+        }
+        onMarkupLayerReceived: {
+            markupController.deleteAllGraphics();
         }
     }
 
@@ -58,15 +62,27 @@ Item {
 
     MarkupController {
         id: markupController
-
         onSketchCompleted: drawPane.sketchInProgress = true
         active: rootMarkup.visible
         drawModeEnabled: rootMarkup.visible
-        sketching: drawPane.sketchInProgress
 
         onActiveChanged: {
             if (!active)
                 rootMarkup.visible = false;
+        }
+
+        onMarkupReceived: {
+            markupDialog.title = "Markup Received";
+            markupDialog.path = filePath;
+            markupDialog.informativeText = "%1 has sent you a markup. Would you like to view it now?".arg(sharedBy)
+            markupDialog.open();
+        }
+
+        onMarkupSent: {
+            markupDialog.title = "Markup Shared";
+            markupDialog.path = filePath;
+            markupDialog.informativeText = "The shared markup has been added as an overlay. Would you like to view it now?";
+            markupDialog.open();
         }
     }
 
@@ -212,19 +228,9 @@ Item {
 
             ToolIcon {
                 anchors.verticalCenter: parent.verticalCenter
-                iconSource: DsaResources.iconComplete
-                toolName: "Finish Sketch"
-                onToolSelected: appRoot.showInputDialog("Sketch name", "ex: Sketch 1")
-            }
-
-            ToolIcon {
-                anchors.verticalCenter: parent.verticalCenter
-                iconSource: DsaResources.iconClose
-                toolName: "Cancel Sketch"
-                onToolSelected: {
-                    markupController.clearCurrentSketch();
-                    drawPane.sketchInProgress = false;
-                }
+                iconSource: DsaResources.iconSendMap
+                toolName: "Share"
+                onToolSelected: appRoot.showInputDialog("Share Markup", "Markup name", "ex: Markup 1");
             }
         }
     }
@@ -287,8 +293,8 @@ Item {
             orientation: ListView.Horizontal
             model: colorModel
             height: 25 * scaleFactor
-            width: Qt.platform.os === "android" ? parent.width : 175 * scaleFactor
-            spacing: 5 * scaleFactor
+            width: parent.width
+            spacing: 8 * scaleFactor
             currentIndex: 0
             clip: true
             snapMode: ListView.SnapOneItem
@@ -296,14 +302,10 @@ Item {
             delegate: Component {
 
                 Rectangle {
-                    height: DsaStyles.mainToolbarHeight * 0.45
+                    height: DsaStyles.mainToolbarHeight * 0.35
                     width: height
                     radius: 100 * scaleFactor
-                    color: drawColors[index]
-                    border {
-                        color: Material.accent
-                        width: 0.50 * scaleFactor
-                    }
+                    color: markupController.colors[index]
 
                     Image {
                         anchors.centerIn: parent
@@ -335,43 +337,6 @@ Item {
                 id: colorModel
             }
         }
-
-        // button for adding new colors
-        RoundButton {
-            id: addButton
-            anchors {
-                margins: 5 * scaleFactor
-                left: colorView.right
-                top: colorTitle.bottom
-            }
-            visible: Qt.platform.os !== "android" // ColorDialog does not scale properly on Android
-            height: 20 * scaleFactor
-            width: height
-            opacity: 0.95
-
-            background: Rectangle {
-                implicitWidth: parent.width
-                implicitHeight: implicitWidth
-                opacity: enabled ? 1 : 0.3
-                radius: addButton.radius
-                color: Material.accent
-
-                Image {
-                    anchors.centerIn: parent
-                    width: 16 * scaleFactor
-                    height: width
-                    source: DsaResources.iconAdd
-                }
-            }
-
-            onClicked: {
-                if (!newColorDialog.visible) {
-                    colorDialogVisibleChanged(true);
-                    newColorDialog.open();
-                }
-
-            }
-        }
     }
 
     Item {
@@ -379,18 +344,6 @@ Item {
         anchors.fill: parent
 
         // TODO
-    }
-
-    Dialogs1.ColorDialog {
-        id: newColorDialog
-        title: "Choose a Draw Color"
-
-        onAccepted: {
-            colorDialogVisibleChanged(false);
-            drawColors.push(color);
-            colorModel.append({"selected": false});
-            colorView.positionViewAtEnd();
-        }
     }
 
     // calls into C++ to create a new SimpleLineSymbol with the desired color
@@ -401,10 +354,11 @@ Item {
 
     // initialize the ListModel with the initial draw colors
     Component.onCompleted: {
-        for (var i = 0; i < drawColors.length; i++)
-            colorModel.append({"drawColor": drawColors[i], "selected": false});
+        var colors = markupController.colors;
+        for (var i = 0; i < colors.length; i++)
+            colorModel.append({"drawColor": colors[i], "selected": false});
 
-        markupController.setColor(drawColors[0]);
+        markupController.setColor(colors[0]);
         colorModel.setProperty(colorView.currentIndex, "selected", true);
     }
 }

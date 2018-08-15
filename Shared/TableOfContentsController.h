@@ -1,34 +1,37 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 #ifndef TABLEOFCONTENTSCONTROLLER_H
 #define TABLEOFCONTENTSCONTROLLER_H
 
-#include <QObject>
-
-#include <QAbstractItemModel>
-#include <QHash>
-#include <QUrl>
-
+// toolkit headers
 #include "AbstractTool.h"
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
+// Qt headers
+#include <QAbstractItemModel>
+#include <QHash>
+
+namespace Esri {
+namespace ArcGISRuntime {
   class Layer;
   class LayerListModel;
 }
 }
+
+namespace Dsa {
 
 class DrawOrderLayerListModel;
 
@@ -46,7 +49,8 @@ public:
     Points = 0,
     Polylines = 1,
     Polygons = 2,
-    Raster = 3
+    Raster = 3,
+    FreehandMarkup = 4
   };
   Q_ENUM(LayerGeometryType)
 
@@ -74,10 +78,13 @@ public slots:
 
 private:
   int mappedIndex(int index) const;
+  void refreshLayerOrder();
 
   Esri::ArcGISRuntime::LayerListModel* m_layerListModel = nullptr;
   QHash<Esri::ArcGISRuntime::Layer*, QMetaObject::Connection> m_layerConnections;
   DrawOrderLayerListModel* m_drawOrderModel = nullptr;
 };
+
+} // Dsa
 
 #endif // TABLEOFCONTENTSCONTROLLER_H

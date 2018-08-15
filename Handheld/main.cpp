@@ -1,58 +1,70 @@
 
-// Copyright 2016 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
-#include <QSettings>
-#include <QGuiApplication>
-#include <QQuickView>
-#include <QCommandLineParser>
-#include <QDir>
-#include <QMessageBox>
-#include <QQmlEngine>
-#include <QObject>
+// PCH header
+#include "pch.hpp"
 
-#ifdef Q_OS_WIN
-#include <Windows.h>
-#endif
+// example app headers
+#include "AddLocalDataController.h"
+#include "AlertConditionsController.h"
+#include "AlertListController.h"
+#include "AnalysisListController.h"
+#include "AppInfo.h"
+#include "BasemapPickerController.h"
+#include "ObservationReportController.h"
+#include "ContextMenuController.h"
+#include "DsaResources.h"
+#include "FollowPositionController.h"
+#include "Handheld.h"
+#include "HandheldStyles.h"
+#include "IdentifyController.h"
+#include "LineOfSightController.h"
+#include "LocationController.h"
+#include "LocationTextController.h"
+#include "MarkupController.h"
+#include "MessageFeedsController.h"
+#include "NavigationController.h"
+#include "OptionsController.h"
+#include "TableOfContentsController.h"
+#include "ViewedAlertsController.h"
+#include "ViewshedController.h"
 
+// toolkit headers
+#include "ArcGISCompassController.h"
+#include "ArcGISRuntimeToolkit.h"
+
+// C++ API headers
 #include "ArcGISRuntimeEnvironment.h"
 #include "PopupManager.h"
 #include "SceneQuickView.h"
 
-#include "AlertListController.h"
-#include "BasemapPickerController.h"
-#include "AddLocalDataController.h"
-#include "LocationController.h"
-#include "MessageFeedsController.h"
-#include "FollowPositionController.h"
-#include "TableOfContentsController.h"
-#include "NavigationController.h"
-#include "MarkupController.h"
-#include "ViewshedController.h"
-#include "OptionsController.h"
-#include "HandheldStyles.h"
-#include "ViewedAlertsController.h"
-#include "AlertConditionsController.h"
-#include "IdentifyController.h"
-#include "LocationTextController.h"
-#include "LineOfSightController.h"
-#include "ContextMenuController.h"
-#include "DsaResources.h"
+// Qt headers
+#include <QCommandLineParser>
+#include <QDir>
+#include <QGuiApplication>
+#include <QMessageBox>
+#include <QObject>
+#include <QQmlEngine>
+#include <QQuickView>
+#include <QSettings>
 
-#include "ArcGISRuntimeToolkit.h"
-#include "ArcGISCompassController.h"
-
-#include "AppInfo.h"
-#include "Handheld.h"
+#ifdef Q_OS_WIN
+#include <Windows.h>
+#endif
 
 //------------------------------------------------------------------------------
 
@@ -98,49 +110,33 @@ int main(int argc, char *argv[])
 #endif
   QSettings::setDefaultFormat(kSettingsFormat);
 
-  // Before initializing ArcGIS Runtime, first set the
-  // ArcGIS Runtime license setting required for your application.
-
-  // ArcGISRuntimeEnvironment::setLicense("Place license string in here");
-
-  //  use this code to check for initialization errors
-  //  QObject::connect(ArcGISRuntimeEnvironment::instance(), &ArcGISRuntimeEnvironment::errorOccurred, [](const Error& error){
-  //    QMessageBox msgBox;
-  //    msgBox.setText(error.message);
-  //    msgBox.exec();
-  //  });
-
-  //  if (ArcGISRuntimeEnvironment::initialize() == false)
-  //  {
-  //    application.quit();
-  //    return 1;
-  //  }
-
   // Register the map view for QML
   qmlRegisterType<SceneQuickView>("Esri.Handheld", 1, 0, "SceneView");
   qRegisterMetaType<PopupManager*>("PopupManager*");
 
   // Register the Handheld (QQuickItem) for QML
-  qmlRegisterType<Handheld>("Esri.Handheld", 1, 0, "Handheld");
-  qmlRegisterType<BasemapPickerController>("Esri.DSA", 1, 0, "BasemapPickerController");
-  qmlRegisterType<AddLocalDataController>("Esri.DSA", 1, 0, "AddLocalDataController");
-  qmlRegisterType<LocationController>("Esri.DSA", 1, 0, "LocationController");
-  qmlRegisterType<MessageFeedsController>("Esri.DSA", 1, 0, "MessageFeedsController");
-  qmlRegisterType<FollowPositionController>("Esri.DSA", 1, 0, "FollowPositionController");
-  qmlRegisterType<TableOfContentsController>("Esri.DSA", 1, 0, "TableOfContentsController");
-  qmlRegisterType<NavigationController>("Esri.DSA", 1, 0, "NavigationController");
-  qmlRegisterType<MarkupController>("Esri.DSA", 1, 0, "MarkupController");
-  qmlRegisterType<ViewshedController>("Esri.DSA", 1, 0, "ViewshedController");
-  qmlRegisterType<OptionsController>("Esri.DSA", 1, 0, "OptionsController");
-  qmlRegisterSingletonType<HandheldStyles>("Esri.DSA", 1, 0, "DsaStyles", &dsaStylesProvider);
-  qmlRegisterSingletonType<DsaResources>("Esri.DSA", 1, 0, "DsaResources", &dsaResourcesProvider);
-  qmlRegisterType<IdentifyController>("Esri.DSA", 1, 0, "IdentifyController");
-  qmlRegisterType<AlertListController>("Esri.DSA", 1, 0, "AlertListController");
-  qmlRegisterType<ViewedAlertsController>("Esri.DSA", 1, 0, "ViewedAlertsController");
-  qmlRegisterType<LocationTextController>("Esri.DSA", 1, 0, "LocationTextController");
-  qmlRegisterType<AlertConditionsController>("Esri.DSA", 1, 0, "AlertConditionsController");
-  qmlRegisterType<LineOfSightController>("Esri.DSA", 1, 0, "LineOfSightController");
-  qmlRegisterType<ContextMenuController>("Esri.DSA", 1, 0, "ContextMenuController");
+  qmlRegisterType<Dsa::Handheld::Handheld>("Esri.Handheld", 1, 0, "Handheld");
+  qmlRegisterType<Dsa::BasemapPickerController>("Esri.DSA", 1, 0, "BasemapPickerController");
+  qmlRegisterType<Dsa::AddLocalDataController>("Esri.DSA", 1, 0, "AddLocalDataController");
+  qmlRegisterType<Dsa::LocationController>("Esri.DSA", 1, 0, "LocationController");
+  qmlRegisterType<Dsa::MessageFeedsController>("Esri.DSA", 1, 0, "MessageFeedsController");
+  qmlRegisterType<Dsa::FollowPositionController>("Esri.DSA", 1, 0, "FollowPositionController");
+  qmlRegisterType<Dsa::TableOfContentsController>("Esri.DSA", 1, 0, "TableOfContentsController");
+  qmlRegisterType<Dsa::NavigationController>("Esri.DSA", 1, 0, "NavigationController");
+  qmlRegisterType<Dsa::MarkupController>("Esri.DSA", 1, 0, "MarkupController");
+  qmlRegisterType<Dsa::ViewshedController>("Esri.DSA", 1, 0, "ViewshedController");
+  qmlRegisterType<Dsa::OptionsController>("Esri.DSA", 1, 0, "OptionsController");
+  qmlRegisterSingletonType<Dsa::Handheld::HandheldStyles>("Esri.DSA", 1, 0, "DsaStyles", &dsaStylesProvider);
+  qmlRegisterSingletonType<Dsa::DsaResources>("Esri.DSA", 1, 0, "DsaResources", &dsaResourcesProvider);
+  qmlRegisterType<Dsa::IdentifyController>("Esri.DSA", 1, 0, "IdentifyController");
+  qmlRegisterType<Dsa::AlertListController>("Esri.DSA", 1, 0, "AlertListController");
+  qmlRegisterType<Dsa::ViewedAlertsController>("Esri.DSA", 1, 0, "ViewedAlertsController");
+  qmlRegisterType<Dsa::LocationTextController>("Esri.DSA", 1, 0, "LocationTextController");
+  qmlRegisterType<Dsa::AlertConditionsController>("Esri.DSA", 1, 0, "AlertConditionsController");
+  qmlRegisterType<Dsa::LineOfSightController>("Esri.DSA", 1, 0, "LineOfSightController");
+  qmlRegisterType<Dsa::ContextMenuController>("Esri.DSA", 1, 0, "ContextMenuController");
+  qmlRegisterType<Dsa::AnalysisListController>("Esri.DSA", 1, 0, "AnalysisListController");
+  qmlRegisterType<Dsa::ObservationReportController>("Esri.DSA", 1, 0, "ObservationReportController");
 
   // Register Toolkit Component Types
   ArcGISRuntimeToolkit::registerToolkitTypes();
@@ -225,12 +221,12 @@ int main(int argc, char *argv[])
 // qml dsa styles provider
 QObject* dsaStylesProvider(QQmlEngine* engine, QJSEngine*)
 {
-  static HandheldStyles* dsaStyles = new HandheldStyles(engine);
+  static Dsa::Handheld::HandheldStyles* dsaStyles = new Dsa::Handheld::HandheldStyles(engine);
   return dsaStyles;
 }
 
 QObject* dsaResourcesProvider(QQmlEngine* engine, QJSEngine*)
 {
-  static DsaResources* dsaResources = new DsaResources(engine);
+  static Dsa::DsaResources* dsaResources = new Dsa::DsaResources(engine);
   return dsaResources;
 }

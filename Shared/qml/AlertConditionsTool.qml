@@ -1,15 +1,18 @@
-
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 import QtQuick 2.6
 import QtQuick.Controls 2.1
@@ -19,12 +22,13 @@ import Esri.DSA 1.0
 
 DsaPanel {
     id: manageAlertsRoot
-    title: qsTr("Alert Conditions")
     clip: true
+    title: qsTr("Alert Conditions")
 
     property bool isMobile
     property alias pickMode: toolController.pickMode
     property bool  toolActive: toolController.active
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     AlertConditionsController {
         id: toolController
@@ -36,20 +40,6 @@ DsaPanel {
         }
     }
 
-    Text {
-        id: conditionsListTitle
-        anchors {
-            margins: 8 * scaleFactor
-            top: titleBar.bottom
-            horizontalCenter: parent.horizontalCenter
-        }
-        text: qsTr("Conditions")
-        color: Material.foreground
-        font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
-        horizontalAlignment: Text.AlignRight
-        verticalAlignment: Text.AlignVCenter
-    }
-
     ListView {
         id: conditionsList
         property string currentName
@@ -57,7 +47,7 @@ DsaPanel {
         clip: true
         anchors {
             margins: 8 * scaleFactor
-            top: conditionsListTitle.bottom
+            top: titleBar.bottom
             bottom: createNewConditionButton.top
             left: parent.left
             right: parent.right
@@ -89,12 +79,13 @@ DsaPanel {
                     itemChecked: conditionEnabled
                     menuIconVisible: true
                     imageUrl: level === 1 ?
-                                  DsaResources.iconWarningGreen
-                                : ( level === 2 ? DsaResources.iconWarningOrange
-                                                : ( level === 3 ? DsaResources.iconWarningRed
-                                                                : level === 4 ? DsaResources.iconWarningRedExclamation
+                                  DsaResources.iconAlertLow
+                                : ( level === 2 ? DsaResources.iconAlertModerate
+                                                : ( level === 3 ? DsaResources.iconAlertHigh
+                                                                : level === 4 ? DsaResources.iconAlertCritical
                                                                               : "") )
                     imageVisible: true
+                    imageFrameVisible: false
 
                     onItemCheckedChanged: {
                         if (conditionEnabled !== itemChecked)
@@ -139,10 +130,8 @@ DsaPanel {
                             width: 125 * scaleFactor
 
                             Column {
-                                anchors.margins: 10 * scaleFactor
                                 width: parent.width
                                 spacing: 10 * scaleFactor
-                                leftPadding: 10 * scaleFactor
 
                                 ListLabel {
                                     text: "Edit"
@@ -154,6 +143,7 @@ DsaPanel {
 
                                 ListLabel {
                                     text: "Delete"
+                                    separatorVisible: false
                                     onTriggered: {
                                         conditionMenu.close();
                                         toolController.removeConditionAt(index);
@@ -410,11 +400,10 @@ DsaPanel {
                 }
             }
 
-            ListSeparator{}
-
             ListLabel {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: "Delete"
+                separatorVisible: false
                 onTriggered: {
                     toolController.removeConditionAt(conditionsList.currentIndex);
                     mobileMenu.close(true);
@@ -427,7 +416,7 @@ DsaPanel {
         anchors {
             left: parent.left
             right: parent.right
-            top: conditionsListTitle.bottom
+            top: titleBar.bottom
             margins: 15 * scaleFactor
         }
         visible: conditionsList.count === 0

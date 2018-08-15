@@ -1,15 +1,18 @@
-
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 import QtQuick 2.9
 import QtQml.Models 2.2
@@ -64,6 +67,7 @@ DsaPanel {
             itemChecked: layerVisible
             imageUrl: imageSourceForGeomType(index)
             imageVisible: true
+            imageFrameVisible: false
             menuIconVisible: true
             mainText: name && name !== "" ?
                           name :
@@ -103,13 +107,12 @@ DsaPanel {
                     width: 125 * scaleFactor
 
                     Column {
-                        anchors.margins: 10 * scaleFactor
                         width: parent.width
                         spacing: 10 * scaleFactor
-                        leftPadding: 10 * scaleFactor
 
                         ListLabel {
                             text: "Zoom to"
+                            separatorVisible: visible
                             onTriggered: {
                                 vehicleMenu.close();
                                 tocRoot.closed();
@@ -119,6 +122,7 @@ DsaPanel {
 
                         ListLabel {
                             text: "Remove"
+                            separatorVisible: moveUpLabel.visible || moveDownLabel.visible
                             onTriggered: {
                                 vehicleMenu.close()
                                 toolController.removeAt(layersList.currentIndex);
@@ -126,8 +130,10 @@ DsaPanel {
                         }
 
                         ListLabel {
+                            id: moveUpLabel
                             text: "Move up"
                             visible: layersList.currentIndex !== 0
+                            separatorVisible: layersList.currentIndex !== layersList.count -1
                             onTriggered: {
                                 vehicleMenu.close()
                                 toolController.moveUp(layersList.currentIndex);
@@ -135,8 +141,10 @@ DsaPanel {
                         }
 
                         ListLabel {
+                            id: moveDownLabel
                             text: "Move down"
                             visible: layersList.currentIndex + 1 !== layersList.count
+                            separatorVisible: false
                             onTriggered: {
                                 vehicleMenu.close()
                                 toolController.moveDown(layersList.currentIndex);
@@ -159,6 +167,8 @@ DsaPanel {
                     return DsaResources.iconPolygon;
                 case TableOfContentsController.Raster:
                     return DsaResources.iconRaster;
+                case TableOfContentsController.FreehandMarkup:
+                    return DsaResources.iconSketch;
                 }
             }
         }
@@ -247,8 +257,6 @@ DsaPanel {
                 }
             }
 
-            ListSeparator{}
-
             ListLabel {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: "Remove"
@@ -256,10 +264,6 @@ DsaPanel {
                     toolController.removeAt(layersList.currentIndex);
                     mobileMenu.close()
                 }
-            }
-
-            ListSeparator {
-                visible: layersList.currentIndex !== 0
             }
 
             ListLabel {
@@ -272,10 +276,6 @@ DsaPanel {
                 }
             }
 
-            ListSeparator {
-                visible: layersList.currentIndex + 1 !== layersList.count
-            }
-
             ListLabel {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: "Move down"
@@ -286,11 +286,10 @@ DsaPanel {
                 }
             }
 
-            ListSeparator{}
-
             ListLabel {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: "Cancel"
+                separatorVisible: false
                 onTriggered: {
                     mobileMenu.close();
                 }

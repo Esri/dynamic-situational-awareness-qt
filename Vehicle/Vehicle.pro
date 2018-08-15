@@ -1,33 +1,35 @@
-#-------------------------------------------------
-#  Copyright 2017 ESRI
+################################################################################
+#  Copyright 2012-2018 Esri
 #
-#  All rights reserved under the copyright laws of the United States
-#  and applicable international laws, treaties, and conventions.
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
 #
-#  You may freely redistribute and use this sample code, with or
-#  without modification, provided you include the original copyright
-#  notice and use restrictions.
+#  http://www.apache.org/licenses/LICENSE-2.0
 #
-#  See the Sample code usage restrictions document for further information.
-#-------------------------------------------------
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+################################################################################
 
 TARGET = DSA_Vehicle_Qt
 TEMPLATE = app
 
-QT += core gui opengl network positioning sensors qml quick xml svg
+QT += core gui opengl network positioning sensors qml quick xml
 CONFIG += c++11
 
-# uncomment this line to use a local toolkit build
-#CONFIG += LocalToolkitBuild ToolkitBuildUsePrefix
-
-ARCGIS_RUNTIME_VERSION = 100.2.1
-include($$PWD/../Shared/arcgisruntime.pri)
+ARCGIS_RUNTIME_VERSION = 100.3
+include($$PWD/../Shared/build/arcgisruntime.pri)
+include($$PWD/../Shared/build/arcgisruntimecpptoolkit.pri)
 
 INCLUDEPATH += $$PWD/../Shared/ \
     $$PWD/../Shared/alerts \
     $$PWD/../Shared/analysis \
     $$PWD/../Shared/messages \
-    $$PWD/../Shared/utilities
+    $$PWD/../Shared/utilities \
+    $$PWD/../Shared/markup
 
 HEADERS += \
     AppInfo.h \
@@ -37,7 +39,8 @@ HEADERS += \
     $$PWD/../Shared/alerts/*.h \
     $$PWD/../Shared/analysis/*.h \
     $$PWD/../Shared/messages/*.h \
-    $$PWD/../Shared/utilities/*.h
+    $$PWD/../Shared/utilities/*.h \
+    $$PWD/../Shared/markup/*.h
 
 SOURCES += \
     main.cpp \
@@ -47,7 +50,8 @@ SOURCES += \
     $$PWD/../Shared/alerts/*.cpp \
     $$PWD/../Shared/analysis/*.cpp \
     $$PWD/../Shared/messages/*.cpp \
-    $$PWD/../Shared/utilities/*.cpp
+    $$PWD/../Shared/utilities/*.cpp \
+    $$PWD/../Shared/markup/*.cpp
 
 RESOURCES += \
     qml/qml.qrc \
@@ -56,6 +60,11 @@ RESOURCES += \
     ../Shared/qml/shared_qml.qrc
 
 QML_IMPORT_PATH += $$PWD/../Shared/qml
+
+!android {
+  PRECOMPILED_HEADER = $$PWD/../Shared/pch.hpp
+  CONFIG += precompile_header
+}
 
 #-------------------------------------------------------------------------------
 
@@ -76,4 +85,5 @@ android {
 }
 
 DISTFILES += \
-    Resources/qtquickcontrols2.conf
+    Resources/qtquickcontrols2.conf \
+    ../qdoc/dsa-overview.qdoc

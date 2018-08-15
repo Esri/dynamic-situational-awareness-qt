@@ -1,15 +1,18 @@
-
-// Copyright 2016 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 import QtQuick 2.9
 import QtQuick.Controls 2.2
@@ -23,31 +26,47 @@ Dialog {
     property alias inputLabel: inputLabelText.text
     property alias inputPlaceholderText: nameText.placeholderText
     property alias userInputText: nameText.text
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+    property alias titleText: titleLabel.text
     visible: false
     x: appRoot.width / 2 - width / 2
     y: appRoot.height / 2 - height / 2
     width: 250 * scaleFactor
-    height: 100 * scaleFactor
-    standardButtons: Dialog.Ok
+    standardButtons: Dialog.Ok | Dialog.Cancel
 
-    Row {
+    Column {
         width: parent.width
-        spacing: 5 * scaleFactor
+        spacing: 10 * scaleFactor
 
         Label {
-            id: inputLabelText
-            anchors.verticalCenter: parent.verticalCenter
-            width: parent.width * 0.4
+            id: titleLabel
+            anchors.horizontalCenter: parent.horizontalCenter
             font {
                 family: DsaStyles.fontFamily
-                pixelSize: 12 * scaleFactor
+                pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
+                bold: true
             }
         }
 
-        TextField {
-            id: nameText
-            anchors.verticalCenter: parent.verticalCenter
-            width: parent.width * 0.6
+        Row {
+            width: parent.width
+            spacing: 5 * scaleFactor
+
+            Label {
+                id: inputLabelText
+                anchors.verticalCenter: parent.verticalCenter
+                width: parent.width * 0.4
+                font {
+                    family: DsaStyles.fontFamily
+                    pixelSize: 12 * scaleFactor
+                }
+            }
+
+            TextField {
+                id: nameText
+                anchors.verticalCenter: parent.verticalCenter
+                width: parent.width * 0.6
+            }
         }
     }
 

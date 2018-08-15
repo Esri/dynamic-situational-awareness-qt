@@ -1,26 +1,40 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
+
+// PCH header
+#include "pch.hpp"
 
 #include "AlertCondition.h"
+
+// example app headers
 #include "AlertConditionData.h"
 #include "GraphicAlertSource.h"
 
-#include "GraphicsOverlay.h"
+// C++ API headers
 #include "GraphicListModel.h"
+#include "GraphicsOverlay.h"
 
 using namespace Esri::ArcGISRuntime;
 
+namespace Dsa {
+
 /*!
-  \class AlertCondition
+  \class Dsa::AlertCondition
+  \inmodule Dsa
   \inherits QObject
   \brief Represents a condition which will be coninuosly monitored and will
   trigger an alert when met.
@@ -51,13 +65,12 @@ AlertCondition::AlertCondition(const AlertLevel& level,
   m_level(level),
   m_name(name)
 {
-
 }
 
 /*!
   \brief Initializes the condition with a \a source and \a target with a \a sourceDescription and a \a targetDescription.
 
-  A new \a AlertConditionData will be created to track changes to the
+  A new \l AlertConditionData will be created to track changes to the
   source and target.
  */
 void AlertCondition::init(AlertSource* source, AlertTarget* target, const QString& sourceDescription, const QString& targetDescription)
@@ -74,7 +87,7 @@ void AlertCondition::init(AlertSource* source, AlertTarget* target, const QStrin
 /*!
   \brief Initializes the condition with a \a sourceFeed, \a sourceDescription, a \a target and a \a targetDescription.
 
-  A new \a AlertConditionData will be created for each \l Esri::ArcGISRuntime::Graphic
+  A new \l AlertConditionData will be created for each \l Esri::ArcGISRuntime::Graphic
   in the source feed, to track changes to the source and target.
  */
 void AlertCondition::init(GraphicsOverlay* sourceFeed, const QString& sourceDescription, AlertTarget* target, const QString& targetDescription)
@@ -226,7 +239,7 @@ QString AlertCondition::description() const
 /*!
   \brief Returns whether this condition is enabled.
 
-  When enabled is \false the condition will not be checked and no alerts will be raised.
+  When enabled is \c false the condition will not be checked and no alerts will be raised.
  */
 bool AlertCondition::isConditionEnabled() const
 {
@@ -236,7 +249,7 @@ bool AlertCondition::isConditionEnabled() const
 /*!
   \brief Sets this condition to be \a enabled.
 
-  When enabled is \false the condition will not be checked and no alerts will be raised.
+  When enabled is \c false the condition will not be checked and no alerts will be raised.
  */
 void AlertCondition::setConditionEnabled(bool enabled)
 {
@@ -253,3 +266,26 @@ void AlertCondition::setConditionEnabled(bool enabled)
   m_enabled = enabled;
   emit conditionEnabledChanged();
 }
+
+} // Dsa
+
+// Signal Documentation
+/*!
+  \fn void AlertCondition::noLongerValid();
+  \brief Signal emitted when alert condition is no longer valid.
+ */
+
+/*!
+  \fn void AlertCondition::newConditionData(Dsa::AlertConditionData* newConditionData);
+  \brief Signal emitted when \a newConditionData is added to the alert condition.
+ */
+
+/*!
+  \fn void AlertCondition::conditionChanged();
+  \brief Signal emitted when the alert condition changes.
+ */
+
+/*!
+  \fn void AlertCondition::conditionEnabledChanged();
+  \brief Signal emitted when conditionEnabled property changes.
+ */

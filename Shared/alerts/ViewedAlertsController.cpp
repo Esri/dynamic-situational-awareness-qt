@@ -1,25 +1,39 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
 
-#include "AlertConditionData.h"
-#include "AlertListModel.h"
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
+
+// PCH header
+#include "pch.hpp"
+
 #include "ViewedAlertsController.h"
 
+// example app headers
+#include "AlertConditionData.h"
+#include "AlertListModel.h"
+
+// toolkit headers
 #include "ToolManager.h"
 
 using namespace Esri::ArcGISRuntime;
 
+namespace Dsa {
+
 /*!
-  \class ViewedAlertsController
+  \class Dsa::ViewedAlertsController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for managing the count of unviewed, active alert condition data.
 
@@ -76,6 +90,7 @@ ViewedAlertsController::~ViewedAlertsController()
 }
 
 /*!
+  \property ViewedAlertsController::unviewedCount
   \brief Returns the number of alert condition data objects which are currently active
   and which have not been marked as viewed.
  */
@@ -112,3 +127,11 @@ int ViewedAlertsController::unviewedCount() const
 
   return m_cachedCount;
 }
+
+} // Dsa
+
+// Signal Documentation
+/*!
+  \fn void ViewedAlertsController::unviewedCountChanged();
+  \brief Signal emitted when the unviewed count changes.
+ */

@@ -41,11 +41,20 @@
         <file>AlertConditionsConditionTypePage.qml</file>
         <file>AlertConditionsNamePage.qml</file>
         <file>AlertConditionsSourcePage.qml</file>
-        <file>AlertConditionsGeofenceQueryPage.qml</file>
+        <file>AlertConditionsSpatialQueryPage.qml</file>
         <file>AlertConditionsAttributeQueryPage.qml</file>
         <file>AlertConditionsSpatialTarget.qml</file>
         <file>AlertConditionsAttributeTarget.qml</file>
         <file>LineOfSightTool.qml</file>
         <file>ContextMenu.qml</file>
+        <file>AnalysisList.qml</file>
+        <file>ObservationReportTool.qml</file>
+        <file>ObservationReportObservedByPage.qml</file>
+        <file>ObservationReportSizePage.qml</file>
+        <file>ObservationReportActivityPage.qml</file>
+        <file>ObservationReportLocationPage.qml</file>
+        <file>ObservationReportDescriptionPage.qml</file>
+        <file>ObservationReportObservedTimePage.qml</file>
+        <file>DsaYesNoDialog.qml</file>
     </qresource>
 </RCC>

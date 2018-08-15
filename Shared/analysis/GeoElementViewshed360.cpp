@@ -1,31 +1,64 @@
-// Copyright 2018 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
+
+// PCH header
+#include "pch.hpp"
 
 #include "GeoElementViewshed360.h"
-#include "GeoElementViewshed.h"
+
+// C++ API headers
 #include "AnalysisOverlay.h"
 #include "AttributeListModel.h"
+#include "GeoElementViewshed.h"
 
+// STL headers
 #include <cmath>
+
+using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 constexpr double c_defaultPitch = 0.0;
 constexpr double c_defaultHorizontalAngle = 120.0;
 constexpr double c_defaultVerticalAngle = 90.0;
-constexpr double c_defaultMinDistance = 30.0;
+constexpr double c_defaultMinDistance = 0.0;
 constexpr double c_defaultMaxDistance = 500.0;
 constexpr double c_defaultOffsetZ = 5.0;
 
-using namespace Esri::ArcGISRuntime;
+/*!
+  \class Dsa::GeoElementViewshed360
+  \inmodule Dsa
+  \inherits Viewshed360
+  \brief A 360 degree viewshed centered upon a GeoElement.
 
+  \sa Esri::ArcGISRuntime::GeoElement
+  */
+
+/*!
+  \brief Constructor for a 360 degree viewshed centered upon a GeoElement.
+
+  \list
+    \li \a geoElement - The \l Esri::ArcGISRuntime::GeoElement which the viewshed will be centered upon.
+    \li \a analysisOverlay - The \l Esri::ArcGISRuntime::AnalysisOverlay which contains the viewshed.
+    \li \a headingAttribute - the name of the heading attribute.
+    \li \a pitchAttribute - the name of the pitch attribute.
+    \li \a parent - An optional parent.
+  \endlist
+ */
 GeoElementViewshed360::GeoElementViewshed360(GeoElement* geoElement, AnalysisOverlay* analysisOverlay,
                                              const QString& headingAttribute, const QString& pitchAttribute, QObject* parent) :
   Viewshed360(new GeoElementViewshed(geoElement, c_defaultHorizontalAngle, c_defaultVerticalAngle, c_defaultMinDistance, c_defaultMaxDistance, 0.0, 0.0, parent), analysisOverlay, parent),
@@ -36,15 +69,26 @@ GeoElementViewshed360::GeoElementViewshed360(GeoElement* geoElement, AnalysisOve
   update360Mode(is360Mode());
 }
 
+/*!
+  \brief Destructor.
+ */
 GeoElementViewshed360::~GeoElementViewshed360()
 {
 }
 
+/*!
+  \brief Returns the \l Esri::ArcGISRuntime::GeoElement which the viewshed is centered upon.
+ */
 GeoElement* GeoElementViewshed360::geoElement() const
 {
   return m_geoElement.data();
 }
 
+/*!
+  \brief Returns the heading attribute of the \l Esri::ArcGISRuntime::GeoElement in degrees.
+
+  If not set, this returns \c NAN.
+ */
 double GeoElementViewshed360::heading() const
 {
   if (m_headingAttribute.isEmpty())
@@ -56,6 +100,11 @@ double GeoElementViewshed360::heading() const
   return m_geoElement->attributes()->attributeValue(m_headingAttribute).toDouble();
 }
 
+/*!
+  \brief Sets the heading attribute of the \l Esri::ArcGISRuntime::GeoElement to \a heading.
+
+  The supplied value should be in degrees.
+ */
 void GeoElementViewshed360::setHeading(double heading)
 {
   if (m_headingAttribute.isEmpty())
@@ -94,6 +143,11 @@ void GeoElementViewshed360::setHeading(double heading)
   emit headingChanged();
 }
 
+/*!
+  \brief Returns the pitch attribute of the \l Esri::ArcGISRuntime::GeoElement in degrees.
+
+  If not set, this returns \c NAN.
+ */
 double GeoElementViewshed360::pitch() const
 {
   if (m_pitchAttribute.isEmpty())
@@ -105,6 +159,11 @@ double GeoElementViewshed360::pitch() const
   return m_geoElement->attributes()->attributeValue(m_pitchAttribute).toDouble();
 }
 
+/*!
+  \brief Sets the pitch attribute of the \l Esri::ArcGISRuntime::GeoElement to \a pitch.
+
+  The supplied value should be in degrees.
+ */
 void GeoElementViewshed360::setPitch(double pitch)
 {
   if (m_pitchAttribute.isEmpty())
@@ -132,11 +191,17 @@ void GeoElementViewshed360::setPitch(double pitch)
   emit pitchChanged();
 }
 
+/*!
+  \brief Returns the offset Z value in meters.
+ */
 double GeoElementViewshed360::offsetZ() const
 {
   return static_cast<GeoElementViewshed*>(viewshed())->offsetZ();
 }
 
+/*!
+  \brief Sets the offset Z value to \a offsetZ meters.
+ */
 void GeoElementViewshed360::setOffsetZ(double offsetZ)
 {
   if (static_cast<GeoElementViewshed*>(viewshed())->offsetZ() == offsetZ)
@@ -147,35 +212,62 @@ void GeoElementViewshed360::setOffsetZ(double offsetZ)
   emit offsetZChanged();
 }
 
+/*!
+  \brief Returns whether heading is enabled for the viewshed.
+
+  \note If the viewshed is currently in 360 degree mode, heading will not be used.
+ */
 bool GeoElementViewshed360::isHeadingEnabled() const
 {
   return !is360Mode() && m_headingAttribute.isEmpty();
 }
 
+/*!
+  \brief Returns whether pitch is enabled for the viewshed.
+
+  \note If the viewshed is currently in 360 degree mode, pitch will not be used.
+ */
 bool GeoElementViewshed360::isPitchEnabled() const
 {
   return !is360Mode() && m_pitchAttribute.isEmpty();
 }
 
+/*!
+  \brief Returns whether offset Z is enabled for the viewshed.
+
+  \note For this type, the value is always \c true.
+ */
 bool GeoElementViewshed360::isOffsetZEnabled() const
 {
   return true;
 }
 
+/*!
+  \brief Returns the attribute used for heading.
+ */
 QString GeoElementViewshed360::headingAttribute() const
 {
   return m_headingAttribute;
 }
 
+/*!
+  \brief Returns the attribute used for pitch.
+ */
 QString GeoElementViewshed360::pitchAttribute() const
 {
   return m_pitchAttribute;
 }
 
+/*!
+  \internal
+ */
 void GeoElementViewshed360::update360Mode(bool is360Mode)
 {
+  // update the viewshed to cover 360 degrees if is360Mode is true.
   auto overlay = analysisOverlay();
 
+  // the 1st time the viewshed is set to be 360 degrees, the m_viewsheds360Offsets list is populated with
+  // 2 additional viewsheds to cover the full range, since a single viewshed can only cover 120 degrees.
   if (is360Mode && m_viewsheds360Offsets.isEmpty() &&
       overlay && !m_geoElement.isNull())
   {
@@ -208,6 +300,7 @@ void GeoElementViewshed360::update360Mode(bool is360Mode)
   emit horizontalAngleChanged();
   emit verticalAngleChanged();
 
+  // set the 2 offset viewsheds to be visible if we are in 360 degree mode.
   for (auto viewshed : m_viewsheds360Offsets)
   {
     viewshed->setVisible(isVisible() && is360Mode);
@@ -216,3 +309,5 @@ void GeoElementViewshed360::update360Mode(bool is360Mode)
   emit headingEnabledChanged();
   emit pitchEnabledChanged();
 }
+
+} // Dsa

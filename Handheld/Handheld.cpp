@@ -1,24 +1,40 @@
-// Copyright 2016 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
 
-#include "SceneQuickView.h"
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
-#include "DsaController.h"
+// PCH header
+#include "pch.hpp"
+
 #include "Handheld.h"
-#include "ToolResourceProvider.h"
+
+// example app headers
+#include "DsaController.h"
+
+// toolkit headers
 #include "ToolManager.h"
+#include "ToolResourceProvider.h"
+
+// C++ API headers
+#include "SceneQuickView.h"
 
 using namespace Esri::ArcGISRuntime;
 using namespace Esri::ArcGISRuntime::Toolkit;
+
+namespace Dsa {
+namespace Handheld {
 
 Handheld::Handheld(QQuickItem* parent /* = nullptr */):
   QQuickItem(parent),
@@ -26,10 +42,16 @@ Handheld::Handheld(QQuickItem* parent /* = nullptr */):
 {
 }
 
+/*!
+   \brief Destructor
+ */
 Handheld::~Handheld()
 {
 }
 
+/*!
+   \brief Apply scene to the SceneView.
+ */
 void Handheld::componentComplete()
 {
   QQuickItem::componentComplete();
@@ -89,3 +111,15 @@ void Handheld::componentComplete()
   // Set scene to scene view
   m_sceneView->setArcGISScene(m_controller->scene());
 }
+
+} // Handheld
+} // Dsa
+
+// Signal Documentation
+/*!
+  \fn void Handheld::errorOccurred(const QString& message, const QString& additionalMessage)
+  \brief Signal emitted when an error occurs.
+
+  An error \a message and \a additionalMessage are passed through as parameters, describing
+  the error that occurred.
+ */

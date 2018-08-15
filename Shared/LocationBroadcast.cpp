@@ -1,31 +1,46 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
+
+// PCH header
+#include "pch.hpp"
 
 #include "LocationBroadcast.h"
-#include "MessageSender.h"
 
+// example app headers
+#include "DataSender.h"
+
+// toolkit headers
 #include "ToolResourceProvider.h"
 
-#include <QUdpSocket>
+// Qt headers
 #include <QHostInfo>
 #include <QTimer>
+#include <QUdpSocket>
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 // friendly symbol ID for our location broadcast
 static const QString s_locationBroadcastSic{QStringLiteral("SFGPEVAL-------")};
 
 /*!
-  \class LocationBroadcast
+  \class Dsa::LocationBroadcast
+  \inmodule Dsa
   \inherits QObject
   \brief Broadcasts location updates over a specified message type.
 
@@ -40,7 +55,6 @@ static const QString s_locationBroadcastSic{QStringLiteral("SFGPEVAL-------")};
   \sa setUdpPort
  */
 
-
 /*!
    \brief Constructs a default LocationBroadcast object with
    an optional \a parent.
@@ -51,16 +65,18 @@ static const QString s_locationBroadcastSic{QStringLiteral("SFGPEVAL-------")};
    \sa setUdpPort
  */
 LocationBroadcast::LocationBroadcast(QObject* parent) :
-  QObject(parent)
+  QObject(parent),
+  m_userName(QHostInfo::localHostName())
 {
 }
 
 /*!
-   \brief Constructs a LocationBroadcast object with \a messageType, \a updPort,
+   \brief Constructs a LocationBroadcast object with \a messageType, \a udpPort,
    and optional \a parent.
  */
 LocationBroadcast::LocationBroadcast(const QString& messageType, int udpPort, QObject* parent) :
   QObject(parent),
+  m_userName(QHostInfo::localHostName()),
   m_messageType(messageType),
   m_udpPort(udpPort)
 {
@@ -281,20 +297,20 @@ void LocationBroadcast::update()
   if (m_messageType.isEmpty() || m_udpPort == -1)
     return;
 
-  if (m_messageSender)
+  if (m_dataSender)
   {
-    delete m_messageSender;
-    m_messageSender = nullptr;
+    delete m_dataSender;
+    m_dataSender = nullptr;
     m_timer = nullptr;
   }
 
-  m_messageSender = new MessageSender(this);
+  m_dataSender = new DataSender(this);
 
-  QUdpSocket* udpSocket = new QUdpSocket(m_messageSender);
+  QUdpSocket* udpSocket = new QUdpSocket(m_dataSender);
   udpSocket->connectToHost(QHostAddress::Broadcast, m_udpPort, QIODevice::WriteOnly);
-  m_messageSender->setDevice(udpSocket);
+  m_dataSender->setDevice(udpSocket);
 
-  m_timer = new QTimer(m_messageSender);
+  m_timer = new QTimer(m_dataSender);
   connect(m_timer, &QTimer::timeout, this, [this]
   {
     broadcastLocation();
@@ -326,7 +342,7 @@ void LocationBroadcast::update()
  */
 void LocationBroadcast::broadcastLocation()
 {
-  if (!m_enabled || !m_messageSender || m_location.isEmpty())
+  if (!m_enabled || !m_dataSender || m_location.isEmpty())
     return;
 
   if (m_message.isEmpty())
@@ -339,7 +355,7 @@ void LocationBroadcast::broadcastLocation()
     m_message.setSymbolId(s_locationBroadcastSic);
 
     attribs.insert(Message::GEOMESSAGE_SIC_NAME, s_locationBroadcastSic);
-    attribs.insert(Message::GEOMESSAGE_UNIQUE_DESIGNATION_NAME, QHostInfo::localHostName());
+    attribs.insert(Message::GEOMESSAGE_UNIQUE_DESIGNATION_NAME, m_userName);
     const int status911 = m_inDistress ? 1 : 0;
     attribs.insert(Message::GEOMESSAGE_STATUS_911_NAME, status911);
     m_message.setAttributes(attribs);
@@ -357,7 +373,7 @@ void LocationBroadcast::broadcastLocation()
 
   emit messageChanged();
 
-  m_messageSender->sendMessage(m_message.toGeoMessage());
+  m_dataSender->sendData(m_message.toGeoMessage());
 }
 
 /*!
@@ -375,12 +391,41 @@ void LocationBroadcast::removeBroadcast()
 
     emit messageChanged();
 
-    if (m_messageSender)
-      m_messageSender->sendMessage(m_message.toGeoMessage());
+    if (m_dataSender)
+      m_dataSender->sendData(m_message.toGeoMessage());
   }
 }
 
 /*!
+   \brief Returns the user name for the location broadcast.
+ */
+QString LocationBroadcast::userName() const
+{
+  return m_userName;
+}
+
+/*!
+   \brief Sets the user name for the location broadcast to \a userName.
+ */
+void LocationBroadcast::setUserName(const QString& userName)
+{
+  if (userName == m_userName)
+    return;
+
+  m_userName = userName;
+
+  if (!m_message.isEmpty())
+  {
+    QVariantMap attribs = m_message.attributes();
+    attribs.insert(Message::GEOMESSAGE_UNIQUE_DESIGNATION_NAME, m_userName);
+    m_message.setAttributes(attribs);
+  }
+}
+
+// Signal Documentation
+/*!
   \fn void LocationBroadcast::messageChanged();
   \brief Signal emitted when the message for this location broadcast changes.
  */
+
+} // Dsa

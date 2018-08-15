@@ -1,23 +1,36 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
 
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
+
+// PCH header
+#include "pch.hpp"
+
+// example app headers
 #include "Message.h"
+
+// C++ API headers
 #include "Point.h"
-#include "Message_p.h"
 #include "PolygonBuilder.h"
 #include "PolylineBuilder.h"
 
-#include <QXmlStreamReader>
+// Qt headers
 #include <QDomDocument>
+#include <QXmlStreamReader>
+
+namespace Dsa {
 
 const QString Message::COT_ROOT_ELEMENT_NAME{QStringLiteral("events")};
 const QString Message::COT_ELEMENT_NAME{QStringLiteral("event")};
@@ -44,30 +57,54 @@ const QString Message::SIDC_NAME{QStringLiteral("sidc")};
 
 using namespace Esri::ArcGISRuntime;
 
+/*!
+  \class Dsa::Message
+  \inmodule Dsa
+  \brief A message shared between applications.
+ */
+
+/*!
+  \brief Default constructor.
+ */
 Message::Message() :
   d(new MessageData())
 {
 }
 
+/*!
+  \brief Constructor accepting a \a messageAction and a \a geometry.
+ */
 Message::Message(MessageAction messageAction, const Geometry& geometry) :
   d(new MessageData(messageAction, geometry))
 {
 }
 
+/*!
+  \brief Copy constructor.
+ */
 Message::Message(const Message& other) :
   d(other.d)
 {
 }
 
+/*!
+  \brief Move constructor.
+ */
 Message::Message(Message&& other) :
   d(std::move(other.d))
 {
 }
 
+/*!
+  \brief Destructor.
+ */
 Message::~Message()
 {
 }
 
+/*!
+  \brief Assignment operator.
+ */
 Message& Message::operator=(const Message& other)
 {
   if (d != other.d)
@@ -78,6 +115,9 @@ Message& Message::operator=(const Message& other)
   return *this;
 }
 
+/*!
+  \brief Move operator.
+ */
 Message& Message::operator=(Message&& other)
 {
   if (d != other.d)
@@ -88,6 +128,9 @@ Message& Message::operator=(Message&& other)
   return *this;
 }
 
+/*!
+  \brief Comparison operator.
+ */
 bool Message::operator==(const Message& other) const
 {
   return messageAction() == other.messageAction() &&
@@ -99,8 +142,12 @@ bool Message::operator==(const Message& other) const
       symbolId() == other.symbolId();
 }
 
-// Demetermines if the provided bytes contain a CoT event
-// or a GeoMessage and then forwards to the appropriate factory
+/*!
+  \brief Static method to create a message from a QByteArray \a message.
+
+  Demetermines if the provided bytes contain a CoT event
+  or a GeoMessage and then forwards to the appropriate factory
+ */
 Message Message::create(const QByteArray& message)
 {
   QDomDocument doc;
@@ -136,6 +183,9 @@ Message Message::create(const QByteArray& message)
   return Message();
 }
 
+/*!
+  \brief Static method to create from a Cot (Cursor on Target) QByteArray \a message.
+ */
 Message Message::createFromCoTMessage(const QByteArray& message)
 {
   // parse CoT XML bytes and build up a Message object from the
@@ -218,6 +268,9 @@ Message Message::createFromCoTMessage(const QByteArray& message)
   return cotMessage;
 }
 
+/*!
+  \brief Static method to create from a GeoMessage QByteArray \a message.
+ */
 Message Message::createFromGeoMessage(const QByteArray& message)
 {
   // parse GeoMessage XML bytes and build up a Message object from the
@@ -363,6 +416,9 @@ Message Message::createFromGeoMessage(const QByteArray& message)
   return geoMessage;
 }
 
+/*!
+  \brief Static method to convert a CoT type string \a cotType to a SIDC string.
+ */
 QString Message::cotTypeToSidc(const QString& cotType)
 {
   // converts a CoT type to a sidc symbol id code
@@ -416,6 +472,9 @@ QString Message::cotTypeToSidc(const QString& cotType)
   return retVal;
 }
 
+/*!
+  \brief Static method to convert an \a action string to a MessageAction enum value.
+ */
 Message::MessageAction Message::toMessageAction(const QString& action)
 {
   if (action.compare("remove", Qt::CaseInsensitive) == 0)
@@ -430,6 +489,9 @@ Message::MessageAction Message::toMessageAction(const QString& action)
   return MessageAction::Unknown;
 }
 
+/*!
+  \brief Static method to convert from a MessageAction enum value (\a action) to a string.
+ */
 QString Message::fromMessageAction(MessageAction action)
 {
   switch (action)
@@ -449,6 +511,9 @@ QString Message::fromMessageAction(MessageAction action)
   return QString();
 }
 
+/*!
+  \brief Returns whether the message is empty.
+ */
 bool Message::isEmpty() const
 {
   return d->attributes.isEmpty() && d->geometry.isEmpty() &&
@@ -457,76 +522,121 @@ bool Message::isEmpty() const
       d->messageAction == MessageAction::Unknown;
 }
 
+/*!
+  \brief Returns the current message action.
+ */
 Message::MessageAction Message::messageAction() const
 {
   return d->messageAction;
 }
 
+/*!
+  \brief Sets the current message action to \a messageAction.
+ */
 void Message::setMessageAction(MessageAction messageAction)
 {
   d->messageAction = messageAction;
 }
 
+/*!
+  \brief Returns the current message attributes.
+ */
 QVariantMap Message::attributes() const
 {
   return d->attributes;
 }
 
+/*!
+  \brief Sets the current message attributes to \a attributes.
+ */
 void Message::setAttributes(const QVariantMap& attributes)
 {
   d->attributes = attributes;
 }
 
+/*!
+  \brief Returns the current message geometry.
+ */
 Geometry Message::geometry() const
 {
   return d->geometry;
 }
 
+/*!
+  \brief Sets the current message geometry to \a geometry.
+ */
 void Message::setGeometry(const Geometry& geometry)
 {
   d->geometry = geometry;
 }
 
+/*!
+  \brief Returns the current message ID.
+ */
 QString Message::messageId() const
 {
   return d->messageId;
 }
 
+/*!
+  \brief Sets the current message ID to \a messageId.
+ */
 void Message::setMessageId(const QString& messageId)
 {
   d->messageId = messageId;
 }
 
+/*!
+  \brief Returns the current message name.
+ */
 QString Message::messageName() const
 {
   return d->messageName;
 }
 
+/*!
+  \brief Sets the current message name to \a messageName.
+ */
 void Message::setMessageName(const QString& messageName)
 {
   d->messageName = messageName;
 }
 
+/*!
+  \brief Returns the current message type.
+ */
 QString Message::messageType() const
 {
   return d->messageType;
 }
 
+/*!
+  \brief Sets the current message type to \a messageType.
+ */
 void Message::setMessageType(const QString& messageType)
 {
   d->messageType = messageType;
 }
 
+/*!
+  \brief Returns the current symbol ID.
+ */
 QString Message::symbolId() const
 {
   return d->symbolId;
 }
 
+/*!
+  \brief Sets the current symbol ID to \a symbolId.
+ */
 void Message::setSymbolId(const QString& symbolId)
 {
   d->symbolId = symbolId;
 }
 
+/*!
+  \brief Returns the current message as QByteArray in the GeoMessage format.
+ */
 QByteArray Message::toGeoMessage() const
 {
   QByteArray message;
@@ -583,16 +693,25 @@ QByteArray Message::toGeoMessage() const
   return message;
 }
 
+/*!
+  \internal
+ */
 MessageData::MessageData()
 {
 }
 
+/*!
+  \internal
+ */
 MessageData::MessageData(Message::MessageAction messageAction, const Geometry& geometry) :
   messageAction(messageAction),
   geometry(geometry)
 {
 }
 
+/*!
+  \internal
+ */
 MessageData::MessageData(const MessageData& other) :
   QSharedData(other),
   messageAction(other.messageAction),
@@ -605,6 +724,11 @@ MessageData::MessageData(const MessageData& other) :
 {
 }
 
+/*!
+  \internal
+ */
 MessageData::~MessageData()
 {
 }
+
+} // Dsa

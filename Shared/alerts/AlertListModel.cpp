@@ -1,28 +1,66 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
 
-#include "AlertConditionData.h"
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
+
+// PCH header
+#include "pch.hpp"
+
 #include "AlertListModel.h"
 
+// example app headers
+#include "AlertConditionData.h"
+
+// Qt headers
 #include <QUuid>
 
 using namespace Esri::ArcGISRuntime;
 
+namespace Dsa {
+
 /*!
-  \class AlertListModel
+  \class Dsa::AlertListModel
+  \inmodule Dsa
   \inherits QAbstractListModel
   \brief A model responsible for storing \l AlertConditionData objects and reporting when they
   change.
-  */
+
+  The model returns data for the following roles:
+  \table
+    \header
+        \li Role
+        \li Type
+        \li Description
+    \row
+        \li alertId
+        \li QUuid
+        \li The unique ID of the alert.
+    \row
+        \li name
+        \li QString
+        \li The name of the alert.
+    \row
+        \li level
+        \li int
+        \li The level of severity.
+    \row
+        \li viewed
+        \li bool
+        \li Whether the alert condition has been viewed.
+  \endtable
+ */
 
 /*!
   \brief Static method to return a singleton instance of the model.
@@ -52,11 +90,12 @@ AlertListModel::AlertListModel(QObject* parent):
  */
 AlertListModel::~AlertListModel()
 {
-
 }
 
 /*!
   \brief Adds a new \l AlertConditionData \a newConditionData to the model.
+
+  Returns \c true on success, else \c false.
  */
 bool AlertListModel::addAlertConditionData(AlertConditionData* newConditionData)
 {
@@ -109,7 +148,7 @@ bool AlertListModel::addAlertConditionData(AlertConditionData* newConditionData)
 }
 
 /*!
-  \brief Removes \l conditionData from the model.
+  \brief Removes \a conditionData from the model.
  */
 void AlertListModel::removeAlert(AlertConditionData* conditionData)
 {
@@ -143,7 +182,6 @@ AlertConditionData* AlertListModel::alertAt(int rowIndex) const
   return m_alerts.value(rowIndex, nullptr);
 }
 
-
 /*!
   \brief Removes the \l AlertConditionData at \a rowIndex.
  */
@@ -157,7 +195,6 @@ void AlertListModel::removeAt(int rowIndex)
   m_alerts.removeAt(rowIndex);
   endRemoveRows();
 }
-
 
 /*!
   \brief Returns the number of condition data objects in the model.
@@ -256,3 +293,5 @@ QHash<int, QByteArray> AlertListModel::roleNames() const
 {
   return m_roles;
 }
+
+} // Dsa

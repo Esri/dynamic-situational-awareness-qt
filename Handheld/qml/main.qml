@@ -1,15 +1,18 @@
-
-// Copyright 2016 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 import QtQuick 2.9
 import QtQuick.Controls 2.2
@@ -19,8 +22,8 @@ import QtQml.Models 2.2
 import QtGraphicalEffects 1.0
 import Esri.DSA 1.0
 import Esri.Handheld 1.0
-import Esri.ArcGISRuntime.Toolkit.Controls 100.2
-import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.2
+import Esri.ArcGISRuntime.Toolkit.Controls 100.3
+import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.3
 
 Handheld {
     id: appRoot
@@ -36,6 +39,7 @@ Handheld {
     signal clearDialogAccepted();
     signal closeDialogAccepted();
     signal inputDialogAccepted(var input, var index);
+    signal markupLayerReceived(var path, var overlayVisible);
 
     LocationController {
         id: locationController
@@ -178,6 +182,41 @@ Handheld {
             height: width
         }
 
+        CoordinateConversion {
+            id: coordinateConversion
+            anchors {
+                bottom: followHud.visible ? followHud.top : currentLocation.top
+                left: sceneView.left
+                right: navTool.left
+                margins: hudMargins
+            }
+
+            objectName: "coordinateConversion"
+            visible: false
+            geoView: sceneView
+            highlightColor : Material.accent
+            textColor: Material.foreground
+            backgroundColor: Material.background
+            fontSize: DsaStyles.toolFontPixelSize
+            fontFamily: DsaStyles.fontFamily
+            backgroundOpacity: hudOpacity
+            radius: hudRadius
+
+            onVisibleChanged: {
+                if (!visible)
+                    return;
+
+                if (mapToolRow.state !== "Convert XY") {
+                    mapToolRow.state = "Convert XY";
+                    categoryToolbar.state = "map";
+                }
+            }
+        }
+
+        ContextMenu {
+            id: contextMenu
+        }
+
         TableOfContents {
             id: tableOfContentsTool
             anchors {
@@ -206,8 +245,10 @@ Handheld {
             width: drawer.width
             visible: false
             isMobile: true
-
-            onClosed: visible = false;
+            onClosed: {
+                visible = false;
+                alertToolRow.state = "clear";
+            }
         }
 
         AlertConditionsTool {
@@ -220,8 +261,10 @@ Handheld {
             width: drawer.width
             visible: false
             isMobile: true
-
-            onClosed: visible = false;
+            onClosed: {
+                visible = false;
+                alertToolRow.state = "clear";
+            }
 
             onPickModeChanged: {
                 if (!toolActive)
@@ -252,9 +295,12 @@ Handheld {
             }
             width: drawer.width
             visible: false
-            isMobile: true
+
+            onMyLocationModeSelected: {
+                navTool.startFollowing();
+            }
+
             onClosed: {
-                visible = false;
                 analysisToolRow.state = "clear";
             }
         }
@@ -267,6 +313,58 @@ Handheld {
                 top: parent.top
             }
             visible: false
+        }
+
+        AnalysisList {
+            id: analysisListTool
+            anchors {
+                right: parent.right
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+            isMobile: true
+            onClosed: {
+                visible = false;
+                analysisToolRow.state = "clear";
+            }
+        }
+
+        ObservationReportTool {
+            id: observationReportTool
+            anchors {
+                right: parent.right
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+            isMobile: true
+            onClosed: {
+                visible = false;
+                reportToolRow.state = reportToolRow.clearState;
+            }
+
+            onVisibleChanged: {
+                if (!visible)
+                    return;
+
+                categoryToolbar.state = "reports";
+
+                if (reportToolRow.state !== reportToolRow.observationState)
+                    reportToolRow.state = reportToolRow.observationState;
+            }
+
+            onPickModeChanged: {
+                if (!toolActive)
+                    return;
+
+                if (pickMode)
+                    visible = false;
+                else
+                    visible = true;
+            }
         }
 
         PopupStackView {
@@ -351,41 +449,6 @@ Handheld {
                     onClosed: drawer.close();
                 }
             }
-        }
-
-        CoordinateConversion {
-            id: coordinateConversion
-            anchors {
-                bottom: followHud.visible ? followHud.top : currentLocation.top
-                left: sceneView.left
-                right: navTool.left
-                margins: hudMargins
-            }
-
-            objectName: "coordinateConversion"
-            visible: false
-            geoView: sceneView
-            highlightColor : Material.accent
-            textColor: Material.foreground
-            backgroundColor: Material.background
-            fontSize: DsaStyles.toolFontPixelSize
-            fontFamily: DsaStyles.fontFamily
-            opacity: hudOpacity
-            radius: hudRadius
-
-            onVisibleChanged: {
-                if (!visible)
-                    return;
-
-                if (mapToolRow.state !== "Convert XY") {
-                    mapToolRow.state = "Convert XY";
-                    categoryToolbar.state = "map";
-                }
-            }
-        }
-
-        ContextMenu {
-            id: contextMenu
         }
     }
 
@@ -486,16 +549,23 @@ Handheld {
 
     DsaInputDialog {
         id: inputDialog
-        property int i: 1
         onAccepted: {
-            i++;
-            inputDialogAccepted(inputDialog.userInputText, i);
+            inputDialogAccepted(inputDialog.userInputText, inputDialog.titleText);
         }
     }
 
-    function showInputDialog(labelText, placeholderText) {
+    function showInputDialog(titleText, labelText, placeholderText) {
+        inputDialog.titleText = titleText;
         inputDialog.inputLabel = labelText;
         inputDialog.inputPlaceholderText = placeholderText;
         inputDialog.open();
+    }
+
+    DsaYesNoDialog {
+        id: markupDialog
+        property string path
+
+        onAccepted: markupLayerReceived(path, true);
+        onRejected: markupLayerReceived(path, false);
     }
 }

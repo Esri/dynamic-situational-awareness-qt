@@ -1,80 +1,68 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
 
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
+
+// PCH header
+#include "pch.hpp"
+
+#include "AlertConditionsController.h"
+
+// example app headers
+#include "AlertConditionData.h"
+#include "AlertConditionListModel.h"
 #include "AlertConstants.h"
 #include "AlertListModel.h"
 #include "AttributeEqualsAlertCondition.h"
-#include "FixedValueAlertTarget.h"
-#include "AlertConditionData.h"
-#include "AlertConditionListModel.h"
-#include "AlertConditionsController.h"
 #include "FeatureLayerAlertTarget.h"
+#include "FixedValueAlertTarget.h"
 #include "GeoElementAlertTarget.h"
 #include "GraphicsOverlayAlertTarget.h"
+#include "GraphicsOverlaysResultsManager.h"
+#include "LayerResultsManager.h"
 #include "LocationAlertSource.h"
 #include "LocationAlertTarget.h"
 #include "MessageFeedConstants.h"
 #include "WithinAreaAlertCondition.h"
 #include "WithinDistanceAlertCondition.h"
 
+// toolkit headers
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
+// C++ API headers
 #include "ArcGISFeatureTable.h"
+#include "FeatureLayer.h"
 #include "GeoView.h"
 #include "GraphicsOverlay.h"
 #include "GraphicsOverlayListModel.h"
-#include "FeatureLayer.h"
 #include "Layer.h"
 #include "LayerListModel.h"
 
+// Qt headers
 #include <QEventLoop>
 #include <QJsonArray>
 #include <QJsonObject>
 
 using namespace Esri::ArcGISRuntime;
 
-struct ResultsManager {
-
-  QList<IdentifyLayerResult*>& m_results;
-
-  ResultsManager(QList<IdentifyLayerResult*>& results):
-    m_results(results)
-  {
-  }
-
-  ~ResultsManager()
-  {
-    qDeleteAll(m_results);
-  }
-};
-
-struct GraphicsResultsManager {
-
-  QList<IdentifyGraphicsOverlayResult*>& m_results;
-
-  GraphicsResultsManager(QList<IdentifyGraphicsOverlayResult*>& results):
-    m_results(results)
-  {
-  }
-
-  ~GraphicsResultsManager()
-  {
-    qDeleteAll(m_results);
-  }
-};
+namespace Dsa {
 
 /*!
-  \class AlertConditionsController
+  \class Dsa::AlertConditionsController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for working with the conditions which can trigger alerts.
 
@@ -137,7 +125,7 @@ QString AlertConditionsController::toolName() const
  * \list
  *  \li Conditions. A list of JSON objects describing alert conditions to be added to the map.
  *  \li MessageFeeds. A list of real-time feeds to be used as condition sources.
- * \endList
+ * \endlist
  */
 void AlertConditionsController::setProperties(const QVariantMap& properties)
 {
@@ -166,14 +154,16 @@ void AlertConditionsController::setProperties(const QVariantMap& properties)
   if (conditionsData.isNull())
     return;
 
-  m_storedConditions.clear();
-
   const auto conditionsList = conditionsData.toList();
   if (conditionsList.isEmpty())
     return;
 
   QJsonArray conditionsJsonArray = QJsonArray::fromVariantList(conditionsList);
   if (conditionsJsonArray.isEmpty())
+    return;
+
+  // only update stored connections at startup
+  if (!m_storedConditions.isEmpty() || m_conditions->rowCount() > 0)
     return;
 
   auto it = conditionsJsonArray.constBegin();
@@ -370,8 +360,8 @@ bool AlertConditionsController::addWithinAreaAlert(const QString& conditionName,
     \li \a levelIndex. The \l AlertLevel for the condition.
     \li \a sourceFeedName. The name of the source feed
       (e.g. a \l Esri::ArcGISRuntime::GraphicsOverlay) used to create an \l AlertSource.
-    \li attributeName. The name of the attribute to query.
-    \li targetValue. The attribute value to check for.
+    \li \a attributeName. The name of the attribute to query.
+    \li \a targetValue. The attribute value to check for.
   \endlist
 
   Returns \c true if the condition was succesfully added
@@ -485,6 +475,7 @@ void AlertConditionsController::updateConditionLevel(int rowIndex, int level)
 }
 
 /*!
+  \property AlertConditionsController::sourceNames
   \brief Returns a QAbstractItemModel containing the list of
   names for creating condition sources.
 
@@ -496,6 +487,7 @@ QAbstractItemModel* AlertConditionsController::sourceNames() const
 }
 
 /*!
+  \property AlertConditionsController::targetNames
   \brief Returns a QAbstractItemModel containing the list of
   names for creating condition targets.
 
@@ -507,6 +499,7 @@ QAbstractItemModel* AlertConditionsController::targetNames() const
 }
 
 /*!
+  \property AlertConditionsController::levelNames
   \brief Returns a QAbstractItemModel containing the list of
   level names for creating condition targets.
 
@@ -518,6 +511,7 @@ QAbstractItemModel* AlertConditionsController::levelNames() const
 }
 
 /*!
+  \property AlertConditionsController::conditionsList
   \brief Returns a QAbstractItemModel containing the list of
   conditions.
 
@@ -529,6 +523,7 @@ QAbstractItemModel* AlertConditionsController::conditionsList() const
 }
 
 /*!
+  \property AlertConditionsController::pickMode
   \brief Returns whether the tool is in pick mode or not.
  */
 bool AlertConditionsController::pickMode() const
@@ -605,7 +600,7 @@ void AlertConditionsController::onLayersChanged()
       else
       {
         newTargetList.append(featLayer->name());
-        existingLayerIds.append(featLayer->layerId());
+        existingLayerIds.append(featLayer->name());
       }
     }
   }
@@ -704,7 +699,7 @@ void AlertConditionsController::onIdentifyLayersCompleted(const QUuid& taskId, Q
   if (taskId != m_identifyLayersWatcher.taskId())
     return;
 
-  ResultsManager resultsManager(identifyResults);
+  LayerResultsManager resultsManager(identifyResults);
 
   if (!isActive())
     return;
@@ -772,7 +767,7 @@ void AlertConditionsController::onIdentifyGraphicsOverlaysCompleted(const QUuid&
   if (taskId != m_identifyGraphicsWatcher.taskId())
     return;
 
-  GraphicsResultsManager resultsManager(identifyResults);
+  GraphicsOverlaysResultsManager resultsManager(identifyResults);
 
   if (!isActive())
     return;
@@ -1071,11 +1066,11 @@ AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int
       {
         if (itemId == -1)
         {
-          if (!m_layerTargets.contains(featLayer->layerId()))
-            m_layerTargets.insert(featLayer->layerId(), new FeatureLayerAlertTarget(featLayer));
+          if (!m_layerTargets.contains(featLayer->name()))
+            m_layerTargets.insert(featLayer->name(), new FeatureLayerAlertTarget(featLayer));
 
-          targetDescription = featLayer->layerId();
-          return m_layerTargets.value(featLayer->layerId(), nullptr);
+          targetDescription = featLayer->name();
+          return m_layerTargets.value(featLayer->name(), nullptr);
         }
         else
         {
@@ -1262,3 +1257,39 @@ QStringList AlertConditionsController::realtimeFeedNames() const
   return m_messageFeedTypesToNames.values();
 }
 
+} // Dsa
+
+// Signal Documentation
+/*!
+  \fn void AlertConditionsController::sourceNamesChanged();
+  \brief Signal emitted when the source names change.
+ */
+
+/*!
+  \fn void AlertConditionsController::targetNamesChanged();
+  \brief Signal emitted when the target names change.
+ */
+
+/*!
+  \fn void AlertConditionsController::conditionsListChanged();
+  \brief Signal emitted when the conditions list changes.
+ */
+
+/*!
+  \fn void AlertConditionsController::pickModeChanged();
+  \brief Signal emitted when the pick mode changes.
+ */
+
+/*!
+  \fn void AlertConditionsController::pickedElement(const QString& overlayName, int elementId);
+  \brief Signal emitted when an element is picked, passing the selected \a overlayName and \a elementId
+  through as parameters.
+ */
+
+/*!
+  \fn void AlertConditionsController::toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
+  \brief Signal emitted when an error occurs.
+
+  An \a errorMessage and \a additionalMessage are passed through as parameters, describing
+  the error that occurred.
+ */

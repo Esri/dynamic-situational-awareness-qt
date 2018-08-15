@@ -1,29 +1,34 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 #ifndef LINEOFSIGHTCONTROLLER_H
 #define LINEOFSIGHTCONTROLLER_H
 
+// toolkit headers
 #include "AbstractTool.h"
 
+// C++ API headers
 #include "Point.h"
 #include "TaskWatcher.h"
 
+// Qt headers
 #include <QAbstractItemModel>
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
+namespace Esri {
+namespace ArcGISRuntime {
   class AnalysisOverlay;
   class GeoElement;
   class GeoView;
@@ -35,12 +40,15 @@ namespace ArcGISRuntime
 
 class QStringListModel;
 
+namespace Dsa {
+
 class LineOfSightController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
   Q_OBJECT
 
   Q_PROPERTY(QAbstractItemModel* overlayNames READ overlayNames NOTIFY overlayNamesChanged)
   Q_PROPERTY(bool analysisVisible READ isAnalysisVisible WRITE setAnalysisVisible NOTIFY analysisVisibleChanged)
+  Q_PROPERTY(int visibleByCount READ visibleByCount NOTIFY visibleByCountChanged)
 
 public:
 
@@ -52,7 +60,7 @@ public:
 
   QAbstractItemModel* overlayNames() const;
 
-  Q_INVOKABLE void selectOverlayIndex(int overlayIndex);
+  Q_INVOKABLE bool selectOverlayIndex(int overlayIndex);
   Q_INVOKABLE void clearAnalysis();
 
   bool isAnalysisVisible() const;
@@ -60,10 +68,15 @@ public:
 
   Esri::ArcGISRuntime::AnalysisOverlay* lineOfSightOverlay() const;
 
+  void lineOfSightFromLocationToGeoElement(Esri::ArcGISRuntime::GeoElement* geoElement);
+
+  int visibleByCount() const;
+
 signals:
   void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
   void overlayNamesChanged();
   void analysisVisibleChanged();
+  void visibleByCountChanged();
 
 public slots:
   void onGeoViewChanged(Esri::ArcGISRuntime::GeoView* geoView);
@@ -75,6 +88,7 @@ private slots:
 private:
   void cancelTask();
   void getLocationGeoElement();
+  void setVisibleByCount(int visibleByCount);
 
   QStringListModel* m_overlayNames;
   Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
@@ -85,6 +99,10 @@ private:
   Esri::ArcGISRuntime::GeoElement* m_locationGeoElement = nullptr;
   QMetaObject::Connection m_queryFeaturesConnection;
   bool m_analysisVisible = true;
+  int m_visibleByCount = 0;
+  QList<QMetaObject::Connection> m_visibleByConnections;
 };
+
+} // Dsa
 
 #endif // LINEOFSIGHTCONTROLLER_H

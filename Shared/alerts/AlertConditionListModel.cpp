@@ -1,18 +1,65 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
 
-#include "AlertCondition.h"
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
+
+// PCH header
+#include "pch.hpp"
+
 #include "AlertConditionListModel.h"
 
+// example app headers
+#include "AlertCondition.h"
+
+namespace Dsa {
+
+/*!
+  \class Dsa::AlertConditionListModel
+  \inmodule Dsa
+  \inherits QAbstractListModel
+  \brief A model for storing \l AlertCondition objects and reporting when they
+  change.
+
+  The model returns data for the following roles:
+  \table
+    \header
+        \li Role
+        \li Type
+        \li Description
+    \row
+        \li conditionName
+        \li QString
+        \li The name of the alert condition.
+    \row
+        \li level
+        \li int
+        \li The level of the alert.
+    \row
+        \li description
+        \li QString
+        \li The description of the alert condition.
+    \row
+        \li conditionEnabled
+        \li bool
+        \li Whether the alert condition is enabled.
+  \endtable
+  */
+
+/*!
+  \brief Constructor for a model taking an optional \a parent.
+ */
 AlertConditionListModel::AlertConditionListModel(QObject* parent):
   QAbstractListModel(parent)
 {
@@ -22,11 +69,18 @@ AlertConditionListModel::AlertConditionListModel(QObject* parent):
   m_roles[AlertConditionListRoles::ConditionEnabled] = "conditionEnabled";
 }
 
+/*!
+  \brief Destructor.
+ */
 AlertConditionListModel::~AlertConditionListModel()
 {
-
 }
 
+/*!
+  \brief Adds a new \l AlertCondition \a condition to the model.
+
+  Returns \c false if \a condition is nullptr, otherwise returns \c true.
+ */
 bool AlertConditionListModel::addAlertCondition(AlertCondition* condition)
 {
   if (!condition)
@@ -61,11 +115,17 @@ bool AlertConditionListModel::addAlertCondition(AlertCondition* condition)
   return true;
 }
 
+/*!
+  \brief Return the \l AlertCondition at \a rowIndex.
+ */
 AlertCondition* AlertConditionListModel::conditionAt(int rowIndex) const
 {
   return m_conditions.value(rowIndex, nullptr);
 }
 
+/*!
+  \brief Removes condition at \a rowIndex from the model.
+ */
 void AlertConditionListModel::removeAt(int rowIndex)
 {
   AlertCondition* condition = conditionAt(rowIndex);
@@ -77,11 +137,19 @@ void AlertConditionListModel::removeAt(int rowIndex)
   endRemoveRows();
 }
 
+/*!
+  \brief Returns the number of condition objects in the model.
+ */
 int AlertConditionListModel::rowCount(const QModelIndex&) const
 {
   return m_conditions.size();
 }
 
+/*!
+  \brief Returns the data stored under \a role at \a index in the model.
+
+  The role should make use of the \l AlertConditionListRoles enum.
+ */
 QVariant AlertConditionListModel::data(const QModelIndex& index, int role) const
 {
   if (index.row() < 0 || index.row() > rowCount())
@@ -161,7 +229,14 @@ bool AlertConditionListModel::setData(const QModelIndex& index, const QVariant& 
   return valueSet;
 }
 
+/*!
+  \brief Returns the hash of role names used by the model.
+
+  The roles are based on the \l AlertListRoles enum.
+ */
 QHash<int, QByteArray> AlertConditionListModel::roleNames() const
 {
   return m_roles;
 }
+
+} // Dsa

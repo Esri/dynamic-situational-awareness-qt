@@ -9,20 +9,16 @@
         <file>icons/xhdpi/drawer_large.png</file>
         <file>icons/xhdpi/ic_menu_layervisibilitypopover_dark_d.png</file>
         <file>icons/xhdpi/ic_menu_add_dark_d.png</file>
-        <file>icons/xhdpi/ic_menu_messages_dark.png</file>
         <file>icons/xhdpi/ic_menu_gpsondontfollow_dark.png</file>
         <file>icons/xhdpi/navigation_north.png</file>
         <file>icons/xhdpi/ic_menu_openlistview_dark.png</file>
         <file>icons/xhdpi/ic_menu_zoomtofeature_light.png</file>
         <file>icons/xhdpi/icon-64-coorconv-white.png</file>
-        <file>icons/xhdpi/ic_menu_linelayer_light.png</file>
-        <file>icons/xhdpi/ic_menu_pointlayer_light.png</file>
-        <file>icons/xhdpi/ic_menu_polygonlayer_light.png</file>
         <file>icons/xhdpi/raster_layer.png</file>
         <file>icons/xhdpi/ic_menu_subtract_dark_d.png</file>
         <file>icons/xhdpi/2D.png</file>
         <file>icons/xhdpi/3D.png</file>
-        <file>icons/xhdpi/message/enemycontact1600.png</file>
+        <file>icons/xhdpi/message/observation1600.png</file>
         <file>icons/xhdpi/message/eod1600.png</file>
         <file>icons/xhdpi/message/saevents.png</file>
         <file>icons/xhdpi/message/sensorobs1600.png</file>
@@ -30,7 +26,6 @@
         <file>icons/xhdpi/ic_menu_completedone_dark.png</file>
         <file>icons/xhdpi/ic_menu_failedlayer.png</file>
         <file>icons/xhdpi/ic_menu_freehandsketchoff_dark.png</file>
-        <file>icons/xhdpi/ic_menu_video_dark_d.png</file>
         <file>icons/xhdpi/ic_menu_settings_dark_d.png</file>
         <file>icons/xhdpi/ic_menu_home_dark.png</file>
         <file>icons/xhdpi/ic_menu_editmap_dark_d-2.png</file>
@@ -41,19 +36,34 @@
         <file>icons/xhdpi/ic_menu_sendmap_dark_d.png</file>
         <file>icons/xhdpi/ic_menu_trash_dark_d.png</file>
         <file>icons/xhdpi/ic_menu_aboutmap_dark.png</file>
-        <file>icons/xhdpi/ic_menu_refresh_dark.png</file>
         <file>icons/xhdpi/applogo.png</file>
         <file>icons/xhdpi/ic_menu_overflowcirclessmall_dark_d.png</file>
-        <file>icons/xhdpi/warning_green.png</file>
-        <file>icons/xhdpi/warning_orange.png</file>
-        <file>icons/xhdpi/warning_red.png</file>
         <file>icons/xhdpi/ic_menu_sketchlinepopover_dark_d.png</file>
         <file>icons/xhdpi/ic_menu_colorpalette_dark_d.png</file>
-        <file>icons/xhdpi/warning_red_exclamation.png</file>
-        <file>icons/xhdpi/distressIconGray.svg</file>
-        <file>icons/xhdpi/distressIconRed.svg</file>
         <file>icons/xhdpi/message/friendlytracks.png</file>
         <file>icons/xhdpi/message/friendlytracks-air.png</file>
         <file>icons/xhdpi/line_of_sight.png</file>
+        <file>icons/xhdpi/distressIconGray.png</file>
+        <file>icons/xhdpi/distressIconRed.png</file>
+        <file>icons/xhdpi/dsa_home.png</file>
+        <file>icons/xhdpi/Alert.png</file>
+        <file>icons/xhdpi/Create_Report.png</file>
+        <file>icons/xhdpi/Viewshed_Tool.png</file>
+        <file>icons/xhdpi/Point.png</file>
+        <file>icons/xhdpi/Polygon.png</file>
+        <file>icons/xhdpi/Polyline.png</file>
+        <file>icons/xhdpi/Real_Time_Feeds.png</file>
+        <file>icons/xhdpi/Rotate_Mode.png</file>
+        <file>icons/xhdpi/GPS_Off.png</file>
+        <file>icons/xhdpi/Touch.png</file>
+        <file>icons/xhdpi/ic_menu_usecurrentlocation_dark_d.png</file>
+        <file>icons/xhdpi/View_Alert_Conditions.png</file>
+        <file>icons/xhdpi/View_Alerts.png</file>
+        <file>icons/xhdpi/pin.png</file>
+        <file>icons/xhdpi/save.png</file>
+        <file>icons/xhdpi/Alert_Critical.png</file>
+        <file>icons/xhdpi/Alert_High.png</file>
+        <file>icons/xhdpi/Alert_Low.png</file>
+        <file>icons/xhdpi/Alert_Moderate.png</file>
     </qresource>
 </RCC>

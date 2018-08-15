@@ -1,40 +1,56 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
 
-#include "AlertConditionData.h"
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
+
+// PCH header
+#include "pch.hpp"
+
 #include "AlertListController.h"
+
+// example app headers
+#include "AlertConditionData.h"
 #include "AlertListModel.h"
 #include "AlertListProxyModel.h"
 #include "AlertSource.h"
-#include "PointHighlighter.h"
 #include "DsaUtility.h"
 #include "IdsAlertFilter.h"
+#include "PointHighlighter.h"
 #include "StatusAlertFilter.h"
 
+// toolkit headers
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
+// C++ API headers
 #include "GeoView.h"
 #include "GraphicsOverlay.h"
 #include "SceneView.h"
 #include "SimpleMarkerSceneSymbol.h"
 #include "SimpleRenderer.h"
 
+// Qt headers
 #include <QTimer>
 
 using namespace Esri::ArcGISRuntime;
 
+namespace Dsa {
+
 /*!
-  \class AlertListController
+  \class Dsa::AlertListController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for working with the list of condition data which can trigger alerts.
 
@@ -81,6 +97,7 @@ AlertListController::~AlertListController()
 }
 
 /*!
+  \property AlertListController::alertListModel
   \brief Returns a model containing the filtered list of active alert condition data.
  */
 QAbstractItemModel* AlertListController::alertListModel() const
@@ -89,6 +106,7 @@ QAbstractItemModel* AlertListController::alertListModel() const
 }
 
 /*!
+  \property AlertListController::allAlertsCount
   \brief Returns the count of all alerts - ignoring any filters.
  */
 int AlertListController::allAlertsCount() const
@@ -130,7 +148,7 @@ QString AlertListController::toolName() const
 
   \note Only one alert can be highlighted at a given time.
 
-  \sa PointHighlighter.
+  \sa PointHighlighter
  */
 void AlertListController::highlight(int rowIndex, bool showHighlight)
 {
@@ -258,7 +276,6 @@ void AlertListController::dismiss(int rowIndex)
   m_alertsProxyModel->applyFilter(m_filters);
 }
 
-
 /*!
   \brief Sets the minimum \l AlertLevel for the current \l StatusAlertFilter to \a level.
  */
@@ -301,9 +318,27 @@ void AlertListController::flashAll(bool highlight)
   for (int i = 0; i < modelSize; ++i)
   {
     AlertConditionData* alert = model->alertAt(i);
-    if (!alert || !alert->isActive())
+    if (!alert || !alert->isActive() || !alert->isConditionEnabled())
       continue;
 
     alert->highlight(highlight);
   }
 }
+
+} // Dsa
+
+// Signal Documentation
+/*!
+  \fn void AlertListController::alertListModelChanged();
+  \brief Signal emitted when the alert list model changes.
+ */
+
+/*!
+  \fn void AlertListController::allAlertsCountChanged();
+  \brief Signal emitted when the alert count changes.
+ */
+
+/*!
+  \fn void AlertListController::highlightStopped();
+  \brief Signal emitted highlighting has stopped.
+ */

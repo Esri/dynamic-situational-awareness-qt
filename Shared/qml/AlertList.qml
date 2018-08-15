@@ -1,15 +1,18 @@
-
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 import QtQuick 2.6
 import QtQuick.Controls 2.1
@@ -19,7 +22,7 @@ import Esri.DSA 1.0
 
 DsaPanel {
     id: alertsRoot
-    title: qsTr("Alerts")
+    title: qsTr("Active Alerts")
     clip: true
 
     property int hightlightIndex: -1
@@ -57,11 +60,12 @@ DsaPanel {
             height: 40 * scaleFactor
             itemChecked: true
             imageUrl: level === 1 ?
-                          DsaResources.iconWarningGreen
-                        : ( level === 2 ? DsaResources.iconWarningOrange
-                                        : ( level === 3 ? DsaResources.iconWarningRed
-                                                        : DsaResources.iconWarningRedExclamation) )
+                          DsaResources.iconAlertLow
+                        : ( level === 2 ? DsaResources.iconAlertModerate
+                                        : ( level === 3 ? DsaResources.iconAlertHigh
+                                                        : DsaResources.iconAlertCritical) )
             imageVisible: true
+            imageFrameVisible: false
             checkBoxVisible: false
             mainText: name
             menuIconVisible: true
@@ -107,7 +111,6 @@ DsaPanel {
                         anchors.margins: 10 * scaleFactor
                         width: parent.width
                         spacing: 10 * scaleFactor
-                        leftPadding: 10 * scaleFactor
 
                         ListLabel {
                             text: "Zoom to"
@@ -135,6 +138,7 @@ DsaPanel {
 
                         ListLabel {
                             text: "Dismiss"
+                            separatorVisible: false
                             onTriggered: {
                                 alertMenu.close();
                                 toolController.dismiss(index);
@@ -324,8 +328,6 @@ DsaPanel {
                 }
             }
 
-            ListSeparator{}
-
             ListLabel {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: alertsView.currentIndex === hightlightIndex ? "Highlight (off)" : "Highlight"
@@ -343,11 +345,10 @@ DsaPanel {
                 }
             }
 
-            ListSeparator{}
-
             ListLabel {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: "Dismiss"
+                separatorVisible: false
                 onTriggered: {
                     toolController.dismiss(alertsView.currentIndex);
                     mobileMenu.close();

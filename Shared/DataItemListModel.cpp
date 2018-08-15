@@ -1,39 +1,83 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
 
-#include <QAbstractListModel>
-#include <QByteArray>
-#include <QHash>
-#include <QModelIndex>
-#include <QObject>
-#include <QVariant>
-#include <QFileInfo>
-#include <QDir>
-#include <QList>
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
+
+// PCH header
+#include "pch.hpp"
 
 #include "DataItemListModel.h"
 
+// Qt headers
+#include <QAbstractListModel>
+#include <QByteArray>
+#include <QDir>
+#include <QFileInfo>
+#include <QHash>
+#include <QList>
+#include <QModelIndex>
+#include <QObject>
+#include <QVariant>
+
+namespace Dsa {
+
+/*!
+  \class Dsa::DataItemListModel
+  \inmodule Dsa
+  \inherits QAbstractListModel
+  \brief A model responsible for storing data items (such as local layers) and reporting when they
+  change.
+
+  The model returns data for the following roles:
+  \table
+    \header
+        \li Role
+        \li Type
+        \li Description
+    \row
+        \li fullPath
+        \li QString
+        \li The full path to the data item.
+    \row
+        \li fileName
+        \li QString
+        \li The file name of the data item.
+  \endtable
+ */
+
+/*!
+  \brief Constructor for a model taking an optional \a parent.
+ */
 DataItemListModel::DataItemListModel(QObject* parent) :
   QAbstractListModel(parent)
 {
   setupRoles();
 }
 
+/*!
+  \internal
+ */
 void DataItemListModel::setupRoles()
 {
   m_roles[FullPathRole] = "fullPath";
   m_roles[FileNameRole] = "fileName";
 }
 
+/*!
+  \brief Adds a new local data item located at \a fullPath.
+ */
 void DataItemListModel::addDataItem(const QString& fullPath)
 {
   beginInsertRows(QModelIndex(), rowCount(), rowCount());
@@ -41,12 +85,24 @@ void DataItemListModel::addDataItem(const QString& fullPath)
   endInsertRows();
 }
 
+/*!
+  \brief Returns the number of data items in the model.
+
+  \list
+  \li \a parent - The parent object (unused).
+  \endlist
+ */
 int DataItemListModel::rowCount(const QModelIndex& parent) const
 {
   Q_UNUSED(parent);
   return m_dataItems.count();
 }
 
+/*!
+  \brief Returns the data stored under \a role at \a index in the model.
+
+  The role should make use of the \l DataItemRoles enum.
+ */
 QVariant DataItemListModel::data(const QModelIndex& index, int role) const
 {
   if (index.row() < 0 || index.row() >= m_dataItems.count())
@@ -71,11 +127,19 @@ QVariant DataItemListModel::data(const QModelIndex& index, int role) const
   return retVal;
 }
 
+/*!
+  \brief Returns the hash of role names used by the model.
+
+  The roles are based on the \l DataItemRoles enum.
+ */
 QHash<int, QByteArray> DataItemListModel::roleNames() const
 {
   return m_roles;
 }
 
+/*!
+  \brief Clears the model.
+ */
 void DataItemListModel::clear()
 {
   beginResetModel();
@@ -83,6 +147,9 @@ void DataItemListModel::clear()
   endResetModel();
 }
 
+/*!
+  \brief Returns the \l DataType of the item at \a index in the model.
+ */
 DataType DataItemListModel::getDataItemType(int index)
 {
   if (index >= m_dataItems.size())
@@ -91,6 +158,9 @@ DataType DataItemListModel::getDataItemType(int index)
   return m_dataItems.at(index).dataType;
 }
 
+/*!
+  \brief Returns the path of the item at \a index in the model.
+ */
 QString DataItemListModel::getDataItemPath(int index) const
 {
   if (index >= m_dataItems.size())
@@ -99,7 +169,10 @@ QString DataItemListModel::getDataItemPath(int index) const
   return m_dataItems.at(index).fullPath;
 }
 
-// c'tor for DataItem struct
+/*!
+  \internal
+  c'tor for DataItem struct
+ */
 DataItemListModel::DataItem::DataItem(const QString& fullPath):
   fullPath(fullPath)
 {
@@ -122,8 +195,13 @@ DataItemListModel::DataItem::DataItem(const QString& fullPath):
     dataType = DataType::SceneLayerPackage;
   else if (fileExtension.compare("vtpk", Qt::CaseInsensitive) == 0)
     dataType = DataType::VectorTilePackage;
+  else if (fileExtension.compare("markup", Qt::CaseInsensitive) == 0)
+    dataType = DataType::Markup;
   else if (rasterExtensions.contains(fileExtension.toLower()))
     dataType = DataType::Raster;
   else
     dataType = DataType::Unknown;
 }
+
+} // Dsa
+

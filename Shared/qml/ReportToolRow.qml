@@ -1,98 +1,70 @@
-// Copyright 2016 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
 import QtQuick.Window 2.2
 import Esri.DSA 1.0
-import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.2
+import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.3
 
 Row {
     id: reportToolRow
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
     spacing: 10 * scaleFactor
     visible: categoryToolbar.state === "reports"
     onVisibleChanged: state = "clear"
 
+    property alias observationState: observationIcon.toolName
+    property string clearState: "clear"
+
     states: [
         State {
-            name: enemyIcon.toolName
+            name: observationIcon.toolName
             PropertyChanges {
-                target: enemyIcon
-                selected: true
-            }
-        },
-        State {
-            name: sigactIcon.toolName
-            PropertyChanges {
-                target: sigactIcon
-                selected: true
-            }
-        },
-        State {
-            name: cotIcon.toolName
-            PropertyChanges {
-                target: cotIcon
+                target: observationIcon
                 selected: true
             }
         },
 
         State {
-            name: "clear"
+            name: clearState
             PropertyChanges {
-                target: cotIcon
-                selected: false
-            }
-            PropertyChanges {
-                target: enemyIcon
-                selected: false
-            }
-            PropertyChanges {
-                target: sigactIcon
+                target: observationIcon
                 selected: false
             }
         }
     ]
 
-    // Enemy Tool
+    // Observation Tool
     ToolIcon {
-        id: enemyIcon
+        id: observationIcon
         iconSource: DsaResources.iconCreateReport
-        toolName: "Enemy"
+        toolName: "Observation"
         onToolSelected: {
-            reportToolRow.state = toolName;
-            console.log("send Enemy report");
+            if (selected) {
+                reportToolRow.state = clearState;
+                selected = false;
+            }
+            else
+                reportToolRow.state = toolName;
         }
-    }
 
-    // SIGACT Tool
-    ToolIcon {
-        id: sigactIcon
-        iconSource: DsaResources.iconCreateReport
-        toolName: "SIGACT"
-        onToolSelected: {
-            reportToolRow.state = toolName;
-            console.log("send SIGACT report");
-        }
-    }
-
-    // CoT Tool
-    ToolIcon {
-        id: cotIcon
-        iconSource: DsaResources.iconCreateReport
-        toolName: "CoT"
-        onToolSelected: {
-            reportToolRow.state = toolName;
-            console.log("send CoT report");
+        onSelectedChanged: {
+            observationReportTool.visible = selected;
         }
     }
 }

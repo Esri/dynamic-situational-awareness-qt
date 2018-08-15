@@ -1,37 +1,66 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
 
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
+
+// PCH header
+#include "pch.hpp"
+
+#include "LineOfSightController.h"
+
+// example app headers
 #include "FeatureQueryResultManager.h"
 #include "LocationController.h"
 #include "LocationDisplay3d.h"
-#include "LineOfSightController.h"
 
+// toolkit headers
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
+// C++ API headers
 #include "AnalysisOverlay.h"
+#include "FeatureLayer.h"
 #include "GeoElementLineOfSight.h"
 #include "GeoView.h"
 #include "GeometryEngine.h"
-#include "FeatureLayer.h"
 #include "LayerListModel.h"
 #include "SceneView.h"
 
+// Qt headers
 #include <QStringListModel>
 
 using namespace Esri::ArcGISRuntime;
 
+namespace Dsa {
+
 /*!
-  \brief Constructor accepting an optional \a parent.
+  \class Dsa::LineOfSightController
+  \inmodule Dsa
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller for creating line of sight analysis.
+
+  This tool allows line of sight analysis to be created:
+
+  \list
+    \li From the objects in a feature layer to the current position.
+    \li From the current position to a supplied GeoElement.
+  \endlist
+ */
+
+/*!
+  \internal
  */
 void LineOfSightController::getLocationGeoElement()
 {
@@ -40,6 +69,31 @@ void LineOfSightController::getLocationGeoElement()
     m_locationGeoElement = locationController->locationDisplay()->locationGraphic();
 }
 
+/*!
+  \property LineOfSightController::visibleByCount
+  \brief Returns the number of line of sight analyses from features to the current position
+  which are unobstructed.
+ */
+int LineOfSightController::visibleByCount() const
+{
+  return m_visibleByCount;
+}
+
+/*!
+  \internal
+ */
+void LineOfSightController::setVisibleByCount(int visibleByCount)
+{
+  if (m_visibleByCount == visibleByCount)
+    return;
+
+  m_visibleByCount = visibleByCount;
+  emit visibleByCountChanged();
+}
+
+/*!
+  \brief Constructor accepting an optional \a parent.
+ */
 LineOfSightController::LineOfSightController(QObject* parent):
   Toolkit::AbstractTool(parent),
   m_overlayNames(new QStringListModel(this)),
@@ -57,6 +111,9 @@ LineOfSightController::LineOfSightController(QObject* parent):
   {
     onOperationalLayersChanged(Toolkit::ToolResourceProvider::instance()->operationalLayers());
   });
+
+  onGeoViewChanged(Toolkit::ToolResourceProvider::instance()->geoView());
+  onOperationalLayersChanged(Toolkit::ToolResourceProvider::instance()->operationalLayers());
 }
 
 /*!
@@ -154,8 +211,12 @@ void LineOfSightController::onOperationalLayersChanged(LayerListModel* operation
         }
         else
         {
-          overlayNames.append(featLayer->name());
-          m_overlays.append(featLayer);
+          // Only point layers are suitable for Line of sight
+          if (featLayer->featureTable()->geometryType() == GeometryType::Point)
+          {
+            overlayNames.append(featLayer->name());
+            m_overlays.append(featLayer);
+          }
         }
       }
     }
@@ -199,6 +260,12 @@ void LineOfSightController::onQueryFeaturesCompleted(QUuid taskId, FeatureQueryR
     return;
   }
 
+  for (const auto& conn : m_visibleByConnections)
+    disconnect(conn);
+
+  m_visibleByConnections.clear();
+  setVisibleByCount(0);
+
   // clear the QObject used as a parent for Line of Sight results
   if (m_lineOfSightParent)
   {
@@ -211,8 +278,8 @@ void LineOfSightController::onQueryFeaturesCompleted(QUuid taskId, FeatureQueryR
   // These are only required within the scope of this method
   QObject localParent;
 
-  // For each feature, obtain a point location and use it as the target for a new
-  // LocationLineOfSight which will be added to the overlay.
+  // For each feature, obtain a point location and use it as the observer for a new
+  // GeoElementLineOfSight which will be added to the overlay.
   QList<Feature*> features = resultsMgr.m_results->iterator().features(&localParent);
   auto it = features.constBegin();
   auto itEnd = features.constEnd();
@@ -222,9 +289,36 @@ void LineOfSightController::onQueryFeaturesCompleted(QUuid taskId, FeatureQueryR
     if (feat == nullptr)
       continue;
 
-    GeoElementLineOfSight * lineOfSight = new GeoElementLineOfSight(m_locationGeoElement, feat, m_lineOfSightParent);
+    // create a Line of sight from the feature to the current location
+    GeoElementLineOfSight * lineOfSight = new GeoElementLineOfSight(feat, m_locationGeoElement, m_lineOfSightParent);
     lineOfSight->setVisible(m_analysisVisible);
     m_lineOfSightOverlay->analyses()->append(lineOfSight);
+
+    m_visibleByConnections.append(connect(lineOfSight, &GeoElementLineOfSight::targetVisibilityChanged, this, [this]()
+    {
+      int visibleCount = 0;
+      AnalysisListModel* losList = m_lineOfSightOverlay->analyses();
+      const int count = losList->rowCount();
+      for (int i = 0; i < count; ++i)
+      {
+        Analysis* analysis = losList->at(i);
+        if (!analysis)
+          continue;
+
+        GeoElementLineOfSight* lineOfSight = qobject_cast<GeoElementLineOfSight*>(analysis);
+        if (!lineOfSight)
+          continue;
+
+        // don't count Line of Sight from the current location
+        if (lineOfSight->observerGeoElement() == m_locationGeoElement)
+          continue;
+
+        if (lineOfSight->targetVisibility() == LineOfSightTargetVisibility::Visible)
+          visibleCount += 1;
+      }
+
+      setVisibleByCount(visibleCount);
+    }));
   }
 }
 
@@ -248,6 +342,33 @@ AnalysisOverlay* LineOfSightController::lineOfSightOverlay() const
 }
 
 /*!
+  \brief Creates a new Line of sight from the app's current location to the target \a geoElement.
+ */
+void LineOfSightController::lineOfSightFromLocationToGeoElement(GeoElement* geoElement)
+{
+  if (!geoElement)
+  {
+    emit toolErrorOccurred(QStringLiteral("Invalid Line Of Sight target"), QStringLiteral("Null GeoElement"));
+    return;
+  }
+
+  if (!m_locationGeoElement)
+    getLocationGeoElement();
+
+  if (!m_locationGeoElement)
+  {
+    emit toolErrorOccurred(QStringLiteral("Failed to get location"), QStringLiteral("Unable to find My Location GeoElement for GeoElementLineOfSight"));
+    return;
+  }
+
+  // create a Line of sight from the feature to the current location
+  GeoElementLineOfSight* lineOfSight = new GeoElementLineOfSight(m_locationGeoElement, geoElement, m_lineOfSightParent);
+  lineOfSight->setVisible(true);
+  m_lineOfSightOverlay->analyses()->append(lineOfSight);
+}
+
+/*!
+  \property LineOfSightController::analysisVisible
   \brief Returns whether the results of Line of sight analysis should be visible.
  */
 bool LineOfSightController::isAnalysisVisible() const
@@ -288,6 +409,7 @@ void LineOfSightController::setAnalysisVisible(bool analysisVisible)
 }
 
 /*!
+  \property Dsa::LineOfSightController::overlayNames
   \brief Returns the list of overlay names which are suitable for Line of sight analysis.
  */
 QAbstractItemModel* LineOfSightController::overlayNames() const
@@ -299,8 +421,10 @@ QAbstractItemModel* LineOfSightController::overlayNames() const
   \brief Select the overlay index (\a selectOverlayIndex) to use for Line of sight analysis.
 
   The index refers to the overalys returned by \l overlayNames.
+
+  Returns whether the overlay was succesfully used to perform analysis.
  */
-void LineOfSightController::selectOverlayIndex(int selectOverlayIndex)
+bool LineOfSightController::selectOverlayIndex(int selectOverlayIndex)
 {
   // cancel any query tasks which are currently running
   if (m_featuresTask.isValid() && !m_featuresTask.isCanceled() && !m_featuresTask.isDone())
@@ -310,14 +434,24 @@ void LineOfSightController::selectOverlayIndex(int selectOverlayIndex)
   clearAnalysis();
 
   if (selectOverlayIndex > m_overlays.size() || selectOverlayIndex == -1)
-    return;
+    return false;
 
   FeatureLayer* overlay = m_overlays.at(selectOverlayIndex);
   if (!overlay)
   {
     emit toolErrorOccurred(QStringLiteral("Invalid Line of sight overlay selected"),
                            QString("The selected overlay index is invalid: %1").arg(QString::number(selectOverlayIndex)));
-    return;
+    return false;
+  }
+
+  constexpr int maxFeatures = 16; // Due to performance reasons, limit the number of features which can be used in the analysis
+  const int featuresCount = overlay->featureTable()->numberOfFeatures();
+  if (featuresCount > maxFeatures)
+  {
+    emit toolErrorOccurred(QString("There are too many points in this layer (%1).\n Please choose another one with %2 or fewer points.")
+                           .arg(QString::number(featuresCount), QString::number(maxFeatures)),
+                           QStringLiteral("For performance reasons, Line of Sight analysis is limited to a maximum number of features"));
+    return false;
   }
 
   // perform a query to retrieve all the features from the selected overlay. These will be the target features for Line of sight analysis.
@@ -326,6 +460,8 @@ void LineOfSightController::selectOverlayIndex(int selectOverlayIndex)
   query.setReturnGeometry(true);
   m_queryFeaturesConnection = connect(overlay->featureTable(), &FeatureTable::queryFeaturesCompleted, this, &LineOfSightController::onQueryFeaturesCompleted);
   m_featuresTask = overlay->featureTable()->queryFeatures(query);
+
+  return true;
 }
 
 /*!
@@ -335,6 +471,13 @@ void LineOfSightController::clearAnalysis()
 {
   // remove all of the results from the overlay
   m_lineOfSightOverlay->analyses()->clear();
+
+  for (const auto& conn : m_visibleByConnections)
+    disconnect(conn);
+
+  m_visibleByConnections.clear();
+  setVisibleByCount(0);
+
   // delete the QObject used as the parent for the analysis
   if (m_lineOfSightParent)
   {
@@ -342,3 +485,29 @@ void LineOfSightController::clearAnalysis()
     m_lineOfSightParent = nullptr;
   }
 }
+
+} // Dsa
+
+// Signal Documentation
+/*!
+  \fn void AnalysisListController::visibleByCountChanged();
+  \brief Signal emitted when the visibleByCount property changes.
+ */
+
+/*!
+  \fn void AnalysisListController::analysisVisibleChanged();
+  \brief Signal emitted when the analysisVisible property changes.
+ */
+
+/*!
+  \fn void AnalysisListController::overlayNamesChanged();
+  \brief Signal emitted when the overlay names change.
+ */
+
+/*!
+  \fn void AnalysisListController::toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
+  \brief Signal emitted when an error occurs.
+
+  An error \a message and \a additionalMessage are passed through as parameters, describing
+  the error that occurred.
+ */

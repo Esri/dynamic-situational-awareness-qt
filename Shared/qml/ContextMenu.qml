@@ -1,15 +1,18 @@
-
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 import QtQuick 2.9
 import QtQuick.Controls 2.2
@@ -19,6 +22,8 @@ import Esri.DSA 1.0
 
 Menu {
     id: contextMenu
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+
     visible: contextMenuController.contextActive
     x: contextMenuController.contextScreenPosition.x
     y: contextMenuController.contextScreenPosition.y
@@ -42,16 +47,9 @@ Menu {
     Repeater {
         id: optionsRepeater
         model: contextMenuController.options
-        anchors.margins: 8 * scaleFactor
-
-        delegate: ListLabel{
-            anchors{
-                left: parent.left
-                margins: 4 * scaleFactor
-            }
+        delegate: ListLabel {
             text: display
-            horizontalAlignment: Text.AlignLeft
-
+            separatorVisible: index !== contextMenuController.options.rowCount() - 1
             onTriggered: {
                 contextMenuController.selectOption(display);
             }

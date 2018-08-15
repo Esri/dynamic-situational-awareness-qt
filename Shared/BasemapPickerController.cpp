@@ -1,33 +1,58 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
 
-#include <QDir>
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
-#include "ArcGISTiledLayer.h"
-#include "Basemap.h"
+// PCH header
+#include "pch.hpp"
 
+#include "BasemapPickerController.h"
+
+// example app headers
+#include "TileCacheListModel.h"
+
+// toolkit headers
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
-#include "BasemapPickerController.h"
-#include "TileCacheListModel.h"
+// C++ API headers
+#include "ArcGISTiledLayer.h"
+#include "Basemap.h"
+
+// Qt headers
+#include <QDir>
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 const QString BasemapPickerController::DEFAULT_BASEMAP_PROPERTYNAME = "DefaultBasemap";
 const QString BasemapPickerController::BASEMAP_DIRECTORY_PROPERTYNAME = "BasemapDirectory";
 
-// Default c'tor
-// User must call setBasemapDataPath to populate the basemap list
+/*!
+  \class Dsa::BasemapPickerController
+  \inmodule Dsa
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller for setting a basemap for the app.
+
+  \sa Esri::ArcGISRuntime::Basemap
+ */
+
+/*!
+  \brief Constructor taking an optional \a parent.
+ */
 BasemapPickerController::BasemapPickerController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent),
   m_tileCacheModel(new TileCacheListModel(this))
@@ -37,10 +62,16 @@ BasemapPickerController::BasemapPickerController(QObject* parent /* = nullptr */
   connect(this, &BasemapPickerController::basemapsDataPathChanged, this, &BasemapPickerController::onBasemapDataPathChanged);
 }
 
+/*!
+  \brief Destructor.
+ */
 BasemapPickerController::~BasemapPickerController()
 {
 }
 
+/*!
+  \brief Sets the \a dataPath where local basemaps (.tpk files) are located.
+ */
 void BasemapPickerController::setBasemapDataPath(const QString& dataPath)
 {
   if (dataPath == m_basemapDataPath)
@@ -51,6 +82,9 @@ void BasemapPickerController::setBasemapDataPath(const QString& dataPath)
   emit propertyChanged(BASEMAP_DIRECTORY_PROPERTYNAME, m_basemapDataPath);
 }
 
+/*!
+  \brief Sets the name of the default basemap to \a defaultBasemap.
+ */
 void BasemapPickerController::setDefaultBasemap(const QString& defaultBasemap)
 {
   if (defaultBasemap == m_defaultBasemap)
@@ -60,6 +94,12 @@ void BasemapPickerController::setDefaultBasemap(const QString& defaultBasemap)
   emit propertyChanged(DEFAULT_BASEMAP_PROPERTYNAME, m_defaultBasemap);
 }
 
+/*!
+  \brief Handle changes to the basemap data path.
+
+  When the path is changed, a list of tile cache files (.tpk) located
+  in the directory is built up.
+ */
 void BasemapPickerController::onBasemapDataPathChanged()
 {
   m_tileCacheModel->clear();
@@ -101,11 +141,20 @@ void BasemapPickerController::onBasemapDataPathChanged()
   emit tileCacheModelChanged();
 }
 
+/*!
+  \property Dsa::BasemapPickerController::tileCacheModel
+  \brief Returns a model of the local tile cache files contained in the
+  basemap data directory.
+ */
 QAbstractListModel* BasemapPickerController::tileCacheModel() const
 {
   return m_tileCacheModel;
 }
 
+/*!
+  \brief Selects the basemap at index \a row in the \l tileCacheModel and
+  sets it on the view.
+ */
 void BasemapPickerController::basemapSelected(int row)
 {
   TileCache* tileCache = m_tileCacheModel->tileCacheAt(row);
@@ -123,16 +172,31 @@ void BasemapPickerController::basemapSelected(int row)
   emit basemapChanged(selectedBasemap, basemapName);
 }
 
+/*!
+  \brief Selects the initial basemap.
+ */
 void BasemapPickerController::selectInitialBasemap()
 {
   basemapSelected(m_defaultBasemapIndex);
 }
 
+/*!
+  \brief Returns the name of this tool - \c "basemap picker".
+ */
 QString BasemapPickerController::toolName() const
 {
   return QStringLiteral("basemap picker");
 }
 
+/*! \brief Sets any values in \a properties which are relevant for the basemap picker controller.
+ *
+ * This tool will use the following key/value pairs in the \a properties map if they are set:
+ *
+ * \list
+ *  \li DefaultBasemap. The name of the default basemap to load.
+ *  \li BasemapDirectory. The directory containing basemap data.
+ * \endlist
+ */
 void BasemapPickerController::setProperties(const QVariantMap& properties)
 {
   const QString newDefaultBasemap = properties.value(DEFAULT_BASEMAP_PROPERTYNAME).toString();
@@ -151,3 +215,37 @@ void BasemapPickerController::setProperties(const QVariantMap& properties)
     selectInitialBasemap();
   }
 }
+
+} // Dsa
+
+// Signal Documentation
+
+/*!
+  \fn void BasemapPickerController::tileCacheModelChanged();
+
+  \brief Signal emitted when the TileCacheModel associated with this class changes.
+ */
+
+/*!
+  \fn void BasemapPickerController::basemapsDataPathChanged();
+
+  \brief Signal emitted when basemap data path changes.
+ */
+
+/*!
+  \fn void BasemapPickerController::basemapChanged(Esri::ArcGISRuntime::Basemap* basemap, QString name = "");
+
+  \brief Signal emitted when the current \a basemap changes.
+
+  The \a name of the basemap is passed through the signal as a parameter.
+ */
+
+/*!
+  \fn void BasemapPickerController::toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
+
+  \brief Signal emitted when an error occurs.
+
+  An \a errorMessage and \a additionalMessage are passed through as parameters, describing
+  the error that occurred.
+ */
+

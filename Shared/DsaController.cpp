@@ -1,93 +1,116 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
 
-// API
-#include "ArcGISTiledElevationSource.h"
-#include "Scene.h"
-#include "ElevationSource.h"
-#include "GeoView.h"
-#include "FeatureLayer.h"
-#include "RasterLayer.h"
-#include "Geodatabase.h"
-#include "GeodatabaseFeatureTable.h"
-#include "FeatureTable.h"
-#include "GeoPackage.h"
-#include "GeoPackageFeatureTable.h"
-#include "GeoPackageRaster.h"
-#include "ShapefileFeatureTable.h"
-#include "ArcGISSceneLayer.h"
-#include "ArcGISTiledLayer.h"
-#include "ArcGISVectorTiledLayer.h"
-#include "Raster.h"
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
-// Toolkit
+// PCH header
+#include "pch.hpp"
+
+#include "DsaController.h"
+
+// example app headers
+#include "AlertConstants.h"
+#include "AlertLevel.h"
+#include "AppConstants.h"
+#include "ContextMenuController.h"
+#include "DsaUtility.h"
+#include "LayerCacheManager.h"
+#include "MessageFeedConstants.h"
+
+// toolkit headers
 #include "AbstractTool.h"
 #include "CoordinateConversionConstants.h"
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
-#include "LayerCacheManager.h"
 
-// Dsa apps
-#include "AlertLevel.h"
-#include "AlertConstants.h"
-#include "ContextMenuController.h"
-#include "DsaUtility.h"
-#include "DsaController.h"
-#include "MessageFeedConstants.h"
+// C++ API headers
+#include "GeoView.h"
+#include "Scene.h"
 
-// Qt
+// Qt headers
 #include <QDir>
+#include <QFileInfo>
+#include <QHostInfo>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QSettings>
 
 using namespace Esri::ArcGISRuntime;
 
+namespace Dsa {
+
 bool readJsonFile(QIODevice& device, QSettings::SettingsMap& map);
 bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map);
 
+/*!
+  \class Dsa::DsaController
+  \inmodule Dsa
+  \inherits QObject
+  \brief This is the controller for the DSA app. It is responsible for connecting the
+  view (such as the \l Esri::ArcGISRuntime::GeoView) to the business logic of the app.
+
+  For example, signals from the view are passed to the \l Toolkit::ToolResourceProvider
+  where they can be accessed by the list of \l Esri::ArcGISRuntime::Toolkit::AbstractTool objects stored in
+  the \l Esri::ArcGISRuntime::Toolkit::ToolManager.
+
+  This type is also responsible for reading and writing app configuration details to
+  a JSON settings file. Information in the JSON file is sent to each tool as a set of
+  properties.
+ */
+
+/*!
+  \brief Constructor for a model taking an optional \a parent.
+ */
 DsaController::DsaController(QObject* parent):
   QObject(parent),
   m_scene(new Scene(this)),
   m_jsonFormat(QSettings::registerFormat("json", &readJsonFile, &writeJsonFile)),
   m_conflictingToolNames{QStringLiteral("Alert Conditions"),
-                         QStringLiteral("identify"),
                          QStringLiteral("Markup Tool"),
-                         QStringLiteral("CoordinateConversion"),
-                         QStringLiteral("viewshed")}
+                         QStringLiteral("viewshed"),
+                         QStringLiteral("Observation Report")}
 {
   // setup config settings
   setupConfig();
   m_dataPath = m_dsaSettings["RootDataDirectory"].toString();
 
   connect(m_scene, &Scene::errorOccurred, this, &DsaController::onError);
-
-  // set an elevation source
-  ArcGISTiledElevationSource* source = new ArcGISTiledElevationSource(QUrl(m_dsaSettings["DefaultElevationSource"].toString()), this);
-  connect(source, &ArcGISTiledElevationSource::errorOccurred, this, &DsaController::onError);
-  m_scene->baseSurface()->elevationSources()->append(source);
 }
 
+/*!
+  \brief Destructor.
+ */
 DsaController::~DsaController()
 {
   // save the settings
   saveSettings();
 }
 
-Esri::ArcGISRuntime::Scene* DsaController::scene() const
+/*!
+  \brief Returns the Esri::ArcGISRuntime::Scene used by the app.
+ */
+Scene* DsaController::scene() const
 {
   return m_scene;
 }
 
+/*!
+  \brief Initialize the app with the Esri::ArcGISRuntime::GeoView \a geoView.
+
+  When this method is called, the various tools in the app are initialized.
+ */
 void DsaController::init(GeoView* geoView)
 {
   Toolkit::ToolResourceProvider::instance()->setScene(m_scene);
@@ -178,17 +201,17 @@ void DsaController::init(GeoView* geoView)
   }
 }
 
-/*! \brief Slot to handle an ArcGISRuntime Error \a e.
- *
+/*!
+ * \brief Slot to handle an ArcGISRuntime Error \a error.
  */
-void DsaController::onError(const Error& e)
+void DsaController::onError(const Error& error)
 {
-  qDebug() << "Error" << e.message() << e.additionalMessage();
-  emit errorOccurred(e.message(), e.additionalMessage());
+  qDebug() << "Error" << error.message() << error.additionalMessage();
+  emit errorOccurred(error.message(), error.additionalMessage());
 }
 
-/*! \brief Slot to handle an \a errorMessage (with an \a additionalMessage) from an \l AbstractTool.
- *
+/*!
+ * \brief Slot to handle an \a errorMessage (with an \a additionalMessage) from an \l AbstractTool.
  */
 void DsaController::onToolError(const QString& errorMessage, const QString& additionalMessage)
 {
@@ -196,13 +219,37 @@ void DsaController::onToolError(const QString& errorMessage, const QString& addi
   emit errorOccurred(errorMessage, additionalMessage);
 }
 
+/*!
+ * \brief Slot to handle a change to the \a propertyName to the new value \l propertyValue.
+ */
 void DsaController::onPropertyChanged(const QString& propertyName, const QVariant& propertyValue)
 {
+  if (m_dsaSettings.value(propertyName) == propertyValue)
+    return;
+
   m_dsaSettings.insert(propertyName, propertyValue);
   // save the settings
   saveSettings();
+
+  // inform tools of the change
+  auto it = Toolkit::ToolManager::instance().begin();
+  auto itEnd = Toolkit::ToolManager::instance().end();
+  for (;it != itEnd; ++it)
+  {
+    Toolkit::AbstractTool* tool = *it;
+    if (!tool)
+      continue;
+
+    disconnect(tool, &Toolkit::AbstractTool::propertyChanged,this, &DsaController::onPropertyChanged);
+    tool->setProperties(m_dsaSettings);
+    connect(tool, &Toolkit::AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
+  }
+
 }
 
+/*!
+ * \internal
+ */
 void DsaController::setupConfig()
 {
   // create the default settings map
@@ -315,10 +362,10 @@ void DsaController::writeDefaultMessageFeeds()
   messageFeedsJson.append(friendlyTracksAirJson);
 
   QJsonObject spotRepJson;
-  spotRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_NAME, QStringLiteral("Contact Reports"));
+  spotRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_NAME, QStringLiteral("Observation Reports"));
   spotRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_TYPE, QStringLiteral("spotrep"));
-  spotRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("enemycontact1600.png"));
-  spotRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER, QStringLiteral("enemycontact1600.png"));
+  spotRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("observation1600.png"));
+  spotRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER, QStringLiteral("observation1600.png"));
   spotRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT, QStringLiteral("draped"));
   messageFeedsJson.append(spotRepJson);
 
@@ -351,6 +398,10 @@ void DsaController::writeDefaultMessageFeeds()
   locationBroadcastJson.insert(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE, QStringLiteral("position_report_land"));
   locationBroadcastJson.insert(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PORT, 45679);
   m_dsaSettings[MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME] = locationBroadcastJson;
+
+  QJsonObject observationReportJson;
+  observationReportJson.insert(MessageFeedConstants::OBSERVATION_REPORT_CONFIG_PORT, 45679);
+  m_dsaSettings[MessageFeedConstants::OBSERVATION_REPORT_CONFIG_PROPERTYNAME] = observationReportJson;
 }
 
 /*! \brief internal
@@ -374,6 +425,7 @@ void DsaController::createDefaultSettings()
 {
   // setup the defaults
   m_dsaSettings["RootDataDirectory"] = DsaUtility::dataPath();
+  m_dsaSettings[AppConstants::USERNAME_PROPERTYNAME] = QHostInfo::localHostName();
   m_dsaSettings["BasemapDirectory"] = QString("%1/BasemapData").arg(m_dsaSettings["RootDataDirectory"].toString());
   m_dsaSettings["ElevationDirectory"] = QString("%1/ElevationData").arg(m_dsaSettings["RootDataDirectory"].toString());
   m_dsaSettings["SimulationDirectory"] = QString("%1/SimulationData").arg(m_dsaSettings["RootDataDirectory"].toString());
@@ -386,8 +438,11 @@ void DsaController::createDefaultSettings()
   writeDefaultMessageFeeds();
   writeDefaultInitialLocation();
   m_dsaSettings[Toolkit::CoordinateConversionConstants::COORDINATE_FORMAT_PROPERTY] = Toolkit::CoordinateConversionConstants::MGRS_FORMAT;
-  m_dsaSettings["UnitOfMeasurement"] = QStringLiteral("meters");
+  m_dsaSettings[AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME] = AppConstants::UNIT_METERS;
   m_dsaSettings["UseGpsForElevation"] = QStringLiteral("true");
+  QJsonObject markupJson;
+  markupJson.insert(QStringLiteral("port"), 12345);
+  m_dsaSettings[QStringLiteral("MarkupConfig")] = markupJson;
   writeDefaultConditions();
 }
 
@@ -443,3 +498,15 @@ bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map)
   return writtenBytes != -1;
 }
 
+} // Dsa
+
+// Signal Documentation
+
+/*!
+  \fn void DsaController::errorOccurred(const QString& message, const QString& additionalMessage);
+
+  \brief Signal emitted when an error occurs.
+
+  An error \a message and \a additionalMessage are passed through as parameters, describing
+  the error that occurred.
+ */

@@ -1,42 +1,67 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
+
+// PCH header
+#include "pch.hpp"
 
 #include "LocationController.h"
 
+// example app headers
+#include "GPXLocationSimulator.h"
+#include "LocationDisplay3d.h"
+
+// toolkit headers
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
+
+// C++ API headers
+#include "DistanceCompositeSceneSymbol.h"
+#include "GraphicsOverlay.h"
+#include "ModelSceneSymbol.h"
+#include "Point.h"
+#include "SceneQuickView.h"
+#include "SimpleRenderer.h"
+
+// Qt headers
 #include <QCompass>
 #include <QDir>
 #include <QFile>
 
+// STL headers
 #include <cmath>
 
-#include "SceneQuickView.h"
-#include "Point.h"
-#include "GraphicsOverlay.h"
-#include "ModelSceneSymbol.h"
-#include "DistanceCompositeSceneSymbol.h"
-#include "SimpleRenderer.h"
-
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
-#include "LocationDisplay3d.h"
-
-#include "GPXLocationSimulator.h"
-
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
 
 const QString LocationController::SIMULATE_LOCATION_PROPERTYNAME = "SimulateLocation";
 const QString LocationController::GPX_FILE_PROPERTYNAME = "GpxFile";
 const QString LocationController::RESOURCE_DIRECTORY_PROPERTYNAME = "ResourceDirectory";
 
+/*!
+  \class Dsa::LocationController
+  \inmodule Dsa
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller for handling the current location.
+ */
+
+/*!
+  \brief Constructor for a model taking an optional \a parent.
+ */
 LocationController::LocationController(QObject* parent) :
   Toolkit::AbstractTool(parent),
   m_locationDisplay3d(new LocationDisplay3d(this))
@@ -49,10 +74,16 @@ LocationController::LocationController(QObject* parent) :
   updateGeoView();
 }
 
+/*!
+  \brief Destructor.
+ */
 LocationController::~LocationController()
 {
 }
 
+/*!
+  \internal
+ */
 void LocationController::initPositionInfoSource(bool simulated)
 {
   if (simulated && dynamic_cast<GPXLocationSimulator*>(m_positionSource))
@@ -130,6 +161,9 @@ void LocationController::initPositionInfoSource(bool simulated)
   m_locationDisplay3d->setCompass(m_compass);
 }
 
+/*!
+  \internal
+ */
 void LocationController::clearPositionInfoSource()
 {
   if (m_positionSource)
@@ -147,24 +181,44 @@ void LocationController::clearPositionInfoSource()
   }
 }
 
+/*!
+  \brief Returns the name of the tool - \c "location".
+ */
 QString LocationController::toolName() const
 {
   return QStringLiteral("location");
 }
 
+/*! \brief Sets any values in \a properties which are relevant for the location tool.
+ *
+ * This tool will use the following key/value pairs in the \a properties map if they are set:
+ *
+ * \list
+ *  \li \c SimulateLocation - Whether the app's location should be simulated.
+ *  \li \c GpxFile - The path of the GPX file for simulated positions.
+ *  \li \c ResourceDirectory - The directory containing icons for the location display.
+ * \endlist
+ */
 void LocationController::setProperties(const QVariantMap& properties)
 {
   bool simulate = QString::compare(properties[SIMULATE_LOCATION_PROPERTYNAME].toString(), QString("true"), Qt::CaseInsensitive) == 0;
-  setSimulated(simulate);
-  setGpxFilePath(QUrl::fromLocalFile(properties[GPX_FILE_PROPERTYNAME].toString()));
+  setSimulationEnabled(simulate);
+  setGpxFilePath(properties[GPX_FILE_PROPERTYNAME].toString());
   setIconDataPath(properties[RESOURCE_DIRECTORY_PROPERTYNAME].toString());
 }
 
+/*!
+  \property LocationController::enabled
+  \brief Returns whether the tool is enabled.
+ */
 bool LocationController::isEnabled() const
 {
   return m_enabled;
 }
 
+/*!
+  \brief Sets the tool to be \a enabled.
+ */
 void LocationController::setEnabled(bool enabled)
 {
   if (m_enabled == enabled)
@@ -189,17 +243,24 @@ void LocationController::setEnabled(bool enabled)
   emit enabledChanged();
 }
 
+/*!
+  \property LocationController::locationVisible
+  \brief Returns whether the location is visible.
+ */
 bool LocationController::isLocationVisible() const
 {
   return m_locationDisplay3d->isStarted();
 }
 
-void LocationController::setLocationVisible(bool isVisible)
+/*!
+  \brief Sets whether the location is visible to \a visible.
+ */
+void LocationController::setLocationVisible(bool visible)
 {
-  if (m_locationDisplay3d->isStarted() == isVisible)
+  if (m_locationDisplay3d->isStarted() == visible)
     return;
 
-  if (isVisible)
+  if (visible)
     m_locationDisplay3d->start();
   else
     m_locationDisplay3d->stop();
@@ -207,12 +268,19 @@ void LocationController::setLocationVisible(bool isVisible)
   emit locationVisibleChanged();
 }
 
-bool LocationController::isSimulated() const
+/*!
+  \property LocationController::simulationEnabled
+  \brief Returns whether the location is simulated.
+ */
+bool LocationController::isSimulationEnabled() const
 {
   return m_simulated;
 }
 
-void LocationController::setSimulated(bool simulated)
+/*!
+  \brief Sets whether the location is simulated to \a simulated.
+ */
+void LocationController::setSimulationEnabled(bool simulated)
 {
   if (m_simulated == simulated)
     return;
@@ -221,7 +289,7 @@ void LocationController::setSimulated(bool simulated)
 
   if (!m_gpxFilePath.isEmpty() && dynamic_cast<GPXLocationSimulator*>(m_positionSource))
   {
-    static_cast<GPXLocationSimulator*>(m_positionSource)->setGpxFile(m_gpxFilePath.toLocalFile());
+    static_cast<GPXLocationSimulator*>(m_positionSource)->setGpxFile(m_gpxFilePath);
   }
 
   if (isEnabled())
@@ -232,44 +300,52 @@ void LocationController::setSimulated(bool simulated)
   }
 
   m_simulated = simulated;
-  emit simulatedChanged();
+  emit simulationEnabledChanged();
   emit propertyChanged(SIMULATE_LOCATION_PROPERTYNAME, m_simulated);
 }
 
+/*!
+  \brief Returns the current location.
+ */
 Point LocationController::currentLocation() const
 {
   return m_currentLocation;
 }
 
+/*!
+  \brief Returns the location display for 3D apps.
+ */
 LocationDisplay3d* LocationController::locationDisplay() const
 {
   return m_locationDisplay3d;
 }
 
-QUrl LocationController::gpxFilePath() const
+/*!
+  \property LocationController::gpxFilePath
+  \brief Returns the file path of the GPX file.
+ */
+QString LocationController::gpxFilePath() const
 {
   return m_gpxFilePath;
 }
 
-QString LocationController::gpxFilePathAsString() const
-{
-  return m_gpxFilePath.toLocalFile();
-}
-
-void LocationController::setGpxFilePath(const QUrl& gpxFilePath)
+/*!
+  \brief Sets the file path of the GPX file to \a gpxFilePath.
+ */
+void LocationController::setGpxFilePath(const QString& gpxFilePath)
 {
   if (m_gpxFilePath == gpxFilePath)
     return;
 
-  if (!QFile::exists(gpxFilePath.toLocalFile()))
+  if (!QFile::exists(gpxFilePath))
   {
-    emit toolErrorOccurred(QString("GPX File missing: %1").arg(gpxFilePath.fileName()), QString("Could not find %1").arg(gpxFilePath.toLocalFile()));
+    emit toolErrorOccurred(QStringLiteral("GPX File missing"), QString("Could not find %1").arg(gpxFilePath));
     return;
   }
 
   initPositionInfoSource(true); // ignore m_simulated, we need to init the simulator now
 
-  static_cast<GPXLocationSimulator*>(m_positionSource)->setGpxFile(gpxFilePath.toLocalFile());
+  static_cast<GPXLocationSimulator*>(m_positionSource)->setGpxFile(gpxFilePath);
 
   if (isEnabled())
   {
@@ -280,9 +356,12 @@ void LocationController::setGpxFilePath(const QUrl& gpxFilePath)
 
   m_gpxFilePath = gpxFilePath;
   emit gpxFilePathChanged();
-  emit propertyChanged(GPX_FILE_PROPERTYNAME, m_gpxFilePath.toLocalFile());
+  emit propertyChanged(GPX_FILE_PROPERTYNAME, m_gpxFilePath);
 }
 
+/*!
+  \brief Sets the \a sceneView to use for relative heading changes.
+ */
 void LocationController::setRelativeHeadingSceneView(SceneQuickView* sceneView)
 {
   connect(sceneView, &SceneQuickView::viewpointChanged, this, [this, sceneView]()
@@ -299,6 +378,9 @@ void LocationController::setRelativeHeadingSceneView(SceneQuickView* sceneView)
   });
 }
 
+/*!
+  \internal
+ */
 void LocationController::updateGeoView()
 {
   GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
@@ -306,7 +388,7 @@ void LocationController::updateGeoView()
   {
     geoView->graphicsOverlays()->append(m_locationDisplay3d->locationOverlay());
 
-    constexpr float symbolSize = 45.0;
+    constexpr float symbolSize = 25.0;
     constexpr double rangeMultiplier = 1.04; // the closer to 1.0, the smoother the transitions
     constexpr double maxRange = 10000000.0;
 
@@ -337,6 +419,9 @@ void LocationController::updateGeoView()
   }
 }
 
+/*!
+  \brief Sets the icon data path to \a dataPath.
+ */
 void LocationController::setIconDataPath(const QString& dataPath)
 {
   if (dataPath == m_iconDataPath)
@@ -346,6 +431,9 @@ void LocationController::setIconDataPath(const QString& dataPath)
   emit propertyChanged(RESOURCE_DIRECTORY_PROPERTYNAME, m_iconDataPath);
 }
 
+/*!
+  \brief Returns the URL of the model symbol used for location display.
+ */
 QUrl LocationController::modelSymbolPath() const
 {
   // both files are needed: LocationDisplay.dae
@@ -386,3 +474,45 @@ QUrl LocationController::modelSymbolPath() const
 
   return QUrl::fromLocalFile(modelPath);
 }
+
+} // Dsa
+
+// Signal Documentation
+/*!
+  \fn void LocationController::locationChanged(const Esri::ArcGISRuntime::Point& newLocation);
+  \brief Signal emitted when the location changes to \a newLocation.
+ */
+
+/*!
+  \fn void LocationController::headingChanged(double newHeading);
+  \brief Signal emitted when the heading changes to \a newHeading.
+ */
+
+/*!
+  \fn void LocationController::gpxFilePathChanged();
+  \brief Signal emitted when GPX file path changes.
+ */
+
+/*!
+  \fn void LocationController::enabledChanged();
+  \brief Signal emitted when the enabled property changes.
+ */
+
+/*!
+  \fn void LocationController::locationVisibleChanged();
+  \brief Signal emitted when the locationVisible property changes.
+ */
+
+/*!
+  \fn void LocationController::simulationEnabledChanged();
+  \brief Signal emitted when simulationEnabled property changes.
+ */
+
+/*!
+  \fn void LocationController::toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
+  \brief Signal emitted when an error occurs.
+
+  An \a errorMessage and \a additionalMessage are passed through as parameters, describing
+  the error that occurred.
+ */
+

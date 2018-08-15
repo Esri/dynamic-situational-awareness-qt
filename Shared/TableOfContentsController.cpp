@@ -1,31 +1,60 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
 
-#include <QFileInfo>
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
-#include "GeoView.h"
-#include "FeatureLayer.h"
-#include "LayerListModel.h"
-#include "RasterLayer.h"
+// PCH header
+#include "pch.hpp"
 
+#include "TableOfContentsController.h"
+
+// example app headers
+#include "DrawOrderLayerListModel.h"
+#include "DsaUtility.h"
+#include "MarkupLayer.h"
+
+// toolkit headers
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
-#include "DsaUtility.h"
-#include "DrawOrderLayerListModel.h"
-#include "TableOfContentsController.h"
+// C++ API headers
+#include "FeatureLayer.h"
+#include "FeatureCollectionLayer.h"
+#include "GeoView.h"
+#include "LayerListModel.h"
+#include "RasterLayer.h"
+
+// Qt headers
+#include <QFileInfo>
 
 using namespace Esri::ArcGISRuntime;
 
+namespace Dsa {
+
+/*!
+  \class Dsa::TableOfContentsController
+  \inmodule Dsa
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller for managing the table of contents for operational layers.
+
+  \sa Esri::ArcGISRuntime::LayerListModel
+ */
+
+/*!
+  \brief Constructor taking an optional \a parent.
+ */
 TableOfContentsController::TableOfContentsController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent)
 {
@@ -38,15 +67,25 @@ TableOfContentsController::TableOfContentsController(QObject* parent /* = nullpt
   updateLayerListModel();
 }
 
+/*!
+  \brief Destructor.
+ */
 TableOfContentsController::~TableOfContentsController()
 {
 }
 
+/*!
+  \property TableOfContentsController::layerListModel
+  \brief Returns the list of operational layers in draw order.
+ */
 QAbstractItemModel* TableOfContentsController::layerListModel() const
 {
   return m_drawOrderModel;
 }
 
+/*!
+  \brief Zoom to the layer at \a layerIndex in the list.
+ */
 void TableOfContentsController::zoomTo(int layerIndex)
 {
   if (!m_layerListModel)
@@ -65,9 +104,20 @@ void TableOfContentsController::zoomTo(int layerIndex)
   if (!geoView)
     return;
 
-  geoView->setViewpoint(Viewpoint(layer->fullExtent()));
+  Envelope extent;
+
+  MarkupLayer* markupLayer = dynamic_cast<MarkupLayer*>(layer);
+  if (markupLayer)
+    extent = markupLayer->featureCollection()->tables()->at(0)->extent();
+  else
+    extent = layer->fullExtent();
+
+  geoView->setViewpoint(Viewpoint(extent));
 }
 
+/*!
+  \brief Remove the layer at \a layerIndex in the list.
+ */
 void TableOfContentsController::removeAt(int layerIndex)
 {
   if (!m_layerListModel)
@@ -78,6 +128,9 @@ void TableOfContentsController::removeAt(int layerIndex)
   m_layerListModel->removeAt(modelIndex);
 }
 
+/*!
+  \brief Move the layer at \a layerIndex in the list down.
+ */
 void TableOfContentsController::moveDown(int layerIndex)
 {
   if (!m_layerListModel)
@@ -89,8 +142,13 @@ void TableOfContentsController::moveDown(int layerIndex)
     return;
 
   m_layerListModel->move(modelIndex, modelIndex - 1);
+
+  refreshLayerOrder();
 }
 
+/*!
+  \brief Move the layer at \a layerIndex in the list up.
+ */
 void TableOfContentsController::moveUp(int layerIndex)
 {
   if (!m_layerListModel)
@@ -102,8 +160,13 @@ void TableOfContentsController::moveUp(int layerIndex)
     return;
 
   m_layerListModel->move(modelIndex, modelIndex + 1);
+
+  refreshLayerOrder();
 }
 
+/*!
+  \brief Move the layer at \a fromIndex to the new position \a toIndex.
+ */
 void TableOfContentsController::moveFromTo(int fromIndex, int toIndex)
 {
   if (!m_layerListModel)
@@ -116,8 +179,13 @@ void TableOfContentsController::moveFromTo(int fromIndex, int toIndex)
     return;
 
   m_layerListModel->move(modelFromIndex, modelToIndex);
+
+  refreshLayerOrder();
 }
 
+/*!
+  \brief Return an alternate name for the layer at \a layerIndex in the list.
+ */
 QString TableOfContentsController::alternateName(int layerIndex)
 {
   const QString unknownName("????");
@@ -150,6 +218,9 @@ QString TableOfContentsController::alternateName(int layerIndex)
   return rasterFile.baseName();
 }
 
+/*!
+  \brief Returns the geometry type of the layer at \a layerIndex in the list.
+ */
 TableOfContentsController::LayerGeometryType TableOfContentsController::layerGeometryType(int layerIndex)
 {
   if (!m_layerListModel)
@@ -208,16 +279,24 @@ TableOfContentsController::LayerGeometryType TableOfContentsController::layerGeo
   }
   case LayerType::RasterLayer:
     return LayerGeometryType::Raster;
+  case LayerType::FeatureCollectionLayer:
+    return LayerGeometryType::FreehandMarkup;
   default:
     return LayerGeometryType::Unknown;
   }
 }
 
+/*!
+  \brief Return the name of the tool - \c "table of contents".
+ */
 QString TableOfContentsController::toolName() const
 {
   return QStringLiteral("table of contents");
 }
 
+/*!
+  \brief Update the list of operational layers used by the app.
+ */
 void TableOfContentsController::updateLayerListModel()
 {
   auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
@@ -230,6 +309,9 @@ void TableOfContentsController::updateLayerListModel()
   }
 }
 
+/*!
+  \brief Returns the operational layer index of the layer at \a index in the draw order model.
+ */
 int TableOfContentsController::mappedIndex(int index) const
 {
   if (!m_layerListModel || !m_drawOrderModel)
@@ -238,3 +320,31 @@ int TableOfContentsController::mappedIndex(int index) const
   const QModelIndex sourceIndex = m_drawOrderModel->mapToSource(m_drawOrderModel->index(index, 0));
   return sourceIndex.row();
 }
+
+/*!
+  \internal
+ */
+void TableOfContentsController::refreshLayerOrder()
+{
+  // To avoid a re-ordering issue which affects FeatureCollectionLayers in 3D view
+  // these types of layers are removed and re-added at the desired index
+  const int layerCount = m_layerListModel->rowCount();
+  for (int i = 0; i < layerCount; ++i)
+  {
+    Layer* layer = m_layerListModel->at(i);
+    FeatureCollectionLayer* featCollectionLyr = qobject_cast<FeatureCollectionLayer*>(layer);
+    if (!featCollectionLyr)
+      continue;
+
+    m_layerListModel->removeAt(i);
+    m_layerListModel->insert(i, layer);
+  }
+}
+
+} // Dsa
+
+// Signal Documentation
+/*!
+  \fn void TableOfContentsController::layerListModelChanged();
+  \brief Signal emitted when the LayerListModel changes.
+ */

@@ -1,35 +1,42 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 #ifndef CONTEXTMENUCONTROLLER_H
 #define CONTEXTMENUCONTROLLER_H
 
+// toolkit headers
 #include "AbstractTool.h"
 
+// C++ API headers
 #include "Point.h"
 #include "TaskWatcher.h"
 
+// Qt headers
 #include <QMouseEvent>
 #include <QStringListModel>
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
+namespace Esri {
+namespace ArcGISRuntime {
   class GeoElement;
   class IdentifyGraphicsOverlayResult;
   class IdentifyLayerResult;
 }
 }
+
+namespace Dsa {
 
 class ContextMenuController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -46,7 +53,9 @@ public:
   static const QString ELEVATION_OPTION;
   static const QString FOLLOW_OPTION;
   static const QString IDENTIFY_OPTION;
+  static const QString LINE_OF_SIGHT_OPTION;
   static const QString VIEWSHED_OPTION;
+  static const QString OBSERVATION_REPORT_OPTION;
 
   explicit ContextMenuController(QObject* parent = nullptr);
   ~ContextMenuController();
@@ -89,6 +98,7 @@ private:
   void setResultTitle(const QString& resultTitle);
   void cancelTasks();
   void cancelIdentifyTasks();
+  void processGeoElements();
 
   bool m_contextActive = false;
   QPoint m_contextScreenPosition{0, 0};
@@ -96,10 +106,14 @@ private:
   QString m_result;
   QString m_resultTitle;
   Esri::ArcGISRuntime::Point m_contextLocation;
+  Esri::ArcGISRuntime::Point m_contextBaseSurfaceLocation;
   Esri::ArcGISRuntime::TaskWatcher m_identifyFeaturesTask;
   Esri::ArcGISRuntime::TaskWatcher m_identifyGraphicsTask;
   Esri::ArcGISRuntime::TaskWatcher m_screenToLocationTask;
-  Esri::ArcGISRuntime::GeoElement* m_contextElement = nullptr;
+  QHash<QString, QList<Esri::ArcGISRuntime::GeoElement*>> m_contextFeatures;
+  QHash<QString, QList<Esri::ArcGISRuntime::GeoElement*>> m_contextGraphics;
 };
+
+} // Dsa
 
 #endif // CONTEXTMENUCONTROLLER_H

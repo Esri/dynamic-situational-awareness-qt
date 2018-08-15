@@ -1,17 +1,27 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 #ifndef OPTIONSCONTROLLER_H
 #define OPTIONSCONTROLLER_H
+
+// toolkit headers
+#include "AbstractTool.h"
+
+// Qt headers
+#include <QObject>
 
 namespace Esri {
 namespace ArcGISRuntime {
@@ -19,10 +29,9 @@ class DictionaryRenderer;
 }
 }
 
-class LocationTextController;
+namespace Dsa {
 
-#include "AbstractTool.h"
-#include <QObject>
+class LocationTextController;
 
 class OptionsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
@@ -34,6 +43,7 @@ class OptionsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
   Q_PROPERTY(int initialFormatIndex READ initialFormatIndex NOTIFY initialFormatIndexChanged)
   Q_PROPERTY(int initialUnitIndex READ initialUnitIndex NOTIFY initialUnitIndexChanged)
   Q_PROPERTY(bool showFriendlyTracksLabels READ showFriendlyTracksLabels WRITE setShowFriendlyTracksLabels NOTIFY showFriendlyTracksLabelsChanged)
+  Q_PROPERTY(QString userName READ userName WRITE setUserName NOTIFY userNameChanged)
 
 public:
   explicit OptionsController(QObject* parent = nullptr);
@@ -44,6 +54,9 @@ public:
   Q_INVOKABLE void setCoordinateFormat(const QString& format);
   Q_INVOKABLE void setUnitOfMeasurement(const QString& unit);
 
+  QString userName() const;
+  void setUserName(const QString &userName);
+
 signals:
   void coordinateFormatsChanged();
   void useGpsForElevationChanged();
@@ -51,21 +64,9 @@ signals:
   void initialUnitIndexChanged();
   void initialFormatIndexChanged();
   void showFriendlyTracksLabelsChanged();
+  void userNameChanged();
 
 private:
-  static const QString COORDINATE_FORMAT_PROPERTYNAME;
-  static const QString UNIT_OF_MEASUREMENT_PROPERTYNAME;
-  static const QString DMS;
-  static const QString DD;
-  static const QString DDM;
-  static const QString UTM;
-  static const QString MGRS;
-  static const QString USNG;
-  static const QString GeoRef;
-  static const QString Gars;
-  static const QString Meters;
-  static const QString Feet;
-
   LocationTextController* m_locationTextController = nullptr;
   int m_initialUnitIndex;
   int m_initialFormatIndex;
@@ -73,6 +74,7 @@ private:
   QString m_coordinateFormat;
   QStringList m_coordinateFormatOptions;
   QStringList m_units;
+  QString m_userName;
 
   void getUpdatedTools();
   QStringList coordinateFormats() const;
@@ -85,5 +87,7 @@ private:
   void setShowFriendlyTracksLabels(bool show);
   QList<Esri::ArcGISRuntime::DictionaryRenderer*> friendlyTracksOverlayRenderers() const;
 };
+
+} // Dsa
 
 #endif // OPTIONSCONTROLLER_H

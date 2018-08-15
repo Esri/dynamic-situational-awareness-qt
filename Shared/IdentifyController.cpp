@@ -1,22 +1,34 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
 
-#include "GraphicsOverlaysResultsManager.h"
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
+
+// PCH header
+#include "pch.hpp"
+
 #include "IdentifyController.h"
+
+// example app headers
+#include "GraphicsOverlaysResultsManager.h"
 #include "LayerResultsManager.h"
 
+// toolkit headers
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
+// C++ API headers
 #include "GeoElement.h"
 #include "GeoView.h"
 #include "Graphic.h"
@@ -24,6 +36,15 @@
 #include "PopupManager.h"
 
 using namespace Esri::ArcGISRuntime;
+
+namespace Dsa {
+
+/*!
+  \class Dsa::IdentifyController
+  \inmodule Dsa
+  \inherits Toolkit::AbstractTool
+  \brief Tool controller for identifying GeoElements.
+ */
 
 /*!
   \brief Constructor accepting an optional \a parent.
@@ -84,6 +105,7 @@ void IdentifyController::setActive(bool active)
 }
 
 /*!
+  \property IdentifyController::busy
   \brief Returns whether the tool is busy or not (e.g. whether identify tasks are running).
  */
 bool IdentifyController::busy() const
@@ -93,6 +115,7 @@ bool IdentifyController::busy() const
 }
 
 /*!
+  \property IdentifyController::popupManagers
   \brief Returns a QVariantList of \l Esri::ArcGISRuntime::PopupManager which can be displayed in the view.
 
   For example, this can be passed to a \l PopupView or \l PopupStackView for display.
@@ -110,6 +133,9 @@ QVariantList IdentifyController::popupManagers() const
   return res;
 }
 
+/*!
+  \brief Show the popup for \a geoElement with the title \a popupTitle.
+ */
 void IdentifyController::showPopup(GeoElement* geoElement, const QString& popupTitle)
 {
   if (!geoElement)
@@ -118,6 +144,30 @@ void IdentifyController::showPopup(GeoElement* geoElement, const QString& popupT
   m_popupManagers.clear();
   emit popupManagersChanged();
   addGeoElementPopup(geoElement, popupTitle);
+  emit popupManagersChanged();
+}
+
+/*!
+  \brief Show popups for all of the \a geoElementsByTitle.
+
+  A popup will be created for each \l Esri::ArcGISRuntime::GeoElement in the QHash,
+  with the string key as the title.
+ */
+void IdentifyController::showPopups(const QHash<QString, QList<GeoElement*>>& geoElementsByTitle)
+{
+  if (geoElementsByTitle.isEmpty())
+    return;
+
+  m_popupManagers.clear();
+  emit popupManagersChanged();
+
+  for (auto it = geoElementsByTitle.cbegin(); it != geoElementsByTitle.cend(); ++it)
+  {
+    const QString& popupTitle = it.key();
+    for (GeoElement* geoElement : qAsConst(it.value()))
+      addGeoElementPopup(geoElement, popupTitle);
+  }
+
   emit popupManagersChanged();
 }
 
@@ -264,3 +314,17 @@ bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QStrin
 
   return true;
 }
+
+} // Dsa
+
+// Signal Documentation
+/*!
+  \fn void IdentifyController::busyChanged();
+  \brief Signal emitted when the busy property changes.
+ */
+
+/*!
+  \fn void IdentifyController::popupManagersChanged();
+  \brief Signal emitted when the popup managers change.
+ */
+

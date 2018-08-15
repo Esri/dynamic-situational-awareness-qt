@@ -1,14 +1,18 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 import QtQuick 2.9
 import QtQuick.Controls 2.2
@@ -17,8 +21,8 @@ import QtQuick.Window 2.2
 import QtQml.Models 2.2
 import Esri.DSA 1.0
 import Esri.Vehicle 1.0
-import Esri.ArcGISRuntime.Toolkit.Controls 100.2
-import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.2
+import Esri.ArcGISRuntime.Toolkit.Controls 100.3
+import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.3
 
 Vehicle {
     id: appRoot
@@ -166,6 +170,41 @@ Vehicle {
             height: width
         }
 
+        CoordinateConversion {
+            id: coordinateConversion
+            anchors {
+                bottom: sceneView.attributionTop
+                left: categoryToolbar.right
+                right: followHud.left
+                margins: hudMargins
+            }
+
+            objectName: "coordinateConversion"
+            visible: false
+            geoView: sceneView
+            highlightColor : Material.accent
+            textColor: Material.foreground
+            backgroundColor: Material.background
+            fontSize: DsaStyles.toolFontPixelSize
+            fontFamily: DsaStyles.fontFamily
+            backgroundOpacity: hudOpacity
+            radius: hudRadius
+
+            onVisibleChanged: {
+                if (!visible)
+                    return;
+
+                if (mapToolRow.state !== "Convert XY") {
+                    mapToolRow.state = "Convert XY";
+                    categoryToolbar.state = "map";
+                }
+            }
+        }
+
+        ContextMenu {
+            id: contextMenu
+        }
+
         CategoryToolbarColumn {
             id: categoryToolbar
             anchors {
@@ -174,8 +213,7 @@ Vehicle {
                 bottom: sceneView.attributionTop
             }
             width: 56 * scaleFactor
-            appTitle: "DSA - V"
-            opacity: 0.75
+            appTitle: "DSA - V"            
 
             onSettingsClicked: optionsTool.visible = true;
             onAboutClicked: aboutTool.visible = true;
@@ -252,6 +290,10 @@ Vehicle {
             onMyLocationModeSelected: {
                 navTool.startFollowing();
             }
+
+            onClosed: {
+                analysisToolRow.state = "clear";
+            }
         }
 
         LineOfSightTool {
@@ -280,8 +322,8 @@ Vehicle {
             }
         }
 
-        ContactReportTool {
-            id: contactReportTool
+        ObservationReportTool {
+            id: observationReportTool
             anchors {
                 right: parent.right
                 top: parent.top
@@ -301,8 +343,8 @@ Vehicle {
 
                 categoryToolbar.state = "reports";
 
-                if (reportToolRow.state !== reportToolRow.contactState)
-                    reportToolRow.state = reportToolRow.contactState;
+                if (reportToolRow.state !== reportToolRow.observationState)
+                    reportToolRow.state = reportToolRow.observationState;
             }
         }
 
@@ -326,7 +368,7 @@ Vehicle {
             height: sceneView.height - 20 * scaleFactor // approximation for attribution text
             edge: Qt.RightEdge
             y: topToolbar.height
-            interactive: x < appRoot.width
+            interactive: false
 
             onClosed: {
                 // update state for each category
@@ -388,41 +430,6 @@ Vehicle {
                     onClosed: drawer.close();
                 }
             }
-        }
-
-        CoordinateConversion {
-            id: coordinateConversion
-            anchors {
-                bottom: sceneView.attributionTop
-                left: categoryToolbar.right
-                right: followHud.left
-                margins: hudMargins
-            }
-
-            objectName: "coordinateConversion"
-            visible: false
-            geoView: sceneView
-            highlightColor : Material.accent
-            textColor: Material.foreground
-            backgroundColor: Material.background
-            fontSize: DsaStyles.toolFontPixelSize
-            fontFamily: DsaStyles.fontFamily
-            opacity: hudOpacity
-            radius: hudRadius
-
-            onVisibleChanged: {
-                if (!visible)
-                    return;
-
-                if (mapToolRow.state !== "Convert XY") {
-                    mapToolRow.state = "Convert XY";
-                    categoryToolbar.state = "map";
-                }
-            }
-        }
-
-        ContextMenu {
-            id: contextMenu
         }
     }
 

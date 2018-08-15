@@ -1,14 +1,18 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 // PCH header
 #include "pch.hpp"
@@ -41,7 +45,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class LineOfSightController
+  \class Dsa::LineOfSightController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for creating line of sight analysis.
 
@@ -64,6 +69,7 @@ void LineOfSightController::getLocationGeoElement()
 }
 
 /*!
+  \property LineOfSightController::visibleByCount
   \brief Returns the number of line of sight analyses from features to the current position
   which are unobstructed.
  */
@@ -361,6 +367,7 @@ void LineOfSightController::lineOfSightFromLocationToGeoElement(GeoElement* geoE
 }
 
 /*!
+  \property LineOfSightController::analysisVisible
   \brief Returns whether the results of Line of sight analysis should be visible.
  */
 bool LineOfSightController::isAnalysisVisible() const
@@ -401,6 +408,7 @@ void LineOfSightController::setAnalysisVisible(bool analysisVisible)
 }
 
 /*!
+  \property Dsa::LineOfSightController::overlayNames
   \brief Returns the list of overlay names which are suitable for Line of sight analysis.
  */
 QAbstractItemModel* LineOfSightController::overlayNames() const
@@ -478,3 +486,27 @@ void LineOfSightController::clearAnalysis()
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void AnalysisListController::visibleByCountChanged();
+  \brief Signal emitted when the visibleByCount property changes.
+ */
+
+/*!
+  \fn void AnalysisListController::analysisVisibleChanged();
+  \brief Signal emitted when the analysisVisible property changes.
+ */
+
+/*!
+  \fn void AnalysisListController::overlayNamesChanged();
+  \brief Signal emitted when the overlay names change.
+ */
+
+/*!
+  \fn void AnalysisListController::toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
+  \brief Signal emitted when an error occurs.
+
+  An error \a message and \a additionalMessage are passed through as parameters, describing
+  the error that occurred.
+ */

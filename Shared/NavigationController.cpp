@@ -1,14 +1,18 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 // PCH header
 #include "pch.hpp"
@@ -43,7 +47,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class NavigationController
+  \class Dsa::NavigationController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for handling navigation for the app.
  */
@@ -89,7 +94,7 @@ QString NavigationController::toolName() const
  * This tool will use the following key/value pairs from the \a properties map if they are set:
  * \list
  *  \li InitialLocation. A JSON description of a the starting location for the app.
- * \endList
+ * \endlist
  */
 void NavigationController::setProperties(const QVariantMap& properties)
 {
@@ -358,6 +363,7 @@ void NavigationController::zoom()
 }
 
 /*!
+  \property NavigationController::vertical
   \brief Returns whether the camera is vertical.
  */
 bool NavigationController::isVertical() const
@@ -366,6 +372,7 @@ bool NavigationController::isVertical() const
 }
 
 /*!
+  \property NavigationController::zoomFactor
   \brief Returns the zoom factor.
  */
 double NavigationController::zoomFactor() const
@@ -386,6 +393,7 @@ void NavigationController::setZoomFactor(double value)
 }
 
 /*!
+  \property NavigationController::cameraMoveDistance
   \brief Returns the camera move distance in meters.
  */
 double NavigationController::cameraMoveDistance() const
@@ -550,3 +558,27 @@ Point NavigationController::initialCenter() const
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void NavigationController::verticalChanged();
+  \brief Signal emitted when \l isVertical changes.
+ */
+
+/*!
+  \fn void NavigationController::zoomFactorChanged();
+  \brief Signal emitted when the zoom factor changes.
+ */
+
+/*!
+  \fn void NavigationController::screenToLocationCompleted(QUuid taskId, Esri::ArcGISRuntime::Point location);
+  \brief Signal emitted when the screen to location operation completes.
+
+  The \a taskId and \a location are passed through as parameters.
+ */
+
+/*!
+  \fn void NavigationController::cameraMoveDistanceChanged();
+  \brief Signal emitted when the camera move distance changes.
+ */
+

@@ -1,14 +1,18 @@
-// Copyright 2018 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 // PCH header
 #include "pch.hpp"
@@ -35,12 +39,33 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class CombinedAnalysisListModel
+  \class Dsa::CombinedAnalysisListModel
+  \inmodule Dsa
   \inherits QAbstractListModel
   \brief A Model which manages the list of both line of sight and viewshed analyses.
 
   \sa Esri::ArcGISRuntime::AnalysisListModel
   \sa ViewshedListModel
+
+  The model returns data for the following roles:
+  \table
+    \header
+        \li Role
+        \li Type
+        \li Description
+    \row
+        \li analysisName
+        \li QString
+        \li The name of the analysis.
+    \row
+        \li analysisType
+        \li int
+        \li The type of analysis
+    \row
+        \li analysisVisible
+        \li bool
+        \li Whether the analysis is visible.
+  \endtable
   */
 
 /*!
@@ -93,6 +118,15 @@ void CombinedAnalysisListModel::setLineOfSightModel(AnalysisListModel* lineOfSig
 
   beginResetModel();
   m_lineOfSightModel = lineOfSightModel;
+
+  // persist a unique index for each Line of sight as they are added - to be used to construct a name
+  connect(m_lineOfSightModel, &AnalysisListModel::analysisAdded, this, [this](int index)
+  {
+    Analysis* addedAnalysis = m_lineOfSightModel->at(index);
+    if (addedAnalysis)
+      m_lineOfSightIndices.insert(addedAnalysis, m_lineOfSightIndices.count() + 1);
+  });
+
   connectAnalysisListModelSignals(m_lineOfSightModel);
   endResetModel();
 }
@@ -202,7 +236,11 @@ QVariant CombinedAnalysisListModel::data(const QModelIndex& index, int role) con
     switch (role)
     {
     case AnalysisNameRole:
-      return QString("Line of Sight %1").arg(QString::number(lineOfSightIndex(index.row())));
+    {
+      Analysis* losPtr = m_lineOfSightModel->at(lineOfSightIndex(index.row()));
+      if (losPtr)
+        return QString("Line of sight %1").arg(m_lineOfSightIndices.value(losPtr));
+    }
     case AnalysisVisibleRole:
       return m_lineOfSightModel->data(m_lineOfSightModel->index(lineOfSightIndex(index.row()), 0), AnalysisListModel::AnalysisRoles::AnalysisVisibleRole);
     case AnalysisTypeRole:
@@ -217,6 +255,8 @@ QVariant CombinedAnalysisListModel::data(const QModelIndex& index, int role) con
 
 /*!
   \brief Sets the data stored in the combined list at \a index under the \l CombinedAnalysisRoles \a role to \a value.
+
+  Returns \c true on success, else \c false.
 
   \note The  only editable role is \c CombinedAnalysisRoles::AnalysisVisibleRole.
  */

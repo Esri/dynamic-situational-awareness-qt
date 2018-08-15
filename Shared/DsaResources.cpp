@@ -1,14 +1,18 @@
-// Copyright 2016 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 // PCH header
 #include "pch.hpp"
@@ -18,7 +22,8 @@
 namespace Dsa {
 
 /*!
-  \class DsaResources
+  \class Dsa::DsaResources
+  \inmodule Dsa
   \inherits QObject
   \brief Helper class which presents a series of resources such as icon URLs.
  */
@@ -84,6 +89,39 @@ QUrl DsaResources::iconAddLayer() const
 QUrl DsaResources::iconAlert() const
 {
   return QStringLiteral("qrc:/Resources/icons/xhdpi/Alert.png");
+}
+
+
+/*!
+  \brief Returns the URL to the Critical Alert icon.
+ */
+QUrl DsaResources::iconAlertCritical() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/Alert_Critical.png");
+}
+
+/*!
+  \brief Returns the URL to the High Alert icon.
+ */
+QUrl DsaResources::iconAlertHigh() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/Alert_High.png");
+}
+
+/*!
+  \brief Returns the URL to the Low Alert icon.
+ */
+QUrl DsaResources::iconAlertLow() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/Alert_Low.png");
+}
+
+/*!
+  \brief Returns the URL to the Moderate Alert icon.
+ */
+QUrl DsaResources::iconAlertModerate() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/Alert_Moderate.png");
 }
 
 /*!
@@ -436,38 +474,6 @@ QUrl DsaResources::iconViewshed() const
 QUrl DsaResources::iconZoomTo() const
 {
   return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_zoomtofeature_light.png");
-}
-
-/*!
-  \brief Returns the URL to the "Warning (Green)" icon.
- */
-QUrl DsaResources::iconWarningGreen() const
-{
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/warning_green.png");
-}
-
-/*!
-  \brief Returns the URL to the "Warning (Orange)" icon.
- */
-QUrl DsaResources::iconWarningOrange() const
-{
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/warning_orange.png");
-}
-
-/*!
-  \brief Returns the URL to the "Warning (Red)" icon.
- */
-QUrl DsaResources::iconWarningRed() const
-{
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/warning_red.png");
-}
-
-/*!
-  \brief Returns the URL to the "Warning (Red Exclamation)" icon.
- */
-QUrl DsaResources::iconWarningRedExclamation() const
-{
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/warning_red_exclamation.png");
 }
 
 /*!

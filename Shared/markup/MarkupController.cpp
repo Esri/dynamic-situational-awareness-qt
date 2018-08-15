@@ -1,14 +1,18 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 // PCH header
 #include "pch.hpp"
@@ -50,7 +54,8 @@ namespace Dsa {
 const QString MarkupController::USERNAME_PROPERTYNAME = "UserName";
 
 /*!
-  \class MarkupController
+  \class Dsa::MarkupController
+  \inmodule Dsa
   \inherits AbstractSketchTool
   \brief Tool controller for creating markups.
  */
@@ -121,6 +126,7 @@ void MarkupController::setDrawingAltitude(double altitude)
 }
 
 /*!
+  \property MarkupController::drawingAltitude
  \brief Returns the drawing altitude.
  */
 double MarkupController::drawingAltitude() const
@@ -361,6 +367,7 @@ void MarkupController::updateGeoView()
 }
 
 /*!
+  \property MarkupController::is3d
  \brief Returns whether the app is 3D.
  */
 bool MarkupController::is3d() const
@@ -377,6 +384,7 @@ int MarkupController::sketchCount() const
 }
 
 /*!
+  \property MarkupController::drawModeEnabled
  \brief Returns whether drawing is enabled.
  */
 bool MarkupController::drawModeEnabled() const
@@ -416,6 +424,7 @@ void MarkupController::setOverlayName(const QString& name)
 }
 
 /*!
+  \property MarkupController::colors
  \brief Returns the list of colors available for markups.
  */
 QStringList MarkupController::colors() const
@@ -444,3 +453,42 @@ QColor MarkupController::currentColor() const
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void MarkupController::markupSent(const QString& filePath);
+  \brief Signal emitted when a markup is sent with the specified \a filePath.
+ */
+
+/*!
+  \fn void MarkupController::markupReceived(const QString& filePath, const QString& sharedBy);
+  \brief Signal emitted when a markup is received.
+
+  The \a filePath to the JSON and the author that the markup was \a sharedBy are passed through
+  as parameters.
+ */
+
+/*!
+  \fn void MarkupController::sketchingChanged();
+  \brief Signal emitted when the sketching property changes.
+ */
+
+/*!
+  \fn void MarkupController::sketchCompleted();
+  \brief Signal emitted when a markup sketch is completed.
+ */
+
+/*!
+  \fn void MarkupController::drawingAltitudeChanged();
+  \brief Signal emitted when the drawing altitude property changes.
+ */
+
+/*!
+  \fn void MarkupController::drawModeEnabledChanged();
+  \brief Signal emitted when the draw mode enabled property changes.
+ */
+
+/*!
+  \fn void MarkupController::is3dChanged();
+  \brief Signal emitted when the is3d property changes.
+ */

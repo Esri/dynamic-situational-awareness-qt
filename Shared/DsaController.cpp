@@ -1,14 +1,18 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 // PCH header
 #include "pch.hpp"
@@ -52,7 +56,8 @@ bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map);
 
 
 /*!
-  \class DsaController
+  \class Dsa::DsaController
+  \inmodule Dsa
   \inherits QObject
   \brief This is the controller for the DSA app. It is responsible for connecting the
   view (such as the \l Esri::ArcGISRuntime::GeoView) to the business logic of the app.
@@ -75,7 +80,8 @@ DsaController::DsaController(QObject* parent):
   m_jsonFormat(QSettings::registerFormat("json", &readJsonFile, &writeJsonFile)),
   m_conflictingToolNames{QStringLiteral("Alert Conditions"),
                          QStringLiteral("Markup Tool"),
-                         QStringLiteral("viewshed")}
+                         QStringLiteral("viewshed"),
+                         QStringLiteral("Observation Report")}
 {
   // setup config settings
   setupConfig();
@@ -356,10 +362,10 @@ void DsaController::writeDefaultMessageFeeds()
   messageFeedsJson.append(friendlyTracksAirJson);
 
   QJsonObject spotRepJson;
-  spotRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_NAME, QStringLiteral("Contact Reports"));
+  spotRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_NAME, QStringLiteral("Observation Reports"));
   spotRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_TYPE, QStringLiteral("spotrep"));
-  spotRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("enemycontact1600.png"));
-  spotRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER, QStringLiteral("enemycontact1600.png"));
+  spotRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("observation1600.png"));
+  spotRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER, QStringLiteral("observation1600.png"));
   spotRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT, QStringLiteral("draped"));
   messageFeedsJson.append(spotRepJson);
 
@@ -393,9 +399,9 @@ void DsaController::writeDefaultMessageFeeds()
   locationBroadcastJson.insert(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PORT, 45679);
   m_dsaSettings[MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME] = locationBroadcastJson;
 
-  QJsonObject conditionReportJson;
-  conditionReportJson.insert(MessageFeedConstants::CONTACT_REPORT_CONFIG_PORT, 45679);
-  m_dsaSettings[MessageFeedConstants::CONTACT_REPORT_CONFIG_PROPERTYNAME] = conditionReportJson;
+  QJsonObject observationReportJson;
+  observationReportJson.insert(MessageFeedConstants::OBSERVATION_REPORT_CONFIG_PORT, 45679);
+  m_dsaSettings[MessageFeedConstants::OBSERVATION_REPORT_CONFIG_PROPERTYNAME] = observationReportJson;
 }
 
 /*! \brief internal
@@ -493,3 +499,14 @@ bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map)
 }
 
 } // Dsa
+
+// Signal Documentation
+
+/*!
+  \fn void DsaController::errorOccurred(const QString& message, const QString& additionalMessage);
+
+  \brief Signal emitted when an error occurs.
+
+  An error \a message and \a additionalMessage are passed through as parameters, describing
+  the error that occurred.
+ */

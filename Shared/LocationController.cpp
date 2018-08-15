@@ -1,14 +1,18 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 // PCH header
 #include "pch.hpp"
@@ -48,7 +52,8 @@ const QString LocationController::GPX_FILE_PROPERTYNAME = "GpxFile";
 const QString LocationController::RESOURCE_DIRECTORY_PROPERTYNAME = "ResourceDirectory";
 
 /*!
-  \class LocationController
+  \class Dsa::LocationController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for handling the current location.
  */
@@ -191,7 +196,7 @@ QString LocationController::toolName() const
  *  \li \c SimulateLocation - Whether the app's location should be simulated.
  *  \li \c GpxFile - The path of the GPX file for simulated positions.
  *  \li \c ResourceDirectory - The directory containing icons for the location display.
- * \endList
+ * \endlist
  */
 void LocationController::setProperties(const QVariantMap& properties)
 {
@@ -202,6 +207,7 @@ void LocationController::setProperties(const QVariantMap& properties)
 }
 
 /*!
+  \property LocationController::enabled
   \brief Returns whether the tool is enabled.
  */
 bool LocationController::isEnabled() const
@@ -237,6 +243,7 @@ void LocationController::setEnabled(bool enabled)
 }
 
 /*!
+  \property LocationController::locationVisible
   \brief Returns whether the location is visible.
  */
 bool LocationController::isLocationVisible() const
@@ -261,6 +268,7 @@ void LocationController::setLocationVisible(bool visible)
 }
 
 /*!
+  \property LocationController::simulationEnabled
   \brief Returns whether the location is simulated.
  */
 bool LocationController::isSimulationEnabled() const
@@ -312,6 +320,7 @@ LocationDisplay3d* LocationController::locationDisplay() const
 }
 
 /*!
+  \property LocationController::gpxFilePath
   \brief Returns the file path of the GPX file.
  */
 QString LocationController::gpxFilePath() const
@@ -466,3 +475,43 @@ QUrl LocationController::modelSymbolPath() const
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void LocationController::locationChanged(const Esri::ArcGISRuntime::Point& newLocation);
+  \brief Signal emitted when the location changes to \a newLocation.
+ */
+
+/*!
+  \fn void LocationController::headingChanged(double newHeading);
+  \brief Signal emitted when the heading changes to \a newHeading.
+ */
+
+/*!
+  \fn void LocationController::gpxFilePathChanged();
+  \brief Signal emitted when GPX file path changes.
+ */
+
+/*!
+  \fn void LocationController::enabledChanged();
+  \brief Signal emitted when the enabled property changes.
+ */
+
+/*!
+  \fn void LocationController::locationVisibleChanged();
+  \brief Signal emitted when the locationVisible property changes.
+ */
+
+/*!
+  \fn void LocationController::simulationEnabledChanged();
+  \brief Signal emitted when simulationEnabled property changes.
+ */
+
+/*!
+  \fn void LocationController::toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
+  \brief Signal emitted when an error occurs.
+
+  An \a errorMessage and \a additionalMessage are passed through as parameters, describing
+  the error that occurred.
+ */
+

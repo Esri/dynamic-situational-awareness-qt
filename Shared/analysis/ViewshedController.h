@@ -1,14 +1,18 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 #ifndef VIEWSHEDCONTROLLER_H
 #define VIEWSHEDCONTROLLER_H
@@ -63,6 +67,7 @@ class ViewshedController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
   Q_PROPERTY(bool activeViewshedPitchEnabled READ isActiveViewshedPitchEnabled NOTIFY activeViewshedPitchEnabledChanged)
   Q_PROPERTY(bool activeViewshedOffsetZEnabled READ isActiveViewshedOffsetZEnabled NOTIFY activeViewshedOffsetZEnabledChanged)
   Q_PROPERTY(bool activeViewshed360Mode READ isActiveViewshed360Mode WRITE setActiveViewshed360Mode NOTIFY activeViewshed360ModeChanged)
+  Q_PROPERTY(bool locationDisplayViewshedActive READ isLocationDisplayViewshedActive NOTIFY locationDisplayViewshedActiveChanged)
 
 signals:
   void activeModeChanged();
@@ -82,6 +87,7 @@ signals:
   void activeViewshedPitchEnabledChanged();
   void activeViewshedOffsetZEnabledChanged();
   void activeViewshed360ModeChanged();
+  void locationDisplayViewshedActiveChanged();
 
 public:
   enum ViewshedActiveMode
@@ -121,9 +127,6 @@ public:
   Q_INVOKABLE void finishActiveViewshed();
 
   bool isActiveViewshedEnabled() const;
-
-  int activeViewshedIndex() const;
-  void setActiveViewshedIndex(int index);
 
   double activeViewshedMinDistance() const;
   void setActiveViewshedMinDistance(double minDistance);
@@ -179,7 +182,6 @@ private:
   Viewshed360* m_activeViewshed = nullptr;
   GeoElementViewshed360* m_locationDisplayViewshed = nullptr;
 
-  int m_activeViewshedIndex = -1;
   ViewshedActiveMode m_activeMode = ViewshedActiveMode::NoActiveMode;
 
   Esri::ArcGISRuntime::TaskWatcher m_identifyTaskWatcher;

@@ -1,14 +1,18 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 // PCH header
 #include "pch.hpp"
@@ -20,7 +24,7 @@
 #include "AnalysisListController.h"
 #include "AppInfo.h"
 #include "BasemapPickerController.h"
-#include "ContactReportController.h"
+#include "ObservationReportController.h"
 #include "ContextMenuController.h"
 #include "DsaResources.h"
 #include "FollowPositionController.h"
@@ -110,24 +114,6 @@ int main(int argc, char *argv[])
   QCoreApplication::setAttribute(Qt::AA_UseOpenGLES);
 #endif
 
-  // Before initializing ArcGIS Runtime, first set the
-  // ArcGIS Runtime license setting required for your application.
-
-  // ArcGISRuntimeEnvironment::setLicense("Place license string in here");
-
-  //  use this code to check for initialization errors
-  //  QObject::connect(ArcGISRuntimeEnvironment::instance(), &ArcGISRuntimeEnvironment::errorOccurred, [](const Error& error){
-  //    QMessageBox msgBox;
-  //    msgBox.setText(error.message);
-  //    msgBox.exec();
-  //  });
-
-  //  if (ArcGISRuntimeEnvironment::initialize() == false)
-  //  {
-  //    application.quit();
-  //    return 1;
-  //  }
-
   // Register the map view for QML
   qmlRegisterType<SceneQuickView>("Esri.Handheld", 1, 0, "SceneView");
   qRegisterMetaType<PopupManager*>("PopupManager*");
@@ -154,7 +140,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<Dsa::LineOfSightController>("Esri.DSA", 1, 0, "LineOfSightController");
   qmlRegisterType<Dsa::ContextMenuController>("Esri.DSA", 1, 0, "ContextMenuController");
   qmlRegisterType<Dsa::AnalysisListController>("Esri.DSA", 1, 0, "AnalysisListController");
-  qmlRegisterType<Dsa::ContactReportController>("Esri.DSA", 1, 0, "ContactReportController");
+  qmlRegisterType<Dsa::ObservationReportController>("Esri.DSA", 1, 0, "ObservationReportController");
 
   // Register Toolkit Component Types
   ArcGISRuntimeToolkit::registerToolkitTypes();

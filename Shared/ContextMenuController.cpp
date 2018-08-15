@@ -1,14 +1,19 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
+
 
 // PCH header
 #include "pch.hpp"
@@ -16,7 +21,7 @@
 #include "ContextMenuController.h"
 
 // example app headers
-#include "ContactReportController.h"
+#include "ObservationReportController.h"
 #include "FollowPositionController.h"
 #include "GraphicsOverlaysResultsManager.h"
 #include "IdentifyController.h"
@@ -46,10 +51,11 @@ const QString ContextMenuController::FOLLOW_OPTION = "Follow";
 const QString ContextMenuController::IDENTIFY_OPTION = "Identify";
 const QString ContextMenuController::LINE_OF_SIGHT_OPTION = "Line of sight";
 const QString ContextMenuController::VIEWSHED_OPTION = "Viewshed";
-const QString ContextMenuController::CONTACT_REPORT_OPTION = "Contact report";
+const QString ContextMenuController::OBSERVATION_REPORT_OPTION = "Observation";
 
 /*!
-  \class ContextMenuController
+  \class Dsa::ContextMenuController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for displaying a Context menu.
 
@@ -62,12 +68,12 @@ const QString ContextMenuController::CONTACT_REPORT_OPTION = "Contact report";
     \li Identify.
     \li Elevation.
     \li Coordinates.
-    \li Contact Report.
+    \li Observation Report.
     \li Viewshed.
     \li Line of sight.
   \endlist
 
-  \sa ContactReportController
+  \sa ObservationReportController
   \sa IdentifyController
   \sa ViewshedController
   \sa LineOfSightController
@@ -275,6 +281,10 @@ void ContextMenuController::onScreenToLocationCompleted(QUuid taskId, const Poin
 
 /*!
   \brief Update the context information for the clicked screen position.
+
+  \list
+  \li \a contextScreenPosition - The clicked screen position.
+  \endlist
  */
 void ContextMenuController::setContextScreenPosition(const QPoint& contextScreenPosition)
 {
@@ -305,7 +315,7 @@ void ContextMenuController::setContextLocation(const Point& location)
 
   addOption(ELEVATION_OPTION);
   addOption(VIEWSHED_OPTION);
-  addOption(CONTACT_REPORT_OPTION);
+  addOption(OBSERVATION_REPORT_OPTION);
 }
 
 /*!
@@ -337,6 +347,7 @@ void ContextMenuController::clearOptions()
 }
 
 /*!
+  \property ContextMenuController::resultTitle
   \brief Returns the title of the current context action.
  */
 QString ContextMenuController::resultTitle() const
@@ -441,6 +452,7 @@ Point ContextMenuController::contextLocation() const
 }
 
 /*!
+  \property ContextMenuController::result
   \brief Returns the result of the current action (if applicable).
  */
 QString ContextMenuController::result() const
@@ -460,6 +472,7 @@ void ContextMenuController::setResult(const QString& result)
 }
 
 /*!
+  \property ContextMenuController::options
   \brief Returns the current list of actions which can be performed for this context
  */
 QStringListModel* ContextMenuController::options() const
@@ -556,18 +569,19 @@ void ContextMenuController::selectOption(const QString& option)
     losFunc(m_contextGraphics);
     losFunc(m_contextFeatures);
   }
-  else if (option == CONTACT_REPORT_OPTION)
+  else if (option == OBSERVATION_REPORT_OPTION)
   {
-    Dsa::ContactReportController* contactReportTool = Toolkit::ToolManager::instance().tool<Dsa::ContactReportController>();
-    if (!contactReportTool)
+    Dsa::ObservationReportController* observationReportTool = Toolkit::ToolManager::instance().tool<Dsa::ObservationReportController>();
+    if (!observationReportTool)
       return;
 
-    contactReportTool->setControlPoint(m_contextLocation);
-    contactReportTool->setActive(true);
+    observationReportTool->setControlPoint(m_contextLocation);
+    observationReportTool->setActive(true);
   }
 }
 
 /*!
+  \property ContextMenuController::contextScreenPosition
   \brief Returns the screen position for the current context.
  */
 QPoint ContextMenuController::contextScreenPosition() const
@@ -576,6 +590,7 @@ QPoint ContextMenuController::contextScreenPosition() const
 }
 
 /*!
+  \property ContextMenuController::contextActive
   \brief Returns whether the current context is active or not.
  */
 bool ContextMenuController::isContextActive() const
@@ -596,3 +611,36 @@ void ContextMenuController::setContextActive(bool contextRequested)
 }
 
 } // Dsa
+
+// Signal Documentation
+
+/*!
+  \fn void ContextMenuController::contextActiveChanged();
+
+  \brief Signal emitted when active state changes.
+ */
+
+/*!
+  \fn void ContextMenuController::contextScreenPositionChanged();
+
+  \brief Signal emitted when the screen position of the context menu changes.
+ */
+
+/*!
+  \fn void ContextMenuController::optionsChanged();
+
+  \brief Signal emitted when the current options of the context menu changes.
+ */
+
+/*!
+  \fn void ContextMenuController::resultChanged();
+
+  \brief Signal emitted when the results change.
+ */
+
+/*!
+  \fn void ContextMenuController::resultTitleChanged();
+
+  \brief Signal emitted when the result title changes.
+ */
+

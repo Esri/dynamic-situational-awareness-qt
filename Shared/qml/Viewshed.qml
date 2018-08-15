@@ -1,14 +1,18 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 import QtQuick 2.9
 import QtQuick.Controls 2.2
@@ -22,6 +26,7 @@ Item {
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     signal myLocationModeSelected
+    signal closed
 
     ViewshedController {
         id: toolController
@@ -33,6 +38,11 @@ Item {
             if (activeMode === ViewshedController.AddMyLocationViewshed360)
                 myLocationModeSelected();
         }
+    }
+
+    function cancelViewshed() {
+        toolController.removeActiveViewshed();
+        toolController.activeMode = ViewshedController.NoActiveMode;
     }
 
     DropShadow {
@@ -76,6 +86,11 @@ Item {
         id: viewshedTypeToolbar
         visible: true
 
+        onVisibleChanged: {
+            if (!visible)
+                cancelViewshed();
+        }
+
         anchors {
             top: parent.top
             left: parent.left
@@ -97,6 +112,8 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 iconUrl: DsaResources.iconCurrentLocation
                 color: "transparent"
+                opacity: enabled ? 1 : 0.5
+                enabled: !toolController.locationDisplayViewshedActive
                 selected: toolController.activeMode === ViewshedController.AddMyLocationViewshed360;
 
                 onClicked: {
@@ -221,11 +238,23 @@ Item {
                         border.color: Material.background
                     }
                 }
-                text: "360 °"
 
                 onCheckedChanged: {
                     toolController.activeViewshed360Mode = checked;
                 }
+            }
+
+            Text {
+                anchors.horizontalCenter: parent.horizontalCenter
+                horizontalAlignment: Text.AlignHCenter
+
+                font {
+                    family: DsaStyles.fontFamily
+                    pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                }
+
+                color: Material.foreground
+                text: "360 °"
             }
         }
     }
@@ -412,13 +441,13 @@ Item {
         }
 
         function getAngleText() {
-            if (angleSelector.currentIndex === 0)
+            if (angleSelector.currentText === "Heading")
                 return Math.round(toolController.activeViewshedHeading) + "°";
-            else if (angleSelector.currentIndex === 1)
+            if (angleSelector.currentText === "Horizontal Angle")
                 return Math.round(toolController.activeViewshedHorizontalAngle) + "°";
-            else if (angleSelector.currentIndex === 2)
+            if (angleSelector.currentText === "Vertical Angle")
                 return Math.round(toolController.activeViewshedVerticalAngle) + "°";
-            else if (angleSelector.currentIndex === 3)
+            if (angleSelector.currentText === "Pitch")
                 return Math.round(toolController.activeViewshedPitch) + "°";
         }
     }
@@ -441,10 +470,11 @@ Item {
             id: finishIcon
             anchors.verticalCenter: parent.verticalCenter
             iconSource: DsaResources.iconComplete
-            toolName: "Finish"
+            toolName: "Save"
             onToolSelected: {
                 toolController.finishActiveViewshed();
                 toolController.activeMode = ViewshedController.NoActiveMode;
+                closed();
             }
         }
 
@@ -453,8 +483,8 @@ Item {
             iconSource: DsaResources.iconClose
             toolName: "Cancel"
             onToolSelected: {
-                toolController.removeActiveViewshed();
-                toolController.activeMode = ViewshedController.NoActiveMode;
+                cancelViewshed();
+                closed();
             }
         }
     }

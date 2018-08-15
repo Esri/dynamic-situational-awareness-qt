@@ -1,14 +1,18 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 // PCH header
 #include "pch.hpp"
@@ -37,7 +41,8 @@ const QString BasemapPickerController::DEFAULT_BASEMAP_PROPERTYNAME = "DefaultBa
 const QString BasemapPickerController::BASEMAP_DIRECTORY_PROPERTYNAME = "BasemapDirectory";
 
 /*!
-  \class BasemapPickerController
+  \class Dsa::BasemapPickerController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for setting a basemap for the app.
 
@@ -136,6 +141,7 @@ void BasemapPickerController::onBasemapDataPathChanged()
 }
 
 /*!
+  \property Dsa::BasemapPickerController::tileCacheModel
   \brief Returns a model of the local tile cache files contained in the
   basemap data directory.
  */
@@ -188,7 +194,7 @@ QString BasemapPickerController::toolName() const
  * \list
  *  \li DefaultBasemap. The name of the default basemap to load.
  *  \li BasemapDirectory. The directory containing basemap data.
- * \endList
+ * \endlist
  */
 void BasemapPickerController::setProperties(const QVariantMap& properties)
 {
@@ -210,3 +216,35 @@ void BasemapPickerController::setProperties(const QVariantMap& properties)
 }
 
 } // Dsa
+
+// Signal Documentation
+
+/*!
+  \fn void BasemapPickerController::tileCacheModelChanged();
+
+  \brief Signal emitted when the TileCacheModel associated with this class changes.
+ */
+
+/*!
+  \fn void BasemapPickerController::basemapsDataPathChanged();
+
+  \brief Signal emitted when basemap data path changes.
+ */
+
+/*!
+  \fn void BasemapPickerController::basemapChanged(Esri::ArcGISRuntime::Basemap* basemap, QString name = "");
+
+  \brief Signal emitted when the current \a basemap changes.
+
+  The \a name of the basemap is passed through the signal as a parameter.
+ */
+
+/*!
+  \fn void BasemapPickerController::toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
+
+  \brief Signal emitted when an error occurs.
+
+  An \a errorMessage and \a additionalMessage are passed through as parameters, describing
+  the error that occurred.
+ */
+

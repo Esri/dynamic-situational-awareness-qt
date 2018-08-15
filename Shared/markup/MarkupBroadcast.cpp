@@ -1,14 +1,18 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 // PCH header
 #include "pch.hpp"
@@ -40,7 +44,8 @@ const QString MarkupBroadcast::MARKUPKEY = QStringLiteral("markup");
 const QString MarkupBroadcast::SHAREDBYKEY = QStringLiteral("sharedBy");
 
 /*!
-  \class MarkupBroadcast
+  \class Dsa::MarkupBroadcast
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for broadcasting markups.
 
@@ -127,7 +132,7 @@ void MarkupBroadcast::setProperties(const QVariantMap& properties)
 }
 
 /*!
-   \brief Broadcasts the markup JSON over a UDP port.
+   \brief Broadcasts the markup JSON (\a json) over a UDP port.
  */
 void MarkupBroadcast::broadcastMarkup(const QString& json)
 {
@@ -164,3 +169,17 @@ void MarkupBroadcast::updateDataListener()
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void MarkupBroadcast::markupReceived(const QString& filePath, const QString& sharedBy);
+  \brief Signal emitted when a markup is received.
+
+  The \a filePath to the JSON and the author that the markup was \a sharedBy are passed through
+  as parameters.
+ */
+
+/*!
+  \fn void MarkupBroadcast::markupSent(const QString& filePath);
+  \brief Signal emitted when a markup is sent with the specified \a filePath.
+ */

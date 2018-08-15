@@ -1,14 +1,18 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 // PCH header
 #include "pch.hpp"
@@ -46,7 +50,8 @@ const QString LocationTextController::Meters = QStringLiteral("meters");
 const QString LocationTextController::Feet = QStringLiteral("feet");
 
 /*!
-  \class LocationTextController
+  \class Dsa::LocationTextController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for displaying the current location.
  */
@@ -84,6 +89,7 @@ QString LocationTextController::toolName() const
 }
 
 /*!
+ \property LocationTextController::currentLocationText
  \brief Returns the location text string for display in QML.
  */
 QString LocationTextController::currentLocationText() const
@@ -92,6 +98,7 @@ QString LocationTextController::currentLocationText() const
 }
 
 /*!
+ \property LocationTextController::currentElevationText
  \brief Returns the elevation text string for display in QML.
  */
 QString LocationTextController::currentElevationText() const
@@ -303,3 +310,33 @@ void LocationTextController::setUnitOfMeasurement(const QString& unit)
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void LocationTextController::currentLocationTextChanged();
+  \brief Signal emitted when the current location text changes.
+ */
+
+/*!
+  \fn void LocationTextController::currentElevationTextChanged();
+  \brief Signal emitted when the current elevation text changes.
+ */
+
+/*!
+  \fn void LocationTextController::useGpsForElevationChanged();
+  \brief Signal emitted when the \l useGpsForElevtion changes.
+
+  If \c true, GPS is used for elevation. If \c false, the Surface is used
+  for elevation.
+ */
+
+/*!
+  \fn void LocationTextController::unitOfMeasurementChanged();
+  \brief Signal emitted when the unit of measurement changes.
+ */
+
+/*!
+  \fn void LocationTextController::coordinateFormatChanged();
+  \brief Signal emitted when the coordinate format changes.
+ */
+

@@ -1,14 +1,18 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 // PCH header
 #include "pch.hpp"
@@ -74,7 +78,8 @@ const QString AddLocalDataController::s_tilePackageData = QStringLiteral("Tile P
 const QString AddLocalDataController::s_markupData = QStringLiteral("Markup (*.markup)");
 
 /*!
-  \class AddLocalDataController
+  \class Dsa::AddLocalDataController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for adding local data to the app.
  */
@@ -101,6 +106,7 @@ AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
 }
 
 /*!
+ \property AddLocalDataController::localDataModel
  \brief Returns the local data model associated with the controller.
  */
 QAbstractListModel* AddLocalDataController::localDataModel() const
@@ -152,6 +158,7 @@ void AddLocalDataController::refreshLocalDataModel(const QString& fileType)
 }
 
 /*!
+ \property AddLocalDataController::fileFilterList
  \brief Returns the file filter string list for filtering data from the QDir entrylist
  */
 QStringList AddLocalDataController::determineFileFilters(const QString& fileType)
@@ -846,3 +853,42 @@ void AddLocalDataController::setProperties(const QVariantMap& properties)
 }
 
 } // Dsa
+
+// Signal Documentation
+
+/*!
+  \fn void AddLocalDataController::localDataModelChanged();
+
+  \brief Signal emitted when the LocalDataModel associated with this class changes.
+ */
+
+/*!
+  \fn void AddLocalDataController::layerSelected(Esri::ArcGISRuntime::Layer* layer);
+
+  \brief Signal emitted when a \a layer is selected.
+ */
+
+/*!
+  \fn void AddLocalDataController::elevationSourceSelected(Esri::ArcGISRuntime::ElevationSource* source);
+
+  \brief Signal emitted when an elevation \a source is selected.
+ */
+
+/*!
+  \fn void AddLocalDataController::layerCreated(int i, Esri::ArcGISRuntime::Layer* layer);
+
+  \brief Signal emitted when a \a layer is created.
+
+  The index of the layer in the operational layer list is passed through as \a i.
+ */
+
+/*!
+  \fn void AddLocalDataController::toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
+
+  \brief Signal emitted when an error occurs.
+
+  An \a errorMessage and \a additionalMessage are passed through as parameters, describing
+  the error that occurred.
+ */
+
+

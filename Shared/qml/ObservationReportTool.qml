@@ -1,15 +1,18 @@
-
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 import QtQuick 2.6
 import QtQuick.Controls 2.1
@@ -18,25 +21,25 @@ import QtQuick.Window 2.2
 import Esri.DSA 1.0
 
 DsaPanel {
-    id: contactReportRoot
+    id: observationReportRoot
     clip: true
-    title: qsTr("Contact Report")
+    title: qsTr("Observation Report")
 
     property bool isMobile
     property alias pickMode: toolController.pickMode
     property bool  toolActive: toolController.active
     property bool readyToAdd: reportFrame.currentItem == reviewPage
 
-    ContactReportController {
+    ObservationReportController {
         id: toolController
 
-        active: isMobile ? (contactReportRoot.visible || pickMode) : contactReportRoot.visible
+        active: isMobile ? (observationReportRoot.visible || pickMode) : observationReportRoot.visible
 
         onActiveChanged: {
-            if (!active && contactReportRoot.visible)
-                contactReportRoot.visible = false;
-            else if (active && !contactReportRoot.visible)
-                contactReportRoot.visible = true;
+            if (!active && observationReportRoot.visible)
+                observationReportRoot.visible = false;
+            else if (active && !observationReportRoot.visible)
+                observationReportRoot.visible = true;
         }
     }
 
@@ -78,38 +81,38 @@ DsaPanel {
         }
         currentIndex: 0
 
-        // Date and time of report
-        ContactReportUnitPage {
-            id: unitPage
+        // Observed by
+        ObservationReportObservedByPage {
+            id: observedByPage
             visible: reportFrame.currentIndex === 0
         }
 
-        // Size of enemy unit
-        ContactReportSizePage {
+        // Size of object observed or number of items
+        ObservationReportSizePage {
             id: sizePage
             visible: reportFrame.currentIndex === 1
         }
 
         // Activity
-        ContactReportActivityPage {
+        ObservationReportActivityPage {
             id: activityPage
             visible: reportFrame.currentIndex === 2
         }
 
         // Location
-        ContactReportLocationPage {
+        ObservationReportLocationPage {
             id: locationPage
             visible: reportFrame.currentIndex === 3
         }
 
-        // Enemy Unit
-        ContactReportEnemyUnitPage {
-            id: enemyUnitPage
+        // Description of who is performing activity
+        ObservationReportDescriptionPage {
+            id: descriptionPage
             visible: reportFrame.currentIndex === 4
         }
 
         // Observed Time
-        ContactReportObservedTimePage {
+        ObservationReportObservedTimePage {
             id: observedTimePage
             visible: reportFrame.currentIndex === 5
         }
@@ -118,7 +121,7 @@ DsaPanel {
         Item {
             id: reviewPage
             visible: reportFrame.currentIndex === 6
-            property string instruction: "Create contact report"
+            property string instruction: "Create observation report"
             property bool valid: true
             clip: true
 
@@ -228,8 +231,8 @@ DsaPanel {
 
             toolController.broadcastReport(sizePage.size,
                                       locationPage.locationDescription,
-                                      enemyUnitPage.enemyUnit,
-                                      activityPage.enemyActivity,
+                                      descriptionPage.enemyUnit,
+                                      activityPage.activity,
                                       observedTimePage.observedTime,
                                       "");
 
@@ -238,7 +241,7 @@ DsaPanel {
             reportFrame.setCurrentIndex(0);
 
             if (isMobile)
-                contactReportRoot.visible = false;
+                observationReportRoot.visible = false;
         }
     }
 
@@ -259,7 +262,7 @@ DsaPanel {
             toolController.cancelReport();
 
             if (isMobile)
-                contactReportRoot.visible = false;
+                observationReportRoot.visible = false;
         }
     }
 

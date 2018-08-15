@@ -1,14 +1,18 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 #ifndef MESSAGESIMULATORCONTROLLER_H
 #define MESSAGESIMULATORCONTROLLER_H
@@ -33,8 +37,7 @@ class MessageSimulatorController : public QObject
   Q_OBJECT
 
   Q_PROPERTY(QUrl simulationFile READ simulationFile NOTIFY simulationFileChanged)
-  Q_PROPERTY(bool simulationStarted READ isSimulationStarted NOTIFY simulationStartedChanged)
-  Q_PROPERTY(bool simulationPaused READ isSimulationPaused NOTIFY simulationPausedChanged)
+  Q_PROPERTY(SimulationState simulationState READ simulationState NOTIFY simulationStateChanged)
   Q_PROPERTY(int port READ port WRITE setPort NOTIFY portChanged)
   Q_PROPERTY(bool simulationLooped READ isSimulationLooped WRITE setSimulationLooped NOTIFY simulationLoopedChanged)
   Q_PROPERTY(float messageFrequency READ messageFrequency WRITE setMessageFrequency NOTIFY messageFrequencyChanged)
@@ -49,7 +52,15 @@ public:
     Hours = 2
   };
 
+  enum class SimulationState
+  {
+    Running = 0,
+    Stopped = 1,
+    Paused = 2
+  };
+
   Q_ENUM(TimeUnit)
+  Q_ENUM(SimulationState)
 
   explicit MessageSimulatorController(QObject* parent = nullptr);
   ~MessageSimulatorController();
@@ -63,8 +74,7 @@ public:
   void setMessageFrequency(float messageFrequency);
   float messageFrequency() const;
 
-  bool isSimulationStarted() const;
-  bool isSimulationPaused() const;
+  SimulationState simulationState() const;
 
   bool isSimulationLooped() const;
   void setSimulationLooped(bool simulationLooped);
@@ -86,8 +96,7 @@ public:
 
 signals:
   void simulationFileChanged();
-  void simulationStartedChanged();
-  void simulationPausedChanged();
+  void simulationStateChanged();
   void portChanged();
   void simulationLoopedChanged();
   void messageFrequencyChanged();
@@ -117,8 +126,7 @@ private:
   qint64 m_messagesSent = 0;
 
   bool m_simulationLooped = true;
-  bool m_simulationStarted = false;
-  bool m_simulationPaused = false;
+  SimulationState m_simulationState = SimulationState::Stopped;
 
   TimeUnit m_timeUnit = TimeUnit::Seconds;
 };

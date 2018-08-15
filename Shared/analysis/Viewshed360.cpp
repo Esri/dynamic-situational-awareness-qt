@@ -1,14 +1,18 @@
-// Copyright 2018 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 // PCH header
 #include "pch.hpp"
@@ -24,7 +28,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class Viewshed360
+  \class Dsa::Viewshed360
+  \inmodule Dsa
   \inherits QObject
   \brief A viewshed which can cover up to 360 degrees.
 
@@ -75,6 +80,7 @@ void Viewshed360::removeFromOverlay()
 }
 
 /*!
+  \property Viewshed360::visible
   \brief Returns whether the viewshed is visible.
  */
 bool Viewshed360::isVisible() const
@@ -101,6 +107,7 @@ void Viewshed360::setVisible(bool visible)
 }
 
 /*!
+  \property Viewshed360::name
   \brief Returns the name of the viewshed.
  */
 QString Viewshed360::name() const
@@ -122,6 +129,7 @@ void Viewshed360::setName(const QString& name)
 }
 
 /*!
+  \property Viewshed360::minDistance
   \brief Returns the minimum distance in meters from the observer at which visibility will be evaluated.
  */
 double Viewshed360::minDistance() const
@@ -148,6 +156,7 @@ void Viewshed360::setMinDistance(double minDistance)
 }
 
 /*!
+  \property Viewshed360::maxDistance
   \brief Returns the maximum distance in meters from the observer at which visibility will be evaluated.
  */
 double Viewshed360::maxDistance() const
@@ -174,6 +183,7 @@ void Viewshed360::setMaxDistance(double maxDistance)
 }
 
 /*!
+  \property Viewshed360::horizontalAngle
   \brief Returns the horizontal angle in degrees of the observer's field of vision.
  */
 double Viewshed360::horizontalAngle() const
@@ -206,6 +216,7 @@ void Viewshed360::setHorizontalAngle(double horizontalAngle)
 }
 
 /*!
+  \property Viewshed360::verticalAngle
   \brief Returns the vertical angle in degrees of the observer's field of vision.
  */
 double Viewshed360::verticalAngle() const
@@ -238,6 +249,7 @@ void Viewshed360::setVerticalAngle(double verticalAngle)
 }
 
 /*!
+  \property Viewshed360::offsetZ
   \brief Returns the offset Z value of the viewshed in meters.
 
   The default value is \c 0.0.
@@ -258,6 +270,7 @@ void Viewshed360::setOffsetZ(double)
 }
 
 /*!
+  \property Viewshed360::headingEnabled
   \brief Returns whether heading is enabled for the viewshed.
 
   Heading will not be used if the viewshed is in 360 degree mode.
@@ -268,6 +281,7 @@ bool Viewshed360::isHeadingEnabled() const
 }
 
 /*!
+  \property Viewshed360::pitchEnabled
   \brief Returns whether pitch is enabled for the viewshed.
 
   Pitch will not be used if the viewshed is in 360 degree mode.
@@ -278,6 +292,7 @@ bool Viewshed360::isPitchEnabled() const
 }
 
 /*!
+  \property Viewshed360::offsetEnabled
   \brief Returns whether offset z is enabled for the viewshed.
  */
 bool Viewshed360::isOffsetZEnabled() const
@@ -286,6 +301,7 @@ bool Viewshed360::isOffsetZEnabled() const
 }
 
 /*!
+  \property Viewshed360::is360Mode
   \brief Returns whether the viewshed is in 360 degree mode.
  */
 bool Viewshed360::is360Mode() const
@@ -328,3 +344,70 @@ AnalysisOverlay* Viewshed360::analysisOverlay() const
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void Viewshed360::is360ModeChanged();
+  \brief Signal emitted when the is360Mode property changes.
+ */
+
+/*!
+  \fn void Viewshed360::offsetZEnabledChanged();
+  \brief Signal emitted when the offsetZEnabled property changes.
+ */
+
+/*!
+  \fn void Viewshed360::pitchEnabledChanged();
+  \brief Signal emitted when the pitchEnabledChanged property changes.
+ */
+
+/*!
+  \fn void Viewshed360::headingEnabledChanged();
+  \brief Signal emitted when the headingEnabled property changes.
+ */
+
+/*!
+  \fn void Viewshed360::offsetZChanged();
+  \brief Signal emitted when the offsetZ property changes.
+ */
+
+/*!
+  \fn void Viewshed360::pitchChanged();
+  \brief Signal emitted when the pitch property changes.
+ */
+
+/*!
+  \fn void Viewshed360::headingChanged();
+  \brief Signal emitted when the heading property changes.
+ */
+
+/*!
+  \fn void Viewshed360::verticalAngleChanged();
+  \brief Signal emitted when the verticalAngle property changes.
+ */
+
+/*!
+  \fn void Viewshed360::horizontalAngleChanged();
+  \brief Signal emitted when the horizontalAngle property changes.
+ */
+
+/*!
+  \fn void Viewshed360::maxDistanceChanged();
+  \brief Signal emitted when the maxDistance property changes.
+ */
+
+/*!
+  \fn void Viewshed360::minDistanceChanged();
+  \brief Signal emitted when the minDistance property changes.
+ */
+
+/*!
+  \fn void Viewshed360::nameChanged();
+  \brief Signal emitted when the name property changes.
+ */
+
+/*!
+  \fn void Viewshed360::visibleChanged();
+  \brief Signal emitted when the visible property changes.
+ */
+

@@ -1,3 +1,19 @@
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
+
 import QtQuick 2.7
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
@@ -16,17 +32,15 @@ ApplicationWindow {
     MessageSimulatorController {
         id: messageSimulatorController
 
-        onSimulationStartedChanged: {
-            loggingPage.loggingText += "\n" + (simulationStarted ? qsTr("Started ") : qsTr("Stopped ")) + new Date().toLocaleString();
-            if (simulationStarted) {
+        onSimulationStateChanged: {
+            var simulationStateStr = simulationState === MessageSimulatorController.Running ? qsTr("running ") :
+                                                                                              simulationState === MessageSimulatorController.Paused ?
+                                                                                                  qsTr("paused ") : qsTr("stopped ")
+            loggingPage.loggingText += "\n Simulation " + simulationState + new Date().toLocaleString();
+
+            if (simulationState === MessageSimulatorController.Running) {
                 loggingPage.loggingText += "\n" + qsTr("UDP broadcast port: ") + port;
                 loggingPage.loggingText += "\n" + qsTr("Sending ") + messageFrequency + qsTr(" message per ") + messageSimulatorController.fromTimeUnit(timeUnit);
-            }
-        }
-
-        onSimulationPausedChanged: {
-            if (simulationStarted) {
-                loggingPage.loggingText += "\n" + (simulationPaused ? qsTr("Paused ") : qsTr("Resumed ")) + new Date().toLocaleString();
             }
         }
 
@@ -100,7 +114,8 @@ ApplicationWindow {
             bottom:indicator.top
             margins: 16 * scaleFactor
         }
-        enabled: messageSimulatorController.simulationStarted
+        enabled: messageSimulatorController.simulationState === MessageSimulatorController.Running ||
+                 messageSimulatorController.simulationState === MessageSimulatorController.Paused
         text: qsTr("stop")
         font.bold: true
         font.pixelSize: startButton.font.pixelSize
@@ -119,15 +134,18 @@ ApplicationWindow {
             margins: 16 * scaleFactor
         }
         enabled: settingsPage.xmlFilePath.length > 0 && settingsPage.port.length > 0
-        text: messageSimulatorController.simulationPaused ? qsTr("resume") :
-                                                            messageSimulatorController.simulationStarted ? qsTr("pause") : qsTr("start")
+        text: messageSimulatorController.simulationState === MessageSimulatorController.Paused ?
+                  qsTr("resume") :
+                  messageSimulatorController.simulationState === MessageSimulatorController.Running ?
+                      qsTr("pause") :
+                      qsTr("start")
         font.bold: true
         font.pixelSize: 14 * scaleFactor
 
         onClicked: {
-            if (messageSimulatorController.simulationPaused) {
+            if (messageSimulatorController.simulationState === MessageSimulatorController.Paused) {
                 messageSimulatorController.resumeSimulation();
-            } else if (messageSimulatorController.simulationStarted) {
+            } else if (messageSimulatorController.simulationState === MessageSimulatorController.Running) {
                 messageSimulatorController.pauseSimulation();
             } else {
                 messageSimulatorController.startSimulation(settingsPage.xmlFilePath);

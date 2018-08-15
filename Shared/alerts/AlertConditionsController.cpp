@@ -1,14 +1,18 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 // PCH header
 #include "pch.hpp"
@@ -56,7 +60,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class AlertConditionsController
+  \class Dsa::AlertConditionsController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for working with the conditions which can trigger alerts.
 
@@ -119,7 +124,7 @@ QString AlertConditionsController::toolName() const
  * \list
  *  \li Conditions. A list of JSON objects describing alert conditions to be added to the map.
  *  \li MessageFeeds. A list of real-time feeds to be used as condition sources.
- * \endList
+ * \endlist
  */
 void AlertConditionsController::setProperties(const QVariantMap& properties)
 {
@@ -354,8 +359,8 @@ bool AlertConditionsController::addWithinAreaAlert(const QString& conditionName,
     \li \a levelIndex. The \l AlertLevel for the condition.
     \li \a sourceFeedName. The name of the source feed
       (e.g. a \l Esri::ArcGISRuntime::GraphicsOverlay) used to create an \l AlertSource.
-    \li attributeName. The name of the attribute to query.
-    \li targetValue. The attribute value to check for.
+    \li \a attributeName. The name of the attribute to query.
+    \li \a targetValue. The attribute value to check for.
   \endlist
 
   Returns \c true if the condition was succesfully added
@@ -469,6 +474,7 @@ void AlertConditionsController::updateConditionLevel(int rowIndex, int level)
 }
 
 /*!
+  \property AlertConditionsController::sourceNames
   \brief Returns a QAbstractItemModel containing the list of
   names for creating condition sources.
 
@@ -480,6 +486,7 @@ QAbstractItemModel* AlertConditionsController::sourceNames() const
 }
 
 /*!
+  \property AlertConditionsController::targetNames
   \brief Returns a QAbstractItemModel containing the list of
   names for creating condition targets.
 
@@ -491,6 +498,7 @@ QAbstractItemModel* AlertConditionsController::targetNames() const
 }
 
 /*!
+  \property AlertConditionsController::levelNames
   \brief Returns a QAbstractItemModel containing the list of
   level names for creating condition targets.
 
@@ -502,6 +510,7 @@ QAbstractItemModel* AlertConditionsController::levelNames() const
 }
 
 /*!
+  \property AlertConditionsController::conditionsList
   \brief Returns a QAbstractItemModel containing the list of
   conditions.
 
@@ -513,6 +522,7 @@ QAbstractItemModel* AlertConditionsController::conditionsList() const
 }
 
 /*!
+  \property AlertConditionsController::pickMode
   \brief Returns whether the tool is in pick mode or not.
  */
 bool AlertConditionsController::pickMode() const
@@ -1247,3 +1257,38 @@ QStringList AlertConditionsController::realtimeFeedNames() const
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void AlertConditionsController::sourceNamesChanged();
+  \brief Signal emitted when the source names change.
+ */
+
+/*!
+  \fn void AlertConditionsController::targetNamesChanged();
+  \brief Signal emitted when the target names change.
+ */
+
+/*!
+  \fn void AlertConditionsController::conditionsListChanged();
+  \brief Signal emitted when the conditions list changes.
+ */
+
+/*!
+  \fn void AlertConditionsController::pickModeChanged();
+  \brief Signal emitted when the pick mode changes.
+ */
+
+/*!
+  \fn void AlertConditionsController::pickedElement(const QString& overlayName, int elementId);
+  \brief Signal emitted when an element is picked, passing the selected \a overlayName and \a elementId
+  through as parameters.
+ */
+
+/*!
+  \fn void AlertConditionsController::toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
+  \brief Signal emitted when an error occurs.
+
+  An \a errorMessage and \a additionalMessage are passed through as parameters, describing
+  the error that occurred.
+ */

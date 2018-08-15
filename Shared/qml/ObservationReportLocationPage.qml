@@ -1,15 +1,18 @@
-
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 import QtQuick 2.6
 import QtQuick.Controls 2.1
@@ -21,17 +24,17 @@ Item {
     id: reportDatePage
 
     property bool valid: controlPointTextField.length > 0
-    property string instruction: "Location"
+    property string instruction: "Location of observation"
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
 
     property alias controlPoint: controlPointTextField.text
-    property alias locationDescription: enemyLocationField.text
+    property alias locationDescription: locationField.text
 
     function clear() {
-        enemyLocationField.text = "";
+        locationField.text = "";
 
         if (visible)
-            enemyLocationField.forceActiveFocus();
+            locationField.forceActiveFocus();
     }
 
     function text() {
@@ -40,14 +43,14 @@ Item {
 
     onVisibleChanged: {
         if (visible)
-            enemyLocationField.forceActiveFocus();
+            locationField.forceActiveFocus();
     }
 
     TextField {
         id: controlPointTextField
         anchors {
-            left: enemyLocationField.left
-            right: enemyLocationField.right
+            left: locationField.left
+            right: locationField.right
             margins: 16 * scaleFactor
         }
         width: parent.width * 0.75
@@ -60,47 +63,52 @@ Item {
         verticalAlignment: Text.AlignVCenter
         text: toolController.controlPoint;
 
-        placeholderText: "<lat long of enemy>"
+        placeholderText: "<lat long of observation>"
     }
 
-    OverlayButton {
-        id: pickButton
 
+    Row {
+        id: pickRow
         anchors {
             top: controlPointTextField.bottom
-            right: parent.horizontalCenter
+            horizontalCenter: parent.horizontalCenter
+            margins: 8 * scaleFactor
         }
 
-        selected: toolController.pickMode
-        iconUrl: DsaResources.iconTouch
-        opacity: enabled ? 1.0 : 0.8
+        spacing: 20 * scaleFactor
 
-        onClicked: {
-            toolController.togglePickMode();
-        }
-    }
+        ToolIcon {
+            id: pickButton
 
-    OverlayButton {
-        id: myLocationButton
+            selected: toolController.pickMode
+            toolName: "From Map"
+            iconSource: DsaResources.iconTouch
+            opacity: enabled ? 1.0 : 0.8
 
-        anchors {
-            top: controlPointTextField.bottom
-            left: parent.horizontalCenter
+            onToolSelected: {
+                toolController.togglePickMode();
+            }
         }
 
-        iconUrl: DsaResources.iconGps
+        ToolIcon {
+            id: myLocationButton
 
-        onClicked: {
-            toolController.setFromMyLocation();
+            toolName: "My Location"
+            iconSource: DsaResources.iconGps
+            opacity: enabled ? 1.0 : 0.8
+
+            onToolSelected: {
+                toolController.setFromMyLocation();
+            }
         }
     }
 
     TextEdit {
-        id: enemyLocationField
+        id: locationField
         clip: true
         anchors {
             horizontalCenter: parent.horizontalCenter
-            top: pickButton.bottom
+            top: pickRow.bottom
             margins: 16 * scaleFactor
         }
         width: parent.width * 0.75
@@ -133,7 +141,7 @@ Item {
 
         Text {
             anchors.centerIn: parent
-            visible: enemyLocationField.text.length === 0
+            visible: locationField.text.length === 0
             font {
                 pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 family: DsaStyles.fontFamily
@@ -150,8 +158,8 @@ Item {
 
     Button {
         anchors {
-            top : enemyLocationField.bottom
-            right: enemyLocationField.right
+            top : locationField.bottom
+            right: locationField.right
             margins: 4 * scaleFactor
         }
         text: "clear"

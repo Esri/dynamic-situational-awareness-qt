@@ -1,14 +1,18 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 // PCH header
 #include "pch.hpp"
@@ -18,6 +22,7 @@
 // example app headers
 #include "DrawOrderLayerListModel.h"
 #include "DsaUtility.h"
+#include "MarkupLayer.h"
 
 // toolkit headers
 #include "ToolManager.h"
@@ -25,6 +30,7 @@
 
 // C++ API headers
 #include "FeatureLayer.h"
+#include "FeatureCollectionLayer.h"
 #include "GeoView.h"
 #include "LayerListModel.h"
 #include "RasterLayer.h"
@@ -37,7 +43,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class TableOfContentsController
+  \class Dsa::TableOfContentsController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for managing the table of contents for operational layers.
 
@@ -67,6 +74,7 @@ TableOfContentsController::~TableOfContentsController()
 }
 
 /*!
+  \property TableOfContentsController::layerListModel
   \brief Returns the list of operational layers in draw order.
  */
 QAbstractItemModel* TableOfContentsController::layerListModel() const
@@ -95,7 +103,15 @@ void TableOfContentsController::zoomTo(int layerIndex)
   if (!geoView)
     return;
 
-  geoView->setViewpoint(Viewpoint(layer->fullExtent()));
+  Envelope extent;
+
+  MarkupLayer* markupLayer = dynamic_cast<MarkupLayer*>(layer);
+  if (markupLayer)
+    extent = markupLayer->featureCollection()->tables()->at(0)->extent();
+  else
+    extent = layer->fullExtent();
+
+  geoView->setViewpoint(Viewpoint(extent));
 }
 
 /*!
@@ -125,6 +141,8 @@ void TableOfContentsController::moveDown(int layerIndex)
     return;
 
   m_layerListModel->move(modelIndex, modelIndex - 1);
+
+  refreshLayerOrder();
 }
 
 /*!
@@ -141,6 +159,8 @@ void TableOfContentsController::moveUp(int layerIndex)
     return;
 
   m_layerListModel->move(modelIndex, modelIndex + 1);
+
+  refreshLayerOrder();
 }
 
 /*!
@@ -158,6 +178,8 @@ void TableOfContentsController::moveFromTo(int fromIndex, int toIndex)
     return;
 
   m_layerListModel->move(modelFromIndex, modelToIndex);
+
+  refreshLayerOrder();
 }
 
 /*!
@@ -298,4 +320,30 @@ int TableOfContentsController::mappedIndex(int index) const
   return sourceIndex.row();
 }
 
+/*!
+  \internal
+ */
+void TableOfContentsController::refreshLayerOrder()
+{
+  // To avoid a re-ordering issue which affects FeatureCollectionLayers in 3D view
+  // these types of layers are removed and re-added at the desired index
+  const int layerCount = m_layerListModel->rowCount();
+  for (int i = 0; i < layerCount; ++i)
+  {
+    Layer* layer = m_layerListModel->at(i);
+    FeatureCollectionLayer* featCollectionLyr = qobject_cast<FeatureCollectionLayer*>(layer);
+    if (!featCollectionLyr)
+      continue;
+
+    m_layerListModel->removeAt(i);
+    m_layerListModel->insert(i, layer);
+  }
+}
+
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void TableOfContentsController::layerListModelChanged();
+  \brief Signal emitted when the LayerListModel changes.
+ */

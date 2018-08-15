@@ -1,14 +1,18 @@
-// Copyright 2016 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 #ifndef DSARESOURCES_H
 #define DSARESOURCES_H
@@ -73,10 +77,10 @@ class DsaResources : public QObject
   Q_PROPERTY(QUrl iconTrash READ iconTrash CONSTANT)
   Q_PROPERTY(QUrl iconViewshed READ iconViewshed CONSTANT)
   Q_PROPERTY(QUrl iconZoomTo READ iconZoomTo CONSTANT)
-  Q_PROPERTY(QUrl iconWarningGreen READ iconWarningGreen CONSTANT)
-  Q_PROPERTY(QUrl iconWarningOrange READ iconWarningOrange CONSTANT)
-  Q_PROPERTY(QUrl iconWarningRed READ iconWarningRed CONSTANT)
-  Q_PROPERTY(QUrl iconWarningRedExclamation READ iconWarningRedExclamation CONSTANT)
+  Q_PROPERTY(QUrl iconAlertCritical READ iconAlertCritical CONSTANT)
+  Q_PROPERTY(QUrl iconAlertHigh READ iconAlertHigh CONSTANT)
+  Q_PROPERTY(QUrl iconAlertLow READ iconAlertLow CONSTANT)
+  Q_PROPERTY(QUrl iconAlertModerate READ iconAlertModerate CONSTANT)
   Q_PROPERTY(QUrl iconLineOfSight READ iconLineOfSight CONSTANT)
 
 public:
@@ -90,6 +94,10 @@ private:
   QUrl iconAdd() const;
   QUrl iconAddLayer() const;
   QUrl iconAlert() const;
+  QUrl iconAlertCritical() const;
+  QUrl iconAlertHigh() const;
+  QUrl iconAlertLow() const;
+  QUrl iconAlertModerate() const;
   QUrl iconAlertConditionList() const;
   QUrl iconAlertList() const;
   QUrl iconAppLogo() const;
@@ -134,10 +142,6 @@ private:
   QUrl iconTrash() const;
   QUrl iconViewshed() const;
   QUrl iconZoomTo() const;
-  QUrl iconWarningGreen() const;
-  QUrl iconWarningOrange() const;
-  QUrl iconWarningRed() const;
-  QUrl iconWarningRedExclamation() const;
   QUrl iconLineOfSight() const;
 };
 

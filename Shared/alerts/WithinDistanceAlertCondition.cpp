@@ -1,14 +1,18 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 // PCH header
 #include "pch.hpp"
@@ -24,7 +28,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class WithinDistanceAlertCondition
+  \class Dsa::WithinDistanceAlertCondition
+  \inmodule Dsa
   \inherits AlertCondition
   \brief Represents a spatial, "Geofence", condition which will be coninuosly monitored and will
   trigger an alert when a source object is within a threshold distance of a target object.
@@ -36,7 +41,7 @@ namespace Dsa {
 
 /*!
   \brief Constructor taking an \l AlertLevel (\a level) the \a name of the condition,
-  the threshold distance (in meters) and an optional \a parent.
+  the threshold \a distance (in meters) and an optional \a parent.
  */
 WithinDistanceAlertCondition::WithinDistanceAlertCondition(AlertLevel level,
                                                            const QString& name,
@@ -57,7 +62,7 @@ WithinDistanceAlertCondition::~WithinDistanceAlertCondition()
 }
 
 /*!
-  \brief Creates a new \l WithinDistanceAlertConditionData to track source and target objects.
+  \brief Creates a new \l WithinDistanceAlertConditionData to track \a source and \a target objects.
  */
 AlertConditionData* WithinDistanceAlertCondition::createData(AlertSource* source, AlertTarget* target)
 {

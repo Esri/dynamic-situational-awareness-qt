@@ -1,14 +1,18 @@
-// Copyright 2017 ESRI
-//
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
-//
-// You may freely redistribute and use this sample code, with or
-// without modification, provided you include the original copyright
-// notice and use restrictions.
-//
-// See the Sample code usage restrictions document for further information.
-//
+/*******************************************************************************
+ *  Copyright 2012-2018 Esri
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************/
 
 // PCH header
 #include "pch.hpp"
@@ -36,7 +40,8 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class OptionsController
+  \class Dsa::OptionsController
+  \inmodule Dsa
   \inherits Toolkit::AbstractTool
   \brief Tool controller for setting various options for the app.
  */
@@ -128,6 +133,7 @@ void OptionsController::setProperties(const QVariantMap& properties)
 }
 
 /*!
+ \property OptionsController::coordinateFormats
  \brief Returns the coordinate format list for display in the combo box.
  */
 QStringList OptionsController::coordinateFormats() const
@@ -147,6 +153,7 @@ void OptionsController::setCoordinateFormat(const QString& format)
 }
 
 /*!
+  \property OptionsController::useGpsForElevation
  \brief Returns whether to use GPS for elevation for display.
  */
 bool OptionsController::useGpsForElevation() const
@@ -169,6 +176,7 @@ void OptionsController::setUseGpsForElevation(bool useGps)
 }
 
 /*!
+  \property OptionsController::units
  \brief Returns the unit of measurement list for display.
  */
 QStringList OptionsController::units() const
@@ -188,6 +196,7 @@ void OptionsController::setUnitOfMeasurement(const QString& unit)
 }
 
 /*!
+ \property OptionsController::userName
  \brief Returns the user name for the app.
  */
 QString OptionsController::userName() const
@@ -209,6 +218,7 @@ void OptionsController::setUserName(const QString& userName)
 }
 
 /*!
+  \property OptionsController::initialFormatIndex
  \brief Returns the initial index.
   This is used to set the initial index in the combo box to match the controller.
   */
@@ -218,6 +228,7 @@ int OptionsController::initialFormatIndex() const
 }
 
 /*!
+  \property OptionsController::initialUnitIndex
  \brief Returns the initial index of the list of units.
 
   This is used to set the initial index in the combo box to match the controller.
@@ -228,6 +239,7 @@ int OptionsController::initialUnitIndex() const
 }
 
 /*!
+  \property OptionsController::showFriendlyTracksLabels
  \brief Returns whether the friendly tracks labels show.
 */
 bool OptionsController::showFriendlyTracksLabels()
@@ -284,3 +296,39 @@ QList<DictionaryRenderer*> OptionsController::friendlyTracksOverlayRenderers() c
 }
 
 } // Dsa
+
+// Signal Documentation
+/*!
+  \fn void OptionsController::coordinateFormatsChanged();
+  \brief Signal emitted when the coordinateFormats property changes.
+ */
+
+/*!
+  \fn void OptionsController::useGpsForElevationChanged();
+  \brief Signal emitted when the useGpsForElevation property changes.
+ */
+
+/*!
+  \fn void OptionsController::unitsChanged();
+  \brief Signal emitted when the units property changes.
+ */
+
+/*!
+  \fn void OptionsController::initialUnitIndexChanged();
+  \brief Signal emitted when the initial unit index changes.
+ */
+
+/*!
+  \fn void OptionsController::initialFormatIndexChanged();
+  \brief Signal emitted when the initial coordinate format index changes.
+ */
+
+/*!
+  \fn void OptionsController::showFriendlyTracksLabelsChanged();
+  \brief Signal emitted when showFriendlyTracksLabels property changes.
+ */
+
+/*!
+  \fn void OptionsController::userNameChanged();
+  \brief Signal emitted when the userName property changes.
+ */

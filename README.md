@@ -16,7 +16,7 @@ The repo contains [Qt](http://qt.io) projects for dynamic situational awareness 
 
 If you just want to grab the latest code and build the project, these are the quick steps:
  
- * `git clone https://github.com/ArcGIS/dynamic-situational-awareness-qt.git`
+ * `git clone https://github.com/Esri/dynamic-situational-awareness-qt.git`
  * `cd dynamic-situational-awareness-qt`
  * `git clone https://github.com/Esri/arcgis-runtime-toolkit-qt.git`
  * `cd arcgis-runtime-toolkit-qt`

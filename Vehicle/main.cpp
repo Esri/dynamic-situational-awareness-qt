@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -109,11 +110,6 @@ int main(int argc, char *argv[])
 #endif
   QSettings::setDefaultFormat(kSettingsFormat);
 
-#ifdef Q_OS_WIN
-  // Force usage of OpenGL ES through ANGLE on Windows
-  QCoreApplication::setAttribute(Qt::AA_UseOpenGLES);
-#endif
-
   // Register the map view for QML
   qmlRegisterType<SceneQuickView>("Esri.Vehicle", 1, 0, "SceneView");
   qRegisterMetaType<PopupManager*>("PopupManager*");
@@ -145,7 +141,7 @@ int main(int argc, char *argv[])
   // Register Toolkit Component Types
   ArcGISRuntimeToolkit::registerToolkitTypes();
 
-  // Intialize application view
+  // Initialize application view
   QQuickView view;
   view.setResizeMode(QQuickView::SizeRootObjectToView);
 

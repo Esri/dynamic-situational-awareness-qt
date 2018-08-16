@@ -22,6 +22,7 @@
 
 // Qt headers
 #include <QAbstractListModel>
+#include <QVariantList>
 
 namespace Esri {
   namespace ArcGISRuntime {
@@ -88,6 +89,7 @@ signals:
   void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
 
 private:
+  void setupFeeds();
   Esri::ArcGISRuntime::Renderer* createRenderer(const QString& rendererInfo, QObject* parent = nullptr) const;
 
   Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
@@ -96,6 +98,7 @@ private:
   QList<DataListener*> m_dataListeners;
   QString m_resourcePath;
   LocationBroadcast* m_locationBroadcast = nullptr;
+  QVariantList m_messageFeedProperties;
 };
 
 } // Dsa

@@ -83,16 +83,20 @@ LocationController::~LocationController()
 /*!
   \internal
  */
-void LocationController::initPositionInfoSource(bool simulated)
+void LocationController::initPositionInfoSource()
 {
-  if (simulated && dynamic_cast<GPXLocationSimulator*>(m_positionSource))
+  if (isSimulationEnabled() && dynamic_cast<GPXLocationSimulator*>(m_positionSource))
     return;
 
-  if (simulated)
-  {
-    clearPositionInfoSource();
+  clearPositionInfoSource();
 
+  if (isSimulationEnabled())
+  {
     auto gpxLocationSimulator = new GPXLocationSimulator(this);
+
+    if (!m_gpxFilePath.isEmpty())
+      gpxLocationSimulator->setGpxFile(m_gpxFilePath);
+
     m_positionSource = gpxLocationSimulator;
 
     connect(gpxLocationSimulator, &GPXLocationSimulator::headingChanged, this,
@@ -109,8 +113,6 @@ void LocationController::initPositionInfoSource(bool simulated)
   }
   else
   {
-    clearPositionInfoSource();
-
     m_positionSource = QGeoPositionInfoSource::createDefaultSource(this);
 
     m_compass = new QCompass(this);
@@ -200,9 +202,9 @@ QString LocationController::toolName() const
  */
 void LocationController::setProperties(const QVariantMap& properties)
 {
-  bool simulate = QString::compare(properties[SIMULATE_LOCATION_PROPERTYNAME].toString(), QString("true"), Qt::CaseInsensitive) == 0;
-  setSimulationEnabled(simulate);
+  const bool simulate = QString::compare(properties[SIMULATE_LOCATION_PROPERTYNAME].toString(), QString("true"), Qt::CaseInsensitive) == 0;
   setGpxFilePath(properties[GPX_FILE_PROPERTYNAME].toString());
+  setSimulationEnabled(simulate);
   setIconDataPath(properties[RESOURCE_DIRECTORY_PROPERTYNAME].toString());
 }
 
@@ -223,7 +225,7 @@ void LocationController::setEnabled(bool enabled)
   if (m_enabled == enabled)
     return;
 
-  initPositionInfoSource(m_simulated);
+  initPositionInfoSource();
 
   if (enabled)
   {
@@ -284,12 +286,9 @@ void LocationController::setSimulationEnabled(bool simulated)
   if (m_simulated == simulated)
     return;
 
-  initPositionInfoSource(simulated);
+  m_simulated = simulated;
 
-  if (!m_gpxFilePath.isEmpty() && dynamic_cast<GPXLocationSimulator*>(m_positionSource))
-  {
-    static_cast<GPXLocationSimulator*>(m_positionSource)->setGpxFile(m_gpxFilePath);
-  }
+  initPositionInfoSource();
 
   if (isEnabled())
   {
@@ -298,7 +297,6 @@ void LocationController::setSimulationEnabled(bool simulated)
       m_compass->start();
   }
 
-  m_simulated = simulated;
   emit simulationEnabledChanged();
   emit propertyChanged(SIMULATE_LOCATION_PROPERTYNAME, m_simulated);
 }
@@ -342,15 +340,17 @@ void LocationController::setGpxFilePath(const QString& gpxFilePath)
     return;
   }
 
-  initPositionInfoSource(true); // ignore m_simulated, we need to init the simulator now
-
-  static_cast<GPXLocationSimulator*>(m_positionSource)->setGpxFile(gpxFilePath);
-
-  if (isEnabled())
+  if (isSimulationEnabled())
   {
-    m_positionSource->startUpdates();
-    if (m_compass)
-      m_compass->start();
+    initPositionInfoSource();
+    static_cast<GPXLocationSimulator*>(m_positionSource)->setGpxFile(gpxFilePath);
+
+    if (isEnabled())
+    {
+      m_positionSource->startUpdates();
+      if (m_compass)
+        m_compass->start();
+    }
   }
 
   m_gpxFilePath = gpxFilePath;

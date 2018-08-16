@@ -67,7 +67,7 @@ public:
   void setLocationVisible(bool isVisible);
 
   bool isSimulationEnabled() const;
-  void setSimulationEnabled(bool isSimulationEnabled);
+  void setSimulationEnabled(bool simulated);
 
   Esri::ArcGISRuntime::Point currentLocation() const;
 
@@ -103,7 +103,7 @@ private slots:
   void updateGeoView();
 
 private:
-  void initPositionInfoSource(bool isSimulationEnabled);
+  void initPositionInfoSource();
   void clearPositionInfoSource();
   QUrl modelSymbolPath() const;
 
@@ -111,7 +111,7 @@ private:
   QCompass* m_compass = nullptr;
   LocationDisplay3d* m_locationDisplay3d = nullptr;
   bool m_enabled = false;
-  bool m_simulated = true;
+  bool m_simulated = false;
   double m_lastViewHeading = 0.0;
   double m_lastKnownHeading = 0.0;
   Esri::ArcGISRuntime::Point m_currentLocation;

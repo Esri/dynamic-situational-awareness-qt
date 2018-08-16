@@ -434,7 +434,7 @@ void DsaController::createDefaultSettings()
   m_dsaSettings["DefaultBasemap"] = QStringLiteral("topographic");
   m_dsaSettings["DefaultElevationSource"] = QString("%1/CaDEM.tpk").arg(m_dsaSettings["ElevationDirectory"].toString());
   m_dsaSettings["GpxFile"] = QString("%1/MontereyMounted.gpx").arg(m_dsaSettings["SimulationDirectory"].toString());
-  m_dsaSettings["SimulateLocation"] = QStringLiteral("true");
+  m_dsaSettings["SimulateLocation"] = QStringLiteral("false");
   writeDefaultMessageFeeds();
   writeDefaultInitialLocation();
   m_dsaSettings[Toolkit::CoordinateConversionConstants::COORDINATE_FORMAT_PROPERTY] = Toolkit::CoordinateConversionConstants::MGRS_FORMAT;

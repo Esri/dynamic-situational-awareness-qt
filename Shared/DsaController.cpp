@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -47,13 +48,12 @@
 #include <QSettings>
 
 using namespace Esri::ArcGISRuntime;
-using Esri::ArcGISRuntime::Toolkit::ToolManager;
+using namespace Esri::ArcGISRuntime::Toolkit;
 
 namespace Dsa {
 
 bool readJsonFile(QIODevice& device, QSettings::SettingsMap& map);
 bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map);
-
 
 /*!
   \class Dsa::DsaController

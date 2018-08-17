@@ -55,9 +55,6 @@ public:
   QString headingAttribute() const;
   QString pitchAttribute() const;
 
-protected:
-  void update360Mode(bool is360Mode) override;
-
 private:
   Q_DISABLE_COPY(GeoElementViewshed360)
   GeoElementViewshed360() = delete;

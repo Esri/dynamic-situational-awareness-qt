@@ -111,10 +111,6 @@ protected:
                    Esri::ArcGISRuntime::AnalysisOverlay* analysisOverlay,
                    QObject* parent = nullptr);
 
-  virtual void update360Mode(bool is360Mode) = 0;
-
-  QList<Esri::ArcGISRuntime::Viewshed*> m_viewsheds360Offsets;
-
 private:
   Q_DISABLE_COPY(Viewshed360)
   Viewshed360() = delete;

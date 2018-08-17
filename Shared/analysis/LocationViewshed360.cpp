@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -35,7 +36,7 @@ namespace Dsa {
 
 constexpr double c_defaultHeading = 0.0;
 constexpr double c_defaultPitch = 90.0;
-constexpr double c_defaultHorizontalAngle = 120.0;
+constexpr double c_defaultHorizontalAngle = 360.0;
 constexpr double c_defaultVerticalAngle = 90.0;
 constexpr double c_defaultMinDistance = 0.0;
 constexpr double c_defaultMaxDistance = 500.0;
@@ -67,8 +68,14 @@ LocationViewshed360::LocationViewshed360(const Point& point, GraphicsOverlay* gr
   m_locationViewshedGraphic->attributes()->insertAttribute(ViewshedController::VIEWSHED_HEADING_ATTRIBUTE, headingOffset);
   m_locationViewshedGraphic->attributes()->insertAttribute(ViewshedController::VIEWSHED_PITCH_ATTRIBUTE, c_defaultPitch);
   m_graphicsOverlay->graphics()->append(m_locationViewshedGraphic);
+  const double newGraphicPitch = is360Mode() ? 180.0 : pitch();
+  m_locationViewshedGraphic->attributes()->replaceAttribute(ViewshedController::VIEWSHED_PITCH_ATTRIBUTE, newGraphicPitch);
 
-  update360Mode(is360Mode());
+  connect(this, &Viewshed360::is360ModeChanged, this, [this]()
+  {
+    const double newGraphicPitch = is360Mode() ? 180.0 : pitch();
+    m_locationViewshedGraphic->attributes()->replaceAttribute(ViewshedController::VIEWSHED_PITCH_ATTRIBUTE, newGraphicPitch);
+  });
 }
 
 /*!
@@ -95,11 +102,6 @@ void LocationViewshed360::setPoint(const Point& point)
 {
   static_cast<LocationViewshed*>(viewshed())->setLocation(point);
   m_locationViewshedGraphic->setGeometry(point);
-
-  for (auto viewshed : m_viewsheds360Offsets)
-  {
-    static_cast<LocationViewshed*>(viewshed)->setLocation(point);
-  }
 }
 
 /*!
@@ -131,18 +133,6 @@ void LocationViewshed360::setHeading(double heading)
 
   constexpr double headingOffset = -180.0;
   m_locationViewshedGraphic->attributes()->replaceAttribute(ViewshedController::VIEWSHED_HEADING_ATTRIBUTE, heading + headingOffset);
-
-  if (!m_viewsheds360Offsets.isEmpty())
-  {
-    constexpr double horizontalAngle360Value = 360.0;
-    double headingOffset1 = heading + c_defaultHorizontalAngle;
-    if (headingOffset1 > horizontalAngle360Value)
-      headingOffset1 -= horizontalAngle360Value;
-
-    static_cast<LocationViewshed*>(m_viewsheds360Offsets[0])->setHeading(headingOffset1);
-    static_cast<LocationViewshed*>(m_viewsheds360Offsets[1])->setHeading(headingOffset1 + c_defaultHorizontalAngle);
-  }
-
   emit headingChanged();
 }
 
@@ -170,59 +160,6 @@ void LocationViewshed360::setPitch(double pitch)
   m_locationViewshedGraphic->attributes()->replaceAttribute(ViewshedController::VIEWSHED_PITCH_ATTRIBUTE, pitch);
 
   emit pitchChanged();
-}
-
-/*!
-  \internal
- */
-void LocationViewshed360::update360Mode(bool is360Mode)
-{
-  auto overlay = analysisOverlay();
-
-  if (!is360Mode)
-    m_locationViewshedGraphic->attributes()->replaceAttribute(ViewshedController::VIEWSHED_PITCH_ATTRIBUTE, pitch());
-  else
-    m_locationViewshedGraphic->attributes()->replaceAttribute(ViewshedController::VIEWSHED_PITCH_ATTRIBUTE, 180.0);
-
-  // the 1st time the viewshed is set to be 360 degrees, the m_viewsheds360Offsets list is populated with
-  // 2 additional viewsheds to cover the full range, since a single viewshed can only cover 120 degrees.
-  if (is360Mode && m_viewsheds360Offsets.isEmpty() && overlay)
-  {
-    double headingOffset1 = heading() + c_defaultHorizontalAngle;
-    constexpr double horizontalAngle360Value = 360.0;
-    if (headingOffset1 > horizontalAngle360Value)
-      headingOffset1 -= horizontalAngle360Value;
-    auto viewshedOffset1 = new LocationViewshed(point(), headingOffset1, pitch(), c_defaultHorizontalAngle, c_defaultVerticalAngle,
-                                                minDistance(), maxDistance(), this);
-
-    viewshedOffset1->setVisible(isVisible());
-    overlay->analyses()->append(viewshedOffset1);
-    m_viewsheds360Offsets.append(viewshedOffset1);
-
-    auto viewshedOffset2 = new LocationViewshed(point(), headingOffset1 + c_defaultHorizontalAngle, pitch(), c_defaultHorizontalAngle,
-                                                c_defaultVerticalAngle, minDistance(), maxDistance(), this);
-
-    viewshedOffset2->setVisible(isVisible());
-    overlay->analyses()->append(viewshedOffset2);
-    m_viewsheds360Offsets.append(viewshedOffset2);
-  }
-
-  viewshed()->setHorizontalAngle(c_defaultHorizontalAngle);
-  viewshed()->setVerticalAngle(c_defaultVerticalAngle);
-  static_cast<LocationViewshed*>(viewshed())->setPitch(c_defaultPitch);
-
-  emit horizontalAngleChanged();
-  emit verticalAngleChanged();
-  emit pitchChanged();
-
-  // set the 2 offset viewsheds to be visible if we are in 360 degree mode.
-  for (auto viewshed : m_viewsheds360Offsets)
-  {
-    viewshed->setVisible(isVisible() && is360Mode);
-  }
-
-  emit headingEnabledChanged();
-  emit pitchEnabledChanged();
 }
 
 } // Dsa

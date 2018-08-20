@@ -69,6 +69,9 @@ LocationViewshed360::LocationViewshed360(const Point& point, GraphicsOverlay* gr
   m_locationViewshedGraphic->attributes()->insertAttribute(ViewshedController::VIEWSHED_PITCH_ATTRIBUTE, is360Mode() ? 180.0 : c_defaultPitch);
   m_graphicsOverlay->graphics()->append(m_locationViewshedGraphic);
 
+  // set pitch to make sure heading is valid
+  static_cast<LocationViewshed*>(viewshed())->setPitch(c_defaultPitch);
+
   connect(this, &Viewshed360::is360ModeChanged, this, [this]()
   {
     const double newGraphicPitch = is360Mode() ? 180.0 : pitch();

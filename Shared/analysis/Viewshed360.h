@@ -120,6 +120,7 @@ private:
 
   QString m_name;
   bool m_is360Mode = true;
+  double m_lastHorizontalAngle = 120.0;
 };
 
 } // Dsa

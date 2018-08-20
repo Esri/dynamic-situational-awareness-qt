@@ -300,11 +300,12 @@ void Viewshed360::set360Mode(bool is360Mode)
 
   if (is360Mode)
   {
+    m_lastHorizontalAngle = viewshed()->horizontalAngle();
     viewshed()->setHorizontalAngle(360.0);
   }
   else
   {
-    viewshed()->setHorizontalAngle(120.0);
+    viewshed()->setHorizontalAngle(m_lastHorizontalAngle);
   }
 
   emit horizontalAngleChanged();

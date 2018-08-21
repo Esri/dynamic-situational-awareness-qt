@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -32,7 +33,7 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 constexpr double c_defaultPitch = 0.0;
-constexpr double c_defaultHorizontalAngle = 120.0;
+constexpr double c_defaultHorizontalAngle = 360.0;
 constexpr double c_defaultVerticalAngle = 90.0;
 constexpr double c_defaultMinDistance = 0.0;
 constexpr double c_defaultMaxDistance = 500.0;
@@ -65,7 +66,6 @@ GeoElementViewshed360::GeoElementViewshed360(GeoElement* geoElement, AnalysisOve
   m_headingAttribute(headingAttribute),
   m_pitchAttribute(pitchAttribute)
 {
-  update360Mode(is360Mode());
 }
 
 /*!
@@ -112,17 +112,6 @@ void GeoElementViewshed360::setHeading(double heading)
       return;
 
     static_cast<GeoElementViewshed*>(viewshed())->setHeadingOffset(heading);
-
-    if (!m_viewsheds360Offsets.isEmpty())
-    {
-      double headingOffset1 = heading + c_defaultHorizontalAngle;
-      constexpr double horizontalAngle360Value = 360.0;
-      if (headingOffset1 > horizontalAngle360Value)
-        headingOffset1 -= horizontalAngle360Value;
-
-      static_cast<GeoElementViewshed*>(m_viewsheds360Offsets[0])->setHeadingOffset(headingOffset1);
-      static_cast<GeoElementViewshed*>(m_viewsheds360Offsets[1])->setHeadingOffset(headingOffset1 + c_defaultHorizontalAngle);
-    }
   }
   else
   {
@@ -141,7 +130,6 @@ void GeoElementViewshed360::setHeading(double heading)
 
   emit headingChanged();
 }
-
 
 /*!
   \brief Returns the pitch attribute of the \l Esri::ArcGISRuntime::GeoElement in degrees.
@@ -256,58 +244,6 @@ QString GeoElementViewshed360::headingAttribute() const
 QString GeoElementViewshed360::pitchAttribute() const
 {
   return m_pitchAttribute;
-}
-
-/*!
-  \internal
- */
-void GeoElementViewshed360::update360Mode(bool is360Mode)
-{
-  // update the viewshed to cover 360 degrees if is360Mode is true.
-  auto overlay = analysisOverlay();
-
-  // the 1st time the viewshed is set to be 360 degrees, the m_viewsheds360Offsets list is populated with
-  // 2 additional viewsheds to cover the full range, since a single viewshed can only cover 120 degrees.
-  if (is360Mode && m_viewsheds360Offsets.isEmpty() &&
-      overlay && !m_geoElement.isNull())
-  {
-    double headingOffset1 = static_cast<GeoElementViewshed*>(viewshed())->headingOffset() + c_defaultHorizontalAngle;
-    constexpr double horizontalAngle360Value = 360.0;
-    if (headingOffset1 > horizontalAngle360Value)
-      headingOffset1 -= horizontalAngle360Value;
-
-    auto viewshedOffset1 = new GeoElementViewshed(m_geoElement.data(), c_defaultHorizontalAngle, c_defaultVerticalAngle,
-                                                  minDistance(), maxDistance(), headingOffset1, 0.0, this);
-
-    viewshedOffset1->setOffsetZ(c_defaultOffsetZ);
-    viewshedOffset1->setVisible(isVisible());
-    overlay->analyses()->append(viewshedOffset1);
-    m_viewsheds360Offsets.append(viewshedOffset1);
-
-    auto viewshedOffset2 = new GeoElementViewshed(m_geoElement.data(), c_defaultHorizontalAngle, c_defaultVerticalAngle,
-                                                  minDistance(), maxDistance(), headingOffset1 + c_defaultHorizontalAngle, 0.0, this);
-
-    viewshedOffset2->setOffsetZ(c_defaultOffsetZ);
-    viewshedOffset2->setVisible(isVisible());
-    overlay->analyses()->append(viewshedOffset2);
-    m_viewsheds360Offsets.append(viewshedOffset2);
-  }
-
-  viewshed()->setHorizontalAngle(c_defaultHorizontalAngle);
-  viewshed()->setVerticalAngle(c_defaultVerticalAngle);
-  setPitch(c_defaultPitch);
-
-  emit horizontalAngleChanged();
-  emit verticalAngleChanged();
-
-  // set the 2 offset viewsheds to be visible if we are in 360 degree mode.
-  for (auto viewshed : m_viewsheds360Offsets)
-  {
-    viewshed->setVisible(isVisible() && is360Mode);
-  }
-
-  emit headingEnabledChanged();
-  emit pitchEnabledChanged();
 }
 
 } // Dsa

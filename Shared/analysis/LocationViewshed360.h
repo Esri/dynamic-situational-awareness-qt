@@ -51,9 +51,6 @@ public:
   double pitch() const override;
   void setPitch(double pitch) override;
 
-protected:
-  void update360Mode(bool is360Mode) override;
-
 private:
   Q_DISABLE_COPY(LocationViewshed360)
   LocationViewshed360() = delete;

@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -33,8 +34,7 @@ namespace Dsa {
   \inherits QObject
   \brief A viewshed which can cover up to 360 degrees.
 
-  When in 360 degree mode the primary viewshed will be supplemented by 2 additional
-  viewsheds to complete the full arc, since a single viewshed can only cover 120 degrees.
+  When in 360 degree mode the \l horizontalAngle is set to 360 degrees.
 
   \sa Esri::ArcGISRuntime::Viewshed
   */
@@ -43,8 +43,7 @@ namespace Dsa {
   \brief Constructor for a 360 degree viewshed.
 
   \list
-    \li \a viewshed - The primary \l Esri::ArcGISRuntime::Viewshed. When in 360 degree mode this will be supplemented
-        by 2 additional viewsheds to complete the full arc, since a single viewshed can only cover 120 degrees.
+    \li \a viewshed - The primary \l Esri::ArcGISRuntime::Viewshed.
     \li \a analysisOverlay - The \l Esri::ArcGISRuntime::AnalysisOverlay which contains the viewshed(s).
     \li \a parent - An optional parent.
   \endlist
@@ -71,11 +70,6 @@ void Viewshed360::removeFromOverlay()
   if (m_analysisOverlay.isNull())
     return;
 
-  for (auto viewshed : m_viewsheds360Offsets)
-  {
-    m_analysisOverlay->analyses()->removeOne(viewshed);
-  }
-
   m_analysisOverlay->analyses()->removeOne(m_viewshed);
 }
 
@@ -97,11 +91,6 @@ void Viewshed360::setVisible(bool visible)
     return;
 
   m_viewshed->setVisible(visible);
-
-  for (auto viewshed : m_viewsheds360Offsets)
-  {
-    viewshed->setVisible(visible && m_is360Mode);
-  }
 
   emit visibleChanged();
 }
@@ -147,11 +136,6 @@ void Viewshed360::setMinDistance(double minDistance)
 
   viewshed()->setMinDistance(minDistance);
 
-  for (auto viewshed : m_viewsheds360Offsets)
-  {
-    viewshed->setMinDistance(minDistance);
-  }
-
   emit minDistanceChanged();
 }
 
@@ -173,11 +157,6 @@ void Viewshed360::setMaxDistance(double maxDistance)
     return;
 
   viewshed()->setMaxDistance(maxDistance);
-
-  for (auto viewshed : m_viewsheds360Offsets)
-  {
-    viewshed->setMaxDistance(maxDistance);
-  }
 
   emit maxDistanceChanged();
 }
@@ -311,9 +290,6 @@ bool Viewshed360::is360Mode() const
 
 /*!
   \brief Sets whether the viewshed is in 360 degree mode to \a is360Mode.
-
-  When in 360 degree mode the primary viewshed will be supplemented by 2 additional
-  viewsheds to complete the full arc, since a single viewshed can only cover 120 degrees.
  */
 void Viewshed360::set360Mode(bool is360Mode)
 {
@@ -322,8 +298,17 @@ void Viewshed360::set360Mode(bool is360Mode)
 
   m_is360Mode = is360Mode;
 
-  update360Mode(m_is360Mode);
+  if (is360Mode)
+  {
+    m_lastHorizontalAngle = viewshed()->horizontalAngle();
+    viewshed()->setHorizontalAngle(360.0);
+  }
+  else
+  {
+    viewshed()->setHorizontalAngle(m_lastHorizontalAngle);
+  }
 
+  emit horizontalAngleChanged();
   emit is360ModeChanged();
 }
 

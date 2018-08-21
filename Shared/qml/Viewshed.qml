@@ -402,9 +402,11 @@ Item {
         }
 
         function getMaxAngle() {
-            if (angleSelector.currentText === "Heading")
+            var angleText = angleSelector.currentText;
+
+            if (angleText === "Heading" || angleText === "Horizontal Angle")
                 return 359;
-            else if (angleSelector.currentText === "Pitch")
+            else if (angleText === "Pitch")
                 return toolController.activeViewshedMaxPitch;
 
             return 120;

@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -47,12 +48,12 @@
 #include <QSettings>
 
 using namespace Esri::ArcGISRuntime;
+using namespace Esri::ArcGISRuntime::Toolkit;
 
 namespace Dsa {
 
 bool readJsonFile(QIODevice& device, QSettings::SettingsMap& map);
 bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map);
-
 
 /*!
   \class Dsa::DsaController
@@ -87,6 +88,14 @@ DsaController::DsaController(QObject* parent):
   m_dataPath = m_dsaSettings["RootDataDirectory"].toString();
 
   connect(m_scene, &Scene::errorOccurred, this, &DsaController::onError);
+
+  // as tools are added, set the properties
+  connect(&ToolManager::instance(), &ToolManager::toolAdded, this,
+          [this](Esri::ArcGISRuntime::Toolkit::AbstractTool* tool)
+  {
+    if (tool)
+      tool->setProperties(m_dsaSettings);
+  });
 }
 
 /*!
@@ -189,15 +198,6 @@ void DsaController::init(GeoView* geoView)
       if (contextMenu && contextMenu->isActive() == anyActive)
         contextMenu->setActive(!anyActive);
     });
-  }
-
-  // set all tool properties
-  for(Toolkit::AbstractTool* abstractTool : Toolkit::ToolManager::instance())
-  {
-    if (!abstractTool)
-      continue;
-
-    abstractTool->setProperties(m_dsaSettings);
   }
 }
 
@@ -434,7 +434,7 @@ void DsaController::createDefaultSettings()
   m_dsaSettings["DefaultBasemap"] = QStringLiteral("topographic");
   m_dsaSettings["DefaultElevationSource"] = QString("%1/CaDEM.tpk").arg(m_dsaSettings["ElevationDirectory"].toString());
   m_dsaSettings["GpxFile"] = QString("%1/MontereyMounted.gpx").arg(m_dsaSettings["SimulationDirectory"].toString());
-  m_dsaSettings["SimulateLocation"] = QStringLiteral("true");
+  m_dsaSettings["SimulateLocation"] = QStringLiteral("false");
   writeDefaultMessageFeeds();
   writeDefaultInitialLocation();
   m_dsaSettings[Toolkit::CoordinateConversionConstants::COORDINATE_FORMAT_PROPERTY] = Toolkit::CoordinateConversionConstants::MGRS_FORMAT;

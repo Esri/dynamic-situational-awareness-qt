@@ -136,13 +136,7 @@ QString LayerCacheManager::toolName() const
  */
 void LayerCacheManager::setProperties(const QVariantMap& properties)
 {
-  if (m_initialLoadCompleted)
-    return;
-
-  if (!m_localDataController)
-    return;
-
-  if (m_initialLoadCompleted)
+  if (m_initialLoadCompleted || !m_localDataController)
     return;
 
   const QVariant layersData = properties.value(LAYERS_PROPERTYNAME);

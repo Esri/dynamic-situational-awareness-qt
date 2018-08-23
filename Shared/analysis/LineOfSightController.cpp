@@ -110,10 +110,17 @@ LineOfSightController::LineOfSightController(QObject* parent):
     onOperationalLayersChanged(Toolkit::ToolResourceProvider::instance()->operationalLayers());
   });
 
-  onGeoViewChanged(Toolkit::ToolResourceProvider::instance()->geoView());
   onOperationalLayersChanged(Toolkit::ToolResourceProvider::instance()->operationalLayers());
 
+  // this tool must be in the tool manager before adding analyses below
   Toolkit::ToolManager::instance().addTool(this);
+
+  SceneView* sceneView = dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView());
+  if (sceneView)
+  {
+    m_geoView = sceneView;
+    sceneView->analysisOverlays()->append(m_lineOfSightOverlay);
+  }
 }
 
 /*!

@@ -90,10 +90,6 @@ ViewshedController::ViewshedController(QObject* parent) :
 
   connectMouseSignals();
 
-  auto sceneView = dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView());
-  if (sceneView)
-    setSceneView(sceneView);
-
   connect(m_viewsheds, &ViewshedListModel::viewshedRemoved, this, [this](Viewshed360* viewshed)
   {
     std::unique_ptr<Viewshed360> viewshedPtr(viewshed);
@@ -108,7 +104,15 @@ ViewshedController::ViewshedController(QObject* parent) :
     }
   });
 
+  // this tool must be in the tool manager before adding analyses below
   Toolkit::ToolManager::instance().addTool(this);
+
+  auto sceneView = dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView());
+  if (sceneView)
+  {
+    m_sceneView = sceneView;
+    m_sceneView->analysisOverlays()->append(m_analysisOverlay);
+  }
 }
 
 /*!

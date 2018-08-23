@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -56,9 +57,9 @@ BasemapPickerController::BasemapPickerController(QObject* parent /* = nullptr */
   Toolkit::AbstractTool(parent),
   m_tileCacheModel(new TileCacheListModel(this))
 {
-  Toolkit::ToolManager::instance().addTool(this);
-
   connect(this, &BasemapPickerController::basemapsDataPathChanged, this, &BasemapPickerController::onBasemapDataPathChanged);
+
+  Toolkit::ToolManager::instance().addTool(this);
 }
 
 /*!

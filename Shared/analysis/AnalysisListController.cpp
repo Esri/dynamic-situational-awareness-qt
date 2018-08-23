@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -58,8 +59,6 @@ AnalysisListController::AnalysisListController(QObject* parent):
   Toolkit::AbstractTool(parent),
   m_analysisList(new CombinedAnalysisListModel(this))
 {
-  Toolkit::ToolManager::instance().addTool(this);
-
   // update the geoView used by the tool as required
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]()
   {
@@ -67,6 +66,8 @@ AnalysisListController::AnalysisListController(QObject* parent):
   });
 
   onGeoViewChanged(Toolkit::ToolResourceProvider::instance()->geoView());
+
+  Toolkit::ToolManager::instance().addTool(this);
 }
 
 /*!

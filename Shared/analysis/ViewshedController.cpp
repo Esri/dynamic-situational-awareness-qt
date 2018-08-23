@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -82,8 +83,6 @@ ViewshedController::ViewshedController(QObject* parent) :
   m_analysisOverlay(new AnalysisOverlay(this)),
   m_viewsheds(new ViewshedListModel(this))
 {
-  Toolkit::ToolManager::instance().addTool(this);
-
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]
   {
     setSceneView(dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView()));
@@ -108,6 +107,8 @@ ViewshedController::ViewshedController(QObject* parent) :
       emit locationDisplayViewshedActiveChanged();
     }
   });
+
+  Toolkit::ToolManager::instance().addTool(this);
 }
 
 /*!

@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -67,7 +68,6 @@ MarkupController::MarkupController(QObject* parent):
   AbstractSketchTool(parent),
   m_markupBroadcast(new MarkupBroadcast(parent))
 {
-  Toolkit::ToolManager::instance().addTool(this);
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, &MarkupController::updateGeoView);
 
   updateGeoView();
@@ -82,6 +82,8 @@ MarkupController::MarkupController(QObject* parent):
   {
     emit this->markupSent(fileName);
   });
+
+  Toolkit::ToolManager::instance().addTool(this);
 }
 
 /*!

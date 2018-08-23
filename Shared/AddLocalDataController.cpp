@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -91,8 +92,6 @@ AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent),
   m_localDataModel(new DataItemListModel(this))
 {
-  Toolkit::ToolManager::instance().addTool(this);
-
   // add the base path to the string list
   addPathToDirectoryList(DsaUtility::dataPath());
 
@@ -103,6 +102,8 @@ AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
       /*, vectorTilePackageData()*/}; // VTPK is not supported in 3D
   emit fileFilterListChanged();
   emit localDataModelChanged();
+
+  Toolkit::ToolManager::instance().addTool(this);
 }
 
 /*!
@@ -890,5 +891,4 @@ void AddLocalDataController::setProperties(const QVariantMap& properties)
   An \a errorMessage and \a additionalMessage are passed through as parameters, describing
   the error that occurred.
  */
-
 

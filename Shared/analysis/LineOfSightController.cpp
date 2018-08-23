@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -98,8 +99,6 @@ LineOfSightController::LineOfSightController(QObject* parent):
   m_overlayNames(new QStringListModel(this)),
   m_lineOfSightOverlay(new AnalysisOverlay(this))
 {
-  Toolkit::ToolManager::instance().addTool(this);
-
   // connect to ToolResourceProvider signals
   auto resourecProvider = Toolkit::ToolResourceProvider::instance();
   connect(resourecProvider, &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]()
@@ -113,6 +112,8 @@ LineOfSightController::LineOfSightController(QObject* parent):
 
   onGeoViewChanged(Toolkit::ToolResourceProvider::instance()->geoView());
   onOperationalLayersChanged(Toolkit::ToolResourceProvider::instance()->operationalLayers());
+
+  Toolkit::ToolManager::instance().addTool(this);
 }
 
 /*!

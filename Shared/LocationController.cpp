@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -65,12 +66,12 @@ LocationController::LocationController(QObject* parent) :
   Toolkit::AbstractTool(parent),
   m_locationDisplay3d(new LocationDisplay3d(this))
 {
-  Toolkit::ToolManager::instance().addTool(this);
-
   connect(this, &LocationController::locationChanged, Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::onLocationChanged);
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, &LocationController::updateGeoView);
 
   updateGeoView();
+
+  Toolkit::ToolManager::instance().addTool(this);
 }
 
 /*!

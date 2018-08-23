@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -51,8 +52,6 @@ namespace Dsa {
 ViewedAlertsController::ViewedAlertsController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent)
 {
-  Toolkit::ToolManager::instance().addTool(this);
-
   AlertListModel* model = AlertListModel::instance();
   if (model)
   {
@@ -61,6 +60,8 @@ ViewedAlertsController::ViewedAlertsController(QObject* parent /* = nullptr */):
     connect(model, &AlertListModel::rowsRemoved, this, &ViewedAlertsController::handleDataChanged);
     emit unviewedCountChanged();
   }
+
+  Toolkit::ToolManager::instance().addTool(this);
 }
 
 /*!
@@ -126,7 +127,6 @@ int ViewedAlertsController::unviewedCount() const
 
   return m_cachedCount;
 }
-
 
 } // Dsa
 

@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -76,8 +77,6 @@ using namespace Esri::ArcGISRuntime;
 LayerCacheManager::LayerCacheManager(QObject* parent) :
   Toolkit::AbstractTool(parent)
 {
-  Toolkit::ToolManager::instance().addTool(this);
-
   // obtain Add Local Data Controller
   m_localDataController = Toolkit::ToolManager::instance().tool<AddLocalDataController>();
 
@@ -114,6 +113,8 @@ LayerCacheManager::LayerCacheManager(QObject* parent) :
     connect(m_scene->operationalLayers(), &LayerListModel::layoutChanged, this, &LayerCacheManager::onLayerListChanged); // order changed
     connect(m_scene->operationalLayers(), &LayerListModel::modelReset, this, &LayerCacheManager::onLayerListChanged); // order changed
   }
+
+  Toolkit::ToolManager::instance().addTool(this);
 }
 
 /*!

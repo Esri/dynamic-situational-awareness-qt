@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -66,12 +67,12 @@ MessageFeedsController::MessageFeedsController(QObject* parent) :
   m_messageFeeds(new MessageFeedListModel(this)),
   m_locationBroadcast(new LocationBroadcast(this))
 {
-  Toolkit::ToolManager::instance().addTool(this);
-
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]
   {
     setGeoView(Toolkit::ToolResourceProvider::instance()->geoView());
   });
+
+  Toolkit::ToolManager::instance().addTool(this);
 }
 
 /*!

@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -62,9 +63,9 @@ OptionsController::OptionsController(QObject* parent) :
   m_units{AppConstants::UNIT_METERS,
           AppConstants::UNIT_FEET}
 {
-  Toolkit::ToolManager::instance().addTool(this);
   emit unitsChanged();
   emit coordinateFormatsChanged();
+  Toolkit::ToolManager::instance().addTool(this);
 }
 
 /*!

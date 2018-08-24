@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -61,8 +62,6 @@ MarkupBroadcast::MarkupBroadcast(QObject *parent) :
   m_dataSender(new DataSender(parent)),
   m_dataListener(new DataListener(parent))
 {
-  Toolkit::ToolManager::instance().addTool(this);
-
   connect(m_dataListener, &DataListener::dataReceived, this, [this](const QByteArray& data)
   {
     QJsonDocument markupJson = QJsonDocument::fromJson(data);
@@ -92,6 +91,8 @@ MarkupBroadcast::MarkupBroadcast(QObject *parent) :
         emit this->markupReceived(markupFileName, sharedBy);
     }
   });
+
+  Toolkit::ToolManager::instance().addTool(this);
 }
 
 /*!

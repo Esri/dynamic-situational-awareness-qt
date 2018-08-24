@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -51,8 +52,6 @@ namespace Dsa {
 IdentifyController::IdentifyController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent)
 {
-  Toolkit::ToolManager::instance().addTool(this);
-
   // setup connection to handle mouse-clicking in the view (used to trigger the identify tasks)
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mouseClicked,
           this, &IdentifyController::onMouseClicked);
@@ -64,6 +63,8 @@ IdentifyController::IdentifyController(QObject* parent /* = nullptr */):
   // setup connection to handle the results of an Identify Graphic Overlays task
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::identifyGraphicsOverlaysCompleted,
           this, &IdentifyController::onIdentifyGraphicsOverlaysCompleted);
+
+  Toolkit::ToolManager::instance().addTool(this);
 }
 
 /*!

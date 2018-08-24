@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -75,7 +76,6 @@ AlertListController::AlertListController(QObject* parent /* = nullptr */):
   m_idsAlertFilter(new IdsAlertFilter(this)),
   m_highlighter(new PointHighlighter(this))
 {
-  Toolkit::ToolManager::instance().addTool(this);
   m_filters.append(m_statusAlertFilter);
   m_filters.append(m_idsAlertFilter);
 
@@ -86,6 +86,8 @@ AlertListController::AlertListController(QObject* parent /* = nullptr */):
   connect(AlertListModel::instance(), &AlertListModel::rowsInserted, this, &AlertListController::allAlertsCountChanged);
   connect(AlertListModel::instance(), &AlertListModel::rowsRemoved, this, &AlertListController::allAlertsCountChanged);
   emit allAlertsCountChanged();
+
+  Toolkit::ToolManager::instance().addTool(this);
 }
 
 /*!
@@ -274,7 +276,6 @@ void AlertListController::dismiss(int rowIndex)
   m_idsAlertFilter->addId(alert->id());
   m_alertsProxyModel->applyFilter(m_filters);
 }
-
 
 /*!
   \brief Sets the minimum \l AlertLevel for the current \l StatusAlertFilter to \a level.

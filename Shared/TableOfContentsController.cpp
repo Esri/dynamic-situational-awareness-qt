@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -57,13 +58,13 @@ namespace Dsa {
 TableOfContentsController::TableOfContentsController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent)
 {
-  Toolkit::ToolManager::instance().addTool(this);
-
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mapChanged,
           this, &TableOfContentsController::updateLayerListModel);
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::sceneChanged,
           this, &TableOfContentsController::updateLayerListModel);
   updateLayerListModel();
+
+  Toolkit::ToolManager::instance().addTool(this);
 }
 
 /*!

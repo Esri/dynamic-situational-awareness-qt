@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -62,8 +63,6 @@ NavigationController::NavigationController(QObject* parent) :
   Toolkit::AbstractTool(parent),
   m_initialCenter(DsaUtility::montereyCA())
 {
-  Toolkit::ToolManager::instance().addTool(this);
-
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::sceneChanged, this, &NavigationController::setInitialLocation);
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mapChanged, this, &NavigationController::setInitialLocation);
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, &NavigationController::updateGeoView);
@@ -71,6 +70,8 @@ NavigationController::NavigationController(QObject* parent) :
 
   updateGeoView();
   setInitialLocation();
+
+  Toolkit::ToolManager::instance().addTool(this);
 }
 
 /*!

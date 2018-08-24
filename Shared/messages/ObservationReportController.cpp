@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -60,8 +61,6 @@ ObservationReportController::ObservationReportController(QObject* parent):
   m_observedBy(QHostInfo::localHostName()),
   m_highlighter(new PointHighlighter(this))
 {
-  Toolkit::ToolManager::instance().addTool(this);
-
   // connect to ToolResourceProvider signals
   auto resourceProvider = Toolkit::ToolResourceProvider::instance();
   connect(resourceProvider, &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]()
@@ -72,6 +71,8 @@ ObservationReportController::ObservationReportController(QObject* parent):
 
   connect(this, &ObservationReportController::activeChanged, this, &ObservationReportController::onUpdateControlPointHightlight);
   connect(this, &ObservationReportController::controlPointChanged, this, &ObservationReportController::onUpdateControlPointHightlight);
+
+  Toolkit::ToolManager::instance().addTool(this);
 }
 
 /*!
@@ -79,7 +80,6 @@ ObservationReportController::ObservationReportController(QObject* parent):
  */
 ObservationReportController::~ObservationReportController()
 {
-
 }
 
 /*!

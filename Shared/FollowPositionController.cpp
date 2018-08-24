@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -47,12 +48,12 @@ namespace Dsa {
 FollowPositionController::FollowPositionController(QObject* parent) :
   Toolkit::AbstractTool(parent)
 {
-  Toolkit::ToolManager::instance().addTool(this);
-
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this,
           &FollowPositionController::updateGeoView);
 
   updateGeoView();
+
+  Toolkit::ToolManager::instance().addTool(this);
 }
 
 /*!

@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -89,8 +90,6 @@ AlertConditionsController::AlertConditionsController(QObject* parent /* = nullpt
   m_locationSource(new LocationAlertSource(this)),
   m_locationTarget(new LocationAlertTarget(this))
 {
-  Toolkit::ToolManager::instance().addTool(this);
-
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged,
           this, &AlertConditionsController::onGeoviewChanged);
 
@@ -100,6 +99,8 @@ AlertConditionsController::AlertConditionsController(QObject* parent /* = nullpt
   connect(m_conditions, &AlertConditionListModel::dataChanged, this, &AlertConditionsController::onConditionsChanged);
 
   onGeoviewChanged();
+
+  Toolkit::ToolManager::instance().addTool(this);
 }
 
 /*!

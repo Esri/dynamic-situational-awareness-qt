@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -64,13 +65,13 @@ LocationTextController::LocationTextController(QObject* parent) :
   m_coordinateFormat(DMS),
   m_unitOfMeasurement(Meters)
 {
-  Toolkit::ToolManager::instance().addTool(this);
-
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged,
           this, &LocationTextController::onGeoViewChanged);
 
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::locationChanged,
           this, &LocationTextController::onLocationChanged);
+
+  Toolkit::ToolManager::instance().addTool(this);
 }
 
 /*!

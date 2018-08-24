@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -82,18 +83,12 @@ ViewshedController::ViewshedController(QObject* parent) :
   m_analysisOverlay(new AnalysisOverlay(this)),
   m_viewsheds(new ViewshedListModel(this))
 {
-  Toolkit::ToolManager::instance().addTool(this);
-
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]
   {
     setSceneView(dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView()));
   });
 
   connectMouseSignals();
-
-  auto sceneView = dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView());
-  if (sceneView)
-    setSceneView(sceneView);
 
   connect(m_viewsheds, &ViewshedListModel::viewshedRemoved, this, [this](Viewshed360* viewshed)
   {
@@ -108,6 +103,16 @@ ViewshedController::ViewshedController(QObject* parent) :
       emit locationDisplayViewshedActiveChanged();
     }
   });
+
+  // this tool must be in the tool manager before adding analyses below
+  Toolkit::ToolManager::instance().addTool(this);
+
+  auto sceneView = dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView());
+  if (sceneView)
+  {
+    m_sceneView = sceneView;
+    m_sceneView->analysisOverlays()->append(m_analysisOverlay);
+  }
 }
 
 /*!

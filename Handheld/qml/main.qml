@@ -22,8 +22,8 @@ import QtQml.Models 2.2
 import QtGraphicalEffects 1.0
 import Esri.DSA 1.0
 import Esri.Handheld 1.0
-import Esri.ArcGISRuntime.Toolkit.Controls 100.3
-import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.3
+import Esri.ArcGISRuntime.Toolkit.Controls 100.4
+import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.4
 
 Handheld {
     id: appRoot

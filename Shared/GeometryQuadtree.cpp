@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -18,6 +19,7 @@
 #include "pch.hpp"
 
 #include "GeometryQuadtree.h"
+#include "GeoElementUtils.h"
 
 // C++ API headers
 #include "Envelope.h"
@@ -100,7 +102,6 @@ GeometryQuadtree::GeometryQuadtree(const Envelope& extent,
  */
 GeometryQuadtree::~GeometryQuadtree()
 {
-
 }
 
 /*!
@@ -150,9 +151,9 @@ QList<Geometry> GeometryQuadtree::candidateIntersections(const Envelope& extent)
     auto findIt = m_elementStorage.find(id);
     if (findIt != m_elementStorage.end())
     {
-      GeoElement* element = findIt.value();
+      GeoElementSignaler* element = findIt.value();
       if (element)
-        results.push_back(element->geometry());
+        results.push_back(element->m_geoElement->geometry());
     }
   }
 
@@ -181,9 +182,9 @@ QList<Geometry> GeometryQuadtree::candidateIntersections(const Point& location) 
     auto findIt = m_elementStorage.find(id);
     if (findIt != m_elementStorage.end())
     {
-      GeoElement* element = findIt.value();
+      GeoElementSignaler* element = findIt.value();
       if (element)
-        results.push_back(element->geometry());
+        results.push_back(element->m_geoElement->geometry());
     }
   }
 
@@ -206,11 +207,11 @@ void GeometryQuadtree::buildTree(const Envelope& extent)
   auto itEnd = m_elementStorage.cend();
   for (; it != itEnd; ++it)
   {
-    GeoElement* element = it.value();
+    GeoElementSignaler* element = it.value();
     if (!element)
       continue;
 
-    const Geometry wgs84 = GeometryEngine::project(element->geometry(), SpatialReference::wgs84());
+    const Geometry wgs84 = GeometryEngine::project(element->m_geoElement->geometry(), SpatialReference::wgs84());
     m_tree->assign(wgs84.extent(), it.key(), m_maxLevels);
   }
 
@@ -225,11 +226,11 @@ void GeometryQuadtree::buildTree(const Envelope& extent)
  */
 void GeometryQuadtree::handleGeometryChange(int changedId)
 {
-  const GeoElement* changedElement = m_elementStorage.value(changedId);
+  const GeoElementSignaler* changedElement = m_elementStorage.value(changedId);
   if (!changedElement)
     return;
 
-  const Geometry wgs84Geom = GeometryEngine::project(changedElement->geometry(), SpatialReference::wgs84());
+  const Geometry wgs84Geom = GeometryEngine::project(changedElement->m_geoElement->geometry(), SpatialReference::wgs84());
   const Envelope wgs84Extent = wgs84Geom.extent();
 
   // if the extent of the changed geom is the same or smaller than the existing tree, it can still be used
@@ -249,14 +250,14 @@ void GeometryQuadtree::handleGeometryChange(int changedId)
     QList<Geometry> allGeom;
     for(auto it = m_elementStorage.begin(); it != m_elementStorage.end(); ++it)
     {
-      GeoElement* element = it.value();
+      GeoElementSignaler* element = it.value();
       if (!element)
         continue;
 
-      if (element->geometry().isEmpty())
+      if (element->m_geoElement->geometry().isEmpty())
         continue;
 
-      allGeom.append(GeometryEngine::project(element->geometry(), SpatialReference::wgs84()));
+      allGeom.append(GeometryEngine::project(element->m_geoElement->geometry(), SpatialReference::wgs84()));
     }
 
     const Geometry newExtent = GeometryEngine::combineExtents(allGeom);
@@ -276,21 +277,23 @@ int GeometryQuadtree::handleNewGeoElement(GeoElement* geoElement)
   if (!geoElement)
     return -1;
 
-  m_elementStorage.insert(m_nextKey, geoElement);
+  GeoElementSignaler* signaler = new GeoElementSignaler(geoElement, this);
+
+  m_elementStorage.insert(m_nextKey, signaler);
   const int insertedKey = m_nextKey;
   m_nextKey++;
 
-  connect(geoElement, &GeoElement::geometryChanged, this, [this, geoElement]()
+  connect(signaler, &GeoElementSignaler::geometryChanged, this, [this, signaler]()
   {
     auto it = m_elementStorage.cbegin();
     auto itEnd = m_elementStorage.cend();
     for (; it != itEnd; ++it)
     {
-      GeoElement* testElement = it.value();
+      GeoElementSignaler* testElement = it.value();
       if (!testElement)
         continue;
 
-      if (testElement == geoElement)
+      if (testElement == signaler)
       {
         handleGeometryChange(it.key());
         return;
@@ -298,17 +301,17 @@ int GeometryQuadtree::handleNewGeoElement(GeoElement* geoElement)
     }
   });
 
-  connect(geoElement, &GeoElement::destroyed, this, [this, geoElement]()
+  connect(signaler, &GeoElementSignaler::destroyed, this, [this, signaler]()
   {
     auto it = m_elementStorage.cbegin();
     auto itEnd = m_elementStorage.cend();
     for (; it != itEnd; ++it)
     {
-      GeoElement* testElement = it.value();
+      GeoElementSignaler* testElement = it.value();
       if (!testElement)
         continue;
 
-      if (testElement == geoElement)
+      if (testElement == signaler)
       {
         m_tree->removeId(it.key());
         m_tree->prune();
@@ -332,7 +335,6 @@ GeometryQuadtree::QuadTree::QuadTree(int level, double xMin, double xMax, double
   m_yMin(yMin),
   m_yMax(yMax)
 {
-
 }
 
 /*!

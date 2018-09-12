@@ -28,6 +28,7 @@ namespace Esri {
 
 namespace Dsa {
 
+class GeoElementSignaler;
 class GeoElementViewshed360 : public Viewshed360
 {
   Q_OBJECT
@@ -59,7 +60,7 @@ private:
   Q_DISABLE_COPY(GeoElementViewshed360)
   GeoElementViewshed360() = delete;
 
-  QPointer<Esri::ArcGISRuntime::GeoElement> m_geoElement;
+  QPointer<GeoElementSignaler> m_geoElementSignaler;
   QString m_headingAttribute;
   QString m_pitchAttribute;
 };

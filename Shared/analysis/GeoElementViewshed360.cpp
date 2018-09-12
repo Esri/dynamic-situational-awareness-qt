@@ -20,6 +20,8 @@
 
 #include "GeoElementViewshed360.h"
 
+#include "GeoElementUtils.h"
+
 // C++ API headers
 #include "AnalysisOverlay.h"
 #include "AttributeListModel.h"
@@ -62,7 +64,7 @@ constexpr double c_defaultOffsetZ = 5.0;
 GeoElementViewshed360::GeoElementViewshed360(GeoElement* geoElement, AnalysisOverlay* analysisOverlay,
                                              const QString& headingAttribute, const QString& pitchAttribute, QObject* parent) :
   Viewshed360(new GeoElementViewshed(geoElement, c_defaultHorizontalAngle, c_defaultVerticalAngle, c_defaultMinDistance, c_defaultMaxDistance, 0.0, 0.0, parent), analysisOverlay, parent),
-  m_geoElement(geoElement),
+  m_geoElementSignaler(new GeoElementSignaler(geoElement, GeoElementUtils::toQObject(geoElement))),
   m_headingAttribute(headingAttribute),
   m_pitchAttribute(pitchAttribute)
 {
@@ -80,7 +82,7 @@ GeoElementViewshed360::~GeoElementViewshed360()
  */
 GeoElement* GeoElementViewshed360::geoElement() const
 {
-  return m_geoElement.data();
+  return m_geoElementSignaler.isNull() ? nullptr : m_geoElementSignaler.data()->m_geoElement;
 }
 
 /*!
@@ -93,10 +95,10 @@ double GeoElementViewshed360::heading() const
   if (m_headingAttribute.isEmpty())
     return static_cast<GeoElementViewshed*>(viewshed())->headingOffset();
 
-  if (m_geoElement.isNull())
+  if (m_geoElementSignaler.isNull())
     return NAN;
 
-  return m_geoElement->attributes()->attributeValue(m_headingAttribute).toDouble();
+  return m_geoElementSignaler->m_geoElement->attributes()->attributeValue(m_headingAttribute).toDouble();
 }
 
 /*!
@@ -115,10 +117,10 @@ void GeoElementViewshed360::setHeading(double heading)
   }
   else
   {
-    if (m_geoElement.isNull())
+    if (m_geoElementSignaler.isNull())
       return;
 
-    auto attributes = m_geoElement->attributes();
+    auto attributes = m_geoElementSignaler->m_geoElement->attributes();
     if (attributes->attributeValue(m_headingAttribute).toDouble() == heading)
       return;
 
@@ -141,10 +143,10 @@ double GeoElementViewshed360::pitch() const
   if (m_pitchAttribute.isEmpty())
     return static_cast<GeoElementViewshed*>(viewshed())->pitchOffset();
 
-  if (m_geoElement.isNull())
+  if (m_geoElementSignaler.isNull())
     return NAN;
 
-  return m_geoElement->attributes()->attributeValue(m_pitchAttribute).toDouble();
+  return m_geoElementSignaler->m_geoElement->attributes()->attributeValue(m_pitchAttribute).toDouble();
 }
 
 /*!
@@ -163,10 +165,10 @@ void GeoElementViewshed360::setPitch(double pitch)
   }
   else
   {
-    if (m_geoElement.isNull())
+    if (m_geoElementSignaler.isNull())
       return;
 
-    auto attributes = m_geoElement->attributes();
+    auto attributes = m_geoElementSignaler->m_geoElement->attributes();
     if (attributes->attributeValue(m_pitchAttribute).toDouble() == pitch)
       return;
 

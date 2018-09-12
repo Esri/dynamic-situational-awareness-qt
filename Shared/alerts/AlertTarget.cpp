@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -36,7 +37,6 @@ namespace Dsa {
 AlertTarget::AlertTarget(QObject* parent):
   QObject(parent)
 {
-
 }
 
 /*!

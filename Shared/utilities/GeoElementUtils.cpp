@@ -99,7 +99,7 @@ GeoElement* GeoElementSignaler::geoElement() const
   \fn void Dsa::GeoElementUtils::setParent(const QList<Esri::ArcGISRuntime::GeoElement*> geoElements, QObject* parent)
   \brief Allows the \a parent to be applied to all the \a geoElements.
  */
-void GeoElementUtils::setParent(const QList<Esri::ArcGISRuntime::GeoElement*> geoElements, QObject* parent)
+void GeoElementUtils::setParent(const QList<GeoElement*> geoElements, QObject* parent)
 {
   if (geoElements.isEmpty())
     return;
@@ -114,7 +114,7 @@ void GeoElementUtils::setParent(const QList<Esri::ArcGISRuntime::GeoElement*> ge
   \fn void Dsa::GeoElementUtils::setParent(Esri::ArcGISRuntime::GeoElement* geoElement, QObject* parent)
   \brief Allows the \a parent to be applied to the \a geoElement.
  */
-void GeoElementUtils::setParent(Esri::ArcGISRuntime::GeoElement* geoElement, QObject* parent)
+void GeoElementUtils::setParent(GeoElement* geoElement, QObject* parent)
 {
   if (geoElement)
   {
@@ -126,7 +126,7 @@ void GeoElementUtils::setParent(Esri::ArcGISRuntime::GeoElement* geoElement, QOb
   \fn QObject* Dsa::GeoElementUtils::toQObject(Esri::ArcGISRuntime::GeoElement* geoElement)
   \brief Returns a QObject* from a GeoElement.
  */
-QObject* GeoElementUtils::toQObject(Esri::ArcGISRuntime::GeoElement* geoElement)
+QObject* GeoElementUtils::toQObject(GeoElement* geoElement)
 {
   if (dynamic_cast<Feature*>(geoElement))
     return static_cast<Feature*>(geoElement);

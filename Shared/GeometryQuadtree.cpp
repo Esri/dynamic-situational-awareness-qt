@@ -277,7 +277,7 @@ int GeometryQuadtree::handleNewGeoElement(GeoElement* geoElement)
   if (!geoElement)
     return -1;
 
-  GeoElementSignaler* signaler = new GeoElementSignaler(geoElement, this);
+  GeoElementSignaler* signaler = new GeoElementSignaler(geoElement, GeoElementUtils::toQObject(geoElement));
 
   m_elementStorage.insert(m_nextKey, signaler);
   const int insertedKey = m_nextKey;

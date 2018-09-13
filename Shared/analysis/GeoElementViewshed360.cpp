@@ -82,7 +82,7 @@ GeoElementViewshed360::~GeoElementViewshed360()
  */
 GeoElement* GeoElementViewshed360::geoElement() const
 {
-  return m_geoElementSignaler.isNull() ? nullptr : m_geoElementSignaler.data()->m_geoElement;
+  return m_geoElementSignaler.isNull() ? nullptr : m_geoElementSignaler.data()->geoElement();
 }
 
 /*!
@@ -98,7 +98,7 @@ double GeoElementViewshed360::heading() const
   if (m_geoElementSignaler.isNull())
     return NAN;
 
-  return m_geoElementSignaler->m_geoElement->attributes()->attributeValue(m_headingAttribute).toDouble();
+  return m_geoElementSignaler->geoElement()->attributes()->attributeValue(m_headingAttribute).toDouble();
 }
 
 /*!
@@ -120,7 +120,7 @@ void GeoElementViewshed360::setHeading(double heading)
     if (m_geoElementSignaler.isNull())
       return;
 
-    auto attributes = m_geoElementSignaler->m_geoElement->attributes();
+    auto attributes = m_geoElementSignaler->geoElement()->attributes();
     if (attributes->attributeValue(m_headingAttribute).toDouble() == heading)
       return;
 
@@ -146,7 +146,7 @@ double GeoElementViewshed360::pitch() const
   if (m_geoElementSignaler.isNull())
     return NAN;
 
-  return m_geoElementSignaler->m_geoElement->attributes()->attributeValue(m_pitchAttribute).toDouble();
+  return m_geoElementSignaler->geoElement()->attributes()->attributeValue(m_pitchAttribute).toDouble();
 }
 
 /*!
@@ -168,7 +168,7 @@ void GeoElementViewshed360::setPitch(double pitch)
     if (m_geoElementSignaler.isNull())
       return;
 
-    auto attributes = m_geoElementSignaler->m_geoElement->attributes();
+    auto attributes = m_geoElementSignaler->geoElement()->attributes();
     if (attributes->attributeValue(m_pitchAttribute).toDouble() == pitch)
       return;
 

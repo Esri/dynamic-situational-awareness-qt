@@ -21,12 +21,14 @@
 #include "GeoElementUtils.h"
 
 // C++ API headers
-#include "GeoElement.h"
-#include "Feature.h"
-#include "Graphic.h"
 #include "EncFeature.h"
-#include "WmsFeature.h"
+#include "Feature.h"
+#include "GeoElement.h"
+#include "Graphic.h"
 #include "KmlPlacemark.h"
+#include "WmsFeature.h"
+
+#include <QDebug>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -74,12 +76,24 @@ GeoElementSignaler::GeoElementSignaler(GeoElement* geoElement, QObject* parent) 
     connect(static_cast<WmsFeature*>(m_geoElement), &WmsFeature::geometryChanged,
             this, &GeoElementSignaler::geometryChanged);
   }
+  else
+  {
+    qWarning() << Q_FUNC_INFO << "Unhandled GeoElement type";
+  }
 }
 
 /*!
   \brief Destructor.
  */
 GeoElementSignaler::~GeoElementSignaler() = default;
+
+/*!
+  \brief Returns the managed GeoElement.
+ */
+GeoElement* GeoElementSignaler::geoElement() const
+{
+  return m_geoElement;
+}
 
 /*!
   \fn void Dsa::GeoElementUtils::setParent(const QList<Esri::ArcGISRuntime::GeoElement*> geoElements, QObject* parent)
@@ -98,7 +112,7 @@ void GeoElementUtils::setParent(const QList<Esri::ArcGISRuntime::GeoElement*> ge
 
 /*!
   \fn void Dsa::GeoElementUtils::setParent(Esri::ArcGISRuntime::GeoElement* geoElement, QObject* parent)
-  \brief Allows the \a parent to be applied to \a geoElement.
+  \brief Allows the \a parent to be applied to the \a geoElement.
  */
 void GeoElementUtils::setParent(Esri::ArcGISRuntime::GeoElement* geoElement, QObject* parent)
 {
@@ -128,6 +142,8 @@ QObject* GeoElementUtils::toQObject(Esri::ArcGISRuntime::GeoElement* geoElement)
 
   if (dynamic_cast<WmsFeature*>(geoElement))
     return static_cast<WmsFeature*>(geoElement);
+
+  qWarning() << Q_FUNC_INFO << "Unhandled GeoElement type";
 
   return nullptr;
 }

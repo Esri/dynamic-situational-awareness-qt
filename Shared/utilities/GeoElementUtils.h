@@ -37,10 +37,13 @@ public:
   GeoElementSignaler(Esri::ArcGISRuntime::GeoElement* geoElement, QObject* parent = nullptr);
   ~GeoElementSignaler();
 
-  Esri::ArcGISRuntime::GeoElement* m_geoElement = nullptr;
+  Esri::ArcGISRuntime::GeoElement* geoElement() const;
 
 signals:
   void geometryChanged();
+
+private:
+  Esri::ArcGISRuntime::GeoElement* m_geoElement = nullptr;
 };
 
 namespace GeoElementUtils

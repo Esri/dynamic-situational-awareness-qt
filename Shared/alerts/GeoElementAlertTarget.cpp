@@ -66,7 +66,7 @@ GeoElementAlertTarget::~GeoElementAlertTarget()
  */
 QList<Geometry> GeoElementAlertTarget::targetGeometries(const Envelope&) const
 {
-  return QList<Geometry>{m_geoElementSignaler->m_geoElement->geometry()};
+  return QList<Geometry>{m_geoElementSignaler->geoElement()->geometry()};
 }
 
 /*!

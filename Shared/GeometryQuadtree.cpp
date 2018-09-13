@@ -153,7 +153,7 @@ QList<Geometry> GeometryQuadtree::candidateIntersections(const Envelope& extent)
     {
       GeoElementSignaler* element = findIt.value();
       if (element)
-        results.push_back(element->m_geoElement->geometry());
+        results.push_back(element->geoElement()->geometry());
     }
   }
 
@@ -184,7 +184,7 @@ QList<Geometry> GeometryQuadtree::candidateIntersections(const Point& location) 
     {
       GeoElementSignaler* element = findIt.value();
       if (element)
-        results.push_back(element->m_geoElement->geometry());
+        results.push_back(element->geoElement()->geometry());
     }
   }
 
@@ -211,7 +211,7 @@ void GeometryQuadtree::buildTree(const Envelope& extent)
     if (!element)
       continue;
 
-    const Geometry wgs84 = GeometryEngine::project(element->m_geoElement->geometry(), SpatialReference::wgs84());
+    const Geometry wgs84 = GeometryEngine::project(element->geoElement()->geometry(), SpatialReference::wgs84());
     m_tree->assign(wgs84.extent(), it.key(), m_maxLevels);
   }
 
@@ -230,7 +230,7 @@ void GeometryQuadtree::handleGeometryChange(int changedId)
   if (!changedElement)
     return;
 
-  const Geometry wgs84Geom = GeometryEngine::project(changedElement->m_geoElement->geometry(), SpatialReference::wgs84());
+  const Geometry wgs84Geom = GeometryEngine::project(changedElement->geoElement()->geometry(), SpatialReference::wgs84());
   const Envelope wgs84Extent = wgs84Geom.extent();
 
   // if the extent of the changed geom is the same or smaller than the existing tree, it can still be used
@@ -254,10 +254,10 @@ void GeometryQuadtree::handleGeometryChange(int changedId)
       if (!element)
         continue;
 
-      if (element->m_geoElement->geometry().isEmpty())
+      if (element->geoElement()->geometry().isEmpty())
         continue;
 
-      allGeom.append(GeometryEngine::project(element->m_geoElement->geometry(), SpatialReference::wgs84()));
+      allGeom.append(GeometryEngine::project(element->geoElement()->geometry(), SpatialReference::wgs84()));
     }
 
     const Geometry newExtent = GeometryEngine::combineExtents(allGeom);

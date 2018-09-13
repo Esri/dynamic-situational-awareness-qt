@@ -48,7 +48,7 @@ private:
 
 namespace GeoElementUtils
 {
-  void setParent(const QList<Esri::ArcGISRuntime::GeoElement*> geoElements, QObject* parent);
+  void setParent(const QList<Esri::ArcGISRuntime::GeoElement*>& geoElements, QObject* parent);
   void setParent(Esri::ArcGISRuntime::GeoElement* geoElement, QObject* parent);
   QObject* toQObject(Esri::ArcGISRuntime::GeoElement* geoElement);
 }

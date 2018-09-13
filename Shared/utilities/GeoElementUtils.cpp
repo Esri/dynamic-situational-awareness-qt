@@ -96,10 +96,10 @@ GeoElement* GeoElementSignaler::geoElement() const
 }
 
 /*!
-  \fn void Dsa::GeoElementUtils::setParent(const QList<Esri::ArcGISRuntime::GeoElement*> geoElements, QObject* parent)
+  \fn void Dsa::GeoElementUtils::setParent(const QList<Esri::ArcGISRuntime::GeoElement*>& geoElements, QObject* parent)
   \brief Allows the \a parent to be applied to all the \a geoElements.
  */
-void GeoElementUtils::setParent(const QList<GeoElement*> geoElements, QObject* parent)
+void GeoElementUtils::setParent(const QList<GeoElement*>& geoElements, QObject* parent)
 {
   if (geoElements.isEmpty())
     return;

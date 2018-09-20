@@ -26,7 +26,7 @@ Item {
     property alias iconSource: image.source
     property string categoryName
     property bool selected: false
-    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
     signal categorySelected()
 
     Column {

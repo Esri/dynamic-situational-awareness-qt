@@ -26,7 +26,7 @@ Item {
     property alias type : typeGroup.checkedButton
     property bool valid: spatialCB.checked || attributeCB.checked || analysisCB.checked
     property string instruction: "Select type"
-    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
 
     function clear() {
     }

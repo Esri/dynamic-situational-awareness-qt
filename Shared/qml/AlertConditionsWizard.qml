@@ -25,7 +25,7 @@ Rectangle {
     color: Material.primary
 
     property bool readyToAdd: conditionFrame.currentItem == reviewPage
-    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
 
     Text {
         id: titleRow

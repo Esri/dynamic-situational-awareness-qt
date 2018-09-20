@@ -25,7 +25,7 @@ Row {
     id: alertToolRow
     spacing: 10 * scaleFactor
     visible: categoryToolbar.state === "alerts"
-    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
 
     onVisibleChanged: {
         if (visible) {

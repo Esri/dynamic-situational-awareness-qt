@@ -25,7 +25,7 @@ Item {
 
     property bool valid: descriptionField.length > 0
     property string instruction: "Description of who is performing activity"
-    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
 
     property alias enemyUnit: descriptionField.text
 

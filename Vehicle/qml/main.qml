@@ -29,7 +29,7 @@ Vehicle {
     width: 800 * scaleFactor
     height: 600 * scaleFactor
 
-    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
     property alias messageFeeds: messageFeedsTool
     property real hudOpacity: 0.9
     property real hudRadius: 3 * scaleFactor

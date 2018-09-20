@@ -22,7 +22,7 @@ import Esri.DSA 1.0
 
 Rectangle {
     id: dsaPanel
-    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
     property string title: ""
     property alias titleBar: titleBar
     signal closed()

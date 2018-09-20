@@ -26,7 +26,7 @@ ToolBar {
     property int marginWidth: 5 * scaleFactor
     property int imageWidth: 36 * scaleFactor
     property bool menuVisible
-    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
 
     Row {
         anchors {

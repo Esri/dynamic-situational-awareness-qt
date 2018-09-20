@@ -23,7 +23,7 @@ import Esri.DSA 1.0
 DsaPanel {
     id: localDataRoot
     property bool showDataConnectionPane: true
-    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
     property var selectedItems: []
     title: "Add Local Data"
     width: 272 * scaleFactor

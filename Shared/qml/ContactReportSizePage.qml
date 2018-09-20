@@ -25,7 +25,7 @@ Item {
 
     property bool valid: size.length > 0
     property string instruction: "Size of enemy unit"
-    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
 
     property string size: smallButton.checked ? "small" :
                                                 (mediumButton.checked ? "medium" : "large")

@@ -25,7 +25,7 @@ Item {
 
     property bool valid: levelGroup.checkedButton !== null
     property string instruction: "Select priority"
-    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
 
     function getLevel() {
         if (lowCB.checked)

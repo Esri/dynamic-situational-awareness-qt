@@ -26,7 +26,7 @@ Item {
 
     property string appTitle
     property string titleText
-    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
     signal settingsClicked()
     signal aboutClicked()
 

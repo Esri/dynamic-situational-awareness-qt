@@ -1053,7 +1053,6 @@ AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int
     const int opLayersCount = operationalLayers->rowCount();
     for (int i = 0; i < opLayersCount; ++i)
     {
-      currIndex++;
       Layer* layer = operationalLayers->at(i);
       if (!layer)
         continue;
@@ -1061,6 +1060,8 @@ AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int
       FeatureLayer* featLayer = qobject_cast<FeatureLayer*>(layer);
       if (!featLayer)
         continue;
+
+      currIndex++;
 
       if (currIndex == targetOverlayIndex)
       {

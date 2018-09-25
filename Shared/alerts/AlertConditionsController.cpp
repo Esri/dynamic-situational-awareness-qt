@@ -729,7 +729,7 @@ void AlertConditionsController::onIdentifyLayersCompleted(const QUuid& taskId, Q
       if (!atts)
         return;
 
-      Feature* feature = qobject_cast<Feature*>(geoElement);
+      Feature* feature = dynamic_cast<Feature*>(geoElement);
       if (!feature)
         continue;
 

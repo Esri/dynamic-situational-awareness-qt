@@ -66,7 +66,6 @@ MessagesOverlay::MessagesOverlay(GeoView* geoView, Renderer* renderer, const QSt
   m_graphicsOverlay->setRenderingMode(GraphicsRenderingMode::Dynamic);
   m_graphicsOverlay->setSceneProperties(LayerSceneProperties(m_surfacePlacement));
   m_graphicsOverlay->setRenderer(m_renderer);
-  m_graphicsOverlay->setSelectionColor(Qt::red);
   m_geoView->graphicsOverlays()->append(m_graphicsOverlay);
 }
 

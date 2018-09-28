@@ -125,6 +125,9 @@ void DsaController::init(GeoView* geoView)
   Toolkit::ToolResourceProvider::instance()->setScene(m_scene);
   Toolkit::ToolResourceProvider::instance()->setGeoView(geoView);
 
+  // set the selection color for graphics and features
+  geoView->setSelectionProperties(SelectionProperties(Qt::red));
+
   m_cacheManager = new LayerCacheManager(this);
 
   // connect all tool signals

@@ -104,14 +104,26 @@ CategoryToolbar {
             id: menu
             MenuItem {
                 text: "About"
+                font {
+                    pixelSize: 12 * scaleFactor
+                    family: DsaStyles.fontFamily
+                }
                 onTriggered: aboutClicked()
             }
             MenuItem {
                 text: "Settings"
+                font {
+                    pixelSize: 12 * scaleFactor
+                    family: DsaStyles.fontFamily
+                }
                 onTriggered: settingsClicked()
             }
             MenuItem {
                 text: "Close"
+                font {
+                    pixelSize: 12 * scaleFactor
+                    family: DsaStyles.fontFamily
+                }
                 onTriggered: appRoot.showCloseDialog("Are you sure you want to close?");
             }
         }

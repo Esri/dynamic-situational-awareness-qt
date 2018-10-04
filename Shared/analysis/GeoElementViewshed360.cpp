@@ -34,12 +34,10 @@ using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
 
-constexpr double c_defaultPitch = 0.0;
 constexpr double c_defaultHorizontalAngle = 360.0;
 constexpr double c_defaultVerticalAngle = 90.0;
 constexpr double c_defaultMinDistance = 0.0;
 constexpr double c_defaultMaxDistance = 500.0;
-constexpr double c_defaultOffsetZ = 5.0;
 
 /*!
   \class Dsa::GeoElementViewshed360

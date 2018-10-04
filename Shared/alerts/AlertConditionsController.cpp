@@ -1144,13 +1144,13 @@ AlertTarget* AlertConditionsController::targetFromFeatureLayer(FeatureLayer* fea
   QEventLoop loop;
   tab->queryFeatures(qp);
 
-  connect(tab, &FeatureTable::errorOccurred, this, [this, &loop](Error)
+  connect(tab, &FeatureTable::errorOccurred, this, [&loop](Error)
   {
     loop.quit();
   });
 
   Feature* feature = nullptr;
-  auto connection = loop.connect(tab, &FeatureTable::queryFeaturesCompleted, this, [this, &loop, &feature](QUuid, FeatureQueryResult* featureQueryResult)
+  auto connection = loop.connect(tab, &FeatureTable::queryFeaturesCompleted, this, [&loop, &feature](QUuid, FeatureQueryResult* featureQueryResult)
   {
     loop.quit();
 

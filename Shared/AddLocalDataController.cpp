@@ -412,7 +412,7 @@ void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path)
 
       connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
-      connect(featureLayer, &FeatureLayer::doneLoading, this, [this, featureLayer](Error loadError)
+      connect(featureLayer, &FeatureLayer::doneLoading, this, [featureLayer](Error loadError)
       {
         if (!loadError.isEmpty())
           return;
@@ -458,7 +458,7 @@ void AddLocalDataController::createFeatureLayerGeodatabaseWithId(const QString& 
     featureLayer->setVisible(visible);
     connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
-    connect(featureLayer, &FeatureLayer::doneLoading, this, [this, featureLayer](Error loadError)
+    connect(featureLayer, &FeatureLayer::doneLoading, this, [featureLayer](Error loadError)
     {
       if (!loadError.isEmpty())
         return;
@@ -513,7 +513,7 @@ void AddLocalDataController::createFeatureLayerGeoPackage(const QString& path, i
     featureLayer->setVisible(visible);
     connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
-    connect(featureLayer, &FeatureLayer::doneLoading, this, [this, featureLayer](Error loadError)
+    connect(featureLayer, &FeatureLayer::doneLoading, this, [featureLayer](Error loadError)
     {
       if (!loadError.isEmpty())
         return;
@@ -608,7 +608,7 @@ void AddLocalDataController::createLayerGeoPackage(const QString& path)
       FeatureLayer* featureLayer = new FeatureLayer(table, this);
       connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
-      connect(featureLayer, &FeatureLayer::doneLoading, this, [this, featureLayer](Error loadError)
+      connect(featureLayer, &FeatureLayer::doneLoading, this, [featureLayer](Error loadError)
       {
         if (!loadError.isEmpty())
           return;
@@ -656,7 +656,7 @@ void AddLocalDataController::createFeatureLayerShapefile(const QString& path, in
   featureLayer->setVisible(visible);
   connect(featureLayer, &FeatureLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
-  connect(featureLayer, &FeatureLayer::doneLoading, this, [this, featureLayer](Error loadError)
+  connect(featureLayer, &FeatureLayer::doneLoading, this, [featureLayer](Error loadError)
   {
     if (!loadError.isEmpty())
       return;

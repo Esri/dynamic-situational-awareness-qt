@@ -293,6 +293,14 @@ QUrl DsaResources::iconHome() const
 }
 
 /*!
+  \brief Returns the URL to the "KML" icon.
+ */
+QUrl DsaResources::iconKml() const
+{
+  return QStringLiteral("qrc:/Resources/icons/xhdpi/kml.png");
+}
+
+/*!
   \brief Returns the URL to the "Layers" icon.
  */
 QUrl DsaResources::iconLayers() const

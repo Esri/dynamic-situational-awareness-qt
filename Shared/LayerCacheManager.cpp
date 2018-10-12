@@ -40,6 +40,7 @@
 #include "GeoPackageRaster.h"
 #include "Geodatabase.h"
 #include "GeodatabaseFeatureTable.h"
+#include "KmlLayer.h"
 #include "Raster.h"
 #include "RasterLayer.h"
 #include "Scene.h"
@@ -290,6 +291,11 @@ void LayerCacheManager::layerToJson(Layer* layer)
   auto markupLayer = dynamic_cast<MarkupLayer*>(layer);
   if (markupLayer)
     layerPath = markupLayer->path();
+
+  // Get KmlLayers
+  auto kmlLayer = dynamic_cast<KmlLayer*>(layer);
+  if (kmlLayer)
+    layerPath = kmlLayer->dataset()->url().toLocalFile();
 
   // add the layer to the layer list for caching
   QJsonObject layerJson;

@@ -54,6 +54,7 @@ class DsaResources : public QObject
   Q_PROPERTY(QUrl iconGps READ iconGps CONSTANT)
   Q_PROPERTY(QUrl iconGpsOff READ iconGpsOff CONSTANT)
   Q_PROPERTY(QUrl iconHome READ iconHome CONSTANT)
+  Q_PROPERTY(QUrl iconKml READ iconKml CONSTANT)
   Q_PROPERTY(QUrl iconLayers READ iconLayers CONSTANT)
   Q_PROPERTY(QUrl iconLineWidth READ iconLineWidth CONSTANT)
   Q_PROPERTY(QUrl iconListView READ iconListView CONSTANT)
@@ -119,6 +120,7 @@ private:
   QUrl iconGps() const;
   QUrl iconGpsOff() const;
   QUrl iconHome() const;
+  QUrl iconKml() const;
   QUrl iconLayers() const;
   QUrl iconLineWidth() const;
   QUrl iconListView() const;

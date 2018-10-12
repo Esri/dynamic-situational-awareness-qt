@@ -196,6 +196,8 @@ DataItemListModel::DataItem::DataItem(const QString& fullPath):
     dataType = DataType::VectorTilePackage;
   else if (fileExtension.compare("markup", Qt::CaseInsensitive) == 0)
     dataType = DataType::Markup;
+  else if ((fileExtension.compare("kml", Qt::CaseInsensitive) == 0) || (fileExtension.compare("kmz", Qt::CaseInsensitive) == 0))
+    dataType = DataType::Kml;
   else if (rasterExtensions.contains(fileExtension.toLower()))
     dataType = DataType::Raster;
   else

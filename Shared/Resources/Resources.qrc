@@ -65,5 +65,6 @@
         <file>icons/xhdpi/Alert_High.png</file>
         <file>icons/xhdpi/Alert_Low.png</file>
         <file>icons/xhdpi/Alert_Moderate.png</file>
+        <file>icons/xhdpi/kml.png</file>
     </qresource>
 </RCC>

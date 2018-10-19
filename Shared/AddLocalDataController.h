@@ -66,6 +66,7 @@ public:
   void createRasterLayer(const QString& path, int layerIndex = -1, bool visible = true, bool autoAdd = true);
   void createSceneLayer(const QString& path, int layerIndex = -1, bool visible = true, bool autoAdd = true);
   void createTiledLayer(const QString& path, int layerIndex = -1, bool visible = true, bool autoAdd = true);
+  void createKmlLayer(const QString& path, int layerIndex = -1, bool visible = true, bool autoAdd = true);
   void createVectorTiledLayer(const QString& path, int layerIndex = -1, bool visible = true, bool autoAdd = true);
   void createElevationSourceFromTpk(const QString& path);
   void createElevationSourceFromRasters(const QStringList& paths);
@@ -92,6 +93,7 @@ private:
   static const QString vectorTilePackageData() { return s_vectorTilePackageData; }
   static const QString tilePackageData() { return s_tilePackageData; }
   static const QString markupData() { return s_markupData; }
+  static const QString kmlData() { return s_kmlData; }
 
 private:
   DataItemListModel* m_localDataModel;
@@ -106,6 +108,7 @@ private:
   static const QString s_vectorTilePackageData;
   static const QString s_tilePackageData;
   static const QString s_markupData;
+  static const QString s_kmlData;
   static const QString LOCAL_DATAPATHS_PROPERTYNAME;
   static const QString DEFAULT_ELEVATION_PROPERTYNAME;
 };

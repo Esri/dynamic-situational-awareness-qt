@@ -281,6 +281,8 @@ TableOfContentsController::LayerGeometryType TableOfContentsController::layerGeo
     return LayerGeometryType::Raster;
   case LayerType::FeatureCollectionLayer:
     return LayerGeometryType::FreehandMarkup;
+  case LayerType::KMLLayer:
+    return LayerGeometryType::Kml;
   default:
     return LayerGeometryType::Unknown;
   }

@@ -44,6 +44,8 @@
 #include "GeoPackageRaster.h"
 #include "Geodatabase.h"
 #include "GeodatabaseFeatureTable.h"
+#include "KmlDataset.h"
+#include "KmlLayer.h"
 #include "LayerListModel.h"
 #include "Raster.h"
 #include "RasterElevationSource.h"
@@ -68,7 +70,7 @@ namespace Dsa
 const QString AddLocalDataController::LOCAL_DATAPATHS_PROPERTYNAME = "LocalDataPaths";
 const QString AddLocalDataController::DEFAULT_ELEVATION_PROPERTYNAME = "DefaultElevationSource";
 
-const QString AddLocalDataController::s_allData = QStringLiteral("All Data (*.geodatabase *.tpk *.shp *.gpkg *.mmpk *.slpk *.vtpk *.img *.tif *.tiff *.i1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr *.markup *.sid)");
+const QString AddLocalDataController::s_allData = QStringLiteral("All Data (*.geodatabase *.tpk *.shp *.gpkg *.slpk *.img *.tif *.tiff *.i1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr *.markup *.sid *.kml *.kmz)");
 const QString AddLocalDataController::s_rasterData = QStringLiteral("Raster Files (*.img *.tif *.tiff *.I1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr *.sid)");
 const QString AddLocalDataController::s_geodatabaseData = QStringLiteral("Geodatabase (*.geodatabase)");
 const QString AddLocalDataController::s_shapefileData = QStringLiteral("Shapefile (*.shp)");
@@ -77,6 +79,7 @@ const QString AddLocalDataController::s_sceneLayerData = QStringLiteral("Scene L
 const QString AddLocalDataController::s_vectorTilePackageData = QStringLiteral("Vector Tile Package (*.vtpk)");
 const QString AddLocalDataController::s_tilePackageData = QStringLiteral("Tile Package (*.tpk)");
 const QString AddLocalDataController::s_markupData = QStringLiteral("Markup (*.markup)");
+const QString AddLocalDataController::s_kmlData = QStringLiteral("KML (*.kml *.kmz)");
 
 /*!
   \class Dsa::AddLocalDataController
@@ -98,7 +101,7 @@ AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
   // create file filter list
   m_fileFilterList = QStringList{allData(), rasterData(), geodatabaseData(),
       sceneLayerData(), tilePackageData(), shapefileData(), geopackageData(),
-      markupData()
+      markupData(), kmlData()
       /*, vectorTilePackageData()*/}; // VTPK is not supported in 3D
   emit fileFilterListChanged();
   emit localDataModelChanged();
@@ -181,12 +184,14 @@ QStringList AddLocalDataController::determineFileFilters(const QString& fileType
     fileFilter << "*.vtpk";
   else if (fileType == markupData())
     fileFilter << "*.markup";
+  else if (fileType == kmlData())
+    fileFilter << "*.kml" << "*.kmz";
   else if (fileType == rasterData())
     fileFilter = rasterExtensions;
   else
   {
     fileFilter = rasterExtensions;
-    fileFilter << "*.geodatabase" << "*.tpk" << "*.shp" << "*.gpkg" << "*.slpk" << "*.markup"/* << "*.vtpk"*/; // VTPK is not supported in 3D
+    fileFilter << "*.geodatabase" << "*.tpk" << "*.shp" << "*.gpkg" << "*.slpk" << "*.markup" << "*.kml" << "*.kmz"/* << "*.vtpk"*/; // VTPK is not supported in 3D
   }
 
   return fileFilter;
@@ -301,8 +306,6 @@ void AddLocalDataController::createMarkupLayer(const QString& path, int layerInd
   }
   else
     emit layerCreated(layerIndex, markupLayer);
-
-  Q_UNUSED(layerIndex)
 }
 
 /*!
@@ -339,6 +342,9 @@ void AddLocalDataController::addItemAsLayer(const QList<int>& indices)
       break;
     case DataType::Markup:
       createMarkupLayer(dataItemPath);
+      break;
+    case DataType::Kml:
+      createKmlLayer(dataItemPath);
       break;
     default:
       break;
@@ -386,6 +392,8 @@ void AddLocalDataController::addLayerFromPath(const QString& path, int layerInde
     createVectorTiledLayer(path, layerIndex, visible, autoAdd);
   else if (fileExtension.compare("markup", Qt::CaseInsensitive) == 0)
     createMarkupLayer(path, layerIndex, visible, autoAdd);
+  else if ((fileExtension.compare("kml", Qt::CaseInsensitive) == 0) || (fileExtension.compare("kmz", Qt::CaseInsensitive) == 0))
+    createKmlLayer(path, layerIndex, visible, autoAdd);
   else if (rasterExtensions.contains(fileExtension.toLower()))
     createRasterLayer(path, layerIndex, visible, autoAdd);
 }
@@ -474,7 +482,6 @@ void AddLocalDataController::createFeatureLayerGeodatabaseWithId(const QString& 
         operationalLayers->append(featureLayer);
 
       emit layerSelected(featureLayer);
-      Q_UNUSED(layerIndex)
     }
     else
     {
@@ -527,7 +534,6 @@ void AddLocalDataController::createFeatureLayerGeoPackage(const QString& path, i
       auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
       operationalLayers->append(featureLayer);
       emit layerSelected(featureLayer);
-      Q_UNUSED(layerIndex)
     }
     else
     {
@@ -575,7 +581,6 @@ void AddLocalDataController::createRasterLayerGeoPackage(const QString& path, in
 
       operationalLayers->append(rasterLayer);
       emit layerSelected(rasterLayer);
-      Q_UNUSED(layerIndex)
     }
     else
     {
@@ -674,7 +679,6 @@ void AddLocalDataController::createFeatureLayerShapefile(const QString& path, in
       operationalLayers->append(featureLayer);
 
     emit layerSelected(featureLayer);
-    Q_UNUSED(layerIndex)
   }
   else
   {
@@ -708,7 +712,6 @@ void AddLocalDataController::createRasterLayer(const QString& path, int layerInd
       operationalLayers->append(rasterLayer);
 
     emit layerSelected(rasterLayer);
-    Q_UNUSED(layerIndex)
   }
   else
   {
@@ -741,7 +744,6 @@ void AddLocalDataController::createSceneLayer(const QString& path, int layerInde
       operationalLayers->append(sceneLayer);
 
     emit layerSelected(sceneLayer);
-    Q_UNUSED(layerIndex)
   }
   else
   {
@@ -775,7 +777,6 @@ void AddLocalDataController::createTiledLayer(const QString& path, int layerInde
       operationalLayers->append(tiledLayer);
 
     emit layerSelected(tiledLayer);
-    Q_UNUSED(layerIndex)
   }
   else
   {
@@ -808,12 +809,44 @@ void AddLocalDataController::createTiledLayer(const QString& path, int layerInde
     if (operationalLayers)
       operationalLayers->append(vectorTiledLayer);
 
-    emit layerSelected(vectorTiledLayer);
-    Q_UNUSED(layerIndex)
+    emit layerSelected(vectorTiledLayer);    
   }
   else
   {
     emit layerCreated(layerIndex, vectorTiledLayer);
+  }
+}
+
+/*!
+ \brief Creates a KmlLayer with the provided KML path.
+
+ \list
+   \li \a path - The path to the local data source.
+   \li \a layerIndex - The index for which the layer will be added to the operational layer list.
+   \li \a visible - Whether the layer should be visible by default.
+   \li \a autoAdd - Whether the layer will be automatically added to the operational layer list.
+        If \c false, it will not add automatically. Instead, a signal will emit once the Layer has
+        been constructed.
+ \endlist
+*/void AddLocalDataController::createKmlLayer(const QString& path, int layerIndex, bool visible, bool autoAdd)
+{
+  KmlDataset* kmlDataset = new KmlDataset(QUrl::fromLocalFile(path), this);
+  connect(kmlDataset, &KmlDataset::errorOccurred, this, &AddLocalDataController::errorOccurred);
+  KmlLayer* kmlLayer = new KmlLayer(kmlDataset, this);
+  kmlLayer->setVisible(visible);
+  connect(kmlLayer, &KmlLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
+
+  if (autoAdd)
+  {
+    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+    if (operationalLayers)
+      operationalLayers->append(kmlLayer);
+
+    emit layerSelected(kmlLayer);    
+  }
+  else
+  {
+    emit layerCreated(layerIndex, kmlLayer);
   }
 }
 

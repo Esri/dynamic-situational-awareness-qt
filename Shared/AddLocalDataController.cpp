@@ -830,7 +830,7 @@ void AddLocalDataController::createTiledLayer(const QString& path, int layerInde
  \endlist
 */void AddLocalDataController::createKmlLayer(const QString& path, int layerIndex, bool visible, bool autoAdd)
 {
-  KmlDataset* kmlDataset = new KmlDataset(path, this);
+  KmlDataset* kmlDataset = new KmlDataset(QUrl::fromLocalFile(path), this);
   connect(kmlDataset, &KmlDataset::errorOccurred, this, &AddLocalDataController::errorOccurred);
   KmlLayer* kmlLayer = new KmlLayer(kmlDataset, this);
   kmlLayer->setVisible(visible);

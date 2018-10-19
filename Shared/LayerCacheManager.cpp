@@ -297,8 +297,7 @@ void LayerCacheManager::layerToJson(Layer* layer)
   if (kmlLayer)
   {
     const QUrl kmlUrl = kmlLayer->dataset()->url();
-    const QString localKmlFile = kmlUrl.toLocalFile();
-    layerPath = localKmlFile.isEmpty() ? kmlUrl.toString() : localKmlFile;
+    layerPath = kmlUrl.isLocalFile() ? kmlUrl.toLocalFile() : kmlUrl.toString();
   }
 
   // add the layer to the layer list for caching

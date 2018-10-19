@@ -306,8 +306,6 @@ void AddLocalDataController::createMarkupLayer(const QString& path, int layerInd
   }
   else
     emit layerCreated(layerIndex, markupLayer);
-
-  Q_UNUSED(layerIndex)
 }
 
 /*!
@@ -484,7 +482,6 @@ void AddLocalDataController::createFeatureLayerGeodatabaseWithId(const QString& 
         operationalLayers->append(featureLayer);
 
       emit layerSelected(featureLayer);
-      Q_UNUSED(layerIndex)
     }
     else
     {
@@ -537,7 +534,6 @@ void AddLocalDataController::createFeatureLayerGeoPackage(const QString& path, i
       auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
       operationalLayers->append(featureLayer);
       emit layerSelected(featureLayer);
-      Q_UNUSED(layerIndex)
     }
     else
     {
@@ -585,7 +581,6 @@ void AddLocalDataController::createRasterLayerGeoPackage(const QString& path, in
 
       operationalLayers->append(rasterLayer);
       emit layerSelected(rasterLayer);
-      Q_UNUSED(layerIndex)
     }
     else
     {
@@ -684,7 +679,6 @@ void AddLocalDataController::createFeatureLayerShapefile(const QString& path, in
       operationalLayers->append(featureLayer);
 
     emit layerSelected(featureLayer);
-    Q_UNUSED(layerIndex)
   }
   else
   {
@@ -718,7 +712,6 @@ void AddLocalDataController::createRasterLayer(const QString& path, int layerInd
       operationalLayers->append(rasterLayer);
 
     emit layerSelected(rasterLayer);
-    Q_UNUSED(layerIndex)
   }
   else
   {
@@ -751,7 +744,6 @@ void AddLocalDataController::createSceneLayer(const QString& path, int layerInde
       operationalLayers->append(sceneLayer);
 
     emit layerSelected(sceneLayer);
-    Q_UNUSED(layerIndex)
   }
   else
   {
@@ -785,7 +777,6 @@ void AddLocalDataController::createTiledLayer(const QString& path, int layerInde
       operationalLayers->append(tiledLayer);
 
     emit layerSelected(tiledLayer);
-    Q_UNUSED(layerIndex)
   }
   else
   {
@@ -818,8 +809,7 @@ void AddLocalDataController::createTiledLayer(const QString& path, int layerInde
     if (operationalLayers)
       operationalLayers->append(vectorTiledLayer);
 
-    emit layerSelected(vectorTiledLayer);
-    Q_UNUSED(layerIndex)
+    emit layerSelected(vectorTiledLayer);    
   }
   else
   {
@@ -852,8 +842,7 @@ void AddLocalDataController::createTiledLayer(const QString& path, int layerInde
     if (operationalLayers)
       operationalLayers->append(kmlLayer);
 
-    emit layerSelected(kmlLayer);
-    Q_UNUSED(layerIndex)
+    emit layerSelected(kmlLayer);    
   }
   else
   {

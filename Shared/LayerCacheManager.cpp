@@ -295,7 +295,11 @@ void LayerCacheManager::layerToJson(Layer* layer)
   // Get KmlLayers
   auto kmlLayer = dynamic_cast<KmlLayer*>(layer);
   if (kmlLayer)
-    layerPath = kmlLayer->dataset()->url().toLocalFile();
+  {
+    const QUrl kmlUrl = kmlLayer->dataset()->url();
+    const QString localKmlFile = kmlUrl.toLocalFile();
+    layerPath = localKmlFile.isEmpty() ? kmlUrl.toString() : localKmlFile;
+  }
 
   // add the layer to the layer list for caching
   QJsonObject layerJson;

@@ -19,6 +19,8 @@
 
 #include "DsaResources.h"
 
+#include <QUrl>
+
 namespace Dsa {
 
 /*!
@@ -48,7 +50,7 @@ DsaResources::~DsaResources()
  */
 QUrl DsaResources::icon2d() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/2D.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/2D.png"));
 }
 
 /*!
@@ -56,7 +58,7 @@ QUrl DsaResources::icon2d() const
  */
 QUrl DsaResources::icon3d() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/3D.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/3D.png"));
 }
 
 /*!
@@ -64,7 +66,7 @@ QUrl DsaResources::icon3d() const
  */
 QUrl DsaResources::iconAboutMap() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_aboutmap_dark.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_aboutmap_dark.png"));
 }
 
 /*!
@@ -72,7 +74,7 @@ QUrl DsaResources::iconAboutMap() const
  */
 QUrl DsaResources::iconAdd() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_add_dark_d.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_add_dark_d.png"));
 }
 
 /*!
@@ -80,7 +82,7 @@ QUrl DsaResources::iconAdd() const
  */
 QUrl DsaResources::iconAddLayer() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_layervisibilitypopover_dark_d.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_layervisibilitypopover_dark_d.png"));
 }
 
 /*!
@@ -88,7 +90,7 @@ QUrl DsaResources::iconAddLayer() const
  */
 QUrl DsaResources::iconAlert() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/Alert.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/Alert.png"));
 }
 
 
@@ -97,7 +99,7 @@ QUrl DsaResources::iconAlert() const
  */
 QUrl DsaResources::iconAlertCritical() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/Alert_Critical.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/Alert_Critical.png"));
 }
 
 /*!
@@ -105,7 +107,7 @@ QUrl DsaResources::iconAlertCritical() const
  */
 QUrl DsaResources::iconAlertHigh() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/Alert_High.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/Alert_High.png"));
 }
 
 /*!
@@ -113,7 +115,7 @@ QUrl DsaResources::iconAlertHigh() const
  */
 QUrl DsaResources::iconAlertLow() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/Alert_Low.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/Alert_Low.png"));
 }
 
 /*!
@@ -121,7 +123,7 @@ QUrl DsaResources::iconAlertLow() const
  */
 QUrl DsaResources::iconAlertModerate() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/Alert_Moderate.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/Alert_Moderate.png"));
 }
 
 /*!
@@ -129,7 +131,7 @@ QUrl DsaResources::iconAlertModerate() const
  */
 QUrl DsaResources::iconAlertConditionList() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/View_Alert_Conditions.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/View_Alert_Conditions.png"));
 }
 
 /*!
@@ -137,7 +139,7 @@ QUrl DsaResources::iconAlertConditionList() const
  */
 QUrl DsaResources::iconAlertList() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/View_Alerts.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/View_Alerts.png"));
 }
 
 /*!
@@ -145,7 +147,7 @@ QUrl DsaResources::iconAlertList() const
  */
 QUrl DsaResources::iconAppLogo() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/applogo.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/applogo.png"));
 }
 
 /*!
@@ -153,7 +155,7 @@ QUrl DsaResources::iconAppLogo() const
  */
 QUrl DsaResources::iconChooseBasemap() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_dark.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_choosebasemap_dark.png"));
 }
 
 /*!
@@ -161,7 +163,7 @@ QUrl DsaResources::iconChooseBasemap() const
  */
 QUrl DsaResources::iconClose() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_closeclear_dark.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_closeclear_dark.png"));
 }
 
 /*!
@@ -169,7 +171,7 @@ QUrl DsaResources::iconClose() const
  */
 QUrl DsaResources::iconColorPalette() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_colorpalette_dark_d.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_colorpalette_dark_d.png"));
 }
 
 /*!
@@ -177,7 +179,7 @@ QUrl DsaResources::iconColorPalette() const
  */
 QUrl DsaResources::iconComplete() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_completedone_dark.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_completedone_dark.png"));
 }
 
 /*!
@@ -185,7 +187,7 @@ QUrl DsaResources::iconComplete() const
  */
 QUrl DsaResources::iconCoordinateConversion() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/icon-64-coorconv-white.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/icon-64-coorconv-white.png"));
 }
 
 /*!
@@ -193,7 +195,7 @@ QUrl DsaResources::iconCoordinateConversion() const
  */
 QUrl DsaResources::iconCreateReport() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_editmap_dark_d-2.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_editmap_dark_d-2.png"));
 }
 
 /*!
@@ -201,7 +203,7 @@ QUrl DsaResources::iconCreateReport() const
  */
 QUrl DsaResources::iconCurrentLocation() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_usecurrentlocation_dark_d.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_usecurrentlocation_dark_d.png"));
 }
 
 /*!
@@ -209,7 +211,7 @@ QUrl DsaResources::iconCurrentLocation() const
  */
 QUrl DsaResources::iconDistressGray() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/distressIconGray.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/distressIconGray.png"));
 }
 
 /*!
@@ -217,7 +219,7 @@ QUrl DsaResources::iconDistressGray() const
  */
 QUrl DsaResources::iconDistressRed() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/distressIconRed.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/distressIconRed.png"));
 }
 
 /*!
@@ -225,7 +227,7 @@ QUrl DsaResources::iconDistressRed() const
  */
 QUrl DsaResources::iconDraw() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_edit_dark_d.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_edit_dark_d.png"));
 }
 
 /*!
@@ -233,7 +235,7 @@ QUrl DsaResources::iconDraw() const
  */
 QUrl DsaResources::iconDrawer() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/drawer_large.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/drawer_large.png"));
 }
 
 /*!
@@ -241,7 +243,7 @@ QUrl DsaResources::iconDrawer() const
  */
 QUrl DsaResources::iconDsaHome() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/dsa_home.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/dsa_home.png"));
 }
 
 /*!
@@ -249,7 +251,7 @@ QUrl DsaResources::iconDsaHome() const
  */
 QUrl DsaResources::iconFollowLocation() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/navigation.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/navigation.png"));
 }
 
 /*!
@@ -257,7 +259,7 @@ QUrl DsaResources::iconFollowLocation() const
  */
 QUrl DsaResources::iconFollowLocationNorthUp() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/navigation_north.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/navigation_north.png"));
 }
 
 /*!
@@ -265,7 +267,7 @@ QUrl DsaResources::iconFollowLocationNorthUp() const
  */
 QUrl DsaResources::iconFollowLocationOff() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/navigation_disabled.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/navigation_disabled.png"));
 }
 
 /*!
@@ -273,7 +275,7 @@ QUrl DsaResources::iconFollowLocationOff() const
  */
 QUrl DsaResources::iconGps() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_gpsondontfollow_dark.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_gpsondontfollow_dark.png"));
 }
 
 /*!
@@ -281,7 +283,7 @@ QUrl DsaResources::iconGps() const
  */
 QUrl DsaResources::iconGpsOff() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/GPS_Off.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/GPS_Off.png"));
 }
 
 /*!
@@ -289,7 +291,7 @@ QUrl DsaResources::iconGpsOff() const
  */
 QUrl DsaResources::iconHome() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_home_dark.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_home_dark.png"));
 }
 
 /*!
@@ -297,7 +299,7 @@ QUrl DsaResources::iconHome() const
  */
 QUrl DsaResources::iconKml() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/kml.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/kml.png"));
 }
 
 /*!
@@ -305,7 +307,7 @@ QUrl DsaResources::iconKml() const
  */
 QUrl DsaResources::iconLayers() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_layergroup_dark_d.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_layergroup_dark_d.png"));
 }
 
 /*!
@@ -313,7 +315,7 @@ QUrl DsaResources::iconLayers() const
  */
 QUrl DsaResources::iconLineWidth() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_sketchlinepopover_dark_d.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_sketchlinepopover_dark_d.png"));
 }
 
 /*!
@@ -321,7 +323,7 @@ QUrl DsaResources::iconLineWidth() const
  */
 QUrl DsaResources::iconListView() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_openlistview_dark.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_openlistview_dark.png"));
 }
 
 /*!
@@ -329,7 +331,7 @@ QUrl DsaResources::iconListView() const
  */
 QUrl DsaResources::iconMap() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_mapview_dark_d.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_mapview_dark_d.png"));
 }
 
 /*!
@@ -337,7 +339,7 @@ QUrl DsaResources::iconMap() const
  */
 QUrl DsaResources::iconMenu() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_overflowcirclessmall_dark_d.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_overflowcirclessmall_dark_d.png"));
 }
 
 /*!
@@ -345,7 +347,7 @@ QUrl DsaResources::iconMenu() const
  */
 QUrl DsaResources::iconMessages() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/Real_Time_Feeds.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/Real_Time_Feeds.png"));
 }
 
 /*!
@@ -353,7 +355,7 @@ QUrl DsaResources::iconMessages() const
  */
 QUrl DsaResources::iconPin() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/pin.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/pin.png"));
 }
 
 /*!
@@ -361,7 +363,7 @@ QUrl DsaResources::iconPin() const
  */
 QUrl DsaResources::iconPoint() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/Point.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/Point.png"));
 }
 
 /*!
@@ -369,7 +371,7 @@ QUrl DsaResources::iconPoint() const
  */
 QUrl DsaResources::iconPolygon() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/Polygon.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/Polygon.png"));
 }
 
 /*!
@@ -377,7 +379,7 @@ QUrl DsaResources::iconPolygon() const
  */
 QUrl DsaResources::iconPolyline() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/Polyline.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/Polyline.png"));
 }
 
 /*!
@@ -385,7 +387,7 @@ QUrl DsaResources::iconPolyline() const
  */
 QUrl DsaResources::iconRaster() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/raster_layer.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/raster_layer.png"));
 }
 
 /*!
@@ -393,7 +395,7 @@ QUrl DsaResources::iconRaster() const
  */
 QUrl DsaResources::iconRemove() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_subtract_dark_d.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_subtract_dark_d.png"));
 }
 
 /*!
@@ -401,7 +403,7 @@ QUrl DsaResources::iconRemove() const
  */
 QUrl DsaResources::iconReport() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/Create_Report.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/Create_Report.png"));
 }
 
 /*!
@@ -409,7 +411,7 @@ QUrl DsaResources::iconReport() const
  */
 QUrl DsaResources::iconRotate() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/Rotate_Mode.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/Rotate_Mode.png"));
 }
 
 /*!
@@ -417,7 +419,7 @@ QUrl DsaResources::iconRotate() const
  */
 QUrl DsaResources::iconSave() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/save.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/save.png"));
 }
 
 /*!
@@ -425,7 +427,7 @@ QUrl DsaResources::iconSave() const
  */
 QUrl DsaResources::iconSendMap() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_sendmap_dark_d.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_sendmap_dark_d.png"));
 }
 
 /*!
@@ -433,7 +435,7 @@ QUrl DsaResources::iconSendMap() const
  */
 QUrl DsaResources::iconSettings() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_settings_dark_d.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_settings_dark_d.png"));
 }
 
 /*!
@@ -441,7 +443,7 @@ QUrl DsaResources::iconSettings() const
  */
 QUrl DsaResources::iconSketch() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_freehandsketchoff_dark.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_freehandsketchoff_dark.png"));
 }
 
 /*!
@@ -449,7 +451,7 @@ QUrl DsaResources::iconSketch() const
  */
 QUrl DsaResources::iconTools() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_tooloverflow_dark_d.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_tooloverflow_dark_d.png"));
 }
 
 /*!
@@ -457,7 +459,7 @@ QUrl DsaResources::iconTools() const
  */
 QUrl DsaResources::iconTouch() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/Touch.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/Touch.png"));
 }
 
 /*!
@@ -465,7 +467,7 @@ QUrl DsaResources::iconTouch() const
  */
 QUrl DsaResources::iconTrash() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_trash_dark_d.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_trash_dark_d.png"));
 }
 
 /*!
@@ -473,7 +475,7 @@ QUrl DsaResources::iconTrash() const
  */
 QUrl DsaResources::iconViewshed() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/Viewshed_Tool.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/Viewshed_Tool.png"));
 }
 
 /*!
@@ -481,7 +483,7 @@ QUrl DsaResources::iconViewshed() const
  */
 QUrl DsaResources::iconZoomTo() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_zoomtofeature_light.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_zoomtofeature_light.png"));
 }
 
 /*!
@@ -489,7 +491,7 @@ QUrl DsaResources::iconZoomTo() const
  */
 QUrl DsaResources::iconLineOfSight() const
 {
-  return QStringLiteral("qrc:/Resources/icons/xhdpi/line_of_sight.png");
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/line_of_sight.png"));
 }
 
 } // Dsa

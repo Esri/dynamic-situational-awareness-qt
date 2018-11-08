@@ -25,7 +25,7 @@ If you just want to grab the latest code and build the project, these are the qu
 **Note:** There is a file path length limit when deploying the DSA apps to Android from Windows. The simplest way to workaround this is to shorten the folder name of the "Shadow Build Directory" in the Qt Creator Project settings.
  
 # Prerequisites
-* ArcGIS Runtime SDK for Qt 100.4
+* ArcGIS Runtime SDK for Qt 100.5
 * Qt SDK 5.9.2 or higher
 * Qt Creator
 * ArcGIS Runtime SDK for Qt C++ Plugin [(details)](https://github.com/Esri/arcgis-runtime-toolkit-qt)

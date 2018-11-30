@@ -407,6 +407,13 @@ Vehicle {
                     }
                 ]
 
+                OpenPackageTool {
+                    id: openPackageTool
+                    anchors.fill: parent
+                    visible: false
+                    onClosed: drawer.close();
+                }
+
                 BasemapPicker {
                     id: basemapsTool
                     anchors.fill: parent

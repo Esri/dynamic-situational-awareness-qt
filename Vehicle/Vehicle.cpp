@@ -60,6 +60,11 @@ void Vehicle::componentComplete()
     emit errorOccurred(message, additionalMessage);
   });
 
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::sceneChanged, this, [this]()
+  {
+    m_sceneView->setArcGISScene(m_controller->scene());
+  });
+
   m_controller->init(m_sceneView);
 
   // setup the connections from the view to the resource provider
@@ -95,14 +100,6 @@ void Vehicle::componentComplete()
 
   connect(m_sceneView, &SceneQuickView::screenToLocationCompleted,
           ToolResourceProvider::instance(), &ToolResourceProvider::onScreenToLocationCompleted);
-
-  connect(ToolResourceProvider::instance(), &ToolResourceProvider::setMouseCursorRequested, this, [this](const QCursor& mouseCursor)
-  {
-    m_sceneView->setCursor(mouseCursor);
-  });
-
-  // Set scene to scene view
-  m_sceneView->setArcGISScene(m_controller->scene());
 }
 
 } // Vehicle

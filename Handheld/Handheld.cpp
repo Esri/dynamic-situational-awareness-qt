@@ -67,6 +67,11 @@ void Handheld::componentComplete()
     emit errorOccurred(message, additionalMessage);
   });
 
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::sceneChanged, this, [this]()
+  {
+    m_sceneView->setArcGISScene(m_controller->scene());
+  });
+
   m_controller->init(m_sceneView);
 
   // setup the connections from the view to the resource provider
@@ -107,9 +112,6 @@ void Handheld::componentComplete()
   {
     m_sceneView->setCursor(mouseCursor);
   });
-
-  // Set scene to scene view
-  m_sceneView->setArcGISScene(m_controller->scene());
 }
 
 } // Handheld

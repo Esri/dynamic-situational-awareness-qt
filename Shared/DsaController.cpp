@@ -96,6 +96,11 @@ DsaController::DsaController(QObject* parent):
     if (tool)
       tool->setProperties(m_dsaSettings);
   });
+
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::sceneChanged, this, [this]()
+  {
+    m_scene = ToolResourceProvider::instance()->scene();
+  });
 }
 
 /*!
@@ -230,6 +235,7 @@ void DsaController::onPropertyChanged(const QString& propertyName, const QVarian
   if (m_dsaSettings.value(propertyName) == propertyValue)
     return;
 
+  qDebug() << propertyName << ":" << propertyValue;
   m_dsaSettings.insert(propertyName, propertyValue);
   // save the settings
   saveSettings();

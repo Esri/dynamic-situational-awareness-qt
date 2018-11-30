@@ -19,7 +19,7 @@
 exists($$PWD/../../../../sdk/toolkit/Plugin/CppApi/ArcGISRuntimeToolkit.pri) {
   CppToolkitLocation = $$absolute_path($$PWD/../../../../sdk/toolkit/Plugin/CppApi)
 } else {
-  exists($$PWD/../../arcgis-runtime-toolkit-qt/Plugin/CppApi/ArcGISRuntimeToolkit.pri) {
-    CppToolkitLocation = $$absolute_path($$PWD/../../arcgis-runtime-toolkit-qt/Plugin/CppApi)
+  exists($$PWD/../../../arcgis-runtime-toolkit-qt/Plugin/CppApi/ArcGISRuntimeToolkit.pri) {
+    CppToolkitLocation = $$absolute_path($$PWD/../../../arcgis-runtime-toolkit-qt/Plugin/CppApi)
   }
 }

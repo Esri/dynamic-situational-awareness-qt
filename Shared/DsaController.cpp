@@ -83,6 +83,8 @@ DsaController::DsaController(QObject* parent):
                          QStringLiteral("viewshed"),
                          QStringLiteral("Observation Report")}
 {
+  setDefaultViewpoint();
+
   // setup config settings
   setupConfig();
   m_dataPath = m_dsaSettings["RootDataDirectory"].toString();
@@ -256,6 +258,13 @@ void DsaController::onPropertyChanged(const QString& propertyName, const QVarian
 
 }
 
+void DsaController::setDefaultViewpoint()
+{
+  const Camera initCamera(DsaUtility::montereyCA(), 5000.0, 0.0, 75.0, 0.0);
+  Viewpoint initViewpoint(DsaUtility::montereyCA(), initCamera);
+  m_scene->setInitialViewpoint(initViewpoint);
+}
+
 /*!
  * \internal
  */
@@ -282,24 +291,6 @@ void DsaController::setupConfig()
     for (const QString& key : allKeys)
       m_dsaSettings[key] = settings.value(key);
   }
-}
-
-/*! \brief internal
- *
- * Writes the default initial location (in this app Monterey California)
- * as JSON to the settings map.
- */
-void DsaController::writeDefaultInitialLocation()
-{
-  QJsonObject initialLocationJson;
-  const QString centerString = DsaUtility::montereyCA().toJson();
-  const QJsonDocument centerDoc = QJsonDocument::fromJson(centerString.toLatin1());
-  initialLocationJson.insert( QStringLiteral("center"), centerDoc.object());
-  initialLocationJson.insert( QStringLiteral("distance"), 5000.0);
-  initialLocationJson.insert( QStringLiteral("heading"), 0.0);
-  initialLocationJson.insert( QStringLiteral("pitch"), 75.0);
-  initialLocationJson.insert( QStringLiteral("roll"), 0.0);
-  m_dsaSettings[QStringLiteral("InitialLocation")] = initialLocationJson.toVariantMap();
 }
 
 /*! \brief internal
@@ -445,7 +436,6 @@ void DsaController::createDefaultSettings()
   m_dsaSettings["GpxFile"] = QString("%1/MontereyMounted.gpx").arg(m_dsaSettings["SimulationDirectory"].toString());
   m_dsaSettings["SimulateLocation"] = QStringLiteral("false");
   writeDefaultMessageFeeds();
-  writeDefaultInitialLocation();
   m_dsaSettings[Toolkit::CoordinateConversionConstants::COORDINATE_FORMAT_PROPERTY] = Toolkit::CoordinateConversionConstants::MGRS_FORMAT;
   m_dsaSettings[AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME] = AppConstants::UNIT_METERS;
   m_dsaSettings["UseGpsForElevation"] = QStringLiteral("true");

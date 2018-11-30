@@ -132,8 +132,9 @@ void OpenPackageController::setProperties(const QVariantMap& properties)
   const int newPackageIndex = properties.value(PACKAGE_INDEX_PROPERTYNAME).toInt(&ok);
   const bool packageIndexChanged = ok && setPackageIndex(newPackageIndex);
 
-  if (dataPathChanged || packageNameChanged
-      && m_currentPackageName.isEmpty() && !m_packageDataPath.isEmpty())
+  if ((dataPathChanged || packageNameChanged)
+      && !m_currentPackageName.isEmpty()
+      && !m_packageDataPath.isEmpty())
   {
     findPackage();
   }

@@ -70,7 +70,6 @@ OpenPackageController::OpenPackageController(QObject* parent /* = nullptr */):
       QString unpackedPackageName = m_currentPackageName;
       unpackedPackageName.replace(MSPK_EXTENSION, "");
       const QString unpackedDir = m_packageDataPath + "/" + unpackedPackageName;
-      qDebug() << "Unpacking " << combinedPackagePath() << "to" << unpackedDir;
       MobileScenePackage::unpack(combinedPackagePath(), unpackedDir);
     }
     else

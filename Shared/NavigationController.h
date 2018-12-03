@@ -45,7 +45,6 @@ class NavigationController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
   Q_PROPERTY(double cameraMoveDistance READ cameraMoveDistance WRITE setCameraMoveDistance NOTIFY cameraMoveDistanceChanged)
 
 public:
-  static const QString INITIAL_LOCATION_PROPERTYNAME;
 
   explicit NavigationController(QObject* parent = nullptr);
   ~NavigationController();
@@ -74,7 +73,6 @@ signals:
 
 private slots:
   void updateGeoView();
-  void setInitialLocation();
 
 private:
   enum class Mode

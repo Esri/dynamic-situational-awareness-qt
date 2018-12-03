@@ -83,10 +83,9 @@ DsaController::DsaController(QObject* parent):
                          QStringLiteral("viewshed"),
                          QStringLiteral("Observation Report")}
 {
-  setDefaultViewpoint();
-
   // setup config settings
   setupConfig();
+  setDefaultViewpoint();
   m_dataPath = m_dsaSettings["RootDataDirectory"].toString();
 
   connect(m_scene, &Scene::errorOccurred, this, &DsaController::onError);
@@ -237,7 +236,6 @@ void DsaController::onPropertyChanged(const QString& propertyName, const QVarian
   if (m_dsaSettings.value(propertyName) == propertyValue)
     return;
 
-  qDebug() << propertyName << ":" << propertyValue;
   m_dsaSettings.insert(propertyName, propertyValue);
   // save the settings
   saveSettings();
@@ -258,11 +256,77 @@ void DsaController::onPropertyChanged(const QString& propertyName, const QVarian
 
 }
 
+/*!
+ * \internal
+ */
+bool DsaController::setInitialLocationFromConfig()
+{
+  // Attempt to set the scene's initialViewpoint from JSON configuration
+  const auto findIt = m_dsaSettings.constFind(QStringLiteral("InitialLocation"));
+
+  // If no initial location is specified, default to Monterey, CA
+  if (findIt == m_dsaSettings.constEnd())
+    return false;
+
+  const QVariant initialLocVar = findIt.value();
+  if (initialLocVar.isNull())
+    return false;
+
+  const QJsonObject initialLocation = QJsonObject::fromVariantMap(initialLocVar.toMap());
+  if (initialLocation.isEmpty())
+    return false;
+
+  // set the initial center Point from JSON if it is found
+  auto centerIt = initialLocation.find("center");
+  if (centerIt == initialLocation.constEnd())
+    return false;
+
+  const QJsonValue centerVal = centerIt.value();
+  const QJsonDocument centerDoc = QJsonDocument(centerVal.toObject());
+  const auto newCenter = Point::fromJson(centerDoc.toJson(QJsonDocument::JsonFormat::Compact));
+
+  // set the initial distance from JSON if it is found (if not default to 5000)
+  auto distanceIt = initialLocation.find("distance");
+  double initialDistance = distanceIt != initialLocation.constEnd() ? distanceIt.value().toDouble(5000.0)
+                                                                    : 5000.0;
+
+  // set the initial heading from JSON if it is found (if not default to 0.0)
+  auto headingIt = initialLocation.find("heading");
+  double initialHeading = headingIt != initialLocation.constEnd() ? headingIt.value().toDouble(0.0)
+                                                                  : 0.0;
+
+  // set the initial pitch from JSON if it is found (if not default to 0.0)
+  auto pitchIt = initialLocation.find("pitch");
+  double initialPitch = pitchIt != initialLocation.constEnd() ? pitchIt.value().toDouble(0.0)
+                                                              : 0.0;
+
+  // set the initial roll from JSON if it is found (if not default to 0.0)
+  auto rollIt = initialLocation.find("roll");
+  double initialRoll = rollIt != initialLocation.constEnd() ? rollIt.value().toDouble(0.0)
+                                                            : 0.0;
+
+  // Set the initial viewpoint
+  const Camera initCamera(newCenter, initialDistance, initialHeading, initialPitch, initialRoll);
+  Viewpoint initViewpoint(newCenter, initCamera);
+  m_scene->setInitialViewpoint(initViewpoint);
+
+  return true;
+}
+
+/*!
+ * \internal
+ */
 void DsaController::setDefaultViewpoint()
 {
-  const Camera initCamera(DsaUtility::montereyCA(), 5000.0, 0.0, 75.0, 0.0);
-  Viewpoint initViewpoint(DsaUtility::montereyCA(), initCamera);
-  m_scene->setInitialViewpoint(initViewpoint);
+  // If there is no configuration setting, default the initial viewpoint to Monterey, CA
+  // NOTE that if using a MobileScenePackage, this will be replaced with the
+  // selected scene's initialViewpoint
+  if (!setInitialLocationFromConfig())
+  {
+    const Camera initCamera(DsaUtility::montereyCA(), 5000.0, 0.0, 75.0, 0.0);
+    Viewpoint initViewpoint(DsaUtility::montereyCA(), initCamera);
+    m_scene->setInitialViewpoint(initViewpoint);
+  }
 }
 
 /*!

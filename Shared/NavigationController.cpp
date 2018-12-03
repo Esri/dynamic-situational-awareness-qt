@@ -54,22 +54,16 @@ namespace Dsa {
   \brief Tool controller for handling navigation for the app.
  */
 
-const QString NavigationController::INITIAL_LOCATION_PROPERTYNAME = "InitialLocation";
-
 /*!
   \brief Constructor taking an optional \a parent.
  */
 NavigationController::NavigationController(QObject* parent) :
-  Toolkit::AbstractTool(parent)/*,
-  m_initialCenter(DsaUtility::montereyCA())*/
+  Toolkit::AbstractTool(parent)
 {
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::sceneChanged, this, &NavigationController::setInitialLocation);
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mapChanged, this, &NavigationController::setInitialLocation);
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, &NavigationController::updateGeoView);
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::screenToLocationCompleted, this, &NavigationController::screenToLocationCompleted);
 
   updateGeoView();
-  setInitialLocation();
 
   Toolkit::ToolManager::instance().addTool(this);
 }
@@ -91,94 +85,9 @@ QString NavigationController::toolName() const
 
 /*!
  * \brief Sets any values in \a properties which are relevant for the navigation controller.
- *
- * This tool will use the following key/value pairs from the \a properties map if they are set:
- * \list
- *  \li InitialLocation. A JSON description of a the starting location for the app.
- * \endlist
  */
-void NavigationController::setProperties(const QVariantMap& properties)
+void NavigationController::setProperties(const QVariantMap&)
 {
-  auto findIt = properties.constFind(NavigationController::INITIAL_LOCATION_PROPERTYNAME);
-  if (findIt == properties.constEnd())
-    return;
-
-  const QVariant initialLocVar = findIt.value();
-  if (initialLocVar.isNull())
-    return;
-
-  const QJsonObject initialLocation = QJsonObject::fromVariantMap(initialLocVar.toMap());
-  if (initialLocation.isEmpty())
-    return;
-
-  bool propertiesChanged = false;
-
-  // set the initial center Point from JSON if it is found
-//  auto centerIt = initialLocation.find("center");
-//  if (centerIt != initialLocation.constEnd())
-//  {
-//    const QJsonValue centerVal = centerIt.value();
-//    const QJsonDocument centerDoc = QJsonDocument(centerVal.toObject());
-//    const auto newCenter = Point::fromJson(centerDoc.toJson(QJsonDocument::JsonFormat::Compact));
-//    if (!m_initialCenter.equalsWithTolerance(newCenter, 0.0))
-//    {
-//      propertiesChanged = true;
-//      m_initialCenter = newCenter;
-//    }
-//  }
-
-  // set the initial distance from JSON if it is found (if not default to the existing value)
-//  auto distanceIt = initialLocation.find("distance");
-//  if (distanceIt != initialLocation.constEnd())
-//  {
-//    const auto newDistance = distanceIt.value().toDouble(m_initialDistance);
-//    if (m_initialDistance != newDistance)
-//    {
-//      propertiesChanged = true;
-//      m_initialDistance = newDistance;
-//    }
-//  }
-
-  // set the initial heading from JSON if it is found (if not default to the existing value)
-//  auto headingIt = initialLocation.find("heading");
-//  if (distanceIt != initialLocation.constEnd())
-//  {
-//    const auto newHeading = headingIt.value().toDouble(m_initialHeading);
-//    if (m_initialHeading != newHeading)
-//    {
-//      propertiesChanged = true;
-//      m_initialHeading = newHeading;
-//    }
-//  }
-
-  // set the initial pitch from JSON if it is found (if not default to the existing value)
-//  auto pitchIt = initialLocation.find("pitch");
-//  if (pitchIt != initialLocation.constEnd())
-//  {
-//    const auto newPitch = pitchIt.value().toDouble(m_initialPitch);
-//    if (m_initialPitch != newPitch)
-//    {
-//      propertiesChanged = true;
-//      m_initialPitch = newPitch;
-//    }
-//  }
-
-  // set the initial roll from JSON if it is found (if not default to the existing value)
-//  auto rollIt = initialLocation.find("roll");
-//  if (rollIt != initialLocation.constEnd())
-//  {
-//    const auto newRoll = rollIt.value().toDouble(m_initialRoll);
-//    if (m_initialRoll != newRoll)
-//    {
-//      propertiesChanged = true;
-//      m_initialRoll = newRoll;
-//    }
-//  }
-
-  if (!propertiesChanged)
-    return;
-
-  setInitialLocation();
 }
 
 /*!
@@ -225,29 +134,6 @@ void NavigationController::updateGeoView()
     // set the mapView here
     m_is3d = false;
   }
-}
-
-/*!
-  \internal
- */
-void NavigationController::setInitialLocation()
-{
-//  Scene* scene = Toolkit::ToolResourceProvider::instance()->scene();
-//  if (scene)
-//  {
-//    const Camera initCamera(m_initialCenter, m_initialDistance, m_initialHeading, m_initialPitch, m_initialRoll);
-//    Viewpoint initViewpoint(m_initialCenter, initCamera);
-//    scene->setInitialViewpoint(initViewpoint);
-
-//    return;
-//  }
-
-//  Map* map = Toolkit::ToolResourceProvider::instance()->map();
-//  if (!map)
-//    return;
-
-//  Viewpoint initViewpoint(m_initialCenter, 1000.0);
-//  map->setInitialViewpoint(initViewpoint);
 }
 
 /*!

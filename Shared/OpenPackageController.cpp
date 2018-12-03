@@ -68,8 +68,19 @@ OpenPackageController::OpenPackageController(QObject* parent /* = nullptr */):
     {
       // needs unpacked before loading
       QString unpackedPackageName = m_currentPackageName;
-      unpackedPackageName.replace(MSPK_EXTENSION, "");
+      unpackedPackageName.replace(MSPK_EXTENSION, "_unpacked");
       const QString unpackedDir = m_packageDataPath + "/" + unpackedPackageName;
+
+      // If a directory with the unpacked name already exists, usue that
+      if (QFileInfo::exists(unpackedDir))
+      {
+        qDebug() << "Loading unpacked version " << unpackedDir;
+        loadMobileScenePackage(unpackedDir);
+        setCurrentPackageName(unpackedPackageName);
+
+        return;
+      }
+
       MobileScenePackage::unpack(combinedPackagePath(), unpackedDir);
     }
     else
@@ -87,11 +98,13 @@ OpenPackageController::OpenPackageController(QObject* parent /* = nullptr */):
       return;
     }
 
-    QString unpackedPackageName = m_currentPackageName;
-    unpackedPackageName.replace(MSPK_EXTENSION, "");
-    setCurrentPackageName(unpackedPackageName);
+    refreshPackageNames();
 
-    loadMobileScenePackage(combinedPackagePath());
+    QString unpackedPackageName = m_currentPackageName;
+    unpackedPackageName.replace(MSPK_EXTENSION, "_unpacked");
+    const QString unpackedDir = m_packageDataPath + "/" + unpackedPackageName;
+    loadMobileScenePackage(unpackedDir);
+    setCurrentPackageName(unpackedPackageName);
   });
 }
 
@@ -149,7 +162,7 @@ void OpenPackageController::findPackage()
   QFileInfo packagePathFileInfo = packagePath;
   if (!packagePathFileInfo.exists())
   {
-    emit toolErrorOccurred("Failed to open package", QString("% not found").arg(packagePath));
+    emit toolErrorOccurred("Failed to open package", QString("%1 not found").arg(packagePath));
     return;
   }
 
@@ -216,16 +229,7 @@ bool OpenPackageController::setPackageDataPath(const QString dataPath)
   m_packageDataPath = std::move(dataPath);
   emit packageDataPathChanged();
 
-  QDir dir(m_packageDataPath);
-  QStringList filters { QString("*" + MSPK_EXTENSION) };
-  dir.setNameFilters(filters); // filter to include on .mspk files
-  QStringList packageNames = dir.entryList();
-  dir.setFilter(QDir::AllDirs |
-                QDir::NoDot |
-                QDir::NoDotDot); // filter to include all child directories (for unpacked mspk)
-  packageNames.append(dir.entryList());
-
-  setPackageNames(packageNames);
+  refreshPackageNames();
 
   return true;
 }
@@ -318,6 +322,20 @@ bool OpenPackageController::setPackageIndex(int packageIndex)
   emit packageIndexChanged();
 
   return true;
+}
+
+void OpenPackageController::refreshPackageNames()
+{
+  QDir dir(m_packageDataPath);
+  QStringList filters { QString("*" + MSPK_EXTENSION) };
+  dir.setNameFilters(filters); // filter to include on .mspk files
+  QStringList packageNames = dir.entryList();
+  dir.setFilter(QDir::AllDirs |
+                QDir::NoDot |
+                QDir::NoDotDot); // filter to include all child directories (for unpacked mspk)
+  packageNames.append(dir.entryList());
+
+  setPackageNames(packageNames);
 }
 
 } // Dsa

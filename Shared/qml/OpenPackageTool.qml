@@ -78,7 +78,6 @@ DsaPanel {
                 anchors.fill: parent
                 hoverEnabled: true
                 onClicked: {
-                    console.log(modelData)
                     toolController.selectPackageName(modelData);
                     packageSelected();
                 }

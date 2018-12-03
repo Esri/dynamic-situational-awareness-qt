@@ -75,6 +75,7 @@ private:
   int packageIndex() const;
   bool setPackageIndex(int packageIndex);
 
+  void refreshPackageNames();
   QStringList packageNames() const;
   void setPackageNames(QStringList packageNames);
 

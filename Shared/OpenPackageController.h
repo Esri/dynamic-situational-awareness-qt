@@ -21,8 +21,8 @@
 #include "AbstractTool.h"
 
 // Qt headers
-#include <QAbstractListModel>
 #include <QObject>
+#include <QStringList>
 
 namespace Esri {
 namespace ArcGISRuntime {
@@ -36,6 +36,8 @@ namespace Dsa {
 class OpenPackageController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
   Q_OBJECT
+
+  Q_PROPERTY(QStringList packageNames READ packageNames WRITE setPackageNames NOTIFY packageNamesChanged)
 
 public:
   static const QString PACKAGE_DIRECTORY_PROPERTYNAME;
@@ -53,8 +55,7 @@ public:
   void findPackage();
   void loadGeoDocument();
 
-  bool setCurrentPackageName(QString packageName);
-  bool setPackageIndex(int packageIndex);
+  Q_INVOKABLE void selectPackageName(QString newPackageName);
 
 public slots:
 
@@ -63,12 +64,19 @@ signals:
   void packageDataPathChanged();
   void currentPackageNameChanged();
   void packageIndexChanged();
+  void packageNamesChanged();
 
 private:
   QString packageDataPath() const;
   bool setPackageDataPath(QString dataPath);
   QString currentPackageName() const;
+  bool setCurrentPackageName(QString packageName);
+
   int packageIndex() const;
+  bool setPackageIndex(int packageIndex);
+
+  QStringList packageNames() const;
+  void setPackageNames(QStringList packageNames);
 
   void loadMobileScenePackage(const QString& mspkPath);
 
@@ -77,6 +85,8 @@ private:
   QString m_packageDataPath;
   QString m_currentPackageName;
   int m_packageIndex = 0;
+
+  QStringList m_packageNames;
 
   Esri::ArcGISRuntime::MobileScenePackage* m_mspk = nullptr;
 };

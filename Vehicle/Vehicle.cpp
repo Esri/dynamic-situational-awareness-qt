@@ -62,7 +62,7 @@ void Vehicle::componentComplete()
 
   connect(ToolResourceProvider::instance(), &ToolResourceProvider::sceneChanged, this, [this]()
   {
-    m_sceneView->setArcGISScene(m_controller->scene());
+    m_sceneView->setArcGISScene(ToolResourceProvider::instance()->scene());
   });
 
   m_controller->init(m_sceneView);

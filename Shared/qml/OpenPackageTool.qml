@@ -22,9 +22,118 @@ import Esri.DSA 1.0
 
 DsaPanel {
     width: parent.width
-    title: qsTr("Open Packages")
+    title: qsTr("Open Package")
+
+    signal packageSelected();
 
     OpenPackageController {
         id: toolController
+    }
+
+    Component {
+        id: packageDelegate
+
+        Rectangle {
+            id: packageCard
+            width: packagesList.cellWidth - 10 * scaleFactor
+            height: packagesList.cellHeight - 10 * scaleFactor
+
+            border.color: index === packagesList.currentIndex ? Material.accent : Material.background
+            border.width: index === packagesList.currentIndex ? 2 * scaleFactor : 1 * scaleFactor
+            color: Material.background
+            radius: 2 * scaleFactor
+
+            Image {
+                source: ""// thumbnailUrl;
+                fillMode: Image.PreserveAspectCrop
+                anchors{
+                    fill: parent
+                    margins: 4 * scaleFactor
+                }
+            }
+
+            Rectangle {
+                anchors.centerIn: packageTitle
+                width: packageTitle.width + (8 * scaleFactor)
+                height: packageTitle.height + (8 * scaleFactor)
+                color: Material.primary
+                opacity: 0.5
+                radius: 2 * scaleFactor
+            }
+
+            Label {
+                id: packageTitle
+                text: modelData
+                anchors.centerIn: parent
+                width: parent.width - (16 * scaleFactor)
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+
+                wrapMode: Text.WrapAnywhere
+                font.bold: true
+                color: Material.foreground
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                onClicked: {
+                    console.log(modelData)
+                    toolController.selectPackageName(modelData);
+                    packageSelected();
+                }
+                onHoveredChanged: {
+                    if (containsMouse) {
+                        packagesList.currentIndex = index
+                    }
+                }
+
+            }
+        }
+    }
+
+    GridView {
+        id: packagesList
+
+        property string currentPath: ""
+
+        anchors{
+            top: titleBar.bottom
+            horizontalCenter: parent.horizontalCenter
+            bottom: footerBar.top
+            margins: 8 * scaleFactor
+        }
+
+        clip: true
+        model: toolController.packageNames
+
+        cellWidth: 128 * scaleFactor
+        cellHeight: 128 * scaleFactor
+        width: 2 * cellWidth
+
+        delegate: packageDelegate
+    }
+
+
+    Rectangle {
+        id: footerBar
+        anchors{
+            bottom: parent.bottom
+            left: parent.left
+            right: parent.right
+        }
+        color: Material.primary
+
+        height: 32 * scaleFactor
+
+        Label {
+            id: pathText
+            anchors.fill: parent
+            text: packagesList.currentPath
+            wrapMode: Text.WrapAnywhere
+            elide: Text.ElideRight
+            font.pixelSize: 12 * scaleFactor
+
+        }
     }
 }

@@ -188,18 +188,15 @@ void OpenPackageController::loadGeoDocument()
   }
 
   Scene* theScene = scenes.at(m_packageIndex);
-  Viewpoint viewpoint = theScene->initialViewpoint();
-  QJsonObject initialLocationJson;
-  const QString centerString = viewpoint.camera().location().toJson();
-  const QJsonDocument centerDoc = QJsonDocument::fromJson(centerString.toLatin1());
-  initialLocationJson.insert( QStringLiteral("center"), centerDoc.object());
-  initialLocationJson.insert( QStringLiteral("distance"), 5000.0);
-  initialLocationJson.insert( QStringLiteral("heading"), viewpoint.camera().heading());
-  initialLocationJson.insert( QStringLiteral("pitch"), viewpoint.camera().pitch());
-  initialLocationJson.insert( QStringLiteral("roll"), viewpoint.camera().roll());
-
-  emit propertyChanged("InitialLocation", initialLocationJson.toVariantMap());
   Toolkit::ToolResourceProvider::instance()->setScene(theScene);
+}
+
+void OpenPackageController::selectPackageName(QString newPackageName)
+{
+  if (!setCurrentPackageName(newPackageName))
+    return;
+
+  findPackage();
 }
 
 QString OpenPackageController::packageDataPath() const
@@ -218,6 +215,17 @@ bool OpenPackageController::setPackageDataPath(const QString dataPath)
 
   m_packageDataPath = std::move(dataPath);
   emit packageDataPathChanged();
+
+  QDir dir(m_packageDataPath);
+  QStringList filters { QString("*" + MSPK_EXTENSION) };
+  dir.setNameFilters(filters); // filter to include on .mspk files
+  QStringList packageNames = dir.entryList();
+  dir.setFilter(QDir::AllDirs |
+                QDir::NoDot |
+                QDir::NoDotDot); // filter to include all child directories (for unpacked mspk)
+  packageNames.append(dir.entryList());
+
+  setPackageNames(packageNames);
 
   return true;
 }
@@ -252,6 +260,12 @@ void OpenPackageController::loadMobileScenePackage(const QString& mspkPath)
     oldPackage = m_mspk;
   }
 
+  Scene* oldScene = Toolkit::ToolResourceProvider::instance()->scene();
+  {
+    Toolkit::ToolResourceProvider::instance()->setScene(nullptr);
+    delete oldScene;
+  }
+
   m_mspk = new MobileScenePackage(mspkPath, this);
   connect(m_mspk, &MobileScenePackage::errorOccurred, this, &OpenPackageController::errorOccurred);
 
@@ -278,6 +292,21 @@ void OpenPackageController::loadMobileScenePackage(const QString& mspkPath)
 QString OpenPackageController::combinedPackagePath() const
 {
  return m_packageDataPath + "/" + m_currentPackageName;
+}
+
+QStringList OpenPackageController::packageNames() const
+{
+  return m_packageNames;
+}
+
+void OpenPackageController::setPackageNames(QStringList packageNames)
+{
+  if (packageNames == m_packageNames)
+    return;
+
+  m_packageNames = std::move(packageNames);
+
+  emit packageNamesChanged();
 }
 
 bool OpenPackageController::setPackageIndex(int packageIndex)

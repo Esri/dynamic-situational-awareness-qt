@@ -24,7 +24,7 @@ DsaPanel {
     width: parent.width
     title: qsTr("Open Package")
 
-    signal packageSelected();
+    signal sceneSelected();
 
     OpenPackageController {
         id: toolController
@@ -79,7 +79,8 @@ DsaPanel {
                 hoverEnabled: true
                 onClicked: {
                     toolController.selectPackageName(modelData);
-                    packageSelected();
+                    if (toolController.documentsCount === 1)
+                        sceneSelected();
                 }
                 onHoveredChanged: {
                     if (containsMouse) {
@@ -94,12 +95,10 @@ DsaPanel {
     GridView {
         id: packagesList
 
-        property string currentPath: ""
-
         anchors{
             top: titleBar.bottom
             horizontalCenter: parent.horizontalCenter
-            bottom: footerBar.top
+            bottom: documentSelector.top
             margins: 8 * scaleFactor
         }
 
@@ -113,6 +112,44 @@ DsaPanel {
         delegate: packageDelegate
     }
 
+    Row {
+        id: documentSelector
+        anchors{
+            bottom: footerBar.top
+            left: parent.left
+            right: parent.right
+            margins: 8 * scaleFactor
+        }
+
+        spacing: 8 * scaleFactor
+
+        Label {
+            id: documentLabel
+            anchors.verticalCenter: parent.verticalCenter
+            text: "Select Scene:"
+            wrapMode: Text.WrapAnywhere
+            elide: Text.ElideRight
+            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+        }
+
+        SpinBox {
+            id: withinDistanceSB
+            anchors.verticalCenter: documentLabel.verticalCenter
+            enabled: toolController.documentsCount > 1
+            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+            width: 128 * scaleFactor
+            editable: true
+            value: toolController.currentDocumentIndex + 1
+            from: 1
+            to: toolController.documentsCount
+
+            onValueChanged: {
+                toolController.selectDocument(value -1);
+                sceneSelected();
+            }
+        }
+
+    }
 
     Rectangle {
         id: footerBar
@@ -128,11 +165,10 @@ DsaPanel {
         Label {
             id: pathText
             anchors.fill: parent
-            text: packagesList.currentPath
+            text: toolController.currentPackageName
             wrapMode: Text.WrapAnywhere
             elide: Text.ElideRight
             font.pixelSize: 12 * scaleFactor
-
         }
     }
 }

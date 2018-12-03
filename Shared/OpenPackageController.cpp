@@ -142,7 +142,7 @@ void OpenPackageController::setProperties(const QVariantMap& properties)
 
   bool ok = false;
   const int newPackageIndex = properties.value(PACKAGE_INDEX_PROPERTYNAME).toInt(&ok);
-  const bool packageIndexChanged = ok && setPackageIndex(newPackageIndex);
+  const bool packageIndexChanged = ok && setCurrentDocumentIndex(newPackageIndex);
 
   if ((dataPathChanged || packageNameChanged)
       && !m_currentPackageName.isEmpty()
@@ -188,6 +188,7 @@ void OpenPackageController::loadGeoDocument()
     return;
 
   const QList<Scene*> scenes = m_mspk->scenes();
+  setDocumentsCount(scenes.count());
   if (scenes.isEmpty())
   {
     emit toolErrorOccurred("Package contaisn no scenes", combinedPackagePath());
@@ -195,12 +196,12 @@ void OpenPackageController::loadGeoDocument()
   }
 
   // If the index is invalid for this package, fall back to 0
-  if (m_packageIndex >= scenes.length())
+  if (m_currentDocumentIndex >= scenes.length())
   {
-    setPackageIndex(0);
+    setCurrentDocumentIndex(0);
   }
 
-  Scene* theScene = scenes.at(m_packageIndex);
+  Scene* theScene = scenes.at(m_currentDocumentIndex);
   Toolkit::ToolResourceProvider::instance()->setScene(theScene);
 }
 
@@ -210,6 +211,14 @@ void OpenPackageController::selectPackageName(QString newPackageName)
     return;
 
   findPackage();
+}
+
+void OpenPackageController::selectDocument(int newDocumentIndex)
+{
+  if (!setCurrentDocumentIndex(newDocumentIndex))
+    return;
+
+  loadGeoDocument();
 }
 
 QString OpenPackageController::packageDataPath() const
@@ -251,9 +260,9 @@ bool OpenPackageController::setCurrentPackageName(const QString packageName)
   return true;
 }
 
-int OpenPackageController::packageIndex() const
+int OpenPackageController::currentDocumentIndex() const
 {
-  return m_packageIndex;
+  return m_currentDocumentIndex;
 }
 
 void OpenPackageController::loadMobileScenePackage(const QString& mspkPath)
@@ -298,6 +307,21 @@ QString OpenPackageController::combinedPackagePath() const
  return m_packageDataPath + "/" + m_currentPackageName;
 }
 
+int OpenPackageController::documentsCount() const
+{
+  return m_documentsCount;
+}
+
+void OpenPackageController::setDocumentsCount(int documentsCount)
+{
+  if (documentsCount == m_documentsCount)
+    return;
+
+  m_documentsCount = documentsCount;
+
+  emit documentsCountChanged();
+}
+
 QStringList OpenPackageController::packageNames() const
 {
   return m_packageNames;
@@ -313,12 +337,12 @@ void OpenPackageController::setPackageNames(QStringList packageNames)
   emit packageNamesChanged();
 }
 
-bool OpenPackageController::setPackageIndex(int packageIndex)
+bool OpenPackageController::setCurrentDocumentIndex(int packageIndex)
 {
-  if (packageIndex == m_packageIndex || packageIndex < 0)
+  if (packageIndex == m_currentDocumentIndex || packageIndex < 0)
     return false;
 
-  m_packageIndex = packageIndex;
+  m_currentDocumentIndex = packageIndex;
   emit packageIndexChanged();
 
   return true;
@@ -334,6 +358,8 @@ void OpenPackageController::refreshPackageNames()
                 QDir::NoDot |
                 QDir::NoDotDot); // filter to include all child directories (for unpacked mspk)
   packageNames.append(dir.entryList());
+
+  packageNames.sort();
 
   setPackageNames(packageNames);
 }

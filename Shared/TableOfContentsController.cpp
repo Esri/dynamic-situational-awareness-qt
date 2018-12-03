@@ -302,13 +302,23 @@ QString TableOfContentsController::toolName() const
 void TableOfContentsController::updateLayerListModel()
 {
   auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
-  if (operationalLayers)
+  if (operationalLayers == m_layerListModel)
+    return;
+
+  m_layerListModel = operationalLayers;
+  if (m_drawOrderModel)
   {
-    m_layerListModel = operationalLayers;
+    delete m_drawOrderModel;
+    m_drawOrderModel = nullptr;
+  }
+
+  if (m_layerListModel)
+  {
     m_drawOrderModel = new DrawOrderLayerListModel(this);
     m_drawOrderModel->setSourceModel(m_layerListModel);
-    emit layerListModelChanged();
   }
+
+  emit layerListModelChanged();
 }
 
 /*!

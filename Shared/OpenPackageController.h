@@ -38,6 +38,9 @@ class OpenPackageController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
   Q_OBJECT
 
   Q_PROPERTY(QStringList packageNames READ packageNames WRITE setPackageNames NOTIFY packageNamesChanged)
+  Q_PROPERTY(QString currentPackageName READ currentPackageName NOTIFY currentPackageNameChanged)
+  Q_PROPERTY(int documentsCount READ documentsCount NOTIFY documentsCountChanged)
+  Q_PROPERTY(int currentDocumentIndex READ currentDocumentIndex NOTIFY currentPackageNameChanged)
 
 public:
   static const QString PACKAGE_DIRECTORY_PROPERTYNAME;
@@ -56,6 +59,7 @@ public:
   void loadGeoDocument();
 
   Q_INVOKABLE void selectPackageName(QString newPackageName);
+  Q_INVOKABLE void selectDocument(int newDocumentIndex);
 
 public slots:
 
@@ -65,6 +69,7 @@ signals:
   void currentPackageNameChanged();
   void packageIndexChanged();
   void packageNamesChanged();
+  void documentsCountChanged();
 
 private:
   QString packageDataPath() const;
@@ -72,8 +77,8 @@ private:
   QString currentPackageName() const;
   bool setCurrentPackageName(QString packageName);
 
-  int packageIndex() const;
-  bool setPackageIndex(int packageIndex);
+  int currentDocumentIndex() const;
+  bool setCurrentDocumentIndex(int currentDocumentIndex);
 
   void refreshPackageNames();
   QStringList packageNames() const;
@@ -83,10 +88,13 @@ private:
 
   QString combinedPackagePath() const;
 
+  int documentsCount() const;
+  void setDocumentsCount(int documentsCount);
+
   QString m_packageDataPath;
   QString m_currentPackageName;
-  int m_packageIndex = 0;
-
+  int m_currentDocumentIndex = 0;
+  int m_documentsCount = 0;
   QStringList m_packageNames;
 
   Esri::ArcGISRuntime::MobileScenePackage* m_mspk = nullptr;

@@ -80,7 +80,7 @@ signals:
 
 public slots:
   void onGeoViewChanged(Esri::ArcGISRuntime::GeoView* geoView);
-  void onOperationalLayersChanged(Esri::ArcGISRuntime::LayerListModel* operationalLayers);
+  void onOperationalLayersChanged();
 
 private slots:
   void onQueryFeaturesCompleted(QUuid taskId, Esri::ArcGISRuntime::FeatureQueryResult* featureQueryResult);

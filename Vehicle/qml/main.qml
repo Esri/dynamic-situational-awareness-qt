@@ -417,7 +417,7 @@ Vehicle {
                 OpenPackageTool {
                     id: openPackageTool
                     anchors.fill: parent
-                    onPackageSelected: closed();
+                    onSceneSelected: closed();
                     visible: false
                     onClosed: drawer.close();
                 }

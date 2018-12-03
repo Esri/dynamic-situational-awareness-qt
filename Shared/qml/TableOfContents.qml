@@ -53,7 +53,7 @@ DsaPanel {
         interactive: true
         clip: true
         spacing: 5 * scaleFactor
-        model: toolController.layerListModel
+        model: toolController.layerListModel ? toolController.layerListModel : null
         highlight: Rectangle {
             radius: 5 * scaleFactor
             color: Material.accent
@@ -64,7 +64,7 @@ DsaPanel {
         delegate: ListItemDelegate {
             width: parent.width
             height: 40 * scaleFactor
-            itemChecked: layerVisible
+            itemChecked: layerVisible ? layerVisible : false
             imageUrl: imageSourceForGeomType(index)
             imageVisible: true
             imageFrameVisible: false

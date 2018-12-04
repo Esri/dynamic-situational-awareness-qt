@@ -22,7 +22,7 @@ import Esri.DSA 1.0
 
 DsaPanel {
     width: parent.width
-    title: qsTr("Open Package")
+    title: packageFrame.currentIndex === 0 ? "Choose Package" : "Open Scene"
 
     signal sceneSelected();
 
@@ -44,7 +44,7 @@ DsaPanel {
             radius: 2 * scaleFactor
 
             Image {
-                source: ""// thumbnailUrl;
+                source: imageReady ? "image://packages/" + packageName : ""
                 fillMode: Image.PreserveAspectCrop
                 anchors{
                     fill: parent
@@ -63,24 +63,50 @@ DsaPanel {
 
             Label {
                 id: packageTitle
-                text: modelData
+                text: packageName
                 anchors.centerIn: parent
                 width: parent.width - (16 * scaleFactor)
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
 
                 wrapMode: Text.WrapAnywhere
-                font.bold: true
+                font{
+                    pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                    bold: true
+                }
                 color: Material.foreground
+            }
+
+            Label {
+                id: needsUnpackLabel
+                visible: requiresUnpack
+                text: "Needs Unpack"
+                anchors {
+                    top: packageTitle.bottom
+                    bottom: parent.bottom
+                    left: parent.left
+                    right: parent.right
+                }
+
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+
+                wrapMode: Text.WrapAnywhere
+                font{
+                    pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                    bold: true
+                }
+                color: Material.accent
             }
 
             MouseArea {
                 anchors.fill: parent
                 hoverEnabled: true
                 onClicked: {
-                    toolController.selectPackageName(modelData);
-                    if (toolController.documentsCount === 1)
-                        sceneSelected();
+                    toolController.selectPackageName(packageName);
+                    documentList.model = documents;
+                    unpackWarning.visible = requiresUnpack
+                    packageFrame.currentIndex = 1;
                 }
                 onHoveredChanged: {
                     if (containsMouse) {
@@ -92,63 +118,111 @@ DsaPanel {
         }
     }
 
-    GridView {
-        id: packagesList
+    Button {
+        id: backToScenesButton
 
-        anchors{
+        anchors {
             top: titleBar.bottom
-            horizontalCenter: parent.horizontalCenter
-            bottom: documentSelector.top
+            right: pageIndicator.left
+            left: packageFrame.left
             margins: 8 * scaleFactor
         }
 
-        clip: true
-        model: toolController.packageNames
+        visible: packageFrame.currentIndex === 1
 
-        cellWidth: 128 * scaleFactor
-        cellHeight: 128 * scaleFactor
-        width: 2 * cellWidth
+        text: "< Scenes"
 
-        delegate: packageDelegate
+        font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+        font.family: DsaStyles.fontFamily
+
+        onClicked: packageFrame.currentIndex = 0;
     }
 
-    Row {
-        id: documentSelector
-        anchors{
-            bottom: footerBar.top
-            left: parent.left
-            right: parent.right
+    PageIndicator {
+        id: pageIndicator
+        anchors {
+            verticalCenter: backToScenesButton.verticalCenter
+            horizontalCenter: packageFrame.horizontalCenter
             margins: 8 * scaleFactor
         }
+        width: 64 * scaleFactor
+        count: packageFrame.count
+        currentIndex: packageFrame.currentIndex
+    }
 
-        spacing: 8 * scaleFactor
+    SwipeView {
+        id: packageFrame
+        clip: true
+        anchors{
+            top: pageIndicator.bottom
+            left: parent.left
+            right: parent.right
+            bottom: footerBar.top
+            margins: 8 * scaleFactor
+        }
+        currentIndex: 0
 
-        Label {
-            id: documentLabel
-            anchors.verticalCenter: parent.verticalCenter
-            text: "Select Scene:"
-            wrapMode: Text.WrapAnywhere
-            elide: Text.ElideRight
-            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+        GridView {
+            id: packagesList
+
+            visible: packageFrame.currentIndex === 0
+
+            clip: true
+            model: toolController.packages
+
+            cellWidth: 128 * scaleFactor
+            cellHeight: 128 * scaleFactor
+            width: 2 * cellWidth
+
+            delegate: packageDelegate
         }
 
-        SpinBox {
-            id: withinDistanceSB
-            anchors.verticalCenter: documentLabel.verticalCenter
-            enabled: toolController.documentsCount > 1
-            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-            width: 128 * scaleFactor
-            editable: true
-            value: toolController.currentDocumentIndex + 1
-            from: 1
-            to: toolController.documentsCount
+        ListView {
+            id: documentList
 
-            onValueChanged: {
-                toolController.selectDocument(value -1);
-                sceneSelected();
+            clip: true
+            spacing: 64 * scaleFactor
+            visible: packageFrame.currentIndex === 1
+
+            Button {
+                id: unpackWarning
+                anchors.centerIn: parent
+
+                contentItem: Text {
+                    anchors.fill: parent
+                    text: "Unpack"
+                    font{
+                        pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                        family: DsaStyles.fontFamily
+                        bold: true
+                    }
+                    color: "white"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+
+                background: Rectangle {
+                    anchors.fill: parent
+                    color: Material.accent
+                }
+
+                onClicked: {
+                    packageFrame.currentIndex = 0;
+                    toolController.unpack();
+                }
+            }
+
+            delegate: Button {
+                text: modelData
+                width: parent.width
+                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                font.family: DsaStyles.fontFamily
+                onClicked: {
+                    toolController.selectDocument(index);
+                    sceneSelected();
+                }
             }
         }
-
     }
 
     Rectangle {

@@ -21,25 +21,30 @@
 #include "AbstractTool.h"
 
 // Qt headers
+#include <QAbstractListModel>
+#include <QHash>
 #include <QObject>
 #include <QStringList>
 
+class QImage;
+
 namespace Esri {
 namespace ArcGISRuntime {
-  class MobileScenePackage;
-  class Scene;
+class MobileScenePackage;
+class Scene;
 }
 }
 
 namespace Dsa {
 
+class PackagesListModel;
+
 class OpenPackageController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
   Q_OBJECT
 
-  Q_PROPERTY(QStringList packageNames READ packageNames WRITE setPackageNames NOTIFY packageNamesChanged)
+  Q_PROPERTY(QAbstractListModel* packages READ packages NOTIFY packagesChanged)
   Q_PROPERTY(QString currentPackageName READ currentPackageName NOTIFY currentPackageNameChanged)
-  Q_PROPERTY(int documentsCount READ documentsCount NOTIFY documentsCountChanged)
   Q_PROPERTY(int currentDocumentIndex READ currentDocumentIndex NOTIFY currentPackageNameChanged)
 
 public:
@@ -60,8 +65,7 @@ public:
 
   Q_INVOKABLE void selectPackageName(QString newPackageName);
   Q_INVOKABLE void selectDocument(int newDocumentIndex);
-
-public slots:
+  Q_INVOKABLE void unpack();
 
 signals:
   void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
@@ -69,7 +73,11 @@ signals:
   void currentPackageNameChanged();
   void packageIndexChanged();
   void packageNamesChanged();
-  void documentsCountChanged();
+  void imageReady(const QString& packageName, const QImage& packageImage);
+  void packagesChanged();
+
+private slots:
+  void handleIsDirectReadSupportedCompleted(QUuid taskId, bool directReadSupported);
 
 private:
   QString packageDataPath() const;
@@ -80,24 +88,23 @@ private:
   int currentDocumentIndex() const;
   bool setCurrentDocumentIndex(int currentDocumentIndex);
 
-  void refreshPackageNames();
-  QStringList packageNames() const;
-  void setPackageNames(QStringList packageNames);
+  void updatePackageDetails();
 
   void loadMobileScenePackage(const QString& mspkPath);
+  void loadMobileScenePackageForDetails(const QString& packageName);
+  bool createPackageDetails(const QString& packageName);
 
   QString combinedPackagePath() const;
 
-  int documentsCount() const;
-  void setDocumentsCount(int documentsCount);
+  QAbstractListModel* packages() const;
 
   QString m_packageDataPath;
   QString m_currentPackageName;
-  int m_currentDocumentIndex = 0;
-  int m_documentsCount = 0;
-  QStringList m_packageNames;
-
+  int m_currentDocumentIndex = -1;
+  PackagesListModel* m_packagesModel = nullptr;
   Esri::ArcGISRuntime::MobileScenePackage* m_mspk = nullptr;
+  QHash<QUuid, QString> m_directReadTasks;
+  QHash<QString, Esri::ArcGISRuntime::MobileScenePackage*> m_packages;
 };
 
 } // Dsa

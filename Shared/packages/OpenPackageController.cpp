@@ -19,18 +19,24 @@
 #include "pch.hpp"
 
 #include "OpenPackageController.h"
+#include "PackagesListModel.h"
 
 // toolkit headers
 #include "ToolManager.h"
 
 // C++ API headers
+#include "Item.h"
 #include "MobileScenePackage.h"
 #include "Scene.h"
+#include "SceneQuickView.h"
 
 // Qt headers
+#include <QQmlContext>
 #include <QDir>
+#include <QQmlEngine>
 #include <QFileInfo>
 #include <QJsonDocument>
+#include <QQmlEngine>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -55,40 +61,16 @@ const QString OpenPackageController::MMPK_EXTENSION = ".mmpk";
   \brief Constructor taking an optional \a parent.
  */
 OpenPackageController::OpenPackageController(QObject* parent /* = nullptr */):
-  Toolkit::AbstractTool(parent)
+  Toolkit::AbstractTool(parent),
+  m_packagesModel(new PackagesListModel(this))
 {
+  emit packagesChanged();
   Toolkit::ToolManager::instance().addTool(this);
 
-  connect(MobileScenePackage::instance(), &MobileScenePackage::errorOccurred, this, &OpenPackageController::errorOccurred);
+  //connect(MobileScenePackage::instance(), &MobileScenePackage::errorOccurred, this, &OpenPackageController::errorOccurred);
 
-  connect(MobileScenePackage::instance(), &MobileScenePackage::isDirectReadSupportedCompleted, this, [this]
-          (QUuid, bool directReadSupported)
-  {
-    if (!directReadSupported)
-    {
-      // needs unpacked before loading
-      QString unpackedPackageName = m_currentPackageName;
-      unpackedPackageName.replace(MSPK_EXTENSION, "_unpacked");
-      const QString unpackedDir = m_packageDataPath + "/" + unpackedPackageName;
-
-      // If a directory with the unpacked name already exists, usue that
-      if (QFileInfo::exists(unpackedDir))
-      {
-        qDebug() << "Loading unpacked version " << unpackedDir;
-        loadMobileScenePackage(unpackedDir);
-        setCurrentPackageName(unpackedPackageName);
-
-        return;
-      }
-
-      MobileScenePackage::unpack(combinedPackagePath(), unpackedDir);
-    }
-    else
-    {
-      // proceed with loading the archived mspk file
-      loadMobileScenePackage(combinedPackagePath());
-    }
-  });
+  connect(MobileScenePackage::instance(), &MobileScenePackage::isDirectReadSupportedCompleted, this,
+          &OpenPackageController::handleIsDirectReadSupportedCompleted);
 
   connect(MobileScenePackage::instance(), &MobileScenePackage::unpackCompleted, this, [this](QUuid, bool success)
   {
@@ -98,7 +80,7 @@ OpenPackageController::OpenPackageController(QObject* parent /* = nullptr */):
       return;
     }
 
-    refreshPackageNames();
+    updatePackageDetails();
 
     QString unpackedPackageName = m_currentPackageName;
     unpackedPackageName.replace(MSPK_EXTENSION, "_unpacked");
@@ -152,7 +134,7 @@ void OpenPackageController::setProperties(const QVariantMap& properties)
   }
   else if (packageIndexChanged)
   {
-    // load the new scene
+    loadGeoDocument();
   }
 }
 
@@ -187,11 +169,13 @@ void OpenPackageController::loadGeoDocument()
   if (!m_mspk)
     return;
 
+  if (m_currentDocumentIndex == -1)
+    return;
+
   const QList<Scene*> scenes = m_mspk->scenes();
-  setDocumentsCount(scenes.count());
   if (scenes.isEmpty())
   {
-    emit toolErrorOccurred("Package contaisn no scenes", combinedPackagePath());
+    emit toolErrorOccurred("Package contains no scenes", combinedPackagePath());
     return;
   }
 
@@ -210,6 +194,9 @@ void OpenPackageController::selectPackageName(QString newPackageName)
   if (!setCurrentPackageName(newPackageName))
     return;
 
+  // reset the scene index to -1
+  setCurrentDocumentIndex(-1);
+
   findPackage();
 }
 
@@ -219,6 +206,52 @@ void OpenPackageController::selectDocument(int newDocumentIndex)
     return;
 
   loadGeoDocument();
+}
+
+void OpenPackageController::unpack()
+{
+  // needs unpacked before loading
+  QString unpackedPackageName = m_currentPackageName;
+  unpackedPackageName.replace(MSPK_EXTENSION, "_unpacked");
+  const QString unpackedDir = m_packageDataPath + "/" + unpackedPackageName;
+
+  // If a directory with the unpacked name already exists, usue that
+  if (QFileInfo::exists(unpackedDir))
+  {
+    qDebug() << "Loading unpacked version " << unpackedDir;
+    loadMobileScenePackage(unpackedDir);
+    setCurrentPackageName(unpackedPackageName);
+
+    return;
+  }
+
+  MobileScenePackage::unpack(combinedPackagePath(), unpackedDir);
+}
+
+void OpenPackageController::handleIsDirectReadSupportedCompleted(QUuid taskId, bool directReadSupported)
+{
+  auto findTask = m_directReadTasks.constFind(taskId);
+
+  // If the task was concerned with checking a packages details
+  if (findTask != m_directReadTasks.constEnd())
+  {
+    // Update whether the package requires unpack
+    const auto& packageName = findTask.value();
+    m_packagesModel->setRequiresUnpack(packageName, !directReadSupported);
+
+    // If the package doesn't need to eb unpacked, get it's thumbnai;, and scenes etc.
+    if (directReadSupported)
+      loadMobileScenePackageForDetails(packageName);
+
+    return;
+  }
+
+  // otherwise, if the task was concerned with loading a package for display
+  if (directReadSupported)
+  {
+    // proceed with loading the archived mspk file
+    loadMobileScenePackage(combinedPackagePath());
+  }
 }
 
 QString OpenPackageController::packageDataPath() const
@@ -238,7 +271,7 @@ bool OpenPackageController::setPackageDataPath(const QString dataPath)
   m_packageDataPath = std::move(dataPath);
   emit packageDataPathChanged();
 
-  refreshPackageNames();
+  updatePackageDetails();
 
   return true;
 }
@@ -302,66 +335,110 @@ void OpenPackageController::loadMobileScenePackage(const QString& mspkPath)
   m_mspk->load();
 }
 
-QString OpenPackageController::combinedPackagePath() const
+void OpenPackageController::loadMobileScenePackageForDetails(const QString& packageName)
 {
- return m_packageDataPath + "/" + m_currentPackageName;
+  MobileScenePackage* newPackage = new MobileScenePackage(m_packageDataPath + "/" + packageName, this);
+  m_packages.insert(packageName, newPackage);
+
+  connect(newPackage, &MobileScenePackage::doneLoading, this, [this, newPackage, packageName](Error e)
+  {
+    if (!e.isEmpty())
+    {
+      qDebug() << packageName << e.message() << e.additionalMessage();
+      return;
+    }
+
+    auto packageItem = newPackage->item();
+    if (!packageItem)
+      return;
+
+    auto scenes = newPackage->scenes();
+    QStringList documentNames;
+    documentNames.reserve(scenes.length());
+    for (int i = 0; i < scenes.length(); ++i)
+    {
+      // TODO: this should use Scene::Item::name when available (requires the scene to be loaded)
+      documentNames.append(QString("Scene %1").arg(QString::number(i)));
+    }
+
+    m_packagesModel->setDocumentNames(packageName, documentNames);
+
+    connect(packageItem, &Item::fetchThumbnailCompleted, this, [this, packageName, packageItem](bool success)
+    {
+      if (success)
+        emit imageReady(packageName, packageItem->thumbnail());
+
+      m_packagesModel->setImageReady(packageName, success);
+    });
+
+    newPackage->item()->fetchThumbnail();
+  });
+
+  newPackage->load();
 }
 
-int OpenPackageController::documentsCount() const
+bool OpenPackageController::createPackageDetails(const QString& packageName)
 {
-  return m_documentsCount;
-}
-
-void OpenPackageController::setDocumentsCount(int documentsCount)
-{
-  if (documentsCount == m_documentsCount)
-    return;
-
-  m_documentsCount = documentsCount;
-
-  emit documentsCountChanged();
-}
-
-QStringList OpenPackageController::packageNames() const
-{
-  return m_packageNames;
-}
-
-void OpenPackageController::setPackageNames(QStringList packageNames)
-{
-  if (packageNames == m_packageNames)
-    return;
-
-  m_packageNames = std::move(packageNames);
-
-  emit packageNamesChanged();
-}
-
-bool OpenPackageController::setCurrentDocumentIndex(int packageIndex)
-{
-  if (packageIndex == m_currentDocumentIndex || packageIndex < 0)
+  if (m_packages.constFind(packageName) != m_packages.constEnd())
     return false;
 
-  m_currentDocumentIndex = packageIndex;
-  emit packageIndexChanged();
+  m_packages.insert(packageName, nullptr);
+  m_packagesModel->addPackageData(packageName);
 
   return true;
 }
 
-void OpenPackageController::refreshPackageNames()
+QString OpenPackageController::combinedPackagePath() const
+{
+  return m_packageDataPath + "/" + m_currentPackageName;
+}
+
+QAbstractListModel* OpenPackageController::packages() const
+{
+  return m_packagesModel;
+}
+
+bool OpenPackageController::setCurrentDocumentIndex(int packageIndex)
+{
+  if (packageIndex == m_currentDocumentIndex)
+    return false;
+
+  m_currentDocumentIndex = packageIndex;
+  emit packageIndexChanged();
+  emit propertyChanged(PACKAGE_INDEX_PROPERTYNAME, m_currentDocumentIndex);
+
+  return true;
+}
+
+void OpenPackageController::updatePackageDetails()
 {
   QDir dir(m_packageDataPath);
   QStringList filters { QString("*" + MSPK_EXTENSION) };
   dir.setNameFilters(filters); // filter to include on .mspk files
-  QStringList packageNames = dir.entryList();
+  const QStringList filePackageNames = dir.entryList();
+  for (const auto& packageName : filePackageNames)
+  {
+    // existing package
+    if (!createPackageDetails(packageName))
+      continue;
+
+    // check if it needs unpack
+    const auto taskWatcher = MobileScenePackage::instance()->isDirectReadSupported(m_packageDataPath);
+    m_directReadTasks.insert(taskWatcher.taskId(), packageName);
+  }
+
   dir.setFilter(QDir::AllDirs |
                 QDir::NoDot |
                 QDir::NoDotDot); // filter to include all child directories (for unpacked mspk)
-  packageNames.append(dir.entryList());
+  const QStringList dirPackageNames = dir.entryList();
+  for (const auto& packageName : dirPackageNames)
+  {
+    // existing package
+    if (!createPackageDetails(packageName))
+      continue;
 
-  packageNames.sort();
-
-  setPackageNames(packageNames);
+    loadMobileScenePackageForDetails(packageName);
+  }
 }
 
 } // Dsa

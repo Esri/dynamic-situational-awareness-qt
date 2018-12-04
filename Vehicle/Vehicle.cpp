@@ -39,6 +39,7 @@ Vehicle::Vehicle(QQuickItem* parent /* = nullptr */):
   QQuickItem(parent),
   m_controller(new DsaController(this))
 {
+
 }
 
 Vehicle::~Vehicle()

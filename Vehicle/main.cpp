@@ -43,6 +43,7 @@
 #include "VehicleStyles.h"
 #include "ViewedAlertsController.h"
 #include "ViewshedController.h"
+#include "PackageImageProvider.h"
 
 // toolkit headers
 #include "ArcGISCompassController.h"
@@ -146,6 +147,8 @@ int main(int argc, char *argv[])
   // Initialize application view
   QQuickView view;
   view.setResizeMode(QQuickView::SizeRootObjectToView);
+
+  view.engine()->addImageProvider(QStringLiteral("packages"), new Dsa::PackageImageProvider());
 
 #ifndef DEPLOYMENT_BUILD
   // Add the import Path

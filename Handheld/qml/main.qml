@@ -59,6 +59,7 @@ Handheld {
 
         HomeToolRow  {
             id: homeToolRow
+            isMobile: true
             anchors {
                 verticalCenter: parent.verticalCenter
                 right: parent.right

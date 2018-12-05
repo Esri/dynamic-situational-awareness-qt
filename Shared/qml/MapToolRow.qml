@@ -43,10 +43,6 @@ Row {
                 target: tocIcon
                 selected: selected
             }
-            PropertyChanges {
-                target: packageIcon
-                selected: selected
-            }
         },
         State {
             name: coordinateConversionIcon.toolName
@@ -56,10 +52,6 @@ Row {
             }
             PropertyChanges {
                 target: tocIcon
-                selected: selected
-            }
-            PropertyChanges {
-                target: packageIcon
                 selected: selected
             }
         },
@@ -81,10 +73,6 @@ Row {
                 target: identifyIcon
                 selected: selected
             }
-            PropertyChanges {
-                target: packageIcon
-                selected: selected
-            }
         },
         State {
             name: addLocalDataIcon.toolName
@@ -104,10 +92,6 @@ Row {
                 target: identifyIcon
                 selected: selected
             }
-            PropertyChanges {
-                target: packageIcon
-                selected: selected
-            }
         },
         State {
             name: tocIcon.toolName
@@ -123,10 +107,6 @@ Row {
                 target: identifyIcon
                 selected: selected
             }
-            PropertyChanges {
-                target: packageIcon
-                selected: selected
-            }
         },
         State {
             name: basemapIcon.toolName
@@ -144,10 +124,6 @@ Row {
             }
             PropertyChanges {
                 target: identifyIcon
-                selected: selected
-            }
-            PropertyChanges {
-                target: packageIcon
                 selected: selected
             }
         },
@@ -168,10 +144,6 @@ Row {
             PropertyChanges {
                 target: identifyIcon
                 selected: selected
-            }
-            PropertyChanges {
-                target: packageIcon
-                selected: true
             }
         },
         State {
@@ -198,10 +170,6 @@ Row {
             }
             PropertyChanges {
                 target: tocIcon
-                selected: false
-            }
-            PropertyChanges {
-                target: packageIcon
                 selected: false
             }
         }
@@ -314,22 +282,6 @@ Row {
                 drawer.close();
             else {
                 toolRect.state = "basemap";
-                mapToolRow.state = toolName;
-                drawer.open();
-            }
-        }
-    }
-
-    // Basemap Tool
-    ToolIcon {
-        id: packageIcon
-        iconSource: DsaResources.iconChooseBasemap
-        toolName: "Open Scene"
-        onToolSelected: {
-            if (drawer.visible)
-                drawer.close();
-            else {
-                toolRect.state = "package";
                 mapToolRow.state = toolName;
                 drawer.open();
             }

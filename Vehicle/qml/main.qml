@@ -56,6 +56,15 @@ Vehicle {
         height: DsaStyles.mainToolbarHeight * scaleFactor
         menuVisible: true
 
+        HomeToolRow  {
+            id: homeToolRow
+            anchors {
+                verticalCenter: parent.verticalCenter
+                right: parent.right
+                rightMargin: 16 * scaleFactor
+            }
+        }
+
         MapToolRow {
             id: mapToolRow
             anchors {

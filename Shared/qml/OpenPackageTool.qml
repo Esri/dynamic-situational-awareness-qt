@@ -54,11 +54,13 @@ DsaPanel {
         clip: true
         anchors{
             top: backToPackagesButton.bottom
-            left: parent.left
-            right: parent.right
+//            left: parent.left
+//            right: parent.right
+            horizontalCenter: parent.horizontalCenter
             bottom: footerBar.top
             margins: 8 * scaleFactor
         }
+        width: parent.width
         currentIndex: 0
 
         GridView {

@@ -424,12 +424,20 @@ Handheld {
                             target: messageFeedsTool
                             visible: true
                         }
+                    },
+                    State {
+                        name: "package"
+                        PropertyChanges {
+                            target: openPackageTool
+                            visible: true
+                        }
                     }
                 ]
 
                 OpenPackageTool {
                     id: openPackageTool
                     anchors.fill: parent
+                    onSceneSelected: closed();
                     visible: false
                     onClosed: drawer.close();
                 }

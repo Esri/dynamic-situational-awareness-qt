@@ -324,7 +324,7 @@ Row {
     ToolIcon {
         id: packageIcon
         iconSource: DsaResources.iconChooseBasemap
-        toolName: "Package"
+        toolName: "Open Scene"
         onToolSelected: {
             if (drawer.visible)
                 drawer.close();

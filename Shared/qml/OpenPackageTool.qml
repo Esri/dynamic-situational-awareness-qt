@@ -31,18 +31,17 @@ DsaPanel {
     }
 
     Button {
-        id: backToScenesButton
+        id: backToPackagesButton
 
         anchors {
             top: titleBar.bottom
-            right: pageIndicator.left
             left: packageFrame.left
             margins: 8 * scaleFactor
         }
 
         visible: packageFrame.currentIndex === 1
 
-        text: "< Scenes"
+        text: "< Packages"
 
         font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
         font.family: DsaStyles.fontFamily
@@ -50,23 +49,11 @@ DsaPanel {
         onClicked: packageFrame.currentIndex = 0;
     }
 
-    PageIndicator {
-        id: pageIndicator
-        anchors {
-            verticalCenter: backToScenesButton.verticalCenter
-            horizontalCenter: packageFrame.horizontalCenter
-            margins: 8 * scaleFactor
-        }
-        width: 64 * scaleFactor
-        count: packageFrame.count
-        currentIndex: packageFrame.currentIndex
-    }
-
     SwipeView {
         id: packageFrame
         clip: true
         anchors{
-            top: pageIndicator.bottom
+            top: backToPackagesButton.bottom
             left: parent.left
             right: parent.right
             bottom: footerBar.top
@@ -162,7 +149,7 @@ DsaPanel {
                         // If the package has an unpacked version, use that
                         toolController.selectPackageName( unpackedName.length > 0 ? unpackedName :
                                                                                     packageName);
-                        unpackWarning.visible = requiresUnpack
+                        unpackButton.visible = requiresUnpack
                         packageFrame.currentIndex = 1;
                     }
                     onHoveredChanged: {
@@ -170,7 +157,6 @@ DsaPanel {
                             packagesList.currentIndex = index
                         }
                     }
-
                 }
             }
         }
@@ -185,7 +171,7 @@ DsaPanel {
             visible: packageFrame.currentIndex === 1
 
             Button {
-                id: unpackWarning
+                id: unpackButton
                 anchors.centerIn: parent
 
                 contentItem: Text {
@@ -208,8 +194,28 @@ DsaPanel {
 
                 onClicked: {
                     toolController.unpack();
-                    unpackWarning.visible = false;
+                    unpackButton.visible = false;
                 }
+            }
+
+            Label
+            {
+                id: unpackText
+                visible: unpackButton.visible
+                anchors {
+                    top: unpackButton.bottom
+                    left: parent.left
+                    right: parent.right
+                    bottom: parent.bottom
+                    margins: 8 * scaleFactor
+                }
+
+                text: "This package contains archived data that must be unpacked to a directory on your device"
+                wrapMode: Text.WordWrap
+
+                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                font.family: DsaStyles.fontFamily
+
             }
 
             delegate: Button {

@@ -60,6 +60,7 @@ PackagesListModel::PackagesListModel(QObject* parent):
   m_roles[ImageReadyRole] = "imageReady";
   m_roles[DocumentsRole] = "documents";
   m_roles[RequiresUnpackRole] = "requiresUnpack";
+  m_roles[UnpackedNameRole] = "unpackedName";
 }
 
 /*!
@@ -67,7 +68,6 @@ PackagesListModel::PackagesListModel(QObject* parent):
  */
 PackagesListModel::~PackagesListModel()
 {
-
 }
 
 void PackagesListModel::addPackageData(const QString& packageName)
@@ -123,6 +123,33 @@ void PackagesListModel::setDocumentNames(const QString& packageName, QStringList
   emit dataChanged(changedIndex, changedIndex);
 }
 
+void PackagesListModel::setUnpackedName(const QString &packageName, QString unpackedName)
+{
+  auto findIt = m_packageDetails.find(packageName);
+  if (findIt == m_packageDetails.end())
+    return;
+
+  findIt.value().m_unpackedName = std::move(unpackedName);
+  findIt.value().m_requiresUnpack = false;
+
+  int index = std::distance(m_packageDetails.begin(), findIt);
+  auto changedIndex = createIndex(index, 0);
+  emit dataChanged(changedIndex, changedIndex);
+}
+
+bool PackagesListModel::isUnpackedVersion(const QString& packageName) const
+{
+  auto it = m_packageDetails.constBegin();
+  auto itEnd = m_packageDetails.constEnd();
+  for (; it != itEnd; ++it)
+  {
+    if (it.value().m_unpackedName == packageName)
+      return true;
+  }
+
+  return false;
+}
+
 /*!
   \brief Returns the number of package details in the model.
 
@@ -159,6 +186,8 @@ QVariant PackagesListModel::data(const QModelIndex& index, int role) const
     return it.value().m_documentNames;
   case RequiresUnpackRole:
     return it.value().m_requiresUnpack;
+  case UnpackedNameRole:
+    return it.value().m_unpackedName;
   default:
     break;
   }

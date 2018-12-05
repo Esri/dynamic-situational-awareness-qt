@@ -75,6 +75,7 @@ signals:
   void packageNamesChanged();
   void imageReady(const QString& packageName, const QImage& packageImage);
   void packagesChanged();
+  void unpackCompleted(const QStringList& scenes);
 
 private slots:
   void handleIsDirectReadSupportedCompleted(QUuid taskId, bool directReadSupported);
@@ -90,13 +91,18 @@ private:
 
   void updatePackageDetails();
 
-  void loadMobileScenePackage(const QString& mspkPath);
-  void loadMobileScenePackageForDetails(const QString& packageName);
+  void loadMobileScenePackage(const QString& packageName);
   bool createPackageDetails(const QString& packageName);
 
   QString combinedPackagePath() const;
 
   QAbstractListModel* packages() const;
+
+  static QString getPackedName(const QString& packageName);
+  static QString getUnpackedName(const QString& packageName);
+
+  Esri::ArcGISRuntime::MobileScenePackage* getPackage(const QString& packageName);
+  void loadCurrentGeoDocument(Esri::ArcGISRuntime::MobileScenePackage* package);
 
   QString m_packageDataPath;
   QString m_currentPackageName;

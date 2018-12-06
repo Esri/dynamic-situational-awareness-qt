@@ -37,7 +37,7 @@ Row {
             if (drawer.visible)
                 drawer.close();
             else {
-                toolRect.state = "package";
+                toolRect.state = "open scene";
                 drawer.open();
             }
         }

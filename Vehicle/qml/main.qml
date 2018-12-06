@@ -415,7 +415,7 @@ Vehicle {
                         }
                     },
                     State {
-                        name: "package"
+                        name: "open scene"
                         PropertyChanges {
                             target: openSceneTool
                             visible: true

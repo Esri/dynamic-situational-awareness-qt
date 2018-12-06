@@ -97,6 +97,7 @@ private:
 
   static QString getPackedName(const QString& packageName);
   static QString getUnpackedName(const QString& packageName);
+  QString pathInPackagesDirectory(const QString& packageName) const;
 
   Esri::ArcGISRuntime::MobileScenePackage* getPackage(const QString& packageName);
   void loadCurrentScene(Esri::ArcGISRuntime::MobileScenePackage* package);

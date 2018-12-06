@@ -232,7 +232,7 @@ void OpenMobileScenePackageController::unpack()
 {
   // work out what the unpacked name should be.
   QString unpackedPackageName = getUnpackedName(m_currentPackageName);
-  const QString unpackedDir = m_packageDataPath + "/" + unpackedPackageName;
+  const QString unpackedDir = pathInPackagesDirectory(unpackedPackageName);
 
   // If a directory with the unpacked name already exists, usue that
   if (QFileInfo::exists(unpackedDir))
@@ -494,6 +494,15 @@ QString OpenMobileScenePackageController::getUnpackedName(const QString& package
 
 /*!
   \internal
+  Returns the \a packageName as a path in the directory.
+ */
+QString OpenMobileScenePackageController::pathInPackagesDirectory(const QString& packageName) const
+{
+  return QDir(m_packageDataPath).filePath(packageName);
+}
+
+/*!
+  \internal
   Returns the mobile scene pacakge called \a packageName if it exists.
  */
 MobileScenePackage *OpenMobileScenePackageController::getPackage(const QString& packageName)
@@ -503,7 +512,7 @@ MobileScenePackage *OpenMobileScenePackageController::getPackage(const QString& 
   MobileScenePackage* package = nullptr;
   if (findPackage == m_packages.end() || findPackage.value() == nullptr)
   {
-    package = new MobileScenePackage(m_packageDataPath + "/" + packageName, this);
+    package = new MobileScenePackage(pathInPackagesDirectory(packageName), this);
     m_packages.insert(packageName, package);
   }
   else
@@ -570,7 +579,7 @@ void OpenMobileScenePackageController::updatePackageDetails()
     else
     {
       // check if it needs unpack
-      const auto taskWatcher = MobileScenePackage::instance()->isDirectReadSupported(m_packageDataPath + "/" + packageName);
+      const auto taskWatcher = MobileScenePackage::instance()->isDirectReadSupported(pathInPackagesDirectory(packageName));
       m_directReadTasks.insert(taskWatcher.taskId(), packageName);
     }
   }

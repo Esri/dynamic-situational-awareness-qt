@@ -78,6 +78,8 @@ private:
     QString m_description;
   };
 
+  void broadcastDataChanged(const QMap<QString, PackageDetails>::iterator& changedIterator);
+
   QHash<int, QByteArray> m_roles;
   QMap<QString, PackageDetails> m_packageDetails;
 };

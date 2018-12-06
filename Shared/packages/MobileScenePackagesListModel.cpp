@@ -22,12 +22,11 @@
 namespace Dsa {
 
 /*!
-  \class Dsa::TileCacheListModel
+  \class Dsa::MobileScenePackagesListModel
   \inmodule Dsa
   \inherits QAbstractListModel
-  \brief A model for storing the list of
-  \l Esri::ArcGISRuntime::TileCache files available for
-  use as basemaps in the app.
+  \brief A model for storing details about mobile scene packages
+  available to the app.
 
   The model returns data for the following roles:
   \table
@@ -36,17 +35,37 @@ namespace Dsa {
         \li Type
         \li Description
     \row
-        \li title
+        \li packageName
         \li QString
-        \li The title of the tile cache.
+        \li The file name of the package.
     \row
-        \li fileName
+        \li imageReady
+        \li bool
+        \li Whether a thumbnail image for the package is ready.
+    \row
+        \li sceneNames
+        \li QStringList
+        \li The names of the scenes contained in the package.
+    \row
+        \li requiresUnpack
+        \li bool
+        \li Whether the package must be unpacked before it can be loaded.
+    \row
+        \li unpackedName
         \li QString
-        \li The file path to the tile cache.
+        \li The name of the unpacked version of this package, if it exists.
     \row
-        \li thumbnailUrl
-        \li QUrl
-        \li The URL to the thumbnail of the tile cache.
+        \li sceneImagesReady
+        \li bool
+        \li Whether thumbnail imagea for the scenes in the package are ready.
+    \row
+        \li packageTitle
+        \li QString
+        \li The title of the packagem if set.
+    \row
+        \li packageDescription
+        \li QString
+        \li The description of the package, if set.
   \endtable
  */
 
@@ -73,6 +92,9 @@ MobileScenePackagesListModel::~MobileScenePackagesListModel()
 {
 }
 
+/*!
+  \brief Add a data row for the package called \a packageName.
+ */
 void MobileScenePackagesListModel::addPackageData(const QString& packageName)
 {
   beginResetModel();
@@ -80,6 +102,9 @@ void MobileScenePackagesListModel::addPackageData(const QString& packageName)
   endResetModel();
 }
 
+/*!
+  \brief Remove the data for the package called \a packageName.
+ */
 void MobileScenePackagesListModel::removePackageDetails(const QString& packageName)
 {
   beginResetModel();
@@ -87,6 +112,20 @@ void MobileScenePackagesListModel::removePackageDetails(const QString& packageNa
   endResetModel();
 }
 
+/*!
+  \internal
+  Emit the \l dataChanged signal for the row referenced by \a changedIterator.
+ */
+void MobileScenePackagesListModel::broadcastDataChanged(const QMap<QString, PackageDetails>::iterator& changedIterator)
+{
+  int index = std::distance(m_packageDetails.begin(), changedIterator);
+  auto changedIndex = createIndex(index, 0);
+  emit dataChanged(changedIndex, changedIndex);
+}
+
+/*!
+  \brief Update the data for \a packageName, setting whether the package requires to be unpacked to \a requiresUnpack.
+ */
 void MobileScenePackagesListModel::setRequiresUnpack(const QString& packageName, bool requiresUnpack)
 {
   auto findIt = m_packageDetails.find(packageName);
@@ -95,11 +134,12 @@ void MobileScenePackagesListModel::setRequiresUnpack(const QString& packageName,
 
   findIt.value().m_requiresUnpack = requiresUnpack;
 
-  int index = std::distance(m_packageDetails.begin(), findIt);
-  auto changedIndex = createIndex(index, 0);
-  emit dataChanged(changedIndex, changedIndex);
+  broadcastDataChanged(findIt);
 }
 
+/*!
+  \brief Update the data for \a packageName, setting whether an image is available to \a imageReady.
+ */
 void MobileScenePackagesListModel::setImageReady(const QString& packageName, bool imageReady)
 {
   auto findIt = m_packageDetails.find(packageName);
@@ -107,12 +147,12 @@ void MobileScenePackagesListModel::setImageReady(const QString& packageName, boo
     return;
 
   findIt.value().m_imageReady = imageReady;
-
-  int index = std::distance(m_packageDetails.begin(), findIt);
-  auto changedIndex = createIndex(index, 0);
-  emit dataChanged(changedIndex, changedIndex);
+  broadcastDataChanged(findIt);
 }
 
+/*!
+  \brief Update the data for \a packageName, setting the list of scene names to \a sceneNames.
+ */
 void MobileScenePackagesListModel::setSceneNames(const QString& packageName, QStringList sceneNames)
 {
   auto findIt = m_packageDetails.find(packageName);
@@ -121,11 +161,12 @@ void MobileScenePackagesListModel::setSceneNames(const QString& packageName, QSt
 
   findIt.value().m_sceneNames = std::move(sceneNames);
 
-  int index = std::distance(m_packageDetails.begin(), findIt);
-  auto changedIndex = createIndex(index, 0);
-  emit dataChanged(changedIndex, changedIndex);
+  broadcastDataChanged(findIt);
 }
 
+/*!
+  \brief Update the data for \a packageName, setting the unpacked name to \a unpackedName.
+ */
 void MobileScenePackagesListModel::setUnpackedName(const QString &packageName, QString unpackedName)
 {
   auto findIt = m_packageDetails.find(packageName);
@@ -133,13 +174,15 @@ void MobileScenePackagesListModel::setUnpackedName(const QString &packageName, Q
     return;
 
   findIt.value().m_unpackedName = std::move(unpackedName);
+  // since an unpacked version exists, requires unpack should be set to false
   findIt.value().m_requiresUnpack = false;
 
-  int index = std::distance(m_packageDetails.begin(), findIt);
-  auto changedIndex = createIndex(index, 0);
-  emit dataChanged(changedIndex, changedIndex);
+  broadcastDataChanged(findIt);
 }
 
+/*!
+  \brief Update the data for \a packageName, setting whether images are ready for the scenes to \a sceneImagesReady.
+ */
 void MobileScenePackagesListModel::setSceneImagesReady(const QString& packageName, bool sceneImagesReady)
 {
   auto findIt = m_packageDetails.find(packageName);
@@ -148,11 +191,12 @@ void MobileScenePackagesListModel::setSceneImagesReady(const QString& packageNam
 
   findIt.value().m_sceneImagesReady = sceneImagesReady;
 
-  int index = std::distance(m_packageDetails.begin(), findIt);
-  auto changedIndex = createIndex(index, 0);
-  emit dataChanged(changedIndex, changedIndex);
+  broadcastDataChanged(findIt);
 }
 
+/*!
+  \brief Update the data for \a packageName, setting the title to \a title and the description to \a description.
+ */
 void MobileScenePackagesListModel::setTitleAndDescription(const QString& packageName, QString title, QString description)
 {
   auto findIt = m_packageDetails.find(packageName);
@@ -162,11 +206,12 @@ void MobileScenePackagesListModel::setTitleAndDescription(const QString& package
   findIt.value().m_title = title;
   findIt.value().m_description = description;
 
-  int index = std::distance(m_packageDetails.begin(), findIt);
-  auto changedIndex = createIndex(index, 0);
-  emit dataChanged(changedIndex, changedIndex);
+  broadcastDataChanged(findIt);
 }
 
+/*!
+  \brief Returns whether \a packageName is already present as the unpacked version of a package file.
+ */
 bool MobileScenePackagesListModel::isUnpackedVersion(const QString& packageName) const
 {
   auto it = m_packageDetails.constBegin();

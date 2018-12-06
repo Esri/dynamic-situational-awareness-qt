@@ -417,14 +417,14 @@ Vehicle {
                     State {
                         name: "package"
                         PropertyChanges {
-                            target: openPackageTool
+                            target: openSceneTool
                             visible: true
                         }
                     }
                 ]
 
-                OpenPackageTool {
-                    id: openPackageTool
+                OpenSceneTool {
+                    id: openSceneTool
                     anchors.fill: parent
                     onSceneSelected: closed();
                     visible: false

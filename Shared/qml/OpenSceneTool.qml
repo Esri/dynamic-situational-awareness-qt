@@ -26,7 +26,7 @@ DsaPanel {
 
     signal sceneSelected();
 
-    OpenPackageController {
+    OpenMobileScenePackageController {
         id: toolController
     }
 

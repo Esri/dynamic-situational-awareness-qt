@@ -62,7 +62,7 @@ const QString OpenMobileScenePackageController::MMPK_EXTENSION = ".mmpk";
  */
 OpenMobileScenePackageController::OpenMobileScenePackageController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent),
-  m_packagesModel(new PackagesListModel(this))
+  m_packagesModel(new MobileScenePackagesListModel(this))
 {
   emit packagesChanged();
   Toolkit::ToolManager::instance().addTool(this);

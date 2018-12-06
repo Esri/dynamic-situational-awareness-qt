@@ -53,7 +53,7 @@ namespace Dsa {
 /*!
   \brief Constructor for a model taking an optional \a parent.
  */
-MobileScenePackagesListModel::PackagesListModel(QObject* parent):
+MobileScenePackagesListModel::MobileScenePackagesListModel(QObject* parent):
   QAbstractListModel(parent)
 {
   m_roles[PackageNameRole] = "packageName";
@@ -66,25 +66,25 @@ MobileScenePackagesListModel::PackagesListModel(QObject* parent):
 /*!
   \brief Destructor.
  */
-PackagesListModel::~PackagesListModel()
+MobileScenePackagesListModel::~MobileScenePackagesListModel()
 {
 }
 
-void PackagesListModel::addPackageData(const QString& packageName)
+void MobileScenePackagesListModel::addPackageData(const QString& packageName)
 {
   beginResetModel();
   m_packageDetails.insert(packageName, PackageDetails());
   endResetModel();
 }
 
-void PackagesListModel::removePackageDetails(const QString& packageName)
+void MobileScenePackagesListModel::removePackageDetails(const QString& packageName)
 {
   beginResetModel();
   m_packageDetails.remove(packageName);
   endResetModel();
 }
 
-void PackagesListModel::setRequiresUnpack(const QString& packageName, bool requiresUnpack)
+void MobileScenePackagesListModel::setRequiresUnpack(const QString& packageName, bool requiresUnpack)
 {
   auto findIt = m_packageDetails.find(packageName);
   if (findIt == m_packageDetails.end())
@@ -97,7 +97,7 @@ void PackagesListModel::setRequiresUnpack(const QString& packageName, bool requi
   emit dataChanged(changedIndex, changedIndex);
 }
 
-void PackagesListModel::setImageReady(const QString& packageName, bool imageReady)
+void MobileScenePackagesListModel::setImageReady(const QString& packageName, bool imageReady)
 {
   auto findIt = m_packageDetails.find(packageName);
   if (findIt == m_packageDetails.end())
@@ -110,7 +110,7 @@ void PackagesListModel::setImageReady(const QString& packageName, bool imageRead
   emit dataChanged(changedIndex, changedIndex);
 }
 
-void PackagesListModel::setDocumentNames(const QString& packageName, QStringList documentNames)
+void MobileScenePackagesListModel::setDocumentNames(const QString& packageName, QStringList documentNames)
 {
   auto findIt = m_packageDetails.find(packageName);
   if (findIt == m_packageDetails.end())
@@ -123,7 +123,7 @@ void PackagesListModel::setDocumentNames(const QString& packageName, QStringList
   emit dataChanged(changedIndex, changedIndex);
 }
 
-void PackagesListModel::setUnpackedName(const QString &packageName, QString unpackedName)
+void MobileScenePackagesListModel::setUnpackedName(const QString &packageName, QString unpackedName)
 {
   auto findIt = m_packageDetails.find(packageName);
   if (findIt == m_packageDetails.end())
@@ -137,7 +137,7 @@ void PackagesListModel::setUnpackedName(const QString &packageName, QString unpa
   emit dataChanged(changedIndex, changedIndex);
 }
 
-bool PackagesListModel::isUnpackedVersion(const QString& packageName) const
+bool MobileScenePackagesListModel::isUnpackedVersion(const QString& packageName) const
 {
   auto it = m_packageDetails.constBegin();
   auto itEnd = m_packageDetails.constEnd();
@@ -158,7 +158,7 @@ bool PackagesListModel::isUnpackedVersion(const QString& packageName) const
   /endlist
 
  */
-int PackagesListModel::rowCount(const QModelIndex&) const
+int MobileScenePackagesListModel::rowCount(const QModelIndex&) const
 {
   return m_packageDetails.size();
 }
@@ -168,7 +168,7 @@ int PackagesListModel::rowCount(const QModelIndex&) const
 
   The role should make use of the \l PackageRoles enum.
  */
-QVariant PackagesListModel::data(const QModelIndex& index, int role) const
+QVariant MobileScenePackagesListModel::data(const QModelIndex& index, int role) const
 {
   if (index.row() < 0 || index.row() >= rowCount(index))
     return QVariant();
@@ -200,7 +200,7 @@ QVariant PackagesListModel::data(const QModelIndex& index, int role) const
 
   The roles are based on the \l DataItemRoles enum.
  */
-QHash<int, QByteArray> PackagesListModel::roleNames() const
+QHash<int, QByteArray> MobileScenePackagesListModel::roleNames() const
 {
   return m_roles;
 }

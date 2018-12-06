@@ -28,6 +28,7 @@
 #include "DsaUtility.h"
 #include "LayerCacheManager.h"
 #include "MessageFeedConstants.h"
+#include "OpenMobileScenePackageController.h"
 
 // toolkit headers
 #include "AbstractTool.h"
@@ -90,14 +91,6 @@ DsaController::DsaController(QObject* parent):
 
   connect(m_scene, &Scene::errorOccurred, this, &DsaController::onError);
 
-  // as tools are added, set the properties
-  connect(&ToolManager::instance(), &ToolManager::toolAdded, this,
-          [this](Esri::ArcGISRuntime::Toolkit::AbstractTool* tool)
-  {
-    if (tool)
-      tool->setProperties(m_dsaSettings);
-  });
-
   connect(ToolResourceProvider::instance(), &ToolResourceProvider::sceneChanged, this, [this]()
   {
     m_scene = ToolResourceProvider::instance()->scene();
@@ -128,6 +121,10 @@ Scene* DsaController::scene() const
  */
 void DsaController::init(GeoView* geoView)
 {
+  auto openScenePackageTool = Toolkit::ToolManager::instance().tool<OpenMobileScenePackageController>();
+  if (openScenePackageTool)
+    openScenePackageTool->setProperties(m_dsaSettings);
+
   Toolkit::ToolResourceProvider::instance()->setScene(m_scene);
   Toolkit::ToolResourceProvider::instance()->setGeoView(geoView);
 
@@ -136,11 +133,16 @@ void DsaController::init(GeoView* geoView)
 
   m_cacheManager = new LayerCacheManager(this);
 
+  if (openScenePackageTool)
+    m_cacheManager->addExcludedPath(openScenePackageTool->packageDataPath());
+
   // connect all tool signals
   for(Toolkit::AbstractTool* abstractTool : Toolkit::ToolManager::instance())
   {
     if (!abstractTool)
       continue;
+
+    abstractTool->setProperties(m_dsaSettings);
 
     connect(abstractTool, &Toolkit::AbstractTool::errorOccurred, this, &DsaController::onError);
     connect(abstractTool, &Toolkit::AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);

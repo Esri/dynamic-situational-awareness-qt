@@ -300,6 +300,19 @@ void LayerCacheManager::layerToJson(Layer* layer)
     layerPath = kmlUrl.isLocalFile() ? kmlUrl.toLocalFile() : kmlUrl.toString();
   }
 
+  // Don't serialize invalid layers
+  if (layerPath.isEmpty())
+  {
+    return;
+  }
+
+  // Don't serialize data in excluded path locations
+  for (const auto& excludedPath : m_excludedPaths)
+  {
+    if (layerPath.startsWith(excludedPath))
+      return;
+  }
+
   // add the layer to the layer list for caching
   QJsonObject layerJson;
   layerJson.insert(layerPathKey, QString(layerPath).simplified());
@@ -345,6 +358,11 @@ void LayerCacheManager::onLayerListChanged()
 QJsonArray LayerCacheManager::layerJson() const
 {
   return m_layers;
+}
+
+void LayerCacheManager::addExcludedPath(QString exludedPath)
+{
+  m_excludedPaths.append(std::move(exludedPath));
 }
 
 } // Dsa

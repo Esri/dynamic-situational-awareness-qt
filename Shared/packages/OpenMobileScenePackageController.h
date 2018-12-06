@@ -64,6 +64,8 @@ public:
   Q_INVOKABLE void selectScene(int newSceneIndex);
   Q_INVOKABLE void unpack();
 
+  QString packageDataPath() const;
+
 signals:
   void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
   void packageDataPathChanged();
@@ -78,7 +80,6 @@ private slots:
 private:
   void findPackage();
   void loadScene();
-  QString packageDataPath() const;
   bool setPackageDataPath(QString dataPath);
   QString currentPackageName() const;
   bool setCurrentPackageName(QString packageName);

@@ -32,7 +32,6 @@ DsaPanel {
 
     Button {
         id: backToPackagesButton
-
         anchors {
             top: titleBar.bottom
             left: packageFrame.left
@@ -43,21 +42,24 @@ DsaPanel {
 
         text: "< Packages"
 
-        font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-        font.family: DsaStyles.fontFamily
+        font{
+            pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+            family: DsaStyles.fontFamily
+        }
 
-        onClicked: packageFrame.currentIndex = 0;
+        onClicked: packageFrame.currentIndex = 0
     }
 
     SwipeView {
         id: packageFrame
-        clip: true
-        anchors{
+        anchors {
             top: backToPackagesButton.bottom
             horizontalCenter: parent.horizontalCenter
             bottom: footerBar.top
             margins: 8 * scaleFactor
         }
+
+        clip: true
         width: parent.width
         currentIndex: 0
 
@@ -90,12 +92,13 @@ DsaPanel {
                 radius: 2 * scaleFactor
 
                 Image {
-                    source: imageReady ? "image://packages/" + packageName : ""
-                    fillMode: Image.PreserveAspectCrop
-                    anchors{
+                    anchors {
                         fill: parent
                         margins: 4 * scaleFactor
                     }
+
+                    source: imageReady ? "image://packages/" + packageName : ""
+                    fillMode: Image.PreserveAspectCrop
                 }
 
                 Rectangle {
@@ -109,8 +112,8 @@ DsaPanel {
 
                 Label {
                     id: packageTitleLabel
-                    text: packageName
                     anchors.centerIn: parent
+                    text: packageName
                     width: parent.width - (16 * scaleFactor)
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
@@ -125,8 +128,6 @@ DsaPanel {
 
                 Label {
                     id: needsUnpackLabel
-                    visible: requiresUnpack
-                    text: "Needs Unpack"
                     anchors {
                         top: packageTitleLabel.bottom
                         bottom: parent.bottom
@@ -134,11 +135,14 @@ DsaPanel {
                         right: parent.right
                     }
 
+                    visible: requiresUnpack
+                    text: "Needs Unpack"
+
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
 
                     wrapMode: Text.WrapAnywhere
-                    font{
+                    font {
                         pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                         bold: true
                     }
@@ -148,6 +152,7 @@ DsaPanel {
                 MouseArea {
                     anchors.fill: parent
                     hoverEnabled: true
+
                     onClicked: {
                         // If the package has an unpacked version, use that
                         toolController.selectPackageName( unpackedName.length > 0 ? unpackedName :
@@ -155,6 +160,7 @@ DsaPanel {
                         unpackButton.visible = requiresUnpack
                         packageFrame.currentIndex = 1;
                     }
+
                     onHoveredChanged: {
                         if (containsMouse) {
                             packagesList.currentIndex = index
@@ -204,7 +210,6 @@ DsaPanel {
             Label
             {
                 id: unpackText
-                visible: unpackButton.visible
                 anchors {
                     top: unpackButton.bottom
                     left: parent.left
@@ -212,13 +217,13 @@ DsaPanel {
                     bottom: parent.bottom
                     margins: 8 * scaleFactor
                 }
+                visible: unpackButton.visible
 
                 text: "This package contains archived data that must be unpacked to a directory on your device"
                 wrapMode: Text.WordWrap
 
                 font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 font.family: DsaStyles.fontFamily
-
             }
 
             delegate: Rectangle {
@@ -230,11 +235,7 @@ DsaPanel {
                 color: Material.background
                 radius: 2 * scaleFactor
 
-
                 Image {
-                    source: packagesList.currentItem.sceneImages ? "image://packages/" + toolController.currentPackageName + "_" + modelData
-                                                                      : ""
-                    fillMode: Image.PreserveAspectCrop
                     anchors {
                         left: parent.left
                         top: parent.top
@@ -242,6 +243,10 @@ DsaPanel {
                         right: parent.horizontalCenter
                         margins: 4 * scaleFactor
                     }
+
+                    source: packagesList.currentItem.sceneImages ? "image://packages/" + toolController.currentPackageName + "_" + modelData
+                                                                 : ""
+                    fillMode: Image.PreserveAspectCrop
                 }
 
                 Label {
@@ -253,6 +258,7 @@ DsaPanel {
                         right: parent.right
                         margins: 4 * scaleFactor
                     }
+
                     font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                     font.family: DsaStyles.fontFamily
                     verticalAlignment: Text.AlignVCenter
@@ -262,10 +268,12 @@ DsaPanel {
                 MouseArea {
                     anchors.fill: parent
                     hoverEnabled: true
+
                     onClicked: {
                         toolController.selectScene(index);
                         sceneSelected();
                     }
+
                     onHoveredChanged: {
                         if (containsMouse) {
                             sceneNamesList.currentIndex = index
@@ -278,7 +286,7 @@ DsaPanel {
 
     Rectangle {
         id: footerBar
-        anchors{
+        anchors {
             bottom: parent.bottom
             left: parent.left
             right: parent.right

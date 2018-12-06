@@ -35,7 +35,7 @@
 #include "LocationTextController.h"
 #include "MarkupController.h"
 #include "MessageFeedsController.h"
-#include "OpenPackageController.h"
+#include "OpenMobileScenePackageController.h"
 #include "NavigationController.h"
 #include "OptionsController.h"
 #include "TableOfContentsController.h"

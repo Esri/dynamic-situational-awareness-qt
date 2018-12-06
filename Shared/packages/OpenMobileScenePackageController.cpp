@@ -18,8 +18,8 @@
 // PCH header
 #include "pch.hpp"
 
-#include "OpenPackageController.h"
-#include "PackagesListModel.h"
+#include "OpenMobileScenePackageController.h"
+#include "MobileScenePackagesListModel.h"
 
 // toolkit headers
 #include "ToolManager.h"

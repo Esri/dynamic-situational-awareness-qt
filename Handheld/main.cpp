@@ -38,7 +38,7 @@
 #include "MarkupController.h"
 #include "MessageFeedsController.h"
 #include "NavigationController.h"
-#include "OpenPackageController.h"
+#include "OpenMobileScenePackageController.h"
 #include "OptionsController.h"
 #include "TableOfContentsController.h"
 #include "ViewedAlertsController.h"

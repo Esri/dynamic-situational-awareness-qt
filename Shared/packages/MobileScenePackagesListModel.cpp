@@ -17,7 +17,7 @@
 // PCH header
 #include "pch.hpp"
 
-#include "PackagesListModel.h"
+#include "MobileScenePackagesListModel.h"
 
 namespace Dsa {
 

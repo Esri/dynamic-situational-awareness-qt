@@ -19,7 +19,7 @@
 #include "pch.hpp"
 
 #include "PackageImageProvider.h"
-#include "OpenPackageController.h"
+#include "OpenMobileScenePackageController.h"
 
 // toolkit headers
 #include "ToolManager.h"

@@ -54,8 +54,6 @@ DsaPanel {
         clip: true
         anchors{
             top: backToPackagesButton.bottom
-//            left: parent.left
-//            right: parent.right
             horizontalCenter: parent.horizontalCenter
             bottom: footerBar.top
             margins: 8 * scaleFactor
@@ -79,6 +77,9 @@ DsaPanel {
                 id: packageCard
 
                 property variant sceneNamesModel: sceneNames
+                property bool sceneImages: sceneImagesReady
+                property string packageTitleString: packageTitle
+                property string packageDescriptionString: packageDescription
 
                 width: packagesList.cellWidth - 10 * scaleFactor
                 height: packagesList.cellHeight - 10 * scaleFactor
@@ -98,16 +99,16 @@ DsaPanel {
                 }
 
                 Rectangle {
-                    anchors.centerIn: packageTitle
-                    width: packageTitle.width + (8 * scaleFactor)
-                    height: packageTitle.height + (8 * scaleFactor)
+                    anchors.centerIn: packageTitleLabel
+                    width: packageTitleLabel.width + (8 * scaleFactor)
+                    height: packageTitleLabel.height + (8 * scaleFactor)
                     color: Material.primary
                     opacity: 0.5
                     radius: 2 * scaleFactor
                 }
 
                 Label {
-                    id: packageTitle
+                    id: packageTitleLabel
                     text: packageName
                     anchors.centerIn: parent
                     width: parent.width - (16 * scaleFactor)
@@ -127,7 +128,7 @@ DsaPanel {
                     visible: requiresUnpack
                     text: "Needs Unpack"
                     anchors {
-                        top: packageTitle.bottom
+                        top: packageTitleLabel.bottom
                         bottom: parent.bottom
                         left: parent.left
                         right: parent.right
@@ -220,14 +221,56 @@ DsaPanel {
 
             }
 
-            delegate: Button {
-                text: modelData
+            delegate: Rectangle {
                 width: parent.width
-                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                font.family: DsaStyles.fontFamily
-                onClicked: {
-                    toolController.selectScene(index);
-                    sceneSelected();
+                height: width * 0.5
+
+                border.color: index === sceneNamesList.currentIndex ? Material.accent : Material.background
+                border.width: index === sceneNamesList.currentIndex ? 2 * scaleFactor : 1 * scaleFactor
+                color: Material.background
+                radius: 2 * scaleFactor
+
+
+                Image {
+                    source: packagesList.currentItem.sceneImages ? "image://packages/" + toolController.currentPackageName + "_" + modelData
+                                                                      : ""
+                    fillMode: Image.PreserveAspectCrop
+                    anchors {
+                        left: parent.left
+                        top: parent.top
+                        bottom: parent.bottom
+                        right: parent.horizontalCenter
+                        margins: 4 * scaleFactor
+                    }
+                }
+
+                Label {
+                    text: modelData
+                    anchors {
+                        left: parent.horizontalCenter
+                        top: parent.top
+                        bottom: parent.bottom
+                        right: parent.right
+                        margins: 4 * scaleFactor
+                    }
+                    font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                    font.family: DsaStyles.fontFamily
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onClicked: {
+                        toolController.selectScene(index);
+                        sceneSelected();
+                    }
+                    onHoveredChanged: {
+                        if (containsMouse) {
+                            sceneNamesList.currentIndex = index
+                        }
+                    }
                 }
             }
         }
@@ -242,15 +285,16 @@ DsaPanel {
         }
         color: Material.primary
 
-        height: 32 * scaleFactor
+        height: 64 * scaleFactor
 
         Label {
             id: pathText
             anchors.fill: parent
-            text: toolController.currentPackageName
+            text: toolController.currentPackageName + "\n" + packagesList.currentItem.packageTitleString + ": " +packagesList.currentItem.packageDescriptionString
             wrapMode: Text.WrapAnywhere
             elide: Text.ElideRight
             font.pixelSize: 12 * scaleFactor
         }
     }
 }
+

@@ -30,32 +30,34 @@ namespace Dsa {
 
 PackageImageProvider::PackageImageProvider(QObject* parent /*= nullptr*/) :
   QQuickImageProvider(QQuickImageProvider::Image),
-  QObject(parent)
+  QObject(parent),
+  m_defaultImage(":/Resources/AppIcon.png")
 {
   m_findToolConnection = connect(&ToolManager::instance(), &ToolManager::toolAdded, [this](AbstractTool* newTool)
   {
-    if (!newTool)
+      if (!newTool)
       return;
 
-    auto candidateTool = qobject_cast<OpenMobileScenePackageController*>(newTool);
-    if (!candidateTool)
+      auto candidateTool = qobject_cast<OpenMobileScenePackageController*>(newTool);
+      if (!candidateTool)
       return;
 
-    m_packageController = candidateTool;
+      m_packageController = candidateTool;
 
-    connect(m_packageController, &OpenMobileScenePackageController::imageReady, this, [this](const QString& packageName, const QImage& packageImage)
-    {
-      m_packages.insert(packageName, packageImage.copy());
-    });
-
-    disconnect(m_findToolConnection);
+      connect(m_packageController, &OpenMobileScenePackageController::imageReady, this, [this](const QString& packageName, const QImage& packageImage)
+  {
+    m_packages.insert(packageName, packageImage.copy());
   });
+
+      disconnect(m_findToolConnection);
+});
 }
 
 QImage PackageImageProvider::requestImage(const QString &id, QSize* /*size*/, const QSize& /*requestedSize*/)
 {
   auto findIt = m_packages.constFind(id);
-  return findIt == m_packages.constEnd() ? QImage() : findIt.value();
+  auto image = findIt == m_packages.constEnd() ? m_defaultImage : findIt.value();
+  return image.isNull() ? m_defaultImage : image;
 }
 
 } // Dsa

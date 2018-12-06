@@ -38,6 +38,8 @@ public:
     OpenMobileScenePackageController* m_packageController = nullptr;
 
     QMetaObject::Connection m_findToolConnection;
+
+    QImage m_defaultImage;
 };
 
 } // Dsa

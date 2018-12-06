@@ -61,6 +61,9 @@ MobileScenePackagesListModel::MobileScenePackagesListModel(QObject* parent):
   m_roles[SceneNamesRole] = "sceneNames";
   m_roles[RequiresUnpackRole] = "requiresUnpack";
   m_roles[UnpackedNameRole] = "unpackedName";
+  m_roles[SceneImagesReadyRole] = "sceneImagesReady";
+  m_roles[PackageTitleRole] = "packageTitle";
+  m_roles[PackageDescriptionRole] = "packageDescription";
 }
 
 /*!
@@ -137,6 +140,33 @@ void MobileScenePackagesListModel::setUnpackedName(const QString &packageName, Q
   emit dataChanged(changedIndex, changedIndex);
 }
 
+void MobileScenePackagesListModel::setSceneImagesReady(const QString& packageName, bool sceneImagesReady)
+{
+  auto findIt = m_packageDetails.find(packageName);
+  if (findIt == m_packageDetails.end())
+    return;
+
+  findIt.value().m_sceneImagesReady = sceneImagesReady;
+
+  int index = std::distance(m_packageDetails.begin(), findIt);
+  auto changedIndex = createIndex(index, 0);
+  emit dataChanged(changedIndex, changedIndex);
+}
+
+void MobileScenePackagesListModel::setTitleAndDescription(const QString& packageName, QString title, QString description)
+{
+  auto findIt = m_packageDetails.find(packageName);
+  if (findIt == m_packageDetails.end())
+    return;
+
+  findIt.value().m_title = title;
+  findIt.value().m_description = description;
+
+  int index = std::distance(m_packageDetails.begin(), findIt);
+  auto changedIndex = createIndex(index, 0);
+  emit dataChanged(changedIndex, changedIndex);
+}
+
 bool MobileScenePackagesListModel::isUnpackedVersion(const QString& packageName) const
 {
   auto it = m_packageDetails.constBegin();
@@ -188,6 +218,12 @@ QVariant MobileScenePackagesListModel::data(const QModelIndex& index, int role) 
     return it.value().m_requiresUnpack;
   case UnpackedNameRole:
     return it.value().m_unpackedName;
+  case SceneImagesReadyRole:
+    return it.value().m_sceneImagesReady;
+  case PackageTitleRole:
+    return it.value().m_title;
+  case PackageDescriptionRole:
+    return it.value().m_description;
   default:
     break;
   }

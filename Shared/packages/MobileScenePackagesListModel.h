@@ -37,7 +37,10 @@ public:
     ImageReadyRole = Qt::UserRole + 2,
     SceneNamesRole = Qt::UserRole + 3,
     RequiresUnpackRole = Qt::UserRole + 4,
-    UnpackedNameRole = Qt::UserRole + 5
+    UnpackedNameRole = Qt::UserRole + 5,
+    SceneImagesReadyRole = Qt::UserRole + 6,
+    PackageTitleRole = Qt::UserRole + 7,
+    PackageDescriptionRole = Qt::UserRole + 8
   };
 
   MobileScenePackagesListModel(QObject* parent = nullptr);
@@ -50,6 +53,8 @@ public:
   void setImageReady(const QString& packageName, bool imageReady);
   void setSceneNames(const QString& packageName, QStringList sceneNames);
   void setUnpackedName(const QString& packageName, QString unpackedName);
+  void setSceneImagesReady(const QString& packageName, bool sceneImagesReady);
+  void setTitleAndDescription(const QString& packageName, QString title, QString description);
 
   bool isUnpackedVersion(const QString& packageName) const;
 
@@ -68,6 +73,9 @@ private:
     bool m_requiresUnpack = false;
     bool m_imageReady = false;
     QStringList m_sceneNames;
+    bool m_sceneImagesReady = false;
+    QString m_title;
+    QString m_description;
   };
 
   QHash<int, QByteArray> m_roles;

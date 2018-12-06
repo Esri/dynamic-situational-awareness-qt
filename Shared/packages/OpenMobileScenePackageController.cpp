@@ -318,6 +318,12 @@ void OpenMobileScenePackageController::loadMobileScenePackage(const QString& pac
     if (!packageItem)
       return;
 
+    // If the package is unpacked, update the details for the original
+    const QString packageNameToUse = m_packagesModel->isUnpackedVersion(packageName) ? getPackedName(packageName)
+                                                                                     : packageName;
+
+    m_packagesModel->setTitleAndDescription(packageNameToUse, packageItem->title(), packageItem->description());
+
     auto scenes = package->scenes();
     QStringList sceneNames;
     sceneNames.reserve(scenes.length());
@@ -326,13 +332,26 @@ void OpenMobileScenePackageController::loadMobileScenePackage(const QString& pac
       if (!scene)
         continue;
 
-      // TODO: this should use Scene::Item::name when available (requires the scene to be loaded)
-      sceneNames.append(scene->item()->title());
-    }
+      auto item = scene->item();
+      if (!item)
+        continue;
 
-    // If the package is unpacked, update the details for the original
-    const QString packageNameToUse = m_packagesModel->isUnpackedVersion(packageName) ? getPackedName(packageName)
-                                                                                     : packageName;
+      // TODO: this should use Scene::Item::name when available (requires the scene to be loaded)
+      sceneNames.append(item->title());
+
+      if (!item->thumbnail().isNull())
+        continue;
+
+      connect(item, &Item::fetchThumbnailCompleted, this, [this, packageNameToUse, packageName, item](bool success)
+      {
+        if (success)
+          emit imageReady(packageName + "_" + item->title(), item->thumbnail());
+
+        m_packagesModel->setSceneImagesReady(packageNameToUse, success);
+      });
+
+      item->fetchThumbnail();
+    }
 
     m_packagesModel->setSceneNames(packageNameToUse, sceneNames);
 

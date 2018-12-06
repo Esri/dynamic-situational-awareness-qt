@@ -28,31 +28,50 @@ using namespace Esri::ArcGISRuntime::Toolkit;
 
 namespace Dsa {
 
+/*!
+  \class Dsa::PackageImageProvider
+  \inmodule Dsa
+  \inherits QQuickImageProvider
+  \brief Image provider for the thumbnails contained in mobile scene packages.
+
+  \sa Dsa::OpenMobileScenePackageController
+ */
+
+/*!
+  \brief Constructor taking an optional \a parent.
+ */
 PackageImageProvider::PackageImageProvider(QObject* parent /*= nullptr*/) :
   QQuickImageProvider(QQuickImageProvider::Image),
   QObject(parent),
   m_defaultImage(":/Resources/AppIcon.png")
 {
+  // Find the OpenMobileScenePackageController and connect to the imageReady signal
   m_findToolConnection = connect(&ToolManager::instance(), &ToolManager::toolAdded, [this](AbstractTool* newTool)
   {
-      if (!newTool)
+    if (!newTool)
       return;
 
-      auto candidateTool = qobject_cast<OpenMobileScenePackageController*>(newTool);
-      if (!candidateTool)
+    auto candidateTool = qobject_cast<OpenMobileScenePackageController*>(newTool);
+    if (!candidateTool)
       return;
 
-      m_packageController = candidateTool;
+    m_packageController = candidateTool;
 
-      connect(m_packageController, &OpenMobileScenePackageController::imageReady, this, [this](const QString& packageName, const QImage& packageImage)
-  {
+    // store images created by the tool
+    connect(m_packageController, &OpenMobileScenePackageController::imageReady, this, [this](const QString& packageName, const QImage& packageImage)
+    {
     m_packages.insert(packageName, packageImage.copy());
-  });
+    });
 
-      disconnect(m_findToolConnection);
+  disconnect(m_findToolConnection);
 });
 }
 
+/*!
+  \brief Return the image with the specified \a id.
+
+  If none is foound, return a default image.
+ */
 QImage PackageImageProvider::requestImage(const QString &id, QSize* /*size*/, const QSize& /*requestedSize*/)
 {
   auto findIt = m_packages.constFind(id);

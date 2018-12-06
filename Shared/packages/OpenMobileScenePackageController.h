@@ -44,13 +44,13 @@ class OpenMobileScenePackageController : public Esri::ArcGISRuntime::Toolkit::Ab
   Q_OBJECT
 
   Q_PROPERTY(QAbstractListModel* packages READ packages NOTIFY packagesChanged)
-  Q_PROPERTY(QString currentPackageName READ currentPackageName NOTIFY currentPackageNameChanged)
-  Q_PROPERTY(int currentDocumentIndex READ currentDocumentIndex NOTIFY currentPackageNameChanged)
+  Q_PROPERTY(QString currentPackageName READ currentPackageName NOTIFY currentSceneNameChanged)
+  Q_PROPERTY(int currentSceneIndex READ currentSceneIndex NOTIFY currentSceneNameChanged)
 
 public:
   static const QString PACKAGE_DIRECTORY_PROPERTYNAME;
   static const QString CURRENT_PACKAGE_PROPERTYNAME;
-  static const QString PACKAGE_INDEX_PROPERTYNAME;
+  static const QString SCENE_INDEX_PROPERTYNAME;
   static const QString MSPK_EXTENSION;
   static const QString MMPK_EXTENSION;
 
@@ -61,16 +61,16 @@ public:
   void setProperties(const QVariantMap& properties) override;
 
   void findPackage();
-  void loadGeoDocument();
+  void loadScene();
 
   Q_INVOKABLE void selectPackageName(QString newPackageName);
-  Q_INVOKABLE void selectDocument(int newDocumentIndex);
+  Q_INVOKABLE void selectScene(int newSceneIndex);
   Q_INVOKABLE void unpack();
 
 signals:
   void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
   void packageDataPathChanged();
-  void currentPackageNameChanged();
+  void currentSceneNameChanged();
   void packageIndexChanged();
   void packageNamesChanged();
   void imageReady(const QString& packageName, const QImage& packageImage);
@@ -86,8 +86,8 @@ private:
   QString currentPackageName() const;
   bool setCurrentPackageName(QString packageName);
 
-  int currentDocumentIndex() const;
-  bool setCurrentDocumentIndex(int currentDocumentIndex);
+  int currentSceneIndex() const;
+  bool setCurrentSceneIndex(int currentSceneIndex);
 
   void updatePackageDetails();
 
@@ -102,11 +102,11 @@ private:
   static QString getUnpackedName(const QString& packageName);
 
   Esri::ArcGISRuntime::MobileScenePackage* getPackage(const QString& packageName);
-  void loadCurrentGeoDocument(Esri::ArcGISRuntime::MobileScenePackage* package);
+  void loadCurrentScene(Esri::ArcGISRuntime::MobileScenePackage* package);
 
   QString m_packageDataPath;
   QString m_currentPackageName;
-  int m_currentDocumentIndex = -1;
+  int m_currentSceneIndex = -1;
   MobileScenePackagesListModel* m_packagesModel = nullptr;
   Esri::ArcGISRuntime::MobileScenePackage* m_mspk = nullptr;
   QHash<QUuid, QString> m_directReadTasks;

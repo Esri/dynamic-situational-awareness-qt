@@ -58,7 +58,7 @@ MobileScenePackagesListModel::MobileScenePackagesListModel(QObject* parent):
 {
   m_roles[PackageNameRole] = "packageName";
   m_roles[ImageReadyRole] = "imageReady";
-  m_roles[DocumentsRole] = "documents";
+  m_roles[SceneNamesRole] = "sceneNames";
   m_roles[RequiresUnpackRole] = "requiresUnpack";
   m_roles[UnpackedNameRole] = "unpackedName";
 }
@@ -110,13 +110,13 @@ void MobileScenePackagesListModel::setImageReady(const QString& packageName, boo
   emit dataChanged(changedIndex, changedIndex);
 }
 
-void MobileScenePackagesListModel::setDocumentNames(const QString& packageName, QStringList documentNames)
+void MobileScenePackagesListModel::setSceneNames(const QString& packageName, QStringList sceneNames)
 {
   auto findIt = m_packageDetails.find(packageName);
   if (findIt == m_packageDetails.end())
     return;
 
-  findIt.value().m_documentNames = std::move(documentNames);
+  findIt.value().m_sceneNames = std::move(sceneNames);
 
   int index = std::distance(m_packageDetails.begin(), findIt);
   auto changedIndex = createIndex(index, 0);
@@ -182,8 +182,8 @@ QVariant MobileScenePackagesListModel::data(const QModelIndex& index, int role) 
     return it.key();
   case ImageReadyRole:
     return it.value().m_imageReady;
-  case DocumentsRole:
-    return it.value().m_documentNames;
+  case SceneNamesRole:
+    return it.value().m_sceneNames;
   case RequiresUnpackRole:
     return it.value().m_requiresUnpack;
   case UnpackedNameRole:

@@ -35,7 +35,7 @@ public:
   {
     PackageNameRole = Qt::UserRole + 1,
     ImageReadyRole = Qt::UserRole + 2,
-    DocumentsRole = Qt::UserRole + 3,
+    SceneNamesRole = Qt::UserRole + 3,
     RequiresUnpackRole = Qt::UserRole + 4,
     UnpackedNameRole = Qt::UserRole + 5
   };
@@ -48,7 +48,7 @@ public:
 
   void setRequiresUnpack(const QString& packageName, bool requiresUnpack);
   void setImageReady(const QString& packageName, bool imageReady);
-  void setDocumentNames(const QString& packageName, QStringList documentNames);
+  void setSceneNames(const QString& packageName, QStringList sceneNames);
   void setUnpackedName(const QString& packageName, QString unpackedName);
 
   bool isUnpackedVersion(const QString& packageName) const;
@@ -67,7 +67,7 @@ private:
     QString m_unpackedName;
     bool m_requiresUnpack = false;
     bool m_imageReady = false;
-    QStringList m_documentNames;
+    QStringList m_sceneNames;
   };
 
   QHash<int, QByteArray> m_roles;

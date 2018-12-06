@@ -44,7 +44,7 @@ namespace Dsa {
 
 const QString OpenMobileScenePackageController::PACKAGE_DIRECTORY_PROPERTYNAME = "PackageDirectory";
 const QString OpenMobileScenePackageController::CURRENT_PACKAGE_PROPERTYNAME = "CurrentPackage";
-const QString OpenMobileScenePackageController::PACKAGE_INDEX_PROPERTYNAME = "PackageIndex";
+const QString OpenMobileScenePackageController::SCENE_INDEX_PROPERTYNAME = "PackageIndex";
 const QString OpenMobileScenePackageController::MSPK_EXTENSION = ".mspk";
 const QString OpenMobileScenePackageController::MMPK_EXTENSION = ".mmpk";
 
@@ -122,8 +122,8 @@ void OpenMobileScenePackageController::setProperties(const QVariantMap& properti
   const bool packageNameChanged = setCurrentPackageName(newPackageName);
 
   bool ok = false;
-  const int newPackageIndex = properties.value(PACKAGE_INDEX_PROPERTYNAME).toInt(&ok);
-  const bool packageIndexChanged = ok && setCurrentDocumentIndex(newPackageIndex);
+  const int newPackageIndex = properties.value(SCENE_INDEX_PROPERTYNAME).toInt(&ok);
+  const bool packageIndexChanged = ok && setCurrentSceneIndex(newPackageIndex);
 
   if ((dataPathChanged || packageNameChanged)
       && !m_currentPackageName.isEmpty()
@@ -133,7 +133,7 @@ void OpenMobileScenePackageController::setProperties(const QVariantMap& properti
   }
   else if (packageIndexChanged)
   {
-    loadGeoDocument();
+    loadScene();
   }
 }
 
@@ -164,12 +164,12 @@ void OpenMobileScenePackageController::findPackage()
   }
 }
 
-void OpenMobileScenePackageController::loadGeoDocument()
+void OpenMobileScenePackageController::loadScene()
 {
   if (!m_mspk)
     return;
 
-  if (m_currentDocumentIndex == -1)
+  if (m_currentSceneIndex == -1)
     return;
 
   const QList<Scene*> scenes = m_mspk->scenes();
@@ -180,10 +180,10 @@ void OpenMobileScenePackageController::loadGeoDocument()
   }
 
   // If the index is invalid for this package, fall back to 0
-  if (m_currentDocumentIndex >= scenes.length())
+  if (m_currentSceneIndex >= scenes.length())
     return;
 
-  Scene* theScene = scenes.at(m_currentDocumentIndex);
+  Scene* theScene = scenes.at(m_currentSceneIndex);
   Toolkit::ToolResourceProvider::instance()->setScene(theScene);
 }
 
@@ -193,17 +193,17 @@ void OpenMobileScenePackageController::selectPackageName(QString newPackageName)
     return;
 
   // reset the scene index to -1
-  setCurrentDocumentIndex(-1);
+  setCurrentSceneIndex(-1);
 
   findPackage();
 }
 
-void OpenMobileScenePackageController::selectDocument(int newDocumentIndex)
+void OpenMobileScenePackageController::selectScene(int newSceneIndex)
 {
-  if (!setCurrentDocumentIndex(newDocumentIndex))
+  if (!setCurrentSceneIndex(newSceneIndex))
     return;
 
-  loadGeoDocument();
+  loadScene();
 }
 
 void OpenMobileScenePackageController::unpack()
@@ -277,24 +277,24 @@ bool OpenMobileScenePackageController::setCurrentPackageName(QString packageName
     return false;
 
   m_currentPackageName = std::move(packageName);
-  emit currentPackageNameChanged();
+  emit currentSceneNameChanged();
   emit propertyChanged(CURRENT_PACKAGE_PROPERTYNAME, m_currentPackageName);
 
   return true;
 }
 
-int OpenMobileScenePackageController::currentDocumentIndex() const
+int OpenMobileScenePackageController::currentSceneIndex() const
 {
-  return m_currentDocumentIndex;
+  return m_currentSceneIndex;
 }
 
-void OpenMobileScenePackageController::loadCurrentGeoDocument(MobileScenePackage* package)
+void OpenMobileScenePackageController::loadCurrentScene(MobileScenePackage* package)
 {
   if (!m_mspk)
     return;
 
   if (package == m_mspk)
-    loadGeoDocument();
+    loadScene();
 }
 
 void OpenMobileScenePackageController::loadMobileScenePackage(const QString& packageName)
@@ -319,19 +319,22 @@ void OpenMobileScenePackageController::loadMobileScenePackage(const QString& pac
       return;
 
     auto scenes = package->scenes();
-    QStringList documentNames;
-    documentNames.reserve(scenes.length());
-    for (int i = 0; i < scenes.length(); ++i)
+    QStringList sceneNames;
+    sceneNames.reserve(scenes.length());
+    for (auto scene: scenes)
     {
+      if (!scene)
+        continue;
+
       // TODO: this should use Scene::Item::name when available (requires the scene to be loaded)
-      documentNames.append(QString("Scene %1").arg(QString::number(i)));
+      sceneNames.append(scene->item()->title());
     }
 
     // If the package is unpacked, update the details for the original
     const QString packageNameToUse = m_packagesModel->isUnpackedVersion(packageName) ? getPackedName(packageName)
                                                                                      : packageName;
 
-    m_packagesModel->setDocumentNames(packageNameToUse, documentNames);
+    m_packagesModel->setSceneNames(packageNameToUse, sceneNames);
 
     connect(packageItem, &Item::fetchThumbnailCompleted, this, [this, packageNameToUse, packageItem](bool success)
     {
@@ -343,11 +346,11 @@ void OpenMobileScenePackageController::loadMobileScenePackage(const QString& pac
 
     package->item()->fetchThumbnail();
 
-    loadCurrentGeoDocument(package);
+    loadCurrentScene(package);
   });
 
   if (package->loadStatus() == LoadStatus::Loaded)
-    loadCurrentGeoDocument(package);
+    loadCurrentScene(package);
   else
     package->load();
 }
@@ -407,16 +410,16 @@ MobileScenePackage *OpenMobileScenePackageController::getPackage(const QString &
   return package;
 }
 
-bool OpenMobileScenePackageController::setCurrentDocumentIndex(int packageIndex)
+bool OpenMobileScenePackageController::setCurrentSceneIndex(int packageIndex)
 {
-  if (packageIndex == m_currentDocumentIndex)
+  if (packageIndex == m_currentSceneIndex)
     return false;
 
-  m_currentDocumentIndex = packageIndex;
+  m_currentSceneIndex = packageIndex;
   emit packageIndexChanged();
-  emit propertyChanged(PACKAGE_INDEX_PROPERTYNAME, m_currentDocumentIndex);
+  emit propertyChanged(SCENE_INDEX_PROPERTYNAME, m_currentSceneIndex);
 
-  loadGeoDocument();
+  loadScene();
 
   return true;
 }

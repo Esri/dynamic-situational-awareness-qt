@@ -78,7 +78,7 @@ DsaPanel {
             delegate: Rectangle {
                 id: packageCard
 
-                property variant documentsModel: documents
+                property variant sceneNamesModel: sceneNames
 
                 width: packagesList.cellWidth - 10 * scaleFactor
                 height: packagesList.cellHeight - 10 * scaleFactor
@@ -164,9 +164,9 @@ DsaPanel {
         }
 
         ListView {
-            id: documentList
+            id: sceneNamesList
 
-            model: packagesList.currentItem.documentsModel
+            model: packagesList.currentItem.sceneNamesModel
 
             clip: true
             spacing: 64 * scaleFactor
@@ -226,7 +226,7 @@ DsaPanel {
                 font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 font.family: DsaStyles.fontFamily
                 onClicked: {
-                    toolController.selectDocument(index);
+                    toolController.selectScene(index);
                     sceneSelected();
                 }
             }

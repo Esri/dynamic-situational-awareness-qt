@@ -23,7 +23,7 @@
 
 namespace Dsa {
 
-class OpenPackageController;
+class OpenMobileScenePackageController;
 
 class PackageImageProvider : public QQuickImageProvider, public QObject
 {
@@ -35,7 +35,7 @@ public:
 
   private:
     QHash<QString, QImage> m_packages;
-    OpenPackageController* m_packageController = nullptr;
+    OpenMobileScenePackageController* m_packageController = nullptr;
 
     QMetaObject::Connection m_findToolConnection;
 };

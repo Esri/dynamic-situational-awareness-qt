@@ -14,8 +14,8 @@
  *  limitations under the License.
  ******************************************************************************/
 
-#ifndef PACKAGES_LISTMODEL_H
-#define PACKAGES_LISTMODEL_H
+#ifndef MOBILESCENEPACKAGES_LISTMODEL_H
+#define MOBILESCENEPACKAGES_LISTMODEL_H
 
 // Qt headers
 #include <QAbstractListModel>
@@ -25,7 +25,7 @@
 
 namespace Dsa {
 
-class PackagesListModel : public QAbstractListModel
+class MobileScenePackagesListModel : public QAbstractListModel
 {
   Q_OBJECT
 
@@ -40,8 +40,8 @@ public:
     UnpackedNameRole = Qt::UserRole + 5
   };
 
-  PackagesListModel(QObject* parent = nullptr);
-  ~PackagesListModel();
+  MobileScenePackagesListModel(QObject* parent = nullptr);
+  ~MobileScenePackagesListModel();
 
   void addPackageData(const QString& packageName);
   void removePackageDetails(const QString& packageName);
@@ -76,4 +76,4 @@ private:
 
 } // Dsa
 
-#endif // PACKAGES_LISTMODEL_H
+#endif // MOBILESCENEPACKAGES_LISTMODEL_H

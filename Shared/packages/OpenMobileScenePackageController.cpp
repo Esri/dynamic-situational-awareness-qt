@@ -42,11 +42,11 @@ using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
 
-const QString OpenPackageController::PACKAGE_DIRECTORY_PROPERTYNAME = "PackageDirectory";
-const QString OpenPackageController::CURRENT_PACKAGE_PROPERTYNAME = "CurrentPackage";
-const QString OpenPackageController::PACKAGE_INDEX_PROPERTYNAME = "PackageIndex";
-const QString OpenPackageController::MSPK_EXTENSION = ".mspk";
-const QString OpenPackageController::MMPK_EXTENSION = ".mmpk";
+const QString OpenMobileScenePackageController::PACKAGE_DIRECTORY_PROPERTYNAME = "PackageDirectory";
+const QString OpenMobileScenePackageController::CURRENT_PACKAGE_PROPERTYNAME = "CurrentPackage";
+const QString OpenMobileScenePackageController::PACKAGE_INDEX_PROPERTYNAME = "PackageIndex";
+const QString OpenMobileScenePackageController::MSPK_EXTENSION = ".mspk";
+const QString OpenMobileScenePackageController::MMPK_EXTENSION = ".mmpk";
 
 /*!
   \class Dsa::OpenPackageController
@@ -60,7 +60,7 @@ const QString OpenPackageController::MMPK_EXTENSION = ".mmpk";
 /*!
   \brief Constructor taking an optional \a parent.
  */
-OpenPackageController::OpenPackageController(QObject* parent /* = nullptr */):
+OpenMobileScenePackageController::OpenMobileScenePackageController(QObject* parent /* = nullptr */):
   Toolkit::AbstractTool(parent),
   m_packagesModel(new PackagesListModel(this))
 {
@@ -70,7 +70,7 @@ OpenPackageController::OpenPackageController(QObject* parent /* = nullptr */):
   //connect(MobileScenePackage::instance(), &MobileScenePackage::errorOccurred, this, &OpenPackageController::errorOccurred);
 
   connect(MobileScenePackage::instance(), &MobileScenePackage::isDirectReadSupportedCompleted, this,
-          &OpenPackageController::handleIsDirectReadSupportedCompleted);
+          &OpenMobileScenePackageController::handleIsDirectReadSupportedCompleted);
 
   connect(MobileScenePackage::instance(), &MobileScenePackage::unpackCompleted, this, [this](QUuid, bool success)
   {
@@ -92,14 +92,14 @@ OpenPackageController::OpenPackageController(QObject* parent /* = nullptr */):
 /*!
   \brief Destructor.
  */
-OpenPackageController::~OpenPackageController()
+OpenMobileScenePackageController::~OpenMobileScenePackageController()
 {
 }
 
 /*!
   \brief Returns the name of this tool - \c "mobile scene package picker".
  */
-QString OpenPackageController::toolName() const
+QString OpenMobileScenePackageController::toolName() const
 {
   return QStringLiteral("mobile scene package picker");
 }
@@ -113,7 +113,7 @@ QString OpenPackageController::toolName() const
  *  \li BasemapDirectory. The directory containing basemap data.
  * \endlist
  */
-void OpenPackageController::setProperties(const QVariantMap& properties)
+void OpenMobileScenePackageController::setProperties(const QVariantMap& properties)
 {
   const QString newPackageDirectoryPath = properties.value(PACKAGE_DIRECTORY_PROPERTYNAME).toString();
   const bool dataPathChanged = setPackageDataPath(newPackageDirectoryPath);
@@ -137,7 +137,7 @@ void OpenPackageController::setProperties(const QVariantMap& properties)
   }
 }
 
-void OpenPackageController::findPackage()
+void OpenMobileScenePackageController::findPackage()
 {
   const QString packagePath = combinedPackagePath();
   QFileInfo packagePathFileInfo = packagePath;
@@ -164,7 +164,7 @@ void OpenPackageController::findPackage()
   }
 }
 
-void OpenPackageController::loadGeoDocument()
+void OpenMobileScenePackageController::loadGeoDocument()
 {
   if (!m_mspk)
     return;
@@ -187,7 +187,7 @@ void OpenPackageController::loadGeoDocument()
   Toolkit::ToolResourceProvider::instance()->setScene(theScene);
 }
 
-void OpenPackageController::selectPackageName(QString newPackageName)
+void OpenMobileScenePackageController::selectPackageName(QString newPackageName)
 {
   if (!setCurrentPackageName(newPackageName))
     return;
@@ -198,7 +198,7 @@ void OpenPackageController::selectPackageName(QString newPackageName)
   findPackage();
 }
 
-void OpenPackageController::selectDocument(int newDocumentIndex)
+void OpenMobileScenePackageController::selectDocument(int newDocumentIndex)
 {
   if (!setCurrentDocumentIndex(newDocumentIndex))
     return;
@@ -206,7 +206,7 @@ void OpenPackageController::selectDocument(int newDocumentIndex)
   loadGeoDocument();
 }
 
-void OpenPackageController::unpack()
+void OpenMobileScenePackageController::unpack()
 {
   // needs unpacked before loading
   QString unpackedPackageName = getUnpackedName(m_currentPackageName);
@@ -225,7 +225,7 @@ void OpenPackageController::unpack()
   MobileScenePackage::unpack(combinedPackagePath(), unpackedDir);
 }
 
-void OpenPackageController::handleIsDirectReadSupportedCompleted(QUuid taskId, bool directReadSupported)
+void OpenMobileScenePackageController::handleIsDirectReadSupportedCompleted(QUuid taskId, bool directReadSupported)
 {
   auto findTask = m_directReadTasks.constFind(taskId);
 
@@ -244,12 +244,12 @@ void OpenPackageController::handleIsDirectReadSupportedCompleted(QUuid taskId, b
   }
 }
 
-QString OpenPackageController::packageDataPath() const
+QString OpenMobileScenePackageController::packageDataPath() const
 {
   return m_packageDataPath;
 }
 
-bool OpenPackageController::setPackageDataPath(const QString dataPath)
+bool OpenMobileScenePackageController::setPackageDataPath(const QString dataPath)
 {
   if (dataPath == m_packageDataPath || dataPath.isEmpty())
     return false;
@@ -266,12 +266,12 @@ bool OpenPackageController::setPackageDataPath(const QString dataPath)
   return true;
 }
 
-QString OpenPackageController::currentPackageName() const
+QString OpenMobileScenePackageController::currentPackageName() const
 {
   return m_currentPackageName;
 }
 
-bool OpenPackageController::setCurrentPackageName(QString packageName)
+bool OpenMobileScenePackageController::setCurrentPackageName(QString packageName)
 {
   if (packageName.isEmpty() || packageName == currentPackageName())
     return false;
@@ -283,12 +283,12 @@ bool OpenPackageController::setCurrentPackageName(QString packageName)
   return true;
 }
 
-int OpenPackageController::currentDocumentIndex() const
+int OpenMobileScenePackageController::currentDocumentIndex() const
 {
   return m_currentDocumentIndex;
 }
 
-void OpenPackageController::loadCurrentGeoDocument(MobileScenePackage* package)
+void OpenMobileScenePackageController::loadCurrentGeoDocument(MobileScenePackage* package)
 {
   if (!m_mspk)
     return;
@@ -297,7 +297,7 @@ void OpenPackageController::loadCurrentGeoDocument(MobileScenePackage* package)
     loadGeoDocument();
 }
 
-void OpenPackageController::loadMobileScenePackage(const QString& packageName)
+void OpenMobileScenePackageController::loadMobileScenePackage(const QString& packageName)
 {
   MobileScenePackage* package = getPackage(packageName);
   if (!package)
@@ -352,7 +352,7 @@ void OpenPackageController::loadMobileScenePackage(const QString& packageName)
     package->load();
 }
 
-bool OpenPackageController::createPackageDetails(const QString& packageName)
+bool OpenMobileScenePackageController::createPackageDetails(const QString& packageName)
 {
   if (m_packages.constFind(packageName) != m_packages.constEnd())
     return false;
@@ -363,17 +363,17 @@ bool OpenPackageController::createPackageDetails(const QString& packageName)
   return true;
 }
 
-QString OpenPackageController::combinedPackagePath() const
+QString OpenMobileScenePackageController::combinedPackagePath() const
 {
   return m_packageDataPath + "/" + m_currentPackageName;
 }
 
-QAbstractListModel* OpenPackageController::packages() const
+QAbstractListModel* OpenMobileScenePackageController::packages() const
 {
   return m_packagesModel;
 }
 
-QString OpenPackageController::getPackedName(const QString& packageName)
+QString OpenMobileScenePackageController::getPackedName(const QString& packageName)
 {
   QString packedPackageName = packageName;
   packedPackageName.replace("_unpacked", MSPK_EXTENSION);
@@ -381,7 +381,7 @@ QString OpenPackageController::getPackedName(const QString& packageName)
   return packedPackageName;
 }
 
-QString OpenPackageController::getUnpackedName(const QString& packageName)
+QString OpenMobileScenePackageController::getUnpackedName(const QString& packageName)
 {
   QString unpackedPackageName = packageName;
   unpackedPackageName.replace(MSPK_EXTENSION, "_unpacked");
@@ -389,7 +389,7 @@ QString OpenPackageController::getUnpackedName(const QString& packageName)
   return unpackedPackageName;
 }
 
-MobileScenePackage *OpenPackageController::getPackage(const QString &packageName)
+MobileScenePackage *OpenMobileScenePackageController::getPackage(const QString &packageName)
 {
   auto findPackage = m_packages.find(packageName);
 
@@ -407,7 +407,7 @@ MobileScenePackage *OpenPackageController::getPackage(const QString &packageName
   return package;
 }
 
-bool OpenPackageController::setCurrentDocumentIndex(int packageIndex)
+bool OpenMobileScenePackageController::setCurrentDocumentIndex(int packageIndex)
 {
   if (packageIndex == m_currentDocumentIndex)
     return false;
@@ -421,7 +421,7 @@ bool OpenPackageController::setCurrentDocumentIndex(int packageIndex)
   return true;
 }
 
-void OpenPackageController::updatePackageDetails()
+void OpenMobileScenePackageController::updatePackageDetails()
 {
   QDir dir(m_packageDataPath);
   QStringList filters { QString("*" + MSPK_EXTENSION) };

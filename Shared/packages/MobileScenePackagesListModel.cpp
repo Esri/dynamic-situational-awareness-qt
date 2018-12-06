@@ -53,7 +53,7 @@ namespace Dsa {
 /*!
   \brief Constructor for a model taking an optional \a parent.
  */
-PackagesListModel::PackagesListModel(QObject* parent):
+MobileScenePackagesListModel::PackagesListModel(QObject* parent):
   QAbstractListModel(parent)
 {
   m_roles[PackageNameRole] = "packageName";

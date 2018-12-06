@@ -14,8 +14,8 @@
  *  limitations under the License.
  ******************************************************************************/
 
-#ifndef OPENPACKAGECONTROLLER_H
-#define OPENPACKAGECONTROLLER_H
+#ifndef OPENMOBILESCENEPACKAGECONTROLLER_H
+#define OPENMOBILESCENEPACKAGECONTROLLER_H
 
 // toolkit headers
 #include "AbstractTool.h"
@@ -37,9 +37,9 @@ class Scene;
 
 namespace Dsa {
 
-class PackagesListModel;
+class MobileScenePackagesListModel;
 
-class OpenPackageController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+class OpenMobileScenePackageController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
   Q_OBJECT
 
@@ -54,8 +54,8 @@ public:
   static const QString MSPK_EXTENSION;
   static const QString MMPK_EXTENSION;
 
-  explicit OpenPackageController(QObject* parent = nullptr);
-  ~OpenPackageController();
+  explicit OpenMobileScenePackageController(QObject* parent = nullptr);
+  ~OpenMobileScenePackageController();
 
   QString toolName() const override;
   void setProperties(const QVariantMap& properties) override;
@@ -107,7 +107,7 @@ private:
   QString m_packageDataPath;
   QString m_currentPackageName;
   int m_currentDocumentIndex = -1;
-  PackagesListModel* m_packagesModel = nullptr;
+  MobileScenePackagesListModel* m_packagesModel = nullptr;
   Esri::ArcGISRuntime::MobileScenePackage* m_mspk = nullptr;
   QHash<QUuid, QString> m_directReadTasks;
   QHash<QString, Esri::ArcGISRuntime::MobileScenePackage*> m_packages;
@@ -115,4 +115,4 @@ private:
 
 } // Dsa
 
-#endif // OPENPACKAGECONTROLLER_H
+#endif // OPENMOBILESCENEPACKAGECONTROLLER_H

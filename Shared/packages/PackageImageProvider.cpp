@@ -37,13 +37,13 @@ PackageImageProvider::PackageImageProvider(QObject* parent /*= nullptr*/) :
     if (!newTool)
       return;
 
-    auto candidateTool = qobject_cast<OpenPackageController*>(newTool);
+    auto candidateTool = qobject_cast<OpenMobileScenePackageController*>(newTool);
     if (!candidateTool)
       return;
 
     m_packageController = candidateTool;
 
-    connect(m_packageController, &OpenPackageController::imageReady, this, [this](const QString& packageName, const QImage& packageImage)
+    connect(m_packageController, &OpenMobileScenePackageController::imageReady, this, [this](const QString& packageName, const QImage& packageImage)
     {
       m_packages.insert(packageName, packageImage.copy());
     });

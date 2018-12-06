@@ -507,6 +507,7 @@ void DsaController::createDefaultSettings()
   markupJson.insert(QStringLiteral("port"), 12345);
   m_dsaSettings[QStringLiteral("MarkupConfig")] = markupJson;
   writeDefaultConditions();
+  m_dsaSettings[OpenMobileScenePackageController::PACKAGE_DIRECTORY_PROPERTYNAME] = QString("%1/Packages").arg(m_dsaSettings["RootDataDirectory"].toString());
 }
 
 /*!

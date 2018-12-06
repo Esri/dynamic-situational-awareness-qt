@@ -173,7 +173,7 @@ DsaPanel {
         ListView {
             id: sceneNamesList
 
-            model: packagesList.currentItem.sceneNamesModel
+            model: packagesList.currentItem ? packagesList.currentItem.sceneNamesModel : null
 
             clip: true
             spacing: 64 * scaleFactor
@@ -297,8 +297,10 @@ DsaPanel {
 
         Label {
             id: pathText
+            property string detailsText: packagesList.currentItem ? packagesList.currentItem.packageTitleString + ": " + packagesList.currentItem.packageDescriptionString
+                                                                  : ""
             anchors.fill: parent
-            text: toolController.currentPackageName + "\n" + packagesList.currentItem.packageTitleString + ": " +packagesList.currentItem.packageDescriptionString
+            text: toolController.currentPackageName + "\n" + detailsText
             wrapMode: Text.WrapAnywhere
             elide: Text.ElideRight
             font.pixelSize: 12 * scaleFactor

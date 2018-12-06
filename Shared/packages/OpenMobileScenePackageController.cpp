@@ -44,15 +44,15 @@ namespace Dsa {
 
 const QString OpenMobileScenePackageController::PACKAGE_DIRECTORY_PROPERTYNAME = "PackageDirectory";
 const QString OpenMobileScenePackageController::CURRENT_PACKAGE_PROPERTYNAME = "CurrentPackage";
-const QString OpenMobileScenePackageController::SCENE_INDEX_PROPERTYNAME = "PackageIndex";
+const QString OpenMobileScenePackageController::SCENE_INDEX_PROPERTYNAME = "SceneIndex";
 const QString OpenMobileScenePackageController::MSPK_EXTENSION = ".mspk";
 const QString OpenMobileScenePackageController::MMPK_EXTENSION = ".mmpk";
 
 /*!
-  \class Dsa::OpenPackageController
+  \class Dsa::OpenMobileScenePackageController
   \inmodule Dsa
   \inherits Toolkit::AbstractTool
-  \brief Tool controller for opening mobile packages.
+  \brief Tool controller for opening mobile scene packages.
 
   \sa Esri::ArcGISRuntime::MobileScenePackage
  */
@@ -66,8 +66,6 @@ OpenMobileScenePackageController::OpenMobileScenePackageController(QObject* pare
 {
   emit packagesChanged();
   Toolkit::ToolManager::instance().addTool(this);
-
-  //connect(MobileScenePackage::instance(), &MobileScenePackage::errorOccurred, this, &OpenPackageController::errorOccurred);
 
   connect(MobileScenePackage::instance(), &MobileScenePackage::isDirectReadSupportedCompleted, this,
           &OpenMobileScenePackageController::handleIsDirectReadSupportedCompleted);
@@ -85,7 +83,6 @@ OpenMobileScenePackageController::OpenMobileScenePackageController(QObject* pare
     m_packagesModel->setUnpackedName(m_currentPackageName, unpackedPackageName);
     setCurrentPackageName(unpackedPackageName);
     loadMobileScenePackage(unpackedPackageName);
-
   });
 }
 
@@ -97,11 +94,11 @@ OpenMobileScenePackageController::~OpenMobileScenePackageController()
 }
 
 /*!
-  \brief Returns the name of this tool - \c "mobile scene package picker".
+  \brief Returns the name of this tool - \c "open mobile scene package".
  */
 QString OpenMobileScenePackageController::toolName() const
 {
-  return QStringLiteral("mobile scene package picker");
+  return QStringLiteral("open mobile scene package");
 }
 
 /*! \brief Sets any values in \a properties which are relevant for the basemap picker controller.
@@ -109,8 +106,9 @@ QString OpenMobileScenePackageController::toolName() const
  * This tool will use the following key/value pairs in the \a properties map if they are set:
  *
  * \list
- *  \li DefaultBasemap. The name of the default basemap to load.
- *  \li BasemapDirectory. The directory containing basemap data.
+ *  \li PackageDirectory. The directory containing package data.
+ *  \li CurrentPackage. The name of the current package.
+ *  \li SceneIndex. The index of the scene in the current package.
  * \endlist
  */
 void OpenMobileScenePackageController::setProperties(const QVariantMap& properties)
@@ -137,6 +135,11 @@ void OpenMobileScenePackageController::setProperties(const QVariantMap& properti
   }
 }
 
+/*!
+  \internal
+
+  Find the mobile scene package in the packages directory with the current name.
+ */
 void OpenMobileScenePackageController::findPackage()
 {
   const QString packagePath = combinedPackagePath();
@@ -149,11 +152,12 @@ void OpenMobileScenePackageController::findPackage()
 
   if (packagePathFileInfo.isDir())
   {
-    // package is already unpacked
+    // package is already unpacked, load it
     loadMobileScenePackage(m_currentPackageName);
   }
   else if (packagePath.endsWith(MSPK_EXTENSION))
   {
+    // the package is an .mspk archive file - eheck if it can be read directly
     const auto taskWatcher = MobileScenePackage::instance()->isDirectReadSupported(packagePath);
     m_directReadTasks.insert(taskWatcher.taskId(), m_currentPackageName);
   }
@@ -164,6 +168,11 @@ void OpenMobileScenePackageController::findPackage()
   }
 }
 
+/*!
+  \internal
+
+  Load the scene at the current index from the current mobile scene package.
+ */
 void OpenMobileScenePackageController::loadScene()
 {
   if (!m_mspk)
@@ -183,10 +192,14 @@ void OpenMobileScenePackageController::loadScene()
   if (m_currentSceneIndex >= scenes.length())
     return;
 
+  // Get the scene at the current index and add add it to the ToolResourceProvider
   Scene* theScene = scenes.at(m_currentSceneIndex);
   Toolkit::ToolResourceProvider::instance()->setScene(theScene);
 }
 
+/*!
+  \brief Selects the package with the name \a newPackageName.
+ */
 void OpenMobileScenePackageController::selectPackageName(QString newPackageName)
 {
   if (!setCurrentPackageName(newPackageName))
@@ -195,9 +208,15 @@ void OpenMobileScenePackageController::selectPackageName(QString newPackageName)
   // reset the scene index to -1
   setCurrentSceneIndex(-1);
 
+  // attempt to find the package with the given name.
   findPackage();
 }
 
+/*!
+  \brief Selects the scene with the index \a newSceneIndex from the current package.
+
+  If succesful, the scene will be loaded.
+ */
 void OpenMobileScenePackageController::selectScene(int newSceneIndex)
 {
   if (!setCurrentSceneIndex(newSceneIndex))
@@ -206,9 +225,12 @@ void OpenMobileScenePackageController::selectScene(int newSceneIndex)
   loadScene();
 }
 
+/*!
+  \brief Unpack the current mobile scene package to support direct reading of the contents.
+ */
 void OpenMobileScenePackageController::unpack()
 {
-  // needs unpacked before loading
+  // work out what the unpacked name should be.
   QString unpackedPackageName = getUnpackedName(m_currentPackageName);
   const QString unpackedDir = m_packageDataPath + "/" + unpackedPackageName;
 
@@ -222,33 +244,49 @@ void OpenMobileScenePackageController::unpack()
     return;
   }
 
+  // start the unpack task
   MobileScenePackage::unpack(combinedPackagePath(), unpackedDir);
 }
 
+/*!
+  \internal
+
+  Handles the result of a task to check whether a given package supports direct read, or whether it must be unpacked.
+ */
 void OpenMobileScenePackageController::handleIsDirectReadSupportedCompleted(QUuid taskId, bool directReadSupported)
 {
   auto findTask = m_directReadTasks.constFind(taskId);
 
-  // If the task was concerned with checking a packages details
-  if (findTask != m_directReadTasks.constEnd())
-  {
-    // Update whether the package requires unpack
-    const auto& packageName = findTask.value();
-    m_packagesModel->setRequiresUnpack(packageName, !directReadSupported);
-
-    // If the package doesn't need to eb unpacked, get it's thumbnai;, and scenes etc.
-    if (directReadSupported)
-      loadMobileScenePackage(packageName);
-
+  // If the task was not started by this tool, ignore
+  if (findTask == m_directReadTasks.constEnd())
     return;
-  }
+
+  // Update the model to shoe whether the package requires unpack
+  const auto& packageName = findTask.value();
+  m_packagesModel->setRequiresUnpack(packageName, !directReadSupported);
+
+  // If the package doesn't need to be unpacked, load it to get it's thumbnail, scenes etc.
+  if (directReadSupported)
+    loadMobileScenePackage(packageName);
+
+  return;
 }
 
+/*!
+  \internal
+
+  Returns the path to the directory where package data is stored.
+ */
 QString OpenMobileScenePackageController::packageDataPath() const
 {
   return m_packageDataPath;
 }
 
+/*!
+  \internal
+
+  Sets the path to the directory where package data is stored to \a dataPath.
+ */
 bool OpenMobileScenePackageController::setPackageDataPath(const QString dataPath)
 {
   if (dataPath == m_packageDataPath || dataPath.isEmpty())
@@ -261,16 +299,25 @@ bool OpenMobileScenePackageController::setPackageDataPath(const QString dataPath
   m_packageDataPath = std::move(dataPath);
   emit packageDataPathChanged();
 
+  // refresh the list of packages
   updatePackageDetails();
 
   return true;
 }
 
+/*!
+  \property
+  \brief The name of the current mobile scene package.
+ */
 QString OpenMobileScenePackageController::currentPackageName() const
 {
   return m_currentPackageName;
 }
 
+/*!
+  \internal
+  Sets the current package name to \a packageName.
+ */
 bool OpenMobileScenePackageController::setCurrentPackageName(QString packageName)
 {
   if (packageName.isEmpty() || packageName == currentPackageName())
@@ -283,11 +330,19 @@ bool OpenMobileScenePackageController::setCurrentPackageName(QString packageName
   return true;
 }
 
+/*!
+  \property
+  \brief The index of the scene in the current mobile scene package.
+ */
 int OpenMobileScenePackageController::currentSceneIndex() const
 {
   return m_currentSceneIndex;
 }
 
+/*!
+  \internal
+  Loads the current scene index in the supplied \a package if it is the current mobile scene package.
+ */
 void OpenMobileScenePackageController::loadCurrentScene(MobileScenePackage* package)
 {
   if (!m_mspk)
@@ -297,6 +352,12 @@ void OpenMobileScenePackageController::loadCurrentScene(MobileScenePackage* pack
     loadScene();
 }
 
+/*!
+  \internal
+  Loads the mobile scene package called \a packageName.
+
+  Updates the model with details of the package contents.
+ */
 void OpenMobileScenePackageController::loadMobileScenePackage(const QString& packageName)
 {
   MobileScenePackage* package = getPackage(packageName);
@@ -374,6 +435,10 @@ void OpenMobileScenePackageController::loadMobileScenePackage(const QString& pac
     package->load();
 }
 
+/*!
+  \internal
+  Creates place-holder details for the given \a packageName.
+ */
 bool OpenMobileScenePackageController::createPackageDetails(const QString& packageName)
 {
   if (m_packages.constFind(packageName) != m_packages.constEnd())
@@ -385,16 +450,28 @@ bool OpenMobileScenePackageController::createPackageDetails(const QString& packa
   return true;
 }
 
+/*!
+  \internal
+  Returns the path of the current mobile scene package.
+ */
 QString OpenMobileScenePackageController::combinedPackagePath() const
 {
   return m_packageDataPath + "/" + m_currentPackageName;
 }
 
+/*!
+  \property
+  \l brief The list of package details.
+ */
 QAbstractListModel* OpenMobileScenePackageController::packages() const
 {
   return m_packagesModel;
 }
 
+/*!
+  \internal
+  Static method to apply the packed naming scene to the given \a packageName.
+ */
 QString OpenMobileScenePackageController::getPackedName(const QString& packageName)
 {
   QString packedPackageName = packageName;
@@ -403,6 +480,10 @@ QString OpenMobileScenePackageController::getPackedName(const QString& packageNa
   return packedPackageName;
 }
 
+/*!
+  \internal
+  Static method to apply the unpacked naming scene to the given \a packageName.
+ */
 QString OpenMobileScenePackageController::getUnpackedName(const QString& packageName)
 {
   QString unpackedPackageName = packageName;
@@ -411,7 +492,11 @@ QString OpenMobileScenePackageController::getUnpackedName(const QString& package
   return unpackedPackageName;
 }
 
-MobileScenePackage *OpenMobileScenePackageController::getPackage(const QString &packageName)
+/*!
+  \internal
+  Returns the mobile scene pacakge called \a packageName if it exists.
+ */
+MobileScenePackage *OpenMobileScenePackageController::getPackage(const QString& packageName)
 {
   auto findPackage = m_packages.find(packageName);
 
@@ -429,6 +514,10 @@ MobileScenePackage *OpenMobileScenePackageController::getPackage(const QString &
   return package;
 }
 
+/*!
+  \internal
+  Sets the current scene index to \a packageIndex. The scene at the index will be loaded.
+ */
 bool OpenMobileScenePackageController::setCurrentSceneIndex(int packageIndex)
 {
   if (packageIndex == m_currentSceneIndex)
@@ -443,6 +532,13 @@ bool OpenMobileScenePackageController::setCurrentSceneIndex(int packageIndex)
   return true;
 }
 
+/*!
+  \internal
+  Updates the details for the packages in the \l packageDataPath.
+
+  Packages will be tested to see if they can be read directly, and if so,
+  loaded to obtaiin meta-data and images.
+ */
 void OpenMobileScenePackageController::updatePackageDetails()
 {
   QDir dir(m_packageDataPath);
@@ -494,32 +590,40 @@ void OpenMobileScenePackageController::updatePackageDetails()
 
 // Signal Documentation
 
-/*!
-  \fn void BasemapPickerController::tileCacheModelChanged();
 
-  \brief Signal emitted when the TileCacheModel associated with this class changes.
+
+/*!
+  \fn void OpenMobileScenePackageController::toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
+
+  \brief Signal emitted an error occurs.
  */
 
 /*!
-  \fn void BasemapPickerController::basemapsDataPathChanged();
+  \fn void OpenMobileScenePackageController::packageDataPathChanged();
 
-  \brief Signal emitted when basemap data path changes.
+  \brief Signal emitted when the \l packageDataPath property changes.
  */
 
 /*!
-  \fn void BasemapPickerController::basemapChanged(Esri::ArcGISRuntime::Basemap* basemap, QString name = "");
+  \fn void OpenMobileScenePackageController::currentSceneNameChanged();
 
-  \brief Signal emitted when the current \a basemap changes.
-
-  The \a name of the basemap is passed through the signal as a parameter.
+  \brief Signal emitted when the \l currentSceneName property changes.
  */
 
 /*!
-  \fn void BasemapPickerController::toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
+  \fn void OpenMobileScenePackageController::packageIndexChanged();
 
-  \brief Signal emitted when an error occurs.
-
-  An \a errorMessage and \a additionalMessage are passed through as parameters, describing
-  the error that occurred.
+  \brief Signal emitted when the \l packageIndex property changes.
  */
 
+/*!
+  \fn void OpenMobileScenePackageController::imageReady(const QString& packageName, const QImage& packageImage);
+
+  \brief Signal emitted when the \a packageImage for the package \a packageName is ready.
+ */
+
+/*!
+  \fn void OpenMobileScenePackageController::packagesChanged();
+
+  \brief Signal emitted when the \a packages model property changes.
+ */

@@ -60,9 +60,6 @@ public:
   QString toolName() const override;
   void setProperties(const QVariantMap& properties) override;
 
-  void findPackage();
-  void loadScene();
-
   Q_INVOKABLE void selectPackageName(QString newPackageName);
   Q_INVOKABLE void selectScene(int newSceneIndex);
   Q_INVOKABLE void unpack();
@@ -72,15 +69,15 @@ signals:
   void packageDataPathChanged();
   void currentSceneNameChanged();
   void packageIndexChanged();
-  void packageNamesChanged();
   void imageReady(const QString& packageName, const QImage& packageImage);
   void packagesChanged();
-  void unpackCompleted(const QStringList& scenes);
 
 private slots:
   void handleIsDirectReadSupportedCompleted(QUuid taskId, bool directReadSupported);
 
 private:
+  void findPackage();
+  void loadScene();
   QString packageDataPath() const;
   bool setPackageDataPath(QString dataPath);
   QString currentPackageName() const;

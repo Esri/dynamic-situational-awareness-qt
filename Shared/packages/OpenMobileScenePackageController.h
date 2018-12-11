@@ -64,6 +64,13 @@ public:
   Q_INVOKABLE void unpack();
 
   QString packageDataPath() const;
+  bool setPackageDataPath(QString dataPath);
+
+  QString currentPackageName() const;
+  bool setCurrentPackageName(QString packageName);
+
+  int currentSceneIndex() const;
+  bool setCurrentSceneIndex(int currentSceneIndex);
 
   QAbstractListModel* packages() const;
 
@@ -81,12 +88,6 @@ private slots:
 private:
   void findPackage();
   void loadScene();
-  bool setPackageDataPath(QString dataPath);
-  QString currentPackageName() const;
-  bool setCurrentPackageName(QString packageName);
-
-  int currentSceneIndex() const;
-  bool setCurrentSceneIndex(int currentSceneIndex);
 
   void updatePackageDetails();
 

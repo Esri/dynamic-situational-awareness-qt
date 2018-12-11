@@ -59,15 +59,15 @@ public:
   QString toolName() const override;
   void setProperties(const QVariantMap& properties) override;
 
-  Q_INVOKABLE void selectPackageName(QString newPackageName);
+  Q_INVOKABLE void selectPackageName(const QString& newPackageName);
   Q_INVOKABLE void selectScene(int newSceneIndex);
   Q_INVOKABLE void unpack();
 
   QString packageDataPath() const;
-  bool setPackageDataPath(QString dataPath);
+  bool setPackageDataPath(const QString& dataPath);
 
   QString currentPackageName() const;
-  bool setCurrentPackageName(QString packageName);
+  bool setCurrentPackageName(const QString& packageName);
 
   int currentSceneIndex() const;
   bool setCurrentSceneIndex(int currentSceneIndex);

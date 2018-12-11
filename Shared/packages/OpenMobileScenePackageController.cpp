@@ -201,7 +201,7 @@ void OpenMobileScenePackageController::loadScene()
 /*!
   \brief Selects the package with the name \a newPackageName.
  */
-void OpenMobileScenePackageController::selectPackageName(QString newPackageName)
+void OpenMobileScenePackageController::selectPackageName(const QString& newPackageName)
 {
   if (!setCurrentPackageName(newPackageName))
     return;
@@ -272,9 +272,7 @@ void OpenMobileScenePackageController::handleIsDirectReadSupportedCompleted(QUui
 }
 
 /*!
-  \internal
-
-  Returns the path to the directory where package data is stored.
+  \brief Returns the path to the directory where package data is stored.
  */
 QString OpenMobileScenePackageController::packageDataPath() const
 {
@@ -282,11 +280,9 @@ QString OpenMobileScenePackageController::packageDataPath() const
 }
 
 /*!
-  \internal
-
-  Sets the path to the directory where package data is stored to \a dataPath.
+  \brief Sets the path to the directory where package data is stored to \a dataPath.
  */
-bool OpenMobileScenePackageController::setPackageDataPath(const QString dataPath)
+bool OpenMobileScenePackageController::setPackageDataPath(const QString& dataPath)
 {
   if (dataPath == m_packageDataPath || dataPath.isEmpty())
     return false;
@@ -295,8 +291,9 @@ bool OpenMobileScenePackageController::setPackageDataPath(const QString dataPath
   if (!packageDirFileInfo.isDir())
     return false;
 
-  m_packageDataPath = std::move(dataPath);
+  m_packageDataPath = dataPath;
   emit packageDataPathChanged();
+  emit propertyChanged(PACKAGE_DIRECTORY_PROPERTYNAME, m_packageDataPath);
 
   // refresh the list of packages
   updatePackageDetails();
@@ -317,12 +314,12 @@ QString OpenMobileScenePackageController::currentPackageName() const
   \internal
   Sets the current package name to \a packageName.
  */
-bool OpenMobileScenePackageController::setCurrentPackageName(QString packageName)
+bool OpenMobileScenePackageController::setCurrentPackageName(const QString& packageName)
 {
   if (packageName.isEmpty() || packageName == currentPackageName())
     return false;
 
-  m_currentPackageName = std::move(packageName);
+  m_currentPackageName = packageName;
   emit currentSceneNameChanged();
   emit propertyChanged(CURRENT_PACKAGE_PROPERTYNAME, m_currentPackageName);
 

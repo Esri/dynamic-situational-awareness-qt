@@ -65,6 +65,8 @@ public:
 
   QString packageDataPath() const;
 
+  QAbstractListModel* packages() const;
+
 signals:
   void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
   void packageDataPathChanged();
@@ -92,8 +94,6 @@ private:
   bool createPackageDetails(const QString& packageName);
 
   QString combinedPackagePath() const;
-
-  QAbstractListModel* packages() const;
 
   static QString getPackedName(const QString& packageName);
   static QString getUnpackedName(const QString& packageName);

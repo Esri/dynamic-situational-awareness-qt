@@ -71,20 +71,23 @@ DsaPanel {
             clip: true
             model: toolController.packages
 
-            cellWidth: 128 * scaleFactor
-            cellHeight: 128 * scaleFactor
-            width: 2 * cellWidth
+            anchors.horizontalCenter: parent.horizontalCenter
+            cellWidth: packagesList.width * 0.5
+            cellHeight: cellWidth
 
             delegate: Rectangle {
                 id: packageCard
+
+                x: packagesList.cellWidth * 0.25
+                y: x
 
                 property variant sceneNamesModel: sceneNames
                 property bool sceneImages: sceneImagesReady
                 property string packageTitleString: packageTitle
                 property string packageDescriptionString: packageDescription
 
-                width: packagesList.cellWidth - 10 * scaleFactor
-                height: packagesList.cellHeight - 10 * scaleFactor
+                width: packagesList.cellWidth
+                height: width
 
                 border.color: index === packagesList.currentIndex ? Material.accent : Material.background
                 border.width: index === packagesList.currentIndex ? 2 * scaleFactor : 1 * scaleFactor
@@ -297,6 +300,7 @@ DsaPanel {
 
         Label {
             id: pathText
+            visible: packageFrame.currentIndex == 1
             property string detailsText: packagesList.currentItem ?
                                              packagesList.currentItem.packageTitleString + ": " + packagesList.currentItem.packageDescriptionString
                                                                   : ""

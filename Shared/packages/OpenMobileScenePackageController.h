@@ -47,6 +47,7 @@ class OpenMobileScenePackageController : public Esri::ArcGISRuntime::Toolkit::Ab
   Q_PROPERTY(QAbstractListModel* packages READ packages NOTIFY packagesChanged)
   Q_PROPERTY(QString currentPackageName READ currentPackageName NOTIFY currentSceneNameChanged)
   Q_PROPERTY(int currentSceneIndex READ currentSceneIndex NOTIFY currentSceneNameChanged)
+  Q_PROPERTY(bool busy READ busy NOTIFY busyChanged)
 
 public:
   static const QString PACKAGE_DIRECTORY_PROPERTYNAME;
@@ -74,6 +75,8 @@ public:
 
   QAbstractListModel* packages() const;
 
+  bool busy() const;
+
 signals:
   void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
   void packageDataPathChanged();
@@ -81,6 +84,7 @@ signals:
   void packageIndexChanged();
   void imageReady(const QString& packageName, const QImage& packageImage);
   void packagesChanged();
+  void busyChanged();
 
 private slots:
   void handleIsDirectReadSupportedCompleted(QUuid taskId, bool directReadSupported);
@@ -114,6 +118,7 @@ private:
   Esri::ArcGISRuntime::MobileScenePackage* m_mspk = nullptr;
   QHash<QUuid, QString> m_directReadTasks;
   QHash<QString, Esri::ArcGISRuntime::MobileScenePackage*> m_packages;
+  int m_loadingCount = 0;
 };
 
 } // Dsa

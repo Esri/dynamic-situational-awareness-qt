@@ -25,6 +25,7 @@
 #include <QHash>
 #include <QObject>
 #include <QStringList>
+#include <QUuid>
 
 class QImage;
 

@@ -155,10 +155,10 @@ DsaPanel {
 
                     onClicked: {
                         // If the package has an unpacked version, use that
+                        packageFrame.currentIndex = 1;
                         toolController.selectPackageName( unpackedName.length > 0 ? unpackedName :
                                                                                     packageName);
-                        unpackButton.visible = requiresUnpack
-                        packageFrame.currentIndex = 1;
+                        unpackButton.visible = requiresUnpack         
                     }
 
                     onHoveredChanged: {
@@ -228,7 +228,7 @@ DsaPanel {
 
             delegate: Rectangle {
                 width: parent.width
-                height: width * 0.5
+                height: width * 0.4
 
                 border.color: index === sceneNamesList.currentIndex ? Material.accent : Material.background
                 border.width: index === sceneNamesList.currentIndex ? 2 * scaleFactor : 1 * scaleFactor
@@ -301,7 +301,7 @@ DsaPanel {
                                              packagesList.currentItem.packageTitleString + ": " + packagesList.currentItem.packageDescriptionString
                                                                   : ""
             anchors.fill: parent
-            text: toolController.currentPackageName + "\n" + detailsText
+            text: toolController.currentPackageName + (detailsText.length > 2 ? "\n" + detailsText : "")
             wrapMode: Text.WrapAnywhere
             elide: Text.ElideRight
             font.pixelSize: 12 * scaleFactor

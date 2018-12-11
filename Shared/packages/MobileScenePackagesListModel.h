@@ -51,10 +51,10 @@ public:
 
   void setRequiresUnpack(const QString& packageName, bool requiresUnpack);
   void setImageReady(const QString& packageName, bool imageReady);
-  void setSceneNames(const QString& packageName, QStringList sceneNames);
-  void setUnpackedName(const QString& packageName, QString unpackedName);
+  void setSceneNames(const QString& packageName, const QStringList& sceneNames);
+  void setUnpackedName(const QString& packageName, const QString& unpackedName);
   void setSceneImagesReady(const QString& packageName, bool sceneImagesReady);
-  void setTitleAndDescription(const QString& packageName, QString title, QString description);
+  void setTitleAndDescription(const QString& packageName, const QString& title, const QString& description);
 
   bool isUnpackedVersion(const QString& packageName) const;
 

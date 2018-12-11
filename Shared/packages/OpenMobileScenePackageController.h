@@ -51,8 +51,6 @@ public:
   static const QString PACKAGE_DIRECTORY_PROPERTYNAME;
   static const QString CURRENT_PACKAGE_PROPERTYNAME;
   static const QString SCENE_INDEX_PROPERTYNAME;
-  static const QString MSPK_EXTENSION;
-  static const QString MMPK_EXTENSION;
 
   explicit OpenMobileScenePackageController(QObject* parent = nullptr);
   ~OpenMobileScenePackageController();
@@ -102,6 +100,10 @@ private:
 
   Esri::ArcGISRuntime::MobileScenePackage* getPackage(const QString& packageName);
   void loadCurrentScene(Esri::ArcGISRuntime::MobileScenePackage* package);
+
+  static const QString MSPK_EXTENSION;
+  static const QString MMPK_EXTENSION;
+  static const QString UNPACKED_SUFFIX;
 
   QString m_packageDataPath;
   QString m_currentPackageName;

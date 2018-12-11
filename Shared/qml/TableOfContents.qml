@@ -64,7 +64,7 @@ DsaPanel {
         delegate: ListItemDelegate {
             width: parent.width
             height: 40 * scaleFactor
-            itemChecked: layerVisible ? layerVisible : false
+            itemChecked: layerVisible
             imageUrl: imageSourceForGeomType(index)
             imageVisible: true
             imageFrameVisible: false

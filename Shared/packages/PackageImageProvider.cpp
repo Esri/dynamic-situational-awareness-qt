@@ -60,7 +60,7 @@ PackageImageProvider::PackageImageProvider(QObject* parent /*= nullptr*/) :
     // store images created by the tool
     connect(m_packageController, &OpenMobileScenePackageController::imageReady, this, [this](const QString& packageName, const QImage& packageImage)
     {
-    m_packages.insert(packageName, packageImage.copy());
+      m_packages.insert(packageName, packageImage.copy());
     });
 
   disconnect(m_findToolConnection);

@@ -297,7 +297,8 @@ DsaPanel {
 
         Label {
             id: pathText
-            property string detailsText: packagesList.currentItem ? packagesList.currentItem.packageTitleString + ": " + packagesList.currentItem.packageDescriptionString
+            property string detailsText: packagesList.currentItem ?
+                                             packagesList.currentItem.packageTitleString + ": " + packagesList.currentItem.packageDescriptionString
                                                                   : ""
             anchors.fill: parent
             text: toolController.currentPackageName + "\n" + detailsText

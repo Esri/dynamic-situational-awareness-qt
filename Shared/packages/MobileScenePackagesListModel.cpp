@@ -19,6 +19,8 @@
 
 #include "MobileScenePackagesListModel.h"
 
+#include <iterator>
+
 namespace Dsa {
 
 /*!
@@ -153,13 +155,13 @@ void MobileScenePackagesListModel::setImageReady(const QString& packageName, boo
 /*!
   \brief Update the data for \a packageName, setting the list of scene names to \a sceneNames.
  */
-void MobileScenePackagesListModel::setSceneNames(const QString& packageName, QStringList sceneNames)
+void MobileScenePackagesListModel::setSceneNames(const QString& packageName, const QStringList& sceneNames)
 {
   auto findIt = m_packageDetails.find(packageName);
   if (findIt == m_packageDetails.end())
     return;
 
-  findIt.value().m_sceneNames = std::move(sceneNames);
+  findIt.value().m_sceneNames = sceneNames;
 
   broadcastDataChanged(findIt);
 }
@@ -167,13 +169,13 @@ void MobileScenePackagesListModel::setSceneNames(const QString& packageName, QSt
 /*!
   \brief Update the data for \a packageName, setting the unpacked name to \a unpackedName.
  */
-void MobileScenePackagesListModel::setUnpackedName(const QString &packageName, QString unpackedName)
+void MobileScenePackagesListModel::setUnpackedName(const QString& packageName, const QString& unpackedName)
 {
   auto findIt = m_packageDetails.find(packageName);
   if (findIt == m_packageDetails.end())
     return;
 
-  findIt.value().m_unpackedName = std::move(unpackedName);
+  findIt.value().m_unpackedName = unpackedName;
   // since an unpacked version exists, requires unpack should be set to false
   findIt.value().m_requiresUnpack = false;
 
@@ -197,7 +199,7 @@ void MobileScenePackagesListModel::setSceneImagesReady(const QString& packageNam
 /*!
   \brief Update the data for \a packageName, setting the title to \a title and the description to \a description.
  */
-void MobileScenePackagesListModel::setTitleAndDescription(const QString& packageName, QString title, QString description)
+void MobileScenePackagesListModel::setTitleAndDescription(const QString& packageName, const QString& title, const QString& description)
 {
   auto findIt = m_packageDetails.find(packageName);
   if (findIt == m_packageDetails.end())

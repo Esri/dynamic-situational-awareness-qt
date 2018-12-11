@@ -124,7 +124,6 @@ LineOfSightController::LineOfSightController(QObject* parent):
 
     m_geoView = sceneView;
     sceneView->analysisOverlays()->append(m_lineOfSightOverlay);
-
   });
 
   onOperationalLayersChanged();

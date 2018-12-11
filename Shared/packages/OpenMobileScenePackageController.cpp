@@ -47,6 +47,7 @@ const QString OpenMobileScenePackageController::CURRENT_PACKAGE_PROPERTYNAME = "
 const QString OpenMobileScenePackageController::SCENE_INDEX_PROPERTYNAME = "SceneIndex";
 const QString OpenMobileScenePackageController::MSPK_EXTENSION = ".mspk";
 const QString OpenMobileScenePackageController::MMPK_EXTENSION = ".mmpk";
+const QString OpenMobileScenePackageController::UNPACKED_SUFFIX = "_unpacked";
 
 /*!
   \class Dsa::OpenMobileScenePackageController
@@ -64,8 +65,8 @@ OpenMobileScenePackageController::OpenMobileScenePackageController(QObject* pare
   Toolkit::AbstractTool(parent),
   m_packagesModel(new MobileScenePackagesListModel(this))
 {
-  emit packagesChanged();
   Toolkit::ToolManager::instance().addTool(this);
+  emit packagesChanged();
 
   connect(MobileScenePackage::instance(), &MobileScenePackage::isDirectReadSupportedCompleted, this,
           &OpenMobileScenePackageController::handleIsDirectReadSupportedCompleted);
@@ -143,13 +144,13 @@ void OpenMobileScenePackageController::setProperties(const QVariantMap& properti
 void OpenMobileScenePackageController::findPackage()
 {
   const QString packagePath = combinedPackagePath();
-  QFileInfo packagePathFileInfo = packagePath;
-  if (!packagePathFileInfo.exists())
+  if (!QFileInfo::exists(packagePath))
   {
     emit toolErrorOccurred("Failed to open package", QString("%1 not found").arg(packagePath));
     return;
   }
 
+  QFileInfo packagePathFileInfo = packagePath;
   if (packagePathFileInfo.isDir())
   {
     // package is already unpacked, load it
@@ -161,7 +162,7 @@ void OpenMobileScenePackageController::findPackage()
     const auto taskWatcher = MobileScenePackage::instance()->isDirectReadSupported(packagePath);
     m_directReadTasks.insert(taskWatcher.taskId(), m_currentPackageName);
   }
-  else if(packagePath.endsWith(MMPK_EXTENSION))
+  else if (packagePath.endsWith(MMPK_EXTENSION))
   {
     emit toolErrorOccurred("MobileMapPackages (.mmpk) are not supported", packagePath);
     return;
@@ -268,8 +269,6 @@ void OpenMobileScenePackageController::handleIsDirectReadSupportedCompleted(QUui
   // If the package doesn't need to be unpacked, load it to get it's thumbnail, scenes etc.
   if (directReadSupported)
     loadMobileScenePackage(packageName);
-
-  return;
 }
 
 /*!
@@ -388,7 +387,7 @@ void OpenMobileScenePackageController::loadMobileScenePackage(const QString& pac
     auto scenes = package->scenes();
     QStringList sceneNames;
     sceneNames.reserve(scenes.length());
-    for (auto scene: scenes)
+    for (auto* scene : scenes)
     {
       if (!scene)
         continue;
@@ -475,7 +474,7 @@ QAbstractListModel* OpenMobileScenePackageController::packages() const
 QString OpenMobileScenePackageController::getPackedName(const QString& packageName)
 {
   QString packedPackageName = packageName;
-  packedPackageName.replace("_unpacked", MSPK_EXTENSION);
+  packedPackageName.replace(UNPACKED_SUFFIX, MSPK_EXTENSION);
 
   return packedPackageName;
 }
@@ -487,7 +486,7 @@ QString OpenMobileScenePackageController::getPackedName(const QString& packageNa
 QString OpenMobileScenePackageController::getUnpackedName(const QString& packageName)
 {
   QString unpackedPackageName = packageName;
-  unpackedPackageName.replace(MSPK_EXTENSION, "_unpacked");
+  unpackedPackageName.replace(MSPK_EXTENSION, UNPACKED_SUFFIX);
 
   return unpackedPackageName;
 }

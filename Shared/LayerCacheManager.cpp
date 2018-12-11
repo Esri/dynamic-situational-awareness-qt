@@ -360,9 +360,9 @@ QJsonArray LayerCacheManager::layerJson() const
   return m_layers;
 }
 
-void LayerCacheManager::addExcludedPath(QString exludedPath)
+void LayerCacheManager::addExcludedPath(const QString& exludedPath)
 {
-  m_excludedPaths.append(std::move(exludedPath));
+  m_excludedPaths.append(exludedPath);
 }
 
 } // Dsa

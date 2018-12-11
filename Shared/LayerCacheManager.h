@@ -50,7 +50,7 @@ public:
   void jsonToLayer(const QJsonObject& jsonObject, const int layerIndex = -1);
   QJsonArray layerJson() const;
 
-  void addExcludedPath(QString exludedPath);
+  void addExcludedPath(const QString& exludedPath);
 
 signals:
   void layerJsonChanged();

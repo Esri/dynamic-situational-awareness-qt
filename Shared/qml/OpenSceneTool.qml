@@ -26,6 +26,9 @@ DsaPanel {
 
     signal sceneSelected();
 
+    property string packageTitleString
+    property string packageDescriptionString
+
     OpenMobileScenePackageController {
         id: toolController
     }
@@ -78,6 +81,10 @@ DsaPanel {
             delegate: Item {
                 width: packagesList.cellWidth
                 height: width
+
+                property variant sceneNamesModel: sceneNames
+                property bool sceneImages: sceneImagesReady
+
                 Rectangle {
                     id: packageCard
 
@@ -85,11 +92,6 @@ DsaPanel {
                         fill: parent
                         margins: 8 * scaleFactor
                     }
-
-                    property variant sceneNamesModel: sceneNames
-                    property bool sceneImages: sceneImagesReady
-                    property string packageTitleString: packageTitle
-                    property string packageDescriptionString: packageDescription
 
                     border.color: index === packagesList.currentIndex ? Material.accent : Material.background
                     border.width: index === packagesList.currentIndex ? 2 * scaleFactor : 1 * scaleFactor
@@ -159,8 +161,10 @@ DsaPanel {
                         hoverEnabled: true
 
                         onClicked: {
-                            // If the package has an unpacked version, use that
+                            packageTitleString = packageTitle;
+                            packageDescriptionString = packageDescription;
                             packageFrame.currentIndex = 1;
+                            // If the package has an unpacked version, use that
                             toolController.selectPackageName( unpackedName.length > 0 ? unpackedName :
                                                                                         packageName);
                             unpackButton.visible = requiresUnpack
@@ -297,21 +301,29 @@ DsaPanel {
             left: parent.left
             right: parent.right
         }
+        visible: packageFrame.currentIndex == 1
         color: Material.primary
 
         height: 64 * scaleFactor
 
-        Label {
-            id: pathText
-            visible: packageFrame.currentIndex == 1
-            property string detailsText: packagesList.currentItem ?
-                                             packagesList.currentItem.packageTitleString + ": " + packagesList.currentItem.packageDescriptionString
-                                           : ""
+        Column {
             anchors.fill: parent
-            text: toolController.currentPackageName + (detailsText.length > 2 ? "\n" + detailsText : "")
-            wrapMode: Text.WrapAnywhere
-            elide: Text.ElideRight
-            font.pixelSize: 12 * scaleFactor
+            spacing: 4 * scaleFactor
+
+            Label {
+                text: "Current Package: " + (packageTitleString.length > 0 ? packageTitleString : toolController.currentPackageName)
+                wrapMode: Text.WrapAnywhere
+                elide: Text.ElideRight
+                font.pixelSize: 12 * scaleFactor
+            }
+
+            Label {
+                visible: text.length > 13
+                text: "Description: " + packageDescriptionString
+                wrapMode: Text.WrapAnywhere
+                elide: Text.ElideRight
+                font.pixelSize: 12 * scaleFactor
+            }
         }
     }
 }

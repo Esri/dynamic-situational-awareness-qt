@@ -68,10 +68,10 @@ OpenMobileScenePackageController::OpenMobileScenePackageController(QObject* pare
   Toolkit::ToolManager::instance().addTool(this);
   emit packagesChanged();
 
-  connect(MobileScenePackage::instance(), &MobileScenePackage::isDirectReadSupportedCompleted, this,
+  m_mspkInstanceDirectReadConn = connect(MobileScenePackage::instance(), &MobileScenePackage::isDirectReadSupportedCompleted, this,
           &OpenMobileScenePackageController::handleIsDirectReadSupportedCompleted);
 
-  connect(MobileScenePackage::instance(), &MobileScenePackage::unpackCompleted, this, [this](QUuid, bool success)
+  m_mspkInstanceUnpackConn = connect(MobileScenePackage::instance(), &MobileScenePackage::unpackCompleted, this, [this](QUuid, bool success)
   {
     if (!success)
     {
@@ -92,6 +92,10 @@ OpenMobileScenePackageController::OpenMobileScenePackageController(QObject* pare
  */
 OpenMobileScenePackageController::~OpenMobileScenePackageController()
 {
+  // Disconnect the connections for the MobileScenePackage singleton instance
+  // since these should not outlive the OpenMobileScenePackageController object.
+  disconnect(m_mspkInstanceDirectReadConn);
+  disconnect(m_mspkInstanceUnpackConn);
 }
 
 /*!
@@ -263,15 +267,15 @@ void OpenMobileScenePackageController::handleIsDirectReadSupportedCompleted(QUui
     return;
 
   // Update the model to shoe whether the package requires unpack
-  const auto packageName = findTask.value();
-  m_directReadTasks.erase(findTask);
-  emit busyChanged();
+  const auto& packageName = findTask.value();
 
   m_packagesModel->setRequiresUnpack(packageName, !directReadSupported);
 
   // If the package doesn't need to be unpacked, load it to get it's thumbnail, scenes etc.
   if (directReadSupported)
     loadMobileScenePackage(packageName);
+
+  m_directReadTasks.erase(findTask);
 }
 
 /*!
@@ -368,9 +372,6 @@ void OpenMobileScenePackageController::loadMobileScenePackage(const QString& pac
 
   connect(package, &MobileScenePackage::doneLoading, this, [this, package, packageName](Error e)
   {
-    m_loadingCount--;
-    emit busyChanged();
-
     if (!e.isEmpty())
     {
       qDebug() << packageName << e.message() << e.additionalMessage();
@@ -468,15 +469,6 @@ QString OpenMobileScenePackageController::combinedPackagePath() const
 QAbstractListModel* OpenMobileScenePackageController::packages() const
 {
   return m_packagesModel;
-}
-
-/*!
-  \property
-  \l whether the tool is currently busy (e.g. perfomring a load).
- */
-bool OpenMobileScenePackageController::busy() const
-{
-  return m_loadingCount > 0 || !m_directReadTasks.isEmpty();
 }
 
 /*!

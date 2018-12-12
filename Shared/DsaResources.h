@@ -83,6 +83,7 @@ class DsaResources : public QObject
   Q_PROPERTY(QUrl iconAlertLow READ iconAlertLow CONSTANT)
   Q_PROPERTY(QUrl iconAlertModerate READ iconAlertModerate CONSTANT)
   Q_PROPERTY(QUrl iconLineOfSight READ iconLineOfSight CONSTANT)
+  Q_PROPERTY(QUrl iconOpenScene READ iconOpenScene CONSTANT)
 
 public:
   DsaResources(QObject* parent = nullptr);
@@ -145,6 +146,7 @@ private:
   QUrl iconViewshed() const;
   QUrl iconZoomTo() const;
   QUrl iconLineOfSight() const;
+  QUrl iconOpenScene() const;
 };
 
 } // Dsa

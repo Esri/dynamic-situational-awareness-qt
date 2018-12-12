@@ -31,7 +31,7 @@ Row {
     // Open Scene Tool
     ToolIcon {
         id: packageIcon
-        iconSource: DsaResources.iconChooseBasemap
+        iconSource: DsaResources.iconOpenScene
         toolName: "Open Scene"
         onToolSelected: {
             if (drawer.visible)

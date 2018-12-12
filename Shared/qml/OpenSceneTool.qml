@@ -75,98 +75,101 @@ DsaPanel {
             cellWidth: packagesList.width * 0.5
             cellHeight: cellWidth
 
-            delegate: Rectangle {
-                id: packageCard
-
-                x: packagesList.cellWidth * 0.25
-                y: x
-
-                property variant sceneNamesModel: sceneNames
-                property bool sceneImages: sceneImagesReady
-                property string packageTitleString: packageTitle
-                property string packageDescriptionString: packageDescription
-
+            delegate: Item {
                 width: packagesList.cellWidth
                 height: width
+                Rectangle {
+                    id: packageCard
 
-                border.color: index === packagesList.currentIndex ? Material.accent : Material.background
-                border.width: index === packagesList.currentIndex ? 2 * scaleFactor : 1 * scaleFactor
-                color: Material.background
-                radius: 2 * scaleFactor
-
-                Image {
                     anchors {
                         fill: parent
-                        margins: 4 * scaleFactor
+                        margins: 8 * scaleFactor
                     }
 
-                    source: imageReady ? "image://packages/" + packageName : ""
-                    fillMode: Image.PreserveAspectCrop
-                }
+                    property variant sceneNamesModel: sceneNames
+                    property bool sceneImages: sceneImagesReady
+                    property string packageTitleString: packageTitle
+                    property string packageDescriptionString: packageDescription
 
-                Rectangle {
-                    anchors.centerIn: packageTitleLabel
-                    width: packageTitleLabel.width + (8 * scaleFactor)
-                    height: packageTitleLabel.height + (8 * scaleFactor)
-                    color: Material.primary
-                    opacity: 0.5
+                    border.color: index === packagesList.currentIndex ? Material.accent : Material.background
+                    border.width: index === packagesList.currentIndex ? 2 * scaleFactor : 1 * scaleFactor
+                    color: Material.background
                     radius: 2 * scaleFactor
-                }
 
-                Label {
-                    id: packageTitleLabel
-                    anchors.centerIn: parent
-                    text: packageName
-                    width: parent.width - (16 * scaleFactor)
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
+                    Image {
+                        anchors {
+                            fill: parent
+                            margins: 4 * scaleFactor
+                        }
 
-                    wrapMode: Text.WrapAnywhere
-                    font{
-                        pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                        bold: true
-                    }
-                    color: Material.foreground
-                }
-
-                Label {
-                    id: needsUnpackLabel
-                    anchors {
-                        top: packageTitleLabel.bottom
-                        bottom: parent.bottom
-                        left: parent.left
-                        right: parent.right
+                        source: imageReady ? "image://packages/" + packageName : ""
+                        fillMode: Image.PreserveAspectCrop
                     }
 
-                    visible: requiresUnpack
-                    text: "Needs Unpack"
-
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-
-                    wrapMode: Text.WrapAnywhere
-                    font {
-                        pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                        bold: true
-                    }
-                    color: Material.accent
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    hoverEnabled: true
-
-                    onClicked: {
-                        // If the package has an unpacked version, use that
-                        packageFrame.currentIndex = 1;
-                        toolController.selectPackageName( unpackedName.length > 0 ? unpackedName :
-                                                                                    packageName);
-                        unpackButton.visible = requiresUnpack         
+                    Rectangle {
+                        anchors.centerIn: packageTitleLabel
+                        width: packageTitleLabel.width + (8 * scaleFactor)
+                        height: packageTitleLabel.height + (8 * scaleFactor)
+                        color: Material.primary
+                        opacity: 0.5
+                        radius: 2 * scaleFactor
                     }
 
-                    onHoveredChanged: {
-                        if (containsMouse) {
-                            packagesList.currentIndex = index
+                    Label {
+                        id: packageTitleLabel
+                        anchors.centerIn: parent
+                        text: packageName
+                        width: parent.width - (16 * scaleFactor)
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+
+                        wrapMode: Text.WrapAnywhere
+                        font{
+                            pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                            bold: true
+                        }
+                        color: Material.foreground
+                    }
+
+                    Label {
+                        id: needsUnpackLabel
+                        anchors {
+                            top: packageTitleLabel.bottom
+                            bottom: parent.bottom
+                            left: parent.left
+                            right: parent.right
+                        }
+
+                        visible: requiresUnpack
+                        text: "Needs Unpack"
+
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+
+                        wrapMode: Text.WrapAnywhere
+                        font {
+                            pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                            bold: true
+                        }
+                        color: Material.accent
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        hoverEnabled: true
+
+                        onClicked: {
+                            // If the package has an unpacked version, use that
+                            packageFrame.currentIndex = 1;
+                            toolController.selectPackageName( unpackedName.length > 0 ? unpackedName :
+                                                                                        packageName);
+                            unpackButton.visible = requiresUnpack
+                        }
+
+                        onHoveredChanged: {
+                            if (containsMouse) {
+                                packagesList.currentIndex = index
+                            }
                         }
                     }
                 }
@@ -303,7 +306,7 @@ DsaPanel {
             visible: packageFrame.currentIndex == 1
             property string detailsText: packagesList.currentItem ?
                                              packagesList.currentItem.packageTitleString + ": " + packagesList.currentItem.packageDescriptionString
-                                                                  : ""
+                                           : ""
             anchors.fill: parent
             text: toolController.currentPackageName + (detailsText.length > 2 ? "\n" + detailsText : "")
             wrapMode: Text.WrapAnywhere

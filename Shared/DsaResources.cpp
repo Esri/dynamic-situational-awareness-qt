@@ -494,4 +494,9 @@ QUrl DsaResources::iconLineOfSight() const
   return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/line_of_sight.png"));
 }
 
+QUrl DsaResources::iconOpenScene() const
+{
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_zoomtomapextent_dark.png"));
+}
+
 } // Dsa

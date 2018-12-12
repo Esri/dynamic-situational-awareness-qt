@@ -59,6 +59,7 @@ Handheld {
 
         HomeToolRow  {
             id: homeToolRow
+            isMobile: true
             anchors {
                 verticalCenter: parent.verticalCenter
                 right: parent.right
@@ -423,8 +424,23 @@ Handheld {
                             target: messageFeedsTool
                             visible: true
                         }
+                    },
+                    State {
+                        name: "open scene"
+                        PropertyChanges {
+                            target: openSceneTool
+                            visible: true
+                        }
                     }
                 ]
+
+                OpenSceneTool {
+                    id: openSceneTool
+                    anchors.fill: parent
+                    onSceneSelected: closed();
+                    visible: false
+                    onClosed: drawer.close();
+                }
 
                 BasemapPicker {
                     id: basemapsTool

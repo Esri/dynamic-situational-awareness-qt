@@ -38,10 +38,12 @@
 #include "MarkupController.h"
 #include "MessageFeedsController.h"
 #include "NavigationController.h"
+#include "OpenMobileScenePackageController.h"
 #include "OptionsController.h"
 #include "TableOfContentsController.h"
 #include "ViewedAlertsController.h"
 #include "ViewshedController.h"
+#include "PackageImageProvider.h"
 
 // toolkit headers
 #include "ArcGISCompassController.h"
@@ -137,6 +139,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<Dsa::ContextMenuController>("Esri.DSA", 1, 0, "ContextMenuController");
   qmlRegisterType<Dsa::AnalysisListController>("Esri.DSA", 1, 0, "AnalysisListController");
   qmlRegisterType<Dsa::ObservationReportController>("Esri.DSA", 1, 0, "ObservationReportController");
+  qmlRegisterType<Dsa::OpenMobileScenePackageController>("Esri.DSA", 1, 0, "OpenMobileScenePackageController");
 
   // Register Toolkit Component Types
   ArcGISRuntimeToolkit::registerToolkitTypes();
@@ -144,6 +147,8 @@ int main(int argc, char *argv[])
   // Initialize application view
   QQuickView view;
   view.setResizeMode(QQuickView::SizeRootObjectToView);
+
+  view.engine()->addImageProvider(QStringLiteral("packages"), new Dsa::PackageImageProvider());
 
 #ifndef DEPLOYMENT_BUILD
   // Add the import Path

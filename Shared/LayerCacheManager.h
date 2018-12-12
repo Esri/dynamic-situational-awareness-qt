@@ -50,6 +50,8 @@ public:
   void jsonToLayer(const QJsonObject& jsonObject, const int layerIndex = -1);
   QJsonArray layerJson() const;
 
+  void addExcludedPath(const QString& exludedPath);
+
 signals:
   void layerJsonChanged();
   void jsonToLayerCompleted(Esri::ArcGISRuntime::Layer* layer);
@@ -73,6 +75,7 @@ private:
   AddLocalDataController* m_localDataController = nullptr;
   Esri::ArcGISRuntime::Scene* m_scene = nullptr;
   QHash<int, Esri::ArcGISRuntime::Layer*> m_initialLayerCache;
+  QStringList m_excludedPaths;
 };
 
 } // Dsa

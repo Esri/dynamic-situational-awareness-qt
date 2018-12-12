@@ -28,6 +28,7 @@
 #include "DsaUtility.h"
 #include "LayerCacheManager.h"
 #include "MessageFeedConstants.h"
+#include "OpenMobileScenePackageController.h"
 
 // toolkit headers
 #include "AbstractTool.h"
@@ -85,16 +86,14 @@ DsaController::DsaController(QObject* parent):
 {
   // setup config settings
   setupConfig();
+  setDefaultViewpoint();
   m_dataPath = m_dsaSettings["RootDataDirectory"].toString();
 
   connect(m_scene, &Scene::errorOccurred, this, &DsaController::onError);
 
-  // as tools are added, set the properties
-  connect(&ToolManager::instance(), &ToolManager::toolAdded, this,
-          [this](Esri::ArcGISRuntime::Toolkit::AbstractTool* tool)
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::sceneChanged, this, [this]()
   {
-    if (tool)
-      tool->setProperties(m_dsaSettings);
+    m_scene = ToolResourceProvider::instance()->scene();
   });
 }
 
@@ -122,6 +121,10 @@ Scene* DsaController::scene() const
  */
 void DsaController::init(GeoView* geoView)
 {
+  auto openScenePackageTool = Toolkit::ToolManager::instance().tool<OpenMobileScenePackageController>();
+  if (openScenePackageTool)
+    openScenePackageTool->setProperties(m_dsaSettings);
+
   Toolkit::ToolResourceProvider::instance()->setScene(m_scene);
   Toolkit::ToolResourceProvider::instance()->setGeoView(geoView);
 
@@ -130,11 +133,16 @@ void DsaController::init(GeoView* geoView)
 
   m_cacheManager = new LayerCacheManager(this);
 
+  if (openScenePackageTool)
+    m_cacheManager->addExcludedPath(openScenePackageTool->packageDataPath());
+
   // connect all tool signals
   for(Toolkit::AbstractTool* abstractTool : Toolkit::ToolManager::instance())
   {
     if (!abstractTool)
       continue;
+
+    abstractTool->setProperties(m_dsaSettings);
 
     connect(abstractTool, &Toolkit::AbstractTool::errorOccurred, this, &DsaController::onError);
     connect(abstractTool, &Toolkit::AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
@@ -253,6 +261,79 @@ void DsaController::onPropertyChanged(const QString& propertyName, const QVarian
 /*!
  * \internal
  */
+bool DsaController::setInitialLocationFromConfig()
+{
+  // Attempt to set the scene's initialViewpoint from JSON configuration
+  const auto findIt = m_dsaSettings.constFind(QStringLiteral("InitialLocation"));
+
+  // If no initial location is specified, default to Monterey, CA
+  if (findIt == m_dsaSettings.constEnd())
+    return false;
+
+  const QVariant initialLocVar = findIt.value();
+  if (initialLocVar.isNull())
+    return false;
+
+  const QJsonObject initialLocation = QJsonObject::fromVariantMap(initialLocVar.toMap());
+  if (initialLocation.isEmpty())
+    return false;
+
+  // set the initial center Point from JSON if it is found
+  auto centerIt = initialLocation.find("center");
+  if (centerIt == initialLocation.constEnd())
+    return false;
+
+  const QJsonValue centerVal = centerIt.value();
+  const QJsonDocument centerDoc = QJsonDocument(centerVal.toObject());
+  const auto newCenter = Point::fromJson(centerDoc.toJson(QJsonDocument::JsonFormat::Compact));
+
+  // set the initial distance from JSON if it is found (if not default to 5000)
+  auto distanceIt = initialLocation.find("distance");
+  double initialDistance = distanceIt != initialLocation.constEnd() ? distanceIt.value().toDouble(5000.0)
+                                                                    : 5000.0;
+
+  // set the initial heading from JSON if it is found (if not default to 0.0)
+  auto headingIt = initialLocation.find("heading");
+  double initialHeading = headingIt != initialLocation.constEnd() ? headingIt.value().toDouble(0.0)
+                                                                  : 0.0;
+
+  // set the initial pitch from JSON if it is found (if not default to 0.0)
+  auto pitchIt = initialLocation.find("pitch");
+  double initialPitch = pitchIt != initialLocation.constEnd() ? pitchIt.value().toDouble(0.0)
+                                                              : 0.0;
+
+  // set the initial roll from JSON if it is found (if not default to 0.0)
+  auto rollIt = initialLocation.find("roll");
+  double initialRoll = rollIt != initialLocation.constEnd() ? rollIt.value().toDouble(0.0)
+                                                            : 0.0;
+
+  // Set the initial viewpoint
+  const Camera initCamera(newCenter, initialDistance, initialHeading, initialPitch, initialRoll);
+  Viewpoint initViewpoint(newCenter, initCamera);
+  m_scene->setInitialViewpoint(initViewpoint);
+
+  return true;
+}
+
+/*!
+ * \internal
+ */
+void DsaController::setDefaultViewpoint()
+{
+  // If there is no configuration setting, default the initial viewpoint to Monterey, CA
+  // NOTE that if using a MobileScenePackage, this will be replaced with the
+  // selected scene's initialViewpoint
+  if (!setInitialLocationFromConfig())
+  {
+    const Camera initCamera(DsaUtility::montereyCA(), 5000.0, 0.0, 75.0, 0.0);
+    Viewpoint initViewpoint(DsaUtility::montereyCA(), initCamera);
+    m_scene->setInitialViewpoint(initViewpoint);
+  }
+}
+
+/*!
+ * \internal
+ */
 void DsaController::setupConfig()
 {
   // create the default settings map
@@ -276,24 +357,6 @@ void DsaController::setupConfig()
     for (const QString& key : allKeys)
       m_dsaSettings[key] = settings.value(key);
   }
-}
-
-/*! \brief internal
- *
- * Writes the default initial location (in this app Monterey California)
- * as JSON to the settings map.
- */
-void DsaController::writeDefaultInitialLocation()
-{
-  QJsonObject initialLocationJson;
-  const QString centerString = DsaUtility::montereyCA().toJson();
-  const QJsonDocument centerDoc = QJsonDocument::fromJson(centerString.toLatin1());
-  initialLocationJson.insert( QStringLiteral("center"), centerDoc.object());
-  initialLocationJson.insert( QStringLiteral("distance"), 5000.0);
-  initialLocationJson.insert( QStringLiteral("heading"), 0.0);
-  initialLocationJson.insert( QStringLiteral("pitch"), 75.0);
-  initialLocationJson.insert( QStringLiteral("roll"), 0.0);
-  m_dsaSettings[QStringLiteral("InitialLocation")] = initialLocationJson.toVariantMap();
 }
 
 /*! \brief internal
@@ -439,7 +502,6 @@ void DsaController::createDefaultSettings()
   m_dsaSettings["GpxFile"] = QString("%1/MontereyMounted.gpx").arg(m_dsaSettings["SimulationDirectory"].toString());
   m_dsaSettings["SimulateLocation"] = QStringLiteral("true");
   writeDefaultMessageFeeds();
-  writeDefaultInitialLocation();
   m_dsaSettings[Toolkit::CoordinateConversionConstants::COORDINATE_FORMAT_PROPERTY] = Toolkit::CoordinateConversionConstants::MGRS_FORMAT;
   m_dsaSettings[AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME] = AppConstants::UNIT_METERS;
   m_dsaSettings["UseGpsForElevation"] = QStringLiteral("true");
@@ -447,6 +509,7 @@ void DsaController::createDefaultSettings()
   markupJson.insert(QStringLiteral("port"), 12345);
   m_dsaSettings[QStringLiteral("MarkupConfig")] = markupJson;
   writeDefaultConditions();
+  m_dsaSettings[OpenMobileScenePackageController::PACKAGE_DIRECTORY_PROPERTYNAME] = QString("%1/Packages").arg(m_dsaSettings["RootDataDirectory"].toString());
 }
 
 /*!

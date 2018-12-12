@@ -128,6 +128,25 @@ Row {
             }
         },
         State {
+            name: basemapIcon.toolName
+            PropertyChanges {
+                target: basemapIcon
+                selected: selected
+            }
+            PropertyChanges {
+                target: tocIcon
+                selected: selected
+            }
+            PropertyChanges {
+                target: coordinateConversionIcon
+                selected: selected
+            }
+            PropertyChanges {
+                target: identifyIcon
+                selected: selected
+            }
+        },
+        State {
             name: "clear"
             PropertyChanges {
                 target: identifyIcon

@@ -45,7 +45,6 @@ class NavigationController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
   Q_PROPERTY(double cameraMoveDistance READ cameraMoveDistance WRITE setCameraMoveDistance NOTIFY cameraMoveDistanceChanged)
 
 public:
-  static const QString INITIAL_LOCATION_PROPERTYNAME;
 
   explicit NavigationController(QObject* parent = nullptr);
   ~NavigationController();
@@ -65,16 +64,6 @@ public:
   void setZoomFactor(double value);
   double cameraMoveDistance() const;
   void setCameraMoveDistance(double value);
-  Esri::ArcGISRuntime::Point initialCenter() const;
-  void setInitialCenter(const Esri::ArcGISRuntime::Point &initialCenter);
-  double initialDistance() const;
-  void setInitialDistance(double initialDistance);
-  double initialHeading() const;
-  void setInitialHeading(double initialHeading);
-  double initialPitch() const;
-  void setInitialPitch(double initialPitch);
-  double initialRoll() const;
-  void setInitialRoll(double initialRoll);
 
 signals:
   void verticalChanged();
@@ -84,7 +73,6 @@ signals:
 
 private slots:
   void updateGeoView();
-  void setInitialLocation();
 
 private:
   enum class Mode
@@ -103,11 +91,6 @@ private:
 
   Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
   Esri::ArcGISRuntime::SceneView* m_sceneView = nullptr;
-  Esri::ArcGISRuntime::Point m_initialCenter;
-  double m_initialDistance = 5000.0;
-  double m_initialHeading = 0.0;
-  double m_initialPitch = 75.0;
-  double m_initialRoll = 0.0;
   bool m_is3d = false;
   bool m_isCameraVertical = false;
   double m_zoomFactor = 1.0;

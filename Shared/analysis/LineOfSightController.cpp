@@ -107,10 +107,26 @@ LineOfSightController::LineOfSightController(QObject* parent):
   });
   connect(resourecProvider, &Toolkit::ToolResourceProvider::sceneChanged, this, [this]()
   {
-    onOperationalLayersChanged(Toolkit::ToolResourceProvider::instance()->operationalLayers());
+    onOperationalLayersChanged();
+
+    // this tool must be in the tool manager before adding analyses below
+    Toolkit::ToolManager::instance().addTool(this);
+
+    SceneView* sceneView = dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView());
+    if (!sceneView)
+      return;
+
+    if (m_lineOfSightOverlay)
+    {
+      delete m_lineOfSightOverlay;
+      m_lineOfSightOverlay = new AnalysisOverlay(this);
+    }
+
+    m_geoView = sceneView;
+    sceneView->analysisOverlays()->append(m_lineOfSightOverlay);
   });
 
-  onOperationalLayersChanged(Toolkit::ToolResourceProvider::instance()->operationalLayers());
+  onOperationalLayersChanged();
 
   // this tool must be in the tool manager before adding analyses below
   Toolkit::ToolManager::instance().addTool(this);
@@ -178,8 +194,9 @@ void LineOfSightController::onGeoViewChanged(GeoView* geoView)
   Any \l Esri::ArcGISRuntime::FeatureLayer objects will be added to the list of
   \l overlayNames, to be used as the targets for Line of Sight analysis.
  */
-void LineOfSightController::onOperationalLayersChanged(LayerListModel* operationalLayers)
+void LineOfSightController::onOperationalLayersChanged()
 {
+  Esri::ArcGISRuntime::LayerListModel* operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
   // if there are no layers, clear the overlays list
   if (!operationalLayers)
   {
@@ -190,11 +207,12 @@ void LineOfSightController::onOperationalLayersChanged(LayerListModel* operation
   }
 
   // lambda to update the list of overlays
-  auto updateNames = [this, operationalLayers]()
+  auto updateNames = [this]()
   {
     QStringList overlayNames;
     m_overlays.clear();
 
+    Esri::ArcGISRuntime::LayerListModel* operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
     if (operationalLayers)
     {
       const int opLayersCount = operationalLayers->rowCount();
@@ -211,9 +229,15 @@ void LineOfSightController::onOperationalLayersChanged(LayerListModel* operation
         // if the feature layer is not loaded, react to the loaded signal and update the list
         if (featLayer->loadStatus() != LoadStatus::Loaded)
         {
-          connect(featLayer, &FeatureLayer::doneLoading, this, [this, operationalLayers]()
+          connect(featLayer, &FeatureLayer::doneLoading, this, [this](Error e)
           {
-            onOperationalLayersChanged(operationalLayers);
+            if (!e.isEmpty())
+            {
+              emit errorOccurred(e);
+              return;
+            }
+
+            onOperationalLayersChanged();
           });
         }
         else

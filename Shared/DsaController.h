@@ -60,10 +60,11 @@ signals:
   void errorOccurred(const QString& message, const QString& additionalMessage);
 
 private:
+  bool setInitialLocationFromConfig();
+  void setDefaultViewpoint();
   void setupConfig();
   void createDefaultSettings();
   void saveSettings();
-  void writeDefaultInitialLocation();
   void writeDefaultLocalDataPaths();
   void writeDefaultConditions();
   void writeDefaultMessageFeeds();

@@ -19,7 +19,7 @@ import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
 import QtQuick.Window 2.2
 import Esri.DSA 1.0
-import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.4
+import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.5
 
 Row {
     id: mapToolRow

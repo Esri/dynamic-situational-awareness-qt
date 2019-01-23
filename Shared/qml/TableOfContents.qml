@@ -169,6 +169,8 @@ DsaPanel {
                     return DsaResources.iconRaster;
                 case TableOfContentsController.FreehandMarkup:
                     return DsaResources.iconSketch;
+                case TableOfContentsController.Kml:
+                    return DsaResources.iconKml;
                 }
             }
         }

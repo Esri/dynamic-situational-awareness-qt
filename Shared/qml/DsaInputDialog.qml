@@ -26,7 +26,7 @@ Dialog {
     property alias inputLabel: inputLabelText.text
     property alias inputPlaceholderText: nameText.placeholderText
     property alias userInputText: nameText.text
-    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
     property alias titleText: titleLabel.text
     visible: false
     x: appRoot.width / 2 - width / 2

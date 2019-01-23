@@ -14,36 +14,45 @@
  *  limitations under the License.
  ******************************************************************************/
 
-#ifndef GEOELEMENTALERTTARGET_H
-#define GEOELEMENTALERTTARGET_H
+#ifndef GEOELEMENTUTILS_H
+#define GEOELEMENTUTILS_H
 
-// example app headers
-#include "AlertTarget.h"
+// Qt headers
+#include <QList>
+#include <QObject>
 
 namespace Esri {
 namespace ArcGISRuntime {
-class GeoElement;
+  class GeoElement;
 }
 }
 
 namespace Dsa {
 
-class GeoElementSignaler;
-class GeoElementAlertTarget : public AlertTarget
+class GeoElementSignaler : public QObject
 {
   Q_OBJECT
 
 public:
-  explicit GeoElementAlertTarget(Esri::ArcGISRuntime::GeoElement* geoElement);
-  ~GeoElementAlertTarget();
+  GeoElementSignaler(Esri::ArcGISRuntime::GeoElement* geoElement, QObject* parent = nullptr);
+  ~GeoElementSignaler();
 
-  QList<Esri::ArcGISRuntime::Geometry> targetGeometries(const Esri::ArcGISRuntime::Envelope& targetArea) const override;
-  QVariant targetValue() const override;
+  Esri::ArcGISRuntime::GeoElement* geoElement() const;
+
+signals:
+  void geometryChanged();
 
 private:
-  GeoElementSignaler* m_geoElementSignaler = nullptr;
+  Esri::ArcGISRuntime::GeoElement* m_geoElement = nullptr;
 };
+
+namespace GeoElementUtils
+{
+  void setParent(const QList<Esri::ArcGISRuntime::GeoElement*>& geoElements, QObject* parent);
+  void setParent(Esri::ArcGISRuntime::GeoElement* geoElement, QObject* parent);
+  QObject* toQObject(Esri::ArcGISRuntime::GeoElement* geoElement);
+}
 
 } // Dsa
 
-#endif // GEOELEMENTALERTTARGET_H
+#endif // GEOELEMENTUTILS_H

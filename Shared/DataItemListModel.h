@@ -37,6 +37,7 @@ enum class DataType
   Markup,
   GeoPackage,
   All,
+  Kml,
   Unknown = -1
 };
 

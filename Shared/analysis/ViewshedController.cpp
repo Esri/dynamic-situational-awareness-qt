@@ -28,6 +28,7 @@
 #include "LocationDisplay3d.h"
 #include "LocationViewshed360.h"
 #include "ViewshedListModel.h"
+#include "GeoElementUtils.h"
 
 // toolkit headers
 #include "ToolManager.h"
@@ -336,8 +337,8 @@ void ViewshedController::addGeoElementViewshed360(GeoElement* geoElement)
   auto geoElementViewshed360 = new GeoElementViewshed360(geoElement, m_analysisOverlay, QString(), QString(), this);
   s_viewshedCount++;
   geoElementViewshed360->setName(QString("Viewshed %1").arg(QString::number(s_viewshedCount)));
-  if (!geoElement->parent())
-    geoElement->setParent(geoElementViewshed360);
+  if (!GeoElementUtils::toQObject(geoElement)->parent())
+    GeoElementUtils::setParent(geoElement, geoElementViewshed360);
 
   geoElementViewshed360->setOffsetZ(c_defaultOffsetZ);
   m_analysisOverlay->analyses()->append(geoElementViewshed360->viewshed());
@@ -781,7 +782,7 @@ void ViewshedController::disconnectActiveViewshedSignals()
 {
   if (!m_activeViewshedConns.isEmpty())
   {
-    for (auto conn : m_activeViewshedConns)
+    for (const auto& conn : qAsConst(m_activeViewshedConns))
     {
       disconnect(conn);
     }

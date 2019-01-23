@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -18,6 +19,8 @@
 #include "pch.hpp"
 
 #include "GeoElementAlertTarget.h"
+
+#include "GeoElementUtils.h"
 
 // C++ API headers
 #include "GeoElement.h"
@@ -43,10 +46,10 @@ namespace Dsa {
   \brief Constructor taking an \l Esri::ArcGISRuntime::GeoElement (\a geoElement).
  */
 GeoElementAlertTarget::GeoElementAlertTarget(GeoElement* geoElement):
-  AlertTarget(geoElement),
-  m_geoElement(geoElement)
+  AlertTarget(GeoElementUtils::toQObject(geoElement)),
+  m_geoElementSignaler(new GeoElementSignaler(geoElement, this))
 {
-  connect(m_geoElement, &GeoElement::geometryChanged, this, &GeoElementAlertTarget::dataChanged);
+  connect(m_geoElementSignaler, &GeoElementSignaler::geometryChanged, this, &GeoElementAlertTarget::dataChanged);
 }
 
 /*!
@@ -54,7 +57,6 @@ GeoElementAlertTarget::GeoElementAlertTarget(GeoElement* geoElement):
  */
 GeoElementAlertTarget::~GeoElementAlertTarget()
 {
-
 }
 
 /*!
@@ -64,7 +66,7 @@ GeoElementAlertTarget::~GeoElementAlertTarget()
  */
 QList<Geometry> GeoElementAlertTarget::targetGeometries(const Envelope&) const
 {
-  return QList<Geometry>{m_geoElement->geometry()};
+  return QList<Geometry>{m_geoElementSignaler->geoElement()->geometry()};
 }
 
 /*!

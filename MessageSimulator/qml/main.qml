@@ -27,7 +27,7 @@ ApplicationWindow {
     height: 600
     title: qsTr("Message Simulator")
 
-    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
 
     MessageSimulatorController {
         id: messageSimulatorController

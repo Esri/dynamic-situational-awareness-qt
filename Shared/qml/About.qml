@@ -23,7 +23,7 @@ import Esri.DSA 1.0
 
 Item {
     id: aboutRoot
-    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
 
     MouseArea {
         anchors.fill: parent
@@ -53,9 +53,9 @@ Item {
                 spacing: 25 * scaleFactor
 
                 Text {
-                    anchors.verticalCenter: parent.verticalCenter
                     text: "Dynamic\nSituational\nAwareness"
                     color: Material.foreground
+                    Layout.alignment: Qt.AlignVCenter
                     Layout.leftMargin: 30 * scaleFactor
                     font {
                         pixelSize: 24 * scaleFactor
@@ -64,13 +64,13 @@ Item {
                 }
 
                 Image {
-                    anchors.verticalCenter: parent.verticalCenter
                     source: DsaResources.iconAppLogo
                     width: 64 * scaleFactor
                     height: width
                     Layout.maximumHeight: height
                     Layout.maximumWidth: width
                     Layout.rightMargin: 30 * scaleFactor
+                    Layout.alignment: Qt.AlignVCenter
                 }
             }
 
@@ -105,7 +105,7 @@ Item {
 
             Text {
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: "Built with ArcGIS Runtime SDK 100.3 for Qt"
+                text: "Built with ArcGIS Runtime SDK 100.4 for Qt"
                 color: Material.foreground
                 font {
                     pixelSize: 12 * scaleFactor
@@ -121,6 +121,10 @@ Item {
                 margins: 10 * scaleFactor
             }
             text: "Close"
+            font {
+                pixelSize: 12 * scaleFactor
+                family: DsaStyles.fontFamily
+            }
             onClicked: aboutRoot.visible = false;
         }
     }

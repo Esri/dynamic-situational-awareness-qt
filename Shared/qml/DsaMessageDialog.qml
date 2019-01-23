@@ -23,7 +23,7 @@ import QtGraphicalEffects 1.0
 import Esri.DSA 1.0
 
 Dialog {
-    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
 
     visible: false
     x: appRoot.width / 2 - width / 2

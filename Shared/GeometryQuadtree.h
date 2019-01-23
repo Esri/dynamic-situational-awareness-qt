@@ -36,6 +36,8 @@ class Point;
 
 namespace Dsa {
 
+class GeoElementSignaler;
+
 class GeometryQuadtree : public QObject
 {
   Q_OBJECT
@@ -65,7 +67,7 @@ private:
 
   int m_maxLevels;
   std::unique_ptr<QuadTree> m_tree;
-  QHash<int, Esri::ArcGISRuntime::GeoElement*> m_elementStorage;
+  QHash<int, GeoElementSignaler*> m_elementStorage;
   int m_nextKey = 0;
 };
 

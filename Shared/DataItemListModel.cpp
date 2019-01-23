@@ -181,7 +181,7 @@ DataItemListModel::DataItem::DataItem(const QString& fullPath):
 
   // determine the layer type
   QString fileExtension = fileInfo.completeSuffix();
-  QStringList rasterExtensions{"img", "tif", "tiff", "i1", "dt0", "dt1", "dt2", "tc2", "geotiff", "hr1", "jpg", "jpeg", "jp2", "ntf", "png", "i21"};
+  QStringList rasterExtensions{"img", "tif", "tiff", "i1", "dt0", "dt1", "dt2", "tc2", "geotiff", "hr1", "jpg", "jpeg", "jp2", "ntf", "png", "i21", "sid"};
   if (fileExtension == "geodatabase")
     dataType = DataType::Geodatabase;
   else if (fileExtension.compare("tpk", Qt::CaseInsensitive) == 0)
@@ -196,6 +196,8 @@ DataItemListModel::DataItem::DataItem(const QString& fullPath):
     dataType = DataType::VectorTilePackage;
   else if (fileExtension.compare("markup", Qt::CaseInsensitive) == 0)
     dataType = DataType::Markup;
+  else if ((fileExtension.compare("kml", Qt::CaseInsensitive) == 0) || (fileExtension.compare("kmz", Qt::CaseInsensitive) == 0))
+    dataType = DataType::Kml;
   else if (rasterExtensions.contains(fileExtension.toLower()))
     dataType = DataType::Raster;
   else

@@ -28,6 +28,7 @@
 #include "LayerResultsManager.h"
 #include "LineOfSightController.h"
 #include "ViewshedController.h"
+#include "GeoElementUtils.h"
 
 // toolkit headers
 #include "CoordinateConversionController.h"
@@ -210,8 +211,8 @@ void ContextMenuController::onIdentifyLayersCompleted(const QUuid& taskId, const
       continue;
 
     auto geoElements = res->geoElements();
-    for(GeoElement* geoElement : qAsConst(geoElements))
-      geoElement->setParent(this); // set the GeoElements to be managed by the tool
+    // set the GeoElements to be managed by the tool
+    GeoElementUtils::setParent(geoElements, this);
 
     // add the geoElements to the context hash using the layer name as the key
     m_contextFeatures.insert(res->layerContent()->name(), geoElements);
@@ -252,7 +253,7 @@ void ContextMenuController::onIdentifyGraphicsOverlaysCompleted(const QUuid& tas
     for(; gIt != gEnd; ++gIt)
     {
       GeoElement* geoElement = *gIt;
-      geoElement->setParent(this); // set the GeoElements to be managed by the tool
+      GeoElementUtils::setParent(geoElement, this); // set the GeoElements to be managed by the tool
       geoElements.append(geoElement);
     }
 

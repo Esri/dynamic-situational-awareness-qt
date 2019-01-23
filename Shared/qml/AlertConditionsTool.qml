@@ -28,7 +28,7 @@ DsaPanel {
     property bool isMobile
     property alias pickMode: toolController.pickMode
     property bool  toolActive: toolController.active
-    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
 
     AlertConditionsController {
         id: toolController

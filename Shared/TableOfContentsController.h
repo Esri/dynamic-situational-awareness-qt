@@ -50,7 +50,8 @@ public:
     Polylines = 1,
     Polygons = 2,
     Raster = 3,
-    FreehandMarkup = 4
+    FreehandMarkup = 4,
+    Kml = 5
   };
   Q_ENUM(LayerGeometryType)
 

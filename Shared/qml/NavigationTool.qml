@@ -22,7 +22,7 @@ import QtQuick.Controls.Material 2.2
 import Esri.DSA 1.0
 
 Item {
-    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" ? 96 : 72)
+    property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
 
     NavigationController {
         id: navController

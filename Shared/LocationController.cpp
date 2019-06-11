@@ -29,7 +29,6 @@
 #include "ToolResourceProvider.h"
 
 // C++ API headers
-#include "DistanceCompositeSceneSymbol.h"
 #include "GraphicsOverlay.h"
 #include "ModelSceneSymbol.h"
 #include "Point.h"
@@ -397,25 +396,9 @@ void LocationController::updateGeoView()
     ModelSceneSymbol* modelSceneSymbol = new ModelSceneSymbol(modelPath, this);
     modelSceneSymbol->setWidth(symbolSize);
     modelSceneSymbol->setDepth(symbolSize);
+    modelSceneSymbol->setSymbolSizeUnits(SymbolSizeUnits::DIPs);
 
-    DistanceCompositeSceneSymbol* distanceCompSymbol = new DistanceCompositeSceneSymbol(this);
-    distanceCompSymbol->ranges()->append(new DistanceSymbolRange(modelSceneSymbol, 0.0, 1000.0, this));
-
-    float rangeSize = symbolSize;
-    for (double i = 1000.0; i < maxRange; i *= rangeMultiplier)
-    {
-      ModelSceneSymbol* rangeSym = new ModelSceneSymbol(modelPath, this);
-      rangeSize *= static_cast<float>(rangeMultiplier);
-      rangeSym->setWidth(rangeSize);
-      rangeSym->setDepth(rangeSize);
-
-      if (i * rangeMultiplier >= maxRange)
-        distanceCompSymbol->ranges()->append(new DistanceSymbolRange(rangeSym, i, 0.0, this));
-      else
-        distanceCompSymbol->ranges()->append(new DistanceSymbolRange(rangeSym, i, i * rangeMultiplier, this));
-    }
-
-    m_locationDisplay3d->setDefaultSymbol(distanceCompSymbol);
+    m_locationDisplay3d->setDefaultSymbol(modelSceneSymbol);
   }
 }
 

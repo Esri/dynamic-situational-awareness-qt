@@ -83,7 +83,6 @@ Rectangle {
             horizontalCenter: conditionFrame.horizontalCenter
             margins: 8 * scaleFactor
         }
-        width: nextButton.width
         count: conditionFrame.count
         currentIndex: conditionFrame.currentIndex
     }

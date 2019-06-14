@@ -28,21 +28,6 @@ Row {
     spacing: 10 * scaleFactor
     visible: categoryToolbar.state === "home"
 
-    // Open Scene Tool
-    ToolIcon {
-        id: packageIcon
-        iconSource: DsaResources.iconOpenScene
-        toolName: "Open Scene"
-        onToolSelected: {
-            if (drawer.visible)
-                drawer.close();
-            else {
-                toolRect.state = "open scene";
-                drawer.open();
-            }
-        }
-    }
-
     Image {
         id: optionsIcon
         visible: isMobile

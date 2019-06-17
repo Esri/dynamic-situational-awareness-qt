@@ -81,10 +81,10 @@ private:
   QVariantMap m_initialSettings;
   QMetaObject::Connection m_layerAddedConnection;
   QMetaObject::Connection m_dataChangedConnection;
-  QMetaObject::Connection m_LayerRemovedConnection;
-  QMetaObject::Connection m_LayoutChangedConnection;
-  QMetaObject::Connection m_ModelResetConnection;
-  QMetaObject::Connection m_LayerCreatedConnection;
+  QMetaObject::Connection m_layerRemovedConnection;
+  QMetaObject::Connection m_layoutChangedConnection;
+  QMetaObject::Connection m_modelResetConnection;
+  QMetaObject::Connection m_layerCreatedConnection;
 };
 
 } // Dsa

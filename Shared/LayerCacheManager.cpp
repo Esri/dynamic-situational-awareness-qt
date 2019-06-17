@@ -84,6 +84,7 @@ LayerCacheManager::LayerCacheManager(QObject* parent) :
   // connect to new scene for cases where a new scene is set on the SceneView (via MobileScenePackage)
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::sceneChanged, this, [this]()
   {
+    qDebug() << "scene changed";
     m_scene = Toolkit::ToolResourceProvider::instance()->scene();
     connectSignals();
 
@@ -204,7 +205,6 @@ void LayerCacheManager::jsonToLayer(const QJsonObject& jsonObject, const int lay
 
   const QString layerType = jsonObject.value(layerTypeKey).toString();
   const QString layerPath = jsonObject.value(layerPathKey).toString();
-  qDebug() << "LAYER PATH" << layerPath;
   const bool layerVisible = jsonObject.value(layerVisibleKey).toString() == "true";
   const int layerId = jsonObject.value(layerIdKey).toString().toInt();
 
@@ -385,32 +385,35 @@ void LayerCacheManager::connectSignals()
     if (m_layerAddedConnection)
       disconnect(m_layerAddedConnection);
 
-    if (m_LayerRemovedConnection)
-      disconnect(m_LayerRemovedConnection);
+    if (m_layerRemovedConnection)
+      disconnect(m_layerRemovedConnection);
 
-    if (m_LayoutChangedConnection)
-      disconnect(m_LayoutChangedConnection);
+    if (m_layoutChangedConnection)
+      disconnect(m_layoutChangedConnection);
 
-    if (m_ModelResetConnection)
-      disconnect(m_ModelResetConnection);
+    if (m_modelResetConnection)
+      disconnect(m_modelResetConnection);
 
     // connect signals
     m_dataChangedConnection = connect(m_scene->operationalLayers(), &LayerListModel::dataChanged, this, &LayerCacheManager::onLayerListChanged); // layer objects have been added or changed
     m_layerAddedConnection = connect(m_scene->operationalLayers(), &LayerListModel::layerAdded, this, &LayerCacheManager::onLayerListChanged); // layer objects have been added
-    m_LayerRemovedConnection = connect(m_scene->operationalLayers(), &LayerListModel::layerRemoved, this, &LayerCacheManager::onLayerListChanged); // layer has been removed
-    m_LayoutChangedConnection = connect(m_scene->operationalLayers(), &LayerListModel::layoutChanged, this, &LayerCacheManager::onLayerListChanged); // order changed
-    m_ModelResetConnection = connect(m_scene->operationalLayers(), &LayerListModel::modelReset, this, &LayerCacheManager::onLayerListChanged); // order changed
+    m_layerRemovedConnection = connect(m_scene->operationalLayers(), &LayerListModel::layerRemoved, this, &LayerCacheManager::onLayerListChanged); // layer has been removed
+    m_layoutChangedConnection = connect(m_scene->operationalLayers(), &LayerListModel::layoutChanged, this, &LayerCacheManager::onLayerListChanged); // order changed
+    m_modelResetConnection = connect(m_scene->operationalLayers(), &LayerListModel::modelReset, this, &LayerCacheManager::onLayerListChanged); // order changed
   }
 
   if (m_localDataController)
   {
     // disconnect
-    if (m_LayerCreatedConnection)
-      disconnect(m_LayerCreatedConnection);
+    if (m_layerCreatedConnection)
+      disconnect(m_layerCreatedConnection);
+
+    m_initialLayerCache.clear();
 
     // cache the created layers
-    m_LayerCreatedConnection = connect(m_localDataController, &AddLocalDataController::layerCreated, this, [this](int layerIndex, Layer* layer)
+    m_layerCreatedConnection = connect(m_localDataController, &AddLocalDataController::layerCreated, this, [this](int layerIndex, Layer* layer)
     {
+      qDebug() << "layer created";
       m_scene = Toolkit::ToolResourceProvider::instance()->scene();
       m_initialLayerCache.insert(layerIndex, layer);
       const int layerCount = m_inputLayerJsonArray.size();

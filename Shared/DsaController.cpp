@@ -125,16 +125,15 @@ void DsaController::init(GeoView* geoView)
   if (openScenePackageTool)
     openScenePackageTool->setProperties(m_dsaSettings);
 
+  m_cacheManager = new LayerCacheManager(this);
+  if (openScenePackageTool)
+    m_cacheManager->addExcludedPath(openScenePackageTool->packageDataPath());
+
   Toolkit::ToolResourceProvider::instance()->setScene(m_scene);
   Toolkit::ToolResourceProvider::instance()->setGeoView(geoView);
 
   // set the selection color for graphics and features
   geoView->setSelectionProperties(SelectionProperties(Qt::red));
-
-  m_cacheManager = new LayerCacheManager(this);
-
-  if (openScenePackageTool)
-    m_cacheManager->addExcludedPath(openScenePackageTool->packageDataPath());
 
   // connect all tool signals
   for(Toolkit::AbstractTool* abstractTool : Toolkit::ToolManager::instance())

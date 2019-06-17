@@ -60,6 +60,8 @@ private slots:
   void onLayerListChanged();
 
 private:
+  void connectSignals();
+
   static const QString LAYERS_PROPERTYNAME;
   static const QString ELEVATION_PROPERTYNAME;
   static const QString layerPathKey;
@@ -76,6 +78,13 @@ private:
   Esri::ArcGISRuntime::Scene* m_scene = nullptr;
   QHash<int, Esri::ArcGISRuntime::Layer*> m_initialLayerCache;
   QStringList m_excludedPaths;
+  QVariantMap m_initialSettings;
+  QMetaObject::Connection m_layerAddedConnection;
+  QMetaObject::Connection m_dataChangedConnection;
+  QMetaObject::Connection m_LayerRemovedConnection;
+  QMetaObject::Connection m_LayoutChangedConnection;
+  QMetaObject::Connection m_ModelResetConnection;
+  QMetaObject::Connection m_LayerCreatedConnection;
 };
 
 } // Dsa

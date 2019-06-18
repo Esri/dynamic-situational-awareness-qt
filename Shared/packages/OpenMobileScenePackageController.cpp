@@ -162,7 +162,7 @@ void OpenMobileScenePackageController::findPackage()
   }
   else if (packagePath.endsWith(MSPK_EXTENSION))
   {
-    // the package is an .mspk archive file - eheck if it can be read directly
+    // the package is an .mspk archive file - check if it can be read directly
     const auto taskWatcher = MobileScenePackage::instance()->isDirectReadSupported(packagePath);
     m_directReadTasks.insert(taskWatcher.taskId(), m_currentPackageName);
   }
@@ -209,6 +209,9 @@ void OpenMobileScenePackageController::selectPackageName(const QString& newPacka
 {
   if (!setCurrentPackageName(newPackageName))
     return;
+
+  // user selected the package
+  m_userSelected = true;
 
   // reset the scene index to -1
   setCurrentSceneIndex(-1);

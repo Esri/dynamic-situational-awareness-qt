@@ -22,6 +22,7 @@
 
 // example app headers
 #include "AddLocalDataController.h"
+#include "OpenMobileScenePackageController.h"
 #include "MarkupLayer.h"
 
 // toolkit headers
@@ -84,12 +85,18 @@ LayerCacheManager::LayerCacheManager(QObject* parent) :
   // connect to new scene for cases where a new scene is set on the SceneView (via MobileScenePackage)
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::sceneChanged, this, [this]()
   {
-    qDebug() << "scene changed";
     m_scene = Toolkit::ToolResourceProvider::instance()->scene();
+    m_layers = QJsonArray();
+    m_inputLayerJsonArray = QJsonArray();
+    m_initialLayerCache.clear();
     connectSignals();
 
-    // NOTE - Is this what we should do? Essentially re-add the initial layers every time the scene changes?
-    // TODO breakout
+    // only add initial layers on initial load. Once the user selects a new scene, the layer list will be cleared
+    auto mobileSceneTool = Toolkit::ToolManager::instance().tool<OpenMobileScenePackageController>();
+    if (mobileSceneTool->userSelected())
+      return;
+
+    // If this is the initial load of a MSPK Scene, add additional layers
     const QVariant layersData = m_initialSettings.value(LAYERS_PROPERTYNAME);
     const auto layersList = layersData.toList();
     m_inputLayerJsonArray = QJsonArray::fromVariantList(layersList);
@@ -111,7 +118,6 @@ LayerCacheManager::LayerCacheManager(QObject* parent) :
 
       layerIndex++;
     };
-    // TODO End breakout
   });
 
   // connect to the initial default scene created in code
@@ -143,7 +149,6 @@ void LayerCacheManager::setProperties(const QVariantMap& properties)
   if (m_initialLoadCompleted || !m_localDataController)
     return;
 
-  // TODO - Should we do this? Cache the initial values
   m_initialSettings = properties;
   const QVariant layersData = properties.value(LAYERS_PROPERTYNAME);
   const auto layersList = layersData.toList();
@@ -413,7 +418,6 @@ void LayerCacheManager::connectSignals()
     // cache the created layers
     m_layerCreatedConnection = connect(m_localDataController, &AddLocalDataController::layerCreated, this, [this](int layerIndex, Layer* layer)
     {
-      qDebug() << "layer created";
       m_scene = Toolkit::ToolResourceProvider::instance()->scene();
       m_initialLayerCache.insert(layerIndex, layer);
       const int layerCount = m_inputLayerJsonArray.size();
@@ -427,7 +431,6 @@ void LayerCacheManager::connectSignals()
 
         for (int i = 0; i < layerCount; i++)
         {
-          qDebug () << "adding layer";
           m_scene->operationalLayers()->append(m_initialLayerCache.value(i));
         }
       }

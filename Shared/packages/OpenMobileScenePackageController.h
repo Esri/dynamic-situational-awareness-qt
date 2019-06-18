@@ -74,6 +74,8 @@ public:
 
   QAbstractListModel* packages() const;
 
+  bool userSelected() const { return m_userSelected; }
+
 signals:
   void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
   void packageDataPathChanged();
@@ -116,6 +118,7 @@ private:
   QHash<QString, Esri::ArcGISRuntime::MobileScenePackage*> m_packages;
   QMetaObject::Connection m_mspkInstanceUnpackConn;
   QMetaObject::Connection m_mspkInstanceDirectReadConn;
+  bool m_userSelected = false;
 };
 
 } // Dsa

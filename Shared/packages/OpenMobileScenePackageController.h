@@ -62,6 +62,7 @@ public:
   Q_INVOKABLE void selectPackageName(const QString& newPackageName);
   Q_INVOKABLE void selectScene(int newSceneIndex);
   Q_INVOKABLE void unpack();
+  Q_INVOKABLE void createDefaultScene();
 
   QString packageDataPath() const;
   bool setPackageDataPath(const QString& dataPath);
@@ -108,6 +109,7 @@ private:
   static const QString MSPK_EXTENSION;
   static const QString MMPK_EXTENSION;
   static const QString UNPACKED_SUFFIX;
+  static const QString LAYERS_PROPERTYNAME;
 
   QString m_packageDataPath;
   QString m_currentPackageName;
@@ -119,6 +121,7 @@ private:
   QMetaObject::Connection m_mspkInstanceUnpackConn;
   QMetaObject::Connection m_mspkInstanceDirectReadConn;
   bool m_userSelected = false;
+  QVariantMap m_dsaSettings;
 };
 
 } // Dsa

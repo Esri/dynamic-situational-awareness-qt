@@ -97,27 +97,7 @@ LayerCacheManager::LayerCacheManager(QObject* parent) :
       return;
 
     // If this is the initial load of a MSPK Scene, add additional layers
-    const QVariant layersData = m_initialSettings.value(LAYERS_PROPERTYNAME);
-    const auto layersList = layersData.toList();
-    m_inputLayerJsonArray = QJsonArray::fromVariantList(layersList);
-
-    auto it = m_inputLayerJsonArray.constBegin();
-    auto itEnd = m_inputLayerJsonArray.constEnd();
-    int layerIndex = 0;
-    for (; it != itEnd; ++it)
-    {
-      const QJsonValue jsonVal = *it;
-      if (jsonVal.isNull())
-        continue;
-
-      const QJsonObject jsonObject = jsonVal.toObject();
-      if (jsonObject.isEmpty())
-        continue;
-
-      jsonToLayer(jsonObject, layerIndex);
-
-      layerIndex++;
-    };
+    addLayers(m_initialSettings);
   });
 
   // connect to the initial default scene created in code
@@ -149,51 +129,14 @@ void LayerCacheManager::setProperties(const QVariantMap& properties)
   if (m_initialLoadCompleted || !m_localDataController)
     return;
 
+  // cache initial settings
   m_initialSettings = properties;
-  const QVariant layersData = properties.value(LAYERS_PROPERTYNAME);
-  const auto layersList = layersData.toList();
-  m_inputLayerJsonArray = QJsonArray::fromVariantList(layersList);
 
-  auto it = m_inputLayerJsonArray.constBegin();
-  auto itEnd = m_inputLayerJsonArray.constEnd();
-  int layerIndex = 0;
-  for (; it != itEnd; ++it)
-  {
-    const QJsonValue jsonVal = *it;
-    if (jsonVal.isNull())
-      continue;
-
-    const QJsonObject jsonObject = jsonVal.toObject();
-    if (jsonObject.isEmpty())
-      continue;
-
-    jsonToLayer(jsonObject, layerIndex);
-
-    layerIndex++;
-  };
+  // add layers
+  addLayers(properties);
 
   // Add the default elevation source
-  const QVariant elevationData = properties.value(ELEVATION_PROPERTYNAME);
-  const QStringList pathList = elevationData.toStringList();
-
-  // If size is 1, it could be a TPK or raster
-  if (pathList.length() == 1)
-  {
-    // Get the string
-    const QString elevationSource = pathList.at(0);
-    QFileInfo elevationSourceInfo(elevationSource);
-
-    // Check if TPK or not
-    if (elevationSourceInfo.suffix().toLower() == "tpk")
-      m_localDataController->createElevationSourceFromTpk(elevationSource);
-    else
-      m_localDataController->createElevationSourceFromRasters(QStringList{elevationSource});
-  }
-  // If more than 1, it is a list of rasters
-  else if (pathList.length() > 1)
-  {
-    m_localDataController->createElevationSourceFromRasters(pathList);
-  }
+  addElevation(properties);
 
   m_initialLoadCompleted = true;
 }
@@ -375,6 +318,56 @@ void LayerCacheManager::addExcludedPath(const QString& exludedPath)
 {
   qDebug() << "add exlcuded path";
   m_excludedPaths.append(exludedPath);
+}
+
+void LayerCacheManager::addElevation(const QVariantMap& properties)
+{
+  const QVariant elevationData = properties.value(ELEVATION_PROPERTYNAME);
+  const QStringList pathList = elevationData.toStringList();
+
+  // If size is 1, it could be a TPK or raster
+  if (pathList.length() == 1)
+  {
+    // Get the string
+    const QString elevationSource = pathList.at(0);
+    QFileInfo elevationSourceInfo(elevationSource);
+
+    // Check if TPK or not
+    if (elevationSourceInfo.suffix().toLower() == "tpk")
+      m_localDataController->createElevationSourceFromTpk(elevationSource);
+    else
+      m_localDataController->createElevationSourceFromRasters(QStringList{elevationSource});
+  }
+  // If more than 1, it is a list of rasters
+  else if (pathList.length() > 1)
+  {
+    m_localDataController->createElevationSourceFromRasters(pathList);
+  }
+}
+
+void LayerCacheManager::addLayers(const QVariantMap& properties)
+{
+  const QVariant layersData = properties.value(LAYERS_PROPERTYNAME);
+  const auto layersList = layersData.toList();
+  m_inputLayerJsonArray = QJsonArray::fromVariantList(layersList);
+
+  auto it = m_inputLayerJsonArray.constBegin();
+  auto itEnd = m_inputLayerJsonArray.constEnd();
+  int layerIndex = 0;
+  for (; it != itEnd; ++it)
+  {
+    const QJsonValue jsonVal = *it;
+    if (jsonVal.isNull())
+      continue;
+
+    const QJsonObject jsonObject = jsonVal.toObject();
+    if (jsonObject.isEmpty())
+      continue;
+
+    jsonToLayer(jsonObject, layerIndex);
+
+    layerIndex++;
+  };
 }
 
 void LayerCacheManager::connectSignals()

@@ -17,6 +17,12 @@
 #ifndef DSACONTROLLER_H
 #define DSACONTROLLER_H
 
+// toolkit headers
+#include "AbstractTool.h"
+
+// API headers
+#include "Viewpoint.h"
+
 // Qt headers
 #include <QJsonArray>
 #include <QObject>
@@ -37,7 +43,7 @@ namespace Dsa {
 
 class LayerCacheManager;
 
-class DsaController : public QObject
+class DsaController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
 {
   Q_OBJECT
 
@@ -48,6 +54,10 @@ public:
   Esri::ArcGISRuntime::Scene* scene() const;
 
   void init(Esri::ArcGISRuntime::GeoView* geoView);
+
+  QString toolName() const override;
+  void setProperties(const QVariantMap& properties) override;
+  Esri::ArcGISRuntime::Viewpoint defaultViewpoint();
 
 public slots:
   void onError(const Esri::ArcGISRuntime::Error& error);
@@ -60,8 +70,7 @@ signals:
   void errorOccurred(const QString& message, const QString& additionalMessage);
 
 private:
-  bool setInitialLocationFromConfig();
-  void setDefaultViewpoint();
+  Esri::ArcGISRuntime::Viewpoint initialLocationFromConfig();
   void setupConfig();
   void createDefaultSettings();
   void saveSettings();

@@ -45,12 +45,36 @@ DsaPanel {
 
         text: "< Packages"
 
-        font{
+        font {
             pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
             family: DsaStyles.fontFamily
         }
 
         onClicked: packageFrame.currentIndex = 0
+    }
+
+    Button {
+        id: resetButton
+        anchors {
+            top: titleBar.bottom
+            left: packageFrame.left
+            right: packageFrame.right
+            margins: 8 * scaleFactor
+        }
+
+        visible: packageFrame.currentIndex === 0
+
+        text: "Reset to Default Scene"
+
+        font {
+            pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+            family: DsaStyles.fontFamily
+        }
+
+        onClicked: {
+            toolController.createDefaultScene();
+            sceneSelected();
+        }
     }
 
     SwipeView {
@@ -217,8 +241,7 @@ DsaPanel {
                 }
             }
 
-            Label
-            {
+            Label {
                 id: unpackText
                 anchors {
                     top: unpackButton.bottom

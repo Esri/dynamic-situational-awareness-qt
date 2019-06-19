@@ -52,6 +52,9 @@ public:
 
   void addExcludedPath(const QString& exludedPath);
 
+  void addElevation(const QVariantMap& properties);
+  void addLayers(const QVariantMap& properties);
+
 signals:
   void layerJsonChanged();
   void jsonToLayerCompleted(Esri::ArcGISRuntime::Layer* layer);

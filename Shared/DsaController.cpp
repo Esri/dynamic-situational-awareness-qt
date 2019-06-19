@@ -76,7 +76,7 @@ bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map);
   \brief Constructor for a model taking an optional \a parent.
  */
 DsaController::DsaController(QObject* parent):
-  QObject(parent),
+  Toolkit::AbstractTool(parent),
   m_scene(new Scene(this)),
   m_jsonFormat(QSettings::registerFormat("json", &readJsonFile, &writeJsonFile)),
   m_conflictingToolNames{QStringLiteral("Alert Conditions"),
@@ -86,7 +86,7 @@ DsaController::DsaController(QObject* parent):
 {
   // setup config settings
   setupConfig();
-  setDefaultViewpoint();
+  m_scene->setInitialViewpoint(defaultViewpoint());
   m_dataPath = m_dsaSettings["RootDataDirectory"].toString();
 
   connect(m_scene, &Scene::errorOccurred, this, &DsaController::onError);
@@ -95,6 +95,8 @@ DsaController::DsaController(QObject* parent):
   {
     m_scene = ToolResourceProvider::instance()->scene();
   });
+
+  Toolkit::ToolManager::instance().addTool(this);
 }
 
 /*!
@@ -211,6 +213,16 @@ void DsaController::init(GeoView* geoView)
   }
 }
 
+QString DsaController::toolName() const
+{
+  return QStringLiteral("DSA Controller");
+}
+
+void DsaController::setProperties(const QVariantMap& properties)
+{
+  Q_UNUSED(properties)
+}
+
 /*!
  * \brief Slot to handle an ArcGISRuntime Error \a error.
  */
@@ -260,27 +272,27 @@ void DsaController::onPropertyChanged(const QString& propertyName, const QVarian
 /*!
  * \internal
  */
-bool DsaController::setInitialLocationFromConfig()
+Viewpoint DsaController::initialLocationFromConfig()
 {
   // Attempt to set the scene's initialViewpoint from JSON configuration
   const auto findIt = m_dsaSettings.constFind(QStringLiteral("InitialLocation"));
 
   // If no initial location is specified, default to Monterey, CA
   if (findIt == m_dsaSettings.constEnd())
-    return false;
+    return Viewpoint();
 
   const QVariant initialLocVar = findIt.value();
   if (initialLocVar.isNull())
-    return false;
+    return Viewpoint();
 
   const QJsonObject initialLocation = QJsonObject::fromVariantMap(initialLocVar.toMap());
   if (initialLocation.isEmpty())
-    return false;
+    return Viewpoint();
 
   // set the initial center Point from JSON if it is found
   auto centerIt = initialLocation.find("center");
   if (centerIt == initialLocation.constEnd())
-    return false;
+    return Viewpoint();
 
   const QJsonValue centerVal = centerIt.value();
   const QJsonDocument centerDoc = QJsonDocument(centerVal.toObject());
@@ -306,27 +318,30 @@ bool DsaController::setInitialLocationFromConfig()
   double initialRoll = rollIt != initialLocation.constEnd() ? rollIt.value().toDouble(0.0)
                                                             : 0.0;
 
-  // Set the initial viewpoint
+  // Return the initial viewpoint
   const Camera initCamera(newCenter, initialDistance, initialHeading, initialPitch, initialRoll);
   Viewpoint initViewpoint(newCenter, initCamera);
-  m_scene->setInitialViewpoint(initViewpoint);
-
-  return true;
+  return initViewpoint;
 }
 
 /*!
  * \internal
  */
-void DsaController::setDefaultViewpoint()
+Viewpoint DsaController::defaultViewpoint()
 {
   // If there is no configuration setting, default the initial viewpoint to Monterey, CA
   // NOTE that if using a MobileScenePackage, this will be replaced with the
   // selected scene's initialViewpoint
-  if (!setInitialLocationFromConfig())
+  Viewpoint initLocationFromConfig = initialLocationFromConfig();
+  if (initLocationFromConfig.isEmpty())
   {
     const Camera initCamera(DsaUtility::montereyCA(), 5000.0, 0.0, 75.0, 0.0);
     Viewpoint initViewpoint(DsaUtility::montereyCA(), initCamera);
-    m_scene->setInitialViewpoint(initViewpoint);
+    return initViewpoint;
+  }
+  else
+  {
+    return initLocationFromConfig;
   }
 }
 

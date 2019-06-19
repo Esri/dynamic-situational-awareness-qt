@@ -18,8 +18,11 @@
 // PCH header
 #include "pch.hpp"
 
-#include "OpenMobileScenePackageController.h"
+#include "BasemapPickerController.h"
+#include "LayerCacheManager.h"
 #include "MobileScenePackagesListModel.h"
+#include "OpenMobileScenePackageController.h"
+#include "DsaController.h"
 
 // toolkit headers
 #include "ToolManager.h"
@@ -35,6 +38,7 @@
 #include <QDir>
 #include <QQmlEngine>
 #include <QFileInfo>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QQmlEngine>
 
@@ -48,6 +52,7 @@ const QString OpenMobileScenePackageController::SCENE_INDEX_PROPERTYNAME = "Scen
 const QString OpenMobileScenePackageController::MSPK_EXTENSION = ".mspk";
 const QString OpenMobileScenePackageController::MMPK_EXTENSION = ".mmpk";
 const QString OpenMobileScenePackageController::UNPACKED_SUFFIX = "_unpacked";
+const QString OpenMobileScenePackageController::LAYERS_PROPERTYNAME = "Layers";
 
 /*!
   \class Dsa::OpenMobileScenePackageController
@@ -118,6 +123,8 @@ QString OpenMobileScenePackageController::toolName() const
  */
 void OpenMobileScenePackageController::setProperties(const QVariantMap& properties)
 {
+  m_dsaSettings = properties;
+
   const QString newPackageDirectoryPath = properties.value(PACKAGE_DIRECTORY_PROPERTYNAME).toString();
   const bool dataPathChanged = setPackageDataPath(newPackageDirectoryPath);
 
@@ -254,6 +261,48 @@ void OpenMobileScenePackageController::unpack()
 
   // start the unpack task
   MobileScenePackage::unpack(combinedPackagePath(), unpackedDir);
+}
+
+/*!
+  \brief Creates a new scene with the default basemap and default surface.
+ */
+void OpenMobileScenePackageController::createDefaultScene()
+{
+  // obtain other required tools
+  auto basemapTool = Toolkit::ToolManager::instance().tool<BasemapPickerController>();
+  auto layerCacheTool = Toolkit::ToolManager::instance().tool<LayerCacheManager>();
+  auto dsaController = Toolkit::ToolManager::instance().tool<DsaController>();
+  if (!basemapTool || !layerCacheTool || !dsaController)
+    return;
+
+  // create scene
+  Scene* newScene = new Scene(this);
+  newScene->setInitialViewpoint(dsaController->defaultViewpoint());
+
+  // set on sceneview
+  Toolkit::ToolResourceProvider::instance()->setScene(newScene);
+
+  // add basemap
+  basemapTool->selectInitialBasemap();
+
+  // add elevation
+  layerCacheTool->addElevation(m_dsaSettings);
+
+  // remove any layers if automatically added
+  if (!newScene->operationalLayers()->isEmpty())
+  {
+    for (auto layer : *newScene->operationalLayers())
+    {
+      delete layer;
+      layer = nullptr;
+    }
+    newScene->operationalLayers()->clear();
+  }
+
+  // clear current scene and index in properties
+  emit propertyChanged(SCENE_INDEX_PROPERTYNAME, -1);
+  emit propertyChanged(CURRENT_PACKAGE_PROPERTYNAME, "");
+  emit propertyChanged(LAYERS_PROPERTYNAME, QJsonArray().toVariantList());
 }
 
 /*!

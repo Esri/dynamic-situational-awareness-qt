@@ -171,6 +171,8 @@ DsaPanel {
                     return DsaResources.iconSketch;
                 case TableOfContentsController.Kml:
                     return DsaResources.iconKml;
+                case TableOfContentsController.SceneLayer:
+                    return DsaResources.iconSceneLayer;
                 }
             }
         }

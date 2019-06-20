@@ -316,7 +316,6 @@ QJsonArray LayerCacheManager::layerJson() const
 
 void LayerCacheManager::addExcludedPath(const QString& exludedPath)
 {
-  qDebug() << "add exlcuded path";
   m_excludedPaths.append(exludedPath);
 }
 

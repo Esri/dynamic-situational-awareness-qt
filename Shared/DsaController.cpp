@@ -24,6 +24,7 @@
 #include "AlertConstants.h"
 #include "AlertLevel.h"
 #include "AppConstants.h"
+#include "BasemapPickerController.h"
 #include "ContextMenuController.h"
 #include "DsaUtility.h"
 #include "LayerCacheManager.h"
@@ -31,7 +32,6 @@
 #include "OpenMobileScenePackageController.h"
 
 // toolkit headers
-#include "AbstractTool.h"
 #include "CoordinateConversionConstants.h"
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
@@ -76,7 +76,7 @@ bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map);
   \brief Constructor for a model taking an optional \a parent.
  */
 DsaController::DsaController(QObject* parent):
-  Toolkit::AbstractTool(parent),
+  QObject(parent),
   m_scene(new Scene(this)),
   m_jsonFormat(QSettings::registerFormat("json", &readJsonFile, &writeJsonFile)),
   m_conflictingToolNames{QStringLiteral("Alert Conditions"),
@@ -95,8 +95,6 @@ DsaController::DsaController(QObject* parent):
   {
     m_scene = ToolResourceProvider::instance()->scene();
   });
-
-  Toolkit::ToolManager::instance().addTool(this);
 }
 
 /*!
@@ -211,16 +209,6 @@ void DsaController::init(GeoView* geoView)
         contextMenu->setActive(!anyActive);
     });
   }
-}
-
-QString DsaController::toolName() const
-{
-  return QStringLiteral("DSA Controller");
-}
-
-void DsaController::setProperties(const QVariantMap& properties)
-{
-  Q_UNUSED(properties)
 }
 
 /*!
@@ -343,6 +331,47 @@ Viewpoint DsaController::defaultViewpoint()
   {
     return initLocationFromConfig;
   }
+}
+
+/*!
+  \brief Creates a new scene with the default basemap and default surface.
+ */
+void DsaController::resetToDefaultScene()
+{
+  // obtain other required tools
+  auto basemapTool = Toolkit::ToolManager::instance().tool<BasemapPickerController>();
+  if (!basemapTool)
+    return;
+
+  // create scene
+  Scene* newScene = new Scene(this);
+  newScene->setInitialViewpoint(defaultViewpoint());
+
+  // set on sceneview
+  Toolkit::ToolResourceProvider::instance()->setScene(newScene);
+
+  // add basemap
+  basemapTool->selectInitialBasemap();
+
+  // add elevation
+  m_cacheManager->addElevation(m_dsaSettings);
+
+  // remove any layers if automatically added
+  if (!newScene->operationalLayers()->isEmpty())
+  {
+    for (auto layer : *newScene->operationalLayers())
+    {
+      delete layer;
+      layer = nullptr;
+    }
+    newScene->operationalLayers()->clear();
+  }
+
+  // clear current scene and index in properties
+  onPropertyChanged(AppConstants::SCENEINDEX_PROPERTYNAME, -1);
+  onPropertyChanged(AppConstants::CURRENTSCENE_PROPERTYNAME, "");
+  onPropertyChanged(AppConstants::LAYERS_PROPERTYNAME, QJsonArray().toVariantList());
+  m_cacheManager->setProperties(m_dsaSettings);
 }
 
 /*!

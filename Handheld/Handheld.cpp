@@ -114,6 +114,11 @@ void Handheld::componentComplete()
   });
 }
 
+void Handheld::resetToDefaultScene()
+{
+  m_controller->resetToDefaultScene();
+}
+
 } // Handheld
 } // Dsa
 

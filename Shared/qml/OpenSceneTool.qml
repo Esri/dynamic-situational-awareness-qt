@@ -25,6 +25,7 @@ DsaPanel {
     title: packageFrame.currentIndex === 0 ? "Choose Package" : "Open Scene"
 
     signal sceneSelected();
+    signal resetToDefaultSelected();
 
     property string packageTitleString
     property string packageDescriptionString
@@ -72,7 +73,7 @@ DsaPanel {
         }
 
         onClicked: {
-            toolController.createDefaultScene();
+            resetToDefaultSelected();
             sceneSelected();
         }
     }

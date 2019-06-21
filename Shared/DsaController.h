@@ -17,9 +17,6 @@
 #ifndef DSACONTROLLER_H
 #define DSACONTROLLER_H
 
-// API headers
-#include "Viewpoint.h"
-
 // Qt headers
 #include <QJsonArray>
 #include <QObject>
@@ -33,6 +30,7 @@ namespace ArcGISRuntime {
   class Scene;
   class GeoView;
   class Layer;
+  class Viewpoint;
 }
 }
 

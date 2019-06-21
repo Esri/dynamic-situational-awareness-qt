@@ -475,6 +475,16 @@ QAbstractListModel* OpenMobileScenePackageController::packages() const
 }
 
 /*!
+  \brief Indicates whether the user selected the scene or if it was the default.
+
+  By default, the value is \c false.
+*/
+bool OpenMobileScenePackageController::userSelected() const
+{
+  return m_userSelected;
+}
+
+/*!
   \internal
   Static method to apply the packed naming scene to the given \a packageName.
  */

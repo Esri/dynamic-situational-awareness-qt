@@ -74,7 +74,7 @@ public:
 
   QAbstractListModel* packages() const;
 
-  bool userSelected() const { return m_userSelected; }
+  bool userSelected() const;
 
 signals:
   void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);

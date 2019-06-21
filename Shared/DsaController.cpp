@@ -363,7 +363,6 @@ void DsaController::resetToDefaultScene()
     for (auto layer : *newScene->operationalLayers())
     {
       delete layer;
-      layer = nullptr;
     }
     newScene->operationalLayers()->clear();
   }

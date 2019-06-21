@@ -35,7 +35,6 @@
 #include <QDir>
 #include <QQmlEngine>
 #include <QFileInfo>
-#include <QJsonArray>
 #include <QJsonDocument>
 #include <QQmlEngine>
 

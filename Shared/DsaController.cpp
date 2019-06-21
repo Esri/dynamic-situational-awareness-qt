@@ -126,6 +126,7 @@ void DsaController::init(GeoView* geoView)
     openScenePackageTool->setProperties(m_dsaSettings);
 
   m_cacheManager = new LayerCacheManager(this);
+
   if (openScenePackageTool)
     m_cacheManager->addExcludedPath(openScenePackageTool->packageDataPath());
 

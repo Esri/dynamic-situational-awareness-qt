@@ -18,8 +18,8 @@
 // PCH header
 #include "pch.hpp"
 
-#include "OpenMobileScenePackageController.h"
 #include "MobileScenePackagesListModel.h"
+#include "OpenMobileScenePackageController.h"
 
 // toolkit headers
 #include "ToolManager.h"
@@ -162,7 +162,7 @@ void OpenMobileScenePackageController::findPackage()
   }
   else if (packagePath.endsWith(MSPK_EXTENSION))
   {
-    // the package is an .mspk archive file - eheck if it can be read directly
+    // the package is an .mspk archive file - check if it can be read directly
     const auto taskWatcher = MobileScenePackage::instance()->isDirectReadSupported(packagePath);
     m_directReadTasks.insert(taskWatcher.taskId(), m_currentPackageName);
   }
@@ -209,6 +209,9 @@ void OpenMobileScenePackageController::selectPackageName(const QString& newPacka
 {
   if (!setCurrentPackageName(newPackageName))
     return;
+
+  // user selected the package
+  m_userSelected = true;
 
   // reset the scene index to -1
   setCurrentSceneIndex(-1);
@@ -469,6 +472,16 @@ QString OpenMobileScenePackageController::combinedPackagePath() const
 QAbstractListModel* OpenMobileScenePackageController::packages() const
 {
   return m_packagesModel;
+}
+
+/*!
+  \brief Indicates whether the user selected the scene or if it was the default.
+
+  By default, the value is \c false.
+*/
+bool OpenMobileScenePackageController::userSelected() const
+{
+  return m_userSelected;
 }
 
 /*!

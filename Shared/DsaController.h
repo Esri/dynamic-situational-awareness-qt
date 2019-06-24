@@ -30,6 +30,7 @@ namespace ArcGISRuntime {
   class Scene;
   class GeoView;
   class Layer;
+  class Viewpoint;
 }
 }
 
@@ -49,6 +50,9 @@ public:
 
   void init(Esri::ArcGISRuntime::GeoView* geoView);
 
+  Esri::ArcGISRuntime::Viewpoint defaultViewpoint();
+  void resetToDefaultScene();
+
 public slots:
   void onError(const Esri::ArcGISRuntime::Error& error);
   void onToolError(const QString& errorMessage, const QString& additionalMessage);
@@ -60,8 +64,7 @@ signals:
   void errorOccurred(const QString& message, const QString& additionalMessage);
 
 private:
-  bool setInitialLocationFromConfig();
-  void setDefaultViewpoint();
+  Esri::ArcGISRuntime::Viewpoint initialLocationFromConfig();
   void setupConfig();
   void createDefaultSettings();
   void saveSettings();

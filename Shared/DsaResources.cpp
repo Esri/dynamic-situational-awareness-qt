@@ -423,6 +423,14 @@ QUrl DsaResources::iconSave() const
 }
 
 /*!
+  \brief Returns the URL to the "Scene Layer" icon.
+ */
+QUrl DsaResources::iconSceneLayer() const
+{
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/scenelayer.png"));
+}
+
+/*!
   \brief Returns the URL to the "Send Map" icon.
  */
 QUrl DsaResources::iconSendMap() const
@@ -494,6 +502,9 @@ QUrl DsaResources::iconLineOfSight() const
   return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/line_of_sight.png"));
 }
 
+/*!
+  \brief Returns the URL to the "Open Scene" icon.
+ */
 QUrl DsaResources::iconOpenScene() const
 {
   return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/icon_open_scene.png"));

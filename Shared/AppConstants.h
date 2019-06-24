@@ -28,6 +28,9 @@ public:
   static const QString UNIT_OF_MEASUREMENT_PROPERTYNAME;
   static const QString UNIT_METERS;
   static const QString UNIT_FEET;
+  static const QString LAYERS_PROPERTYNAME;
+  static const QString CURRENTSCENE_PROPERTYNAME;
+  static const QString SCENEINDEX_PROPERTYNAME;
 };
 
 } // Dsa

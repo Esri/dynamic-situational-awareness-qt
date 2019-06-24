@@ -102,6 +102,11 @@ void Vehicle::componentComplete()
           ToolResourceProvider::instance(), &ToolResourceProvider::onScreenToLocationCompleted);
 }
 
+void Vehicle::resetToDefaultScene()
+{
+  m_controller->resetToDefaultScene();
+}
+
 } // Vehicle
 } // Dsa
 

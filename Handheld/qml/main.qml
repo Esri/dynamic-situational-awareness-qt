@@ -440,6 +440,7 @@ Handheld {
                     onSceneSelected: closed();
                     visible: false
                     onClosed: drawer.close();
+                    onResetToDefaultSelected: resetToDefaultScene();
                 }
 
                 BasemapPicker {

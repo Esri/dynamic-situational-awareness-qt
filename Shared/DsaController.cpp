@@ -24,6 +24,7 @@
 #include "AlertConstants.h"
 #include "AlertLevel.h"
 #include "AppConstants.h"
+#include "BasemapPickerController.h"
 #include "ContextMenuController.h"
 #include "DsaUtility.h"
 #include "LayerCacheManager.h"
@@ -31,7 +32,6 @@
 #include "OpenMobileScenePackageController.h"
 
 // toolkit headers
-#include "AbstractTool.h"
 #include "CoordinateConversionConstants.h"
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
@@ -86,7 +86,7 @@ DsaController::DsaController(QObject* parent):
 {
   // setup config settings
   setupConfig();
-  setDefaultViewpoint();
+  m_scene->setInitialViewpoint(defaultViewpoint());
   m_dataPath = m_dsaSettings["RootDataDirectory"].toString();
 
   connect(m_scene, &Scene::errorOccurred, this, &DsaController::onError);
@@ -125,16 +125,16 @@ void DsaController::init(GeoView* geoView)
   if (openScenePackageTool)
     openScenePackageTool->setProperties(m_dsaSettings);
 
+  m_cacheManager = new LayerCacheManager(this);
+
+  if (openScenePackageTool)
+    m_cacheManager->addExcludedPath(openScenePackageTool->packageDataPath());
+
   Toolkit::ToolResourceProvider::instance()->setScene(m_scene);
   Toolkit::ToolResourceProvider::instance()->setGeoView(geoView);
 
   // set the selection color for graphics and features
   geoView->setSelectionProperties(SelectionProperties(Qt::red));
-
-  m_cacheManager = new LayerCacheManager(this);
-
-  if (openScenePackageTool)
-    m_cacheManager->addExcludedPath(openScenePackageTool->packageDataPath());
 
   // connect all tool signals
   for(Toolkit::AbstractTool* abstractTool : Toolkit::ToolManager::instance())
@@ -261,27 +261,27 @@ void DsaController::onPropertyChanged(const QString& propertyName, const QVarian
 /*!
  * \internal
  */
-bool DsaController::setInitialLocationFromConfig()
+Viewpoint DsaController::initialLocationFromConfig()
 {
   // Attempt to set the scene's initialViewpoint from JSON configuration
   const auto findIt = m_dsaSettings.constFind(QStringLiteral("InitialLocation"));
 
   // If no initial location is specified, default to Monterey, CA
   if (findIt == m_dsaSettings.constEnd())
-    return false;
+    return Viewpoint();
 
   const QVariant initialLocVar = findIt.value();
   if (initialLocVar.isNull())
-    return false;
+    return Viewpoint();
 
   const QJsonObject initialLocation = QJsonObject::fromVariantMap(initialLocVar.toMap());
   if (initialLocation.isEmpty())
-    return false;
+    return Viewpoint();
 
   // set the initial center Point from JSON if it is found
   auto centerIt = initialLocation.find("center");
   if (centerIt == initialLocation.constEnd())
-    return false;
+    return Viewpoint();
 
   const QJsonValue centerVal = centerIt.value();
   const QJsonDocument centerDoc = QJsonDocument(centerVal.toObject());
@@ -307,28 +307,71 @@ bool DsaController::setInitialLocationFromConfig()
   double initialRoll = rollIt != initialLocation.constEnd() ? rollIt.value().toDouble(0.0)
                                                             : 0.0;
 
-  // Set the initial viewpoint
+  // Return the initial viewpoint
   const Camera initCamera(newCenter, initialDistance, initialHeading, initialPitch, initialRoll);
   Viewpoint initViewpoint(newCenter, initCamera);
-  m_scene->setInitialViewpoint(initViewpoint);
-
-  return true;
+  return initViewpoint;
 }
 
 /*!
  * \internal
  */
-void DsaController::setDefaultViewpoint()
+Viewpoint DsaController::defaultViewpoint()
 {
   // If there is no configuration setting, default the initial viewpoint to Monterey, CA
   // NOTE that if using a MobileScenePackage, this will be replaced with the
   // selected scene's initialViewpoint
-  if (!setInitialLocationFromConfig())
+  Viewpoint initLocationFromConfig = initialLocationFromConfig();
+  if (initLocationFromConfig.isEmpty())
   {
     const Camera initCamera(DsaUtility::montereyCA(), 5000.0, 0.0, 75.0, 0.0);
     Viewpoint initViewpoint(DsaUtility::montereyCA(), initCamera);
-    m_scene->setInitialViewpoint(initViewpoint);
+    return initViewpoint;
   }
+  else
+  {
+    return initLocationFromConfig;
+  }
+}
+
+/*!
+  \brief Creates a new scene with the default basemap and default surface.
+ */
+void DsaController::resetToDefaultScene()
+{
+  // obtain other required tools
+  auto basemapTool = Toolkit::ToolManager::instance().tool<BasemapPickerController>();
+  if (!basemapTool)
+    return;
+
+  // create scene
+  Scene* newScene = new Scene(this);
+  newScene->setInitialViewpoint(defaultViewpoint());
+
+  // set on sceneview
+  Toolkit::ToolResourceProvider::instance()->setScene(newScene);
+
+  // add basemap
+  basemapTool->selectInitialBasemap();
+
+  // add elevation
+  m_cacheManager->addElevation(m_dsaSettings);
+
+  // remove any layers if automatically added
+  if (!newScene->operationalLayers()->isEmpty())
+  {
+    for (auto layer : *newScene->operationalLayers())
+    {
+      delete layer;
+    }
+    newScene->operationalLayers()->clear();
+  }
+
+  // clear current scene and index in properties
+  onPropertyChanged(AppConstants::SCENEINDEX_PROPERTYNAME, -1);
+  onPropertyChanged(AppConstants::CURRENTSCENE_PROPERTYNAME, "");
+  onPropertyChanged(AppConstants::LAYERS_PROPERTYNAME, QJsonArray().toVariantList());
+  m_cacheManager->setProperties(m_dsaSettings);
 }
 
 /*!

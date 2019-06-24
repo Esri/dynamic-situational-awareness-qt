@@ -22,6 +22,7 @@
 
 // example app headers
 #include "AddLocalDataController.h"
+#include "OpenMobileScenePackageController.h"
 #include "MarkupLayer.h"
 
 // toolkit headers
@@ -81,39 +82,29 @@ LayerCacheManager::LayerCacheManager(QObject* parent) :
   // obtain Add Local Data Controller
   m_localDataController = Toolkit::ToolManager::instance().tool<AddLocalDataController>();
 
-  if (m_localDataController)
+  // connect to new scene for cases where a new scene is set on the SceneView (via MobileScenePackage)
+  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::sceneChanged, this, [this]()
   {
-    // cache the created layers
-    connect(m_localDataController, &AddLocalDataController::layerCreated, this, [this](int layerIndex, Layer* layer)
-    {
-      m_initialLayerCache.insert(layerIndex, layer);
-      const int layerCount = m_inputLayerJsonArray.size();
-      emit jsonToLayerCompleted(layer);
+    m_scene = Toolkit::ToolResourceProvider::instance()->scene();
+    m_layers = QJsonArray();
+    m_inputLayerJsonArray = QJsonArray();
+    m_initialLayerCache.clear();
+    connectSignals();
 
-      // once all the layers are created, add them in the proper order
-      if (m_initialLayerCache.size() == layerCount)
-      {
-        if (!m_scene)
-          return;
+    // only add initial layers on initial load. Once the user selects a new scene, the layer list will be cleared
+    auto mobileSceneTool = Toolkit::ToolManager::instance().tool<OpenMobileScenePackageController>();
+    if (!mobileSceneTool)
+      return;
 
-        for (int i = 0; i < layerCount; i++)
-        {
-          m_scene->operationalLayers()->append(m_initialLayerCache.value(i));
-        }
-      }
-    });
-  }
+    if (mobileSceneTool->userSelected())
+      return;
 
-  // obtain Scene and connect slot
-  m_scene = Toolkit::ToolResourceProvider::instance()->scene();
-  if (m_scene)
-  {
-    connect(m_scene->operationalLayers(), &LayerListModel::dataChanged, this, &LayerCacheManager::onLayerListChanged); // layer objects have been added or changed
-    connect(m_scene->operationalLayers(), &LayerListModel::layerAdded, this, &LayerCacheManager::onLayerListChanged); // layer objects have been added
-    connect(m_scene->operationalLayers(), &LayerListModel::layerRemoved, this, &LayerCacheManager::onLayerListChanged); // layer has been removed
-    connect(m_scene->operationalLayers(), &LayerListModel::layoutChanged, this, &LayerCacheManager::onLayerListChanged); // order changed
-    connect(m_scene->operationalLayers(), &LayerListModel::modelReset, this, &LayerCacheManager::onLayerListChanged); // order changed
-  }
+    // If this is the initial load of a MSPK Scene, add additional layers
+    addLayers(m_initialSettings);
+  });
+
+  // connect to the initial default scene created in code
+  connectSignals();
 
   Toolkit::ToolManager::instance().addTool(this);
 }
@@ -141,50 +132,14 @@ void LayerCacheManager::setProperties(const QVariantMap& properties)
   if (m_initialLoadCompleted || !m_localDataController)
     return;
 
-  const QVariant layersData = properties.value(LAYERS_PROPERTYNAME);
-  const auto layersList = layersData.toList();
-  m_inputLayerJsonArray = QJsonArray::fromVariantList(layersList);
+  // cache initial settings
+  m_initialSettings = properties;
 
-  auto it = m_inputLayerJsonArray.constBegin();
-  auto itEnd = m_inputLayerJsonArray.constEnd();
-  int layerIndex = 0;
-  for (; it != itEnd; ++it)
-  {
-    const QJsonValue jsonVal = *it;
-    if (jsonVal.isNull())
-      continue;
-
-    const QJsonObject jsonObject = jsonVal.toObject();
-    if (jsonObject.isEmpty())
-      continue;
-
-    jsonToLayer(jsonObject, layerIndex);
-
-    layerIndex++;
-  };
+  // add layers
+  addLayers(properties);
 
   // Add the default elevation source
-  const QVariant elevationData = properties.value(ELEVATION_PROPERTYNAME);
-  const QStringList pathList = elevationData.toStringList();
-
-  // If size is 1, it could be a TPK or raster
-  if (pathList.length() == 1)
-  {
-    // Get the string
-    const QString elevationSource = pathList.at(0);
-    QFileInfo elevationSourceInfo(elevationSource);
-
-    // Check if TPK or not
-    if (elevationSourceInfo.suffix().toLower() == "tpk")
-      m_localDataController->createElevationSourceFromTpk(elevationSource);
-    else
-      m_localDataController->createElevationSourceFromRasters(QStringList{elevationSource});
-  }
-  // If more than 1, it is a list of rasters
-  else if (pathList.length() > 1)
-  {
-    m_localDataController->createElevationSourceFromRasters(pathList);
-  }
+  addElevation(properties);
 
   m_initialLoadCompleted = true;
 }
@@ -323,6 +278,7 @@ void LayerCacheManager::layerToJson(Layer* layer)
     layerJson.insert(layerTypeKey, layerType);
 
   m_layers.append(layerJson);
+
   emit layerJsonChanged();
 }
 
@@ -331,6 +287,7 @@ void LayerCacheManager::layerToJson(Layer* layer)
 */
 void LayerCacheManager::onLayerListChanged()
 {
+  m_scene = Toolkit::ToolResourceProvider::instance()->scene();
   if (!m_initialLoadCompleted)
     return;
 
@@ -363,6 +320,117 @@ QJsonArray LayerCacheManager::layerJson() const
 void LayerCacheManager::addExcludedPath(const QString& exludedPath)
 {
   m_excludedPaths.append(exludedPath);
+}
+
+void LayerCacheManager::addElevation(const QVariantMap& properties)
+{
+  const QVariant elevationData = properties.value(ELEVATION_PROPERTYNAME);
+  const QStringList pathList = elevationData.toStringList();
+
+  // If size is 1, it could be a TPK or raster
+  if (pathList.length() == 1)
+  {
+    // Get the string
+    const QString elevationSource = pathList.at(0);
+    const QFileInfo elevationSourceInfo(elevationSource);
+
+    // Check if TPK or not
+    if (elevationSourceInfo.suffix().toLower() == "tpk")
+      m_localDataController->createElevationSourceFromTpk(elevationSource);
+    else
+      m_localDataController->createElevationSourceFromRasters(QStringList{elevationSource});
+  }
+  // If more than 1, it is a list of rasters
+  else if (pathList.length() > 1)
+  {
+    m_localDataController->createElevationSourceFromRasters(pathList);
+  }
+}
+
+void LayerCacheManager::addLayers(const QVariantMap& properties)
+{
+  const QVariant layersData = properties.value(LAYERS_PROPERTYNAME);
+  const auto layersList = layersData.toList();
+  m_inputLayerJsonArray = QJsonArray::fromVariantList(layersList);
+
+  auto it = m_inputLayerJsonArray.constBegin();
+  auto itEnd = m_inputLayerJsonArray.constEnd();
+  int layerIndex = 0;
+  for (; it != itEnd; ++it)
+  {
+    const QJsonValue jsonVal = *it;
+    if (jsonVal.isNull())
+      continue;
+
+    const QJsonObject jsonObject = jsonVal.toObject();
+    if (jsonObject.isEmpty())
+      continue;
+
+    jsonToLayer(jsonObject, layerIndex);
+
+    layerIndex++;
+  };
+}
+
+void LayerCacheManager::connectSignals()
+{
+  // obtain Scene and connect slot
+  m_scene = Toolkit::ToolResourceProvider::instance()->scene();
+  if (!m_scene)
+    return;
+
+  // disconnect signals
+  if (m_dataChangedConnection)
+    disconnect(m_dataChangedConnection);
+
+  if (m_layerAddedConnection)
+    disconnect(m_layerAddedConnection);
+
+  if (m_layerRemovedConnection)
+    disconnect(m_layerRemovedConnection);
+
+  if (m_layoutChangedConnection)
+    disconnect(m_layoutChangedConnection);
+
+  if (m_modelResetConnection)
+    disconnect(m_modelResetConnection);
+
+  // connect signals
+  m_dataChangedConnection = connect(m_scene->operationalLayers(), &LayerListModel::dataChanged, this, &LayerCacheManager::onLayerListChanged); // layer objects have been added or changed
+  m_layerAddedConnection = connect(m_scene->operationalLayers(), &LayerListModel::layerAdded, this, &LayerCacheManager::onLayerListChanged); // layer objects have been added
+  m_layerRemovedConnection = connect(m_scene->operationalLayers(), &LayerListModel::layerRemoved, this, &LayerCacheManager::onLayerListChanged); // layer has been removed
+  m_layoutChangedConnection = connect(m_scene->operationalLayers(), &LayerListModel::layoutChanged, this, &LayerCacheManager::onLayerListChanged); // order changed
+  m_modelResetConnection = connect(m_scene->operationalLayers(), &LayerListModel::modelReset, this, &LayerCacheManager::onLayerListChanged); // order changed
+
+  if (!m_localDataController)
+    return;
+
+  // disconnect
+  if (m_layerCreatedConnection)
+    disconnect(m_layerCreatedConnection);
+
+  m_initialLayerCache.clear();
+
+  // cache the created layers
+  m_layerCreatedConnection = connect(m_localDataController, &AddLocalDataController::layerCreated, this, [this](int layerIndex, Layer* layer)
+  {
+    m_scene = Toolkit::ToolResourceProvider::instance()->scene();
+    m_initialLayerCache.insert(layerIndex, layer);
+    const int layerCount = m_inputLayerJsonArray.size();
+    emit jsonToLayerCompleted(layer);
+
+    // once all the layers are created, add them in the proper order
+    if (m_initialLayerCache.size() == layerCount)
+    {
+      if (!m_scene)
+        return;
+
+      for (int i = 0; i < layerCount; i++)
+      {
+        m_scene->operationalLayers()->append(m_initialLayerCache.value(i));
+      }
+    }
+  });
 }
 
 } // Dsa

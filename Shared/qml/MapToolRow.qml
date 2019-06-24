@@ -34,6 +34,25 @@ Row {
 
     states: [
         State {
+            name: packageIcon.toolName
+            PropertyChanges {
+                target: packageIcon
+                selected: true
+            }
+            PropertyChanges {
+                target: tocIcon
+                selected: selected
+            }
+            PropertyChanges {
+                target: coordinateConversionIcon
+                selected: selected
+            }
+            PropertyChanges {
+                target: identifyIcon
+                selected: selected
+            }
+        },
+        State {
             name: identifyIcon.toolName
             PropertyChanges {
                 target: identifyIcon
@@ -283,6 +302,22 @@ Row {
             else {
                 toolRect.state = "basemap";
                 mapToolRow.state = toolName;
+                drawer.open();
+            }
+        }
+    }
+
+    // Open Scene Tool
+    ToolIcon {
+        id: packageIcon
+        iconSource: DsaResources.iconOpenScene
+        toolName: "Open"
+        onToolSelected: {
+            if (drawer.visible)
+                drawer.close();
+            else {
+                mapToolRow.state = toolName;
+                toolRect.state = "open scene";
                 drawer.open();
             }
         }

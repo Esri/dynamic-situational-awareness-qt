@@ -283,6 +283,14 @@ TableOfContentsController::LayerGeometryType TableOfContentsController::layerGeo
     return LayerGeometryType::FreehandMarkup;
   case LayerType::KMLLayer:
     return LayerGeometryType::Kml;
+  case LayerType::ArcGISSceneLayer:
+    return LayerGeometryType::SceneLayer;
+  case LayerType::PointCloudLayer:
+    return LayerGeometryType::SceneLayer;
+  case LayerType::IntegratedMeshLayer:
+    return LayerGeometryType::SceneLayer;
+  case LayerType::ArcGISTiledLayer:
+    return LayerGeometryType::Raster;
   default:
     return LayerGeometryType::Unknown;
   }

@@ -64,7 +64,6 @@ DsaPanel {
             horizontalCenter: reportFrame.horizontalCenter
             margins: 8 * scaleFactor
         }
-        width: nextButton.width
         count: reportFrame.count
         currentIndex: reportFrame.currentIndex
     }

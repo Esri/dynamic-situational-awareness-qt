@@ -19,7 +19,7 @@ import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
 import QtQuick.Window 2.2
 import Esri.DSA 1.0
-import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.4
+import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.5
 
 Row {
     id: mapToolRow
@@ -33,6 +33,25 @@ Row {
     property alias tocIconSelected: tocIcon.selected
 
     states: [
+        State {
+            name: packageIcon.toolName
+            PropertyChanges {
+                target: packageIcon
+                selected: true
+            }
+            PropertyChanges {
+                target: tocIcon
+                selected: selected
+            }
+            PropertyChanges {
+                target: coordinateConversionIcon
+                selected: selected
+            }
+            PropertyChanges {
+                target: identifyIcon
+                selected: selected
+            }
+        },
         State {
             name: identifyIcon.toolName
             PropertyChanges {
@@ -113,6 +132,25 @@ Row {
             PropertyChanges {
                 target: basemapIcon
                 selected: true
+            }
+            PropertyChanges {
+                target: tocIcon
+                selected: selected
+            }
+            PropertyChanges {
+                target: coordinateConversionIcon
+                selected: selected
+            }
+            PropertyChanges {
+                target: identifyIcon
+                selected: selected
+            }
+        },
+        State {
+            name: basemapIcon.toolName
+            PropertyChanges {
+                target: basemapIcon
+                selected: selected
             }
             PropertyChanges {
                 target: tocIcon
@@ -264,6 +302,22 @@ Row {
             else {
                 toolRect.state = "basemap";
                 mapToolRow.state = toolName;
+                drawer.open();
+            }
+        }
+    }
+
+    // Open Scene Tool
+    ToolIcon {
+        id: packageIcon
+        iconSource: DsaResources.iconOpenScene
+        toolName: "Open"
+        onToolSelected: {
+            if (drawer.visible)
+                drawer.close();
+            else {
+                mapToolRow.state = toolName;
+                toolRect.state = "open scene";
                 drawer.open();
             }
         }

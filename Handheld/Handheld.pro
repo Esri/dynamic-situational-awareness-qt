@@ -20,7 +20,7 @@ TEMPLATE = app
 QT += core gui opengl network positioning sensors qml quick xml
 CONFIG += c++11
 
-ARCGIS_RUNTIME_VERSION = 100.4
+ARCGIS_RUNTIME_VERSION = 100.5
 include($$PWD/../Shared/build/arcgisruntime.pri)
 include($$PWD/../Shared/build/arcgisruntimecpptoolkit.pri)
 
@@ -28,6 +28,7 @@ INCLUDEPATH += $$PWD/../Shared/ \
     $$PWD/../Shared/alerts \
     $$PWD/../Shared/analysis \
     $$PWD/../Shared/messages \
+    $$PWD/../Shared/packages \
     $$PWD/../Shared/utilities \
     $$PWD/../Shared/markup
 
@@ -39,6 +40,7 @@ HEADERS += \
     $$PWD/../Shared/alerts/*.h \
     $$PWD/../Shared/analysis/*.h \
     $$PWD/../Shared/messages/*.h \
+    $$PWD/../Shared/packages/*.h \
     $$PWD/../Shared/utilities/*.h \
     $$PWD/../Shared/markup/*.h
 
@@ -50,6 +52,7 @@ SOURCES += \
     $$PWD/../Shared/alerts/*.cpp \
     $$PWD/../Shared/analysis/*.cpp \
     $$PWD/../Shared/messages/*.cpp \
+    $$PWD/../Shared/packages/*.cpp \
     $$PWD/../Shared/utilities/*.cpp \
     $$PWD/../Shared/markup/*.cpp
 

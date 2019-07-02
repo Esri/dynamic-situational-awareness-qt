@@ -21,8 +21,8 @@ import QtQuick.Window 2.2
 import QtQml.Models 2.2
 import Esri.DSA 1.0
 import Esri.Vehicle 1.0
-import Esri.ArcGISRuntime.Toolkit.Controls 100.4
-import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.4
+import Esri.ArcGISRuntime.Toolkit.Controls 100.5
+import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.5
 
 Vehicle {
     id: appRoot
@@ -55,6 +55,15 @@ Vehicle {
         toolbarLabelText: categoryToolbar.titleText
         height: DsaStyles.mainToolbarHeight * scaleFactor
         menuVisible: true
+
+        HomeToolRow  {
+            id: homeToolRow
+            anchors {
+                verticalCenter: parent.verticalCenter
+                right: parent.right
+                rightMargin: 16 * scaleFactor
+            }
+        }
 
         MapToolRow {
             id: mapToolRow
@@ -404,8 +413,24 @@ Vehicle {
                             target: messageFeedsTool
                             visible: true
                         }
+                    },
+                    State {
+                        name: "open scene"
+                        PropertyChanges {
+                            target: openSceneTool
+                            visible: true
+                        }
                     }
                 ]
+
+                OpenSceneTool {
+                    id: openSceneTool
+                    anchors.fill: parent
+                    onSceneSelected: closed();
+                    visible: false
+                    onClosed: drawer.close();
+                    onResetToDefaultSelected: resetToDefaultScene();
+                }
 
                 BasemapPicker {
                     id: basemapsTool

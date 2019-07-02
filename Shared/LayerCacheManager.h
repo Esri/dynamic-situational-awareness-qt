@@ -50,6 +50,11 @@ public:
   void jsonToLayer(const QJsonObject& jsonObject, const int layerIndex = -1);
   QJsonArray layerJson() const;
 
+  void addExcludedPath(const QString& exludedPath);
+
+  void addElevation(const QVariantMap& properties);
+  void addLayers(const QVariantMap& properties);
+
 signals:
   void layerJsonChanged();
   void jsonToLayerCompleted(Esri::ArcGISRuntime::Layer* layer);
@@ -58,6 +63,8 @@ private slots:
   void onLayerListChanged();
 
 private:
+  void connectSignals();
+
   static const QString LAYERS_PROPERTYNAME;
   static const QString ELEVATION_PROPERTYNAME;
   static const QString layerPathKey;
@@ -73,6 +80,14 @@ private:
   AddLocalDataController* m_localDataController = nullptr;
   Esri::ArcGISRuntime::Scene* m_scene = nullptr;
   QHash<int, Esri::ArcGISRuntime::Layer*> m_initialLayerCache;
+  QStringList m_excludedPaths;
+  QVariantMap m_initialSettings;
+  QMetaObject::Connection m_layerAddedConnection;
+  QMetaObject::Connection m_dataChangedConnection;
+  QMetaObject::Connection m_layerRemovedConnection;
+  QMetaObject::Connection m_layoutChangedConnection;
+  QMetaObject::Connection m_modelResetConnection;
+  QMetaObject::Connection m_layerCreatedConnection;
 };
 
 } // Dsa

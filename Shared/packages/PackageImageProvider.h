@@ -14,25 +14,34 @@
  *  limitations under the License.
  ******************************************************************************/
 
-#ifndef APPCONSTANTS_H
-#define APPCONSTANTS_H
+#ifndef PACKAGEIMAGEPROVIDER_H
+#define PACKAGEIMAGEPROVIDER_H
 
 // Qt headers
-#include <QString>
+#include <QObject>
+#include <QQuickImageProvider>
 
 namespace Dsa {
 
-class AppConstants {
+class OpenMobileScenePackageController;
+
+class PackageImageProvider : public QQuickImageProvider, public QObject
+{
 public:
-  static const QString USERNAME_PROPERTYNAME;
-  static const QString UNIT_OF_MEASUREMENT_PROPERTYNAME;
-  static const QString UNIT_METERS;
-  static const QString UNIT_FEET;
-  static const QString LAYERS_PROPERTYNAME;
-  static const QString CURRENTSCENE_PROPERTYNAME;
-  static const QString SCENEINDEX_PROPERTYNAME;
+
+  PackageImageProvider(QObject* parent = nullptr);
+
+  QImage requestImage(const QString& id, QSize* size, const QSize& requestedSize) override;
+
+  private:
+    QHash<QString, QImage> m_packages;
+    OpenMobileScenePackageController* m_packageController = nullptr;
+
+    QMetaObject::Connection m_findToolConnection;
+
+    QImage m_defaultImage;
 };
 
 } // Dsa
 
-#endif // APPCONSTANTS_H
+#endif // PACKAGEIMAGEPROVIDER_H

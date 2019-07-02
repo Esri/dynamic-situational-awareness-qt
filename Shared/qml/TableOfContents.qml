@@ -53,7 +53,7 @@ DsaPanel {
         interactive: true
         clip: true
         spacing: 5 * scaleFactor
-        model: toolController.layerListModel
+        model: toolController.layerListModel ? toolController.layerListModel : null
         highlight: Rectangle {
             radius: 5 * scaleFactor
             color: Material.accent
@@ -171,6 +171,8 @@ DsaPanel {
                     return DsaResources.iconSketch;
                 case TableOfContentsController.Kml:
                     return DsaResources.iconKml;
+                case TableOfContentsController.SceneLayer:
+                    return DsaResources.iconSceneLayer;
                 }
             }
         }

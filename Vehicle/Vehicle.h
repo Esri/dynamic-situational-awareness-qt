@@ -41,6 +41,7 @@ public:
   ~Vehicle();
 
   void componentComplete() override;
+  Q_INVOKABLE void resetToDefaultScene();
 
 signals:
   void errorOccurred(const QString& message, const QString& additionalMessage);

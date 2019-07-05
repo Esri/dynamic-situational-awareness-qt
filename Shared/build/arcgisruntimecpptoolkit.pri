@@ -28,5 +28,5 @@ include($$PWD/resolvelocaltoolkit.pri)
   }
 }
 else {
-  error("Error. Cannot locate ArcGIS Runtime C++ Toolkit PRI file. Toolkit repo must be cloned locally")
+  error("Error. Cannot locate ArcGIS Runtime C++ Toolkit files. Toolkit repo must be cloned locally.")
 }

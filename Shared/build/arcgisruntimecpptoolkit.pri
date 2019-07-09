@@ -28,9 +28,5 @@ include($$PWD/resolvelocaltoolkit.pri)
   }
 }
 else {
-  include($$PWD/resolvesdkinstall.pri)
-  # use the toolkit included with the SDK installation
-  !include($$QtRuntimeSdkPath/sdk/ideintegration/arcgis_runtime_toolkit_cpp.pri) {
-    message("Error. Cannot locate ArcGIS Runtime C++ Toolkit PRI file")
-  }
+  error("Error. Cannot locate ArcGIS Runtime C++ Toolkit files. Toolkit repo must be cloned locally.")
 }

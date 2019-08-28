@@ -17,7 +17,7 @@
 #ifndef WITHINAREAALERTCONDITION_H
 #define WITHINAREAALERTCONDITION_H
 
-// example app headers
+// dsa app headers
 #include "AlertCondition.h"
 
 // Qt headers

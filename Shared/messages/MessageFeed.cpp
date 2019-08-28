@@ -19,7 +19,7 @@
 
 #include "MessageFeed.h"
 
-// example app headers
+// dsa app headers
 #include "MessagesOverlay.h"
 
 namespace Dsa {

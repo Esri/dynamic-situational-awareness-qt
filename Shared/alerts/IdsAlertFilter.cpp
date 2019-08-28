@@ -19,7 +19,7 @@
 
 #include "IdsAlertFilter.h"
 
-// example app headers
+// dsa app headers
 #include "AlertConditionData.h"
 
 namespace Dsa {

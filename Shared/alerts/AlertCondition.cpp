@@ -19,7 +19,7 @@
 
 #include "AlertCondition.h"
 
-// example app headers
+// dsa app headers
 #include "AlertConditionData.h"
 #include "GraphicAlertSource.h"
 

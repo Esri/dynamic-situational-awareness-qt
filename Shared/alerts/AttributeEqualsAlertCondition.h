@@ -17,7 +17,7 @@
 #ifndef ATTRIBUTEEQUALSALERTCONDITION_H
 #define ATTRIBUTEEQUALSALERTCONDITION_H
 
-// example app headers
+// dsa app headers
 #include "AlertCondition.h"
 
 // Qt headers

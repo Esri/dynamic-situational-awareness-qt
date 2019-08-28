@@ -29,11 +29,11 @@
     
 /*!
     \page index.html
-    \title Dynamic Situational Awareness example app
+    \title Dynamic Situational Awareness Open Source App
     \inmodule Dsa
 
     The Dynamic Situational Awareness app API Reference describes the details of all
-    public classes and members used to create this example app.
+    public classes and members used to create this Open Source App.
 
     \generatelist annotatedclasses
 */

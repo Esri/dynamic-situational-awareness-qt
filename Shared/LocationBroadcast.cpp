@@ -19,7 +19,7 @@
 
 #include "LocationBroadcast.h"
 
-// example app headers
+// dsa app headers
 #include "DataSender.h"
 
 // toolkit headers

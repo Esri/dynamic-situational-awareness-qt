@@ -20,7 +20,7 @@
 
 #include "TableOfContentsController.h"
 
-// example app headers
+// dsa app headers
 #include "DrawOrderLayerListModel.h"
 #include "DsaUtility.h"
 #include "MarkupLayer.h"

@@ -20,7 +20,7 @@
 
 #include "NavigationController.h"
 
-// example app headers
+// dsa app headers
 #include "DsaUtility.h"
 
 // toolkit headers

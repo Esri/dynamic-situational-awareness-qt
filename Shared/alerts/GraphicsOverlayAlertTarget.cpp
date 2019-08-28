@@ -19,7 +19,7 @@
 
 #include "GraphicsOverlayAlertTarget.h"
 
-// example app headers
+// dsa app headers
 #include "GeometryQuadtree.h"
 
 // C++ API headers

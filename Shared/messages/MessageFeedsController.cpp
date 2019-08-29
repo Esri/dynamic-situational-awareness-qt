@@ -396,7 +396,7 @@ Renderer* MessageFeedsController::createRenderer(const QString& rendererInfo, QO
   if (rendererInfo.compare("mil2525c", Qt::CaseInsensitive) == 0)
   {
     if (!dictionarySymbolStyleMil2525c)
-    {     
+    {
       const auto stylePath = m_resourcePath + "/styles/arcade/mil2525c.stylx";
       if (!QFileInfo::exists(stylePath))
       {

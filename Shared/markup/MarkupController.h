@@ -17,7 +17,7 @@
 #ifndef MARKUPCONTROLLER_H
 #define MARKUPCONTROLLER_H
 
-// example app headers
+// dsa app headers
 #include "AbstractSketchTool.h"
 
 // toolkit headers

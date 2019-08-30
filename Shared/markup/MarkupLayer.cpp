@@ -19,7 +19,7 @@
 
 #include "MarkupLayer.h"
 
-// example app headers
+// dsa app headers
 #include "MarkupConstants.h"
 
 // C++ API headers

@@ -17,7 +17,7 @@
 #ifndef LOCATIONALERTTARGET_H
 #define LOCATIONALERTTARGET_H
 
-// example app headers
+// dsa app headers
 #include "AlertTarget.h"
 
 // C++ API headers

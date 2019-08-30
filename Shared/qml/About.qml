@@ -95,7 +95,7 @@ Item {
                 width: parent.width
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
-                text: "This example application is built to demonstrate how situational awareness applications can be built with ArcGIS Runtime. It incorporates common workflows such as adding local data sources, sending messages over a secured network, visualizing military symbols, and creating and viewing alerts from those that are in the field."
+                text: "This open source application is built to demonstrate how situational awareness applications can be built with ArcGIS Runtime. It incorporates common workflows such as adding local data sources, sending messages over a secured network, visualizing military symbols, and creating and viewing alerts from those that are in the field."
                 color: Material.foreground
                 font {
                     pixelSize: 12 * scaleFactor

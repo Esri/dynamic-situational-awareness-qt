@@ -19,7 +19,7 @@
 
 #include "AlertConditionListModel.h"
 
-// example app headers
+// dsa app headers
 #include "AlertCondition.h"
 
 namespace Dsa {

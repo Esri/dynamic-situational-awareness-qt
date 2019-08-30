@@ -17,7 +17,7 @@
 #ifndef WITHINAREAALERTCONDITIONDATA_H
 #define WITHINAREAALERTCONDITIONDATA_H
 
-// example app headers
+// dsa app headers
 #include "AlertConditionData.h"
 
 namespace Esri

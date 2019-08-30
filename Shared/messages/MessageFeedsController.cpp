@@ -20,7 +20,7 @@
 
 #include "MessageFeedsController.h"
 
-// example app headers
+// dsa app headers
 #include "AppConstants.h"
 #include "DataListener.h"
 #include "DataSender.h"
@@ -378,7 +378,7 @@ SurfacePlacement MessageFeedsController::toSurfacePlacement(const QString& surfa
   \internal
   \brief Creates and returns a renderer from the provided \a rendererInfo with an optional \a parent.
 
-  The \a rendererInfo parameter can be the symbol specification type (i.e. "mil2525c_b2" or "mil2525d") or
+  The \a rendererInfo parameter can be the symbol specification type (i.e. "mil2525c" or "mil2525d") or
   it can be the name of an image file located in:
 
   \list
@@ -397,14 +397,14 @@ Renderer* MessageFeedsController::createRenderer(const QString& rendererInfo, QO
   {
     if (!dictionarySymbolStyleMil2525c)
     {
-      const auto stylePath = m_resourcePath + "/styles/mil2525c_b2.stylx";
+      const auto stylePath = m_resourcePath + "/styles/arcade/mil2525c.stylx";
       if (!QFileInfo::exists(stylePath))
       {
-        emit const_cast<MessageFeedsController*>(this)->toolErrorOccurred(QStringLiteral("mil2525c_b2.stylx not found"), QString("Could not find %1").arg(stylePath));
+        emit const_cast<MessageFeedsController*>(this)->toolErrorOccurred(QStringLiteral("mil2525c.stylx not found"), QString("Could not find %1").arg(stylePath));
         return nullptr;
       }
 
-      dictionarySymbolStyleMil2525c = new DictionarySymbolStyle("mil2525c_b2", stylePath, parent);
+      dictionarySymbolStyleMil2525c = DictionarySymbolStyle::createFromFile(stylePath, parent);
     }
 
     return new DictionaryRenderer(dictionarySymbolStyleMil2525c, parent);
@@ -413,14 +413,14 @@ Renderer* MessageFeedsController::createRenderer(const QString& rendererInfo, QO
   {
     if (!dictionarySymbolStyleMil2525d)
     {
-      const auto stylePath = m_resourcePath + "/styles/mil2525d.stylx";
+      const auto stylePath = m_resourcePath + "/styles/arcade/mil2525d.stylx";
       if (!QFileInfo::exists(stylePath))
       {
         emit const_cast<MessageFeedsController*>(this)->toolErrorOccurred(QStringLiteral("mil2525d.stylx not found"), QString("Could not find %1").arg(stylePath));
         return nullptr;
       }
 
-      dictionarySymbolStyleMil2525d = new DictionarySymbolStyle("mil2525d", m_resourcePath + "/styles/mil2525d.stylx", parent);
+      dictionarySymbolStyleMil2525d = DictionarySymbolStyle::createFromFile(stylePath, parent);
     }
 
     return new DictionaryRenderer(dictionarySymbolStyleMil2525d, parent);

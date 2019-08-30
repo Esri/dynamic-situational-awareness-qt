@@ -17,7 +17,7 @@
 #ifndef GRAPHICSOVERLAYALERTTARGET_H
 #define GRAPHICSOVERLAYALERTTARGET_H
 
-// example app headers
+// dsa app headers
 #include "AlertTarget.h"
 
 namespace Esri {

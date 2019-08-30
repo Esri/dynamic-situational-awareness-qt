@@ -19,7 +19,7 @@
 
 #include "AlertConstants.h"
 
-// example app headers
+// dsa app headers
 #include "AttributeEqualsAlertCondition.h"
 #include "WithinAreaAlertCondition.h"
 #include "WithinDistanceAlertCondition.h"

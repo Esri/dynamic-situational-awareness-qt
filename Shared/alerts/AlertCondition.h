@@ -17,7 +17,7 @@
 #ifndef ALERTCONDITION_H
 #define ALERTCONDITION_H
 
-// example app headers
+// dsa app headers
 #include "AlertLevel.h"
 
 // Qt headers

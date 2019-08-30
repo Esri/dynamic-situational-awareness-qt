@@ -19,7 +19,7 @@
 
 #include "AttributeEqualsAlertCondition.h"
 
-// example app headers
+// dsa app headers
 #include "AlertConstants.h"
 #include "AttributeEqualsAlertConditionData.h"
 

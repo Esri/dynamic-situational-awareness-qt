@@ -17,7 +17,7 @@
 #ifndef GEOELEMENTVIEWSHED360_H
 #define GEOELEMENTVIEWSHED360_H
 
-// example app headers
+// dsa app headers
 #include "Viewshed360.h"
 
 namespace Esri {

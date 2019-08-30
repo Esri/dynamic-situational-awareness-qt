@@ -20,7 +20,7 @@
 
 #include "LineOfSightController.h"
 
-// example app headers
+// dsa app headers
 #include "FeatureQueryResultManager.h"
 #include "LocationController.h"
 #include "LocationDisplay3d.h"

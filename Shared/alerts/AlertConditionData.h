@@ -17,7 +17,7 @@
 #ifndef ALERTCONDITIONDATA_H
 #define ALERTCONDITIONDATA_H
 
-// example app headers
+// dsa app headers
 #include "AlertLevel.h"
 
 // C++ API headers

@@ -20,7 +20,7 @@
 
 #include "BasemapPickerController.h"
 
-// example app headers
+// dsa app headers
 #include "TileCacheListModel.h"
 
 // toolkit headers

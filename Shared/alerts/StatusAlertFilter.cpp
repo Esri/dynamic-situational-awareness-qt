@@ -19,7 +19,7 @@
 
 #include "StatusAlertFilter.h"
 
-// example app headers
+// dsa app headers
 #include "AlertFilter.h"
 
 namespace Dsa {

@@ -19,7 +19,7 @@
 
 #include "WithinAreaAlertCondition.h"
 
-// example app headers
+// dsa app headers
 #include "GraphicAlertSource.h"
 #include "WithinAreaAlertConditionData.h"
 

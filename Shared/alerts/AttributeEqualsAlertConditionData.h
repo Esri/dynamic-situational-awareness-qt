@@ -17,7 +17,7 @@
 #ifndef ATTRIBUTEEQUALSALERTCONDITIONDATA_H
 #define ATTRIBUTEEQUALSALERTCONDITIONDATA_H
 
-// example app headers
+// dsa app headers
 #include "AlertConditionData.h"
 
 namespace Esri {

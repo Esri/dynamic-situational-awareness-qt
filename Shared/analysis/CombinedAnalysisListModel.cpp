@@ -19,7 +19,7 @@
 
 #include "CombinedAnalysisListModel.h"
 
-// example app headers
+// dsa app headers
 #include "Viewshed360.h"
 #include "ViewshedListModel.h"
 

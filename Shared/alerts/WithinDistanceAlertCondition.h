@@ -17,7 +17,7 @@
 #ifndef WITHINDISTANCEALERTCONDITION_H
 #define WITHINDISTANCEALERTCONDITION_H
 
-// example app headers
+// dsa app headers
 #include "AlertCondition.h"
 
 // Qt headers

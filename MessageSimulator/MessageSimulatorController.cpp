@@ -16,7 +16,7 @@
 
 #include "MessageSimulatorController.h"
 
-// example app headers
+// dsa app headers
 #include "AbstractMessageParser.h"
 #include "DataSender.h"
 #include "SimulatedMessage.h"

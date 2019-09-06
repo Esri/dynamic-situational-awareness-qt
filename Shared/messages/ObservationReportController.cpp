@@ -20,7 +20,7 @@
 
 #include "ObservationReportController.h"
 
-// example app headers
+// dsa app headers
 #include "AppConstants.h"
 #include "DataSender.h"
 #include "Message.h"

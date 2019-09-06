@@ -17,7 +17,7 @@
 #ifndef WITHINDISTANCEALERTCONDITIONDATA_H
 #define WITHINDISTANCEALERTCONDITIONDATA_H
 
-// example app headers
+// dsa app headers
 #include "AlertConditionData.h"
 
 // C++ API headers

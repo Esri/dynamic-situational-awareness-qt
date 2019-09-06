@@ -20,7 +20,7 @@
 
 #include "IdentifyController.h"
 
-// example app headers
+// dsa app headers
 #include "GraphicsOverlaysResultsManager.h"
 #include "LayerResultsManager.h"
 

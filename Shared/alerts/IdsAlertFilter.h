@@ -17,7 +17,7 @@
 #ifndef IDSALERTFILTER_H
 #define IDSALERTFILTER_H
 
-// example app headers
+// dsa app headers
 #include "AlertFilter.h"
 
 // Qt headers

@@ -20,7 +20,7 @@
 
 #include "AnalysisListController.h"
 
-// example app headers
+// dsa app headers
 #include "CombinedAnalysisListModel.h"
 #include "LineOfSightController.h"
 #include "ViewshedController.h"

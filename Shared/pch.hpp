@@ -17,7 +17,7 @@
 #ifndef DSA_PCH_HPP
 #define DSA_PCH_HPP
 
-// example app headers
+// dsa app headers
 #include "AlertCondition.h"
 #include "AlertFilter.h"
 #include "AlertLevel.h"

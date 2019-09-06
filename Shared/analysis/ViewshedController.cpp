@@ -20,7 +20,7 @@
 
 #include "ViewshedController.h"
 
-// example app headers
+// dsa app headers
 #include "DsaUtility.h"
 #include "GeoElementViewshed360.h"
 #include "GraphicsOverlaysResultsManager.h"

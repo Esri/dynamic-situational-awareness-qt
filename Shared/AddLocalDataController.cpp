@@ -20,7 +20,7 @@
 
 #include "AddLocalDataController.h"
 
-// example app headers
+// dsa app headers
 #include "DataItemListModel.h"
 #include "DsaUtility.h"
 #include "MarkupLayer.h"

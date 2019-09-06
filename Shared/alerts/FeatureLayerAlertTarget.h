@@ -17,7 +17,7 @@
 #ifndef FEATURELAYERALERTTARGET_H
 #define FEATURELAYERALERTTARGET_H
 
-// example app headers
+// dsa app headers
 #include "AlertTarget.h"
 
 // Qt headers

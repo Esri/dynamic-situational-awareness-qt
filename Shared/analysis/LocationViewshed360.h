@@ -17,7 +17,7 @@
 #ifndef LOCATIONVIEWSHED360_H
 #define LOCATIONVIEWSHED360_H
 
-// example app headers
+// dsa app headers
 #include "Viewshed360.h"
 
 namespace Esri {

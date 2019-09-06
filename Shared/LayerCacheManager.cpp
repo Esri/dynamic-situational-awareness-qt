@@ -20,7 +20,7 @@
 
 #include "LayerCacheManager.h"
 
-// example app headers
+// dsa app headers
 #include "AddLocalDataController.h"
 #include "OpenMobileScenePackageController.h"
 #include "MarkupLayer.h"

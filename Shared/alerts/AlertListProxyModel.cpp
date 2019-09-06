@@ -19,7 +19,7 @@
 
 #include "AlertListProxyModel.h"
 
-// example app headers
+// dsa app headers
 #include "AlertConditionData.h"
 #include "AlertFilter.h"
 #include "AlertListModel.h"

@@ -17,7 +17,7 @@
 #ifndef LOCATIONBROADCAST_H
 #define LOCATIONBROADCAST_H
 
-// example app headers
+// dsa app headers
 #include "Message.h"
 
 // C++ API headers

@@ -20,7 +20,7 @@
 
 #include "LocationController.h"
 
-// example app headers
+// dsa app headers
 #include "GPXLocationSimulator.h"
 #include "LocationDisplay3d.h"
 

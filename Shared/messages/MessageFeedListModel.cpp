@@ -19,7 +19,7 @@
 
 #include "MessageFeedListModel.h"
 
-// example app headers
+// dsa app headers
 #include "MessageFeed.h"
 
 namespace Dsa {

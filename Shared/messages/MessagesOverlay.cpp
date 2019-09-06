@@ -19,7 +19,7 @@
 
 #include "MessagesOverlay.h"
 
-// example app headers
+// dsa app headers
 #include "Message.h"
 
 // C++ API headers

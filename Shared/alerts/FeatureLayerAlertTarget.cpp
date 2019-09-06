@@ -19,7 +19,7 @@
 
 #include "FeatureLayerAlertTarget.h"
 
-// example app headers
+// dsa app headers
 #include "FeatureQueryResultManager.h"
 #include "GeometryQuadtree.h"
 

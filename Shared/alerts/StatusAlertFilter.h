@@ -17,7 +17,7 @@
 #ifndef STATUSALERTFILTER_H
 #define STATUSALERTFILTER_H
 
-// example app headers
+// dsa app headers
 #include "AlertConditionData.h"
 #include "AlertFilter.h"
 

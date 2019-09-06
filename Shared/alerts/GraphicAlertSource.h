@@ -17,7 +17,7 @@
 #ifndef GRAPHICALERTSOURCE_H
 #define GRAPHICALERTSOURCE_H
 
-// example app headers
+// dsa app headers
 #include "AlertSource.h"
 
 namespace Esri {

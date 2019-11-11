@@ -18,7 +18,7 @@ TARGET = DSA_MessageSimulator_Qt
 TEMPLATE = app
 
 QT += qml quick xml
-CONFIG += c++11
+CONFIG += c++14
 
 INCLUDEPATH += \
     $$PWD/../Shared/messages \

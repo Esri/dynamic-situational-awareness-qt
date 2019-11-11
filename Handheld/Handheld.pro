@@ -18,7 +18,7 @@ TARGET = DSA_Handheld_Qt
 TEMPLATE = app
 
 QT += core gui opengl network positioning sensors qml quick xml
-CONFIG += c++11
+CONFIG += c++14
 
 ARCGIS_RUNTIME_VERSION = 100.5
 include($$PWD/../Shared/build/arcgisruntime.pri)

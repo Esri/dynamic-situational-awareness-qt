@@ -54,14 +54,13 @@ public:
   static const QString SCENE_INDEX_PROPERTYNAME;
 
   explicit OpenMobileScenePackageController(QObject* parent = nullptr);
-  ~OpenMobileScenePackageController();
+  ~OpenMobileScenePackageController() override;
 
   QString toolName() const override;
   void setProperties(const QVariantMap& properties) override;
 
   Q_INVOKABLE void selectPackageName(const QString& newPackageName);
   Q_INVOKABLE void selectScene(int newSceneIndex);
-  Q_INVOKABLE void unpack();
 
   QString packageDataPath() const;
   bool setPackageDataPath(const QString& dataPath);
@@ -84,9 +83,6 @@ signals:
   void imageReady(const QString& packageName, const QImage& packageImage);
   void packagesChanged();
 
-private slots:
-  void handleIsDirectReadSupportedCompleted(QUuid taskId, bool directReadSupported);
-
 private:
   void findPackage();
   void loadScene();
@@ -98,8 +94,6 @@ private:
 
   QString combinedPackagePath() const;
 
-  static QString getPackedName(const QString& packageName);
-  static QString getUnpackedName(const QString& packageName);
   QString pathInPackagesDirectory(const QString& packageName) const;
 
   Esri::ArcGISRuntime::MobileScenePackage* getPackage(const QString& packageName);
@@ -107,7 +101,6 @@ private:
 
   static const QString MSPK_EXTENSION;
   static const QString MMPK_EXTENSION;
-  static const QString UNPACKED_SUFFIX;
 
   QString m_packageDataPath;
   QString m_currentPackageName;
@@ -116,8 +109,6 @@ private:
   Esri::ArcGISRuntime::MobileScenePackage* m_mspk = nullptr;
   QHash<QUuid, QString> m_directReadTasks;
   QHash<QString, Esri::ArcGISRuntime::MobileScenePackage*> m_packages;
-  QMetaObject::Connection m_mspkInstanceUnpackConn;
-  QMetaObject::Connection m_mspkInstanceDirectReadConn;
   bool m_userSelected = false;
 };
 

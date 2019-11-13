@@ -36,27 +36,21 @@ public:
     PackageNameRole = Qt::UserRole + 1,
     ImageReadyRole = Qt::UserRole + 2,
     SceneNamesRole = Qt::UserRole + 3,
-    RequiresUnpackRole = Qt::UserRole + 4,
-    UnpackedNameRole = Qt::UserRole + 5,
     SceneImagesReadyRole = Qt::UserRole + 6,
     PackageTitleRole = Qt::UserRole + 7,
     PackageDescriptionRole = Qt::UserRole + 8
   };
 
   MobileScenePackagesListModel(QObject* parent = nullptr);
-  ~MobileScenePackagesListModel();
+  ~MobileScenePackagesListModel() override;
 
   void addPackageData(const QString& packageName);
   void removePackageDetails(const QString& packageName);
 
-  void setRequiresUnpack(const QString& packageName, bool requiresUnpack);
   void setImageReady(const QString& packageName, bool imageReady);
   void setSceneNames(const QString& packageName, const QStringList& sceneNames);
-  void setUnpackedName(const QString& packageName, const QString& unpackedName);
   void setSceneImagesReady(const QString& packageName, bool sceneImagesReady);
   void setTitleAndDescription(const QString& packageName, const QString& title, const QString& description);
-
-  bool isUnpackedVersion(const QString& packageName) const;
 
   // QAbstractItemModel interface
   int rowCount(const QModelIndex& parent) const override;
@@ -69,8 +63,6 @@ private:
 
   struct PackageDetails
   {
-    QString m_unpackedName;
-    bool m_requiresUnpack = false;
     bool m_imageReady = false;
     QStringList m_sceneNames;
     bool m_sceneImagesReady = false;

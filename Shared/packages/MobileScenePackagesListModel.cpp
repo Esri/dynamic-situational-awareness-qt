@@ -49,14 +49,6 @@ namespace Dsa {
         \li QStringList
         \li The names of the scenes contained in the package.
     \row
-        \li requiresUnpack
-        \li bool
-        \li Whether the package must be unpacked before it can be loaded.
-    \row
-        \li unpackedName
-        \li QString
-        \li The name of the unpacked version of this package, if it exists.
-    \row
         \li sceneImagesReady
         \li bool
         \li Whether thumbnail imagea for the scenes in the package are ready.
@@ -80,8 +72,6 @@ MobileScenePackagesListModel::MobileScenePackagesListModel(QObject* parent):
   m_roles[PackageNameRole] = "packageName";
   m_roles[ImageReadyRole] = "imageReady";
   m_roles[SceneNamesRole] = "sceneNames";
-  m_roles[RequiresUnpackRole] = "requiresUnpack";
-  m_roles[UnpackedNameRole] = "unpackedName";
   m_roles[SceneImagesReadyRole] = "sceneImagesReady";
   m_roles[PackageTitleRole] = "packageTitle";
   m_roles[PackageDescriptionRole] = "packageDescription";
@@ -120,23 +110,9 @@ void MobileScenePackagesListModel::removePackageDetails(const QString& packageNa
  */
 void MobileScenePackagesListModel::broadcastDataChanged(const QMap<QString, PackageDetails>::iterator& changedIterator)
 {
-  int index = std::distance(m_packageDetails.begin(), changedIterator);
+  int index = static_cast<int>(std::distance(m_packageDetails.begin(), changedIterator));
   auto changedIndex = createIndex(index, 0);
   emit dataChanged(changedIndex, changedIndex);
-}
-
-/*!
-  \brief Update the data for \a packageName, setting whether the package requires to be unpacked to \a requiresUnpack.
- */
-void MobileScenePackagesListModel::setRequiresUnpack(const QString& packageName, bool requiresUnpack)
-{
-  auto findIt = m_packageDetails.find(packageName);
-  if (findIt == m_packageDetails.end())
-    return;
-
-  findIt.value().m_requiresUnpack = requiresUnpack;
-
-  broadcastDataChanged(findIt);
 }
 
 /*!
@@ -162,22 +138,6 @@ void MobileScenePackagesListModel::setSceneNames(const QString& packageName, con
     return;
 
   findIt.value().m_sceneNames = sceneNames;
-
-  broadcastDataChanged(findIt);
-}
-
-/*!
-  \brief Update the data for \a packageName, setting the unpacked name to \a unpackedName.
- */
-void MobileScenePackagesListModel::setUnpackedName(const QString& packageName, const QString& unpackedName)
-{
-  auto findIt = m_packageDetails.find(packageName);
-  if (findIt == m_packageDetails.end())
-    return;
-
-  findIt.value().m_unpackedName = unpackedName;
-  // since an unpacked version exists, requires unpack should be set to false
-  findIt.value().m_requiresUnpack = false;
 
   broadcastDataChanged(findIt);
 }
@@ -209,22 +169,6 @@ void MobileScenePackagesListModel::setTitleAndDescription(const QString& package
   findIt.value().m_description = description;
 
   broadcastDataChanged(findIt);
-}
-
-/*!
-  \brief Returns whether \a packageName is already present as the unpacked version of a package file.
- */
-bool MobileScenePackagesListModel::isUnpackedVersion(const QString& packageName) const
-{
-  auto it = m_packageDetails.constBegin();
-  auto itEnd = m_packageDetails.constEnd();
-  for (; it != itEnd; ++it)
-  {
-    if (it.value().m_unpackedName == packageName)
-      return true;
-  }
-
-  return false;
 }
 
 /*!
@@ -261,10 +205,6 @@ QVariant MobileScenePackagesListModel::data(const QModelIndex& index, int role) 
     return it.value().m_imageReady;
   case SceneNamesRole:
     return it.value().m_sceneNames;
-  case RequiresUnpackRole:
-    return it.value().m_requiresUnpack;
-  case UnpackedNameRole:
-    return it.value().m_unpackedName;
   case SceneImagesReadyRole:
     return it.value().m_sceneImagesReady;
   case PackageTitleRole:

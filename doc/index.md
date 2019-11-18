@@ -390,7 +390,7 @@ The following lists some of the configuration settings that you can change.
 | GpxFile | `~/ArcGIS/Runtime/Data/DSA/SimulationData/MontereyMounted.gpx` | GPX file to use for simulating location |
 | InitialLocation  | * | JSON of center, distance, heading, pitch, roll |
 | LocationBroadcastConfig | * | JSON for message type and port to use |
-| LocalDataPaths | `~/ArcGIS/Runtime/Data/DSA,~/ArcGIS/Runtime/Data/DSA/OperationalData` | Locations that the Add Local Data tool searches for GIS Data. This should be a comma separated list. Folders are NOT recursively searched |
+| LocalDataPaths | `~/ArcGIS/Runtime/Data/DSA` `~/ArcGIS/Runtime/Data/DSA/OperationalData` | Locations that the Add Local Data tool searches for GIS Data. This should be a comma separated list. Folders are NOT recursively searched |
 | MessageFeeds | * | Details of message feeds used in DSA |
 | ResourceDirectory | `~/ArcGIS/Runtime/Data/DSA/ResourceData` | Location to search for images, style files, and other similar files used by the app |
 | RootDataDirectory | `~/ArcGIS/Runtime/Data/DSA` | Root data location |

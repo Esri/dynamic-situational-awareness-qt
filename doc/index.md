@@ -378,31 +378,31 @@ The configuration file is located at `~/ArcGIS/Runtime/Data/DSA/DsaAppConfig.jso
 
 The following lists some of the configuration settings that you can change.
 
-> In the spirit of succinct doc, please substitute all instances of `DATA_PATH` with `~/ArcGIS/Runtime/Data/DSA`
-
 | Key | Default value | Description |
 |-----|-----|-----|
-| BasemapDirectory | `DATA_PATH/BasemapData` | Location the basemap picker searches for basemap data |
-| Conditions | * | JSON array of custom JSON representing a condition |
+| BasemapDirectory | `**/BasemapData` | Location the basemap picker searches for basemap data |
+| Conditions |`*`| JSON array of custom JSON representing a condition |
 | CoordinateFormat | `MGRS` | String representing the default coordinate format used |
 | CurrentPackage | "" | String representing the path to a Mobile Scene Package (.mspk) file |
 | DefaultBasemap | `Topographic` | Name of the TPK file to use as the basemap, without the tpk file extension (not case sensitive) |
-| DefaultElevationSource | `DATA_PATH/ElevationData/CaDEM.tpk` | Default elevation source |
-| ElevationDirectory | `DATA_PATH/ElevationData` | Location to search for DEMs and LERC encoded TPK |
-| GpxFile | `DATA_PATH/SimulationData/MontereyMounted.gpx` | GPX file to use for simulating location |
-| InitialLocation  | * | JSON of center, distance, heading, pitch, roll |
-| LocationBroadcastConfig | * | JSON for message type and port to use |
-| LocalDataPaths | `DATA_PATH`, `DATA_PATH/OperationalData` | Locations that the Add Local Data tool searches for GIS Data. This should be a comma separated list. Folders are NOT recursively searched |
-| MessageFeeds | * | Details of message feeds used in DSA |
-| ResourceDirectory | `DATA_PATH/ResourceData` | Location to search for images, style files, and other similar files used by the app |
-| RootDataDirectory | `DATA_PATH` | Root data location |
+| DefaultElevationSource | `**/ElevationData/CaDEM.tpk` | Default elevation source |
+| ElevationDirectory | `**/ElevationData` | Location to search for DEMs and LERC encoded TPK |
+| GpxFile | `**/SimulationData/MontereyMounted.gpx` | GPX file to use for simulating location |
+| InitialLocation  |`*`| JSON of center, distance, heading, pitch, roll |
+| LocationBroadcastConfig |`*`| JSON for message type and port to use |
+| LocalDataPaths | `**`, `**/OperationalData` | Locations that the Add Local Data tool searches for GIS Data. This should be a comma separated list. Folders are NOT recursively searched |
+| MessageFeeds |`*`| Details of message feeds used in DSA |
+| ResourceDirectory | `**/ResourceData` | Location to search for images, style files, and other similar files used by the app |
+| RootDataDirectory | `**` | Root data location |
 | SceneIndex | `-1` | Integer representing the index of the Scene to load from the CurrentPackage |
 | SimulateLocation | `true` | Whether to simulate location or use your device's location |
-| SimulationDirectory | `DATA_PATH/SimulationData` | Location to search for GPX and Message Simulation files |
+| SimulationDirectory | `**/SimulationData` | Location to search for GPX and Message Simulation files |
 | UnitOfMeasurement | `meters` | Default unit of measurement for distance |
 | UserName | your device's name | Name that identifies your device on the network |
 
  `*` - See the config file for details.
+
+ `**` - Default data path: `~/ArcGIS/Runtime/Data/DSA`.
 
 # Add your own local data
 

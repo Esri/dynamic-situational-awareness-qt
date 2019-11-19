@@ -16,7 +16,7 @@ When the operational landscape changes frequently, then rapid, accurate, purpose
 
 DSA is an open source app designed to help you build your own custom field operation apps. Built using [ArcGIS Runtime SDK for Qt], DSA highlights developer best practices for the specific workflows for in-vehicle (mounted) and field (handheld/dismounted) teams who need to dynamically understand their environment and the situation around them.
 
-The DSA apps do not require access to a server. All the data and processing are on the device itself. Display of each local data source may be toggled on or off. Teammates share information such as own location, observation reports and markup across the peer-to-peer network. The emphasis is on collaboration with other teammates.
+The DSA apps do not require access to a server. All the data and processing are on the device itself. Display of each local data source may be toggled on or off. Teammates share information such as own location, observation reports, and markup across the peer-to-peer network. The emphasis is on collaboration with other teammates.
 
 These networks are typically not connected to the Internet, are not high-bandwidth, and are not constantly connected - a situation commonly encountered in field operations. This communication network topology is unlike more traditional ArcGIS Runtime apps that leverage the Internet and web servers for communication or web services for some functionality. DSA is designed for use on tactical networks that are secure. Communications between teammates minimizes bandwidth by using compact messages.
 
@@ -48,7 +48,7 @@ DSA-Vehicle and DSA-Handheld have the same capability, each built for its intend
 
 ## Supported platforms
 
-DSA-Vehicle and DSA-Handheld can be built to run on all platforms supported by [ArcGIS Runtime SDK for Qt]:  Android, Windows, iOS, Linux and macOS. The message simulator, a testing tool, may be built for Windows, Linux and macOS.
+DSA-Vehicle and DSA-Handheld can be built to run on all platforms supported by [ArcGIS Runtime SDK for Qt]:  Android, Windows, iOS, Linux, and macOS. The message simulator, a testing tool, may be built for Windows, Linux and macOS.
 
 # Overview
 
@@ -267,13 +267,13 @@ The user is notified of new alerts on the Tool Categories bar. The number in the
 
 ![](./images/dsa-tool-alert-view-active.png "View active alerts")<br>*Alerts view tool (DSA Handheld)*
 
-Use the View tool to view a list of active alerts. As alerts become active or inactive the app updates the list. You can filter the list by priority, and zoom to, highlight or dismiss an individual view on the list.
+Use the View tool to view a list of active alerts. As alerts become active or inactive, the app updates the list. You can filter the list by priority, and zoom to, highlight, or dismiss an individual view on the list.
 
 ### ![](./images/dsa-icon-alert-conditions-32.png) Conditions
 
 ![](./images/dsa-tool-alert-conditions.png "Conditions wizard")<br>*Alert conditions tool (DSA Handheld)*
 
-When you select the Conditions tool the app presents a list of the defined alert conditions. When you press CREATE NEW, a wizard asks for details about the conditions that will trigger the new alert.
+When you select the Conditions tool, the app presents a list of the defined alert conditions. When you press CREATE NEW, a wizard asks for details about the conditions that will trigger the new alert.
 
 Create a spatial condition to alert when something enters a polygon or comes within a certain distance of an area or object. Create an attribute condition to alert when an attribute is a specified value for an object provided by a feed. You can use any available attribute on the object. The details you are prompted for depend on the type of condition: spatial or attribute. Conditions are persisted in the app's [configuration file](#app-configuration-settings).
 
@@ -301,7 +301,7 @@ Due to the real-time, dynamic nature the DSA app, the information used can const
 
 In particular, performing spatial analysis (for example, a geofence) against many moving entities can be computationally expensive. To help alleviate this cost, the `GeometryQuadtree` can be used to create a spatial look-up structure for working with multiple [Geometry] objects. The quadtree is built to cover the full extent (an [Envelope] object) of the geometry and each object is recursively assigned to a leaf or node of the tree up to a maximum depth. The maximum depth of the tree can be assigned at creation time - generally 8 offers a good trade-off between granularity and the time taken to build the tree. The tree is a sparse structure, that is, any nodes which contain no geometry are removed. Once built, this structure offers very fast lookup of the candidate geometries which may intersect with a given query geometry. For performance reasons, the tree uses bounding box intersection tests only. The results are returned as a list of geometry objects which can be used for exact intersection tests using the [GeometryEngine]. The quadtree will connect to changes to the underlying geometry objects and can also be updated to include new features.
 
-***Developer tip*** Building the quadtree is the most expensive part of the operation so care should be taken to do this only when required. For example, the quadtree is a useful tool where there are many features which change infrequently (for example, a static feature layer) but would be less appropriate for a small number of constantly changing features (for example, your current location). For very large datasets, the cost to build the tree may be very high, so it may be worth moving it's construction to a background thread to avoid blocking the GUI thread.
+***Developer tip*** Building the quadtree is the most expensive part of the operation so care should be taken to do this only when required. For example, the quadtree is a useful tool where there are many features which change infrequently (for example, a static feature layer) but would be less appropriate for a small number of constantly changing features (for example, your current location). For very large datasets, the cost to build the tree may be very high, so it may be worth moving its construction to a background thread to avoid blocking the GUI thread.
 
 ## Collaboration
 

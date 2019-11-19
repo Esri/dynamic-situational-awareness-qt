@@ -243,8 +243,6 @@ Exploratory [analysis tools] combine information such as feature location, your 
 
 [Viewshed analysis] is a type of visibility analysis that shows the visible and obstructed areas within a directed field of view. Viewshed analysis shows you the areas of the scene that are visible from a given observer, determined by the terrain (represented by an elevation surface), buildings and other 3D features (represented by scene layers, graphics, and so on), and the properties of the observer. A viewshed is adjustable to show what is visible within a specified distance in a certain direction or all directions. Areas that are visible from the location are highlighted in green, and not-visible areas are highlighted in red. As the location moves, the viewshed analysis is recalculated.
 
-<!-- TODO - Add details -->
-
 ### ![](./images/dsa-icon-line-of-site-32.png) Line of sight
 
 ![](./images/dsa-tool-line-of-sight.png "Line of sight")<br>*Line of sight analysis (DSA Vehicle)*
@@ -327,10 +325,6 @@ When you select the observation report tool, a wizard asks for details to includ
 ***Developer tip:*** You can follow the create report patterns used by this app to create your own reports with their own purpose and attributes and share those reports with your teammates.
 
 ### ![](./images/dsa-icon-markup-tools-32.png) Markup tools
-
-<!-- <img style="float: left;" src="./images/dsa-tool-markup.png" alt="Draw on screen"> -->
-
-<!-- ![](./images/dsa-tool-markup.png "Draw on screen") -->
 
 ![](./images/dsa-tool-markup.png "Draw on screen")<br>*Markup tools*
 

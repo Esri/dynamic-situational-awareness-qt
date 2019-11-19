@@ -275,7 +275,7 @@ Use the View tool to view a list of active alerts. As alerts become active or in
 
 ![](./images/dsa-tool-alert-conditions.png "Conditions wizard")<br>*Alert conditions tool (DSA Handheld)*
 
-When you select the Conditions tool the app presents a list of the defined alert conditions. When you press CREATE NEW, a wizard asks for details about the conditions that will trigger the new alert.
+When you select the Conditions tool, the app presents a list of the defined alert conditions. When you press CREATE NEW, a wizard asks for details about the conditions that will trigger the new alert.
 
 Create a spatial condition to alert when something enters a polygon or comes within a certain distance of an area or object. Create an attribute condition to alert when an attribute is a specified value for an object provided by a feed. You can use any available attribute on the object. The details you are prompted for depend on the type of condition: spatial or attribute. Conditions are persisted in the app's [configuration file](#app-configuration-settings).
 

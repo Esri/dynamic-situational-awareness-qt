@@ -16,7 +16,7 @@ When the operational landscape changes frequently, then rapid, accurate, purpose
 
 DSA is an open source app designed to help you build your own custom field operation apps. Built using [ArcGIS Runtime SDK for Qt], DSA highlights developer best practices for the specific workflows for in-vehicle (mounted) and field (handheld/dismounted) teams who need to dynamically understand their environment and the situation around them.
 
-The DSA apps do not require access to a server. All the data and processing are on the device itself. Display of each local data source may be toggled on or off. Teammates share information such as own location, observation reports and markup across the peer-to-peer network. The emphasis is on collaboration with other teammates.
+The DSA apps do not require access to a server. All the data and processing are on the device itself. Display of each local data source may be toggled on or off. Teammates share information such as own location, observation reports, and markup across the peer-to-peer network. The emphasis is on collaboration with other teammates.
 
 These networks are typically not connected to the Internet, are not high-bandwidth, and are not constantly connected - a situation commonly encountered in field operations. This communication network topology is unlike more traditional ArcGIS Runtime apps that leverage the Internet and web servers for communication or web services for some functionality. DSA is designed for use on tactical networks that are secure. Communications between teammates minimizes bandwidth by using compact messages.
 

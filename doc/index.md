@@ -14,7 +14,7 @@ Methodically and meticulously, the team executes the sweep using constant, decen
 
 When the operational landscape changes frequently, then rapid, accurate, purpose-built, mission-focused communication is key to success. This is the working domain of the Dynamic Situational Awareness (DSA) open source app built using ArcGIS Runtime SDK. DSA enables physically distributed teams to work as one, maintaining current status on teammates while exploring and illuminating the operational landscape.
 
-DSA is an open source app designed to help you build your own custom field operation apps. Built using the [ArcGIS Runtime SDK for Qt], DSA highlights developer best practices for the specific workflows for in-vehicle (mounted) and field (handheld/dismounted) teams who need to dynamically understand their environment and the situation around them.
+DSA is an open source app designed to help you build your own custom field operation apps. Built using [ArcGIS Runtime SDK for Qt], DSA highlights developer best practices for the specific workflows for in-vehicle (mounted) and field (handheld/dismounted) teams who need to dynamically understand their environment and the situation around them.
 
 The DSA apps do not require access to a server. All the data and processing are on the device itself. Display of each local data source may be toggled on or off. Teammates share information such as own location, observation reports and markup across the peer-to-peer network. The emphasis is on collaboration with other teammates.
 

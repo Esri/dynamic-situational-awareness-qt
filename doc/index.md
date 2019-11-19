@@ -269,7 +269,7 @@ The user is notified of new alerts on the Tool Categories bar. The number in the
 
 ![](./images/dsa-tool-alert-view-active.png "View active alerts")<br>*Alerts view tool (DSA Handheld)*
 
-Use the View tool to view a list of active alerts. As alerts become active or inactive the app updates the list. You can filter the list by priority, and zoom to, highlight or dismiss an individual view on the list.
+Use the View tool to view a list of active alerts. As alerts become active or inactive, the app updates the list. You can filter the list by priority, and zoom to, highlight, or dismiss an individual view on the list.
 
 ### ![](./images/dsa-icon-alert-conditions-32.png) Conditions
 

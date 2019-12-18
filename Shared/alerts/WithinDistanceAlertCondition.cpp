@@ -19,7 +19,7 @@
 
 #include "WithinDistanceAlertCondition.h"
 
-// example app headers
+// dsa app headers
 #include "AlertConstants.h"
 #include "WithinDistanceAlertConditionData.h"
 

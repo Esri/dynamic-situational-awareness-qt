@@ -17,7 +17,7 @@
 #ifndef FIXEDVALUEALERTTARGET_H
 #define FIXEDVALUEALERTTARGET_H
 
-// example app headers
+// dsa app headers
 #include "AlertTarget.h"
 
 // Qt headers

@@ -19,7 +19,7 @@
 
 #include "ViewshedListModel.h"
 
-// example app headers
+// dsa app headers
 #include "Viewshed360.h"
 
 // C++ API headers

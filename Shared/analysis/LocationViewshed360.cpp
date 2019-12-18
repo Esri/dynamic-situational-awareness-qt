@@ -20,7 +20,7 @@
 
 #include "LocationViewshed360.h"
 
-// example app headers
+// dsa app headers
 #include "ViewshedController.h"
 
 // C++ API headers

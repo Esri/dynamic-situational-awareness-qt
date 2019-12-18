@@ -20,7 +20,7 @@
 
 #include "DsaController.h"
 
-// example app headers
+// dsa app headers
 #include "AlertConstants.h"
 #include "AlertLevel.h"
 #include "AppConstants.h"

@@ -19,7 +19,7 @@
 
 #include "LocationDisplay3d.h"
 
-// example app headers
+// dsa app headers
 #include "GPXLocationSimulator.h"
 
 // C++ API headers

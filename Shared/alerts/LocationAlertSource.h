@@ -17,7 +17,7 @@
 #ifndef LOCATIONALERTSOURCE_H
 #define LOCATIONALERTSOURCE_H
 
-// example app headers
+// dsa app headers
 #include "AlertSource.h"
 
 namespace Dsa {

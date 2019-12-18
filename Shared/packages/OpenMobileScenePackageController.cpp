@@ -47,7 +47,6 @@ const QString OpenMobileScenePackageController::CURRENT_PACKAGE_PROPERTYNAME = "
 const QString OpenMobileScenePackageController::SCENE_INDEX_PROPERTYNAME = "SceneIndex";
 const QString OpenMobileScenePackageController::MSPK_EXTENSION = ".mspk";
 const QString OpenMobileScenePackageController::MMPK_EXTENSION = ".mmpk";
-const QString OpenMobileScenePackageController::UNPACKED_SUFFIX = "_unpacked";
 
 /*!
   \class Dsa::OpenMobileScenePackageController
@@ -67,24 +66,6 @@ OpenMobileScenePackageController::OpenMobileScenePackageController(QObject* pare
 {
   Toolkit::ToolManager::instance().addTool(this);
   emit packagesChanged();
-
-  m_mspkInstanceDirectReadConn = connect(MobileScenePackage::instance(), &MobileScenePackage::isDirectReadSupportedCompleted, this,
-          &OpenMobileScenePackageController::handleIsDirectReadSupportedCompleted);
-
-  m_mspkInstanceUnpackConn = connect(MobileScenePackage::instance(), &MobileScenePackage::unpackCompleted, this, [this](QUuid, bool success)
-  {
-    if (!success)
-    {
-      emit toolErrorOccurred("Failed to unpack mspk", "Could not unpack");
-      return;
-    }
-
-    QString unpackedPackageName = getUnpackedName(m_currentPackageName);
-
-    m_packagesModel->setUnpackedName(m_currentPackageName, unpackedPackageName);
-    setCurrentPackageName(unpackedPackageName);
-    loadMobileScenePackage(unpackedPackageName);
-  });
 }
 
 /*!
@@ -92,10 +73,6 @@ OpenMobileScenePackageController::OpenMobileScenePackageController(QObject* pare
  */
 OpenMobileScenePackageController::~OpenMobileScenePackageController()
 {
-  // Disconnect the connections for the MobileScenePackage singleton instance
-  // since these should not outlive the OpenMobileScenePackageController object.
-  disconnect(m_mspkInstanceDirectReadConn);
-  disconnect(m_mspkInstanceUnpackConn);
 }
 
 /*!
@@ -157,14 +134,11 @@ void OpenMobileScenePackageController::findPackage()
   QFileInfo packagePathFileInfo = packagePath;
   if (packagePathFileInfo.isDir())
   {
-    // package is already unpacked, load it
     loadMobileScenePackage(m_currentPackageName);
   }
   else if (packagePath.endsWith(MSPK_EXTENSION))
   {
-    // the package is an .mspk archive file - check if it can be read directly
-    const auto taskWatcher = MobileScenePackage::instance()->isDirectReadSupported(packagePath);
-    m_directReadTasks.insert(taskWatcher.taskId(), m_currentPackageName);
+    loadMobileScenePackage(m_currentPackageName);
   }
   else if (packagePath.endsWith(MMPK_EXTENSION))
   {
@@ -227,58 +201,8 @@ void OpenMobileScenePackageController::selectPackageName(const QString& newPacka
  */
 void OpenMobileScenePackageController::selectScene(int newSceneIndex)
 {
-  if (!setCurrentSceneIndex(newSceneIndex))
-    return;
-
+  setCurrentSceneIndex(newSceneIndex);
   loadScene();
-}
-
-/*!
-  \brief Unpack the current mobile scene package to support direct reading of the contents.
- */
-void OpenMobileScenePackageController::unpack()
-{
-  // work out what the unpacked name should be.
-  QString unpackedPackageName = getUnpackedName(m_currentPackageName);
-  const QString unpackedDir = pathInPackagesDirectory(unpackedPackageName);
-
-  // If a directory with the unpacked name already exists, usue that
-  if (QFileInfo::exists(unpackedDir))
-  {
-    qDebug() << "Loading unpacked version " << unpackedDir;
-    setCurrentPackageName(unpackedPackageName);
-    loadMobileScenePackage(m_currentPackageName);
-
-    return;
-  }
-
-  // start the unpack task
-  MobileScenePackage::unpack(combinedPackagePath(), unpackedDir);
-}
-
-/*!
-  \internal
-
-  Handles the result of a task to check whether a given package supports direct read, or whether it must be unpacked.
- */
-void OpenMobileScenePackageController::handleIsDirectReadSupportedCompleted(QUuid taskId, bool directReadSupported)
-{
-  auto findTask = m_directReadTasks.constFind(taskId);
-
-  // If the task was not started by this tool, ignore
-  if (findTask == m_directReadTasks.constEnd())
-    return;
-
-  // Update the model to shoe whether the package requires unpack
-  const auto& packageName = findTask.value();
-
-  m_packagesModel->setRequiresUnpack(packageName, !directReadSupported);
-
-  // If the package doesn't need to be unpacked, load it to get it's thumbnail, scenes etc.
-  if (directReadSupported)
-    loadMobileScenePackage(packageName);
-
-  m_directReadTasks.erase(findTask);
 }
 
 /*!
@@ -385,11 +309,9 @@ void OpenMobileScenePackageController::loadMobileScenePackage(const QString& pac
     if (!packageItem)
       return;
 
-    // If the package is unpacked, update the details for the original
-    const QString packageNameToUse = m_packagesModel->isUnpackedVersion(packageName) ? getPackedName(packageName)
-                                                                                     : packageName;
-
-    m_packagesModel->setTitleAndDescription(packageNameToUse, packageItem->title(), packageItem->description());
+    m_packagesModel->setTitleAndDescription(packageName,
+                                            packageItem->title(),
+                                            packageItem->description());
 
     auto scenes = package->scenes();
     QStringList sceneNames;
@@ -409,25 +331,25 @@ void OpenMobileScenePackageController::loadMobileScenePackage(const QString& pac
       if (!item->thumbnail().isNull())
         continue;
 
-      connect(item, &Item::fetchThumbnailCompleted, this, [this, packageNameToUse, packageName, item](bool success)
+      connect(item, &Item::fetchThumbnailCompleted, this, [this, packageName, item](bool success)
       {
         if (success)
           emit imageReady(packageName + "_" + item->title(), item->thumbnail());
 
-        m_packagesModel->setSceneImagesReady(packageNameToUse, success);
+        m_packagesModel->setSceneImagesReady(packageName, success);
       });
 
       item->fetchThumbnail();
     }
 
-    m_packagesModel->setSceneNames(packageNameToUse, sceneNames);
+    m_packagesModel->setSceneNames(packageName, sceneNames);
 
-    connect(packageItem, &Item::fetchThumbnailCompleted, this, [this, packageNameToUse, packageItem](bool success)
+    connect(packageItem, &Item::fetchThumbnailCompleted, this, [this, packageName, packageItem](bool success)
     {
       if (success)
-        emit imageReady(packageNameToUse, packageItem->thumbnail());
+        emit imageReady(packageName, packageItem->thumbnail());
 
-      m_packagesModel->setImageReady(packageNameToUse, success);
+      m_packagesModel->setImageReady(packageName, success);
     });
 
     package->item()->fetchThumbnail();
@@ -482,30 +404,6 @@ QAbstractListModel* OpenMobileScenePackageController::packages() const
 bool OpenMobileScenePackageController::userSelected() const
 {
   return m_userSelected;
-}
-
-/*!
-  \internal
-  Static method to apply the packed naming scene to the given \a packageName.
- */
-QString OpenMobileScenePackageController::getPackedName(const QString& packageName)
-{
-  QString packedPackageName = packageName;
-  packedPackageName.replace(UNPACKED_SUFFIX, MSPK_EXTENSION);
-
-  return packedPackageName;
-}
-
-/*!
-  \internal
-  Static method to apply the unpacked naming scene to the given \a packageName.
- */
-QString OpenMobileScenePackageController::getUnpackedName(const QString& packageName)
-{
-  QString unpackedPackageName = packageName;
-  unpackedPackageName.replace(MSPK_EXTENSION, UNPACKED_SUFFIX);
-
-  return unpackedPackageName;
 }
 
 /*!
@@ -582,22 +480,7 @@ void OpenMobileScenePackageController::updatePackageDetails()
     if (!createPackageDetails(packageName))
       continue;
 
-    const QString unpackedName = getUnpackedName(packageName);
-    // if the package is already unpacked, record the unpacked name
-    if (dirPackageNames.contains(unpackedName))
-    {
-      m_packagesModel->setUnpackedName(packageName, unpackedName);
-      dirPackageNames.removeAll(unpackedName);
-
-      // try and load the unpacked version
-      loadMobileScenePackage(unpackedName);
-    }
-    else
-    {
-      // check if it needs unpack
-      const auto taskWatcher = MobileScenePackage::instance()->isDirectReadSupported(pathInPackagesDirectory(packageName));
-      m_directReadTasks.insert(taskWatcher.taskId(), packageName);
-    }
+    loadMobileScenePackage(packageName);
   }
 
   for (const auto& packageName : dirPackageNames)

@@ -20,7 +20,7 @@
 
 #include "AlertConditionsController.h"
 
-// example app headers
+// dsa app headers
 #include "AlertConditionData.h"
 #include "AlertConditionListModel.h"
 #include "AlertConstants.h"

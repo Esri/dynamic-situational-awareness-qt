@@ -371,7 +371,7 @@ SurfacePlacement MessageFeedsController::toSurfacePlacement(const QString& surfa
   if (surfacePlacement.compare("absolute", Qt::CaseInsensitive) == 0)
     return SurfacePlacement::Absolute;
 
-  return SurfacePlacement::Draped; // default
+  return SurfacePlacement::DrapedFlat; // default
 }
 
 /*!

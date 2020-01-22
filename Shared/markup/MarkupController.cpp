@@ -237,7 +237,7 @@ void MarkupController::init()
   initGeometryBuilder();
 
   if (m_is3d)
-    m_sketchOverlay->setSceneProperties(LayerSceneProperties(SurfacePlacement::Draped));
+    m_sketchOverlay->setSceneProperties(LayerSceneProperties(SurfacePlacement::DrapedFlat));
 
   connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::identifyGraphicsOverlayCompleted, this, [this](QUuid, IdentifyGraphicsOverlayResult* identifyResult)
   {

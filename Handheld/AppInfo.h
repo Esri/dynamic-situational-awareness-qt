@@ -18,8 +18,8 @@
 #define __APPINFO__
 //------------------------------------------------------------------------------
 
-#define kOrganizationName               "MyOrganization"
-#define kOrganizationDomain             "myorganization.com"
+#define kOrganizationName               "Esri"
+#define kOrganizationDomain             "esri.com"
 
 #define kApplicationName                "DSA_Handheld_Qt"
 #define kApplicationVersion             "1.1"

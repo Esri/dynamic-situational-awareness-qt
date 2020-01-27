@@ -20,7 +20,7 @@ import QtQuick.Controls.Material 2.2
 import QtQuick.Window 2.2
 import QtQml.Models 2.2
 import QtGraphicalEffects 1.0
-import Esri.DSA 1.0
+import Esri.ArcGISRuntime.OpenSourceApps.DSA 1.1
 
 Dialog {
     property alias inputLabel: inputLabelText.text

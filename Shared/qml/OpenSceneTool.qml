@@ -18,7 +18,7 @@ import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
 import QtQuick.Window 2.2
-import Esri.DSA 1.0
+import Esri.ArcGISRuntime.OpenSourceApps.DSA 1.1
 
 DsaPanel {
     width: parent.width
@@ -158,29 +158,6 @@ DsaPanel {
                         color: Material.foreground
                     }
 
-                    Label {
-                        id: needsUnpackLabel
-                        anchors {
-                            top: packageTitleLabel.bottom
-                            bottom: parent.bottom
-                            left: parent.left
-                            right: parent.right
-                        }
-
-                        visible: requiresUnpack
-                        text: "Needs Unpack"
-
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-
-                        wrapMode: Text.WrapAnywhere
-                        font {
-                            pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                            bold: true
-                        }
-                        color: Material.accent
-                    }
-
                     MouseArea {
                         anchors.fill: parent
                         hoverEnabled: true
@@ -189,10 +166,7 @@ DsaPanel {
                             packageTitleString = packageTitle;
                             packageDescriptionString = packageDescription;
                             packageFrame.currentIndex = 1;
-                            // If the package has an unpacked version, use that
-                            toolController.selectPackageName( unpackedName.length > 0 ? unpackedName :
-                                                                                        packageName);
-                            unpackButton.visible = requiresUnpack
+                            toolController.selectPackageName(packageName);
                         }
 
                         onHoveredChanged: {
@@ -213,52 +187,6 @@ DsaPanel {
             clip: true
             spacing: 64 * scaleFactor
             visible: packageFrame.currentIndex === 1
-
-            Button {
-                id: unpackButton
-                anchors.centerIn: parent
-
-                contentItem: Text {
-                    anchors.fill: parent
-                    text: "Unpack"
-                    font{
-                        pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                        family: DsaStyles.fontFamily
-                        bold: true
-                    }
-                    color: "white"
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
-
-                background: Rectangle {
-                    anchors.fill: parent
-                    color: Material.accent
-                }
-
-                onClicked: {
-                    toolController.unpack();
-                    unpackButton.visible = false;
-                }
-            }
-
-            Label {
-                id: unpackText
-                anchors {
-                    top: unpackButton.bottom
-                    left: parent.left
-                    right: parent.right
-                    bottom: parent.bottom
-                    margins: 8 * scaleFactor
-                }
-                visible: unpackButton.visible
-
-                text: "This package contains archived data that must be unpacked to a directory on your device"
-                wrapMode: Text.WordWrap
-
-                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                font.family: DsaStyles.fontFamily
-            }
 
             delegate: Rectangle {
                 width: parent.width

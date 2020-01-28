@@ -20,7 +20,7 @@ import QtQuick.Controls 1.4 as QtQuick1
 import QtQuick.Controls.Material 2.2
 import QtGraphicalEffects 1.0
 import QtQuick.Window 2.2
-import Esri.DSA 1.0
+import Esri.ArcGISRuntime.OpenSourceApps.DSA 1.1
 
 Item {
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)

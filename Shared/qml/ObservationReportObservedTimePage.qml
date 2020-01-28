@@ -20,7 +20,7 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls 2.1
 import QtQuick.Controls.Material 2.1
 import QtQuick.Window 2.2
-import Esri.DSA 1.0
+import Esri.ArcGISRuntime.OpenSourceApps.DSA 1.1
 
 Item {
     id: observedTimePage

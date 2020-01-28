@@ -18,7 +18,7 @@ import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
 import QtQuick.Window 2.2
-import Esri.DSA 1.0
+import Esri.ArcGISRuntime.OpenSourceApps.DSA 1.1
 import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.5
 
 Row {
@@ -117,25 +117,6 @@ Row {
             PropertyChanges {
                 target: tocIcon
                 selected: true
-            }
-            PropertyChanges {
-                target: coordinateConversionIcon
-                selected: selected
-            }
-            PropertyChanges {
-                target: identifyIcon
-                selected: selected
-            }
-        },
-        State {
-            name: basemapIcon.toolName
-            PropertyChanges {
-                target: basemapIcon
-                selected: true
-            }
-            PropertyChanges {
-                target: tocIcon
-                selected: selected
             }
             PropertyChanges {
                 target: coordinateConversionIcon

@@ -18,11 +18,11 @@
 #define __APPINFO__
 //------------------------------------------------------------------------------
 
-#define kOrganizationName               "MyOrganization"
-#define kOrganizationDomain             "myorganization.com"
+#define kOrganizationName               "Esri"
+#define kOrganizationDomain             "esri.com"
 
 #define kApplicationName                "DSA_Handheld_Qt"
-#define kApplicationVersion             "1.1"
+#define kApplicationVersion             "1.1.1"
 #define kApplicationDescription         "Dynamic Situational Awareness - Handheld app"
 
 #define kApplicationSourceUrl           "qrc:/qml/main.qml"

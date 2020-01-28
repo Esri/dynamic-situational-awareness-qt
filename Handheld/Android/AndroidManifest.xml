@@ -1,11 +1,7 @@
 <?xml version="1.0"?>
-<manifest package="com.esri.arcgisruntime.DSA_Handheld_Qt" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="1.0" android:versionCode="1" android:installLocation="auto">
+<manifest package="com.esri.arcgisruntime.opensourceapps.DSA_Handheld_Qt" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="1.1.1" android:versionCode="2" android:installLocation="auto">
     <application android:hardwareAccelerated="true" android:icon="@drawable/icon" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:label="DSA_H_Qt" android:theme="@android:style/Theme.Holo.Light.NoActionBar">
         <activity android:name="org.qtproject.qt5.android.bindings.QtActivity" android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|locale|fontScale|keyboard|keyboardHidden|navigation" android:screenOrientation="unspecified" android:label="DSA_H_Qt">
-                  android:name=&quot;org.qtproject.qt5.android.bindings.QtActivity&quot;
-                  android:label=&quot;DSA_H_Qt&quot;
-                  android:screenOrientation=&quot;unspecified&quot;
-                  android:launchMode=&quot;singleTop&quot;&gt;
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -76,4 +72,5 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
 </manifest>

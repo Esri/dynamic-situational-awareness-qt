@@ -6,6 +6,7 @@
 - QML namespaces updated from `Esri.*` to `Esri.ArcGISRuntime.OpenSourceApps.*`.
 - Replaced deprecated use of enum `SurfacePlacement::Draped` with `SurfacePlacement::DrapedFlat`.
 - Removed deprecated "ExampleApps" icon.
+- Comprehensive [app documentation](/docs/index.md) from the ArcGIS for Developers site.
 
 ## 1.1.0
 
@@ -18,5 +19,3 @@
 ## 1.0.0
 
 This is the first release of the Dynamic Situational Awareness app for Qt.
-
-Comprehensive [app documentation](/docs/index.md) from the ArcGIS for Developers site.

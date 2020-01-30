@@ -60,6 +60,18 @@ The compiled versions of the DSA app are made available for you to conveniently 
 ## Issues
 Find a bug or want to request a new feature?  Please let us know by submitting an issue.
 
+## Troubleshooting
+
+### Military Symbols are not displaying after migrating to version 1.1.1.
+
+DSA now requires additional `*.stylx` files in the `styles/arcade` subdirectory of your DSA resource data. The structure
+should look like this:
+
+* `DSA/ResourceData/styles/arcade/mil2525c.stylx`
+* `DSA/ResourceData/styles/arcade/mil2525d.stylx`
+
+To quickly obtain these additional `*.stylx` files, we provide these in the [demo data](http://www.arcgis.com/home/item.html?id=82ce2d85e21c4326bc072d441b636e5e).
+
 ## Contributing
 Esri welcomes contributions from anyone and everyone. Please see our [guidelines for contributing](https://github.com/esri/contributing).
 

@@ -4,9 +4,11 @@
 
 - Updated to use version 100.7 of the ArcGIS Runtime SDK for Qt.
 - QML namespaces updated from `Esri.*` to `Esri.ArcGISRuntime.OpenSourceApps.*`.
-- Replaced deprecated use of enum `SurfacePlacement::Draped` with `SurfacePlacement::DrapedFlat`.
+- Replaced deprecated use of enum `SurfacePlacement::Draped` with `SurfacePlacement::DrapedBillboarded`.
+- Replaced ModelSceneSymbol with PictureMarkerSymbol for location tracking.
 - Removed deprecated "ExampleApps" icon.
 - Comprehensive [app documentation](/docs/index.md) from the ArcGIS for Developers site.
+- Added Troubleshooting section to README.md.
 
 ## 1.1.0
 

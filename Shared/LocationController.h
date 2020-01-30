@@ -94,7 +94,7 @@ private slots:
 private:
   void initPositionInfoSource();
   void clearPositionInfoSource();
-  QImage iconSymbol() const;
+  QImage iconImage() const;
 
   QGeoPositionInfoSource* m_positionSource = nullptr;
   QCompass* m_compass = nullptr;

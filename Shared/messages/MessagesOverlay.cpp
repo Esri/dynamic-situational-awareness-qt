@@ -46,7 +46,7 @@ namespace Dsa {
   \brief Constructor taking a \a geoView and an optional \a parent.
  */
 MessagesOverlay::MessagesOverlay(GeoView* geoView, QObject* parent) :
-  MessagesOverlay(geoView, nullptr, QString(), SurfacePlacement::DrapedFlat, parent)
+  MessagesOverlay(geoView, nullptr, QString(), SurfacePlacement::DrapedBillboarded, parent)
 {
 }
 

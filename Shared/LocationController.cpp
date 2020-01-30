@@ -392,7 +392,7 @@ void LocationController::setIconDataPath(const QString& dataPath)
 }
 
 /*!
-  \brief Returns the QImage of the model symbol used for location display.
+  \brief Returns the QImage of the navigation icon used for location display.
  */
 QImage LocationController::iconImage() const
 {

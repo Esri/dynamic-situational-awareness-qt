@@ -394,7 +394,7 @@ void LocationController::setIconDataPath(const QString& dataPath)
 /*!
   \brief Returns the URL of the model symbol used for location display.
  */
-QImage LocationController::iconSymbol() const
+QImage LocationController::iconImage() const
 {
   const QString imagePath = m_iconDataPath + "/navigation.png";
 

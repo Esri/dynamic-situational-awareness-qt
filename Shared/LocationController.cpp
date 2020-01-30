@@ -370,7 +370,7 @@ void LocationController::updateGeoView()
 
     constexpr float symbolSize = 25.0;
 
-    auto pictureMarkerSymbol = new PictureMarkerSymbol(iconSymbol(), this);
+    auto pictureMarkerSymbol = new PictureMarkerSymbol(iconImage(), this);
     pictureMarkerSymbol->setWidth(symbolSize);
     pictureMarkerSymbol->setHeight(symbolSize);
     pictureMarkerSymbol->setRotationType(RotationType::Geographic);

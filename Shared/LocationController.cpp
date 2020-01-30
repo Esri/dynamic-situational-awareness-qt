@@ -370,7 +370,7 @@ void LocationController::updateGeoView()
 
     constexpr float symbolSize = 25.0;
 
-    PictureMarkerSymbol* pictureMarkerSymbol = new PictureMarkerSymbol(iconSymbol(), this);
+    auto pictureMarkerSymbol = new PictureMarkerSymbol(iconSymbol(), this);
     pictureMarkerSymbol->setWidth(symbolSize);
     pictureMarkerSymbol->setHeight(symbolSize);
     pictureMarkerSymbol->setRotationType(RotationType::Geographic);
@@ -442,4 +442,3 @@ QImage LocationController::iconSymbol() const
   An \a errorMessage and \a additionalMessage are passed through as parameters, describing
   the error that occurred.
  */
-

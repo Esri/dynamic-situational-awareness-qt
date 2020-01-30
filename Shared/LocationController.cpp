@@ -396,7 +396,7 @@ void LocationController::setIconDataPath(const QString& dataPath)
  */
 QImage LocationController::iconSymbol() const
 {
-  QString imagePath = m_iconDataPath + "/navigation.png";
+  const QString imagePath = m_iconDataPath + "/navigation.png";
 
   return (QFile::exists(imagePath)) ? QImage(imagePath)
                                     : QImage(":Resources/icons/xhdpi/navigation.png");

@@ -36,25 +36,25 @@ HEADERS += \
     AppInfo.h \
     Vehicle.h \
     VehicleStyles.h \
-    $$PWD/../Shared/*.h \
-    $$PWD/../Shared/alerts/*.h \
-    $$PWD/../Shared/analysis/*.h \
-    $$PWD/../Shared/messages/*.h \
-    $$PWD/../Shared/packages/*.h \
-    $$PWD/../Shared/utilities/*.h \
-    $$PWD/../Shared/markup/*.h
+    $$files($$PWD/../Shared/*.h) \
+    $$files($$PWD/../Shared/alerts/*.h) \
+    $$files($$PWD/../Shared/analysis/*.h) \
+    $$files($$PWD/../Shared/messages/*.h) \
+    $$files($$PWD/../Shared/packages/*.h) \
+    $$files($$PWD/../Shared/utilities/*.h) \
+    $$files($$PWD/../Shared/markup/*.h)
 
 SOURCES += \
     main.cpp \
     Vehicle.cpp \
     VehicleStyles.cpp \
-    $$PWD/../Shared/*.cpp \
-    $$PWD/../Shared/alerts/*.cpp \
-    $$PWD/../Shared/analysis/*.cpp \
-    $$PWD/../Shared/messages/*.cpp \
-    $$PWD/../Shared/packages/*.cpp \
-    $$PWD/../Shared/utilities/*.cpp \
-    $$PWD/../Shared/markup/*.cpp
+    $$files($$PWD/../Shared/*.cpp) \
+    $$files($$PWD/../Shared/alerts/*.cpp) \
+    $$files($$PWD/../Shared/analysis/*.cpp) \
+    $$files($$PWD/../Shared/messages/*.cpp) \
+    $$files($$PWD/../Shared/packages/*.cpp) \
+    $$files($$PWD/../Shared/utilities/*.cpp) \
+    $$files($$PWD/../Shared/markup/*.cpp)
 
 RESOURCES += \
     qml/qml.qrc \

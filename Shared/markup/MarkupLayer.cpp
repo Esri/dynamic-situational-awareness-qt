@@ -144,7 +144,7 @@ FeatureCollection* MarkupLayer::featureCollection()
 MarkupLayer* MarkupLayer::createFromGraphics(GraphicsOverlay* graphicsOverlay, const QString& authorName, QObject* parent)
 {
   // get the sceneview instance
-  SceneView* sceneView = dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView());
+  SceneView* sceneView = dynamic_cast<SceneView*>(ToolResourceProvider::instance()->geoView());
 
   // create the markup
   QJsonObject markup;

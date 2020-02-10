@@ -30,7 +30,7 @@ namespace ArcGISRuntime {
 
 namespace Dsa {
 
-class FollowPositionController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+class FollowPositionController : public AbstractTool
 {
   Q_OBJECT
 

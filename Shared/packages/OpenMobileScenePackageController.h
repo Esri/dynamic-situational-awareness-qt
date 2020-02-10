@@ -40,7 +40,7 @@ namespace Dsa {
 
 class MobileScenePackagesListModel;
 
-class OpenMobileScenePackageController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+class OpenMobileScenePackageController : public AbstractTool
 {
   Q_OBJECT
 

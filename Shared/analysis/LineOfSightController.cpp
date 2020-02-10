@@ -48,7 +48,7 @@ namespace Dsa {
 /*!
   \class Dsa::LineOfSightController
   \inmodule Dsa
-  \inherits Toolkit::AbstractTool
+  \inherits AbstractTool
   \brief Tool controller for creating line of sight analysis.
 
   This tool allows line of sight analysis to be created:
@@ -64,7 +64,7 @@ namespace Dsa {
  */
 void LineOfSightController::getLocationGeoElement()
 {
-  LocationController* locationController = Toolkit::ToolManager::instance().tool<LocationController>();
+  LocationController* locationController = ToolManager::instance().tool<LocationController>();
   if (locationController)
     m_locationGeoElement = locationController->locationDisplay()->locationGraphic();
 }
@@ -95,24 +95,24 @@ void LineOfSightController::setVisibleByCount(int visibleByCount)
   \brief Constructor accepting an optional \a parent.
  */
 LineOfSightController::LineOfSightController(QObject* parent):
-  Toolkit::AbstractTool(parent),
+  AbstractTool(parent),
   m_overlayNames(new QStringListModel(this)),
   m_lineOfSightOverlay(new AnalysisOverlay(this))
 {
   // connect to ToolResourceProvider signals
-  auto resourecProvider = Toolkit::ToolResourceProvider::instance();
-  connect(resourecProvider, &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]()
+  auto resourecProvider = ToolResourceProvider::instance();
+  connect(resourecProvider, &ToolResourceProvider::geoViewChanged, this, [this]()
   {
-    onGeoViewChanged(Toolkit::ToolResourceProvider::instance()->geoView());
+    onGeoViewChanged(ToolResourceProvider::instance()->geoView());
   });
-  connect(resourecProvider, &Toolkit::ToolResourceProvider::sceneChanged, this, [this]()
+  connect(resourecProvider, &ToolResourceProvider::sceneChanged, this, [this]()
   {
     onOperationalLayersChanged();
 
     // this tool must be in the tool manager before adding analyses below
-    Toolkit::ToolManager::instance().addTool(this);
+    ToolManager::instance().addTool(this);
 
-    SceneView* sceneView = dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView());
+    SceneView* sceneView = dynamic_cast<SceneView*>(ToolResourceProvider::instance()->geoView());
     if (!sceneView)
       return;
 
@@ -129,9 +129,9 @@ LineOfSightController::LineOfSightController(QObject* parent):
   onOperationalLayersChanged();
 
   // this tool must be in the tool manager before adding analyses below
-  Toolkit::ToolManager::instance().addTool(this);
+  ToolManager::instance().addTool(this);
 
-  SceneView* sceneView = dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView());
+  SceneView* sceneView = dynamic_cast<SceneView*>(ToolResourceProvider::instance()->geoView());
   if (sceneView)
   {
     m_geoView = sceneView;
@@ -181,7 +181,7 @@ void LineOfSightController::onGeoViewChanged(GeoView* geoView)
     return;
 
   m_geoView = geoView;
-  SceneView* sceneView = dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView());
+  SceneView* sceneView = dynamic_cast<SceneView*>(ToolResourceProvider::instance()->geoView());
   if (!sceneView)
     return;
 
@@ -196,7 +196,7 @@ void LineOfSightController::onGeoViewChanged(GeoView* geoView)
  */
 void LineOfSightController::onOperationalLayersChanged()
 {
-  Esri::ArcGISRuntime::LayerListModel* operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+  Esri::ArcGISRuntime::LayerListModel* operationalLayers = ToolResourceProvider::instance()->operationalLayers();
   // if there are no layers, clear the overlays list
   if (!operationalLayers)
   {
@@ -212,7 +212,7 @@ void LineOfSightController::onOperationalLayersChanged()
     QStringList overlayNames;
     m_overlays.clear();
 
-    Esri::ArcGISRuntime::LayerListModel* operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+    Esri::ArcGISRuntime::LayerListModel* operationalLayers = ToolResourceProvider::instance()->operationalLayers();
     if (operationalLayers)
     {
       const int opLayersCount = operationalLayers->rowCount();

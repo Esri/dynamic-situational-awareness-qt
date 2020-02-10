@@ -50,7 +50,7 @@ class AlertTarget;
 class LocationAlertSource;
 class LocationAlertTarget;
 
-class AlertConditionsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+class AlertConditionsController : public AbstractTool
 {
   Q_OBJECT
 

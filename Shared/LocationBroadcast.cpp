@@ -321,7 +321,7 @@ void LocationBroadcast::update()
 
   if (m_useCurrentLocation)
   {
-    m_locationChangedConn = connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::locationChanged,
+    m_locationChangedConn = connect(ToolResourceProvider::instance(), &ToolResourceProvider::locationChanged,
                                     this, [this](const Point& location)
     {
       if (!m_enabled)

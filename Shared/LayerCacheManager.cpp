@@ -69,7 +69,7 @@ using namespace Esri::ArcGISRuntime;
 /*!
   \class Dsa::LayerCacheManager
   \inmodule Dsa
-  \inherits Toolkit::AbstractTool
+  \inherits AbstractTool
   \brief Tool controller responsible for managing the layers in the app.
  */
 
@@ -77,22 +77,22 @@ using namespace Esri::ArcGISRuntime;
  \brief Constructor that takes an optional \a parent.
  */
 LayerCacheManager::LayerCacheManager(QObject* parent) :
-  Toolkit::AbstractTool(parent)
+  AbstractTool(parent)
 {
   // obtain Add Local Data Controller
-  m_localDataController = Toolkit::ToolManager::instance().tool<AddLocalDataController>();
+  m_localDataController = ToolManager::instance().tool<AddLocalDataController>();
 
   // connect to new scene for cases where a new scene is set on the SceneView (via MobileScenePackage)
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::sceneChanged, this, [this]()
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::sceneChanged, this, [this]()
   {
-    m_scene = Toolkit::ToolResourceProvider::instance()->scene();
+    m_scene = ToolResourceProvider::instance()->scene();
     m_layers = QJsonArray();
     m_inputLayerJsonArray = QJsonArray();
     m_initialLayerCache.clear();
     connectSignals();
 
     // only add initial layers on initial load. Once the user selects a new scene, the layer list will be cleared
-    auto mobileSceneTool = Toolkit::ToolManager::instance().tool<OpenMobileScenePackageController>();
+    auto mobileSceneTool = ToolManager::instance().tool<OpenMobileScenePackageController>();
     if (!mobileSceneTool)
       return;
 
@@ -106,7 +106,7 @@ LayerCacheManager::LayerCacheManager(QObject* parent) :
   // connect to the initial default scene created in code
   connectSignals();
 
-  Toolkit::ToolManager::instance().addTool(this);
+  ToolManager::instance().addTool(this);
 }
 
 /*!
@@ -287,7 +287,7 @@ void LayerCacheManager::layerToJson(Layer* layer)
 */
 void LayerCacheManager::onLayerListChanged()
 {
-  m_scene = Toolkit::ToolResourceProvider::instance()->scene();
+  m_scene = ToolResourceProvider::instance()->scene();
   if (!m_initialLoadCompleted)
     return;
 
@@ -375,7 +375,7 @@ void LayerCacheManager::addLayers(const QVariantMap& properties)
 void LayerCacheManager::connectSignals()
 {
   // obtain Scene and connect slot
-  m_scene = Toolkit::ToolResourceProvider::instance()->scene();
+  m_scene = ToolResourceProvider::instance()->scene();
   if (!m_scene)
     return;
 
@@ -414,7 +414,7 @@ void LayerCacheManager::connectSignals()
   // cache the created layers
   m_layerCreatedConnection = connect(m_localDataController, &AddLocalDataController::layerCreated, this, [this](int layerIndex, Layer* layer)
   {
-    m_scene = Toolkit::ToolResourceProvider::instance()->scene();
+    m_scene = ToolResourceProvider::instance()->scene();
     m_initialLayerCache.insert(layerIndex, layer);
     const int layerCount = m_inputLayerJsonArray.size();
     emit jsonToLayerCompleted(layer);

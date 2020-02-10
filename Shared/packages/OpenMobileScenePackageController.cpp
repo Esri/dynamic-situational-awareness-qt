@@ -51,7 +51,7 @@ const QString OpenMobileScenePackageController::MMPK_EXTENSION = ".mmpk";
 /*!
   \class Dsa::OpenMobileScenePackageController
   \inmodule Dsa
-  \inherits Toolkit::AbstractTool
+  \inherits AbstractTool
   \brief Tool controller for opening mobile scene packages.
 
   \sa Esri::ArcGISRuntime::MobileScenePackage
@@ -61,10 +61,10 @@ const QString OpenMobileScenePackageController::MMPK_EXTENSION = ".mmpk";
   \brief Constructor taking an optional \a parent.
  */
 OpenMobileScenePackageController::OpenMobileScenePackageController(QObject* parent /* = nullptr */):
-  Toolkit::AbstractTool(parent),
+  AbstractTool(parent),
   m_packagesModel(new MobileScenePackagesListModel(this))
 {
-  Toolkit::ToolManager::instance().addTool(this);
+  ToolManager::instance().addTool(this);
   emit packagesChanged();
 }
 
@@ -173,7 +173,7 @@ void OpenMobileScenePackageController::loadScene()
 
   // Get the scene at the current index and add add it to the ToolResourceProvider
   Scene* theScene = scenes.at(m_currentSceneIndex);
-  Toolkit::ToolResourceProvider::instance()->setScene(theScene);
+  ToolResourceProvider::instance()->setScene(theScene);
 }
 
 /*!

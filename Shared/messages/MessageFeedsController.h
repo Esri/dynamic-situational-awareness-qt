@@ -40,7 +40,7 @@ class LocationBroadcast;
 
 class MessageFeedListModel;
 
-class MessageFeedsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+class MessageFeedsController : public AbstractTool
 {
   Q_OBJECT
 

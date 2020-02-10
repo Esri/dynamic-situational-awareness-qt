@@ -39,7 +39,7 @@ class AlertListProxyModel;
 class IdsAlertFilter;
 class StatusAlertFilter;
 
-class AlertListController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+class AlertListController : public AbstractTool
 {
   Q_OBJECT
 

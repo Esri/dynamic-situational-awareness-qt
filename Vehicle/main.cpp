@@ -47,7 +47,7 @@
 
 // toolkit headers
 #include "ArcGISCompassController.h"
-#include "ArcGISRuntimeToolkit.h"
+#include "CoordinateConversion/CoordinateConversionController.h"
 
 // C++ API headers
 #include "ArcGISRuntimeEnvironment.h"
@@ -89,7 +89,6 @@
 //------------------------------------------------------------------------------
 
 using namespace Esri::ArcGISRuntime;
-using namespace Esri::ArcGISRuntime::Toolkit;
 
 QObject* dsaStylesProvider(QQmlEngine* engine, QJSEngine* scriptEngine);
 QObject* dsaResourcesProvider(QQmlEngine* engine, QJSEngine* scriptEngine);
@@ -140,9 +139,8 @@ int main(int argc, char *argv[])
   qmlRegisterType<Dsa::AnalysisListController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "AnalysisListController");
   qmlRegisterType<Dsa::ObservationReportController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "ObservationReportController");
   qmlRegisterType<Dsa::OpenMobileScenePackageController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "OpenMobileScenePackageController");
-
-  // Register Toolkit Component Types
-  ArcGISRuntimeToolkit::registerToolkitTypes();
+  qmlRegisterType<Dsa::CoordinateConversionController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "CoordinateConversionController");
+  qmlRegisterType<Dsa::ArcGISCompassController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "ArcGISCompassController");
 
   // Initialize application view
   QQuickView view;

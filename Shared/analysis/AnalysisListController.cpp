@@ -40,7 +40,7 @@ namespace Dsa {
 /*!
   \class Dsa::AnalysisListController
   \inmodule Dsa
-  \inherits Toolkit::AbstractTool
+  \inherits AbstractTool
   \brief Tool controller for working with the list of Analysis objects.
 
   Analyses are the result of either a viewshed or line of sight operation.
@@ -56,18 +56,18 @@ namespace Dsa {
   \brief Constructor accepting an optional \a parent.
  */
 AnalysisListController::AnalysisListController(QObject* parent):
-  Toolkit::AbstractTool(parent),
+  AbstractTool(parent),
   m_analysisList(new CombinedAnalysisListModel(this))
 {
   // update the geoView used by the tool as required
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]()
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::geoViewChanged, this, [this]()
   {
-    onGeoViewChanged(Toolkit::ToolResourceProvider::instance()->geoView());
+    onGeoViewChanged(ToolResourceProvider::instance()->geoView());
   });
 
-  onGeoViewChanged(Toolkit::ToolResourceProvider::instance()->geoView());
+  onGeoViewChanged(ToolResourceProvider::instance()->geoView());
 
-  Toolkit::ToolManager::instance().addTool(this);
+  ToolManager::instance().addTool(this);
 }
 
 /*!
@@ -130,11 +130,11 @@ void AnalysisListController::onGeoViewChanged(GeoView* geoView)
   // handle changes to the list of analysis overlays used by the view
   auto handleAnalysisOverlaysChanged = [this]()
   {
-    ViewshedController* viewshed = Toolkit::ToolManager::instance().tool<ViewshedController>();
+    ViewshedController* viewshed = ToolManager::instance().tool<ViewshedController>();
     if (viewshed != nullptr)
       m_analysisList->setViewshedModel(viewshed->viewsheds());
 
-    LineOfSightController* lineOfSight = Toolkit::ToolManager::instance().tool<LineOfSightController>();
+    LineOfSightController* lineOfSight = ToolManager::instance().tool<LineOfSightController>();
     if (lineOfSight != nullptr)
       m_analysisList->setLineOfSightModel(lineOfSight->lineOfSightOverlay()->analyses());
 

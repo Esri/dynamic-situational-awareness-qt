@@ -44,7 +44,7 @@ const QString BasemapPickerController::BASEMAP_DIRECTORY_PROPERTYNAME = "Basemap
 /*!
   \class Dsa::BasemapPickerController
   \inmodule Dsa
-  \inherits Toolkit::AbstractTool
+  \inherits Dsa::AbstractTool
   \brief Tool controller for setting a basemap for the app.
 
   \sa Esri::ArcGISRuntime::Basemap
@@ -54,12 +54,12 @@ const QString BasemapPickerController::BASEMAP_DIRECTORY_PROPERTYNAME = "Basemap
   \brief Constructor taking an optional \a parent.
  */
 BasemapPickerController::BasemapPickerController(QObject* parent /* = nullptr */):
-  Toolkit::AbstractTool(parent),
+  AbstractTool(parent),
   m_tileCacheModel(new TileCacheListModel(this))
 {
   connect(this, &BasemapPickerController::basemapsDataPathChanged, this, &BasemapPickerController::onBasemapDataPathChanged);
 
-  Toolkit::ToolManager::instance().addTool(this);
+  ToolManager::instance().addTool(this);
 }
 
 /*!
@@ -164,7 +164,7 @@ void BasemapPickerController::basemapSelected(int row)
   Basemap* selectedBasemap = new Basemap(new ArcGISTiledLayer(tileCache, this), this);
   connect(selectedBasemap, &Basemap::errorOccurred, this, &BasemapPickerController::errorOccurred);
 
-  Toolkit::ToolResourceProvider::instance()->setBasemap(selectedBasemap);
+  ToolResourceProvider::instance()->setBasemap(selectedBasemap);
 
   const QString basemapName = m_tileCacheModel->tileCacheNameAt(row);
 

@@ -63,7 +63,7 @@ namespace Dsa {
 /*!
   \class Dsa::AlertConditionsController
   \inmodule Dsa
-  \inherits Toolkit::AbstractTool
+  \inherits AbstractTool
   \brief Tool controller for working with the conditions which can trigger alerts.
 
   Alerts are created when a given \l AlertCondition is met.
@@ -82,7 +82,7 @@ namespace Dsa {
   \brief Constructor taking an optional \a parent.
  */
 AlertConditionsController::AlertConditionsController(QObject* parent /* = nullptr */):
-  Toolkit::AbstractTool(parent),
+  AbstractTool(parent),
   m_conditions(new AlertConditionListModel(this)),
   m_sourceNames(new QStringListModel(QStringList{AlertConstants::MY_LOCATION}, this)),
   m_targetNames(new QStringListModel(this)),
@@ -90,7 +90,7 @@ AlertConditionsController::AlertConditionsController(QObject* parent /* = nullpt
   m_locationSource(new LocationAlertSource(this)),
   m_locationTarget(new LocationAlertTarget(this))
 {
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged,
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::geoViewChanged,
           this, &AlertConditionsController::onGeoviewChanged);
 
   connect(m_conditions, &AlertConditionListModel::rowsInserted, this, &AlertConditionsController::onConditionsChanged);
@@ -100,7 +100,7 @@ AlertConditionsController::AlertConditionsController(QObject* parent /* = nullpt
 
   onGeoviewChanged();
 
-  Toolkit::ToolManager::instance().addTool(this);
+  ToolManager::instance().addTool(this);
 }
 
 /*!
@@ -430,13 +430,13 @@ void AlertConditionsController::togglePickMode()
 
   if (m_pickMode)
   {
-    m_mouseClickConnection = connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mouseClicked,
+    m_mouseClickConnection = connect(ToolResourceProvider::instance(), &ToolResourceProvider::mouseClicked,
                                      this, &AlertConditionsController::onMouseClicked);
 
-    m_identifyLayersConnection =  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::identifyLayersCompleted,
+    m_identifyLayersConnection =  connect(ToolResourceProvider::instance(), &ToolResourceProvider::identifyLayersCompleted,
                                           this, &AlertConditionsController::onIdentifyLayersCompleted);
 
-    m_identifyGraphicsConnection =  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::identifyGraphicsOverlaysCompleted,
+    m_identifyGraphicsConnection =  connect(ToolResourceProvider::instance(), &ToolResourceProvider::identifyGraphicsOverlaysCompleted,
                                             this, &AlertConditionsController::onIdentifyGraphicsOverlaysCompleted);
   }
   else
@@ -541,11 +541,11 @@ void AlertConditionsController::onGeoviewChanged()
   setTargetNames(QStringList());
   setSourceNames(QStringList(AlertConstants::MY_LOCATION));
 
-  GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
+  GeoView* geoView = ToolResourceProvider::instance()->geoView();
   if (!geoView)
     return;
 
-  LayerListModel* operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+  LayerListModel* operationalLayers = ToolResourceProvider::instance()->operationalLayers();
   if (operationalLayers)
   {
     connect(operationalLayers, &LayerListModel::layerAdded, this, &AlertConditionsController::onLayersChanged);
@@ -571,7 +571,7 @@ void AlertConditionsController::onGeoviewChanged()
  */
 void AlertConditionsController::onLayersChanged()
 {
-  GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
+  GeoView* geoView = ToolResourceProvider::instance()->geoView();
   if (!geoView)
   {
     setTargetNames(QStringList());
@@ -581,7 +581,7 @@ void AlertConditionsController::onLayersChanged()
 
   QStringList newTargetList;
   QStringList existingLayerIds;
-  LayerListModel* operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+  LayerListModel* operationalLayers = ToolResourceProvider::instance()->operationalLayers();
   if (operationalLayers)
   {
     const int opLayersCount = operationalLayers->rowCount();
@@ -679,7 +679,7 @@ void AlertConditionsController::onMouseClicked(QMouseEvent &event)
   if (m_identifyGraphicsWatcher.isValid() && !m_identifyGraphicsWatcher.isDone())
     return;
 
-  GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
+  GeoView* geoView = ToolResourceProvider::instance()->geoView();
   if (!geoView)
     return;
 
@@ -821,7 +821,7 @@ void AlertConditionsController::handleNewAlertConditionData(AlertConditionData* 
   Reports that conditions have changed and emits a JSON representation of all
   active conditions.
 
-  /sa Toolkit::AbstractTool::propertyChanged
+  /sa AbstractTool::propertyChanged
  */
 void AlertConditionsController::onConditionsChanged()
 {
@@ -1042,12 +1042,12 @@ void AlertConditionsController::addStoredConditions()
  */
 AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int targetOverlayIndex, QString& targetDescription) const
 {
-  GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
+  GeoView* geoView = ToolResourceProvider::instance()->geoView();
   if (!geoView)
     return nullptr;
 
   int currIndex = -1;
-  LayerListModel* operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+  LayerListModel* operationalLayers = ToolResourceProvider::instance()->operationalLayers();
   if (operationalLayers)
   {
     const int opLayersCount = operationalLayers->rowCount();
@@ -1192,7 +1192,7 @@ AlertTarget* AlertConditionsController::targetFromGraphicsOverlay(GraphicsOverla
  */
 GraphicsOverlay* AlertConditionsController::graphicsOverlayFromName(const QString& overlayName)
 {
-  GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
+  GeoView* geoView = ToolResourceProvider::instance()->geoView();
   if (!geoView)
     return nullptr;
 

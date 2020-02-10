@@ -42,7 +42,7 @@ namespace Dsa {
 /*!
   \class Dsa::IdentifyController
   \inmodule Dsa
-  \inherits Toolkit::AbstractTool
+  \inherits AbstractTool
   \brief Tool controller for identifying GeoElements.
  */
 
@@ -50,21 +50,21 @@ namespace Dsa {
   \brief Constructor accepting an optional \a parent.
  */
 IdentifyController::IdentifyController(QObject* parent /* = nullptr */):
-  Toolkit::AbstractTool(parent)
+  AbstractTool(parent)
 {
   // setup connection to handle mouse-clicking in the view (used to trigger the identify tasks)
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mouseClicked,
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::mouseClicked,
           this, &IdentifyController::onMouseClicked);
 
   // setup connection to handle the results of an Identify Layers task
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::identifyLayersCompleted,
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::identifyLayersCompleted,
           this, &IdentifyController::onIdentifyLayersCompleted);
 
   // setup connection to handle the results of an Identify Graphic Overlays task
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::identifyGraphicsOverlaysCompleted,
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::identifyGraphicsOverlaysCompleted,
           this, &IdentifyController::onIdentifyGraphicsOverlaysCompleted);
 
-  Toolkit::ToolManager::instance().addTool(this);
+  ToolManager::instance().addTool(this);
 }
 
 /*!
@@ -188,7 +188,7 @@ void IdentifyController::onMouseClicked(QMouseEvent& event)
   if (busy())
     return;
 
-  GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
+  GeoView* geoView = ToolResourceProvider::instance()->geoView();
   if (!geoView)
     return;
 

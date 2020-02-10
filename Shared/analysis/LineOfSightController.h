@@ -42,7 +42,7 @@ class QStringListModel;
 
 namespace Dsa {
 
-class LineOfSightController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+class LineOfSightController : public AbstractTool
 {
   Q_OBJECT
 

@@ -50,7 +50,7 @@ namespace Dsa {
 /*!
   \class Dsa::NavigationController
   \inmodule Dsa
-  \inherits Toolkit::AbstractTool
+  \inherits AbstractTool
   \brief Tool controller for handling navigation for the app.
  */
 
@@ -58,14 +58,14 @@ namespace Dsa {
   \brief Constructor taking an optional \a parent.
  */
 NavigationController::NavigationController(QObject* parent) :
-  Toolkit::AbstractTool(parent)
+  AbstractTool(parent)
 {
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, &NavigationController::updateGeoView);
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::screenToLocationCompleted, this, &NavigationController::screenToLocationCompleted);
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::geoViewChanged, this, &NavigationController::updateGeoView);
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::screenToLocationCompleted, this, &NavigationController::screenToLocationCompleted);
 
   updateGeoView();
 
-  Toolkit::ToolManager::instance().addTool(this);
+  ToolManager::instance().addTool(this);
 }
 
 /*!
@@ -95,7 +95,7 @@ void NavigationController::setProperties(const QVariantMap&)
  */
 void NavigationController::updateGeoView()
 {
-  m_geoView = Toolkit::ToolResourceProvider::instance()->geoView();
+  m_geoView = ToolResourceProvider::instance()->geoView();
   if (!m_geoView)
     return;
 

@@ -38,7 +38,7 @@ class DataSender;
 
 class PointHighlighter;
 
-class ObservationReportController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+class ObservationReportController : public AbstractTool
 {
   Q_OBJECT
 

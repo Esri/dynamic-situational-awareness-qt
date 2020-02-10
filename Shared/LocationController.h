@@ -40,7 +40,7 @@ namespace Dsa {
 class GPXLocationSimulator;
 class LocationDisplay3d;
 
-class LocationController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+class LocationController : public AbstractTool
 {
   Q_OBJECT
 

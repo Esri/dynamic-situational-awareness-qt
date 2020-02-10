@@ -45,7 +45,7 @@ class ViewshedListModel;
 class Viewshed360;
 class GeoElementViewshed360;
 
-class ViewshedController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+class ViewshedController : public AbstractTool
 {
   Q_OBJECT
 

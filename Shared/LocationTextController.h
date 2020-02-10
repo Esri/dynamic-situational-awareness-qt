@@ -29,7 +29,7 @@ class Surface;
 
 namespace Dsa {
 
-class LocationTextController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+class LocationTextController : public AbstractTool
 {
   Q_OBJECT
 

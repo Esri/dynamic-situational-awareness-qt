@@ -36,7 +36,7 @@ namespace Dsa {
   Changes to the device position will cause the \l AlertSource::locationChanged
   signal to be emitted.
 
-  /sa Toolkit::ToolResourceProvider
+  /sa ToolResourceProvider
  */
 
 /*!
@@ -46,7 +46,7 @@ LocationAlertSource::LocationAlertSource(QObject* parent):
   AlertSource(parent),
   m_location(0., 0., SpatialReference::wgs84())
 {
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::locationChanged, this, [this](const Point& location)
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::locationChanged, this, [this](const Point& location)
   {
     if (m_location == location)
       return;

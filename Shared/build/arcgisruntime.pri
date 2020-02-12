@@ -14,23 +14,21 @@
 #  limitations under the License.
 ################################################################################
 
-equals($$QtRuntimeSdkPath, "") {
-  include($$PWD/resolvesdkinstall.pri)
-}
-
 CONFIG(deployment): DEFINES += DEPLOYMENT_BUILD
 
-!include($$QtRuntimeSdkPath/sdk/ideintegration/arcgis_runtime_qml_cpp.pri) {
+contains(QMAKE_HOST.os, Windows):{
+  iniPath = $$(ALLUSERSPROFILE)\EsriRuntimeQt\ArcGIS Runtime SDK for Qt $${ARCGIS_RUNTIME_VERSION}.ini
+}
+else {
+  userHome = $$system(echo $HOME)
+  iniPath = $${userHome}/.config/EsriRuntimeQt/ArcGIS Runtime SDK for Qt $${ARCGIS_RUNTIME_VERSION}.ini
+}
+iniLine = $$cat($${iniPath}, "lines")
+dirPath = $$find(iniLine, "InstallDir")
+cleanDirPath = $$replace(dirPath, "InstallDir=", "")
+priLocation = $$replace(cleanDirPath, '"', "")
+!include($$priLocation/sdk/ideintegration/arcgis_runtime_qml_cpp.pri) {
   message("Error. Cannot locate ArcGIS Runtime PRI file")
 }
 
-ios: {
-  include(resolvelocaltoolkit.pri)
-  !isEmpty(CppToolkitLocation) {
-    include($$CppToolkitLocation/../ArcGISRuntimeToolkitPlugin.pri)
-  } else {
-    !include($$QtRuntimeSdkPath/sdk/toolkit/Plugin/ArcGISRuntimeToolkitPlugin.pri) {
-      message("Error. Cannot locate PRI file to import Toolkit as a plugin")
-    }
-  }
-}
+

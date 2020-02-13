@@ -21,8 +21,8 @@ import QtQuick.Window 2.2
 import QtQml.Models 2.2
 import Esri.ArcGISRuntime.OpenSourceApps.DSA 1.1
 import Esri.ArcGISRuntime.OpenSourceApps.Vehicle 1.1
-import Esri.ArcGISRuntime.Toolkit.Controls 100.5
-import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.5
+
+import Esri.ArcGISRuntime.Toolkit 100.7
 
 Vehicle {
     id: appRoot
@@ -167,16 +167,17 @@ Vehicle {
             radius: hudRadius
         }
 
-        ArcGISCompass {
+        NorthArrow {
             id: compass
+            geoView: sceneView
             anchors {
                 horizontalCenter: navTool.horizontalCenter
                 verticalCenter: followHud.verticalCenter
                 margins: 10 * scaleFactor
             }
-            autoHideCompass: false
             width: DsaStyles.primaryIconSize * scaleFactor
             height: width
+            autoHide: false;
         }
 
         CoordinateConversion {

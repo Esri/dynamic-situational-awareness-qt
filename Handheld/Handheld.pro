@@ -22,7 +22,6 @@ CONFIG += c++14
 
 ARCGIS_RUNTIME_VERSION = 100.7
 include($$PWD/../Shared/build/arcgisruntime.pri)
-include ($$PWD/../arcgis-runtime-toolkit-qt/toolkitquick.pri)
 
 INCLUDEPATH += $$PWD/../Shared/ \
     $$PWD/../Shared/alerts \

@@ -57,5 +57,8 @@
         <file>ObservationReportObservedTimePage.qml</file>
         <file>DsaYesNoDialog.qml</file>
         <file>OpenSceneTool.qml</file>
+        <file>PopupStackView.qml</file>
+        <file>CoordinateConversion.qml</file>
+        <file>PopupViewBase.qml</file>
     </qresource>
 </RCC>

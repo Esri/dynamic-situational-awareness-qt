@@ -22,8 +22,7 @@ import QtQml.Models 2.2
 import QtGraphicalEffects 1.0
 import Esri.ArcGISRuntime.OpenSourceApps.DSA 1.1
 import Esri.ArcGISRuntime.OpenSourceApps.Handheld 1.1
-import Esri.ArcGISRuntime.Toolkit.Controls 100.5
-import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.5
+import Esri.ArcGISRuntime.Toolkit 100.7
 
 Handheld {
     id: appRoot
@@ -170,15 +169,16 @@ Handheld {
             radius: hudRadius
         }
 
-        ArcGISCompass {
+        NorthArrow {
             id: compass
+            geoView: sceneView
             anchors {
                 right: parent.right
                 bottom: sceneView.attributionTop
                 bottomMargin: 10 * scaleFactor
                 rightMargin: parent.height < navTool.height * 1.6 ? 60 * scaleFactor : 15 * scaleFactor
             }
-            autoHideCompass: false
+            autoHide: false
             width: DsaStyles.primaryIconSize * scaleFactor
             height: width
         }

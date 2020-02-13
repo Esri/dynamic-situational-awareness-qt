@@ -44,10 +44,10 @@
 #include "ViewedAlertsController.h"
 #include "ViewshedController.h"
 #include "PackageImageProvider.h"
+#include "CoordinateConversion/CoordinateConversionController.h"
 
 // toolkit headers
-#include "ArcGISCompassController.h"
-#include "CoordinateConversion/CoordinateConversionController.h"
+#include <Esri/ArcGISRuntime/Toolkit/register.h>
 
 // C++ API headers
 #include "ArcGISRuntimeEnvironment.h"
@@ -140,7 +140,6 @@ int main(int argc, char *argv[])
   qmlRegisterType<Dsa::ObservationReportController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "ObservationReportController");
   qmlRegisterType<Dsa::OpenMobileScenePackageController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "OpenMobileScenePackageController");
   qmlRegisterType<Dsa::CoordinateConversionController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "CoordinateConversionController");
-  qmlRegisterType<Dsa::ArcGISCompassController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "ArcGISCompassController");
 
   // Initialize application view
   QQuickView view;
@@ -148,24 +147,22 @@ int main(int argc, char *argv[])
 
   view.engine()->addImageProvider(QStringLiteral("packages"), new Dsa::PackageImageProvider());
 
+  Esri::ArcGISRuntime::Toolkit::registerComponents(view.engine());
+
 #ifndef DEPLOYMENT_BUILD
   // Add the import Path
   view.engine()->addImportPath(QDir(QCoreApplication::applicationDirPath()).filePath("qml"));
   QString arcGISRuntimeImportPath = QUOTE(ARCGIS_RUNTIME_IMPORT_PATH);
-  QString arcGISToolkitImportPath = QUOTE(ARCGIS_TOOLKIT_IMPORT_PATH);
 
 #if defined(LINUX_PLATFORM_REPLACEMENT)
   // on some linux platforms the string 'linux' is replaced with 1
   // fix the replacement paths which were created
   QString replaceString = QUOTE(LINUX_PLATFORM_REPLACEMENT);
   arcGISRuntimeImportPath = arcGISRuntimeImportPath.replace(replaceString, "linux", Qt::CaseSensitive);
-  arcGISToolkitImportPath = arcGISToolkitImportPath.replace(replaceString, "linux", Qt::CaseSensitive);
 #endif
 
   // Add the Runtime and Extras path
   view.engine()->addImportPath(arcGISRuntimeImportPath);
-  // Add the Toolkit path
-  view.engine()->addImportPath(arcGISToolkitImportPath);
 #endif // DEPLOYMENT_BUILD
 
   // To quit via Qt.quit() from QML, you must connect the QQmlEngine::quit()

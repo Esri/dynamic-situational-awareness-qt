@@ -46,7 +46,6 @@ ToolManager::ToolManager()
  */
 ToolManager::~ToolManager()
 {
-
 }
 
 /*! \brief Adds \a tool to the manager.

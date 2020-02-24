@@ -26,7 +26,6 @@ include($$PWD/../Shared/build/arcgisruntime.pri)
 INCLUDEPATH += $$PWD/../Shared/ \
     $$PWD/../Shared/alerts \
     $$PWD/../Shared/analysis \
-    $$PWD/../Shared/CoordinateConversion \
     $$PWD/../Shared/messages \
     $$PWD/../Shared/packages \
     $$PWD/../Shared/utilities \
@@ -39,7 +38,6 @@ HEADERS += \
     $$PWD/../Shared/*.h \
     $$PWD/../Shared/alerts/*.h \
     $$PWD/../Shared/analysis/*.h \
-    $$PWD/../Shared/CoordinateConversion/*.h \
     $$PWD/../Shared/messages/*.h \
     $$PWD/../Shared/packages/*.h \
     $$PWD/../Shared/utilities/*.h \
@@ -52,7 +50,6 @@ SOURCES += \
     $$PWD/../Shared/*.cpp \
     $$PWD/../Shared/alerts/*.cpp \
     $$PWD/../Shared/analysis/*.cpp \
-    $$PWD/../Shared/CoordinateConversion/*.cpp \
     $$PWD/../Shared/messages/*.cpp \
     $$PWD/../Shared/packages/*.cpp \
     $$PWD/../Shared/utilities/*.cpp \

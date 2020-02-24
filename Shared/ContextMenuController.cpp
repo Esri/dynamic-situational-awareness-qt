@@ -21,6 +21,7 @@
 #include "ContextMenuController.h"
 
 // dsa app headers
+#include "CoordinateConversionToolProxy.h"
 #include "ObservationReportController.h"
 #include "FollowPositionController.h"
 #include "GraphicsOverlaysResultsManager.h"
@@ -30,10 +31,12 @@
 #include "ViewshedController.h"
 #include "GeoElementUtils.h"
 
-// toolkit headers
-#include "CoordinateConversionController.h"
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
+
+// Toolkit headers
+#include "Esri/ArcGISRuntime/Toolkit/CoordinateConversionController.h"
+
 
 // C++ API headers
 #include "MapView.h"
@@ -533,13 +536,12 @@ void ContextMenuController::selectOption(const QString& option)
   }
   else if (option == COORDINATES_OPTION)
   {
-    CoordinateConversionController* coordinateTool = ToolManager::instance().tool<CoordinateConversionController>();
+    auto coordinateTool = ToolManager::instance().tool<CoordinateConversionToolProxy>();
     if (!coordinateTool)
       return;
 
-    coordinateTool->setRunConversion(true);
-    coordinateTool->setCaptureMode(true);
-    coordinateTool->setPointToConvert(m_contextLocation);
+    coordinateTool->handleClick(m_contextLocation);
+    coordinateTool->controller()->setInPickingMode(true);
     coordinateTool->setActive(true);
   }
   else if (option == LINE_OF_SIGHT_OPTION)

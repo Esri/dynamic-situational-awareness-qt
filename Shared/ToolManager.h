@@ -17,8 +17,6 @@
 #ifndef TOOL_MANAGER_H
 #define TOOL_MANAGER_H
 
-#include "ToolkitCommon.h"
-
 #include <QObject>
 #include <QMap>
 #include <memory>
@@ -28,7 +26,7 @@ namespace Dsa
 
 class AbstractTool;
 
-class TOOLKIT_EXPORT ToolManager : public QObject
+class ToolManager : public QObject
 {
   Q_OBJECT
 

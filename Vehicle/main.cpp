@@ -44,7 +44,7 @@
 #include "ViewedAlertsController.h"
 #include "ViewshedController.h"
 #include "PackageImageProvider.h"
-#include "CoordinateConversion/CoordinateConversionController.h"
+#include "CoordinateConversionToolProxy.h"
 
 // toolkit headers
 #include <Esri/ArcGISRuntime/Toolkit/register.h>
@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<Dsa::AnalysisListController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "AnalysisListController");
   qmlRegisterType<Dsa::ObservationReportController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "ObservationReportController");
   qmlRegisterType<Dsa::OpenMobileScenePackageController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "OpenMobileScenePackageController");
-  qmlRegisterType<Dsa::CoordinateConversionController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "CoordinateConversionController");
+  qmlRegisterType<Dsa::CoordinateConversionToolProxy>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "CoordinateConversionToolProxy");
 
   // Initialize application view
   QQuickView view;

@@ -17,8 +17,6 @@
 #ifndef ABSTRACT_TOOL_H
 #define ABSTRACT_TOOL_H
 
-#include "ToolkitCommon.h"
-
 #include <QObject>
 #include <QString>
 #include <QVariantMap>
@@ -37,7 +35,7 @@ class Point;
 namespace Dsa
 {
 
-class TOOLKIT_EXPORT AbstractTool : public QObject
+class AbstractTool : public QObject
 {
   Q_OBJECT
 

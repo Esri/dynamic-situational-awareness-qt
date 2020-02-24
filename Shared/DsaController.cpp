@@ -31,10 +31,11 @@
 #include "MessageFeedConstants.h"
 #include "OpenMobileScenePackageController.h"
 
-// toolkit headers
-#include "CoordinateConversionConstants.h"
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
+
+// toolkit headers
+#include "Esri/ArcGISRuntime/Toolkit/CoordinateConversionConstants.h"
 
 // C++ API headers
 #include "GeoView.h"
@@ -544,7 +545,7 @@ void DsaController::createDefaultSettings()
   m_dsaSettings["GpxFile"] = QString("%1/MontereyMounted.gpx").arg(m_dsaSettings["SimulationDirectory"].toString());
   m_dsaSettings["SimulateLocation"] = QStringLiteral("true");
   writeDefaultMessageFeeds();
-  m_dsaSettings[CoordinateConversionConstants::COORDINATE_FORMAT_PROPERTY] = CoordinateConversionConstants::MGRS_FORMAT;
+  m_dsaSettings["CoordinateFormat"] = Esri::ArcGISRuntime::Toolkit::CoordinateConversionConstants::MGRS_FORMAT;
   m_dsaSettings[AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME] = AppConstants::UNIT_METERS;
   m_dsaSettings["UseGpsForElevation"] = QStringLiteral("true");
   QJsonObject markupJson;

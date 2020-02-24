@@ -22,7 +22,7 @@ import QtQml.Models 2.2
 import Esri.ArcGISRuntime.OpenSourceApps.DSA 1.1
 import Esri.ArcGISRuntime.OpenSourceApps.Vehicle 1.1
 
-import Esri.ArcGISRuntime.Toolkit 100.7
+import Esri.ArcGISRuntime.Toolkit 100.7 as Toolkit
 
 Vehicle {
     id: appRoot
@@ -167,7 +167,7 @@ Vehicle {
             radius: hudRadius
         }
 
-        NorthArrow {
+        Toolkit.NorthArrow {
             id: compass
             geoView: sceneView
             anchors {
@@ -180,7 +180,12 @@ Vehicle {
             autoHide: false;
         }
 
-        CoordinateConversion {
+        CoordinateConversionToolProxy {
+            id: dsaCoordinateController
+            inInputMode: coordinateConversion.inInputMode
+        }
+
+        Toolkit.CoordinateConversion {
             id: coordinateConversion
             anchors {
                 bottom: sceneView.attributionTop
@@ -188,10 +193,9 @@ Vehicle {
                 right: followHud.left
                 margins: hudMargins
             }
-
-            objectName: "coordinateConversion"
-            visible: false
-            geoView: sceneView
+            controller: dsaCoordinateController.controller
+            inputFormat: dsaCoordinateController.inputFormat
+            visible: dsaCoordinateController.active
             highlightColor : Material.accent
             textColor: Material.foreground
             backgroundColor: Material.background

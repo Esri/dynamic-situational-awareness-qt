@@ -19,7 +19,6 @@
 
 #include <QObject>
 
-#include "ToolkitCommon.h"
 #include "Point.h"
 #include <QMouseEvent>
 #include <QUuid>
@@ -44,7 +43,7 @@ class IdentifyLayerResult;
 namespace Dsa
 {
 
-class TOOLKIT_EXPORT ToolResourceProvider : public QObject
+class ToolResourceProvider : public QObject
 {
   Q_OBJECT
 

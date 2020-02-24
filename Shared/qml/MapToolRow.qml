@@ -208,12 +208,12 @@ Row {
             else
                 mapToolRow.state = toolName;
 
-            if (coordinateConversion.visible) {
-                coordinateConversion.visible = false;
+            if (dsaCoordinateController.active) {
+                dsaCoordinateController.active = false;
                 mapToolRow.state = "clear";
                 selected = false;
             } else {
-                coordinateConversion.visible = true;
+                dsaCoordinateController.active = true;
             }
         }
     }

@@ -22,7 +22,7 @@ import QtQml.Models 2.2
 import QtGraphicalEffects 1.0
 import Esri.ArcGISRuntime.OpenSourceApps.DSA 1.1
 import Esri.ArcGISRuntime.OpenSourceApps.Handheld 1.1
-import Esri.ArcGISRuntime.Toolkit 100.7
+import Esri.ArcGISRuntime.Toolkit 100.7 as Toolkit
 
 Handheld {
     id: appRoot
@@ -169,7 +169,7 @@ Handheld {
             radius: hudRadius
         }
 
-        NorthArrow {
+        Toolkit.NorthArrow {
             id: compass
             geoView: sceneView
             anchors {
@@ -183,7 +183,12 @@ Handheld {
             height: width
         }
 
-        CoordinateConversion {
+        CoordinateConversionToolProxy {
+            id: dsaCoordinateController
+            inInputMode: coordinateConversion.inInputMode
+        }
+
+        Toolkit.CoordinateConversion {
             id: coordinateConversion
             anchors {
                 bottom: followHud.visible ? followHud.top : currentLocation.top
@@ -191,10 +196,9 @@ Handheld {
                 right: navTool.left
                 margins: hudMargins
             }
-
-            objectName: "coordinateConversion"
-            visible: false
-            geoView: sceneView
+            controller: dsaCoordinateController.controller
+            inputFormat: dsaCoordinateController.inputFormat
+            visible: dsaCoordinateController.active
             highlightColor : Material.accent
             textColor: Material.foreground
             backgroundColor: Material.background

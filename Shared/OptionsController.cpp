@@ -28,10 +28,11 @@
 #include "MessageFeedsController.h"
 #include "MessagesOverlay.h"
 
-// toolkit headers
-#include "CoordinateConversionConstants.h"
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
+
+// toolkit headers
+#include "Esri/ArcGISRuntime/Toolkit/CoordinateConversionConstants.h"
 
 // C++ API headers
 #include "DictionaryRenderer.h"
@@ -52,14 +53,14 @@ namespace Dsa {
  */
 OptionsController::OptionsController(QObject* parent) :
   AbstractTool(parent),
-  m_coordinateFormatOptions{CoordinateConversionConstants::DEGREES_MINUTES_SECONDS_FORMAT,
-                            CoordinateConversionConstants::DECIMAL_DEGREES_FORMAT,
-                            CoordinateConversionConstants::DEGREES_DECIMAL_MINUTES_FORMAT,
-                            CoordinateConversionConstants::UTM_FORMAT,
-                            CoordinateConversionConstants::MGRS_FORMAT,
-                            CoordinateConversionConstants::USNG_FORMAT,
-                            CoordinateConversionConstants::GEOREF_FORMAT,
-                            CoordinateConversionConstants::GARS_FORMAT},
+  m_coordinateFormatOptions{Esri::ArcGISRuntime::Toolkit::CoordinateConversionConstants::DEGREES_MINUTES_SECONDS_FORMAT,
+                            Esri::ArcGISRuntime::Toolkit::CoordinateConversionConstants::DECIMAL_DEGREES_FORMAT,
+                            Esri::ArcGISRuntime::Toolkit::CoordinateConversionConstants::DEGREES_DECIMAL_MINUTES_FORMAT,
+                            Esri::ArcGISRuntime::Toolkit::CoordinateConversionConstants::UTM_FORMAT,
+                            Esri::ArcGISRuntime::Toolkit::CoordinateConversionConstants::MGRS_FORMAT,
+                            Esri::ArcGISRuntime::Toolkit::CoordinateConversionConstants::USNG_FORMAT,
+                            Esri::ArcGISRuntime::Toolkit::CoordinateConversionConstants::GEOREF_FORMAT,
+                            Esri::ArcGISRuntime::Toolkit::CoordinateConversionConstants::GARS_FORMAT},
   m_units{AppConstants::UNIT_METERS,
           AppConstants::UNIT_FEET}
 {
@@ -111,9 +112,9 @@ QString OptionsController::toolName() const
 void OptionsController::setProperties(const QVariantMap& properties)
 {
   // access tool properties from the config
-  m_coordinateFormat = properties[CoordinateConversionConstants::COORDINATE_FORMAT_PROPERTY].toString();
+  m_coordinateFormat = properties["CoordinateFormat"].toString();
   if (m_coordinateFormat.isEmpty())
-    m_coordinateFormat = CoordinateConversionConstants::DEGREES_MINUTES_SECONDS_FORMAT;
+    m_coordinateFormat = Esri::ArcGISRuntime::Toolkit::CoordinateConversionConstants::DEGREES_MINUTES_SECONDS_FORMAT;
 
   m_unitOfMeasurement = properties[AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME].toString();
   if (m_unitOfMeasurement.isEmpty())

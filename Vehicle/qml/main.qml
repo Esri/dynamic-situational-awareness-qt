@@ -193,16 +193,23 @@ Vehicle {
                 right: followHud.left
                 margins: hudMargins
             }
+            geoView: sceneView
             controller: dsaCoordinateController.controller
             inputFormat: dsaCoordinateController.inputFormat
             visible: dsaCoordinateController.active
             highlightColor : Material.accent
             textColor: Material.foreground
-            backgroundColor: Material.background
-            fontSize: DsaStyles.toolFontPixelSize
-            fontFamily: DsaStyles.fontFamily
-            backgroundOpacity: hudOpacity
-            radius: hudRadius
+
+            font {
+                family: DsaStyles.fontFamily
+                pixelSize: DsaStyles.toolFontPixelSize
+            }
+
+            background: Rectangle {
+                color: Material.background
+                opacity: hudOpacity
+                radius: hudRadius
+            }
 
             onVisibleChanged: {
                 if (!visible)

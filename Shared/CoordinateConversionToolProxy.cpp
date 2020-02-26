@@ -181,11 +181,6 @@ void CoordinateConversionToolProxy::connectController()
       if (isActive() && !m_inInputMode)
         m_controller->setCurrentPoint(point);
     });
-
-  connect(ToolResourceProvider::instance(), &ToolResourceProvider::geoViewChanged, this, [this]()
-  {
-    m_controller->setGeoView(static_cast<SceneQuickView*>(ToolResourceProvider::instance()->geoView()));
-  });
 }
 
 }

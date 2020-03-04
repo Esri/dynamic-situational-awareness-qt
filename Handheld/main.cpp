@@ -47,7 +47,7 @@
 #include "CoordinateConversionToolProxy.h"
 
 // toolkit headers
-#include <Esri/ArcGISRuntime/Toolkit/register.h>
+#include "Esri/ArcGISRuntime/Toolkit/register.h"
 
 // C++ API headers
 #include "ArcGISRuntimeEnvironment.h"

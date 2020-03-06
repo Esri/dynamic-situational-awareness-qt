@@ -379,7 +379,7 @@ Handheld {
             }
         }
 
-        PopupStackView {
+        Toolkit.PopupStackView {
             id: identifyResults
             anchors {
                 left: sceneView.left
@@ -387,7 +387,9 @@ Handheld {
                 right: sceneView.right
                 bottom: sceneView.attributionTop
             }
-            backgroundColor: Material.primary
+            background: Rectangle {
+                color: Material.primary
+            }
             attributeNameTextColor: Material.foreground
             attributeValueTextColor: Material.foreground
             titleTextColor: Material.foreground

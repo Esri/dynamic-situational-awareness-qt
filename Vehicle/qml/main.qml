@@ -369,14 +369,16 @@ Vehicle {
             }
         }
 
-        PopupStackView {
+        Toolkit.PopupStackView {
             id: identifyResults
             anchors {
                 right: parent.right
                 top: sceneView.top
                 bottom: sceneView.attributionTop
             }
-            backgroundColor: Material.primary
+            background: Rectangle {
+                color: Material.primary
+            }
             attributeNameTextColor: Material.foreground
             attributeValueTextColor: Material.foreground
             titleTextColor: Material.foreground

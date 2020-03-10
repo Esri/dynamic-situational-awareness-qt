@@ -21,7 +21,6 @@
 #include "Esri/ArcGISRuntime/Toolkit/CoordinateConversionController.h"
 #include "Esri/ArcGISRuntime/Toolkit/CoordinateConversionConstants.h"
 #include "Esri/ArcGISRuntime/Toolkit/CoordinateConversionResult.h"
-#include "Esri/ArcGISRuntime/Toolkit/GenericListModel.h"
 
 #include <SceneQuickView.h>
 
@@ -119,7 +118,7 @@ void CoordinateConversionToolProxy::setInInputMode(bool mode)
  */
 void CoordinateConversionToolProxy::setProperties(const QVariantMap& properties)
 {
-  const auto formats = qobject_cast<GenericListModel*>(m_controller->coordinateFormats());
+  const auto formats = m_controller->coordinateFormats();
   if (!formats)
     return;
 

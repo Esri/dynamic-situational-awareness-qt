@@ -200,8 +200,11 @@ Handheld {
             controller: dsaCoordinateController.controller
             inputFormat: dsaCoordinateController.inputFormat
             visible: dsaCoordinateController.active
-            highlightColor : Material.accent
-            textColor: Material.foreground
+
+            palette {
+                text: Material.foreground
+                highlight: Material.accent
+            }
 
             font {
                 family: DsaStyles.fontFamily
@@ -387,13 +390,14 @@ Handheld {
                 right: sceneView.right
                 bottom: sceneView.attributionTop
             }
+            palette {
+                text: Material.foreground
+            }
             background: Rectangle {
                 color: Material.primary
             }
-            attributeNameTextColor: Material.foreground
-            attributeValueTextColor: Material.foreground
-            titleTextColor: Material.foreground
-            closeButtonColor: Material.foreground
+            visible: false
+
         }
 
         Drawer {
@@ -503,11 +507,10 @@ Handheld {
         }
 
         onPopupManagersChanged: {
-            identifyResults.dismiss();
-            identifyResults.popupManagers = popupManagers;
-
-            if (popupManagers.length > 0)
-                identifyResults.show();
+            if (popupManagers.length > 0) {
+                identifyResults.popupManagers = popupManagers;
+                identifyResults.visible = true;
+            }
         }
     }
 

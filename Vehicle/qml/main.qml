@@ -197,9 +197,11 @@ Vehicle {
             controller: dsaCoordinateController.controller
             inputFormat: dsaCoordinateController.inputFormat
             visible: dsaCoordinateController.active
-            highlightColor : Material.accent
-            textColor: Material.foreground
 
+            palette {
+                text: Material.foreground
+                highlight: Material.accent
+            }
             font {
                 family: DsaStyles.fontFamily
                 pixelSize: DsaStyles.toolFontPixelSize
@@ -369,20 +371,21 @@ Vehicle {
             }
         }
 
-        Toolkit.PopupStackView {
+        DsaPopupView {
             id: identifyResults
             anchors {
-                right: parent.right
+                left: sceneView.left
                 top: sceneView.top
+                right: sceneView.right
                 bottom: sceneView.attributionTop
+            }
+            palette {
+                text: Material.foreground
             }
             background: Rectangle {
                 color: Material.primary
             }
-            attributeNameTextColor: Material.foreground
-            attributeValueTextColor: Material.foreground
-            titleTextColor: Material.foreground
-            closeButtonColor: Material.foreground
+            visible: false
         }
 
         Drawer {
@@ -491,11 +494,10 @@ Vehicle {
         }
 
         onPopupManagersChanged: {
-            identifyResults.dismiss();
-            identifyResults.popupManagers = popupManagers;
-
-            if (popupManagers.length > 0)
-                identifyResults.show();
+            if (popupManagers.length > 0) {
+                identifyResults.popupManagers = popupManagers;
+                identifyResults.visible = true;
+            }
         }
     }
 

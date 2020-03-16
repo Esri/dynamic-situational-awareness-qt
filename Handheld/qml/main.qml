@@ -382,7 +382,7 @@ Handheld {
             }
         }
 
-        Toolkit.PopupStackView {
+        DsaPopupView {
             id: identifyResults
             anchors {
                 left: sceneView.left
@@ -397,7 +397,6 @@ Handheld {
                 color: Material.primary
             }
             visible: false
-
         }
 
         Drawer {

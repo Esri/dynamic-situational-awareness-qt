@@ -18,7 +18,6 @@ CONFIG(deployment): DEFINES += DEPLOYMENT_BUILD
 
 # Run against the compiled toolkit.
 include($$PWD/../../arcgis-runtime-toolkit-qt/toolkitcpp.pri)
-RESOURCES += $$PWD/../images.qrc
 
 contains(QMAKE_HOST.os, Windows):{
   iniPath = $$(ALLUSERSPROFILE)\EsriRuntimeQt\ArcGIS Runtime SDK for Qt $${ARCGIS_RUNTIME_VERSION}.ini

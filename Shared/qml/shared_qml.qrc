@@ -4,7 +4,6 @@
         <file>PrimaryToolbar.qml</file>
         <file>AddLocalData.qml</file>
         <file>DsaPanel.qml</file>
-        <file>DsaPopupView.qml</file>
         <file>MessageFeeds.qml</file>
         <file>FollowHud.qml</file>
         <file>TableOfContents.qml</file>

@@ -371,10 +371,9 @@ Vehicle {
             }
         }
 
-        DsaPopupView {
+        Toolkit.PopupStackView {
             id: identifyResults
             anchors {
-                left: sceneView.left
                 top: sceneView.top
                 right: sceneView.right
                 bottom: sceneView.attributionTop

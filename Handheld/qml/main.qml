@@ -382,7 +382,7 @@ Handheld {
             }
         }
 
-        DsaPopupView {
+        Toolkit.PopupStackView {
             id: identifyResults
             anchors {
                 left: sceneView.left

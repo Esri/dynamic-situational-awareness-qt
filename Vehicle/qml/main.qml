@@ -193,6 +193,7 @@ Vehicle {
                 right: followHud.left
                 margins: hudMargins
             }
+
             geoView: sceneView
             controller: dsaCoordinateController.controller
             inputFormat: dsaCoordinateController.inputFormat
@@ -202,6 +203,7 @@ Vehicle {
                 text: Material.foreground
                 highlight: Material.accent
             }
+
             font {
                 family: DsaStyles.fontFamily
                 pixelSize: DsaStyles.toolFontPixelSize

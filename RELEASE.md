@@ -1,5 +1,10 @@
 # Release notes
 
+## 1.1.2
+
+- Updated to use version 100.8 of the ArcGIS Runtime SDK for Qt.
+- Fixed crash on RasterCell identify.
+
 ## 1.1.1
 
 - Updated to use version 100.7 of the ArcGIS Runtime SDK for Qt.

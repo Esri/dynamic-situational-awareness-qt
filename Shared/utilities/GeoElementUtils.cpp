@@ -26,6 +26,7 @@
 #include "GeoElement.h"
 #include "Graphic.h"
 #include "KmlPlacemark.h"
+#include "RasterCell.h"
 #include "WmsFeature.h"
 
 #include <QDebug>
@@ -76,6 +77,11 @@ GeoElementSignaler::GeoElementSignaler(GeoElement* geoElement, QObject* parent) 
     connect(static_cast<WmsFeature*>(m_geoElement), &WmsFeature::geometryChanged,
             this, &GeoElementSignaler::geometryChanged);
   }
+  else if (dynamic_cast<RasterCell*>(m_geoElement))
+  {
+    connect(static_cast<RasterCell*>(m_geoElement), &RasterCell::geometryChanged,
+            this, &GeoElementSignaler::geometryChanged);
+  }
   else
   {
     qWarning() << Q_FUNC_INFO << "Unhandled GeoElement type";
@@ -106,7 +112,9 @@ void GeoElementUtils::setParent(const QList<GeoElement*>& geoElements, QObject* 
 
   for (auto* geoElement : geoElements)
   {
-    toQObject(geoElement)->setParent(parent);
+    auto object = toQObject(geoElement);
+    if (object)
+      object->setParent(parent);
   }
 }
 
@@ -118,7 +126,9 @@ void GeoElementUtils::setParent(GeoElement* geoElement, QObject* parent)
 {
   if (geoElement)
   {
-    toQObject(geoElement)->setParent(parent);
+    auto object = toQObject(geoElement);
+    if (object)
+      object->setParent(parent);
   }
 }
 
@@ -142,6 +152,9 @@ QObject* GeoElementUtils::toQObject(GeoElement* geoElement)
 
   if (dynamic_cast<WmsFeature*>(geoElement))
     return static_cast<WmsFeature*>(geoElement);
+
+  if (dynamic_cast<RasterCell*>(geoElement))
+    return static_cast<RasterCell*>(geoElement);
 
   qWarning() << Q_FUNC_INFO << "Unhandled GeoElement type";
 

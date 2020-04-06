@@ -310,6 +310,17 @@ bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QStrin
   newPopup->popupDefinition()->setTitle(popupTitle);
   PopupManager* newManager = new PopupManager(newPopup, this);
 
+  for (auto popupfield : newManager->displayedFields()->popupFields())
+  {    
+    if (!popupfield->format())
+    {
+      auto format = new PopupFieldFormat(newManager);
+      format->setDecimalPlaces(2);
+      format->setUseThousandsSeparator(true);
+      popupfield->setFormat(format);
+    }
+  }
+
   m_popupManagers.push_back(newManager);
 
   return true;

@@ -27,7 +27,6 @@ namespace Esri {
 namespace ArcGISRuntime {
   class Graphic;
   class GraphicsOverlay;
-  class PictureMarkerSymbol;
   class Symbol;
   class SimpleRenderer;
 }}
@@ -59,8 +58,8 @@ public:
 
   Esri::ArcGISRuntime::Graphic* locationGraphic() const;
 
-  Esri::ArcGISRuntime::PictureMarkerSymbol* defaultSymbol() const;
-  void setDefaultSymbol(Esri::ArcGISRuntime::PictureMarkerSymbol* defaultSymbol);
+  Esri::ArcGISRuntime::Symbol* defaultSymbol() const;
+  void setDefaultSymbol(Esri::ArcGISRuntime::Symbol* defaultSymbol);
 
 signals:
   void locationChanged(const Esri::ArcGISRuntime::Point& location);
@@ -74,7 +73,7 @@ private:
   mutable Esri::ArcGISRuntime::GraphicsOverlay* m_locationOverlay = nullptr;
   Esri::ArcGISRuntime::SimpleRenderer* m_locationRenderer = nullptr;
   Esri::ArcGISRuntime::Graphic* m_locationGraphic = nullptr;
-  Esri::ArcGISRuntime::PictureMarkerSymbol* m_defaultSymbol = nullptr;
+  Esri::ArcGISRuntime::Symbol* m_defaultSymbol = nullptr;
   QGeoPositionInfoSource* m_geoPositionInfoSource = nullptr;
   QCompass* m_compass = nullptr;
   Esri::ArcGISRuntime::Point m_lastKnownLocation;

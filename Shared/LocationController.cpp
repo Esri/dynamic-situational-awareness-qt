@@ -30,7 +30,6 @@
 
 // C++ API headers
 #include "GraphicsOverlay.h"
-#include "ModelSceneSymbol.h"
 #include "PictureMarkerSymbol.h"
 #include "Point.h"
 #include "SceneQuickView.h"
@@ -109,6 +108,7 @@ void LocationController::initPositionInfoSource()
       m_lastKnownHeading = heading;
 
       emit headingChanged(heading);
+      emit relativeHeadingChanged(heading - m_lastViewHeading);
     });
   }
   else
@@ -359,6 +359,25 @@ void LocationController::setGpxFilePath(const QString& gpxFilePath)
 }
 
 /*!
+  \brief Sets the \a sceneView to use for relative heading changes.
+ */
+void LocationController::setRelativeHeadingSceneView(SceneQuickView* sceneView)
+{
+  connect(sceneView, &SceneQuickView::viewpointChanged, this, [this, sceneView]()
+  {
+    const auto sceneViewHeading = sceneView->currentViewpointCamera().heading();
+    if (std::abs(m_lastViewHeading - sceneViewHeading) < 0.1)
+      return;
+
+    m_lastViewHeading = sceneViewHeading;
+
+    // keep the orientation correct if we're not doing any updates
+    if (!m_enabled)
+      emit relativeHeadingChanged(m_lastKnownHeading + m_lastViewHeading);
+  });
+}
+
+/*!
   \internal
  */
 void LocationController::updateGeoView()
@@ -369,6 +388,7 @@ void LocationController::updateGeoView()
     geoView->graphicsOverlays()->append(m_locationDisplay3d->locationOverlay());
 
     constexpr float symbolSize = 25.0;
+
 
     auto pictureMarkerSymbol = new PictureMarkerSymbol(iconImage(), this);
     pictureMarkerSymbol->setWidth(symbolSize);

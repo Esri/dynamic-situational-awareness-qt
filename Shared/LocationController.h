@@ -79,6 +79,14 @@ public:
   QString iconDataPath() const { return m_iconDataPath; }
   void setIconDataPath(const QString& dataPath);
 
+  // if using GraphicsRenderingMode::Dynamic for rendering, then we need to massage
+  // the heading value to make sure it's correct when the scene is rotated.
+  // Set the sceneView here and connect to relativeHeadingChanged and that will
+  // be handled automatically.
+  // Note: this is only needed for PictureMarkerSymbol. ModelSceneSybol already
+  // takes this into account
+  void setRelativeHeadingSceneView(Esri::ArcGISRuntime::SceneQuickView* sceneView);
+
 signals:
   void locationChanged(const Esri::ArcGISRuntime::Point& newLocation);
   void headingChanged(double newHeading);
@@ -87,6 +95,9 @@ signals:
   void locationVisibleChanged();
   void simulationEnabledChanged();
   void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
+
+  // see setRelativeHeadingSceneView
+  void relativeHeadingChanged(double relativeHeading);
 
 private slots:
   void updateGeoView();
@@ -101,6 +112,7 @@ private:
   LocationDisplay3d* m_locationDisplay3d = nullptr;
   bool m_enabled = false;
   bool m_simulated = false;
+  double m_lastViewHeading = 0.0;
   double m_lastKnownHeading = 0.0;
   Esri::ArcGISRuntime::Point m_currentLocation;
   QString m_gpxFilePath;

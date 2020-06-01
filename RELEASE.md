@@ -1,5 +1,15 @@
 # Release notes
 
+## 1.1.3
+
+- Minimum SDK version is now 20, target SDK version is 29.
+- Changed expected location of DSA files to match the changes Android
+  has made to scoped storage.
+  When previously data files needed copied to `/sdcard/ArcGIS/Runtime/DSA/Data`,
+  now data must be copied to `<AppDataLocation>/ArcGIS/Runtime/DSA/Data`.
+  For example, with the DSA Vehicle app, the data is expected to be located
+  at: `/sdcard/Android/data/com.esri.arcgisruntime.opensourceapps.DSA_Vehicle_Qt/ArcGIS/Runtime/DSA/Data`.
+
 ## 1.1.2
 
 - Updated to use version 100.8 of the ArcGIS Runtime SDK for Qt.

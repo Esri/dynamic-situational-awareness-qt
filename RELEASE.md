@@ -2,7 +2,7 @@
 
 ## 1.2.0
 
-- Minimum SDK version is now 20, target SDK version is 29.
+- Minimum SDK version is now 21, target SDK version is 29.
 - Changed expected location of DSA files to match the changes Android
   has made to scoped storage.
   When previously data files needed copied to `/sdcard/ArcGIS/Runtime/DSA/Data`,

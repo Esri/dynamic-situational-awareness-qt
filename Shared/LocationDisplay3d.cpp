@@ -244,7 +244,9 @@ void LocationDisplay3d::setDefaultSymbol(Symbol* defaultSymbol)
   if (!m_locationRenderer)
   {
     m_locationRenderer = new SimpleRenderer(defaultSymbol, this);
+
     m_locationRenderer->setRotationExpression(QString("[%1]").arg(s_headingAttribute));
+
     m_locationOverlay->setRenderer(m_locationRenderer);
   }
   else

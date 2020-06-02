@@ -22,5 +22,6 @@ ANDROID_PACKAGE_SOURCE_DIR = $$PWD
 OTHER_FILES +=     $$ANDROID_PACKAGE_SOURCE_DIR/res/drawable-ldpi/icon.png     $$ANDROID_PACKAGE_SOURCE_DIR/res/drawable-mdpi/icon.png     $$ANDROID_PACKAGE_SOURCE_DIR/res/drawable-hdpi/icon.png     $$ANDROID_PACKAGE_SOURCE_DIR/res/drawable-xhdpi/icon.png     $$ANDROID_PACKAGE_SOURCE_DIR/res/drawable-xxhdpi/icon.png
 
 DISTFILES += \
-    $$PWD/AndroidManifest.xml
-
+    $$PWD/AndroidManifest.xml \
+    $$PWD/build.gradle \
+    $$PWD/res/values/libs.xml \

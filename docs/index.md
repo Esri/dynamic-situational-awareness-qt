@@ -370,7 +370,7 @@ You can customize aspects of the DSA apps via a configuration file. When the DSA
 
 The configuration file is located at `~/ArcGIS/Runtime/Data/DSA/DsaAppConfig.json`, where `~` is `%username%`/`C:/Users/<username>` on Windows and `$HOME` on Unix.
 
-For DSA versions < 1.2, `~`, referred to `/sdcard` on Android. With the introduction of scoped storage in DSA versions >= 1.2, `~` is now dependent on the DSA app variant. For the vehicle variant of DSA (DSA_V_Qt), `~` is `/sdcard/Android/data/com.esri.arcgisruntime.opensourceapps.DSA_Vehicle_Qt/` and for the handheld variant of DSA (DSA_H_Qt), `~` is `/sdcard/Android/data/com.esri.arcgisruntime.opensourceapps.DSA_Handheld_Qt/`.
+For DSA versions < 1.2, `~` was `/sdcard` on Android. With the introduction of scoped storage in DSA versions >= 1.2, `~` is now dependent on the DSA app variant. For the vehicle variant of DSA (DSA_V_Qt), `~` is `/sdcard/Android/data/com.esri.arcgisruntime.opensourceapps.DSA_Vehicle_Qt/files` and for the handheld variant of DSA (DSA_H_Qt), `~` is `/sdcard/Android/data/com.esri.arcgisruntime.opensourceapps.DSA_Handheld_Qt/files`.
 
 The following lists some of the configuration settings that you can change.
 

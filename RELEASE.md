@@ -8,7 +8,7 @@
   When previously data files needed copied to `/sdcard/ArcGIS/Runtime/DSA/Data`,
   now data must be copied to `<AppDataLocation>/ArcGIS/Runtime/DSA/Data`.
   For example, with the DSA Vehicle app, the data is expected to be located
-  at: `/sdcard/Android/data/com.esri.arcgisruntime.opensourceapps.DSA_Vehicle_Qt/ArcGIS/Runtime/DSA/Data`.
+  at: `/sdcard/Android/data/com.esri.arcgisruntime.opensourceapps.DSA_Vehicle_Qt/files/ArcGIS/Runtime/DSA/Data`.
 
 ## 1.1.2
 

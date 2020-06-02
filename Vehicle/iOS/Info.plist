@@ -59,11 +59,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-  <string>1.1.1</string>
+  <string>1.2.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-  <string>1.1.1</string>
+  <string>1.2.0</string>
 	<key>NOTE</key>
 	<string>Built with ArcGIS Runtime SDK for Qt.</string>
 	<key>UIFileSharingEnabled</key>

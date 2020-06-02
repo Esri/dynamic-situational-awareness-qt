@@ -1,6 +1,6 @@
 # Release notes
 
-## 1.1.3
+## 1.2.0
 
 - Minimum SDK version is now 20, target SDK version is 29.
 - Changed expected location of DSA files to match the changes Android

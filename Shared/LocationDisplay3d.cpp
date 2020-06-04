@@ -245,7 +245,9 @@ void LocationDisplay3d::setDefaultSymbol(Symbol* defaultSymbol)
   {
     m_locationRenderer = new SimpleRenderer(defaultSymbol, this);
 
-    m_locationRenderer->setRotationExpression(QString("[%1]").arg(s_headingAttribute));
+    RendererSceneProperties renderProperties = m_locationRenderer->sceneProperties();
+    renderProperties.setHeadingExpression(QString("[%1]").arg(s_headingAttribute));
+    m_locationRenderer->setSceneProperties(renderProperties);
 
     m_locationOverlay->setRenderer(m_locationRenderer);
   }

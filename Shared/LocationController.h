@@ -106,6 +106,7 @@ private:
   void initPositionInfoSource();
   void clearPositionInfoSource();
   QImage iconImage() const;
+  QUrl modelSymbolPath() const;
 
   QGeoPositionInfoSource* m_positionSource = nullptr;
   QCompass* m_compass = nullptr;

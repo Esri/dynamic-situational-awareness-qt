@@ -2,7 +2,9 @@
 
 ## 1.2.0
 
-- Minimum SDK version is now 21, target SDK version is 29.
+- Minumum Runtime Qt SDK version is 100.9.
+- Minimum Qt SDK version is Qt 5.15.0.
+- Minimum Android SDK version is now 21, target SDK version is 29.
 - Changed expected location of DSA files to match the changes Android
   has made to scoped storage.
   When previously data files needed copied to `/sdcard/ArcGIS/Runtime/DSA/Data`,

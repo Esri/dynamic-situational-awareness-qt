@@ -14,6 +14,7 @@
 - [Troubleshooting](#troubleshooting)   
    - [Military Symbols are not displaying after migrating to version 1.1.1.](#military-symbols-are-not-displaying-after-migrating-to-version-111)   
 - [Contributing](#contributing)   
+- [MDTOC](#mdtoc)   
 - [Licensing](#licensing)   
 
 <!-- /MDTOC -->
@@ -97,6 +98,10 @@ To quickly obtain these additional `*.stylx` files, we provide these in the [dem
 
 ## Contributing
 Esri welcomes contributions from anyone and everyone. Please see our [guidelines for contributing](https://github.com/esri/contributing).
+
+## MDTOC
+
+Generating table of contents for documents in this repository was performed using the [MDTOC package for Atom](https://atom.io/packages/atom-mdtoc).
 
 ## Licensing
 Copyright 2018 Esri

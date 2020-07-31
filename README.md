@@ -52,7 +52,7 @@ If you just want to grab the latest code and build the project, these are the qu
 * ArcGIS Runtime SDK for Qt 100.9
 * Qt SDK 5.15.0 or higher
 * Qt Creator
-* ArcGIS Runtime SDK for Qt C++ Plugin [(details)](https://github.com/Esri/arcgis-runtime-toolkit-qt)
+* [ArcGIS Runtime SDK for Qt C++ Plugin](https://github.com/Esri/arcgis-runtime-toolkit-qt)
 * For Windows: Microsoft Visual C++ Compiler 14.0
 * For more information, please visit the [System Requirements](https://developers.arcgis.com/qt/quartz/qml/guide/arcgis-runtime-sdk-for-qt-system-requirements.htm) page.
 
@@ -69,7 +69,7 @@ git clone https://github.com/Esri/arcgis-runtime-toolkit-qt
 
 ### Data
 
-The DSA app works with offline data. Demo data is available for Monterey, California [here](http://www.arcgis.com/home/item.html?id=82ce2d85e21c4326bc072d441b636e5e). Details for where to place the data are provided in the demo data's description. Alternatively, you can define your own data by modifying the app's configuration file.
+The DSA app works with offline data. You can retrieve [demo data available for Monterey, California](http://www.arcgis.com/home/item.html?id=82ce2d85e21c4326bc072d441b636e5e). Details for where to place the data are provided in the demo data's description. Alternatively, you can define your own data by modifying the app's configuration file.
 
 ## Resources
 

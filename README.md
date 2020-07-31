@@ -3,13 +3,13 @@
 <!-- MDTOC maxdepth:6 firsth1:0 numbering:0 flatten:0 bullets:1 updateOnSave:1 -->
 
 - [Dynamic Situational Awareness](#dynamic-situational-awareness)   
-- [Detailed Documentation](#detailed-documentation)   
+- [Detailed documentation](#detailed-documentation)   
 - [Quick start](#quick-start)   
 - [Prerequisites](#prerequisites)   
-   - [Setup the [ArcGIS Runtime SDK C++ Toolkit](https://github.com/Esri/arcgis-runtime-toolkit-qt) as a build dependency.](#setup-the-arcgis-runtime-sdk-c-toolkithttpsgithubcomesriarcgis-runtime-toolkit-qt-as-a-build-dependency)   
+   - [Build dependency](#build-dependency)   
    - [Data](#data)   
 - [Resources](#resources)   
-- [Pre-built Apps](#pre-built-apps)   
+- [Pre-built apps](#pre-built-apps)   
 - [Issues](#issues)   
 - [Troubleshooting](#troubleshooting)   
    - [Military Symbols are not displaying after migrating to version 1.1.1.](#military-symbols-are-not-displaying-after-migrating-to-version-111)   
@@ -30,7 +30,7 @@ The DSA apps do not require access to a server. All the data and processing are 
 
 Visit the DSA [Open Source App page] for more details.
 
-## Detailed Documentation
+## Detailed documentation
 
 Read the [docs](./docs/README.md) for a detailed explanation of the application, including its architecture and how it leverages the ArcGIS platform, as well as how you can begin using the app right away.
 
@@ -56,9 +56,11 @@ If you just want to grab the latest code and build the project, these are the qu
 * For Windows: Microsoft Visual C++ Compiler 14.0
 * For more information, please visit the [System Requirements](https://developers.arcgis.com/qt/quartz/qml/guide/arcgis-runtime-sdk-for-qt-system-requirements.htm) page.
 
-### Setup the [ArcGIS Runtime SDK C++ Toolkit](https://github.com/Esri/arcgis-runtime-toolkit-qt) as a build dependency.
+### Build dependency
 
-- This is an optional step but allows you to build with the latest version of the toolkit
+Set up the [ArcGIS Runtime SDK C++ Toolkit](https://github.com/Esri/arcgis-runtime-toolkit-qt) as a build dependency.
+
+> This is an optional step but allows you to build with the latest version of the toolkit.
 
 ```
 # from the base of the repo
@@ -66,6 +68,7 @@ git clone https://github.com/Esri/arcgis-runtime-toolkit-qt
 ```
 
 ### Data
+
 The DSA app works with offline data. Demo data is available for Monterey, California [here](http://www.arcgis.com/home/item.html?id=82ce2d85e21c4326bc072d441b636e5e). Details for where to place the data are provided in the demo data's description. Alternatively, you can define your own data by modifying the app's configuration file.
 
 ## Resources
@@ -75,13 +78,15 @@ The DSA app works with offline data. Demo data is available for Monterey, Califo
 * [ArcGIS Blog](http://blogs.esri.com/esri/arcgis/)
 * [twitter@esri](http://twitter.com/esri)
 
-## Pre-built Apps
+## Pre-built apps
+
 The compiled versions of the DSA app are made available for you to conveniently try out the app, and are not officially supported. Please note that these compiled versions of the app should not be used in production environments.
 
 - [Android](https://www.arcgis.com/home/item.html?id=76fdb565194d4dcc86bdd301131932ea)
 - [Windows](https://www.arcgis.com/home/item.html?id=6b32eec2db784d0da9e9d5b18ccefb76)
 
 ## Issues
+
 Find a bug or want to request a new feature?  Please let us know by submitting an issue.
 
 ## Troubleshooting
@@ -97,6 +102,7 @@ should look like this:
 To quickly obtain these additional `*.stylx` files, we provide these in the [demo data](http://www.arcgis.com/home/item.html?id=82ce2d85e21c4326bc072d441b636e5e).
 
 ## Contributing
+
 Esri welcomes contributions from anyone and everyone. Please see our [guidelines for contributing](https://github.com/esri/contributing).
 
 ## MDTOC
@@ -104,6 +110,7 @@ Esri welcomes contributions from anyone and everyone. Please see our [guidelines
 Generating table of contents for documents in this repository was performed using the [MDTOC package for Atom](https://atom.io/packages/atom-mdtoc).
 
 ## Licensing
+
 Copyright 2018 Esri
 
 Licensed under the Apache License, Version 2.0 (the "License");

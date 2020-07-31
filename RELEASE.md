@@ -1,5 +1,6 @@
 # Release notes
 
+<<<<<<< HEAD
 ## 1.2.0
 
 - Minumum Runtime Qt SDK version is 100.9.
@@ -11,6 +12,11 @@
   now data must be copied to `<AppDataLocation>/ArcGIS/Runtime/DSA/Data`.
   For example, with the DSA Vehicle app, the data is expected to be located
   at: `/sdcard/Android/data/com.esri.arcgisruntime.opensourceapps.DSA_Vehicle_Qt/files/ArcGIS/Runtime/DSA/Data`.
+
+## 1.1.3
+
+- Added doc table of contents to root README.md and docs/index.md
+- Renamed docs/index.md to [docs/README.md](/docs/README.md)
 
 ## 1.1.2
 
@@ -24,8 +30,8 @@
 - Replaced deprecated use of enum `SurfacePlacement::Draped` with `SurfacePlacement::DrapedBillboarded`.
 - Replaced ModelSceneSymbol with PictureMarkerSymbol for location tracking.
 - Removed deprecated "ExampleApps" icon.
-- Comprehensive [app documentation](/docs/index.md) from the ArcGIS for Developers site.
-- Added Troubleshooting section to README.md.
+- Comprehensive [app documentation](/docs/README.md) from the ArcGIS for Developers site.
+- Added Troubleshooting section to root README.md.
 
 ## 1.1.0
 

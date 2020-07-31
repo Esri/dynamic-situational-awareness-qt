@@ -1,3 +1,46 @@
+**Contents**
+
+<!-- MDTOC maxdepth:6 firsth1:1 numbering:0 flatten:0 bullets:1 updateOnSave:1 -->
+
+- [Dynamic Situational Awareness (DSA)](#dynamic-situational-awareness-dsa)   
+   - [What is DSA?](#what-is-dsa)   
+   - [Capabilities](#capabilities)   
+   - [Supported platforms](#supported-platforms)   
+- [Overview](#overview)   
+   - [Tools](#tools)   
+      - [Navigation toolbar](#navigation-toolbar)   
+      - [Compass](#compass)   
+      - [Map context menu](#map-context-menu)   
+      - [Tool categories](#tool-categories)   
+   - [Settings panel](#settings-panel)   
+   - [Map tools](#map-tools)   
+      - [![](./images/dsa-icon-convert-xy-32.png) Convert X/Y](#imagesdsa-icon-convert-xy-32png-convert-xy)   
+      - [![](./images/dsa-icon-feeds-32.png) Feeds](#imagesdsa-icon-feeds-32png-feeds)   
+      - [![](./images/dsa-icon-add-data-32.png) Add data](#imagesdsa-icon-add-data-32png-add-data)   
+      - [![](./images/dsa-icon-overlays-32.png) Overlays](#imagesdsa-icon-overlays-32png-overlays)   
+      - [![](./images/dsa-icon-basemaps-32.png) Basemaps](#imagesdsa-icon-basemaps-32png-basemaps)   
+- [Workflows and best practices](#workflows-and-best-practices)   
+   - [Real-time feeds](#real-time-feeds)   
+   - [Exploratory visual analysis](#exploratory-visual-analysis)   
+      - [![](./images/dsa-icon-viewshed-32.png) Viewshed](#imagesdsa-icon-viewshed-32png-viewshed)   
+      - [![](./images/dsa-icon-line-of-site-32.png) Line of sight](#imagesdsa-icon-line-of-site-32png-line-of-sight)   
+   - [Alerts and conditions](#alerts-and-conditions)   
+      - [New alert notification](#new-alert-notification)   
+      - [![](./images/dsa-icon-view-alerts-32.png) Alerts view](#imagesdsa-icon-view-alerts-32png-alerts-view)   
+      - [![](./images/dsa-icon-alert-conditions-32.png) Conditions](#imagesdsa-icon-alert-conditions-32png-conditions)   
+   - [Collaboration](#collaboration)   
+      - [![](./images/dsa-icon-create-reports-32.png) Create report tools](#imagesdsa-icon-create-reports-32png-create-report-tools)   
+      - [![](./images/dsa-icon-observation-32.png) Observation report](#imagesdsa-icon-observation-32png-observation-report)   
+      - [![](./images/dsa-icon-markup-tools-32.png) Markup tools](#imagesdsa-icon-markup-tools-32png-markup-tools)   
+- [App architecture](#app-architecture)   
+- [Get the DSA apps](#get-the-dsa-apps)   
+- [App configuration settings](#app-configuration-settings)   
+- [Add your own local data](#add-your-own-local-data)   
+- [Message simulator](#message-simulator)   
+
+<!-- /MDTOC -->
+---
+
 # Dynamic Situational Awareness (DSA)
 
 A peer-to-peer situational awareness app for teams working in the field with specialized communication and mission requirements.

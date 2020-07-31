@@ -22,12 +22,10 @@
 #define kOrganizationDomain             "esri.com"
 
 #define kApplicationName                "DSA_Handheld_Qt"
-#define kApplicationVersion             "1.1.1"
+#define kApplicationVersion             "1.1.3"
 #define kApplicationDescription         "Dynamic Situational Awareness - Handheld app"
 
 #define kApplicationSourceUrl           "qrc:/qml/main.qml"
 
 //------------------------------------------------------------------------------
 #endif
-
-

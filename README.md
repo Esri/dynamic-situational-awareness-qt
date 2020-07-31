@@ -3,6 +3,7 @@
 <!-- MDTOC maxdepth:6 firsth1:0 numbering:0 flatten:0 bullets:1 updateOnSave:1 -->
 
 - [Dynamic Situational Awareness](#dynamic-situational-awareness)   
+- [Detailed Documentation](#detailed-documentation)   
 - [Quick start](#quick-start)   
 - [Prerequisites](#prerequisites)   
    - [Setup the [ArcGIS Runtime SDK C++ Toolkit](https://github.com/Esri/arcgis-runtime-toolkit-qt) as a build dependency.](#setup-the-arcgis-runtime-sdk-c-toolkithttpsgithubcomesriarcgis-runtime-toolkit-qt-as-a-build-dependency)   
@@ -27,6 +28,10 @@ DSA is an **Open Source App** intended and designed for the developer who wants 
 The DSA apps do not require access to a server. All the data and processing are on the device itself. Display of each local data source may be toggled on or off. Teammates share information such as own location, observation reports and markup across the peer-to-peer network (UDP). The emphasis is on collaboration with other teammates. These networks are not connected to the Internet, are not high-bandwidth, and are not constantly connected - a situation commonly encountered in field operations. This communication network topology is unlike more traditional ArcGIS Runtime apps that leverage the Internet and web servers for communication or web services for some functionality.
 
 Visit the DSA [Open Source App page] for more details.
+
+## Detailed Documentation
+
+Read the [docs](./docs/README.md) for a detailed explanation of the application, including its architecture and how it leverages the ArcGIS platform, as well as how you can begin using the app right away.
 
 ## Quick start
 

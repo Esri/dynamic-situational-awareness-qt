@@ -86,3 +86,8 @@ ios {
 android {
     include (Android/Android.pri)
 }
+
+DISTFILES += \
+    Resources/qtquickcontrols2.conf \
+    ../qdoc/dsa-overview.qdoc
+

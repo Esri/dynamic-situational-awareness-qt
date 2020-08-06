@@ -23,7 +23,9 @@ import QtQuick.Controls.Material 2.2
 CategoryToolbar {
     Connections {
         target: appRoot
-        onCloseDialogAccepted: Qt.quit()
+        function onCloseDialogAccepted() {
+            Qt.quit();
+        }
     }
 
     Row {

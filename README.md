@@ -25,8 +25,8 @@ If you just want to grab the latest code and build the project, these are the qu
  
 # Prerequisites
 
-* ArcGIS Runtime SDK for Qt 100.7
-* Qt SDK 5.12.6 or higher
+* ArcGIS Runtime SDK for Qt 100.9
+* Qt SDK 5.15.0 or higher
 * Qt Creator
 * ArcGIS Runtime SDK for Qt C++ Plugin [(details)](https://github.com/Esri/arcgis-runtime-toolkit-qt)
 * For Windows: Microsoft Visual C++ Compiler 14.0 

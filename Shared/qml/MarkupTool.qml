@@ -42,12 +42,14 @@ Item {
 
     Connections {
         target: appRoot
-        onClearDialogAccepted: markupController.deleteAllGraphics();
-        onInputDialogAccepted: {
+        function onClearDialogAccepted() {
+            markupController.deleteAllGraphics();
+        }
+        function onInputDialogAccepted() {
             markupController.setOverlayName(input)
             markupController.shareMarkup();
         }
-        onMarkupLayerReceived: {
+        function onMarkupLayerReceived() {
             markupController.deleteAllGraphics();
         }
     }

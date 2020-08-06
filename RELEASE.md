@@ -1,6 +1,5 @@
 # Release notes
 
-<<<<<<< HEAD
 ## 1.2.0
 
 - Minumum Runtime Qt SDK version is 100.9.

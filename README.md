@@ -1,48 +1,75 @@
 # Overview
 
+<!-- MDTOC maxdepth:6 firsth1:0 numbering:0 flatten:0 bullets:1 updateOnSave:1 -->
+
+- [Dynamic Situational Awareness](#dynamic-situational-awareness)   
+- [Detailed documentation](#detailed-documentation)   
+- [Quick start](#quick-start)   
+- [Prerequisites](#prerequisites)   
+   - [Build dependency](#build-dependency)   
+   - [Data](#data)   
+- [Resources](#resources)   
+- [Pre-built apps](#pre-built-apps)   
+- [Issues](#issues)   
+- [Troubleshooting](#troubleshooting)   
+   - [Military Symbols are not displaying after migrating to version 1.1.1.](#military-symbols-are-not-displaying-after-migrating-to-version-111)   
+- [Contributing](#contributing)   
+- [MDTOC](#mdtoc)   
+- [Licensing](#licensing)   
+
+<!-- /MDTOC -->
+---
+
 ## Dynamic Situational Awareness
 
 When the operational landscape changes frequently, then rapid, accurate, purpose-built, mission-focused communication is key to success. This is the working domain of the Dynamic Situational Awareness Open Source App (DSA) built using [ArcGIS Runtime](https://developers.arcgis.com/arcgis-runtime). DSA enables physically distributed teams to work as one, maintaining current status on teammates while exploring and illuminating the operational landscape.
 
 DSA is an **Open Source App** intended and designed for the developer who wants to build their own custom field operation apps. Built using the [ArcGIS Runtime SDK for Qt](https://developers.arcgis.com/qt/latest/), DSA highlights developer best practices for the specific workflows for in-vehicle (mounted) and field (handheld/dismounted) teams who need to dynamically understand their environment and the situation around them.
 
-The DSA apps do not require access to a server. All the data and processing are on the device itself. Display of each local data source may be toggled on or off. Teammates share information such as own location, observation reports and markup across the peer-to-peer network (UDP). The emphasis is on collaboration with other teammates. These networks are not connected to the Internet, are not high-bandwidth, and are not constantly connected - a situation commonly encountered in field operations. This communication network topology is unlike more traditional ArcGIS Runtime apps that leverage the Internet and web servers for communication or web services for some functionality. 
+The DSA apps do not require access to a server. All the data and processing are on the device itself. Display of each local data source may be toggled on or off. Teammates share information such as own location, observation reports and markup across the peer-to-peer network (UDP). The emphasis is on collaboration with other teammates. These networks are not connected to the Internet, are not high-bandwidth, and are not constantly connected - a situation commonly encountered in field operations. This communication network topology is unlike more traditional ArcGIS Runtime apps that leverage the Internet and web servers for communication or web services for some functionality.
 
-Visit the DSA [Open Source App page] for more details. 
+Visit the DSA [Open Source App page] for more details.
+
+## Detailed documentation
+
+Read the [docs](./docs/README.md) for a detailed explanation of the application, including its architecture and how it leverages the ArcGIS platform, as well as how you can begin using the app right away.
 
 ## Quick start
 
 The repo contains [Qt](http://qt.io) projects for dynamic situational awareness applications that can be run from within the Qt Creator IDE.
 
 If you just want to grab the latest code and build the project, these are the quick steps:
- 
+
  * `git clone https://github.com/Esri/dynamic-situational-awareness-qt.git`
  * `cd dynamic-situational-awareness-qt`
  * `git clone https://github.com/Esri/arcgis-runtime-toolkit-qt.git`
  * Open `DSA.pro` with Qt Creator, configure the projects and build.
 
 **Note:** There is a file path length limit when deploying the DSA apps to Android from Windows. The simplest way to workaround this is to shorten the folder name of the "Shadow Build Directory" in the Qt Creator Project settings.
- 
-# Prerequisites
+
+## Prerequisites
 
 * ArcGIS Runtime SDK for Qt 100.8
 * Qt SDK 5.12.6 or higher
 * Qt Creator
-* ArcGIS Runtime SDK for Qt C++ Plugin [(details)](https://github.com/Esri/arcgis-runtime-toolkit-qt)
-* For Windows: Microsoft Visual C++ Compiler 14.0 
+* [ArcGIS Runtime SDK for Qt C++ Plugin](https://github.com/Esri/arcgis-runtime-toolkit-qt)
+* For Windows: Microsoft Visual C++ Compiler 14.0
 * For more information, please visit the [System Requirements](https://developers.arcgis.com/qt/quartz/qml/guide/arcgis-runtime-sdk-for-qt-system-requirements.htm) page.
 
-### Setup the [ArcGIS Runtime SDK C++ Toolkit](https://github.com/Esri/arcgis-runtime-toolkit-qt) as a build dependency.
+### Build dependency
 
-- This is an optional step but allows you to build with the latest version of the toolkit
+Set up the [ArcGIS Runtime SDK C++ Toolkit](https://github.com/Esri/arcgis-runtime-toolkit-qt) as a build dependency.
+
+> This is an optional step but allows you to build with the latest version of the toolkit.
 
 ```
 # from the base of the repo
 git clone https://github.com/Esri/arcgis-runtime-toolkit-qt
 ```
 
-## Data
-The DSA app works with offline data. Demo data is available for Monterey, California [here](http://www.arcgis.com/home/item.html?id=82ce2d85e21c4326bc072d441b636e5e). Details for where to place the data are provided in the demo data's description. Alternatively, you can define your own data by modifying the app's configuration file.
+### Data
+
+The DSA app works with offline data. You can retrieve [demo data available for Monterey, California](http://www.arcgis.com/home/item.html?id=82ce2d85e21c4326bc072d441b636e5e). Details for where to place the data are provided in the demo data's description. Alternatively, you can define your own data by modifying the app's configuration file.
 
 ## Resources
 
@@ -51,13 +78,15 @@ The DSA app works with offline data. Demo data is available for Monterey, Califo
 * [ArcGIS Blog](http://blogs.esri.com/esri/arcgis/)
 * [twitter@esri](http://twitter.com/esri)
 
-## Pre-built Apps
+## Pre-built apps
+
 The compiled versions of the DSA app are made available for you to conveniently try out the app, and are not officially supported. Please note that these compiled versions of the app should not be used in production environments.
 
 - [Android](https://www.arcgis.com/home/item.html?id=76fdb565194d4dcc86bdd301131932ea)
 - [Windows](https://www.arcgis.com/home/item.html?id=6b32eec2db784d0da9e9d5b18ccefb76)
 
 ## Issues
+
 Find a bug or want to request a new feature?  Please let us know by submitting an issue.
 
 ## Troubleshooting
@@ -73,9 +102,15 @@ should look like this:
 To quickly obtain these additional `*.stylx` files, we provide these in the [demo data](http://www.arcgis.com/home/item.html?id=82ce2d85e21c4326bc072d441b636e5e).
 
 ## Contributing
+
 Esri welcomes contributions from anyone and everyone. Please see our [guidelines for contributing](https://github.com/esri/contributing).
 
+## MDTOC
+
+Generating table of contents for documents in this repository was performed using the [MDTOC package for Atom](https://atom.io/packages/atom-mdtoc).
+
 ## Licensing
+
 Copyright 2018 Esri
 
 Licensed under the Apache License, Version 2.0 (the "License");

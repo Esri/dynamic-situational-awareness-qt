@@ -255,8 +255,9 @@ void LayerCacheManager::layerToJson(Layer* layer)
     layerPath = kmlUrl.isLocalFile() ? kmlUrl.toLocalFile() : kmlUrl.toString();
   }
 
-  // Don't serialize invalid layers
-  if (layerPath.isEmpty())
+  // Don't serialize invalid layers or local files that don't actually exist in the file system.
+  auto isMissing = QUrl::fromUserInput(layerPath).isLocalFile() && !QFileInfo(layerPath).exists();
+  if (layerPath.isEmpty() || isMissing)
   {
     return;
   }

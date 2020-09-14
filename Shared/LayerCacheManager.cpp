@@ -256,7 +256,8 @@ void LayerCacheManager::layerToJson(Layer* layer)
   }
 
   // Don't serialize invalid layers or local files that don't actually exist in the file system.
-  auto isMissing = QUrl::fromUserInput(layerPath).isLocalFile() && !QFileInfo(layerPath).exists();
+  auto isMissing = QUrl::fromUserInput(layerPath, QDir::currentPath(), QUrl::AssumeLocalFile).isLocalFile()
+                 && !QFileInfo(layerPath).exists();
   if (layerPath.isEmpty() || isMissing)
   {
     return;

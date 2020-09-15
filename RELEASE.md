@@ -12,6 +12,7 @@
   For example, with the DSA Vehicle app, the data is expected to be located
   at: `/sdcard/Android/data/com.esri.arcgisruntime.opensourceapps.DSA_Vehicle_Qt/files/ArcGIS/Runtime/DSA/Data`.
 - Fixed erronious "missing file" dialog appearing on startup when opening an MSPK. This was a layer-to-json issue when saving the config.
+- Reverted the "ModelSceneSymbol to PictureMarkerSymbol" change. A camera bug was was introduced because a rotation-expression can not be used in place of a heading-expression when working with an `OrbitGeoElementCameraController`. We will need to park this upgrade until an enhancement is exposed by ArcGISRuntime.  
 - Renamed "master" branch to "main."
 
 ## 1.1.3

@@ -11,6 +11,7 @@
   now data must be copied to `<AppDataLocation>/ArcGIS/Runtime/DSA/Data`.
   For example, with the DSA Vehicle app, the data is expected to be located
   at: `/sdcard/Android/data/com.esri.arcgisruntime.opensourceapps.DSA_Vehicle_Qt/files/ArcGIS/Runtime/DSA/Data`.
+- Fixed erronious "missing file" dialog appearing on startup when opening an MSPK. This was a layer-to-json issue when saving the config.
 - Renamed "master" branch to "main."
 
 ## 1.1.3

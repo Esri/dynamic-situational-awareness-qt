@@ -266,6 +266,9 @@ void LayerCacheManager::layerToJson(Layer* layer)
   // Don't serialize data in excluded path locations
   for (const auto& excludedPath : m_excludedPaths)
   {
+    if (excludedPath.isEmpty())
+      continue;
+
     if (layerPath.startsWith(excludedPath))
       return;
   }

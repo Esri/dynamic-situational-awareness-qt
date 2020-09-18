@@ -91,5 +91,4 @@ DISTFILES += \
     Resources/qtquickcontrols2.conf \
     ../qdoc/dsa-overview.qdoc
 
-ANDROID_ABIS = arm64-v8a
 

@@ -19,8 +19,8 @@ import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
 import QtQuick.Window 2.2
 import QtQml.Models 2.2
-import Esri.ArcGISRuntime.OpenSourceApps.DSA 1.2
-import Esri.ArcGISRuntime.OpenSourceApps.Vehicle 1.2
+import Esri.ArcGISRuntime.OpenSourceApps.DSA 1.1
+import Esri.ArcGISRuntime.OpenSourceApps.Vehicle 1.1
 import Esri.ArcGISRuntime.Toolkit.Controls 100.5
 import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.5
 

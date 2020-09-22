@@ -15,7 +15,7 @@
  ******************************************************************************/
 
 import QtQuick 2.9
-import Esri.ArcGISRuntime.OpenSourceApps.DSA 1.2
+import Esri.ArcGISRuntime.OpenSourceApps.DSA 1.1
 
 OverlayButton {
     id: distressButton

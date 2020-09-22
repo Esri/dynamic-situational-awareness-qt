@@ -38,6 +38,7 @@
 #include "OpenMobileScenePackageController.h"
 #include "NavigationController.h"
 #include "OptionsController.h"
+#include "RuntimePermissionRequest.h"
 #include "TableOfContentsController.h"
 #include "Vehicle.h"
 #include "VehicleStyles.h"
@@ -112,34 +113,40 @@ int main(int argc, char *argv[])
 #endif
   QSettings::setDefaultFormat(kSettingsFormat);
 
+  // Force DSA to accept certain permissions.
+  if (!Dsa::requestRequiredPermissions())
+  {
+    return -1;
+  }
+
   // Register the map view for QML
-  qmlRegisterType<SceneQuickView>("Esri.ArcGISRuntime.OpenSourceApps.Vehicle", 1, 2, "SceneView");
+  qmlRegisterType<SceneQuickView>("Esri.ArcGISRuntime.OpenSourceApps.Vehicle", 1, 1, "SceneView");
   qRegisterMetaType<PopupManager*>("PopupManager*");
 
   // Register the Vehicle (QQuickItem) for QML
-  qmlRegisterType<Dsa::Vehicle::Vehicle>("Esri.ArcGISRuntime.OpenSourceApps.Vehicle", 1, 2, "Vehicle");
-  qmlRegisterType<Dsa::BasemapPickerController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 2, "BasemapPickerController");
-  qmlRegisterType<Dsa::AddLocalDataController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 2, "AddLocalDataController");
-  qmlRegisterType<Dsa::LocationController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 2, "LocationController");
-  qmlRegisterType<Dsa::MessageFeedsController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 2, "MessageFeedsController");
-  qmlRegisterType<Dsa::FollowPositionController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 2, "FollowPositionController");
-  qmlRegisterType<Dsa::TableOfContentsController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 2, "TableOfContentsController");
-  qmlRegisterType<Dsa::NavigationController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 2, "NavigationController");
-  qmlRegisterType<Dsa::MarkupController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 2, "MarkupController");
-  qmlRegisterType<Dsa::ViewshedController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 2, "ViewshedController");
-  qmlRegisterType<Dsa::OptionsController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 2, "OptionsController");
-  qmlRegisterSingletonType<Dsa::Vehicle::VehicleStyles>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 2, "DsaStyles", &dsaStylesProvider);
-  qmlRegisterSingletonType<Dsa::DsaResources>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 2, "DsaResources", &dsaResourcesProvider);
-  qmlRegisterType<Dsa::IdentifyController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 2, "IdentifyController");
-  qmlRegisterType<Dsa::AlertListController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 2, "AlertListController");
-  qmlRegisterType<Dsa::ViewedAlertsController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 2, "ViewedAlertsController");
-  qmlRegisterType<Dsa::LocationTextController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 2, "LocationTextController");
-  qmlRegisterType<Dsa::AlertConditionsController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 2, "AlertConditionsController");
-  qmlRegisterType<Dsa::LineOfSightController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 2, "LineOfSightController");
-  qmlRegisterType<Dsa::ContextMenuController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 2, "ContextMenuController");
-  qmlRegisterType<Dsa::AnalysisListController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 2, "AnalysisListController");
-  qmlRegisterType<Dsa::ObservationReportController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 2, "ObservationReportController");
-  qmlRegisterType<Dsa::OpenMobileScenePackageController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 2, "OpenMobileScenePackageController");
+  qmlRegisterType<Dsa::Vehicle::Vehicle>("Esri.ArcGISRuntime.OpenSourceApps.Vehicle", 1, 1, "Vehicle");
+  qmlRegisterType<Dsa::BasemapPickerController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "BasemapPickerController");
+  qmlRegisterType<Dsa::AddLocalDataController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "AddLocalDataController");
+  qmlRegisterType<Dsa::LocationController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "LocationController");
+  qmlRegisterType<Dsa::MessageFeedsController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "MessageFeedsController");
+  qmlRegisterType<Dsa::FollowPositionController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "FollowPositionController");
+  qmlRegisterType<Dsa::TableOfContentsController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "TableOfContentsController");
+  qmlRegisterType<Dsa::NavigationController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "NavigationController");
+  qmlRegisterType<Dsa::MarkupController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "MarkupController");
+  qmlRegisterType<Dsa::ViewshedController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "ViewshedController");
+  qmlRegisterType<Dsa::OptionsController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "OptionsController");
+  qmlRegisterSingletonType<Dsa::Vehicle::VehicleStyles>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "DsaStyles", &dsaStylesProvider);
+  qmlRegisterSingletonType<Dsa::DsaResources>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "DsaResources", &dsaResourcesProvider);
+  qmlRegisterType<Dsa::IdentifyController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "IdentifyController");
+  qmlRegisterType<Dsa::AlertListController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "AlertListController");
+  qmlRegisterType<Dsa::ViewedAlertsController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "ViewedAlertsController");
+  qmlRegisterType<Dsa::LocationTextController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "LocationTextController");
+  qmlRegisterType<Dsa::AlertConditionsController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "AlertConditionsController");
+  qmlRegisterType<Dsa::LineOfSightController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "LineOfSightController");
+  qmlRegisterType<Dsa::ContextMenuController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "ContextMenuController");
+  qmlRegisterType<Dsa::AnalysisListController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "AnalysisListController");
+  qmlRegisterType<Dsa::ObservationReportController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "ObservationReportController");
+  qmlRegisterType<Dsa::OpenMobileScenePackageController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "OpenMobileScenePackageController");
 
   // Register Toolkit Component Types
   ArcGISRuntimeToolkit::registerToolkitTypes();

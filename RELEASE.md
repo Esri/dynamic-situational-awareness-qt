@@ -8,7 +8,6 @@
 - Fixed erronious "missing file" dialog appearing on startup when opening an MSPK. This was a layer-to-json issue when saving the config.
 - Reverted the "ModelSceneSymbol to PictureMarkerSymbol" change. A camera bug was was introduced because a rotation-expression can not be used in place of a heading-expression when working with an `OrbitGeoElementCameraController`. We will need to park this upgrade until an enhancement is exposed by ArcGISRuntime. 
 - Fixed bug where layers were not written out to the config when the `PackageDirectory` key is missing.
-- Renamed "master" branch to "main."
 
 ## 1.1.3
 

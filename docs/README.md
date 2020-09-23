@@ -435,7 +435,7 @@ For convenience, you can try out the DSA apps compiled for [Windows] and [Androi
 
 You can customize aspects of the DSA apps via a configuration file. When the DSA app runs, the app will create a new configuration file if one is not found on local storage. When the app opens the configuration file, the file is read and its values used by the app for that run. Some settings may be changed at run time using the [Settings panel](#settings-panel). Those changes are persisted in the configuration file.
 
-The configuration file is located at `~/ArcGIS/Runtime/Data/DSA/DsaAppConfig.json`, where `~` is `%username%`/`C:/Users/<username>` on Windows, `$HOME` on Unix and `/sdcard` on Android.
+The configuration file is located at `~/ArcGIS/Runtime/Data/DSA/DsaAppConfig.json`, where `~` is `%username%`/`C:/Users/<username>` on Windows, `$HOME` on Unix, and `/sdcard` on Android.
 
 The following lists some of the configuration settings that you can change.
 

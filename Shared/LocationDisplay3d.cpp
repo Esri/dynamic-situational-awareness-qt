@@ -24,7 +24,6 @@
 
 // C++ API headers
 #include "GraphicsOverlay.h"
-#include "PictureMarkerSymbol.h"
 #include "SimpleRenderer.h"
 
 // Qt headers
@@ -36,6 +35,8 @@
 using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
+
+static const QString s_headingAttribute{"heading"};
 
 /*!
   \class Dsa::LocationDisplay3d
@@ -56,9 +57,11 @@ LocationDisplay3d::LocationDisplay3d(QObject* parent) :
   m_locationGraphic(new Graphic(this))
 {
   m_locationOverlay->setOverlayId(QStringLiteral("SCENEVIEWLOCATIONOVERLAY"));
-  m_locationOverlay->setSceneProperties(LayerSceneProperties(SurfacePlacement::DrapedFlat));
+  m_locationOverlay->setSceneProperties(LayerSceneProperties(SurfacePlacement::Relative));
   m_locationOverlay->setRenderingMode(GraphicsRenderingMode::Dynamic);
   m_locationOverlay->setVisible(false);
+
+  m_locationGraphic->attributes()->insertAttribute(s_headingAttribute, 0.0);
   m_locationOverlay->graphics()->append(m_locationGraphic);
 }
 
@@ -161,7 +164,7 @@ void LocationDisplay3d::setPositionSource(QGeoPositionInfoSource* positionSource
 
     m_headingConnection = connect(gpxLocationSimulator, &GPXLocationSimulator::headingChanged, this, [this](double heading)
     {
-      m_defaultSymbol->setAngle(static_cast<float>(-heading));
+      m_locationGraphic->attributes()->replaceAttribute(s_headingAttribute, heading);
     });
   }
 
@@ -199,7 +202,7 @@ void LocationDisplay3d::setCompass(QCompass* compass)
     if (!reading)
       return;
 
-    m_defaultSymbol->setAngle(static_cast<float>(-reading->azimuth()));
+    m_locationGraphic->attributes()->replaceAttribute(s_headingAttribute, static_cast<double>(reading->azimuth()));
 
     emit headingChanged();
   });
@@ -226,7 +229,7 @@ Graphic* LocationDisplay3d::locationGraphic() const
 /*!
   \brief Returns the default symbol for the location display.
  */
-PictureMarkerSymbol* LocationDisplay3d::defaultSymbol() const
+Symbol* LocationDisplay3d::defaultSymbol() const
 {
   return m_defaultSymbol;
 }
@@ -234,13 +237,18 @@ PictureMarkerSymbol* LocationDisplay3d::defaultSymbol() const
 /*!
   \brief Sets the default symbol for the location display to \a defaultSymbol.
  */
-void LocationDisplay3d::setDefaultSymbol(PictureMarkerSymbol* defaultSymbol)
+void LocationDisplay3d::setDefaultSymbol(Symbol* defaultSymbol)
 {
   m_defaultSymbol = defaultSymbol;
 
   if (!m_locationRenderer)
   {
     m_locationRenderer = new SimpleRenderer(defaultSymbol, this);
+
+    RendererSceneProperties renderProperties = m_locationRenderer->sceneProperties();
+    renderProperties.setHeadingExpression(QString("[%1]").arg(s_headingAttribute));
+    m_locationRenderer->setSceneProperties(renderProperties);
+
     m_locationOverlay->setRenderer(m_locationRenderer);
   }
   else

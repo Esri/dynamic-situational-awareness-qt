@@ -22,7 +22,7 @@
 #define kOrganizationDomain             "esri.com"
 
 #define kApplicationName                "DSA_Vehicle_Qt"
-#define kApplicationVersion             "1.1.3"
+#define kApplicationVersion             "1.1.4"
 #define kApplicationDescription         "Dynamic Situational Awareness - Vehicle app"
 
 #define kApplicationSourceUrl           "qrc:/qml/main.qml"

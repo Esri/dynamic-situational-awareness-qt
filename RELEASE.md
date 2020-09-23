@@ -1,5 +1,14 @@
 # Release notes
 
+## 1.1.4
+
+- Minumum Runtime Qt SDK version is 100.9.
+- Minimum Qt SDK version is Qt 5.15.0.
+- Minimum Android SDK version is now 21, target SDK version is 29.
+- Fixed erronious "missing file" dialog appearing on startup when opening an MSPK. This was a layer-to-json issue when saving the config.
+- Reverted the "ModelSceneSymbol to PictureMarkerSymbol" change. A camera bug was was introduced because a rotation-expression can not be used in place of a heading-expression when working with an `OrbitGeoElementCameraController`. We will need to park this upgrade until an enhancement is exposed by ArcGISRuntime. 
+- Fixed bug where layers were not written out to the config when the `PackageDirectory` key is missing.
+
 ## 1.1.3
 
 - Added doc table of contents to root README.md and docs/index.md

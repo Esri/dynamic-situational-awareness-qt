@@ -129,7 +129,7 @@ Item {
     Connections {
         target: toolController
 
-        onPickedElement: {
+        function onPickedElement() {
             for (var i = 0; i < targetCB.count; ++i) {
                 if (targetCB.textAt(i) === overlayName)
                 {

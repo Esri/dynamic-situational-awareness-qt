@@ -24,7 +24,9 @@ CategoryToolbar {
 
     Connections {
         target: appRoot
-        onCloseDialogAccepted: Qt.quit()
+        function onCloseDialogAccepted() {
+            Qt.quit()
+        }
     }
 
     Column {

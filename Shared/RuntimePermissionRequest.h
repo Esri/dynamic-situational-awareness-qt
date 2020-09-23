@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright 2012-2018 Esri
+ *  Copyright 2012-2020 Esri
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,18 +14,13 @@
  *  limitations under the License.
  ******************************************************************************/
 
-#ifndef __APPINFO__
-#define __APPINFO__
-//------------------------------------------------------------------------------
+#ifndef RUNTIMEPERMISSIONREQUEST_H
+#define RUNTIMEPERMISSIONREQUEST_H
 
-#define kOrganizationName               "Esri"
-#define kOrganizationDomain             "esri.com"
+namespace Dsa {
 
-#define kApplicationName                "DSA_Handheld_Qt"
-#define kApplicationVersion             "1.1.4"
-#define kApplicationDescription         "Dynamic Situational Awareness - Handheld app"
+bool requestRequiredPermissions();
 
-#define kApplicationSourceUrl           "qrc:/qml/main.qml"
+} // Dsa
 
-//------------------------------------------------------------------------------
-#endif
+#endif // RUNTIMEPERMISSIONREQUEST_H

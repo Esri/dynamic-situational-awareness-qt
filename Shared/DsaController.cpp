@@ -53,10 +53,15 @@ using namespace Esri::ArcGISRuntime::Toolkit;
 
 namespace Dsa {
 
+namespace
+{
+
 bool readJsonFile(QIODevice& device, QSettings::SettingsMap& map);
 bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map);
-Viewpoint viewpointFromJson(QJsonObject initialLocation);
+Viewpoint viewpointFromJson(const QJsonObject& initialLocation);
 QJsonObject defaultViewpoint();
+
+} // namespace
 
 /*!
   \class Dsa::DsaController
@@ -591,6 +596,9 @@ void DsaController::updateInitialLocationOnSceneChange(bool isInitialization)
   }
 }
 
+namespace
+{
+
 /*! \brief Read method for custom QSettings JSON format
  *
  * Attempts to read the information in \a device in a JSON format
@@ -630,7 +638,7 @@ bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map)
   return writtenBytes != -1;
 }
 
-Viewpoint viewpointFromJson(QJsonObject initialLocation)
+Viewpoint viewpointFromJson(const QJsonObject& initialLocation)
 {
   if (initialLocation.isEmpty())
     return Viewpoint{};
@@ -683,7 +691,8 @@ QJsonObject defaultViewpoint()
   return defaultViewpoint;
 }
 
-} // Dsa
+} // namespace
+} // namespace Dsa
 
 // Signal Documentation
 

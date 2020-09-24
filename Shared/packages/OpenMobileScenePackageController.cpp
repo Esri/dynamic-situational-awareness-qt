@@ -499,7 +499,7 @@ void OpenMobileScenePackageController::updatePackageDetails()
  * \brief Returns \c true when there is a valid scene package
  * and scene index cached in this object.
  */
-bool OpenMobileScenePackageController::hasActiveScene()
+bool OpenMobileScenePackageController::hasActiveScene() const
 {
   return m_mspk && m_currentSceneIndex >= 0;
 }

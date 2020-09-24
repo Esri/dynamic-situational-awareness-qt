@@ -150,7 +150,7 @@ void DsaController::init(GeoView* geoView)
   // Only set the default scene if the scene package tool hasn't set a scene.
   if (!hasActiveScene)
   {
-    if (!m_dsaSettings.contains("InitialLocation"))
+    if (!m_dsaSettings.contains(AppConstants::INITIALLOCATION_PROPERTYNAME))
     {
       // While a scene change would normally write out the viewpoint
       // to config if/when it is missing, this here is a special case. We
@@ -158,7 +158,7 @@ void DsaController::init(GeoView* geoView)
       // using a distance measure. Extracting the viewpoint from the scene
       // will give us a calculated viewpoint with no distance measure, so we have
       // to set this manually.
-      m_dsaSettings["InitialLocation"] = defaultViewpoint();
+      m_dsaSettings[AppConstants::INITIALLOCATION_PROPERTYNAME] = defaultViewpoint();
     }
 
     Toolkit::ToolResourceProvider::instance()->setScene(m_scene);
@@ -540,12 +540,12 @@ void DsaController::writeInitialLocation(const Viewpoint& viewpoint)
   initialLocationJson.insert( QStringLiteral("pitch"), initialCamera.pitch());
   initialLocationJson.insert( QStringLiteral("roll"), initialCamera.roll());
 
-  m_dsaSettings[QStringLiteral("InitialLocation")] = initialLocationJson.toVariantMap();
+  m_dsaSettings[AppConstants::INITIALLOCATION_PROPERTYNAME] = initialLocationJson.toVariantMap();
 }
 
 Viewpoint DsaController::readInitialLocation()
 {
-  return viewpointFromJson(m_dsaSettings["InitialLocation"].toJsonObject());
+  return viewpointFromJson(m_dsaSettings[AppConstants::INITIALLOCATION_PROPERTYNAME].toJsonObject());
 }
 
 void DsaController::updateInitialLocationOnSceneChange(bool isInitialization)

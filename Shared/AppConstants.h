@@ -31,6 +31,7 @@ public:
   static const QString LAYERS_PROPERTYNAME;
   static const QString CURRENTSCENE_PROPERTYNAME;
   static const QString SCENEINDEX_PROPERTYNAME;
+  static const QString INITIALLOCATION_PROPERTYNAME;
 };
 
 } // Dsa

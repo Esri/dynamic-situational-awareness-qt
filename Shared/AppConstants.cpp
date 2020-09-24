@@ -28,5 +28,6 @@ const QString AppConstants::UNIT_FEET = QStringLiteral("feet");
 const QString AppConstants::LAYERS_PROPERTYNAME = QStringLiteral("Layers");
 const QString AppConstants::CURRENTSCENE_PROPERTYNAME = QStringLiteral("CurrentPackage");
 const QString AppConstants::SCENEINDEX_PROPERTYNAME = QStringLiteral("SceneIndex");
+const QString AppConstants::INITIALLOCATION_PROPERTYNAME = QStringLiteral("InitialLocation");
 
 } // Dsa

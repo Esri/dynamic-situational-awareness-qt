@@ -55,6 +55,8 @@ namespace Dsa {
 
 bool readJsonFile(QIODevice& device, QSettings::SettingsMap& map);
 bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map);
+Viewpoint viewpointFromJson(QJsonObject initialLocation);
+QJsonObject defaultViewpoint();
 
 /*!
   \class Dsa::DsaController
@@ -86,14 +88,24 @@ DsaController::DsaController(QObject* parent):
 {
   // setup config settings
   setupConfig();
-  m_scene->setInitialViewpoint(defaultViewpoint());
+  m_scene->setInitialViewpoint(viewpointFromJson(defaultViewpoint()));
   m_dataPath = m_dsaSettings["RootDataDirectory"].toString();
 
   connect(m_scene, &Scene::errorOccurred, this, &DsaController::onError);
 
-  connect(ToolResourceProvider::instance(), &ToolResourceProvider::sceneChanged, this, [this]()
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::sceneChanged, this, [this, firstLoad{true}]() mutable
   {
     m_scene = ToolResourceProvider::instance()->scene();
+
+    // Here we set up the initial location of the scene fron the config. We do this on the first scene
+    // we load when the application starts up. On any subsequent scenes that the user loads
+    // via the UI, we take this new initial location as the source of truth from then on and
+    // write it to file.
+    if (!m_scene)
+      return;
+
+    updateInitialLocationOnSceneChange(firstLoad);
+    firstLoad = false;
   });
 }
 
@@ -121,17 +133,36 @@ Scene* DsaController::scene() const
  */
 void DsaController::init(GeoView* geoView)
 {
+  Toolkit::ToolResourceProvider::instance()->setGeoView(geoView);
+
+  bool hasActiveScene = false;
   auto openScenePackageTool = Toolkit::ToolManager::instance().tool<OpenMobileScenePackageController>();
   if (openScenePackageTool)
+  {
     openScenePackageTool->setProperties(m_dsaSettings);
+    hasActiveScene = openScenePackageTool->hasActiveScene();
+  }
 
   m_cacheManager = new LayerCacheManager(this);
-
   if (openScenePackageTool && !openScenePackageTool->packageDataPath().isEmpty())
     m_cacheManager->addExcludedPath(openScenePackageTool->packageDataPath());
 
-  Toolkit::ToolResourceProvider::instance()->setScene(m_scene);
-  Toolkit::ToolResourceProvider::instance()->setGeoView(geoView);
+  // Only set the default scene if the scene package tool hasn't set a scene.
+  if (!hasActiveScene)
+  {
+    if (!m_dsaSettings.contains("InitialLocation"))
+    {
+      // While a scene change would normally write out the viewpoint
+      // to config if/when it is missing, this here is a special case. We
+      // want the config file to contain a nice human-editable initial location
+      // using a distance measure. Extracting the viewpoint from the scene
+      // will give us a calculated viewpoint with no distance measure, so we have
+      // to set this manually.
+      m_dsaSettings["InitialLocation"] = defaultViewpoint();
+    }
+
+    Toolkit::ToolResourceProvider::instance()->setScene(m_scene);
+  }
 
   // set the selection color for graphics and features
   geoView->setSelectionProperties(SelectionProperties(Qt::red));
@@ -255,83 +286,6 @@ void DsaController::onPropertyChanged(const QString& propertyName, const QVarian
     tool->setProperties(m_dsaSettings);
     connect(tool, &Toolkit::AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
   }
-
-}
-
-/*!
- * \internal
- */
-Viewpoint DsaController::initialLocationFromConfig()
-{
-  // Attempt to set the scene's initialViewpoint from JSON configuration
-  const auto findIt = m_dsaSettings.constFind(QStringLiteral("InitialLocation"));
-
-  // If no initial location is specified, default to Monterey, CA
-  if (findIt == m_dsaSettings.constEnd())
-    return Viewpoint();
-
-  const QVariant initialLocVar = findIt.value();
-  if (initialLocVar.isNull())
-    return Viewpoint();
-
-  const QJsonObject initialLocation = QJsonObject::fromVariantMap(initialLocVar.toMap());
-  if (initialLocation.isEmpty())
-    return Viewpoint();
-
-  // set the initial center Point from JSON if it is found
-  auto centerIt = initialLocation.find("center");
-  if (centerIt == initialLocation.constEnd())
-    return Viewpoint();
-
-  const QJsonValue centerVal = centerIt.value();
-  const QJsonDocument centerDoc = QJsonDocument(centerVal.toObject());
-  const auto newCenter = Point::fromJson(centerDoc.toJson(QJsonDocument::JsonFormat::Compact));
-
-  // set the initial distance from JSON if it is found (if not default to 5000)
-  auto distanceIt = initialLocation.find("distance");
-  double initialDistance = distanceIt != initialLocation.constEnd() ? distanceIt.value().toDouble(5000.0)
-                                                                    : 5000.0;
-
-  // set the initial heading from JSON if it is found (if not default to 0.0)
-  auto headingIt = initialLocation.find("heading");
-  double initialHeading = headingIt != initialLocation.constEnd() ? headingIt.value().toDouble(0.0)
-                                                                  : 0.0;
-
-  // set the initial pitch from JSON if it is found (if not default to 0.0)
-  auto pitchIt = initialLocation.find("pitch");
-  double initialPitch = pitchIt != initialLocation.constEnd() ? pitchIt.value().toDouble(0.0)
-                                                              : 0.0;
-
-  // set the initial roll from JSON if it is found (if not default to 0.0)
-  auto rollIt = initialLocation.find("roll");
-  double initialRoll = rollIt != initialLocation.constEnd() ? rollIt.value().toDouble(0.0)
-                                                            : 0.0;
-
-  // Return the initial viewpoint
-  const Camera initCamera(newCenter, initialDistance, initialHeading, initialPitch, initialRoll);
-  Viewpoint initViewpoint(newCenter, initCamera);
-  return initViewpoint;
-}
-
-/*!
- * \internal
- */
-Viewpoint DsaController::defaultViewpoint()
-{
-  // If there is no configuration setting, default the initial viewpoint to Monterey, CA
-  // NOTE that if using a MobileScenePackage, this will be replaced with the
-  // selected scene's initialViewpoint
-  Viewpoint initLocationFromConfig = initialLocationFromConfig();
-  if (initLocationFromConfig.isEmpty())
-  {
-    const Camera initCamera(DsaUtility::montereyCA(), 5000.0, 0.0, 75.0, 0.0);
-    Viewpoint initViewpoint(DsaUtility::montereyCA(), initCamera);
-    return initViewpoint;
-  }
-  else
-  {
-    return initLocationFromConfig;
-  }
 }
 
 /*!
@@ -346,7 +300,7 @@ void DsaController::resetToDefaultScene()
 
   // create scene
   Scene* newScene = new Scene(this);
-  newScene->setInitialViewpoint(defaultViewpoint());
+  newScene->setInitialViewpoint(viewpointFromJson(defaultViewpoint()));
 
   // set on sceneview
   Toolkit::ToolResourceProvider::instance()->setScene(newScene);
@@ -568,6 +522,75 @@ void DsaController::saveSettings()
     settings.setValue(it.key(), it.value());
 }
 
+void DsaController::writeInitialLocation(const Viewpoint& viewpoint)
+{
+  if (viewpoint.isEmpty())
+    return;
+
+  auto initialCamera = viewpoint.camera();
+  if (initialCamera.isEmpty())
+    return;
+
+  QJsonObject initialLocationJson;
+  const QString centerString = initialCamera.location().toJson();
+  const QJsonDocument centerDoc = QJsonDocument::fromJson(centerString.toLatin1());
+  initialLocationJson.insert( QStringLiteral("center"), centerDoc.object());
+  initialLocationJson.insert( QStringLiteral("distance"), 0);
+  initialLocationJson.insert( QStringLiteral("heading"), initialCamera.heading());
+  initialLocationJson.insert( QStringLiteral("pitch"), initialCamera.pitch());
+  initialLocationJson.insert( QStringLiteral("roll"), initialCamera.roll());
+
+  m_dsaSettings[QStringLiteral("InitialLocation")] = initialLocationJson.toVariantMap();
+}
+
+Viewpoint DsaController::readInitialLocation()
+{
+  return viewpointFromJson(m_dsaSettings["InitialLocation"].toJsonObject());
+}
+
+void DsaController::updateInitialLocationOnSceneChange(bool isInitialization)
+{
+  if (!m_scene)
+    return;
+
+  auto geoView = ToolResourceProvider::instance()->geoView();
+  if (!geoView)
+    return;
+
+  if (!isInitialization)
+  {
+    // This is a user-defined scene change, so we take the scene's
+    // position as our new source of truth.
+    auto v = m_scene->initialViewpoint();
+    if (!v.isEmpty())
+    {
+      writeInitialLocation(m_scene->initialViewpoint());
+    }
+  }
+  else
+  {
+    // This is an initilization scene change, replace the scene's
+    // initial location with our current initial location.
+    auto v = readInitialLocation();
+
+    if (!v.isEmpty())
+    {
+      // Note use of setViewPoint instead of setInitialLocation. The latter
+      // only works if the scene is not loaded, but all MSPK scenes are loaded with
+      // the MSPK so it can't be used.
+      geoView->setViewpoint(readInitialLocation(), 0);
+    }
+    else
+    {
+      // If there is no defined config location we will take the opportunity to
+      // write it out using the current scene if applicable.
+      auto v = m_scene->initialViewpoint();
+      if (!v.isEmpty())
+        writeInitialLocation(m_scene->initialViewpoint());
+    }
+  }
+}
+
 /*! \brief Read method for custom QSettings JSON format
  *
  * Attempts to read the information in \a device in a JSON format
@@ -607,6 +630,59 @@ bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map)
   return writtenBytes != -1;
 }
 
+Viewpoint viewpointFromJson(QJsonObject initialLocation)
+{
+  if (initialLocation.isEmpty())
+    return Viewpoint{};
+
+  // set the initial center Point from JSON if it is found
+  auto centerIt = initialLocation.find("center");
+  if (centerIt == initialLocation.constEnd())
+    return Viewpoint{};
+
+  const QJsonValue centerVal = centerIt.value();
+  const QJsonDocument centerDoc = QJsonDocument(centerVal.toObject());
+  const auto newCenter = Point::fromJson(centerDoc.toJson(QJsonDocument::JsonFormat::Compact));
+
+  auto distanceIt = initialLocation.find("distance");
+  if (distanceIt == initialLocation.constEnd())
+    return Viewpoint{};
+  double initialDistance = distanceIt.value().toDouble(0);
+
+  auto headingIt = initialLocation.find("heading");
+  if (headingIt == initialLocation.constEnd())
+    return Viewpoint{};
+  double initialHeading = headingIt.value().toDouble(0.0);
+
+  auto pitchIt = initialLocation.find("pitch");
+  if (pitchIt == initialLocation.constEnd())
+    return Viewpoint{};
+  double initialPitch = pitchIt.value().toDouble(0.0);
+
+  auto rollIt = initialLocation.find("roll");
+  if (rollIt == initialLocation.constEnd())
+    return Viewpoint{};
+  double initialRoll = rollIt.value().toDouble(0.0);
+
+  // Return the initial viewpoint
+  const Camera initCamera(newCenter, initialDistance, initialHeading, initialPitch, initialRoll);
+  Viewpoint initViewpoint(newCenter, initCamera);
+  return initViewpoint;
+}
+
+QJsonObject defaultViewpoint()
+{
+  QJsonObject defaultViewpoint;
+  const QString point = DsaUtility::montereyCA().toJson();
+  const QJsonDocument centerDoc = QJsonDocument::fromJson(point.toLatin1());
+  defaultViewpoint.insert( QStringLiteral("center"), centerDoc.object());
+  defaultViewpoint.insert( QStringLiteral("distance"), 5000);
+  defaultViewpoint.insert( QStringLiteral("heading"), 0.0);
+  defaultViewpoint.insert( QStringLiteral("pitch"), 75.0);
+  defaultViewpoint.insert( QStringLiteral("roll"), 0.0);
+  return defaultViewpoint;
+}
+
 } // Dsa
 
 // Signal Documentation
@@ -619,3 +695,4 @@ bool writeJsonFile(QIODevice& device, const QSettings::SettingsMap& map)
   An error \a message and \a additionalMessage are passed through as parameters, describing
   the error that occurred.
  */
+

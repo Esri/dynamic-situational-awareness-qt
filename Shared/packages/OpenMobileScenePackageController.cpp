@@ -202,6 +202,7 @@ void OpenMobileScenePackageController::selectPackageName(const QString& newPacka
 void OpenMobileScenePackageController::selectScene(int newSceneIndex)
 {
   setCurrentSceneIndex(newSceneIndex);
+
   loadScene();
 }
 
@@ -492,6 +493,15 @@ void OpenMobileScenePackageController::updatePackageDetails()
     loadMobileScenePackage(packageName);
   }
 
+}
+
+/*!
+ * \brief Returns \c true when there is a valid scene package
+ * and scene index cached in this object.
+ */
+bool OpenMobileScenePackageController::hasActiveScene() const
+{
+  return m_mspk && m_currentSceneIndex >= 0;
 }
 
 } // Dsa

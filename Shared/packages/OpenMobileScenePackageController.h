@@ -75,6 +75,8 @@ public:
 
   bool userSelected() const;
 
+  bool hasActiveScene() const;
+
 signals:
   void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
   void packageDataPathChanged();

@@ -17,6 +17,7 @@
 #include "CoordinateConversionToolProxy.h"
 
 #include "ToolManager.h"
+#include "ToolResourceProvider.h"
 
 #include "Esri/ArcGISRuntime/Toolkit/CoordinateConversionController.h"
 #include "Esri/ArcGISRuntime/Toolkit/CoordinateConversionConstants.h"

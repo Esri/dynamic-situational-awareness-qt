@@ -21,8 +21,7 @@ import QtQuick.Window 2.2
 import QtQml.Models 2.2
 import Esri.ArcGISRuntime.OpenSourceApps.DSA 1.1
 import Esri.ArcGISRuntime.OpenSourceApps.Vehicle 1.1
-
-import "qrc:///Esri/ArcGISRuntime/Toolkit" as Toolkit
+import Esri.ArcGISRuntime.Toolkit 100.10 as Toolkit
 
 Vehicle {
     id: appRoot

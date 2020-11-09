@@ -50,7 +50,6 @@ public:
 
   void init(Esri::ArcGISRuntime::GeoView* geoView);
 
-  Esri::ArcGISRuntime::Viewpoint defaultViewpoint();
   void resetToDefaultScene();
 
 public slots:
@@ -64,7 +63,6 @@ signals:
   void errorOccurred(const QString& message, const QString& additionalMessage);
 
 private:
-  Esri::ArcGISRuntime::Viewpoint initialLocationFromConfig();
   void setupConfig();
   void createDefaultSettings();
   void saveSettings();
@@ -72,6 +70,10 @@ private:
   void writeDefaultConditions();
   void writeDefaultMessageFeeds();
   bool isConflictingTool(const QString& toolName) const;
+  void updateInitialLocationOnSceneChange(bool isInitialization);
+
+  void writeInitialLocation(const Esri::ArcGISRuntime::Viewpoint& viewpoint);
+  Esri::ArcGISRuntime::Viewpoint readInitialLocation();
 
   Esri::ArcGISRuntime::Scene* m_scene = nullptr;
   LayerCacheManager* m_cacheManager = nullptr;

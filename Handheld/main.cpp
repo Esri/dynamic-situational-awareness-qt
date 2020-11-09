@@ -40,6 +40,7 @@
 #include "NavigationController.h"
 #include "OpenMobileScenePackageController.h"
 #include "OptionsController.h"
+#include "RuntimePermissionRequest.h"
 #include "TableOfContentsController.h"
 #include "ViewedAlertsController.h"
 #include "ViewshedController.h"
@@ -111,6 +112,12 @@ int main(int argc, char *argv[])
 #endif
   QSettings::setDefaultFormat(kSettingsFormat);
 
+  // Force DSA to accept certain permissions.
+  if (!Dsa::requestRequiredPermissions())
+  {
+    return -1;
+  }
+
   // Register the map view for QML
   qmlRegisterType<SceneQuickView>("Esri.ArcGISRuntime.OpenSourceApps.Handheld", 1, 1, "SceneView");
   qRegisterMetaType<PopupManager*>("PopupManager*");
@@ -147,7 +154,7 @@ int main(int argc, char *argv[])
 
   view.engine()->addImageProvider(QStringLiteral("packages"), new Dsa::PackageImageProvider());
 
-  Esri::ArcGISRuntime::Toolkit::registerComponents(view.engine());
+  Esri::ArcGISRuntime::Toolkit::registerComponents();
 
 #ifndef DEPLOYMENT_BUILD
   // Add the import Path

@@ -1,3 +1,46 @@
+**Contents**
+
+<!-- MDTOC maxdepth:6 firsth1:1 numbering:0 flatten:0 bullets:1 updateOnSave:1 -->
+
+- [Dynamic Situational Awareness (DSA)](#dynamic-situational-awareness-dsa)   
+   - [What is DSA?](#what-is-dsa)   
+   - [Capabilities](#capabilities)   
+   - [Supported platforms](#supported-platforms)   
+- [Overview](#overview)   
+   - [Tools](#tools)   
+      - [Navigation toolbar](#navigation-toolbar)   
+      - [Compass](#compass)   
+      - [Map context menu](#map-context-menu)   
+      - [Tool categories](#tool-categories)   
+   - [Settings panel](#settings-panel)   
+   - [Map tools](#map-tools)   
+      - [Convert X/Y](#convert-xy)   
+      - [Feeds](#feeds)   
+      - [Add data](#add-data)   
+      - [Overlays](#overlays)   
+      - [Basemaps](#basemaps)   
+- [Workflows and best practices](#workflows-and-best-practices)   
+   - [Real-time feeds](#real-time-feeds)   
+   - [Exploratory visual analysis](#exploratory-visual-analysis)   
+      - [Viewshed](#viewshed)   
+      - [Line of sight](#line-of-sight)   
+   - [Alerts and conditions](#alerts-and-conditions)   
+      - [New alert notification](#new-alert-notification)   
+      - [Alerts view](#alerts-view)   
+      - [Conditions](#conditions)   
+   - [Collaboration](#collaboration)   
+      - [Create report tools](#create-report-tools)   
+      - [Observation report](#observation-report)   
+      - [Markup tools](#markup-tools)   
+- [App architecture](#app-architecture)   
+- [Get the DSA apps](#get-the-dsa-apps)   
+- [App configuration settings](#app-configuration-settings)   
+- [Add your own local data](#add-your-own-local-data)   
+- [Message simulator](#message-simulator)   
+
+<!-- /MDTOC -->
+---
+
 # Dynamic Situational Awareness (DSA)
 
 A peer-to-peer situational awareness app for teams working in the field with specialized communication and mission requirements.
@@ -128,7 +171,9 @@ When you change settings, they are persisted in the configuration file.
 
 ## Map tools
 
-### ![](./images/dsa-icon-convert-xy-32.png) Convert X/Y
+### Convert X/Y
+
+![](./images/dsa-icon-convert-xy-32.png)
 
 It is common for analysts to work across various systems that use different coordinate notation formats to pinpoint places on the Earth. Working with multiple organizations simultaneously, each may require or provide coordinate information in different notation formats. You may need to consume, translate, relay, and/or display those notations. For example, you may have a coordinate expressed as Decimal Degrees (DD) notation with five decimal places, and you want to use that location in another system that expects Military Grid Reference System (MGRS) notation with whitespace between the grid zone designator, the 100km square identifier, and the numerical eastings and northings.
 
@@ -152,13 +197,17 @@ The Convert X/Y tool accepts a location in any supported coordinate notation or 
 
 ***Developer tip:*** This tool relies heavily on the Runtime API class [`CoordinateFormatter`]. You can include in your app only the supported coordinate systems that you are interested in.
 
-### ![](./images/dsa-icon-feeds-32.png) Feeds
+### Feeds
+
+![](./images/dsa-icon-feeds-32.png)
 
 ![](./images/dsa-tool-feeds.png "Feeds")<br>*Message feeds tool (DSA Vehicle)*
 
 Feeds are streams of information broadcast over the network. When information is received over a feed, it is translated into something the app can use, like a map symbol in an overlay or an alert. The Feed tool controls which feeds are represented on your display. See more information in the section [Real-time feeds](#real-time-feeds).
 
-### ![](./images/dsa-icon-add-data-32.png) Add data
+### Add data
+
+![](./images/dsa-icon-add-data-32.png)
 
 ![](./images/dsa-tool-add-local-data.png "Add Local Data")<br>*Add Local Data tool (DSA Vehicle)*
 
@@ -183,7 +232,9 @@ Specify the folders the app searches for local data using your [App configuratio
 - [Shapefile] (SHP)
 - [Scene Layer Package] (SLPK)
 
-### ![](./images/dsa-icon-overlays-32.png) Overlays
+### Overlays
+
+![](./images/dsa-icon-overlays-32.png)
 
 ![](./images/dsa-tool-overlays.png "Overlays")<br>*Overlays tool (DSA Vehicle)*
 
@@ -191,7 +242,9 @@ A set of overlays manages what is drawn on the map. Overlays may be reordered, z
 
 ![](./images/dsa-tool-overlays-menu.png "Overlays (context menu)")<br>*Overlays tool context menu (DSA Vehicle)*
 
-### ![](./images/dsa-icon-basemaps-32.png) Basemaps
+### Basemaps
+
+![](./images/dsa-icon-basemaps-32.png)
 
 <!-- <img style="float: left;" src="./images/dsa-tool-basemap.png" alt="Basemaps"> -->
 
@@ -237,13 +290,17 @@ DSA apps support several generic message feeds.
 
 Exploratory [analysis tools] combine information such as feature location, your location, and elevation to answer questions about the current operational environment. Analysis is continuously updated as the environment changes, leveraging the GPU of the device and the data that is drawn on the map. The results of an analysis are presented in an overlay that can be [managed like other overlays](#overlays).
 
-### ![](./images/dsa-icon-viewshed-32.png) Viewshed
+### Viewshed
+
+![](./images/dsa-icon-viewshed-32.png)
 
 ![](./images/dsa-tool-viewshed.png "Viewshed")<br>*Viewshed analysis (DSA Vehicle)*
 
 [Viewshed analysis] is a type of visibility analysis that shows the visible and obstructed areas within a directed field of view. Viewshed analysis shows you the areas of the scene that are visible from a given observer, determined by the terrain (represented by an elevation surface), buildings and other 3D features (represented by scene layers, graphics, and so on), and the properties of the observer. A viewshed is adjustable to show what is visible within a specified distance in a certain direction or all directions. Areas that are visible from the location are highlighted in green, and not-visible areas are highlighted in red. As the location moves, the viewshed analysis is recalculated.
 
-### ![](./images/dsa-icon-line-of-site-32.png) Line of sight
+### Line of sight
+
+![](./images/dsa-icon-line-of-site-32.png)
 
 ![](./images/dsa-tool-line-of-sight.png "Line of sight")<br>*Line of sight analysis (DSA Vehicle)*
 
@@ -263,13 +320,17 @@ The user is notified of new alerts on the Tool Categories bar. The number in the
 
 ![](./images/dsa-tool-alert-triggered.png "New alerts indicator")<br>*New alerts indicator (DSA Handheld)*
 
-### ![](./images/dsa-icon-view-alerts-32.png) Alerts view
+### Alerts view
+
+![](./images/dsa-icon-view-alerts-32.png)
 
 ![](./images/dsa-tool-alert-view-active.png "View active alerts")<br>*Alerts view tool (DSA Handheld)*
 
 Use the View tool to view a list of active alerts. As alerts become active or inactive, the app updates the list. You can filter the list by priority, and zoom to, highlight, or dismiss an individual view on the list.
 
-### ![](./images/dsa-icon-alert-conditions-32.png) Conditions
+### Conditions
+
+![](./images/dsa-icon-alert-conditions-32.png)
 
 ![](./images/dsa-tool-alert-conditions.png "Conditions wizard")<br>*Alert conditions tool (DSA Handheld)*
 
@@ -307,11 +368,15 @@ In particular, performing spatial analysis (for example, a geofence) against man
 
 You can use DSA to collaborate with teammates by sharing [observation reports](#observation-report) or [markup overlays](#markup-tools) over the peer-to-peer network.
 
-### ![](./images/dsa-icon-create-reports-32.png) Create report tools
+### Create report tools
+
+![](./images/dsa-icon-create-reports-32.png)
 
 Create reports to inform teammates of activities or entities in the area. Currently, DSA supports creating observation reports.
 
-### ![](./images/dsa-icon-observation-32.png) Observation report
+### Observation report
+
+![](./images/dsa-icon-observation-32.png)
 
 When you select the observation report tool, a wizard asks for details to include:
 
@@ -324,7 +389,9 @@ When you select the observation report tool, a wizard asks for details to includ
 
 ***Developer tip:*** You can follow the create report patterns used by this app to create your own reports with their own purpose and attributes and share those reports with your teammates.
 
-### ![](./images/dsa-icon-markup-tools-32.png) Markup tools
+### Markup tools
+
+![](./images/dsa-icon-markup-tools-32.png) 
 
 ![](./images/dsa-tool-markup.png "Draw on screen")<br>*Markup tools*
 

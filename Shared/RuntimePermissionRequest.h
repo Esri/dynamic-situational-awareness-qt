@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright 2012-2018 Esri
+ *  Copyright 2012-2020 Esri
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,20 +14,13 @@
  *  limitations under the License.
  ******************************************************************************/
 
-// PCH header
-#include "pch.hpp"
-
-#include "AppConstants.h"
+#ifndef RUNTIMEPERMISSIONREQUEST_H
+#define RUNTIMEPERMISSIONREQUEST_H
 
 namespace Dsa {
 
-const QString AppConstants::USERNAME_PROPERTYNAME = "UserName";
-const QString AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME = QStringLiteral("UnitOfMeasurement");
-const QString AppConstants::UNIT_METERS = QStringLiteral("meters");
-const QString AppConstants::UNIT_FEET = QStringLiteral("feet");
-const QString AppConstants::LAYERS_PROPERTYNAME = QStringLiteral("Layers");
-const QString AppConstants::CURRENTSCENE_PROPERTYNAME = QStringLiteral("CurrentPackage");
-const QString AppConstants::SCENEINDEX_PROPERTYNAME = QStringLiteral("SceneIndex");
-const QString AppConstants::INITIALLOCATION_PROPERTYNAME = QStringLiteral("InitialLocation");
+bool requestRequiredPermissions();
 
 } // Dsa
+
+#endif // RUNTIMEPERMISSIONREQUEST_H

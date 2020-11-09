@@ -82,7 +82,7 @@ MarkupBroadcast::MarkupBroadcast(QObject *parent) :
     {
       QTextStream stream(&markupFile);
       QString strJson(markupJson.toJson(QJsonDocument::Compact));
-      stream << strJson << endl;
+      stream << strJson << Qt::endl;
 
       // process the markup differently if it is the one that you sent
       if (m_username == sharedBy)

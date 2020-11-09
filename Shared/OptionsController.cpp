@@ -36,10 +36,47 @@
 
 // C++ API headers
 #include "DictionaryRenderer.h"
+#include "DictionarySymbolStyleConfiguration.h"
 
 using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
+
+
+namespace
+{
+  // Returns whether the render is showing text labels for military symbols.
+  bool isTextVisible(DictionaryRenderer* renderer)
+  {
+    auto configurations = renderer->dictionarySymbolStyle()->configurations();
+    auto it = std::find_if(configurations.cbegin(), configurations.cend(),
+                           [](auto c) { return c->name() == QString("text"); } );
+
+    if (it == configurations.end())
+      return false;
+
+    if ((*it)->value().toString() == QString("ON"))
+      return true;
+    else
+      return false;
+  }
+
+
+  // Sets whether the render is showing text labels for military symbols.
+  void setTextVisible(DictionaryRenderer* renderer, bool visible)
+  {
+    auto configurations = renderer->dictionarySymbolStyle()->configurations();
+    auto it = std::find_if(configurations.cbegin(), configurations.cend(),
+                           [](auto c) { return c->name() == QString("text"); } );
+
+    if (it == configurations.end())
+      return;
+
+    (*it)->setValue(visible ? QString("ON")
+                            : QString("OFF"));
+  }
+}
+
 
 /*!
   \class Dsa::OptionsController
@@ -251,7 +288,7 @@ bool OptionsController::showFriendlyTracksLabels()
     return true;
 
   // just check the first renderer in the list to determine label visibility
-  return renderers[0]->isTextVisible();
+  return Dsa::isTextVisible(renderers[0]);
 }
 
 /*!
@@ -264,7 +301,7 @@ void OptionsController::setShowFriendlyTracksLabels(bool show)
     return;
 
   for (auto renderer : renderers)
-    renderer->setTextVisible(show);
+    Dsa::setTextVisible(renderer, show);
 }
 
 /*!

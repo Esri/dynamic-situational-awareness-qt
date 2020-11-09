@@ -31,7 +31,6 @@
 // C++ API headers
 #include "GraphicsOverlay.h"
 #include "ModelSceneSymbol.h"
-#include "PictureMarkerSymbol.h"
 #include "Point.h"
 #include "SceneQuickView.h"
 #include "SimpleRenderer.h"
@@ -109,6 +108,7 @@ void LocationController::initPositionInfoSource()
       m_lastKnownHeading = heading;
 
       emit headingChanged(heading);
+      emit relativeHeadingChanged(heading - m_lastViewHeading);
     });
   }
   else
@@ -359,6 +359,25 @@ void LocationController::setGpxFilePath(const QString& gpxFilePath)
 }
 
 /*!
+  \brief Sets the \a sceneView to use for relative heading changes.
+ */
+void LocationController::setRelativeHeadingSceneView(SceneQuickView* sceneView)
+{
+  connect(sceneView, &SceneQuickView::viewpointChanged, this, [this, sceneView]()
+  {
+    const auto sceneViewHeading = sceneView->currentViewpointCamera().heading();
+    if (std::abs(m_lastViewHeading - sceneViewHeading) < 0.1)
+      return;
+
+    m_lastViewHeading = sceneViewHeading;
+
+    // keep the orientation correct if we're not doing any updates
+    if (!m_enabled)
+      emit relativeHeadingChanged(m_lastKnownHeading + m_lastViewHeading);
+  });
+}
+
+/*!
   \internal
  */
 void LocationController::updateGeoView()
@@ -370,12 +389,11 @@ void LocationController::updateGeoView()
 
     constexpr float symbolSize = 25.0;
 
-    auto pictureMarkerSymbol = new PictureMarkerSymbol(iconImage(), this);
-    pictureMarkerSymbol->setWidth(symbolSize);
-    pictureMarkerSymbol->setHeight(symbolSize);
-    pictureMarkerSymbol->setRotationType(RotationType::Geographic);
-    pictureMarkerSymbol->setAngleAlignment(SymbolAngleAlignment::Map);
-    m_locationDisplay3d->setDefaultSymbol(pictureMarkerSymbol);
+    ModelSceneSymbol* modelSceneSymbol = new ModelSceneSymbol(modelSymbolPath(), this);
+    modelSceneSymbol->setWidth(symbolSize);
+    modelSceneSymbol->setDepth(symbolSize);
+    modelSceneSymbol->setSymbolSizeUnits(SymbolSizeUnits::DIPs);
+    m_locationDisplay3d->setDefaultSymbol(modelSceneSymbol);
   }
 }
 
@@ -400,6 +418,47 @@ QImage LocationController::iconImage() const
 
   return (QFile::exists(imagePath)) ? QImage(imagePath)
                                     : QImage(":Resources/icons/xhdpi/navigation.png");
+}
+
+QUrl LocationController::modelSymbolPath() const
+{
+    // both files are needed: LocationDisplay.dae
+    // and navigation.png and both must be local (not resources)
+    QString modelPath = m_iconDataPath + "/LocationDisplay.dae";
+    QString imagePath = m_iconDataPath + "/navigation.png";
+
+    if (QFile::exists(modelPath) && QFile::exists(imagePath))
+      return QUrl::fromLocalFile(modelPath);
+
+    const QString tempPath = QDir::tempPath();
+    modelPath = tempPath + "/LocationDisplay.dae";
+    imagePath = tempPath + "/navigation.png";
+
+    // check if we've already copied them to temp
+    if (QFile::exists(modelPath) && QFile::exists(imagePath))
+      return QUrl::fromLocalFile(modelPath);
+
+    // if they're not both available, save both from resources to temp
+    // and access from there
+    QFile modelResource(":Resources/LocationDisplay.dae");
+    QFile imageResource(":Resources/icons/xhdpi/navigation.png");
+
+    modelResource.open(QIODevice::ReadOnly);
+    imageResource.open(QIODevice::ReadOnly);
+
+    QFile modelFileTemp(modelPath);
+    QFile imageFileTemp(imagePath);
+
+    modelFileTemp.open(QIODevice::WriteOnly);
+    imageFileTemp.open(QIODevice::WriteOnly);
+
+    modelFileTemp.write(modelResource.readAll());
+    imageFileTemp.write(imageResource.readAll());
+
+    for (QFile* file : { &modelResource, &imageResource, &modelFileTemp, &imageFileTemp })
+      file->close();
+
+    return QUrl::fromLocalFile(modelPath);
 }
 
 } // Dsa

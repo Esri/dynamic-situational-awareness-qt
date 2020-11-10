@@ -32,7 +32,7 @@ using namespace Esri::ArcGISRuntime::Toolkit;
  * \class Dsa::CoordinateConversionToolProxy
  * \brief A wrapper around the Toolkit's CoordinateConversionController.
  *
- * This class is the glue between the DSA and the CoordianteConversionController
+ * This class is the glue between the DSA and the CoordinateConversionController
  * tool. The proxy "owns" the CoordinateConversionProxy, and will feed the
  * controller location updates whenver it is applicable to do so, (i.e: when
  * inInputMode is false).

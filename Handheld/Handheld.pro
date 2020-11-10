@@ -90,6 +90,5 @@ DISTFILES += \
     Resources/qtquickcontrols2.conf \
     ../qdoc/dsa-overview.qdoc
 
-ANDROID_ABIS = armeabi-v7a arm64-v8a x86
 
 

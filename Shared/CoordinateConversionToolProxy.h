@@ -62,8 +62,8 @@ private:
   void connectController();
 
   bool m_inInputMode;
-  Esri::ArcGISRuntime::Toolkit::CoordinateConversionController* m_controller;
-  Esri::ArcGISRuntime::Toolkit::CoordinateConversionResult* m_inputFormat;
+  Esri::ArcGISRuntime::Toolkit::CoordinateConversionController* m_controller = nullptr;
+  Esri::ArcGISRuntime::Toolkit::CoordinateConversionResult* m_inputFormat = nullptr;
 };
 
 } // Dsa

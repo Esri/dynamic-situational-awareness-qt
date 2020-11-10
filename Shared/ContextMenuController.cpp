@@ -36,8 +36,6 @@
 
 // Toolkit headers
 #include "Esri/ArcGISRuntime/Toolkit/CoordinateConversionController.h"
-
-
 // C++ API headers
 #include "MapView.h"
 #include "SceneView.h"
@@ -644,4 +642,3 @@ void ContextMenuController::setContextActive(bool contextRequested)
 
   \brief Signal emitted when the result title changes.
  */
-

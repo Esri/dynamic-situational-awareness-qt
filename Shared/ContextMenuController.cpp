@@ -21,6 +21,7 @@
 #include "ContextMenuController.h"
 
 // dsa app headers
+#include "CoordinateConversionToolProxy.h"
 #include "ObservationReportController.h"
 #include "FollowPositionController.h"
 #include "GraphicsOverlaysResultsManager.h"
@@ -30,11 +31,11 @@
 #include "ViewshedController.h"
 #include "GeoElementUtils.h"
 
-// toolkit headers
-#include "CoordinateConversionController.h"
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
+// Toolkit headers
+#include "Esri/ArcGISRuntime/Toolkit/CoordinateConversionController.h"
 // C++ API headers
 #include "MapView.h"
 #include "SceneView.h"
@@ -57,7 +58,7 @@ const QString ContextMenuController::OBSERVATION_REPORT_OPTION = "Observation";
 /*!
   \class Dsa::ContextMenuController
   \inmodule Dsa
-  \inherits Toolkit::AbstractTool
+  \inherits AbstractTool
   \brief Tool controller for displaying a Context menu.
 
   When the user presses and holds the mouse, a number of tasks are started
@@ -78,36 +79,36 @@ const QString ContextMenuController::OBSERVATION_REPORT_OPTION = "Observation";
   \sa IdentifyController
   \sa ViewshedController
   \sa LineOfSightController
-  \sa Esri::ArcGISRuntime::Toolkit::CoordinateConversionController
+  \sa Esri::ArcGISRuntime::CoordinateConversionController
  */
 
 /*!
   \brief Constructor accepting an optional \a parent.
  */
 ContextMenuController::ContextMenuController(QObject* parent /* = nullptr */):
-  Toolkit::AbstractTool(parent),
+  AbstractTool(parent),
   m_options(new QStringListModel(this))
 {
-  Toolkit::ToolResourceProvider* resourceProvider = Toolkit::ToolResourceProvider::instance();
+  ToolResourceProvider* resourceProvider = ToolResourceProvider::instance();
   // setup connection to handle mouse-clicking in the view (used to trigger the identify tasks)
-  connect(resourceProvider, &Toolkit::ToolResourceProvider::mousePressedAndHeld,
+  connect(resourceProvider, &ToolResourceProvider::mousePressedAndHeld,
           this, &ContextMenuController::onMousePressedAndHeld);
 
   // setup connection to handle the results of an Identify Layers task
-  connect(resourceProvider, &Toolkit::ToolResourceProvider::identifyLayersCompleted,
+  connect(resourceProvider, &ToolResourceProvider::identifyLayersCompleted,
           this, &ContextMenuController::onIdentifyLayersCompleted);
 
   // setup connection to handle the results of an Identify Graphic Overlays task
-  connect(resourceProvider, &Toolkit::ToolResourceProvider::identifyGraphicsOverlaysCompleted,
+  connect(resourceProvider, &ToolResourceProvider::identifyGraphicsOverlaysCompleted,
           this, &ContextMenuController::onIdentifyGraphicsOverlaysCompleted);
 
   // setup connection to handle the results of a screen to location task
-  connect(resourceProvider, &Toolkit::ToolResourceProvider::screenToLocationCompleted,
+  connect(resourceProvider, &ToolResourceProvider::screenToLocationCompleted,
           this, &ContextMenuController::onScreenToLocationCompleted);
 
   m_active = true;
 
-  Toolkit::ToolManager::instance().addTool(this);
+  ToolManager::instance().addTool(this);
 }
 
 /*!
@@ -155,14 +156,14 @@ void ContextMenuController::onMousePressedAndHeld(QMouseEvent& event)
     qDeleteAll(graphics);
   m_contextGraphics.clear();
 
-  GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
+  GeoView* geoView = ToolResourceProvider::instance()->geoView();
   if (!geoView)
     return;
 
   setContextScreenPosition(event.pos());
 
   // start tasks to determine the clicked location
-  SceneView* sceneView = dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView());
+  SceneView* sceneView = dynamic_cast<SceneView*>(ToolResourceProvider::instance()->geoView());
   if (sceneView)
   {
     m_screenToLocationTask = sceneView->screenToLocation(m_contextScreenPosition.x(), m_contextScreenPosition.y());
@@ -170,7 +171,7 @@ void ContextMenuController::onMousePressedAndHeld(QMouseEvent& event)
   }
   else
   {
-    MapView* mapView = dynamic_cast<MapView*>(Toolkit::ToolResourceProvider::instance()->geoView());
+    MapView* mapView = dynamic_cast<MapView*>(ToolResourceProvider::instance()->geoView());
     if (mapView)
     {
       const Point p = mapView->screenToLocation(m_contextScreenPosition.x(), m_contextScreenPosition.y());
@@ -493,7 +494,7 @@ void ContextMenuController::selectOption(const QString& option)
   }
   else if (option == IDENTIFY_OPTION)
   {
-    IdentifyController* identifyTool = Toolkit::ToolManager::instance().tool<IdentifyController>();
+    IdentifyController* identifyTool = ToolManager::instance().tool<IdentifyController>();
     if (!identifyTool)
       return;
 
@@ -503,7 +504,7 @@ void ContextMenuController::selectOption(const QString& option)
   }
   else if (option == VIEWSHED_OPTION)
   {
-    ViewshedController* viewshedTool = Toolkit::ToolManager::instance().tool<ViewshedController>();
+    ViewshedController* viewshedTool = ToolManager::instance().tool<ViewshedController>();
     if (!viewshedTool)
       return;
 
@@ -514,7 +515,7 @@ void ContextMenuController::selectOption(const QString& option)
   }
   else if (option == FOLLOW_OPTION)
   {
-    FollowPositionController* followTool = Toolkit::ToolManager::instance().tool<FollowPositionController>();
+    FollowPositionController* followTool = ToolManager::instance().tool<FollowPositionController>();
     if (!followTool)
       return;
 
@@ -533,18 +534,17 @@ void ContextMenuController::selectOption(const QString& option)
   }
   else if (option == COORDINATES_OPTION)
   {
-    Toolkit::CoordinateConversionController* coordinateTool = Toolkit::ToolManager::instance().tool<Toolkit::CoordinateConversionController>();
+    auto coordinateTool = ToolManager::instance().tool<CoordinateConversionToolProxy>();
     if (!coordinateTool)
       return;
 
-    coordinateTool->setRunConversion(true);
-    coordinateTool->setCaptureMode(true);
-    coordinateTool->setPointToConvert(m_contextLocation);
+    coordinateTool->handleClick(m_contextLocation);
+    coordinateTool->controller()->setInPickingMode(true);
     coordinateTool->setActive(true);
   }
   else if (option == LINE_OF_SIGHT_OPTION)
   {
-    LineOfSightController* lineOfSightTool = Toolkit::ToolManager::instance().tool<LineOfSightController>();
+    LineOfSightController* lineOfSightTool = ToolManager::instance().tool<LineOfSightController>();
     if (!lineOfSightTool)
       return;
 
@@ -570,7 +570,7 @@ void ContextMenuController::selectOption(const QString& option)
   }
   else if (option == OBSERVATION_REPORT_OPTION)
   {
-    Dsa::ObservationReportController* observationReportTool = Toolkit::ToolManager::instance().tool<Dsa::ObservationReportController>();
+    Dsa::ObservationReportController* observationReportTool = ToolManager::instance().tool<Dsa::ObservationReportController>();
     if (!observationReportTool)
       return;
 
@@ -642,4 +642,3 @@ void ContextMenuController::setContextActive(bool contextRequested)
 
   \brief Signal emitted when the result title changes.
  */
-

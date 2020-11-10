@@ -36,7 +36,7 @@ namespace ArcGISRuntime {
 
 namespace Dsa {
 
-class NavigationController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+class NavigationController : public AbstractTool
 {
   Q_OBJECT
 

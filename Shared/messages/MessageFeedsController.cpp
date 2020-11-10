@@ -55,7 +55,7 @@ const QString MessageFeedsController::RESOURCE_DIRECTORY_PROPERTYNAME = "Resourc
 /*!
   \class Dsa::MessageFeedsController
   \inmodule Dsa
-  \inherits Toolkit::AbstractTool
+  \inherits AbstractTool
   \brief Tool controller for working with the list of message feeds.
  */
 
@@ -63,16 +63,16 @@ const QString MessageFeedsController::RESOURCE_DIRECTORY_PROPERTYNAME = "Resourc
   \brief Constructs a default MessageFeedsController with an optional \a parent.
  */
 MessageFeedsController::MessageFeedsController(QObject* parent) :
-  Toolkit::AbstractTool(parent),
+  AbstractTool(parent),
   m_messageFeeds(new MessageFeedListModel(this)),
   m_locationBroadcast(new LocationBroadcast(this))
 {
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::geoViewChanged, this, [this]
   {
-    setGeoView(Toolkit::ToolResourceProvider::instance()->geoView());
+    setGeoView(ToolResourceProvider::instance()->geoView());
   });
 
-  Toolkit::ToolManager::instance().addTool(this);
+  ToolManager::instance().addTool(this);
 }
 
 /*!

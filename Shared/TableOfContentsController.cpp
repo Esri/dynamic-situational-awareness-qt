@@ -46,7 +46,7 @@ namespace Dsa {
 /*!
   \class Dsa::TableOfContentsController
   \inmodule Dsa
-  \inherits Toolkit::AbstractTool
+  \inherits AbstractTool
   \brief Tool controller for managing the table of contents for operational layers.
 
   \sa Esri::ArcGISRuntime::LayerListModel
@@ -56,15 +56,15 @@ namespace Dsa {
   \brief Constructor taking an optional \a parent.
  */
 TableOfContentsController::TableOfContentsController(QObject* parent /* = nullptr */):
-  Toolkit::AbstractTool(parent)
+  AbstractTool(parent)
 {
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mapChanged,
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::mapChanged,
           this, &TableOfContentsController::updateLayerListModel);
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::sceneChanged,
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::sceneChanged,
           this, &TableOfContentsController::updateLayerListModel);
   updateLayerListModel();
 
-  Toolkit::ToolManager::instance().addTool(this);
+  ToolManager::instance().addTool(this);
 }
 
 /*!
@@ -100,7 +100,7 @@ void TableOfContentsController::zoomTo(int layerIndex)
   if (!layer)
     return;
 
-  GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
+  GeoView* geoView = ToolResourceProvider::instance()->geoView();
   if (!geoView)
     return;
 
@@ -309,7 +309,7 @@ QString TableOfContentsController::toolName() const
  */
 void TableOfContentsController::updateLayerListModel()
 {
-  auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+  auto operationalLayers = ToolResourceProvider::instance()->operationalLayers();
   if (operationalLayers == m_layerListModel)
     return;
 

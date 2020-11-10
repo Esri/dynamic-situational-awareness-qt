@@ -45,7 +45,7 @@ namespace Dsa {
 LocationAlertTarget::LocationAlertTarget(QObject* parent):
   AlertTarget(parent)
 {
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::locationChanged, this, [this](const Point& location)
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::locationChanged, this, [this](const Point& location)
   {
     if (m_location == location)
       return;

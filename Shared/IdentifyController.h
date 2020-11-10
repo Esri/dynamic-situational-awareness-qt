@@ -38,7 +38,7 @@ class PopupManager;
 
 namespace Dsa {
 
-class IdentifyController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+class IdentifyController : public AbstractTool
 {
   Q_OBJECT
 

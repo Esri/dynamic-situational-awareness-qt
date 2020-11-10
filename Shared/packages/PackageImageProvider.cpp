@@ -24,8 +24,6 @@
 // toolkit headers
 #include "ToolManager.h"
 
-using namespace Esri::ArcGISRuntime::Toolkit;
-
 namespace Dsa {
 
 /*!

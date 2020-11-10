@@ -61,7 +61,7 @@ constexpr double c_defaultIdentifyTolerance = 5.0;
 /*!
   \class Dsa::ViewshedController
   \inmodule Dsa
-  \inherits Toolkit::AbstractTool
+  \inherits AbstractTool
   \brief Tool controller for creating viewshed analysis.
 
   This tool allows viewshed analysis to be created:
@@ -80,13 +80,13 @@ constexpr double c_defaultIdentifyTolerance = 5.0;
   \brief Constructor accepting an optional \a parent.
  */
 ViewshedController::ViewshedController(QObject* parent) :
-  Toolkit::AbstractTool(parent),
+  AbstractTool(parent),
   m_analysisOverlay(new AnalysisOverlay(this)),
   m_viewsheds(new ViewshedListModel(this))
 {
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::geoViewChanged, this, [this]
   {
-    setSceneView(dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView()));
+    setSceneView(dynamic_cast<SceneView*>(ToolResourceProvider::instance()->geoView()));
   });
 
   connectMouseSignals();
@@ -106,9 +106,9 @@ ViewshedController::ViewshedController(QObject* parent) :
   });
 
   // this tool must be in the tool manager before adding analyses below
-  Toolkit::ToolManager::instance().addTool(this);
+  ToolManager::instance().addTool(this);
 
-  auto sceneView = dynamic_cast<SceneView*>(Toolkit::ToolResourceProvider::instance()->geoView());
+  auto sceneView = dynamic_cast<SceneView*>(ToolResourceProvider::instance()->geoView());
   if (sceneView)
   {
     m_sceneView = sceneView;
@@ -142,8 +142,8 @@ void ViewshedController::setSceneView(SceneView* sceneView)
  */
 void ViewshedController::connectMouseSignals()
 {
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mouseClicked, this, &ViewshedController::onMouseClicked);
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mouseMoved, this, &ViewshedController::onMouseMoved);
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::mouseClicked, this, &ViewshedController::onMouseClicked);
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::mouseMoved, this, &ViewshedController::onMouseMoved);
 }
 
 /*!
@@ -175,7 +175,7 @@ void ViewshedController::onMouseClicked(QMouseEvent& event)
     if (!m_identifyConn)
     {
       // connect to the completion of the identify operation.
-      m_identifyConn = connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::identifyGraphicsOverlaysCompleted,
+      m_identifyConn = connect(ToolResourceProvider::instance(), &ToolResourceProvider::identifyGraphicsOverlaysCompleted,
                                this, [this](const QUuid& taskId, const QList<IdentifyGraphicsOverlayResult*>& identifyResults)
       {
         // if the task ID does not match the current task, return.
@@ -244,7 +244,7 @@ void ViewshedController::addLocationDisplayViewshed()
   if (m_locationDisplayViewshed)
     return;
 
-  LocationController* locationController = Toolkit::ToolManager::instance().tool<LocationController>();
+  LocationController* locationController = ToolManager::instance().tool<LocationController>();
   if (!locationController)
     return;
 

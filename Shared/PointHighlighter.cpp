@@ -50,7 +50,7 @@ namespace Dsa {
 PointHighlighter::PointHighlighter(QObject* parent):
   QObject(parent)
 {
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged,
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::geoViewChanged,
           this, &PointHighlighter::onGeoViewChanged);
 
   onGeoViewChanged();
@@ -185,7 +185,7 @@ void PointHighlighter::onGeoViewChanged()
     m_highlightSymbol = nullptr;
   }
 
-  GeoView* geoview = Toolkit::ToolResourceProvider::instance()->geoView();
+  GeoView* geoview = ToolResourceProvider::instance()->geoView();
   if (!geoview)
     return;
 

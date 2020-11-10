@@ -29,7 +29,7 @@ namespace Dsa
 class DataSender;
 class DataListener;
 
-class MarkupBroadcast : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+class MarkupBroadcast : public AbstractTool
 {
   Q_OBJECT
 

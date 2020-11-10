@@ -29,7 +29,7 @@ namespace Dsa {
 class AlertListProxyModel;
 class StatusAlertFilter;
 
-class ViewedAlertsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+class ViewedAlertsController : public AbstractTool
 {
   Q_OBJECT
 

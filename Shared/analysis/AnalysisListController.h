@@ -35,7 +35,7 @@ namespace Dsa {
 
 class CombinedAnalysisListModel;
 
-class AnalysisListController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+class AnalysisListController : public AbstractTool
 {
   Q_OBJECT
 

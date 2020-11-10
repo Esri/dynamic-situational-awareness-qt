@@ -31,10 +31,11 @@
 #include "MessageFeedConstants.h"
 #include "OpenMobileScenePackageController.h"
 
-// toolkit headers
-#include "CoordinateConversionConstants.h"
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
+
+// toolkit headers
+#include "Esri/ArcGISRuntime/Toolkit/CoordinateConversionConstants.h"
 
 // C++ API headers
 #include "GeoView.h"
@@ -49,7 +50,6 @@
 #include <QSettings>
 
 using namespace Esri::ArcGISRuntime;
-using namespace Esri::ArcGISRuntime::Toolkit;
 
 namespace Dsa {
 
@@ -70,9 +70,9 @@ QJsonObject defaultViewpoint();
   \brief This is the controller for the DSA app. It is responsible for connecting the
   view (such as the \l Esri::ArcGISRuntime::GeoView) to the business logic of the app.
 
-  For example, signals from the view are passed to the \l Toolkit::ToolResourceProvider
-  where they can be accessed by the list of \l Esri::ArcGISRuntime::Toolkit::AbstractTool objects stored in
-  the \l Esri::ArcGISRuntime::Toolkit::ToolManager.
+  For example, signals from the view are passed to the \l ToolResourceProvider
+  where they can be accessed by the list of \l AbstractTool objects stored in
+  the \l Esri::ArcGISRuntime::ToolManager.
 
   This type is also responsible for reading and writing app configuration details to
   a JSON settings file. Information in the JSON file is sent to each tool as a set of
@@ -138,10 +138,10 @@ Scene* DsaController::scene() const
  */
 void DsaController::init(GeoView* geoView)
 {
-  Toolkit::ToolResourceProvider::instance()->setGeoView(geoView);
+  ToolResourceProvider::instance()->setGeoView(geoView);
 
   bool hasActiveScene = false;
-  auto openScenePackageTool = Toolkit::ToolManager::instance().tool<OpenMobileScenePackageController>();
+  auto openScenePackageTool = ToolManager::instance().tool<OpenMobileScenePackageController>();
   if (openScenePackageTool)
   {
     openScenePackageTool->setProperties(m_dsaSettings);
@@ -166,22 +166,21 @@ void DsaController::init(GeoView* geoView)
       m_dsaSettings[AppConstants::INITIALLOCATION_PROPERTYNAME] = defaultViewpoint();
     }
 
-    Toolkit::ToolResourceProvider::instance()->setScene(m_scene);
+    ToolResourceProvider::instance()->setScene(m_scene);
   }
-
   // set the selection color for graphics and features
   geoView->setSelectionProperties(SelectionProperties(Qt::red));
 
   // connect all tool signals
-  for(Toolkit::AbstractTool* abstractTool : Toolkit::ToolManager::instance())
+  for(AbstractTool* abstractTool : ToolManager::instance())
   {
     if (!abstractTool)
       continue;
 
     abstractTool->setProperties(m_dsaSettings);
 
-    connect(abstractTool, &Toolkit::AbstractTool::errorOccurred, this, &DsaController::onError);
-    connect(abstractTool, &Toolkit::AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
+    connect(abstractTool, &AbstractTool::errorOccurred, this, &DsaController::onError);
+    connect(abstractTool, &AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
 
     if (abstractTool->metaObject()->indexOfSignal("toolErrorOccurred(QString,QString)") != -1)
       connect(abstractTool, SIGNAL(toolErrorOccurred(QString,QString)), this, SLOT(onToolError(QString, QString)));
@@ -191,7 +190,7 @@ void DsaController::init(GeoView* geoView)
       continue;
 
     // whenever a conflciting tool is activated, deactivate all of the other conflicting tools
-    connect(abstractTool, &Toolkit::AbstractTool::activeChanged, this, [this, abstractTool]()
+    connect(abstractTool, &AbstractTool::activeChanged, this, [this, abstractTool]()
     {
       bool anyActive = false;
 
@@ -199,11 +198,11 @@ void DsaController::init(GeoView* geoView)
       if (abstractTool->isActive())
       {
         anyActive = true;
-        auto toolsIt = Toolkit::ToolManager::instance().begin();
-        auto toolsEnd = Toolkit::ToolManager::instance().end();
+        auto toolsIt = ToolManager::instance().begin();
+        auto toolsEnd = ToolManager::instance().end();
         for (; toolsIt != toolsEnd; ++toolsIt)
         {
-          Toolkit::AbstractTool* candidateTool = *toolsIt;
+          AbstractTool* candidateTool = *toolsIt;
           if (!candidateTool)
             continue;
 
@@ -221,11 +220,11 @@ void DsaController::init(GeoView* geoView)
       else
       {
 
-        auto toolsIt = Toolkit::ToolManager::instance().begin();
-        auto toolsEnd = Toolkit::ToolManager::instance().end();
+        auto toolsIt = ToolManager::instance().begin();
+        auto toolsEnd = ToolManager::instance().end();
         for (; toolsIt != toolsEnd; ++toolsIt)
         {
-          Toolkit::AbstractTool* candidateTool = *toolsIt;
+          AbstractTool* candidateTool = *toolsIt;
           if (!candidateTool)
             continue;
 
@@ -241,7 +240,7 @@ void DsaController::init(GeoView* geoView)
       }
 
       // The context menu should only be active when the other tools which interact with the view are not
-      ContextMenuController* contextMenu = Toolkit::ToolManager::instance().tool<ContextMenuController>();
+      ContextMenuController* contextMenu = ToolManager::instance().tool<ContextMenuController>();
       if (contextMenu && contextMenu->isActive() == anyActive)
         contextMenu->setActive(!anyActive);
     });
@@ -279,17 +278,17 @@ void DsaController::onPropertyChanged(const QString& propertyName, const QVarian
   saveSettings();
 
   // inform tools of the change
-  auto it = Toolkit::ToolManager::instance().begin();
-  auto itEnd = Toolkit::ToolManager::instance().end();
+  auto it = ToolManager::instance().begin();
+  auto itEnd = ToolManager::instance().end();
   for (;it != itEnd; ++it)
   {
-    Toolkit::AbstractTool* tool = *it;
+    AbstractTool* tool = *it;
     if (!tool)
       continue;
 
-    disconnect(tool, &Toolkit::AbstractTool::propertyChanged,this, &DsaController::onPropertyChanged);
+    disconnect(tool, &AbstractTool::propertyChanged,this, &DsaController::onPropertyChanged);
     tool->setProperties(m_dsaSettings);
-    connect(tool, &Toolkit::AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
+    connect(tool, &AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
   }
 }
 
@@ -299,7 +298,7 @@ void DsaController::onPropertyChanged(const QString& propertyName, const QVarian
 void DsaController::resetToDefaultScene()
 {
   // obtain other required tools
-  auto basemapTool = Toolkit::ToolManager::instance().tool<BasemapPickerController>();
+  auto basemapTool = ToolManager::instance().tool<BasemapPickerController>();
   if (!basemapTool)
     return;
 
@@ -308,7 +307,7 @@ void DsaController::resetToDefaultScene()
   newScene->setInitialViewpoint(viewpointFromJson(defaultViewpoint()));
 
   // set on sceneview
-  Toolkit::ToolResourceProvider::instance()->setScene(newScene);
+  ToolResourceProvider::instance()->setScene(newScene);
 
   // add basemap
   basemapTool->selectInitialBasemap();
@@ -504,7 +503,7 @@ void DsaController::createDefaultSettings()
   m_dsaSettings["GpxFile"] = QString("%1/MontereyMounted.gpx").arg(m_dsaSettings["SimulationDirectory"].toString());
   m_dsaSettings["SimulateLocation"] = QStringLiteral("true");
   writeDefaultMessageFeeds();
-  m_dsaSettings[Toolkit::CoordinateConversionConstants::COORDINATE_FORMAT_PROPERTY] = Toolkit::CoordinateConversionConstants::MGRS_FORMAT;
+  m_dsaSettings["CoordinateFormat"] = Esri::ArcGISRuntime::Toolkit::CoordinateConversionConstants::MGRS_FORMAT;
   m_dsaSettings[AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME] = AppConstants::UNIT_METERS;
   m_dsaSettings["UseGpsForElevation"] = QStringLiteral("true");
   QJsonObject markupJson;

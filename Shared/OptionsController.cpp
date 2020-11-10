@@ -28,10 +28,11 @@
 #include "MessageFeedsController.h"
 #include "MessagesOverlay.h"
 
-// toolkit headers
-#include "CoordinateConversionConstants.h"
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
+
+// toolkit headers
+#include "Esri/ArcGISRuntime/Toolkit/CoordinateConversionConstants.h"
 
 // C++ API headers
 #include "DictionaryRenderer.h"
@@ -80,7 +81,7 @@ namespace
 /*!
   \class Dsa::OptionsController
   \inmodule Dsa
-  \inherits Toolkit::AbstractTool
+  \inherits AbstractTool
   \brief Tool controller for setting various options for the app.
  */
 
@@ -88,21 +89,21 @@ namespace
  \brief Constructor that takes an optional \a parent.
  */
 OptionsController::OptionsController(QObject* parent) :
-  Toolkit::AbstractTool(parent),
-  m_coordinateFormatOptions{Toolkit::CoordinateConversionConstants::DEGREES_MINUTES_SECONDS_FORMAT,
-                            Toolkit::CoordinateConversionConstants::DECIMAL_DEGREES_FORMAT,
-                            Toolkit::CoordinateConversionConstants::DEGREES_DECIMAL_MINUTES_FORMAT,
-                            Toolkit::CoordinateConversionConstants::UTM_FORMAT,
-                            Toolkit::CoordinateConversionConstants::MGRS_FORMAT,
-                            Toolkit::CoordinateConversionConstants::USNG_FORMAT,
-                            Toolkit::CoordinateConversionConstants::GEOREF_FORMAT,
-                            Toolkit::CoordinateConversionConstants::GARS_FORMAT},
+  AbstractTool(parent),
+  m_coordinateFormatOptions{Esri::ArcGISRuntime::Toolkit::CoordinateConversionConstants::DEGREES_MINUTES_SECONDS_FORMAT,
+                            Esri::ArcGISRuntime::Toolkit::CoordinateConversionConstants::DECIMAL_DEGREES_FORMAT,
+                            Esri::ArcGISRuntime::Toolkit::CoordinateConversionConstants::DEGREES_DECIMAL_MINUTES_FORMAT,
+                            Esri::ArcGISRuntime::Toolkit::CoordinateConversionConstants::UTM_FORMAT,
+                            Esri::ArcGISRuntime::Toolkit::CoordinateConversionConstants::MGRS_FORMAT,
+                            Esri::ArcGISRuntime::Toolkit::CoordinateConversionConstants::USNG_FORMAT,
+                            Esri::ArcGISRuntime::Toolkit::CoordinateConversionConstants::GEOREF_FORMAT,
+                            Esri::ArcGISRuntime::Toolkit::CoordinateConversionConstants::GARS_FORMAT},
   m_units{AppConstants::UNIT_METERS,
           AppConstants::UNIT_FEET}
 {
   emit unitsChanged();
   emit coordinateFormatsChanged();
-  Toolkit::ToolManager::instance().addTool(this);
+  ToolManager::instance().addTool(this);
 }
 
 /*!
@@ -118,7 +119,7 @@ OptionsController::~OptionsController()
 void OptionsController::getUpdatedTools()
 {
   // Obtain and cache the LocationTextController. Connect members and emit signals so properties update
-  m_locationTextController = Toolkit::ToolManager::instance().tool<LocationTextController>();
+  m_locationTextController = ToolManager::instance().tool<LocationTextController>();
   if (m_locationTextController)
   {
     connect(m_locationTextController, &LocationTextController::useGpsForElevationChanged, this, [this]
@@ -148,9 +149,9 @@ QString OptionsController::toolName() const
 void OptionsController::setProperties(const QVariantMap& properties)
 {
   // access tool properties from the config
-  m_coordinateFormat = properties[Toolkit::CoordinateConversionConstants::COORDINATE_FORMAT_PROPERTY].toString();
+  m_coordinateFormat = properties["CoordinateFormat"].toString();
   if (m_coordinateFormat.isEmpty())
-    m_coordinateFormat = Toolkit::CoordinateConversionConstants::DEGREES_MINUTES_SECONDS_FORMAT;
+    m_coordinateFormat = Esri::ArcGISRuntime::Toolkit::CoordinateConversionConstants::DEGREES_MINUTES_SECONDS_FORMAT;
 
   m_unitOfMeasurement = properties[AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME].toString();
   if (m_unitOfMeasurement.isEmpty())
@@ -311,7 +312,7 @@ QList<DictionaryRenderer*> OptionsController::friendlyTracksOverlayRenderers() c
   QList<DictionaryRenderer*> renderers;
 
   // Obtain and cache the MessageFeedsController. Connect members and emit signals so properties update
-  MessageFeedsController* messageController = Toolkit::ToolManager::instance().tool<MessageFeedsController>();
+  MessageFeedsController* messageController = ToolManager::instance().tool<MessageFeedsController>();
   if (messageController)
   {
     MessageFeedListModel* messageFeedModel = dynamic_cast<MessageFeedListModel*>(messageController->messageFeeds());

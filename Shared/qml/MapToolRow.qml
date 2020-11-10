@@ -19,7 +19,6 @@ import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
 import QtQuick.Window 2.2
 import Esri.ArcGISRuntime.OpenSourceApps.DSA 1.1
-import Esri.ArcGISRuntime.Toolkit.Controls.CppApi 100.5
 
 Row {
     id: mapToolRow
@@ -209,12 +208,12 @@ Row {
             else
                 mapToolRow.state = toolName;
 
-            if (coordinateConversion.visible) {
-                coordinateConversion.visible = false;
+            if (dsaCoordinateController.active) {
+                dsaCoordinateController.active = false;
                 mapToolRow.state = "clear";
                 selected = false;
             } else {
-                coordinateConversion.visible = true;
+                dsaCoordinateController.active = true;
             }
         }
     }

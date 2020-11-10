@@ -37,7 +37,7 @@ namespace Dsa {
 /*!
   \class Dsa::FollowPositionController
   \inmodule Dsa
-  \inherits Toolkit::AbstractTool
+  \inherits AbstractTool
   \brief Tool controller for managing the follow navigation modes.
  */
 
@@ -46,14 +46,14 @@ namespace Dsa {
  */
 
 FollowPositionController::FollowPositionController(QObject* parent) :
-  Toolkit::AbstractTool(parent)
+  AbstractTool(parent)
 {
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this,
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::geoViewChanged, this,
           &FollowPositionController::updateGeoView);
 
   updateGeoView();
 
-  Toolkit::ToolManager::instance().addTool(this);
+  ToolManager::instance().addTool(this);
 }
 
 /*!
@@ -139,7 +139,7 @@ void FollowPositionController::handleNewMode()
  */
 void FollowPositionController::updateGeoView()
 {
-  GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
+  GeoView* geoView = ToolResourceProvider::instance()->geoView();
   if (geoView)
     init(geoView);
 }

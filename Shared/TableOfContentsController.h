@@ -35,7 +35,7 @@ namespace Dsa {
 
 class DrawOrderLayerListModel;
 
-class TableOfContentsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+class TableOfContentsController : public AbstractTool
 {
   Q_OBJECT
 

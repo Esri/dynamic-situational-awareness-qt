@@ -42,7 +42,7 @@ using namespace Esri::ArcGISRuntime::Toolkit;
  * CoordinateConversion view's input format.
  *
  * Finally, this links up the ToolManager geoViewChanged signals. So that the
- * GeoView of the CoordianteConversionController always matches what the
+ * GeoView of the CoordinateConversionController always matches what the
  * ToolManager claims is the current GeoView.
  *
  */

@@ -35,7 +35,7 @@ DsaPanel {
 
     Connections {
         target: appRoot
-        function onMarkupLayerReceived() {
+        function onMarkupLayerReceived(path, overlayVisible) {
             toolController.createMarkupLayer(path, -1, overlayVisible);
         }
     }

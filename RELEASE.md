@@ -5,6 +5,7 @@
 - Minumum Runtime Qt SDK version is 100.10.
 - Minimum Qt SDK version is Qt 5.15.1.
 - DSA now running on the new toolkit architecture.
+- Fixed bug where Markups were no longer shared.
 
 ## 1.1.5
 

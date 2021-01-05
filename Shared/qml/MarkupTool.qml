@@ -45,7 +45,7 @@ Item {
         function onClearDialogAccepted() {
             markupController.deleteAllGraphics();
         }
-        function onInputDialogAccepted() {
+        function onInputDialogAccepted(input) {
             markupController.setOverlayName(input)
             markupController.shareMarkup();
         }

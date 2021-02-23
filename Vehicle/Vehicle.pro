@@ -20,9 +20,8 @@ TEMPLATE = app
 QT += core gui opengl network positioning sensors qml quick xml
 CONFIG += c++14
 
-ARCGIS_RUNTIME_VERSION = 100.9
+ARCGIS_RUNTIME_VERSION = 100.10
 include($$PWD/../Shared/build/arcgisruntime.pri)
-include($$PWD/../Shared/build/arcgisruntimecpptoolkit.pri)
 
 INCLUDEPATH += $$PWD/../Shared/ \
     $$PWD/../Shared/alerts \

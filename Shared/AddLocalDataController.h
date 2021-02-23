@@ -35,7 +35,7 @@ namespace Dsa {
 
 class DataItemListModel;
 
-class AddLocalDataController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+class AddLocalDataController : public AbstractTool
 {
   Q_OBJECT
 

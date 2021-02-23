@@ -84,7 +84,7 @@ const QString AddLocalDataController::s_kmlData = QStringLiteral("KML (*.kml *.k
 /*!
   \class Dsa::AddLocalDataController
   \inmodule Dsa
-  \inherits Toolkit::AbstractTool
+  \inherits Dsa::AbstractTool
   \brief Tool controller for adding local data to the app.
  */
 
@@ -92,7 +92,7 @@ const QString AddLocalDataController::s_kmlData = QStringLiteral("KML (*.kml *.k
  \brief Constructor that takes an optional \a parent.
  */
 AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
-  Toolkit::AbstractTool(parent),
+  AbstractTool(parent),
   m_localDataModel(new DataItemListModel(this))
 {
   // add the base path to the string list
@@ -106,7 +106,7 @@ AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
   emit fileFilterListChanged();
   emit localDataModelChanged();
 
-  Toolkit::ToolManager::instance().addTool(this);
+  ToolManager::instance().addTool(this);
 }
 
 /*!
@@ -250,7 +250,7 @@ void AddLocalDataController::createElevationSourceFromTpk(const QString& path)
 
       connect(source, &ArcGISTiledElevationSource::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
-      auto scene = Toolkit::ToolResourceProvider::instance()->scene();
+      auto scene = ToolResourceProvider::instance()->scene();
       if (scene)
         scene->baseSurface()->elevationSources()->append(source);
 
@@ -271,7 +271,7 @@ void AddLocalDataController::createElevationSourceFromRasters(const QStringList&
 
   connect(source, &RasterElevationSource::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
-  auto scene = Toolkit::ToolResourceProvider::instance()->scene();
+  auto scene = ToolResourceProvider::instance()->scene();
   if (scene)
     scene->baseSurface()->elevationSources()->append(source);
 
@@ -301,7 +301,7 @@ void AddLocalDataController::createMarkupLayer(const QString& path, int layerInd
 
   if (autoAdd)
   {
-    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+    auto operationalLayers = ToolResourceProvider::instance()->operationalLayers();
     operationalLayers->append(markupLayer);
   }
   else
@@ -412,7 +412,7 @@ void AddLocalDataController::createFeatureLayerGeodatabase(const QString& path)
       return;
     }
 
-    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+    auto operationalLayers = ToolResourceProvider::instance()->operationalLayers();
 
     for (FeatureTable* featureTable : gdb->geodatabaseFeatureTables())
     {
@@ -477,7 +477,7 @@ void AddLocalDataController::createFeatureLayerGeodatabaseWithId(const QString& 
 
     if (autoAdd)
     {
-      auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+      auto operationalLayers = ToolResourceProvider::instance()->operationalLayers();
       if (operationalLayers)
         operationalLayers->append(featureLayer);
 
@@ -531,7 +531,7 @@ void AddLocalDataController::createFeatureLayerGeoPackage(const QString& path, i
 
     if (autoAdd)
     {
-      auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+      auto operationalLayers = ToolResourceProvider::instance()->operationalLayers();
       operationalLayers->append(featureLayer);
       emit layerSelected(featureLayer);
     }
@@ -575,7 +575,7 @@ void AddLocalDataController::createRasterLayerGeoPackage(const QString& path, in
 
     if (autoAdd)
     {
-      auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+      auto operationalLayers = ToolResourceProvider::instance()->operationalLayers();
       if (!operationalLayers)
         return;
 
@@ -606,7 +606,7 @@ void AddLocalDataController::createLayerGeoPackage(const QString& path)
       return;
     }
 
-    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+    auto operationalLayers = ToolResourceProvider::instance()->operationalLayers();
 
     for (const auto& table : geoPackage->geoPackageFeatureTables())
     {
@@ -674,7 +674,7 @@ void AddLocalDataController::createFeatureLayerShapefile(const QString& path, in
 
   if (autoAdd)
   {
-    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+    auto operationalLayers = ToolResourceProvider::instance()->operationalLayers();
     if (operationalLayers)
       operationalLayers->append(featureLayer);
 
@@ -707,7 +707,7 @@ void AddLocalDataController::createRasterLayer(const QString& path, int layerInd
 
   if (autoAdd)
   {
-    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+    auto operationalLayers = ToolResourceProvider::instance()->operationalLayers();
     if (operationalLayers)
       operationalLayers->append(rasterLayer);
 
@@ -739,7 +739,7 @@ void AddLocalDataController::createSceneLayer(const QString& path, int layerInde
 
   if (autoAdd)
   {
-    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+    auto operationalLayers = ToolResourceProvider::instance()->operationalLayers();
     if (operationalLayers)
       operationalLayers->append(sceneLayer);
 
@@ -772,7 +772,7 @@ void AddLocalDataController::createTiledLayer(const QString& path, int layerInde
 
   if (autoAdd)
   {
-    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+    auto operationalLayers = ToolResourceProvider::instance()->operationalLayers();
     if (operationalLayers)
       operationalLayers->append(tiledLayer);
 
@@ -805,7 +805,7 @@ void AddLocalDataController::createTiledLayer(const QString& path, int layerInde
 
   if (autoAdd)
   {
-    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+    auto operationalLayers = ToolResourceProvider::instance()->operationalLayers();
     if (operationalLayers)
       operationalLayers->append(vectorTiledLayer);
 
@@ -838,7 +838,7 @@ void AddLocalDataController::createTiledLayer(const QString& path, int layerInde
 
   if (autoAdd)
   {
-    auto operationalLayers = Toolkit::ToolResourceProvider::instance()->operationalLayers();
+    auto operationalLayers = ToolResourceProvider::instance()->operationalLayers();
     if (operationalLayers)
       operationalLayers->append(kmlLayer);
 

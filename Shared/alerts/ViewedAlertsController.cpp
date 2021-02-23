@@ -34,7 +34,7 @@ namespace Dsa {
 /*!
   \class Dsa::ViewedAlertsController
   \inmodule Dsa
-  \inherits Toolkit::AbstractTool
+  \inherits AbstractTool
   \brief Tool controller for managing the count of unviewed, active alert condition data.
 
   Alerts are created when a given \l AlertCondition is met.
@@ -50,7 +50,7 @@ namespace Dsa {
   \brief Constructor taking an optional \a parent.
  */
 ViewedAlertsController::ViewedAlertsController(QObject* parent /* = nullptr */):
-  Toolkit::AbstractTool(parent)
+  AbstractTool(parent)
 {
   AlertListModel* model = AlertListModel::instance();
   if (model)
@@ -61,7 +61,7 @@ ViewedAlertsController::ViewedAlertsController(QObject* parent /* = nullptr */):
     emit unviewedCountChanged();
   }
 
-  Toolkit::ToolManager::instance().addTool(this);
+  ToolManager::instance().addTool(this);
 }
 
 /*!

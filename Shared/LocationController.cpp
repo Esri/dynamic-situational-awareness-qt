@@ -54,7 +54,7 @@ const QString LocationController::RESOURCE_DIRECTORY_PROPERTYNAME = "ResourceDir
 /*!
   \class Dsa::LocationController
   \inmodule Dsa
-  \inherits Toolkit::AbstractTool
+  \inherits AbstractTool
   \brief Tool controller for handling the current location.
  */
 
@@ -62,15 +62,15 @@ const QString LocationController::RESOURCE_DIRECTORY_PROPERTYNAME = "ResourceDir
   \brief Constructor for a model taking an optional \a parent.
  */
 LocationController::LocationController(QObject* parent) :
-  Toolkit::AbstractTool(parent),
+  AbstractTool(parent),
   m_locationDisplay3d(new LocationDisplay3d(this))
 {
-  connect(this, &LocationController::locationChanged, Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::onLocationChanged);
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, &LocationController::updateGeoView);
+  connect(this, &LocationController::locationChanged, ToolResourceProvider::instance(), &ToolResourceProvider::onLocationChanged);
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::geoViewChanged, this, &LocationController::updateGeoView);
 
   updateGeoView();
 
-  Toolkit::ToolManager::instance().addTool(this);
+  ToolManager::instance().addTool(this);
 }
 
 /*!
@@ -382,7 +382,7 @@ void LocationController::setRelativeHeadingSceneView(SceneQuickView* sceneView)
  */
 void LocationController::updateGeoView()
 {
-  GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
+  GeoView* geoView = ToolResourceProvider::instance()->geoView();
   if (geoView)
   {
     geoView->graphicsOverlays()->append(m_locationDisplay3d->locationOverlay());

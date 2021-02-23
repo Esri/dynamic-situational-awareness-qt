@@ -30,7 +30,6 @@
 #include "SceneQuickView.h"
 
 using namespace Esri::ArcGISRuntime;
-using namespace Esri::ArcGISRuntime::Toolkit;
 
 namespace Dsa {
 namespace Handheld {

@@ -38,7 +38,7 @@ namespace ArcGISRuntime {
 
 namespace Dsa {
 
-class ContextMenuController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+class ContextMenuController : public AbstractTool
 {
   Q_OBJECT
 

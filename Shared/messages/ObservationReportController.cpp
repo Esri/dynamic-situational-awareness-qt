@@ -49,7 +49,7 @@ namespace Dsa {
 /*!
   \class Dsa::ObservationReportController
   \inmodule Dsa
-  \inherits Toolkit::AbstractTool
+  \inherits AbstractTool
   \brief Tool controller for creating observation reports.
  */
 
@@ -57,22 +57,22 @@ namespace Dsa {
   \brief Constructor accepting an optional \a parent.
  */
 ObservationReportController::ObservationReportController(QObject* parent):
-  Toolkit::AbstractTool(parent),
+  AbstractTool(parent),
   m_observedBy(QHostInfo::localHostName()),
   m_highlighter(new PointHighlighter(this))
 {
   // connect to ToolResourceProvider signals
-  auto resourceProvider = Toolkit::ToolResourceProvider::instance();
-  connect(resourceProvider, &Toolkit::ToolResourceProvider::geoViewChanged, this, [this]()
+  auto resourceProvider = ToolResourceProvider::instance();
+  connect(resourceProvider, &ToolResourceProvider::geoViewChanged, this, [this]()
   {
-    onGeoViewChanged(Toolkit::ToolResourceProvider::instance()->geoView());
+    onGeoViewChanged(ToolResourceProvider::instance()->geoView());
   });
   onGeoViewChanged(resourceProvider->geoView());
 
   connect(this, &ObservationReportController::activeChanged, this, &ObservationReportController::onUpdateControlPointHightlight);
   connect(this, &ObservationReportController::controlPointChanged, this, &ObservationReportController::onUpdateControlPointHightlight);
 
-  Toolkit::ToolManager::instance().addTool(this);
+  ToolManager::instance().addTool(this);
 }
 
 /*!
@@ -191,7 +191,7 @@ void ObservationReportController::setPickMode(bool pickMode)
 
   if (m_pickMode)
   {
-    m_mouseClickConnection = connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mouseClicked,
+    m_mouseClickConnection = connect(ToolResourceProvider::instance(), &ToolResourceProvider::mouseClicked,
                                      this, &ObservationReportController::onMouseClicked);
   }
   else
@@ -222,9 +222,9 @@ void ObservationReportController::setFromMyLocation()
   if (pickMode())
     togglePickMode();
 
-  auto resourceProvider = Toolkit::ToolResourceProvider::instance();
+  auto resourceProvider = ToolResourceProvider::instance();
 
-  m_myLocationConnection = connect(resourceProvider, &Toolkit::ToolResourceProvider::locationChanged, this, [this](const Point& location)
+  m_myLocationConnection = connect(resourceProvider, &ToolResourceProvider::locationChanged, this, [this](const Point& location)
   {
     disconnect(m_myLocationConnection);
     setControlPoint(location);

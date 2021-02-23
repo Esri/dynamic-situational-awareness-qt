@@ -33,7 +33,7 @@ namespace Dsa {
 
 class LocationTextController;
 
-class OptionsController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+class OptionsController : public AbstractTool
 {
   Q_OBJECT
 

@@ -36,7 +36,7 @@ namespace Dsa {
 
 class TileCacheListModel;
 
-class BasemapPickerController : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+class BasemapPickerController : public AbstractTool
 {
   Q_OBJECT
 

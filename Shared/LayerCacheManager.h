@@ -35,7 +35,7 @@ namespace Dsa {
 class TableOfContentsController;
 class AddLocalDataController;
 
-class LayerCacheManager : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+class LayerCacheManager : public AbstractTool
 {
   Q_OBJECT
 

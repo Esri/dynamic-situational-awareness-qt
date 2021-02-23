@@ -68,7 +68,7 @@ MarkupController::MarkupController(QObject* parent):
   AbstractSketchTool(parent),
   m_markupBroadcast(new MarkupBroadcast(parent))
 {
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::geoViewChanged, this, &MarkupController::updateGeoView);
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::geoViewChanged, this, &MarkupController::updateGeoView);
 
   updateGeoView();
   updatedSymbol();
@@ -83,7 +83,7 @@ MarkupController::MarkupController(QObject* parent):
     emit this->markupSent(fileName);
   });
 
-  Toolkit::ToolManager::instance().addTool(this);
+  ToolManager::instance().addTool(this);
 }
 
 /*!
@@ -239,7 +239,7 @@ void MarkupController::init()
   if (m_is3d)
     m_sketchOverlay->setSceneProperties(LayerSceneProperties(SurfacePlacement::DrapedFlat));
 
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::identifyGraphicsOverlayCompleted, this, [this](QUuid, IdentifyGraphicsOverlayResult* identifyResult)
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::identifyGraphicsOverlayCompleted, this, [this](QUuid, IdentifyGraphicsOverlayResult* identifyResult)
   {
     if (!m_active)
       return;
@@ -250,7 +250,7 @@ void MarkupController::init()
       m_sketchOverlay->unselectGraphics(m_sketchOverlay->selectedGraphics());
   });
 
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mouseClicked, this, [this](QMouseEvent& mouseEvent)
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::mouseClicked, this, [this](QMouseEvent& mouseEvent)
   {
     if (!m_active)
       return;
@@ -259,7 +259,7 @@ void MarkupController::init()
       m_geoView->identifyGraphicsOverlay(m_sketchOverlay, mouseEvent.x(), mouseEvent.y(), m_is3d ? 100 : 20, false, 1);
   });
 
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mousePressed, this, [this](QMouseEvent& mouseEvent)
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::mousePressed, this, [this](QMouseEvent& mouseEvent)
   {
     // ignore right clicks
     if (mouseEvent.button() == Qt::MouseButton::RightButton)
@@ -291,11 +291,11 @@ void MarkupController::init()
     // for touch screen operation
     mouseEvent.ignore();
 
-    Toolkit::ToolResourceProvider::instance()->setMouseCursor(QCursor(Qt::PointingHandCursor));
+    ToolResourceProvider::instance()->setMouseCursor(QCursor(Qt::PointingHandCursor));
     m_isDrawing = true;
   });
 
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mouseMoved, this, [this](QMouseEvent& mouseEvent)
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::mouseMoved, this, [this](QMouseEvent& mouseEvent)
   {
     if (!m_active || !m_isDrawing)
       return;
@@ -309,7 +309,7 @@ void MarkupController::init()
     insertPointInPart(m_currentPartIndex, -1, movedPoint);
   });
 
-  connect(Toolkit::ToolResourceProvider::instance(), &Toolkit::ToolResourceProvider::mouseReleased, this, [this](QMouseEvent& mouseEvent)
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::mouseReleased, this, [this](QMouseEvent& mouseEvent)
   {
     if (!m_active || !m_isDrawing)
       return;
@@ -322,7 +322,7 @@ void MarkupController::init()
 
     insertPointInPart(m_currentPartIndex, -1, releasedPoint);
 
-    Toolkit::ToolResourceProvider::instance()->setMouseCursor(QCursor(Qt::ArrowCursor));
+    ToolResourceProvider::instance()->setMouseCursor(QCursor(Qt::ArrowCursor));
     m_isDrawing = false;
 
     emit sketchCompleted();
@@ -352,7 +352,7 @@ void MarkupController::updateSketch()
  */
 void MarkupController::updateGeoView()
 {
-  GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
+  GeoView* geoView = ToolResourceProvider::instance()->geoView();
 
   if (!geoView)
     return;

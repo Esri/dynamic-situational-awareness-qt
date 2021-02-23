@@ -1,5 +1,12 @@
 # Release notes
 
+## 1.1.6
+
+- Minumum Runtime Qt SDK version is 100.10.
+- Minimum Qt SDK version is Qt 5.15.1.
+- DSA now running on the new toolkit architecture.
+- Fixed bug where Markups were no longer shared.
+
 ## 1.1.5
 
 - An "InitialLocation" config is now written out to file. This parameter is updated whenver the scene is changed (e.g. loaded from an MSPK.) This property can be used to override the startup location of the camera when the app first loads. 

@@ -51,7 +51,7 @@ namespace Dsa {
 /*!
   \class Dsa::AlertListController
   \inmodule Dsa
-  \inherits Toolkit::AbstractTool
+  \inherits AbstractTool
   \brief Tool controller for working with the list of condition data which can trigger alerts.
 
   Alerts are created when a given \l AlertCondition is met.
@@ -70,7 +70,7 @@ namespace Dsa {
   \brief Constructor taking an optional \a parent.
  */
 AlertListController::AlertListController(QObject* parent /* = nullptr */):
-  Toolkit::AbstractTool(parent),
+  AbstractTool(parent),
   m_alertsProxyModel(new AlertListProxyModel(AlertListModel::instance(), this)),
   m_statusAlertFilter(new StatusAlertFilter(this)),
   m_idsAlertFilter(new IdsAlertFilter(this)),
@@ -87,7 +87,7 @@ AlertListController::AlertListController(QObject* parent /* = nullptr */):
   connect(AlertListModel::instance(), &AlertListModel::rowsRemoved, this, &AlertListController::allAlertsCountChanged);
   emit allAlertsCountChanged();
 
-  Toolkit::ToolManager::instance().addTool(this);
+  ToolManager::instance().addTool(this);
 }
 
 /*!
@@ -223,7 +223,7 @@ void AlertListController::zoomTo(int rowIndex)
   if (!alert)
     return;
 
-  GeoView* geoView = Toolkit::ToolResourceProvider::instance()->geoView();
+  GeoView* geoView = ToolResourceProvider::instance()->geoView();
   if (!geoView)
     return;
 

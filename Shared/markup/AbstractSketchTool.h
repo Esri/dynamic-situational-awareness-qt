@@ -40,7 +40,7 @@ namespace Esri {
 
 namespace Dsa {
 
-class AbstractSketchTool : public Esri::ArcGISRuntime::Toolkit::AbstractTool
+class AbstractSketchTool : public AbstractTool
 {
   Q_OBJECT
 

@@ -47,7 +47,7 @@ const QString MarkupBroadcast::SHAREDBYKEY = QStringLiteral("sharedBy");
 /*!
   \class Dsa::MarkupBroadcast
   \inmodule Dsa
-  \inherits Toolkit::AbstractTool
+  \inherits AbstractTool
   \brief Tool controller for broadcasting markups.
 
   \sa DataSender
@@ -58,7 +58,7 @@ const QString MarkupBroadcast::SHAREDBYKEY = QStringLiteral("sharedBy");
  \brief Constructor that takes an optional \a parent.
  */
 MarkupBroadcast::MarkupBroadcast(QObject *parent) :
-  Toolkit::AbstractTool(parent),
+  AbstractTool(parent),
   m_dataSender(new DataSender(parent)),
   m_dataListener(new DataListener(parent))
 {
@@ -92,7 +92,7 @@ MarkupBroadcast::MarkupBroadcast(QObject *parent) :
     }
   });
 
-  Toolkit::ToolManager::instance().addTool(this);
+  ToolManager::instance().addTool(this);
 }
 
 /*!

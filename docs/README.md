@@ -523,11 +523,11 @@ Parameters available only in console mode:
 
 <!-- Runtime landing pages -->
 
-[ArcGIS Runtime SDK for Qt]: https://developers.arcgis.com/qt/latest
+[ArcGIS Runtime SDK for Qt]: https://developers.arcgis.com/qt
 
 <!-- Guide references -->
 
-[SDK Guide]: https://developers.arcgis.com/qt/latest/cpp/guide/arcgis-runtime-sdk-for-qt.htm
+[SDK Guide]: https://developers.arcgis.com/qt
 
 [analysis tools]: https://developers.arcgis.com/qt/latest/qml/guide/analyze-visibility-in-a-scene-view.htm
 

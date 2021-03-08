@@ -539,7 +539,7 @@ Parameters available only in console mode:
 
 [GeoPackage]: https://developers.arcgis.com/qt/latest/cpp/guide/add-raster-data.htm#ESRI_SECTION1_543960DAEED645B7864351FD2BFC98BB
 
-[Line of sight analysis]: https://developers.arcgis.com/qt/latest/qml/guide/analyze-visibility-in-a-scene-view.htm#ESRI_SECTION1_70DCF26AAE6241669BB87F4A55CB019D
+[Line of sight analysis]: https://developers.arcgis.com/qt/qml/sample-code/line-of-sight-geoelement/
 
 [Mobile geodatabase]: https://developers.arcgis.com/qt/latest/cpp/guide/take-a-layer-offline.htm#ESRI_SECTION2_6AB16F528AB842AEACDB449A73021786
 
@@ -553,7 +553,7 @@ Parameters available only in console mode:
 
 [Tile package]: https://developers.arcgis.com/qt/latest/cpp/guide/work-with-offline-layers.htm#ESRI_SECTION1_AFE57774DA124157973E8598DB68F3FA
 
-[Viewshed analysis]: https://developers.arcgis.com/qt/latest/qml/guide/analyze-visibility-in-a-scene-view.htm#GUID-FE6D1C1C-6556-4E9B-9140-7BCABA905EC9
+[Viewshed analysis]: https://developers.arcgis.com/qt/qml/sample-code/viewshed-camera/
 
 <!-- API references  -->
 

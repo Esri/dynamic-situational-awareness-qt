@@ -288,7 +288,7 @@ DSA apps support several generic message feeds.
 
 ## Exploratory visual analysis
 
-Exploratory [analysis tools] combine information such as feature location, your location, and elevation to answer questions about the current operational environment. Analysis is continuously updated as the environment changes, leveraging the GPU of the device and the data that is drawn on the map. The results of an analysis are presented in an overlay that can be [managed like other overlays](#overlays).
+Exploratory analysis tools combine information such as feature location, your location, and elevation to answer questions about the current operational environment. Analysis is continuously updated as the environment changes, leveraging the GPU of the device and the data that is drawn on the map. The results of an analysis are presented in an overlay that can be [managed like other overlays](#overlays).
 
 ### Viewshed
 
@@ -308,7 +308,7 @@ Exploratory [analysis tools] combine information such as feature location, your 
 
 ***Developer tips:***
 
-- Both viewshed and line of sight analysis are calculated using the GPU and operate only on the data displayed on the map. This means that the accuracy of these analyses are limited by the current resolution of the displayed data and the elevation surface. More information can be found in the section [Scene analyses versus geoprocessing] in the Guide topic Analyze visibility in a scene view.
+- Both viewshed and line of sight analysis are calculated using the GPU and operate only on the data displayed on the map. This means that the accuracy of these analyses are limited by the current resolution of the displayed data and the elevation surface.
 
 ## Alerts and conditions
 
@@ -529,8 +529,6 @@ Parameters available only in console mode:
 
 [SDK Guide]: https://developers.arcgis.com/qt
 
-[analysis tools]: https://developers.arcgis.com/qt/latest/qml/guide/analyze-visibility-in-a-scene-view.htm
-
 [Deploy local offline data]: https://developers.arcgis.com/qt/latest/qml/guide/deploy-local-offline-data-with-your-app.htm
 
 [dictionary renderer]: https://developers.arcgis.com/qt/latest/cpp/guide/display-military-symbols-with-a-dictionary-renderer.htm
@@ -548,8 +546,6 @@ Parameters available only in console mode:
 [Mobile Mosaic Dataset]: https://developers.arcgis.com/qt/latest/cpp/guide/add-raster-data.htm#ESRI_SECTION1_56B9BE5F631B4E4B9E458490CF816950
 
 [Raster formats]: https://developers.arcgis.com/qt/latest/cpp/guide/add-raster-data.htm#ESRI_SECTION1_D3B90253C5A945BEB79E521C344E945D
-
-[Scene analyses versus geoprocessing]: https://developers.arcgis.com/qt/latest/qml/guide/analyze-visibility-in-a-scene-view.htm#ESRI_SECTION1_8BA65A7A341D4A9EA972087EE2EFFD21
 
 [Scene Layer Package]: https://developers.arcgis.com/qt/latest/cpp/guide/build-a-new-scene.htm#ESRI_SECTION1_12529039599C40E6989BE3887956FA0B
 

@@ -529,7 +529,7 @@ Parameters available only in console mode:
 
 [dictionary renderer]: https://developers.arcgis.com/documentation/glossary/dictionary-renderer/
 
-[dynamic rendering]: https://developers.arcgis.com/qt/latest/cpp/guide/performance-considerations.htm#ESRI_SECTION2_C5226FAF302547FD96721CA898FF86F2
+[dynamic rendering]: https://developers.arcgis.com/qt/programming-patterns/performance-considerations/#rendering-modes
 
 [Explorer for ArcGIS markup documentation]: https://doc.arcgis.com/en/explorer/ipad/help/markup.htm
 

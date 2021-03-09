@@ -559,19 +559,19 @@ Parameters available only in console mode:
 
 [`AbstractTool`]: https://developers.arcgis.com/qt/latest/toolkit/api-reference/esri-arcgisruntime-toolkit-abstracttool.html
 
-[basemap]: https://developers.arcgis.com/qt/latest/cpp/api-reference/esri-arcgisruntime-basemap.html
+[basemap]: https://developers.arcgis.com/qt/cpp/api-reference/esri-arcgisruntime-basemap.html
 
 [NorthArrow compass control]: https://developers.arcgis.com/qt/toolkit/api-reference/qml-northarrow.html
 
-[Envelope]: https://developers.arcgis.com/qt/latest/cpp/api-reference/esri-arcgisruntime-envelope.html
+[Envelope]: https://developers.arcgis.com/qt/cpp/api-reference/esri-arcgisruntime-envelope.html
 
-[FeatureCollection]: https://developers.arcgis.com/qt/latest/cpp/api-reference/esri-arcgisruntime-featurecollection.html
+[FeatureCollection]: https://developers.arcgis.com/qt/cpp/api-reference/esri-arcgisruntime-featurecollection.html
 
-[Geometry]: https://developers.arcgis.com/qt/latest/cpp/api-reference/esri-arcgisruntime-geometry.html
+[Geometry]: https://developers.arcgis.com/qt/cpp/api-reference/esri-arcgisruntime-geometry.html
 
-[GeometryEngine]: https://developers.arcgis.com/qt/latest/cpp/api-reference/esri-arcgisruntime-geometryengine.html
+[GeometryEngine]: https://developers.arcgis.com/qt/cpp/api-reference/esri-arcgisruntime-geometryengine.html
 
-[Graphic]: https://developers.arcgis.com/qt/latest/cpp/api-reference/esri-arcgisruntime-graphic.html
+[Graphic]: https://developers.arcgis.com/qt/cpp/api-reference/esri-arcgisruntime-graphic.html
 
 <!-- External website references  -->
 

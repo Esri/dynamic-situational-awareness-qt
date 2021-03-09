@@ -527,15 +527,15 @@ Parameters available only in console mode:
 
 [SDK Guide]: https://developers.arcgis.com/qt
 
-[dictionary renderer]: https://developers.arcgis.com/documentation/glossary/dictionary-renderer/
-
 [dynamic rendering]: https://developers.arcgis.com/qt/programming-patterns/performance-considerations/#rendering-modes
 
 [Explorer for ArcGIS markup documentation]: https://doc.arcgis.com/en/explorer/ipad/help/markup.htm
 
-[Geopackage]: https://developers.arcgis.com/documentation/glossary/geopackage/
+<!-- Glossary terms -->
 
-[Line of sight analysis]: https://developers.arcgis.com/qt/qml/sample-code/line-of-sight-geoelement/
+[dictionary renderer]: https://developers.arcgis.com/documentation/glossary/dictionary-renderer/
+
+[Geopackage]: https://developers.arcgis.com/documentation/glossary/geopackage/
 
 [Mobile geodatabase]: https://developers.arcgis.com/documentation/glossary/mobile-geodatabase/
 
@@ -546,6 +546,10 @@ Parameters available only in console mode:
 [Shapefile]: https://developers.arcgis.com/documentation/glossary/shapefile/
 
 [Tile package]: https://developers.arcgis.com/documentation/glossary/tile-package/
+
+<!-- Samples -- -->
+
+[Line of sight analysis]: https://developers.arcgis.com/qt/qml/sample-code/line-of-sight-geoelement/
 
 [Viewshed analysis]: https://developers.arcgis.com/qt/qml/sample-code/viewshed-camera/
 

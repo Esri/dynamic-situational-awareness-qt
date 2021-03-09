@@ -482,8 +482,6 @@ The default data directory should look like this:
 
 ```
 
-You can learn more in the Guide topic [Deploy local offline data].
-
 # Message simulator
 
 The message simulator app broadcasts simulated messages over the peer-to-peer network. It is not meant for end users in the field, but rather provides a way to test and demonstrate the capabilities of DSA apps by providing a simulated environment through messages. The message simulator broadcasts messages over a given port. DSA-Vehicle and DSA-Handheld apps can listen to the same port for new messages and update their displays as messages are received.
@@ -528,8 +526,6 @@ Parameters available only in console mode:
 <!-- Guide references -->
 
 [SDK Guide]: https://developers.arcgis.com/qt
-
-[Deploy local offline data]: https://developers.arcgis.com/qt/latest/qml/guide/deploy-local-offline-data-with-your-app.htm
 
 [dictionary renderer]: https://developers.arcgis.com/qt/latest/cpp/guide/display-military-symbols-with-a-dictionary-renderer.htm
 

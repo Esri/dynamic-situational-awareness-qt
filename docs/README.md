@@ -122,7 +122,7 @@ The navigation toolbar can be turned off in the [Settings panel](#settings-panel
 
 There is a compass on the display's lower-right corner. Its red pointer points to north. Touching the compass will rotate the map so the top points toward north.
 
-The [compass tool] is part of ArcGIS Runtime Toolkit for Qt.
+The [compass control UI component] is part of ArcGIS Runtime Toolkit for Qt.
 
 ### Map context menu
 
@@ -561,7 +561,7 @@ Parameters available only in console mode:
 
 [basemap]: https://developers.arcgis.com/qt/latest/cpp/api-reference/esri-arcgisruntime-basemap.html
 
-[compass tool]: https://developers.arcgis.com/qt/latest/toolkit/api-reference/qml-arcgiscompass.html
+[compass control UI component]: https://developers.arcgis.com/qt/ui-components/
 
 [Envelope]: https://developers.arcgis.com/qt/latest/cpp/api-reference/esri-arcgisruntime-envelope.html
 

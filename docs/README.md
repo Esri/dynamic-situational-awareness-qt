@@ -215,22 +215,22 @@ Some [overlays](#overlays) get their information from local data sources, such a
 
 Specify the folders the app searches for local data using your [App configuration settings](#app-configuration-settings). Local data that has been found on your device is listed by this tool. Any data supported by ArcGIS Runtime SDKs can be used, including:
 
-- [GeoPackage]
+- [Geopackage]
 - [Tile package] (TPK)
 - [Mobile geodatabase]
 - KML
-- [Raster formats], including:
+- [Raster] formats, including:
   - JPEG / JPEG 2000
   - PNG
   - IMG
   - Raster Product Format (RPF) - CADRG and CIB
   - National Imagery Transmission Format (NITF)
   - Digital Terrain Elevation Data (DTED)
-  - [Mobile Mosaic Dataset]
+  - [Mobile mosaic dataset]
   - MrSID
 
 - [Shapefile] (SHP)
-- [Scene Layer Package] (SLPK)
+- Scene layer package (SLPK)
 
 ### Overlays
 
@@ -527,27 +527,25 @@ Parameters available only in console mode:
 
 [SDK Guide]: https://developers.arcgis.com/qt
 
-[dictionary renderer]: https://developers.arcgis.com/qt/latest/cpp/guide/display-military-symbols-with-a-dictionary-renderer.htm
+[dictionary renderer]: https://developers.arcgis.com/documentation/glossary/dictionary-renderer/
 
 [dynamic rendering]: https://developers.arcgis.com/qt/latest/cpp/guide/performance-considerations.htm#ESRI_SECTION2_C5226FAF302547FD96721CA898FF86F2
 
 [Explorer for ArcGIS markup documentation]: https://doc.arcgis.com/en/explorer/ipad/help/markup.htm
 
-[GeoPackage]: https://developers.arcgis.com/qt/latest/cpp/guide/add-raster-data.htm#ESRI_SECTION1_543960DAEED645B7864351FD2BFC98BB
+[Geopackage]: https://developers.arcgis.com/documentation/glossary/geopackage/
 
 [Line of sight analysis]: https://developers.arcgis.com/qt/qml/sample-code/line-of-sight-geoelement/
 
-[Mobile geodatabase]: https://developers.arcgis.com/qt/latest/cpp/guide/take-a-layer-offline.htm#ESRI_SECTION2_6AB16F528AB842AEACDB449A73021786
+[Mobile geodatabase]: https://developers.arcgis.com/documentation/glossary/mobile-geodatabase/
 
-[Mobile Mosaic Dataset]: https://developers.arcgis.com/qt/latest/cpp/guide/add-raster-data.htm#ESRI_SECTION1_56B9BE5F631B4E4B9E458490CF816950
+[Mobile mosaic dataset]: https://developers.arcgis.com/documentation/glossary/mobile-mosaic-dataset/
 
-[Raster formats]: https://developers.arcgis.com/qt/latest/cpp/guide/add-raster-data.htm#ESRI_SECTION1_D3B90253C5A945BEB79E521C344E945D
+[Raster]: https://developers.arcgis.com/documentation/glossary/raster/
 
-[Scene Layer Package]: https://developers.arcgis.com/qt/latest/cpp/guide/build-a-new-scene.htm#ESRI_SECTION1_12529039599C40E6989BE3887956FA0B
+[Shapefile]: https://developers.arcgis.com/documentation/glossary/shapefile/
 
-[Shapefile]: https://developers.arcgis.com/qt/latest/cpp/api-reference/esri-arcgisruntime-shapefilefeaturetable.html
-
-[Tile package]: https://developers.arcgis.com/qt/latest/cpp/guide/work-with-offline-layers.htm#ESRI_SECTION1_AFE57774DA124157973E8598DB68F3FA
+[Tile package]: https://developers.arcgis.com/documentation/glossary/tile-package/
 
 [Viewshed analysis]: https://developers.arcgis.com/qt/qml/sample-code/viewshed-camera/
 

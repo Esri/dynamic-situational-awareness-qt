@@ -218,7 +218,7 @@ Specify the folders the app searches for local data using your [App configuratio
 - [Geopackage]
 - [Tile package] (TPK)
 - [Mobile geodatabase]
-- KML
+- [KML]
 - [Raster] formats, including:
   - JPEG / JPEG 2000
   - PNG
@@ -536,6 +536,8 @@ Parameters available only in console mode:
 [dictionary renderer]: https://developers.arcgis.com/documentation/glossary/dictionary-renderer/
 
 [Geopackage]: https://developers.arcgis.com/documentation/glossary/geopackage/
+
+[KML]: https://developers.arcgis.com/documentation/glossary/kml/
 
 [Mobile geodatabase]: https://developers.arcgis.com/documentation/glossary/mobile-geodatabase/
 

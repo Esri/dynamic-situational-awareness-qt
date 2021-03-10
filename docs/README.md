@@ -425,7 +425,7 @@ ArcGIS Runtime for Qt C++ API provides ArcGIS Runtime capabilities to manage, di
 
 The SDK Toolkit includes tools to fulfill specific mission requirements, such as displaying a north arrow, measuring distance, or converting coordinate notations.
 
-All DSA tools inherit the Toolkit's [`AbstractTool`] base class so that all tools have a common interface. Tools are exposed as controller classes (which may have associated model classes), and the UIs are implemented using QML to cleanly separate the UI and business logic, as well as effectively manage cross-API dependency. The app makes heavy use of the Toolkit's Resource Provider so that information can be shared between classes without creating cross dependencies between tools.
+All DSA tools have a common interface and are exposed as controller classes (which may have associated model classes). The UIs are implemented using QML to cleanly separate the UI and business logic, as well as effectively manage cross-API dependency. The app makes heavy use of the Toolkit's Resource Provider so that information can be shared between classes without creating cross dependencies between tools.
 
 # Get the DSA apps
 
@@ -556,8 +556,6 @@ Parameters available only in console mode:
 [Viewshed analysis]: https://developers.arcgis.com/qt/qml/sample-code/viewshed-camera/
 
 <!-- API references  -->
-
-[`AbstractTool`]: https://developers.arcgis.com/qt/latest/toolkit/api-reference/esri-arcgisruntime-toolkit-abstracttool.html
 
 [basemap]: https://developers.arcgis.com/qt/cpp/api-reference/esri-arcgisruntime-basemap.html
 

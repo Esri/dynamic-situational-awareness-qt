@@ -121,7 +121,7 @@ The navigation toolbar can be turned off in the [Settings panel](#settings-panel
 
 There is a compass on the display's lower-right corner. Its red pointer points to north. Touching the compass will rotate the map so the top points toward north.
 
-The [NorthArrow compass control] is part of ArcGIS Runtime Toolkit for Qt.
+The [NorthArrow compass control] is part of [ArcGIS Runtime Toolkit for Qt].
 
 ### Map context menu
 
@@ -548,11 +548,15 @@ Parameters available only in console mode:
 
 [Tile package]: https://developers.arcgis.com/documentation/glossary/tile-package/
 
-<!-- Samples -- -->
+<!-- Samples -->
 
 [Line of sight analysis]: https://developers.arcgis.com/qt/qml/sample-code/line-of-sight-geoelement/
 
 [Viewshed analysis]: https://developers.arcgis.com/qt/qml/sample-code/viewshed-camera/
+
+<!-- Toolkit reference -->
+
+[ArcGIS Runtime Toolkit for Qt]: https://github.com/Esri/arcgis-runtime-toolkit-qt
 
 <!-- API references  -->
 

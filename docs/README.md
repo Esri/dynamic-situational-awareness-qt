@@ -117,12 +117,11 @@ The navigation toolbar orients your view of the map. The tool appears vertically
 
 The navigation toolbar can be turned off in the [Settings panel](#settings-panel).
 
-<!-- ## ![](./images/dsa-icon-menu-home-32.png) Compass -->
 ### Compass
 
 There is a compass on the display's lower-right corner. Its red pointer points to north. Touching the compass will rotate the map so the top points toward north.
 
-The [compass tool] is part of ArcGIS Runtime Toolkit for Qt.
+The [NorthArrow compass control] is part of [ArcGIS Runtime Toolkit for Qt].
 
 ### Map context menu
 
@@ -215,22 +214,22 @@ Some [overlays](#overlays) get their information from local data sources, such a
 
 Specify the folders the app searches for local data using your [App configuration settings](#app-configuration-settings). Local data that has been found on your device is listed by this tool. Any data supported by ArcGIS Runtime SDKs can be used, including:
 
-- [GeoPackage]
+- [Geopackage]
 - [Tile package] (TPK)
 - [Mobile geodatabase]
-- KML
-- [Raster formats], including:
+- [KML]
+- [Raster] formats, including:
   - JPEG / JPEG 2000
   - PNG
   - IMG
   - Raster Product Format (RPF) - CADRG and CIB
   - National Imagery Transmission Format (NITF)
   - Digital Terrain Elevation Data (DTED)
-  - [Mobile Mosaic Dataset]
+  - [Mobile mosaic dataset]
   - MrSID
 
 - [Shapefile] (SHP)
-- [Scene Layer Package] (SLPK)
+- Scene layer package (SLPK)
 
 ### Overlays
 
@@ -288,7 +287,7 @@ DSA apps support several generic message feeds.
 
 ## Exploratory visual analysis
 
-Exploratory [analysis tools] combine information such as feature location, your location, and elevation to answer questions about the current operational environment. Analysis is continuously updated as the environment changes, leveraging the GPU of the device and the data that is drawn on the map. The results of an analysis are presented in an overlay that can be [managed like other overlays](#overlays).
+Exploratory analysis tools combine information such as feature location, your location, and elevation to answer questions about the current operational environment. Analysis is continuously updated as the environment changes, leveraging the GPU of the device and the data that is drawn on the map. The results of an analysis are presented in an overlay that can be [managed like other overlays](#overlays).
 
 ### Viewshed
 
@@ -308,7 +307,7 @@ Exploratory [analysis tools] combine information such as feature location, your 
 
 ***Developer tips:***
 
-- Both viewshed and line of sight analysis are calculated using the GPU and operate only on the data displayed on the map. This means that the accuracy of these analyses are limited by the current resolution of the displayed data and the elevation surface. More information can be found in the section [Scene analyses versus geoprocessing] in the Guide topic Analyze visibility in a scene view.
+- Both viewshed and line of sight analysis are calculated using the GPU and operate only on the data displayed on the map. This means that the accuracy of these analyses are limited by the current resolution of the displayed data and the elevation surface.
 
 ## Alerts and conditions
 
@@ -425,7 +424,7 @@ ArcGIS Runtime for Qt C++ API provides ArcGIS Runtime capabilities to manage, di
 
 The SDK Toolkit includes tools to fulfill specific mission requirements, such as displaying a north arrow, measuring distance, or converting coordinate notations.
 
-All DSA tools inherit the Toolkit's [`AbstractTool`] base class so that all tools have a common interface. Tools are exposed as controller classes (which may have associated model classes), and the UIs are implemented using QML to cleanly separate the UI and business logic, as well as effectively manage cross-API dependency. The app makes heavy use of the Toolkit's Resource Provider so that information can be shared between classes without creating cross dependencies between tools.
+All DSA tools have a common interface and are exposed as controller classes (which may have associated model classes). The UIs are implemented using QML to cleanly separate the UI and business logic, as well as effectively manage cross-API dependency. The app makes heavy use of the Toolkit's Resource Provider so that information can be shared between classes without creating cross dependencies between tools.
 
 # Get the DSA apps
 
@@ -482,8 +481,6 @@ The default data directory should look like this:
 
 ```
 
-You can learn more in the Guide topic [Deploy local offline data].
-
 # Message simulator
 
 The message simulator app broadcasts simulated messages over the peer-to-peer network. It is not meant for end users in the field, but rather provides a way to test and demonstrate the capabilities of DSA apps by providing a simulated environment through messages. The message simulator broadcasts messages over a given port. DSA-Vehicle and DSA-Handheld apps can listen to the same port for new messages and update their displays as messages are received.
@@ -523,59 +520,59 @@ Parameters available only in console mode:
 
 <!-- Runtime landing pages -->
 
-[ArcGIS Runtime SDK for Qt]: https://developers.arcgis.com/qt/latest
+[ArcGIS Runtime SDK for Qt]: https://developers.arcgis.com/qt
 
 <!-- Guide references -->
 
-[SDK Guide]: https://developers.arcgis.com/qt/latest/cpp/guide/arcgis-runtime-sdk-for-qt.htm
+[SDK Guide]: https://developers.arcgis.com/qt
 
-[analysis tools]: https://developers.arcgis.com/qt/latest/qml/guide/analyze-visibility-in-a-scene-view.htm
-
-[Deploy local offline data]: https://developers.arcgis.com/qt/latest/qml/guide/deploy-local-offline-data-with-your-app.htm
-
-[dictionary renderer]: https://developers.arcgis.com/qt/latest/cpp/guide/display-military-symbols-with-a-dictionary-renderer.htm
-
-[dynamic rendering]: https://developers.arcgis.com/qt/latest/cpp/guide/performance-considerations.htm#ESRI_SECTION2_C5226FAF302547FD96721CA898FF86F2
+[dynamic rendering]: https://developers.arcgis.com/qt/programming-patterns/performance-considerations/#rendering-modes
 
 [Explorer for ArcGIS markup documentation]: https://doc.arcgis.com/en/explorer/ipad/help/markup.htm
 
-[GeoPackage]: https://developers.arcgis.com/qt/latest/cpp/guide/add-raster-data.htm#ESRI_SECTION1_543960DAEED645B7864351FD2BFC98BB
+<!-- Glossary terms -->
 
-[Line of sight analysis]: https://developers.arcgis.com/qt/latest/qml/guide/analyze-visibility-in-a-scene-view.htm#ESRI_SECTION1_70DCF26AAE6241669BB87F4A55CB019D
+[dictionary renderer]: https://developers.arcgis.com/documentation/glossary/dictionary-renderer/
 
-[Mobile geodatabase]: https://developers.arcgis.com/qt/latest/cpp/guide/take-a-layer-offline.htm#ESRI_SECTION2_6AB16F528AB842AEACDB449A73021786
+[Geopackage]: https://developers.arcgis.com/documentation/glossary/geopackage/
 
-[Mobile Mosaic Dataset]: https://developers.arcgis.com/qt/latest/cpp/guide/add-raster-data.htm#ESRI_SECTION1_56B9BE5F631B4E4B9E458490CF816950
+[KML]: https://developers.arcgis.com/documentation/glossary/kml/
 
-[Raster formats]: https://developers.arcgis.com/qt/latest/cpp/guide/add-raster-data.htm#ESRI_SECTION1_D3B90253C5A945BEB79E521C344E945D
+[Mobile geodatabase]: https://developers.arcgis.com/documentation/glossary/mobile-geodatabase/
 
-[Scene analyses versus geoprocessing]: https://developers.arcgis.com/qt/latest/qml/guide/analyze-visibility-in-a-scene-view.htm#ESRI_SECTION1_8BA65A7A341D4A9EA972087EE2EFFD21
+[Mobile mosaic dataset]: https://developers.arcgis.com/documentation/glossary/mobile-mosaic-dataset/
 
-[Scene Layer Package]: https://developers.arcgis.com/qt/latest/cpp/guide/build-a-new-scene.htm#ESRI_SECTION1_12529039599C40E6989BE3887956FA0B
+[Raster]: https://developers.arcgis.com/documentation/glossary/raster/
 
-[Shapefile]: https://developers.arcgis.com/qt/latest/cpp/api-reference/esri-arcgisruntime-shapefilefeaturetable.html
+[Shapefile]: https://developers.arcgis.com/documentation/glossary/shapefile/
 
-[Tile package]: https://developers.arcgis.com/qt/latest/cpp/guide/work-with-offline-layers.htm#ESRI_SECTION1_AFE57774DA124157973E8598DB68F3FA
+[Tile package]: https://developers.arcgis.com/documentation/glossary/tile-package/
 
-[Viewshed analysis]: https://developers.arcgis.com/qt/latest/qml/guide/analyze-visibility-in-a-scene-view.htm#GUID-FE6D1C1C-6556-4E9B-9140-7BCABA905EC9
+<!-- Samples -->
+
+[Line of sight analysis]: https://developers.arcgis.com/qt/qml/sample-code/line-of-sight-geoelement/
+
+[Viewshed analysis]: https://developers.arcgis.com/qt/qml/sample-code/viewshed-camera/
+
+<!-- Toolkit reference -->
+
+[ArcGIS Runtime Toolkit for Qt]: https://github.com/Esri/arcgis-runtime-toolkit-qt
 
 <!-- API references  -->
 
-[`AbstractTool`]: https://developers.arcgis.com/qt/latest/toolkit/api-reference/esri-arcgisruntime-toolkit-abstracttool.html
+[basemap]: https://developers.arcgis.com/qt/cpp/api-reference/esri-arcgisruntime-basemap.html
 
-[basemap]: https://developers.arcgis.com/qt/latest/cpp/api-reference/esri-arcgisruntime-basemap.html
+[NorthArrow compass control]: https://developers.arcgis.com/qt/toolkit/api-reference/qml-northarrow.html
 
-[compass tool]: https://developers.arcgis.com/qt/latest/toolkit/api-reference/qml-arcgiscompass.html
+[Envelope]: https://developers.arcgis.com/qt/cpp/api-reference/esri-arcgisruntime-envelope.html
 
-[Envelope]: https://developers.arcgis.com/qt/latest/cpp/api-reference/esri-arcgisruntime-envelope.html
+[FeatureCollection]: https://developers.arcgis.com/qt/cpp/api-reference/esri-arcgisruntime-featurecollection.html
 
-[FeatureCollection]: https://developers.arcgis.com/qt/latest/cpp/api-reference/esri-arcgisruntime-featurecollection.html
+[Geometry]: https://developers.arcgis.com/qt/cpp/api-reference/esri-arcgisruntime-geometry.html
 
-[Geometry]: https://developers.arcgis.com/qt/latest/cpp/api-reference/esri-arcgisruntime-geometry.html
+[GeometryEngine]: https://developers.arcgis.com/qt/cpp/api-reference/esri-arcgisruntime-geometryengine.html
 
-[GeometryEngine]: https://developers.arcgis.com/qt/latest/cpp/api-reference/esri-arcgisruntime-geometryengine.html
-
-[Graphic]: https://developers.arcgis.com/qt/latest/cpp/api-reference/esri-arcgisruntime-graphic.html
+[Graphic]: https://developers.arcgis.com/qt/cpp/api-reference/esri-arcgisruntime-graphic.html
 
 <!-- External website references  -->
 

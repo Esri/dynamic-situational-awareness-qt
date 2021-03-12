@@ -2,22 +2,22 @@
 
 ## 1.1.6
 
-- Minumum Runtime Qt SDK version is 100.10.
+- Minimum Runtime Qt SDK version is 100.10.
 - Minimum Qt SDK version is Qt 5.15.1.
 - DSA now running on the new toolkit architecture.
 - Fixed bug where Markups were no longer shared.
 
 ## 1.1.5
 
-- An "InitialLocation" config is now written out to file. This parameter is updated whenver the scene is changed (e.g. loaded from an MSPK.) This property can be used to override the startup location of the camera when the app first loads. 
+- An "InitialLocation" config is now written out to file. This parameter is updated whenever the scene is changed (e.g. loaded from an MSPK.) This property can be used to override the startup location of the camera when the app first loads. 
 
 ## 1.1.4
 
-- Minumum Runtime Qt SDK version is 100.9.
+- Minimum Runtime Qt SDK version is 100.9.
 - Minimum Qt SDK version is Qt 5.15.0.
 - Minimum Android SDK version is now 21, target SDK version is 29.
-- Fixed erronious "missing file" dialog appearing on startup when opening an MSPK. This was a layer-to-json issue when saving the config.
-- Reverted the "ModelSceneSymbol to PictureMarkerSymbol" change. A camera bug was was introduced because a rotation-expression can not be used in place of a heading-expression when working with an `OrbitGeoElementCameraController`. We will need to park this upgrade until an enhancement is exposed by ArcGISRuntime. 
+- Fixed erroneous "missing file" dialog appearing on startup when opening an MSPK. This was a layer-to-json issue when saving the config.
+- Reverted the "ModelSceneSymbol to PictureMarkerSymbol" change. A camera bug was was introduced because a rotation-expression can not be used in place of a heading-expression when working with an `OrbitGeoElementCameraController`. We will need to park this upgrade until an enhancement is exposed by ArcGISRuntime.
 - Fixed bug where layers were not written out to the config when the `PackageDirectory` key is missing.
 
 ## 1.1.3

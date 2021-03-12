@@ -117,7 +117,6 @@ The navigation toolbar orients your view of the map. The tool appears vertically
 
 The navigation toolbar can be turned off in the [Settings panel](#settings-panel).
 
-<!-- ## ![](./images/dsa-icon-menu-home-32.png) Compass -->
 ### Compass
 
 There is a compass on the display's lower-right corner. Its red pointer points to north. Touching the compass will rotate the map so the top points toward north.

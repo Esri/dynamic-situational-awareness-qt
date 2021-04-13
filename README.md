@@ -49,7 +49,7 @@ If you just want to grab the latest code and build the project, these are the qu
 
 ## Prerequisites
 
-* ArcGIS Runtime SDK for Qt 100.9
+* ArcGIS Runtime SDK for Qt 100.10
 * Qt SDK 5.15.0 or higher
 * Qt Creator
 * [ArcGIS Runtime SDK for Qt C++ Plugin](https://github.com/Esri/arcgis-runtime-toolkit-qt)

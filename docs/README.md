@@ -2,13 +2,16 @@
 
 <!-- MDTOC maxdepth:6 firsth1:1 numbering:0 flatten:0 bullets:1 updateOnSave:1 -->
 
-- [Dynamic Situational Awareness (DSA)](#dynamic-situational-awareness-dsa)   
+[[Overview](#dynamic-situational-awareness-dsa)] | [[Tools and Settings](#overview)] | [[Workflows and best practices](#workflows-and-best-practices)] | [[App architecture](#app-architecture)]     
+[[Get the DSA apps](#get-the-dsa-apps)] | [[App configuration settings](#app-configuration-settings)] | [[Add your own local data](#add-your-own-local-data)] | [[Message simulator](#message-simulator)]    
+
+<!---- [Overview](#dynamic-situational-awareness-dsa)   
    - [What is DSA?](#what-is-dsa)   
    - [Capabilities](#capabilities)   
    - [Supported platforms](#supported-platforms)   
-- [Overview](#overview)   
-   - [Tools](#tools)   
-      - [Navigation toolbar](#navigation-toolbar)   
+- [Tools and settings](#overview)   
+<!---    - [Tools](#tools)   
+     - [Navigation toolbar](#navigation-toolbar)   
       - [Compass](#compass)   
       - [Map context menu](#map-context-menu)   
       - [Tool categories](#tool-categories)   
@@ -18,9 +21,9 @@
       - [Feeds](#feeds)   
       - [Add data](#add-data)   
       - [Overlays](#overlays)   
-      - [Basemaps](#basemaps)   
+      - [Basemaps](#basemaps)    
 - [Workflows and best practices](#workflows-and-best-practices)   
-   - [Real-time feeds](#real-time-feeds)   
+<!---   - [Real-time feeds](#real-time-feeds)   
    - [Exploratory visual analysis](#exploratory-visual-analysis)   
       - [Viewshed](#viewshed)   
       - [Line of sight](#line-of-sight)   
@@ -31,12 +34,12 @@
    - [Collaboration](#collaboration)   
       - [Create report tools](#create-report-tools)   
       - [Observation report](#observation-report)   
-      - [Markup tools](#markup-tools)   
+      - [Markup tools](#markup-tools)    
 - [App architecture](#app-architecture)   
 - [Get the DSA apps](#get-the-dsa-apps)   
 - [App configuration settings](#app-configuration-settings)   
 - [Add your own local data](#add-your-own-local-data)   
-- [Message simulator](#message-simulator)   
+- [Message simulator](#message-simulator)   --->
 
 <!-- /MDTOC -->
 ---

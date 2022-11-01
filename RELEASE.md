@@ -1,5 +1,10 @@
 # Release notes
 
+## 1.1.8
+
+- Minimum Runtime Qt SDK version is 100.15.0.
+- Minimum Qt SDK version is Qt 5.15.2.
+
 ## 1.1.7
 
 - Update links within [docs/README.md](/docs/README.md) to direct to new pages

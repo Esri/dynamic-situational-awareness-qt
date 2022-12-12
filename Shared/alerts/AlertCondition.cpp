@@ -118,7 +118,7 @@ void AlertCondition::init(GraphicsOverlay* sourceFeed, const QString& sourceDesc
   };
 
   // connect to the graphicAdded to add condition data for any new graphics
-  connect(graphics, &GraphicListModel::graphicAdded, this, handleGraphicAt);
+  connect(graphics, &GraphicListModel::itemAdded, this, handleGraphicAt);
 
   // add condition data for all of the graphics which are in the overlay to begin with
   const int count = graphics->rowCount();

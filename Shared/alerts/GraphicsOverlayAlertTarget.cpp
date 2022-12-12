@@ -52,14 +52,14 @@ GraphicsOverlayAlertTarget::GraphicsOverlayAlertTarget(GraphicsOverlay* graphics
   m_graphicsOverlay(graphicsOverlay)
 {
   // respond to graphics being removed from the overlay
-  connect(m_graphicsOverlay->graphics(), &GraphicListModel::graphicRemoved, this, [this](int)
+  connect(m_graphicsOverlay->graphics(), &GraphicListModel::itemRemoved, this, [this](int)
   {
     rebuildQuadtree();
     emit dataChanged();
   });
 
   // respond to graphics being added to the overlay
-  connect(m_graphicsOverlay->graphics(), &GraphicListModel::graphicAdded, this, [this](int index)
+  connect(m_graphicsOverlay->graphics(), &GraphicListModel::itemAdded, this, [this](int index)
   {
     Graphic* graphic = m_graphicsOverlay->graphics()->at(index);
     setupGraphicConnections(graphic);

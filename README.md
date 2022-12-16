@@ -42,7 +42,7 @@ If you just want to grab the latest code and build the project, these are the qu
 
  * `git clone https://github.com/Esri/dynamic-situational-awareness-qt.git`
  * `cd dynamic-situational-awareness-qt`
- * `git clone --branch 100.15.0.final https://github.com/Esri/arcgis-runtime-toolkit-qt.git`
+ * `git clone --branch release/100.15 https://github.com/Esri/arcgis-runtime-toolkit-qt.git`
  * Open `DSA.pro` with Qt Creator, configure the projects and build.
 
 **Note:** There is a file path length limit when deploying the DSA apps to Android from Windows. The simplest way to workaround this is to shorten the folder name of the "Shadow Build Directory" in the Qt Creator Project settings.
@@ -62,7 +62,7 @@ Set up the [ArcGIS Runtime SDK C++ Toolkit](https://github.com/Esri/arcgis-runti
 
 ```
 # from the base of the repo
-git clone --branch 100.15.0.final https://github.com/Esri/arcgis-runtime-toolkit-qt
+git clone --branch release/100.15 https://github.com/Esri/arcgis-runtime-toolkit-qt
 ```
 
 ### Data

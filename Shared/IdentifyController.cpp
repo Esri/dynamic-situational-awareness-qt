@@ -29,10 +29,19 @@
 #include "ToolResourceProvider.h"
 
 // C++ API headers
+#include "AttributeListModel.h"
 #include "GeoElement.h"
 #include "GeoView.h"
 #include "Graphic.h"
+#include "GraphicsOverlay.h"
+#include "IdentifyGraphicsOverlayResult.h"
+#include "IdentifyLayerResult.h"
+#include "LayerContent.h"
 #include "Popup.h"
+#include "PopupAttributeListModel.h"
+#include "PopupDefinition.h"
+#include "PopupField.h"
+#include "PopupFieldFormat.h"
 #include "PopupManager.h"
 
 using namespace Esri::ArcGISRuntime;
@@ -153,7 +162,7 @@ void IdentifyController::showPopup(GeoElement* geoElement, const QString& popupT
   A popup will be created for each \l Esri::ArcGISRuntime::GeoElement in the QHash,
   with the string key as the title.
  */
-void IdentifyController::showPopups(const QHash<QString, QList<GeoElement*>>& geoElementsByTitle)
+void IdentifyController::showPopups(const QMultiHash<QString, QList<GeoElement*>>& geoElementsByTitle)
 {
   if (geoElementsByTitle.isEmpty())
     return;
@@ -311,7 +320,7 @@ bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QStrin
   PopupManager* newManager = new PopupManager(newPopup, this);
 
   for (auto popupfield : newManager->displayedFields()->popupFields())
-  {    
+  {
     if (!popupfield->format())
     {
       auto format = new PopupFieldFormat(newManager);

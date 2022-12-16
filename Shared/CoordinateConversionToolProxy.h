@@ -17,19 +17,16 @@
 #ifndef COORDINATE_CONVERSION_TOOL_PROXY_H
 #define COORDINATE_CONVERSION_TOOL_PROXY_H
 
+// dsa headers
 #include "AbstractTool.h"
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
-namespace Toolkit
-{
+namespace Esri::ArcGISRuntime::Toolkit {
 class CoordinateConversionController;
 class CoordinateConversionResult;
 }
-}
-}
+
+Q_MOC_INCLUDE("CoordinateConversionController.h")
+Q_MOC_INCLUDE("CoordinateConversionResult.h")
 
 namespace Dsa
 {

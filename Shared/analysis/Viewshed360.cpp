@@ -21,6 +21,7 @@
 #include "Viewshed360.h"
 
 // C++ API headers
+#include "AnalysisListModel.h"
 #include "AnalysisOverlay.h"
 #include "Viewshed.h"
 

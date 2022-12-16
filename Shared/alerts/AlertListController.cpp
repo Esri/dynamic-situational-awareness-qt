@@ -25,7 +25,6 @@
 #include "AlertListModel.h"
 #include "AlertListProxyModel.h"
 #include "AlertSource.h"
-#include "DsaUtility.h"
 #include "IdsAlertFilter.h"
 #include "PointHighlighter.h"
 #include "StatusAlertFilter.h"
@@ -35,11 +34,12 @@
 #include "ToolResourceProvider.h"
 
 // C++ API headers
+#include "Camera.h"
+#include "Envelope.h"
 #include "GeoView.h"
-#include "GraphicsOverlay.h"
+#include "MapTypes.h"
 #include "SceneView.h"
-#include "SimpleMarkerSceneSymbol.h"
-#include "SimpleRenderer.h"
+#include "Viewpoint.h"
 
 // Qt headers
 #include <QTimer>

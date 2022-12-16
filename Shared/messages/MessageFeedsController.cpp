@@ -23,7 +23,6 @@
 // dsa app headers
 #include "AppConstants.h"
 #include "DataListener.h"
-#include "DataSender.h"
 #include "LocationBroadcast.h"
 #include "Message.h"
 #include "MessageFeed.h"
@@ -40,10 +39,12 @@
 #include "DictionarySymbolStyle.h"
 #include "PictureMarkerSymbol.h"
 #include "SimpleRenderer.h"
+#include "SceneViewTypes.h"
 
 // Qt headers
 #include <QFileInfo>
 #include <QJsonArray>
+#include <QJsonObject>
 #include <QUdpSocket>
 
 using namespace Esri::ArcGISRuntime;

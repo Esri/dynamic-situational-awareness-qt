@@ -20,9 +20,6 @@
 // dsa app headers
 #include "AlertConditionData.h"
 
-// C++ API headers
-#include "Geometry.h"
-
 namespace Dsa {
 
 class WithinDistanceAlertConditionData : public AlertConditionData

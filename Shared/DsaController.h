@@ -24,14 +24,12 @@
 #include <QStringList>
 #include <QVariantMap>
 
-namespace Esri {
-namespace ArcGISRuntime {
+namespace Esri::ArcGISRuntime {
   class Error;
   class Scene;
   class GeoView;
   class Layer;
   class Viewpoint;
-}
 }
 
 namespace Dsa {

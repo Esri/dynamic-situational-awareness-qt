@@ -17,12 +17,13 @@
 #ifndef MESSAGEFEEDSCONTROLLER_H
 #define MESSAGEFEEDSCONTROLLER_H
 
-// toolkit headers
+// dsa headers
 #include "AbstractTool.h"
 
 // Qt headers
-#include <QAbstractListModel>
 #include <QVariantList>
+
+class QAbstractListModel;
 
 namespace Esri {
   namespace ArcGISRuntime {

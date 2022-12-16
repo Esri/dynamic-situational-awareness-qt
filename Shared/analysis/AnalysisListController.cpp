@@ -30,7 +30,9 @@
 #include "ToolResourceProvider.h"
 
 // C++ API headers
+#include "AnalysisOverlay.h"
 #include "AnalysisOverlayListModel.h"
+#include "Camera.h"
 #include "SceneView.h"
 
 using namespace Esri::ArcGISRuntime;

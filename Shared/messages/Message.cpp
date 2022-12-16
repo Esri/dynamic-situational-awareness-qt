@@ -24,10 +24,12 @@
 #include "Point.h"
 #include "PolygonBuilder.h"
 #include "PolylineBuilder.h"
+#include "SpatialReference.h"
 
 // Qt headers
 #include <QDomDocument>
 #include <QXmlStreamReader>
+#include <QString>
 
 namespace Dsa {
 
@@ -201,7 +203,7 @@ Message Message::createFromCoTMessage(const QByteArray& message)
     if (reader.isStartElement())
     {
       // CoT event
-      if (QStringRef::compare(reader.name(), COT_ELEMENT_NAME, Qt::CaseInsensitive) == 0)
+      if (QString::compare(reader.name(), COT_ELEMENT_NAME, Qt::CaseInsensitive) == 0)
       {
         inCoTMessageElement = true;
 
@@ -234,7 +236,7 @@ Message Message::createFromCoTMessage(const QByteArray& message)
         continue;
       }
 
-      if (QStringRef::compare(reader.name(), COT_POINT_NAME, Qt::CaseInsensitive) == 0)
+      if (QString::compare(reader.name(), COT_POINT_NAME, Qt::CaseInsensitive) == 0)
       {
         // parse the CoT point to populate the Message's geometry
         auto attrs = reader.attributes();
@@ -252,7 +254,7 @@ Message Message::createFromCoTMessage(const QByteArray& message)
     }
     else if (reader.isEndElement())
     {
-      if (QStringRef::compare(reader.name(), COT_ELEMENT_NAME, Qt::CaseInsensitive) == 0)
+      if (QString::compare(reader.name(), COT_ELEMENT_NAME, Qt::CaseInsensitive) == 0)
       {
         inCoTMessageElement = false;
       }
@@ -289,7 +291,7 @@ Message Message::createFromGeoMessage(const QByteArray& message)
     if (reader.isStartElement())
     {
       // GeoMessage
-      if (QStringRef::compare(reader.name(), GEOMESSAGE_ELEMENT_NAME, Qt::CaseInsensitive) == 0)
+      if (QString::compare(reader.name(), GEOMESSAGE_ELEMENT_NAME, Qt::CaseInsensitive) == 0)
       {
         inGeoMessageElement = true;
         reader.readNext();
@@ -303,35 +305,35 @@ Message Message::createFromGeoMessage(const QByteArray& message)
         continue;
       }
 
-      if (QStringRef::compare(reader.name(), GEOMESSAGE_TYPE_NAME, Qt::CaseInsensitive) == 0)
+      if (QString::compare(reader.name(), GEOMESSAGE_TYPE_NAME, Qt::CaseInsensitive) == 0)
       {
         geoMessage.d->messageType = reader.readElementText();
       }
-      else if (QStringRef::compare(reader.name(), GEOMESSAGE_ACTION_NAME, Qt::CaseInsensitive) == 0)
+      else if (QString::compare(reader.name(), GEOMESSAGE_ACTION_NAME, Qt::CaseInsensitive) == 0)
       {
         const QString actionText = reader.readElementText();
         geoMessage.d->messageAction = toMessageAction(actionText);
       }
-      else if (QStringRef::compare(reader.name(), GEOMESSAGE_ID_NAME, Qt::CaseInsensitive) == 0)
+      else if (QString::compare(reader.name(), GEOMESSAGE_ID_NAME, Qt::CaseInsensitive) == 0)
       {
         geoMessage.d->messageId = reader.readElementText();
       }
-      else if (QStringRef::compare(reader.name(), GEOMESSAGE_WKID_NAME, Qt::CaseInsensitive) == 0)
+      else if (QString::compare(reader.name(), GEOMESSAGE_WKID_NAME, Qt::CaseInsensitive) == 0)
       {
         wkidText = reader.readElementText();
       }
-      else if (QStringRef::compare(reader.name(), GEOMESSAGE_SIC_NAME, Qt::CaseInsensitive) == 0)
+      else if (QString::compare(reader.name(), GEOMESSAGE_SIC_NAME, Qt::CaseInsensitive) == 0)
       {
         const auto sidc = reader.readElementText();
         attributes.insert(GEOMESSAGE_SIC_NAME, sidc);
         attributes.insert(SIDC_NAME, sidc);
         geoMessage.d->symbolId = sidc;
       }
-      else if (QStringRef::compare(reader.name(), GEOMESSAGE_CONTROL_POINTS_NAME, Qt::CaseInsensitive) == 0)
+      else if (QString::compare(reader.name(), GEOMESSAGE_CONTROL_POINTS_NAME, Qt::CaseInsensitive) == 0)
       {
         controlPointsText = reader.readElementText();
       }
-      else if (QStringRef::compare(reader.name(), GEOMESSAGE_ENVIRONMENT_NAME, Qt::CaseInsensitive) == 0)
+      else if (QString::compare(reader.name(), GEOMESSAGE_ENVIRONMENT_NAME, Qt::CaseInsensitive) == 0)
       {
         environmentText = reader.readElementText();
       }
@@ -342,7 +344,7 @@ Message Message::createFromGeoMessage(const QByteArray& message)
     }
     else if (reader.isEndElement())
     {
-      if (QStringRef::compare(reader.name(), GEOMESSAGE_ELEMENT_NAME, Qt::CaseInsensitive) == 0)
+      if (QString::compare(reader.name(), GEOMESSAGE_ELEMENT_NAME, Qt::CaseInsensitive) == 0)
       {
         inGeoMessageElement = false;
       }

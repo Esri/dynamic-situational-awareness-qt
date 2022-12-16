@@ -22,7 +22,6 @@
 
 // dsa app headers
 #include "DrawOrderLayerListModel.h"
-#include "DsaUtility.h"
 #include "MarkupLayer.h"
 
 // toolkit headers
@@ -30,11 +29,20 @@
 #include "ToolResourceProvider.h"
 
 // C++ API headers
+#include "Envelope.h"
+#include "Error.h"
 #include "FeatureLayer.h"
+#include "FeatureCollection.h"
 #include "FeatureCollectionLayer.h"
+#include "FeatureCollectionTable.h"
+#include "FeatureCollectionTableListModel.h"
+#include "FeatureTable.h"
 #include "GeoView.h"
 #include "LayerListModel.h"
+#include "MapTypes.h"
+#include "Raster.h"
 #include "RasterLayer.h"
+#include "Viewpoint.h"
 
 // Qt headers
 #include <QFileInfo>

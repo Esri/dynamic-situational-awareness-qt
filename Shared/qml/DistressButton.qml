@@ -14,8 +14,8 @@
  *  limitations under the License.
  ******************************************************************************/
 
-import QtQuick 2.9
-import Esri.ArcGISRuntime.OpenSourceApps.DSA 1.1
+import QtQuick
+import Esri.ArcGISRuntime.OpenSourceApps.DSA
 
 OverlayButton {
     id: distressButton

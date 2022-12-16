@@ -17,13 +17,12 @@
 #ifndef WITHINDISTANCEALERTCONDITION_H
 #define WITHINDISTANCEALERTCONDITION_H
 
-// dsa app headers
-#include "AlertCondition.h"
-
 // Qt headers
 #include <QObject>
 
 namespace Dsa {
+
+class AlertCondition;
 
 class WithinDistanceAlertCondition : public AlertCondition
 {

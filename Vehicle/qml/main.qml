@@ -14,14 +14,14 @@
  *  limitations under the License.
  ******************************************************************************/
 
-import QtQuick 2.9
-import QtQuick.Controls 2.2
-import QtQuick.Controls.Material 2.2
-import QtQuick.Window 2.2
-import QtQml.Models 2.2
-import Esri.ArcGISRuntime.OpenSourceApps.DSA 1.1
-import Esri.ArcGISRuntime.OpenSourceApps.Vehicle 1.1
-import Esri.ArcGISRuntime.Toolkit 100.10 as Toolkit
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Controls.Material
+import QtQuick.Window
+import QtQml.Models
+import Esri.ArcGISRuntime.OpenSourceApps.DSA
+import Esri.ArcGISRuntime.OpenSourceApps.Vehicle
+import Esri.ArcGISRuntime.Toolkit as Toolkit
 
 Vehicle {
     id: appRoot
@@ -237,7 +237,7 @@ Vehicle {
                 bottom: sceneView.attributionTop
             }
             width: 56 * scaleFactor
-            appTitle: "DSA - V"            
+            appTitle: "DSA - V"
 
             onSettingsClicked: optionsTool.visible = true;
             onAboutClicked: aboutTool.visible = true;

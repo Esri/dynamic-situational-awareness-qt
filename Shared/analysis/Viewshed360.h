@@ -21,11 +21,9 @@
 #include <QObject>
 #include <QPointer>
 
-namespace Esri {
-  namespace ArcGISRuntime {
+namespace Esri::ArcGISRuntime {
     class Viewshed;
     class AnalysisOverlay;
-  }
 }
 
 namespace Dsa {

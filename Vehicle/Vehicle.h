@@ -20,10 +20,8 @@
 // Qt headers
 #include <QQuickItem>
 
-namespace Esri {
-namespace ArcGISRuntime {
+namespace Esri::ArcGISRuntime {
 class SceneQuickView;
-}
 }
 
 namespace Dsa {

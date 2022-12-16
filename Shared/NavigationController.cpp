@@ -29,13 +29,13 @@
 
 // C++ API headers
 #include "Camera.h"
-#include "GeometryEngine.h"
 #include "GlobeCameraController.h"
-#include "Map.h"
 #include "OrbitGeoElementCameraController.h"
 #include "OrbitLocationCameraController.h"
 #include "Scene.h"
 #include "SceneView.h"
+#include "SceneViewTypes.h"
+#include "Viewpoint.h"
 
 // Qt headers
 #include <QGuiApplication>

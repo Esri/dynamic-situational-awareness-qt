@@ -17,8 +17,9 @@
 #ifndef MESSAGE_H
 #define MESSAGE_H
 
-// C++ API headers
-#include "Geometry.h"
+namespace Esri::ArcGISRuntime {
+class Geometry;
+}
 
 // Qt headers
 #include <QSharedData>

@@ -30,13 +30,23 @@
 #include "ToolResourceProvider.h"
 
 // C++ API headers
+#include "AnalysisListModel.h"
 #include "AnalysisOverlay.h"
+#include "AnalysisOverlayListModel.h"
+#include "Error.h"
+#include "Feature.h"
+#include "FeatureIterator.h"
 #include "FeatureLayer.h"
+#include "FeatureQueryResult.h"
+#include "FeatureTable.h"
 #include "GeoElementLineOfSight.h"
 #include "GeoView.h"
-#include "GeometryEngine.h"
+#include "Graphic.h"
 #include "LayerListModel.h"
+#include "MapTypes.h"
+#include "QueryParameters.h"
 #include "SceneView.h"
+#include "SceneViewTypes.h"
 
 // Qt headers
 #include <QStringListModel>

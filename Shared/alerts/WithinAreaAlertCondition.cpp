@@ -20,12 +20,7 @@
 #include "WithinAreaAlertCondition.h"
 
 // dsa app headers
-#include "GraphicAlertSource.h"
 #include "WithinAreaAlertConditionData.h"
-
-// C++ API headers
-#include "GraphicListModel.h"
-#include "GraphicsOverlay.h"
 
 using namespace Esri::ArcGISRuntime;
 

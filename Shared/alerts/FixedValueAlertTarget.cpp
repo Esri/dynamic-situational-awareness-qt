@@ -20,7 +20,6 @@
 #include "FixedValueAlertTarget.h"
 
 // C++ API headers
-#include "GeoElement.h"
 #include "Geometry.h"
 
 using namespace Esri::ArcGISRuntime;

@@ -17,8 +17,9 @@
 #ifndef ALERTSOURCE_H
 #define ALERTSOURCE_H
 
-// C++ API headers
-#include "Point.h"
+namespace Esri::ArcGISRuntime {
+class Point;
+}
 
 // Qt headers
 #include <QObject>

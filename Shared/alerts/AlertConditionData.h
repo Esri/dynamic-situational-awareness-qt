@@ -20,8 +20,9 @@
 // dsa app headers
 #include "AlertLevel.h"
 
-// C++ API headers
-#include "Point.h"
+namespace Esri::ArcGISRuntime {
+  class Point;
+}
 
 // Qt headers
 #include <QObject>

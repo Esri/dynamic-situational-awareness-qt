@@ -38,9 +38,8 @@ namespace Dsa {
 /*!
   \brief Constructor taking an optional \a parent.
  */
-PackageImageProvider::PackageImageProvider(QObject* parent /*= nullptr*/) :
+PackageImageProvider::PackageImageProvider() :
   QQuickImageProvider(QQuickImageProvider::Image),
-  QObject(parent),
   m_defaultImage(":/Resources/AppIcon.png")
 {
   // Find the OpenMobileScenePackageController and connect to the imageReady signal

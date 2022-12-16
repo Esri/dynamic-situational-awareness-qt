@@ -17,24 +17,23 @@
 #ifndef IDENTIFYFEATURESCONTROLLER_H
 #define IDENTIFYFEATURESCONTROLLER_H
 
-// toolkit headers
+// dsa headers
 #include "AbstractTool.h"
-
-// C++ API headers
-#include "TaskWatcher.h"
 
 // Qt headers
 #include <QMouseEvent>
 #include <QObject>
 
-namespace Esri {
-namespace ArcGISRuntime {
+namespace Esri::ArcGISRuntime {
 class GeoElement;
 class IdentifyGraphicsOverlayResult;
 class IdentifyLayerResult;
 class PopupManager;
+class TaskWatcher;
 }
-}
+
+Q_MOC_INCLUDE("IdentifyGraphicsOverlayResult.h")
+Q_MOC_INCLUDE("IdentifyLayerResult.h")
 
 namespace Dsa {
 
@@ -58,7 +57,7 @@ public:
   QVariantList popupManagers() const;
 
   void showPopup(Esri::ArcGISRuntime::GeoElement* geoElement, const QString& popupTitle);
-  void showPopups(const QHash<QString, QList<Esri::ArcGISRuntime::GeoElement*>>& geoElementsByTitle);
+  void showPopups(const QMultiHash<QString, QList<Esri::ArcGISRuntime::GeoElement*>>& geoElementsByTitle);
 
 private slots:
   void onMouseClicked(QMouseEvent& event);

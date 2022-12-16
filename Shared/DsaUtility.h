@@ -17,8 +17,9 @@
 #ifndef UTILITY_H
 #define UTILITY_H
 
-// C++ API headers
-#include "Point.h"
+namespace Esri::ArcGISRuntime {
+class Point;
+}
 
 // Qt headers
 #include <QList>

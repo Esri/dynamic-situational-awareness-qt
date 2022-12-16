@@ -20,8 +20,9 @@
 // dsa app headers
 #include "Message.h"
 
-// C++ API headers
-#include "Point.h"
+namespace Esri::ArcGISRuntime {
+class Point;
+}
 
 // Qt headers
 #include <QObject>
@@ -30,6 +31,7 @@ class QTimer;
 
 namespace Dsa {
 
+class Message;
 class DataSender;
 
 class LocationBroadcast : public QObject

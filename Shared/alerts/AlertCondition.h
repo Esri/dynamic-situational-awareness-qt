@@ -25,12 +25,9 @@
 #include <QObject>
 #include <QVariantMap>
 
-namespace Esri
-{
-namespace ArcGISRuntime
+namespace Esri::ArcGISRuntime
 {
 class GraphicsOverlay;
-}
 }
 
 namespace Dsa {

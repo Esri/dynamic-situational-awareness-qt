@@ -23,11 +23,20 @@
 #include "GPXLocationSimulator.h"
 
 // C++ API headers
+#include "AttributeListModel.h"
+#include "Graphic.h"
+#include "GraphicListModel.h"
 #include "GraphicsOverlay.h"
+#include "LayerSceneProperties.h"
+#include "MapTypes.h"
+#include "RendererSceneProperties.h"
 #include "SimpleRenderer.h"
+#include "SceneViewTypes.h"
+#include "SpatialReference.h"
 
 // Qt headers
 #include <QCompass>
+#include <QGeoPositionInfoSource>
 
 // STL headers
 #include <cmath>
@@ -128,7 +137,7 @@ void LocationDisplay3d::setPositionSource(QGeoPositionInfoSource* positionSource
   if (m_positionUpdateConnection)
     disconnect(m_positionUpdateConnection);
 
-  m_positionErrorConnection = connect(m_geoPositionInfoSource, static_cast<void (QGeoPositionInfoSource::*)(QGeoPositionInfoSource::Error)>(&QGeoPositionInfoSource::error), this,
+  m_positionErrorConnection = connect(m_geoPositionInfoSource, &QGeoPositionInfoSource::errorOccurred, this,
                                       [this](QGeoPositionInfoSource::Error error)
   {
     if (error != QGeoPositionInfoSource::Error::NoError)

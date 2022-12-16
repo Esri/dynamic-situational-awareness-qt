@@ -17,17 +17,16 @@
 #ifndef BASEMAPPICKERCONTROLLER_H
 #define BASEMAPPICKERCONTROLLER_H
 
-// toolkit headers
+// dsa headers
 #include "AbstractTool.h"
 
 // Qt headers
-#include <QAbstractListModel>
 #include <QObject>
 
-namespace Esri {
-namespace ArcGISRuntime {
+class QAbstractListModel;
+
+namespace Esri::ArcGISRuntime {
   class Basemap;
-}
 }
 
 class QStringListModel;

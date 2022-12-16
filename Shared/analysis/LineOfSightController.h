@@ -17,28 +17,21 @@
 #ifndef LINEOFSIGHTCONTROLLER_H
 #define LINEOFSIGHTCONTROLLER_H
 
-// toolkit headers
+// dsa headers
 #include "AbstractTool.h"
 
-// C++ API headers
-#include "Point.h"
-#include "TaskWatcher.h"
-
-// Qt headers
-#include <QAbstractItemModel>
-
-namespace Esri {
-namespace ArcGISRuntime {
+namespace Esri::ArcGISRuntime {
   class AnalysisOverlay;
   class GeoElement;
   class GeoView;
   class LayerListModel;
   class FeatureLayer;
   class FeatureQueryResult;
-}
+  class TaskWatcher;
 }
 
 class QStringListModel;
+class QAbstractItemModel;
 
 namespace Dsa {
 

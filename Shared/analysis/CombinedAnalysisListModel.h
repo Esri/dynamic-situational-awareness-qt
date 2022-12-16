@@ -17,18 +17,14 @@
 #ifndef COMBINEDANALYSISLISTMODEL_H
 #define COMBINEDANALYSISLISTMODEL_H
 
-// C++ API headers
-#include "Point.h"
-
 // Qt headers
-#include <QAbstractListModel>
+class QAbstractListModel;
 
-namespace Esri {
-namespace ArcGISRuntime {
+namespace Esri::ArcGISRuntime {
   class Analysis;
   class AnalysisListModel;
   class AnalysisOverlay;
-}
+  class Point;
 }
 
 namespace Dsa {

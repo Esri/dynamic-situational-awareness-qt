@@ -14,13 +14,11 @@
  *  limitations under the License.
  ******************************************************************************/
 
-import QtQuick 2.6
-import QtQuick.Controls 1.4 as Qt1
-import QtQuick.Controls.Styles 1.4
-import QtQuick.Controls 2.1
-import QtQuick.Controls.Material 2.1
-import QtQuick.Window 2.2
-import Esri.ArcGISRuntime.OpenSourceApps.DSA 1.1
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Controls.Material
+import QtQuick.Window
+import Esri.ArcGISRuntime.OpenSourceApps.DSA
 
 Item {
     id: observedTimePage
@@ -62,131 +60,131 @@ Item {
 
         clear();
     }
+// TODO LD: Find alternative
+//    Qt1.Calendar {
+//        id: calendar
+//        minimumDate: new Date(2018, 0, 1)
+//        maximumDate: new Date()
 
-    Qt1.Calendar {
-        id: calendar
-        minimumDate: new Date(2018, 0, 1)
-        maximumDate: new Date()
+//        anchors {
+//            left: parent.left
+//            right: parent.right
+//            top: parent.top
+//            margins: 16 * scaleFactor
+//        }
 
-        anchors {
-            left: parent.left
-            right: parent.right
-            top: parent.top
-            margins: 16 * scaleFactor
-        }
+//        height: parent.height * 0.5
 
-        height: parent.height * 0.5
+//        style: CalendarStyle {
 
-        style: CalendarStyle {
+//            navigationBar: Rectangle {
+//                color: Material.background
+//                height: dateText.height * 2
+//                border {
+//                    width: 1 * scaleFactor
+//                    color: Material.foreground
+//                }
 
-            navigationBar: Rectangle {
-                color: Material.background
-                height: dateText.height * 2
-                border {
-                    width: 1 * scaleFactor
-                    color: Material.foreground
-                }
+//                Button {
+//                    id: previousMonth
+//                    anchors{
+//                        verticalCenter: parent.verticalCenter
+//                        left: parent.left
+//                    }
+//                    width: parent.height
+//                    height: width
+//                    text: "<"
+//                    font {
+//                        pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+//                        family: DsaStyles.fontFamily
+//                    }
+//                    onClicked: control.showPreviousMonth()
+//                }
 
-                Button {
-                    id: previousMonth
-                    anchors{
-                        verticalCenter: parent.verticalCenter
-                        left: parent.left
-                    }
-                    width: parent.height
-                    height: width
-                    text: "<"
-                    font {
-                        pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                        family: DsaStyles.fontFamily
-                    }
-                    onClicked: control.showPreviousMonth()
-                }
+//                Label {
+//                    id: dateText
+//                    anchors{
+//                        verticalCenter: parent.verticalCenter
+//                        left: previousMonth.right
+//                        leftMargin: 2 * scaleFactor
+//                        right: nextMonth.left
+//                        rightMargin: 2 * scaleFactor
+//                    }
+//                    text: styleData.title
+//                    font {
+//                        pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+//                        family: DsaStyles.fontFamily
+//                    }
+//                    horizontalAlignment: Text.AlignHCenter
+//                    verticalAlignment: Text.AlignVCenter
+//                    fontSizeMode: Text.Fit
+//                    color: Material.foreground
+//                }
 
-                Label {
-                    id: dateText
-                    anchors{
-                        verticalCenter: parent.verticalCenter
-                        left: previousMonth.right
-                        leftMargin: 2 * scaleFactor
-                        right: nextMonth.left
-                        rightMargin: 2 * scaleFactor
-                    }
-                    text: styleData.title
-                    font {
-                        pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                        family: DsaStyles.fontFamily
-                    }
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                    fontSizeMode: Text.Fit
-                    color: Material.foreground
-                }
+//                Button {
+//                    id: nextMonth
+//                    anchors{
+//                        verticalCenter: parent.verticalCenter
+//                        right: parent.right
+//                    }
+//                    width: parent.height
+//                    height: width
+//                    text: ">"
+//                    font {
+//                        pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+//                        family: DsaStyles.fontFamily
+//                    }
+//                    onClicked: control.showNextMonth()
+//                }
+//            }
 
-                Button {
-                    id: nextMonth
-                    anchors{
-                        verticalCenter: parent.verticalCenter
-                        right: parent.right
-                    }
-                    width: parent.height
-                    height: width
-                    text: ">"
-                    font {
-                        pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                        family: DsaStyles.fontFamily
-                    }
-                    onClicked: control.showNextMonth()
-                }
-            }
+//            dayOfWeekDelegate: Rectangle {
+//                color: Material.background
+//                height: dayOfWeekText.height * 2
 
-            dayOfWeekDelegate: Rectangle {
-                color: Material.background
-                height: dayOfWeekText.height * 2
+//                Label {
+//                    id: dayOfWeekText
+//                    anchors.centerIn: parent
+//                    text: Qt.locale().dayName(styleData.dayOfWeek, control.dayOfWeekFormat)
+//                    color: Material.foreground
+//                    font {
+//                        pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+//                        family: DsaStyles.fontFamily
+//                    }
+//                }
+//            }
 
-                Label {
-                    id: dayOfWeekText
-                    anchors.centerIn: parent
-                    text: Qt.locale().dayName(styleData.dayOfWeek, control.dayOfWeekFormat)
-                    color: Material.foreground
-                    font {
-                        pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                        family: DsaStyles.fontFamily
-                    }
-                }
-            }
+//            gridVisible: false
+//            dayDelegate: Rectangle {
+//                color: styleData.selected ? Material.accent :
+//                                            (styleData.visibleMonth && styleData.valid ? Material.primary : Material.background);
 
-            gridVisible: false
-            dayDelegate: Rectangle {
-                color: styleData.selected ? Material.accent :
-                                            (styleData.visibleMonth && styleData.valid ? Material.primary : Material.background);
+//                Label {
+//                    text: styleData.date.getDate()
+//                    anchors.centerIn: parent
+//                    font {
+//                        pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+//                        family: DsaStyles.fontFamily
+//                    }
+//                    color: Material.foreground
+//                }
 
-                Label {
-                    text: styleData.date.getDate()
-                    anchors.centerIn: parent
-                    font {
-                        pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                        family: DsaStyles.fontFamily
-                    }
-                    color: Material.foreground
-                }
+//                Rectangle {
+//                    width: parent.width
+//                    height: 1 * scaleFactor
+//                    color: Material.background
+//                    anchors.bottom: parent.bottom
+//                }
 
-                Rectangle {
-                    width: parent.width
-                    height: 1 * scaleFactor
-                    color: Material.background
-                    anchors.bottom: parent.bottom
-                }
-
-                Rectangle {
-                    width: 1 * scaleFactor
-                    height: parent.height
-                    color: Material.background
-                    anchors.right: parent.right
-                }
-            }
-        }
-    }
+//                Rectangle {
+//                    width: 1 * scaleFactor
+//                    height: parent.height
+//                    color: Material.background
+//                    anchors.right: parent.right
+//                }
+//            }
+//        }
+//    }
 
     Row {
         id: timeRow

@@ -16,7 +16,6 @@
 
 #include "ToolManager.h"
 #include "AbstractTool.h"
-#include "ToolResourceProvider.h"
 
 using namespace Esri::ArcGISRuntime;
 

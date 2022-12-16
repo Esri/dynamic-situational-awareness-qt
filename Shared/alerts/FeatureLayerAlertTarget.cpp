@@ -24,7 +24,13 @@
 #include "GeometryQuadtree.h"
 
 // C++ API headers
+#include "Envelope.h"
+#include "Feature.h"
+#include "FeatureIterator.h"
 #include "FeatureLayer.h"
+#include "FeatureQueryResult.h"
+#include "FeatureTable.h"
+#include "QueryParameters.h"
 
 using namespace Esri::ArcGISRuntime;
 

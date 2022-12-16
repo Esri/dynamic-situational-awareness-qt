@@ -17,22 +17,18 @@
 #ifndef FEATURELAYERALERTTARGET_H
 #define FEATURELAYERALERTTARGET_H
 
-// dsa app headers
-#include "AlertTarget.h"
-
 // Qt headers
 #include <QUuid>
 
-namespace Esri {
-namespace ArcGISRuntime {
+namespace Esri::ArcGISRuntime {
 class Feature;
 class FeatureLayer;
 class FeatureQueryResult;
 }
-}
 
 namespace Dsa {
 
+class AlertTarget;
 class GeometryQuadtree;
 
 class FeatureLayerAlertTarget : public AlertTarget

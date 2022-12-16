@@ -18,6 +18,9 @@
 #define PACKAGEIMAGEPROVIDER_H
 
 // Qt headers
+#include <QHash>
+#include <QImage>
+#include <QMetaObject>
 #include <QObject>
 #include <QQuickImageProvider>
 
@@ -25,11 +28,12 @@ namespace Dsa {
 
 class OpenMobileScenePackageController;
 
-class PackageImageProvider : public QQuickImageProvider, public QObject
+class PackageImageProvider : public QQuickImageProvider
+
 {
 public:
 
-  PackageImageProvider(QObject* parent = nullptr);
+  PackageImageProvider();
 
   QImage requestImage(const QString& id, QSize* size, const QSize& requestedSize) override;
 

@@ -19,9 +19,13 @@
 
 #include "GPXLocationSimulator.h"
 
+// C++ API headers
+#include "SpatialReference.h"
+
 // Qt headers
 #include <QTimer>
 #include <QXmlStreamReader>
+#include <QGeoPositionInfo>
 
 // STL headers
 #include <cmath>
@@ -91,7 +95,7 @@ void GPXLocationSimulator::connectSignals()
   connect(m_timer, SIGNAL(timeout()), this, SLOT(handleTimerEvent()));
   // internally we emit errorInternal but we cannot emit error due to syntax
   connect(this, &GPXLocationSimulator::errorInternal,
-          this, static_cast<void (QGeoPositionInfoSource::*)(QGeoPositionInfoSource::Error)>(&QGeoPositionInfoSource::error));
+          this, &QGeoPositionInfoSource::errorOccurred);
 }
 
 /*!

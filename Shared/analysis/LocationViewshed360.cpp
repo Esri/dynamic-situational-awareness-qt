@@ -25,7 +25,9 @@
 
 // C++ API headers
 #include "AnalysisOverlay.h"
+#include "AttributeListModel.h"
 #include "Graphic.h"
+#include "GraphicListModel.h"
 #include "GraphicsOverlay.h"
 #include "LocationViewshed.h"
 #include "Point.h"

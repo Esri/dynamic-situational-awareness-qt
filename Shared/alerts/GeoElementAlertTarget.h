@@ -17,17 +17,13 @@
 #ifndef GEOELEMENTALERTTARGET_H
 #define GEOELEMENTALERTTARGET_H
 
-// dsa app headers
-#include "AlertTarget.h"
-
-namespace Esri {
-namespace ArcGISRuntime {
+namespace Esri::ArcGISRuntime {
 class GeoElement;
-}
 }
 
 namespace Dsa {
 
+class AlertTarget;
 class GeoElementSignaler;
 class GeoElementAlertTarget : public AlertTarget
 {

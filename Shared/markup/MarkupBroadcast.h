@@ -17,7 +17,7 @@
 #ifndef MARKUPBROADCAST_H
 #define MARKUPBROADCAST_H
 
-// toolkit headers
+// dsa headers
 #include "AbstractTool.h"
 
 class QJsonObject;

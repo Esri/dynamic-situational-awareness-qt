@@ -23,15 +23,20 @@
 #include "MarkupConstants.h"
 
 // C++ API headers
+#include "Camera.h"
 #include "Feature.h"
 #include "FeatureCollection.h"
 #include "FeatureCollectionLayer.h"
 #include "FeatureCollectionTable.h"
+#include "FeatureCollectionTableListModel.h"
 #include "Field.h"
+#include "Graphic.h"
+#include "GraphicListModel.h"
 #include "GraphicsOverlay.h"
-#include "Polyline.h"
 #include "SimpleLineSymbol.h"
 #include "SimpleRenderer.h"
+#include "SpatialReference.h"
+#include "SymbolTypes.h"
 
 // Qt headers
 #include <QFile>

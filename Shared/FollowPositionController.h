@@ -17,16 +17,15 @@
 #ifndef FOLLOWPOSITIONCONTROLLER_H
 #define FOLLOWPOSITIONCONTROLLER_H
 
-// toolkit headers
+// dsa headers
 #include "AbstractTool.h"
 
-namespace Esri {
-namespace ArcGISRuntime {
+namespace Esri::ArcGISRuntime {
   class CameraController;
   class GeoElement;
   class GeoView;
   class GraphicListModel;
-}}
+}
 
 namespace Dsa {
 

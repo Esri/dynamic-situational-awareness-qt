@@ -17,11 +17,8 @@
 #ifndef ALERTCONDITIONSCONTROLLER_H
 #define ALERTCONDITIONSCONTROLLER_H
 
-// toolkit headers
+// dsa headers
 #include "AbstractTool.h"
-
-// C++ API headers
-#include "TaskWatcher.h"
 
 // Qt headers
 #include <QHash>
@@ -29,20 +26,20 @@
 #include <QStringListModel>
 
 class QMouseEvent;
-class QStringList;
 
-namespace Esri {
-namespace ArcGISRuntime {
+namespace Esri::ArcGISRuntime {
 class IdentifyLayerResult;
 class IdentifyGraphicsOverlayResult;
 class FeatureLayer;
 class FeatureTable;
 class GraphicsOverlay;
+class TaskWatcher;
 }
-}
+
+Q_MOC_INCLUDE("IdentifyGraphicsOverlayResult.h")
+Q_MOC_INCLUDE("IdentifyLayerResult.h")
 
 namespace Dsa {
-
 class AlertCondition;
 class AlertConditionData;
 class AlertConditionListModel;

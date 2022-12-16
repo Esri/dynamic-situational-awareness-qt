@@ -17,14 +17,11 @@
 #ifndef VIEWSHEDLISTMODEL_H
 #define VIEWSHEDLISTMODEL_H
 
-// Qt headers
-#include <QAbstractListModel>
-
-namespace Esri {
-  namespace ArcGISRuntime {
+namespace Esri::ArcGISRuntime {
     class AnalysisOverlay;
-  }
 }
+
+class QAbstractListModel;
 
 namespace Dsa {
 

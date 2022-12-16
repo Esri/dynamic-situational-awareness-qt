@@ -35,8 +35,14 @@
 #include "ToolResourceProvider.h"
 
 // Toolkit headers
-#include "Esri/ArcGISRuntime/Toolkit/CoordinateConversionController.h"
+#include "CoordinateConversionController.h"
+
 // C++ API headers
+#include "Graphic.h"
+#include "GraphicsOverlay.h"
+#include "IdentifyGraphicsOverlayResult.h"
+#include "IdentifyLayerResult.h"
+#include "LayerContent.h"
 #include "MapView.h"
 #include "SceneView.h"
 
@@ -550,7 +556,7 @@ void ContextMenuController::selectOption(const QString& option)
 
     // perform LOS to each point geoElement found
     // follow the 1st point graphic (should be only 1)
-    auto losFunc = [lineOfSightTool](const QHash<QString, QList<GeoElement*>>& geoElementsByTitle)
+    auto losFunc = [lineOfSightTool](const QMultiHash<QString, QList<GeoElement*>>& geoElementsByTitle)
     {
       for(auto gIt = geoElementsByTitle.cbegin(); gIt != geoElementsByTitle.cend(); ++gIt)
       {

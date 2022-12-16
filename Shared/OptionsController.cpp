@@ -27,16 +27,16 @@
 #include "MessageFeedListModel.h"
 #include "MessageFeedsController.h"
 #include "MessagesOverlay.h"
-
 #include "ToolManager.h"
-#include "ToolResourceProvider.h"
 
 // toolkit headers
-#include "Esri/ArcGISRuntime/Toolkit/CoordinateConversionConstants.h"
+#include "CoordinateConversionConstants.h"
 
 // C++ API headers
 #include "DictionaryRenderer.h"
+#include "DictionarySymbolStyle.h"
 #include "DictionarySymbolStyleConfiguration.h"
+#include "SymbolTypes.h"
 
 using namespace Esri::ArcGISRuntime;
 

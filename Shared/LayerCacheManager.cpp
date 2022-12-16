@@ -41,11 +41,15 @@
 #include "GeoPackageRaster.h"
 #include "Geodatabase.h"
 #include "GeodatabaseFeatureTable.h"
+#include "KmlDataset.h"
 #include "KmlLayer.h"
+#include "LayerListModel.h"
 #include "Raster.h"
 #include "RasterLayer.h"
 #include "Scene.h"
 #include "ShapefileFeatureTable.h"
+#include "TileCache.h"
+#include "VectorTileCache.h"
 
 // Qt headers
 #include <QDir>

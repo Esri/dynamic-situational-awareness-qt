@@ -20,10 +20,8 @@
 // dsa app headers
 #include "Viewshed360.h"
 
-namespace Esri {
-  namespace ArcGISRuntime {
+namespace Esri::ArcGISRuntime {
     class GeoElement;
-  }
 }
 
 namespace Dsa {

@@ -23,7 +23,10 @@
 #include "ToolResourceProvider.h"
 
 // C++ API headers
+#include "Envelope.h"
+#include "Geometry.h"
 #include "GeometryEngine.h"
+#include "SpatialReference.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -70,7 +73,7 @@ LocationAlertTarget::~LocationAlertTarget()
  */
 QList<Geometry> LocationAlertTarget::targetGeometries(const Envelope& targetArea) const
 {
-  const Point projected = GeometryEngine::project(m_location, targetArea.spatialReference());
+  const Point projected = geometry_cast<Point>(GeometryEngine::project(m_location, targetArea.spatialReference()));
   if (GeometryEngine::instance()->contains(targetArea, projected))
     return QList<Geometry>{m_location};
 

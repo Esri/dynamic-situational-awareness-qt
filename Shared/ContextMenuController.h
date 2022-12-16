@@ -27,7 +27,7 @@
 // Qt headers
 #include <QMouseEvent>
 #include <QStringListModel>
-#include <QMultiHash>
+#include <QHash>
 
 namespace Esri {
 namespace ArcGISRuntime {
@@ -111,8 +111,8 @@ private:
   Esri::ArcGISRuntime::TaskWatcher m_identifyFeaturesTask;
   Esri::ArcGISRuntime::TaskWatcher m_identifyGraphicsTask;
   Esri::ArcGISRuntime::TaskWatcher m_screenToLocationTask;
-  QMultiHash<QString, QList<Esri::ArcGISRuntime::GeoElement*>> m_contextFeatures;
-  QMultiHash<QString, QList<Esri::ArcGISRuntime::GeoElement*>> m_contextGraphics;
+  QHash<QString, QList<Esri::ArcGISRuntime::GeoElement*>> m_contextFeatures;
+  QHash<QString, QList<Esri::ArcGISRuntime::GeoElement*>> m_contextGraphics;
 };
 
 } // Dsa

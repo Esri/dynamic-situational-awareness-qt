@@ -505,7 +505,7 @@ void ContextMenuController::selectOption(const QString& option)
       return;
 
     auto combinedGeoElementsByTitle = m_contextGraphics;
-    combinedGeoElementsByTitle.unite(m_contextFeatures);
+    combinedGeoElementsByTitle.insert(m_contextFeatures);
     identifyTool->showPopups(combinedGeoElementsByTitle);
   }
   else if (option == VIEWSHED_OPTION)
@@ -556,7 +556,7 @@ void ContextMenuController::selectOption(const QString& option)
 
     // perform LOS to each point geoElement found
     // follow the 1st point graphic (should be only 1)
-    auto losFunc = [lineOfSightTool](const QMultiHash<QString, QList<GeoElement*>>& geoElementsByTitle)
+    auto losFunc = [lineOfSightTool](const QHash<QString, QList<GeoElement*>>& geoElementsByTitle)
     {
       for(auto gIt = geoElementsByTitle.cbegin(); gIt != geoElementsByTitle.cend(); ++gIt)
       {

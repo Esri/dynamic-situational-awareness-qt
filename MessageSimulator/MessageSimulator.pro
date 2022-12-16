@@ -18,7 +18,7 @@ TARGET = DSA_MessageSimulator_Qt
 TEMPLATE = app
 
 QT += qml quick xml
-CONFIG += c++14
+CONFIG += c++17
 
 INCLUDEPATH += \
     $$PWD/../Shared/messages \
@@ -44,7 +44,7 @@ SOURCES += main.cpp \
 
 RESOURCES += qml/qml.qrc \
     Resources/application.qrc
-	
+
 #-------------------------------------------------------------------------------
 
 win32 {

@@ -14,8 +14,8 @@
  *  limitations under the License.
  ******************************************************************************/
 
-import QtQuick 2.7
-import QtQuick.Dialogs 1.2
+import QtQuick
+import Qt.labs.platform
 
 Item {
     id: root
@@ -23,7 +23,7 @@ Item {
 
     property var supportedExtensions: []
     property alias folder: fileDialog.folder
-    property alias fileUrl: fileDialog.fileUrl
+    property alias fileUrl: fileDialog.file
 
     function open() {
         fileDialog.open();

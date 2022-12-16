@@ -60,6 +60,7 @@ Item {
 
         clear();
     }
+
 // TODO LD: Find alternative
 //    Qt1.Calendar {
 //        id: calendar

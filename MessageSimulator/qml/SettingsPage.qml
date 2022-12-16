@@ -14,12 +14,13 @@
  *  limitations under the License.
  ******************************************************************************/
 
-import QtQuick.Controls 2.2
-import QtQuick.Controls.Material 2.2
-import QtQuick.Dialogs 1.0
-import QtQuick 2.7
-import QtQuick.Window 2.3
-import Esri.MessageSimulator 1.0
+import QtQuick.Controls
+import QtQuick.Controls.Material
+import QtQuick.Dialogs
+import QtQuick.Layouts
+import QtQuick
+import QtQuick.Window
+import Esri.MessageSimulator
 
 Rectangle {
     id: settingsPage
@@ -30,216 +31,160 @@ Rectangle {
 
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
 
-    Column {
+    ColumnLayout {
         spacing: 16
 
         Rectangle {
-            width: settingsPage.width
-            height: 50 * scaleFactor
+            Layout.preferredWidth: settingsPage.width
+            Layout.preferredHeight: 50 * scaleFactor
             color: "steelblue"
             radius: 4 * scaleFactor
 
-            Button {
-                id: chooseFileBtn
+            RowLayout {
+                spacing: 10
+                width: parent.width
 
-                anchors {
-                    top: parent.top
-                    left: parent.left
-                    margins: 8 * scaleFactor
+                Button {
+                    id: chooseFileBtn
+                    Layout.leftMargin: 5
+                    enabled: messageSimulatorController.simulationState === MessageSimulatorController.Stopped
+                    text: "message file"
+                    font.bold: true
+                    onClicked: loader.open();
                 }
 
-                enabled: messageSimulatorController.simulationState === MessageSimulatorController.Stopped
-                text: "message\nfile"
-                font.bold: true
-                width: 64 * scaleFactor
-                onClicked: loader.open();
-            }
 
-            TextField {
-                id: xmlFilePath
-                anchors {
-                    top: parent.top
-                    left: chooseFileBtn.right
-                    margins: 8 * scaleFactor
-                    right: parent.right
-                }
-                height: chooseFileBtn.height
+                TextField {
+                    id: xmlFilePath
+                    Layout.rightMargin: 5
+                    Layout.fillWidth: true
+                    placeholderText: "please choose a message file (.xml)"
+                    text: loader.fileUrl.toString() !== "" ? loader.fileUrl : messageSimulatorController.simulationFile
+                    readOnly: true
 
-                placeholderText: "please choose a message file (.xml)"
-                text: loader.fileUrl.toString() !== "" ? loader.fileUrl : messageSimulatorController.simulationFile
-                readOnly: true
-
-                validator: IntValidator{}
-            }
-
-        }
-
-        Rectangle {
-            width: settingsPage.width
-            height: 50 * scaleFactor
-            color: "steelblue"
-            radius: 4 * scaleFactor
-
-            Label {
-                id: portLabel
-                anchors {
-                    top: parent.top
-                    bottom: parent.bottom
-                    left: parent.left
-                    margins: 8 * scaleFactor
-                }
-                width: 64 * scaleFactor
-
-                text: "port\n(udp)"
-                font.bold: true
-                color: "white"
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-            }
-
-            TextField {
-                id: portEdit
-
-                anchors {
-                    top: parent.top
-                    left: portLabel.right
-                    margins: 8 * scaleFactor
-                    right: parent.right
-                }
-                enabled: messageSimulatorController.simulationState === MessageSimulatorController.Stopped
-                text: messageSimulatorController.port !== -1 ? messageSimulatorController.port : ""
-                placeholderText: "8888"
-                height: portLabel.height
-
-                validator: IntValidator { bottom:0; top: 65535}
-
-                onTextChanged: {
-                    messageSimulatorController.port = Number(text)
+                    validator: IntValidator{}
                 }
             }
         }
 
         Rectangle {
-            width: settingsPage.width
-            height: 50 * scaleFactor
+            Layout.preferredWidth: settingsPage.width
+            Layout.preferredHeight: 50 * scaleFactor
             color: "steelblue"
             radius: 4 * scaleFactor
 
-            Slider {
-                id: speedSlider
-                anchors {
-                    left: parent.left
-                    right: speedLabel.left
-                    verticalCenter: parent.verticalCenter
-                    margins: 30 * scaleFactor
-                }
-                enabled: messageSimulatorController.simulationState !== MessageSimulatorController.Running
-                orientation: Qt.Horizontal
-                from: 1
-                to: 500
-                value: messageSimulatorController.messageFrequency
-                stepSize: 1
-                snapMode: Slider.SnapAlways
+            RowLayout {
+                spacing: 10
+                width: parent.width
 
-                onValueChanged: {
-                    messageSimulatorController.messageFrequency = value;
-                }
-            }
-
-            Label {
-                id: speedLabel
-
-                anchors {
-                    right: messagesSpeedOptions.left
-                    verticalCenter: parent.verticalCenter
-                    margins: 8 * scaleFactor
-                }
-                width: 48 * scaleFactor
-
-                font.bold: true
-                color: "white"
-                text: speedSlider.value.toFixed(0) + (speedSlider.value.toFixed(0) > 1 ? qsTr(" messages per") : qsTr(" message per"))
-                horizontalAlignment: Text.AlignRight
-                verticalAlignment: Text.AlignVCenter
-            }
-
-            ComboBox {
-                id: messagesSpeedOptions
-                anchors {
-                    right: parent.right
-                    verticalCenter: parent.verticalCenter
-                    margins: 8 * scaleFactor
-                }
-                height: 30 * scaleFactor
-                width: 100 * scaleFactor
-                enabled: messageSimulatorController.simulationState !== MessageSimulatorController.Running
-
-                onCurrentTextChanged: {
-                    var timeUnit = messageSimulatorController.toTimeUnit(currentText);
-                    messageSimulatorController.timeUnit = timeUnit;
+                Label {
+                    id: portLabel
+                    Layout.leftMargin: 5
+                    text: "UDP Port #"
+                    font.bold: true
+                    color: "white"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
                 }
 
-                Component.onCompleted: {
-                    var timeUnit = messageSimulatorController.timeUnit;
-                    model = [qsTr("second"), qsTr("minute"), qsTr("hour")];
+                TextField {
+                    id: portEdit
+                    Layout.rightMargin: 5
+                    Layout.fillWidth: true
+                    enabled: messageSimulatorController.simulationState === MessageSimulatorController.Stopped
+                    text: messageSimulatorController.port !== -1 ? messageSimulatorController.port : ""
+                    placeholderText: "8888"
+                    height: portLabel.height
 
-                    switch(timeUnit)
-                    {
-                    case MessageSimulatorController.Seconds:
-                        currentIndex = 0;
-                        break;
-                    case MessageSimulatorController.Minutes:
-                        currentIndex = 1;
-                        break;
-                    case MessageSimulatorController.Hours:
-                        currentIndex = 2;
-                        break;
-                    default:
-                        currentIndex = 0;
-                        break;
+                    validator: IntValidator { bottom:0; top: 65535}
+
+                    onTextChanged: {
+                        messageSimulatorController.port = Number(text)
                     }
                 }
             }
         }
 
         Rectangle {
-            width: settingsPage.width
-            height: 50 * scaleFactor
+            Layout.preferredWidth: settingsPage.width
+            Layout.preferredHeight: 50 * scaleFactor
             color: "steelblue"
             radius: 4 * scaleFactor
 
-            Label {
-                id: loopLabel
-                anchors {
-                    top: parent.top
-                    bottom: parent.bottom
-                    left: parent.left
-                    margins: 8 * scaleFactor
-                }
-                width: 64 * scaleFactor
+            RowLayout {
+                spacing: 10
+                width: parent.width
 
-                text: "loop"
-                font.bold: true
-                color: "white"
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
+                Slider {
+                    id: speedSlider
+                    Layout.leftMargin: 5
+                   // Layout.preferredWidth: 200
+                    enabled: messageSimulatorController.simulationState !== MessageSimulatorController.Running
+                    orientation: Qt.Horizontal
+                    from: 1
+                    to: 500
+                    value: messageSimulatorController.messageFrequency
+                    stepSize: 1
+                    snapMode: Slider.SnapAlways
+
+                    onValueChanged: {
+                        messageSimulatorController.messageFrequency = value;
+                    }
+                }
+
+                Label {
+                    id: speedLabel
+                   // Layout.preferredWidth: 48
+                    font.bold: true
+                    color: "white"
+                    text: speedSlider.value.toFixed(0) + (speedSlider.value.toFixed(0) > 1 ? qsTr(" messages per") : qsTr(" message per"))
+                    horizontalAlignment: Text.AlignRight
+                    verticalAlignment: Text.AlignVCenter
+                }
+
+                ComboBox {
+                    id: messagesSpeedOptions
+                    Layout.fillWidth: true
+                    Layout.rightMargin: 5
+                    Layout.preferredWidth: 48
+                    enabled: messageSimulatorController.simulationState !== MessageSimulatorController.Running
+
+                    onCurrentTextChanged: {
+                        var timeUnit = messageSimulatorController.toTimeUnit(currentText);
+                        messageSimulatorController.timeUnit = timeUnit;
+                    }
+
+                    Component.onCompleted: {
+                        var timeUnit = messageSimulatorController.timeUnit;
+                        model = [qsTr("second"), qsTr("minute"), qsTr("hour")];
+
+                        switch(timeUnit)
+                        {
+                        case MessageSimulatorController.Seconds:
+                            currentIndex = 0;
+                            break;
+                        case MessageSimulatorController.Minutes:
+                            currentIndex = 1;
+                            break;
+                        case MessageSimulatorController.Hours:
+                            currentIndex = 2;
+                            break;
+                        default:
+                            currentIndex = 0;
+                            break;
+                        }
+                    }
+                }
             }
+        }
 
-            CheckBox {
-                id: loopCheckBox
-                anchors {
-                    top: parent.top
-                    bottom: parent.bottom
-                    left: loopLabel.right
-                    margins: 8 * scaleFactor
-                }
-
-                font.bold: true
-                checked: messageSimulatorController.simulationLooped
-
-                onCheckedChanged: {
-                    messageSimulatorController.simulationLooped = checked;
-                }
+        CheckBox {
+            id: loopCheckBox
+            text: "Loop"
+            font.bold: true
+            checked: messageSimulatorController.simulationLooped
+            onCheckedChanged: {
+                messageSimulatorController.simulationLooped = checked;
             }
         }
     }

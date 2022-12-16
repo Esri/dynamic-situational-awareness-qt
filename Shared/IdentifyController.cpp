@@ -162,7 +162,7 @@ void IdentifyController::showPopup(GeoElement* geoElement, const QString& popupT
   A popup will be created for each \l Esri::ArcGISRuntime::GeoElement in the QHash,
   with the string key as the title.
  */
-void IdentifyController::showPopups(const QMultiHash<QString, QList<GeoElement*>>& geoElementsByTitle)
+void IdentifyController::showPopups(const QHash<QString, QList<GeoElement*>>& geoElementsByTitle)
 {
   if (geoElementsByTitle.isEmpty())
     return;

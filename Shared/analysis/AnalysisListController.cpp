@@ -142,7 +142,7 @@ void AnalysisListController::onGeoViewChanged(GeoView* geoView)
   };
 
   // react to changes in the sceneView's analysis overlays list
-  connect(m_sceneView->analysisOverlays(), &AnalysisOverlayListModel::analysisOverlayAdded, this, handleAnalysisOverlaysChanged);
+  connect(m_sceneView->analysisOverlays(), &AnalysisOverlayListModel::itemAdded, this, handleAnalysisOverlaysChanged);
   handleAnalysisOverlaysChanged();
 }
 

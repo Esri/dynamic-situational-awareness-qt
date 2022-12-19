@@ -499,7 +499,7 @@ void ContextMenuController::selectOption(const QString& option)
       return;
 
     auto combinedGeoElementsByTitle = m_contextGraphics;
-    combinedGeoElementsByTitle.unite(m_contextFeatures);
+    combinedGeoElementsByTitle.insert(m_contextFeatures);
     identifyTool->showPopups(combinedGeoElementsByTitle);
   }
   else if (option == VIEWSHED_OPTION)

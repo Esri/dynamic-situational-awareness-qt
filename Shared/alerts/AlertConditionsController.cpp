@@ -548,15 +548,15 @@ void AlertConditionsController::onGeoviewChanged()
   LayerListModel* operationalLayers = ToolResourceProvider::instance()->operationalLayers();
   if (operationalLayers)
   {
-    connect(operationalLayers, &LayerListModel::layerAdded, this, &AlertConditionsController::onLayersChanged);
-    connect(operationalLayers, &LayerListModel::layerRemoved, this, &AlertConditionsController::onLayersChanged);
+    connect(operationalLayers, &LayerListModel::itemAdded, this, &AlertConditionsController::onLayersChanged);
+    connect(operationalLayers, &LayerListModel::itemRemoved, this, &AlertConditionsController::onLayersChanged);
   }
 
   GraphicsOverlayListModel* graphicsOverlays = geoView->graphicsOverlays();
   if (graphicsOverlays)
   {
-    connect(graphicsOverlays, &GraphicsOverlayListModel::graphicsOverlayAdded, this, &AlertConditionsController::onLayersChanged);
-    connect(graphicsOverlays, &GraphicsOverlayListModel::graphicsOverlayRemoved, this, &AlertConditionsController::onLayersChanged);
+    connect(graphicsOverlays, &GraphicsOverlayListModel::itemAdded, this, &AlertConditionsController::onLayersChanged);
+    connect(graphicsOverlays, &GraphicsOverlayListModel::itemRemoved, this, &AlertConditionsController::onLayersChanged);
   }
 
   onLayersChanged();

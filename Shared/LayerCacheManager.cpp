@@ -402,8 +402,8 @@ void LayerCacheManager::connectSignals()
 
   // connect signals
   m_dataChangedConnection = connect(m_scene->operationalLayers(), &LayerListModel::dataChanged, this, &LayerCacheManager::onLayerListChanged); // layer objects have been added or changed
-  m_layerAddedConnection = connect(m_scene->operationalLayers(), &LayerListModel::layerAdded, this, &LayerCacheManager::onLayerListChanged); // layer objects have been added
-  m_layerRemovedConnection = connect(m_scene->operationalLayers(), &LayerListModel::layerRemoved, this, &LayerCacheManager::onLayerListChanged); // layer has been removed
+  m_layerAddedConnection = connect(m_scene->operationalLayers(), &LayerListModel::itemAdded, this, &LayerCacheManager::onLayerListChanged); // layer objects have been added
+  m_layerRemovedConnection = connect(m_scene->operationalLayers(), &LayerListModel::itemRemoved, this, &LayerCacheManager::onLayerListChanged); // layer has been removed
   m_layoutChangedConnection = connect(m_scene->operationalLayers(), &LayerListModel::layoutChanged, this, &LayerCacheManager::onLayerListChanged); // order changed
   m_modelResetConnection = connect(m_scene->operationalLayers(), &LayerListModel::modelReset, this, &LayerCacheManager::onLayerListChanged); // order changed
 

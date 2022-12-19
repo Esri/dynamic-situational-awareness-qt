@@ -120,7 +120,7 @@ void CombinedAnalysisListModel::setLineOfSightModel(AnalysisListModel* lineOfSig
   m_lineOfSightModel = lineOfSightModel;
 
   // persist a unique index for each Line of sight as they are added - to be used to construct a name
-  connect(m_lineOfSightModel, &AnalysisListModel::analysisAdded, this, [this](int index)
+  connect(m_lineOfSightModel, &AnalysisListModel::itemAdded, this, [this](int index)
   {
     Analysis* addedAnalysis = m_lineOfSightModel->at(index);
     if (addedAnalysis)

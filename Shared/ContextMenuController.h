@@ -27,6 +27,7 @@
 // Qt headers
 #include <QMouseEvent>
 #include <QStringListModel>
+#include <QHash>
 
 namespace Esri {
 namespace ArcGISRuntime {

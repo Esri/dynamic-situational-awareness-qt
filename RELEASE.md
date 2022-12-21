@@ -1,6 +1,6 @@
 # Release notes
 
-## 1.2.0
+## 2.0.0
 
 - Ports DSA from ArcGIS Runtime SDK for Qt 100.x to ArcGIS Maps SDK for Qt 200.0.
 - Minimum Qt SDK version is Qt 6.2.4

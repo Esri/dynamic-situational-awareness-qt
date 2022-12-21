@@ -26,10 +26,10 @@
 #include <memory>
 
 namespace Esri::ArcGISRuntime {
-class Envelope;
-class GeoElement;
-class Geometry;
-class Point;
+  class Envelope;
+  class GeoElement;
+  class Geometry;
+  class Point;
 }
 
 namespace Dsa {

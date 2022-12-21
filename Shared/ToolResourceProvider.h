@@ -25,14 +25,14 @@
 #include <QCursor>
 
 namespace Esri::ArcGISRuntime {
-class Basemap;
-class GeoView;
-class IdentifyGraphicsOverlayResult;
-class IdentifyLayerResult;
-class Map;
-class LayerListModel;
-class Scene;
-class SpatialReference;
+  class Basemap;
+  class GeoView;
+  class IdentifyGraphicsOverlayResult;
+  class IdentifyLayerResult;
+  class Map;
+  class LayerListModel;
+  class Scene;
+  class SpatialReference;
 }
 
 Q_MOC_INCLUDE("IdentifyGraphicsOverlayResult.h")

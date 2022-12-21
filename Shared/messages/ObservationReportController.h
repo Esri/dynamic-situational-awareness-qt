@@ -23,11 +23,9 @@
 class QDateTime;
 class QMouseEvent;
 
-namespace Esri {
-namespace ArcGISRuntime {
+namespace Esri::ArcGISRuntime {
   class GeoView;
   class Point;
-}
 }
 
 namespace Dsa {

@@ -697,8 +697,8 @@ void AlertConditionsController::onMouseClicked(QMouseEvent &event)
   if (!geoView)
     return;
 
-  m_identifyLayersWatcher = geoView->identifyLayers(event.pos().x(), event.pos().y(), m_tolerance, false);
-  m_identifyGraphicsWatcher = geoView->identifyGraphicsOverlays(event.pos().x(), event.pos().y(), m_tolerance, false);
+  m_identifyLayersWatcher = geoView->identifyLayers(event.position().x(), event.position().y(), m_tolerance, false);
+  m_identifyGraphicsWatcher = geoView->identifyGraphicsOverlays(event.position().x(), event.position().y(), m_tolerance, false);
 
   event.accept();
 }

@@ -25,11 +25,11 @@
 #include <QObject>
 
 namespace Esri::ArcGISRuntime {
-class GeoElement;
-class IdentifyGraphicsOverlayResult;
-class IdentifyLayerResult;
-class PopupManager;
-class TaskWatcher;
+  class GeoElement;
+  class IdentifyGraphicsOverlayResult;
+  class IdentifyLayerResult;
+  class PopupManager;
+  class TaskWatcher;
 }
 
 Q_MOC_INCLUDE("IdentifyGraphicsOverlayResult.h")

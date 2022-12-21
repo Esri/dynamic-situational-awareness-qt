@@ -18,7 +18,7 @@
 #define VIEWSHEDLISTMODEL_H
 
 namespace Esri::ArcGISRuntime {
-    class AnalysisOverlay;
+  class AnalysisOverlay;
 }
 
 class QAbstractListModel;

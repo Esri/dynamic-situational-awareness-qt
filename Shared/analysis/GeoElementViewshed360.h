@@ -21,7 +21,7 @@
 #include "Viewshed360.h"
 
 namespace Esri::ArcGISRuntime {
-    class GeoElement;
+  class GeoElement;
 }
 
 namespace Dsa {

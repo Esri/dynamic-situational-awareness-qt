@@ -204,8 +204,8 @@ void IdentifyController::onMouseClicked(QMouseEvent& event)
   // start new identifyLayers and identifyGraphicsOverlays tasks at the x and y position of the event and using the
   // specifed tolerance (m_tolerance) to determine how accurate a hit-test to perform.
   // create a TaskWatcher to store the progress/state of the task.
-  m_layersWatcher = geoView->identifyLayers(event.pos().x(), event.pos().y(), m_tolerance, false);
-  m_graphicsOverlaysWatcher = geoView->identifyGraphicsOverlays(event.pos().x(), event.pos().y(), m_tolerance, false);
+  m_layersWatcher = geoView->identifyLayers(event.position().x(), event.position().y(), m_tolerance, false);
+  m_graphicsOverlaysWatcher = geoView->identifyGraphicsOverlays(event.position().x(), event.position().y(), m_tolerance, false);
   emit busyChanged();
 
   m_popupManagers.clear();

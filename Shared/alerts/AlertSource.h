@@ -18,7 +18,7 @@
 #define ALERTSOURCE_H
 
 namespace Esri::ArcGISRuntime {
-class Point;
+  class Point;
 }
 
 // Qt headers

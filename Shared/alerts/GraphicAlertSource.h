@@ -21,7 +21,7 @@
 #include "AlertSource.h"
 
 namespace Esri::ArcGISRuntime {
-class Graphic;
+  class Graphic;
 }
 
 namespace Dsa {

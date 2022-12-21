@@ -23,12 +23,10 @@
 // Qt headers
 #include <QAbstractListModel>
 
-namespace Esri {
-namespace ArcGISRuntime
-{
+namespace Esri::ArcGISRuntime {
   class GraphicsOverlay;
   class SimpleMarkerSceneSymbol;
-}}
+}
 
 namespace Dsa {
 

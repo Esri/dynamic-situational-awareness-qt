@@ -21,9 +21,9 @@
 #include "Viewshed360.h"
 
 namespace Esri::ArcGISRuntime {
-    class Point;
-    class GraphicsOverlay;
-    class Graphic;
+  class Point;
+  class GraphicsOverlay;
+  class Graphic;
 }
 
 namespace Dsa {

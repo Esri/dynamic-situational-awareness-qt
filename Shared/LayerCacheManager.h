@@ -24,8 +24,8 @@
 #include <QJsonArray>
 
 namespace Esri::ArcGISRuntime {
-class Layer;
-class Scene;
+  class Layer;
+  class Scene;
 }
 
 namespace Dsa {

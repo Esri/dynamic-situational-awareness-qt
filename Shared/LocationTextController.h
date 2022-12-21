@@ -21,8 +21,8 @@
 #include "AbstractTool.h"
 
 namespace Esri::ArcGISRuntime {
-class Point;
-class Surface;
+  class Point;
+  class Surface;
 }
 
 namespace Dsa {

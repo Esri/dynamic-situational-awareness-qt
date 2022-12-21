@@ -18,7 +18,7 @@
 #define UTILITY_H
 
 namespace Esri::ArcGISRuntime {
-class Point;
+  class Point;
 }
 
 // Qt headers

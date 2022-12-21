@@ -25,12 +25,10 @@
 
 class QAbstractListModel;
 
-namespace Esri {
-  namespace ArcGISRuntime {
-    class GeoView;
-    class Renderer;
-    enum class SurfacePlacement;
-  }
+namespace Esri::ArcGISRuntime {
+  class GeoView;
+  class Renderer;
+  enum class SurfacePlacement;
 }
 
 namespace Dsa {

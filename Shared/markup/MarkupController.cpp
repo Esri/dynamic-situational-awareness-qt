@@ -257,7 +257,7 @@ void MarkupController::init()
       return;
 
     if (!m_isDrawing)
-      m_geoView->identifyGraphicsOverlay(m_sketchOverlay, mouseEvent.pos().x(), mouseEvent.pos().y(), m_is3d ? 100 : 20, false, 1);
+      m_geoView->identifyGraphicsOverlay(m_sketchOverlay, mouseEvent.position().x(), mouseEvent.position().y(), m_is3d ? 100 : 20, false, 1);
   });
 
   connect(ToolResourceProvider::instance(), &ToolResourceProvider::mousePressed, this, [this](QMouseEvent& mouseEvent)
@@ -283,7 +283,7 @@ void MarkupController::init()
     m_sketchOverlay->graphics()->append(partGraphic);
     m_currentPartIndex = addPart();
 
-    Point pressedPoint(normalizedPoint(mouseEvent.pos().x(), mouseEvent.pos().y()));
+    Point pressedPoint(normalizedPoint(mouseEvent.position().x(), mouseEvent.position().y()));
     if (m_sketchOverlay->sceneProperties().surfacePlacement() == SurfacePlacement::Relative)
       pressedPoint = Point(pressedPoint.x(), pressedPoint.y(), m_drawingAltitude);
 
@@ -303,7 +303,7 @@ void MarkupController::init()
 
     mouseEvent.accept();
 
-    Point movedPoint(normalizedPoint(mouseEvent.pos().x(), mouseEvent.pos().y()));
+    Point movedPoint(normalizedPoint(mouseEvent.position().x(), mouseEvent.position().y()));
     if (m_sketchOverlay->sceneProperties().surfacePlacement() == SurfacePlacement::Relative)
       movedPoint = Point(movedPoint.x(), movedPoint.y(), m_drawingAltitude);
 
@@ -317,7 +317,7 @@ void MarkupController::init()
 
     mouseEvent.accept();
 
-    Point releasedPoint(normalizedPoint(mouseEvent.pos().x(), mouseEvent.pos().y()));
+    Point releasedPoint(normalizedPoint(mouseEvent.position().x(), mouseEvent.position().y()));
     if (m_sketchOverlay->sceneProperties().surfacePlacement() == SurfacePlacement::Relative)
       releasedPoint = Point(releasedPoint.x(), releasedPoint.y(), m_drawingAltitude);
 

@@ -24,13 +24,13 @@ class QAbstractListModel;
 class QMouseEvent;
 
 namespace Esri::ArcGISRuntime {
-    class SceneView;
-    class AnalysisOverlay;
-    class GeoElement;
-    class GlobeCameraController;
-    class GraphicsOverlay;
-    class OrbitLocationCameraController;
-    class TaskWatcher;
+  class SceneView;
+  class AnalysisOverlay;
+  class GeoElement;
+  class GlobeCameraController;
+  class GraphicsOverlay;
+  class OrbitLocationCameraController;
+  class TaskWatcher;
 }
 
 namespace Dsa {

@@ -25,10 +25,10 @@
 #include <QHash>
 
 namespace Esri::ArcGISRuntime {
-class FeatureCollection;
-class GraphicsOverlay;
-class SimpleLineSymbol;
-class Feature;
+  class FeatureCollection;
+  class GraphicsOverlay;
+  class SimpleLineSymbol;
+  class Feature;
 }
 
 namespace Dsa {

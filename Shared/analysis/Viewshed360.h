@@ -22,8 +22,8 @@
 #include <QPointer>
 
 namespace Esri::ArcGISRuntime {
-    class Viewshed;
-    class AnalysisOverlay;
+  class AnalysisOverlay;
+  class Viewshed;
 }
 
 namespace Dsa {

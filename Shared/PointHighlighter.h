@@ -21,9 +21,9 @@
 #include <QObject>
 
 namespace Esri::ArcGISRuntime {
-class GraphicsOverlay;
-class Point;
-class SimpleMarkerSceneSymbol;
+  class GraphicsOverlay;
+  class Point;
+  class SimpleMarkerSceneSymbol;
 }
 
 class QTimer;

@@ -21,7 +21,7 @@
 #include "Message.h"
 
 namespace Esri::ArcGISRuntime {
-class Point;
+  class Point;
 }
 
 // Qt headers

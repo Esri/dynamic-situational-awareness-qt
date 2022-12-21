@@ -24,14 +24,14 @@
 #include <QList>
 
 namespace Esri::ArcGISRuntime {
-    class GeoView;
-    class GraphicsOverlay;
-    class GeometryBuilder;
-    class Graphic;
-    class Symbol;
-    class Geometry;
-    enum class GeometryTypes;
-    class Point;
+  class GeoView;
+  class GraphicsOverlay;
+  class GeometryBuilder;
+  class Graphic;
+  class Symbol;
+  class Geometry;
+  enum class GeometryTypes;
+  class Point;
 }
 
 namespace Dsa {

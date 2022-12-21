@@ -24,7 +24,7 @@
 #include <QObject>
 
 namespace Esri::ArcGISRuntime {
-class DictionaryRenderer;
+  class DictionaryRenderer;
 }
 
 namespace Dsa {

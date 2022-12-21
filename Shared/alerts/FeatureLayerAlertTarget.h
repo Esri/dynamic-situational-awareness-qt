@@ -21,9 +21,9 @@
 #include <QUuid>
 
 namespace Esri::ArcGISRuntime {
-class Feature;
-class FeatureLayer;
-class FeatureQueryResult;
+  class Feature;
+  class FeatureLayer;
+  class FeatureQueryResult;
 }
 
 namespace Dsa {

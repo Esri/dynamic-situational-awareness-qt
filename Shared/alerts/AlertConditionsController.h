@@ -28,12 +28,12 @@
 class QMouseEvent;
 
 namespace Esri::ArcGISRuntime {
-class IdentifyLayerResult;
-class IdentifyGraphicsOverlayResult;
-class FeatureLayer;
-class FeatureTable;
-class GraphicsOverlay;
-class TaskWatcher;
+  class IdentifyLayerResult;
+  class IdentifyGraphicsOverlayResult;
+  class FeatureLayer;
+  class FeatureTable;
+  class GraphicsOverlay;
+  class TaskWatcher;
 }
 
 Q_MOC_INCLUDE("IdentifyGraphicsOverlayResult.h")

@@ -21,8 +21,8 @@
 #include "AlertTarget.h"
 
 namespace Esri::ArcGISRuntime {
-class Graphic;
-class GraphicsOverlay;
+  class Graphic;
+  class GraphicsOverlay;
 }
 
 namespace Dsa {

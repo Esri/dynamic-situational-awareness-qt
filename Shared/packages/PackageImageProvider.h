@@ -29,7 +29,6 @@ namespace Dsa {
 class OpenMobileScenePackageController;
 
 class PackageImageProvider : public QQuickImageProvider
-
 {
 public:
 

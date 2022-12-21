@@ -174,7 +174,7 @@ void ViewshedController::onMouseClicked(QMouseEvent& event)
   {
   case AddLocationViewshed360:
   {
-    const Point pt = m_sceneView->screenToBaseSurface(event.pos().x(), event.pos().y());
+    const Point pt = m_sceneView->screenToBaseSurface(event.position().x(), event.position().y());
     addLocationViewshed360(pt);
     break;
   }
@@ -208,7 +208,7 @@ void ViewshedController::onMouseClicked(QMouseEvent& event)
     }
 
     // start an identify graphics overlays task at the clicked position.
-    m_identifyTaskWatcher = m_sceneView->identifyGraphicsOverlays(event.pos().x(), event.pos().y(), c_defaultIdentifyTolerance, false, 1);
+    m_identifyTaskWatcher = m_sceneView->identifyGraphicsOverlays(event.position().x(), event.position().y(), c_defaultIdentifyTolerance, false, 1);
     break;
   }
   default:
@@ -238,7 +238,7 @@ void ViewshedController::onMouseMoved(QMouseEvent& event)
   if (!locViewshed)
     return;
 
-  const Point point = m_sceneView->screenToBaseSurface(event.pos().x(), event.pos().y());
+  const Point point = m_sceneView->screenToBaseSurface(event.position().x(), event.position().y());
   locViewshed->setPoint(point);
 
   event.accept();

@@ -18,7 +18,7 @@
 #define GEOELEMENTALERTTARGET_H
 
 namespace Esri::ArcGISRuntime {
-class GeoElement;
+  class GeoElement;
 }
 
 namespace Dsa {

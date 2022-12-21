@@ -21,7 +21,7 @@
 #include <QQuickItem>
 
 namespace Esri::ArcGISRuntime {
-class SceneQuickView;
+  class SceneQuickView;
 }
 
 namespace Dsa {

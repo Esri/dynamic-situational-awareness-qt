@@ -30,8 +30,8 @@
 class QImage;
 
 namespace Esri::ArcGISRuntime {
-class MobileScenePackage;
-class Scene;
+  class MobileScenePackage;
+  class Scene;
 }
 
 namespace Dsa {

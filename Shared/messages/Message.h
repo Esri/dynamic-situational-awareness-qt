@@ -18,7 +18,7 @@
 #define MESSAGE_H
 
 namespace Esri::ArcGISRuntime {
-class Geometry;
+  class Geometry;
 }
 
 // Qt headers

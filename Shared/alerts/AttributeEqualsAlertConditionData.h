@@ -21,8 +21,8 @@
 #include "AlertConditionData.h"
 
 namespace Esri::ArcGISRuntime {
-class GeoElement;
-class Graphic;
+  class GeoElement;
+  class Graphic;
 }
 
 namespace Dsa {

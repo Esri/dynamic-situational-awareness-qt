@@ -35,13 +35,21 @@
 #include "ToolResourceProvider.h"
 
 // C++ API headers
-#include "GeoElementViewshed.h"
+#include "AnalysisListModel.h"
+#include "AnalysisOverlay.h"
+#include "AnalysisOverlayListModel.h"
+#include "Camera.h"
 #include "GlobeCameraController.h"
-#include "LocationViewshed.h"
+#include "Graphic.h"
+#include "GraphicsOverlay.h"
+#include "GraphicsOverlayListModel.h"
+#include "IdentifyGraphicsOverlayResult.h"
 #include "OrbitLocationCameraController.h"
-#include "SceneQuickView.h"
+#include "RendererSceneProperties.h"
 #include "SimpleMarkerSceneSymbol.h"
 #include "SimpleRenderer.h"
+#include "SymbolTypes.h"
+#include "Viewshed.h"
 
 // STL headers
 #include <cmath>
@@ -166,7 +174,7 @@ void ViewshedController::onMouseClicked(QMouseEvent& event)
   {
   case AddLocationViewshed360:
   {
-    const Point pt = m_sceneView->screenToBaseSurface(event.x(), event.y());
+    const Point pt = m_sceneView->screenToBaseSurface(event.position().x(), event.position().y());
     addLocationViewshed360(pt);
     break;
   }
@@ -200,7 +208,7 @@ void ViewshedController::onMouseClicked(QMouseEvent& event)
     }
 
     // start an identify graphics overlays task at the clicked position.
-    m_identifyTaskWatcher = m_sceneView->identifyGraphicsOverlays(event.x(), event.y(), c_defaultIdentifyTolerance, false, 1);
+    m_identifyTaskWatcher = m_sceneView->identifyGraphicsOverlays(event.position().x(), event.position().y(), c_defaultIdentifyTolerance, false, 1);
     break;
   }
   default:
@@ -230,7 +238,7 @@ void ViewshedController::onMouseMoved(QMouseEvent& event)
   if (!locViewshed)
     return;
 
-  const Point point = m_sceneView->screenToBaseSurface(event.x(), event.y());
+  const Point point = m_sceneView->screenToBaseSurface(event.position().x(), event.position().y());
   locViewshed->setPoint(point);
 
   event.accept();

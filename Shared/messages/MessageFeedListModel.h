@@ -18,7 +18,7 @@
 #define MESSAGEFEEDLISTMODEL_H
 
 // Qt headers
-#include <QAbstractListModel>
+class QAbstractListModel;
 
 namespace Dsa {
 

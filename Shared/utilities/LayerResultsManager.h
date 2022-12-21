@@ -20,10 +20,8 @@
 // Qt headers
 #include <QList>
 
-namespace Esri {
-namespace ArcGISRuntime {
+namespace Esri::ArcGISRuntime {
   class IdentifyLayerResult;
-}
 }
 
 namespace Dsa {

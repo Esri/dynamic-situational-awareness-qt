@@ -35,8 +35,14 @@
 #include "ToolResourceProvider.h"
 
 // Toolkit headers
-#include "Esri/ArcGISRuntime/Toolkit/CoordinateConversionController.h"
+#include "CoordinateConversionController.h"
+
 // C++ API headers
+#include "Graphic.h"
+#include "GraphicsOverlay.h"
+#include "IdentifyGraphicsOverlayResult.h"
+#include "IdentifyLayerResult.h"
+#include "LayerContent.h"
 #include "MapView.h"
 #include "SceneView.h"
 

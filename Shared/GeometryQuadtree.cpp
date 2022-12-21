@@ -26,6 +26,7 @@
 #include "GeoElement.h"
 #include "GeometryEngine.h"
 #include "Point.h"
+#include "SpatialReference.h"
 
 // Qt headers
 #include <QSet>
@@ -138,7 +139,7 @@ QList<Geometry> GeometryQuadtree::candidateIntersections(const Geometry& geometr
 QList<Geometry> GeometryQuadtree::candidateIntersections(const Envelope& extent) const
 {
   // ensure the extent is in WGS84
-  const Envelope wgs84 = GeometryEngine::project(extent, SpatialReference::wgs84());
+  const Envelope wgs84 = geometry_cast<Envelope>(GeometryEngine::project(extent, SpatialReference::wgs84()));
 
   // obtain the indices of Geometry objects from quadtree nodes which intersect the extent
   QSet<int> geomIds = m_tree->intersectingIds(wgs84);
@@ -169,7 +170,7 @@ QList<Geometry> GeometryQuadtree::candidateIntersections(const Envelope& extent)
 QList<Geometry> GeometryQuadtree::candidateIntersections(const Point& location) const
 {
   // ensure the extent is in WGS84
-  const Point wgs84 = GeometryEngine::project(location, SpatialReference::wgs84());
+  const Point wgs84 = geometry_cast<Point>(GeometryEngine::project(location, SpatialReference::wgs84()));
 
   // obtain the indices of Geometry objects from quadtree nodes which contain the location
   QSet<int> geomIds = m_tree->intersectingIds(wgs84);
@@ -197,7 +198,7 @@ QList<Geometry> GeometryQuadtree::candidateIntersections(const Point& location) 
 void GeometryQuadtree::buildTree(const Envelope& extent)
 {
   // ensure the tree's extent is in WGS84
-  const Envelope extentWgs84 = GeometryEngine::project(extent, SpatialReference::wgs84());
+  const Envelope extentWgs84 = geometry_cast<Envelope>(GeometryEngine::project(extent, SpatialReference::wgs84()));
 
   // build the (currently empty) tree to the desired depth
   m_tree.reset(new QuadTree(0, extentWgs84.xMin(), extentWgs84.xMax(), extentWgs84.yMin(), extentWgs84.yMax()));
@@ -260,7 +261,7 @@ void GeometryQuadtree::handleGeometryChange(int changedId)
       allGeom.append(GeometryEngine::project(element->geoElement()->geometry(), SpatialReference::wgs84()));
     }
 
-    const Geometry newExtent = GeometryEngine::combineExtents(allGeom);
+    const Envelope newExtent = GeometryEngine::combineExtents(allGeom);
     buildTree(newExtent);
   }
 }

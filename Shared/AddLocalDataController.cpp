@@ -35,9 +35,8 @@
 #include "ArcGISTiledLayer.h"
 #include "ArcGISVectorTiledLayer.h"
 #include "ElevationSource.h"
-#include "FeatureCollection.h"
-#include "FeatureCollectionLayer.h"
-#include "FeatureCollectionTable.h"
+#include "ElevationSourceListModel.h"
+#include "Error.h"
 #include "FeatureLayer.h"
 #include "GeoPackage.h"
 #include "GeoPackageFeatureTable.h"
@@ -47,12 +46,18 @@
 #include "KmlDataset.h"
 #include "KmlLayer.h"
 #include "LayerListModel.h"
+#include "LayerSceneProperties.h"
 #include "Raster.h"
 #include "RasterElevationSource.h"
 #include "RasterLayer.h"
 #include "Scene.h"
+#include "SceneViewTypes.h"
+#include "ServiceTypes.h"
 #include "ShapefileFeatureTable.h"
+#include "Surface.h"
 #include "TileCache.h"
+#include "TileInfo.h"
+#include "VectorTileCache.h"
 
 // Qt headers
 #include <QDir>
@@ -809,7 +814,7 @@ void AddLocalDataController::createTiledLayer(const QString& path, int layerInde
     if (operationalLayers)
       operationalLayers->append(vectorTiledLayer);
 
-    emit layerSelected(vectorTiledLayer);    
+    emit layerSelected(vectorTiledLayer);
   }
   else
   {
@@ -842,7 +847,7 @@ void AddLocalDataController::createTiledLayer(const QString& path, int layerInde
     if (operationalLayers)
       operationalLayers->append(kmlLayer);
 
-    emit layerSelected(kmlLayer);    
+    emit layerSelected(kmlLayer);
   }
   else
   {

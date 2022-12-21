@@ -19,6 +19,10 @@
 
 #include "LocationAlertSource.h"
 
+// C++ API headers
+#include "Geometry.h"
+#include "SpatialReference.h"
+
 // toolkit headers
 #include "ToolResourceProvider.h"
 

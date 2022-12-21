@@ -22,7 +22,6 @@
 #include "AlertFilter.h"
 
 namespace Dsa {
-
 class AlertConditionData;
 
 class StatusAlertFilter : public AlertFilter

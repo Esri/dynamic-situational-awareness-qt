@@ -17,19 +17,18 @@
 #ifndef MESSAGEFEEDSCONTROLLER_H
 #define MESSAGEFEEDSCONTROLLER_H
 
-// toolkit headers
+// dsa headers
 #include "AbstractTool.h"
 
 // Qt headers
-#include <QAbstractListModel>
 #include <QVariantList>
 
-namespace Esri {
-  namespace ArcGISRuntime {
-    class GeoView;
-    class Renderer;
-    enum class SurfacePlacement;
-  }
+class QAbstractListModel;
+
+namespace Esri::ArcGISRuntime {
+  class GeoView;
+  class Renderer;
+  enum class SurfacePlacement;
 }
 
 namespace Dsa {

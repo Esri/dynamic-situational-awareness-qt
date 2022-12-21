@@ -29,11 +29,14 @@
 #include "ToolResourceProvider.h"
 
 // C++ API headers
+#include "Camera.h"
 #include "GraphicsOverlay.h"
+#include "GraphicsOverlayListModel.h"
 #include "ModelSceneSymbol.h"
 #include "Point.h"
 #include "SceneQuickView.h"
-#include "SimpleRenderer.h"
+#include "SpatialReference.h"
+#include "SymbolTypes.h"
 
 // Qt headers
 #include <QCompass>

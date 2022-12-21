@@ -367,13 +367,13 @@ void ObservationReportController::onMouseClicked(QMouseEvent& event)
   SceneView* sceneView = dynamic_cast<SceneView*>(m_geoView);
   if (sceneView)
   {
-    setControlPoint(sceneView->screenToBaseSurface(event.x(), event.y()));
+    setControlPoint(sceneView->screenToBaseSurface(event.position().x(), event.position().y()));
   }
   else
   {
     MapView* mapView = dynamic_cast<MapView*>(m_geoView);
     if (mapView)
-      setControlPoint(mapView->screenToLocation(event.x(), event.y()));
+      setControlPoint(mapView->screenToLocation(event.position().x(), event.position().y()));
     else
       return;
   }

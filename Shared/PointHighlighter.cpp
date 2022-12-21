@@ -27,8 +27,10 @@
 #include "Graphic.h"
 #include "GraphicListModel.h"
 #include "GraphicsOverlay.h"
+#include "GraphicsOverlayListModel.h"
 #include "Point.h"
 #include "SimpleMarkerSceneSymbol.h"
+#include "SymbolTypes.h"
 
 // Qt headers
 #include <QTimer>

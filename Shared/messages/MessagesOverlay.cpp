@@ -23,9 +23,17 @@
 #include "Message.h"
 
 // C++ API headers
+#include "AttributeListModel.h"
 #include "GeoView.h"
+#include "Graphic.h"
+#include "GraphicListModel.h"
 #include "GraphicsOverlay.h"
+#include "GraphicsOverlayListModel.h"
+#include "LayerSceneProperties.h"
+#include "MapTypes.h"
 #include "Renderer.h"
+#include "SceneViewTypes.h"
+#include "SymbolTypes.h"
 
 using namespace Esri::ArcGISRuntime;
 

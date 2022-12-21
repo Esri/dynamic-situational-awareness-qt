@@ -17,7 +17,7 @@
 #ifndef VIEWEDALERTSCONTROLLER_H
 #define VIEWEDALERTSCONTROLLER_H
 
-// toolkit headers
+// dsa headers
 #include "AbstractTool.h"
 
 // Qt headers

@@ -195,7 +195,7 @@ QVariant MobileScenePackagesListModel::data(const QModelIndex& index, int role) 
     return QVariant();
 
   auto it = m_packageDetails.constBegin();
-  it.operator +=(index.row());
+  std::advance(it, index.row());
 
   switch (role)
   {

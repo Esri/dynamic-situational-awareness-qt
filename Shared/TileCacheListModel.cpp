@@ -20,6 +20,7 @@
 #include "TileCacheListModel.h"
 
 // C++ API headers
+#include "MapTypes.h"
 #include "TileCache.h"
 
 // Qt headers

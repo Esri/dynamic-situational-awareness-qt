@@ -20,11 +20,9 @@
 // dsa app headers
 #include "AlertTarget.h"
 
-namespace Esri {
-namespace ArcGISRuntime {
-class Graphic;
-class GraphicsOverlay;
-}
+namespace Esri::ArcGISRuntime {
+  class Graphic;
+  class GraphicsOverlay;
 }
 
 namespace Dsa {

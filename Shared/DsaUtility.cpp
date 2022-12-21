@@ -19,6 +19,9 @@
 
 #include "DsaUtility.h"
 
+// C++ API headers
+#include "SpatialReference.h"
+
 // Qt headers
 #include <QDir>
 #include <QFileInfo>

@@ -65,7 +65,7 @@ GraphicAlertSource::~GraphicAlertSource()
 Point GraphicAlertSource::location() const
 {
   if (m_graphic->geometry().geometryType() == GeometryType::Point)
-    return m_graphic->geometry();
+    return geometry_cast<Point>(m_graphic->geometry());
   else
     return m_graphic->geometry().extent().center();
 }

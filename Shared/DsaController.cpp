@@ -22,7 +22,6 @@
 
 // dsa app headers
 #include "AlertConstants.h"
-#include "AlertLevel.h"
 #include "AppConstants.h"
 #include "BasemapPickerController.h"
 #include "ContextMenuController.h"
@@ -35,11 +34,17 @@
 #include "ToolResourceProvider.h"
 
 // toolkit headers
-#include "Esri/ArcGISRuntime/Toolkit/CoordinateConversionConstants.h"
+#include "CoordinateConversionConstants.h"
 
 // C++ API headers
+#include "Camera.h"
+#include "Error.h"
 #include "GeoView.h"
+#include "Layer.h"
+#include "LayerListModel.h"
 #include "Scene.h"
+#include "SelectionProperties.h"
+#include "Viewpoint.h"
 
 // Qt headers
 #include <QDir>
@@ -47,6 +52,7 @@
 #include <QHostInfo>
 #include <QJsonArray>
 #include <QJsonDocument>
+#include <QJsonObject>
 #include <QSettings>
 
 using namespace Esri::ArcGISRuntime;
@@ -672,7 +678,7 @@ Viewpoint viewpointFromJson(const QJsonObject& initialLocation)
   double initialRoll = rollIt.value().toDouble(0.0);
 
   // Return the initial viewpoint
-  const Camera initCamera(newCenter, initialDistance, initialHeading, initialPitch, initialRoll);
+  const Camera initCamera(geometry_cast<Point>(newCenter), initialDistance, initialHeading, initialPitch, initialRoll);
   Viewpoint initViewpoint(newCenter, initCamera);
   return initViewpoint;
 }

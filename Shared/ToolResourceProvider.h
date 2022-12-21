@@ -24,21 +24,19 @@
 #include <QUuid>
 #include <QCursor>
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
+namespace Esri::ArcGISRuntime {
+  class Basemap;
+  class GeoView;
+  class IdentifyGraphicsOverlayResult;
+  class IdentifyLayerResult;
+  class Map;
+  class LayerListModel;
+  class Scene;
+  class SpatialReference;
+}
 
-class Basemap;
-class GeoView;
-class Map;
-class LayerListModel;
-class Scene;
-class SpatialReference;
-class IdentifyGraphicsOverlayResult;
-class IdentifyLayerResult;
-}
-}
+Q_MOC_INCLUDE("IdentifyGraphicsOverlayResult.h")
+Q_MOC_INCLUDE("IdentifyLayerResult.h")
 
 namespace Dsa
 {
@@ -80,9 +78,9 @@ public slots:
   void onMousePressedAndHeld(QMouseEvent& mouseEvent);
   void onMouseDoubleClicked(QMouseEvent& mouseEvent);
   void onIdentifyGraphicsOverlayCompleted(QUuid taskId, Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult* identifyResult);
-  void onIdentifyGraphicsOverlaysCompleted(QUuid taskId, QList<Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult*> identifyResults);
+  void onIdentifyGraphicsOverlaysCompleted(QUuid taskId, const QList<Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult*>& identifyResults);
   void onIdentifyLayerCompleted(QUuid taskId, Esri::ArcGISRuntime::IdentifyLayerResult* identifyResult);
-  void onIdentifyLayersCompleted(QUuid taskId, QList<Esri::ArcGISRuntime::IdentifyLayerResult*> identifyResults);
+  void onIdentifyLayersCompleted(QUuid taskId, const QList<Esri::ArcGISRuntime::IdentifyLayerResult*>& identifyResults);
   void onScreenToLocationCompleted(QUuid taskId, const Esri::ArcGISRuntime::Point& location);
   void onLocationChanged(const Esri::ArcGISRuntime::Point& location);
 
@@ -92,9 +90,9 @@ signals:
   void mapChanged();
   void spatialReferenceChanged();
   void identifyGraphicsOverlayCompleted(QUuid taskId, Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult* identifyResult);
-  void identifyGraphicsOverlaysCompleted(QUuid taskId, QList<Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult*> identifyResults);
+  void identifyGraphicsOverlaysCompleted(QUuid taskId, const QList<Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult*>& identifyResults);
   void identifyLayerCompleted(QUuid taskId, Esri::ArcGISRuntime::IdentifyLayerResult* identifyResult);
-  void identifyLayersCompleted(QUuid taskId, QList<Esri::ArcGISRuntime::IdentifyLayerResult*> identifyResults);
+  void identifyLayersCompleted(QUuid taskId, const QList<Esri::ArcGISRuntime::IdentifyLayerResult*>& identifyResults);
   void setMouseCursorRequested(const QCursor& cursor);
   void screenToLocationCompleted(QUuid taskId, const Esri::ArcGISRuntime::Point& location);
   void locationChanged(const Esri::ArcGISRuntime::Point& location);

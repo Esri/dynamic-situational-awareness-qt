@@ -26,17 +26,17 @@
 void printHelp()
 {
   QTextStream out(stdout);
-  out << "Available command line parameters:" << endl;
-  out << "  -h                     Print help and exit" << endl;
-  out << "  -c                     Console mode (no GUI)" << endl;
-  out << "Parameters available only in console mode:" << endl;
-  out << "  -p <port number>       Port number: Required" << endl;
-  out << "  -f <filename>          Simulation file: Required" << endl;
-  out << "  -q <frequency>         Frequency (messages per time unit); default is 1.0" << endl;
-  out << "  -t <time unit>         Time unit for frequency; valid values are seconds," << endl <<
-         "                         minute, and hour; default is second" << endl;
-  out << "  -l                     Simulation loops through simulation file" << endl;
-  out << "  -s                     Silent mode; no verbose output" << endl;
+  out << "Available command line parameters:" << Qt::endl;
+  out << "  -h                     Print help and exit" << Qt::endl;
+  out << "  -c                     Console mode (no GUI)" << Qt::endl;
+  out << "Parameters available only in console mode:" << Qt::endl;
+  out << "  -p <port number>       Port number: Required" << Qt::endl;
+  out << "  -f <filename>          Simulation file: Required" << Qt::endl;
+  out << "  -q <frequency>         Frequency (messages per time unit); default is 1.0" << Qt::endl;
+  out << "  -t <time unit>         Time unit for frequency; valid values are seconds," << Qt::endl <<
+         "                         minute, and hour; default is second" << Qt::endl;
+  out << "  -l                     Simulation loops through simulation file" << Qt::endl;
+  out << "  -s                     Silent mode; no verbose output" << Qt::endl;
 }
 
 int main(int argc, char *argv[])

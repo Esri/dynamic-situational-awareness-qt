@@ -26,7 +26,13 @@
 
 // C++ API headers
 #include "GlobeCameraController.h"
+#include "Graphic.h"
+#include "GraphicListModel.h"
+#include "GraphicsOverlay.h"
+#include "GraphicsOverlayListModel.h"
+#include "LocationDisplay.h"
 #include "MapView.h"
+#include "MapViewTypes.h"
 #include "OrbitGeoElementCameraController.h"
 #include "SceneView.h"
 

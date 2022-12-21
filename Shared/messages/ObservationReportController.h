@@ -17,19 +17,15 @@
 #ifndef OBSERVATIONREPORTCONTROLLER_H
 #define OBSERVATIONREPORTCONTROLLER_H
 
-// toolkit headers
+// dsa headers
 #include "AbstractTool.h"
-
-// C++ API headers
-#include "Point.h"
 
 class QDateTime;
 class QMouseEvent;
 
-namespace Esri {
-namespace ArcGISRuntime {
+namespace Esri::ArcGISRuntime {
   class GeoView;
-}
+  class Point;
 }
 
 namespace Dsa {

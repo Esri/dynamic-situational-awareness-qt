@@ -29,10 +29,19 @@
 #include "ToolResourceProvider.h"
 
 // C++ API headers
+#include "AttributeListModel.h"
 #include "GeoElement.h"
 #include "GeoView.h"
 #include "Graphic.h"
+#include "GraphicsOverlay.h"
+#include "IdentifyGraphicsOverlayResult.h"
+#include "IdentifyLayerResult.h"
+#include "LayerContent.h"
 #include "Popup.h"
+#include "PopupAttributeListModel.h"
+#include "PopupDefinition.h"
+#include "PopupField.h"
+#include "PopupFieldFormat.h"
 #include "PopupManager.h"
 
 using namespace Esri::ArcGISRuntime;
@@ -195,8 +204,8 @@ void IdentifyController::onMouseClicked(QMouseEvent& event)
   // start new identifyLayers and identifyGraphicsOverlays tasks at the x and y position of the event and using the
   // specifed tolerance (m_tolerance) to determine how accurate a hit-test to perform.
   // create a TaskWatcher to store the progress/state of the task.
-  m_layersWatcher = geoView->identifyLayers(event.pos().x(), event.pos().y(), m_tolerance, false);
-  m_graphicsOverlaysWatcher = geoView->identifyGraphicsOverlays(event.pos().x(), event.pos().y(), m_tolerance, false);
+  m_layersWatcher = geoView->identifyLayers(event.position().x(), event.position().y(), m_tolerance, false);
+  m_graphicsOverlaysWatcher = geoView->identifyGraphicsOverlays(event.position().x(), event.position().y(), m_tolerance, false);
   emit busyChanged();
 
   m_popupManagers.clear();
@@ -311,7 +320,7 @@ bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QStrin
   PopupManager* newManager = new PopupManager(newPopup, this);
 
   for (auto popupfield : newManager->displayedFields()->popupFields())
-  {    
+  {
     if (!popupfield->format())
     {
       auto format = new PopupFieldFormat(newManager);

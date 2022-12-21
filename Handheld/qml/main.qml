@@ -19,7 +19,6 @@ import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
 import QtQuick.Window 2.2
 import QtQml.Models 2.2
-import QtGraphicalEffects 1.0
 import Esri.ArcGISRuntime.OpenSourceApps.DSA 1.1
 import Esri.ArcGISRuntime.OpenSourceApps.Handheld 1.1
 import Esri.ArcGISRuntime.Toolkit 100.10 as Toolkit

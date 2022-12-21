@@ -51,7 +51,6 @@
 #include "Esri/ArcGISRuntime/Toolkit/register.h"
 
 // C++ API headers
-#include "ArcGISRuntimeEnvironment.h"
 #include "PopupManager.h"
 #include "SceneQuickView.h"
 
@@ -59,7 +58,6 @@
 #include <QCommandLineParser>
 #include <QDir>
 #include <QGuiApplication>
-#include <QMessageBox>
 #include <QObject>
 #include <QQmlEngine>
 #include <QQuickView>
@@ -96,10 +94,6 @@ QObject* dsaResourcesProvider(QQmlEngine* engine, QJSEngine* scriptEngine);
 
 int main(int argc, char *argv[])
 {
-#ifndef Q_OS_WIN
-  QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-#endif
-
   QGuiApplication app(argc, argv);
 
   QCoreApplication::setApplicationName(kApplicationName);
@@ -152,7 +146,7 @@ int main(int argc, char *argv[])
   QQuickView view;
   view.setResizeMode(QQuickView::SizeRootObjectToView);
 
-  view.engine()->addImageProvider(QStringLiteral("packages"), new Dsa::PackageImageProvider());
+  view.engine()->addImageProvider(QStringLiteral("packages"), new Dsa::PackageImageProvider);
 
   Esri::ArcGISRuntime::Toolkit::registerComponents(*view.engine());
 

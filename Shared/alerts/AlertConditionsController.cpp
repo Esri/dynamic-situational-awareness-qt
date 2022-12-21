@@ -30,6 +30,7 @@
 #include "FixedValueAlertTarget.h"
 #include "GeoElementAlertTarget.h"
 #include "GraphicsOverlayAlertTarget.h"
+#include "GraphicsOverlayAlertTarget.h"
 #include "GraphicsOverlaysResultsManager.h"
 #include "LayerResultsManager.h"
 #include "LocationAlertSource.h"
@@ -44,12 +45,25 @@
 
 // C++ API headers
 #include "ArcGISFeatureTable.h"
+#include "AttributeListModel.h"
+#include "Error.h"
+#include "Feature.h"
+#include "FeatureIterator.h"
 #include "FeatureLayer.h"
+#include "FeatureQueryResult.h"
+#include "Field.h"
 #include "GeoView.h"
+#include "Graphic.h"
+#include "GraphicListModel.h"
 #include "GraphicsOverlay.h"
 #include "GraphicsOverlayListModel.h"
+#include "IdentifyGraphicsOverlayResult.h"
+#include "IdentifyLayerResult.h"
 #include "Layer.h"
 #include "LayerListModel.h"
+#include "MapTypes.h"
+#include "QueryParameters.h"
+#include "ServiceTypes.h"
 
 // Qt headers
 #include <QEventLoop>
@@ -683,8 +697,8 @@ void AlertConditionsController::onMouseClicked(QMouseEvent &event)
   if (!geoView)
     return;
 
-  m_identifyLayersWatcher = geoView->identifyLayers(event.pos().x(), event.pos().y(), m_tolerance, false);
-  m_identifyGraphicsWatcher = geoView->identifyGraphicsOverlays(event.pos().x(), event.pos().y(), m_tolerance, false);
+  m_identifyLayersWatcher = geoView->identifyLayers(event.position().x(), event.position().y(), m_tolerance, false);
+  m_identifyGraphicsWatcher = geoView->identifyGraphicsOverlays(event.position().x(), event.position().y(), m_tolerance, false);
 
   event.accept();
 }

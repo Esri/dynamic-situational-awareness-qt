@@ -20,7 +20,6 @@
 #include "AlertConditionData.h"
 
 // dsa app headers
-#include "AlertCondition.h"
 #include "AlertSource.h"
 #include "AlertTarget.h"
 
@@ -327,7 +326,7 @@ void AlertConditionData::setConditionEnabled(bool enabled)
 
 /*!
   \brief Returns the active state of this conditiom data.
-  
+
   Should be \c true when the condition data is met.
  */
 bool AlertConditionData::isActive() const

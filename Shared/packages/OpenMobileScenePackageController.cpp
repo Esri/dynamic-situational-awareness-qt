@@ -25,10 +25,11 @@
 #include "ToolManager.h"
 
 // C++ API headers
+#include "Error.h"
 #include "Item.h"
+#include "MapTypes.h"
 #include "MobileScenePackage.h"
 #include "Scene.h"
-#include "SceneQuickView.h"
 
 // Qt headers
 #include <QQmlContext>
@@ -131,7 +132,7 @@ void OpenMobileScenePackageController::findPackage()
     return;
   }
 
-  QFileInfo packagePathFileInfo = packagePath;
+  QFileInfo packagePathFileInfo(packagePath);
   if (packagePathFileInfo.isDir())
   {
     loadMobileScenePackage(m_currentPackageName);

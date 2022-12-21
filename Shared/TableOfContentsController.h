@@ -17,18 +17,16 @@
 #ifndef TABLEOFCONTENTSCONTROLLER_H
 #define TABLEOFCONTENTSCONTROLLER_H
 
-// toolkit headers
+// dsa headers
 #include "AbstractTool.h"
 
 // Qt headers
 #include <QAbstractItemModel>
 #include <QHash>
 
-namespace Esri {
-namespace ArcGISRuntime {
+namespace Esri::ArcGISRuntime {
   class Layer;
   class LayerListModel;
-}
 }
 
 namespace Dsa {

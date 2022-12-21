@@ -29,21 +29,22 @@
 #include "ToolResourceProvider.h"
 
 // C++ API headers
-#include "FeatureCollectionLayer.h"
 #include "GeoView.h"
 #include "GeometryEngine.h"
 #include "GeometryTypes.h"
 #include "Graphic.h"
+#include "GraphicListModel.h"
 #include "GraphicsOverlay.h"
-#include "Map.h"
-#include "MapQuickView.h"
+#include "GraphicsOverlayListModel.h"
+#include "IdentifyGraphicsOverlayResult.h"
+#include "LayerSceneProperties.h"
+#include "MapViewTypes.h"
 #include "MultipartBuilder.h"
 #include "PartCollection.h"
-#include "PolylineBuilder.h"
-#include "Scene.h"
-#include "SceneQuickView.h"
+#include "SceneViewTypes.h"
 #include "SimpleLineSymbol.h"
 #include "Symbol.h"
+#include "SymbolTypes.h"
 
 // Qt headers
 #include <QCursor>
@@ -256,7 +257,7 @@ void MarkupController::init()
       return;
 
     if (!m_isDrawing)
-      m_geoView->identifyGraphicsOverlay(m_sketchOverlay, mouseEvent.x(), mouseEvent.y(), m_is3d ? 100 : 20, false, 1);
+      m_geoView->identifyGraphicsOverlay(m_sketchOverlay, mouseEvent.position().x(), mouseEvent.position().y(), m_is3d ? 100 : 20, false, 1);
   });
 
   connect(ToolResourceProvider::instance(), &ToolResourceProvider::mousePressed, this, [this](QMouseEvent& mouseEvent)
@@ -282,7 +283,7 @@ void MarkupController::init()
     m_sketchOverlay->graphics()->append(partGraphic);
     m_currentPartIndex = addPart();
 
-    Point pressedPoint(normalizedPoint(mouseEvent.x(), mouseEvent.y()));
+    Point pressedPoint(normalizedPoint(mouseEvent.position().x(), mouseEvent.position().y()));
     if (m_sketchOverlay->sceneProperties().surfacePlacement() == SurfacePlacement::Relative)
       pressedPoint = Point(pressedPoint.x(), pressedPoint.y(), m_drawingAltitude);
 
@@ -302,7 +303,7 @@ void MarkupController::init()
 
     mouseEvent.accept();
 
-    Point movedPoint(normalizedPoint(mouseEvent.x(), mouseEvent.y()));
+    Point movedPoint(normalizedPoint(mouseEvent.position().x(), mouseEvent.position().y()));
     if (m_sketchOverlay->sceneProperties().surfacePlacement() == SurfacePlacement::Relative)
       movedPoint = Point(movedPoint.x(), movedPoint.y(), m_drawingAltitude);
 
@@ -316,7 +317,7 @@ void MarkupController::init()
 
     mouseEvent.accept();
 
-    Point releasedPoint(normalizedPoint(mouseEvent.x(), mouseEvent.y()));
+    Point releasedPoint(normalizedPoint(mouseEvent.position().x(), mouseEvent.position().y()));
     if (m_sketchOverlay->sceneProperties().surfacePlacement() == SurfacePlacement::Relative)
       releasedPoint = Point(releasedPoint.x(), releasedPoint.y(), m_drawingAltitude);
 

@@ -17,17 +17,15 @@
 #ifndef LAYERCACHEMANAGER_H
 #define LAYERCACHEMANAGER_H
 
-// toolkit headers
+// dsa headers
 #include "AbstractTool.h"
 
 // Qt headers
 #include <QJsonArray>
 
-namespace Esri {
-namespace ArcGISRuntime {
-class Layer;
-class Scene;
-}
+namespace Esri::ArcGISRuntime {
+  class Layer;
+  class Scene;
 }
 
 namespace Dsa {

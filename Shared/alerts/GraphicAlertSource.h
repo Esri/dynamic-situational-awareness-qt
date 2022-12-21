@@ -20,10 +20,8 @@
 // dsa app headers
 #include "AlertSource.h"
 
-namespace Esri {
-namespace ArcGISRuntime {
-class Graphic;
-}
+namespace Esri::ArcGISRuntime {
+  class Graphic;
 }
 
 namespace Dsa {

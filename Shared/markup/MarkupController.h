@@ -20,14 +20,12 @@
 // dsa app headers
 #include "AbstractSketchTool.h"
 
-// toolkit headers
-#include "AbstractTool.h"
-
-// C++ API headers
-#include "GeometryTypes.h"
-
 // Qt headers
 #include <QColor>
+
+namespace Esri::ArcGISRuntime {
+  enum class GeometryTypes;
+}
 
 namespace Dsa {
 

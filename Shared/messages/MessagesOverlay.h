@@ -21,16 +21,12 @@
 #include <QObject>
 #include <QPointer>
 
-namespace Esri
-{
-  namespace ArcGISRuntime
-  {
+namespace Esri::ArcGISRuntime {
     class GeoView;
     class Renderer;
     class GraphicsOverlay;
     class Graphic;
     enum class SurfacePlacement;
-  }
 }
 
 namespace Dsa {

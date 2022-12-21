@@ -21,13 +21,12 @@
 
 // dsa app headers
 #include "DsaController.h"
-
-// toolkit headers
-#include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
 // C++ API headers
 #include "SceneQuickView.h"
+#include "IdentifyGraphicsOverlayResult.h"
+#include "IdentifyLayerResult.h"
 
 using namespace Esri::ArcGISRuntime;
 

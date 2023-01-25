@@ -27,6 +27,10 @@
 // C++ API headers
 #include "Item.h"
 #include "MobileScenePackage.h"
+#include "LayerListModel.h"
+#include "Layer.h"
+#include "FeatureLayer.h"
+#include "GroupLayer.h"
 #include "Scene.h"
 #include "SceneQuickView.h"
 #include "DictionarySymbolStyle.h"
@@ -37,8 +41,8 @@
 #include "GroupLayer.h"
 #include "FeatureLayer.h"
 
-
 // Qt headers
+#include <QDebug>
 #include <QQmlContext>
 #include <QDir>
 #include <QQmlEngine>
@@ -51,6 +55,7 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 const QString OpenMobileScenePackageController::PACKAGE_DIRECTORY_PROPERTYNAME = "PackageDirectory";
+const QString OpenMobileScenePackageController::STYLE_DIRECTORY_PROPERTYNAME = "ResourceDirectory";
 const QString OpenMobileScenePackageController::CURRENT_PACKAGE_PROPERTYNAME = "CurrentPackage";
 const QString OpenMobileScenePackageController::SCENE_INDEX_PROPERTYNAME = "SceneIndex";
 const QString OpenMobileScenePackageController::MSPK_EXTENSION = ".mspk";
@@ -103,6 +108,9 @@ QString OpenMobileScenePackageController::toolName() const
  */
 void OpenMobileScenePackageController::setProperties(const QVariantMap& properties)
 {
+
+    m_stylePath = properties.value(STYLE_DIRECTORY_PROPERTYNAME).toString() + "/styles";
+
   const QString newPackageDirectoryPath = properties.value(PACKAGE_DIRECTORY_PROPERTYNAME).toString();
   const bool dataPathChanged = setPackageDataPath(newPackageDirectoryPath);
 
@@ -205,8 +213,6 @@ void OpenMobileScenePackageController::loadScene()
                 auto renderer = new DictionaryRenderer(style, this);
                 auto fl = dynamic_cast<FeatureLayer*>(lyr1);
 
-                qDebug() << lyr1->name();
-
 
                 if (lyr1->name() == "Control Measures Lines")
                 {
@@ -225,6 +231,7 @@ void OpenMobileScenePackageController::loadScene()
 
                 }
                 fl->setRenderer(renderer);
+
 
                 if (fl->name() == "Units")
                 {

@@ -29,9 +29,17 @@
 #include "Item.h"
 #include "MapTypes.h"
 #include "MobileScenePackage.h"
+#include "LayerListModel.h"
+#include "Layer.h"
+#include "FeatureLayer.h"
+#include "GroupLayer.h"
 #include "Scene.h"
+#include "DictionarySymbolStyle.h"
+#include "DictionaryRenderer.h"
+#include "DictionarySymbolStyleConfiguration.h"
 
 // Qt headers
+#include <QDebug>
 #include <QQmlContext>
 #include <QDir>
 #include <QQmlEngine>
@@ -44,6 +52,7 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 const QString OpenMobileScenePackageController::PACKAGE_DIRECTORY_PROPERTYNAME = "PackageDirectory";
+const QString OpenMobileScenePackageController::STYLE_DIRECTORY_PROPERTYNAME = "ResourceDirectory";
 const QString OpenMobileScenePackageController::CURRENT_PACKAGE_PROPERTYNAME = "CurrentPackage";
 const QString OpenMobileScenePackageController::SCENE_INDEX_PROPERTYNAME = "SceneIndex";
 const QString OpenMobileScenePackageController::MSPK_EXTENSION = ".mspk";
@@ -96,6 +105,9 @@ QString OpenMobileScenePackageController::toolName() const
  */
 void OpenMobileScenePackageController::setProperties(const QVariantMap& properties)
 {
+
+    m_stylePath = properties.value(STYLE_DIRECTORY_PROPERTYNAME).toString() + "/styles";
+
   const QString newPackageDirectoryPath = properties.value(PACKAGE_DIRECTORY_PROPERTYNAME).toString();
   const bool dataPathChanged = setPackageDataPath(newPackageDirectoryPath);
 
@@ -173,7 +185,53 @@ void OpenMobileScenePackageController::loadScene()
     return;
 
   // Get the scene at the current index and add add it to the ToolResourceProvider
-  Scene* theScene = scenes.at(m_currentSceneIndex);
+  if (ToolResourceProvider::instance()->scene() == scenes.at(m_currentSceneIndex))
+     return;
+
+  auto theScene = ToolResourceProvider::instance()->scene();
+
+  theScene = scenes.at(m_currentSceneIndex);
+
+  connect(theScene, &Scene::doneLoading, [this, theScene](const Esri::ArcGISRuntime::Error& loadError)
+  {
+    if (!loadError.isEmpty())
+      return;
+
+    for (auto lyr : *theScene->operationalLayers())
+    {
+        if (lyr->name() == "COA")
+        {
+            auto groupLyr = dynamic_cast<GroupLayer*>(lyr);
+            for (auto lyr1 : *groupLyr->layers())
+            {
+
+                auto style = DictionarySymbolStyle::createFromFile(m_stylePath + "/mil2525bc2.stylx", this);
+
+                auto renderer = new DictionaryRenderer(style, this);
+                auto fl = dynamic_cast<FeatureLayer*>(lyr1);
+
+                if (lyr1->name() == "Control Measures Lines")
+                {
+                    connect(style, &DictionarySymbolStyle::doneLoading, [style](Error e)
+                    {
+                       if (!e.isEmpty())
+                           return;
+
+                       for (auto config : style->configurations())
+                       {
+                           if (config->name() == "model")
+                               config->setValue("ORDERED ANCHOR POINTS");
+                       }
+                    });
+                    style->load();
+
+                }
+                fl->setRenderer(renderer);
+            }
+        }
+    }
+  });
+
   ToolResourceProvider::instance()->setScene(theScene);
 }
 

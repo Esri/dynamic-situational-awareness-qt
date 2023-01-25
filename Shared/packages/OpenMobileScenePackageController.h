@@ -48,6 +48,7 @@ class OpenMobileScenePackageController : public AbstractTool
 
 public:
   static const QString PACKAGE_DIRECTORY_PROPERTYNAME;
+  static const QString STYLE_DIRECTORY_PROPERTYNAME;
   static const QString CURRENT_PACKAGE_PROPERTYNAME;
   static const QString SCENE_INDEX_PROPERTYNAME;
 
@@ -103,6 +104,7 @@ private:
   static const QString MMPK_EXTENSION;
 
   QString m_packageDataPath;
+  QString m_stylePath;
   QString m_currentPackageName;
   int m_currentSceneIndex = -1;
   MobileScenePackagesListModel* m_packagesModel = nullptr;
@@ -110,6 +112,8 @@ private:
   QHash<QUuid, QString> m_directReadTasks;
   QHash<QString, Esri::ArcGISRuntime::MobileScenePackage*> m_packages;
   bool m_userSelected = false;
+ // Esri::ArcGISRuntime::Scene* m_currentScene = nullptr;
+ // bool m_sceneLoadingOrDone = false;
 };
 
 } // Dsa

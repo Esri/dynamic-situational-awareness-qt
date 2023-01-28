@@ -37,6 +37,8 @@
 #include "DictionarySymbolStyle.h"
 #include "DictionaryRenderer.h"
 #include "DictionarySymbolStyleConfiguration.h"
+#include "LayerSceneProperties.h"
+#include "SceneViewTypes.h"
 
 // Qt headers
 #include <QDebug>
@@ -210,6 +212,9 @@ void OpenMobileScenePackageController::loadScene()
                 auto renderer = new DictionaryRenderer(style, this);
                 auto fl = dynamic_cast<FeatureLayer*>(lyr1);
 
+                qDebug() << lyr1->name();
+
+
                 if (lyr1->name() == "Control Measures Lines")
                 {
                     connect(style, &DictionarySymbolStyle::doneLoading, [style](Error e)
@@ -227,6 +232,23 @@ void OpenMobileScenePackageController::loadScene()
 
                 }
                 fl->setRenderer(renderer);
+
+                if (fl->name() == "Units")
+                {
+                    connect(fl, &FeatureLayer::doneLoading, this, [fl](Error e)
+                    {
+                      if (!e.isEmpty())
+                          return;
+
+
+                      qDebug() << "FOUND THE POINT";
+                      fl->setRenderingMode(FeatureRenderingMode::Dynamic);
+                      LayerSceneProperties props = fl->sceneProperties();
+                      props.setSurfacePlacement(SurfacePlacement::DrapedBillboarded);
+                      fl->setSceneProperties(LayerSceneProperties(props));
+
+                    });
+                }
             }
         }
     }

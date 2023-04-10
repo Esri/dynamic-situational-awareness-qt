@@ -109,7 +109,7 @@ QString OpenMobileScenePackageController::toolName() const
 void OpenMobileScenePackageController::setProperties(const QVariantMap& properties)
 {
 
-    m_stylePath = properties.value(STYLE_DIRECTORY_PROPERTYNAME).toString() + "/styles";
+  m_stylePath = properties.value(STYLE_DIRECTORY_PROPERTYNAME).toString() + "/styles";
 
   const QString newPackageDirectoryPath = properties.value(PACKAGE_DIRECTORY_PROPERTYNAME).toString();
   const bool dataPathChanged = setPackageDataPath(newPackageDirectoryPath);
@@ -189,7 +189,7 @@ void OpenMobileScenePackageController::loadScene()
 
   // Get the scene at the current index and add add it to the ToolResourceProvider
   if (ToolResourceProvider::instance()->scene() == scenes.at(m_currentSceneIndex))
-     return;
+    return;
 
   auto theScene = ToolResourceProvider::instance()->scene();
 
@@ -202,55 +202,55 @@ void OpenMobileScenePackageController::loadScene()
 
     for (auto lyr : *theScene->operationalLayers())
     {
-        if (lyr->name() == "COA")
+      if (lyr->name() == "COA")
+      {
+        auto groupLyr = dynamic_cast<GroupLayer*>(lyr);
+        for (auto lyr1 : *groupLyr->layers())
         {
-            auto groupLyr = dynamic_cast<GroupLayer*>(lyr);
-            for (auto lyr1 : *groupLyr->layers())
+
+          auto style = DictionarySymbolStyle::createFromFile(m_stylePath + "/mil2525bc2.stylx", this);
+
+          auto renderer = new DictionaryRenderer(style, this);
+          auto fl = dynamic_cast<FeatureLayer*>(lyr1);
+
+
+          if (lyr1->name() == "Control Measures Lines")
+          {
+            connect(style, &DictionarySymbolStyle::doneLoading, [style](Error e)
             {
+              if (!e.isEmpty())
+                return;
 
-                auto style = DictionarySymbolStyle::createFromFile(m_stylePath + "/mil2525bc2.stylx", this);
+              for (auto config : style->configurations())
+              {
+                if (config->name() == "model")
+                  config->setValue("ORDERED ANCHOR POINTS");
+              }
+            });
+            style->load();
 
-                auto renderer = new DictionaryRenderer(style, this);
-                auto fl = dynamic_cast<FeatureLayer*>(lyr1);
-
-
-                if (lyr1->name() == "Control Measures Lines")
-                {
-                    connect(style, &DictionarySymbolStyle::doneLoading, [style](Error e)
-                    {
-                       if (!e.isEmpty())
-                           return;
-
-                       for (auto config : style->configurations())
-                       {
-                           if (config->name() == "model")
-                               config->setValue("ORDERED ANCHOR POINTS");
-                       }
-                    });
-                    style->load();
-
-                }
-                fl->setRenderer(renderer);
+          }
+          fl->setRenderer(renderer);
 
 
-                if (fl->name() == "Units")
-                {
-                    connect(fl, &FeatureLayer::doneLoading, this, [fl](Error e)
-                    {
-                      if (!e.isEmpty())
-                          return;
+          if (fl->name() == "Units")
+          {
+            connect(fl, &FeatureLayer::doneLoading, this, [fl](Error e)
+            {
+              if (!e.isEmpty())
+                return;
 
 
-                      qDebug() << "FOUND THE POINT";
-                      fl->setRenderingMode(FeatureRenderingMode::Dynamic);
-                      LayerSceneProperties props = fl->sceneProperties();
-                      props.setSurfacePlacement(SurfacePlacement::DrapedBillboarded);
-                      fl->setSceneProperties(LayerSceneProperties(props));
+              qDebug() << "FOUND THE POINT";
+              fl->setRenderingMode(FeatureRenderingMode::Dynamic);
+              LayerSceneProperties props = fl->sceneProperties();
+              props.setSurfacePlacement(SurfacePlacement::DrapedBillboarded);
+              fl->setSceneProperties(LayerSceneProperties(props));
 
-                    });
-                }
-            }
+            });
+          }
         }
+      }
     }
   });
 

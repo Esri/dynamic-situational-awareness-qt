@@ -208,15 +208,15 @@ void LocationController::setProperties(const QVariantMap& properties)
   setSimulationEnabled(simulate);
   setIconDataPath(properties[RESOURCE_DIRECTORY_PROPERTYNAME].toString());
   if (!m_locationDisplay3d)
-      qDebug() << "Location display not ready";
+    qDebug() << "Location display not ready";
   else
   {
-      bool ok;
-      double offset = properties[CURRENT_LOCATION_Z_OFFSET].toString().toDouble(&ok);
-      if (ok)
-      {
-        m_locationDisplay3d->setZOffset(offset);
-      }
+    bool ok;
+    double offset = properties[CURRENT_LOCATION_Z_OFFSET].toString().toDouble(&ok);
+    if (ok)
+    {
+      m_locationDisplay3d->setZOffset(offset);
+    }
   }
 }
 

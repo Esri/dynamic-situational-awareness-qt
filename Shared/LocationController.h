@@ -53,6 +53,7 @@ public:
   static const QString SIMULATE_LOCATION_PROPERTYNAME;
   static const QString GPX_FILE_PROPERTYNAME;
   static const QString RESOURCE_DIRECTORY_PROPERTYNAME;
+  static const QString CURRENT_LOCATION_Z_OFFSET;
 
   explicit LocationController(QObject* parent = nullptr);
   ~LocationController();

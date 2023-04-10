@@ -48,6 +48,9 @@ public:
   void stop();
   bool isStarted() const;
 
+  void setZOffset(double offset);
+  double zOffset();
+
   QGeoPositionInfoSource* positionSource() const;
   void setPositionSource(QGeoPositionInfoSource* positionSource);
 
@@ -78,6 +81,7 @@ private:
   QCompass* m_compass = nullptr;
   Esri::ArcGISRuntime::Point m_lastKnownLocation;
   bool m_isStarted = false;
+  double m_zOffset = 10.0;
 
   QMetaObject::Connection m_positionErrorConnection;
   QMetaObject::Connection m_positionUpdateConnection;

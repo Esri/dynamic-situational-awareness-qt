@@ -500,8 +500,9 @@ void DsaController::createDefaultSettings()
   writeDefaultLocalDataPaths();
   m_dsaSettings["DefaultBasemap"] = QStringLiteral("topographic");
   m_dsaSettings["DefaultElevationSource"] = QString("%1/CaDEM.tpk").arg(m_dsaSettings["ElevationDirectory"].toString());
-  m_dsaSettings["GpxFile"] = QString("%1/MontereyMounted.gpx").arg(m_dsaSettings["SimulationDirectory"].toString());
+  m_dsaSettings["GpxFile"] = QString("%1/MontereyMounted.gpx").arg(m_dsaSettings["SimulationDirectory"].toString());  
   m_dsaSettings["SimulateLocation"] = QStringLiteral("true");
+  m_dsaSettings["CurrentLocationZOffset"] = QStringLiteral("10");
   writeDefaultMessageFeeds();
   m_dsaSettings["CoordinateFormat"] = Esri::ArcGISRuntime::Toolkit::CoordinateConversionConstants::MGRS_FORMAT;
   m_dsaSettings[AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME] = AppConstants::UNIT_METERS;

@@ -29,6 +29,14 @@
 #include "MobileScenePackage.h"
 #include "Scene.h"
 #include "SceneQuickView.h"
+#include "DictionarySymbolStyle.h"
+#include "DictionaryRenderer.h"
+#include "DictionarySymbolStyleConfiguration.h"
+#include "LayerSceneProperties.h"
+#include "SceneViewTypes.h"
+#include "GroupLayer.h"
+#include "FeatureLayer.h"
+
 
 // Qt headers
 #include <QQmlContext>
@@ -172,7 +180,73 @@ void OpenMobileScenePackageController::loadScene()
     return;
 
   // Get the scene at the current index and add add it to the ToolResourceProvider
-  Scene* theScene = scenes.at(m_currentSceneIndex);
+  if (ToolResourceProvider::instance()->scene() == scenes.at(m_currentSceneIndex))
+     return;
+
+  auto theScene = ToolResourceProvider::instance()->scene();
+
+  theScene = scenes.at(m_currentSceneIndex);
+
+  connect(theScene, &Scene::doneLoading, [this, theScene](const Esri::ArcGISRuntime::Error& loadError)
+  {
+    if (!loadError.isEmpty())
+      return;
+
+    for (auto lyr : *theScene->operationalLayers())
+    {
+        if (lyr->name() == "COA")
+        {
+            auto groupLyr = dynamic_cast<GroupLayer*>(lyr);
+            for (auto lyr1 : *groupLyr->layers())
+            {
+
+                auto style = DictionarySymbolStyle::createFromFile(m_stylePath + "/mil2525bc2.stylx", this);
+
+                auto renderer = new DictionaryRenderer(style, this);
+                auto fl = dynamic_cast<FeatureLayer*>(lyr1);
+
+                qDebug() << lyr1->name();
+
+
+                if (lyr1->name() == "Control Measures Lines")
+                {
+                    connect(style, &DictionarySymbolStyle::doneLoading, [style](Error e)
+                    {
+                       if (!e.isEmpty())
+                           return;
+
+                       for (auto config : style->configurations())
+                       {
+                           if (config->name() == "model")
+                               config->setValue("ORDERED ANCHOR POINTS");
+                       }
+                    });
+                    style->load();
+
+                }
+                fl->setRenderer(renderer);
+
+                if (fl->name() == "Units")
+                {
+                    connect(fl, &FeatureLayer::doneLoading, this, [fl](Error e)
+                    {
+                      if (!e.isEmpty())
+                          return;
+
+
+                      qDebug() << "FOUND THE POINT";
+                      fl->setRenderingMode(FeatureRenderingMode::Dynamic);
+                      LayerSceneProperties props = fl->sceneProperties();
+                      props.setSurfacePlacement(SurfacePlacement::DrapedBillboarded);
+                      fl->setSceneProperties(LayerSceneProperties(props));
+
+                    });
+                }
+            }
+        }
+    }
+  });
+
   ToolResourceProvider::instance()->setScene(theScene);
 }
 

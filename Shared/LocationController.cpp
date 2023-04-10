@@ -50,6 +50,7 @@ namespace Dsa {
 const QString LocationController::SIMULATE_LOCATION_PROPERTYNAME = "SimulateLocation";
 const QString LocationController::GPX_FILE_PROPERTYNAME = "GpxFile";
 const QString LocationController::RESOURCE_DIRECTORY_PROPERTYNAME = "ResourceDirectory";
+const QString LocationController::CURRENT_LOCATION_Z_OFFSET = "CurrentLocationZOffset";
 
 /*!
   \class Dsa::LocationController
@@ -206,6 +207,17 @@ void LocationController::setProperties(const QVariantMap& properties)
   setGpxFilePath(properties[GPX_FILE_PROPERTYNAME].toString());
   setSimulationEnabled(simulate);
   setIconDataPath(properties[RESOURCE_DIRECTORY_PROPERTYNAME].toString());
+  if (!m_locationDisplay3d)
+      qDebug() << "Location display not ready";
+  else
+  {
+      bool ok;
+      double offset = properties[CURRENT_LOCATION_Z_OFFSET].toString().toDouble(&ok);
+      if (ok)
+      {
+        m_locationDisplay3d->setZOffset(offset);
+      }
+  }
 }
 
 /*!

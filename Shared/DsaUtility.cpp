@@ -46,13 +46,8 @@ QString DsaUtility::dataPath()
 #elif defined Q_OS_IOS
   dataDir = QDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
 #else
-  dataDir = QDir::home();
+  dataDir = QDir::currentPath();
 #endif
-
-  dataDir.cd("ArcGIS");
-  dataDir.cd("Runtime");
-  dataDir.cd("Data");
-  dataDir.cd("DSA");
 
   return dataDir.exists() ? dataDir.absolutePath() : "";
 }

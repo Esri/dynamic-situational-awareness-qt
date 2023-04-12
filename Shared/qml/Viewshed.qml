@@ -321,11 +321,69 @@ Item {
         }
     }
 
+    Text {
+        id: observerHeightLabel
+        visible: toolController.activeViewshedEnabled
+        anchors{
+            left: parent.left
+            top: distanceRangeLabel.bottom
+            margins: 8 * scaleFactor
+        }
+        text: qsTr("Z Offset\n(meters)")
+        color: Material.foreground
+        height: 32 * scaleFactor
+        font {
+            family: DsaStyles.fontFamily
+            pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+        }
+    }
+
+
+    Slider {
+        id: observerHeightSlider
+        visible: observerHeightLabel.visible
+        anchors {
+            left: observerHeightLabel.right
+            right: obseverHeightText.left
+            verticalCenter: observerHeightLabel.verticalCenter
+            margins: 8 * scaleFactor
+        }
+        orientation: Qt.Horizontal
+        from: 0
+        to: 10
+        stepSize: 1
+        snapMode: Slider.SnapAlways
+        value: toolController.activeViewshedOffsetZ
+
+        onValueChanged: {
+            toolController.activeViewshedOffsetZ = value;
+        }
+    }
+
+    Text {
+        id: obseverHeightText
+        visible: observerHeightLabel.visible
+        anchors {
+            right: parent.right
+            verticalCenter: observerHeightSlider.verticalCenter
+            margins: 8 * scaleFactor
+        }
+        width: 25 * scaleFactor
+        horizontalAlignment: Text.AlignLeft
+        verticalAlignment: Text.AlignVCenter
+        text: observerHeightSlider.value
+        color: Material.foreground
+        font {
+            family: DsaStyles.fontFamily
+            pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+        }
+    }
+
     ComboBox {
         id: angleSelector
         visible: !toolController.activeViewshed360Mode
         anchors {
-            top: distanceRangeLabel.bottom
+            top: observerHeightLabel.bottom
             left: parent.left
             margins: 8 * scaleFactor
         }
@@ -459,7 +517,8 @@ Item {
         visible: toolController.activeViewshedEnabled
 
         anchors {
-            top: angleSelector.visible ? angleSelector.bottom : distanceRangeLabel.bottom
+            top: angleSelector.visible ? angleSelector.bottom : observerHeightSlider.bottom
+            //top: angleSelector.visible ? angleSelector.bottom : distanceRangeLabel.bottom
             left: parent.left
             right: parent.right
             margins: 8 * scaleFactor

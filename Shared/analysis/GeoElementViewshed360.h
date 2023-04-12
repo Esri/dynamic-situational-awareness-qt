@@ -63,6 +63,7 @@ private:
   QPointer<GeoElementSignaler> m_geoElementSignaler;
   QString m_headingAttribute;
   QString m_pitchAttribute;
+  double m_offsetZ = 5;
 };
 
 } // Dsa

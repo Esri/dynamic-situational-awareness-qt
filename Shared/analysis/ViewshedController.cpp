@@ -274,7 +274,7 @@ void ViewshedController::addLocationViewshed360(const Esri::ArcGISRuntime::Point
     // the orientation of the viewshed (not used in 360 degree mode).
     m_graphicsOverlay = new GraphicsOverlay(this);
     m_graphicsOverlay->setOverlayId(QStringLiteral("LocationViewshed360 graphics overlay"));
-    SimpleMarkerSceneSymbol* smss = SimpleMarkerSceneSymbol::cone(QColor("red"), 16, 32.0, this);
+    SimpleMarkerSceneSymbol* smss = SimpleMarkerSceneSymbol::cone(QColor("red"), 0.1, 0.1, this);
     smss->setAnchorPosition(SceneSymbolAnchorPosition::Bottom);
     SimpleRenderer* renderer = new SimpleRenderer(smss, this);
     const QString headingExpression = QString("[%1]").arg(VIEWSHED_HEADING_ATTRIBUTE);

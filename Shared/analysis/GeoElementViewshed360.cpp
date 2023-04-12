@@ -184,7 +184,7 @@ void GeoElementViewshed360::setPitch(double pitch)
  */
 double GeoElementViewshed360::offsetZ() const
 {
-  return static_cast<GeoElementViewshed*>(viewshed())->offsetZ();
+  return m_offsetZ;
 }
 
 /*!
@@ -192,6 +192,7 @@ double GeoElementViewshed360::offsetZ() const
  */
 void GeoElementViewshed360::setOffsetZ(double offsetZ)
 {
+  m_offsetZ = offsetZ;
   if (static_cast<GeoElementViewshed*>(viewshed())->offsetZ() == offsetZ)
     return;
 

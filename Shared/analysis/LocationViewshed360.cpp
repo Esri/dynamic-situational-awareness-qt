@@ -100,6 +100,7 @@ void LocationViewshed360::setPoint(const Point& point)
 {
   static_cast<LocationViewshed*>(viewshed())->setLocation(point);
   m_locationViewshedGraphic->setGeometry(point);
+  setOffsetZ(offsetZ());
 }
 
 /*!
@@ -158,6 +159,27 @@ void LocationViewshed360::setPitch(double pitch)
   m_locationViewshedGraphic->attributes()->replaceAttribute(ViewshedController::VIEWSHED_PITCH_ATTRIBUTE, pitch);
 
   emit pitchChanged();
+}
+
+double LocationViewshed360::offsetZ() const
+{
+  return m_offsetZ;
+}
+
+void LocationViewshed360::setOffsetZ(double offset)
+{
+  if (!m_locationViewshedGraphic)
+    return;
+
+  m_offsetZ = offset;
+
+  Point p = geometry_cast<Point>(m_locationViewshedGraphic->geometry());
+
+  double newZ = p.z() + offset;
+
+  static_cast<LocationViewshed*>(viewshed())->setLocation(Point(p.x(), p.y(), newZ));
+
+  emit offsetZChanged();
 }
 
 } // Dsa

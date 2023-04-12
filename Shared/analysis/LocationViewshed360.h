@@ -51,12 +51,16 @@ public:
   double pitch() const override;
   void setPitch(double pitch) override;
 
+  double offsetZ() const override;
+  void setOffsetZ(double offset) override;
+
 private:
   Q_DISABLE_COPY(LocationViewshed360)
   LocationViewshed360() = delete;
 
   QPointer<Esri::ArcGISRuntime::GraphicsOverlay> m_graphicsOverlay;
   Esri::ArcGISRuntime::Graphic* m_locationViewshedGraphic = nullptr;
+  double m_offsetZ = 5;
 };
 
 } // Dsa

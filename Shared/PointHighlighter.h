@@ -20,9 +20,11 @@
 // Qt headers
 #include <QObject>
 
+// C++ API headers
+#include "Point.h"
+
 namespace Esri::ArcGISRuntime {
   class GraphicsOverlay;
-  class Point;
   class SimpleMarkerSceneSymbol;
 }
 

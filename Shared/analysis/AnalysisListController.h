@@ -17,10 +17,11 @@
 #ifndef ANALYSISLISTCONTROLLER_H
 #define ANALYSISLISTCONTROLLER_H
 
+// Qt headers
+#include <QAbstractItemModel>
+
 // dsa headers
 #include "AbstractTool.h"
-
-class QAbstractItemModel;
 
 namespace Esri::ArcGISRuntime {
   class GeoView;

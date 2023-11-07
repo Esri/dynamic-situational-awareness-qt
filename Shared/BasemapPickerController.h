@@ -17,11 +17,11 @@
 #ifndef BASEMAPPICKERCONTROLLER_H
 #define BASEMAPPICKERCONTROLLER_H
 
-// dsa headers
-#include "AbstractTool.h"
-
 // Qt headers
 #include <QObject>
+
+// dsa headers
+#include "AbstractTool.h"
 
 class QAbstractListModel;
 
@@ -34,6 +34,7 @@ class QStringListModel;
 namespace Dsa {
 
 class TileCacheListModel;
+Q_MOC_INCLUDE("TileCacheListModel.h")
 
 class BasemapPickerController : public AbstractTool
 {

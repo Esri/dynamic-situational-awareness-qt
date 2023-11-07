@@ -20,9 +20,10 @@
 // Qt headers
 #include <QObject>
 
-namespace Dsa {
+// dsa Headers
+#include "AlertCondition.h"
 
-class AlertCondition;
+namespace Dsa {
 
 class AttributeEqualsAlertCondition : public AlertCondition
 {

@@ -17,10 +17,15 @@
 #ifndef VIEWSHEDCONTROLLER_H
 #define VIEWSHEDCONTROLLER_H
 
+// Qt headers
+#include <QAbstractListModel>
+
+// C++ API headers
+#include "TaskWatcher.h"
+
 // dsa headers
 #include "AbstractTool.h"
 
-class QAbstractListModel;
 class QMouseEvent;
 
 namespace Esri::ArcGISRuntime {
@@ -30,7 +35,6 @@ namespace Esri::ArcGISRuntime {
   class GlobeCameraController;
   class GraphicsOverlay;
   class OrbitLocationCameraController;
-  class TaskWatcher;
 }
 
 namespace Dsa {

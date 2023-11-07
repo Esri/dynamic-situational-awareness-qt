@@ -17,13 +17,12 @@
 #ifndef MESSAGE_H
 #define MESSAGE_H
 
-namespace Esri::ArcGISRuntime {
-  class Geometry;
-}
-
 // Qt headers
 #include <QSharedData>
 #include <QVariantMap>
+
+// C++ API headers
+#include "Geometry.h"
 
 namespace Dsa {
 

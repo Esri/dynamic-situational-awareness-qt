@@ -17,11 +17,12 @@
 #ifndef ADDLOCALDATACONTROLLER_H
 #define ADDLOCALDATACONTROLLER_H
 
-// dsa headers
-#include "AbstractTool.h"
-
 // Qt headers
 #include <QStringList>
+
+// dsa headers
+#include "AbstractTool.h"
+#include "DataItemListModel.h"
 
 class QAbstractListModel;
 
@@ -31,8 +32,6 @@ namespace Esri::ArcGISRuntime {
 }
 
 namespace Dsa {
-
-class DataItemListModel;
 
 class AddLocalDataController : public AbstractTool
 {

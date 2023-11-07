@@ -17,15 +17,14 @@
 #ifndef LOCATIONBROADCAST_H
 #define LOCATIONBROADCAST_H
 
-// dsa app headers
-#include "Message.h"
-
-namespace Esri::ArcGISRuntime {
-  class Point;
-}
-
 // Qt headers
 #include <QObject>
+
+// C++ API headers
+#include "Point.h"
+
+// dsa app headers
+#include "Message.h"
 
 class QTimer;
 

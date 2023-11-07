@@ -17,19 +17,21 @@
 #ifndef IDENTIFYFEATURESCONTROLLER_H
 #define IDENTIFYFEATURESCONTROLLER_H
 
-// dsa headers
-#include "AbstractTool.h"
-
 // Qt headers
 #include <QMouseEvent>
 #include <QObject>
+
+// C++ API headers
+#include "TaskWatcher.h"
+
+// dsa headers
+#include "AbstractTool.h"
 
 namespace Esri::ArcGISRuntime {
   class GeoElement;
   class IdentifyGraphicsOverlayResult;
   class IdentifyLayerResult;
   class PopupManager;
-  class TaskWatcher;
 }
 
 Q_MOC_INCLUDE("IdentifyGraphicsOverlayResult.h")

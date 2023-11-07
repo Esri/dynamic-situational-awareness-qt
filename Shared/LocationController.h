@@ -20,12 +20,14 @@
 // Qt headers
 #include <QString>
 
+// C++ API headers
+#include "Point.h"
+
 // dsa headers
 #include "AbstractTool.h"
 
 namespace Esri::ArcGISRuntime {
   class GraphicsOverlay;
-  class Point;
   class SceneQuickView;
 }
 

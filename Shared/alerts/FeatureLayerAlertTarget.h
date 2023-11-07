@@ -20,6 +20,9 @@
 // Qt headers
 #include <QUuid>
 
+// dsa headers
+#include "AlertTarget.h"
+
 namespace Esri::ArcGISRuntime {
   class Feature;
   class FeatureLayer;
@@ -28,7 +31,6 @@ namespace Esri::ArcGISRuntime {
 
 namespace Dsa {
 
-class AlertTarget;
 class GeometryQuadtree;
 
 class FeatureLayerAlertTarget : public AlertTarget

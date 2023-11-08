@@ -18,43 +18,8 @@
 
 #include "RuntimePermissionRequest.h"
 
-#ifndef Q_OS_ANDROID
 bool Dsa::requestRequiredPermissions()
 {
-  return true;
-}
-#else
-#  include <algorithm>
-#  include <QtAndroid>
-
-namespace
-{
-  const QList<QString> REQUIRED_PERMISSIONS = {
-    "android.permission.WRITE_EXTERNAL_STORAGE", 
-    "android.permission.READ_EXTERNAL_STORAGE"
-  };
-}
-
-bool Dsa::requestRequiredPermissions()
-{
-  // Get our permissions not yet allowed.
-  QList<QString> pendingPermissions;
-  std::copy_if(std::begin(REQUIRED_PERMISSIONS), 
-               std::end(REQUIRED_PERMISSIONS), 
-               std::back_inserter(pendingPermissions), 
-               [](const auto& p)
-               {
-                  return QtAndroid::PermissionResult::Denied == QtAndroid::checkPermission(p);
-               }
-  );
-
-  if (pendingPermissions.isEmpty())
+    // insert specific application permissions here
     return true;
-
-  // Attempt to request the permissions.
-  auto results = QtAndroid::requestPermissionsSync(pendingPermissions);
-
-  // Return true only if all permissions were allowed.
-  return !results.values().contains(QtAndroid::PermissionResult::Denied);
 }
-#endif

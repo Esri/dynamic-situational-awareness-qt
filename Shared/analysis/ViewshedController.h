@@ -18,7 +18,9 @@
 #define VIEWSHEDCONTROLLER_H
 
 // Qt headers
-#include <QAbstractListModel>
+#include <qtmetamacros.h>
+class QAbstractListModel;
+Q_MOC_INCLUDE("qabstractitemmodel.h")
 
 // C++ API headers
 #include "TaskWatcher.h"

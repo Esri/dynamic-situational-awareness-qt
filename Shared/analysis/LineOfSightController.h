@@ -19,8 +19,10 @@
 
 // Qt headers
 #include <QUuid>
-#include <QStringListModel>
-#include <QAbstractItemModel>
+class QAbstractItemModel;
+Q_MOC_INCLUDE("qabstractitemmodel.h")
+
+class QStringListModel;
 
 // C++ API headers
 #include "TaskWatcher.h"

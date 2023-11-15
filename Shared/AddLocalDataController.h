@@ -22,9 +22,9 @@
 
 // dsa headers
 #include "AbstractTool.h"
-#include "DataItemListModel.h"
 
 class QAbstractListModel;
+Q_MOC_INCLUDE("qabstractitemmodel.h")
 
 namespace Esri::ArcGISRuntime {
   class Layer;
@@ -32,6 +32,8 @@ namespace Esri::ArcGISRuntime {
 }
 
 namespace Dsa {
+
+class DataItemListModel;
 
 class AddLocalDataController : public AbstractTool
 {

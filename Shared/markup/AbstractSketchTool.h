@@ -20,9 +20,6 @@
 // Qt headers
 #include <QList>
 
-// C++ API headers
-#include "GeometryTypes.h"
-
 // dsa headers
 #include "AbstractTool.h"
 
@@ -34,6 +31,7 @@ namespace Esri::ArcGISRuntime {
   class Symbol;
   class Geometry;
   class Point;
+  enum class GeometryType;
 }
 
 namespace Dsa {

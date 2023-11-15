@@ -19,7 +19,8 @@
 
 // Qt headers
 #include <QVariantList>
-#include <QAbstractListModel>
+class QAbstractListModel;
+Q_MOC_INCLUDE("qabstractitemmodel.h")
 
 // dsa headers
 #include "AbstractTool.h"

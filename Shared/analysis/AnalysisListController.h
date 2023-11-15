@@ -18,7 +18,9 @@
 #define ANALYSISLISTCONTROLLER_H
 
 // Qt headers
-#include <QAbstractItemModel>
+#include <qtmetamacros.h>
+class QAbstractItemModel;
+Q_MOC_INCLUDE("qabstractitemmodel.h");
 
 // dsa headers
 #include "AbstractTool.h"

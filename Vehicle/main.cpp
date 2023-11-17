@@ -38,7 +38,6 @@
 #include "OpenMobileScenePackageController.h"
 #include "NavigationController.h"
 #include "OptionsController.h"
-#include "RuntimePermissionRequest.h"
 #include "TableOfContentsController.h"
 #include "Vehicle.h"
 #include "VehicleStyles.h"
@@ -105,12 +104,6 @@ int main(int argc, char *argv[])
   QCoreApplication::setOrganizationDomain(kOrganizationDomain);
 #endif
   QSettings::setDefaultFormat(kSettingsFormat);
-
-  // Force DSA to accept certain permissions.
-  if (!Dsa::requestRequiredPermissions())
-  {
-    return -1;
-  }
 
   // Register the map view for QML
   qmlRegisterType<SceneQuickView>("Esri.ArcGISRuntime.OpenSourceApps.Vehicle", 1, 1, "SceneView");

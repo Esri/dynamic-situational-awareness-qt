@@ -17,6 +17,16 @@
 #ifndef LINEOFSIGHTCONTROLLER_H
 #define LINEOFSIGHTCONTROLLER_H
 
+// Qt headers
+#include <QUuid>
+class QAbstractItemModel;
+Q_MOC_INCLUDE("qabstractitemmodel.h")
+
+class QStringListModel;
+
+// C++ API headers
+#include "TaskWatcher.h"
+
 // dsa headers
 #include "AbstractTool.h"
 
@@ -27,11 +37,7 @@ namespace Esri::ArcGISRuntime {
   class LayerListModel;
   class FeatureLayer;
   class FeatureQueryResult;
-  class TaskWatcher;
 }
-
-class QStringListModel;
-class QAbstractItemModel;
 
 namespace Dsa {
 

@@ -17,6 +17,9 @@
 #ifndef LOCATIONALERTSOURCE_H
 #define LOCATIONALERTSOURCE_H
 
+// C++ API headers
+#include "Point.h"
+
 // dsa app headers
 #include "AlertSource.h"
 

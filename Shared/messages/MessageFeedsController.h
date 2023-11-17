@@ -17,13 +17,13 @@
 #ifndef MESSAGEFEEDSCONTROLLER_H
 #define MESSAGEFEEDSCONTROLLER_H
 
-// dsa headers
-#include "AbstractTool.h"
-
 // Qt headers
 #include <QVariantList>
-
 class QAbstractListModel;
+Q_MOC_INCLUDE("qabstractitemmodel.h")
+
+// dsa headers
+#include "AbstractTool.h"
 
 namespace Esri::ArcGISRuntime {
   class GeoView;

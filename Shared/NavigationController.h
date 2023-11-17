@@ -17,16 +17,18 @@
 #ifndef NAVIGATIONCONTROLLER_H
 #define NAVIGATIONCONTROLLER_H
 
-// dsa headers
-#include "AbstractTool.h"
-
 // Qt headers
 #include <QUuid>
+
+// C++ API headers
+#include "Point.h"
+
+// dsa headers
+#include "AbstractTool.h"
 
 namespace Esri::ArcGISRuntime {
   class Camera;
   class GeoView;
-  class Point;
   class SceneView;
 }
 

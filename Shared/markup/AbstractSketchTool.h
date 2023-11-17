@@ -17,11 +17,11 @@
 #ifndef ABSTRACTSKETCHTOOL_H
 #define ABSTRACTSKETCHTOOL_H
 
-// dsa headers
-#include "AbstractTool.h"
-
 // Qt headers
 #include <QList>
+
+// dsa headers
+#include "AbstractTool.h"
 
 namespace Esri::ArcGISRuntime {
   class GeoView;
@@ -30,8 +30,8 @@ namespace Esri::ArcGISRuntime {
   class Graphic;
   class Symbol;
   class Geometry;
-  enum class GeometryTypes;
   class Point;
+  enum class GeometryType;
 }
 
 namespace Dsa {

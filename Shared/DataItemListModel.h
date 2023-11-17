@@ -22,8 +22,7 @@
 #include <QFileInfo>
 #include <QHash>
 #include <QList>
-
-class QAbstractListModel;
+#include <QAbstractListModel>
 
 namespace Dsa {
 

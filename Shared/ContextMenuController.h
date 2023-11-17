@@ -17,20 +17,23 @@
 #ifndef CONTEXTMENUCONTROLLER_H
 #define CONTEXTMENUCONTROLLER_H
 
-// dsa headers
-#include "AbstractTool.h"
-
 // Qt headers
+#include <QUuid>
 #include <QMouseEvent>
 #include <QStringListModel>
 #include <QHash>
+
+// C++ API Headers
+#include "Point.h"
+#include "TaskWatcher.h"
+
+// dsa headers
+#include "AbstractTool.h"
 
 namespace Esri::ArcGISRuntime {
   class GeoElement;
   class IdentifyGraphicsOverlayResult;
   class IdentifyLayerResult;
-  class Point;
-  class TaskWatcher;
 }
 
 Q_MOC_INCLUDE("IdentifyGraphicsOverlayResult.h")

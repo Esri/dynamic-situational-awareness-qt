@@ -20,9 +20,10 @@
 // Qt headers
 #include <QObject>
 
-namespace Dsa {
+// dsa headers
+#include "AlertCondition.h"
 
-class AlertCondition;
+namespace Dsa {
 
 class WithinDistanceAlertCondition : public AlertCondition
 {

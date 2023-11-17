@@ -17,13 +17,16 @@
 #ifndef ALERTCONDITIONSCONTROLLER_H
 #define ALERTCONDITIONSCONTROLLER_H
 
-// dsa headers
-#include "AbstractTool.h"
-
 // Qt headers
 #include <QHash>
 #include <QJsonObject>
 #include <QStringListModel>
+
+// C++ API headers
+#include "TaskWatcher.h"
+
+// dsa headers
+#include "AbstractTool.h"
 
 class QMouseEvent;
 
@@ -33,7 +36,6 @@ namespace Esri::ArcGISRuntime {
   class FeatureLayer;
   class FeatureTable;
   class GraphicsOverlay;
-  class TaskWatcher;
 }
 
 Q_MOC_INCLUDE("IdentifyGraphicsOverlayResult.h")

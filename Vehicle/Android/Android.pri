@@ -17,7 +17,6 @@
 INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 
-QT += androidextras
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD
 
 OTHER_FILES +=     $$ANDROID_PACKAGE_SOURCE_DIR/res/drawable-ldpi/icon.png     $$ANDROID_PACKAGE_SOURCE_DIR/res/drawable-mdpi/icon.png     $$ANDROID_PACKAGE_SOURCE_DIR/res/drawable-hdpi/icon.png     $$ANDROID_PACKAGE_SOURCE_DIR/res/drawable-xhdpi/icon.png     $$ANDROID_PACKAGE_SOURCE_DIR/res/drawable-xxhdpi/icon.png

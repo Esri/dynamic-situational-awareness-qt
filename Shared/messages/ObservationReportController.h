@@ -17,6 +17,9 @@
 #ifndef OBSERVATIONREPORTCONTROLLER_H
 #define OBSERVATIONREPORTCONTROLLER_H
 
+// C++ API headers
+#include "Point.h"
+
 // dsa headers
 #include "AbstractTool.h"
 
@@ -25,7 +28,6 @@ class QMouseEvent;
 
 namespace Esri::ArcGISRuntime {
   class GeoView;
-  class Point;
 }
 
 namespace Dsa {

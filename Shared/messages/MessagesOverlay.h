@@ -18,6 +18,7 @@
 #define MESSAGESOVERLAY_H
 
 // Qt headers
+#include <QHash>
 #include <QObject>
 #include <QPointer>
 

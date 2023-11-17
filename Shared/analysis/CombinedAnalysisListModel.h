@@ -18,7 +18,7 @@
 #define COMBINEDANALYSISLISTMODEL_H
 
 // Qt headers
-class QAbstractListModel;
+#include <QAbstractListModel>
 
 namespace Esri::ArcGISRuntime {
   class Analysis;

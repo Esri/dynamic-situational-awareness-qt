@@ -20,9 +20,10 @@
 // Qt headers
 #include <QVariant>
 
-namespace Dsa {
+// dsa headers
+#include "AlertTarget.h"
 
-class AlertTarget;
+namespace Dsa {
 
 class FixedValueAlertTarget : public AlertTarget
 {

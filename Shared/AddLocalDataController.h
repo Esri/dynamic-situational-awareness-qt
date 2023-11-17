@@ -17,13 +17,14 @@
 #ifndef ADDLOCALDATACONTROLLER_H
 #define ADDLOCALDATACONTROLLER_H
 
-// dsa headers
-#include "AbstractTool.h"
-
 // Qt headers
 #include <QStringList>
 
+// dsa headers
+#include "AbstractTool.h"
+
 class QAbstractListModel;
+Q_MOC_INCLUDE("qabstractitemmodel.h")
 
 namespace Esri::ArcGISRuntime {
   class Layer;

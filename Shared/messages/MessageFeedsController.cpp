@@ -143,7 +143,7 @@ void MessageFeedsController::addDataListener(DataListener* dataListener)
     if (!messageFeed)
       return;
 
-    messageFeed->messagesOverlay()->addMessage(m);
+    messageFeed->addMessage(m);
   });
 }
 
@@ -192,8 +192,9 @@ void MessageFeedsController::setupFeeds()
     const auto rendererThumbnail = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL].toString();
     const auto surfacePlacement = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT].toString();
 
-    MessagesOverlay* overlay = new MessagesOverlay(m_geoView, createRenderer(rendererInfo, this), feedType, toSurfacePlacement(surfacePlacement), this);
-    MessageFeed* feed = new MessageFeed(feedName, feedType, overlay, this);
+    MessageFeed *feed = new MessageFeed(feedName, feedType, this);
+    MessagesOverlay *overlay = new MessagesOverlay(m_geoView, createRenderer(rendererInfo, this), feedType, feed, toSurfacePlacement(surfacePlacement), this);
+    feed->setMessagesOverlay(overlay);
 
     if (!rendererThumbnail.isEmpty())
     {

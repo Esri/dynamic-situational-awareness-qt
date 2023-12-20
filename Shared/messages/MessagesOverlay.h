@@ -25,14 +25,13 @@
 namespace Esri::ArcGISRuntime {
     class GeoView;
     class Renderer;
-    class GraphicsOverlay;
-    class Graphic;
+    class DynamicEntityLayer;
     enum class SurfacePlacement;
 }
 
 namespace Dsa {
 
-class Message;
+class MessageFeed;
 
 class MessagesOverlay : public QObject
 {
@@ -40,8 +39,11 @@ class MessagesOverlay : public QObject
 
 public:
   explicit MessagesOverlay(Esri::ArcGISRuntime::GeoView* geoView, QObject* parent = nullptr);
-  MessagesOverlay(Esri::ArcGISRuntime::GeoView* geoView, Esri::ArcGISRuntime::Renderer* renderer,
-                  const QString& messageType, Esri::ArcGISRuntime::SurfacePlacement surfacePlacement,
+  MessagesOverlay(Esri::ArcGISRuntime::GeoView* geoView,
+                  Esri::ArcGISRuntime::Renderer* renderer,
+                  const QString& messageType,
+                  MessageFeed *messageFeed,
+                  Esri::ArcGISRuntime::SurfacePlacement surfacePlacement,
                   QObject* parent = nullptr);
   ~MessagesOverlay();
 
@@ -54,11 +56,9 @@ public:
   QString messageType() const;
   void setMessageType(const QString& messageType);
 
-  Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlay() const;
+  Esri::ArcGISRuntime::DynamicEntityLayer* dynamicEntityLayer() const;
 
   Esri::ArcGISRuntime::GeoView* geoView() const;
-
-  bool addMessage(const Message& message);
 
   bool isVisible() const;
   void setVisible(bool visible);
@@ -74,8 +74,8 @@ private:
   QPointer<Esri::ArcGISRuntime::Renderer> m_renderer;
   Esri::ArcGISRuntime::SurfacePlacement m_surfacePlacement;
 
-  Esri::ArcGISRuntime::GraphicsOverlay* m_graphicsOverlay = nullptr;
-  QHash<QString, Esri::ArcGISRuntime::Graphic*> m_existingGraphics;
+  Esri::ArcGISRuntime::DynamicEntityLayer* m_dynamicEntityLayer = nullptr;
+  MessageFeed *m_messageFeed;
 };
 
 } // Dsa

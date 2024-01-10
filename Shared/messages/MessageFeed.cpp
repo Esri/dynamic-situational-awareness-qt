@@ -119,25 +119,25 @@ QFuture<DynamicEntityDataSourceInfo*> MessageFeed::onLoadAsync()
   // listen for new entities
   connect(this, &DynamicEntityDataSource::dynamicEntityReceived, this, [this](DynamicEntityInfo *info)
   {
-      // checck new entity for select/unselect action
-      auto dynamicEntity = info->dynamicEntity();
-      checkEntityForSelectAction(dynamicEntity);
+    // checck new entity for select/unselect action
+    auto dynamicEntity = info->dynamicEntity();
+    checkEntityForSelectAction(dynamicEntity);
 
-      // mark the info as delete later so it can be cleaned up
-      // info in the source cannot be cleaned up immediately since alert targets might need a reference to the related DynamicEntity
-      info->deleteLater();
+    // mark the info as delete later so it can be cleaned up
+    // info in the source cannot be cleaned up immediately since alert targets might need a reference to the related DynamicEntity
+    info->deleteLater();
   });
 
   // listen for new observations
   connect(this, &DynamicEntityDataSource::dynamicEntityObservationReceived, this, [this](DynamicEntityObservationInfo *observationInfo)
   {
-      // check new entity for select/unselect action
-      auto dynamicEntity = observationInfo->observation()->dynamicEntity();
-      checkEntityForSelectAction(dynamicEntity);
+    // check new entity for select/unselect action
+    auto dynamicEntity = observationInfo->observation()->dynamicEntity();
+    checkEntityForSelectAction(dynamicEntity);
 
-      // mark the observation as delete later so it can be cleaned up
-      // observations in the source cannot be cleaned up immediately since alert targets might need a reference to the related DynamicEntity
-      observationInfo->deleteLater();
+    // mark the observation as delete later so it can be cleaned up
+    // observations in the source cannot be cleaned up immediately since alert targets might need a reference to the related DynamicEntity
+    observationInfo->deleteLater();
   });
 
   // return the new source future
@@ -291,25 +291,25 @@ bool MessageFeed::addMessage(const Message &message)
 
 void MessageFeed::checkEntityForSelectAction(Esri::ArcGISRuntime::DynamicEntity *dynamicEntity)
 {
-    // check for selection on add for geomessage types only
-    if (!m_isCoT)
+  // check for selection on add for geomessage types only
+  if (!m_isCoT)
+  {
+    // find the action attribute
+    if (dynamicEntity)
     {
-        // find the action attribute
-        if (dynamicEntity)
-        {
-            auto actionValue = dynamicEntity->attributes()->attributesMap()[Message::GEOMESSAGE_ACTION_NAME].toString();
-            static QString selectValue = Message::fromMessageAction(Message::MessageAction::Select);
-            static QString unselectValue = Message::fromMessageAction(Message::MessageAction::Unselect);
-            if (actionValue.compare(selectValue, Qt::CaseInsensitive) == 0)
-            {
-                m_messagesOverlay->dynamicEntityLayer()->selectDynamicEntity(dynamicEntity);
-            }
-            else if (actionValue.compare(unselectValue, Qt::CaseInsensitive) == 0)
-            {
-                m_messagesOverlay->dynamicEntityLayer()->unselectDynamicEntity(dynamicEntity);
-            }
-        }
+      auto actionValue = dynamicEntity->attributes()->attributesMap()[Message::GEOMESSAGE_ACTION_NAME].toString();
+      static QString selectValue = Message::fromMessageAction(Message::MessageAction::Select);
+      static QString unselectValue = Message::fromMessageAction(Message::MessageAction::Unselect);
+      if (actionValue.compare(selectValue, Qt::CaseInsensitive) == 0)
+      {
+        m_messagesOverlay->dynamicEntityLayer()->selectDynamicEntity(dynamicEntity);
+      }
+      else if (actionValue.compare(unselectValue, Qt::CaseInsensitive) == 0)
+      {
+        m_messagesOverlay->dynamicEntityLayer()->unselectDynamicEntity(dynamicEntity);
+      }
     }
+  }
 }
 
 } // Dsa

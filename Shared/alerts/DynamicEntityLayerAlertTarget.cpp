@@ -57,45 +57,45 @@ namespace Dsa {
   Entities are added/updated/removed by the DynamicEntityDataSource of the DynamicEntityLayer.
  */
 DynamicEntityLayerAlertTarget::DynamicEntityLayerAlertTarget(DynamicEntityLayer *dynamicEntityLayer) :
-    AlertTarget(dynamicEntityLayer),
-    m_dynamicEntityLayer(dynamicEntityLayer),
-    m_entityGraphics(QMap<quint64, Graphic*>{})
+  AlertTarget(dynamicEntityLayer),
+  m_dynamicEntityLayer(dynamicEntityLayer),
+  m_entityGraphics(QMap<quint64, Graphic*>{})
 {
-    // subscribe to the entity received signal from the source of the dynamic layer
-    connect(m_dynamicEntityLayer->dataSource(), &DynamicEntityDataSource::dynamicEntityReceived, this, [this](DynamicEntityInfo *info)
-    {
-        // check the new entity for a connection and mark the info as delete later
-        auto dynamicEntity = info->dynamicEntity();
-        connectEntityGraphic(dynamicEntity);
-        info->deleteLater();
-    });
+  // subscribe to the entity received signal from the source of the dynamic layer
+  connect(m_dynamicEntityLayer->dataSource(), &DynamicEntityDataSource::dynamicEntityReceived, this, [this](DynamicEntityInfo *info)
+  {
+    // check the new entity for a connection and mark the info as delete later
+    auto dynamicEntity = info->dynamicEntity();
+    connectEntityGraphic(dynamicEntity);
+    info->deleteLater();
+  });
 
-    // subscribe to the observation received signal (this essentially serves as the 'update' signal for the dynamic layer type)
-    connect(m_dynamicEntityLayer->dataSource(), &DynamicEntityDataSource::dynamicEntityObservationReceived, this, [this](DynamicEntityObservationInfo *observationInfo)
-    {
-        // check the entity for a connection and mark the observation as delete later
-        auto dynamicEntity = observationInfo->observation()->dynamicEntity();
-        connectEntityGraphic(dynamicEntity);
-        observationInfo->deleteLater();
-    });
+  // subscribe to the observation received signal (this essentially serves as the 'update' signal for the dynamic layer type)
+  connect(m_dynamicEntityLayer->dataSource(), &DynamicEntityDataSource::dynamicEntityObservationReceived, this, [this](DynamicEntityObservationInfo *observationInfo)
+  {
+    // check the entity for a connection and mark the observation as delete later
+    auto dynamicEntity = observationInfo->observation()->dynamicEntity();
+    connectEntityGraphic(dynamicEntity);
+    observationInfo->deleteLater();
+  });
 
-    // subscribe to the purged signal to remove any graphics from the lookup
-    connect(m_dynamicEntityLayer->dataSource(), &DynamicEntityDataSource::dynamicEntityPurged, this, [this](DynamicEntityInfo *info)
+  // subscribe to the purged signal to remove any graphics from the lookup
+  connect(m_dynamicEntityLayer->dataSource(), &DynamicEntityDataSource::dynamicEntityPurged, this, [this](DynamicEntityInfo *info)
+  {
+    // ensure the graphic is actually in the lookup
+    auto dynamicEntity = info->dynamicEntity();
+    if (m_entityGraphics.contains(dynamicEntity->entityId()))
     {
-        // ensure the graphic is actually in the lookup
-        auto dynamicEntity = info->dynamicEntity();
-        if (m_entityGraphics.contains(dynamicEntity->entityId()))
-        {
-            // get a cleanup reference to the graphic that was stored and remove it from the lookup
-            std::unique_ptr<Graphic> graphic(m_entityGraphics[dynamicEntity->entityId()]);
-            m_entityGraphics.remove(dynamicEntity->entityId());
+      // get a cleanup reference to the graphic that was stored and remove it from the lookup
+      std::unique_ptr<Graphic> graphic(m_entityGraphics[dynamicEntity->entityId()]);
+      m_entityGraphics.remove(dynamicEntity->entityId());
 
-            // signal the data has changed and rebuild the quad tree
-            rebuildQuadtree();
-            emit dataChanged();
-        }
-        info->deleteLater();
-    });
+      // signal the data has changed and rebuild the quad tree
+      rebuildQuadtree();
+      emit dataChanged();
+    }
+    info->deleteLater();
+  });
 }
 
 /*!
@@ -112,18 +112,18 @@ Dsa::DynamicEntityLayerAlertTarget::~DynamicEntityLayerAlertTarget()
  */
 QList<Geometry> DynamicEntityLayerAlertTarget::targetGeometries(const Esri::ArcGISRuntime::Envelope &targetArea) const
 {
-    // if the quadtree has been built, use  it to return the set of candidate geometries
-    if (m_quadtree) { return m_quadtree->candidateIntersections(targetArea); }
+  // if the quadtree has been built, use  it to return the set of candidate geometries
+  if (m_quadtree) { return m_quadtree->candidateIntersections(targetArea); }
 
-    // otherwise, return all of the geometry in the overlay
-    QList<Geometry> geometries;
-    for (auto dynamicEntity : m_entityGraphics)
-    {
-        if (!dynamicEntity) { continue; }
-        geometries.append(dynamicEntity->geometry());
-    }
+  // otherwise, return all of the geometry in the overlay
+  QList<Geometry> geometries;
+  for (auto dynamicEntity : m_entityGraphics)
+  {
+    if (!dynamicEntity) { continue; }
+    geometries.append(dynamicEntity->geometry());
+  }
 
-    return geometries;
+  return geometries;
 }
 
 /*!
@@ -131,7 +131,7 @@ QList<Geometry> DynamicEntityLayerAlertTarget::targetGeometries(const Esri::ArcG
  */
 QVariant DynamicEntityLayerAlertTarget::targetValue() const
 {
-    return QVariant{};
+  return QVariant{};
 }
 
 /*!
@@ -141,30 +141,30 @@ QVariant DynamicEntityLayerAlertTarget::targetValue() const
  */
 void DynamicEntityLayerAlertTarget::connectEntityGraphic(Esri::ArcGISRuntime::DynamicEntity *dynamicEntity)
 {
-    // check for an existing graphic
-    Graphic *graphic;
-    if (m_entityGraphics.contains(dynamicEntity->entityId()))
-    {
-        // update the geometry
-        graphic = m_entityGraphics[dynamicEntity->entityId()];
-        graphic->setGeometry(dynamicEntity->geometry());
-    }
+  // check for an existing graphic
+  Graphic *graphic;
+  if (m_entityGraphics.contains(dynamicEntity->entityId()))
+  {
+    // update the geometry
+    graphic = m_entityGraphics[dynamicEntity->entityId()];
+    graphic->setGeometry(dynamicEntity->geometry());
+  }
+  else
+  {
+      // if no graphic existed for the entity id, construct a new one and insert it into the graphics lookup
+    graphic = new Graphic(dynamicEntity->geometry());
+    connect(graphic, &Graphic::geometryChanged, this, &DynamicEntityLayerAlertTarget::dataChanged); // trigger the dataChanged signal on geometry updates
+    m_entityGraphics[dynamicEntity->entityId()] = graphic;
+
+    // if the quadtree has already been initialized, append the new graphic
+    if (m_quadtree) { m_quadtree->appendGeoElment(graphic); }
     else
     {
-        // if no graphic existed for the entity id, construct a new one and insert it into the graphics lookup
-        graphic = new Graphic(dynamicEntity->geometry());
-        connect(graphic, &Graphic::geometryChanged, this, &DynamicEntityLayerAlertTarget::dataChanged); // trigger the dataChanged signal on geometry updates
-        m_entityGraphics[dynamicEntity->entityId()] = graphic;
-
-        // if the quadtree has already been initialized, append the new graphic
-        if (m_quadtree) { m_quadtree->appendGeoElment(graphic); }
-        else
-        {
-            // otherwise call the rebuild method to initialize it
-            rebuildQuadtree();
-        }
-        emit dataChanged();
+      // otherwise call the rebuild method to initialize it
+      rebuildQuadtree();
     }
+    emit dataChanged();
+  }
 }
 
 
@@ -175,23 +175,23 @@ void DynamicEntityLayerAlertTarget::connectEntityGraphic(Esri::ArcGISRuntime::Dy
  */
 void DynamicEntityLayerAlertTarget::rebuildQuadtree()
 {
-    // destroy the quadtree if it already existed
-    if (m_quadtree)
-    {
-        delete m_quadtree;
-        m_quadtree = nullptr;
-    }
+  // destroy the quadtree if it already existed
+  if (m_quadtree)
+  {
+    delete m_quadtree;
+    m_quadtree = nullptr;
+  }
 
-    // build a list of pointers to geoelements for every graphic in the lookup
-    QList<GeoElement*> elements;
-    for (auto const dynamicEntity : std::as_const(m_entityGraphics))
-    {
-        if (!dynamicEntity) { continue; }
-        elements.append(dynamicEntity);
-    }
+  // build a list of pointers to geoelements for every graphic in the lookup
+  QList<GeoElement*> elements;
+  for (auto const dynamicEntity : std::as_const(m_entityGraphics))
+  {
+    if (!dynamicEntity) { continue; }
+    elements.append(dynamicEntity);
+  }
 
-    // if there is more than 1 element in the overlay, build a quadtree
-    if (elements.size() > 1) { m_quadtree = new GeometryQuadtree(m_dynamicEntityLayer->fullExtent(), elements, 8, this); }
+  // if there is more than 1 element in the overlay, build a quadtree
+  if (elements.size() > 1) { m_quadtree = new GeometryQuadtree(m_dynamicEntityLayer->fullExtent(), elements, 8, this); }
 }
 
 } // Dsa

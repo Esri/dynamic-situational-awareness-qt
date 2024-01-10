@@ -21,10 +21,12 @@
 #include "AlertTarget.h"
 
 namespace Esri::ArcGISRuntime {
+
 class DynamicEntity;
 class DynamicEntityInfo;
 class DynamicEntityLayer;
 class Graphic;
+
 }
 
 namespace Dsa {
@@ -33,21 +35,21 @@ class GeometryQuadtree;
 
 class DynamicEntityLayerAlertTarget : public AlertTarget
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    explicit DynamicEntityLayerAlertTarget(Esri::ArcGISRuntime::DynamicEntityLayer *dynamicEntityLayer);
-    ~DynamicEntityLayerAlertTarget();
+  explicit DynamicEntityLayerAlertTarget(Esri::ArcGISRuntime::DynamicEntityLayer *dynamicEntityLayer);
+  ~DynamicEntityLayerAlertTarget();
 
-    QList<Esri::ArcGISRuntime::Geometry> targetGeometries(const Esri::ArcGISRuntime::Envelope &targetArea) const override;
-    QVariant targetValue() const override;
+  QList<Esri::ArcGISRuntime::Geometry> targetGeometries(const Esri::ArcGISRuntime::Envelope &targetArea) const override;
+  QVariant targetValue() const override;
 
 private:
-    Esri::ArcGISRuntime::DynamicEntityLayer *m_dynamicEntityLayer = nullptr;
-    GeometryQuadtree *m_quadtree = nullptr;
-    QMap<quint64, Esri::ArcGISRuntime::Graphic*> m_entityGraphics;
-    void connectEntityGraphic(Esri::ArcGISRuntime::DynamicEntity *dynamicEntity);
-    void rebuildQuadtree();
+  Esri::ArcGISRuntime::DynamicEntityLayer *m_dynamicEntityLayer = nullptr;
+  GeometryQuadtree *m_quadtree = nullptr;
+  QMap<quint64, Esri::ArcGISRuntime::Graphic*> m_entityGraphics;
+  void connectEntityGraphic(Esri::ArcGISRuntime::DynamicEntity *dynamicEntity);
+  void rebuildQuadtree();
 };
 
 } // Dsa

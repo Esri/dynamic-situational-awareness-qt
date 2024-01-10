@@ -58,15 +58,19 @@ namespace Dsa {
   \brief Destructor.
  */
 MessagesOverlay::MessagesOverlay(Esri::ArcGISRuntime::GeoView *geoView, Esri::ArcGISRuntime::Renderer *renderer, const QString &messageType, MessageFeed *messageFeed, Esri::ArcGISRuntime::SurfacePlacement surfacePlacement, QObject *parent) :
-    QObject(parent), m_geoView(geoView), m_renderer(renderer), m_surfacePlacement(surfacePlacement), m_messageFeed(messageFeed)
+  QObject(parent),
+  m_geoView(geoView),
+  m_renderer(renderer),
+  m_surfacePlacement(surfacePlacement),
+  m_messageFeed(messageFeed)
 {
-    m_dynamicEntityLayer = new DynamicEntityLayer(m_messageFeed, this);
-    m_dynamicEntityLayer->setLayerId(messageType);
-    m_dynamicEntityLayer->setSceneProperties(LayerSceneProperties(m_surfacePlacement));
-    m_dynamicEntityLayer->setRenderer(m_renderer);
-    m_dynamicEntityLayer->setName(messageType);
-    SceneView *scene = static_cast<SceneView*>(m_geoView);
-    scene->arcGISScene()->operationalLayers()->append(m_dynamicEntityLayer);
+  m_dynamicEntityLayer = new DynamicEntityLayer(m_messageFeed, this);
+  m_dynamicEntityLayer->setLayerId(messageType);
+  m_dynamicEntityLayer->setSceneProperties(LayerSceneProperties(m_surfacePlacement));
+  m_dynamicEntityLayer->setRenderer(m_renderer);
+  m_dynamicEntityLayer->setName(messageType);
+  SceneView *scene = static_cast<SceneView*>(m_geoView);
+  scene->arcGISScene()->operationalLayers()->append(m_dynamicEntityLayer);
 }
 
 MessagesOverlay::~MessagesOverlay()
@@ -84,7 +88,7 @@ Renderer* MessagesOverlay::renderer() const
 /*!
   \brief Sets the Esri:ArcGISRuntime::Renderer for the overlay to \a renderer.
  */
-void MessagesOverlay::setRenderer(Renderer* renderer)
+void MessagesOverlay::setRenderer(Renderer *renderer)
 {
   if (m_renderer == renderer)
     return;

@@ -108,8 +108,8 @@ AlertConditionsController::AlertConditionsController(QObject* parent /* = nullpt
 {
   connect(ToolResourceProvider::instance(), &ToolResourceProvider::geoViewChanged,
           this, &AlertConditionsController::onGeoviewChanged);
-    connect(ToolResourceProvider::instance(), &ToolResourceProvider::sceneChanged,
-          this, &AlertConditionsController::onGeoviewChanged);
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::sceneChanged,
+        this, &AlertConditionsController::onGeoviewChanged);
 
   connect(m_conditions, &AlertConditionListModel::rowsInserted, this, &AlertConditionsController::onConditionsChanged);
   connect(m_conditions, &AlertConditionListModel::rowsRemoved, this, &AlertConditionsController::onConditionsChanged);
@@ -616,23 +616,23 @@ void AlertConditionsController::onLayersChanged()
 
       if (featLayer)
       {
-          if (featLayer->loadStatus() != LoadStatus::Loaded)
-              connect(featLayer, &FeatureLayer::doneLoading, this, &AlertConditionsController::onLayersChanged);
-          else
-          {
-              newTargetList.append(featLayer->name());
-              existingLayerIds.append(featLayer->name());
-          }
+        if (featLayer->loadStatus() != LoadStatus::Loaded)
+          connect(featLayer, &FeatureLayer::doneLoading, this, &AlertConditionsController::onLayersChanged);
+        else
+        {
+          newTargetList.append(featLayer->name());
+          existingLayerIds.append(featLayer->name());
+        }
       }
       if (dynamicEntityLayer)
       {
-          if (dynamicEntityLayer->loadStatus() != LoadStatus::Loaded)
-              connect(dynamicEntityLayer, &DynamicEntityLayer::doneLoading, this, &AlertConditionsController::onLayersChanged);
-          else
-          {
-              newTargetList.append(dynamicEntityLayer->name());
-              existingLayerIds.append(dynamicEntityLayer->name());
-          }
+        if (dynamicEntityLayer->loadStatus() != LoadStatus::Loaded)
+          connect(dynamicEntityLayer, &DynamicEntityLayer::doneLoading, this, &AlertConditionsController::onLayersChanged);
+        else
+        {
+          newTargetList.append(dynamicEntityLayer->name());
+          existingLayerIds.append(dynamicEntityLayer->name());
+        }
       }
     }
   }

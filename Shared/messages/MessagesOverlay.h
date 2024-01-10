@@ -38,25 +38,25 @@ class MessagesOverlay : public QObject
   Q_OBJECT
 
 public:
-  explicit MessagesOverlay(Esri::ArcGISRuntime::GeoView* geoView, QObject* parent = nullptr);
-  MessagesOverlay(Esri::ArcGISRuntime::GeoView* geoView,
-                  Esri::ArcGISRuntime::Renderer* renderer,
-                  const QString& messageType,
+  explicit MessagesOverlay(Esri::ArcGISRuntime::GeoView *geoView, QObject *parent = nullptr);
+  MessagesOverlay(Esri::ArcGISRuntime::GeoView *geoView,
+                  Esri::ArcGISRuntime::Renderer *renderer,
+                  const QString &messageType,
                   MessageFeed *messageFeed,
                   Esri::ArcGISRuntime::SurfacePlacement surfacePlacement,
-                  QObject* parent = nullptr);
+                  QObject *parent = nullptr);
   ~MessagesOverlay();
 
-  Esri::ArcGISRuntime::Renderer* renderer() const;
-  void setRenderer(Esri::ArcGISRuntime::Renderer* renderer);
+  Esri::ArcGISRuntime::Renderer *renderer() const;
+  void setRenderer(Esri::ArcGISRuntime::Renderer *renderer);
 
   Esri::ArcGISRuntime::SurfacePlacement surfacePlacement() const;
   void setSurfacePlacement(Esri::ArcGISRuntime::SurfacePlacement surfacePlacement);
 
   QString messageType() const;
-  void setMessageType(const QString& messageType);
+  void setMessageType(const QString &messageType);
 
-  Esri::ArcGISRuntime::DynamicEntityLayer* dynamicEntityLayer() const;
+  Esri::ArcGISRuntime::DynamicEntityLayer *dynamicEntityLayer() const;
 
   Esri::ArcGISRuntime::GeoView* geoView() const;
 
@@ -70,11 +70,11 @@ signals:
 private:
   Q_DISABLE_COPY(MessagesOverlay)
 
-  Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
+  Esri::ArcGISRuntime::GeoView *m_geoView = nullptr;
   QPointer<Esri::ArcGISRuntime::Renderer> m_renderer;
   Esri::ArcGISRuntime::SurfacePlacement m_surfacePlacement;
 
-  Esri::ArcGISRuntime::DynamicEntityLayer* m_dynamicEntityLayer = nullptr;
+  Esri::ArcGISRuntime::DynamicEntityLayer *m_dynamicEntityLayer = nullptr;
   MessageFeed *m_messageFeed;
 };
 

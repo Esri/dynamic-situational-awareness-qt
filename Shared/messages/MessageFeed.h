@@ -49,10 +49,10 @@ public:
   QFuture<void> onDisconnectAsync() override;
 
   QString feedName() const;
-  void setFeedName(const QString& feedName);
+  void setFeedName(const QString &feedName);
 
   QString feedMessageType() const;
-  void setFeedMessageType(const QString& feedMessageType);
+  void setFeedMessageType(const QString &feedMessageType);
 
   bool isFeedVisible() const;
   void setFeedVisible(bool feedVisible);
@@ -61,7 +61,7 @@ public:
   void setMessagesOverlay(MessagesOverlay *messagesOverlay);
 
   QUrl thumbnailUrl() const;
-  void setThumbnailUrl(const QUrl& thumbnailUrl);
+  void setThumbnailUrl(const QUrl &thumbnailUrl);
 
   bool addMessage(const Message &message);
 
@@ -73,11 +73,9 @@ private:
   bool m_isCoT;
   bool m_feedVisible = true;
   QString m_entityIdAttributeName;
-  MessagesOverlay* m_messagesOverlay = nullptr;
-  QMap<QString, Esri::ArcGISRuntime::DynamicEntity*> m_dynamicEntities;
+  MessagesOverlay *m_messagesOverlay = nullptr;
   QUrl m_thumbnailUrl;
-  void dynamicEntityReceived(Esri::ArcGISRuntime::DynamicEntityInfo *info);
-  void dynamicEntityPurged(Esri::ArcGISRuntime::DynamicEntityInfo *info);
+  void checkEntityForSelectAction(Esri::ArcGISRuntime::DynamicEntity *dynamicEntity);
 };
 
 } // Dsa

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright 2012-2018 Esri
+ *  Copyright 2012-2024 Esri
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,17 +38,17 @@ class DynamicEntityLayerAlertTarget : public AlertTarget
   Q_OBJECT
 
 public:
-  explicit DynamicEntityLayerAlertTarget(Esri::ArcGISRuntime::DynamicEntityLayer *dynamicEntityLayer);
+  explicit DynamicEntityLayerAlertTarget(Esri::ArcGISRuntime::DynamicEntityLayer* dynamicEntityLayer);
   ~DynamicEntityLayerAlertTarget();
 
-  QList<Esri::ArcGISRuntime::Geometry> targetGeometries(const Esri::ArcGISRuntime::Envelope &targetArea) const override;
+  QList<Esri::ArcGISRuntime::Geometry> targetGeometries(const Esri::ArcGISRuntime::Envelope& targetArea) const override;
   QVariant targetValue() const override;
 
 private:
-  Esri::ArcGISRuntime::DynamicEntityLayer *m_dynamicEntityLayer = nullptr;
-  GeometryQuadtree *m_quadtree = nullptr;
+  Esri::ArcGISRuntime::DynamicEntityLayer* m_dynamicEntityLayer = nullptr;
+  GeometryQuadtree* m_quadtree = nullptr;
   QMap<quint64, Esri::ArcGISRuntime::Graphic*> m_entityGraphics;
-  void connectEntityGraphic(Esri::ArcGISRuntime::DynamicEntity *dynamicEntity);
+  void connectEntityGraphic(Esri::ArcGISRuntime::DynamicEntity* dynamicEntity);
   void rebuildQuadtree();
 };
 

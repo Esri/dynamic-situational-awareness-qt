@@ -609,25 +609,24 @@ void AlertConditionsController::onLayersChanged()
       if (!lyr)
         continue;
 
-      FeatureLayer* featLayer = qobject_cast<FeatureLayer*>(lyr);
-      DynamicEntityLayer *dynamicEntityLayer = qobject_cast<DynamicEntityLayer*>(lyr);
-      if (!featLayer && !dynamicEntityLayer)
-        continue;
-
-      if (featLayer)
+      if (FeatureLayer* featureLayer = qobject_cast<FeatureLayer*>(lyr); featureLayer)
       {
-        if (featLayer->loadStatus() != LoadStatus::Loaded)
-          connect(featLayer, &FeatureLayer::doneLoading, this, &AlertConditionsController::onLayersChanged);
+        if (featureLayer->loadStatus() != LoadStatus::Loaded)
+        {
+          connect(featureLayer, &FeatureLayer::doneLoading, this, &AlertConditionsController::onLayersChanged);
+        }
         else
         {
-          newTargetList.append(featLayer->name());
-          existingLayerIds.append(featLayer->name());
+          newTargetList.append(featureLayer->name());
+          existingLayerIds.append(featureLayer->name());
         }
       }
-      if (dynamicEntityLayer)
+      else if (DynamicEntityLayer* dynamicEntityLayer = qobject_cast<DynamicEntityLayer*>(lyr); dynamicEntityLayer)
       {
         if (dynamicEntityLayer->loadStatus() != LoadStatus::Loaded)
+        {
           connect(dynamicEntityLayer, &DynamicEntityLayer::doneLoading, this, &AlertConditionsController::onLayersChanged);
+        }
         else
         {
           newTargetList.append(dynamicEntityLayer->name());
@@ -1089,46 +1088,41 @@ AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int
       if (!layer)
         continue;
 
-      FeatureLayer *featLayer = qobject_cast<FeatureLayer*>(layer);
-      DynamicEntityLayer *dynamicEntityLayer = qobject_cast<DynamicEntityLayer*>(layer);
-      if (!featLayer && !dynamicEntityLayer)
-        continue;
-
       currIndex++;
 
       if (currIndex == targetOverlayIndex)
       {
-          if (featLayer)
+        if (FeatureLayer* featureLayer = qobject_cast<FeatureLayer*>(layer); featureLayer)
+        {
+          if (itemId == -1)
           {
-            if (itemId == -1)
-            {
-              if (!m_layerTargets.contains(featLayer->name()))
-                m_layerTargets.insert(featLayer->name(), new FeatureLayerAlertTarget(featLayer));
+            if (!m_layerTargets.contains(featureLayer->name()))
+              m_layerTargets.insert(featureLayer->name(), new FeatureLayerAlertTarget(featureLayer));
 
-              targetDescription = featLayer->name();
-              return m_layerTargets.value(featLayer->name(), nullptr);
-            }
-            else
-            {
-              targetDescription = QString("%1 [%2]").arg(featLayer->name(), QString::number(itemId));
-              return targetFromFeatureLayer(featLayer, itemId);
-            }
+            targetDescription = featureLayer->name();
+            return m_layerTargets.value(featureLayer->name(), nullptr);
           }
-          if (dynamicEntityLayer)
+          else
           {
-              if (itemId == -1)
-              {
-                  if (!m_layerTargets.contains(dynamicEntityLayer->name()))
-                      m_layerTargets.insert(dynamicEntityLayer->name(), new DynamicEntityLayerAlertTarget(dynamicEntityLayer));
-
-                  targetDescription = dynamicEntityLayer->name();
-                  return m_layerTargets.value(dynamicEntityLayer->name(), nullptr);
-              }
-              else
-              {
-                  return nullptr;
-              }
+            targetDescription = QString("%1 [%2]").arg(featureLayer->name(), QString::number(itemId));
+            return targetFromFeatureLayer(featureLayer, itemId);
           }
+        }
+        else if (DynamicEntityLayer* dynamicEntityLayer = qobject_cast<DynamicEntityLayer*>(layer); dynamicEntityLayer)
+        {
+          if (itemId == -1)
+          {
+            if (!m_layerTargets.contains(dynamicEntityLayer->name()))
+              m_layerTargets.insert(dynamicEntityLayer->name(), new DynamicEntityLayerAlertTarget(dynamicEntityLayer));
+
+            targetDescription = dynamicEntityLayer->name();
+            return m_layerTargets.value(dynamicEntityLayer->name(), nullptr);
+          }
+          else
+          {
+            return nullptr;
+          }
+        }
       }
     }
   }

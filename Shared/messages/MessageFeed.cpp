@@ -53,7 +53,7 @@ namespace Dsa {
 /*!
   \brief Constructor accepting a feed \a name, a message \a type, and \a overlay and an optional \a parent.
  */
-MessageFeed::MessageFeed(const QString &name, const QString &type, QObject *parent) :
+MessageFeed::MessageFeed(const QString& name, const QString& type, QObject* parent) :
   DynamicEntityDataSource(parent),
   m_feedName(name),
   m_feedMessageType(type)
@@ -107,20 +107,20 @@ QFuture<DynamicEntityDataSourceInfo*> MessageFeed::onLoadAsync()
 
   QList<Field> fields;
   fields.reserve(field_names.count());
-  for (auto &fn : field_names)
+  for (auto& fn : field_names)
   {
     fields.emplace_back(FieldType::Text, fn, "", 256, Domain(), false, true);
   }
 
   // build the dynamic entity data source info from the fields and the entity id field name
-  auto dynamicEntityDataSourceInfo = new DynamicEntityDataSourceInfo(entity_id_field_name, fields, this);
+  auto* dynamicEntityDataSourceInfo = new DynamicEntityDataSourceInfo(entity_id_field_name, fields, this);
   dynamicEntityDataSourceInfo->setSpatialReference(SpatialReference::wgs84());
 
   // listen for new entities
-  connect(this, &DynamicEntityDataSource::dynamicEntityReceived, this, [this](DynamicEntityInfo *info)
+  connect(this, &DynamicEntityDataSource::dynamicEntityReceived, this, [this](DynamicEntityInfo* info)
   {
     // checck new entity for select/unselect action
-    auto dynamicEntity = info->dynamicEntity();
+    auto* dynamicEntity = info->dynamicEntity();
     checkEntityForSelectAction(dynamicEntity);
 
     // mark the info as delete later so it can be cleaned up
@@ -129,10 +129,10 @@ QFuture<DynamicEntityDataSourceInfo*> MessageFeed::onLoadAsync()
   });
 
   // listen for new observations
-  connect(this, &DynamicEntityDataSource::dynamicEntityObservationReceived, this, [this](DynamicEntityObservationInfo *observationInfo)
+  connect(this, &DynamicEntityDataSource::dynamicEntityObservationReceived, this, [this](DynamicEntityObservationInfo* observationInfo)
   {
     // check new entity for select/unselect action
-    auto dynamicEntity = observationInfo->observation()->dynamicEntity();
+    auto* dynamicEntity = observationInfo->observation()->dynamicEntity();
     checkEntityForSelectAction(dynamicEntity);
 
     // mark the observation as delete later so it can be cleaned up
@@ -178,7 +178,7 @@ QString MessageFeed::feedMessageType() const
 /*!
   \brief Sets the type of this message feed to \a feedMessageType.
  */
-void MessageFeed::setFeedMessageType(const QString &feedMessageType)
+void MessageFeed::setFeedMessageType(const QString& feedMessageType)
 {
   m_feedMessageType = feedMessageType;
 }
@@ -214,7 +214,7 @@ MessagesOverlay* MessageFeed::messagesOverlay() const
 /*!
   \brief Sets the \l MessagesOverlay for this feed to \a messagesOverlay.
  */
-void MessageFeed::setMessagesOverlay(MessagesOverlay *messagesOverlay)
+void MessageFeed::setMessagesOverlay(MessagesOverlay* messagesOverlay)
 {
   m_messagesOverlay = messagesOverlay;
 }
@@ -230,7 +230,7 @@ QUrl MessageFeed::thumbnailUrl() const
 /*!
   \brief Sets the (local file) URL of the thumbnail to use for this feed to \a thumbnailUrl.
  */
-void MessageFeed::setThumbnailUrl(const QUrl &thumbnailUrl)
+void MessageFeed::setThumbnailUrl(const QUrl& thumbnailUrl)
 {
   m_thumbnailUrl = thumbnailUrl;
 }
@@ -238,7 +238,7 @@ void MessageFeed::setThumbnailUrl(const QUrl &thumbnailUrl)
 /*!
   \brief Adds the \l Message \a message to the overlay. Returns whether adding was successful.
  */
-bool MessageFeed::addMessage(const Message &message)
+bool MessageFeed::addMessage(const Message& message)
 {
   static QString additionalErrorMessage = "DSA - MessageFeed";
   const auto messageId = message.messageId();
@@ -261,7 +261,9 @@ bool MessageFeed::addMessage(const Message &message)
   switch (messageAction)
   {
   case Message::MessageAction::Remove:
-    this->deleteEntityAsync(messageId).then([]{});
+    {
+      auto future = this->deleteEntityAsync(messageId);
+    }
     return true;
 
   default:
@@ -289,7 +291,7 @@ bool MessageFeed::addMessage(const Message &message)
   return true;
 }
 
-void MessageFeed::checkEntityForSelectAction(Esri::ArcGISRuntime::DynamicEntity *dynamicEntity)
+void MessageFeed::checkEntityForSelectAction(DynamicEntity* dynamicEntity)
 {
   // check for selection on add for geomessage types only
   if (!m_isCoT)
@@ -298,8 +300,8 @@ void MessageFeed::checkEntityForSelectAction(Esri::ArcGISRuntime::DynamicEntity 
     if (dynamicEntity)
     {
       auto actionValue = dynamicEntity->attributes()->attributesMap()[Message::GEOMESSAGE_ACTION_NAME].toString();
-      static QString selectValue = Message::fromMessageAction(Message::MessageAction::Select);
-      static QString unselectValue = Message::fromMessageAction(Message::MessageAction::Unselect);
+      static const QString selectValue = Message::fromMessageAction(Message::MessageAction::Select);
+      static const QString unselectValue = Message::fromMessageAction(Message::MessageAction::Unselect);
       if (actionValue.compare(selectValue, Qt::CaseInsensitive) == 0)
       {
         m_messagesOverlay->dynamicEntityLayer()->selectDynamicEntity(dynamicEntity);

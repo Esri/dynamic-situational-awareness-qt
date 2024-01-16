@@ -41,7 +41,7 @@ class MessageFeed : public Esri::ArcGISRuntime::DynamicEntityDataSource
   Q_OBJECT
 
 public:
-  MessageFeed(const QString &name, const QString &type, QObject *parent = nullptr);
+  MessageFeed(const QString& name, const QString& type, QObject* parent = nullptr);
   ~MessageFeed() override;
 
   QFuture<Esri::ArcGISRuntime::DynamicEntityDataSourceInfo*> onLoadAsync() override;
@@ -49,21 +49,21 @@ public:
   QFuture<void> onDisconnectAsync() override;
 
   QString feedName() const;
-  void setFeedName(const QString &feedName);
+  void setFeedName(const QString& feedName);
 
   QString feedMessageType() const;
-  void setFeedMessageType(const QString &feedMessageType);
+  void setFeedMessageType(const QString& feedMessageType);
 
   bool isFeedVisible() const;
   void setFeedVisible(bool feedVisible);
 
   MessagesOverlay* messagesOverlay() const;
-  void setMessagesOverlay(MessagesOverlay *messagesOverlay);
+  void setMessagesOverlay(MessagesOverlay* messagesOverlay);
 
   QUrl thumbnailUrl() const;
-  void setThumbnailUrl(const QUrl &thumbnailUrl);
+  void setThumbnailUrl(const QUrl& thumbnailUrl);
 
-  bool addMessage(const Message &message);
+  bool addMessage(const Message& message);
 
 private:
   Q_DISABLE_COPY(MessageFeed)
@@ -73,9 +73,9 @@ private:
   bool m_isCoT;
   bool m_feedVisible = true;
   QString m_entityIdAttributeName;
-  MessagesOverlay *m_messagesOverlay = nullptr;
+  MessagesOverlay* m_messagesOverlay = nullptr;
   QUrl m_thumbnailUrl;
-  void checkEntityForSelectAction(Esri::ArcGISRuntime::DynamicEntity *dynamicEntity);
+  void checkEntityForSelectAction(Esri::ArcGISRuntime::DynamicEntity* dynamicEntity);
 };
 
 } // Dsa

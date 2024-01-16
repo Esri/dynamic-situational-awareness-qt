@@ -192,8 +192,8 @@ void MessageFeedsController::setupFeeds()
     const auto rendererThumbnail = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL].toString();
     const auto surfacePlacement = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT].toString();
 
-    MessageFeed *feed = new MessageFeed(feedName, feedType, this);
-    MessagesOverlay *overlay = new MessagesOverlay(m_geoView, createRenderer(rendererInfo, this), feedType, feed, toSurfacePlacement(surfacePlacement), this);
+    MessageFeed* feed = new MessageFeed(feedName, feedType, this);
+    MessagesOverlay* overlay = new MessagesOverlay(m_geoView, createRenderer(rendererInfo, this), feedType, feed, toSurfacePlacement(surfacePlacement), this);
     feed->setMessagesOverlay(overlay);
 
     if (!rendererThumbnail.isEmpty())

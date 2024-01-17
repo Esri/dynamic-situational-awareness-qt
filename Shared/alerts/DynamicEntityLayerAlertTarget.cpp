@@ -152,7 +152,7 @@ void DynamicEntityLayerAlertTarget::connectEntityGraphic(DynamicEntity* dynamicE
   else
   {
       // if no graphic existed for the entity id, construct a new one and insert it into the graphics lookup
-    graphic = new Graphic(dynamicEntity->geometry());
+    graphic = new Graphic(dynamicEntity->geometry(), this);
     connect(graphic, &Graphic::geometryChanged, this, &DynamicEntityLayerAlertTarget::dataChanged); // trigger the dataChanged signal on geometry updates
     m_entityGraphics[dynamicEntity->entityId()] = graphic;
 

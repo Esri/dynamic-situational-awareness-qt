@@ -26,6 +26,7 @@
 #include "AlertConstants.h"
 #include "AlertListModel.h"
 #include "AttributeEqualsAlertCondition.h"
+#include "DynamicEntityLayerAlertTarget.h"
 #include "FeatureLayerAlertTarget.h"
 #include "FixedValueAlertTarget.h"
 #include "GeoElementAlertTarget.h"
@@ -46,6 +47,7 @@
 // C++ API headers
 #include "ArcGISFeatureTable.h"
 #include "AttributeListModel.h"
+#include "DynamicEntityLayer.h"
 #include "Error.h"
 #include "Feature.h"
 #include "FeatureIterator.h"
@@ -106,6 +108,8 @@ AlertConditionsController::AlertConditionsController(QObject* parent /* = nullpt
 {
   connect(ToolResourceProvider::instance(), &ToolResourceProvider::geoViewChanged,
           this, &AlertConditionsController::onGeoviewChanged);
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::sceneChanged,
+        this, &AlertConditionsController::onGeoviewChanged);
 
   connect(m_conditions, &AlertConditionListModel::rowsInserted, this, &AlertConditionsController::onConditionsChanged);
   connect(m_conditions, &AlertConditionListModel::rowsRemoved, this, &AlertConditionsController::onConditionsChanged);
@@ -605,16 +609,29 @@ void AlertConditionsController::onLayersChanged()
       if (!lyr)
         continue;
 
-      FeatureLayer* featLayer = qobject_cast<FeatureLayer*>(lyr);
-      if (!featLayer)
-        continue;
-
-      if (featLayer->loadStatus() != LoadStatus::Loaded)
-        connect(featLayer, &FeatureLayer::doneLoading, this, &AlertConditionsController::onLayersChanged);
-      else
+      if (FeatureLayer* featureLayer = qobject_cast<FeatureLayer*>(lyr); featureLayer)
       {
-        newTargetList.append(featLayer->name());
-        existingLayerIds.append(featLayer->name());
+        if (featureLayer->loadStatus() != LoadStatus::Loaded)
+        {
+          connect(featureLayer, &FeatureLayer::doneLoading, this, &AlertConditionsController::onLayersChanged);
+        }
+        else
+        {
+          newTargetList.append(featureLayer->name());
+          existingLayerIds.append(featureLayer->name());
+        }
+      }
+      else if (DynamicEntityLayer* dynamicEntityLayer = qobject_cast<DynamicEntityLayer*>(lyr); dynamicEntityLayer)
+      {
+        if (dynamicEntityLayer->loadStatus() != LoadStatus::Loaded)
+        {
+          connect(dynamicEntityLayer, &DynamicEntityLayer::doneLoading, this, &AlertConditionsController::onLayersChanged);
+        }
+        else
+        {
+          newTargetList.append(dynamicEntityLayer->name());
+          existingLayerIds.append(dynamicEntityLayer->name());
+        }
       }
     }
   }
@@ -1071,26 +1088,40 @@ AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int
       if (!layer)
         continue;
 
-      FeatureLayer* featLayer = qobject_cast<FeatureLayer*>(layer);
-      if (!featLayer)
-        continue;
-
       currIndex++;
 
       if (currIndex == targetOverlayIndex)
       {
-        if (itemId == -1)
+        if (FeatureLayer* featureLayer = qobject_cast<FeatureLayer*>(layer); featureLayer)
         {
-          if (!m_layerTargets.contains(featLayer->name()))
-            m_layerTargets.insert(featLayer->name(), new FeatureLayerAlertTarget(featLayer));
+          if (itemId == -1)
+          {
+            if (!m_layerTargets.contains(featureLayer->name()))
+              m_layerTargets.insert(featureLayer->name(), new FeatureLayerAlertTarget(featureLayer));
 
-          targetDescription = featLayer->name();
-          return m_layerTargets.value(featLayer->name(), nullptr);
+            targetDescription = featureLayer->name();
+            return m_layerTargets.value(featureLayer->name(), nullptr);
+          }
+          else
+          {
+            targetDescription = QString("%1 [%2]").arg(featureLayer->name(), QString::number(itemId));
+            return targetFromFeatureLayer(featureLayer, itemId);
+          }
         }
-        else
+        else if (DynamicEntityLayer* dynamicEntityLayer = qobject_cast<DynamicEntityLayer*>(layer); dynamicEntityLayer)
         {
-          targetDescription = QString("%1 [%2]").arg(featLayer->name(), QString::number(itemId));
-          return targetFromFeatureLayer(featLayer, itemId);
+          if (itemId == -1)
+          {
+            if (!m_layerTargets.contains(dynamicEntityLayer->name()))
+              m_layerTargets.insert(dynamicEntityLayer->name(), new DynamicEntityLayerAlertTarget(dynamicEntityLayer));
+
+            targetDescription = dynamicEntityLayer->name();
+            return m_layerTargets.value(dynamicEntityLayer->name(), nullptr);
+          }
+          else
+          {
+            return nullptr;
+          }
         }
       }
     }

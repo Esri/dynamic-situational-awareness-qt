@@ -227,6 +227,7 @@ Message Message::createFromCoTMessage(const QByteArray& message)
 
         // assign the unique message id
         cotMessage.d->messageId = attrs.value(COT_UID_NAME).toString();
+        attributes.insert(COT_UID_NAME, cotMessage.d->messageId);
       }
 
       // before reading other element tags, make sure we are parsing a CoT element
@@ -312,11 +313,13 @@ Message Message::createFromGeoMessage(const QByteArray& message)
       else if (QString::compare(reader.name(), GEOMESSAGE_ACTION_NAME, Qt::CaseInsensitive) == 0)
       {
         const QString actionText = reader.readElementText();
+        attributes.insert(GEOMESSAGE_ACTION_NAME, actionText);
         geoMessage.d->messageAction = toMessageAction(actionText);
       }
       else if (QString::compare(reader.name(), GEOMESSAGE_ID_NAME, Qt::CaseInsensitive) == 0)
       {
         geoMessage.d->messageId = reader.readElementText();
+        attributes.insert(GEOMESSAGE_ID_NAME, geoMessage.d->messageId);
       }
       else if (QString::compare(reader.name(), GEOMESSAGE_WKID_NAME, Qt::CaseInsensitive) == 0)
       {

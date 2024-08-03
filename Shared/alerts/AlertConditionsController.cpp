@@ -408,16 +408,23 @@ bool AlertConditionsController::addAttributeEqualsAlert(const QString& condition
 
   AlertTarget* target = new FixedValueAlertTarget(targetValue, this);
 
-  GraphicsOverlay* sourceOverlay = graphicsOverlayFromName(sourceFeedName);
-  if (!sourceOverlay)
+  AttributeEqualsAlertCondition* condition = new AttributeEqualsAlertCondition(level, conditionName, attributeName, this);
+  connect(condition, &AttributeEqualsAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
+
+  if (GraphicsOverlay* sourceOverlay = graphicsOverlayFromName(sourceFeedName); sourceOverlay)
   {
+    condition->init(sourceOverlay, sourceFeedName, target, targetValue.toString());
+  }
+  else if (DynamicEntityLayer* dynamicEntityLayer = dynamicEntityLayerFromName(sourceFeedName); dynamicEntityLayer)
+  {
+    condition->init(dynamicEntityLayer, sourceFeedName, target, targetValue.toString());
+  }
+  else
+  {
+    delete target;
     emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QString("Could not find source feed: %1").arg(sourceFeedName));
     return false;
   }
-
-  AttributeEqualsAlertCondition* condition = new AttributeEqualsAlertCondition(level, conditionName, attributeName, this);
-  connect(condition, &AttributeEqualsAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
-  condition->init(sourceOverlay, sourceFeedName, target, targetValue.toString());
   return m_conditions->addAlertCondition(condition);
 }
 
@@ -598,6 +605,7 @@ void AlertConditionsController::onLayersChanged()
   }
 
   QStringList newTargetList;
+  QStringList newSourceList{AlertConstants::MY_LOCATION};
   QStringList existingLayerIds;
   LayerListModel* operationalLayers = ToolResourceProvider::instance()->operationalLayers();
   if (operationalLayers)
@@ -630,6 +638,7 @@ void AlertConditionsController::onLayersChanged()
         else
         {
           newTargetList.append(dynamicEntityLayer->name());
+          newSourceList.append(dynamicEntityLayer->name());
           existingLayerIds.append(dynamicEntityLayer->name());
         }
       }
@@ -643,7 +652,6 @@ void AlertConditionsController::onLayersChanged()
       m_layerTargets.remove(key);
   }
 
-  QStringList newSourceList{AlertConstants::MY_LOCATION};
   GraphicsOverlayListModel* graphicsOverlays = geoView->graphicsOverlays();
   if (graphicsOverlays)
   {
@@ -1258,6 +1266,34 @@ GraphicsOverlay* AlertConditionsController::graphicsOverlayFromName(const QStrin
 
       if (overlayId == overlay->overlayId())
         return overlay;
+    }
+  }
+
+  return nullptr;
+}
+
+/*!
+  \brief internal
+ */
+DynamicEntityLayer* AlertConditionsController::dynamicEntityLayerFromName(const QString& layerName)
+{
+  auto* operationalLayers = ToolResourceProvider::instance()->operationalLayers();
+  if (!operationalLayers)
+    return nullptr;
+
+  const QString& layerId = m_messageFeedTypesToNames.key(layerName, layerName);
+  for (const auto& layer : *operationalLayers)
+  {
+    if (!layer)
+      continue;
+    if (auto* dynamicEntityLayer = qobject_cast<DynamicEntityLayer*>(layer); dynamicEntityLayer)
+    {
+      if (dynamicEntityLayer->layerId().isEmpty())
+        continue;
+
+      qDebug(dynamicEntityLayer->layerId().toStdString().c_str());
+      if (dynamicEntityLayer->layerId() == layerId)
+        return dynamicEntityLayer;
     }
   }
 

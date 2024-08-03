@@ -112,6 +112,7 @@ private:
   AlertTarget* targetFromFeatureLayer(Esri::ArcGISRuntime::FeatureLayer* featureLayer, int itemId) const;
   AlertTarget* targetFromGraphicsOverlay(Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlay, int itemId) const;
   Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlayFromName(const QString& overlayName);
+  Esri::ArcGISRuntime::DynamicEntityLayer* dynamicEntityLayerFromName(const QString& layerName);
   QString primaryKeyFieldName(Esri::ArcGISRuntime::FeatureTable* featureTable) const;
 
   QStringList realtimeFeedTypes() const;

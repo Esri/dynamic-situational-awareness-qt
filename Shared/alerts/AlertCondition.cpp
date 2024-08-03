@@ -18,14 +18,21 @@
 #include "pch.hpp"
 
 #include "AlertCondition.h"
+#include "AlertListModel.h"
 
 // dsa app headers
 #include "AlertConditionData.h"
 #include "GraphicAlertSource.h"
+#include "DynamicEntityAlertSource.h"
 
 // C++ API headers
+#include "Graphic.h"
 #include "GraphicListModel.h"
 #include "GraphicsOverlay.h"
+#include "DynamicEntity.h"
+#include "DynamicEntityInfo.h"
+#include "DynamicEntityLayer.h"
+#include "DynamicEntityDataSource.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -124,6 +131,33 @@ void AlertCondition::init(GraphicsOverlay* sourceFeed, const QString& sourceDesc
   const int count = graphics->rowCount();
   for (int i = 0; i < count; ++i)
     handleGraphicAt(i);
+}
+
+void AlertCondition::init(Esri::ArcGISRuntime::DynamicEntityLayer* sourceFeed, const QString& sourceDescription, AlertTarget* target, const QString& targetDescription)
+{
+  if (!sourceFeed || !target)
+    return;
+
+  m_sourceDescription = sourceDescription;
+  m_targetDescription = targetDescription;
+  const auto* dataSource = sourceFeed->dataSource();
+
+  connect(dataSource, &DynamicEntityDataSource::dynamicEntityReceived, this, [this, sourceFeed, target](DynamicEntityInfo* info)
+  {
+    auto* dynamicEntity = info->dynamicEntity();
+    dynamicEntity->setParent(this);
+    DynamicEntityAlertSource* source = new DynamicEntityAlertSource(dynamicEntity, sourceFeed);
+    AlertConditionData* newData = createData(source, target);
+    addData(newData);
+    info->deleteLater();
+  });
+
+  connect(dataSource, &DynamicEntityDataSource::dynamicEntityPurged, this, [](DynamicEntityInfo* info)
+  {
+    auto* dynamicEntity = info->dynamicEntity();
+    dynamicEntity->setParent(nullptr);
+    info->deleteLater();
+  });
 }
 
 /*!

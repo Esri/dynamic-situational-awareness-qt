@@ -406,24 +406,29 @@ bool AlertConditionsController::addAttributeEqualsAlert(const QString& condition
     return false;
   }
 
-  AlertTarget* target = new FixedValueAlertTarget(targetValue, this);
+  GraphicsOverlay* sourceGraphicsOverlay = graphicsOverlayFromName(sourceFeedName);
+  DynamicEntityLayer* sourceDynamicEntityLayer = nullptr;
+  if (!sourceGraphicsOverlay)
+  {
+    sourceDynamicEntityLayer = dynamicEntityLayerFromName(sourceFeedName);
+  }
+  if (!sourceGraphicsOverlay && !sourceDynamicEntityLayer)
+  {
+    emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QString("Could not find source feed: %1").arg(sourceFeedName));
+    return false;
+  }
 
+  AlertTarget* target = new FixedValueAlertTarget(targetValue, this);
   AttributeEqualsAlertCondition* condition = new AttributeEqualsAlertCondition(level, conditionName, attributeName, this);
   connect(condition, &AttributeEqualsAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
 
-  if (GraphicsOverlay* sourceOverlay = graphicsOverlayFromName(sourceFeedName); sourceOverlay)
+  if (sourceGraphicsOverlay)
   {
-    condition->init(sourceOverlay, sourceFeedName, target, targetValue.toString());
-  }
-  else if (DynamicEntityLayer* dynamicEntityLayer = dynamicEntityLayerFromName(sourceFeedName); dynamicEntityLayer)
-  {
-    condition->init(dynamicEntityLayer, sourceFeedName, target, targetValue.toString());
+    condition->init(sourceGraphicsOverlay, sourceFeedName, target, targetValue.toString());
   }
   else
   {
-    delete target;
-    emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QString("Could not find source feed: %1").arg(sourceFeedName));
-    return false;
+    condition->init(sourceDynamicEntityLayer, sourceFeedName, target, targetValue.toString());
   }
   return m_conditions->addAlertCondition(condition);
 }

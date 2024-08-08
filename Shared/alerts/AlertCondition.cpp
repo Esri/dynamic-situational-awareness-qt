@@ -145,17 +145,9 @@ void AlertCondition::init(Esri::ArcGISRuntime::DynamicEntityLayer* sourceFeed, c
   connect(dataSource, &DynamicEntityDataSource::dynamicEntityReceived, this, [this, sourceFeed, target](DynamicEntityInfo* info)
   {
     auto* dynamicEntity = info->dynamicEntity();
-    dynamicEntity->setParent(this);
     DynamicEntityAlertSource* source = new DynamicEntityAlertSource(dynamicEntity, sourceFeed);
     AlertConditionData* newData = createData(source, target);
     addData(newData);
-    info->deleteLater();
-  });
-
-  connect(dataSource, &DynamicEntityDataSource::dynamicEntityPurged, this, [](DynamicEntityInfo* info)
-  {
-    auto* dynamicEntity = info->dynamicEntity();
-    dynamicEntity->setParent(nullptr);
     info->deleteLater();
   });
 }

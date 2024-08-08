@@ -119,8 +119,9 @@ QFuture<DynamicEntityDataSourceInfo*> MessageFeed::onLoadAsync()
   // listen for new entities
   connect(this, &DynamicEntityDataSource::dynamicEntityReceived, this, [this](DynamicEntityInfo* info)
   {
-    // checck new entity for select/unselect action
+    // check new entity for select/unselect action
     auto* dynamicEntity = info->dynamicEntity();
+    dynamicEntity->setParent(this);
     checkEntityForSelectAction(dynamicEntity);
 
     // mark the info as delete later so it can be cleaned up
@@ -138,6 +139,18 @@ QFuture<DynamicEntityDataSourceInfo*> MessageFeed::onLoadAsync()
     // mark the observation as delete later so it can be cleaned up
     // observations in the source cannot be cleaned up immediately since alert targets might need a reference to the related DynamicEntity
     observationInfo->deleteLater();
+  });
+
+  // remove ownership when entities are purged
+  connect(this, &DynamicEntityDataSource::dynamicEntityPurged, this, [](DynamicEntityInfo* info)
+  {
+    // release the dynamic entity
+    auto* dynamicEntity = info->dynamicEntity();
+    dynamicEntity->setParent(nullptr);
+    dynamicEntity->deleteLater();
+
+    // mark the info as delete later so it can be cleaned up
+    info->deleteLater();
   });
 
   // return the new source future

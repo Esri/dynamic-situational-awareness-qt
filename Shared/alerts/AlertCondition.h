@@ -27,7 +27,6 @@
 
 namespace Esri::ArcGISRuntime {
   class GraphicsOverlay;
-  class DynamicEntity;
   class DynamicEntityLayer;
 }
 

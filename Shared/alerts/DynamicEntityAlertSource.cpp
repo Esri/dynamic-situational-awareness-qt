@@ -22,6 +22,7 @@
 // C++ API headers
 #include "AttributeListModel.h"
 #include "DynamicEntity.h"
+#include "DynamicEntityChangedInfo.h"
 #include "DynamicEntityLayer.h"
 
 using namespace Esri::ArcGISRuntime;
@@ -29,29 +30,35 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 /*!
-  \class Dsa::GraphicAlertSource
+  \class Dsa::DynamicEntityAlertSource
   \inmodule Dsa
   \inherits AlertSource
-  \brief Represents a source based on a single \l Esri::ArcGISRuntime::Graphic
+  \brief Represents a source based on a single \l Esri::ArcGISRuntime::DynamicEntity
   for an \l AlertCondition.
 
-  Changes to the underlying graphic's position will cause the \l AlertSource::locationChanged
+  Observations to the underlying DynamicEntity will cause the \l AlertSource::dataChanged
   signal to be emitted.
  */
 
 /*!
-  \brief Constructor taking an \l Esri::ArcGISRuntime::Graphic \a graphic.
+ * \brief Constructor taking a DynamicEntity and it's parent DynamicEntityLayer
+ * \param dynamicEntity
+ * \param dynamicEntityLayer
  */
 DynamicEntityAlertSource::DynamicEntityAlertSource(DynamicEntity* dynamicEntity, DynamicEntityLayer* dynamicEntityLayer):
   AlertSource(dynamicEntity),
   m_dynamicEntity(dynamicEntity),
   m_dynamicEntityLayer(dynamicEntityLayer)
 {
-  connect(m_dynamicEntity, &DynamicEntity::dynamicEntityChanged, this, &DynamicEntityAlertSource::dataChanged);
+  connect(m_dynamicEntity, &DynamicEntity::dynamicEntityChanged, this, [this](DynamicEntityChangedInfo* info)
+  {
+    emit dataChanged();
+    info->deleteLater();
+  });
 }
 
 /*!
-  \brief Destructor.
+ * \brief DynamicEntityAlertSource::~DynamicEntityAlertSource
  */
 DynamicEntityAlertSource::~DynamicEntityAlertSource()
 {
@@ -59,7 +66,7 @@ DynamicEntityAlertSource::~DynamicEntityAlertSource()
 }
 
 /*!
-  \brief Returns the location of the underlying \l Esri::ArcGISRuntime::Graphic.
+  \brief Returns the location of the underlying \l Esri::ArcGISRuntime::DynamicEntity.
  */
 Point DynamicEntityAlertSource::location() const
 {
@@ -68,7 +75,7 @@ Point DynamicEntityAlertSource::location() const
 
 /*!
   \brief Returns the attribute value for the field \a key in the
-  underlying \l Esri::ArcGISRuntime::Graphic.
+  underlying \l Esri::ArcGISRuntime::DynamicEntity.
  */
 QVariant DynamicEntityAlertSource::value(const QString& key) const
 {
@@ -79,7 +86,7 @@ QVariant DynamicEntityAlertSource::value(const QString& key) const
 }
 
 /*!
-  \brief Sets the selected state of the \l Esri::ArcGISRuntime::Graphic to \a selected.
+  \brief Sets the selected state of the \l Esri::ArcGISRuntime::DynamicEntity to \a selected.
  */
 void DynamicEntityAlertSource::setSelected(bool selected)
 {

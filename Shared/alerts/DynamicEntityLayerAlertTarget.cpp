@@ -17,8 +17,6 @@
 // PCH header
 #include "pch.hpp"
 
-#include <QMap>
-
 #include "DynamicEntityLayerAlertTarget.h"
 
 // dsa app headers
@@ -83,11 +81,12 @@ DynamicEntityLayerAlertTarget::DynamicEntityLayerAlertTarget(DynamicEntityLayer*
   {
     // ensure the graphic is actually in the lookup
     auto* dynamicEntity = info->dynamicEntity();
-    if (m_entityGraphics.contains(dynamicEntity->entityId()))
+    auto entityId = dynamicEntity->entityId();
+    if (m_entityGraphics.contains(entityId))
     {
       // get a cleanup reference to the graphic that was stored and remove it from the lookup
-      std::unique_ptr<Graphic> graphic(m_entityGraphics[dynamicEntity->entityId()]);
-      m_entityGraphics.remove(dynamicEntity->entityId());
+      std::unique_ptr<Graphic> graphic(m_entityGraphics[entityId]);
+      m_entityGraphics.remove(entityId);
 
       // signal the data has changed and rebuild the quad tree
       rebuildQuadtree();
@@ -100,9 +99,7 @@ DynamicEntityLayerAlertTarget::DynamicEntityLayerAlertTarget(DynamicEntityLayer*
 /*!
   \brief Destructor.
  */
-Dsa::DynamicEntityLayerAlertTarget::~DynamicEntityLayerAlertTarget()
-{
-}
+DynamicEntityLayerAlertTarget::~DynamicEntityLayerAlertTarget() = default;
 
 /*!
   \brief Returns the list of \l Esri::ArcGISRuntime::Geometry which are in the \a targetArea.
@@ -143,18 +140,20 @@ QVariant DynamicEntityLayerAlertTarget::targetValue() const
 void DynamicEntityLayerAlertTarget::connectEntityGraphic(DynamicEntity* dynamicEntity)
 {
   // check for an existing graphic
-  if (m_entityGraphics.contains(dynamicEntity->entityId()))
+  auto entityId = dynamicEntity->entityId();
+  auto geometry = dynamicEntity->geometry();
+  if (m_entityGraphics.contains(entityId))
   {
     // update the geometry
-    auto* graphic = m_entityGraphics[dynamicEntity->entityId()];
-    graphic->setGeometry(dynamicEntity->geometry());
+    auto* graphic = m_entityGraphics[entityId];
+    graphic->setGeometry(geometry);
   }
   else
   {
     // if no graphic existed for the entity id, construct a new one and insert it into the graphics lookup
-    auto* graphic = new Graphic(dynamicEntity->geometry(), this);
+    auto* graphic = new Graphic(geometry, this);
     connect(graphic, &Graphic::geometryChanged, this, &DynamicEntityLayerAlertTarget::dataChanged); // trigger the dataChanged signal on geometry updates
-    m_entityGraphics[dynamicEntity->entityId()] = graphic;
+    m_entityGraphics[entityId] = graphic;
 
     // if the quadtree has already been initialized, append the new graphic
     if (m_quadtree)

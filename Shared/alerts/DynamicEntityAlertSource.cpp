@@ -60,10 +60,7 @@ DynamicEntityAlertSource::DynamicEntityAlertSource(DynamicEntity* dynamicEntity,
 /*!
  * \brief DynamicEntityAlertSource::~DynamicEntityAlertSource
  */
-DynamicEntityAlertSource::~DynamicEntityAlertSource()
-{
-
-}
+DynamicEntityAlertSource::~DynamicEntityAlertSource() = default;
 
 /*!
   \brief Returns the location of the underlying \l Esri::ArcGISRuntime::DynamicEntity.

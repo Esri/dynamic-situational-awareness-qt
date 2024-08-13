@@ -27,6 +27,7 @@
 
 namespace Esri::ArcGISRuntime {
   class GraphicsOverlay;
+  class DynamicEntityLayer;
 }
 
 namespace Dsa {
@@ -46,6 +47,7 @@ public:
 
   void init(AlertSource* source, AlertTarget* target, const QString& sourceDescription, const QString& targetDescription);
   void init(Esri::ArcGISRuntime::GraphicsOverlay* sourceFeed, const QString& sourceDescription, AlertTarget* target, const QString& targetDescription);
+  void init(Esri::ArcGISRuntime::DynamicEntityLayer* sourceFeed, const QString& sourceDescription, AlertTarget* target, const QString& targetDescription);
 
   ~AlertCondition();
 
@@ -72,7 +74,7 @@ public:
 
 signals:
   void noLongerValid();
-  void newConditionData(Dsa::AlertConditionData* newConditionData);
+  void newConditionData(AlertConditionData* newConditionData);
   void conditionChanged();
   void conditionEnabledChanged();
 

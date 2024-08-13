@@ -47,7 +47,7 @@ public:
 private:
   Esri::ArcGISRuntime::DynamicEntityLayer* m_dynamicEntityLayer = nullptr;
   GeometryQuadtree* m_quadtree = nullptr;
-  QMap<quint64, Esri::ArcGISRuntime::Graphic*> m_entityGraphics;
+  QHash<quint64, Esri::ArcGISRuntime::Graphic*> m_entityGraphics;
   void connectEntityGraphic(Esri::ArcGISRuntime::DynamicEntity* dynamicEntity);
   void rebuildQuadtree();
 };

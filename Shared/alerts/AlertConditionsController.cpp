@@ -406,30 +406,28 @@ bool AlertConditionsController::addAttributeEqualsAlert(const QString& condition
     return false;
   }
 
-  GraphicsOverlay* sourceGraphicsOverlay = graphicsOverlayFromName(sourceFeedName);
-  DynamicEntityLayer* sourceDynamicEntityLayer = nullptr;
-  if (!sourceGraphicsOverlay)
-  {
-    sourceDynamicEntityLayer = dynamicEntityLayerFromName(sourceFeedName);
-  }
-  if (!sourceGraphicsOverlay && !sourceDynamicEntityLayer)
-  {
-    emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QString("Could not find source feed: %1").arg(sourceFeedName));
-    return false;
-  }
+  // pass the source layer that was found by name in either the graphics layers or dynamics layers in operationalLayers
+  if (GraphicsOverlay* graphicsOverlay = graphicsOverlayFromName(sourceFeedName); graphicsOverlay)
+    return addAttributeEqualsAlertBySourceLayerType(conditionName, level, sourceFeedName, attributeName, targetValue, graphicsOverlay);
+  else if (DynamicEntityLayer* dynamicEntityLayer = dynamicEntityLayerFromName(sourceFeedName); dynamicEntityLayer)
+    return addAttributeEqualsAlertBySourceLayerType(conditionName, level, sourceFeedName, attributeName, targetValue, dynamicEntityLayer);
 
+  emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QString("Could not find source feed: %1").arg(sourceFeedName));
+  return false;
+}
+
+template<typename T>
+bool AlertConditionsController::addAttributeEqualsAlertBySourceLayerType(const QString& conditionName,
+                                                                         AlertLevel level,
+                                                                         const QString& sourceFeedName,
+                                                                         const QString& attributeName,
+                                                                         const QVariant& targetValue,
+                                                                         T* alertSourceLayer)
+{
   AlertTarget* target = new FixedValueAlertTarget(targetValue, this);
   AttributeEqualsAlertCondition* condition = new AttributeEqualsAlertCondition(level, conditionName, attributeName, this);
   connect(condition, &AttributeEqualsAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
-
-  if (sourceGraphicsOverlay)
-  {
-    condition->init(sourceGraphicsOverlay, sourceFeedName, target, targetValue.toString());
-  }
-  else
-  {
-    condition->init(sourceDynamicEntityLayer, sourceFeedName, target, targetValue.toString());
-  }
+  condition->init(alertSourceLayer, sourceFeedName, target, targetValue.toString());
   return m_conditions->addAlertCondition(condition);
 }
 
@@ -630,8 +628,9 @@ void AlertConditionsController::onLayersChanged()
         }
         else
         {
-          newTargetList.append(featureLayer->name());
-          existingLayerIds.append(featureLayer->name());
+          const auto featureLayerName = featureLayer->name();
+          newTargetList.append(featureLayerName);
+          existingLayerIds.append(featureLayerName);
         }
       }
       else if (DynamicEntityLayer* dynamicEntityLayer = qobject_cast<DynamicEntityLayer*>(lyr); dynamicEntityLayer)
@@ -642,9 +641,10 @@ void AlertConditionsController::onLayersChanged()
         }
         else
         {
-          newTargetList.append(dynamicEntityLayer->name());
-          newSourceList.append(dynamicEntityLayer->name());
-          existingLayerIds.append(dynamicEntityLayer->name());
+          const auto dynamicEntityLayerName = dynamicEntityLayer->name();
+          newTargetList.append(dynamicEntityLayerName);
+          newSourceList.append(dynamicEntityLayerName);
+          existingLayerIds.append(dynamicEntityLayerName);
         }
       }
     }
@@ -1287,16 +1287,10 @@ DynamicEntityLayer* AlertConditionsController::dynamicEntityLayerFromName(const 
     return nullptr;
 
   const QString& layerId = m_messageFeedTypesToNames.key(layerName, layerName);
-  for (const auto& layer : *operationalLayers)
+  for (auto* layer : *operationalLayers)
   {
-    if (!layer)
-      continue;
     if (auto* dynamicEntityLayer = qobject_cast<DynamicEntityLayer*>(layer); dynamicEntityLayer)
     {
-      if (dynamicEntityLayer->layerId().isEmpty())
-        continue;
-
-      qDebug(dynamicEntityLayer->layerId().toStdString().c_str());
       if (dynamicEntityLayer->layerId() == layerId)
         return dynamicEntityLayer;
     }

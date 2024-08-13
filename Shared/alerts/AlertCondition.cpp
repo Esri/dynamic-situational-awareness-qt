@@ -29,7 +29,6 @@
 #include "Graphic.h"
 #include "GraphicListModel.h"
 #include "GraphicsOverlay.h"
-#include "DynamicEntity.h"
 #include "DynamicEntityInfo.h"
 #include "DynamicEntityLayer.h"
 #include "DynamicEntityDataSource.h"
@@ -133,7 +132,7 @@ void AlertCondition::init(GraphicsOverlay* sourceFeed, const QString& sourceDesc
     handleGraphicAt(i);
 }
 
-void AlertCondition::init(Esri::ArcGISRuntime::DynamicEntityLayer* sourceFeed, const QString& sourceDescription, AlertTarget* target, const QString& targetDescription)
+void AlertCondition::init(DynamicEntityLayer* sourceFeed, const QString& sourceDescription, AlertTarget* target, const QString& targetDescription)
 {
   if (!sourceFeed || !target)
     return;

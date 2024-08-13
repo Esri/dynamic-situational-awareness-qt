@@ -60,10 +60,7 @@ MessageFeed::MessageFeed(const QString& name, const QString& type, QObject* pare
 {
 }
 
-MessageFeed::~MessageFeed()
-{
-  // no cleanup currently required in destructor
-}
+MessageFeed::~MessageFeed() = default;
 
 QFuture<DynamicEntityDataSourceInfo*> MessageFeed::onLoadAsync()
 {
@@ -146,7 +143,6 @@ QFuture<DynamicEntityDataSourceInfo*> MessageFeed::onLoadAsync()
   {
     // release the dynamic entity
     auto* dynamicEntity = info->dynamicEntity();
-    dynamicEntity->setParent(nullptr);
     dynamicEntity->deleteLater();
 
     // mark the info as delete later so it can be cleaned up

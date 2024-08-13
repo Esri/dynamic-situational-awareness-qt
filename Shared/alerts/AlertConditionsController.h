@@ -115,6 +115,9 @@ private:
   Esri::ArcGISRuntime::DynamicEntityLayer* dynamicEntityLayerFromName(const QString& layerName);
   QString primaryKeyFieldName(Esri::ArcGISRuntime::FeatureTable* featureTable) const;
 
+  template<typename T>
+  bool addAttributeEqualsAlertBySourceLayerType(const QString& conditionName, AlertLevel level, const QString& sourceFeedName, const QString& attributeName, const QVariant& targetValue, T* alertTarget);
+
   QStringList realtimeFeedTypes() const;
   QStringList realtimeFeedNames() const;
 

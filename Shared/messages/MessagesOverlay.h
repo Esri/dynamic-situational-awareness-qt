@@ -17,64 +17,31 @@
 #ifndef MESSAGESOVERLAY_H
 #define MESSAGESOVERLAY_H
 
-// Qt headers
-#include <QHash>
-#include <QObject>
-#include <QPointer>
+// C++ API headers
+#include "DynamicEntityLayer.h"
 
 namespace Esri::ArcGISRuntime {
-class GeoView;
-class Renderer;
-class DynamicEntityLayer;
-enum class SurfacePlacement;
+class DynamicEntity;
 }
 
 namespace Dsa {
 
 class MessageFeed;
 
-class MessagesOverlay : public QObject
+class MessagesOverlay : public Esri::ArcGISRuntime::DynamicEntityLayer
 {
   Q_OBJECT
-
 public:
-  explicit MessagesOverlay(Esri::ArcGISRuntime::GeoView* geoView, QObject* parent = nullptr);
-  MessagesOverlay(Esri::ArcGISRuntime::GeoView* geoView,
-                  Esri::ArcGISRuntime::Renderer* renderer,
-                  const QString& messageType,
-                  MessageFeed* messageFeed,
-                  Esri::ArcGISRuntime::SurfacePlacement surfacePlacement,
-                  QObject* parent = nullptr);
+  explicit MessagesOverlay(MessageFeed* messageFeed, const QString& messageType, QObject* parent = nullptr);
   ~MessagesOverlay();
-
-  Esri::ArcGISRuntime::Renderer* renderer() const;
-  void setRenderer(Esri::ArcGISRuntime::Renderer* renderer);
-
-  Esri::ArcGISRuntime::SurfacePlacement surfacePlacement() const;
-  void setSurfacePlacement(Esri::ArcGISRuntime::SurfacePlacement surfacePlacement);
 
   QString messageType() const;
   void setMessageType(const QString& messageType);
-
-  Esri::ArcGISRuntime::DynamicEntityLayer* dynamicEntityLayer() const;
-
-  Esri::ArcGISRuntime::GeoView* geoView() const;
-
-  bool isVisible() const;
-  void setVisible(bool visible);
-
-signals:
-  void visibleChanged();
-  void errorOccurred(const QString& error);
+  Esri::ArcGISRuntime::DynamicEntity* getDynamicEntityById(quint64 entityId);
+  const QHash<quint64, Esri::ArcGISRuntime::DynamicEntity*>& dynamicEntities();
 
 private:
   Q_DISABLE_COPY(MessagesOverlay)
-
-  Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
-  QPointer<Esri::ArcGISRuntime::Renderer> m_renderer;
-  Esri::ArcGISRuntime::SurfacePlacement m_surfacePlacement;
-
-  Esri::ArcGISRuntime::DynamicEntityLayer* m_dynamicEntityLayer = nullptr;
   MessageFeed* m_messageFeed = nullptr;
 };
 

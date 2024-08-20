@@ -27,7 +27,6 @@
 
 namespace Esri::ArcGISRuntime {
   class GraphicsOverlay;
-  class DynamicEntityLayer;
 }
 
 namespace Dsa {
@@ -35,6 +34,7 @@ namespace Dsa {
 class AlertConditionData;
 class AlertSource;
 class AlertTarget;
+class MessagesOverlay;
 
 class AlertCondition : public QObject
 {
@@ -45,9 +45,9 @@ public:
                           const QString& name,
                           QObject* parent = nullptr);
 
-  void init(AlertSource* source, AlertTarget* target, const QString& sourceDescription, const QString& targetDescription);
+  void init(AlertSource* source, const QString& sourceDescription, AlertTarget* target, const QString& targetDescription);
   void init(Esri::ArcGISRuntime::GraphicsOverlay* sourceFeed, const QString& sourceDescription, AlertTarget* target, const QString& targetDescription);
-  void init(Esri::ArcGISRuntime::DynamicEntityLayer* sourceFeed, const QString& sourceDescription, AlertTarget* target, const QString& targetDescription);
+  void init(Dsa::MessagesOverlay* sourceFeed, const QString& sourceDescription, AlertTarget* target, const QString& targetDescription);
 
   ~AlertCondition();
 

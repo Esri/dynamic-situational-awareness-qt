@@ -37,8 +37,8 @@ namespace Dsa {
 /*!
   \class Dsa::MessagesOverlay
   \inmodule Dsa
-  \inherits QObject
-  \brief Manages a \l Esri::ArcGISRuntime::GraphicsOverlay object
+  \inherits DynamicEntityLayer
+  \brief Manages a \l Esri::ArcGISRuntime::DynamicEntityLayer object
   for displaying message feed graphics.
 
   The overlay currently only supports messages containing a
@@ -46,85 +46,29 @@ namespace Dsa {
  */
 
 /*!
-  \brief Constructor taking a \a geoView and an optional \a parent.
+  \brief Constructor taking a \a messageFeed, a \a messageType
+  and an optional \a parent.
  */
-
-/*!
-  \brief Constructor taking a \a geoView, a \a renderer, a \a messageType,
-  a \a surfacePlacement mode and an optional \a parent.
- */
+MessagesOverlay::MessagesOverlay(MessageFeed* messageFeed, const QString& messageType, QObject* parent) :
+    DynamicEntityLayer(messageFeed, parent),
+    m_messageFeed(messageFeed)
+{
+  this->setLayerId(messageType);
+  this->setName(messageType);
+  messageFeed->setMessagesOverlay(this);
+}
 
 /*!
   \brief Destructor.
  */
-MessagesOverlay::MessagesOverlay(GeoView* geoView, Renderer* renderer, const QString& messageType, MessageFeed* messageFeed, SurfacePlacement surfacePlacement, QObject* parent) :
-  QObject(parent),
-  m_geoView(geoView),
-  m_renderer(renderer),
-  m_surfacePlacement(surfacePlacement),
-  m_messageFeed(messageFeed)
-{
-  m_dynamicEntityLayer = new DynamicEntityLayer(m_messageFeed, this);
-  m_dynamicEntityLayer->setLayerId(messageType);
-  m_dynamicEntityLayer->setSceneProperties(LayerSceneProperties(m_surfacePlacement));
-  m_dynamicEntityLayer->setRenderer(m_renderer);
-  m_dynamicEntityLayer->setName(messageType);
-  SceneView* scene = static_cast<SceneView*>(m_geoView);
-  scene->arcGISScene()->operationalLayers()->append(m_dynamicEntityLayer);
-}
-
-MessagesOverlay::~MessagesOverlay()
-{
-}
-
-/*!
-  \brief Returns the Esri:ArcGISRuntime::Renderer in use by the overlay.
- */
-Renderer* MessagesOverlay::renderer() const
-{
-  return m_renderer.data();
-}
-
-/*!
-  \brief Sets the Esri:ArcGISRuntime::Renderer for the overlay to \a renderer.
- */
-void MessagesOverlay::setRenderer(Renderer* renderer)
-{
-  if (m_renderer == renderer)
-    return;
-
-  m_renderer = renderer;
-
-  m_dynamicEntityLayer->setRenderer(m_renderer);
-}
-
-/*!
-  \brief Returns the Esri:ArcGISRuntime::SurfacePlacement for the overlay.
- */
-SurfacePlacement MessagesOverlay::surfacePlacement() const
-{
-  return m_surfacePlacement;
-}
-
-/*!
-  \brief Sets the Esri:ArcGISRuntime::SurfacePlacement for the overlay to \a surfacePlacement.
- */
-void MessagesOverlay::setSurfacePlacement(SurfacePlacement surfacePlacement)
-{
-  if (m_surfacePlacement == surfacePlacement)
-    return;
-
-  m_surfacePlacement = surfacePlacement;
-
-  m_dynamicEntityLayer->setSceneProperties(LayerSceneProperties(m_surfacePlacement));
-}
+MessagesOverlay::~MessagesOverlay() = default;
 
 /*!
   \brief Returns the message type for the overlay.
  */
 QString MessagesOverlay::messageType() const
 {
-  return m_dynamicEntityLayer->layerId();
+  return this->layerId();
 }
 
 /*!
@@ -132,58 +76,20 @@ QString MessagesOverlay::messageType() const
  */
 void MessagesOverlay::setMessageType(const QString& messageType)
 {
-  if (m_dynamicEntityLayer->layerId() == messageType)
+  if (this->layerId() == messageType)
     return;
 
-  m_dynamicEntityLayer->setLayerId(messageType);
+  this->setLayerId(messageType);
 }
 
-/*!
-  \brief Returns the Esri:ArcGISRuntime::GraphicsOverlay object for the overlay.
- */
-DynamicEntityLayer* MessagesOverlay::dynamicEntityLayer() const
+DynamicEntity* MessagesOverlay::getDynamicEntityById(quint64 entityId)
 {
-  return m_dynamicEntityLayer;
+  return m_messageFeed->getDynamicEntityById(entityId);
 }
 
-/*!
-  \brief Returns the Esri:ArcGISRuntime::GeoView for the overlay.
- */
-GeoView* MessagesOverlay::geoView() const
+const QHash<quint64, Esri::ArcGISRuntime::DynamicEntity*>& MessagesOverlay::dynamicEntities()
 {
-  return m_geoView;
-}
-
-/*!
-  \brief Returns whether the overlay is visible.
- */
-bool MessagesOverlay::isVisible() const
-{
-  return m_dynamicEntityLayer->isVisible();
-}
-
-/*!
-  \brief Sets the overlay to be \a visible.
- */
-void MessagesOverlay::setVisible(bool visible)
-{
-  if (m_dynamicEntityLayer->isVisible() == visible)
-    return;
-
-  m_dynamicEntityLayer->setVisible(visible);
-
-  emit visibleChanged();
+  return m_messageFeed->dynamicEntities();
 }
 
 } // Dsa
-
-// Signal Documentation
-/*!
-  \fn void MessagesOverlay::visibleChanged();
-  \brief Signal emitted when the visibility of the overlay changes.
- */
-
-/*!
-  \fn void MessagesOverlay::errorOccurred(const QString& error);
-  \brief Signal emitted when an \a error occurs.
- */

@@ -5,17 +5,20 @@
 #include "AlertSource.h"
 
 namespace Esri::ArcGISRuntime {
-  class DynamicEntity;
+class DynamicEntity;
+class Point;
 }
 
 namespace Dsa {
+
+class MessagesOverlay;
 
 class DynamicEntityAlertSource : public AlertSource
 {
   Q_OBJECT
 
 public:
-  explicit DynamicEntityAlertSource(Esri::ArcGISRuntime::DynamicEntity* dynamicEntity, Esri::ArcGISRuntime::DynamicEntityLayer* dynamicEntityLayer);
+  explicit DynamicEntityAlertSource(Esri::ArcGISRuntime::DynamicEntity* dynamicEntity, Dsa::MessagesOverlay* messagesOverlay);
   ~DynamicEntityAlertSource();
 
   Esri::ArcGISRuntime::Point location() const override;
@@ -25,7 +28,7 @@ public:
 
 private:
   Esri::ArcGISRuntime::DynamicEntity* m_dynamicEntity = nullptr;
-  Esri::ArcGISRuntime::DynamicEntityLayer* m_dynamicEntityLayer = nullptr;
+  Dsa::MessagesOverlay* m_messagesOverlay = nullptr;
 };
 
 } // Dsa

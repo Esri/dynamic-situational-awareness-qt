@@ -23,6 +23,7 @@
 // C++ API headers
 #include "EncFeature.h"
 #include "Feature.h"
+#include "DynamicEntity.h"
 #include "DynamicEntityObservation.h"
 #include "GeoElement.h"
 #include "Graphic.h"
@@ -81,6 +82,11 @@ GeoElementSignaler::GeoElementSignaler(GeoElement* geoElement, QObject* parent) 
   else if (dynamic_cast<RasterCell*>(m_geoElement))
   {
     connect(static_cast<RasterCell*>(m_geoElement), &RasterCell::geometryChanged,
+            this, &GeoElementSignaler::geometryChanged);
+  }
+  else if (dynamic_cast<DynamicEntity*>(m_geoElement))
+  {
+    connect(static_cast<DynamicEntity*>(m_geoElement), &DynamicEntity::geometryChanged,
             this, &GeoElementSignaler::geometryChanged);
   }
   else if (dynamic_cast<DynamicEntityObservation*>(m_geoElement))
@@ -161,6 +167,9 @@ QObject* GeoElementUtils::toQObject(GeoElement* geoElement)
 
   if (dynamic_cast<RasterCell*>(geoElement))
     return static_cast<RasterCell*>(geoElement);
+
+  if (dynamic_cast<DynamicEntity*>(geoElement))
+    return static_cast<DynamicEntity*>(geoElement);
 
   if (dynamic_cast<DynamicEntityObservation*>(geoElement))
     return static_cast<DynamicEntityObservation*>(geoElement);

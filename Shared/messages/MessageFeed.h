@@ -19,7 +19,6 @@
 
 // Qt headers
 #include <QObject>
-#include <QUrl>
 
 // MapsSDK headers
 #include "DynamicEntityDataSource.h"
@@ -64,6 +63,9 @@ public:
   void setThumbnailUrl(const QUrl& thumbnailUrl);
 
   bool addMessage(const Message& message);
+  Esri::ArcGISRuntime::DynamicEntity* getDynamicEntityById(quint64 entityId);
+
+  const QHash<quint64, Esri::ArcGISRuntime::DynamicEntity*>& dynamicEntities();
 
 private:
   Q_DISABLE_COPY(MessageFeed)
@@ -71,11 +73,10 @@ private:
   QString m_feedName;
   QString m_feedMessageType;
   bool m_isCoT;
-  bool m_feedVisible = true;
   QString m_entityIdAttributeName;
   MessagesOverlay* m_messagesOverlay = nullptr;
   QUrl m_thumbnailUrl;
-  void checkEntityForSelectAction(Esri::ArcGISRuntime::DynamicEntity* dynamicEntity);
+  QHash<quint64, Esri::ArcGISRuntime::DynamicEntity*> m_dynamicEntities;
 };
 
 } // Dsa

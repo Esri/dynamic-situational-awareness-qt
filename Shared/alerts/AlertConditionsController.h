@@ -48,6 +48,7 @@ class AlertConditionListModel;
 class AlertTarget;
 class LocationAlertSource;
 class LocationAlertTarget;
+class MessagesOverlay;
 
 class AlertConditionsController : public AbstractTool
 {
@@ -111,9 +112,16 @@ private:
   AlertTarget* targetFromItemIdAndIndex(int itemId, int targetOverlayIndex, QString& targetDescription) const;
   AlertTarget* targetFromFeatureLayer(Esri::ArcGISRuntime::FeatureLayer* featureLayer, int itemId) const;
   AlertTarget* targetFromGraphicsOverlay(Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlay, int itemId) const;
+  AlertTarget* targetFromMessagesOverlay(Dsa::MessagesOverlay* messagesOverlay, int itemId) const;
   Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlayFromName(const QString& overlayName);
-  Esri::ArcGISRuntime::DynamicEntityLayer* dynamicEntityLayerFromName(const QString& layerName);
+  Dsa::MessagesOverlay* messagesOverlayFromName(const QString& layerName);
   QString primaryKeyFieldName(Esri::ArcGISRuntime::FeatureTable* featureTable) const;
+
+  template<typename T>
+  bool addWithinDistanceAlertBySourceLayerType(const QString& conditionName, AlertLevel level, const QString& sourceFeedName, double distance, AlertTarget* target, const QString& targetDescription, T* alertSourceLayer);
+
+  template<typename T>
+  bool addWithinAreaAlertBySourceLayerType(const QString& conditionName, AlertLevel level, const QString& sourceFeedName, AlertTarget* target, const QString& targetDescription, T* alertSourceLayer);
 
   template<typename T>
   bool addAttributeEqualsAlertBySourceLayerType(const QString& conditionName, AlertLevel level, const QString& sourceFeedName, const QString& attributeName, const QVariant& targetValue, T* alertTarget);

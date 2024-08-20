@@ -39,6 +39,7 @@
 #include "MessageFeedConstants.h"
 #include "WithinAreaAlertCondition.h"
 #include "WithinDistanceAlertCondition.h"
+#include "MessagesOverlay.h"
 
 // toolkit headers
 #include "ToolManager.h"
@@ -47,7 +48,8 @@
 // C++ API headers
 #include "ArcGISFeatureTable.h"
 #include "AttributeListModel.h"
-#include "DynamicEntityLayer.h"
+#include "DynamicEntity.h"
+#include "DynamicEntityObservation.h"
 #include "Error.h"
 #include "Feature.h"
 #include "FeatureIterator.h"
@@ -66,6 +68,7 @@
 #include "MapTypes.h"
 #include "QueryParameters.h"
 #include "ServiceTypes.h"
+#include "MessagesOverlay.h"
 
 // Qt headers
 #include <QEventLoop>
@@ -273,28 +276,29 @@ bool AlertConditionsController::addWithinDistanceAlert(const QString& conditionN
     return false;
   }
 
-  WithinDistanceAlertCondition* condition = new WithinDistanceAlertCondition(level, conditionName, distance, this);
-  connect(condition, &WithinDistanceAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
-
   if (sourceFeedName == AlertConstants::MY_LOCATION)
-  {
-    condition->init(m_locationSource, target, AlertConstants::MY_LOCATION, targetDescription);
-  }
-  else
-  {
-    GraphicsOverlay* sourceOverlay = graphicsOverlayFromName(sourceFeedName);
-    if (sourceOverlay)
-    {
-      condition->init(sourceOverlay, sourceFeedName, target, targetDescription);
-    }
-    else
-    {
-      emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QString("Could not find source feed: %1").arg(sourceFeedName));
-      delete condition;
-      return false;
-    }
-  }
+    return addWithinDistanceAlertBySourceLayerType(conditionName, level, sourceFeedName, distance, target, targetDescription, m_locationSource);
+  else if (GraphicsOverlay* graphicsOverlay = graphicsOverlayFromName(sourceFeedName); graphicsOverlay)
+    return addWithinDistanceAlertBySourceLayerType(conditionName, level, sourceFeedName, distance, target, targetDescription, graphicsOverlay);
+  else if (MessagesOverlay* messagesOverlay = messagesOverlayFromName(sourceFeedName); messagesOverlay)
+    return addWithinDistanceAlertBySourceLayerType(conditionName, level, sourceFeedName, distance, target, targetDescription, messagesOverlay);
 
+  emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QString("Could not find source feed: %1").arg(sourceFeedName));
+  return false;
+}
+
+template<typename T>
+bool AlertConditionsController::addWithinDistanceAlertBySourceLayerType(const QString& conditionName,
+                                                                        AlertLevel level,
+                                                                        const QString& sourceFeedName,
+                                                                        double distance,
+                                                                        AlertTarget* target,
+                                                                        const QString& targetDescription,
+                                                                        T* alertSourceLayer)
+{
+  auto* condition = new WithinDistanceAlertCondition(level, conditionName, distance, this);
+  connect(condition, &WithinDistanceAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
+  condition->init(alertSourceLayer, sourceFeedName, target, targetDescription);
   return m_conditions->addAlertCondition(condition);
 }
 
@@ -345,28 +349,28 @@ bool AlertConditionsController::addWithinAreaAlert(const QString& conditionName,
     return false;
   }
 
-  WithinAreaAlertCondition* condition = new WithinAreaAlertCondition(level, conditionName, this);
-  connect(condition, &WithinAreaAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
-
   if (sourceFeedName == AlertConstants::MY_LOCATION)
-  {
-    condition->init(m_locationSource, target, AlertConstants::MY_LOCATION, targetDescription);
-  }
-  else
-  {
-    GraphicsOverlay* sourceOverlay = graphicsOverlayFromName(sourceFeedName);
-    if (sourceOverlay)
-    {
-      condition->init(sourceOverlay, sourceFeedName, target, targetDescription);
-    }
-    else
-    {
-      emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QString("Could not find source feed: %1").arg(sourceFeedName));
-      delete condition;
-      return false;
-    }
-  }
+    return addWithinAreaAlertBySourceLayerType(conditionName, level, sourceFeedName, target, targetDescription, m_locationSource);
+  else if (GraphicsOverlay* graphicsOverlay = graphicsOverlayFromName(sourceFeedName); graphicsOverlay)
+    return addWithinAreaAlertBySourceLayerType(conditionName, level, sourceFeedName, target, targetDescription, graphicsOverlay);
+  else if (MessagesOverlay* messagesOverlay = messagesOverlayFromName(sourceFeedName); messagesOverlay)
+    return addWithinAreaAlertBySourceLayerType(conditionName, level, sourceFeedName, target, targetDescription, messagesOverlay);
 
+  emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QString("Could not find source feed: %1").arg(sourceFeedName));
+  return false;
+}
+
+template<typename T>
+bool AlertConditionsController::addWithinAreaAlertBySourceLayerType(const QString& conditionName,
+                                                                    AlertLevel level,
+                                                                    const QString& sourceFeedName,
+                                                                    AlertTarget* target,
+                                                                    const QString& targetDescription,
+                                                                    T* alertSourceLayer)
+{
+  auto* condition = new WithinAreaAlertCondition(level, conditionName, this);
+  connect(condition, &WithinAreaAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
+  condition->init(alertSourceLayer, sourceFeedName, target, targetDescription);
   return m_conditions->addAlertCondition(condition);
 }
 
@@ -409,8 +413,8 @@ bool AlertConditionsController::addAttributeEqualsAlert(const QString& condition
   // pass the source layer that was found by name in either the graphics layers or dynamics layers in operationalLayers
   if (GraphicsOverlay* graphicsOverlay = graphicsOverlayFromName(sourceFeedName); graphicsOverlay)
     return addAttributeEqualsAlertBySourceLayerType(conditionName, level, sourceFeedName, attributeName, targetValue, graphicsOverlay);
-  else if (DynamicEntityLayer* dynamicEntityLayer = dynamicEntityLayerFromName(sourceFeedName); dynamicEntityLayer)
-    return addAttributeEqualsAlertBySourceLayerType(conditionName, level, sourceFeedName, attributeName, targetValue, dynamicEntityLayer);
+  else if (MessagesOverlay* messagesOverlay = messagesOverlayFromName(sourceFeedName); messagesOverlay)
+    return addAttributeEqualsAlertBySourceLayerType(conditionName, level, sourceFeedName, attributeName, targetValue, messagesOverlay);
 
   emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QString("Could not find source feed: %1").arg(sourceFeedName));
   return false;
@@ -633,18 +637,18 @@ void AlertConditionsController::onLayersChanged()
           existingLayerIds.append(featureLayerName);
         }
       }
-      else if (DynamicEntityLayer* dynamicEntityLayer = qobject_cast<DynamicEntityLayer*>(lyr); dynamicEntityLayer)
+      else if (MessagesOverlay* messagesOverlay = qobject_cast<MessagesOverlay*>(lyr); messagesOverlay)
       {
-        if (dynamicEntityLayer->loadStatus() != LoadStatus::Loaded)
+        if (messagesOverlay->loadStatus() != LoadStatus::Loaded)
         {
-          connect(dynamicEntityLayer, &DynamicEntityLayer::doneLoading, this, &AlertConditionsController::onLayersChanged);
+          connect(messagesOverlay, &DynamicEntityLayer::doneLoading, this, &AlertConditionsController::onLayersChanged);
         }
         else
         {
-          const auto dynamicEntityLayerName = dynamicEntityLayer->name();
-          newTargetList.append(dynamicEntityLayerName);
-          newSourceList.append(dynamicEntityLayerName);
-          existingLayerIds.append(dynamicEntityLayerName);
+          const auto messagesOverlayLayerName = messagesOverlay->name();
+          newTargetList.append(messagesOverlayLayerName);
+          newSourceList.append(messagesOverlayLayerName);
+          existingLayerIds.append(messagesOverlayLayerName);
         }
       }
     }
@@ -773,25 +777,34 @@ void AlertConditionsController::onIdentifyLayersCompleted(const QUuid& taskId, Q
       if (!atts)
         return;
 
-      Feature* feature = dynamic_cast<Feature*>(geoElement);
-      if (!feature)
-        continue;
+      // check for the type of GeoElement
+      int geoElementId = 0;
+      if (auto* observation = dynamic_cast<DynamicEntityObservation*>(geoElement); observation)
+      {
+        geoElementId = observation->dynamicEntity()->entityId();
+        observation->deleteLater();
+      }
+      else if (auto* feature = dynamic_cast<Feature*>(geoElement); feature)
+      {
+        auto* table = feature->featureTable();
+        if (!table)
+          continue;
 
-      FeatureTable* table = feature->featureTable();
-      if (!table)
-        continue;
+        auto primaryKeyField = primaryKeyFieldName(table);
+        if (primaryKeyField.isEmpty())
+          continue;
 
-      QString primaryKeyField = primaryKeyFieldName(table);
+        if (!atts->containsAttribute(primaryKeyField))
+          continue;
 
-      if (primaryKeyField.isEmpty())
-        continue;
-
-      if (!atts->containsAttribute(primaryKeyField))
+        geoElementId = atts->attributeValue(primaryKeyField).toInt();
+      }
+      else
         continue;
 
       m_identifyGraphicsWatcher.cancel();
       m_identifyGraphicsWatcher = TaskWatcher();
-      emit pickedElement(layerName, atts->attributeValue(primaryKeyField).toInt());
+      emit pickedElement(layerName, geoElementId);
 
       break;
     }
@@ -1121,19 +1134,20 @@ AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int
             return targetFromFeatureLayer(featureLayer, itemId);
           }
         }
-        else if (DynamicEntityLayer* dynamicEntityLayer = qobject_cast<DynamicEntityLayer*>(layer); dynamicEntityLayer)
+        else if (MessagesOverlay* messagesOverlay = qobject_cast<MessagesOverlay*>(layer); messagesOverlay)
         {
           if (itemId == -1)
           {
-            if (!m_layerTargets.contains(dynamicEntityLayer->name()))
-              m_layerTargets.insert(dynamicEntityLayer->name(), new DynamicEntityLayerAlertTarget(dynamicEntityLayer));
+            if (!m_layerTargets.contains(messagesOverlay->name()))
+              m_layerTargets.insert(messagesOverlay->name(), new DynamicEntityLayerAlertTarget(messagesOverlay));
 
-            targetDescription = dynamicEntityLayer->name();
-            return m_layerTargets.value(dynamicEntityLayer->name(), nullptr);
+            targetDescription = messagesOverlay->name();
+            return m_layerTargets.value(messagesOverlay->name(), nullptr);
           }
           else
           {
-            return nullptr;
+            targetDescription = QString("%1 [%2]").arg(messagesOverlay->name(), QString::number(itemId));
+            return targetFromMessagesOverlay(messagesOverlay, itemId);
           }
         }
       }
@@ -1245,6 +1259,18 @@ AlertTarget* AlertConditionsController::targetFromGraphicsOverlay(GraphicsOverla
   return new GeoElementAlertTarget(g);
 }
 
+AlertTarget* AlertConditionsController::targetFromMessagesOverlay(MessagesOverlay* messagesOverlay, int itemId) const
+{
+  if (!messagesOverlay)
+    return nullptr;
+
+  auto* e = messagesOverlay->getDynamicEntityById(itemId);
+  if (!e)
+    return nullptr;
+
+  return new GeoElementAlertTarget(e);
+}
+
 /*!
   \brief internal
  */
@@ -1280,7 +1306,7 @@ GraphicsOverlay* AlertConditionsController::graphicsOverlayFromName(const QStrin
 /*!
   \brief internal
  */
-DynamicEntityLayer* AlertConditionsController::dynamicEntityLayerFromName(const QString& layerName)
+MessagesOverlay* AlertConditionsController::messagesOverlayFromName(const QString& layerName)
 {
   auto* operationalLayers = ToolResourceProvider::instance()->operationalLayers();
   if (!operationalLayers)
@@ -1289,10 +1315,10 @@ DynamicEntityLayer* AlertConditionsController::dynamicEntityLayerFromName(const 
   const QString& layerId = m_messageFeedTypesToNames.key(layerName, layerName);
   for (auto* layer : *operationalLayers)
   {
-    if (auto* dynamicEntityLayer = qobject_cast<DynamicEntityLayer*>(layer); dynamicEntityLayer)
+    if (auto* messagesOverlay = qobject_cast<MessagesOverlay*>(layer); messagesOverlay)
     {
-      if (dynamicEntityLayer->layerId() == layerId)
-        return dynamicEntityLayer;
+      if (messagesOverlay->layerId() == layerId)
+        return messagesOverlay;
     }
   }
 

@@ -40,6 +40,8 @@
 #include "PictureMarkerSymbol.h"
 #include "SimpleRenderer.h"
 #include "SceneViewTypes.h"
+#include "LayerSceneProperties.h"
+#include "LayerListModel.h"
 
 // Qt headers
 #include <QFileInfo>
@@ -192,9 +194,12 @@ void MessageFeedsController::setupFeeds()
     const auto rendererThumbnail = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL].toString();
     const auto surfacePlacement = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT].toString();
 
-    MessageFeed* feed = new MessageFeed(feedName, feedType, this);
-    MessagesOverlay* overlay = new MessagesOverlay(m_geoView, createRenderer(rendererInfo, this), feedType, feed, toSurfacePlacement(surfacePlacement), this);
-    feed->setMessagesOverlay(overlay);
+    auto* feed = new MessageFeed(feedName, feedType, this);
+    auto* overlay = new MessagesOverlay(feed, feedType, this);
+    overlay->setSceneProperties(LayerSceneProperties(toSurfacePlacement(surfacePlacement)));
+    overlay->setRenderer(createRenderer(rendererInfo, this));
+    SceneView* scene = static_cast<SceneView*>(m_geoView);
+    scene->arcGISScene()->operationalLayers()->append(overlay);
 
     if (!rendererThumbnail.isEmpty())
     {

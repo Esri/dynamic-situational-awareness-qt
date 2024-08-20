@@ -24,13 +24,13 @@
 #include "AlertConditionData.h"
 #include "GraphicAlertSource.h"
 #include "DynamicEntityAlertSource.h"
+#include "MessagesOverlay.h"
 
 // C++ API headers
 #include "Graphic.h"
 #include "GraphicListModel.h"
 #include "GraphicsOverlay.h"
 #include "DynamicEntityInfo.h"
-#include "DynamicEntityLayer.h"
 #include "DynamicEntityDataSource.h"
 
 using namespace Esri::ArcGISRuntime;
@@ -79,7 +79,7 @@ AlertCondition::AlertCondition(const AlertLevel& level,
   A new \l AlertConditionData will be created to track changes to the
   source and target.
  */
-void AlertCondition::init(AlertSource* source, AlertTarget* target, const QString& sourceDescription, const QString& targetDescription)
+void AlertCondition::init(AlertSource* source, const QString& sourceDescription, AlertTarget* target, const QString& targetDescription)
 {
   if (!source || !target)
     return;
@@ -132,7 +132,7 @@ void AlertCondition::init(GraphicsOverlay* sourceFeed, const QString& sourceDesc
     handleGraphicAt(i);
 }
 
-void AlertCondition::init(DynamicEntityLayer* sourceFeed, const QString& sourceDescription, AlertTarget* target, const QString& targetDescription)
+void AlertCondition::init(MessagesOverlay* sourceFeed, const QString& sourceDescription, AlertTarget* target, const QString& targetDescription)
 {
   if (!sourceFeed || !target)
     return;

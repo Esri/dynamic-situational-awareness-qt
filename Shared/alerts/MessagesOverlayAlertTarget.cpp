@@ -17,7 +17,7 @@
 // PCH header
 #include "pch.hpp"
 
-#include "DynamicEntityLayerAlertTarget.h"
+#include "MessagesOverlayAlertTarget.h"
 
 // dsa app headers
 #include "GeometryQuadtree.h"
@@ -53,7 +53,7 @@ namespace Dsa {
 
   Entities are added/updated/removed by the DynamicEntityDataSource of the DynamicEntityLayer.
  */
-DynamicEntityLayerAlertTarget::DynamicEntityLayerAlertTarget(MessagesOverlay* messagesOverlay) :
+MessagesOverlayAlertTarget::MessagesOverlayAlertTarget(MessagesOverlay* messagesOverlay) :
   AlertTarget(messagesOverlay),
   m_messagesOverlay(messagesOverlay)
 {
@@ -86,14 +86,14 @@ DynamicEntityLayerAlertTarget::DynamicEntityLayerAlertTarget(MessagesOverlay* me
 /*!
   \brief Destructor.
  */
-DynamicEntityLayerAlertTarget::~DynamicEntityLayerAlertTarget() = default;
+MessagesOverlayAlertTarget::~MessagesOverlayAlertTarget() = default;
 
 /*!
   \brief Returns the list of \l Esri::ArcGISRuntime::Geometry which are in the \a targetArea.
 
   \note No exact intersection tests are carried out to create this list.
  */
-QList<Geometry> DynamicEntityLayerAlertTarget::targetGeometries(const Envelope& targetArea) const
+QList<Geometry> MessagesOverlayAlertTarget::targetGeometries(const Envelope& targetArea) const
 {
   // if the quadtree has been built, use  it to return the set of candidate geometries
   if (m_quadtree)
@@ -101,7 +101,7 @@ QList<Geometry> DynamicEntityLayerAlertTarget::targetGeometries(const Envelope& 
 
   // otherwise, return all of the geometry in the overlay
   QList<Geometry> geometries;
-  for (const auto* dynamicEntity : std::as_const(m_messagesOverlay->dynamicEntities()))
+  for (auto* dynamicEntity : m_messagesOverlay->dynamicEntities())
   {
     if (!dynamicEntity)
       continue;
@@ -114,7 +114,7 @@ QList<Geometry> DynamicEntityLayerAlertTarget::targetGeometries(const Envelope& 
 /*!
   \brief Returns an empty QVariant.
  */
-QVariant DynamicEntityLayerAlertTarget::targetValue() const
+QVariant MessagesOverlayAlertTarget::targetValue() const
 {
   return QVariant{};
 }
@@ -125,7 +125,7 @@ QVariant DynamicEntityLayerAlertTarget::targetValue() const
 
   Build the quadtree used to find intersections with entity geometry etc.
  */
-void DynamicEntityLayerAlertTarget::rebuildQuadtree()
+void MessagesOverlayAlertTarget::rebuildQuadtree()
 {
   // destroy the quadtree if it already existed
   if (m_quadtree)
@@ -136,7 +136,7 @@ void DynamicEntityLayerAlertTarget::rebuildQuadtree()
 
   // build a list of pointers to geoelements for every graphic in the lookup
   QList<GeoElement*> elements;
-  for (auto* dynamicEntity : std::as_const(m_messagesOverlay->dynamicEntities()))
+  for (auto* dynamicEntity : m_messagesOverlay->dynamicEntities())
   {
     if (!dynamicEntity)
       continue;

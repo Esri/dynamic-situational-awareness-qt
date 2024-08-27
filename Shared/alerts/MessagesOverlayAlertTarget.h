@@ -14,8 +14,8 @@
  *  limitations under the License.
  ******************************************************************************/
 
-#ifndef DYNAMICENTITYLAYERALERTTARGET_H
-#define DYNAMICENTITYLAYERALERTTARGET_H
+#ifndef MESSAGESOVERLAYALERTTARGET_H
+#define MESSAGESOVERLAYALERTTARGET_H
 
 // dsa app headers
 #include "AlertTarget.h"
@@ -32,13 +32,13 @@ namespace Dsa {
 class MessagesOverlay;
 class GeometryQuadtree;
 
-class DynamicEntityLayerAlertTarget : public AlertTarget
+class MessagesOverlayAlertTarget : public AlertTarget
 {
   Q_OBJECT
 
 public:
-  explicit DynamicEntityLayerAlertTarget(Dsa::MessagesOverlay* messagesOverlay);
-  ~DynamicEntityLayerAlertTarget();
+  explicit MessagesOverlayAlertTarget(Dsa::MessagesOverlay* messagesOverlay);
+  ~MessagesOverlayAlertTarget();
 
   QList<Esri::ArcGISRuntime::Geometry> targetGeometries(const Esri::ArcGISRuntime::Envelope& targetArea) const override;
   QVariant targetValue() const override;
@@ -51,4 +51,4 @@ private:
 
 } // Dsa
 
-#endif // DYNAMICENTITYLAYERALERTTARGET_H
+#endif // MESSAGESOVERLAYALERTTARGET_H

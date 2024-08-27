@@ -26,7 +26,7 @@
 #include "AlertConstants.h"
 #include "AlertListModel.h"
 #include "AttributeEqualsAlertCondition.h"
-#include "DynamicEntityLayerAlertTarget.h"
+#include "MessagesOverlayAlertTarget.h"
 #include "FeatureLayerAlertTarget.h"
 #include "FixedValueAlertTarget.h"
 #include "GeoElementAlertTarget.h"
@@ -1139,7 +1139,7 @@ AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int
           if (itemId == -1)
           {
             if (!m_layerTargets.contains(messagesOverlay->name()))
-              m_layerTargets.insert(messagesOverlay->name(), new DynamicEntityLayerAlertTarget(messagesOverlay));
+              m_layerTargets.insert(messagesOverlay->name(), new MessagesOverlayAlertTarget(messagesOverlay));
 
             targetDescription = messagesOverlay->name();
             return m_layerTargets.value(messagesOverlay->name(), nullptr);

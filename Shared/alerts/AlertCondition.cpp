@@ -30,6 +30,7 @@
 #include "Graphic.h"
 #include "GraphicListModel.h"
 #include "GraphicsOverlay.h"
+#include "DynamicEntity.h"
 #include "DynamicEntityInfo.h"
 #include "DynamicEntityDataSource.h"
 
@@ -141,12 +142,24 @@ void AlertCondition::init(MessagesOverlay* sourceFeed, const QString& sourceDesc
   m_targetDescription = targetDescription;
   const auto* dataSource = sourceFeed->dataSource();
 
-  connect(dataSource, &DynamicEntityDataSource::dynamicEntityReceived, this, [this, sourceFeed, target](DynamicEntityInfo* info)
+  // create a function to generate a new AlertSource for the DynamicEntity
+  auto createNewSourceAndAdd = [this, sourceFeed, target](DynamicEntity* dynamicEntity)
   {
-    auto* dynamicEntity = info->dynamicEntity();
-    DynamicEntityAlertSource* source = new DynamicEntityAlertSource(dynamicEntity, sourceFeed);
-    AlertConditionData* newData = createData(source, target);
-    addData(newData);
+    auto* source = new DynamicEntityAlertSource(dynamicEntity, sourceFeed);
+    auto* data = createData(source, target);
+    addData(data);
+  };
+
+  // add all the existing DynamicEntities already in the layer as AlertSources
+  for (auto dynamicEntity : sourceFeed->dynamicEntities())
+  {
+    createNewSourceAndAdd(dynamicEntity);
+  }
+
+  // add a listner to create AlertSource for any new entities added
+  connect(dataSource, &DynamicEntityDataSource::dynamicEntityReceived, this, [createNewSourceAndAdd](DynamicEntityInfo* info)
+  {
+    createNewSourceAndAdd(info->dynamicEntity());
     info->deleteLater();
   });
 }

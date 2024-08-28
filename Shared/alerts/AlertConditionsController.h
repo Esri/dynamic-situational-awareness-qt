@@ -97,8 +97,6 @@ private slots:
   void onGeoviewChanged();
   void onLayersChanged();
   void onMouseClicked(QMouseEvent& event);
-  void onIdentifyLayersCompleted(const QUuid& taskId, QList<Esri::ArcGISRuntime::IdentifyLayerResult*> identifyResults);
-  void onIdentifyGraphicsOverlaysCompleted(const QUuid& taskId, QList<Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult*> identifyResults);
   void handleNewAlertConditionData(AlertConditionData* newConditionData);
   void onConditionsChanged();
 
@@ -114,7 +112,7 @@ private:
   AlertTarget* targetFromGraphicsOverlay(Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlay, int itemId) const;
   AlertTarget* targetFromMessagesOverlay(Dsa::MessagesOverlay* messagesOverlay, int itemId) const;
   Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlayFromName(const QString& overlayName);
-  Dsa::MessagesOverlay* messagesOverlayFromName(const QString& layerName);
+  MessagesOverlay* messagesOverlayFromName(const QString& layerName);
   QString primaryKeyFieldName(Esri::ArcGISRuntime::FeatureTable* featureTable) const;
 
   template<typename T>
@@ -137,16 +135,12 @@ private:
   double m_tolerance = 5;
   LocationAlertSource* m_locationSource = nullptr;
   LocationAlertTarget* m_locationTarget = nullptr;
-  Esri::ArcGISRuntime::TaskWatcher m_identifyLayersWatcher;
-  Esri::ArcGISRuntime::TaskWatcher m_identifyGraphicsWatcher;
   mutable QHash<QString,AlertTarget*> m_layerTargets;
   mutable QHash<QString,AlertTarget*> m_overlayTargets;
   QList<QJsonObject> m_storedConditions;
   QHash<QString,QString> m_messageFeedTypesToNames;
 
   QMetaObject::Connection m_mouseClickConnection;
-  QMetaObject::Connection m_identifyLayersConnection;
-  QMetaObject::Connection m_identifyGraphicsConnection;
 };
 
 } // Dsa

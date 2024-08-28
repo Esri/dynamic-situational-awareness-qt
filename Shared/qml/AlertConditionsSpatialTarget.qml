@@ -129,7 +129,9 @@ Item {
     Connections {
         target: toolController
 
-        function onPickedElement() {
+        function onPickedElement(overlayName, elementId) {
+            targetCB.currentIndex = -1;
+            featureIdEdit.text = "";
             for (var i = 0; i < targetCB.count; ++i) {
                 if (targetCB.textAt(i) === overlayName)
                 {

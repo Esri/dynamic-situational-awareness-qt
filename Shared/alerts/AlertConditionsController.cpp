@@ -74,6 +74,7 @@
 #include <QEventLoop>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QFuture>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -214,9 +215,6 @@ void AlertConditionsController::setActive(bool active)
 {
   if (active == m_active)
     return;
-
-  if (m_identifyLayersWatcher.isValid() && !m_identifyLayersWatcher.isDone() && !m_identifyLayersWatcher.isCanceled())
-    m_identifyLayersWatcher.cancel();
 
   m_active = active;
   emit activeChanged();
@@ -464,18 +462,10 @@ void AlertConditionsController::togglePickMode()
   {
     m_mouseClickConnection = connect(ToolResourceProvider::instance(), &ToolResourceProvider::mouseClicked,
                                      this, &AlertConditionsController::onMouseClicked);
-
-    m_identifyLayersConnection =  connect(ToolResourceProvider::instance(), &ToolResourceProvider::identifyLayersCompleted,
-                                          this, &AlertConditionsController::onIdentifyLayersCompleted);
-
-    m_identifyGraphicsConnection =  connect(ToolResourceProvider::instance(), &ToolResourceProvider::identifyGraphicsOverlaysCompleted,
-                                            this, &AlertConditionsController::onIdentifyGraphicsOverlaysCompleted);
   }
   else
   {
     disconnect(m_mouseClickConnection);
-    disconnect(m_identifyLayersConnection);
-    disconnect(m_identifyGraphicsConnection);
   }
 
   emit pickModeChanged();
@@ -712,6 +702,8 @@ void AlertConditionsController::onLayersChanged()
  */
 void AlertConditionsController::onMouseClicked(QMouseEvent &event)
 {
+  static QPair<QString, int> emptyPair{ "", -1 };
+
   if (!isActive())
     return;
 
@@ -721,147 +713,104 @@ void AlertConditionsController::onMouseClicked(QMouseEvent &event)
   if (!m_pickMode)
     return;
 
-  if (m_identifyLayersWatcher.isValid() && !m_identifyLayersWatcher.isDone())
-    return;
-
-  if (m_identifyGraphicsWatcher.isValid() && !m_identifyGraphicsWatcher.isDone())
-    return;
-
   GeoView* geoView = ToolResourceProvider::instance()->geoView();
   if (!geoView)
     return;
 
-  m_identifyLayersWatcher = geoView->identifyLayers(event.position().x(), event.position().y(), m_tolerance, false);
-  m_identifyGraphicsWatcher = geoView->identifyGraphicsOverlays(event.position().x(), event.position().y(), m_tolerance, false);
+  geoView->identifyLayersAsync(event.position(), m_tolerance, false, 1, this).then(this, [this](QList<IdentifyLayerResult*> identifyLayersResults) -> QPair<QString, int> {
+    LayerResultsManager resultsManager(identifyLayersResults);
 
-  event.accept();
-}
+    if (!isActive())
+      return emptyPair;
 
-/*!
-  \brief internal
-
-  Handle the result of an identify layers task.
- */
-void AlertConditionsController::onIdentifyLayersCompleted(const QUuid& taskId, QList<IdentifyLayerResult*> identifyResults)
-{
-  if (taskId != m_identifyLayersWatcher.taskId())
-    return;
-
-  LayerResultsManager resultsManager(identifyResults);
-
-  if (!isActive())
-    return;
-
-  m_identifyLayersWatcher = TaskWatcher();
-
-  auto it = resultsManager.m_results.begin();
-  auto itEnd = resultsManager.m_results.end();
-  for (; it != itEnd; ++it)
-  {
-    IdentifyLayerResult* res = *it;
-    if (!res)
-      continue;
-
-    const QString layerName = res->layerContent()->name();
-
-    const QList<GeoElement*> geoElements = res->geoElements();
-    auto geoElemIt = geoElements.begin();
-    auto geoElemEnd = geoElements.end();
-    for (; geoElemIt != geoElemEnd; ++geoElemIt)
+    for (auto* result : resultsManager.m_results)
     {
-      GeoElement* geoElement = *geoElemIt;
-      if (!geoElement)
+      if (!result)
         continue;
 
-      AttributeListModel* atts = geoElement->attributes();
-      if (!atts)
+      const QString& layerName = result->layerContent()->name();
+      for (auto* geoElement : result->geoElements())
+      {
+        if (!geoElement)
+          continue;
+
+        AttributeListModel* attributes = geoElement->attributes();
+        if (!attributes)
+          return emptyPair;
+
+        // check for the type of GeoElement
+        int geoElementId = -1;
+        if (auto* observation = dynamic_cast<DynamicEntityObservation*>(geoElement); observation)
+        {
+          geoElementId = observation->dynamicEntity()->entityId();
+          observation->deleteLater();
+        }
+        else if (auto* feature = dynamic_cast<Feature*>(geoElement); feature)
+        {
+          auto* table = feature->featureTable();
+          if (!table)
+            continue;
+
+          auto primaryKeyField = primaryKeyFieldName(table);
+          if (primaryKeyField.isEmpty())
+            continue;
+
+          if (!attributes->containsAttribute(primaryKeyField))
+            continue;
+
+          geoElementId = attributes->attributeValue(primaryKeyField).toInt();
+        }
+        else
+          continue;
+
+        // pass the pair along to the graphics continuation block
+        return { layerName, geoElementId };
+      }
+    }
+
+    // if execution makes it here then nothing valid was found in the operational layers
+    return emptyPair;
+
+  }).then(this, [this, geoView, &event](QPair<QString, int> identifyLayersResultPair) {
+    if (!identifyLayersResultPair.first.isEmpty() && identifyLayersResultPair.second != -1)
+    {
+      emit pickedElement(identifyLayersResultPair.first, identifyLayersResultPair.second);
+      return;
+    }
+
+    geoView->identifyGraphicsOverlaysAsync(event.position(), m_tolerance, false, 1, this).then(this, [this](QList<IdentifyGraphicsOverlayResult*> identifyGraphicsOverlayResult) {
+
+      GraphicsOverlaysResultsManager resultsManager(identifyGraphicsOverlayResult);
+
+      if (!isActive())
+        emit pickedElement(emptyPair.first, emptyPair.second);
         return;
 
-      // check for the type of GeoElement
-      int geoElementId = 0;
-      if (auto* observation = dynamic_cast<DynamicEntityObservation*>(geoElement); observation)
+      for (auto* result : resultsManager.m_results)
       {
-        geoElementId = observation->dynamicEntity()->entityId();
-        observation->deleteLater();
+        if (!result)
+          continue;
+
+        const QString overlayName = result->graphicsOverlay()->overlayId();
+
+        for (auto* graphic : result->graphics())
+        {
+          if (!graphic || !graphic->graphicsOverlay() || !graphic->graphicsOverlay()->graphics())
+            continue;
+
+          const int index = graphic->graphicsOverlay()->graphics()->indexOf(graphic);
+
+          emit pickedElement(overlayName, index);
+          return;
+        }
       }
-      else if (auto* feature = dynamic_cast<Feature*>(geoElement); feature)
-      {
-        auto* table = feature->featureTable();
-        if (!table)
-          continue;
 
-        auto primaryKeyField = primaryKeyFieldName(table);
-        if (primaryKeyField.isEmpty())
-          continue;
+      emit pickedElement(emptyPair.first, emptyPair.second);
+    });
+  });
 
-        if (!atts->containsAttribute(primaryKeyField))
-          continue;
-
-        geoElementId = atts->attributeValue(primaryKeyField).toInt();
-      }
-      else
-        continue;
-
-      m_identifyGraphicsWatcher.cancel();
-      m_identifyGraphicsWatcher = TaskWatcher();
-      emit pickedElement(layerName, geoElementId);
-
-      break;
-    }
-  }
-
-  if (!m_identifyGraphicsWatcher.isValid() || m_identifyGraphicsWatcher.isDone() || m_identifyGraphicsWatcher.isCanceled())
-    togglePickMode();
-}
-
-/*!
-  \brief internal
-
-  Handle the result of an identify graphic overlays task.
- */
-void AlertConditionsController::onIdentifyGraphicsOverlaysCompleted(const QUuid& taskId, QList<IdentifyGraphicsOverlayResult*> identifyResults)
-{
-  if (taskId != m_identifyGraphicsWatcher.taskId())
-    return;
-
-  GraphicsOverlaysResultsManager resultsManager(identifyResults);
-
-  if (!isActive())
-    return;
-
-  m_identifyGraphicsWatcher = TaskWatcher();
-
-  auto it = resultsManager.m_results.begin();
-  auto itEnd = resultsManager.m_results.end();
-  for (; it != itEnd; ++it)
-  {
-    IdentifyGraphicsOverlayResult* res = *it;
-    if (!res)
-      continue;
-
-    const QString overlayName = res->graphicsOverlay()->overlayId();
-
-    const QList<Graphic*> graphics = res->graphics();
-    auto graphicsIt = graphics.begin();
-    auto graphicsEnd = graphics.end();
-    for (; graphicsIt != graphicsEnd; ++graphicsIt)
-    {
-      Graphic* graphic = *graphicsIt;
-      if (!graphic || !graphic->graphicsOverlay() || !graphic->graphicsOverlay()->graphics())
-        continue;
-
-      const int index = graphic->graphicsOverlay()->graphics()->indexOf(graphic);
-
-      m_identifyLayersWatcher.cancel();
-      m_identifyLayersWatcher = TaskWatcher();
-      emit pickedElement(overlayName, index);
-
-      break;
-    }
-  }
-
-  if (!m_identifyLayersWatcher.isValid() || m_identifyLayersWatcher.isDone() || m_identifyLayersWatcher.isCanceled())
-    togglePickMode();
+  togglePickMode();
+  event.accept();
 }
 
 void AlertConditionsController::handleNewAlertConditionData(AlertConditionData* newConditionData)

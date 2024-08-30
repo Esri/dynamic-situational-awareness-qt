@@ -79,6 +79,15 @@ private:
   QList<Esri::ArcGISRuntime::PopupManager*> m_popupManagers;
 };
 
+// some shortcuts for working with multiple identify operation futures in a single 'QtFuture::whenAll' handler
+namespace IdentifyResultsVariant {
+  using FutureType = std::variant<QFuture<QList<Esri::ArcGISRuntime::IdentifyLayerResult*>>, QFuture<QList<Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult*>>>;
+  namespace Types {
+    constexpr uchar LAYERS = 0;
+    constexpr uchar GRAPHICS = 1;
+  }
+}
+
 } // Dsa
 
 #endif // IDENTIFYFEATURESCONTROLLER_H

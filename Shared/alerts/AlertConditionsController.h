@@ -25,8 +25,9 @@
 // C++ API headers
 #include "TaskWatcher.h"
 
-// dsa headers
+// DSA headers
 #include "AbstractTool.h"
+#include "AlertLevel.h"
 
 class QMouseEvent;
 

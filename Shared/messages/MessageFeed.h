@@ -18,7 +18,9 @@
 #define MESSAGEFEED_H
 
 // Qt headers
+#include <QHash>
 #include <QObject>
+#include <QUrl>
 
 // MapsSDK headers
 #include "DynamicEntityDataSource.h"

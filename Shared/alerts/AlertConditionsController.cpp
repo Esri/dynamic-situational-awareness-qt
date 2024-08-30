@@ -20,30 +20,11 @@
 
 #include "AlertConditionsController.h"
 
-// dsa app headers
-#include "AlertConditionData.h"
-#include "AlertConditionListModel.h"
-#include "AlertConstants.h"
-#include "AlertListModel.h"
-#include "AttributeEqualsAlertCondition.h"
-#include "MessagesOverlayAlertTarget.h"
-#include "FeatureLayerAlertTarget.h"
-#include "FixedValueAlertTarget.h"
-#include "GeoElementAlertTarget.h"
-#include "GraphicsOverlayAlertTarget.h"
-#include "GraphicsOverlayAlertTarget.h"
-#include "GraphicsOverlaysResultsManager.h"
-#include "LayerResultsManager.h"
-#include "LocationAlertSource.h"
-#include "LocationAlertTarget.h"
-#include "MessageFeedConstants.h"
-#include "WithinAreaAlertCondition.h"
-#include "WithinDistanceAlertCondition.h"
-#include "MessagesOverlay.h"
-
-// toolkit headers
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
+// Qt headers
+#include <QEventLoop>
+#include <QFuture>
+#include <QJsonArray>
+#include <QJsonObject>
 
 // C++ API headers
 #include "ArcGISFeatureTable.h"
@@ -68,13 +49,31 @@
 #include "MapTypes.h"
 #include "QueryParameters.h"
 #include "ServiceTypes.h"
-#include "MessagesOverlay.h"
 
-// Qt headers
-#include <QEventLoop>
-#include <QJsonArray>
-#include <QJsonObject>
-#include <QFuture>
+// Toolkit headers
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
+
+// DSA headers
+#include "AlertConditionData.h"
+#include "AlertConditionListModel.h"
+#include "AlertConstants.h"
+#include "AlertListModel.h"
+#include "AttributeEqualsAlertCondition.h"
+#include "FeatureLayerAlertTarget.h"
+#include "FixedValueAlertTarget.h"
+#include "GeoElementAlertTarget.h"
+#include "GraphicsOverlayAlertTarget.h"
+#include "GraphicsOverlayAlertTarget.h"
+#include "GraphicsOverlaysResultsManager.h"
+#include "LayerResultsManager.h"
+#include "LocationAlertSource.h"
+#include "LocationAlertTarget.h"
+#include "MessageFeedConstants.h"
+#include "MessagesOverlay.h"
+#include "MessagesOverlayAlertTarget.h"
+#include "WithinAreaAlertCondition.h"
+#include "WithinDistanceAlertCondition.h"
 
 using namespace Esri::ArcGISRuntime;
 

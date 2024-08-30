@@ -20,23 +20,6 @@
 
 #include "ContextMenuController.h"
 
-// dsa app headers
-#include "CoordinateConversionToolProxy.h"
-#include "ObservationReportController.h"
-#include "FollowPositionController.h"
-#include "GraphicsOverlaysResultsManager.h"
-#include "IdentifyController.h"
-#include "LayerResultsManager.h"
-#include "LineOfSightController.h"
-#include "ViewshedController.h"
-#include "GeoElementUtils.h"
-
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
-
-// Toolkit headers
-#include "CoordinateConversionController.h"
-
 // C++ API headers
 #include "Graphic.h"
 #include "GraphicsOverlay.h"
@@ -46,8 +29,21 @@
 #include "MapView.h"
 #include "SceneView.h"
 
-// STL headers
-#include <cmath>
+// Toolkit headers
+#include "CoordinateConversionController.h"
+
+// DSA headers
+#include "CoordinateConversionToolProxy.h"
+#include "FollowPositionController.h"
+#include "GeoElementUtils.h"
+#include "GraphicsOverlaysResultsManager.h"
+#include "IdentifyController.h"
+#include "LayerResultsManager.h"
+#include "LineOfSightController.h"
+#include "ObservationReportController.h"
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
+#include "ViewshedController.h"
 
 using namespace Esri::ArcGISRuntime;
 

@@ -66,6 +66,7 @@
 #include "GraphicsOverlayAlertTarget.h"
 #include "GraphicsOverlayAlertTarget.h"
 #include "GraphicsOverlaysResultsManager.h"
+#include "IdentifyController.h"
 #include "LayerResultsManager.h"
 #include "LocationAlertSource.h"
 #include "LocationAlertTarget.h"
@@ -701,111 +702,105 @@ void AlertConditionsController::onLayersChanged()
  */
 void AlertConditionsController::onMouseClicked(QMouseEvent &event)
 {
-  static QPair<QString, int> emptyPair{ "", -1 };
-
+  // abort if the tool is not the active tool for some unexplained reason
   if (!isActive())
     return;
 
+  // only respond to left click
   if (event.button() != Qt::MouseButton::LeftButton)
     return;
 
+  // abort if the tool is somehow not in pick mode
   if (!m_pickMode)
     return;
 
+  // get a pointer to the geoView for calling the identify operations
   GeoView* geoView = ToolResourceProvider::instance()->geoView();
   if (!geoView)
     return;
 
-  geoView->identifyLayersAsync(event.position(), m_tolerance, false, 1, this).then(this, [this](QList<IdentifyLayerResult*> identifyLayersResults) -> QPair<QString, int> {
-    LayerResultsManager resultsManager(identifyLayersResults);
+  // dispatch identify calls to the graphics layers and operational layers of the GeoView
+  // TODO: can we do something here to search only the layer in the combobox? right now, the user must toggle visibility
+  //       in order to search only their desired layer in the combo of targets. perhaps a model property for selected index
+  auto identify_layers = geoView->identifyLayersAsync(event.position(), m_tolerance, false, 1, this);
+  auto identify_graphics = geoView->identifyGraphicsOverlaysAsync(event.position(), m_tolerance, false, 1, this);
 
+  // respond once all QFutures are complete (includes any cancel or failure as well)
+  QtFuture::whenAll(identify_layers, identify_graphics).then(this, [this](const QList<IdentifyResultsVariant::FutureType> &identify_results)
+  {
+    // abort if tool is no longer the active tool
     if (!isActive())
-      return emptyPair;
-
-    for (auto* result : resultsManager.m_results)
-    {
-      if (!result)
-        continue;
-
-      const QString& layerName = result->layerContent()->name();
-      for (auto* geoElement : result->geoElements())
-      {
-        if (!geoElement)
-          continue;
-
-        AttributeListModel* attributes = geoElement->attributes();
-        if (!attributes)
-          return emptyPair;
-
-        // check for the type of GeoElement
-        int geoElementId = -1;
-        if (auto* observation = dynamic_cast<DynamicEntityObservation*>(geoElement); observation)
-        {
-          geoElementId = observation->dynamicEntity()->entityId();
-          observation->deleteLater();
-        }
-        else if (auto* feature = dynamic_cast<Feature*>(geoElement); feature)
-        {
-          auto* table = feature->featureTable();
-          if (!table)
-            continue;
-
-          auto primaryKeyField = primaryKeyFieldName(table);
-          if (primaryKeyField.isEmpty())
-            continue;
-
-          if (!attributes->containsAttribute(primaryKeyField))
-            continue;
-
-          geoElementId = attributes->attributeValue(primaryKeyField).toInt();
-        }
-        else
-          continue;
-
-        // pass the pair along to the graphics continuation block
-        return { layerName, geoElementId };
-      }
-    }
-
-    // if execution makes it here then nothing valid was found in the operational layers
-    return emptyPair;
-
-  }).then(this, [this, geoView, &event](QPair<QString, int> identifyLayersResultPair) {
-    if (!identifyLayersResultPair.first.isEmpty() && identifyLayersResultPair.second != -1)
-    {
-      emit pickedElement(identifyLayersResultPair.first, identifyLayersResultPair.second);
       return;
-    }
 
-    geoView->identifyGraphicsOverlaysAsync(event.position(), m_tolerance, false, 1, this).then(this, [this](QList<IdentifyGraphicsOverlayResult*> identifyGraphicsOverlayResult) {
-
-      GraphicsOverlaysResultsManager resultsManager(identifyGraphicsOverlayResult);
-
-      if (!isActive())
-        emit pickedElement(emptyPair.first, emptyPair.second);
-        return;
-
-      for (auto* result : resultsManager.m_results)
+    // iterate over each type in the results variant
+    for (const IdentifyResultsVariant::FutureType& identify_result : identify_results)
+    {
+      if (identify_result.index() == IdentifyResultsVariant::Types::LAYERS)
       {
-        if (!result)
-          continue;
-
-        const QString overlayName = result->graphicsOverlay()->overlayId();
-
-        for (auto* graphic : result->graphics())
+        LayerResultsManager resultsManager(std::get<IdentifyResultsVariant::Types::LAYERS>(identify_result).result());
+        for (auto* result : resultsManager.m_results)
         {
-          if (!graphic || !graphic->graphicsOverlay() || !graphic->graphicsOverlay()->graphics())
+          if (!result)
             continue;
 
-          const int index = graphic->graphicsOverlay()->graphics()->indexOf(graphic);
+          const auto& layerName = result->layerContent()->name();
+          for (auto* geoElement : result->geoElements())
+          {
+            if (!geoElement)
+              continue;
 
-          emit pickedElement(overlayName, index);
-          return;
+            auto* attributes = geoElement->attributes();
+            if (!attributes)
+              continue;
+
+            // check for the type of GeoElement
+            if (auto* observation = dynamic_cast<DynamicEntityObservation*>(geoElement); observation)
+            {
+              emit pickedElement(layerName, observation->dynamicEntity()->entityId());
+              observation->deleteLater();
+              return;
+            }
+            else if (auto* feature = dynamic_cast<Feature*>(geoElement); feature)
+            {
+              auto* table = feature->featureTable();
+              if (!table)
+                continue;
+
+              auto primaryKeyField = primaryKeyFieldName(table);
+              if (primaryKeyField.isEmpty())
+                continue;
+
+              if (!attributes->containsAttribute(primaryKeyField))
+                continue;
+
+              emit pickedElement(layerName, attributes->attributeValue(primaryKeyField).toInt());
+              return;
+            }
+          }
         }
       }
+      else if (identify_result.index() == IdentifyResultsVariant::Types::GRAPHICS)
+      {
+        GraphicsOverlaysResultsManager resultsManager(std::get<IdentifyResultsVariant::Types::GRAPHICS>(identify_result).result());
+        for (auto* result : resultsManager.m_results)
+        {
+          if (!result)
+            continue;
 
-      emit pickedElement(emptyPair.first, emptyPair.second);
-    });
+          for (auto* graphic : result->graphics())
+          {
+            if (!graphic || !graphic->graphicsOverlay() || !graphic->graphicsOverlay()->graphics())
+              continue;
+
+            emit pickedElement(result->graphicsOverlay()->overlayId(), graphic->graphicsOverlay()->graphics()->indexOf(graphic));
+            return;
+          }
+        }
+      }
+    }
+
+    // if the execution makes it to this point, then nothing was found
+    emit pickedElement(QStringLiteral(""), -1);
   });
 
   togglePickMode();

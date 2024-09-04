@@ -46,6 +46,7 @@
 
 // Qt headers
 #include <QFileInfo>
+#include <QFuture>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -120,7 +121,7 @@ void TableOfContentsController::zoomTo(int layerIndex)
   else
     extent = layer->fullExtent();
 
-  geoView->setViewpoint(Viewpoint(extent));
+  geoView->setViewpointAsync(Viewpoint(extent));
 }
 
 /*!

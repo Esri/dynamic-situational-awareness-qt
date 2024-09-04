@@ -38,6 +38,7 @@
 #include "Viewpoint.h"
 
 // Qt headers
+#include <QFuture>
 #include <QGuiApplication>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -61,7 +62,6 @@ NavigationController::NavigationController(QObject* parent) :
   AbstractTool(parent)
 {
   connect(ToolResourceProvider::instance(), &ToolResourceProvider::geoViewChanged, this, &NavigationController::updateGeoView);
-  connect(ToolResourceProvider::instance(), &ToolResourceProvider::screenToLocationCompleted, this, &NavigationController::screenToLocationCompleted);
 
   updateGeoView();
 
@@ -103,31 +103,6 @@ void NavigationController::updateGeoView()
   if (m_sceneView)
   {
     m_is3d = true;
-
-    connect(this, &NavigationController::screenToLocationCompleted, this, [this](QUuid, Point location)
-    {
-      // check if called from the navigation controls
-      if (!m_enabled)
-        return;
-
-      m_currentCenter = location;
-
-      if (m_currentMode == Mode::Zoom)
-      {
-        zoom();
-      }
-      else if (m_currentMode == Mode::Rotate)
-      {
-        setRotationInternal();
-      }
-      else if(m_currentMode == Mode::Tilt)
-      {
-        set2DInternal();
-      }
-
-      // reset
-      m_enabled = false;
-    });
   }
   else
   {
@@ -144,7 +119,7 @@ void NavigationController::zoomToInitialLocation()
   Viewpoint initViewpoint;
   if (m_is3d)
   {
-    m_sceneView->setViewpoint(m_sceneView->arcGISScene()->initialViewpoint(), 1.0f);
+    m_sceneView->setViewpointAsync(m_sceneView->arcGISScene()->initialViewpoint(), 1.0f);
   }
 }
 
@@ -230,14 +205,14 @@ void NavigationController::zoom()
     if (m_currentCenter.x() == 0 && m_currentCenter.y() == 0 && m_currentCenter.z() == 0)
     {
       Camera newCam = currentCamera.moveForward(m_cameraMoveDistance);
-      m_sceneView->setViewpointCamera(newCam);
+      m_sceneView->setViewpointCameraAsync(newCam);
     }
     else
     {
       // zoom in/out using the zoom factor
       Camera newCamera = currentCamera.zoomToward(m_currentCenter, m_zoomFactor);
       // set the sceneview to the new camera
-      m_sceneView->setViewpointCamera(newCamera, 0.5);
+      m_sceneView->setViewpointCameraAsync(newCamera, 0.5);
     }
   }
 }
@@ -324,7 +299,7 @@ void NavigationController::set2DInternal()
     // rotate the camera using the delta pitch value
     const Camera newCamera = currentCamera.rotateAround(m_currentCenter, 0., -currentCamera.pitch(), 0.);
     // set the sceneview to the new camera
-    m_sceneView->setViewpointCamera(newCamera, 2.0);
+    m_sceneView->setViewpointCameraAsync(newCamera, 2.0);
   }
 }
 
@@ -338,7 +313,31 @@ void NavigationController::center()
 
   m_enabled = true;
 
-  m_sceneView->screenToLocation(m_sceneView->widthInPixels() * 0.5, m_sceneView->heightInPixels() * 0.5);
+  m_sceneView->screenToLocationAsync(m_sceneView->widthInPixels() * 0.5, m_sceneView->heightInPixels() * 0.5).then(this, [this](Point point)
+  {
+    // check if called from the navigation controls
+    if (!m_enabled)
+      return;
+
+    m_currentCenter = point;
+
+    if (m_currentMode == Mode::Zoom)
+    {
+      zoom();
+    }
+    else if (m_currentMode == Mode::Rotate)
+    {
+      setRotationInternal();
+    }
+    else if(m_currentMode == Mode::Tilt)
+    {
+      set2DInternal();
+    }
+
+    // reset
+    m_enabled = false;
+  });
+
 }
 
 /*!

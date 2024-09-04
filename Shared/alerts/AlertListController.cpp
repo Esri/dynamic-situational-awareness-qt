@@ -42,6 +42,7 @@
 #include "Viewpoint.h"
 
 // Qt headers
+#include <QFuture>
 #include <QTimer>
 
 using namespace Esri::ArcGISRuntime;
@@ -237,14 +238,14 @@ void AlertListController::zoomTo(int rowIndex)
     constexpr double targetDistance = 1500.0;
     Camera newCam(pos, targetDistance, currentCam.heading(), currentCam.pitch(), currentCam.roll());
 
-    sceneView->setViewpointCamera(newCam, 1.0);
+    sceneView->setViewpointCameraAsync(newCam, 1.0);
   }
   else
   {
     const Viewpoint currVP = geoView->currentViewpoint(ViewpointType::CenterAndScale);
     const Viewpoint newViewPoint(pos, currVP.targetScale());
 
-    geoView->setViewpoint(newViewPoint, 1.0);
+    geoView->setViewpointAsync(newViewPoint, 1.0);
   }
 }
 

@@ -66,7 +66,6 @@ public:
 signals:
   void verticalChanged();
   void zoomFactorChanged();
-  void screenToLocationCompleted(QUuid taskId, Esri::ArcGISRuntime::Point location);
   void cameraMoveDistanceChanged();
 
 private slots:

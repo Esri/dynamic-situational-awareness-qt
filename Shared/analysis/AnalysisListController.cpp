@@ -35,6 +35,9 @@
 #include "Camera.h"
 #include "SceneView.h"
 
+// Qt headers
+#include <QFuture>
+
 using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
@@ -161,7 +164,7 @@ void AnalysisListController::zoomToLocation(const Point& point)
   constexpr double targetDistance = 1500.0;
   const Camera newCam(point, targetDistance, currentCam.heading(), currentCam.pitch(), currentCam.roll());
 
-  m_sceneView->setViewpointCamera(newCam, 1.0);
+  m_sceneView->setViewpointCameraAsync(newCam, 1.0);
 }
 
 } // Dsa

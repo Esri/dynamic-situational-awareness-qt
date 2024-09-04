@@ -49,6 +49,7 @@
 // Qt headers
 #include <QDir>
 #include <QFileInfo>
+#include <QFuture>
 #include <QHostInfo>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -588,7 +589,7 @@ void DsaController::updateInitialLocationOnSceneChange(bool isInitialization)
       // Note use of setViewPoint instead of setInitialLocation. The latter
       // only works if the scene is not loaded, but all MSPK scenes are loaded with
       // the MSPK so it can't be used.
-      geoView->setViewpoint(readInitialLocation(), 0);
+      geoView->setViewpointAsync(readInitialLocation(), 0);
     }
     else
     {

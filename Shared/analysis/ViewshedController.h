@@ -22,9 +22,6 @@
 class QAbstractListModel;
 Q_MOC_INCLUDE("qabstractitemmodel.h")
 
-// C++ API headers
-#include "TaskWatcher.h"
-
 // dsa headers
 #include "AbstractTool.h"
 
@@ -183,9 +180,6 @@ private:
   GeoElementViewshed360* m_locationDisplayViewshed = nullptr;
 
   ViewshedActiveMode m_activeMode = ViewshedActiveMode::NoActiveMode;
-
-  Esri::ArcGISRuntime::TaskWatcher m_identifyTaskWatcher;
-  QMetaObject::Connection m_identifyConn;
 
   QList<QMetaObject::Connection> m_activeViewshedConns;
 };

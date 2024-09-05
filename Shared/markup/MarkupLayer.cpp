@@ -40,6 +40,7 @@
 
 // Qt headers
 #include <QFile>
+#include <QFuture>
 #include <QHash>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -76,28 +77,21 @@ MarkupLayer::MarkupLayer(const QString& json, FeatureCollection* featureCollecti
   // Get the table
   auto table = m_featureCollection->tables()->at(0);
 
-  // Connect to know when addFeature successfully completes
-  connect(table, &FeatureCollectionTable::addFeatureCompleted, this, [this, table](QUuid id, bool success)
-  {
-    if (!success || !m_featureHash.contains(id))
-      return;
-
-    auto pair = m_featureHash.value(id);
-    table->setSymbolOverride(pair.first, pair.second);
-  });
-
   // Loop through the markup elements and add them as Features to the table
   QJsonArray markupElements = markupJson.value(MarkupConstants::MARKUP).toObject().value(MarkupConstants::ELEMENTS).toArray();
   const int markupSize = markupElements.size();
   for (int i = 0; i < markupSize; i++)
   {
-    const QJsonObject element = markupElements.at(i).toObject();
-    Feature* feature = table->createFeature(table);
-    const QString geomString = QString(QJsonDocument(element.value(MarkupConstants::GEOMETRY).toObject()).toJson(QJsonDocument::Compact));
+    const auto element = markupElements.at(i).toObject();
+    auto elementColor = QColor(MarkupLayer::colors().at(element.value(MarkupConstants::COLOR).toInt()));
+    auto* feature = table->createFeature(table);
+    const auto geomString = QString(QJsonDocument(element.value(MarkupConstants::GEOMETRY).toObject()).toJson(QJsonDocument::Compact));
     feature->setGeometry(Geometry::fromJson(geomString));
-    QUuid id = table->addFeature(feature).taskId();
-    SimpleLineSymbol* sls = new SimpleLineSymbol(SimpleLineSymbolStyle::Solid, QColor(MarkupLayer::colors().at(element.value(MarkupConstants::COLOR).toInt())), 12.0f, parent);
-    m_featureHash[id] = QPair<Feature*, SimpleLineSymbol*>(feature, sls);
+    table->addFeatureAsync(feature).then(this, [parent, table, elementColor, feature]()
+    {
+      auto* sls = new SimpleLineSymbol(SimpleLineSymbolStyle::Solid, elementColor, 12.0f, parent);
+      table->setSymbolOverride(feature, sls);
+    });
   }
 
   setName(markupJson.value(MarkupConstants::MARKUP).toObject().value(MarkupConstants::NAME).toString());

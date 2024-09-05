@@ -514,7 +514,7 @@ void DsaController::createDefaultSettings()
   m_dsaSettings[AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME] = AppConstants::UNIT_METERS;
   m_dsaSettings["UseGpsForElevation"] = QStringLiteral("true");
   QJsonObject markupJson;
-  markupJson.insert(QStringLiteral("port"), 12345);
+  markupJson.insert(QStringLiteral("port"), 45680);
   m_dsaSettings[QStringLiteral("MarkupConfig")] = markupJson;
   writeDefaultConditions();
   m_dsaSettings[OpenMobileScenePackageController::PACKAGE_DIRECTORY_PROPERTYNAME] = QString("%1/Packages").arg(m_dsaSettings["RootDataDirectory"].toString());

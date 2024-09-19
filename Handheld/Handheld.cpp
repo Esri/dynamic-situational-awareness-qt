@@ -94,21 +94,6 @@ void Handheld::componentComplete()
   connect(m_sceneView, &SceneQuickView::mousePressedAndHeld,
           ToolResourceProvider::instance(), &ToolResourceProvider::onMousePressedAndHeld);
 
-  connect(m_sceneView, &SceneQuickView::identifyGraphicsOverlayCompleted,
-          ToolResourceProvider::instance(), &ToolResourceProvider::onIdentifyGraphicsOverlayCompleted);
-
-  connect(m_sceneView, &SceneQuickView::identifyGraphicsOverlaysCompleted,
-          ToolResourceProvider::instance(), &ToolResourceProvider::onIdentifyGraphicsOverlaysCompleted);
-
-  connect(m_sceneView, &SceneQuickView::identifyLayerCompleted,
-          ToolResourceProvider::instance(), &ToolResourceProvider::onIdentifyLayerCompleted);
-
-  connect(m_sceneView, &SceneQuickView::identifyLayersCompleted,
-          ToolResourceProvider::instance(), &ToolResourceProvider::onIdentifyLayersCompleted);
-
-  connect(m_sceneView, &SceneQuickView::screenToLocationCompleted,
-          ToolResourceProvider::instance(), &ToolResourceProvider::onScreenToLocationCompleted);
-
   connect(ToolResourceProvider::instance(), &ToolResourceProvider::setMouseCursorRequested, this, [this](const QCursor& mouseCursor)
   {
     m_sceneView->setCursor(mouseCursor);

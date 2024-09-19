@@ -44,9 +44,6 @@ public:
   QList<Esri::ArcGISRuntime::Geometry> targetGeometries(const Esri::ArcGISRuntime::Envelope& targetArea) const override;
   QVariant targetValue() const override;
 
-private slots:
-  void handleQueryFeaturesCompleted(QUuid taskId, Esri::ArcGISRuntime::FeatureQueryResult* featureQueryResult);
-
 private:
   void rebuildQuadtree();
 

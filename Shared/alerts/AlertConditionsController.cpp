@@ -243,61 +243,64 @@ void AlertConditionsController::setActive(bool active)
 
   Returns \c true if the condition was successfully added.
  */
-bool AlertConditionsController::addWithinDistanceAlert(const QString& conditionName,
-                                                       int levelIndex,
-                                                       const QString& sourceFeedName,
-                                                       double distance,
-                                                       int itemId,
-                                                       int targetOverlayIndex)
+QFuture<bool> AlertConditionsController::addWithinDistanceAlert(const QString& conditionName,
+                                                                int levelIndex,
+                                                                const QString& sourceFeedName,
+                                                                double distance,
+                                                                int itemId,
+                                                                int targetOverlayIndex)
 {
+  auto future_false = QtFuture::makeReadyFuture(false);
   if (levelIndex < 0 ||
       sourceFeedName.isEmpty() ||
       distance < 0.0 ||
       targetOverlayIndex < 0)
   {
     emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QStringLiteral("Invalid inputs"));
-    return false;
+    return future_false;
   }
 
   AlertLevel level = static_cast<AlertLevel>(levelIndex);
   if (level > AlertLevel::Critical)
   {
     emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QStringLiteral("Invalid Alert Level"));
-    return false;
+    return future_false;
   }
 
   QString targetDescription;
-  AlertTarget* target = targetFromItemIdAndIndex(itemId, targetOverlayIndex, targetDescription);
-  if (!target)
+  return targetFromItemIdAndIndex(itemId, targetOverlayIndex, targetDescription).then(this, [=](AlertTargetOptional target_opt) -> QFuture<bool>
   {
-    emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QStringLiteral("Invalid Target"));
-    return false;
-  }
+    if (!target_opt.has_value())
+    {
+      emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QStringLiteral("Invalid Target"));
+      return future_false;
+    }
 
-  if (sourceFeedName == AlertConstants::MY_LOCATION)
-    return addWithinDistanceAlertBySourceLayerType(conditionName, level, sourceFeedName, distance, target, targetDescription, m_locationSource);
-  else if (GraphicsOverlay* graphicsOverlay = graphicsOverlayFromName(sourceFeedName); graphicsOverlay)
-    return addWithinDistanceAlertBySourceLayerType(conditionName, level, sourceFeedName, distance, target, targetDescription, graphicsOverlay);
-  else if (MessagesOverlay* messagesOverlay = messagesOverlayFromName(sourceFeedName); messagesOverlay)
-    return addWithinDistanceAlertBySourceLayerType(conditionName, level, sourceFeedName, distance, target, targetDescription, messagesOverlay);
+    if (sourceFeedName == AlertConstants::MY_LOCATION)
+      return addWithinDistanceAlertBySourceLayerType(conditionName, level, sourceFeedName, distance, target_opt.value(), targetDescription, m_locationSource);
+    else if (GraphicsOverlay* graphicsOverlay = graphicsOverlayFromName(sourceFeedName); graphicsOverlay)
+      return addWithinDistanceAlertBySourceLayerType(conditionName, level, sourceFeedName, distance, target_opt.value(), targetDescription, graphicsOverlay);
+    else if (MessagesOverlay* messagesOverlay = messagesOverlayFromName(sourceFeedName); messagesOverlay)
+      return addWithinDistanceAlertBySourceLayerType(conditionName, level, sourceFeedName, distance, target_opt.value(), targetDescription, messagesOverlay);
 
-  emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QString("Could not find source feed: %1").arg(sourceFeedName));
-  return false;
+    emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QString("Could not find source feed: %1").arg(sourceFeedName));
+    return future_false;
+  }).result();
 }
 
 template<typename T>
-bool AlertConditionsController::addWithinDistanceAlertBySourceLayerType(const QString& conditionName,
-                                                                        AlertLevel level,
-                                                                        const QString& sourceFeedName,
-                                                                        double distance,
-                                                                        AlertTarget* target,
-                                                                        const QString& targetDescription,
-                                                                        T* alertSourceLayer)
+QFuture<bool> AlertConditionsController::addWithinDistanceAlertBySourceLayerType(const QString& conditionName,
+                                                                                 AlertLevel level,
+                                                                                 const QString& sourceFeedName,
+                                                                                 double distance,
+                                                                                 AlertTarget* target,
+                                                                                 const QString& targetDescription,
+                                                                                 T* alertSourceLayer)
 {
   auto* condition = new WithinDistanceAlertCondition(level, conditionName, distance, this);
   connect(condition, &WithinDistanceAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
   condition->init(alertSourceLayer, sourceFeedName, target, targetDescription);
-  return m_conditions->addAlertCondition(condition);
+  return QtFuture::makeReadyFuture(m_conditions->addAlertCondition(condition));
 }
 
 /*!
@@ -318,48 +321,51 @@ bool AlertConditionsController::addWithinDistanceAlertBySourceLayerType(const QS
 
   Returns \c true if the condition was successfully added.
  */
-bool AlertConditionsController::addWithinAreaAlert(const QString& conditionName,
-                                                   int levelIndex,
-                                                   const QString& sourceFeedName,
-                                                   int itemId,
-                                                   int targetOverlayIndex)
+QFuture<bool> AlertConditionsController::addWithinAreaAlert(const QString& conditionName,
+                                                            int levelIndex,
+                                                            const QString& sourceFeedName,
+                                                            int itemId,
+                                                            int targetOverlayIndex)
 {
+  auto future_false = QtFuture::makeReadyFuture(false);
   if (levelIndex < 0 ||
       sourceFeedName.isEmpty() ||
       targetOverlayIndex < 0)
   {
     emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QStringLiteral("Invalid inputs"));
-    return false;
+    return future_false;
   }
 
   AlertLevel level = static_cast<AlertLevel>(levelIndex);
   if (level > AlertLevel::Critical)
   {
     emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QStringLiteral("Invalid Alert Level"));
-    return false;
+    return future_false;
   }
 
   QString targetDescription;
-  AlertTarget* target = targetFromItemIdAndIndex(itemId, targetOverlayIndex, targetDescription);
-  if (!target)
+  return targetFromItemIdAndIndex(itemId, targetOverlayIndex, targetDescription).then(this, [=](AlertTargetOptional target_opt) -> QFuture<bool>
   {
-    emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QStringLiteral("Invalid Target"));
-    return false;
-  }
+    if (!target_opt.has_value())
+    {
+      emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QStringLiteral("Invalid Target"));
+      return future_false;
+    }
 
-  if (sourceFeedName == AlertConstants::MY_LOCATION)
-    return addWithinAreaAlertBySourceLayerType(conditionName, level, sourceFeedName, target, targetDescription, m_locationSource);
-  else if (GraphicsOverlay* graphicsOverlay = graphicsOverlayFromName(sourceFeedName); graphicsOverlay)
-    return addWithinAreaAlertBySourceLayerType(conditionName, level, sourceFeedName, target, targetDescription, graphicsOverlay);
-  else if (MessagesOverlay* messagesOverlay = messagesOverlayFromName(sourceFeedName); messagesOverlay)
-    return addWithinAreaAlertBySourceLayerType(conditionName, level, sourceFeedName, target, targetDescription, messagesOverlay);
+    if (sourceFeedName == AlertConstants::MY_LOCATION)
+      return addWithinAreaAlertBySourceLayerType(conditionName, level, sourceFeedName, target_opt.value(), targetDescription, m_locationSource);
+    else if (GraphicsOverlay* graphicsOverlay = graphicsOverlayFromName(sourceFeedName); graphicsOverlay)
+      return addWithinAreaAlertBySourceLayerType(conditionName, level, sourceFeedName, target_opt.value(), targetDescription, graphicsOverlay);
+    else if (MessagesOverlay* messagesOverlay = messagesOverlayFromName(sourceFeedName); messagesOverlay)
+      return addWithinAreaAlertBySourceLayerType(conditionName, level, sourceFeedName, target_opt.value(), targetDescription, messagesOverlay);
 
-  emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QString("Could not find source feed: %1").arg(sourceFeedName));
-  return false;
+    emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QString("Could not find source feed: %1").arg(sourceFeedName));
+    return future_false;
+  }).unwrap();
 }
 
 template<typename T>
-bool AlertConditionsController::addWithinAreaAlertBySourceLayerType(const QString& conditionName,
+QFuture<bool> AlertConditionsController::addWithinAreaAlertBySourceLayerType(const QString& conditionName,
                                                                     AlertLevel level,
                                                                     const QString& sourceFeedName,
                                                                     AlertTarget* target,
@@ -369,7 +375,7 @@ bool AlertConditionsController::addWithinAreaAlertBySourceLayerType(const QStrin
   auto* condition = new WithinAreaAlertCondition(level, conditionName, this);
   connect(condition, &WithinAreaAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
   condition->init(alertSourceLayer, sourceFeedName, target, targetDescription);
-  return m_conditions->addAlertCondition(condition);
+  return QtFuture::makeReadyFuture(m_conditions->addAlertCondition(condition));
 }
 
 /*!
@@ -386,26 +392,27 @@ bool AlertConditionsController::addWithinAreaAlertBySourceLayerType(const QStrin
 
   Returns \c true if the condition was succesfully added
  */
-bool AlertConditionsController::addAttributeEqualsAlert(const QString& conditionName,
-                                                        int levelIndex,
-                                                        const QString& sourceFeedName,
-                                                        const QString& attributeName,
-                                                        const QVariant& targetValue)
+QFuture<bool> AlertConditionsController::addAttributeEqualsAlert(const QString& conditionName,
+                                                                 int levelIndex,
+                                                                 const QString& sourceFeedName,
+                                                                 const QString& attributeName,
+                                                                 const QVariant& targetValue)
 {
+  auto future_false = QtFuture::makeReadyFuture(false);
   if (levelIndex < 0 ||
       sourceFeedName.isEmpty() ||
       attributeName.isEmpty() ||
       targetValue.isNull())
   {
     emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QStringLiteral("Invalid inputs"));
-    return false;
+    return future_false;
   }
 
   AlertLevel level = static_cast<AlertLevel>(levelIndex);
   if (level > AlertLevel::Critical)
   {
     emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QStringLiteral("Invalid Alert Level"));
-    return false;
+    return future_false;
   }
 
   // pass the source layer that was found by name in either the graphics layers or dynamics layers in operationalLayers
@@ -415,11 +422,11 @@ bool AlertConditionsController::addAttributeEqualsAlert(const QString& condition
     return addAttributeEqualsAlertBySourceLayerType(conditionName, level, sourceFeedName, attributeName, targetValue, messagesOverlay);
 
   emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QString("Could not find source feed: %1").arg(sourceFeedName));
-  return false;
+  return future_false;
 }
 
 template<typename T>
-bool AlertConditionsController::addAttributeEqualsAlertBySourceLayerType(const QString& conditionName,
+QFuture<bool> AlertConditionsController::addAttributeEqualsAlertBySourceLayerType(const QString& conditionName,
                                                                          AlertLevel level,
                                                                          const QString& sourceFeedName,
                                                                          const QString& attributeName,
@@ -430,7 +437,7 @@ bool AlertConditionsController::addAttributeEqualsAlertBySourceLayerType(const Q
   AttributeEqualsAlertCondition* condition = new AttributeEqualsAlertCondition(level, conditionName, attributeName, this);
   connect(condition, &AttributeEqualsAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
   condition->init(alertSourceLayer, sourceFeedName, target, targetValue.toString());
-  return m_conditions->addAlertCondition(condition);
+  return QtFuture::makeReadyFuture(m_conditions->addAlertCondition(condition));
 }
 
 /*!
@@ -811,7 +818,6 @@ void AlertConditionsController::handleNewAlertConditionData(AlertConditionData* 
 {
   if (!newConditionData)
     return;
-
   AlertListModel::instance()->addAlertConditionData(newConditionData);
 }
 
@@ -913,10 +919,11 @@ QJsonObject AlertConditionsController::conditionToJson(AlertCondition* condition
 
   Returns \c true if successful, \c false if not.
  */
-bool AlertConditionsController::addConditionFromJson(const QJsonObject& json)
+QFuture<bool> AlertConditionsController::addConditionFromJson(const QJsonObject& json)
 {
+  auto future_false = QtFuture::makeReadyFuture(false);
   if (json.isEmpty())
-    return false;
+    return future_false;
 
   auto findString = [json](const QString& key)
   {
@@ -929,32 +936,32 @@ bool AlertConditionsController::addConditionFromJson(const QJsonObject& json)
 
   const QString conditionType = findString(AlertConstants::CONDITION_TYPE);
   if (conditionType.isEmpty())
-    return false;
+    return future_false;
 
   const bool isAttributeEquals = conditionType == AlertConstants::attributeEqualsAlertConditionType();
   const bool isWithinArea = conditionType == AlertConstants::withinAreaAlertConditionType();
   const bool isWithinDistance = conditionType == AlertConstants::withinDistanceAlertConditionType();
 
   if (!isAttributeEquals && !isWithinArea && !isWithinDistance)
-    return false;
+    return future_false;
 
   auto levelIt = json.constFind(AlertConstants::CONDITION_LEVEL);
   if (levelIt == json.constEnd())
-    return false;
+    return future_false;
 
   const int level = levelIt.value().toInt(0);
 
   const QString conditionName = findString(AlertConstants::CONDITION_NAME);
   if (conditionName.isEmpty())
-    return false;
+    return future_false;
 
   const QString sourceString = findString(AlertConstants::CONDITION_SOURCE);
   if (sourceString.isEmpty())
-    return false;
+    return future_false;
 
   const QString targetString = findString(AlertConstants::CONDITION_TARGET);
   if (targetString.isEmpty())
-    return false;
+    return future_false;
 
   QJsonObject queryObject = json.value(AlertConstants::CONDITION_QUERY).toObject();
   const QVariantMap queryComponents = queryObject.toVariantMap();
@@ -963,7 +970,7 @@ bool AlertConditionsController::addConditionFromJson(const QJsonObject& json)
   {
     const QString attributeName = AttributeEqualsAlertCondition::attributeNameFromQueryComponents(queryComponents);
     if (attributeName.isEmpty())
-      return false;
+      return future_false;
 
     return addAttributeEqualsAlert(conditionName, level, sourceString, attributeName, targetString );
   }
@@ -981,33 +988,37 @@ bool AlertConditionsController::addConditionFromJson(const QJsonObject& json)
       itemId = itemString.toInt(&ok);
 
       if (itemId == -1 || !ok)
-        return false;
+        return future_false;
     }
 
     int targetOverlayIndex = m_targetNames->stringList().indexOf(targetOverlayName);
     if (targetOverlayIndex == -1)
-      return false;
+      return future_false;
 
     QString targetDescription;
-    AlertTarget* target = targetFromItemIdAndIndex(itemId, targetOverlayIndex, targetDescription);
-    if (!target)
-      return false;
-
-    if (isWithinArea)
+    return targetFromItemIdAndIndex(itemId, targetOverlayIndex, targetDescription).then(QtFuture::Launch::Sync, [=](AlertTargetOptional target_opt) -> QFuture<bool>
     {
-      return addWithinAreaAlert(conditionName, level, sourceString, itemId, targetOverlayIndex );
-    }
-    else if (isWithinDistance)
-    {
-      const double distance = WithinDistanceAlertCondition::getDistanceFromQueryComponents(queryComponents);
-      if (distance == -1.0)
-        return false;
+      if (!target_opt.has_value())
+        return future_false;
 
-      return addWithinDistanceAlert(conditionName, level, sourceString, distance, itemId, targetOverlayIndex);
-    }
+      if (isWithinArea)
+      {
+        return addWithinAreaAlert(conditionName, level, sourceString, itemId, targetOverlayIndex );
+      }
+      else if (isWithinDistance)
+      {
+        const double distance = WithinDistanceAlertCondition::getDistanceFromQueryComponents(queryComponents);
+        if (distance == -1.0)
+          return future_false;
+
+        return addWithinDistanceAlert(conditionName, level, sourceString, distance, itemId, targetOverlayIndex);
+      }
+      else
+        return future_false;
+    }).unwrap();
   }
 
-  return false;
+  return future_false;
 }
 
 /*!
@@ -1017,34 +1028,48 @@ bool AlertConditionsController::addConditionFromJson(const QJsonObject& json)
  */
 void AlertConditionsController::addStoredConditions()
 {
-  QList<QJsonObject> addedConditions;
-  auto it = m_storedConditions.constBegin();
-  auto itEnd = m_storedConditions.constEnd();
-  for (; it != itEnd; ++it)
+  // block signals while we are adding each stored condition
+  this->blockSignals(true);
+  QList<QFuture<bool>> addStoredConditionFutures;
+  for (auto it = m_storedConditions.rbegin(); it != m_storedConditions.rend(); it++)
   {
-    // block signals while we are adding each stored condition
-    QSignalBlocker blocker(this);
-    Q_UNUSED(blocker)
-    const QJsonObject& stored = *it;
-    if (addConditionFromJson(stored))
-      addedConditions.append(stored);
+    // add this future to the list
+    addStoredConditionFutures.append(addConditionFromJson(*it));
   }
 
-  for (const QJsonObject& added : addedConditions)
-    m_storedConditions.removeOne(added);
+  // skip the when all if nothing was added
+  if (addStoredConditionFutures.count() == 0)
+  {
+    this->blockSignals(false);
+    return;
+  }
 
-  // emit once for all conditions (including stored)
-  onConditionsChanged();
+  // call the completion handler for all adds
+  QtFuture::whenAll(addStoredConditionFutures.rbegin(), addStoredConditionFutures.rend()).then(this, [this](const QList<QFuture<bool>> addStoredConditions)
+  {
+    // store the index of any condition that was successfully added
+    int currentConditionId = addStoredConditions.size() - 1;
+    for (auto it = addStoredConditions.rbegin(); it != addStoredConditions.rend(); it++)
+    {
+      if (it->result())
+        m_storedConditions.removeAt(currentConditionId);
+      currentConditionId--;
+    }
+
+    // emit once for all conditions (including stored)
+    this->blockSignals(false);
+    onConditionsChanged();
+  });
 }
 
 /*!
   \brief internal
  */
-AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int targetOverlayIndex, QString& targetDescription) const
+AlertTargetFuture AlertConditionsController::targetFromItemIdAndIndex(int itemId, int targetOverlayIndex, QString& targetDescription) const
 {
   GeoView* geoView = ToolResourceProvider::instance()->geoView();
   if (!geoView)
-    return nullptr;
+    return QtFuture::makeReadyFuture(AlertTargetOptional{});
 
   int currIndex = -1;
   LayerListModel* operationalLayers = ToolResourceProvider::instance()->operationalLayers();
@@ -1069,7 +1094,7 @@ AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int
               m_layerTargets.insert(featureLayer->name(), new FeatureLayerAlertTarget(featureLayer));
 
             targetDescription = featureLayer->name();
-            return m_layerTargets.value(featureLayer->name(), nullptr);
+            return QtFuture::makeReadyFuture(AlertTargetOptional{m_layerTargets.value(featureLayer->name(), nullptr)});
           }
           else
           {
@@ -1085,12 +1110,12 @@ AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int
               m_layerTargets.insert(messagesOverlay->name(), new MessagesOverlayAlertTarget(messagesOverlay));
 
             targetDescription = messagesOverlay->name();
-            return m_layerTargets.value(messagesOverlay->name(), nullptr);
+            return QtFuture::makeReadyFuture(AlertTargetOptional{m_layerTargets.value(messagesOverlay->name(), nullptr)});
           }
           else
           {
             targetDescription = QString("%1 [%2]").arg(messagesOverlay->name(), QString::number(itemId));
-            return targetFromMessagesOverlay(messagesOverlay, itemId);
+            return QtFuture::makeReadyFuture(AlertTargetOptional{targetFromMessagesOverlay(messagesOverlay, itemId)});
           }
         }
       }
@@ -1118,7 +1143,7 @@ AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int
       if (overlay->overlayId() == QStringLiteral("SCENEVIEWLOCATIONOVERLAY"))
       {
         targetDescription = AlertConstants::MY_LOCATION;
-        return m_locationTarget;
+        return QtFuture::makeReadyFuture(AlertTargetOptional{m_locationTarget});
       }
 
       const QString overlayIdOrName = m_messageFeedTypesToNames.value(overlay->overlayId(), overlay->overlayId());
@@ -1129,58 +1154,44 @@ AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int
           m_overlayTargets.insert(overlayIdOrName, new GraphicsOverlayAlertTarget(overlay));
 
         targetDescription = overlayIdOrName;
-        return m_overlayTargets.value(overlayIdOrName, nullptr);
+        return QtFuture::makeReadyFuture(AlertTargetOptional{m_overlayTargets.value(overlayIdOrName, nullptr)});
       }
       else
       {
         targetDescription = QString("%1 [%2]").arg(overlayIdOrName, QString::number(itemId));
-        return targetFromGraphicsOverlay(overlay, itemId);
+        return QtFuture::makeReadyFuture(AlertTargetOptional{targetFromGraphicsOverlay(overlay, itemId)});
       }
     }
   }
 
-  return nullptr;
+  return QtFuture::makeReadyFuture(AlertTargetOptional{});
 }
 
 /*!
   \brief internal
  */
-AlertTarget* AlertConditionsController::targetFromFeatureLayer(FeatureLayer* featureLayer, int itemId) const
+AlertTargetFuture AlertConditionsController::targetFromFeatureLayer(FeatureLayer* featureLayer, int itemId) const
 {
+  auto future_null = QtFuture::makeReadyFuture(AlertTargetOptional{});
   FeatureTable* tab = featureLayer->featureTable();
   if (!tab)
-    return nullptr;
+    return future_null;
 
   const QString primaryKey = primaryKeyFieldName(tab);
 
   QueryParameters qp;
   qp.setWhereClause(QString("\"%1\" = %2").arg(primaryKey, QString::number(itemId)));
-
-  QEventLoop loop;
-  tab->queryFeatures(qp);
-
-  connect(tab, &FeatureTable::errorOccurred, this, [&loop](Error)
+  auto* non_const_this = const_cast<AlertConditionsController*>(this);
+  return tab->queryFeaturesAsync(qp, non_const_this).then(non_const_this, [future_null](FeatureQueryResult* results) -> AlertTargetFuture
   {
-    loop.quit();
-  });
+    auto* feature = results->iterator().next();
 
-  Feature* feature = nullptr;
-  auto connection = loop.connect(tab, &FeatureTable::queryFeaturesCompleted, this, [&loop, &feature](QUuid, FeatureQueryResult* featureQueryResult)
-  {
-    loop.quit();
+    if (!feature)
+      return future_null;
 
-    if (featureQueryResult)
-      feature = featureQueryResult->iterator().next();
-  });
+    return QtFuture::makeReadyFuture(AlertTargetOptional{new GeoElementAlertTarget(feature)});
 
-  loop.exec();
-
-  disconnect(connection);
-
-  if (!feature)
-    return nullptr;
-
-  return new GeoElementAlertTarget(feature);
+  }).unwrap();
 }
 
 /*!

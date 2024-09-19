@@ -18,6 +18,7 @@
 #define ALERTCONDITIONSCONTROLLER_H
 
 // Qt headers
+#include <QFuture>
 #include <QHash>
 #include <QJsonObject>
 #include <QStringListModel>
@@ -28,6 +29,8 @@
 // DSA headers
 #include "AbstractTool.h"
 #include "AlertLevel.h"
+
+#include <optional>
 
 class QMouseEvent;
 
@@ -51,6 +54,9 @@ class LocationAlertSource;
 class LocationAlertTarget;
 class MessagesOverlay;
 
+using AlertTargetOptional = std::optional<AlertTarget*>;
+using AlertTargetFuture = QFuture<AlertTargetOptional>;
+
 class AlertConditionsController : public AbstractTool
 {
   Q_OBJECT
@@ -72,9 +78,9 @@ public:
 
   void setActive(bool active) override;
 
-  Q_INVOKABLE bool addWithinDistanceAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, double distance, int itemId, int targetOverlayIndex);
-  Q_INVOKABLE bool addWithinAreaAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, int itemId, int targetOverlayIndex);
-  Q_INVOKABLE bool addAttributeEqualsAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, const QString& attributeName, const QVariant& targetValue);
+  Q_INVOKABLE QFuture<bool> addWithinDistanceAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, double distance, int itemId, int targetOverlayIndex);
+  Q_INVOKABLE QFuture<bool> addWithinAreaAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, int itemId, int targetOverlayIndex);
+  Q_INVOKABLE QFuture<bool> addAttributeEqualsAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, const QString& attributeName, const QVariant& targetValue);
   Q_INVOKABLE void removeConditionAt(int rowIndex);
   Q_INVOKABLE void togglePickMode();
   Q_INVOKABLE void updateConditionName(int rowIndex, const QString& conditionName);
@@ -105,11 +111,11 @@ private:
   void setTargetNames(const QStringList& targetNames);
   void setSourceNames(const QStringList& sourceNames);
   QJsonObject conditionToJson(AlertCondition* condition) const;
-  bool addConditionFromJson(const QJsonObject& json);
+  QFuture<bool> addConditionFromJson(const QJsonObject& json);
   void addStoredConditions();
 
-  AlertTarget* targetFromItemIdAndIndex(int itemId, int targetOverlayIndex, QString& targetDescription) const;
-  AlertTarget* targetFromFeatureLayer(Esri::ArcGISRuntime::FeatureLayer* featureLayer, int itemId) const;
+  AlertTargetFuture targetFromItemIdAndIndex(int itemId, int targetOverlayIndex, QString& targetDescription) const;
+  AlertTargetFuture targetFromFeatureLayer(Esri::ArcGISRuntime::FeatureLayer* featureLayer, int itemId) const;
   AlertTarget* targetFromGraphicsOverlay(Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlay, int itemId) const;
   AlertTarget* targetFromMessagesOverlay(Dsa::MessagesOverlay* messagesOverlay, int itemId) const;
   Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlayFromName(const QString& overlayName);
@@ -117,13 +123,13 @@ private:
   QString primaryKeyFieldName(Esri::ArcGISRuntime::FeatureTable* featureTable) const;
 
   template<typename T>
-  bool addWithinDistanceAlertBySourceLayerType(const QString& conditionName, AlertLevel level, const QString& sourceFeedName, double distance, AlertTarget* target, const QString& targetDescription, T* alertSourceLayer);
+  QFuture<bool> addWithinDistanceAlertBySourceLayerType(const QString& conditionName, AlertLevel level, const QString& sourceFeedName, double distance, AlertTarget* target, const QString& targetDescription, T* alertSourceLayer);
 
   template<typename T>
-  bool addWithinAreaAlertBySourceLayerType(const QString& conditionName, AlertLevel level, const QString& sourceFeedName, AlertTarget* target, const QString& targetDescription, T* alertSourceLayer);
+  QFuture<bool> addWithinAreaAlertBySourceLayerType(const QString& conditionName, AlertLevel level, const QString& sourceFeedName, AlertTarget* target, const QString& targetDescription, T* alertSourceLayer);
 
   template<typename T>
-  bool addAttributeEqualsAlertBySourceLayerType(const QString& conditionName, AlertLevel level, const QString& sourceFeedName, const QString& attributeName, const QVariant& targetValue, T* alertTarget);
+  QFuture<bool> addAttributeEqualsAlertBySourceLayerType(const QString& conditionName, AlertLevel level, const QString& sourceFeedName, const QString& attributeName, const QVariant& targetValue, T* alertTarget);
 
   QStringList realtimeFeedTypes() const;
   QStringList realtimeFeedNames() const;

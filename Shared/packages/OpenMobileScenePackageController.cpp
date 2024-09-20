@@ -26,6 +26,7 @@
 
 // C++ API headers
 #include "Error.h"
+#include "ErrorException.h"
 #include "Item.h"
 #include "MapTypes.h"
 #include "MobileScenePackage.h"
@@ -34,6 +35,7 @@
 // Qt headers
 #include <QQmlContext>
 #include <QDir>
+#include <QFuture>
 #include <QQmlEngine>
 #include <QFileInfo>
 #include <QJsonDocument>
@@ -311,9 +313,8 @@ void OpenMobileScenePackageController::loadMobileScenePackage(const QString& pac
     if (!packageItem)
       return;
 
-    m_packagesModel->setTitleAndDescription(packageName,
-                                            packageItem->title(),
-                                            packageItem->description());
+    const auto& packageTitle = packageItem->title();
+    m_packagesModel->setTitleAndDescription(packageName, packageTitle, packageItem->description());
 
     auto scenes = package->scenes();
     QStringList sceneNames;
@@ -328,33 +329,31 @@ void OpenMobileScenePackageController::loadMobileScenePackage(const QString& pac
         continue;
 
       // TODO: this should use Scene::Item::name when available (requires the scene to be loaded)
-      sceneNames.append(item->title());
-
+      sceneNames.append(packageTitle);
       if (!item->thumbnail().isNull())
         continue;
 
-      connect(item, &Item::fetchThumbnailCompleted, this, [this, packageName, item](bool success)
+      item->fetchThumbnailAsync().then(this, [this, packageName, packageTitle](QImage image)
       {
-        if (success)
-          emit imageReady(packageName + "_" + item->title(), item->thumbnail());
-
-        m_packagesModel->setSceneImagesReady(packageName, success);
+        emit imageReady(packageName + "_" + packageTitle, image);
+        m_packagesModel->setSceneImagesReady(packageName, true);
+      }).onFailed(this, [this, packageName](const ErrorException& e)
+      {
+        emit toolErrorOccurred(QString("Unable to fetch thumbnail for package %1:, %2").arg(packageName, e.error().additionalMessage()), QString("Package Error"));
+        m_packagesModel->setSceneImagesReady(packageName, false);
       });
-
-      item->fetchThumbnail();
     }
 
     m_packagesModel->setSceneNames(packageName, sceneNames);
-
-    connect(packageItem, &Item::fetchThumbnailCompleted, this, [this, packageName, packageItem](bool success)
+    package->item()->fetchThumbnailAsync().then(this, [this, packageName](QImage image)
     {
-      if (success)
-        emit imageReady(packageName, packageItem->thumbnail());
-
-      m_packagesModel->setImageReady(packageName, success);
+      emit imageReady(packageName, image);
+      m_packagesModel->setSceneImagesReady(packageName, true);
+    }).onFailed(this, [this, packageName](const ErrorException& e)
+    {
+      emit toolErrorOccurred(QString("Unable to fetch thumbnail for package %1:, %2").arg(packageName, e.error().additionalMessage()), QString("Package Error"));
+      m_packagesModel->setSceneImagesReady(packageName, false);
     });
-
-    package->item()->fetchThumbnail();
 
     loadCurrentScene(package);
   });

@@ -19,11 +19,6 @@
 
 #include "MessagesOverlayAlertTarget.h"
 
-// dsa app headers
-#include "GeometryQuadtree.h"
-#include "MessageFeed.h"
-#include "MessagesOverlay.h"
-
 // C++ API headers
 #include "DynamicEntity.h"
 #include "DynamicEntityInfo.h"
@@ -31,6 +26,11 @@
 #include "DynamicEntityObservationInfo.h"
 #include "Envelope.h"
 #include "Graphic.h"
+
+// DSA headers
+#include "GeometryQuadtree.h"
+#include "MessageFeed.h"
+#include "MessagesOverlay.h"
 
 using namespace Esri::ArcGISRuntime;
 

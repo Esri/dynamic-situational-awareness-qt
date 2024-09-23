@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -20,13 +19,6 @@
 
 #include "NavigationController.h"
 
-// dsa app headers
-#include "DsaUtility.h"
-
-// toolkit headers
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
-
 // C++ API headers
 #include "Camera.h"
 #include "GlobeCameraController.h"
@@ -43,6 +35,11 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QScreen>
+
+// DSA headers
+#include "DsaUtility.h"
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
 
 using namespace Esri::ArcGISRuntime;
 

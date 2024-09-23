@@ -19,17 +19,15 @@
 
 #include "Handheld.h"
 
-// dsa app headers
-#include "DsaController.h"
-
-// toolkit headers
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
-
 // C++ API headers
-#include "SceneQuickView.h"
 #include "IdentifyGraphicsOverlayResult.h"
 #include "IdentifyLayerResult.h"
+#include "SceneQuickView.h"
+
+// DSA headers
+#include "DsaController.h"
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
 
 using namespace Esri::ArcGISRuntime;
 

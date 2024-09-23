@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -20,10 +19,6 @@
 
 #include "LineOfSightController.h"
 
-// Qt headers
-#include <QFuture>
-#include <QStringListModel>
-
 // C++ API headers
 #include "AnalysisListModel.h"
 #include "AnalysisOverlay.h"
@@ -42,6 +37,10 @@
 #include "QueryParameters.h"
 #include "SceneView.h"
 #include "SceneViewTypes.h"
+
+// Qt headers
+#include <QFuture>
+#include <QStringListModel>
 
 // DSA headers
 #include "FeatureQueryResultManager.h"

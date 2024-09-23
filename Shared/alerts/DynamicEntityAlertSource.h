@@ -1,7 +1,7 @@
 #ifndef DYNAMICENTITYALERTSOURCE_H
 #define DYNAMICENTITYALERTSOURCE_H
 
-// dsa app headers
+// DSA headers
 #include "AlertSource.h"
 
 namespace Esri::ArcGISRuntime {

@@ -15,20 +15,20 @@
  ******************************************************************************/
 
 // PCH header
-#include "LayerListModel.h"
 #include "pch.hpp"
 
 #include "MessagesOverlay.h"
 
-// DSA app headers
-#include "MessageFeed.h"
-
 // C++ API headers
+#include "DynamicEntityLayer.h"
 #include "GeoView.h"
+#include "LayerListModel.h"
 #include "LayerSceneProperties.h"
 #include "Renderer.h"
 #include "SceneViewTypes.h"
-#include "DynamicEntityLayer.h"
+
+// DSA headers
+#include "MessageFeed.h"
 
 using namespace Esri::ArcGISRuntime;
 

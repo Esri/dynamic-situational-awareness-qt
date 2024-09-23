@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -20,22 +19,6 @@
 
 #include "DsaController.h"
 
-// dsa app headers
-#include "AlertConstants.h"
-#include "AppConstants.h"
-#include "BasemapPickerController.h"
-#include "ContextMenuController.h"
-#include "DsaUtility.h"
-#include "LayerCacheManager.h"
-#include "MessageFeedConstants.h"
-#include "OpenMobileScenePackageController.h"
-
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
-
-// toolkit headers
-#include "CoordinateConversionConstants.h"
-
 // C++ API headers
 #include "Camera.h"
 #include "Error.h"
@@ -46,6 +29,9 @@
 #include "SelectionProperties.h"
 #include "Viewpoint.h"
 
+// Toolkit headers
+#include "CoordinateConversionConstants.h"
+
 // Qt headers
 #include <QDir>
 #include <QFileInfo>
@@ -55,6 +41,18 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QSettings>
+
+// DSA headers
+#include "AlertConstants.h"
+#include "AppConstants.h"
+#include "BasemapPickerController.h"
+#include "ContextMenuController.h"
+#include "DsaUtility.h"
+#include "LayerCacheManager.h"
+#include "MessageFeedConstants.h"
+#include "OpenMobileScenePackageController.h"
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
 
 using namespace Esri::ArcGISRuntime;
 

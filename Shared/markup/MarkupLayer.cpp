@@ -19,9 +19,6 @@
 
 #include "MarkupLayer.h"
 
-// dsa app headers
-#include "MarkupConstants.h"
-
 // C++ API headers
 #include "Camera.h"
 #include "Feature.h"
@@ -46,6 +43,9 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QString>
+
+// DSA headers
+#include "MarkupConstants.h"
 
 using namespace Esri::ArcGISRuntime;
 

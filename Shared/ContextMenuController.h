@@ -17,13 +17,13 @@
 #ifndef CONTEXTMENUCONTROLLER_H
 #define CONTEXTMENUCONTROLLER_H
 
+// C++ API headers
+#include "Point.h"
+
 // Qt headers
 #include <QHash>
 #include <QMouseEvent>
 #include <QStringListModel>
-
-// C++ API Headers
-#include "Point.h"
 
 // DSA headers
 #include "AbstractTool.h"

@@ -20,11 +20,11 @@
 // Qt headers
 #include <QStringList>
 
-// dsa headers
-#include "AbstractTool.h"
-
 class QAbstractListModel;
 Q_MOC_INCLUDE("qabstractitemmodel.h")
+
+// DSA headers
+#include "AbstractTool.h"
 
 namespace Esri::ArcGISRuntime {
   class Layer;

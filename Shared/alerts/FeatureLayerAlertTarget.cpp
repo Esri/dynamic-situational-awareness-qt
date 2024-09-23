@@ -19,10 +19,6 @@
 
 #include "FeatureLayerAlertTarget.h"
 
-// dsa app headers
-#include "FeatureQueryResultManager.h"
-#include "GeometryQuadtree.h"
-
 // C++ API headers
 #include "Envelope.h"
 #include "Feature.h"
@@ -34,6 +30,10 @@
 
 // Qt headers
 #include <QFuture>
+
+// DSA headers
+#include "FeatureQueryResultManager.h"
+#include "GeometryQuadtree.h"
 
 using namespace Esri::ArcGISRuntime;
 

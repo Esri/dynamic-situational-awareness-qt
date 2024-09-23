@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -20,14 +19,6 @@
 
 #include "IdentifyController.h"
 
-// dsa app headers
-#include "GraphicsOverlaysResultsManager.h"
-#include "LayerResultsManager.h"
-
-// toolkit headers
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
-
 // C++ API headers
 #include "AttributeListModel.h"
 #include "GeoElement.h"
@@ -43,6 +34,12 @@
 #include "PopupField.h"
 #include "PopupFieldFormat.h"
 #include "PopupManager.h"
+
+// DSA headers
+#include "GraphicsOverlaysResultsManager.h"
+#include "LayerResultsManager.h"
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
 
 using namespace Esri::ArcGISRuntime;
 

@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -20,15 +19,6 @@
 
 #include "AnalysisListController.h"
 
-// dsa app headers
-#include "CombinedAnalysisListModel.h"
-#include "LineOfSightController.h"
-#include "ViewshedController.h"
-
-// toolkit headers
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
-
 // C++ API headers
 #include "AnalysisOverlay.h"
 #include "AnalysisOverlayListModel.h"
@@ -37,6 +27,13 @@
 
 // Qt headers
 #include <QFuture>
+
+// DSA headers
+#include "CombinedAnalysisListModel.h"
+#include "LineOfSightController.h"
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
+#include "ViewshedController.h"
 
 using namespace Esri::ArcGISRuntime;
 

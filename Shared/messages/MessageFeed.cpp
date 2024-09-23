@@ -17,24 +17,25 @@
 // PCH header
 #include "pch.hpp"
 
-// C++ API Headers
-#include "Error.h"
-#include "Field.h"
+#include "MessageFeed.h"
+
+// C++ API headers
+#include "AttributeListModel.h"
 #include "Domain.h"
-#include "Renderer.h"
-#include "SymbolTypes.h"
-#include "ServiceTypes.h"
-#include "SpatialReference.h"
 #include "DynamicEntity.h"
-#include "DynamicEntityInfo.h"
 #include "DynamicEntityDataSourceInfo.h"
+#include "DynamicEntityInfo.h"
 #include "DynamicEntityObservation.h"
 #include "DynamicEntityObservationInfo.h"
-#include "AttributeListModel.h"
+#include "Error.h"
+#include "Field.h"
+#include "Renderer.h"
+#include "ServiceTypes.h"
+#include "SpatialReference.h"
+#include "SymbolTypes.h"
 
-// DSA app headers
+// DSA headers
 #include "Message.h"
-#include "MessageFeed.h"
 #include "MessagesOverlay.h"
 
 using namespace Esri::ArcGISRuntime;

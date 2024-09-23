@@ -22,7 +22,7 @@
 #include <QMouseEvent>
 #include <QObject>
 
-// dsa headers
+// DSA headers
 #include "AbstractTool.h"
 
 namespace Esri::ArcGISRuntime {

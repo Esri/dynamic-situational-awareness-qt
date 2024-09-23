@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -20,19 +19,6 @@
 
 #include "AlertListController.h"
 
-// dsa app headers
-#include "AlertConditionData.h"
-#include "AlertListModel.h"
-#include "AlertListProxyModel.h"
-#include "AlertSource.h"
-#include "IdsAlertFilter.h"
-#include "PointHighlighter.h"
-#include "StatusAlertFilter.h"
-
-// toolkit headers
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
-
 // C++ API headers
 #include "Camera.h"
 #include "Envelope.h"
@@ -44,6 +30,17 @@
 // Qt headers
 #include <QFuture>
 #include <QTimer>
+
+// DSA headers
+#include "AlertConditionData.h"
+#include "AlertListModel.h"
+#include "AlertListProxyModel.h"
+#include "AlertSource.h"
+#include "IdsAlertFilter.h"
+#include "PointHighlighter.h"
+#include "StatusAlertFilter.h"
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
 
 using namespace Esri::ArcGISRuntime;
 

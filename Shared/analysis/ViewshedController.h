@@ -22,7 +22,7 @@
 class QAbstractListModel;
 Q_MOC_INCLUDE("qabstractitemmodel.h")
 
-// dsa headers
+// DSA headers
 #include "AbstractTool.h"
 
 class QMouseEvent;

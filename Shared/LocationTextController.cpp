@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -20,10 +19,6 @@
 
 #include "LocationTextController.h"
 
-// toolkit headers
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
-
 // C++ API headers
 #include "CoordinateFormatter.h"
 #include "Scene.h"
@@ -31,6 +26,10 @@
 
 // Qt headers
 #include <QFuture>
+
+// DSA headers
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
 
 using namespace Esri::ArcGISRuntime;
 

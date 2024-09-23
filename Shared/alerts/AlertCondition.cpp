@@ -18,21 +18,21 @@
 #include "pch.hpp"
 
 #include "AlertCondition.h"
-#include "AlertListModel.h"
-
-// dsa app headers
-#include "AlertConditionData.h"
-#include "GraphicAlertSource.h"
-#include "DynamicEntityAlertSource.h"
-#include "MessagesOverlay.h"
 
 // C++ API headers
+#include "DynamicEntity.h"
+#include "DynamicEntityDataSource.h"
+#include "DynamicEntityInfo.h"
 #include "Graphic.h"
 #include "GraphicListModel.h"
 #include "GraphicsOverlay.h"
-#include "DynamicEntity.h"
-#include "DynamicEntityInfo.h"
-#include "DynamicEntityDataSource.h"
+
+// DSA headers
+#include "AlertConditionData.h"
+#include "AlertListModel.h"
+#include "DynamicEntityAlertSource.h"
+#include "GraphicAlertSource.h"
+#include "MessagesOverlay.h"
 
 using namespace Esri::ArcGISRuntime;
 

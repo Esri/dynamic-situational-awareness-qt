@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -20,7 +19,22 @@
 
 #include "MessageFeedsController.h"
 
-// dsa app headers
+// C++ API headers
+#include "DictionaryRenderer.h"
+#include "DictionarySymbolStyle.h"
+#include "LayerListModel.h"
+#include "LayerSceneProperties.h"
+#include "PictureMarkerSymbol.h"
+#include "SceneViewTypes.h"
+#include "SimpleRenderer.h"
+
+// Qt headers
+#include <QFileInfo>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QUdpSocket>
+
+// DSA headers
 #include "AppConstants.h"
 #include "DataListener.h"
 #include "LocationBroadcast.h"
@@ -29,25 +43,8 @@
 #include "MessageFeedConstants.h"
 #include "MessageFeedListModel.h"
 #include "MessagesOverlay.h"
-
-// toolkit headers
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
-
-// C++ API headers
-#include "DictionaryRenderer.h"
-#include "DictionarySymbolStyle.h"
-#include "PictureMarkerSymbol.h"
-#include "SimpleRenderer.h"
-#include "SceneViewTypes.h"
-#include "LayerSceneProperties.h"
-#include "LayerListModel.h"
-
-// Qt headers
-#include <QFileInfo>
-#include <QJsonArray>
-#include <QJsonObject>
-#include <QUdpSocket>
 
 using namespace Esri::ArcGISRuntime;
 

@@ -20,7 +20,7 @@
 // Qt headers
 #include <QUuid>
 
-// dsa headers
+// DSA headers
 #include "AlertTarget.h"
 
 namespace Esri::ArcGISRuntime {

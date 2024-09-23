@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -20,22 +19,14 @@
 
 #include "TableOfContentsController.h"
 
-// dsa app headers
-#include "DrawOrderLayerListModel.h"
-#include "MarkupLayer.h"
-
-// toolkit headers
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
-
 // C++ API headers
 #include "Envelope.h"
 #include "Error.h"
-#include "FeatureLayer.h"
 #include "FeatureCollection.h"
 #include "FeatureCollectionLayer.h"
 #include "FeatureCollectionTable.h"
 #include "FeatureCollectionTableListModel.h"
+#include "FeatureLayer.h"
 #include "FeatureTable.h"
 #include "GeoView.h"
 #include "LayerListModel.h"
@@ -47,6 +38,12 @@
 // Qt headers
 #include <QFileInfo>
 #include <QFuture>
+
+// DSA headers
+#include "DrawOrderLayerListModel.h"
+#include "MarkupLayer.h"
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
 
 using namespace Esri::ArcGISRuntime;
 

@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -21,16 +20,17 @@
 #include "GeoElementUtils.h"
 
 // C++ API headers
-#include "EncFeature.h"
-#include "Feature.h"
 #include "DynamicEntity.h"
 #include "DynamicEntityObservation.h"
+#include "EncFeature.h"
+#include "Feature.h"
 #include "GeoElement.h"
 #include "Graphic.h"
 #include "KmlPlacemark.h"
 #include "RasterCell.h"
 #include "WmsFeature.h"
 
+// Qt headers
 #include <QDebug>
 
 using namespace Esri::ArcGISRuntime;

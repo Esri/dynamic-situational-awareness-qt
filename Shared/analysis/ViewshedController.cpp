@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -20,18 +19,6 @@
 
 #include "ViewshedController.h"
 
-// DSA headers
-#include "DsaUtility.h"
-#include "GeoElementViewshed360.h"
-#include "GraphicsOverlaysResultsManager.h"
-#include "LocationController.h"
-#include "LocationDisplay3d.h"
-#include "LocationViewshed360.h"
-#include "ViewshedListModel.h"
-#include "GeoElementUtils.h"
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
-
 // C++ API headers
 #include "AnalysisListModel.h"
 #include "AnalysisOverlay.h"
@@ -49,10 +36,23 @@
 #include "SymbolTypes.h"
 #include "Viewshed.h"
 
+// Qt headers
 #include <QFuture>
 
 // STL headers
 #include <cmath>
+
+// DSA headers
+#include "DsaUtility.h"
+#include "GeoElementUtils.h"
+#include "GeoElementViewshed360.h"
+#include "GraphicsOverlaysResultsManager.h"
+#include "LocationController.h"
+#include "LocationDisplay3d.h"
+#include "LocationViewshed360.h"
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
+#include "ViewshedListModel.h"
 
 using namespace Esri::ArcGISRuntime;
 

@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -18,11 +17,7 @@
 // PCH header
 #include "pch.hpp"
 
-#include "MobileScenePackagesListModel.h"
 #include "OpenMobileScenePackageController.h"
-
-// toolkit headers
-#include "ToolManager.h"
 
 // C++ API headers
 #include "Error.h"
@@ -33,13 +28,16 @@
 #include "Scene.h"
 
 // Qt headers
-#include <QQmlContext>
 #include <QDir>
-#include <QFuture>
-#include <QQmlEngine>
 #include <QFileInfo>
+#include <QFuture>
 #include <QJsonDocument>
+#include <QQmlContext>
 #include <QQmlEngine>
+
+// DSA headers
+#include "MobileScenePackagesListModel.h"
+#include "ToolManager.h"
 
 using namespace Esri::ArcGISRuntime;
 

@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -19,12 +18,6 @@
 #include "pch.hpp"
 
 #include "AlertConditionsController.h"
-
-// Qt headers
-#include <QEventLoop>
-#include <QFuture>
-#include <QJsonArray>
-#include <QJsonObject>
 
 // C++ API headers
 #include "ArcGISFeatureTable.h"
@@ -50,9 +43,11 @@
 #include "QueryParameters.h"
 #include "ServiceTypes.h"
 
-// Toolkit headers
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
+// Qt headers
+#include <QEventLoop>
+#include <QFuture>
+#include <QJsonArray>
+#include <QJsonObject>
 
 // DSA headers
 #include "AlertConditionData.h"
@@ -64,7 +59,6 @@
 #include "FixedValueAlertTarget.h"
 #include "GeoElementAlertTarget.h"
 #include "GraphicsOverlayAlertTarget.h"
-#include "GraphicsOverlayAlertTarget.h"
 #include "GraphicsOverlaysResultsManager.h"
 #include "IdentifyController.h"
 #include "LayerResultsManager.h"
@@ -73,6 +67,8 @@
 #include "MessageFeedConstants.h"
 #include "MessagesOverlay.h"
 #include "MessagesOverlayAlertTarget.h"
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
 #include "WithinAreaAlertCondition.h"
 #include "WithinDistanceAlertCondition.h"
 

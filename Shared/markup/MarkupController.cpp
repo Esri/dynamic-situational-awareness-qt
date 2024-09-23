@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -19,14 +18,6 @@
 #include "pch.hpp"
 
 #include "MarkupController.h"
-
-// dsa app headers
-#include "MarkupBroadcast.h"
-#include "MarkupLayer.h"
-
-// toolkit headers
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
 
 // C++ API headers
 #include "GeoView.h"
@@ -49,6 +40,12 @@
 // Qt headers
 #include <QCursor>
 #include <QFuture>
+
+// DSA headers
+#include "MarkupBroadcast.h"
+#include "MarkupLayer.h"
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
 
 using namespace Esri::ArcGISRuntime;
 

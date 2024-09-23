@@ -17,13 +17,13 @@
 #ifndef NAVIGATIONCONTROLLER_H
 #define NAVIGATIONCONTROLLER_H
 
-// Qt headers
-#include <QUuid>
-
 // C++ API headers
 #include "Point.h"
 
-// dsa headers
+// Qt headers
+#include <QUuid>
+
+// DSA headers
 #include "AbstractTool.h"
 
 namespace Esri::ArcGISRuntime {

@@ -17,13 +17,13 @@
 #ifndef ALERTCONDITION_H
 #define ALERTCONDITION_H
 
-// dsa app headers
-#include "AlertLevel.h"
-
 // Qt headers
 #include <QList>
 #include <QObject>
 #include <QVariantMap>
+
+// DSA headers
+#include "AlertLevel.h"
 
 namespace Esri::ArcGISRuntime {
   class GraphicsOverlay;

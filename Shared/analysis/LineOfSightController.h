@@ -18,6 +18,7 @@
 #define LINEOFSIGHTCONTROLLER_H
 
 // Qt headers
+#include <qtmetamacros.h>
 class QAbstractItemModel;
 Q_MOC_INCLUDE("qabstractitemmodel.h")
 

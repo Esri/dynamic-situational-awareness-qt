@@ -17,13 +17,13 @@
 #ifndef MESSAGEFEED_H
 #define MESSAGEFEED_H
 
+// C++ API headers
+#include "DynamicEntityDataSource.h"
+
 // Qt headers
 #include <QHash>
 #include <QObject>
 #include <QUrl>
-
-// MapsSDK headers
-#include "DynamicEntityDataSource.h"
 
 namespace Esri::ArcGISRuntime {
 

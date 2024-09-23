@@ -17,7 +17,7 @@
 #ifndef MESSAGESOVERLAYALERTTARGET_H
 #define MESSAGESOVERLAYALERTTARGET_H
 
-// dsa app headers
+// DSA headers
 #include "AlertTarget.h"
 
 namespace Esri::ArcGISRuntime {

@@ -17,20 +17,21 @@
 #ifndef ALERTCONDITIONSCONTROLLER_H
 #define ALERTCONDITIONSCONTROLLER_H
 
+// C++ API headers
+#include "TaskWatcher.h"
+
 // Qt headers
 #include <QFuture>
 #include <QHash>
 #include <QJsonObject>
 #include <QStringListModel>
 
-// C++ API headers
-#include "TaskWatcher.h"
+// STL headers
+#include <optional>
 
 // DSA headers
 #include "AbstractTool.h"
 #include "AlertLevel.h"
-
-#include <optional>
 
 class QMouseEvent;
 

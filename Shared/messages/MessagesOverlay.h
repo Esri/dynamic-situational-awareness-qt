@@ -37,8 +37,8 @@ public:
 
   QString messageType() const;
   void setMessageType(const QString& messageType);
-  Esri::ArcGISRuntime::DynamicEntity* getDynamicEntityById(quint64 entityId);
-  const QHash<quint64, Esri::ArcGISRuntime::DynamicEntity*>& dynamicEntities();
+  Esri::ArcGISRuntime::DynamicEntity* getDynamicEntityById(quint64 entityId) const;
+  const QHash<quint64, Esri::ArcGISRuntime::DynamicEntity*>& dynamicEntities() const;
 
 private:
   Q_DISABLE_COPY(MessagesOverlay)

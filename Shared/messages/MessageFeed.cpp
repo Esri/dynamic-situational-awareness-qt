@@ -113,34 +113,8 @@ QFuture<DynamicEntityDataSourceInfo*> MessageFeed::onLoadAsync()
   auto* dynamicEntityDataSourceInfo = new DynamicEntityDataSourceInfo(entity_id_field_name, fields, this);
   dynamicEntityDataSourceInfo->setSpatialReference(SpatialReference::wgs84());
 
-  // create a function that can be passed on received updates to check for selection
-  auto checkEntityForSelectAction = [this](DynamicEntity* dynamicEntity)
-  {
-    {
-      // check for selection on add for geomessage types only
-      if (!m_isCoT)
-      {
-        // find the action attribute
-        if (dynamicEntity)
-        {
-          auto actionValue = dynamicEntity->attributes()->attributesMap()[Message::GEOMESSAGE_ACTION_NAME].toString();
-          static const QString selectValue = Message::fromMessageAction(Message::MessageAction::Select);
-          static const QString unselectValue = Message::fromMessageAction(Message::MessageAction::Unselect);
-          if (actionValue.compare(selectValue, Qt::CaseInsensitive) == 0)
-          {
-            m_messagesOverlay->selectDynamicEntity(dynamicEntity);
-          }
-          else if (actionValue.compare(unselectValue, Qt::CaseInsensitive) == 0)
-          {
-            m_messagesOverlay->unselectDynamicEntity(dynamicEntity);
-          }
-        }
-      }
-    }
-  };
-
   // listen for new entities
-  connect(this, &DynamicEntityDataSource::dynamicEntityReceived, this, [this, checkEntityForSelectAction](DynamicEntityInfo* info)
+  connect(this, &DynamicEntityDataSource::dynamicEntityReceived, this, [this](DynamicEntityInfo* info)
   {
     // check new entity for select/unselect action
     auto* dynamicEntity = info->dynamicEntity();
@@ -154,7 +128,7 @@ QFuture<DynamicEntityDataSourceInfo*> MessageFeed::onLoadAsync()
   });
 
   // listen for new observations
-  connect(this, &DynamicEntityDataSource::dynamicEntityObservationReceived, this, [checkEntityForSelectAction](DynamicEntityObservationInfo* observationInfo)
+  connect(this, &DynamicEntityDataSource::dynamicEntityObservationReceived, this, [this](DynamicEntityObservationInfo* observationInfo)
   {
     // check new entity for select/unselect action
     auto* dynamicEntity = observationInfo->observation()->dynamicEntity();
@@ -334,15 +308,46 @@ bool MessageFeed::addMessage(const Message& message)
   return true;
 }
 
-
-DynamicEntity* MessageFeed::getDynamicEntityById(quint64 entityId)
+/*!
+ * \brief Gets a pointer to a DynamicEntity by it's entity ID that was defined in the feed setup. Used for selection in alerts, etc.
+ * \param entityId
+ * \return
+ */
+DynamicEntity* MessageFeed::getDynamicEntityById(quint64 entityId) const
 {
   return m_dynamicEntities.contains(entityId) ? m_dynamicEntities[entityId] : nullptr;
 }
 
-const QHash<quint64, Esri::ArcGISRuntime::DynamicEntity*>& MessageFeed::dynamicEntities()
+/*!
+ * \brief Returns a reference to the list of active entities. Used when a new alert is setup so any already existing entities can be searched and evaluated
+ * \return
+ */
+const QHash<quint64, DynamicEntity*>& MessageFeed::dynamicEntities() const
 {
   return m_dynamicEntities;
+}
+
+/*!
+ * \brief Checks a cursor on target message for the 'Select' action type and selects it in the overlay(DynamicEntityLayer)
+ * \param dynamicEntity
+ */
+void MessageFeed::checkEntityForSelectAction(DynamicEntity* dynamicEntity)
+{
+  // check for selection on add for geomessage types only
+  if (!m_isCoT)
+    return;
+
+  // find the action attribute
+  if (dynamicEntity)
+  {
+    const auto actionValue = dynamicEntity->attributes()->attributesMap()[Message::GEOMESSAGE_ACTION_NAME].toString();
+    static const QString selectValue = Message::fromMessageAction(Message::MessageAction::Select);
+    static const QString unselectValue = Message::fromMessageAction(Message::MessageAction::Unselect);
+    if (actionValue.compare(selectValue, Qt::CaseInsensitive) == 0)
+      m_messagesOverlay->selectDynamicEntity(dynamicEntity);
+    else if (actionValue.compare(unselectValue, Qt::CaseInsensitive) == 0)
+      m_messagesOverlay->unselectDynamicEntity(dynamicEntity);
+  }
 }
 
 } // Dsa

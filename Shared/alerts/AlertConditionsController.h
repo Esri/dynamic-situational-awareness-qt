@@ -17,9 +17,6 @@
 #ifndef ALERTCONDITIONSCONTROLLER_H
 #define ALERTCONDITIONSCONTROLLER_H
 
-// C++ API headers
-#include "TaskWatcher.h"
-
 // Qt headers
 #include <QFuture>
 #include <QHash>

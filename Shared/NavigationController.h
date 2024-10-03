@@ -20,9 +20,6 @@
 // C++ API headers
 #include "Point.h"
 
-// Qt headers
-#include <QUuid>
-
 // DSA headers
 #include "AbstractTool.h"
 

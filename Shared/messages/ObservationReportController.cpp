@@ -41,6 +41,7 @@
 #include <QDateTime>
 #include <QHostInfo>
 #include <QUdpSocket>
+#include <QUuid>
 
 using namespace Esri::ArcGISRuntime;
 

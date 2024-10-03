@@ -21,7 +21,6 @@
 
 #include "Point.h"
 #include <QMouseEvent>
-#include <QUuid>
 #include <QCursor>
 
 namespace Esri::ArcGISRuntime {
@@ -77,11 +76,6 @@ public slots:
   void onMouseReleased(QMouseEvent& mouseEvent);
   void onMousePressedAndHeld(QMouseEvent& mouseEvent);
   void onMouseDoubleClicked(QMouseEvent& mouseEvent);
-  void onIdentifyGraphicsOverlayCompleted(QUuid taskId, Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult* identifyResult);
-  void onIdentifyGraphicsOverlaysCompleted(QUuid taskId, const QList<Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult*>& identifyResults);
-  void onIdentifyLayerCompleted(QUuid taskId, Esri::ArcGISRuntime::IdentifyLayerResult* identifyResult);
-  void onIdentifyLayersCompleted(QUuid taskId, const QList<Esri::ArcGISRuntime::IdentifyLayerResult*>& identifyResults);
-  void onScreenToLocationCompleted(QUuid taskId, const Esri::ArcGISRuntime::Point& location);
   void onLocationChanged(const Esri::ArcGISRuntime::Point& location);
 
 signals:
@@ -89,12 +83,7 @@ signals:
   void geoViewChanged();
   void mapChanged();
   void spatialReferenceChanged();
-  void identifyGraphicsOverlayCompleted(QUuid taskId, Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult* identifyResult);
-  void identifyGraphicsOverlaysCompleted(QUuid taskId, const QList<Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult*>& identifyResults);
-  void identifyLayerCompleted(QUuid taskId, Esri::ArcGISRuntime::IdentifyLayerResult* identifyResult);
-  void identifyLayersCompleted(QUuid taskId, const QList<Esri::ArcGISRuntime::IdentifyLayerResult*>& identifyResults);
   void setMouseCursorRequested(const QCursor& cursor);
-  void screenToLocationCompleted(QUuid taskId, const Esri::ArcGISRuntime::Point& location);
   void locationChanged(const Esri::ArcGISRuntime::Point& location);
 
   // mouse signals

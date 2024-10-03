@@ -87,7 +87,7 @@ DynamicEntity* MessagesOverlay::getDynamicEntityById(quint64 entityId) const
   return m_messageFeed->getDynamicEntityById(entityId);
 }
 
-const QHash<quint64, Esri::ArcGISRuntime::DynamicEntity*>& MessagesOverlay::dynamicEntities() const
+const QHash<quint64, DynamicEntity*>& MessagesOverlay::dynamicEntities() const
 {
   return m_messageFeed->dynamicEntities();
 }

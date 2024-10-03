@@ -52,9 +52,6 @@ class LocationAlertSource;
 class LocationAlertTarget;
 class MessagesOverlay;
 
-using AlertTargetOptional = std::optional<AlertTarget*>;
-using AlertTargetFuture = QFuture<AlertTargetOptional>;
-
 class AlertConditionsController : public AbstractTool
 {
   Q_OBJECT
@@ -112,8 +109,8 @@ private:
   QFuture<bool> addConditionFromJson(const QJsonObject& json);
   void addStoredConditions();
 
-  AlertTargetFuture targetFromItemIdAndIndex(int itemId, int targetOverlayIndex, QString& targetDescription) const;
-  AlertTargetFuture targetFromFeatureLayer(Esri::ArcGISRuntime::FeatureLayer* featureLayer, int itemId) const;
+  QFuture<AlertTarget*> targetFromItemIdAndIndex(int itemId, int targetOverlayIndex, QString& targetDescription) const;
+  QFuture<AlertTarget*> targetFromFeatureLayer(Esri::ArcGISRuntime::FeatureLayer* featureLayer, int itemId) const;
   AlertTarget* targetFromGraphicsOverlay(Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlay, int itemId) const;
   AlertTarget* targetFromMessagesOverlay(Dsa::MessagesOverlay* messagesOverlay, int itemId) const;
   Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlayFromName(const QString& overlayName);

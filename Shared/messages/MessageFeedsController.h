@@ -19,11 +19,13 @@
 
 // Qt headers
 #include <QVariantList>
-class QAbstractListModel;
-Q_MOC_INCLUDE("qabstractitemmodel.h")
 
 // DSA headers
 #include "AbstractTool.h"
+
+Q_MOC_INCLUDE("qabstractitemmodel.h")
+
+class QAbstractListModel;
 
 namespace Esri::ArcGISRuntime {
   class GeoView;

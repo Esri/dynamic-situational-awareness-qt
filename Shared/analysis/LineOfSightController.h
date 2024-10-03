@@ -17,12 +17,12 @@
 #ifndef LINEOFSIGHTCONTROLLER_H
 #define LINEOFSIGHTCONTROLLER_H
 
-// Qt headers
-#include <QAbstractListModel>
-
 // DSA headers
 #include "AbstractTool.h"
 
+Q_MOC_INCLUDE("qabstractitemmodel.h")
+
+class QAbstractItemModel;
 class QStringListModel;
 
 namespace Esri::ArcGISRuntime {

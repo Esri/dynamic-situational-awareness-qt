@@ -250,8 +250,9 @@ void MarkupController::init()
         if (!m_active)
           return;
 
-        if (result->graphics().size() > 0)
-          result->graphicsOverlay()->selectGraphics(result->graphics());
+        const auto graphics = result->graphics();
+        if (graphics.size() > 0)
+          result->graphicsOverlay()->selectGraphics(graphics);
         else
           m_sketchOverlay->unselectGraphics(m_sketchOverlay->selectedGraphics());
 

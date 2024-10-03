@@ -90,6 +90,7 @@ private:
   void setResult(const QString& result);
   void setResultTitle(const QString& resultTitle);
   void processGeoElements();
+  void invokeIdentifyOnGeoView();
 
   bool m_contextActive = false;
   QPoint m_contextScreenPosition{0, 0};

@@ -246,7 +246,7 @@ QFuture<bool> AlertConditionsController::addWithinDistanceAlert(const QString& c
                                                                 int itemId,
                                                                 int targetOverlayIndex)
 {
-  auto future_false = QtFuture::makeReadyFuture(false);
+  const auto future_false = QtFuture::makeReadyFuture(false);
   if (levelIndex < 0 ||
       sourceFeedName.isEmpty() ||
       distance < 0.0 ||
@@ -323,7 +323,7 @@ QFuture<bool> AlertConditionsController::addWithinAreaAlert(const QString& condi
                                                             int itemId,
                                                             int targetOverlayIndex)
 {
-  auto future_false = QtFuture::makeReadyFuture(false);
+  const auto future_false = QtFuture::makeReadyFuture(false);
   if (levelIndex < 0 ||
       sourceFeedName.isEmpty() ||
       targetOverlayIndex < 0)
@@ -362,11 +362,11 @@ QFuture<bool> AlertConditionsController::addWithinAreaAlert(const QString& condi
 
 template<typename T>
 QFuture<bool> AlertConditionsController::addWithinAreaAlertBySourceLayerType(const QString& conditionName,
-                                                                    AlertLevel level,
-                                                                    const QString& sourceFeedName,
-                                                                    AlertTarget* target,
-                                                                    const QString& targetDescription,
-                                                                    T* alertSourceLayer)
+                                                                             AlertLevel level,
+                                                                             const QString& sourceFeedName,
+                                                                             AlertTarget* target,
+                                                                             const QString& targetDescription,
+                                                                             T* alertSourceLayer)
 {
   auto* condition = new WithinAreaAlertCondition(level, conditionName, this);
   connect(condition, &WithinAreaAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
@@ -394,7 +394,7 @@ QFuture<bool> AlertConditionsController::addAttributeEqualsAlert(const QString& 
                                                                  const QString& attributeName,
                                                                  const QVariant& targetValue)
 {
-  auto future_false = QtFuture::makeReadyFuture(false);
+  const auto future_false = QtFuture::makeReadyFuture(false);
   if (levelIndex < 0 ||
       sourceFeedName.isEmpty() ||
       attributeName.isEmpty() ||
@@ -423,11 +423,11 @@ QFuture<bool> AlertConditionsController::addAttributeEqualsAlert(const QString& 
 
 template<typename T>
 QFuture<bool> AlertConditionsController::addAttributeEqualsAlertBySourceLayerType(const QString& conditionName,
-                                                                         AlertLevel level,
-                                                                         const QString& sourceFeedName,
-                                                                         const QString& attributeName,
-                                                                         const QVariant& targetValue,
-                                                                         T* alertSourceLayer)
+                                                                                  AlertLevel level,
+                                                                                  const QString& sourceFeedName,
+                                                                                  const QString& attributeName,
+                                                                                  const QVariant& targetValue,
+                                                                                  T* alertSourceLayer)
 {
   AlertTarget* target = new FixedValueAlertTarget(targetValue, this);
   AttributeEqualsAlertCondition* condition = new AttributeEqualsAlertCondition(level, conditionName, attributeName, this);
@@ -917,7 +917,7 @@ QJsonObject AlertConditionsController::conditionToJson(AlertCondition* condition
  */
 QFuture<bool> AlertConditionsController::addConditionFromJson(const QJsonObject& json)
 {
-  auto future_false = QtFuture::makeReadyFuture(false);
+  const auto future_false = QtFuture::makeReadyFuture(false);
   if (json.isEmpty())
     return future_false;
 
@@ -1168,7 +1168,7 @@ AlertTargetFuture AlertConditionsController::targetFromItemIdAndIndex(int itemId
  */
 AlertTargetFuture AlertConditionsController::targetFromFeatureLayer(FeatureLayer* featureLayer, int itemId) const
 {
-  auto future_null = QtFuture::makeReadyFuture(AlertTargetOptional{});
+  const auto future_null = QtFuture::makeReadyFuture(AlertTargetOptional{});
   FeatureTable* tab = featureLayer->featureTable();
   if (!tab)
     return future_null;

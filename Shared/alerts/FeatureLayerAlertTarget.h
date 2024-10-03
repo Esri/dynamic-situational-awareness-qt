@@ -17,9 +17,6 @@
 #ifndef FEATURELAYERALERTTARGET_H
 #define FEATURELAYERALERTTARGET_H
 
-// Qt headers
-#include <QUuid>
-
 // DSA headers
 #include "AlertTarget.h"
 

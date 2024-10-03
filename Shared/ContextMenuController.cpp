@@ -150,65 +150,10 @@ void ContextMenuController::onMousePressedAndHeld(QMouseEvent& event)
 
   setContextScreenPosition(event.pos());
 
-  // lambda to call identify operations once the point from the scene or map view has been determined
-  auto invokeIdentifyOnGeoView = [this, geoView]()
-  {
-    // invoke the identify operations on the geoview for layers and graphics overlays
-    auto layers_identify = geoView->identifyLayersAsync(m_contextScreenPosition, 5.0, false, -1, this);
-    auto graphics_overlay_identify = geoView->identifyGraphicsOverlaysAsync(m_contextScreenPosition, 5.0, false, -1, this);
-
-    QtFuture::whenAll(layers_identify, graphics_overlay_identify).then(this, [this](const QList<IdentifyResultsVariant::FutureType> &identify_results)
-    {
-      for (const IdentifyResultsVariant::FutureType& identify_result : identify_results)
-      {
-        if (identify_result.index() == IdentifyResultsVariant::Types::LAYERS)
-        {
-          LayerResultsManager resultsManager(std::get<IdentifyResultsVariant::Types::LAYERS>(identify_result).result());
-          for (auto* result : resultsManager.m_results)
-          {
-            if (!result)
-              continue;
-
-            auto geoElements = result->geoElements();
-            // set the GeoElements to be managed by the tool
-            GeoElementUtils::setParent(geoElements, this);
-
-            // add the geoElements to the context hash using the layer name as the key
-            m_contextFeatures.insert(result->layerContent()->name(), geoElements);
-          }
-        }
-        else if (identify_result.index() == IdentifyResultsVariant::Types::GRAPHICS)
-        {
-          GraphicsOverlaysResultsManager resultsManager(std::get<IdentifyResultsVariant::Types::GRAPHICS>(identify_result).result());
-          for (auto* result : resultsManager.m_results)
-          {
-            if (!result)
-              continue;
-
-            const auto graphics = result->graphics();
-            if (graphics.isEmpty())
-              continue;
-
-            QList<GeoElement*> geoElements;
-            for(auto* geoElement : graphics)
-            {
-              GeoElementUtils::setParent(geoElement, this); // set the GeoElements to be managed by the tool
-              geoElements.append(geoElement);
-            }
-
-            // add the geoElements to the context hash using the overlay id as the key
-            m_contextGraphics.insert(result->graphicsOverlay()->overlayId(), geoElements);
-          }
-        }
-      }
-      processGeoElements();
-    });
-  };
-
   // start tasks to determine the clicked location
   if (auto* sceneView = dynamic_cast<SceneView*>(ToolResourceProvider::instance()->geoView()); sceneView)
   {
-    sceneView->screenToLocationAsync(m_contextScreenPosition.x(), m_contextScreenPosition.y()).then(this, [this, sceneView, invokeIdentifyOnGeoView](Point point) {
+    sceneView->screenToLocationAsync(m_contextScreenPosition.x(), m_contextScreenPosition.y()).then(this, [this, sceneView](Point point) {
       setContextLocation(point);
       m_contextBaseSurfaceLocation = sceneView->screenToBaseSurface(m_contextScreenPosition.x(), m_contextScreenPosition.y());
       invokeIdentifyOnGeoView();
@@ -358,6 +303,64 @@ void ContextMenuController::processGeoElements()
       }
     }
   }
+}
+
+void ContextMenuController::invokeIdentifyOnGeoView()
+{
+  GeoView* geoView = ToolResourceProvider::instance()->geoView();
+  if (!geoView)
+    return;
+
+  // invoke the identify operations on the geoview for layers and graphics overlays
+  auto layers_identify = geoView->identifyLayersAsync(m_contextScreenPosition, 5.0, false, -1, this);
+  auto graphics_overlay_identify = geoView->identifyGraphicsOverlaysAsync(m_contextScreenPosition, 5.0, false, -1, this);
+
+  QtFuture::whenAll(layers_identify, graphics_overlay_identify).then(this, [this](const QList<IdentifyResultsVariant::FutureType> &identify_results)
+  {
+    for (const IdentifyResultsVariant::FutureType& identify_result : identify_results)
+    {
+      if (identify_result.index() == IdentifyResultsVariant::Types::LAYERS)
+      {
+        LayerResultsManager resultsManager(std::get<IdentifyResultsVariant::Types::LAYERS>(identify_result).result());
+        for (auto* result : resultsManager.m_results)
+        {
+          if (!result)
+            continue;
+
+          auto geoElements = result->geoElements();
+          // set the GeoElements to be managed by the tool
+          GeoElementUtils::setParent(geoElements, this);
+
+          // add the geoElements to the context hash using the layer name as the key
+          m_contextFeatures.insert(result->layerContent()->name(), geoElements);
+        }
+      }
+      else if (identify_result.index() == IdentifyResultsVariant::Types::GRAPHICS)
+      {
+        GraphicsOverlaysResultsManager resultsManager(std::get<IdentifyResultsVariant::Types::GRAPHICS>(identify_result).result());
+        for (auto* result : resultsManager.m_results)
+        {
+          if (!result)
+            continue;
+
+          const auto graphics = result->graphics();
+          if (graphics.isEmpty())
+            continue;
+
+          QList<GeoElement*> geoElements;
+          for(auto* geoElement : graphics)
+          {
+            GeoElementUtils::setParent(geoElement, this); // set the GeoElements to be managed by the tool
+            geoElements.append(geoElement);
+          }
+
+          // add the geoElements to the context hash using the overlay id as the key
+          m_contextGraphics.insert(result->graphicsOverlay()->overlayId(), geoElements);
+        }
+      }
+    }
+    processGeoElements();
+  });
 }
 
 /*!

@@ -143,7 +143,7 @@ void AlertCondition::init(MessagesOverlay* sourceFeed, const QString& sourceDesc
   const auto* dataSource = sourceFeed->dataSource();
 
   // create a function to generate a new AlertSource for the DynamicEntity
-  auto createNewSourceAndAdd = [this, sourceFeed, target](DynamicEntity* dynamicEntity)
+  const auto createNewSourceAndAdd = [this, sourceFeed, target](DynamicEntity* dynamicEntity)
   {
     auto* source = new DynamicEntityAlertSource(dynamicEntity, sourceFeed);
     auto* data = createData(source, target);
@@ -151,7 +151,7 @@ void AlertCondition::init(MessagesOverlay* sourceFeed, const QString& sourceDesc
   };
 
   // add all the existing DynamicEntities already in the layer as AlertSources
-  for (auto dynamicEntity : sourceFeed->dynamicEntities())
+  for (auto* dynamicEntity : sourceFeed->dynamicEntities())
   {
     createNewSourceAndAdd(dynamicEntity);
   }

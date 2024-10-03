@@ -18,14 +18,12 @@
 #define LINEOFSIGHTCONTROLLER_H
 
 // Qt headers
-#include <qtmetamacros.h>
-class QAbstractItemModel;
-Q_MOC_INCLUDE("qabstractitemmodel.h")
-
-class QStringListModel;
+#include <QAbstractListModel>
 
 // DSA headers
 #include "AbstractTool.h"
+
+class QStringListModel;
 
 namespace Esri::ArcGISRuntime {
   class AnalysisOverlay;

@@ -65,9 +65,9 @@ public:
   void setThumbnailUrl(const QUrl& thumbnailUrl);
 
   bool addMessage(const Message& message);
-  Esri::ArcGISRuntime::DynamicEntity* getDynamicEntityById(quint64 entityId);
+  Esri::ArcGISRuntime::DynamicEntity* getDynamicEntityById(quint64 entityId) const;
 
-  const QHash<quint64, Esri::ArcGISRuntime::DynamicEntity*>& dynamicEntities();
+  const QHash<quint64, Esri::ArcGISRuntime::DynamicEntity*>& dynamicEntities() const;
 
 private:
   Q_DISABLE_COPY(MessageFeed)
@@ -79,6 +79,7 @@ private:
   MessagesOverlay* m_messagesOverlay = nullptr;
   QUrl m_thumbnailUrl;
   QHash<quint64, Esri::ArcGISRuntime::DynamicEntity*> m_dynamicEntities;
+  void checkEntityForSelectAction(Esri::ArcGISRuntime::DynamicEntity* dynamicEntity);
 };
 
 } // Dsa

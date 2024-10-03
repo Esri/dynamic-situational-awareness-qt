@@ -181,10 +181,10 @@ void ViewshedController::onMouseClicked(QMouseEvent& event)
     case AddGeoElementViewshed360:
     {
       // start an identify graphics overlays task at the clicked position.
-      m_sceneView->identifyGraphicsOverlaysAsync(event.position(), c_defaultIdentifyTolerance, false, 1, this).then(this, [this](QList<IdentifyGraphicsOverlayResult*> results)
+      m_sceneView->identifyGraphicsOverlaysAsync(event.position(), c_defaultIdentifyTolerance, false, 1, this).then(this, [this](const QList<IdentifyGraphicsOverlayResult*>& results)
       {
         // Create a RAII helper to ensure we clean up the results
-        GraphicsOverlaysResultsManager resultsManager(results);
+        GraphicsOverlaysResultsManager resultsManager{results};
         if (!isActive() || resultsManager.m_results.isEmpty() || resultsManager.m_results[0]->graphics().isEmpty())
         {
           return;

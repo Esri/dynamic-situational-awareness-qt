@@ -53,8 +53,8 @@ MessagesOverlay::MessagesOverlay(MessageFeed* messageFeed, const QString& messag
     DynamicEntityLayer(messageFeed, parent),
     m_messageFeed(messageFeed)
 {
-  this->setLayerId(messageType);
-  this->setName(messageType);
+  setLayerId(messageType);
+  setName(messageType);
   messageFeed->setMessagesOverlay(this);
 }
 
@@ -68,7 +68,7 @@ MessagesOverlay::~MessagesOverlay() = default;
  */
 QString MessagesOverlay::messageType() const
 {
-  return this->layerId();
+  return layerId();
 }
 
 /*!
@@ -76,18 +76,18 @@ QString MessagesOverlay::messageType() const
  */
 void MessagesOverlay::setMessageType(const QString& messageType)
 {
-  if (this->layerId() == messageType)
+  if (layerId() == messageType)
     return;
 
-  this->setLayerId(messageType);
+  setLayerId(messageType);
 }
 
-DynamicEntity* MessagesOverlay::getDynamicEntityById(quint64 entityId)
+DynamicEntity* MessagesOverlay::getDynamicEntityById(quint64 entityId) const
 {
   return m_messageFeed->getDynamicEntityById(entityId);
 }
 
-const QHash<quint64, Esri::ArcGISRuntime::DynamicEntity*>& MessagesOverlay::dynamicEntities()
+const QHash<quint64, DynamicEntity*>& MessagesOverlay::dynamicEntities() const
 {
   return m_messageFeed->dynamicEntities();
 }

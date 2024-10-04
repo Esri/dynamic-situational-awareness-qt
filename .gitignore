@@ -40,3 +40,4 @@ CMakeLists.txt.user*
 # Local ArcGIS Toolkit Repo
 arcgis-maps-sdk-toolkit-qt
 
+build

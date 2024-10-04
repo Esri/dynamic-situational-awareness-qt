@@ -17,27 +17,20 @@
 #ifndef CONTEXTMENUCONTROLLER_H
 #define CONTEXTMENUCONTROLLER_H
 
+// C++ API headers
+#include "Point.h"
+
 // Qt headers
-#include <QUuid>
+#include <QHash>
 #include <QMouseEvent>
 #include <QStringListModel>
-#include <QHash>
 
-// C++ API Headers
-#include "Point.h"
-#include "TaskWatcher.h"
-
-// dsa headers
+// DSA headers
 #include "AbstractTool.h"
 
 namespace Esri::ArcGISRuntime {
   class GeoElement;
-  class IdentifyGraphicsOverlayResult;
-  class IdentifyLayerResult;
 }
-
-Q_MOC_INCLUDE("IdentifyGraphicsOverlayResult.h")
-Q_MOC_INCLUDE("IdentifyLayerResult.h")
 
 namespace Dsa {
 
@@ -90,18 +83,14 @@ signals:
 
 private slots:
   void onMousePressedAndHeld(QMouseEvent& event);
-  void onIdentifyLayersCompleted(const QUuid& taskId, const QList<Esri::ArcGISRuntime::IdentifyLayerResult*>& identifyResults);
-  void onIdentifyGraphicsOverlaysCompleted(const QUuid& taskId, const QList<Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult*>& identifyResults);
-  void onScreenToLocationCompleted(QUuid taskId, const Esri::ArcGISRuntime::Point& location);
 
 private:
   void addOption(const QString& option);
   void clearOptions();
   void setResult(const QString& result);
   void setResultTitle(const QString& resultTitle);
-  void cancelTasks();
-  void cancelIdentifyTasks();
   void processGeoElements();
+  void invokeIdentifyOnGeoView();
 
   bool m_contextActive = false;
   QPoint m_contextScreenPosition{0, 0};
@@ -110,9 +99,6 @@ private:
   QString m_resultTitle;
   Esri::ArcGISRuntime::Point m_contextLocation;
   Esri::ArcGISRuntime::Point m_contextBaseSurfaceLocation;
-  Esri::ArcGISRuntime::TaskWatcher m_identifyFeaturesTask;
-  Esri::ArcGISRuntime::TaskWatcher m_identifyGraphicsTask;
-  Esri::ArcGISRuntime::TaskWatcher m_screenToLocationTask;
   QHash<QString, QList<Esri::ArcGISRuntime::GeoElement*>> m_contextFeatures;
   QHash<QString, QList<Esri::ArcGISRuntime::GeoElement*>> m_contextGraphics;
 };

@@ -19,17 +19,15 @@
 
 #include "Handheld.h"
 
-// dsa app headers
-#include "DsaController.h"
-
-// toolkit headers
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
-
 // C++ API headers
-#include "SceneQuickView.h"
 #include "IdentifyGraphicsOverlayResult.h"
 #include "IdentifyLayerResult.h"
+#include "SceneQuickView.h"
+
+// DSA headers
+#include "DsaController.h"
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -93,21 +91,6 @@ void Handheld::componentComplete()
 
   connect(m_sceneView, &SceneQuickView::mousePressedAndHeld,
           ToolResourceProvider::instance(), &ToolResourceProvider::onMousePressedAndHeld);
-
-  connect(m_sceneView, &SceneQuickView::identifyGraphicsOverlayCompleted,
-          ToolResourceProvider::instance(), &ToolResourceProvider::onIdentifyGraphicsOverlayCompleted);
-
-  connect(m_sceneView, &SceneQuickView::identifyGraphicsOverlaysCompleted,
-          ToolResourceProvider::instance(), &ToolResourceProvider::onIdentifyGraphicsOverlaysCompleted);
-
-  connect(m_sceneView, &SceneQuickView::identifyLayerCompleted,
-          ToolResourceProvider::instance(), &ToolResourceProvider::onIdentifyLayerCompleted);
-
-  connect(m_sceneView, &SceneQuickView::identifyLayersCompleted,
-          ToolResourceProvider::instance(), &ToolResourceProvider::onIdentifyLayersCompleted);
-
-  connect(m_sceneView, &SceneQuickView::screenToLocationCompleted,
-          ToolResourceProvider::instance(), &ToolResourceProvider::onScreenToLocationCompleted);
 
   connect(ToolResourceProvider::instance(), &ToolResourceProvider::setMouseCursorRequested, this, [this](const QCursor& mouseCursor)
   {

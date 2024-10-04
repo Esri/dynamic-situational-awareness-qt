@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -20,20 +19,6 @@
 
 #include "ViewshedController.h"
 
-// dsa app headers
-#include "DsaUtility.h"
-#include "GeoElementViewshed360.h"
-#include "GraphicsOverlaysResultsManager.h"
-#include "LocationController.h"
-#include "LocationDisplay3d.h"
-#include "LocationViewshed360.h"
-#include "ViewshedListModel.h"
-#include "GeoElementUtils.h"
-
-// toolkit headers
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
-
 // C++ API headers
 #include "AnalysisListModel.h"
 #include "AnalysisOverlay.h"
@@ -51,8 +36,23 @@
 #include "SymbolTypes.h"
 #include "Viewshed.h"
 
+// Qt headers
+#include <QFuture>
+
 // STL headers
 #include <cmath>
+
+// DSA headers
+#include "DsaUtility.h"
+#include "GeoElementUtils.h"
+#include "GeoElementViewshed360.h"
+#include "GraphicsOverlaysResultsManager.h"
+#include "LocationController.h"
+#include "LocationDisplay3d.h"
+#include "LocationViewshed360.h"
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
+#include "ViewshedListModel.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -172,29 +172,19 @@ void ViewshedController::onMouseClicked(QMouseEvent& event)
 
   switch (m_activeMode)
   {
-  case AddLocationViewshed360:
-  {
-    const Point pt = m_sceneView->screenToBaseSurface(event.position().x(), event.position().y());
-    addLocationViewshed360(pt);
-    break;
-  }
-  case AddGeoElementViewshed360:
-  {
-    if (!m_identifyConn)
+    case AddLocationViewshed360:
     {
-      // connect to the completion of the identify operation.
-      m_identifyConn = connect(ToolResourceProvider::instance(), &ToolResourceProvider::identifyGraphicsOverlaysCompleted,
-                               this, [this](const QUuid& taskId, const QList<IdentifyGraphicsOverlayResult*>& identifyResults)
+      const Point pt = m_sceneView->screenToBaseSurface(event.position().x(), event.position().y());
+      addLocationViewshed360(pt);
+      break;
+    }
+    case AddGeoElementViewshed360:
+    {
+      // start an identify graphics overlays task at the clicked position.
+      m_sceneView->identifyGraphicsOverlaysAsync(event.position(), c_defaultIdentifyTolerance, false, 1, this).then(this, [this](const QList<IdentifyGraphicsOverlayResult*>& results)
       {
-        // if the task ID does not match the current task, return.
-        if (taskId != m_identifyTaskWatcher.taskId())
-          return;
-
-        m_identifyTaskWatcher = TaskWatcher();
-
         // Create a RAII helper to ensure we clean up the results
-        GraphicsOverlaysResultsManager resultsManager(identifyResults);
-
+        GraphicsOverlaysResultsManager resultsManager{results};
         if (!isActive() || resultsManager.m_results.isEmpty() || resultsManager.m_results[0]->graphics().isEmpty())
         {
           return;
@@ -205,14 +195,10 @@ void ViewshedController::onMouseClicked(QMouseEvent& event)
         graphic->setParent(nullptr);
         addGeoElementViewshed360(graphic);
       });
+      break;
     }
-
-    // start an identify graphics overlays task at the clicked position.
-    m_identifyTaskWatcher = m_sceneView->identifyGraphicsOverlays(event.position().x(), event.position().y(), c_defaultIdentifyTolerance, false, 1);
-    break;
-  }
-  default:
-    break;
+    default:
+      break;
   }
 }
 

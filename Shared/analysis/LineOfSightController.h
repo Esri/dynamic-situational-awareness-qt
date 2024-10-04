@@ -17,18 +17,13 @@
 #ifndef LINEOFSIGHTCONTROLLER_H
 #define LINEOFSIGHTCONTROLLER_H
 
-// Qt headers
-#include <QUuid>
-class QAbstractItemModel;
+// DSA headers
+#include "AbstractTool.h"
+
 Q_MOC_INCLUDE("qabstractitemmodel.h")
 
+class QAbstractItemModel;
 class QStringListModel;
-
-// C++ API headers
-#include "TaskWatcher.h"
-
-// dsa headers
-#include "AbstractTool.h"
 
 namespace Esri::ArcGISRuntime {
   class AnalysisOverlay;
@@ -59,7 +54,7 @@ public:
 
   QAbstractItemModel* overlayNames() const;
 
-  Q_INVOKABLE bool selectOverlayIndex(int overlayIndex);
+  Q_INVOKABLE void selectOverlayIndex(int overlayIndex);
   Q_INVOKABLE void clearAnalysis();
 
   bool isAnalysisVisible() const;
@@ -76,13 +71,11 @@ signals:
   void overlayNamesChanged();
   void analysisVisibleChanged();
   void visibleByCountChanged();
+  void selectOverlayFailed();
 
 public slots:
   void onGeoViewChanged(Esri::ArcGISRuntime::GeoView* geoView);
   void onOperationalLayersChanged();
-
-private slots:
-  void onQueryFeaturesCompleted(QUuid taskId, Esri::ArcGISRuntime::FeatureQueryResult* featureQueryResult);
 
 private:
   void cancelTask();
@@ -94,7 +87,6 @@ private:
   QList<Esri::ArcGISRuntime::FeatureLayer*> m_overlays;
   Esri::ArcGISRuntime::AnalysisOverlay* m_lineOfSightOverlay = nullptr;
   QObject* m_lineOfSightParent = nullptr;
-  Esri::ArcGISRuntime::TaskWatcher m_featuresTask;
   Esri::ArcGISRuntime::GeoElement* m_locationGeoElement = nullptr;
   QMetaObject::Connection m_queryFeaturesConnection;
   bool m_analysisVisible = true;

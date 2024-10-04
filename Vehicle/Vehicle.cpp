@@ -19,14 +19,14 @@
 
 #include "Vehicle.h"
 
-// dsa app headers
-#include "DsaController.h"
-#include "ToolResourceProvider.h"
-
 // C++ API headers
-#include "SceneQuickView.h"
 #include "IdentifyGraphicsOverlayResult.h"
 #include "IdentifyLayerResult.h"
+#include "SceneQuickView.h"
+
+// DSA headers
+#include "DsaController.h"
+#include "ToolResourceProvider.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -83,21 +83,6 @@ void Vehicle::componentComplete()
 
   connect(m_sceneView, &SceneQuickView::mouseReleased,
           ToolResourceProvider::instance(), &ToolResourceProvider::onMouseReleased);
-
-  connect(m_sceneView, &SceneQuickView::identifyGraphicsOverlayCompleted,
-          ToolResourceProvider::instance(), &ToolResourceProvider::onIdentifyGraphicsOverlayCompleted);
-
-  connect(m_sceneView, &SceneQuickView::identifyGraphicsOverlaysCompleted,
-          ToolResourceProvider::instance(), &ToolResourceProvider::onIdentifyGraphicsOverlaysCompleted);
-
-  connect(m_sceneView, &SceneQuickView::identifyLayerCompleted,
-          ToolResourceProvider::instance(), &ToolResourceProvider::onIdentifyLayerCompleted);
-
-  connect(m_sceneView, &SceneQuickView::identifyLayersCompleted,
-          ToolResourceProvider::instance(), &ToolResourceProvider::onIdentifyLayersCompleted);
-
-  connect(m_sceneView, &SceneQuickView::screenToLocationCompleted,
-          ToolResourceProvider::instance(), &ToolResourceProvider::onScreenToLocationCompleted);
 }
 
 void Vehicle::resetToDefaultScene()

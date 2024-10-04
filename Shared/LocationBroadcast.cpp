@@ -29,6 +29,7 @@
 #include <QHostInfo>
 #include <QTimer>
 #include <QUdpSocket>
+#include <QUuid>
 
 using namespace Esri::ArcGISRuntime;
 

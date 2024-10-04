@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -20,7 +19,22 @@
 
 #include "MessageFeedsController.h"
 
-// dsa app headers
+// C++ API headers
+#include "DictionaryRenderer.h"
+#include "DictionarySymbolStyle.h"
+#include "LayerListModel.h"
+#include "LayerSceneProperties.h"
+#include "PictureMarkerSymbol.h"
+#include "SceneViewTypes.h"
+#include "SimpleRenderer.h"
+
+// Qt headers
+#include <QFileInfo>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QUdpSocket>
+
+// DSA headers
 #include "AppConstants.h"
 #include "DataListener.h"
 #include "LocationBroadcast.h"
@@ -29,23 +43,8 @@
 #include "MessageFeedConstants.h"
 #include "MessageFeedListModel.h"
 #include "MessagesOverlay.h"
-
-// toolkit headers
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
-
-// C++ API headers
-#include "DictionaryRenderer.h"
-#include "DictionarySymbolStyle.h"
-#include "PictureMarkerSymbol.h"
-#include "SimpleRenderer.h"
-#include "SceneViewTypes.h"
-
-// Qt headers
-#include <QFileInfo>
-#include <QJsonArray>
-#include <QJsonObject>
-#include <QUdpSocket>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -192,9 +191,12 @@ void MessageFeedsController::setupFeeds()
     const auto rendererThumbnail = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL].toString();
     const auto surfacePlacement = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT].toString();
 
-    MessageFeed* feed = new MessageFeed(feedName, feedType, this);
-    MessagesOverlay* overlay = new MessagesOverlay(m_geoView, createRenderer(rendererInfo, this), feedType, feed, toSurfacePlacement(surfacePlacement), this);
-    feed->setMessagesOverlay(overlay);
+    auto* feed = new MessageFeed(feedName, feedType, this);
+    auto* overlay = new MessagesOverlay(feed, feedType, this);
+    overlay->setSceneProperties(LayerSceneProperties(toSurfacePlacement(surfacePlacement)));
+    overlay->setRenderer(createRenderer(rendererInfo, this));
+    SceneView* scene = static_cast<SceneView*>(m_geoView);
+    scene->arcGISScene()->operationalLayers()->append(overlay);
 
     if (!rendererThumbnail.isEmpty())
     {

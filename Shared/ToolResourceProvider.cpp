@@ -26,8 +26,6 @@
 
 #include "ToolResourceProvider.h"
 
-#include <QUuid>
-
 using namespace Esri::ArcGISRuntime;
 
 namespace Dsa
@@ -285,31 +283,6 @@ void ToolResourceProvider::onMouseDoubleClicked(QMouseEvent &mouseEvent)
     emit mouseDoubleClickedPoint(static_cast<SceneView*>(m_geoView)->screenToBaseSurface(mouseEvent.position().x(), mouseEvent.position().y()));
   else if (dynamic_cast<MapView*>(m_geoView))
     emit mouseDoubleClickedPoint(static_cast<MapView*>(m_geoView)->screenToLocation(mouseEvent.position().x(), mouseEvent.position().y()));
-}
-
-void ToolResourceProvider::onIdentifyGraphicsOverlayCompleted(QUuid id, IdentifyGraphicsOverlayResult* identifyResult)
-{
-  emit identifyGraphicsOverlayCompleted(id, identifyResult);
-}
-
-void ToolResourceProvider::onIdentifyGraphicsOverlaysCompleted(QUuid taskId, const QList<IdentifyGraphicsOverlayResult*>& identifyResults)
-{
-  emit identifyGraphicsOverlaysCompleted(taskId, identifyResults);
-}
-
-void ToolResourceProvider::onIdentifyLayerCompleted(QUuid taskId, IdentifyLayerResult* identifyResult)
-{
-  emit identifyLayerCompleted(taskId, identifyResult);
-}
-
-void ToolResourceProvider::onIdentifyLayersCompleted(QUuid taskId, const QList<IdentifyLayerResult*>& identifyResults)
-{
-  emit identifyLayersCompleted(taskId, identifyResults);
-}
-
-void ToolResourceProvider::onScreenToLocationCompleted(QUuid taskId, const Point& location)
-{
-  emit screenToLocationCompleted(taskId, location);
 }
 
 void ToolResourceProvider::onLocationChanged(const Point& location)

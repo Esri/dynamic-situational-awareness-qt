@@ -17,12 +17,13 @@
 #ifndef MESSAGEFEED_H
 #define MESSAGEFEED_H
 
+// C++ API headers
+#include "DynamicEntityDataSource.h"
+
 // Qt headers
+#include <QHash>
 #include <QObject>
 #include <QUrl>
-
-// MapsSDK headers
-#include "DynamicEntityDataSource.h"
 
 namespace Esri::ArcGISRuntime {
 
@@ -64,6 +65,9 @@ public:
   void setThumbnailUrl(const QUrl& thumbnailUrl);
 
   bool addMessage(const Message& message);
+  Esri::ArcGISRuntime::DynamicEntity* getDynamicEntityById(quint64 entityId) const;
+
+  const QHash<quint64, Esri::ArcGISRuntime::DynamicEntity*>& dynamicEntities() const;
 
 private:
   Q_DISABLE_COPY(MessageFeed)
@@ -71,10 +75,10 @@ private:
   QString m_feedName;
   QString m_feedMessageType;
   bool m_isCoT;
-  bool m_feedVisible = true;
   QString m_entityIdAttributeName;
   MessagesOverlay* m_messagesOverlay = nullptr;
   QUrl m_thumbnailUrl;
+  QHash<quint64, Esri::ArcGISRuntime::DynamicEntity*> m_dynamicEntities;
   void checkEntityForSelectAction(Esri::ArcGISRuntime::DynamicEntity* dynamicEntity);
 };
 

@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -20,14 +19,6 @@
 
 #include "MarkupController.h"
 
-// dsa app headers
-#include "MarkupBroadcast.h"
-#include "MarkupLayer.h"
-
-// toolkit headers
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
-
 // C++ API headers
 #include "GeoView.h"
 #include "GeometryEngine.h"
@@ -48,6 +39,13 @@
 
 // Qt headers
 #include <QCursor>
+#include <QFuture>
+
+// DSA headers
+#include "MarkupBroadcast.h"
+#include "MarkupLayer.h"
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -240,24 +238,27 @@ void MarkupController::init()
   if (m_is3d)
     m_sketchOverlay->setSceneProperties(LayerSceneProperties(SurfacePlacement::DrapedFlat));
 
-  connect(ToolResourceProvider::instance(), &ToolResourceProvider::identifyGraphicsOverlayCompleted, this, [this](QUuid, IdentifyGraphicsOverlayResult* identifyResult)
-  {
-    if (!m_active)
-      return;
-
-    if (identifyResult->graphics().size() > 0)
-      identifyResult->graphicsOverlay()->selectGraphics(identifyResult->graphics());
-    else
-      m_sketchOverlay->unselectGraphics(m_sketchOverlay->selectedGraphics());
-  });
-
   connect(ToolResourceProvider::instance(), &ToolResourceProvider::mouseClicked, this, [this](QMouseEvent& mouseEvent)
   {
     if (!m_active)
       return;
 
     if (!m_isDrawing)
-      m_geoView->identifyGraphicsOverlay(m_sketchOverlay, mouseEvent.position().x(), mouseEvent.position().y(), m_is3d ? 100 : 20, false, 1);
+    {
+      m_geoView->identifyGraphicsOverlayAsync(m_sketchOverlay, mouseEvent.position(), m_is3d ? 100 : 20, false, 1, this).then(this, [this](IdentifyGraphicsOverlayResult* result)
+      {
+        if (!m_active)
+          return;
+
+        const auto graphics = result->graphics();
+        if (graphics.size() > 0)
+          result->graphicsOverlay()->selectGraphics(graphics);
+        else
+          m_sketchOverlay->unselectGraphics(m_sketchOverlay->selectedGraphics());
+
+        result->deleteLater();
+      });
+    }
   });
 
   connect(ToolResourceProvider::instance(), &ToolResourceProvider::mousePressed, this, [this](QMouseEvent& mouseEvent)

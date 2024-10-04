@@ -17,25 +17,25 @@
 // PCH header
 #include "pch.hpp"
 
-// C++ API Headers
-#include "Error.h"
-#include "Field.h"
+#include "MessageFeed.h"
+
+// C++ API headers
+#include "AttributeListModel.h"
 #include "Domain.h"
-#include "Renderer.h"
-#include "SymbolTypes.h"
-#include "ServiceTypes.h"
-#include "SpatialReference.h"
 #include "DynamicEntity.h"
-#include "DynamicEntityInfo.h"
-#include "DynamicEntityLayer.h"
 #include "DynamicEntityDataSourceInfo.h"
+#include "DynamicEntityInfo.h"
 #include "DynamicEntityObservation.h"
 #include "DynamicEntityObservationInfo.h"
-#include "AttributeListModel.h"
+#include "Error.h"
+#include "Field.h"
+#include "Renderer.h"
+#include "ServiceTypes.h"
+#include "SpatialReference.h"
+#include "SymbolTypes.h"
 
-// DSA app headers
+// DSA headers
 #include "Message.h"
-#include "MessageFeed.h"
 #include "MessagesOverlay.h"
 
 using namespace Esri::ArcGISRuntime;
@@ -119,6 +119,7 @@ QFuture<DynamicEntityDataSourceInfo*> MessageFeed::onLoadAsync()
     // check new entity for select/unselect action
     auto* dynamicEntity = info->dynamicEntity();
     dynamicEntity->setParent(this);
+    m_dynamicEntities[dynamicEntity->entityId()] = dynamicEntity;
     checkEntityForSelectAction(dynamicEntity);
 
     // mark the info as delete later so it can be cleaned up
@@ -139,10 +140,11 @@ QFuture<DynamicEntityDataSourceInfo*> MessageFeed::onLoadAsync()
   });
 
   // remove ownership when entities are purged
-  connect(this, &DynamicEntityDataSource::dynamicEntityPurged, this, [](DynamicEntityInfo* info)
+  connect(this, &DynamicEntityDataSource::dynamicEntityPurged, this, [this](DynamicEntityInfo* info)
   {
     // release the dynamic entity
     auto* dynamicEntity = info->dynamicEntity();
+    m_dynamicEntities.remove(dynamicEntity->entityId());
     dynamicEntity->deleteLater();
 
     // mark the info as delete later so it can be cleaned up
@@ -276,6 +278,12 @@ bool MessageFeed::addMessage(const Message& message)
     return true;
 
   default:
+    if (m_messagesOverlay == nullptr)
+    {
+      emit errorOccurred(Error("MessagesOverlay not set", additionalErrorMessage, ExtendedErrorType::None));
+      return false;
+    }
+
     if (m_messagesOverlay->renderer() && m_messagesOverlay->renderer()->rendererType() == RendererType::DictionaryRenderer && symbolId.isEmpty())
     {
       emit errorOccurred(Error("Failed to add message - symbol ID is empty", additionalErrorMessage, ExtendedErrorType::None));
@@ -300,26 +308,45 @@ bool MessageFeed::addMessage(const Message& message)
   return true;
 }
 
+/*!
+ * \brief Gets a pointer to a DynamicEntity by it's entity ID that was defined in the feed setup. Used for selection in alerts, etc.
+ * \param entityId
+ * \return
+ */
+DynamicEntity* MessageFeed::getDynamicEntityById(quint64 entityId) const
+{
+  return m_dynamicEntities.contains(entityId) ? m_dynamicEntities[entityId] : nullptr;
+}
+
+/*!
+ * \brief Returns a reference to the list of active entities. Used when a new alert is setup so any already existing entities can be searched and evaluated
+ * \return
+ */
+const QHash<quint64, DynamicEntity*>& MessageFeed::dynamicEntities() const
+{
+  return m_dynamicEntities;
+}
+
+/*!
+ * \brief Checks a cursor on target message for the 'Select' action type and selects it in the overlay(DynamicEntityLayer)
+ * \param dynamicEntity
+ */
 void MessageFeed::checkEntityForSelectAction(DynamicEntity* dynamicEntity)
 {
   // check for selection on add for geomessage types only
   if (!m_isCoT)
+    return;
+
+  // find the action attribute
+  if (dynamicEntity)
   {
-    // find the action attribute
-    if (dynamicEntity)
-    {
-      auto actionValue = dynamicEntity->attributes()->attributesMap()[Message::GEOMESSAGE_ACTION_NAME].toString();
-      static const QString selectValue = Message::fromMessageAction(Message::MessageAction::Select);
-      static const QString unselectValue = Message::fromMessageAction(Message::MessageAction::Unselect);
-      if (actionValue.compare(selectValue, Qt::CaseInsensitive) == 0)
-      {
-        m_messagesOverlay->dynamicEntityLayer()->selectDynamicEntity(dynamicEntity);
-      }
-      else if (actionValue.compare(unselectValue, Qt::CaseInsensitive) == 0)
-      {
-        m_messagesOverlay->dynamicEntityLayer()->unselectDynamicEntity(dynamicEntity);
-      }
-    }
+    const auto actionValue = dynamicEntity->attributes()->attributesMap()[Message::GEOMESSAGE_ACTION_NAME].toString();
+    static const QString selectValue = Message::fromMessageAction(Message::MessageAction::Select);
+    static const QString unselectValue = Message::fromMessageAction(Message::MessageAction::Unselect);
+    if (actionValue.compare(selectValue, Qt::CaseInsensitive) == 0)
+      m_messagesOverlay->selectDynamicEntity(dynamicEntity);
+    else if (actionValue.compare(unselectValue, Qt::CaseInsensitive) == 0)
+      m_messagesOverlay->unselectDynamicEntity(dynamicEntity);
   }
 }
 

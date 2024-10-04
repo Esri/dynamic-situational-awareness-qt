@@ -23,7 +23,9 @@
 #include "AttributeListModel.h"
 #include "DynamicEntity.h"
 #include "DynamicEntityChangedInfo.h"
-#include "DynamicEntityLayer.h"
+
+// DSA headers
+#include "MessagesOverlay.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -33,7 +35,7 @@ namespace Dsa {
   \class Dsa::DynamicEntityAlertSource
   \inmodule Dsa
   \inherits AlertSource
-  \brief Represents a source based on a single \l Esri::ArcGISRuntime::DynamicEntity
+  \brief Represents a source based on a single \l Dsa::MessagesOverlay
   for an \l AlertCondition.
 
   Observations to the underlying DynamicEntity will cause the \l AlertSource::dataChanged
@@ -41,14 +43,14 @@ namespace Dsa {
  */
 
 /*!
- * \brief Constructor taking a DynamicEntity and it's parent DynamicEntityLayer
+ * \brief Constructor taking a DynamicEntity and it's parent MessagesOverlay
  * \param dynamicEntity
- * \param dynamicEntityLayer
+ * \param messagesOverlay
  */
-DynamicEntityAlertSource::DynamicEntityAlertSource(DynamicEntity* dynamicEntity, DynamicEntityLayer* dynamicEntityLayer):
+DynamicEntityAlertSource::DynamicEntityAlertSource(DynamicEntity* dynamicEntity, MessagesOverlay* messagesOverlay):
   AlertSource(dynamicEntity),
   m_dynamicEntity(dynamicEntity),
-  m_dynamicEntityLayer(dynamicEntityLayer)
+  m_messagesOverlay(messagesOverlay)
 {
   connect(m_dynamicEntity, &DynamicEntity::dynamicEntityChanged, this, [this](DynamicEntityChangedInfo* info)
   {
@@ -87,10 +89,14 @@ QVariant DynamicEntityAlertSource::value(const QString& key) const
  */
 void DynamicEntityAlertSource::setSelected(bool selected)
 {
+  // check to ensure that the dynamic entity has not been released
+  if (!m_dynamicEntity)
+    return;
+
   if (selected)
-    m_dynamicEntityLayer->selectDynamicEntity(m_dynamicEntity);
+    m_messagesOverlay->selectDynamicEntity(m_dynamicEntity);
   else
-    m_dynamicEntityLayer->unselectDynamicEntity(m_dynamicEntity);
+    m_messagesOverlay->unselectDynamicEntity(m_dynamicEntity);
 }
 
 } // Dsa

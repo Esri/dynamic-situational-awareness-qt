@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -20,19 +19,6 @@
 
 #include "AlertListController.h"
 
-// dsa app headers
-#include "AlertConditionData.h"
-#include "AlertListModel.h"
-#include "AlertListProxyModel.h"
-#include "AlertSource.h"
-#include "IdsAlertFilter.h"
-#include "PointHighlighter.h"
-#include "StatusAlertFilter.h"
-
-// toolkit headers
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
-
 // C++ API headers
 #include "Camera.h"
 #include "Envelope.h"
@@ -42,7 +28,19 @@
 #include "Viewpoint.h"
 
 // Qt headers
+#include <QFuture>
 #include <QTimer>
+
+// DSA headers
+#include "AlertConditionData.h"
+#include "AlertListModel.h"
+#include "AlertListProxyModel.h"
+#include "AlertSource.h"
+#include "IdsAlertFilter.h"
+#include "PointHighlighter.h"
+#include "StatusAlertFilter.h"
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -237,14 +235,14 @@ void AlertListController::zoomTo(int rowIndex)
     constexpr double targetDistance = 1500.0;
     Camera newCam(pos, targetDistance, currentCam.heading(), currentCam.pitch(), currentCam.roll());
 
-    sceneView->setViewpointCamera(newCam, 1.0);
+    sceneView->setViewpointCameraAsync(newCam, 1.0);
   }
   else
   {
     const Viewpoint currVP = geoView->currentViewpoint(ViewpointType::CenterAndScale);
     const Viewpoint newViewPoint(pos, currVP.targetScale());
 
-    geoView->setViewpoint(newViewPoint, 1.0);
+    geoView->setViewpointAsync(newViewPoint, 1.0);
   }
 }
 

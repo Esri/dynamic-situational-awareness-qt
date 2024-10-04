@@ -20,7 +20,7 @@
 // Qt headers
 #include <qtmetamacros.h>
 class QAbstractItemModel;
-Q_MOC_INCLUDE("qabstractitemmodel.h");
+Q_MOC_INCLUDE("qabstractitemmodel.h")
 
 // dsa headers
 #include "AbstractTool.h"

@@ -75,8 +75,7 @@ Item {
             if (currentIndex === -1)
                 return;
 
-            if (!toolController.selectOverlayIndex(currentIndex))
-                currentIndex = -1;
+            toolController.selectOverlayIndex(currentIndex)
         }
 
         Text {
@@ -128,5 +127,13 @@ Item {
 
         text: "Visible by <b>" + toolController.visibleByCount + ( toolController.visibleByCount === 1 ? "</b> Observer" :
                                                                                                          "</b> Observers")
+    }
+
+    Connections {
+        target: toolController
+
+        function onSelectOverlayFailed() {
+            overlayNameCB.currentIndex = -1;
+        }
     }
 }

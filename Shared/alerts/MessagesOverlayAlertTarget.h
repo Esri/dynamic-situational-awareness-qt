@@ -14,44 +14,41 @@
  *  limitations under the License.
  ******************************************************************************/
 
-#ifndef DYNAMICENTITYLAYERALERTTARGET_H
-#define DYNAMICENTITYLAYERALERTTARGET_H
+#ifndef MESSAGESOVERLAYALERTTARGET_H
+#define MESSAGESOVERLAYALERTTARGET_H
 
-// dsa app headers
+// DSA headers
 #include "AlertTarget.h"
 
 namespace Esri::ArcGISRuntime {
 
-class DynamicEntity;
-class DynamicEntityInfo;
-class DynamicEntityLayer;
-class Graphic;
+class Geometry;
+class Envelope;
 
 }
 
 namespace Dsa {
 
+class MessagesOverlay;
 class GeometryQuadtree;
 
-class DynamicEntityLayerAlertTarget : public AlertTarget
+class MessagesOverlayAlertTarget : public AlertTarget
 {
   Q_OBJECT
 
 public:
-  explicit DynamicEntityLayerAlertTarget(Esri::ArcGISRuntime::DynamicEntityLayer* dynamicEntityLayer);
-  ~DynamicEntityLayerAlertTarget();
+  explicit MessagesOverlayAlertTarget(Dsa::MessagesOverlay* messagesOverlay);
+  ~MessagesOverlayAlertTarget();
 
   QList<Esri::ArcGISRuntime::Geometry> targetGeometries(const Esri::ArcGISRuntime::Envelope& targetArea) const override;
   QVariant targetValue() const override;
 
 private:
-  Esri::ArcGISRuntime::DynamicEntityLayer* m_dynamicEntityLayer = nullptr;
+  Dsa::MessagesOverlay* m_messagesOverlay = nullptr;
   GeometryQuadtree* m_quadtree = nullptr;
-  QHash<quint64, Esri::ArcGISRuntime::Graphic*> m_entityGraphics;
-  void connectEntityGraphic(Esri::ArcGISRuntime::DynamicEntity* dynamicEntity);
   void rebuildQuadtree();
 };
 
 } // Dsa
 
-#endif // DYNAMICENTITYLAYERALERTTARGET_H
+#endif // MESSAGESOVERLAYALERTTARGET_H

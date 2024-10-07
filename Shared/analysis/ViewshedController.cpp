@@ -176,7 +176,7 @@ void ViewshedController::onMouseClicked(QMouseEvent& event)
   if (!isActive() || !m_sceneView)
     return;
 
-  auto position = event.position();
+  const auto position = event.position();
 
   switch (m_activeMode)
   {

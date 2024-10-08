@@ -54,7 +54,7 @@ MessagesOverlay::MessagesOverlay(MessageFeed* messageFeed, const QString& messag
     m_messageFeed(messageFeed)
 {
   setLayerId(messageType);
-  setName(messageType);
+  setName(messageFeed->feedName());
   messageFeed->setMessagesOverlay(this);
 }
 

@@ -196,10 +196,11 @@ DsaPanel {
             enabled: reportFrame.currentIndex > 0
             opacity: enabled ? 1.0 : 0.0
             Layout.margins: wizardButtonsFactoredMargin
+            Material.roundedScale: Material.NotRounded
             height: nextButton.height
             width: nextButton.width
             text: "Back"
-            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor * 1.75
 
             onClicked: reportFrame.decrementCurrentIndex();
         }
@@ -266,10 +267,11 @@ DsaPanel {
                 right: wizardButtonsFactoredMargin
                 bottom: wizardButtonsFactoredMargin
             }
+            Material.roundedScale: Material.NotRounded
             height: 32 * scaleFactor
             width: 64 * scaleFactor
             text: "Next"
-            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor * 1.75
 
             onClicked: reportFrame.incrementCurrentIndex();
         }

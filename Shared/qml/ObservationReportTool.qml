@@ -30,7 +30,7 @@ DsaPanel {
     property alias pickMode: toolController.pickMode
     property bool  toolActive: toolController.active
     property bool readyToAdd: reportFrame.currentItem == reviewPage
-    property real wizardButtonsFactoredMargin: 4 * scaleFactor
+    readonly property real wizardButtonsFactoredMargin: 4 * scaleFactor
 
     ObservationReportController {
         id: toolController

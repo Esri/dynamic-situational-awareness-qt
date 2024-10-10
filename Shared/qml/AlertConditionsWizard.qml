@@ -27,7 +27,7 @@ Rectangle {
 
     property bool readyToAdd: conditionFrame.currentItem == reviewPage
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
-    property real wizardButtonsFactoredMargin: 4 * scaleFactor
+    readonly property real wizardButtonsFactoredMargin: 4 * scaleFactor
 
     Text {
         id: titleRow

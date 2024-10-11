@@ -46,17 +46,15 @@ DsaResources::~DsaResources()
 }
 
 /*!
- * \brief Sets the string for the Maps SDK version from main.cpp
- * \param const char* from the ARCGIS_MAPS_SDK_VERSION define
+ * \brief Sets the string for the Maps SDK version from the #define for ARCGIS_MAPS_SDK_VERSION in main.cpp
  */
-void DsaResources::setArcGISMapsSDKVersion(const char *arcGISMapsSDKVersion)
+void DsaResources::setArcGISMapsSDKVersion(const char* arcGISMapsSDKVersion)
 {
   m_arcGISMapsSDKVersion = QString(arcGISMapsSDKVersion);
 }
 
 /*!
  * \brief Returns the version string of the Maps SDK that is used by the project
- * \return
  */
 QString DsaResources::arcGISMapsSDKVersion() const
 {

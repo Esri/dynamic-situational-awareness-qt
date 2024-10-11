@@ -191,6 +191,7 @@ void MessageFeedsController::setupFeeds()
     const auto surfacePlacement = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT].toString();
 
     auto* feed = new MessageFeed(feedName, feedType, this);
+    m_messageFeeds->append(feed);
     auto* overlay = new MessagesOverlay(feed, feedType, this);
     overlay->setSceneProperties(LayerSceneProperties(toSurfacePlacement(surfacePlacement)));
     overlay->setRenderer(createRenderer(rendererInfo, this));
@@ -206,8 +207,6 @@ void MessageFeedsController::setupFeeds()
       else
         emit toolErrorOccurred(QString("Failed to find icon %1").arg(rendererThumbnail), QString("Could not find icon %1 for feed %2").arg(rendererThumbnail, feedName));
     }
-
-    m_messageFeeds->append(feed);
   }
 
   // only needs to be cached until the geoView is ready
@@ -251,9 +250,7 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
 
   // only setup message feeds at startup
   if (m_geoView && m_messageFeeds->rowCount() == 0)
-  {
     setupFeeds();
-  }
 
   const auto locationBroadcastConfig = properties[MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME].toMap();
   if (locationBroadcastConfig.contains(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE) &&

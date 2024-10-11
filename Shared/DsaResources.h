@@ -27,6 +27,7 @@ class DsaResources : public QObject
 {
   Q_OBJECT
 
+  Q_PROPERTY(QString arcGISMapsSDKVersion READ arcGISMapsSDKVersion CONSTANT)
   Q_PROPERTY(QUrl icon2d READ icon2d CONSTANT)
   Q_PROPERTY(QUrl icon3d READ icon3d CONSTANT)
   Q_PROPERTY(QUrl iconAboutMap READ iconAboutMap CONSTANT)
@@ -89,8 +90,11 @@ class DsaResources : public QObject
 public:
   DsaResources(QObject* parent = nullptr);
   ~DsaResources();
+  void setArcGISMapsSDKVersion(const char* arcGISMapsSDKVersion);
 
 private:
+  QString m_arcGISMapsSDKVersion;
+  QString arcGISMapsSDKVersion() const;
   QUrl icon2d() const;
   QUrl icon3d() const;
   QUrl iconAboutMap() const;

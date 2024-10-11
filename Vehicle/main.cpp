@@ -223,5 +223,6 @@ QObject* dsaStylesProvider(QQmlEngine* engine, QJSEngine*)
 QObject* dsaResourcesProvider(QQmlEngine* engine, QJSEngine*)
 {
   static Dsa::DsaResources* dsaResources = new Dsa::DsaResources(engine);
+  dsaResources->setArcGISMapsSDKVersion(QUOTE(ARCGIS_MAPS_SDK_VERSION));
   return dsaResources;
 }

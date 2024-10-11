@@ -46,6 +46,24 @@ DsaResources::~DsaResources()
 }
 
 /*!
+ * \brief Sets the string for the Maps SDK version from main.cpp
+ * \param const char* from the ARCGIS_MAPS_SDK_VERSION define
+ */
+void DsaResources::setArcGISMapsSDKVersion(const char *arcGISMapsSDKVersion)
+{
+  m_arcGISMapsSDKVersion = QString(arcGISMapsSDKVersion);
+}
+
+/*!
+ * \brief Returns the version string of the Maps SDK that is used by the project
+ * \return
+ */
+QString DsaResources::arcGISMapsSDKVersion() const
+{
+  return m_arcGISMapsSDKVersion;
+}
+
+/*!
   \brief Returns the URL to the "2D" icon.
  */
 QUrl DsaResources::icon2d() const

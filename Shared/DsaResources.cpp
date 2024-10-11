@@ -51,6 +51,7 @@ DsaResources::~DsaResources()
 void DsaResources::setArcGISMapsSDKVersion(const char* arcGISMapsSDKVersion)
 {
   m_arcGISMapsSDKVersion = QString(arcGISMapsSDKVersion);
+  emit arcGISMapsSDKVersionChanged();
 }
 
 /*!

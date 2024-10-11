@@ -173,10 +173,22 @@ QString MessageFeedsController::toolName() const
 
 void MessageFeedsController::setupFeeds()
 {
+  // this should only initialize with actual data in the messageFeedProperties list once
+  if (m_feedsInitialized)
+    return;
+
   // parse and add message feeds
   const auto messageFeedsJson = QJsonArray::fromVariantList(m_messageFeedProperties);
   for (const auto& messageFeed : messageFeedsJson)
   {
+    // The swapping of GraphicsLayer for DynamicEntityLayer introduced an async call into this method.
+    // When the DynamicEntityLayer is added below, execution can continue and setupFeeds will be called again via Tool::setProperties.
+    // This flag will prevent it from being called more than once per app startup.
+    // GeoView updated also calls this method but it is prior to the messageFeedProperties list getting populated.
+    // We need to not flag this from being called until there are feeds in the properties list
+    m_feedsInitialized = true;
+
+    // deserialize the messageFeed from the json object itself
     const auto messageFeedJsonObject = messageFeed.toObject();
     if (messageFeedJsonObject.size() < 4)
     {
@@ -251,9 +263,7 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
 
   // only setup message feeds at startup
   if (m_geoView && m_messageFeeds->rowCount() == 0)
-  {
     setupFeeds();
-  }
 
   const auto locationBroadcastConfig = properties[MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME].toMap();
   if (locationBroadcastConfig.contains(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE) &&

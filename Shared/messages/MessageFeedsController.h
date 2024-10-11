@@ -98,6 +98,7 @@ private:
   MessageFeedListModel* m_messageFeeds = nullptr;
   QList<DataListener*> m_dataListeners;
   QString m_resourcePath;
+  bool m_feedsInitialized = false;
   LocationBroadcast* m_locationBroadcast = nullptr;
   QVariantList m_messageFeedProperties;
 };

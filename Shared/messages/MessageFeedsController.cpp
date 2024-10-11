@@ -250,9 +250,7 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
 
   // only setup message feeds at startup
   if (m_geoView && m_messageFeeds->rowCount() == 0)
-  {
     setupFeeds();
-  }
 
   const auto locationBroadcastConfig = properties[MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME].toMap();
   if (locationBroadcastConfig.contains(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE) &&

@@ -174,7 +174,6 @@ QString MessageFeedsController::toolName() const
 void MessageFeedsController::setupFeeds()
 {
   // parse and add message feeds
-
   const auto messageFeedsJson = QJsonArray::fromVariantList(m_messageFeedProperties);
   for (const auto& messageFeed : messageFeedsJson)
   {

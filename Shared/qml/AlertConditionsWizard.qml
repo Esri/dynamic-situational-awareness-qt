@@ -17,6 +17,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Material
+import QtQuick.Layouts
 import QtQuick.Window
 import Esri.ArcGISRuntime.OpenSourceApps.DSA
 
@@ -26,6 +27,7 @@ Rectangle {
 
     property bool readyToAdd: conditionFrame.currentItem == reviewPage
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
+    readonly property real wizardButtonsFactoredMargin: 4 * scaleFactor
 
     Text {
         id: titleRow
@@ -92,7 +94,7 @@ Rectangle {
         clip: true
         anchors {
             top: pageIndicator.bottom
-            bottom: nextButton.top
+            bottom: wizardButtonRow.top
             left: parent.left
             right: parent.right
             margins: 8 * scaleFactor
@@ -204,97 +206,115 @@ Rectangle {
         }
     }
 
-    Button {
-        id: backButton
-        visible: conditionFrame.currentIndex > 0
+    RowLayout {
+        id: wizardButtonRow
         anchors {
-            left: conditionFrame.left
-            verticalCenter: nextButton.verticalCenter
-            margins: 8 * scaleFactor
-        }
-        height: nextButton.height
-        width: nextButton.width
-        text: "Back"
-        font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-
-        onClicked: conditionFrame.decrementCurrentIndex();
-    }
-
-    Button {
-        id: nextButton
-        visible: conditionFrame.currentIndex < (conditionFrame.count -1) && conditionFrame.currentItem.valid
-        anchors {
-            right: conditionFrame.right
             bottom: parent.bottom
-            margins: 16 * scaleFactor
+            horizontalCenter: parent.horizontalCenter
+            margins: wizardButtonsFactoredMargin * 2
         }
-        height: 32 * scaleFactor
-        width: 64 * scaleFactor
-        text: "Next"
-        font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+        Button {
+            id: backButton
+            enabled: conditionFrame.currentIndex > 0
+            opacity: enabled ? 1.0 : 0.0
+            Layout.margins: wizardButtonsFactoredMargin
+            Material.roundedScale: Material.NotRounded
+            height: nextButton.height
+            width: nextButton.width
+            text: "Back"
+            leftPadding: 0
+            rightPadding: 0
+            topPadding: 0
+            bottomPadding: 0
+            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor * 1.5
 
-        onClicked: conditionFrame.incrementCurrentIndex();
-    }
-
-    ToolIcon {
-        id: createButton
-        anchors {
-            verticalCenter: nextButton.verticalCenter
-            right: conditionFrame.horizontalCenter
-            margins: 4 * scaleFactor
+            onClicked: conditionFrame.decrementCurrentIndex();
         }
-        enabled: readyToAdd
-        opacity: enabled ? 1.0 : 0.5
-        iconSource: DsaResources.iconComplete
-        toolName: "Create"
-        visible: reviewText.visible
-        labelColor: Material.accent
-        onToolSelected: {
-            conditionsWizardRoot.visible = false;
-            if (conditionPage.isSpatial) {
-                if (queryLoader.item.isWithinDistance) {
-                    toolController.addWithinDistanceAlert(namePage.conditionName,
+
+        ToolIcon {
+            id: createButton
+            Layout.margins: {
+                left: 0
+                top: wizardButtonsFactoredMargin
+                right: wizardButtonsFactoredMargin
+                bottom: wizardButtonsFactoredMargin
+            }
+            enabled: readyToAdd
+            opacity: enabled ? 1.0 : 0.5
+            iconSource: DsaResources.iconComplete
+            toolName: "Create"
+            labelColor: Material.accent
+            onToolSelected: {
+                conditionsWizardRoot.visible = false;
+                if (conditionPage.isSpatial) {
+                    if (queryLoader.item.isWithinDistance) {
+                        toolController.addWithinDistanceAlert(namePage.conditionName,
+                                                              levelPage.getLevel(),
+                                                              sourcePage.sourceName,
+                                                              queryLoader.item.distance,
+                                                              targetLoader.item.targetFeatureId,
+                                                              targetLoader.item.targetIndex);
+                    } else if (queryLoader.item.isWithinArea) {
+                        toolController.addWithinAreaAlert(namePage.conditionName,
                                                           levelPage.getLevel(),
                                                           sourcePage.sourceName,
-                                                          queryLoader.item.distance,
                                                           targetLoader.item.targetFeatureId,
                                                           targetLoader.item.targetIndex);
-                } else if (queryLoader.item.isWithinArea) {
-                    toolController.addWithinAreaAlert(namePage.conditionName,
-                                                      levelPage.getLevel(),
-                                                      sourcePage.sourceName,
-                                                      targetLoader.item.targetFeatureId,
-                                                      targetLoader.item.targetIndex);
+                    }
+                } else if (conditionPage.isAttribute) {
+                    toolController.addAttributeEqualsAlert(namePage.conditionName,
+                                                           levelPage.getLevel(),
+                                                           sourcePage.sourceName,
+                                                           queryLoader.item.attributeField,
+                                                           targetLoader.item.attributeValue);
                 }
-            } else if (conditionPage.isAttribute) {
-                toolController.addAttributeEqualsAlert(namePage.conditionName,
-                                                       levelPage.getLevel(),
-                                                       sourcePage.sourceName,
-                                                       queryLoader.item.attributeField,
-                                                       targetLoader.item.attributeValue);
+
+                for (var i = 0; i < conditionFrame.count; ++i)
+                    conditionFrame.itemAt(i).clear();
+                conditionFrame.setCurrentIndex(0);
             }
-
-            for (var i = 0; i < conditionFrame.count; ++i)
-                conditionFrame.itemAt(i).clear();
-            conditionFrame.setCurrentIndex(0);
         }
-    }
 
-    ToolIcon {
-        id: cancelButton
-        anchors {
-            verticalCenter: nextButton.verticalCenter
-            left: conditionFrame.horizontalCenter
-            margins: 4 * scaleFactor
+        ToolIcon {
+            id: cancelButton
+            Layout.margins: {
+                left: 0
+                top: wizardButtonsFactoredMargin
+                right: wizardButtonsFactoredMargin
+                bottom: wizardButtonsFactoredMargin
+            }
+            toolName: "Cancel"
+            iconSource: DsaResources.iconClose
+
+            onToolSelected: {
+                conditionsWizardRoot.visible = false;
+                for (var i = 0; i < conditionFrame.count; ++i)
+                    conditionFrame.itemAt(i).clear();
+                conditionFrame.setCurrentIndex(0);
+            }
         }
-        toolName: "Cancel"
-        iconSource: DsaResources.iconClose
 
-        onToolSelected: {
-            conditionsWizardRoot.visible = false;
-            for (var i = 0; i < conditionFrame.count; ++i)
-                conditionFrame.itemAt(i).clear();
-            conditionFrame.setCurrentIndex(0);
+        Button {
+            id: nextButton
+            enabled: conditionFrame.currentIndex < (conditionFrame.count -1) && conditionFrame.currentItem.valid
+            opacity: enabled ? 1.0 : 0.0
+            Layout.margins: {
+                left: 0
+                top: wizardButtonsFactoredMargin
+                right: wizardButtonsFactoredMargin
+                bottom: wizardButtonsFactoredMargin
+            }
+            Material.roundedScale: Material.NotRounded
+            height: 32 * scaleFactor
+            width: 64 * scaleFactor
+            text: "Next"
+            leftPadding: 0
+            rightPadding: 0
+            topPadding: 0
+            bottomPadding: 0
+            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor * 1.5
+
+            onClicked: conditionFrame.incrementCurrentIndex();
         }
     }
 }

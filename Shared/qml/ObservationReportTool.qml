@@ -200,7 +200,11 @@ DsaPanel {
             height: nextButton.height
             width: nextButton.width
             text: "Back"
-            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor * 1.75
+            leftPadding: 0
+            rightPadding: 0
+            topPadding: 0
+            bottomPadding: 0
+            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor * 1.5
 
             onClicked: reportFrame.decrementCurrentIndex();
         }
@@ -271,7 +275,11 @@ DsaPanel {
             height: 32 * scaleFactor
             width: 64 * scaleFactor
             text: "Next"
-            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor * 1.75
+            leftPadding: 0
+            rightPadding: 0
+            topPadding: 0
+            bottomPadding: 0
+            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor * 1.5
 
             onClicked: reportFrame.incrementCurrentIndex();
         }

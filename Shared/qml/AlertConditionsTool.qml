@@ -304,10 +304,9 @@ DsaPanel {
         }
         text: "Create new"
         font {
-            pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+            pixelSize: DsaStyles.toolFontPixelSize * scaleFactor * 1.5
             bold: checked
         }
-        width: 96 * scaleFactor
         background: Rectangle {
             color: Material.accent
             border.color: Material.foreground

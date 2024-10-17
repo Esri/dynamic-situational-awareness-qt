@@ -23,6 +23,7 @@
 #include "AnalysisListModel.h"
 #include "AnalysisOverlay.h"
 #include "AnalysisOverlayListModel.h"
+#include "DynamicEntity.h"
 #include "Error.h"
 #include "Feature.h"
 #include "FeatureIterator.h"
@@ -46,6 +47,7 @@
 #include "FeatureQueryResultManager.h"
 #include "LocationController.h"
 #include "LocationDisplay3d.h"
+#include "MessagesOverlay.h"
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
@@ -97,6 +99,64 @@ void LineOfSightController::setVisibleByCount(int visibleByCount)
 
   m_visibleByCount = visibleByCount;
   emit visibleByCountChanged();
+}
+
+void LineOfSightController::updateLayerNames()
+{
+  // remove any previously tracked overlay names from the list
+  m_overlays.clear();
+
+  // check the scene's operational layers
+  QStringList overlayNames;
+  auto* operationalLayers = ToolResourceProvider::instance()->operationalLayers();
+  if (operationalLayers)
+  {
+    // loop through all the layers in the operationalLayers property
+    for (auto layerIt = operationalLayers->begin(); layerIt < operationalLayers->end(); layerIt++)
+    {
+      auto* layer = *layerIt;
+      if (!layer)
+        return;
+
+      // assign a handler to trigger the layers changed event if the layer is not loaded when we are iterating through
+      if (layer->loadStatus() != LoadStatus::Loaded)
+      {
+        connect(layer, &Layer::doneLoading, this, [this](const Error& e)
+        {
+          if (!e.isEmpty())
+          {
+            emit errorOccurred(e);
+            return;
+          }
+
+          onOperationalLayersChanged();
+        });
+        continue;
+      }
+
+      // check based on layer type
+      if (auto* featureLayer = dynamic_cast<FeatureLayer*>(layer); featureLayer)
+      {
+        // Only point layers are suitable for Line of sight
+        if (featureLayer->featureTable()->geometryType() == GeometryType::Point)
+        {
+          overlayNames.append(featureLayer->name());
+          m_overlays.append(featureLayer);
+        }
+      }
+      else if (auto* messagesOverlay = dynamic_cast<MessagesOverlay*>(layer); messagesOverlay)
+      {
+        // MessagesOverlay can only be geometry type point
+        overlayNames.append(messagesOverlay->name());
+        m_overlays.append(messagesOverlay);
+      }
+
+      // skipping for any non-supported layer types
+    }
+  }
+
+  m_overlayNames->setStringList(overlayNames);
+  emit overlayNamesChanged();
 }
 
 /*!
@@ -204,72 +264,22 @@ void LineOfSightController::onGeoViewChanged(GeoView* geoView)
  */
 void LineOfSightController::onOperationalLayersChanged()
 {
-  Esri::ArcGISRuntime::LayerListModel* operationalLayers = ToolResourceProvider::instance()->operationalLayers();
   // if there are no layers, clear the overlays list
+  auto* operationalLayers = ToolResourceProvider::instance()->operationalLayers();
   if (!operationalLayers)
   {
-    m_overlayNames->setStringList(QStringList());
+    m_overlayNames->setStringList(QStringList{});
     emit overlayNamesChanged();
 
     return;
   }
 
-  // lambda to update the list of overlays
-  auto updateNames = [this]()
-  {
-    QStringList overlayNames;
-    m_overlays.clear();
-
-    Esri::ArcGISRuntime::LayerListModel* operationalLayers = ToolResourceProvider::instance()->operationalLayers();
-    if (operationalLayers)
-    {
-      const int opLayersCount = operationalLayers->rowCount();
-      for (int i = 0; i < opLayersCount; ++i)
-      {
-        Layer* lyr = operationalLayers->at(i);
-        if (!lyr)
-          continue;
-
-        FeatureLayer* featLayer = qobject_cast<FeatureLayer*>(lyr);
-        if (!featLayer)
-          continue;
-
-        // if the feature layer is not loaded, react to the loaded signal and update the list
-        if (featLayer->loadStatus() != LoadStatus::Loaded)
-        {
-          connect(featLayer, &FeatureLayer::doneLoading, this, [this](Error e)
-          {
-            if (!e.isEmpty())
-            {
-              emit errorOccurred(e);
-              return;
-            }
-
-            onOperationalLayersChanged();
-          });
-        }
-        else
-        {
-          // Only point layers are suitable for Line of sight
-          if (featLayer->featureTable()->geometryType() == GeometryType::Point)
-          {
-            overlayNames.append(featLayer->name());
-            m_overlays.append(featLayer);
-          }
-        }
-      }
-    }
-
-    m_overlayNames->setStringList(overlayNames);
-    emit overlayNamesChanged();
-  };
-
   // update the list of overlays whenever layers are added/removed
-  connect(operationalLayers, &LayerListModel::rowsInserted, this, updateNames);
-  connect(operationalLayers, &LayerListModel::rowsRemoved, this, updateNames);
+  connect(operationalLayers, &LayerListModel::rowsInserted, this, &LineOfSightController::updateLayerNames);
+  connect(operationalLayers, &LayerListModel::rowsRemoved, this, &LineOfSightController::updateLayerNames);
 
-  // call the lambda to set the initial list of overlay names
-  updateNames();
+  // set the initial list of overlay names
+  updateLayerNames();
 }
 
 /*!
@@ -379,10 +389,12 @@ void LineOfSightController::selectOverlayIndex(int selectOverlayIndex)
   clearAnalysis();
 
   if (selectOverlayIndex > m_overlays.size() || selectOverlayIndex == -1)
+  {
     emit selectOverlayFailed();
     return;
+  }
 
-  FeatureLayer* overlay = m_overlays.at(selectOverlayIndex);
+  auto* overlay = m_overlays.at(selectOverlayIndex);
   if (!overlay)
   {
     emit toolErrorOccurred(QStringLiteral("Invalid Line of sight overlay selected"),
@@ -391,98 +403,130 @@ void LineOfSightController::selectOverlayIndex(int selectOverlayIndex)
     return;
   }
 
-  constexpr int maxFeatures = 16; // Due to performance reasons, limit the number of features which can be used in the analysis
-  const int featuresCount = overlay->featureTable()->numberOfFeatures();
-  if (featuresCount > maxFeatures)
+  if (auto* featureLayer = dynamic_cast<FeatureLayer*>(overlay); featureLayer)
   {
-    emit toolErrorOccurred(QString("There are too many points in this layer (%1).\n Please choose another one with %2 or fewer points.")
-                           .arg(QString::number(featuresCount), QString::number(maxFeatures)),
-                           QStringLiteral("For performance reasons, Line of Sight analysis is limited to a maximum number of features"));
-    emit selectOverlayFailed();
-    return;
+    if (!resetAnalysis(featureLayer->featureTable()->numberOfFeatures()))
+      return;
+
+    // perform a query to retrieve all the features from the selected overlay. These will be the target features for Line of sight analysis.
+    QueryParameters query;
+    query.setWhereClause(QStringLiteral("1=1"));
+    query.setReturnGeometry(true);
+    featureLayer->featureTable()->queryFeaturesAsync(query, this).then(this, [this](FeatureQueryResult* results) -> bool
+    {
+      FeatureQueryResultManager resultsManager{results};
+
+      // create a local QObject to as as the parent for returned features
+      // These are only required within the scope of this method
+      QObject localParent;
+
+      // For each feature, obtain a point location and use it as the observer for a new
+      // GeoElementLineOfSight which will be added to the overlay.
+      for (auto* feature : resultsManager.m_results->iterator().features(&localParent))
+      {
+        if (feature == nullptr)
+          continue;
+
+        // create a Line of sight from the feature to the current location
+        auto* lineOfSight = new GeoElementLineOfSight(feature, m_locationGeoElement, m_lineOfSightParent);
+        setupNewLineOfSight(lineOfSight);
+      }
+
+      // if no early returns or failures happened pass success=true along to the continuation
+      return true;
+    }).then(this, [this](bool success)
+    {
+      if (!success)
+        emit selectOverlayFailed();
+    });
   }
-
-  // perform a query to retrieve all the features from the selected overlay. These will be the target features for Line of sight analysis.
-  QueryParameters query;
-  query.setWhereClause(QStringLiteral("1=1"));
-  query.setReturnGeometry(true);
-  overlay->featureTable()->queryFeaturesAsync(query, this).then(this, [this](FeatureQueryResult* results) -> bool
+  else if (auto* messagesOverlay = dynamic_cast<MessagesOverlay*>(overlay); messagesOverlay)
   {
-    FeatureQueryResultManager resultsManager{results};
+    if (!resetAnalysis(messagesOverlay->dynamicEntities().count()))
+      return;
 
-    if (!m_locationGeoElement)
-      getLocationGeoElement();
-
-    if (!m_locationGeoElement)
-    {
-      emit toolErrorOccurred(QStringLiteral("Failed to get location"), QStringLiteral("Unable to find My Location GeoElement for GeoElementLineOfSight"));
-      return false;
-    }
-
-    for (const auto& conn : m_visibleByConnections)
-      disconnect(conn);
-
-    m_visibleByConnections.clear();
-    setVisibleByCount(0);
-
-    // clear the QObject used as a parent for Line of Sight results
-    if (m_lineOfSightParent)
-    {
-      delete m_lineOfSightParent;
-      m_lineOfSightParent = nullptr;
-    }
-    m_lineOfSightParent = new QObject(this);
-
-    // create a local QObject to as as the parent for returned features
-    // These are only required within the scope of this method
-    QObject localParent;
-
-    // For each feature, obtain a point location and use it as the observer for a new
+    // For each dynamic entity, obtain a point location and use it as the observer for a new
     // GeoElementLineOfSight which will be added to the overlay.
-    for (auto* feature : resultsManager.m_results->iterator().features(&localParent))
+    const auto dynamicEntities = messagesOverlay->dynamicEntities();
+    for (auto* dynamicEntity : dynamicEntities)
     {
-      if (feature == nullptr)
+      if (dynamicEntity == nullptr)
         continue;
 
       // create a Line of sight from the feature to the current location
-      auto* lineOfSight = new GeoElementLineOfSight(feature, m_locationGeoElement, m_lineOfSightParent);
-      lineOfSight->setVisible(m_analysisVisible);
-      m_lineOfSightOverlay->analyses()->append(lineOfSight);
+      auto* lineOfSight = new GeoElementLineOfSight(dynamicEntity, m_locationGeoElement, m_lineOfSightParent);
+      setupNewLineOfSight(lineOfSight);
+    }
+  }
+}
 
-      m_visibleByConnections.append(connect(lineOfSight, &GeoElementLineOfSight::targetVisibilityChanged, this, [this]()
-      {
-        int visibleCount = 0;
-        auto* losList = m_lineOfSightOverlay->analyses();
-        const int count = losList->rowCount();
-        for (int i = 0; i < count; ++i)
-        {
-          auto* analysis = losList->at(i);
-          if (!analysis)
-            continue;
+bool LineOfSightController::resetAnalysis(size_t featureCount)
+{
+  constexpr int maxFeatures = 32; // Due to performance reasons, limit the number of features which can be used in the analysis
+  if (featureCount > maxFeatures)
+  {
+    emit toolErrorOccurred(QString("There are too many points in this layer (%1).\n Please choose another one with %2 or fewer points.")
+                           .arg(QString::number(featureCount), QString::number(maxFeatures)),
+                           QStringLiteral("For performance reasons, Line of Sight analysis is limited to a maximum number of features"));
+    emit selectOverlayFailed();
+    return false;
+  }
 
-          auto* lineOfSight = qobject_cast<GeoElementLineOfSight*>(analysis);
-          if (!lineOfSight)
-            continue;
+  if (!m_locationGeoElement)
+    getLocationGeoElement();
 
-          // don't count Line of Sight from the current location
-          if (lineOfSight->observerGeoElement() == m_locationGeoElement)
-            continue;
+  if (!m_locationGeoElement)
+  {
+    emit toolErrorOccurred(QStringLiteral("Failed to get location"), QStringLiteral("Unable to find My Location GeoElement for GeoElementLineOfSight"));
+    return false;
+  }
 
-          if (lineOfSight->targetVisibility() == LineOfSightTargetVisibility::Visible)
-            visibleCount += 1;
-        }
+  for (const auto& conn : m_visibleByConnections)
+    disconnect(conn);
 
-        setVisibleByCount(visibleCount);
-      }));
+  m_visibleByConnections.clear();
+  setVisibleByCount(0);
+
+  // clear the QObject used as a parent for Line of Sight results
+  if (m_lineOfSightParent)
+  {
+    delete m_lineOfSightParent;
+    m_lineOfSightParent = nullptr;
+  }
+  m_lineOfSightParent = new QObject(this);
+  return true;
+}
+
+void LineOfSightController::setupNewLineOfSight(GeoElementLineOfSight* lineOfSight)
+{
+  lineOfSight->setVisible(m_analysisVisible);
+  m_lineOfSightOverlay->analyses()->append(lineOfSight);
+
+  m_visibleByConnections.append(connect(lineOfSight, &GeoElementLineOfSight::targetVisibilityChanged, this, [this]()
+  {
+    int visibleCount = 0;
+    auto* losList = m_lineOfSightOverlay->analyses();
+    const int count = losList->rowCount();
+    for (int i = 0; i < count; ++i)
+    {
+      auto* analysis = losList->at(i);
+      if (!analysis)
+        continue;
+
+      auto* lineOfSight = qobject_cast<GeoElementLineOfSight*>(analysis);
+      if (!lineOfSight)
+        continue;
+
+      // don't count Line of Sight from the current location
+      if (lineOfSight->observerGeoElement() == m_locationGeoElement)
+        continue;
+
+      if (lineOfSight->targetVisibility() == LineOfSightTargetVisibility::Visible)
+        visibleCount += 1;
     }
 
-    // if no early returns or failures happened pass success=true along to the continuation
-    return true;
-  }).then(this, [this](bool success)
-  {
-    if (!success)
-      emit selectOverlayFailed();
-  });
+    setVisibleByCount(visibleCount);
+  }));
 }
 
 /*!

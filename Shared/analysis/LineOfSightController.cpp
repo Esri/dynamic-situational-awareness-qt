@@ -505,15 +505,14 @@ void LineOfSightController::setupNewLineOfSight(GeoElementLineOfSight* lineOfSig
   m_visibleByConnections.append(connect(lineOfSight, &GeoElementLineOfSight::targetVisibilityChanged, this, [this]()
   {
     int visibleCount = 0;
-    auto* losList = m_lineOfSightOverlay->analyses();
-    const int count = losList->rowCount();
-    for (int i = 0; i < count; ++i)
+    const auto* losList = m_lineOfSightOverlay->analyses();
+    for (auto losIt = losList->begin(); losIt < losList->end(); losIt++)
     {
-      auto* analysis = losList->at(i);
+      const auto* analysis = *losIt;
       if (!analysis)
         continue;
 
-      auto* lineOfSight = qobject_cast<GeoElementLineOfSight*>(analysis);
+      const auto* lineOfSight = qobject_cast<const GeoElementLineOfSight*>(analysis);
       if (!lineOfSight)
         continue;
 

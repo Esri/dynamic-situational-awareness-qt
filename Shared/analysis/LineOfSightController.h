@@ -83,14 +83,14 @@ private:
   void getLocationGeoElement();
   void setVisibleByCount(int visibleByCount);
   void updateLayerNames();
-  bool resetAnalysis(size_t featureCount);
+  bool resetAnalysis(qsizetype featureCount);
   void setupNewLineOfSight(Esri::ArcGISRuntime::GeoElementLineOfSight* lineOfSight);
 
   QStringListModel* m_overlayNames;
   Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
   QList<Esri::ArcGISRuntime::Layer*> m_overlays;
   Esri::ArcGISRuntime::AnalysisOverlay* m_lineOfSightOverlay = nullptr;
-  QObject* m_lineOfSightParent = nullptr;
+  std::unique_ptr<QObject> m_lineOfSightParent = std::make_unique<QObject>();
   Esri::ArcGISRuntime::GeoElement* m_locationGeoElement = nullptr;
   QMetaObject::Connection m_queryFeaturesConnection;
   bool m_analysisVisible = true;

@@ -108,13 +108,12 @@ void LineOfSightController::updateLayerNames()
 
   // check the scene's operational layers
   QStringList overlayNames;
-  auto* operationalLayers = ToolResourceProvider::instance()->operationalLayers();
+  const auto* operationalLayers = ToolResourceProvider::instance()->operationalLayers();
   if (operationalLayers)
   {
     // loop through all the layers in the operationalLayers property
-    for (auto layerIt = operationalLayers->begin(); layerIt < operationalLayers->end(); layerIt++)
+    for (auto* layer : *operationalLayers)
     {
-      auto* layer = *layerIt;
       if (!layer)
         return;
 
@@ -321,7 +320,7 @@ void LineOfSightController::lineOfSightFromLocationToGeoElement(GeoElement* geoE
   }
 
   // create a Line of sight from the feature to the current location
-  GeoElementLineOfSight* lineOfSight = new GeoElementLineOfSight(m_locationGeoElement, geoElement, m_lineOfSightParent);
+  GeoElementLineOfSight* lineOfSight = new GeoElementLineOfSight(m_locationGeoElement, geoElement, m_lineOfSightParent.get());
   lineOfSight->setVisible(true);
   m_lineOfSightOverlay->analyses()->append(lineOfSight);
 }
@@ -428,7 +427,7 @@ void LineOfSightController::selectOverlayIndex(int selectOverlayIndex)
           continue;
 
         // create a Line of sight from the feature to the current location
-        auto* lineOfSight = new GeoElementLineOfSight(feature, m_locationGeoElement, m_lineOfSightParent);
+        auto* lineOfSight = new GeoElementLineOfSight(feature, m_locationGeoElement, m_lineOfSightParent.get());
         setupNewLineOfSight(lineOfSight);
       }
 
@@ -454,13 +453,13 @@ void LineOfSightController::selectOverlayIndex(int selectOverlayIndex)
         continue;
 
       // create a Line of sight from the feature to the current location
-      auto* lineOfSight = new GeoElementLineOfSight(dynamicEntity, m_locationGeoElement, m_lineOfSightParent);
+      auto* lineOfSight = new GeoElementLineOfSight(dynamicEntity, m_locationGeoElement, m_lineOfSightParent.get());
       setupNewLineOfSight(lineOfSight);
     }
   }
 }
 
-bool LineOfSightController::resetAnalysis(size_t featureCount)
+bool LineOfSightController::resetAnalysis(qsizetype featureCount)
 {
   constexpr int maxFeatures = 32; // Due to performance reasons, limit the number of features which can be used in the analysis
   if (featureCount > maxFeatures)
@@ -489,11 +488,7 @@ bool LineOfSightController::resetAnalysis(size_t featureCount)
 
   // clear the QObject used as a parent for Line of Sight results
   if (m_lineOfSightParent)
-  {
-    delete m_lineOfSightParent;
-    m_lineOfSightParent = nullptr;
-  }
-  m_lineOfSightParent = new QObject(this);
+    m_lineOfSightParent = std::make_unique<QObject>();
   return true;
 }
 
@@ -505,13 +500,9 @@ void LineOfSightController::setupNewLineOfSight(GeoElementLineOfSight* lineOfSig
   m_visibleByConnections.append(connect(lineOfSight, &GeoElementLineOfSight::targetVisibilityChanged, this, [this]()
   {
     int visibleCount = 0;
-    const auto* losList = m_lineOfSightOverlay->analyses();
-    for (auto losIt = losList->begin(); losIt < losList->end(); losIt++)
+    const auto* analyses = m_lineOfSightOverlay->analyses();
+    for (const auto* analysis : *analyses)
     {
-      const auto* analysis = *losIt;
-      if (!analysis)
-        continue;
-
       const auto* lineOfSight = qobject_cast<const GeoElementLineOfSight*>(analysis);
       if (!lineOfSight)
         continue;
@@ -544,10 +535,7 @@ void LineOfSightController::clearAnalysis()
 
   // delete the QObject used as the parent for the analysis
   if (m_lineOfSightParent)
-  {
-    delete m_lineOfSightParent;
-    m_lineOfSightParent = nullptr;
-  }
+    m_lineOfSightParent = std::make_unique<QObject>();
 }
 
 } // Dsa

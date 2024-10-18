@@ -489,7 +489,9 @@ void ContextMenuController::selectOption(const QString& option)
             lineOfSightTool->lineOfSightFromLocationToGeoElement(dynamicEntityGeoElement);
           }
           else
+          {
             lineOfSightTool->lineOfSightFromLocationToGeoElement(geoElement);
+          }
         }
       }
     };

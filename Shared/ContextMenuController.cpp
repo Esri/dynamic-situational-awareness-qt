@@ -20,6 +20,8 @@
 #include "ContextMenuController.h"
 
 // C++ API headers
+#include "DynamicEntity.h"
+#include "DynamicEntityObservation.h"
 #include "Graphic.h"
 #include "GraphicsOverlay.h"
 #include "IdentifyGraphicsOverlayResult.h"
@@ -480,7 +482,16 @@ void ContextMenuController::selectOption(const QString& option)
           if (!geoElement || geoElement->geometry().geometryType() != GeometryType::Point)
             continue;
 
-          lineOfSightTool->lineOfSightFromLocationToGeoElement(geoElement);
+          // identify results of type observation require the dynamic entity they belong to
+          if (auto* dynamicEntityObservation = dynamic_cast<DynamicEntityObservation*>(geoElement); dynamicEntityObservation)
+          {
+            auto* dynamicEntityGeoElement = static_cast<GeoElement*>(dynamicEntityObservation->dynamicEntity());
+            lineOfSightTool->lineOfSightFromLocationToGeoElement(dynamicEntityGeoElement);
+          }
+          else
+          {
+            lineOfSightTool->lineOfSightFromLocationToGeoElement(geoElement);
+          }
         }
       }
     };

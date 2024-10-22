@@ -108,6 +108,7 @@ private:
   QJsonObject conditionToJson(AlertCondition* condition) const;
   QFuture<bool> addConditionFromJson(const QJsonObject& json);
   void addStoredConditions();
+  bool conditionAlreadyAdded(const QString& conditionName);
 
   QFuture<AlertTarget*> targetFromItemIdAndIndex(int itemId, int targetOverlayIndex, QString& targetDescription) const;
   QFuture<AlertTarget*> targetFromFeatureLayer(Esri::ArcGISRuntime::FeatureLayer* featureLayer, int itemId) const;

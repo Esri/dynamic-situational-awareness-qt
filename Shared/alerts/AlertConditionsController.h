@@ -80,6 +80,7 @@ public:
   Q_INVOKABLE void togglePickMode();
   Q_INVOKABLE void updateConditionName(int rowIndex, const QString& conditionName);
   Q_INVOKABLE void updateConditionLevel(int rowIndex, int level);
+  Q_INVOKABLE bool conditionAlreadyAdded(const QString& conditionName);
 
   QAbstractItemModel* sourceNames() const;
   QAbstractItemModel* targetNames() const;
@@ -108,7 +109,6 @@ private:
   QJsonObject conditionToJson(AlertCondition* condition) const;
   QFuture<bool> addConditionFromJson(const QJsonObject& json);
   void addStoredConditions();
-  bool conditionAlreadyAdded(const QString& conditionName);
 
   QFuture<AlertTarget*> targetFromItemIdAndIndex(int itemId, int targetOverlayIndex, QString& targetDescription) const;
   QFuture<AlertTarget*> targetFromFeatureLayer(Esri::ArcGISRuntime::FeatureLayer* featureLayer, int itemId) const;

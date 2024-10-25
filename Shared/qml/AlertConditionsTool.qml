@@ -181,6 +181,8 @@ DsaPanel {
                     width: parent.width
                     spacing: 10 * scaleFactor
                     leftPadding: 10 * scaleFactor
+                    property bool nameAlreadyInUse: !toolController.conditionAlreadyAdded(editConditionName.text)
+                    property bool valid: editConditionName.length > 0 && nameAlreadyInUse
 
                     ComboBox {
                         id: editLevelBox
@@ -194,7 +196,7 @@ DsaPanel {
 
                     TextField {
                         id: editConditionName
-                        color: Material.accent
+                        color: parent.nameAlreadyInUse ? Material.accent : "red"
                         font.pixelSize: 14 * scaleFactor
                         width: parent.width * 0.9
                         horizontalAlignment: Text.AlignLeft
@@ -208,6 +210,8 @@ DsaPanel {
                         OverlayButton {
                             id: keepEditsButton
                             iconUrl: DsaResources.iconComplete
+                            enabled: parent.parent.valid
+                            opacity: parent.parent.valid ? 1.0 : 0.5
 
                             onClicked: {
                                 editMenu.close();
@@ -244,6 +248,8 @@ DsaPanel {
             width: parent.width
             spacing: 10 * scaleFactor
             leftPadding: 10 * scaleFactor
+            property bool nameAlreadyInUseMobile: !toolController.conditionAlreadyAdded(editConditionMobileName.text)
+            property bool validMobile: editConditionMobileName.length > 0 && nameIsValid
 
             ComboBox {
                 id: editLevelMobileBox
@@ -257,7 +263,7 @@ DsaPanel {
 
             TextField {
                 id: editConditionMobileName
-                color: Material.accent
+                color: parent.nameAlreadyInUseMobile ? Material.accent : "red"
                 font.pixelSize: 14 * scaleFactor
                 width: parent.width * 0.9
                 horizontalAlignment: Text.AlignLeft
@@ -270,6 +276,8 @@ DsaPanel {
 
                 OverlayButton {
                     iconUrl: DsaResources.iconComplete
+                    enabled: parent.parent.validMobile
+                    opacity: parent.parent.validMobile ? 1.0 : 0.5
 
                     onClicked: {
                         if (conditionsList.currentName !== editConditionMobileName.text)

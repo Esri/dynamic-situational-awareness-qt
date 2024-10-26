@@ -249,7 +249,7 @@ DsaPanel {
             spacing: 10 * scaleFactor
             leftPadding: 10 * scaleFactor
             property bool nameAlreadyInUseMobile: !toolController.conditionAlreadyAdded(editConditionMobileName.text)
-            property bool validMobile: editConditionMobileName.length > 0 && nameIsValid
+            property bool validMobile: editConditionMobileName.length > 0 && nameAlreadyInUseMobile
 
             ComboBox {
                 id: editLevelMobileBox

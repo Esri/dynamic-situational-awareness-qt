@@ -296,6 +296,7 @@ QFuture<bool> AlertConditionsController::addWithinDistanceAlertBySourceLayerType
   // make sure the condition has not already been added
   if (conditionAlreadyAdded(conditionName))
     return QtFuture::makeReadyFuture(false);
+
   auto* condition = new WithinDistanceAlertCondition(level, conditionName, distance, this);
   connect(condition, &WithinDistanceAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
   condition->init(alertSourceLayer, sourceFeedName, target, targetDescription);
@@ -374,6 +375,7 @@ QFuture<bool> AlertConditionsController::addWithinAreaAlertBySourceLayerType(con
   // make sure the condition has not already been added
   if (conditionAlreadyAdded(conditionName))
     return QtFuture::makeReadyFuture(false);
+
   auto* condition = new WithinAreaAlertCondition(level, conditionName, this);
   connect(condition, &WithinAreaAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
   condition->init(alertSourceLayer, sourceFeedName, target, targetDescription);
@@ -438,6 +440,7 @@ QFuture<bool> AlertConditionsController::addAttributeEqualsAlertBySourceLayerTyp
   // make sure the condition has not already been added
   if (conditionAlreadyAdded(conditionName))
     return QtFuture::makeReadyFuture(false);
+
   AlertTarget* target = new FixedValueAlertTarget(targetValue, this);
   AttributeEqualsAlertCondition* condition = new AttributeEqualsAlertCondition(level, conditionName, attributeName, this);
   connect(condition, &AttributeEqualsAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);

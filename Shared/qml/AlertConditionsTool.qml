@@ -181,8 +181,8 @@ DsaPanel {
                     width: parent.width
                     spacing: 10 * scaleFactor
                     leftPadding: 10 * scaleFactor
-                    property bool nameAlreadyInUse: !toolController.conditionAlreadyAdded(editConditionName.text)
-                    property bool valid: editConditionName.length > 0 && nameAlreadyInUse
+                    property bool nameAlreadyInUse: toolController.conditionAlreadyAdded(editConditionName.text)
+                    property bool valid: editConditionName.length > 0 && !nameAlreadyInUse
 
                     ComboBox {
                         id: editLevelBox
@@ -196,7 +196,7 @@ DsaPanel {
 
                     TextField {
                         id: editConditionName
-                        color: parent.nameAlreadyInUse ? Material.accent : "red"
+                        color: parent.nameAlreadyInUse ? "red" : Material.accent
                         font.pixelSize: 14 * scaleFactor
                         width: parent.width * 0.9
                         horizontalAlignment: Text.AlignLeft
@@ -248,8 +248,8 @@ DsaPanel {
             width: parent.width
             spacing: 10 * scaleFactor
             leftPadding: 10 * scaleFactor
-            property bool nameAlreadyInUseMobile: !toolController.conditionAlreadyAdded(editConditionMobileName.text)
-            property bool validMobile: editConditionMobileName.length > 0 && nameAlreadyInUseMobile
+            property bool nameAlreadyInUseMobile: toolController.conditionAlreadyAdded(editConditionMobileName.text)
+            property bool validMobile: editConditionMobileName.length > 0 && !nameAlreadyInUseMobile
 
             ComboBox {
                 id: editLevelMobileBox
@@ -263,7 +263,7 @@ DsaPanel {
 
             TextField {
                 id: editConditionMobileName
-                color: parent.nameAlreadyInUseMobile ? Material.accent : "red"
+                color: parent.nameAlreadyInUseMobile ? "red" : Material.accent
                 font.pixelSize: 14 * scaleFactor
                 width: parent.width * 0.9
                 horizontalAlignment: Text.AlignLeft

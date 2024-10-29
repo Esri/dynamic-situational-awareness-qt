@@ -23,7 +23,8 @@ import Esri.ArcGISRuntime.OpenSourceApps.DSA
 Item {
     id: namePage
 
-    property bool valid: newAlertName.length > 0
+    property bool nameAlreadyInUse: toolController.conditionAlreadyAdded(newAlertName.text)
+    property bool valid: newAlertName.length > 0 && !nameAlreadyInUse
     property string instruction: "Set name"
     property alias conditionName: newAlertName.text
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
@@ -52,5 +53,20 @@ Item {
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         placeholderText: "<enter name>"
+    }
+    Label {
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+            top: newAlertName.bottom
+            margins: 16 * scaleFactor
+        }
+        font {
+            pixelSize: DsaStyles.titleFontPixelSize * scaleFactor * 0.5
+            italic: true
+        }
+
+        color: "red"
+        opacity: nameAlreadyInUse ? 1.0 : 0.0
+        text: "Name already in use"
     }
 }

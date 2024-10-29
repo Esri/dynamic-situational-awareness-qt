@@ -293,6 +293,10 @@ QFuture<bool> AlertConditionsController::addWithinDistanceAlertBySourceLayerType
                                                                                  const QString& targetDescription,
                                                                                  T* alertSourceLayer)
 {
+  // make sure the condition has not already been added
+  if (conditionAlreadyAdded(conditionName))
+    return QtFuture::makeReadyFuture(false);
+
   auto* condition = new WithinDistanceAlertCondition(level, conditionName, distance, this);
   connect(condition, &WithinDistanceAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
   condition->init(alertSourceLayer, sourceFeedName, target, targetDescription);
@@ -368,6 +372,10 @@ QFuture<bool> AlertConditionsController::addWithinAreaAlertBySourceLayerType(con
                                                                              const QString& targetDescription,
                                                                              T* alertSourceLayer)
 {
+  // make sure the condition has not already been added
+  if (conditionAlreadyAdded(conditionName))
+    return QtFuture::makeReadyFuture(false);
+
   auto* condition = new WithinAreaAlertCondition(level, conditionName, this);
   connect(condition, &WithinAreaAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
   condition->init(alertSourceLayer, sourceFeedName, target, targetDescription);
@@ -429,6 +437,10 @@ QFuture<bool> AlertConditionsController::addAttributeEqualsAlertBySourceLayerTyp
                                                                                   const QVariant& targetValue,
                                                                                   T* alertSourceLayer)
 {
+  // make sure the condition has not already been added
+  if (conditionAlreadyAdded(conditionName))
+    return QtFuture::makeReadyFuture(false);
+
   AlertTarget* target = new FixedValueAlertTarget(targetValue, this);
   AttributeEqualsAlertCondition* condition = new AttributeEqualsAlertCondition(level, conditionName, attributeName, this);
   connect(condition, &AttributeEqualsAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
@@ -1056,6 +1068,17 @@ void AlertConditionsController::addStoredConditions()
     this->blockSignals(false);
     onConditionsChanged();
   });
+}
+
+bool AlertConditionsController::conditionAlreadyAdded(const QString& conditionName)
+{
+  for (auto i = 0; i < m_conditions->rowCount(); i++)
+  {
+    const auto* condition = m_conditions->conditionAt(i);
+    if (condition->name() == conditionName)
+      return true;
+  }
+  return false;
 }
 
 /*!

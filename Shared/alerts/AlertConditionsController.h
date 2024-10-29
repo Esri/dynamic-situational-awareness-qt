@@ -80,6 +80,7 @@ public:
   Q_INVOKABLE void togglePickMode();
   Q_INVOKABLE void updateConditionName(int rowIndex, const QString& conditionName);
   Q_INVOKABLE void updateConditionLevel(int rowIndex, int level);
+  Q_INVOKABLE bool conditionAlreadyAdded(const QString& conditionName);
 
   QAbstractItemModel* sourceNames() const;
   QAbstractItemModel* targetNames() const;

@@ -34,7 +34,6 @@
 #include "Point.h"
 #include "Scene.h"
 #include "SceneView.h"
-#include "TaskWatcher.h"
 
 // Qt headers
 #include <QAbstractListModel>

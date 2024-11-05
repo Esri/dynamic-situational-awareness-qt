@@ -28,6 +28,7 @@ Item {
                          (featureIdEdit.text.length > 0 || allObjectRb.checked)
     property string instruction: "Set target"
     property alias targetIndex: targetCB.currentIndex
+    property alias targetName: targetCB.currentText
     property int targetFeatureId: singleFeatureRb.checked? Number(featureIdEdit.text) : -1
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
 

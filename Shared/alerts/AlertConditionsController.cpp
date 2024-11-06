@@ -250,7 +250,7 @@ QFuture<bool> AlertConditionsController::addWithinDistanceAlert(const QString& c
   if (levelIndex < 0 ||
       sourceFeedName.isEmpty() ||
       distance < 0.0 ||
-      targetOverlayName == "")
+      targetOverlayName.isEmpty())
   {
     emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QStringLiteral("Invalid inputs"));
     return future_false;
@@ -264,7 +264,7 @@ QFuture<bool> AlertConditionsController::addWithinDistanceAlert(const QString& c
   }
 
   QString targetDescription;
-  return targetFromItemIdAndIndex(itemId, targetOverlayName, targetDescription).then(this, [=](AlertTarget* target) -> QFuture<bool>
+  return targetFromItemIdAndOverlayName(itemId, targetOverlayName, targetDescription).then(this, [=](AlertTarget* target) -> QFuture<bool>
   {
     if (!target)
     {
@@ -330,7 +330,7 @@ QFuture<bool> AlertConditionsController::addWithinAreaAlert(const QString& condi
   const auto future_false = QtFuture::makeReadyFuture(false);
   if (levelIndex < 0 ||
       sourceFeedName.isEmpty() ||
-      targetOverlayName == "")
+      targetOverlayName.isEmpty())
   {
     emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QStringLiteral("Invalid inputs"));
     return future_false;
@@ -344,7 +344,7 @@ QFuture<bool> AlertConditionsController::addWithinAreaAlert(const QString& condi
   }
 
   QString targetDescription;
-  return targetFromItemIdAndIndex(itemId, targetOverlayName, targetDescription).then(this, [=](AlertTarget* target) -> QFuture<bool>
+  return targetFromItemIdAndOverlayName(itemId, targetOverlayName, targetDescription).then(this, [=](AlertTarget* target) -> QFuture<bool>
   {
     if (!target)
     {
@@ -1004,7 +1004,7 @@ QFuture<bool> AlertConditionsController::addConditionFromJson(const QJsonObject&
       return future_false;
 
     QString targetDescription;
-    return targetFromItemIdAndIndex(itemId, targetOverlayName, targetDescription).then(QtFuture::Launch::Sync, [=](AlertTarget* target) -> QFuture<bool>
+    return targetFromItemIdAndOverlayName(itemId, targetOverlayName, targetDescription).then(QtFuture::Launch::Sync, [=](AlertTarget* target) -> QFuture<bool>
     {
       if (!target)
         return future_false;
@@ -1084,7 +1084,7 @@ bool AlertConditionsController::conditionAlreadyAdded(const QString& conditionNa
 /*!
   \brief internal
  */
-QFuture<AlertTarget*> AlertConditionsController::targetFromItemIdAndIndex(int itemId, const QString& targetOverlayIndex, QString& targetDescription) const
+QFuture<AlertTarget*> AlertConditionsController::targetFromItemIdAndOverlayName(int itemId, const QString& targetOverlayName, QString& targetDescription) const
 {
   GeoView* geoView = ToolResourceProvider::instance()->geoView();
   AlertTarget* target = nullptr;
@@ -1102,7 +1102,7 @@ QFuture<AlertTarget*> AlertConditionsController::targetFromItemIdAndIndex(int it
       if (!layer)
         continue;
 
-      if (layer->name() == targetOverlayIndex)
+      if (layer->name() == targetOverlayName)
       {
         if (FeatureLayer* featureLayer = qobject_cast<FeatureLayer*>(layer); featureLayer)
         {
@@ -1160,7 +1160,7 @@ QFuture<AlertTarget*> AlertConditionsController::targetFromItemIdAndIndex(int it
         return QtFuture::makeReadyFuture(target);
       }
 
-      if (overlay->overlayId() != targetOverlayIndex)
+      if (overlay->overlayId() != targetOverlayName)
         continue;
 
       const QString overlayIdOrName = m_messageFeedTypesToNames.value(overlay->overlayId(), overlay->overlayId());

@@ -73,8 +73,8 @@ public:
 
   void setActive(bool active) override;
 
-  Q_INVOKABLE QFuture<bool> addWithinDistanceAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, double distance, int itemId, int targetOverlayIndex);
-  Q_INVOKABLE QFuture<bool> addWithinAreaAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, int itemId, int targetOverlayIndex);
+  Q_INVOKABLE QFuture<bool> addWithinDistanceAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, double distance, int itemId, const QString& targetOverlayName);
+  Q_INVOKABLE QFuture<bool> addWithinAreaAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, int itemId, const QString& targetOverlayName);
   Q_INVOKABLE QFuture<bool> addAttributeEqualsAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, const QString& attributeName, const QVariant& targetValue);
   Q_INVOKABLE void removeConditionAt(int rowIndex);
   Q_INVOKABLE void togglePickMode();
@@ -110,7 +110,7 @@ private:
   QFuture<bool> addConditionFromJson(const QJsonObject& json);
   void addStoredConditions();
 
-  QFuture<AlertTarget*> targetFromItemIdAndIndex(int itemId, int targetOverlayIndex, QString& targetDescription) const;
+  QFuture<AlertTarget*> targetFromItemIdAndOverlayName(int itemId, const QString& targetOverlayName, QString& targetDescription) const;
   QFuture<AlertTarget*> targetFromFeatureLayer(Esri::ArcGISRuntime::FeatureLayer* featureLayer, int itemId) const;
   AlertTarget* targetFromGraphicsOverlay(Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlay, int itemId) const;
   AlertTarget* targetFromMessagesOverlay(Dsa::MessagesOverlay* messagesOverlay, int itemId) const;

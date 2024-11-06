@@ -253,13 +253,13 @@ Rectangle {
                                                               sourcePage.sourceName,
                                                               queryLoader.item.distance,
                                                               targetLoader.item.targetFeatureId,
-                                                              targetLoader.item.targetIndex);
+                                                              targetLoader.item.targetName);
                     } else if (queryLoader.item.isWithinArea) {
                         toolController.addWithinAreaAlert(namePage.conditionName,
                                                           levelPage.getLevel(),
                                                           sourcePage.sourceName,
                                                           targetLoader.item.targetFeatureId,
-                                                          targetLoader.item.targetIndex);
+                                                          targetLoader.item.targetName);
                     }
                 } else if (conditionPage.isAttribute) {
                     toolController.addAttributeEqualsAlert(namePage.conditionName,

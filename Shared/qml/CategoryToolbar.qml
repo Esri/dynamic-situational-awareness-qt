@@ -103,6 +103,17 @@ Item {
                 target: categoryToolbar
                 titleText: "Markup"
             }
+        },
+        State {
+            name: "packages"
+            PropertyChanges {
+                target: packagesIcon
+                selected: true
+            }
+            PropertyChanges {
+                target: categoryToolbar
+                titleText: "Packages"
+            }
         }
     ]
 }

@@ -108,6 +108,15 @@ Vehicle {
                 rightMargin: 10 * scaleFactor
             }
         }
+
+        PackagesToolRow {
+            id: packagesToolRow
+            anchors {
+                verticalCenter: parent.verticalCenter
+                right: parent.right
+                rightMargin: 10 * scaleFactor
+            }
+        }
     }
 
     // Create SceneQuickView here, and create its Scene etc. in C++ code
@@ -369,6 +378,31 @@ Vehicle {
 
                 if (reportToolRow.state !== reportToolRow.observationState)
                     reportToolRow.state = reportToolRow.observationState;
+            }
+        }
+
+        PackagesTool {
+            id: packagesTool
+            anchors {
+                right: parent.right
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+            onClosed: {
+                visible = false;
+                packagesToolRow.state = packagesToolRow.clearState;
+            }
+
+            onVisibleChanged: {
+                if (!visible)
+                    return;
+
+                categoryToolbar.state = "packages";
+
+                if (packagesToolRow.state !== packagesToolRow.observationState)
+                    packagesToolRow.state = packagesToolRow.observationState;
             }
         }
 

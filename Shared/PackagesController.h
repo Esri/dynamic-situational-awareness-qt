@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright 2012-2018 Esri
+ *  Copyright 2012-2024 Esri
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,35 +14,29 @@
  *  limitations under the License.
  ******************************************************************************/
 
-#ifndef UTILITY_H
-#define UTILITY_H
-
-namespace Esri::ArcGISRuntime {
-  class Point;
-}
+#ifndef PACKAGESCONTROLLER_H
+#define PACKAGESCONTROLLER_H
 
 // Qt headers
-#include <QList>
 #include <QObject>
-#include <QString>
-#include <QVector3D>
+
+// DSA headers
+#include "AbstractTool.h"
 
 namespace Dsa {
 
-class DsaUtility
+class PackagesController : public AbstractTool
 {
+  Q_OBJECT
+
 public:
 
-  static const QString FILE_NAME_SELECTED_DSA_DATASET;
-  static QString dataPath();
-  static Esri::ArcGISRuntime::Point montereyCA();
-  static double distance3D(const Esri::ArcGISRuntime::Point& from, const Esri::ArcGISRuntime::Point& to);
-  static QVector3D toCartesianPoint(const Esri::ArcGISRuntime::Point& point);
+  explicit PackagesController(QObject* parent = nullptr);
 
-private:
-  static QString m_dataPath;
+  QString toolName() const override;
+  void setProperties(const QVariantMap& properties) override;
 };
 
-} // Dsa
+} // namespace Dsa
 
-#endif // UTILITY_H
+#endif // PACKAGESCONTROLLER_H

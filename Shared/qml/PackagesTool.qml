@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright 2012-2018 Esri
+ *  Copyright 2012-2024 Esri
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,35 +14,32 @@
  *  limitations under the License.
  ******************************************************************************/
 
-#ifndef UTILITY_H
-#define UTILITY_H
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Controls.Material
+import QtQuick.Window
+import Esri.ArcGISRuntime.OpenSourceApps.DSA
 
-namespace Esri::ArcGISRuntime {
-  class Point;
+DsaPanel {
+    // signal basemapSelected();
+
+    // width: Math.min(parent.width, ((basemapsList.cellWidth * 2) + (16 * scaleFactor)))
+    title: qsTr("Packages")
+
+    PackagesController {
+        id: toolController
+    }
+
+    Component {
+        id: tileCacheDelegate
+
+        Rectangle {
+        }
+    }
+
+
+    Rectangle {
+    }
+
+    // Component.onCompleted: toolController.selectInitialBasemap();
 }
-
-// Qt headers
-#include <QList>
-#include <QObject>
-#include <QString>
-#include <QVector3D>
-
-namespace Dsa {
-
-class DsaUtility
-{
-public:
-
-  static const QString FILE_NAME_SELECTED_DSA_DATASET;
-  static QString dataPath();
-  static Esri::ArcGISRuntime::Point montereyCA();
-  static double distance3D(const Esri::ArcGISRuntime::Point& from, const Esri::ArcGISRuntime::Point& to);
-  static QVector3D toCartesianPoint(const Esri::ArcGISRuntime::Point& point);
-
-private:
-  static QString m_dataPath;
-};
-
-} // Dsa
-
-#endif // UTILITY_H

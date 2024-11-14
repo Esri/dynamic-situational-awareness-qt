@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright 2012-2018 Esri
+ *  Copyright 2012-2024 Esri
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,35 +14,28 @@
  *  limitations under the License.
  ******************************************************************************/
 
-#ifndef UTILITY_H
-#define UTILITY_H
+#include "PackagesController.h"
 
-namespace Esri::ArcGISRuntime {
-  class Point;
-}
-
-// Qt headers
-#include <QList>
-#include <QObject>
-#include <QString>
-#include <QVector3D>
+// #include "AbstractTool.h"
 
 namespace Dsa {
 
-class DsaUtility
+PackagesController::PackagesController(QObject* parent /* = nullptr */):
+  AbstractTool(parent)
 {
-public:
+  // connect(this, &BasemapPickerController::basemapsDataPathChanged, this, &BasemapPickerController::onBasemapDataPathChanged);
 
-  static const QString FILE_NAME_SELECTED_DSA_DATASET;
-  static QString dataPath();
-  static Esri::ArcGISRuntime::Point montereyCA();
-  static double distance3D(const Esri::ArcGISRuntime::Point& from, const Esri::ArcGISRuntime::Point& to);
-  static QVector3D toCartesianPoint(const Esri::ArcGISRuntime::Point& point);
+  ToolManager::instance().addTool(this);
+}
 
-private:
-  static QString m_dataPath;
-};
+QString PackagesController::toolName() const
+{
+  return QStringLiteral("packages");
+}
 
-} // Dsa
+void PackagesController::setProperties(const QVariantMap& properties)
+{
+  Q_UNUSED(properties);
+}
 
-#endif // UTILITY_H
+} // namespace Dsa

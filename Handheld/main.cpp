@@ -27,6 +27,7 @@
 #include "BasemapPickerController.h"
 #include "ObservationReportController.h"
 #include "ContextMenuController.h"
+#include "PackagesController.h"
 #include "DsaResources.h"
 #include "FollowPositionController.h"
 #include "Handheld.h"
@@ -134,6 +135,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<Dsa::ObservationReportController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "ObservationReportController");
   qmlRegisterType<Dsa::OpenMobileScenePackageController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "OpenMobileScenePackageController");
   qmlRegisterType<Dsa::CoordinateConversionToolProxy>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "CoordinateConversionToolProxy");
+  qmlRegisterType<Dsa::PackagesController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "PackagesController");
 
   // Initialize application view
   QQuickView view;

@@ -32,6 +32,10 @@ using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
 
+const QString DsaUtility::FILE_NAME_SELECTED_DSA_DATASET = "SelectedDsaDataset.json";
+
+QString DsaUtility::m_dataPath;
+
 /*!
   \class Dsa::DsaUtility
   \inmodule Dsa
@@ -43,6 +47,12 @@ namespace Dsa {
  */
 QString DsaUtility::dataPath()
 {
+  // this only needs to be called once; skip otherwise
+  static bool dataPathHasBeenCalculated = false;
+  if (dataPathHasBeenCalculated)
+    return m_dataPath;
+
+  // setup the root directory based on the os/platform
   QDir dataDir;
 #ifdef Q_OS_ANDROID
   dataDir = QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
@@ -52,12 +62,35 @@ QString DsaUtility::dataPath()
   dataDir = QDir::home();
 #endif
 
+  // append the standard path to the dsa application data folder structure
   dataDir.cd("ArcGIS");
   dataDir.cd("Runtime");
   dataDir.cd("Data");
   dataDir.cd("DSA");
 
-  return dataDir.exists() ? dataDir.absolutePath() : "";
+  // check for the selected dsa dataset file
+  QFile selectedDsaDatasetFile(dataDir.absoluteFilePath(FILE_NAME_SELECTED_DSA_DATASET));
+  bool appendedSelectedDsaDatasetFolder = false;
+  if (selectedDsaDatasetFile.exists() && selectedDsaDatasetFile.open(QIODevice::ReadOnly))
+  {
+    QTextStream textStream(&selectedDsaDatasetFile);
+    while (!textStream.atEnd())
+    {
+      // read the only line from the file and append it as the data folder name to be used
+      dataDir.cd(textStream.readLine().trimmed());
+      appendedSelectedDsaDatasetFolder = true;
+      break;
+    }
+  }
+
+  // if no selected dsa dataset file exists just use the default directory
+  if (!appendedSelectedDsaDatasetFolder)
+    dataDir.cd("default");
+
+  // cache the value for the data path, toggle the cached flag and return the value
+  m_dataPath = QString(dataDir.exists() ? dataDir.absolutePath() : "");
+  dataPathHasBeenCalculated = true;
+  return m_dataPath;
 }
 
 /*!

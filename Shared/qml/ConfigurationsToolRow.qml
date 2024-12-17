@@ -21,20 +21,20 @@ import QtQuick.Window
 import Esri.ArcGISRuntime.OpenSourceApps.DSA
 
 Row {
-    id: packagesToolRow
+    id: configurationsToolRow
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
     spacing: 10 * scaleFactor
-    visible: categoryToolbar.state === "packages"
+    visible: categoryToolbar.state === "configurations"
     onVisibleChanged: state = "clear"
 
-    property alias observationState: packagesIcon.toolName
+    property alias observationState: configurationsIcon.toolName
     property string clearState: "clear"
 
     states: [
         State {
-            name: packagesIcon.toolName
+            name: configurationsIcon.toolName
             PropertyChanges {
-                target: packagesIcon
+                target: configurationsIcon
                 selected: true
             }
         },
@@ -42,28 +42,28 @@ Row {
         State {
             name: clearState
             PropertyChanges {
-                target: packagesIcon
+                target: configurationsIcon
                 selected: false
             }
         }
     ]
 
-    // Packages Tool
+    // Configurations Tool
     ToolIcon {
-        id: packagesIcon
+        id: configurationsIcon
         iconSource: DsaResources.iconAddLayer
-        toolName: "Packages"
+        toolName: "Configurations"
         onToolSelected: {
             if (selected) {
-                packagesToolRow.state = clearState;
+                configurationsToolRow.state = clearState;
                 selected = false;
             }
             else
-                packagesToolRow.state = toolName;
+                configurationsToolRow.state = toolName;
         }
 
         onSelectedChanged: {
-            packagesTool.visible = selected;
+            configurationsTool.visible = selected;
         }
     }
 }

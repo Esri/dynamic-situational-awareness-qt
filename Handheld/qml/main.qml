@@ -111,8 +111,8 @@ Handheld {
             }
         }
 
-        PackagesToolRow {
-            id: packagesToolRow
+        ConfigurationsToolRow {
+            id: configurationsToolRow
             anchors {
                 verticalCenter: parent.verticalCenter
                 right: parent.right
@@ -390,8 +390,8 @@ Handheld {
             }
         }
 
-        PackagesTool {
-            id: packagesTool
+        ConfigurationsTool {
+            id: configurationsTool
             anchors {
                 right: parent.right
                 top: parent.top
@@ -401,17 +401,17 @@ Handheld {
             visible: false
             onClosed: {
                 visible = false;
-                packagesToolRow.state = packagesToolRow.clearState;
+                configurationsToolRow.state = configurationsToolRow.clearState;
             }
 
             onVisibleChanged: {
                 if (!visible)
                     return;
 
-                categoryToolbar.state = "packages";
+                categoryToolbar.state = "configurations";
 
-                if (packagesToolRow.state !== packagesToolRow.observationState)
-                    packagesToolRow.state = packagesToolRow.observationState;
+                if (configurationsToolRow.state !== configurationsToolRow.observationState)
+                    configurationsToolRow.state = configurationsToolRow.observationState;
             }
         }
 

@@ -54,10 +54,8 @@ QString DsaUtility::dataPath()
 
   // setup the root directory based on the os/platform
   QDir dataDir;
-#ifdef Q_OS_ANDROID
-  dataDir = QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
-#elif defined Q_OS_IOS
-  dataDir = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+#if defined Q_OS_ANDROID || defined Q_OS_IOS
+  dataDir = QDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
 #else
   dataDir = QDir::home();
 #endif
@@ -85,7 +83,10 @@ QString DsaUtility::dataPath()
 
   // if no selected dsa dataset file exists just use the default directory
   if (!appendedSelectedDsaDatasetFolder)
+  {
+    dataDir.mkdir("default");
     dataDir.cd("default");
+  }
 
   // cache the value for the data path, toggle the cached flag and return the value
   m_dataPath = QString(dataDir.exists() ? dataDir.absolutePath() : "");

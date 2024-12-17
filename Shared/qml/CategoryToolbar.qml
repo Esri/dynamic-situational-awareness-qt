@@ -105,14 +105,14 @@ Item {
             }
         },
         State {
-            name: "packages"
+            name: "configurations"
             PropertyChanges {
-                target: packagesIcon
+                target: configurationsIcon
                 selected: true
             }
             PropertyChanges {
                 target: categoryToolbar
-                titleText: "Packages"
+                titleText: "Configurations"
             }
         }
     ]

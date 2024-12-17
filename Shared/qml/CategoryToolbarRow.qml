@@ -89,10 +89,10 @@ CategoryToolbar {
         }
 
         CategoryIcon {
-            id: packagesIcon
+            id: configurationsIcon
             anchors.verticalCenter: parent.verticalCenter
             iconSource: DsaResources.iconAddLayer
-            categoryName: "packages"
+            categoryName: "configurations"
             onCategorySelected: categoryToolbar.state = categoryName
         }
     }

@@ -112,14 +112,8 @@ bool ConfigurationListModel::setData(const QModelIndex& index, const QVariant& v
     case Roles::Url:
       configuration.setUrl(value.toString());
       break;
-    case Roles::Downloaded:
-      configuration.setDownloaded(value.toBool());
-      break;
     case Roles::Selected:
       configuration.setSelected(value.toBool());
-      break;
-    case Roles::Loaded:
-      configuration.setLoaded(value.toBool());
       break;
     case Roles::PercentDownloaded:
       configuration.setPercentDownloaded(value.toInt());
@@ -132,10 +126,10 @@ bool ConfigurationListModel::setData(const QModelIndex& index, const QVariant& v
   return true;
 }
 
-bool ConfigurationListModel::add(const QString& name, const QString& url, bool downloaded, bool selected, bool loaded, int percentDownloaded)
+bool ConfigurationListModel::add(const QString& name, const QString& url, bool selected, bool loaded, int percentDownloaded)
 {
   beginInsertRows(QModelIndex{}, m_configurations.count(), m_configurations.count());
-  m_configurations.emplaceBack(name, url, downloaded, selected, loaded, percentDownloaded);
+  m_configurations.emplaceBack(name, url, selected, loaded, percentDownloaded);
   endInsertRows();
   return true;
 }

@@ -52,7 +52,7 @@ public:
   QVariant data(const QModelIndex& index, int role) const override;
   bool setData(const QModelIndex& index, const QVariant& value, int role) override;
 
-  bool add(const QString& name, const QString& url, bool downloaded, bool selected, bool loaded, int percentDownloaded);
+  bool add(const QString& name, const QString& url, bool selected, bool loaded, int percentDownloaded);
 
   QList<Configuration>::iterator begin() { return m_configurations.begin(); }
   QList<Configuration>::iterator end() { return m_configurations.end(); }

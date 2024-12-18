@@ -34,8 +34,8 @@ const QString ConfigurationController::URL_DEFAULT_DOWNLOAD = QString("https://u
 ConfigurationController::ConfigurationController(QObject* parent /* = nullptr */):
   AbstractTool(parent),
   m_configurationListModel(new ConfigurationListModel{this})
-{                              //name,     url,                                           downloaded, selected, loaded, percentDownloaded
-  m_configurationListModel->add("Default", ConfigurationController::URL_DEFAULT_DOWNLOAD, false,      false,    false,  0);
+{                              //name,     url,                                           selected, loaded, percentDownloaded
+  m_configurationListModel->add("Default", ConfigurationController::URL_DEFAULT_DOWNLOAD, false,    false,  0);
 
   connect(m_configurationListModel, &ConfigurationListModel::dataChanged, this, [this]() { emit configurationsChanged(); });
 

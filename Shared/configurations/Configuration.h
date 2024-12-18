@@ -24,7 +24,6 @@ class Configuration
 public:
   explicit Configuration(const QString& name,
                          const QString& url,
-                         bool downloaded,
                          bool selected,
                          bool loaded,
                          int percentDownloaded);
@@ -41,13 +40,11 @@ public:
   void setUrl(const QString& url);
 
   bool downloaded() const;
-  void setDownloaded(bool downloaded);
 
   bool selected() const;
   void setSelected(bool selected);
 
   bool loaded() const;
-  void setLoaded(bool loaded);
 
   int percentDownloaded() const;
   void setPercentDownloaded(int percentDownloaded);
@@ -55,7 +52,6 @@ public:
 private:
   QString m_name;
   QString m_url;
-  bool m_downloaded;
   bool m_selected;
   bool m_loaded;
   int m_percentDownloaded;

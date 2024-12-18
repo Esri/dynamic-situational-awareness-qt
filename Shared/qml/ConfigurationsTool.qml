@@ -41,10 +41,23 @@ DsaPanel {
             height: 40 * scaleFactor
             width: parent.width
 
+            ProgressBar {
+                id: progressBarPercentDownloaded
+                anchors {
+                    bottom: parent.bottom
+                    right: parent.right
+                    left: parent.left
+                }
+                visible: model.PercentDownloaded > 0 && model.PercentDownloaded < 100
+                to: 100
+                value: model.PercentDownloaded
+            }
+
             CheckBox {
                 id: checkboxSelected
                 anchors {
                     left: parent.left
+                    verticalCenter: parent.verticalCenter
                 }
                 checked: model.Selected
                 enabled: model.Downloaded
@@ -60,42 +73,33 @@ DsaPanel {
                 id: labelName
                 anchors {
                     left: checkboxSelected.right
+                    verticalCenter: parent.verticalCenter
                 }
                 height: parent.height
-                verticalAlignment: Text.AlignVCenter
                 text: model.Name
+                verticalAlignment: Text.AlignVCenter
             }
 
             Image {
                 id: imageRequiresReload
-                source: DsaResources.iconAlertModerate
+                source: DsaResources.iconAlertLow
                 anchors {
                     left: labelName.right
-                }
-                height: parent.height
-                verticalAlignment: Text.AlignVCenter
-                width: model.Selected && !model.Loaded ? parent.height : 0
-            }
-
-            ProgressBar {
-                id: progressBarPercentDownloaded
-                anchors {
-                    left: imageRequiresReload.right
-                    right: imageCancel.left
                     verticalCenter: parent.verticalCenter
+                    margins: 4
                 }
-                visible: model.PercentDownloaded > 0 && model.PercentDownloaded < 100
-                to: 100
-                value: model.PercentDownloaded
+                height: parent.height / 2
+                width: model.Selected && !model.Loaded ? parent.height / 2 : 0
             }
 
             Image {
                 id: imageCancel
-                source: DsaResources.iconAlertModerate
-                height: parent.height
-                width: model.PercentDownloaded > 0 && model.PercentDownloaded < 100 ? parent.height : 0
+                source: "qrc:/Resources/icons/xhdpi/ic_menu_closeclear_dark.png"
+                height: parent.height / 2
+                width: model.PercentDownloaded > 0 && model.PercentDownloaded < 100 ? parent.height / 2 : 0
                 anchors {
                     right: imageDownload.left
+                    verticalCenter: parent.verticalCenter
                 }
                 MouseArea {
                     anchors.fill: parent
@@ -111,6 +115,7 @@ DsaPanel {
                 enabled: !toolController.downloading
                 anchors {
                     right: imageRemove.left
+                    verticalCenter: parent.verticalCenter
                 }
                 MouseArea {
                     anchors.fill: parent
@@ -122,9 +127,10 @@ DsaPanel {
                 id: imageRemove
                 source: DsaResources.iconTrash
                 height: parent.height
-                width: model.Downloaded ? parent.height : 0
+                width: model.Downloaded && !model.Loaded ? parent.height : 0
                 anchors {
                     right: parent.right
+                    verticalCenter: parent.verticalCenter
                 }
                 MouseArea {
                     anchors.fill: parent
@@ -147,5 +153,15 @@ DsaPanel {
         spacing: 2 * scaleFactor
         model: toolController.configurations
         delegate: configurationListItemDelegate
+    }
+
+    Button {
+        id: buttonSave
+        anchors {
+            bottom: parent.bottom
+            horizontalCenter: parent.horizontalCenter
+        }
+        text: "Save"
+        onClicked: toolController.save()
     }
 }

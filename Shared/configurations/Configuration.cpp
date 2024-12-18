@@ -20,10 +20,9 @@
 
 namespace Dsa {
 
-Configuration::Configuration(const QString& name, const QString& url, bool downloaded, bool selected, bool loaded, int percentDownloaded):
+Configuration::Configuration(const QString& name, const QString& url, bool selected, bool loaded, int percentDownloaded):
   m_name(name),
   m_url(url),
-  m_downloaded(downloaded),
   m_selected(selected),
   m_loaded(loaded),
   m_percentDownloaded(percentDownloaded)
@@ -56,11 +55,6 @@ bool Configuration::downloaded() const
   return m_percentDownloaded == 100;
 }
 
-void Configuration::setDownloaded(bool downloaded)
-{
-  m_downloaded = downloaded;
-}
-
 bool Configuration::selected() const
 {
   return m_selected;
@@ -74,11 +68,6 @@ void Configuration::setSelected(bool selected)
 bool Configuration::loaded() const
 {
   return m_loaded;
-}
-
-void Configuration::setLoaded(bool loaded)
-{
-  m_loaded = loaded;
 }
 
 int Configuration::percentDownloaded() const

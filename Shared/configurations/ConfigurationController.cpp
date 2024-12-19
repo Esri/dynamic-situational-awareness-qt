@@ -222,7 +222,15 @@ void ConfigurationController::finished()
   connect(m_zipHelper, &ZipHelper::extractCompleted, this, &ConfigurationController::extractCompleted);
   connect(m_zipHelper, &ZipHelper::extractProgress, this, &ConfigurationController::extractProgress);
   connect(m_zipHelper, &ZipHelper::extractError, this, &ConfigurationController::extractError);
-  m_zipHelper->extractAll(DsaUtility::activeConfigurationPath());
+
+  // extract the file to the associated configuration folder
+  auto activeDownloadIndex = m_configurationListModel->index(m_activeDownloadIndex);
+  auto activeDownloadName = m_configurationListModel->data(activeDownloadIndex, ConfigurationListModel::Roles::Name).toString();
+  QDir dirConfigurations{DsaUtility::configurationsDirectoryPath()};
+  QDir dirActiveDownloadConfiguration{dirConfigurations.filePath(activeDownloadName)};
+  if (!dirActiveDownloadConfiguration.exists())
+    dirConfigurations.mkdir(activeDownloadName);
+  m_zipHelper->extractAll(dirActiveDownloadConfiguration.absolutePath());
 }
 
 void ConfigurationController::extractCompleted()

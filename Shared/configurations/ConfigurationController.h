@@ -17,6 +17,7 @@
 #ifndef CONFIGURATIONCONTROLLER_H
 #define CONFIGURATIONCONTROLLER_H
 
+#include "AbstractTool.h"
 #include "ZipHelper.h"
 
 #include <QDir>
@@ -44,6 +45,7 @@ public:
   Q_INVOKABLE void download(int index);
   Q_INVOKABLE void cancel(int index);
   Q_INVOKABLE void remove(int index);
+  static bool createDefaultConfigurationsFile();
 
   QString toolName() const override;
   void setProperties(const QVariantMap& properties) override;
@@ -53,7 +55,6 @@ public:
 
 signals:
   void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
-  void downloadCompleted();
   void configurationsChanged();
 
 private slots:
@@ -66,6 +67,8 @@ private slots:
 
 private:
   void setPercentComplete(int percentComplete);
+  void fetchConfigurations();
+  void storeConfigurations();
   ConfigurationListModel* m_configurationListModel = nullptr;
   QNetworkAccessManager m_networkAccessManager;
   int m_activeDownloadIndex;

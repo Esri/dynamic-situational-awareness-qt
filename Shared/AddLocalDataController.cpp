@@ -101,7 +101,7 @@ AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
   m_localDataModel(new DataItemListModel(this))
 {
   // add the base path to the string list
-  addPathToDirectoryList(DsaUtility::dataPath());
+  addPathToDirectoryList(DsaUtility::activeConfigurationPath());
 
   // create file filter list
   m_fileFilterList = QStringList{allData(), rasterData(), geodatabaseData(),

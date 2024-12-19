@@ -22,6 +22,10 @@
 #include "ConfigurationListModel.h"
 #include "DsaUtility.h"
 
+#include <QDirIterator>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QStandardPaths>
@@ -34,9 +38,7 @@ const QString ConfigurationController::URL_DEFAULT_DOWNLOAD = QString("https://u
 ConfigurationController::ConfigurationController(QObject* parent /* = nullptr */):
   AbstractTool(parent),
   m_configurationListModel(new ConfigurationListModel{this})
-{                              //name,     url,                                           selected, loaded, percentDownloaded
-  m_configurationListModel->add("Default", ConfigurationController::URL_DEFAULT_DOWNLOAD, false,    false,  0);
-
+{
   connect(m_configurationListModel, &ConfigurationListModel::dataChanged, this, [this]() { emit configurationsChanged(); });
 
   ToolManager::instance().addTool(this);
@@ -47,11 +49,15 @@ ConfigurationController::ConfigurationController(QObject* parent /* = nullptr */
 #else
   m_downloadFolder = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
 #endif
+
+  // populate the configurations from disk
+  fetchConfigurations();
 }
 
 void ConfigurationController::select(int index)
 {
   m_configurationListModel->select(index);
+  storeConfigurations();
   emit configurationsChanged();
 }
 
@@ -102,7 +108,48 @@ void ConfigurationController::cancel(int index)
 
 void ConfigurationController::remove(int index)
 {
+  // make extracted packages removeable from device
+  Q_UNUSED(index);
+}
 
+void ConfigurationController::storeConfigurations()
+{
+  QJsonArray array;
+  for (const auto& cfg : *m_configurationListModel)
+  {
+    QJsonObject obj;
+    obj["selected"] = cfg.selected();
+    obj["name"] = cfg.name();
+    obj["url"] = cfg.url();
+    array.append(obj);
+  }
+  QJsonDocument doc{array};
+  QFile file{DsaUtility::configurationsFilePath()};
+  if (file.open(QIODevice::WriteOnly))
+  {
+    file.write(doc.toJson());
+  }
+}
+
+bool ConfigurationController::createDefaultConfigurationsFile()
+{
+  // create a single entry for the default configuration
+  QJsonObject obj;
+  obj["selected"] = true;
+  obj["name"] = "Default";
+  obj["url"] = URL_DEFAULT_DOWNLOAD;
+
+  // create a new document as a top level array and append the default object
+  QJsonArray array;
+  array.append(obj);
+  QJsonDocument doc{array};
+
+  // write out the document to disk
+  QFile file{DsaUtility::configurationsFilePath()};
+  if (!file.open(QIODevice::WriteOnly))
+    return false;
+  file.write(doc.toJson());
+  return true;
 }
 
 QString ConfigurationController::toolName() const
@@ -175,7 +222,7 @@ void ConfigurationController::finished()
   connect(m_zipHelper, &ZipHelper::extractCompleted, this, &ConfigurationController::extractCompleted);
   connect(m_zipHelper, &ZipHelper::extractProgress, this, &ConfigurationController::extractProgress);
   connect(m_zipHelper, &ZipHelper::extractError, this, &ConfigurationController::extractError);
-  m_zipHelper->extractAll(DsaUtility::dataPath());
+  m_zipHelper->extractAll(DsaUtility::activeConfigurationPath());
 }
 
 void ConfigurationController::extractCompleted()
@@ -184,14 +231,13 @@ void ConfigurationController::extractCompleted()
   QFile::remove(m_downloadFileName);
   setPercentComplete(100);
   m_zipHelper->deleteLater();
-  emit downloadCompleted();
 }
 
 void ConfigurationController::extractProgress(const QString& fileName, const QString& outputFileName, qreal percent)
 {
   Q_UNUSED(fileName);
   Q_UNUSED(outputFileName);
-  qDebug() << "extracted: " << percent;
+  Q_UNUSED(percent);
 }
 
 void ConfigurationController::extractError(const QString& fileName, const QString& outputFileName, ZipHelper::Result result)
@@ -204,6 +250,75 @@ void ConfigurationController::setPercentComplete(int percentComplete)
 {
   auto i = m_configurationListModel->index(m_activeDownloadIndex, 0);
   m_configurationListModel->setData(i, percentComplete, ConfigurationListModel::Roles::PercentDownloaded);
+  emit configurationsChanged();
+}
+
+void ConfigurationController::fetchConfigurations()
+{
+  // check for the default configurations file and create if it doesn't exist
+  m_configurationListModel->removeRows(0, m_configurationListModel->rowCount(QModelIndex{}));
+  QFile fileConfigurations{DsaUtility::configurationsFilePath()};
+  QDir dirConfigurations{DsaUtility::configurationsDirectoryPath()};
+  if (fileConfigurations.open(QIODevice::ReadOnly))
+  {
+    QJsonParseError parseError;
+    const auto docConfigurations = QJsonDocument::fromJson(fileConfigurations.readAll(), &parseError);
+    bool alreadySelected = false;
+    if (!docConfigurations.isNull() && !docConfigurations.isEmpty() && docConfigurations.isArray())
+    {
+      const auto configurationsArray = docConfigurations.array();
+      for (const auto& configurationNode : configurationsArray)
+      {
+        if (configurationNode.isObject())
+        {
+          // add a new item
+          const auto configurationObject = configurationNode.toObject();
+
+          // determine if the configuration has been downloaded by checking for the configuration file and at least
+          // some other files in the directory
+          bool downloaded = false;
+          auto configurationName = configurationObject["name"].toString();
+          auto configurationDirectoryPath = dirConfigurations.filePath(configurationName);
+          QDir dirConfiguration{configurationDirectoryPath};
+          if (dirConfiguration.exists())
+          {
+            QFile fileSettings{dirConfiguration.filePath("DsaAppConfig.json")};
+            if (fileSettings.exists())
+            {
+              QDirIterator dirIt(configurationDirectoryPath, QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
+              auto filesInConfigurationFolder = 0;
+              while (dirIt.hasNext())
+              {
+                filesInConfigurationFolder++;
+                QFile f{dirIt.next()};
+                qDebug() << f.fileName();
+                if (filesInConfigurationFolder > 1)
+                {
+                  downloaded = true;
+                  break;
+                }
+              }
+            }
+          }
+
+          // select the first item marked as selected
+          bool selected = false;
+          if (!alreadySelected)
+          {
+            selected = configurationObject["selected"].toBool();
+            alreadySelected = selected;
+          }
+
+          // add the new entry
+          m_configurationListModel->add(configurationName,
+                                        configurationObject["url"].toString(),
+                                        selected,
+                                        selected && downloaded,
+                                        downloaded ? 100 : 0);
+        }
+      }
+    }
+  }
   emit configurationsChanged();
 }
 

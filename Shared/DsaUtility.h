@@ -33,14 +33,13 @@ class DsaUtility
 {
 public:
 
-  static const QString FILE_NAME_SELECTED_DSA_DATASET;
-  static QString dataPath();
+  static const QString FILE_NAME_DSA_CONFIGURATIONS;
+  static QString configurationsDirectoryPath();
+  static QString configurationsFilePath();
+  static QString activeConfigurationPath();
   static Esri::ArcGISRuntime::Point montereyCA();
   static double distance3D(const Esri::ArcGISRuntime::Point& from, const Esri::ArcGISRuntime::Point& to);
   static QVector3D toCartesianPoint(const Esri::ArcGISRuntime::Point& point);
-
-private:
-  static QString m_dataPath;
 };
 
 } // Dsa

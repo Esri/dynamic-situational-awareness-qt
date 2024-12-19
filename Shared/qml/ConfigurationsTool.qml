@@ -111,7 +111,7 @@ DsaPanel {
                 id: imageDownload
                 source: "qrc:/Resources/icons/xhdpi/ic_menu_sendmap_dark_d.png"
                 height: parent.height
-                width: !model.Downloaded ? parent.height : 0
+                width: !model.Downloaded && !model.Url.length !== "" ? parent.height : 0
                 enabled: !toolController.downloading
                 anchors {
                     right: imageRemove.left
@@ -127,7 +127,7 @@ DsaPanel {
                 id: imageRemove
                 source: DsaResources.iconTrash
                 height: parent.height
-                width: model.Downloaded && !model.Loaded ? parent.height : 0
+                width: model.Downloaded && !model.Selected && !model.Loaded ? parent.height : 0
                 anchors {
                     right: parent.right
                     verticalCenter: parent.verticalCenter
@@ -153,15 +153,5 @@ DsaPanel {
         spacing: 2 * scaleFactor
         model: toolController.configurations
         delegate: configurationListItemDelegate
-    }
-
-    Button {
-        id: buttonSave
-        anchors {
-            bottom: parent.bottom
-            horizontalCenter: parent.horizontalCenter
-        }
-        text: "Save"
-        onClicked: toolController.save()
     }
 }

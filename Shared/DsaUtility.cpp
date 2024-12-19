@@ -18,6 +18,7 @@
 #include "pch.hpp"
 
 #include "DsaUtility.h"
+#include "ConfigurationController.h"
 
 // C++ API headers
 #include "SpatialReference.h"
@@ -25,6 +26,10 @@
 // Qt headers
 #include <QDir>
 #include <QFileInfo>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonValueConstRef>
 #include <QStandardPaths>
 #include <QtMath>
 
@@ -32,9 +37,7 @@ using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
 
-const QString DsaUtility::FILE_NAME_SELECTED_DSA_DATASET = "SelectedDsaDataset.json";
-
-QString DsaUtility::m_dataPath;
+const QString DsaUtility::FILE_NAME_DSA_CONFIGURATIONS = "DsaConfigurations.json";
 
 /*!
   \class Dsa::DsaUtility
@@ -45,53 +48,101 @@ QString DsaUtility::m_dataPath;
 /*!
   \brief Returns the platform independent data path to \c [HOME]/ArcGIS/Runtime/Data/DSA.
  */
-QString DsaUtility::dataPath()
+QString DsaUtility::configurationsDirectoryPath()
 {
-  // this only needs to be called once; skip otherwise
-  static bool dataPathHasBeenCalculated = false;
-  if (dataPathHasBeenCalculated)
-    return m_dataPath;
+  // return the cached path to the configurations folder
+  static bool cached = false;
+  static QString path;
+  if (cached)
+    return path;
 
   // setup the root directory based on the os/platform
-  QDir dataDir;
 #if defined Q_OS_ANDROID || defined Q_OS_IOS
-  dataDir = QDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
+  QDir dir{QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)};
 #else
-  dataDir = QDir::home();
+  QDir dir{QDir::home()};
 #endif
 
   // append the standard path to the dsa application data folder structure
-  dataDir.cd("ArcGIS");
-  dataDir.cd("Runtime");
-  dataDir.cd("Data");
-  dataDir.cd("DSA");
+  dir.cd("ArcGIS");
+  dir.cd("Runtime");
+  dir.cd("Data");
+  dir.cd("DSA");
 
-  // check for the selected dsa dataset file
-  QFile selectedDsaDatasetFile(dataDir.absoluteFilePath(FILE_NAME_SELECTED_DSA_DATASET));
-  bool appendedSelectedDsaDatasetFolder = false;
-  if (selectedDsaDatasetFile.exists() && selectedDsaDatasetFile.open(QIODevice::ReadOnly))
+  // return the full path to the configurations directory
+  path = QString(dir.absolutePath());
+  cached = true;
+  return path;
+}
+
+QString DsaUtility::configurationsFilePath()
+{
+  // return the cached path to the configuration file
+  static bool cached = false;
+  static QString path;
+  if (cached)
+    return path;
+
+  // return the full path to the configurations file
+  QDir dir{DsaUtility::configurationsDirectoryPath()};
+  path = dir.absoluteFilePath(FILE_NAME_DSA_CONFIGURATIONS);
+  cached = true;
+  return path;
+}
+
+QString DsaUtility::activeConfigurationPath()
+{
+  // return the cached path to the configuration folder
+  static bool cached = false;
+  static QString path;
+  if (cached)
+    return path;
+
+  // check for the default configurations file and create if it doesn't exist
+  QFile fileConfigurations{DsaUtility::configurationsFilePath()};
+  if (!fileConfigurations.exists())
+    ConfigurationController::createDefaultConfigurationsFile();
+
+  // get the first 'selected' configuration in the file
+  QString selectedConfigurationName{};
+  if (fileConfigurations.open(QIODevice::ReadOnly))
   {
-    QTextStream textStream(&selectedDsaDatasetFile);
-    while (!textStream.atEnd())
+    QJsonParseError parseError;
+    const auto docConfigurations = QJsonDocument::fromJson(fileConfigurations.readAll(), &parseError);
+    if (!docConfigurations.isNull() && !docConfigurations.isEmpty() && docConfigurations.isArray())
     {
-      // read the only line from the file and append it as the data folder name to be used
-      dataDir.cd(textStream.readLine().trimmed());
-      appendedSelectedDsaDatasetFolder = true;
-      break;
+      const auto configurationsArray = docConfigurations.array();
+      for (const auto& configurationNode : configurationsArray)
+      {
+        if (configurationNode.isObject())
+        {
+          // get the selected value
+          const auto configurationObject = configurationNode.toObject();
+          const auto configurationSelected = configurationObject["selected"].toBool();
+          if (configurationSelected)
+          {
+            selectedConfigurationName = configurationObject["name"].toString();
+            break;
+          }
+        }
+      }
     }
   }
 
-  // if no selected dsa dataset file exists just use the default directory
-  if (!appendedSelectedDsaDatasetFolder)
-  {
-    dataDir.mkdir("default");
-    dataDir.cd("default");
-  }
+  // abort if the file contained nothing that could resolve to disk
+  if (selectedConfigurationName.isEmpty())
+    return QString{};
+
+  // find the selected configuration folder on disk and create if not exists
+  QDir dirConfigurations{DsaUtility::configurationsDirectoryPath()};
+  QDir dirConfiguration{dirConfigurations.filePath(selectedConfigurationName)};
+  if (!dirConfiguration.exists())
+    dirConfigurations.mkdir(selectedConfigurationName);
 
   // cache the value for the data path, toggle the cached flag and return the value
-  m_dataPath = QString(dataDir.exists() ? dataDir.absolutePath() : "");
-  dataPathHasBeenCalculated = true;
-  return m_dataPath;
+  path = dirConfiguration.absolutePath();
+  cached = true;
+  return path;
 }
 
 /*!

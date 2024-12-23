@@ -29,6 +29,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QStandardPaths>
+#include <QStorageInfo>
 #include <QUuid>
 
 namespace Dsa {
@@ -77,13 +78,45 @@ void ConfigurationController::download(int index)
   m_downloadFileName = downloadFolder.absoluteFilePath((QString("dsa_%1").arg(QUuid::createUuid().toString(QUuid::WithoutBraces))));
   QNetworkRequest networkRequest{QUrl{url.toString()}};
 
-  // reset the properties for download status and use the network manager to download the file
+  // make a head request to check the availabiity of the network as well as get the final size of the package to be downloaded
   m_aborted = false;
-  m_downloading = true;
-  m_networkReply = m_networkAccessManager.get(networkRequest);
-  connect(m_networkReply, &QNetworkReply::downloadProgress, this, &ConfigurationController::downloadProgress);
-  connect(m_networkReply, &QNetworkReply::readyRead, this, &ConfigurationController::readyRead);
-  connect(m_networkReply, &QNetworkReply::finished, this, &ConfigurationController::finished);
+  auto* headReply = m_networkAccessManager.head(networkRequest);
+  connect(headReply, &QNetworkReply::finished, this, [this, headReply, networkRequest]()
+  {
+    // get the total bytes that will be downloaded
+    bool convertedOk = false;
+    int bytesToDownload = 0;
+    auto contentLengthVariant = headReply->header(QNetworkRequest::ContentLengthHeader);
+    if (contentLengthVariant.isValid())
+      bytesToDownload = contentLengthVariant.toInt(&convertedOk);
+
+    // clean up the head reply
+    headReply->deleteLater();
+
+    // abort if the download size could not be fetched
+    if (!convertedOk || bytesToDownload <= 0)
+    {
+      emit toolErrorOccurred("Unable to fetch the download size.", "Network Error");
+      return;
+    }
+
+    // make sure the device has enough room for the download
+    QStorageInfo storageInfo(m_downloadFolder);
+    auto bytesAvailable = storageInfo.bytesAvailable() * 0.95;
+    if (bytesToDownload > bytesAvailable)
+    {
+      emit toolErrorOccurred("The total download size exceeds storage available on the device", "Download Error");
+      return;
+    }
+
+    // reset the properties for download status and use the network manager to download the file
+    m_networkReply = m_networkAccessManager.get(networkRequest);
+    m_downloading = true;
+    connect(m_networkReply, &QNetworkReply::downloadProgress, this, &ConfigurationController::downloadProgress);
+    connect(m_networkReply, &QNetworkReply::readyRead, this, &ConfigurationController::readyRead);
+    connect(m_networkReply, &QNetworkReply::finished, this, &ConfigurationController::finished);
+    connect(m_networkReply, &QNetworkReply::errorOccurred, this, &ConfigurationController::downloadErrorOccurred);
+  });
 }
 
 void ConfigurationController::cancel(int index)
@@ -210,10 +243,15 @@ void ConfigurationController::finished()
   {
     QFile fileFinish{m_downloadFileName};
     if (!fileFinish.open(QIODevice::Append))
+    {
+      emit toolErrorOccurred("Unable to complete download", "Error Downloading");
       return;
+    }
 
     fileFinish.write(m_networkReply->readAll());
     fileFinish.flush();
+    m_networkReply->deleteLater();
+    m_networkReply = nullptr;
   }
   setPercentComplete(100);
 
@@ -231,6 +269,13 @@ void ConfigurationController::finished()
   if (!dirActiveDownloadConfiguration.exists())
     dirConfigurations.mkdir(activeDownloadName);
   m_zipHelper->extractAll(dirActiveDownloadConfiguration.absolutePath());
+}
+
+void ConfigurationController::downloadErrorOccurred(QNetworkReply::NetworkError error)
+{
+  m_aborted = true;
+  if (error != QNetworkReply::NetworkError::OperationCanceledError)
+    emit toolErrorOccurred(QString("Network Error (%1)").arg(error), "Error Downloading");
 }
 
 void ConfigurationController::extractCompleted()
@@ -251,7 +296,10 @@ void ConfigurationController::extractProgress(const QString& fileName, const QSt
 void ConfigurationController::extractError(const QString& fileName, const QString& outputFileName, ZipHelper::Result result)
 {
   Q_UNUSED(result);
-  emit toolErrorOccurred(QString("error %1, %2").arg(fileName, outputFileName), "extractError");
+  emit toolErrorOccurred(QString("error %1, %2").arg(fileName, outputFileName), "Error Unzipping");
+  QFile::remove(m_downloadFileName);
+  setPercentComplete(0);
+  m_zipHelper->deleteLater();
 }
 
 void ConfigurationController::setPercentComplete(int percentComplete)

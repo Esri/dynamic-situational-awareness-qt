@@ -22,8 +22,7 @@
 
 #include <QDir>
 #include <QNetworkAccessManager>
-
-class QNetworkReply;
+#include <QNetworkReply>
 
 namespace Dsa {
 
@@ -61,6 +60,7 @@ private slots:
   void downloadProgress(quint64 bytesReceived, quint64 bytesTotal);
   void readyRead();
   void finished();
+  void downloadErrorOccurred(QNetworkReply::NetworkError);
   void extractCompleted();
   void extractProgress(const QString& fileName, const QString& outputFileName, qreal percent);
   void extractError(const QString& fileName, const QString& outputFileName, ZipHelper::Result result);

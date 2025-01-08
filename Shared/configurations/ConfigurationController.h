@@ -24,6 +24,9 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 
+Q_MOC_INCLUDE("qabstractitemmodel.h")
+class QAbstractListModel;
+
 namespace Dsa {
 
 class ConfigurationListModel;

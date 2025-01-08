@@ -12,4 +12,7 @@
             <meta-data android:name="android.app.extract_android_style" android:value="minimal" />
         </activity>
     </application>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>

@@ -18,38 +18,6 @@
 // PCH header
 #include "pch.hpp"
 
-// dsa app headers
-#include "AddLocalDataController.h"
-#include "AlertConditionsController.h"
-#include "AlertListController.h"
-#include "AnalysisListController.h"
-#include "AppInfo.h"
-#include "BasemapPickerController.h"
-#include "ConfigurationController.h"
-#include "ObservationReportController.h"
-#include "ContextMenuController.h"
-#include "DsaResources.h"
-#include "FollowPositionController.h"
-#include "IdentifyController.h"
-#include "LineOfSightController.h"
-#include "LocationController.h"
-#include "LocationTextController.h"
-#include "MarkupController.h"
-#include "MessageFeedsController.h"
-#include "OpenMobileScenePackageController.h"
-#include "NavigationController.h"
-#include "OptionsController.h"
-#include "TableOfContentsController.h"
-#include "Vehicle.h"
-#include "VehicleStyles.h"
-#include "ViewedAlertsController.h"
-#include "ViewshedController.h"
-#include "PackageImageProvider.h"
-#include "CoordinateConversionToolProxy.h"
-
-// toolkit headers
-#include <Esri/ArcGISRuntime/Toolkit/register.h>
-
 // C++ API headers
 #include "PopupManager.h"
 #include "SceneQuickView.h"
@@ -62,6 +30,39 @@
 #include <QQmlEngine>
 #include <QQuickView>
 #include <QSettings>
+
+// Toolkit headers
+#include <Esri/ArcGISRuntime/Toolkit/register.h>
+
+// DSA headers
+#include "AddLocalDataController.h"
+#include "AlertConditionsController.h"
+#include "AlertListController.h"
+#include "AnalysisListController.h"
+#include "AppInfo.h"
+#include "BasemapPickerController.h"
+#include "ConfigurationController.h"
+#include "ContextMenuController.h"
+#include "CoordinateConversionToolProxy.h"
+#include "DsaResources.h"
+#include "FollowPositionController.h"
+#include "IdentifyController.h"
+#include "LineOfSightController.h"
+#include "LocationController.h"
+#include "LocationTextController.h"
+#include "MarkupController.h"
+#include "MessageFeedsController.h"
+#include "NavigationController.h"
+#include "ObservationReportController.h"
+#include "OpenMobileScenePackageController.h"
+#include "OptionsController.h"
+#include "PackageImageProvider.h"
+#include "TableOfContentsController.h"
+#include "Vehicle.h"
+#include "VehicleStyles.h"
+#include "ViewedAlertsController.h"
+#include "ViewshedController.h"
+
 
 #ifdef Q_OS_WIN
 #include <Windows.h>

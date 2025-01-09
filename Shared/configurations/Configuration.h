@@ -17,6 +17,7 @@
 #ifndef CONFIGURATION_H
 #define CONFIGURATION_H
 
+// Qt headers
 #include <QString>
 
 namespace Dsa {

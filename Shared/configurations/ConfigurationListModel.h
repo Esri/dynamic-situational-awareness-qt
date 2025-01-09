@@ -17,9 +17,11 @@
 #ifndef CONFIGURATIONLISTMODEL_H
 #define CONFIGURATIONLISTMODEL_H
 
-#include "Configuration.h"
-
+// Qt headers
 #include <QAbstractListModel>
+
+// DSA headers
+#include "Configuration.h"
 
 namespace Dsa {
 

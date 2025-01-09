@@ -17,12 +17,14 @@
 #ifndef CONFIGURATIONCONTROLLER_H
 #define CONFIGURATIONCONTROLLER_H
 
-#include "AbstractTool.h"
-#include "ZipHelper.h"
-
+// Qt headers
 #include <QDir>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+
+// DSA headers
+#include "AbstractTool.h"
+#include "ZipHelper.h"
 
 Q_MOC_INCLUDE("qabstractitemmodel.h")
 class QAbstractListModel;

@@ -18,7 +18,6 @@
 #include "pch.hpp"
 
 #include "DsaUtility.h"
-#include "ConfigurationController.h"
 
 // C++ API headers
 #include "SpatialReference.h"
@@ -29,9 +28,12 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QJsonValueConstRef>
 #include <QStandardPaths>
+#include <QJsonValueConstRef>
 #include <QtMath>
+
+// DSA headers
+#include "ConfigurationController.h"
 
 using namespace Esri::ArcGISRuntime;
 

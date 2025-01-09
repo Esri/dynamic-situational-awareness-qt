@@ -14,14 +14,12 @@
  *  limitations under the License.
  ******************************************************************************/
 
+// PCH header
 #include "pch.hpp"
 
 #include "ConfigurationController.h"
 
-#include "Configuration.h"
-#include "ConfigurationListModel.h"
-#include "DsaUtility.h"
-
+// Qt headers
 #include <QDirIterator>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -31,6 +29,11 @@
 #include <QStandardPaths>
 #include <QStorageInfo>
 #include <QUuid>
+
+// DSA headers
+#include "Configuration.h"
+#include "ConfigurationListModel.h"
+#include "DsaUtility.h"
 
 namespace Dsa {
 

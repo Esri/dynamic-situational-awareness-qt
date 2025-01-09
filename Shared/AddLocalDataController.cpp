@@ -20,15 +20,6 @@
 
 #include "AddLocalDataController.h"
 
-// dsa app headers
-#include "DataItemListModel.h"
-#include "DsaUtility.h"
-#include "MarkupLayer.h"
-
-// toolkit headers
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
-
 // C++ API headers
 #include "ArcGISSceneLayer.h"
 #include "ArcGISTiledElevationSource.h"
@@ -66,6 +57,13 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QTextStream>
+
+// DSA headers
+#include "DataItemListModel.h"
+#include "DsaUtility.h"
+#include "MarkupLayer.h"
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
 
 using namespace Esri::ArcGISRuntime;
 

@@ -162,9 +162,7 @@ void ConfigurationController::storeConfigurations()
   QJsonDocument doc{array};
   QFile file{DsaUtility::configurationsFilePath()};
   if (file.open(QIODevice::WriteOnly))
-  {
     file.write(doc.toJson());
-  }
 }
 
 bool ConfigurationController::createDefaultConfigurationsFile()
@@ -219,7 +217,6 @@ void ConfigurationController::readyRead()
   QFile file(m_downloadFileName);
   if (!file.open(QIODevice::Append))
   {
-    // write some abort code
     m_aborted = true;
     return;
   }
@@ -261,7 +258,6 @@ void ConfigurationController::finished()
   // extract the downloaded file with a new instance of the ziphelper class
   m_zipHelper = new ZipHelper(m_downloadFileName, this);
   connect(m_zipHelper, &ZipHelper::extractCompleted, this, &ConfigurationController::extractCompleted);
-  connect(m_zipHelper, &ZipHelper::extractProgress, this, &ConfigurationController::extractProgress);
   connect(m_zipHelper, &ZipHelper::extractError, this, &ConfigurationController::extractError);
 
   // extract the file to the associated configuration folder
@@ -287,13 +283,6 @@ void ConfigurationController::extractCompleted()
   QFile::remove(m_downloadFileName);
   setPercentComplete(100);
   m_zipHelper->deleteLater();
-}
-
-void ConfigurationController::extractProgress(const QString& fileName, const QString& outputFileName, qreal percent)
-{
-  Q_UNUSED(fileName);
-  Q_UNUSED(outputFileName);
-  Q_UNUSED(percent);
 }
 
 void ConfigurationController::extractError(const QString& fileName, const QString& outputFileName, ZipHelper::Result result)

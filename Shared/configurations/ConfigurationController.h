@@ -67,7 +67,6 @@ private slots:
   void finished();
   void downloadErrorOccurred(QNetworkReply::NetworkError);
   void extractCompleted();
-  void extractProgress(const QString& fileName, const QString& outputFileName, qreal percent);
   void extractError(const QString& fileName, const QString& outputFileName, ZipHelper::Result result);
 
 private:

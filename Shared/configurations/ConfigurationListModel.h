@@ -45,9 +45,11 @@ public:
   ~ConfigurationListModel();
 
   void select(int index);
-  void download(int index);
   void cancel(int index);
-  void remove(int index);
+
+  // to be implemented when additional packages can be setup for download by the end user
+  // void remove(int index);
+  // void download(int index);
 
   // QAbstractItemModel interface
   int rowCount(const QModelIndex& parent) const override;

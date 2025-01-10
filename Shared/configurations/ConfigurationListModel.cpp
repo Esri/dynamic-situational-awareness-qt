@@ -27,12 +27,13 @@ ConfigurationListModel::ConfigurationListModel(QObject* parent):
 
 ConfigurationListModel::~ConfigurationListModel()
 {
-
 }
 
 void ConfigurationListModel::select(int index)
 {
-  // TODO: ensure the index is valid
+  if (index < 0 || index >= m_configurations.size())
+    return;
+
   int loc = 0;
   for (auto& configuration : m_configurations)
   {
@@ -43,24 +44,15 @@ void ConfigurationListModel::select(int index)
   }
 }
 
-void ConfigurationListModel::download(int index)
-{
-  Q_UNUSED(index); // TODO: downloading multiple files at a time will require more management objects for the replies
-}
-
 void ConfigurationListModel::cancel(int index)
 {
-  // TODO: ensure the index is valid
+  if (index < 0 || index >= m_configurations.size())
+    return;
+
   auto& configuration = m_configurations[index];
   configuration.setPercentDownloaded(0);
   auto idx = createIndex(index, 0);
   emit dataChanged(idx, idx);
-}
-
-void ConfigurationListModel::remove(int index)
-{
-  // TODO: remove the unpacked data on device
-  Q_UNUSED(index);
 }
 
 int ConfigurationListModel::rowCount(const QModelIndex& parent) const
@@ -98,8 +90,7 @@ QVariant ConfigurationListModel::data(const QModelIndex& index, int role) const
 
 bool ConfigurationListModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-  // TODO: better validation of the incoming index value
-  if (!index.isValid())
+  if (!index.isValid() || value.isNull())
     return false;
 
   auto& configuration = m_configurations[index.row()];

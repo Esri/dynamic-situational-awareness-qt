@@ -53,9 +53,8 @@ const QString DsaUtility::FILE_NAME_DSA_CONFIGURATIONS = "DsaConfigurations.json
 QString DsaUtility::configurationsDirectoryPath()
 {
   // return the cached path to the configurations folder
-  static bool cached = false;
   static QString path;
-  if (cached)
+  if (!path.isNull())
     return path;
 
   // setup the root directory based on the os/platform
@@ -73,31 +72,27 @@ QString DsaUtility::configurationsDirectoryPath()
 
   // return the full path to the configurations directory
   path = QString(dir.absolutePath());
-  cached = true;
   return path;
 }
 
 QString DsaUtility::configurationsFilePath()
 {
   // return the cached path to the configuration file
-  static bool cached = false;
   static QString path;
-  if (cached)
+  if (!path.isNull())
     return path;
 
   // return the full path to the configurations file
   QDir dir{DsaUtility::configurationsDirectoryPath()};
   path = dir.absoluteFilePath(FILE_NAME_DSA_CONFIGURATIONS);
-  cached = true;
   return path;
 }
 
 QString DsaUtility::activeConfigurationPath()
 {
   // return the cached path to the configuration folder
-  static bool cached = false;
   static QString path;
-  if (cached)
+  if (!path.isNull())
     return path;
 
   // check for the default configurations file and create if it doesn't exist
@@ -143,7 +138,6 @@ QString DsaUtility::activeConfigurationPath()
 
   // cache the value for the data path, toggle the cached flag and return the value
   path = dirConfiguration.absolutePath();
-  cached = true;
   return path;
 }
 

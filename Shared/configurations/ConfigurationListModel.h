@@ -42,7 +42,6 @@ public:
   };
 
   explicit ConfigurationListModel(QObject* parent = nullptr);
-  ~ConfigurationListModel();
 
   void select(int index);
   void cancel(int index);

@@ -25,11 +25,11 @@ namespace Dsa {
 class Configuration
 {
 public:
-  explicit Configuration(const QString& name,
-                         const QString& url,
-                         bool selected,
-                         bool loaded,
-                         int percentDownloaded);
+  Configuration(const QString& name,
+                const QString& url,
+                bool selected,
+                bool loaded,
+                int percentDownloaded);
   Configuration(Configuration&) = default;
   Configuration(const Configuration&) = default;
   Configuration(Configuration&&) = default;
@@ -55,9 +55,9 @@ public:
 private:
   QString m_name;
   QString m_url;
-  bool m_selected;
-  bool m_loaded;
-  int m_percentDownloaded;
+  bool m_selected = false;
+  bool m_loaded = false;
+  int m_percentDownloaded = 0;
 };
 
 }

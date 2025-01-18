@@ -26,7 +26,7 @@
 #include "AbstractTool.h"
 #include "ZipHelper.h"
 
-Q_MOC_INCLUDE("qabstractitemmodel.h")
+Q_MOC_INCLUDE("QAbstractListModel")
 class QAbstractListModel;
 
 namespace Dsa {
@@ -52,7 +52,6 @@ public:
   static bool createDefaultConfigurationsFile();
 
   QString toolName() const override;
-  void setProperties(const QVariantMap& properties) override;
   bool downloading();
 
   QAbstractListModel* configurations() const;

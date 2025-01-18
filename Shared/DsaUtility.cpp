@@ -53,9 +53,9 @@ const QString DsaUtility::FILE_NAME_DSA_CONFIGURATIONS = "DsaConfigurations.json
 QString DsaUtility::configurationsDirectoryPath()
 {
   // return the cached path to the configurations folder
-  static QString path;
-  if (!path.isNull())
-    return path;
+  static QString fullPathToConfigurationsDirectory;
+  if (!fullPathToConfigurationsDirectory.isNull())
+    return fullPathToConfigurationsDirectory;
 
   // setup the root directory based on the os/platform
 #if defined Q_OS_ANDROID || defined Q_OS_IOS
@@ -71,62 +71,65 @@ QString DsaUtility::configurationsDirectoryPath()
   dir.cd("DSA");
 
   // return the full path to the configurations directory
-  path = QString(dir.absolutePath());
-  return path;
+  fullPathToConfigurationsDirectory = QString(dir.absolutePath());
+  return fullPathToConfigurationsDirectory;
 }
 
 QString DsaUtility::configurationsFilePath()
 {
   // return the cached path to the configuration file
-  static QString path;
-  if (!path.isNull())
-    return path;
+  static QString fullPathToConfigurationsFile;
+  if (!fullPathToConfigurationsFile.isNull())
+    return fullPathToConfigurationsFile;
 
   // return the full path to the configurations file
   QDir dir{DsaUtility::configurationsDirectoryPath()};
-  path = dir.absoluteFilePath(FILE_NAME_DSA_CONFIGURATIONS);
-  return path;
+  fullPathToConfigurationsFile = dir.absoluteFilePath(FILE_NAME_DSA_CONFIGURATIONS);
+  return fullPathToConfigurationsFile;
 }
 
 QString DsaUtility::activeConfigurationPath()
 {
   // return the cached path to the configuration folder
-  static QString path;
-  if (!path.isNull())
-    return path;
+  static QString fullPathToActiveConfigurationFolder;
+  if (!fullPathToActiveConfigurationFolder.isNull())
+    return fullPathToActiveConfigurationFolder;
 
   // check for the default configurations file and create if it doesn't exist
   QFile fileConfigurations{DsaUtility::configurationsFilePath()};
   if (!fileConfigurations.exists())
     ConfigurationController::createDefaultConfigurationsFile();
 
-  // get the first 'selected' configuration in the file
+  // make sure the file can be opened for read
   QString selectedConfigurationName{};
-  if (fileConfigurations.open(QIODevice::ReadOnly))
+  if (!fileConfigurations.open(QIODevice::ReadOnly))
+    return QString{};
+
+  // check that the document parses and contains an array
+  QJsonParseError parseError;
+  const auto docConfigurations = QJsonDocument::fromJson(fileConfigurations.readAll(), &parseError);
+  if (docConfigurations.isNull() || docConfigurations.isEmpty() || !docConfigurations.isArray())
+    return QString{};
+
+  // loop through all the elements in the array
+  const auto configurationsArray = docConfigurations.array();
+  for (const auto& configurationNode : configurationsArray)
   {
-    QJsonParseError parseError;
-    const auto docConfigurations = QJsonDocument::fromJson(fileConfigurations.readAll(), &parseError);
-    if (!docConfigurations.isNull() && !docConfigurations.isEmpty() && docConfigurations.isArray())
+    // skip any non object types
+    if (!configurationNode.isObject())
+      continue;
+
+    // get the selected value
+    const auto configurationObject = configurationNode.toObject();
+    const auto configurationSelected = configurationObject["selected"].toBool();
+    if (configurationSelected)
     {
-      const auto configurationsArray = docConfigurations.array();
-      for (const auto& configurationNode : configurationsArray)
-      {
-        if (configurationNode.isObject())
-        {
-          // get the selected value
-          const auto configurationObject = configurationNode.toObject();
-          const auto configurationSelected = configurationObject["selected"].toBool();
-          if (configurationSelected)
-          {
-            selectedConfigurationName = configurationObject["name"].toString();
-            break;
-          }
-        }
-      }
+      selectedConfigurationName = configurationObject["name"].toString();
+      break;
     }
   }
 
-  // abort if the file contained nothing that could resolve to disk
+  // abort if the file contained nothing that could resolve to a name that represents a folder
   if (selectedConfigurationName.isEmpty())
     return QString{};
 
@@ -137,8 +140,8 @@ QString DsaUtility::activeConfigurationPath()
     dirConfigurations.mkdir(selectedConfigurationName);
 
   // cache the value for the data path, toggle the cached flag and return the value
-  path = dirConfiguration.absolutePath();
-  return path;
+  fullPathToActiveConfigurationFolder = dirConfiguration.absolutePath();
+  return fullPathToActiveConfigurationFolder;
 }
 
 /*!

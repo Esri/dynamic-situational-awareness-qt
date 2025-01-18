@@ -25,10 +25,6 @@ ConfigurationListModel::ConfigurationListModel(QObject* parent):
 {
 }
 
-ConfigurationListModel::~ConfigurationListModel()
-{
-}
-
 void ConfigurationListModel::select(int index)
 {
   if (index < 0 || index >= m_configurations.size())
@@ -81,8 +77,6 @@ QVariant ConfigurationListModel::data(const QModelIndex& index, int role) const
       return configuration.loaded();
     case Roles::PercentDownloaded:
       return configuration.percentDownloaded();
-    default:
-      return QVariant{};
   }
 
   return QVariant{};
@@ -109,8 +103,6 @@ bool ConfigurationListModel::setData(const QModelIndex& index, const QVariant& v
     case Roles::PercentDownloaded:
       configuration.setPercentDownloaded(value.toInt());
       break;
-    default:
-      break;
   }
 
   emit dataChanged(index, index);
@@ -127,7 +119,7 @@ bool ConfigurationListModel::add(const QString& name, const QString& url, bool s
 
 QHash<int, QByteArray> ConfigurationListModel::roleNames() const
 {
-  static QHash<int, QByteArray> roles = {
+  static const QHash<int, QByteArray> roles = {
     { Name, "Name" },
     { Url, "Url" },
     { Downloaded, "Downloaded" },

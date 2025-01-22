@@ -41,6 +41,7 @@ class ConfigurationController : public AbstractTool
 
   Q_PROPERTY(QAbstractListModel* configurations READ configurations NOTIFY configurationsChanged)
   Q_PROPERTY(bool downloading READ downloading NOTIFY configurationsChanged)
+  Q_PROPERTY(bool requiresRestart READ requiresRestart NOTIFY configurationsChanged)
 
 public:
   explicit ConfigurationController(QObject* parent = nullptr);
@@ -53,6 +54,7 @@ public:
 
   QString toolName() const override;
   bool downloading();
+  bool requiresRestart();
 
   QAbstractListModel* configurations() const;
 

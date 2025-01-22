@@ -194,6 +194,22 @@ bool ConfigurationController::downloading()
   return m_downloading;
 }
 
+bool ConfigurationController::requiresRestart()
+{
+  // check the configurations for reload
+  auto foundRequiresReload = false;
+  for (const auto& c : *m_configurationListModel)
+  {
+    if (c.selected() && c.percentDownloaded() == 100 && !c.loaded())
+    {
+      foundRequiresReload = true;
+      break;
+    }
+  }
+  emit configurationsChanged();
+  return foundRequiresReload;
+}
+
 QAbstractListModel* ConfigurationController::configurations() const
 {
   return m_configurationListModel;

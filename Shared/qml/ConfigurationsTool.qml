@@ -80,16 +80,17 @@ DsaPanel {
                 verticalAlignment: Text.AlignVCenter
             }
 
-            Image {
-                id: imageRequiresReload
-                source: DsaResources.iconAlertLow
+            Label {
+                id: labelRequiresRestart
                 anchors {
                     left: labelName.right
                     verticalCenter: parent.verticalCenter
-                    margins: 4
+                    margins: 2
                 }
-                height: parent.height / 2
-                width: model.Selected && !model.Loaded ? parent.height / 2 : 0
+                text: "*"
+                color: "yellow"
+                font.italic: true
+                visible: model.Selected && model.PercentDownloaded === 100 && !model.Loaded
             }
 
             Image {
@@ -128,6 +129,7 @@ DsaPanel {
                 source: DsaResources.iconTrash
                 height: parent.height
                 width: model.Downloaded && !model.Selected && !model.Loaded ? parent.height : 0
+                visible: false // TODO: remove when downloads from user are implemented
                 anchors {
                     right: parent.right
                     verticalCenter: parent.verticalCenter
@@ -153,5 +155,17 @@ DsaPanel {
         spacing: 2 * scaleFactor
         model: toolController.configurations
         delegate: configurationListItemDelegate
+    }
+
+    Label {
+        id: labelRequiresRestartText
+        anchors {
+            bottom: parent.bottom
+            right: parent.right
+            margins: 2
+        }
+        color: "yellow"
+        text: "*requires restart"
+        visible: toolController.requiresRestart
     }
 }

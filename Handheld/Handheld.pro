@@ -24,7 +24,7 @@ ARCGIS_RUNTIME_VERSION = 200.5.0
 DEFINES += ARCGIS_MAPS_SDK_VERSION=$$ARCGIS_RUNTIME_VERSION
 include($$PWD/../Shared/build/arcgisruntime.pri)
 
-include($$PWD/../3rdparty/zlib_minizip_ng.pri)
+include($$PWD/../3rdparty/zlib-ng/zlib_minizip_ng.pri)
 
 INCLUDEPATH += $$PWD/../Shared/ \
     $$PWD/../Shared/alerts \

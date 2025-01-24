@@ -77,6 +77,12 @@ QVariant ConfigurationListModel::data(const QModelIndex& index, int role) const
       return configuration.loaded();
     case Roles::PercentDownloaded:
       return configuration.percentDownloaded();
+    case Roles::Downloading:
+      return configuration.downloading();
+    case Roles::RequiresRestart:
+      return configuration.requiresRestart();
+    case Roles::CanDownload:
+      return configuration.canDownload();
   }
 
   return QVariant{};
@@ -125,7 +131,10 @@ QHash<int, QByteArray> ConfigurationListModel::roleNames() const
     { Downloaded, "Downloaded" },
     { Selected, "Selected" },
     { Loaded, "Loaded" },
-    { PercentDownloaded, "PercentDownloaded" }
+    { PercentDownloaded, "PercentDownloaded" },
+    { Downloading, "Downloading" },
+    { RequiresRestart, "RequiresRestart" },
+    { CanDownload, "CanDownload" }
   };
 
   return roles;

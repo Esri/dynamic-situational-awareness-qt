@@ -55,6 +55,21 @@ bool Configuration::downloaded() const
   return m_percentDownloaded == 100;
 }
 
+bool Configuration::downloading() const
+{
+  return m_percentDownloaded > 0 && m_percentDownloaded < 100;
+}
+
+bool Configuration::requiresRestart() const
+{
+  return m_selected && downloaded() && !m_loaded;
+}
+
+bool Configuration::canDownload() const
+{
+  return !downloaded() && !m_url.isEmpty();
+}
+
 bool Configuration::selected() const
 {
   return m_selected;

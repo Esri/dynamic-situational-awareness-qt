@@ -103,17 +103,6 @@ Item {
                 target: categoryToolbar
                 titleText: "Markup"
             }
-        },
-        State {
-            name: "configurations"
-            PropertyChanges {
-                target: configurationsIcon
-                selected: true
-            }
-            PropertyChanges {
-                target: categoryToolbar
-                titleText: "Configurations"
-            }
         }
     ]
 }

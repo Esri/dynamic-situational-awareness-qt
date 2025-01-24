@@ -43,6 +43,9 @@ public:
   void setUrl(const QString& url);
 
   bool downloaded() const;
+  bool downloading() const;
+  bool requiresRestart() const;
+  bool canDownload() const;
 
   bool selected() const;
   void setSelected(bool selected);

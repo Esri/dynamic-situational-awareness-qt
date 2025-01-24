@@ -38,7 +38,10 @@ public:
     Downloaded,
     Selected,
     Loaded,
-    PercentDownloaded
+    PercentDownloaded,
+    Downloading,
+    RequiresRestart,
+    CanDownload
   };
 
   explicit ConfigurationListModel(QObject* parent = nullptr);

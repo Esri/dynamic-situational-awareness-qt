@@ -38,8 +38,6 @@
 
 namespace Dsa {
 
-const QString ConfigurationController::URL_DEFAULT_DOWNLOAD = QString("https://usdanrcswmx.esri.com/arcgis/sharing/rest/content/items/46c2b274325c4418833624d48cb2a44a/data");
-
 ConfigurationController::ConfigurationController(QObject* parent /* = nullptr */):
   AbstractTool(parent),
   m_configurationListModel(new ConfigurationListModel{this})
@@ -166,8 +164,8 @@ bool ConfigurationController::createDefaultConfigurationsFile()
   // create a single entry for the default configuration
   QJsonObject obj;
   obj["selected"] = true;
-  obj["name"] = "Default";
-  obj["url"] = URL_DEFAULT_DOWNLOAD;
+  obj["name"] = DEFAULT_DOWNLOAD_NAME;
+  obj["url"] = DEFAULT_DOWNLOAD_URL;
 
   // create a new document as a top level array and append the default object
   QJsonArray array;
@@ -200,6 +198,17 @@ bool ConfigurationController::requiresRestart()
   for (const auto& cfg : *m_configurationListModel)
   {
     if (cfg.requiresRestart())
+      return true;
+  }
+  return false;
+}
+
+bool ConfigurationController::configurationIsAvailable()
+{
+  // look for a downloaded configuration
+  for (const auto& cfg : *m_configurationListModel)
+  {
+    if (cfg.downloaded())
       return true;
   }
   return false;
@@ -303,6 +312,20 @@ void ConfigurationController::extractError(const QString& fileName, const QStrin
   QFile::remove(m_downloadFileName);
   setPercentComplete(0);
   m_zipHelper->deleteLater();
+}
+
+void ConfigurationController::downloadDefaultData()
+{
+  qsizetype i = 0;
+  for (const auto& cfg : *m_configurationListModel)
+  {
+    if (cfg.name() == DEFAULT_DOWNLOAD_NAME)
+    {
+      download(i);
+      return;
+    }
+    i++;
+  }
 }
 
 void ConfigurationController::setPercentComplete(int percentComplete)

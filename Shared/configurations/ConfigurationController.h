@@ -35,13 +35,15 @@ class ConfigurationListModel;
 
 class ConfigurationController : public AbstractTool
 {
-  static const QString URL_DEFAULT_DOWNLOAD;
+  inline static const QString DEFAULT_DOWNLOAD_URL{"https://usdanrcswmx.esri.com/arcgis/sharing/rest/content/items/46c2b274325c4418833624d48cb2a44a/data"};
+  inline static const QString DEFAULT_DOWNLOAD_NAME{"Default"};
 
   Q_OBJECT
 
   Q_PROPERTY(QAbstractListModel* configurations READ configurations NOTIFY configurationsChanged)
   Q_PROPERTY(bool downloading READ downloading NOTIFY configurationsChanged)
   Q_PROPERTY(bool requiresRestart READ requiresRestart NOTIFY configurationsChanged)
+  Q_PROPERTY(bool configurationIsAvailable READ configurationIsAvailable)
 
 public:
   explicit ConfigurationController(QObject* parent = nullptr);
@@ -50,11 +52,13 @@ public:
   Q_INVOKABLE void download(int index);
   Q_INVOKABLE void cancel(int index);
   Q_INVOKABLE void remove(int index);
+  Q_INVOKABLE void downloadDefaultData();
   static bool createDefaultConfigurationsFile();
 
   QString toolName() const override;
   bool downloading();
   bool requiresRestart();
+  bool configurationIsAvailable();
 
   QAbstractListModel* configurations() const;
 

@@ -39,8 +39,6 @@ using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
 
-const QString DsaUtility::FILE_NAME_DSA_CONFIGURATIONS = "DsaConfigurations.json";
-
 /*!
   \class Dsa::DsaUtility
   \inmodule Dsa
@@ -65,12 +63,11 @@ QString DsaUtility::configurationsDirectoryPath()
 #endif
 
   // append the standard path to the dsa application data folder structure
-  dir.cd("ArcGIS");
-  dir.cd("Runtime");
-  dir.cd("Data");
-  dir.cd("DSA");
+  if (!dir.mkpath(FILE_PATH_HOME_DATA))
+    return QString{};
 
   // return the full path to the configurations directory
+  dir.cd(FILE_PATH_HOME_DATA);
   fullPathToConfigurationsDirectory = QString(dir.absolutePath());
   return fullPathToConfigurationsDirectory;
 }

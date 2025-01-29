@@ -27,13 +27,14 @@ Rectangle {
 
     color: Material.primary
 
+    function showConfigurationsTab() {
+        visible = true;
+        bar.setCurrentIndex(1);
+    }
+
     // Add the Options Controller Class
     OptionsController {
         id: optionsController
-    }
-
-    ConfigurationController {
-        id: configurationController
     }
 
     TabBar {
@@ -48,6 +49,7 @@ Rectangle {
     }
 
     StackLayout {
+        id: stackLayout
         width: parent.width
         anchors {
             top: bar.bottom
@@ -58,203 +60,203 @@ Rectangle {
 
         // Create a flickable column so that n number of options can be added
         Item {
-        Flickable {
-            id: optionsFlickable
+            Flickable {
+                id: optionsFlickable
 
-            anchors {
-                fill: parent
-                margins: 10 * scaleFactor
-            }
-            contentHeight: optionsColumn.height + parent.height * .15
-
-            clip: true
-            Column {
-                id: optionsColumn
-                width: parent.width
-
-                spacing: 10 * scaleFactor
-
-                Label {
-                    text: "Map"
-                    font {
-                        family: DsaStyles.fontFamily
-                        underline: true
-                        pixelSize: DsaStyles.titleFontPixelSize * 0.75
-                    }
-                    color: Material.foreground
+                anchors {
+                    fill: parent
+                    margins: 10 * scaleFactor
                 }
+                contentHeight: optionsColumn.height + parent.height * .15
 
-                // Toggle navigation controls
-                CheckBox {
-                    text: "Show navigation controls"
-                    checked: true
-                    onCheckedChanged: {
-                        // update visibility of UI components
-                        navTool.visible = checked;
-                        compass.visible = checked;
-                    }
-                }
-
-                // Toggle location/elevation overlay
-                CheckBox {
-                    text: "Show location and elevation"
-                    checked: true
-                    onCheckedChanged: {
-                        // update visibility of UI component
-                        currentLocation.visible = checked;
-                    }
-                }
-
-                // Toggle friendly tracks labels
-                CheckBox {
-                    text: "Show friendly tracks labels"
-                    checked: true
-                    onCheckedChanged: {
-                        optionsController.showFriendlyTracksLabels = checked;
-                    }
-                }
-
-                Label {
-                    text: "Location"
-                    font {
-                        family: DsaStyles.fontFamily
-                        underline: true
-                        pixelSize: DsaStyles.titleFontPixelSize * 0.75
-                    }
-                    color: Material.foreground
-                }
-
-                // Whether to use GPS for the location/elevation display or not.
-                // The alternative is the use the Scene's base surface.
-                CheckBox {
-                    id: useGPS
-                    text: "Use GPS for current elevation display"
-                    checked: optionsController.useGpsForElevation
-                    onCheckedChanged: optionsController.useGpsForElevation = checked
-                }
-
-
-                CheckBox {
-                    text: "Location Broadcast"
-                    checked: messageFeeds.controller.locationBroadcastEnabled
-                    onCheckedChanged: messageFeeds.controller.locationBroadcastEnabled = checked
-                }
-
-                Row {
-                    height: 40 * scaleFactor
-                    spacing: 5 * scaleFactor
-
-                    Text {
-                        text: "Location Broadcast frequency (ms)"
-                        color: Material.foreground
-                        font {
-                            pixelSize: 10 * scaleFactor
-                            family: DsaStyles.fontFamily
-                        }
-                    }
-
-                    TextField {
-                        width: 50 * scaleFactor
-                        text: messageFeeds.controller.locationBroadcastFrequency
-                        color: Material.foreground
-                        font {
-                            pixelSize: 10 * scaleFactor
-                            family: DsaStyles.fontFamily
-                        }
-
-                        validator: IntValidator { bottom:0 }
-
-                        onTextChanged: messageFeeds.controller.locationBroadcastFrequency = Number(text)
-                    }
-                }
-
-                Label {
-                    text: "General"
-                    font {
-                        family: DsaStyles.fontFamily
-                        underline: true
-                        pixelSize: DsaStyles.titleFontPixelSize * 0.75
-                    }
-                    color: Material.foreground
-                }
-
-                // Change the default coordinate formats between DMS, USNG, MGRS, etc.
-                Row {
+                clip: true
+                Column {
+                    id: optionsColumn
                     width: parent.width
+
                     spacing: 10 * scaleFactor
 
                     Label {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: "Default Coordinate Format"
+                        text: "Map"
                         font {
-                            pixelSize: 12 * scaleFactor
                             family: DsaStyles.fontFamily
+                            underline: true
+                            pixelSize: DsaStyles.titleFontPixelSize * 0.75
                         }
                         color: Material.foreground
                     }
 
-                    ComboBox {
-                        anchors.verticalCenter: parent.verticalCenter
-                        model: optionsController.coordinateFormats
-                        Component.onCompleted: currentIndex = optionsController.initialFormatIndex
-                        onCurrentTextChanged: optionsController.setCoordinateFormat(currentText);
+                    // Toggle navigation controls
+                    CheckBox {
+                        text: "Show navigation controls"
+                        checked: true
+                        onCheckedChanged: {
+                            // update visibility of UI components
+                            navTool.visible = checked;
+                            compass.visible = checked;
+                        }
                     }
-                }
 
-                // Change the default units between feet and meters
-                Row {
-                    width: parent.width
-                    spacing: 10 * scaleFactor
+                    // Toggle location/elevation overlay
+                    CheckBox {
+                        text: "Show location and elevation"
+                        checked: true
+                        onCheckedChanged: {
+                            // update visibility of UI component
+                            currentLocation.visible = checked;
+                        }
+                    }
+
+                    // Toggle friendly tracks labels
+                    CheckBox {
+                        text: "Show friendly tracks labels"
+                        checked: true
+                        onCheckedChanged: {
+                            optionsController.showFriendlyTracksLabels = checked;
+                        }
+                    }
 
                     Label {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: "Default Unit of Measurement"
+                        text: "Location"
                         font {
-                            pixelSize: 12 * scaleFactor
                             family: DsaStyles.fontFamily
+                            underline: true
+                            pixelSize: DsaStyles.titleFontPixelSize * 0.75
                         }
                         color: Material.foreground
                     }
 
-                    ComboBox {
-                        anchors.verticalCenter: parent.verticalCenter
-                        model: optionsController.units
-                        Component.onCompleted: currentIndex = optionsController.initialUnitIndex
-                        onCurrentTextChanged: optionsController.setUnitOfMeasurement(currentText)
+                    // Whether to use GPS for the location/elevation display or not.
+                    // The alternative is the use the Scene's base surface.
+                    CheckBox {
+                        id: useGPS
+                        text: "Use GPS for current elevation display"
+                        checked: optionsController.useGpsForElevation
+                        onCheckedChanged: optionsController.useGpsForElevation = checked
                     }
-                }
 
-                Row {
-                    height: 40 * scaleFactor
-                    spacing: 5 * scaleFactor
 
-                    Text {
-                        text: "User name"
-                        color: Material.foreground
-                        font {
-                            pixelSize: 10 * scaleFactor
-                            family: DsaStyles.fontFamily
+                    CheckBox {
+                        text: "Location Broadcast"
+                        checked: messageFeeds.controller.locationBroadcastEnabled
+                        onCheckedChanged: messageFeeds.controller.locationBroadcastEnabled = checked
+                    }
+
+                    Row {
+                        height: 40 * scaleFactor
+                        spacing: 5 * scaleFactor
+
+                        Text {
+                            text: "Location Broadcast frequency (ms)"
+                            color: Material.foreground
+                            font {
+                                pixelSize: 10 * scaleFactor
+                                family: DsaStyles.fontFamily
+                            }
+                        }
+
+                        TextField {
+                            width: 50 * scaleFactor
+                            text: messageFeeds.controller.locationBroadcastFrequency
+                            color: Material.foreground
+                            font {
+                                pixelSize: 10 * scaleFactor
+                                family: DsaStyles.fontFamily
+                            }
+
+                            validator: IntValidator { bottom:0 }
+
+                            onTextChanged: messageFeeds.controller.locationBroadcastFrequency = Number(text)
                         }
                     }
 
-                    TextField {
-                        width: 128 * scaleFactor
-                        text: optionsController.userName
-                        color: Material.foreground
+                    Label {
+                        text: "General"
                         font {
-                            pixelSize: 10 * scaleFactor
                             family: DsaStyles.fontFamily
+                            underline: true
+                            pixelSize: DsaStyles.titleFontPixelSize * 0.75
+                        }
+                        color: Material.foreground
+                    }
+
+                    // Change the default coordinate formats between DMS, USNG, MGRS, etc.
+                    Row {
+                        width: parent.width
+                        spacing: 10 * scaleFactor
+
+                        Label {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: "Default Coordinate Format"
+                            font {
+                                pixelSize: 12 * scaleFactor
+                                family: DsaStyles.fontFamily
+                            }
+                            color: Material.foreground
                         }
 
-                        onTextEdited: {
-                            if (optionsController.userName !== text)
-                                optionsController.userName = text;
+                        ComboBox {
+                            anchors.verticalCenter: parent.verticalCenter
+                            model: optionsController.coordinateFormats
+                            Component.onCompleted: currentIndex = optionsController.initialFormatIndex
+                            onCurrentTextChanged: optionsController.setCoordinateFormat(currentText);
+                        }
+                    }
+
+                    // Change the default units between feet and meters
+                    Row {
+                        width: parent.width
+                        spacing: 10 * scaleFactor
+
+                        Label {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: "Default Unit of Measurement"
+                            font {
+                                pixelSize: 12 * scaleFactor
+                                family: DsaStyles.fontFamily
+                            }
+                            color: Material.foreground
+                        }
+
+                        ComboBox {
+                            anchors.verticalCenter: parent.verticalCenter
+                            model: optionsController.units
+                            Component.onCompleted: currentIndex = optionsController.initialUnitIndex
+                            onCurrentTextChanged: optionsController.setUnitOfMeasurement(currentText)
+                        }
+                    }
+
+                    Row {
+                        height: 40 * scaleFactor
+                        spacing: 5 * scaleFactor
+
+                        Text {
+                            text: "User name"
+                            color: Material.foreground
+                            font {
+                                pixelSize: 10 * scaleFactor
+                                family: DsaStyles.fontFamily
+                            }
+                        }
+
+                        TextField {
+                            width: 128 * scaleFactor
+                            text: optionsController.userName
+                            color: Material.foreground
+                            font {
+                                pixelSize: 10 * scaleFactor
+                                family: DsaStyles.fontFamily
+                            }
+
+                            onTextEdited: {
+                                if (optionsController.userName !== text)
+                                    optionsController.userName = text;
+                            }
                         }
                     }
                 }
             }
         }
-}
         // Create a flickable column so that n number of options can be added
         Item {
             Flickable {

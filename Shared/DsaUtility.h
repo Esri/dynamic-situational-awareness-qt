@@ -33,7 +33,9 @@ class DsaUtility
 {
 public:
 
-  static const QString FILE_NAME_DSA_CONFIGURATIONS;
+  inline static const QString FILE_NAME_DSA_CONFIGURATIONS{"DsaConfigurations.json"};
+  inline static const QString FILE_PATH_HOME_DATA{"ArcGIS/Runtime/Data/DSA"};
+
   static QString configurationsDirectoryPath();
   static QString configurationsFilePath();
   static QString activeConfigurationPath();

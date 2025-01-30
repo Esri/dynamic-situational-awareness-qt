@@ -346,8 +346,8 @@ Rectangle {
                             id: imageDownload
                             source: "qrc:/Resources/icons/xhdpi/ic_menu_sendmap_dark_d.png"
                             height: parent.height
-                            width: model.CanDownload && !configurationController.downloading ? parent.height : 0
-                            enabled: !configurationController.downloading
+                            width: model.CanDownload && !configurationController.downloadInProgress ? parent.height : 0
+                            enabled: !configurationController.downloadInProgress
                             anchors {
                                 right: parent.right
                                 verticalCenter: parent.verticalCenter

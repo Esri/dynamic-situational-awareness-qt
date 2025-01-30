@@ -67,7 +67,7 @@ void ConfigurationController::select(int index)
 void ConfigurationController::download(int index)
 {
   // prevent calling the download function if something is already in progress
-  if (m_downloading)
+  if (m_downloadInProgress)
     return;
 
   // get the url from the selected item
@@ -113,7 +113,7 @@ void ConfigurationController::download(int index)
 
     // reset the properties for download status and use the network manager to download the file
     m_networkReply = m_networkAccessManager.get(networkRequest);
-    m_downloading = true;
+    m_downloadInProgress = true;
     connect(m_networkReply, &QNetworkReply::downloadProgress, this, &ConfigurationController::downloadProgress);
     connect(m_networkReply, &QNetworkReply::readyRead, this, &ConfigurationController::readyRead);
     connect(m_networkReply, &QNetworkReply::finished, this, &ConfigurationController::finished);
@@ -129,7 +129,7 @@ void ConfigurationController::cancel(int index)
     // cancel the downloading item and reset all the
     m_configurationListModel->cancel(index);
     m_aborted = true;
-    m_downloading = false;
+    m_downloadInProgress = false;
     m_networkReply->abort();
     m_networkReply->deleteLater();
     m_networkReply = nullptr;
@@ -189,7 +189,7 @@ QString ConfigurationController::toolName() const
 
 bool ConfigurationController::downloading()
 {
-  return m_downloading;
+  return m_downloadInProgress;
 }
 
 bool ConfigurationController::requiresRestart()
@@ -245,7 +245,7 @@ void ConfigurationController::readyRead()
 void ConfigurationController::finished()
 {
   // turn off the downloading state and clean up any aborted download files remaining
-  m_downloading = false;
+  m_downloadInProgress = false;
   if (m_aborted)
   {
     QFile fileAbort(m_downloadFileName);

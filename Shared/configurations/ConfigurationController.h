@@ -41,7 +41,7 @@ class ConfigurationController : public AbstractTool
   Q_OBJECT
 
   Q_PROPERTY(QAbstractListModel* configurations READ configurations NOTIFY configurationsChanged)
-  Q_PROPERTY(bool downloading READ downloading NOTIFY configurationsChanged)
+  Q_PROPERTY(bool downloadInProgress READ downloadInProgress NOTIFY configurationsChanged)
   Q_PROPERTY(bool requiresRestart READ requiresRestart NOTIFY configurationsChanged)
   Q_PROPERTY(bool configurationIsAvailable READ configurationIsAvailable)
 
@@ -56,7 +56,7 @@ public:
   static bool createDefaultConfigurationsFile();
 
   QString toolName() const override;
-  bool downloading();
+  bool downloadInProgress();
   bool requiresRestart();
   bool configurationIsAvailable();
 
@@ -84,7 +84,7 @@ private:
   QDir m_downloadFolder;
   QString m_downloadFileName;
   bool m_aborted = false;
-  bool m_downloading = false;
+  bool m_downloadInProgress = false;
   QNetworkReply* m_networkReply = nullptr;
   ZipHelper* m_zipHelper = nullptr;
 };

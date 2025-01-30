@@ -606,6 +606,7 @@ Vehicle {
     function showConfigurations(downloadDefaultData) {
         if (downloadDefaultData)
             configurationController.downloadDefaultData();
+
         optionsTool.showConfigurationsTab();
     }
 }

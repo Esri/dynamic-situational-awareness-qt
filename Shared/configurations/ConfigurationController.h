@@ -85,7 +85,7 @@ private:
   QString m_downloadFileName;
   bool m_aborted = false;
   bool m_downloadInProgress = false;
-  QNetworkReply* m_networkReply = nullptr;
+  QPointer<QNetworkReply> m_networkReply;
   ZipHelper* m_zipHelper = nullptr;
 };
 

@@ -46,6 +46,8 @@ ConfigurationController::ConfigurationController(QObject* parent /* = nullptr */
 
   ToolManager::instance().addTool(this);
 
+  m_networkAccessManager.setAutoDeleteReplies(true);
+
   // set the downloads folder based on the system type
 #if defined Q_OS_IOS || defined Q_OS_ANDROID
   m_downloadFolder = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
@@ -92,9 +94,6 @@ void ConfigurationController::download(int index)
     if (contentLengthVariant.isValid())
       bytesToDownload = contentLengthVariant.toInt(&convertedOk);
 
-    // clean up the head reply
-    headReply->deleteLater();
-
     // abort if the download size could not be fetched
     if (!convertedOk || bytesToDownload <= 0)
     {
@@ -131,8 +130,6 @@ void ConfigurationController::cancel(int index)
     m_aborted = true;
     m_downloadInProgress = false;
     m_networkReply->abort();
-    m_networkReply->deleteLater();
-    m_networkReply = nullptr;
   }
 }
 
@@ -268,8 +265,6 @@ void ConfigurationController::finished()
     }
 
     fileFinish.write(m_networkReply->readAll());
-    m_networkReply->deleteLater();
-    m_networkReply = nullptr;
   }
   setPercentComplete(100);
 

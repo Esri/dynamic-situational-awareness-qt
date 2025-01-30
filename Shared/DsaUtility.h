@@ -32,7 +32,7 @@ namespace Dsa {
 class DsaUtility
 {
 public:
-
+  inline static const QString FILE_NAME_APP_CONFIG{"DsaAppConfig.json"};
   inline static const QString FILE_NAME_DSA_CONFIGURATIONS{"DsaConfigurations.json"};
   inline static const QString FILE_PATH_HOME_DATA{"ArcGIS/Runtime/Data/DSA"};
 

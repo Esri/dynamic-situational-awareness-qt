@@ -376,17 +376,15 @@ void ConfigurationController::fetchConfigurations()
       continue;
 
     // skip if the app config cannot be found in the directory
-    QFile fileSettings{dirConfiguration.filePath("DsaAppConfig.json")};
-    if (!fileSettings.exists())
+    if (!QFile::exists(dirConfiguration.filePath(DsaUtility::FILE_NAME_APP_CONFIG)))
       continue;
 
     // check the folder recursively for other files
     QDirIterator dirIt(configurationDirectoryPath, QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
     auto filesInConfigurationFolder = 0;
-    while (dirIt.hasNext())
+    while (!dirIt.next().isEmpty())
     {
       filesInConfigurationFolder++;
-      QFile f{dirIt.next()};
       if (filesInConfigurationFolder > 1)
       {
         downloaded = true;

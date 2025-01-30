@@ -153,7 +153,7 @@ void ConfigurationController::storeConfigurations()
     obj["url"] = cfg.url();
     array.append(obj);
   }
-  QJsonDocument doc{array};
+  const QJsonDocument doc{array};
   QFile file{DsaUtility::configurationsFilePath()};
   if (file.open(QIODevice::WriteOnly))
     file.write(doc.toJson());
@@ -187,7 +187,7 @@ QString ConfigurationController::toolName() const
   return QStringLiteral("configurations");
 }
 
-bool ConfigurationController::downloading()
+bool ConfigurationController::downloadInProgress()
 {
   return m_downloadInProgress;
 }

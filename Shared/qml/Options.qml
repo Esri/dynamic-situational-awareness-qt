@@ -359,12 +359,14 @@ Rectangle {
                             rotation: 180
                         }
 
+                        //
+                        // TODO: re-enable the delete function once users are able to add their own sources for download
+                        //
                         // Image {
                         //     id: imageRemove
                         //     source: DsaResources.iconTrash
                         //     height: parent.height
-                        //     // width: model.Downloaded && !model.Selected && !model.Loaded ? parent.height / 2 : 0
-                        //     width: 0 // TODO: remove when downloads from user are implemented
+                        //     width: model.Downloaded && !model.Selected && !model.Loaded ? parent.height / 2 : 0
                         //     anchors {
                         //         right: parent.right
                         //         verticalCenter: parent.verticalCenter

@@ -24,8 +24,6 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
 #include <QStandardPaths>
 #include <QStorageInfo>
 #include <QtGlobal>

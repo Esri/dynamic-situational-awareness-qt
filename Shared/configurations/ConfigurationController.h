@@ -21,6 +21,7 @@
 #include <QDir>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QPointer>
 
 // DSA headers
 #include "AbstractTool.h"
@@ -35,8 +36,8 @@ class ConfigurationListModel;
 
 class ConfigurationController : public AbstractTool
 {
-  inline static const QString DEFAULT_DOWNLOAD_URL{"https://usdanrcswmx.esri.com/arcgis/sharing/rest/content/items/46c2b274325c4418833624d48cb2a44a/data"};
-  inline static const QString DEFAULT_DOWNLOAD_NAME{"Default"};
+  inline static const QString DEFAULT_DOWNLOAD_URL = QStringLiteral("https://usdanrcswmx.esri.com/arcgis/sharing/rest/content/items/46c2b274325c4418833624d48cb2a44a/data");
+  inline static const QString DEFAULT_DOWNLOAD_NAME = QStringLiteral("Default");
 
   Q_OBJECT
 

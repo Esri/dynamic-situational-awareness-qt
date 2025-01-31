@@ -20,7 +20,7 @@ TEMPLATE = app
 QT += core gui opengl network positioning sensors qml quick xml
 CONFIG += c++17
 
-ARCGIS_RUNTIME_VERSION = 200.5.0
+ARCGIS_RUNTIME_VERSION = 200.6.0
 DEFINES += ARCGIS_MAPS_SDK_VERSION=$$ARCGIS_RUNTIME_VERSION
 include($$PWD/../Shared/build/arcgisruntime.pri)
 

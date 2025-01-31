@@ -296,6 +296,7 @@ void ConfigurationController::extractCompleted()
   QFile::remove(m_downloadFileName);
   setPercentComplete(100);
   m_zipHelper->deleteLater();
+  m_zipHelper = nullptr;
 }
 
 void ConfigurationController::extractError(const QString& fileName, const QString& outputFileName, ZipHelper::Result result)
@@ -305,6 +306,7 @@ void ConfigurationController::extractError(const QString& fileName, const QStrin
   QFile::remove(m_downloadFileName);
   setPercentComplete(0);
   m_zipHelper->deleteLater();
+  m_zipHelper = nullptr;
 }
 
 void ConfigurationController::downloadDefaultData()

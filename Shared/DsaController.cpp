@@ -346,7 +346,7 @@ void DsaController::setupConfig()
   createDefaultSettings();
 
   // get the app config
-  m_configFilePath = QString("%1/%2").arg(m_dsaSettings["RootDataDirectory"].toString(), QStringLiteral("DsaAppConfig.json"));
+  m_configFilePath = QString("%1/%2").arg(m_dsaSettings["RootDataDirectory"].toString(), DsaUtility::FILE_NAME_APP_CONFIG);
 
   // If the config file does not exist, create it, and set all of the defaults
   if (!QFileInfo::exists(m_configFilePath))
@@ -496,7 +496,7 @@ bool DsaController::isConflictingTool(const QString& toolName) const
 void DsaController::createDefaultSettings()
 {
   // setup the defaults
-  m_dsaSettings["RootDataDirectory"] = DsaUtility::dataPath();
+  m_dsaSettings["RootDataDirectory"] = DsaUtility::activeConfigurationPath();
   m_dsaSettings[AppConstants::USERNAME_PROPERTYNAME] = QHostInfo::localHostName();
   m_dsaSettings["BasemapDirectory"] = QString("%1/BasemapData").arg(m_dsaSettings["RootDataDirectory"].toString());
   m_dsaSettings["ElevationDirectory"] = QString("%1/ElevationData").arg(m_dsaSettings["RootDataDirectory"].toString());

@@ -38,10 +38,15 @@ Vehicle {
     signal closeDialogAccepted();
     signal inputDialogAccepted(var input, var index);
     signal markupLayerReceived(var path, var overlayVisible);
+    property bool configurationsChanged: false
 
     LocationController {
         id: locationController
         enabled: true
+    }
+
+    ConfigurationController {
+        id: configurationController
     }
 
     PrimaryToolbar {
@@ -516,6 +521,15 @@ Vehicle {
     onParentChanged: {
         if (parent && msgDialog.informativeText.length > 0)
             msgDialog.open();
+
+        // skip if for any reason this method is called again
+        if (configurationsChanged)
+            return;
+
+        // set the skip flag on first run and prompt for download if nothing was available on device
+        configurationsChanged = true;
+        if (parent && !configurationController.configurationIsAvailable)
+            configurationDownloadDialog.open()
     }
 
     Options {
@@ -581,5 +595,18 @@ Vehicle {
 
         onAccepted: markupLayerReceived(path, true);
         onRejected: markupLayerReceived(path, false);
+    }
+
+    DsaYesNoDialog {
+        id: configurationDownloadDialog
+        informativeText: "Download the default configuration data from Esri (~450mb)?"
+        onAccepted: showConfigurations(true);
+        onRejected: showConfigurations(false);
+    }
+    function showConfigurations(downloadDefaultData) {
+        if (downloadDefaultData)
+            configurationController.downloadDefaultData();
+
+        optionsTool.showConfigurationsTab();
     }
 }

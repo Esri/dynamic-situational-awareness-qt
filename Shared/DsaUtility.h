@@ -32,8 +32,13 @@ namespace Dsa {
 class DsaUtility
 {
 public:
+  inline static const QString FILE_NAME_APP_CONFIG = QStringLiteral("DsaAppConfig.json");
+  inline static const QString FILE_NAME_DSA_CONFIGURATIONS = QStringLiteral("DsaConfigurations.json");
+  inline static const QString FILE_PATH_HOME_DATA = QStringLiteral("ArcGIS/Runtime/Data/DSA");
 
-  static QString dataPath();
+  static QString configurationsDirectoryPath();
+  static QString configurationsFilePath();
+  static QString activeConfigurationPath();
   static Esri::ArcGISRuntime::Point montereyCA();
   static double distance3D(const Esri::ArcGISRuntime::Point& from, const Esri::ArcGISRuntime::Point& to);
   static QVector3D toCartesianPoint(const Esri::ArcGISRuntime::Point& point);

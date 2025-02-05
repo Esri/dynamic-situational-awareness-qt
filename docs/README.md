@@ -151,16 +151,16 @@ The tool categories include:
 
 |  |  |
 | :---: | --- |
-| ![](./images/dsa-icon-dsa-32.png) | Return command bar to start |
-| ![](./images/dsa-icon-map-tools-32.png) | [Map tools](#map-tools) (manage map elements) |
-| ![](./images/dsa-icon-create-reports-32.png) | [Create report tools](#create-report-tools) (such as observation reports) |
-| ![](./images/dsa-icon-analysis-tools-32.png) | [Analysis tools](#exploratory-visual-analysis) (viewshed, line of sight) |
-|  ![](./images/dsa-icon-alert-tools-32.png)  | [Alert tools](#alerts-and-conditions) (proximity, geofence, attribute-driven) |
+| ![](./images/dsa-icon-dsa-32.png)           | Return command bar to start |
+| ![](./images/dsa-icon-map-tools-32.png)     | [Map tools](#map-tools) (manage map elements) |
+| ![](./images/dsa-icon-create-reports-32.png)| [Create report tools](#create-report-tools) (such as observation reports) |
+| ![](./images/dsa-icon-analysis-tools-32.png)| [Analysis tools](#exploratory-visual-analysis) (viewshed, line of sight) |
+| ![](./images/dsa-icon-alert-tools-32.png)   | [Alert tools](#alerts-and-conditions) (proximity, geofence, attribute-driven) |
 | ![](./images/dsa-icon-markup-tools-32.png)  | [Markup tools](#markup-tools) (sketching) |
 
 ## Settings panel
 
-![](./images/dsa-tool-settings.png "Setting panel")<br>*Settings panel (DSA Vehicle)*
+![](./images/dsa-tool-settings.png "Setting panel") ![](./images/dsa-tool-configurations.png)<br>*Settings panel (DSA Vehicle)*
 
 The settings panel accesses the app's About information, app settings, and app close (for desktop platforms).
 
@@ -169,7 +169,7 @@ The settings panel accesses the app's About information, app settings, and app c
 
 <!-- TODO - Verify the following paragraph: Some settings are persisted, but ALL of them? -->
 
-When you change settings, they are persisted in the configuration file.
+When you change settings on the Options tab, they are persisted in the application's settings file. The Configurations tab will allow you to switch the active configuration (data + application settings) or download a sample configuration from Esri.
 
 ## Map tools
 
@@ -437,7 +437,10 @@ For convenience, you can try out the DSA apps compiled for [Windows] and [Androi
 
 You can customize aspects of the DSA apps via a configuration file. When the DSA app runs, the app will create a new configuration file if one is not found on local storage. When the app opens the configuration file, the file is read and its values used by the app for that run. Some settings may be changed at run time using the [Settings panel](#settings-panel). Those changes are persisted in the configuration file.
 
-The configuration file is located at `~/ArcGIS/Runtime/Data/DSA/DsaAppConfig.json`, where `~` is `%username%`/`C:/Users/<username>` on Windows, `$HOME` on Unix, and `<app_folder>/files` on Android where `<app_folder>` is path to the package name in your AndroidManifest.xml file (e.g. /data/data/com.esri.arcgisruntime.opensourceapps.DSA_Handheld_Qt).
+The configuration file is located at `~/ArcGIS/Runtime/Data/DSA/Default/DsaAppConfig.json`, where `~` is `%username%`/`C:/Users/<username>` on Windows, `$HOME` on Unix, and `<app_folder>/files` on Android where `<app_folder>` is path to the package name in your AndroidManifest.xml file (e.g. /data/data/com.esri.arcgisruntime.opensourceapps.DSA_Handheld_Qt).
+
+DSA also includes a file for making use of more than one configuration located at `~/ArcGIS/Runtime/Data/DSA/DsaConfigurations.json`. This file will also be created if one does not exist. To setup a new 'Configuration' for DSA, create a folder with the desired name at the same level as the 'Default' configuration folder. Place all your data in the new folder using the same structure described below. Make an update to the DsaConfiguration.json file to include your new folder as shown below. You do not need to provide a url for this configuration. Be sure to put the comma to separate this from the default configuration entity. And if you want your configuration to be loaded on startup, make sure to set the `selected` value to `true` for your new item and set the default entity's `selected` property to `false`(as shown in the highlighted section in the image).
+![](./images/dsa-tool-configurations-setup.png)
 
 The following lists some of the configuration settings that you can change.
 
@@ -465,22 +468,22 @@ The following lists some of the configuration settings that you can change.
 
  `*` - See the config file for details.
 
- `**` - Default data path: `~/ArcGIS/Runtime/Data/DSA`.
+ `**` - Default data path: `~/ArcGIS/Runtime/Data/DSA/Default`.
 
 # Add your own local data
 
-The default data path to local data is `~/ArcGIS/Runtime/Data/DSA`. If you wish to change this, reference the above table, and update the various paths.
+The default data path to local data is `~/ArcGIS/Runtime/Data/DSA/Default`. If you wish to change this, reference the above table, and update the various paths.
 
 The default data directory should look like this:
 
 ```xml
-~/ArcGIS/Runtime/Data/DSA/..
-                          BasemapData/
-                          OperationalData/
-                          Packages/
-                          SimulationData/
-                          ResourceData/
-                          ElevationData/
+~/ArcGIS/Runtime/Data/DSA/Default/..
+                                  BasemapData/
+                                  OperationalData/
+                                  Packages/
+                                  SimulationData/
+                                  ResourceData/
+                                  ElevationData/
 
 ```
 

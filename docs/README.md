@@ -160,7 +160,7 @@ The tool categories include:
 
 ## Settings panel
 
-![](./images/dsa-tool-settings.png "Setting panel") ![](./images/dsa-tool-configurations.png)<br>*Settings panel (DSA Vehicle)*
+![](./images/dsa-tool-settings.png "Setting panel") ![](./images/dsa-tool-configurations.png)<br>*Settings panel (DSA Handheld)*
 
 The settings panel accesses the app's About information, app settings, and app close (for desktop platforms).
 
@@ -439,7 +439,7 @@ You can customize aspects of the DSA apps via a configuration file. When the DSA
 
 The configuration file is located at `~/ArcGIS/Runtime/Data/DSA/Default/DsaAppConfig.json`, where `~` is `%username%`/`C:/Users/<username>` on Windows, `$HOME` on Unix, and `<app_folder>/files` on Android where `<app_folder>` is path to the package name in your AndroidManifest.xml file (e.g. /data/data/com.esri.arcgisruntime.opensourceapps.DSA_Handheld_Qt).
 
-DSA also includes a file for making use of more than one configuration located at `~/ArcGIS/Runtime/Data/DSA/DsaConfigurations.json`. This file will also be created if one does not exist. To setup a new 'Configuration' for DSA, create a folder with the desired name at the same level as the 'Default' configuration folder. Place all your data in the new folder using the same structure described below. Make an update to the DsaConfiguration.json file to include your new folder as shown below. You do not need to provide a url for this configuration. Be sure to put the comma to separate this from the default configuration entity. And if you want your configuration to be loaded on startup, make sure to set the `selected` value to `true` for your new item and set the default entity's `selected` property to `false`(as shown in the highlighted section in the image).
+DSA also includes a file for making use of more than one configuration located at `~/ArcGIS/Runtime/Data/DSA/DsaConfigurations.json`. This file will also be created if one does not exist. To setup a new 'Configuration' for DSA, create a folder with the desired name at the same level as the 'Default' configuration folder. Place all your data in the new folder using the same structure described below. Make an update to the DsaConfiguration.json file to include your new folder as shown below. You do not need to provide a url for this configuration. Be sure to put the comma to separate this from the Default configuration entity. And if you want your configuration to be loaded on startup, make sure to set the `selected` value to `true` for your new item and set the default entity's `selected` property to `false`(as shown in the highlighted section in the image). In the Settings page, on the Configurations tab, you can select which configuration you want activated. Changing the active configuration requires you to restart the application to see the changes. When the application runs for the first time, you will be prompted with an option to download the sample data that is available from Esri (~450mb).
 ![](./images/dsa-tool-configurations-setup.png)
 
 The following lists some of the configuration settings that you can change.

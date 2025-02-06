@@ -47,7 +47,7 @@ ConfigurationController::ConfigurationController(QObject* parent /* = nullptr */
   m_networkAccessManager.setAutoDeleteReplies(true);
 
   // set the downloads folder based on the system type
-#if defined Q_OS_IOS || defined Q_OS_ANDROID
+#ifdef Q_OS_IOS
   m_downloadFolder = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
 #else
   m_downloadFolder = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);

@@ -56,10 +56,10 @@ QString DsaUtility::configurationsDirectoryPath()
     return fullPathToConfigurationsDirectory;
 
   // setup the root directory based on the os/platform
-#if defined Q_OS_ANDROID || defined Q_OS_IOS
+#ifdef Q_OS_IOS
   QDir dir{QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)};
 #else
-  QDir dir{QDir::home()};
+  QDir dir{QStandardPaths::writableLocation(QStandardPaths::HomeLocation)};
 #endif
 
   // append the standard path to the dsa application data folder structure

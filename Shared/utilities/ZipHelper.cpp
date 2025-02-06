@@ -691,14 +691,10 @@ QString ZipHelper::defaultPathVariable(const QString& name)
 
 QString ZipHelper::defaultHomePath()
 {
-  QString homePath;
-
-#ifdef Q_OS_ANDROID
-  homePath = "/sdcard";
-#elif defined Q_OS_IOS
-  homePath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+#ifdef Q_OS_IOS
+  QString homePath{QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)};
 #else
-  homePath = QDir::homePath();
+  QString homePath{QStandardPaths::writableLocation(QStandardPaths::HomeLocation)};
 #endif
 
   return homePath;

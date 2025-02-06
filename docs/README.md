@@ -284,8 +284,8 @@ DSA apps support several generic message feeds.
 
 ***Developer tips:***
 
-- DSA serializes feeds as XML, which is then converted into bytes. Next, the bytes are broadcast as datagrams over a specific UDP port. DSA apps are configured to listen on the same UDP ports, so when incoming datagrams are received, the messages are deserialized and displayed on the map.
-- This app uses [dynamic rendering] for graphics.
+- DSA serializes feeds as strings of XML, which are then converted into bytes. The bytes are broadcast as datagrams over a specific UDP port. DSA apps are configured to listen on the same UDP ports, so when incoming datagrams are received, the messages are deserialized and displayed on the map.
+- This app uses [DynamicEntities] to represent message feeds in the scene. [DynamicEntityLayer] is a core type that was added at 200.3 specifically for the purpose of representing real-time data.
 - Military symbols are displayed using a [dictionary renderer].
 
 ## Exploratory visual analysis
@@ -311,6 +311,7 @@ Exploratory analysis tools combine information such as feature location, your lo
 ***Developer tips:***
 
 - Both viewshed and line of sight analysis are calculated using the GPU and operate only on the data displayed on the map. This means that the accuracy of these analyses are limited by the current resolution of the displayed data and the elevation surface.
+- Because DynamicEntities are a kind of GeoElement, MessageFeed layers can also be used as the target of the analysis tools.
 
 ## Alerts and conditions
 
@@ -532,7 +533,8 @@ Parameters available only in console mode:
 
 [SDK Guide]: https://developers.arcgis.com/qt
 
-[dynamic rendering]: https://developers.arcgis.com/qt/programming-patterns/performance-considerations/#rendering-modes
+[DynamicEntities]: https://developers.arcgis.com/qt/real-time/work-with-dynamic-entities/
+[DynamicEntityLayer]: https://developers.arcgis.com/qt/cpp/api-reference/esri-arcgisruntime-dynamicentitylayer.html
 
 [Explorer for ArcGIS markup documentation]: https://doc.arcgis.com/en/explorer/ipad/help/markup.htm
 

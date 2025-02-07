@@ -311,7 +311,7 @@ Exploratory analysis tools combine information such as feature location, your lo
 ***Developer tips:***
 
 - Both viewshed and line of sight analysis are calculated using the GPU and operate only on the data displayed on the map. This means that the accuracy of these analyses are limited by the current resolution of the displayed data and the elevation surface.
-- Because [DynamicEntities] are a kind of GeoElement, they can be used within MessageFeed layers as the target of the analysis tools.
+- Because [Dynamic Entities] are a kind of GeoElement, they can be used within MessageFeed layers as the target of the analysis tools.
 
 ## Alerts and conditions
 
@@ -439,7 +439,7 @@ For convenience, you can try out the DSA apps compiled for [Windows] and [Androi
 ## Configure and persist app settings using the App Configuration file
 An app configuration file is used to set paths to data sources and persist the state of the app (settings, layers, and conditions) between sessions. When the DSA app runs, it will create a new app configuration file if one is not found in local storage. If the app configuration file is found, the app will read the values from the file when it starts. Any app settings changed at run time in the app using the [Settings panel](#settings-panel), data layers in the Overlays list, and alert conditions are persisted in the configuration file automatically when the app is closed. 
 
-The app configuration file is located at `~/ArcGIS/Runtime/Data/DSA/Default/DsaAppConfig.json`, where `~` is `%username%`/`C:/Users/<username>` on Windows, `$HOME` on Unix, and `<app_folder>/files` on Android where `<app_folder>` is the path to the package name in your AndroidManifest.xml file (e.g. /data/data/com.esri.arcgisruntime.opensourceapps.DSA_Handheld_Qt).
+The app configuration file is located at `~/ArcGIS/Runtime/Data/DSA/Default/DsaAppConfig.json`, where `~` is `%username%`/`C:/Users/<username>` on Windows, `$HOME` on Unix and MacOS, and `<app_folder>/files` on Android where `<app_folder>` is the path to the package name in your AndroidManifest.xml file (e.g. /data/data/com.esri.arcgisruntime.opensourceapps.DSA_Handheld_Qt).
 
 The following lists some of the app configuration settings that you can change.
 
@@ -551,7 +551,7 @@ Parameters available only in console mode:
 
 [SDK Guide]: https://developers.arcgis.com/qt
 
-[DynamicEntities]: https://developers.arcgis.com/qt/real-time/work-with-dynamic-entities/
+[Dynamic Entities]: https://developers.arcgis.com/qt/real-time/work-with-dynamic-entities/
 [DynamicEntityLayer]: https://developers.arcgis.com/qt/cpp/api-reference/esri-arcgisruntime-dynamicentitylayer.html
 [DynamicEntityDataSource]: https://developers.arcgis.com/qt/cpp/api-reference/esri-arcgisruntime-dynamicentitydatasource.html
 [DynamicEntities]: https://developers.arcgis.com/qt/cpp/api-reference/esri-arcgisruntime-dynamicentity.html

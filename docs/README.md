@@ -536,7 +536,7 @@ Parameters available only in console mode:
 [DynamicEntities]: https://developers.arcgis.com/qt/real-time/work-with-dynamic-entities/
 [DynamicEntityLayer]: https://developers.arcgis.com/qt/cpp/api-reference/esri-arcgisruntime-dynamicentitylayer.html
 [DynamicEntityDataSource]: https://developers.arcgis.com/qt/cpp/api-reference/esri-arcgisruntime-dynamicentitydatasource.html
-[DynamicEntities](https://developers.arcgis.com/qt/cpp/api-reference/esri-arcgisruntime-dynamicentity.html)
+[DynamicEntities]: https://developers.arcgis.com/qt/cpp/api-reference/esri-arcgisruntime-dynamicentity.html
 
 [Explorer for ArcGIS markup documentation]: https://doc.arcgis.com/en/explorer/ipad/help/markup.htm
 
@@ -560,9 +560,9 @@ Parameters available only in console mode:
 
 <!-- Samples -->
 
-[Line of sight analysis]: https://developers.arcgis.com/qt/qml/sample-code/line-of-sight-geoelement/
+[Line of sight analysis]: https://developers.arcgis.com/qt/cpp/sample-code/line-of-sight-geoelement/
 
-[Viewshed analysis]: https://developers.arcgis.com/qt/qml/sample-code/viewshed-camera/
+[Viewshed analysis]: https://developers.arcgis.com/qt/cpp/sample-code/viewshed-geoelement/
 
 <!-- Toolkit reference -->
 
@@ -572,7 +572,7 @@ Parameters available only in console mode:
 
 [basemap]: https://developers.arcgis.com/qt/cpp/api-reference/esri-arcgisruntime-basemap.html
 
-[NorthArrow compass control]: https://developers.arcgis.com/qt/toolkit/api-reference/qml-northarrow.html
+[NorthArrow compass control]: https://developers.arcgis.com/qt/toolkit/api-reference/esri-arcgisruntime-toolkit-northarrow.html
 
 [Envelope]: https://developers.arcgis.com/qt/cpp/api-reference/esri-arcgisruntime-envelope.html
 

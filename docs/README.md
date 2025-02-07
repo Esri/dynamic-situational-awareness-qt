@@ -496,7 +496,7 @@ To set up an additional 'Configuration' for DSA, create a folder with the desire
 Note: 
 - You do not need to provide a `url` value for this configuration
 - Be sure to add a comma to separate this from the Default configuration entity
-- If you want your configuration to be loaded on startup, set the `selected` value to `true` for your new item and set the Default entity's `selecteD` property to `false` (as shown in the highlighted section in the image below)
+- If you want your configuration to be loaded on startup, set the `selected` value to `true` for your new item and set the Default entity's `selected` property to `false` (as shown in the highlighted section in the image below)
 
 ![](./images/dsa-tool-configurations-setup.png)
 
@@ -508,7 +508,7 @@ Once the DSA configuration file is updated and saved, the next time you open the
 
 # Message simulator
 
-The message simulator app broadcasts simulated messages over the peer-to-peer network. It is not meant for end users in the field, but rather provides a way to test and demonstrate the capabilities of DSA apps by providing a simulated environment through messages. The message simulator broadcasts messages over a given port. DSA-Vehicle and DSA-Handheld apps can listen to the same port for new messages and update their displays as messages are received.
+The message simulator app broadcasts simulated messages over the peer-to-peer network. It is not meant for end users in the field but rather provides a way to test and demonstrate the capabilities of DSA apps by providing a simulated environment through messages. The message simulator broadcasts messages over a given port. DSA-Vehicle and DSA-Handheld apps can listen to the same port for new messages and update their displays as messages are received.
 
 The message simulator can only consume one simulation file at a time. You can create a script to run multiple simulation instances at the same time from the command line. For example on Windows, run `DSA_MessageSimulator_Qt.exe -h` to see the usage options:
 

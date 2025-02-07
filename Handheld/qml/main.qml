@@ -530,7 +530,7 @@ Handheld {
         visible: false
     }
 
-    onErrorOccurred: {
+    onErrorOccurred: (message) => {
         // if the parent is null, the app is in a loading state and not yet ready to display errors
         if (parent) {
             msgDialog.informativeText = message;

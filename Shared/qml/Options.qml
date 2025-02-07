@@ -53,7 +53,7 @@ Rectangle {
         width: parent.width
         anchors {
             top: bar.bottom
-            bottom: buttonClose.top
+            bottom: buttonDismiss.top
         }
 
         currentIndex: bar.currentIndex
@@ -287,7 +287,7 @@ Rectangle {
                             value: model.PercentDownloaded
                         }
 
-                        CheckBox {
+                        RadioButton {
                             id: checkboxSelected
                             anchors {
                                 left: parent.left
@@ -296,7 +296,7 @@ Rectangle {
                             checked: model.Selected
                             enabled: model.Downloaded
                             onClicked: {
-                                configurationController.select(index)
+                                configurationController.select(index);
                                 checked = Qt.binding(function () { // restore the binding
                                     return model.Selected;
                                 });
@@ -338,7 +338,9 @@ Rectangle {
                             }
                             MouseArea {
                                 anchors.fill: parent
-                                onClicked: configurationController.cancel(index)
+                                onClicked: {
+                                    configurationController.cancel(index);
+                                }
                             }
                         }
 
@@ -354,7 +356,9 @@ Rectangle {
                             }
                             MouseArea {
                                 anchors.fill: parent
-                                onClicked: configurationController.download(index)
+                                onClicked: {
+                                    configurationController.download(index);
+                                }
                             }
                             rotation: 180
                         }
@@ -378,11 +382,25 @@ Rectangle {
                         // }
                     }
                 }
+                Label {
+                    text: "Changing a configuration will require restarting the application"
+                    id: labelRequiresRestart
+                    width: parent.width
+                    wrapMode: "WordWrap"
+                    font {
+                        family: DsaStyles.fontFamily
+                        pixelSize: DsaStyles.titleFontPixelSize * 0.75
+                        italic: true
+                    }
+                }
 
                 ListView {
                     id: configurationList
                     anchors {
-                        fill: parent
+                        top: labelRequiresRestart.bottom
+                        right: parent.right
+                        left: parent.left
+                        bottom: parent.bottom
                     }
                     interactive: true
                     clip: true
@@ -392,33 +410,32 @@ Rectangle {
                 }
             }
 
-            Label {
-                id: labelRequiresRestartText
+            Button {
+                id: buttonCloseApp
                 anchors {
                     bottom: parent.bottom
-                    right: parent.right
-                    margins: 25
+                    horizontalCenter: parent.horizontalCenter
+                    margins: 5
                 }
-                padding: 5
-                color: "yellow"
-                background: Rectangle {
-                    radius: 5
-                    color: "green"
+                onClicked: {
+                    showCloseDialog("Are you sure you want to close?");
                 }
 
-                text: "*requires restart"
+                text: "Close App"
                 visible: configurationController.requiresRestart
             }
         }
     }
     Button {
-        id: buttonClose
+        id: buttonDismiss
         anchors {
             horizontalCenter: parent.horizontalCenter
             bottom: parent.bottom
             margins: 10 * scaleFactor
         }
-        text: "Close"
-        onClicked: optionsRoot.visible = false;
+        text: "Dismiss"
+        onClicked: {
+            optionsRoot.visible = false;
+        }
     }
 }

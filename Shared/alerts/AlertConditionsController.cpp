@@ -54,6 +54,7 @@
 #include "AlertConditionListModel.h"
 #include "AlertConstants.h"
 #include "AlertListModel.h"
+#include "AppConstants.h"
 #include "AttributeEqualsAlertCondition.h"
 #include "FeatureLayerAlertTarget.h"
 #include "FixedValueAlertTarget.h"
@@ -686,7 +687,7 @@ void AlertConditionsController::onLayersChanged()
         newSourceList.append(overlayIt.value());
         newTargetList.append(overlayIt.value());
       }
-      else if (overlay->overlayId() == QStringLiteral("SCENEVIEWLOCATIONOVERLAY"))
+      else if (overlay->overlayId() == AppConstants::LAYER_NAME_SCENEVIEW_LOCATION)
       {
         newTargetList.append(AlertConstants::MY_LOCATION);
       }
@@ -1153,7 +1154,7 @@ QFuture<AlertTarget*> AlertConditionsController::targetFromItemIdAndOverlayName(
       if (overlay->overlayId().isEmpty())
         continue;
 
-      if (overlay->overlayId() == QStringLiteral("SCENEVIEWLOCATIONOVERLAY"))
+      if (overlay->overlayId() == AppConstants::LAYER_NAME_SCENEVIEW_LOCATION)
       {
         targetDescription = AlertConstants::MY_LOCATION;
         auto* target = static_cast<AlertTarget*>(m_locationTarget);

@@ -506,7 +506,7 @@ Vehicle {
         }
     }
 
-    onErrorOccurred: {
+    onErrorOccurred: (message) => {
         // if the parent is null, the app is in a loading state and not yet ready to display errors
         msgDialog.title = "Error"
         if (parent) {

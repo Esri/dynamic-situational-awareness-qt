@@ -19,9 +19,6 @@
 
 #include "LocationDisplay3d.h"
 
-// dsa app headers
-#include "GPXLocationSimulator.h"
-
 // C++ API headers
 #include "AttributeListModel.h"
 #include "Graphic.h"
@@ -40,6 +37,10 @@
 
 // STL headers
 #include <cmath>
+
+// DSA headers
+#include "AppConstants.h"
+#include "GPXLocationSimulator.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -65,7 +66,7 @@ LocationDisplay3d::LocationDisplay3d(QObject* parent) :
   m_locationOverlay(new GraphicsOverlay(this)),
   m_locationGraphic(new Graphic(this))
 {
-  m_locationOverlay->setOverlayId(QStringLiteral("SCENEVIEWLOCATIONOVERLAY"));
+  m_locationOverlay->setOverlayId(AppConstants::LAYER_NAME_SCENEVIEW_LOCATION);
   m_locationOverlay->setSceneProperties(LayerSceneProperties(SurfacePlacement::Relative));
   m_locationOverlay->setRenderingMode(GraphicsRenderingMode::Dynamic);
   m_locationOverlay->setVisible(false);

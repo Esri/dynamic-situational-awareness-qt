@@ -24,14 +24,15 @@ namespace Dsa {
 
 class AppConstants {
 public:
-  static const QString USERNAME_PROPERTYNAME;
-  static const QString UNIT_OF_MEASUREMENT_PROPERTYNAME;
-  static const QString UNIT_METERS;
-  static const QString UNIT_FEET;
-  static const QString LAYERS_PROPERTYNAME;
-  static const QString CURRENTSCENE_PROPERTYNAME;
-  static const QString SCENEINDEX_PROPERTYNAME;
-  static const QString INITIALLOCATION_PROPERTYNAME;
+  inline static const QString USERNAME_PROPERTYNAME = QStringLiteral("UserName");
+  inline static const QString UNIT_OF_MEASUREMENT_PROPERTYNAME = QStringLiteral("UnitOfMeasurement");
+  inline static const QString UNIT_METERS = QStringLiteral("meters");
+  inline static const QString UNIT_FEET = QStringLiteral("feet");
+  inline static const QString LAYERS_PROPERTYNAME = QStringLiteral("Layers");
+  inline static const QString CURRENTSCENE_PROPERTYNAME = QStringLiteral("CurrentPackage");
+  inline static const QString SCENEINDEX_PROPERTYNAME = QStringLiteral("SceneIndex");
+  inline static const QString INITIALLOCATION_PROPERTYNAME = QStringLiteral("InitialLocation");
+  inline static const QString LAYER_NAME_SCENEVIEW_LOCATION = QStringLiteral("SceneViewLocationOverlay");
 };
 
 } // Dsa

@@ -30,10 +30,9 @@
 #include "MapView.h"
 #include "SceneView.h"
 
-// Toolkit headers
-#include "CoordinateConversionController.h"
-
 // DSA headers
+#include "AppConstants.h"
+#include "CoordinateConversionController.h"
 #include "CoordinateConversionToolProxy.h"
 #include "FollowPositionController.h"
 #include "GeoElementUtils.h"
@@ -131,10 +130,6 @@ QString ContextMenuController::toolName() const
 void ContextMenuController::onMousePressedAndHeld(QMouseEvent& event)
 {
   if (!isActive())
-    return;
-
-  // only consider left clicks (or taps) on the view.
-  if (event.button() != Qt::MouseButton::LeftButton)
     return;
 
   clearOptions();
@@ -347,6 +342,10 @@ void ContextMenuController::invokeIdentifyOnGeoView()
 
           const auto graphics = result->graphics();
           if (graphics.isEmpty())
+            continue;
+
+          // don't process the location on the context menu
+          if (result->graphicsOverlay()->overlayId() == AppConstants::LAYER_NAME_SCENEVIEW_LOCATION)
             continue;
 
           QList<GeoElement*> geoElements;

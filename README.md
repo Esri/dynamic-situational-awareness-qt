@@ -42,14 +42,14 @@ If you just want to grab the latest code and build the project, these are the qu
 
  * `git clone https://github.com/Esri/dynamic-situational-awareness-qt.git`
  * `cd dynamic-situational-awareness-qt`
- * `git clone --branch 200.5.0.final https://github.com/Esri/arcgis-maps-sdk-toolkit-qt.git`
+ * `git clone --branch 200.6.0.final https://github.com/Esri/arcgis-maps-sdk-toolkit-qt.git`
  * Open `DSA.pro` with Qt Creator, configure the projects and build.
 
 **Note:** There is a file path length limit when deploying the DSA apps to Android from Windows. The simplest way to workaround this is to shorten the folder name of the "Shadow Build Directory" in the Qt Creator Project settings.
 
 ## Prerequisites
 
-* ArcGIS Maps SDK for Qt 200.5
+* ArcGIS Maps SDK for Qt 200.6
 * Qt SDK 6.5.6 or higher
 * Qt Creator
 * [ArcGIS Maps SDK for Qt Toolkit](https://github.com/Esri/arcgis-maps-sdk-toolkit-qt.git)
@@ -62,7 +62,7 @@ Set up the [ArcGIS Maps SDK for Qt Toolkit](https://github.com/Esri/arcgis-maps-
 
 ```
 # from the base of the repo
-git clone --branch 200.5.0.final https://github.com/Esri/arcgis-maps-sdk-toolkit-qt.git
+git clone --branch 200.6.0.final https://github.com/Esri/arcgis-maps-sdk-toolkit-qt.git
 ```
 
 ### Data

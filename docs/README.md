@@ -436,44 +436,43 @@ For convenience, you can try out the DSA apps compiled for [Windows] and [Androi
 
 # App configuration settings
 
-You can customize aspects of the DSA apps via a configuration file. When the DSA app runs, the app will create a new configuration file if one is not found on local storage. When the app opens the configuration file, the file is read and the values used by the app for that run. Some settings may be changed at run time using the [Settings panel](#settings-panel). Those changes are persisted in the configuration file.
+## Configure and persist app settings using the App Configuration file
+An app configuration file is used to set paths to data sources and persist the state of the app (settings, layers, and conditions) between sessions. When the DSA app runs, it will create a new app configuration file if one is not found in local storage. If the app configuration file is found, the app will read the values from the file when it starts. Any app settings changed at run time in the app using the [Settings panel](#settings-panel), data layers in the Overlays list, and alert conditions are persisted in the configuration file automatically when the app is closed. 
 
-The configuration file is located at `~/ArcGIS/Runtime/Data/DSA/Default/DsaAppConfig.json`, where `~` is `%username%`/`C:/Users/<username>` on Windows, `$HOME` on Unix, and `<app_folder>/files` on Android where `<app_folder>` is path to the package name in your AndroidManifest.xml file (e.g. /data/data/com.esri.arcgisruntime.opensourceapps.DSA_Handheld_Qt).
+The app configuration file is located at `~/ArcGIS/Runtime/Data/DSA/Default/DsaAppConfig.json`, where `~` is `%username%`/`C:/Users/<username>` on Windows, `$HOME` on Unix, and `<app_folder>/files` on Android where `<app_folder>` is the path to the package name in your AndroidManifest.xml file (e.g. /data/data/com.esri.arcgisruntime.opensourceapps.DSA_Handheld_Qt).
 
-DSA also includes a file for making use of more than one configuration located at `~/ArcGIS/Runtime/Data/DSA/DsaConfigurations.json`. This file will also be created if one does not exist. To setup a new 'Configuration' for DSA, create a folder with the desired name at the same level as the 'Default' configuration folder. Place all your data in the new folder using the same structure described below. Make an update to the DsaConfiguration.json file to include your new folder as shown below. You do not need to provide a url for this configuration. Be sure to put the comma to separate this from the Default configuration entity. And if you want your configuration to be loaded on startup, make sure to set the `selected` value to `true` for your new item and set the default entity's `selected` property to `false`(as shown in the highlighted section in the image). In the Settings page, on the Configurations tab, you can select which configuration you want activated. Changing the active configuration requires you to restart the application to see the changes. When the application runs for the first time, you will be prompted with an option to download the sample data that is available from Esri (~450mb).
-![](./images/dsa-tool-configurations-setup.png)
-
-The following lists some of the configuration settings that you can change.
+The following lists some of the app configuration settings that you can change.
 
 | Key | Default value | Description |
 |-----|-----|-----|
-| BasemapDirectory | `**/BasemapData` | Location the basemap picker searches for basemap data |
-| Conditions |`*`| JSON array of custom JSON representing a condition |
-| CoordinateFormat | `MGRS` | String representing the default coordinate format used |
-| CurrentPackage | "" | String representing the path to a Mobile Scene Package (.mspk) file |
-| DefaultBasemap | `Topographic` | Name of the TPK file to use as the basemap, without the tpk file extension (not case sensitive) |
-| DefaultElevationSource | `**/ElevationData/CaDEM.tpk` | Default elevation source |
-| ElevationDirectory | `**/ElevationData` | Location to search for DEMs and LERC encoded TPK |
-| GpxFile | `**/SimulationData/MontereyMounted.gpx` | GPX file to use for simulating location |
-| InitialLocation  |`*`| JSON of center, distance, heading, pitch, roll |
-| LocationBroadcastConfig |`*`| JSON for message type and port to use |
-| LocalDataPaths | `**`, `**/OperationalData` | Locations that the Add Local Data tool searches for GIS Data. This should be a comma separated list. Folders are NOT recursively searched |
-| MessageFeeds |`*`| Details of message feeds used in DSA |
-| ResourceDirectory | `**/ResourceData` | Location to search for images, style files, and other similar files used by the app |
 | RootDataDirectory | `**` | Root data location |
-| SceneIndex | `-1` | Integer representing the index of the Scene to load from the CurrentPackage |
-| SimulateLocation | `true` | Whether to simulate location or use your device's location |
+| BasemapDirectory | `**/BasemapData` | Location the basemap picker searches for basemap data |
+| ElevationDirectory | `**/ElevationData` | Location to search for DEMs and LERC encoded TPK |
+| ResourceDirectory | `**/ResourceData` | Location to search for images, style files, and other similar files used by the app |
 | SimulationDirectory | `**/SimulationData` | Location to search for GPX and Message Simulation files |
+| LocalDataPaths | `**`, `**/OperationalData` | Locations that the Add Local Data tool searches for GIS Data. This should be a comma-separated list. Folders are NOT recursively searched |
+| GpxFile | `**/SimulationData/MontereyMounted.gpx` | GPX file to use for simulating location |
+| DefaultBasemap | `Topographic` | Name of the TPK file to use as the basemap, without the .tpk file extension (not case sensitive) |
+| DefaultElevationSource | `**/ElevationData/CaDEM.tpk` | Default elevation source |
+| CurrentPackage | "" | String representing the path to a Mobile Scene Package (.mspk) file |
+| SceneIndex | `-1` | Integer representing the index of the Scene to load from the CurrentPackage |
+| InitialLocation  |`*`| JSON of center, distance, heading, pitch, roll |
+| SimulateLocation | `true` | Whether to simulate location or use your device's location |
+| CoordinateFormat | `MGRS` | String representing the default coordinate format used |
 | UnitOfMeasurement | `meters` | Default unit of measurement for distance |
-| UserName | your device's name | Name that identifies your device on the network |
+| UserName | your device name | Name that identifies your device on the network |
+| LocationBroadcastConfig |`*`| JSON for message type and port to use |
+| MessageFeeds |`*`| Details of message feeds used in DSA |
+| Layers | `*` | JSON array of layers added to the Overlay list |  
+| Conditions |`*`| JSON array of custom JSON representing a condition |
 
  `*` - See the config file for details.
 
  `**` - Default data path: `~/ArcGIS/Runtime/Data/DSA/Default`.
 
-# Add your own local data
+## Add your local data
 
-The default data path to local data is `~/ArcGIS/Runtime/Data/DSA/Default`. If you wish to change this, reference the above table, and update the various paths.
+The default path to the data used by DSA is `~/ArcGIS/Runtime/Data/DSA/Default`. If you wish to use your own data, copy the data files into the related folders (see below) and reference the above table to update the various paths in the app configuration file (`DsaAppConfig.json`). If you have not copied your own data into the Default directory, the app will prompt you with an option to download the demo DSA data package from ArcGIS Online (~450mb) and place it in the Default directory. 
 
 The default data directory should look like this:
 
@@ -487,6 +486,25 @@ The default data directory should look like this:
                                   ElevationData/
 
 ```
+
+## Configure multiple app configurations using the DSA Configurations file
+
+DSA also includes a file to allow you to save more than one configuration of the app. This is useful if you use DSA to demonstrate more than one area of interest, each with different data sources.  The DSA configuration file is located at `~/ArcGIS/Runtime/Data/DSA/DsaConfigurations.json`. If the file does not already exist when the app starts, it will be created automatically and will refer to the Default DSA data package, referenced in the section above.  
+
+To set up an additional 'Configuration' for DSA, create a folder with the desired name at the same level as the 'Default' configuration folder (i.e. "MyLocalData"). Place all your data in the new folder using the structure described in the section above. Update the **DsaConfiguration.json** file to include your new folder, as shown in the screenshot below. 
+
+Note: 
+- You do not need to provide a `url` value for this configuration
+- Be sure to add a comma to separate this from the Default configuration entity
+- If you want your configuration to be loaded on startup, set the `selected` value to `true` for your new item and set the Default entity's `selecteD` property to `false` (as shown in the highlighted section in the image below)
+
+![](./images/dsa-tool-configurations-setup.png)
+
+Once the DSA configuration file is updated and saved, the next time you open the app you will see the new configuration listed on the Configurations tab, which is part of the Settings page. Here, you can select which configuration you want activated by selecting it in the list. Changes are made to the DSA configuration file immediately, however, an app restart will be necessary to see the new app configuration reflected in the app. 
+
+
+
+
 
 # Message simulator
 

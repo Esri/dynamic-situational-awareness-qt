@@ -1,17 +1,14 @@
 Sanity test list to perform on several platforms prior to release. 
 
-## 1. Test Data
+# 1. Setup / Test Data
 
 
-## 1. App
-anything?
-
-## Map Toolbar
-### Table of Contents
-####Setup:
+# Map Toolbar
+## Table of Contents
+#### Setup:
 - Make sure you have some data to add to the app  in ~/ArcGIS/Runtime/Data/DSA/SimulationData. You will need some data in the same location - e.f. Shasta.tif and Shasta_elevation.tif rasters***
 
-####Steps:
+#### Steps:
 - Run the DSA app
 - Click on the Table of contents toolbar icon.
   - [ ] confirm that the Table of Contents opens and is empty
@@ -34,7 +31,7 @@ anything?
   - [ ] confirm the layer is removed from the list
   - [ ] confirm the layer is removed from the map/scene
 
-### Basemap Picker
+## Basemap Picker
 - Run the DSA app
 - confirm that the app starts with the topographic basemap
 - Select the basemap tool
@@ -45,7 +42,7 @@ anything?
 - click the close button
 - confirm that the tool closes without changing the basemap
 
-### Add Local Data
+## Add Local Data
 Setup:
 - Copy some raster data (\\apps-data\data\api\qt\UnitTests\raster\formats\tiff\Monterey), a shapefile (\\apps-data\data\api\qt\UnitTests\shapefile), a geodatabase (\\apps-data\data\api\qt\UnitTests\Geodatabase), and a TPK (\\apps-data\data\api\qt\UnitTests\tpks) to ~/ArcGIS/Runtime/Data/DSA/OperationalData
 - Copy a tpk that supports elevation (\\apps-data\data\api\qt\UnitTests\tpks\elevation\California\CaDem.tpk) to ~/ArcGIS/Runtime/Data/DSA/ElevationData
@@ -64,7 +61,7 @@ Steps:
 - Select a shapefile and click ADD SELECTED toadd it to the map, and make sure it draws
 
 
-### Message Feeds
+## Message Feeds
 Run the DSA app
 Run the Message Simulator app
 Run the temporary ArcGISQtMessageSimulator (for GeoMessage)
@@ -186,8 +183,8 @@ The `Friendly Tracks - Air` graphics should no longer be drawn to the view.
 The `Contact Reports`, `Situation Reports`, `EOD Reports`, and `Sensor Observations` message feeds graphics should no longer be drawn to the view.
 
 
-## Map Display Tools
-### Navigation Tools
+# Map Display Tools
+## Navigation Tools
 Run the DSA app
 
 **Test 1: Zoom in**
@@ -246,8 +243,8 @@ and the follow tool.
 ![image](https://devtopia.esri.com/storage/user/163/files/97731d22-adce-11e7-9551-974ba8b7fc0a)
 
 
-**** Screenshots subject to change in later revisions.
-### Location Text
+
+## Location Text
 - Elevation/Location text should display on the bottom
 - By default it is DMS and in meters
 - Go to settings, and toggle the visibility off. It should not appear
@@ -256,7 +253,7 @@ and the follow tool.
 - The text should update to use the selection
 - Close the app and reopen. The same format/unit settings used in the previous run should be applied
 
-### Context Menu
+## Context Menu
 #### Test case 1: No menu shown for invalid context
 - pitch the 3d view so that you can see the sky. Press and hold on the sky
 - [ ] no context menu should be shown

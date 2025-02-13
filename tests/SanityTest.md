@@ -17,13 +17,63 @@ anything?
 ### Navigation Tools
 ### Location Text
 ### Context Menu
-- Coordinates
-- Elevation
-- Follow
-- Identify
-- Line of Sight
-- Observation (see Observation Report section below)
-- Viewshed
+#### Test case 1: No menu shown for invalid context
+- pitch the 3d view so that you can see the sky. Press and hold on the sky
+- [ ] no context menu should be shown
+
+#### Test case 2: Dismiss with no action
+- Press and hold on the terrain
+- [ ] the context menu should be shown
+- click somewhere off the menu
+- [ ] the menu should be dismissed and nothing should happen
+
+#### Test case 3: Coordinates context
+- press and hold on the terrain
+- [ ] the context menu should be shown and should include the "Coordinates" option
+- click "Coordinates"
+- [ ] the coordinate conversion tool should open up with the context point as the input
+
+#### Test case 4: Elevation context
+- press and hold on the terrain
+- [ ] the context menu should be shown and should include the "Elevation" option
+- click "Elevation"
+- [ ] a message box should appear showing the elevation (in meters) at the clicked position
+
+#### Test case 5: Viewshed context
+- press and hold on the terrain
+- [ ] the context menu should be shown and include the "Viewshed" option
+- click "Viewshed"
+- [ ] a 360 degree viewshed should appear centered around the clicked position.
+_Note - you can remove this viewshed with the Analysis List_
+
+#### Test case 6: Identify context
+- press and hold on a graphic (e.g. from a message feed)
+- [ ] the context menu should be shown and include the "Identify" option
+- click "Identify"
+- [ ] a Popup should appear with the attributes of the graphic (it may not have any)
+- press and hold on a feature (e.g. from a feature layer)
+- [ ] the context menu should be shown and include the "Identify" option
+- click "Identify"
+- [ ] a Popup should appear with the attributes of the feature (it may not have any)
+
+#### Test case 7: Follow context
+- press and hold on a graphic (e.g. from a message feed)
+- [ ] the context menu should be shown and include the "Follow" option
+- click "Follow"
+- [ ] The app should begin following the graphic
+- interact with the view again to stop following
+
+#### Test case 8: Line of sight context
+- turn on location display
+- press and hold on a graphic (e.g. from a message feed)
+- [ ] the context menu should be shown and include the "Line of sight" option
+- click "Line of sight"
+- [ ] You should see a line of sight from the current location to the graphic you clicked on
+_Note - you can remove this Line of sight with the Analysis List_
+
+#### Observation
+_See Observation Report section below_
+
 ### Identify Tool
 ### Display Current Location
 ### Follow Position
@@ -36,10 +86,36 @@ anything?
 
 ## Message Feeds
 ### Broadcast Current Location
+The current location updates will be enabled in the DSA app at startup.
+
+**Test 1: General broadcast location test**
+
+- Connect 2 or more devices to the same network.  Either via LAN connection or to the Watchtower wifi (Esri-internal wifi has the broadcast ports blocked, so don't use it)
+- Each app should display a military symbol for each others location at the default frequency of 3000ms updates.
+
+**Test 2: Disable/Enable location broadcast**
+- In one of the apps, locate the `Settings` panel and un-check the "Location Broadcast checkbox.
+- Notice in the other app that the military symbol stops updating and remains where it left off.
+- Wait for several seconds and enable the checkbox again.
+- Now the military symbol should begin moving again at the default frequency of 3000ms updates.
+
+**Test 3: Modify Location Broadcast frequency**
+- In one of the apps, locate the `Settings` panel and change the "Location Broadcast Frequency" value from `3000`ms to `100`ms.
+- In the other app you will notice that the military symbol is updating its location much more frequently than before.
+
+**Test 4: Show teammate in distress**
+- Locate the distress icon/button in the app
+- Press the button and the icon should change to indicate that the app is now broadcasting a "in distress" status.
+- From the other app, notice that the teammate's military symbol is now flashing red.
+- Press the distress button again and the teammate's military symbol should no longer be flashing red and should no longer be selected in any way.
+
+**Test 5: Remove location broadcast**
+- Close down one of the apps
+- You should notice that the teammate's military symbol is now gone and have been removed from the message feed overlay.
 
 
 ## Observation Report
-### Test case 1: Create Observation Report from Tool
+#### Test case 1: Create Observation Report from Tool
 - go to the reports category and select the "Observation" tool icon
   - [ ] the contact report wizard should appear
   - [ ] the username should be whatever your app is configured to use (by default the machine name)
@@ -52,7 +128,7 @@ anything?
   - [ ] you should see the contact report added in both apps
   - [ ] in the other app, identify the report (using the context menu) and confirm the details you submitted have been correctly broadcast
 
-### Test case 2: Create Observation Report from Context Menu
+#### Test case 2: Create Observation Report from Context Menu
 - long press on the view to open the Context Menu
   - [ ] you should see an option for Observation Report
 - select the option
@@ -64,19 +140,19 @@ anything?
 
 ## Analysis Tools
 ### Line of Sight
-### Test case 1: Enable Line of Sight
+#### Test case 1: Enable Line of Sight
 - turn on the location display
 - go to the analysis tab and select "Line of sight"
 - select "Observers_SD" from the overlay drop down
   - [ ] line of sight should be displayed from the various observer positions (atop buildings). 
   - [ ] Should look something like this:
-### Test case 2: Toggle visibility
+#### Test case 2: Toggle visibility
 - uncheck the box next to the overlay drop down
   - [ ] the line of sight should disappear
 - recheck the box
  - [ ] they should reappear
 
-### Test case 3: Remove
+#### Test case 3: Remove
 - click the "x" button next to the overlay drop down
   - [ ] the lines of sight should disappear and the overlay drop down should be cleared
 
@@ -141,12 +217,135 @@ anything?
 
 
 ## Alerts and Conditions
+#### Setup
+- delete the `ArcGIS\Runtime\Data\DSA\DsaAppConfig.json` (to make sure you get the default distress condition)
+- you will need to run the `ArcGIS\Runtime\Data\DSA\SimulationData\GeoMessage_FriendlyTracksLand.xml` tracks to simulate a distress message. You can run this using the simulator @ `\\apps-data\data\sdk\qt\exampleApps\Simulators\DSA_MessageSimulator_Qt`
+- you will need to use the `Cot_Reports.xml` which can be run with the `DSA_MessageSimulator_Qt` app
+
+#### Test case 1: default distress condition (attribute equals)
+- start the app
+- [ ] a new `DsaAppConfig.json` file should be created and it should contain a Condition called "Distress"
+- start the simulator and run the `GeoMessage_FriendlyTracksLand.xml` file
+- [ ] go to the Alert Conditions tool. You should see the "Distress" condition. 
+- close the Alert Conditions tool
+- [ ] wait for a while and you should see an alert notification for the distress condition (a small red circle with the number of alerts).
+- open the alert list tool
+- [ ] the notification should disappear
+- [ ] zoom to the alert and the app should zoom in on the track which is in distress
+- [ ] highlight the alert and you should see the highlight graphic centered on the track
+- [ ] set highlight off and the highlight graphic should disappear
+- wait for a bit longer
+- [ ] you should see the alert disappear when the track is no longer in distress
+- wait for a bit longer
+- [ ] you should see another notification when the alert moves back into the distress state
+
+#### Test case 2: creating/editing alerts (within distance)
+- restart the app
+- turn on location display (should be from simulated GPS file)
+- open the markup tool and draw a big "X" over Monterey (see screenshot)
+
+![image](https://devtopia.esri.com/storage/user/1340/files/b8e09322-1183-11e8-8acc-626e91e0687f)
+
+- open the Alerts Condition tool and create a new moderate priority Geofence condition called "test condition" where "My Location" is within 250 meters of "Sketch Overlay"
+- [ ] when the location display gets within 250 m of the X an alert should be created
+_NOTE whenever the location moves out of the 250 m zone the alert should disappear, and the following steps will not be possible_
+- in the alerts view tool set the Minimum level to "High"
+- [ ] the alert should disappear
+- [ ] set the minimum level back to Low and the alert should disappear again
+- [ ] dismiss the alert and it should disappear
+- [ ] click "Clear Filters" and the alert should re-appear
+- go to the Conditions tab and un-check/disable the condition you created
+- [ ] the associated alert should disappear from the list
+- [ ] check/enable the condition again and the alert should reappear
+- [ ] Edit the condition (e.g. change it's name/level) and the associated alert should get a new name/level as well
+- wait until the location overlay moves away from the "X" you drew and the alert should disappear
+- open the `DsaAppConfig.json` file and confirm that their is a json representation of the condition you just created
+
+#### Test case 3: pick specific feature for condition (within area)
+- re-start the app
+- add the `AOI.shp` layer
+- start the `DSA_MessageSimulator_Qt` app using `Cot_Reports.xml`
+- create a new Critical Priority Geofence condition when objects from Cursor-on-Target are within Object 0 from AOI. To set the specific polygon to use, toggle the pick tool and click on the polygon in the screenshot below:
+
+![image](https://devtopia.esri.com/storage/user/1340/files/e3faf8d4-1185-11e8-9cfe-0eeecf992371)
+
+- [ ] wait until one of the tracks appears in the target polygon and you should see an alert created
+- [ ] the track in the area should flash continuously while it is in the alert state
+- [ ] go to the conditions list and disable the condition you added. the track should stop flashing
+- [ ] re-enable the condition and the track should start flashing again
 
 
 ## Markup Tool
 
-## App and Settings
+## App Config and Settings
 ### DsaConfig file
+#### Setup
+delete the json settings file from `~\ArcGIS\Runtime\Data\DSA\DsaAppConfig.json`
+
+#### Test 1: default values written to json
+- [ ] when you start the app you get default values written to the json file for:
+- location text format (e.g. DMS)
+- a set of message feeds (e.g. friendly tracks)
+- alert distress condition
+- initial location
+- basemap directory and default basemap
+- default elevation source
+- gps file
+
+#### Test 2: json values used by the app
+- [ ] when you start the app:
+ - it starts in the expected default location (Monteray)
+ - it has a basemap
+ - it has an elevation source
+ - the message feeds tool contains the names of feeds
+ - the location text has the expected format
+
+#### Test 3: json values are written by the app
+- [ ] when you change a setting it is saved to the json file and applied when you restart the app
+ - the format for location text
+ - the default basemap
+ - a condition
+
 ### Persist Layers
+- Open the DSA app
+- Go to the add data tool and add several layers
+- Go to the Overlays/TOC tool, and those layers should be reflected
+- Close/Reopen the app, go to the Overlays/TOC, and those same layers should be in the list and display on the screen
+- Turn the visibility of one of the layers off, and reorder the layers (move one of them up or down)
+- Close/Reopen the app, go to the Overlays/TOC tool, and the visibility and layer order should be retained
+
 ### Settings
 ### App Configuration
+
+## App and Tool Errors
+#### Test Case 1: No errors when everything is present
+- open the app
+- [ ] there should be no error messages shown at start up
+- play around with some tools etc.
+- [ ] you should see no errors (unless you do something invalid)
+
+#### Test Case 2: No Data
+- rename the "DSA" folder to "DSA2"
+- restart the app
+- [ ] you should see an error message reporting No Data
+- change the folder back to DSA and run the app again
+- [ ] you should not see an error
+
+#### Test Case 3: Error on startup
+- rename `~\ArcGIS\Runtime\Data\DSA\BasemapData\Topographic.tpk` to `Topographic2.tpk`
+- open the app
+- [ ] you should see an error on startup informing you that the default basemap could not be found
+_NOTE - the error may be duplicated (I think that's ok)_
+- change the file back to `Topographic.tpk` and reopen the app
+- [ ] you should not see an error
+
+#### Test Case 4: Error using tool
+_this test is for errors we create at the app level_
+- go to the create alerts condition tool and create a new Attribute alert using "My Location" as the source feed (this is invalid since the location has no attributes)
+- [ ] you should see an error indicating that the condition was not created
+
+#### Test Case 5: Error from the API
+_this test is for errors we receive from the API_
+- rename `~\ArcGIS\Runtime\Data\DSA\OperationalData\AOI.dbf` to `AOI2.dbf` (this will make the AOI shapefile invalid when we try to add it)
+- go to the add data tool and select the `AOI.shp` to add
+- [ ] you should see an error

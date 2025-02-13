@@ -1,21 +1,261 @@
 Sanity test list to perform on several platforms prior to release. 
 
-## Test Data
+## 1. Test Data
 
 
-## App
+## 1. App
 anything?
 
 ## Map Toolbar
 ### Table of Contents
+####Setup:
+- Make sure you have some data to add to the app  in ~/ArcGIS/Runtime/Data/DSA/SimulationData. You will need some data in the same location - e.f. Shasta.tif and Shasta_elevation.tif rasters***
+
+####Steps:
+- Run the DSA app
+- Click on the Table of contents toolbar icon.
+  - [ ] confirm that the Table of Contents opens and is empty
+  - [ ] confirm that you can still interact with the map/scene (if in vehicle app)
+- close the tool
+- launch the add data tool and add some layers
+- reopen the table of contents tool
+  - [ ] confirm that the layers you added are in the list
+  - [ ] confirm that each layer has an icon (points, lines, polygons, raster)
+  - [ ] confirm that each layer has a name (there is a known issue about names for raster layers so we have a workaround for now)
+- for each layer in turn: 
+  - click on the item to zoom to the layer
+    - [ ] confirm the map/scene zooms
+  - toggle the layer visibility on/off
+    - [ ] confirm the layer is set visible/invisible in the map/scene
+- select the ellipses and opt to zoom to a layer
+- experiment with reordering the layers by selecting the ellipses and selecting move up or down
+  - [ ] confirm that reordering the list also reorders the layers in the map/scene
+- remove a layer by selecting the ellipses
+  - [ ] confirm the layer is removed from the list
+  - [ ] confirm the layer is removed from the map/scene
+
 ### Basemap Picker
+- Run the DSA app
+- confirm that the app starts with the topographic basemap
+- Select the basemap tool
+- confirm that you see a list of all the .tpk files in the directory you copied to
+- select one of the tpks
+- confirm that the tool closes and the basemap changes
+- reopen the tool
+- click the close button
+- confirm that the tool closes without changing the basemap
+
 ### Add Local Data
+Setup:
+- Copy some raster data (\\apps-data\data\api\qt\UnitTests\raster\formats\tiff\Monterey), a shapefile (\\apps-data\data\api\qt\UnitTests\shapefile), a geodatabase (\\apps-data\data\api\qt\UnitTests\Geodatabase), and a TPK (\\apps-data\data\api\qt\UnitTests\tpks) to ~/ArcGIS/Runtime/Data/DSA/OperationalData
+- Copy a tpk that supports elevation (\\apps-data\data\api\qt\UnitTests\tpks\elevation\California\CaDem.tpk) to ~/ArcGIS/Runtime/Data/DSA/ElevationData
+
+Steps:
+- Run the DSA app
+- Select Map Tools icon, then the Add Data tool 
+- Change the filter to 'Raster Files' and select a raster; check the box for one of the raster layers. Click ADD SELECTED, this should add it to the map. To zoom to that layer, select the Overlays tool, click on, '...', and select 'Zoom to'.
+- Select the Add Data tool again
+- Change the filter to 'Geodatabase'
+- Select a Geodatabase; check the box for one of the raster layers. Click ADD SELECTED, this should add it to the map. 
+- Select the  the Add Data tool again, and change the filter to Tile Package
+- Select a TPK that supports elevation; check the box for one of the raster layers; select the 'Add as elevation source' checkbox. Then click ADD SELECTED, this should add it to the map. 
+- Select the  Add Data tool again
+- Uncheck the add as elevation checkbox, and change the filter to'Shapefile'
+- Select a shapefile and click ADD SELECTED toadd it to the map, and make sure it draws
+
+
 ### Message Feeds
+Run the DSA app
+Run the Message Simulator app
+Run the temporary ArcGISQtMessageSimulator (for GeoMessage)
+
+The DSA app by default should be configured to handle certain message feeds.
+They are:
+1.  SA Events - (Cursor-on-Target)
+2.  Friendly Tracks - Land (GeoMessage)
+3.  Friendly Tracks - Air (GeoMessage)
+4.  Contact Reports (GeoMessage)
+5.  Situation Reports (GeoMessage)
+6.  EOD Reports (GeoMessage)
+7.  Sensor Observations (GeoMessage)
+
+**Test 1: SA Events message feed**
+
+**Steps**
+
+-  Run the DSA app (Vehicle or Handheld)
+-  Run the MessageSimulator app and browse to the `CoT_Reports.xml` simulation file in the DSA's `SimulationData` folder.
+-  Run the simulation on port 45678
+-  Specify a frequency value for the amount of messages to send
+-  Choose to loop simulation
+-  Hit the `Start` button to start the simulation
+
+**Expectations**
+
+`SA Events` message feed should begin drawing mil2525c symbols to the screen.
+
+**Test 2: Toggle SA Evenets message feed**
+
+**Steps**
+-  While the DSA app and `CoT_Reports.xml` simulation running, select the `Message Feeds` panel and switch off the `SA Events` message feed.
+
+**Expectations**
+
+The `SA Events` graphics should no longer be drawn to the view.
+
+**Test 3: Friendly Tracks - Land message feed**
+
+**Steps**
+
+-  Run the DSA app (Vehicle or Handheld)
+-  Run the ArcGISQtMessageSimulator (GeoMessage) app and browse to the `GeoMessage_FriendlyTracksLand.xml` simulation file in the DSA's `SimulationData` folder.
+-  Run the simulation on port 45678
+-  Specify a frequency value for the amount of messages to send
+-  Choose to loop simulation
+-  Hit the `Start` button to start the simulation
+
+**Expectations**
+
+`Friendly Tracks - Land` message feed should begin drawing mil2525c friendly draped symbols to the screen.
+
+**Test 4: Toggle Friendly Tracks - Land message feed**
+
+**Steps**
+-  While the DSA app and `GeoMessage_FriendlyTracksLand.xml` simulation running, select the `Message Feeds` panel and switch off the `Friendly Tracks - Land` message feed.
+
+**Expectations**
+
+The `Friendly Tracks - Land` graphics should no longer be drawn to the view.
+
+**Test 5: Friendly Tracks - Air message feed**
+
+**Steps**
+
+-  Run the DSA app (Vehicle or Handheld)
+-  Run the ArcGISQtMessageSimulator (GeoMessage) app and browse to the `GeoMessage_FriendlyTracksAir.xml` simulation file in the DSA's `SimulationData` folder.
+-  Run the simulation on port 45678
+-  Specify a frequency value for the amount of messages to send
+-  Choose to loop simulation
+-  Hit the `Start` button to start the simulation
+
+**Expectations**
+
+`Friendly Tracks - Air` message feed should begin drawing mil2525c friendly symbols to the screen in absolute surface placement mode.  The symbols are floating in the air at a fixed elevation.
+
+**Test 6: Toggle Friendly Tracks - Air message feed**
+
+**Steps**
+-  While the DSA app and `GeoMessage_FriendlyTracksAir.xml` simulation running, select the `Message Feeds` panel and switch off the `Friendly Tracks - Air` message feed.
+
+**Expectations**
+
+The `Friendly Tracks - Air` graphics should no longer be drawn to the view.
+
+**Test 7: Toggle Friendly Tracks labels**
+
+**Steps**
+- While the DSA app and `GeoMessage_FriendlyTracksLand.xml` simulation running, select the `Message Feeds` panel and make sure the `Friendly Tracks - Land` message feed is enabled.
+- Confirm that labels are displayed next to the blue graphics.
+- Open up the settings panel and uncheck the "Show friendly tracks labels" checkbox.
+- Confirm that labels are not displayed anymore next to the blue graphics.
+- Check the "Show friendly tracks labels" checkbox back on.
+- Confirm that labels are displayed next to the blue graphics again.
+
+**Test 8: Contact Reports, Situation Reports, EOD Reports, and Sensor Observations message feeds**
+
+**Steps**
+
+-  Run the DSA app (Vehicle or Handheld)
+-  Run the ArcGISQtMessageSimulator (GeoMessage) app and browse to the `GeoMessage_MontereyReports.xml` simulation file in the DSA's `SimulationData` folder.
+-  Run the simulation on port 45678
+-  Specify a frequency value for the amount of messages to send
+-  Choose to loop simulation
+-  Hit the `Start` button to start the simulation
+
+**Expectations**
+
+`Contact Reports`, `Situation Reports`, `EOD Reports`, and `Sensor Observations` message feeds should begin drawing picture marker symbol types to the screen for each feed.
+
+**Test 9: Toggle Contact Reports, Situation Reports, EOD Reports, and Sensor Observations message feeds**
+
+**Steps**
+-  While the DSA app and `GeoMessage_MontereyReports.xml` simulation running, select the `Message Feeds` panel and switch off the `Contact Reports`, `Situation Reports`, `EOD Reports`, and `Sensor Observations` message feeds.
+
+**Expectations**
+
+The `Contact Reports`, `Situation Reports`, `EOD Reports`, and `Sensor Observations` message feeds graphics should no longer be drawn to the view.
 
 
 ## Map Display Tools
 ### Navigation Tools
+Run the DSA app
+
+**Test 1: Zoom in**
+
+**Steps:**
+1. Click on the `ZoomIn` tool from the Navigation toolbar 
+![image](https://devtopia.esri.com/storage/user/163/files/634c4ee8-adcd-11e7-9264-df99e0d2c9a1).
+
+**Expectations**
+- [ ] The view should zoom into the center of the screen.  If your pitch is so that you see the sky in the center, there should not be any change when you try to zoom in.
+- [ ] Just zooming in should not change the pitch or the heading (the compass should not change heading).
+
+**Test 2: Zoom out**
+
+**Steps:**
+1. Click on the `ZoomOut` tool from the Navigation toolbar 
+![image](https://devtopia.esri.com/storage/user/163/files/da367bfa-adcd-11e7-9ef2-284b1bde2771)
+
+**Expectations**
+- [ ] The view should zoom out from the center of the screen.  If your pitch is so that you see the sky in the center, there should not be any change when you try to zoom in.
+- [ ] Just zooming out should not change the pitch or the heading (the compass should not change heading).
+
+**Test 3: Set 2D view**
+**Steps:**
+1. Click on the `2D` button from the Navigation toolbar 
+![image](https://devtopia.esri.com/storage/user/163/files/b8474448-b327-11e7-8fac-777a6a74f8bb)
+
+**Expectations**
+- [ ] The view should tilt to a vertical mode. 
+- [ ] Zooming in/out should not change the pitch or the heading (the compass should not change heading).
+
+**Test 4: Zoom in/out while following**
+
+**Steps:**
+1. Click on the `Follow` tool from the Navigation toolbar 
+![image](https://devtopia.esri.com/storage/user/163/files/da367bfa-adcd-11e7-9ef2-284b1bde2771)
+![image](https://devtopia.esri.com/storage/user/163/files/fcc4a62e-b327-11e7-9c35-7d568cdaae45)
+2. Click on the start following icon:
+![image](https://devtopia.esri.com/storage/user/163/files/242fed90-b328-11e7-95fb-a73059efaf53)
+3. Click on zoom in/out button
+
+**Expectations**
+- [ ] The view should zoom in/out on the location symbol.  
+- [ ] The camera should still follow the symbol until manually stopped.
+
+**Test 5: Toolbar button toggle**
+
+**Steps:**
+1. Go to DSA > Settings
+2. Toggle on/off "Show navigation Controls" check box
+
+**Expectations:**
+- [ ] It should hide/show the entire navigation toolbar which includes the compass 
+![image](https://devtopia.esri.com/storage/user/163/files/8a107aee-adce-11e7-897c-ff1b5891ece8)
+and the follow tool.
+![image](https://devtopia.esri.com/storage/user/163/files/97731d22-adce-11e7-9551-974ba8b7fc0a)
+
+
+**** Screenshots subject to change in later revisions.
 ### Location Text
+- Elevation/Location text should display on the bottom
+- By default it is DMS and in meters
+- Go to settings, and toggle the visibility off. It should not appear
+- Toggle visibility on again. It should appear
+- Go to settings and select a different format and a different unit
+- The text should update to use the selection
+- Close the app and reopen. The same format/unit settings used in the previous run should be applied
+
 ### Context Menu
 #### Test case 1: No menu shown for invalid context
 - pitch the 3d view so that you can see the sky. Press and hold on the sky
@@ -75,9 +315,103 @@ _Note - you can remove this Line of sight with the Analysis List_
 _See Observation Report section below_
 
 ### Identify Tool
-### Display Current Location
+- add some feature layer data (the bases.gdb is a good one)
+- enable the identify/query tool and click on a graphic (the green geofence box has some attributes so you can use that)
+  - [ ] confirm that you see a popup for the graphics attributes
+- click on a feature
+  - [ ] confirm that you see a popup for the feature's attributes
+- click somewhere that a graphic and a feature overlap
+  - [ ] confirm that you see a popup for both
+- click somewhere with no graphic or feature
+  - [ ] confirm there is no popup
+  
+### Display Current Location  
+Setup:
+- Make sure you have `MontereyMounted.gpx` (/Volumes/Data/sdk/qt/ExampleAppsData/DSA/) available in ~/ArcGIS/Runtime/Data/DSA. ***
+
+Steps:
+- Run the DSA app
+- Make sure the app is in simulated location mode (it always is currently, it may change in the future).
+- From the Navigation Toolbar, click on
+![image](https://devtopia.esri.com/storage/user/798/files/b32ab67e-14f2-11e9-9a52-14f84e380662)
+- Click on 
+![image](https://devtopia.esri.com/storage/user/798/files/3c97681c-14f3-11e9-959e-02dc6e45bc4f)
+
+    * The toolbar button will be underlined to indicate it's enabled now.
+    * You should see an animated symbol moving along a track. 
+    * The arrow point of the symbol should be facing in the direction of movement.
+ - Zoom in and out very far while the symbol is moving. 
+    * There should be no noticeable judder and the symbol should remain the same size until zoomed in very close. 
+    * The symbol should remain visible while zoomed out and you can see the entire Globe (assumes 3D)
+ - Rotate the View.
+    * The arrow heading should always be pointing in the direction of movement, even as the view is rotated.
+    * While rotating, the symbol should not flicker or have any undesirable side effects. It should remain consistent
+
+- From the Navigation Toolbar, click again on
+![image](https://devtopia.esri.com/storage/user/798/files/b32ab67e-14f2-11e9-9a52-14f84e380662)
+   * The location symbol should be gone from the view as well.
+
+
+
+
 ### Follow Position
+#### Setup:
+- Make sure you have MontereyMounted.gpx (/Volumes/Data/sdk/qt/ExampleAppsData/DSA/) available in ~/ArcGIS/Runtime/Data/DSA/SimulationData. ***
+
+#### Steps:
+- Run the DSA app
+Make sure the app is in simulated location mode (it always is currently, it may change in the future).
+- From the Navigation Toolbar, click on
+![image](https://devtopia.esri.com/storage/user/798/files/b32ab67e-14f2-11e9-9a52-14f84e380662)
+- [ ] confirm that the "Follow Position" HUD buttons appear at the bottom of the screen
+- there are 3 modes:
+    - don't follow
+    - follow (track up)
+    - follow (north up)
+- [ ] confirm that the app is initially in "don't follow" mode
+- click the follow (track up) button
+- [ ] confirm that the app begins to follow the simulated position and that it rotates to the current heading
+- zoom in and out using the mouse wheel/navigation buttons. 
+- [ ] confirm that the app is still following
+- interact with the view in some way (e.g. pan, pitch or heading)
+- [ ] confirm that the app immediately comes out of follow mode and goes back to don't follow state
+- click the follow (north up) button
+- [ ] confirm that the app starts to follow the position, is pitched to a map view perspective and does not rotate (e.g. north is top)
+- zoom in and out
+- [ ] confirm that the app is still following
+- interact with the view in some way (e.g. pan, pitch or heading)
+- [ ] confirm that the app immediately comes out of follow mode and goes back to don't follow state
+- toggle through the states to check it's all changing as expected
+- from the Navigation Toolbar, click again on
+![image](https://devtopia.esri.com/storage/user/798/files/b32ab67e-14f2-11e9-9a52-14f84e380662) (e.g. turn off position)
+- [ ] confirm that the app stops following and the follow HUD disappears
 ### Coordinate Conversion Tool
+## Test case 1: Default coordinate format
+- start the app and open the coordinate conversion tool (using the tool icon on the Map toolbar)
+- [ ] the tool should appear at the bottom of the screen
+- [ ] the tool should be using MGRS format as the input
+- [ ] the tool should be tracking the app's current position
+- shut the tool
+
+## Test case 2: Launch from context menu
+- long press on the terrain. Click "Coordinates" on the context menu
+- [ ] the tool should appear (and should be shown as selected in the Map toolbar)
+- [ ] the tool should show the position where you launched the context-menu (you can use the flash coordinate button to check)
+- [ ] the tool should be in capture mode (not tracking the apps position) - you can expand the tool to check
+- long press on the view again while the coordinate too is open
+- [ ] the context menu should not appear
+
+## Test case 3: Flash position in view
+- open the tool in capture mode and click in the view to set a position
+- click the flash in view button
+- [ ] you should see a point flash in the view at the clicked position
+
+## Test case 4: Go to position
+- open the tool in live mode
+- click the Go to coordinate button
+- [ ] the view should zoom to the current position of the app (you can confirm by turning on the location didsplay)
+-----------------------------------------------------
+
 
 
 ### Tool Errors
@@ -276,6 +610,49 @@ _NOTE whenever the location moves out of the 250 m zone the alert should disappe
 
 
 ## Markup Tool
+Run the DSA apps
+
+#### Test 1: Draw multiple graphics
+- Go to Markup
+- Begin sketching. Draw should be enabled by default, so as soon as you are in the Markup group, you should be able to sketch.
+- Sketch another couple of lines
+- Navigate to a different category (like map), and drawing should not be enabled
+
+#### Test 2: Configure markup color
+- Go to markup
+- Start sketching some lines
+- Click color and select a different color. 
+- Sketch a new line. The new sketch should use the new color
+
+#### Test 3: Share Markup
+- Go to markup
+- Start sketching some lines
+- Click color and select a different color. 
+- Sketch a new line. The new sketch should use the new color
+- Press Share
+- Give the sketch a name and press OK
+- On your device, you should get a prompt saying that you shared a sketch, and then asking if you would like to view it as a layer. Press Yes
+- Go to Maps > Table of Contents, and you should see your markup added as a layer
+
+#### Test 4: Receive
+- Run the app from 2 different devices connected to the watchtower wifi (or other non Esri wifi -- a wireless hotspot from your phone works well)
+- In one of the apps, Go to Markup
+- Start Sketching
+- Press Share
+- Give the markup a name and press OK
+- On your second device, you should get a prompt saying that someone has sent you a sketch, and asks if you would like to view it
+- Select yes, and it will add it as a layer
+- Go to Maps section > Table of Contents tool, and you should see your sketch
+
+#### Test 5: Manually add layer
+- Go to Maps > Add Local Data tool
+- Filter the data type by Markup (.markup)
+- Select one of the markups you created in the previous steps
+- It should add the markup as a layer
+- Close and reopen the app, and the markup should persist
+
+
+
 
 ## App Config and Settings
 ### DsaConfig file

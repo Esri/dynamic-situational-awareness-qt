@@ -3,7 +3,7 @@ Sanity test list to perform on several platforms prior to release.
 # 1. Setup / Test Data
 
 
-# Map Toolbar
+# 2. Map Toolbar
 ## Table of Contents
 #### Setup:
 - Make sure you have some data to add to the app  in ~/ArcGIS/Runtime/Data/DSA/SimulationData. You will need some data in the same location - e.f. Shasta.tif and Shasta_elevation.tif rasters***
@@ -183,7 +183,7 @@ The `Friendly Tracks - Air` graphics should no longer be drawn to the view.
 The `Contact Reports`, `Situation Reports`, `EOD Reports`, and `Sensor Observations` message feeds graphics should no longer be drawn to the view.
 
 
-# Map Display Tools
+# 3. Map Display Tools
 ## Navigation Tools
 Run the DSA app
 
@@ -351,7 +351,7 @@ Steps:
 
 
 
-### Follow Position
+## Follow Position
 #### Setup:
 - Make sure you have MontereyMounted.gpx (/Volumes/Data/sdk/qt/ExampleAppsData/DSA/) available in ~/ArcGIS/Runtime/Data/DSA/SimulationData. ***
 
@@ -411,12 +411,9 @@ Make sure the app is in simulated location mode (it always is currently, it may 
 
 
 
-### Tool Errors
 
-
-
-## Message Feeds
-### Broadcast Current Location
+# 4. Message Feeds
+## Broadcast Current Location
 The current location updates will be enabled in the DSA app at startup.
 
 **Test 1: General broadcast location test**
@@ -445,7 +442,7 @@ The current location updates will be enabled in the DSA app at startup.
 - You should notice that the teammate's military symbol is now gone and have been removed from the message feed overlay.
 
 
-## Observation Report
+# 5. Observation Reports
 #### Test case 1: Create Observation Report from Tool
 - go to the reports category and select the "Observation" tool icon
   - [ ] the contact report wizard should appear
@@ -469,8 +466,8 @@ The current location updates will be enabled in the DSA app at startup.
 - run through the rest of the wizard. On the final page click Cancel
   - [ ] the report should be cleared and the location highlight graphic should disappear
 
-## Analysis Tools
-### Line of Sight
+# 6. Analysis Tools
+## Line of Sight
 #### Test case 1: Enable Line of Sight
 - turn on the location display
 - go to the analysis tab and select "Line of sight"
@@ -487,7 +484,7 @@ The current location updates will be enabled in the DSA app at startup.
 - click the "x" button next to the overlay drop down
   - [ ] the lines of sight should disappear and the overlay drop down should be cleared
 
-### Viewshed
+## Viewshed
 #### Test case 1: Current Location viewshed
 - open the "Viewshed" tool from the analysis toolbar (click on the tool icon)
 - select "Current Location"
@@ -547,7 +544,7 @@ The current location updates will be enabled in the DSA app at startup.
 
 
 
-## Alerts and Conditions
+# 7. Alerts and Conditions
 #### Setup
 - delete the `ArcGIS\Runtime\Data\DSA\DsaAppConfig.json` (to make sure you get the default distress condition)
 - you will need to run the `ArcGIS\Runtime\Data\DSA\SimulationData\GeoMessage_FriendlyTracksLand.xml` tracks to simulate a distress message. You can run this using the simulator @ `\\apps-data\data\sdk\qt\exampleApps\Simulators\DSA_MessageSimulator_Qt`
@@ -606,7 +603,7 @@ _NOTE whenever the location moves out of the 250 m zone the alert should disappe
 - [ ] re-enable the condition and the track should start flashing again
 
 
-## Markup Tool
+# 8. Markup Tool
 Run the DSA apps
 
 #### Test 1: Draw multiple graphics
@@ -651,8 +648,8 @@ Run the DSA apps
 
 
 
-## App Config and Settings
-### DsaConfig file
+# 9. App Config and Settings
+## DsaConfig file
 #### Setup
 delete the json settings file from `~\ArcGIS\Runtime\Data\DSA\DsaAppConfig.json`
 
@@ -680,7 +677,7 @@ delete the json settings file from `~\ArcGIS\Runtime\Data\DSA\DsaAppConfig.json`
  - the default basemap
  - a condition
 
-### Persist Layers
+## Persist Layers
 - Open the DSA app
 - Go to the add data tool and add several layers
 - Go to the Overlays/TOC tool, and those layers should be reflected
@@ -688,10 +685,10 @@ delete the json settings file from `~\ArcGIS\Runtime\Data\DSA\DsaAppConfig.json`
 - Turn the visibility of one of the layers off, and reorder the layers (move one of them up or down)
 - Close/Reopen the app, go to the Overlays/TOC tool, and the visibility and layer order should be retained
 
-### Settings
-### App Configuration
+## Settings
+## App Configuration
 
-## App and Tool Errors
+# App and Tool Errors
 #### Test Case 1: No errors when everything is present
 - open the app
 - [ ] there should be no error messages shown at start up

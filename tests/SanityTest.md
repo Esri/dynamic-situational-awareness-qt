@@ -5,10 +5,10 @@ Sanity test list to perform on several platforms prior to release.
 
 # 2. Map Toolbar
 ## Table of Contents
-#### Setup:
+Setup:
 - Make sure you have some data to add to the app  in ~/ArcGIS/Runtime/Data/DSA/SimulationData. You will need some data in the same location - e.f. Shasta.tif and Shasta_elevation.tif rasters***
 
-#### Steps:
+Steps:
 - Run the DSA app
 - Click on the Table of contents toolbar icon.
   - [ ] confirm that the Table of Contents opens and is empty
@@ -254,36 +254,36 @@ and the follow tool.
 - Close the app and reopen. The same format/unit settings used in the previous run should be applied
 
 ## Context Menu
-#### Test case 1: No menu shown for invalid context
+Test case 1: No menu shown for invalid context
 - pitch the 3d view so that you can see the sky. Press and hold on the sky
 - [ ] no context menu should be shown
 
-#### Test case 2: Dismiss with no action
+Test case 2: Dismiss with no action
 - Press and hold on the terrain
 - [ ] the context menu should be shown
 - click somewhere off the menu
 - [ ] the menu should be dismissed and nothing should happen
 
-#### Test case 3: Coordinates context
+Test case 3: Coordinates context
 - press and hold on the terrain
 - [ ] the context menu should be shown and should include the "Coordinates" option
 - click "Coordinates"
 - [ ] the coordinate conversion tool should open up with the context point as the input
 
-#### Test case 4: Elevation context
+Test case 4: Elevation context
 - press and hold on the terrain
 - [ ] the context menu should be shown and should include the "Elevation" option
 - click "Elevation"
 - [ ] a message box should appear showing the elevation (in meters) at the clicked position
 
-#### Test case 5: Viewshed context
+Test case 5: Viewshed context
 - press and hold on the terrain
 - [ ] the context menu should be shown and include the "Viewshed" option
 - click "Viewshed"
 - [ ] a 360 degree viewshed should appear centered around the clicked position.
 _Note - you can remove this viewshed with the Analysis List_
 
-#### Test case 6: Identify context
+Test case 6: Identify context
 - press and hold on a graphic (e.g. from a message feed)
 - [ ] the context menu should be shown and include the "Identify" option
 - click "Identify"
@@ -293,14 +293,14 @@ _Note - you can remove this viewshed with the Analysis List_
 - click "Identify"
 - [ ] a Popup should appear with the attributes of the feature (it may not have any)
 
-#### Test case 7: Follow context
+Test case 7: Follow context
 - press and hold on a graphic (e.g. from a message feed)
 - [ ] the context menu should be shown and include the "Follow" option
 - click "Follow"
 - [ ] The app should begin following the graphic
 - interact with the view again to stop following
 
-#### Test case 8: Line of sight context
+Test case 8: Line of sight context
 - turn on location display
 - press and hold on a graphic (e.g. from a message feed)
 - [ ] the context menu should be shown and include the "Line of sight" option
@@ -308,7 +308,7 @@ _Note - you can remove this viewshed with the Analysis List_
 - [ ] You should see a line of sight from the current location to the graphic you clicked on
 _Note - you can remove this Line of sight with the Analysis List_
 
-#### Observation
+### Observation
 _See Observation Report section below_
 
 ### Identify Tool
@@ -352,10 +352,10 @@ Steps:
 
 
 ## Follow Position
-#### Setup:
+Setup:
 - Make sure you have MontereyMounted.gpx (/Volumes/Data/sdk/qt/ExampleAppsData/DSA/) available in ~/ArcGIS/Runtime/Data/DSA/SimulationData. ***
 
-#### Steps:
+Steps:
 - Run the DSA app
 Make sure the app is in simulated location mode (it always is currently, it may change in the future).
 - From the Navigation Toolbar, click on
@@ -443,7 +443,7 @@ The current location updates will be enabled in the DSA app at startup.
 
 
 # 5. Observation Reports
-#### Test case 1: Create Observation Report from Tool
+Test case 1: Create Observation Report from Tool
 - go to the reports category and select the "Observation" tool icon
   - [ ] the contact report wizard should appear
   - [ ] the username should be whatever your app is configured to use (by default the machine name)
@@ -456,7 +456,7 @@ The current location updates will be enabled in the DSA app at startup.
   - [ ] you should see the contact report added in both apps
   - [ ] in the other app, identify the report (using the context menu) and confirm the details you submitted have been correctly broadcast
 
-#### Test case 2: Create Observation Report from Context Menu
+Test case 2: Create Observation Report from Context Menu
 - long press on the view to open the Context Menu
   - [ ] you should see an option for Observation Report
 - select the option
@@ -468,24 +468,24 @@ The current location updates will be enabled in the DSA app at startup.
 
 # 6. Analysis Tools
 ## Line of Sight
-#### Test case 1: Enable Line of Sight
+Test case 1: Enable Line of Sight
 - turn on the location display
 - go to the analysis tab and select "Line of sight"
 - select "Observers_SD" from the overlay drop down
   - [ ] line of sight should be displayed from the various observer positions (atop buildings). 
   - [ ] Should look something like this:
-#### Test case 2: Toggle visibility
+Test case 2: Toggle visibility
 - uncheck the box next to the overlay drop down
   - [ ] the line of sight should disappear
 - recheck the box
  - [ ] they should reappear
 
-#### Test case 3: Remove
+Test case 3: Remove
 - click the "x" button next to the overlay drop down
   - [ ] the lines of sight should disappear and the overlay drop down should be cleared
 
 ## Viewshed
-#### Test case 1: Current Location viewshed
+Test case 1: Current Location viewshed
 - open the "Viewshed" tool from the analysis toolbar (click on the tool icon)
 - select "Current Location"
   - [ ] the follow position HUD should turn on if it was not enabled
@@ -501,7 +501,7 @@ The current location updates will be enabled in the DSA app at startup.
 - create another viewshed around the current location but this time click Save
   - [ ] the viewshed should remain in the view
 
-#### Test case 2: Map Element viewshed
+Test case 2: Map Element viewshed
 - open the "Viewshed" tool from the analysis toolbar (click on the tool icon)
 - select "Map Element"
 - click on a graphic (e.g. from a message feed) in the view
@@ -516,7 +516,7 @@ The current location updates will be enabled in the DSA app at startup.
 - click Save
 - the viewshed should remain in the scene
 
-#### Test case 3: Follow Touch viewshed
+Test case 3: Follow Touch viewshed
 - open the "Viewshed" tool from the analysis toolbar (click on the tool icon)
 - select "Follow Touch"
 - click on the terrain in the view
@@ -531,7 +531,7 @@ The current location updates will be enabled in the DSA app at startup.
 - click Save
 - the viewshed should remain in the scene
 
-#### Test case 4: Manage viewsheds
+Test case 4: Manage viewsheds
 - click on View List
   - [ ] you should see each of the viewsheds created above
   - [ ] any 360 degree viewsheds should appear as a single list entry
@@ -545,12 +545,12 @@ The current location updates will be enabled in the DSA app at startup.
 
 
 # 7. Alerts and Conditions
-#### Setup
+Setup
 - delete the `ArcGIS\Runtime\Data\DSA\DsaAppConfig.json` (to make sure you get the default distress condition)
 - you will need to run the `ArcGIS\Runtime\Data\DSA\SimulationData\GeoMessage_FriendlyTracksLand.xml` tracks to simulate a distress message. You can run this using the simulator @ `\\apps-data\data\sdk\qt\exampleApps\Simulators\DSA_MessageSimulator_Qt`
 - you will need to use the `Cot_Reports.xml` which can be run with the `DSA_MessageSimulator_Qt` app
 
-#### Test case 1: default distress condition (attribute equals)
+Test case 1: default distress condition (attribute equals)
 - start the app
 - [ ] a new `DsaAppConfig.json` file should be created and it should contain a Condition called "Distress"
 - start the simulator and run the `GeoMessage_FriendlyTracksLand.xml` file
@@ -567,7 +567,7 @@ The current location updates will be enabled in the DSA app at startup.
 - wait for a bit longer
 - [ ] you should see another notification when the alert moves back into the distress state
 
-#### Test case 2: creating/editing alerts (within distance)
+Test case 2: creating/editing alerts (within distance)
 - restart the app
 - turn on location display (should be from simulated GPS file)
 - open the markup tool and draw a big "X" over Monterey (see screenshot)
@@ -589,7 +589,7 @@ _NOTE whenever the location moves out of the 250 m zone the alert should disappe
 - wait until the location overlay moves away from the "X" you drew and the alert should disappear
 - open the `DsaAppConfig.json` file and confirm that their is a json representation of the condition you just created
 
-#### Test case 3: pick specific feature for condition (within area)
+Test case 3: pick specific feature for condition (within area)
 - re-start the app
 - add the `AOI.shp` layer
 - start the `DSA_MessageSimulator_Qt` app using `Cot_Reports.xml`
@@ -606,19 +606,19 @@ _NOTE whenever the location moves out of the 250 m zone the alert should disappe
 # 8. Markup Tool
 Run the DSA apps
 
-#### Test 1: Draw multiple graphics
+Test 1: Draw multiple graphics
 - Go to Markup
 - Begin sketching. Draw should be enabled by default, so as soon as you are in the Markup group, you should be able to sketch.
 - Sketch another couple of lines
 - Navigate to a different category (like map), and drawing should not be enabled
 
-#### Test 2: Configure markup color
+Test 2: Configure markup color
 - Go to markup
 - Start sketching some lines
 - Click color and select a different color. 
 - Sketch a new line. The new sketch should use the new color
 
-#### Test 3: Share Markup
+Test 3: Share Markup
 - Go to markup
 - Start sketching some lines
 - Click color and select a different color. 
@@ -628,7 +628,7 @@ Run the DSA apps
 - On your device, you should get a prompt saying that you shared a sketch, and then asking if you would like to view it as a layer. Press Yes
 - Go to Maps > Table of Contents, and you should see your markup added as a layer
 
-#### Test 4: Receive
+Test 4: Receive
 - Run the app from 2 different devices connected to the watchtower wifi (or other non Esri wifi -- a wireless hotspot from your phone works well)
 - In one of the apps, Go to Markup
 - Start Sketching
@@ -638,7 +638,7 @@ Run the DSA apps
 - Select yes, and it will add it as a layer
 - Go to Maps section > Table of Contents tool, and you should see your sketch
 
-#### Test 5: Manually add layer
+Test 5: Manually add layer
 - Go to Maps > Add Local Data tool
 - Filter the data type by Markup (.markup)
 - Select one of the markups you created in the previous steps
@@ -650,10 +650,10 @@ Run the DSA apps
 
 # 9. App Config and Settings
 ## DsaConfig file
-#### Setup
+Setup
 delete the json settings file from `~\ArcGIS\Runtime\Data\DSA\DsaAppConfig.json`
 
-#### Test 1: default values written to json
+Test 1: default values written to json
 - [ ] when you start the app you get default values written to the json file for:
 - location text format (e.g. DMS)
 - a set of message feeds (e.g. friendly tracks)
@@ -663,7 +663,7 @@ delete the json settings file from `~\ArcGIS\Runtime\Data\DSA\DsaAppConfig.json`
 - default elevation source
 - gps file
 
-#### Test 2: json values used by the app
+Test 2: json values used by the app
 - [ ] when you start the app:
  - it starts in the expected default location (Monteray)
  - it has a basemap
@@ -671,7 +671,7 @@ delete the json settings file from `~\ArcGIS\Runtime\Data\DSA\DsaAppConfig.json`
  - the message feeds tool contains the names of feeds
  - the location text has the expected format
 
-#### Test 3: json values are written by the app
+Test 3: json values are written by the app
 - [ ] when you change a setting it is saved to the json file and applied when you restart the app
  - the format for location text
  - the default basemap
@@ -688,21 +688,21 @@ delete the json settings file from `~\ArcGIS\Runtime\Data\DSA\DsaAppConfig.json`
 ## Settings
 ## App Configuration
 
-# App and Tool Errors
-#### Test Case 1: No errors when everything is present
+# 10. App and Tool Errors
+Test Case 1: No errors when everything is present
 - open the app
 - [ ] there should be no error messages shown at start up
 - play around with some tools etc.
 - [ ] you should see no errors (unless you do something invalid)
 
-#### Test Case 2: No Data
+Test Case 2: No Data
 - rename the "DSA" folder to "DSA2"
 - restart the app
 - [ ] you should see an error message reporting No Data
 - change the folder back to DSA and run the app again
 - [ ] you should not see an error
 
-#### Test Case 3: Error on startup
+Test Case 3: Error on startup
 - rename `~\ArcGIS\Runtime\Data\DSA\BasemapData\Topographic.tpk` to `Topographic2.tpk`
 - open the app
 - [ ] you should see an error on startup informing you that the default basemap could not be found
@@ -710,12 +710,12 @@ _NOTE - the error may be duplicated (I think that's ok)_
 - change the file back to `Topographic.tpk` and reopen the app
 - [ ] you should not see an error
 
-#### Test Case 4: Error using tool
+Test Case 4: Error using tool
 _this test is for errors we create at the app level_
 - go to the create alerts condition tool and create a new Attribute alert using "My Location" as the source feed (this is invalid since the location has no attributes)
 - [ ] you should see an error indicating that the condition was not created
 
-#### Test Case 5: Error from the API
+Test Case 5: Error from the API
 _this test is for errors we receive from the API_
 - rename `~\ArcGIS\Runtime\Data\DSA\OperationalData\AOI.dbf` to `AOI2.dbf` (this will make the AOI shapefile invalid when we try to add it)
 - go to the add data tool and select the `AOI.shp` to add

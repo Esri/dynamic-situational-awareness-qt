@@ -382,15 +382,16 @@ Make sure the app is in simulated location mode (it always is currently, it may 
 - from the Navigation Toolbar, click again on
 ![image](https://devtopia.esri.com/storage/user/798/files/b32ab67e-14f2-11e9-9a52-14f84e380662) (e.g. turn off position)
 - [ ] confirm that the app stops following and the follow HUD disappears
-### Coordinate Conversion Tool
-## Test case 1: Default coordinate format
+
+## Coordinate Conversion Tool
+Test case 1: Default coordinate format
 - start the app and open the coordinate conversion tool (using the tool icon on the Map toolbar)
 - [ ] the tool should appear at the bottom of the screen
 - [ ] the tool should be using MGRS format as the input
 - [ ] the tool should be tracking the app's current position
 - shut the tool
 
-## Test case 2: Launch from context menu
+Test case 2: Launch from context menu
 - long press on the terrain. Click "Coordinates" on the context menu
 - [ ] the tool should appear (and should be shown as selected in the Map toolbar)
 - [ ] the tool should show the position where you launched the context-menu (you can use the flash coordinate button to check)
@@ -398,16 +399,16 @@ Make sure the app is in simulated location mode (it always is currently, it may 
 - long press on the view again while the coordinate too is open
 - [ ] the context menu should not appear
 
-## Test case 3: Flash position in view
+Test case 3: Flash position in view
 - open the tool in capture mode and click in the view to set a position
 - click the flash in view button
 - [ ] you should see a point flash in the view at the clicked position
 
-## Test case 4: Go to position
+Test case 4: Go to position
 - open the tool in live mode
 - click the Go to coordinate button
-- [ ] the view should zoom to the current position of the app (you can confirm by turning on the location didsplay)
------------------------------------------------------
+- [ ] the view should zoom to the current position of the app (you can confirm by turning on the location display)
+
 
 
 

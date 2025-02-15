@@ -1,7 +1,20 @@
 Sanity test list to perform on several platforms prior to release. 
 
 # 1. Setup / Test Data
-
+#### General comments
+- Test the app on at least on Windows and Android
+  
+#### Prepare device for tests
+- Delete (or rename) DSA data folder (/ArcGIS/Runtime/Data) so that it can be recreated
+  - On Android, do this by opening the App Info (long press on the app icon and choose 'info'), scroll down and tap on Storage, tap Clear data.
+- Open the DSA app
+  - [ ] You should be prompted to download the default configuration from Esri.  Click Yes
+- Click OK on the Error dialog that the GPX file is missing
+  - [ ] You should be brought to the Configurations page and see the data downloading
+- Wait for the data to download. Once it's done downloading, tap "Close App" (the app needs to reload to read the data)
+- tap "OK" to confirm closing the app
+- Open the app
+  - [ ]  Confirm the default data is shown in the app (topo basemap is drawn, datasets are available in `Local Data` panel)
 
 # 2. Map Toolbar
 ## Table of Contents
@@ -33,14 +46,14 @@ Steps:
 
 ## Basemap Picker
 - Run the DSA app
-- confirm that the app starts with the topographic basemap
+  - [ ] confirm that the app starts with the topographic basemap
 - Select the basemap tool
-- confirm that you see a list of all the .tpk files in the directory you copied to
+  - [ ] confirm that you see a list of all the .tpk files in the directory you copied to
 - select one of the tpks
-- confirm that the tool closes and the basemap changes
+  - [ ] confirm that the tool closes and the basemap changes
 - reopen the tool
 - click the close button
-- confirm that the tool closes without changing the basemap
+  - [ ] confirm that the tool closes without changing the basemap
 
 ## Add Local Data
 Setup:

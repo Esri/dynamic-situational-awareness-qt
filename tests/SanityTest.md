@@ -26,12 +26,12 @@ Sanity test list to perform on several platforms prior to release.
   - [ ] confirm that the tool closes and the basemap changes
 - reopen the tool
 - click the close button (`X`)
-  - [ ] confirm that the tool closes without changing the basemap
+  - [ ] confirm that the tool closes without changing the basemap   
 DONE
 
 ## Add Local Data
 #### Setup:
-You can use the default demo data for this test, but it has a limited set of data. Ideally, copy additional datasets into the OperationalData folder so you can test all types. 
+> You can use the default demo data for this test, but it has a limited set of data. Ideally, copy additional datasets into the OperationalData folder so you can test all types. 
 
 Steps:
 - Run the DSA app
@@ -61,16 +61,17 @@ DONE
 - for each layer in turn: 
   - click on the Ellipses and choose to zoom to the layer
     - [ ] confirm the scene zooms  
-  - (ANDROID) Open Overlays again 
+  - Open Overlays again 
   - Uncheck one of the layers
   - (ANDROID) Close Overlays
     - [ ] confirm the layer is _not_ displayed on the scene
+  - (ANDROID) Open Overlays
 - experiment with reordering the layers by selecting the ellipses and selecting move up or down
   - [ ] confirm that reordering the list also reorders the layers in the map/scene
 - remove a layer by selecting the ellipses
   - [ ] confirm the layer is removed from the list
   - [ ] confirm the layer is removed from the map/scene
-- close the tool
+- close the tool   
 DONE
 
 ## Message Feeds

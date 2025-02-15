@@ -76,11 +76,23 @@ DONE
 
 ## Message Feeds
 #### Setup
-- To test on a mobile device, you may need to turn off VPN if you have it on, or update your network settings to allow traffice through the UDP port.
+To test on a mobile device, you may need to turn off VPN if you have it on, or update your network settings to allow traffice through the UDP port.
 
-Run the DSA app
-Run the Message Simulator app
-Run the temporary ArcGISQtMessageSimulator (for GeoMessage)
+- Run the DSA app
+- (WINDOWS) Run the simulators using the StartDSATracks.bat if available, otherwise: 
+  - (WINDOWS) Run the Message Simulator app (for CoT)
+    -  Run the MessageSimulator app and browse to the `CoT_Reports.xml` simulation file in the DSA's `SimulationData` folder.
+    -  Run the simulation on port 45678
+    -  Specify a frequency value for the amount of messages to send
+    -  Choose to loop simulation
+    -  Hit the `Start` button to start the simulation
+  - (WINDOWS) Run the ArcGISQtMessageSimulator app (for GeoMessage)
+    -  Browse to the `GeoMessage_FriendlyTracksLand.xml` simulation file in the DSA's `SimulationData` folder.
+    -  Run the simulation on port 45678
+    -  Specify a frequency value for the amount of messages to send
+    -  Choose to loop simulation
+    -  Hit the `Start` button to start the simulation
+    - Repeat for the other GeoMessage simulation files
 
 The DSA app by default should be configured to handle certain message feeds.
 They are:
@@ -93,75 +105,15 @@ They are:
 7.  Sensor Observations (GeoMessage)
 
 **Test 1: SA Events message feed**
-
-**Steps**
-
--  Run the DSA app (Vehicle or Handheld)
--  Run the MessageSimulator app and browse to the `CoT_Reports.xml` simulation file in the DSA's `SimulationData` folder.
--  Run the simulation on port 45678
--  Specify a frequency value for the amount of messages to send
--  Choose to loop simulation
--  Hit the `Start` button to start the simulation
-
-**Expectations**
-
-`SA Events` message feed should begin drawing mil2525c symbols to the screen.
-
-**Test 2: Toggle SA Evenets message feed**
-
-**Steps**
--  While the DSA app and `CoT_Reports.xml` simulation running, select the `Message Feeds` panel and switch off the `SA Events` message feed.
-
-**Expectations**
-
-The `SA Events` graphics should no longer be drawn to the view.
-
-**Test 3: Friendly Tracks - Land message feed**
-
-**Steps**
-
--  Run the DSA app (Vehicle or Handheld)
--  Run the ArcGISQtMessageSimulator (GeoMessage) app and browse to the `GeoMessage_FriendlyTracksLand.xml` simulation file in the DSA's `SimulationData` folder.
--  Run the simulation on port 45678
--  Specify a frequency value for the amount of messages to send
--  Choose to loop simulation
--  Hit the `Start` button to start the simulation
-
-**Expectations**
+#### **Steps**
+- Run the DSA app (Vehicle or Handheld)
+- [ ] You should see data from the message feeds on the scene (blue military symbols moving, plus other point symbols appearing) 
+- Select the `Message Feeds` panel and switch off the `SA Events` message feed.
+  - [ ] The `SA Events` graphics (green and red symbols) should no longer be drawn to the view.
 
 `Friendly Tracks - Land` message feed should begin drawing mil2525c friendly draped symbols to the screen.
-
-**Test 4: Toggle Friendly Tracks - Land message feed**
-
-**Steps**
--  While the DSA app and `GeoMessage_FriendlyTracksLand.xml` simulation running, select the `Message Feeds` panel and switch off the `Friendly Tracks - Land` message feed.
-
-**Expectations**
-
 The `Friendly Tracks - Land` graphics should no longer be drawn to the view.
-
-**Test 5: Friendly Tracks - Air message feed**
-
-**Steps**
-
--  Run the DSA app (Vehicle or Handheld)
--  Run the ArcGISQtMessageSimulator (GeoMessage) app and browse to the `GeoMessage_FriendlyTracksAir.xml` simulation file in the DSA's `SimulationData` folder.
--  Run the simulation on port 45678
--  Specify a frequency value for the amount of messages to send
--  Choose to loop simulation
--  Hit the `Start` button to start the simulation
-
-**Expectations**
-
 `Friendly Tracks - Air` message feed should begin drawing mil2525c friendly symbols to the screen in absolute surface placement mode.  The symbols are floating in the air at a fixed elevation.
-
-**Test 6: Toggle Friendly Tracks - Air message feed**
-
-**Steps**
--  While the DSA app and `GeoMessage_FriendlyTracksAir.xml` simulation running, select the `Message Feeds` panel and switch off the `Friendly Tracks - Air` message feed.
-
-**Expectations**
-
 The `Friendly Tracks - Air` graphics should no longer be drawn to the view.
 
 **Test 7: Toggle Friendly Tracks labels**

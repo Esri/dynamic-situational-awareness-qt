@@ -17,11 +17,38 @@ Sanity test list to perform on several platforms prior to release.
   - [ ]  Confirm the default data is shown in the app (topo basemap is drawn, datasets are available in `Local Data` panel)
 
 # 2. Map Toolbar
-## Table of Contents
-Setup:
-- Make sure you have some data to add to the app  in ~/ArcGIS/Runtime/Data/DSA/SimulationData. You will need some data in the same location - e.f. Shasta.tif and Shasta_elevation.tif rasters***
+## Basemap Picker
+- Run the DSA app
+  - [ ] confirm that the app starts with the topographic basemap
+- Select the basemap tool
+  - [ ] confirm that you see a list of all the .tpk files in the BasemapData folder (default is `ImageryMonterey` & `Topographic`)
+- select one of the tpks
+  - [ ] confirm that the tool closes and the basemap changes
+- reopen the tool
+- click the close button (`X`)
+  - [ ] confirm that the tool closes without changing the basemap
+DONE
+
+## Add Local Data
+#### Setup:
+You can use the default demo data for this test, but it has a limited set of data. Ideally, copy additional datasets into the OperationalData folder so you can test all types. 
 
 Steps:
+- Run the DSA app
+- Select Map Tools icon, then the Add Data tool and change the filter to `Geodatabase`
+- Check the box for one of the geodatabase files and click Add Selected
+  - [ ] Confirm the data is displayed on the scene. 
+- Select the Add Data tool again and change the filter to `Shapefile`
+- Check the box for one of the shapefiles and click Add Selected
+  - [ ] Confirm the shapefile is added to the scene 
+- Select the  the Add Data tool again, and change the filter to `Raster Files`
+- Check the box for a .dt2 file
+- Select the 'Add as elevation source' checkbox and click ADD SELECTED
+  - [ ] Confirm the DTED file is added as an elevation source to the scene (you should see the terrain surface reload)
+DONE
+
+## Table of Contents
+#### Steps:
 - Run the DSA app
 - Click on the Table of contents toolbar icon.
   - [ ] confirm that the Table of Contents opens and is empty
@@ -44,37 +71,11 @@ Steps:
   - [ ] confirm the layer is removed from the list
   - [ ] confirm the layer is removed from the map/scene
 
-## Basemap Picker
-- Run the DSA app
-  - [ ] confirm that the app starts with the topographic basemap
-- Select the basemap tool
-  - [ ] confirm that you see a list of all the .tpk files in the directory you copied to
-- select one of the tpks
-  - [ ] confirm that the tool closes and the basemap changes
-- reopen the tool
-- click the close button
-  - [ ] confirm that the tool closes without changing the basemap
-
-## Add Local Data
-Setup:
-- Copy some raster data (\\apps-data\data\api\qt\UnitTests\raster\formats\tiff\Monterey), a shapefile (\\apps-data\data\api\qt\UnitTests\shapefile), a geodatabase (\\apps-data\data\api\qt\UnitTests\Geodatabase), and a TPK (\\apps-data\data\api\qt\UnitTests\tpks) to ~/ArcGIS/Runtime/Data/DSA/OperationalData
-- Copy a tpk that supports elevation (\\apps-data\data\api\qt\UnitTests\tpks\elevation\California\CaDem.tpk) to ~/ArcGIS/Runtime/Data/DSA/ElevationData
-
-Steps:
-- Run the DSA app
-- Select Map Tools icon, then the Add Data tool 
-- Change the filter to 'Raster Files' and select a raster; check the box for one of the raster layers. Click ADD SELECTED, this should add it to the map. To zoom to that layer, select the Overlays tool, click on, '...', and select 'Zoom to'.
-- Select the Add Data tool again
-- Change the filter to 'Geodatabase'
-- Select a Geodatabase; check the box for one of the raster layers. Click ADD SELECTED, this should add it to the map. 
-- Select the  the Add Data tool again, and change the filter to Tile Package
-- Select a TPK that supports elevation; check the box for one of the raster layers; select the 'Add as elevation source' checkbox. Then click ADD SELECTED, this should add it to the map. 
-- Select the  Add Data tool again
-- Uncheck the add as elevation checkbox, and change the filter to'Shapefile'
-- Select a shapefile and click ADD SELECTED toadd it to the map, and make sure it draws
-
 
 ## Message Feeds
+#### Setup
+- To test on a mobile device, you may need to turn off VPN if you have it on, or update your network settings to allow traffice through the UDP port.
+
 Run the DSA app
 Run the Message Simulator app
 Run the temporary ArcGISQtMessageSimulator (for GeoMessage)
@@ -194,6 +195,8 @@ The `Friendly Tracks - Air` graphics should no longer be drawn to the view.
 **Expectations**
 
 The `Contact Reports`, `Situation Reports`, `EOD Reports`, and `Sensor Observations` message feeds graphics should no longer be drawn to the view.
+
+## Open Package
 
 
 # 3. Map Display Tools

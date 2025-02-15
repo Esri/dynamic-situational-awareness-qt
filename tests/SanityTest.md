@@ -46,31 +46,32 @@ Steps:
 - Select the 'Add as elevation source' checkbox and click ADD SELECTED
   - [ ] Confirm the DTED file is added as an elevation source to the scene (you should see the terrain surface reload)
 DONE
+> In preparation for the next test, do NOT remove the layers from the Overlays list
 
-## Table of Contents
+## Overlays
 #### Steps:
+> If not done already, run the previous test (`Add Local Data`) to make sure there is data load in the app
+
 - Run the DSA app
-- Click on the Table of contents toolbar icon.
-  - [ ] confirm that the Table of Contents opens and is empty
-  - [ ] confirm that you can still interact with the map/scene (if in vehicle app)
-- close the tool
-- launch the add data tool and add some layers
-- reopen the table of contents tool
+- Open the Overlays tool
+  - [ ] (VEHICLE) confirm that you can still interact with the scene 
   - [ ] confirm that the layers you added are in the list
-  - [ ] confirm that each layer has an icon (points, lines, polygons, raster)
+  - [ ] confirm that each layer has an icon that matches it's type (points, lines, polygons, raster)
   - [ ] confirm that each layer has a name (there is a known issue about names for raster layers so we have a workaround for now)
 - for each layer in turn: 
-  - click on the item to zoom to the layer
-    - [ ] confirm the map/scene zooms
-  - toggle the layer visibility on/off
-    - [ ] confirm the layer is set visible/invisible in the map/scene
-- select the ellipses and opt to zoom to a layer
+  - click on the Ellipses and choose to zoom to the layer
+    - [ ] confirm the scene zooms  
+  - (ANDROID) Open Overlays again 
+  - Uncheck one of the layers
+  - (ANDROID) Close Overlays
+    - [ ] confirm the layer is _not_ displayed on the scene
 - experiment with reordering the layers by selecting the ellipses and selecting move up or down
   - [ ] confirm that reordering the list also reorders the layers in the map/scene
 - remove a layer by selecting the ellipses
   - [ ] confirm the layer is removed from the list
   - [ ] confirm the layer is removed from the map/scene
-
+- close the tool
+DONE
 
 ## Message Feeds
 #### Setup

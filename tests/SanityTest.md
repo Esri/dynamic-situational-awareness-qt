@@ -30,10 +30,10 @@ Sanity test list to perform on several platforms prior to release.
 DONE
 
 ## Add Local Data
-#### Setup:
+**Setup:**
 > You can use the default demo data for this test, but it has a limited set of data. Ideally, copy additional datasets into the OperationalData folder so you can test all types. 
 
-Steps:
+**Steps:**
 - Run the DSA app
 - Select Map Tools icon, then the Add Data tool and change the filter to `Geodatabase`
 - Check the box for one of the geodatabase files and click Add Selected
@@ -49,9 +49,9 @@ DONE
 > In preparation for the next test, do NOT remove the layers from the Overlays list
 
 ## Overlays
-#### Steps:
 > If not done already, run the previous test (`Add Local Data`) to make sure there is data load in the app
 
+**Steps:**
 - Run the DSA app
 - Open the Overlays tool
   - [ ] (VEHICLE) confirm that you can still interact with the scene 
@@ -87,11 +87,11 @@ DONE
 
 To test on a mobile device, you may need to turn off VPN if you have it on, or update your network settings to allow traffic through the UDP port.
 
-#### Setup
+**Setup**
 - Run the DSA app
 - (WINDOWS) Run the simulators using the StartDSATracks.bat
 
-#### **Test 1: Turn on/off message feeds**
+**Test 1: Turn on/off message feeds**
 - Run the DSA app (Vehicle or Handheld)
 - [ ] You should see data from the message feeds on the scene (blue military symbols moving, plus other point symbols appearing):
   - [ ] `SA Events` message feed should draw red and green military symbols, billboarded on the view
@@ -104,7 +104,7 @@ To test on a mobile device, you may need to turn off VPN if you have it on, or u
   - [ ] The `Friendly Tracks - Air` graphics should no longer be drawn to the view.
   - [ ] The `Contact Reports`, `Situation Reports`, `EOD Reports`, and `Sensor Observations` message feeds graphics should no longer be drawn to the view.
 
-#### **Test 2: Toggle Friendly Tracks labels**
+**Test 2: Toggle Friendly Tracks labels**
 - While the DSA app and `GeoMessage_FriendlyTracksLand.xml` simulation running, select the `Message Feeds` panel and make sure the `Friendly Tracks - Land` message feed is enabled.
 - [ ] Confirm that labels are displayed next to the blue graphics.
 - Open up the settings panel and uncheck the "Show friendly tracks labels" checkbox.

@@ -199,7 +199,7 @@ and the follow tool.
 
 ## Location Text
 - Elevation/Location text should display on the bottom
-- By default it is DMS and in meters
+- By default it is MGRS and in meters
 - Go to settings, and toggle the visibility off. It should not appear
 - Toggle visibility on again. It should appear
 - Go to settings and select a different format and a different unit
@@ -264,55 +264,40 @@ _Note - you can remove this Line of sight with the Analysis List_
 ### Observation
 _See Observation Report section below_
 
-### Identify Tool
-- add some feature layer data (the bases.gdb is a good one)
-- enable the identify/query tool and click on a graphic (the green geofence box has some attributes so you can use that)
-  - [ ] confirm that you see a popup for the graphics attributes
-- click on a feature
-  - [ ] confirm that you see a popup for the feature's attributes
-- click somewhere that a graphic and a feature overlap
-  - [ ] confirm that you see a popup for both
-- click somewhere with no graphic or feature
-  - [ ] confirm there is no popup
+
   
 ### Display Current Location  
 Setup:
-- Make sure you have `MontereyMounted.gpx` (/Volumes/Data/sdk/qt/ExampleAppsData/DSA/) available in ~/ArcGIS/Runtime/Data/DSA. ***
+- Make sure you have `MontereyMounted.gpx` available in ~/ArcGIS/Runtime/Data/DSA. ***
 
 Steps:
 - Run the DSA app
 - Make sure the app is in simulated location mode (it always is currently, it may change in the future).
-- From the Navigation Toolbar, click on
-![image](https://devtopia.esri.com/storage/user/798/files/b32ab67e-14f2-11e9-9a52-14f84e380662)
-- Click on 
-![image](https://devtopia.esri.com/storage/user/798/files/3c97681c-14f3-11e9-959e-02dc6e45bc4f)
+- From the Navigation Toolbar, click on ![image](https://github.com/user-attachments/assets/95f6aa23-cef1-405c-900f-f6025187eee9)
 
-    * The toolbar button will be underlined to indicate it's enabled now.
-    * You should see an animated symbol moving along a track. 
-    * The arrow point of the symbol should be facing in the direction of movement.
+- Click on ![image](https://github.com/user-attachments/assets/c64ff247-1c59-446c-8883-7cd8b45f922e)
+  * The toolbar button will be underlined to indicate it's enabled now.
+  * You should see an animated symbol moving along a track. 
+  * The arrow point of the symbol should be facing in the direction of movement.
  - Zoom in and out very far while the symbol is moving. 
-    * There should be no noticeable judder and the symbol should remain the same size until zoomed in very close. 
-    * The symbol should remain visible while zoomed out and you can see the entire Globe (assumes 3D)
+  * There should be no noticeable judder and the symbol should remain the same size until zoomed in very close. 
+  * The symbol should remain visible while zoomed out and you can see the entire Globe (assumes 3D)
  - Rotate the View.
-    * The arrow heading should always be pointing in the direction of movement, even as the view is rotated.
-    * While rotating, the symbol should not flicker or have any undesirable side effects. It should remain consistent
+  * The arrow heading should always be pointing in the direction of movement, even as the view is rotated.
+  * While rotating, the symbol should not flicker or have any undesirable side effects. It should remain consistent
 
-- From the Navigation Toolbar, click again on
-![image](https://devtopia.esri.com/storage/user/798/files/b32ab67e-14f2-11e9-9a52-14f84e380662)
-   * The location symbol should be gone from the view as well.
-
-
+- From the Navigation Toolbar, click again on ![image](https://github.com/user-attachments/assets/55d84b24-a29e-49ee-a33b-0f814d5ebbd5)
+  * The location symbol should be gone from the view as well.
 
 
 ## Follow Position
 Setup:
-- Make sure you have MontereyMounted.gpx (/Volumes/Data/sdk/qt/ExampleAppsData/DSA/) available in ~/ArcGIS/Runtime/Data/DSA/SimulationData. ***
+- Make sure you have MontereyMounted.gpx available in ~/ArcGIS/Runtime/Data/DSA/SimulationData.
 
 Steps:
 - Run the DSA app
 Make sure the app is in simulated location mode (it always is currently, it may change in the future).
-- From the Navigation Toolbar, click on
-![image](https://devtopia.esri.com/storage/user/798/files/b32ab67e-14f2-11e9-9a52-14f84e380662)
+- From the Navigation Toolbar, click on ![image](https://github.com/user-attachments/assets/517876e8-db78-4dde-9b94-794771d5650b)
 - [ ] confirm that the "Follow Position" HUD buttons appear at the bottom of the screen
 - there are 3 modes:
     - don't follow
@@ -332,8 +317,7 @@ Make sure the app is in simulated location mode (it always is currently, it may 
 - interact with the view in some way (e.g. pan, pitch or heading)
 - [ ] confirm that the app immediately comes out of follow mode and goes back to don't follow state
 - toggle through the states to check it's all changing as expected
-- from the Navigation Toolbar, click again on
-![image](https://devtopia.esri.com/storage/user/798/files/b32ab67e-14f2-11e9-9a52-14f84e380662) (e.g. turn off position)
+- from the Navigation Toolbar, click again on ![image](https://github.com/user-attachments/assets/517876e8-db78-4dde-9b94-794771d5650b) (e.g. turn off position)
 - [ ] confirm that the app stops following and the follow HUD disappears
 
 ## Coordinate Conversion Tool
@@ -501,8 +485,7 @@ Test case 4: Manage viewsheds
 # 7. Alerts and Conditions
 Setup
 - delete the `ArcGIS\Runtime\Data\DSA\DsaAppConfig.json` (to make sure you get the default distress condition)
-- you will need to run the `ArcGIS\Runtime\Data\DSA\SimulationData\GeoMessage_FriendlyTracksLand.xml` tracks to simulate a distress message. You can run this using the simulator @ `\\apps-data\data\sdk\qt\exampleApps\Simulators\DSA_MessageSimulator_Qt`
-- you will need to use the `Cot_Reports.xml` which can be run with the `DSA_MessageSimulator_Qt` app
+- ,ale sire the simulator is running
 
 Test case 1: default distress condition (attribute equals)
 - start the app
@@ -525,9 +508,7 @@ Test case 2: creating/editing alerts (within distance)
 - restart the app
 - turn on location display (should be from simulated GPS file)
 - open the markup tool and draw a big "X" over Monterey (see screenshot)
-
-![image](https://devtopia.esri.com/storage/user/1340/files/b8e09322-1183-11e8-8acc-626e91e0687f)
-
+![image](https://github.com/user-attachments/assets/cf510d8b-8469-4cb0-bd43-bc2cb6fdc9fa)
 - open the Alerts Condition tool and create a new moderate priority Geofence condition called "test condition" where "My Location" is within 250 meters of "Sketch Overlay"
 - [ ] when the location display gets within 250 m of the X an alert should be created
 _NOTE whenever the location moves out of the 250 m zone the alert should disappear, and the following steps will not be possible_
@@ -547,10 +528,7 @@ Test case 3: pick specific feature for condition (within area)
 - re-start the app
 - add the `AOI.shp` layer
 - start the `DSA_MessageSimulator_Qt` app using `Cot_Reports.xml`
-- create a new Critical Priority Geofence condition when objects from Cursor-on-Target are within Object 0 from AOI. To set the specific polygon to use, toggle the pick tool and click on the polygon in the screenshot below:
-
-![image](https://devtopia.esri.com/storage/user/1340/files/e3faf8d4-1185-11e8-9cfe-0eeecf992371)
-
+- create a new Critical Priority Geofence condition when objects from Cursor-on-Target are within Object 0 from AOI. To set the specific polygon to use, toggle the pick tool and click on an AOI polygon
 - [ ] wait until one of the tracks appears in the target polygon and you should see an alert created
 - [ ] the track in the area should flash continuously while it is in the alert state
 - [ ] go to the conditions list and disable the condition you added. the track should stop flashing
@@ -605,7 +583,7 @@ Test 5: Manually add layer
 # 9. App Config and Settings
 ## DsaConfig file
 Setup
-delete the json settings file from `~\ArcGIS\Runtime\Data\DSA\DsaAppConfig.json`
+delete the json settings file from `~\ArcGIS\Runtime\Data\DSA\Default\DsaAppConfig.json`
 
 Test 1: default values written to json
 - [ ] when you start the app you get default values written to the json file for:

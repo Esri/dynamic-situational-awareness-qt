@@ -129,7 +129,7 @@ Steps:
   - [ ] Confirm you see a list of layers from the scene package listed, and that you can interact with the like any other layer (see previous test steps)
 - Open the Add Local Data panel and add another layer to the scene
   - [ ] Confirm it adds the layer to the Overlays panel
-- Restore back to the 'default' scene by tapping the `Open` tool on the Map toolbar, then the `<Packages` button, and then the `Reset to Default Scene` button
+- Restore back to the 'default' scene by tapping the `Open` tool on the Map toolbar, then the `Packages` button, and then the `Reset to Default Scene` button
   - [ ] Confirm you see the default basemap shown and no other overlays in the Overlay list. (everything in the map should be reset)
 
 # 3. Map Display Tools
@@ -484,8 +484,8 @@ Test case 4: Manage viewsheds
 
 # 7. Alerts and Conditions
 Setup
-- delete the `ArcGIS\Runtime\Data\DSA\DsaAppConfig.json` (to make sure you get the default distress condition)
-- ,ale sire the simulator is running
+- delete the `ArcGIS\Runtime\Data\DSA\Default\DsaAppConfig.json` (to make sure you get the default distress condition)
+- make sure the simulator is running
 
 Test case 1: default distress condition (attribute equals)
 - start the app
@@ -635,7 +635,7 @@ Test Case 2: No Data
 - [ ] you should not see an error
 
 Test Case 3: Error on startup
-- rename `~\ArcGIS\Runtime\Data\DSA\BasemapData\Topographic.tpk` to `Topographic2.tpk`
+- rename `~\ArcGIS\Runtime\Data\DSA\Default\BasemapData\Topographic.tpk` to `Topographic2.tpk`
 - open the app
 - [ ] you should see an error on startup informing you that the default basemap could not be found
 _NOTE - the error may be duplicated (I think that's ok)_
@@ -649,6 +649,6 @@ _this test is for errors we create at the app level_
 
 Test Case 5: Error from the API
 _this test is for errors we receive from the API_
-- rename `~\ArcGIS\Runtime\Data\DSA\OperationalData\AOI.dbf` to `AOI2.dbf` (this will make the AOI shapefile invalid when we try to add it)
+- rename `~\ArcGIS\Runtime\Data\DSA\Default\OperationalData\AOI.dbf` to `AOI2.dbf` (this will make the AOI shapefile invalid when we try to add it)
 - go to the add data tool and select the `AOI.shp` to add
 - [ ] you should see an error

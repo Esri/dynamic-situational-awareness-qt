@@ -54,8 +54,8 @@ If you just want to grab the latest code and build the project, these are the qu
 * Qt SDK 6.5.6 or higher
 * Qt Creator
 * [ArcGIS Maps SDK for Qt Toolkit](https://github.com/Esri/arcgis-maps-sdk-toolkit-qt.git)
-* For Windows: Microsoft Visual C++ Compiler 14.0
-* For more information, please visit the [System Requirements](https://developers.arcgis.com/qt/system-requirements/system-requirements-for-200-5/) page.
+* For Windows: Microsoft Visual C++ Compiler 16.1.6
+* For more information, please visit the [System Requirements](https://developers.arcgis.com/qt/system-requirements/system-requirements-for-200-6/) page.
 
 ### Build dependency
 

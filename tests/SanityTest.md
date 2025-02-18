@@ -116,7 +116,6 @@ To test on a mobile device, you may need to turn off VPN if you have it on, or u
 DONE
 
 ## Open Package
-_TO ADD_
 Setup:
 - Make sure you have a mobile scene package to test with in the Packages folder
 
@@ -141,17 +140,19 @@ Run the DSA app
 
 **Steps:**
 1. Click on the `ZoomIn` tool from the Navigation toolbar 
-![image](https://devtopia.esri.com/storage/user/163/files/634c4ee8-adcd-11e7-9264-df99e0d2c9a1).
+![image](https://github.com/user-attachments/assets/b743ac50-8b16-4d36-ba9d-fbdf7f8b7929)
+
 
 **Expectations**
-- [ ] The view should zoom into the center of the screen.  If your pitch is so that you see the sky in the center, there should not be any change when you try to zoom in.
+- [ ] The view should zoom into the center of the screen.  
 - [ ] Just zooming in should not change the pitch or the heading (the compass should not change heading).
 
 **Test 2: Zoom out**
 
 **Steps:**
 1. Click on the `ZoomOut` tool from the Navigation toolbar 
-![image](https://devtopia.esri.com/storage/user/163/files/da367bfa-adcd-11e7-9ef2-284b1bde2771)
+![image](https://github.com/user-attachments/assets/0e205aa0-657e-47ec-8823-3ee3ce8e3c86)
+
 
 **Expectations**
 - [ ] The view should zoom out from the center of the screen.  If your pitch is so that you see the sky in the center, there should not be any change when you try to zoom in.
@@ -160,7 +161,8 @@ Run the DSA app
 **Test 3: Set 2D view**
 **Steps:**
 1. Click on the `2D` button from the Navigation toolbar 
-![image](https://devtopia.esri.com/storage/user/163/files/b8474448-b327-11e7-8fac-777a6a74f8bb)
+![image](https://github.com/user-attachments/assets/983a2917-ee16-46f8-a254-169cf6760b4b)
+
 
 **Expectations**
 - [ ] The view should tilt to a vertical mode. 
@@ -169,11 +171,10 @@ Run the DSA app
 **Test 4: Zoom in/out while following**
 
 **Steps:**
-1. Click on the `Follow` tool from the Navigation toolbar 
-![image](https://devtopia.esri.com/storage/user/163/files/da367bfa-adcd-11e7-9ef2-284b1bde2771)
-![image](https://devtopia.esri.com/storage/user/163/files/fcc4a62e-b327-11e7-9c35-7d568cdaae45)
+1. Click on the `Location` tool from the Navigation toolbar 
+![image](https://github.com/user-attachments/assets/e1a69005-8061-4aa1-a0a7-276bddf5fba9)
 2. Click on the start following icon:
-![image](https://devtopia.esri.com/storage/user/163/files/242fed90-b328-11e7-95fb-a73059efaf53)
+![image](https://github.com/user-attachments/assets/63d0314a-296f-46cc-a41f-98555e871923)  
 3. Click on zoom in/out button
 
 **Expectations**
@@ -188,9 +189,11 @@ Run the DSA app
 
 **Expectations:**
 - [ ] It should hide/show the entire navigation toolbar which includes the compass 
-![image](https://devtopia.esri.com/storage/user/163/files/8a107aee-adce-11e7-897c-ff1b5891ece8)
+![image](https://github.com/user-attachments/assets/95a6f9f3-c7e8-48f4-a382-6298e330df93)
+
 and the follow tool.
-![image](https://devtopia.esri.com/storage/user/163/files/97731d22-adce-11e7-9551-974ba8b7fc0a)
+![image](https://github.com/user-attachments/assets/51b3c3cc-783d-483d-a02e-319b1b758860)
+
 
 
 

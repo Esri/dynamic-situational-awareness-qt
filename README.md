@@ -1,23 +1,20 @@
 # Overview
 
-<!-- MDTOC maxdepth:6 firsth1:0 numbering:0 flatten:0 bullets:1 updateOnSave:1 -->
+- [Dynamic Situational Awareness](#dynamic-situational-awareness)
+- [Release notes](#release-notes)
+- [Detailed documentation](#detailed-documentation)
+- [Quick start](#quick-start)
+- [Prerequisites](#prerequisites)
+   - [Build dependency](#build-dependency)
+   - [Data](#data)
+- [Resources](#resources)
+- [Pre-built apps](#pre-built-apps)
+- [Issues](#issues)
+- [Troubleshooting](#troubleshooting)
+   - [Military Symbols are not displaying after migrating to version 1.1.1.](#military-symbols-are-not-displaying-after-migrating-to-version-111)
+- [Contributing](#contributing)
+- [Licensing](#licensing)
 
-- [Dynamic Situational Awareness](#dynamic-situational-awareness)   
-- [Detailed documentation](#detailed-documentation)   
-- [Quick start](#quick-start)   
-- [Prerequisites](#prerequisites)   
-   - [Build dependency](#build-dependency)   
-   - [Data](#data)   
-- [Resources](#resources)   
-- [Pre-built apps](#pre-built-apps)   
-- [Issues](#issues)   
-- [Troubleshooting](#troubleshooting)   
-   - [Military Symbols are not displaying after migrating to version 1.1.1.](#military-symbols-are-not-displaying-after-migrating-to-version-111)   
-- [Contributing](#contributing)   
-- [MDTOC](#mdtoc)   
-- [Licensing](#licensing)   
-
-<!-- /MDTOC -->
 ---
 
 ## Dynamic Situational Awareness
@@ -29,6 +26,10 @@ DSA is an **Open Source App** intended and designed for the developer who wants 
 The DSA apps do not require access to a server. All the data and processing are on the device itself. Display of each local data source may be toggled on or off. Teammates share information such as own location, observation reports and markup across the peer-to-peer network (UDP). The emphasis is on collaboration with other teammates. These networks are not connected to the Internet, are not high-bandwidth, and are not constantly connected - a situation commonly encountered in field operations. This communication network topology is unlike more traditional ArcGIS Maps SDK apps that leverage the Internet and web servers for communication or web services for some functionality.
 
 Visit the DSA [Open Source App page] for more details.
+
+## Release notes
+
+Please check the [release notes](./RELEASE.md) for a detailed description of the enhancements and fixes for each release of the DSA application.
 
 ## Detailed documentation
 
@@ -102,10 +103,6 @@ To quickly obtain these additional `*.stylx` files, we provide these in the [dem
 ## Contributing
 
 Esri welcomes contributions from anyone and everyone. Please see our [guidelines for contributing](https://github.com/esri/contributing).
-
-## MDTOC
-
-Generating table of contents for documents in this repository was performed using the [MDTOC package for Atom](https://atom.io/packages/atom-mdtoc).
 
 ## Licensing
 

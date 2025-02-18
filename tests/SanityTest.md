@@ -75,83 +75,45 @@ DONE
 DONE
 
 ## Message Feeds
+> The DSA app by default should be configured to handle certain message feeds.
+> They are:
+> 1.  SA Events - (Cursor-on-Target)
+> 2.  Friendly Tracks - Land (GeoMessage)
+> 3.  Friendly Tracks - Air (GeoMessage)
+> 4.  Contact Reports (GeoMessage)
+> 5.  Situation Reports (GeoMessage)
+> 6.  EOD Reports (GeoMessage)
+> 7.  Sensor Observations (GeoMessage)
+
+To test on a mobile device, you may need to turn off VPN if you have it on, or update your network settings to allow traffic through the UDP port.
+
 #### Setup
-To test on a mobile device, you may need to turn off VPN if you have it on, or update your network settings to allow traffice through the UDP port.
-
 - Run the DSA app
-- (WINDOWS) Run the simulators using the StartDSATracks.bat if available, otherwise: 
-  - (WINDOWS) Run the Message Simulator app (for CoT)
-    -  Run the MessageSimulator app and browse to the `CoT_Reports.xml` simulation file in the DSA's `SimulationData` folder.
-    -  Run the simulation on port 45678
-    -  Specify a frequency value for the amount of messages to send
-    -  Choose to loop simulation
-    -  Hit the `Start` button to start the simulation
-  - (WINDOWS) Run the ArcGISQtMessageSimulator app (for GeoMessage)
-    -  Browse to the `GeoMessage_FriendlyTracksLand.xml` simulation file in the DSA's `SimulationData` folder.
-    -  Run the simulation on port 45678
-    -  Specify a frequency value for the amount of messages to send
-    -  Choose to loop simulation
-    -  Hit the `Start` button to start the simulation
-    - Repeat for the other GeoMessage simulation files
+- (WINDOWS) Run the simulators using the StartDSATracks.bat
 
-The DSA app by default should be configured to handle certain message feeds.
-They are:
-1.  SA Events - (Cursor-on-Target)
-2.  Friendly Tracks - Land (GeoMessage)
-3.  Friendly Tracks - Air (GeoMessage)
-4.  Contact Reports (GeoMessage)
-5.  Situation Reports (GeoMessage)
-6.  EOD Reports (GeoMessage)
-7.  Sensor Observations (GeoMessage)
-
-**Test 1: SA Events message feed**
-#### **Steps**
+#### **Test 1: Turn on/off message feeds**
 - Run the DSA app (Vehicle or Handheld)
-- [ ] You should see data from the message feeds on the scene (blue military symbols moving, plus other point symbols appearing) 
-- Select the `Message Feeds` panel and switch off the `SA Events` message feed.
+- [ ] You should see data from the message feeds on the scene (blue military symbols moving, plus other point symbols appearing):
+  - [ ] `SA Events` message feed should draw red and green military symbols, billboarded on the view
+  - [ ] `Friendly Tracks - Land` message feed should begin drawing mil2525c friendly (blue) billboarded (lollipop) symbols on the view
+  - [ ] `Friendly Tracks - Air` message feed should begin drawing mil2525c friendly (blue) symbols to the screen in absolute surface placement mode.  The symbols are floating in the air at a fixed elevation.
+  - [ ] `Contact Reports`, `Situation Reports`, `EOD Reports`, and `Sensor Observations` message feeds should begin drawing picture marker symbol types (gray and white) to the view for each feed.
+- Select the `Message Feeds` panel and toggle off each one of the message feeds:
   - [ ] The `SA Events` graphics (green and red symbols) should no longer be drawn to the view.
+  - [ ] The `Friendly Tracks - Land` graphics should no longer be drawn to the view.
+  - [ ] The `Friendly Tracks - Air` graphics should no longer be drawn to the view.
+  - [ ] The `Contact Reports`, `Situation Reports`, `EOD Reports`, and `Sensor Observations` message feeds graphics should no longer be drawn to the view.
 
-`Friendly Tracks - Land` message feed should begin drawing mil2525c friendly draped symbols to the screen.
-The `Friendly Tracks - Land` graphics should no longer be drawn to the view.
-`Friendly Tracks - Air` message feed should begin drawing mil2525c friendly symbols to the screen in absolute surface placement mode.  The symbols are floating in the air at a fixed elevation.
-The `Friendly Tracks - Air` graphics should no longer be drawn to the view.
-
-**Test 7: Toggle Friendly Tracks labels**
-
-**Steps**
+#### **Test 2: Toggle Friendly Tracks labels**
 - While the DSA app and `GeoMessage_FriendlyTracksLand.xml` simulation running, select the `Message Feeds` panel and make sure the `Friendly Tracks - Land` message feed is enabled.
-- Confirm that labels are displayed next to the blue graphics.
+- [ ] Confirm that labels are displayed next to the blue graphics.
 - Open up the settings panel and uncheck the "Show friendly tracks labels" checkbox.
-- Confirm that labels are not displayed anymore next to the blue graphics.
+- [ ] Confirm that labels are not displayed anymore next to the blue graphics.
 - Check the "Show friendly tracks labels" checkbox back on.
-- Confirm that labels are displayed next to the blue graphics again.
-
-**Test 8: Contact Reports, Situation Reports, EOD Reports, and Sensor Observations message feeds**
-
-**Steps**
-
--  Run the DSA app (Vehicle or Handheld)
--  Run the ArcGISQtMessageSimulator (GeoMessage) app and browse to the `GeoMessage_MontereyReports.xml` simulation file in the DSA's `SimulationData` folder.
--  Run the simulation on port 45678
--  Specify a frequency value for the amount of messages to send
--  Choose to loop simulation
--  Hit the `Start` button to start the simulation
-
-**Expectations**
-
-`Contact Reports`, `Situation Reports`, `EOD Reports`, and `Sensor Observations` message feeds should begin drawing picture marker symbol types to the screen for each feed.
-
-**Test 9: Toggle Contact Reports, Situation Reports, EOD Reports, and Sensor Observations message feeds**
-
-**Steps**
--  While the DSA app and `GeoMessage_MontereyReports.xml` simulation running, select the `Message Feeds` panel and switch off the `Contact Reports`, `Situation Reports`, `EOD Reports`, and `Sensor Observations` message feeds.
-
-**Expectations**
-
-The `Contact Reports`, `Situation Reports`, `EOD Reports`, and `Sensor Observations` message feeds graphics should no longer be drawn to the view.
+- [ ] Confirm that labels are displayed next to the blue graphics again.
 
 ## Open Package
-
+_TO ADD_
 
 # 3. Map Display Tools
 ## Navigation Tools

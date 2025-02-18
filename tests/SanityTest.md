@@ -45,11 +45,12 @@ DONE
 - Check the box for a .dt2 file
 - Select the 'Add as elevation source' checkbox and click ADD SELECTED
   - [ ] Confirm the DTED file is added as an elevation source to the scene (you should see the terrain surface reload)
-DONE
-> In preparation for the next test, do NOT remove the layers from the Overlays list
+DONE  
+
+> _In preparation for the next test, do NOT remove the layers from the Overlays list_
 
 ## Overlays
-> If not done already, run the previous test (`Add Local Data`) to make sure there is data load in the app
+> _If not done already, run the previous test (`Add Local Data`) to make sure there is data load in the app_
 
 **Steps:**
 - Run the DSA app
@@ -112,8 +113,25 @@ To test on a mobile device, you may need to turn off VPN if you have it on, or u
 - Check the "Show friendly tracks labels" checkbox back on.
 - [ ] Confirm that labels are displayed next to the blue graphics again.
 
+DONE
+
 ## Open Package
 _TO ADD_
+Setup:
+- Make sure you have a mobile scene package to test with in the Packages folder
+
+Steps:
+- Open DSA
+- Tap the `Open` tool on the Map toolbar
+  - [ ] Confirm you see a mobile scene package listed
+- Tap the mobile scene package, and then select a Scene
+  - [ ]  Confirm it opens the scene (you may need to zoom in to see the basemap, or turn one on in the Basemaps panel)
+- Open the Overlays panel
+  - [ ] Confirm you see a list of layers from the scene package listed, and that you can interact with the like any other layer (see previous test steps)
+- Open the Add Local Data panel and add another layer to the scene
+  - [ ] Confirm it adds the layer to the Overlays panel
+- Restore back to the 'default' scene by tapping the `Open` tool on the Map toolbar, then the `<Packages` button, and then the `Reset to Default Scene` button
+  - [ ] Confirm you see the default basemap shown and no other overlays in the Overlay list. (everything in the map should be reset)
 
 # 3. Map Display Tools
 ## Navigation Tools

@@ -25,7 +25,6 @@ DSA is an **Open Source App** intended and designed for the developer who wants 
 
 The DSA apps do not require access to a server. All the data and processing are on the device itself. Display of each local data source may be toggled on or off. Teammates share information such as own location, observation reports and markup across the peer-to-peer network (UDP). The emphasis is on collaboration with other teammates. These networks are not connected to the Internet, are not high-bandwidth, and are not constantly connected - a situation commonly encountered in field operations. This communication network topology is unlike more traditional ArcGIS Maps SDK apps that leverage the Internet and web servers for communication or web services for some functionality.
 
-Visit the DSA [Open Source App page] for more details.
 
 ## Release notes
 

@@ -2,8 +2,12 @@
 
 ## 2.0.0
 
-- Ports DSA from ArcGIS Runtime SDK for Qt 100.x to ArcGIS Maps SDK for Qt 200.0.
-- Minimum Qt SDK version is Qt 6.2.4
+- Minimum ArcGIS Maps SDK for Qt version is 200.6
+- Minimum Qt SDK version is 6.5.6
+- Replaced instances of TaskWatcher with QFuture ([deprecated](https://developers.arcgis.com/qt/release-notes/prior-releases/release-notes-for-200-3/#deprecations) in the ArcGIS Maps SDK for Qt at version 200.3)
+- Mobile platforms now use local app storage for DSA data instead of shared storage (legacy storage `/sdcard` no longer available on recent versions of Android)
+- Works with latest capabilities in Native SDKs: Dynamic Entities. Less custom code to handle real-time feeds.
+- New "Configurations" tool that will download the default demo dataset from ArcGIS Online for you. Can manage multiple configurations/packages in the app and switch between them. Check the documentation [here](/docs/DataManagement.md) for instructions on migrating data used in previous versions of DSA.
 
 ## 1.1.8
 

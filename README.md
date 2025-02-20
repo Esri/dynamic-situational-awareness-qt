@@ -123,5 +123,3 @@ limitations under the License.
 
 
 A copy of the license is available in the repository's [LICENSE](LICENSE) file
-
-[Open Source App page]: http://developers.arcgis.com/example-apps/dsa-app-qt/?utm_source=github&utm_medium=web&utm_campaign=example_apps_dsa_qt

@@ -2,7 +2,7 @@
 
 The DSA application has a base file structure at which the mapping and configuration data is expected to exist. Prior to the 2.0.0 release of DSA, this location was <%home%>/ArcGIS/Runtime/Data/DSA. At the 2.0.0 release, a new feature was introduced in order to give users the ability to manage multiple configurations for the application. For example, you may wish to use the Esri provided dataset. But you may also have data for a relevant geographic location that covers your area of operations. Prior to the introduction of 'Configurations' the user would need to shutdown the application and copy, move or strategically rename folders in order to load a new set of data and application settings. The Configuration feature adds a new folder level at the very bottom of the structure to allow users to host more than 1 set of DSA data at a time.
 
-The following dialog describes the migration process for MacOS. But the same steps should be followed for Windows, Linux or Android.
+The following dialog describes the migration process for MacOS. But the same steps should be followed for Windows and Linux. Although Android users are required to use [Android Studio](https://developer.android.com/studio) to manage the files for DSA, the process is the same. The location of the 'home' folder will be the root of the application(eg. /data/data/com.esri.arcgisruntime.opensourceapps.DSA_Handheld_Qt).
 
 > In our example, we have 3 sets of sample data for 3 different locations in California (Monterey, San Diego and Redlands). The 'DSA' folder in our setup is actually our data for the Monterey location. It has been given the special name 'DSA' which is the required by the application upon startup. We'll rename this folder to its proper name, 'Monterey' which will hide it from the app and allow DSA to create the new folder structure in place.
 
@@ -10,13 +10,13 @@ The following dialog describes the migration process for MacOS. But the same ste
 
 > Next we will launch the new version of DSA. When the app starts, we are asked if we would like to download the default configuration data from Esri. We are configuring our own data so we will click 'No' and close the application.
 
-![image](./images/dsa-data-management-migration-3.png)
+<img src="./images/dsa-data-management-migration-3.png" width=300/>
 
 > The startup process for DSA now looks for a file named 'DsaConfigurations.json' in the DSA folder. Since our old DSA folder was renamed, the application created a new 'DSA' folder along with the default version of the 'DsaConfigurations.json' file. There is also a folder called 'Default' where the sample data would be downloaded. We'll remove this folder since we will be using our own data here. Our folders now look like this:
 
 ![image](./images/dsa-data-management-migration-2.png)
 
-> We can now move our existing folders into the new DSA folder and rename the 'archive_DSA' folder to its actual location name, Monterey.
+> We can now move our existing folders into the new DSA folder.
 
 ![image](./images/dsa-data-management-migration-4.png)
 

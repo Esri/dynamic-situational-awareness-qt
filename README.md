@@ -97,7 +97,7 @@ should look like this:
 * `DSA/ResourceData/styles/arcade/mil2525c.stylx`
 * `DSA/ResourceData/styles/arcade/mil2525d.stylx`
 
-To quickly obtain these additional `*.stylx` files, we provide these in the [demo data](http://www.arcgis.com/home/item.html?id=82ce2d85e21c4326bc072d441b636e5e).
+To quickly obtain these additional `*.stylx` files, we provide these in the [demo data](https://www.arcgis.com/home/item.html?id=02daf003b91348f5a761816e80cc39b5).
 
 ## Contributing
 
@@ -111,9 +111,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
+http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,

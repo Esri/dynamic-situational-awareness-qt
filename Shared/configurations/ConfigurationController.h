@@ -36,7 +36,7 @@ class ConfigurationListModel;
 
 class ConfigurationController : public AbstractTool
 {
-  inline static const QString DEFAULT_DOWNLOAD_URL = QStringLiteral("https://www.arcgis.com/home/item.html?id=02daf003b91348f5a761816e80cc39b5/data");
+  inline static const QString DEFAULT_DOWNLOAD_URL = QStringLiteral("https://www.arcgis.com/sharing/rest/content/items/02daf003b91348f5a761816e80cc39b5/data");
   inline static const QString DEFAULT_DOWNLOAD_NAME = QStringLiteral("Default");
 
   Q_OBJECT

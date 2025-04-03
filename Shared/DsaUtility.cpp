@@ -23,12 +23,15 @@
 #include "SpatialReference.h"
 
 // Qt headers
+#include <QCoreApplication>
 #include <QDir>
+#include <QFile>
 #include <QFileInfo>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QStandardPaths>
+#include <QtSystemDetection>
 #include <QJsonValueConstRef>
 #include <QtMath>
 
@@ -54,6 +57,17 @@ QString DsaUtility::configurationsDirectoryPath()
   static QString fullPathToConfigurationsDirectory;
   if (!fullPathToConfigurationsDirectory.isNull())
     return fullPathToConfigurationsDirectory;
+
+#if defined(Q_OS_LINUX) || defined(Q_OS_MACOS) || defined(Q_OS_WINDOWS)
+  // if running on a desktop system check the current application directory for the configurations file
+  QDir applicationDirectory{QCoreApplication::applicationDirPath()};
+  QFile configurationsFileInExeFolderPath{applicationDirectory.absoluteFilePath(FILE_NAME_DSA_CONFIGURATIONS)};
+  if (configurationsFileInExeFolderPath.exists())
+  {
+    fullPathToConfigurationsDirectory = applicationDirectory.absolutePath();
+    return fullPathToConfigurationsDirectory;
+  }
+#endif
 
   // setup the root directory based on the os/platform
 #ifdef Q_OS_IOS

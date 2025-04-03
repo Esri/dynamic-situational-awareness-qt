@@ -20,11 +20,9 @@
 // dsa app headers
 #include "AlertConditionData.h"
 
-namespace Esri {
-namespace ArcGISRuntime {
-class GeoElement;
-class Graphic;
-}
+namespace Esri::ArcGISRuntime {
+  class GeoElement;
+  class Graphic;
 }
 
 namespace Dsa {

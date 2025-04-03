@@ -19,13 +19,16 @@
 
 #include "MessagesOverlay.h"
 
-// dsa app headers
-#include "Message.h"
-
 // C++ API headers
+#include "DynamicEntityLayer.h"
 #include "GeoView.h"
-#include "GraphicsOverlay.h"
+#include "LayerListModel.h"
+#include "LayerSceneProperties.h"
 #include "Renderer.h"
+#include "SceneViewTypes.h"
+
+// DSA headers
+#include "MessageFeed.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -34,8 +37,8 @@ namespace Dsa {
 /*!
   \class Dsa::MessagesOverlay
   \inmodule Dsa
-  \inherits QObject
-  \brief Manages a \l Esri::ArcGISRuntime::GraphicsOverlay object
+  \inherits DynamicEntityLayer
+  \brief Manages a \l Esri::ArcGISRuntime::DynamicEntityLayer object
   for displaying message feed graphics.
 
   The overlay currently only supports messages containing a
@@ -43,87 +46,29 @@ namespace Dsa {
  */
 
 /*!
-  \brief Constructor taking a \a geoView and an optional \a parent.
+  \brief Constructor taking a \a messageFeed, a \a messageType
+  and an optional \a parent.
  */
-MessagesOverlay::MessagesOverlay(GeoView* geoView, QObject* parent) :
-  MessagesOverlay(geoView, nullptr, QString(), SurfacePlacement::DrapedBillboarded, parent)
+MessagesOverlay::MessagesOverlay(MessageFeed* messageFeed, const QString& messageType, QObject* parent) :
+    DynamicEntityLayer(messageFeed, parent),
+    m_messageFeed(messageFeed)
 {
-}
-
-/*!
-  \brief Constructor taking a \a geoView, a \a renderer, a \a messageType,
-  a \a surfacePlacement mode and an optional \a parent.
- */
-MessagesOverlay::MessagesOverlay(GeoView* geoView, Renderer* renderer, const QString& messageType,
-                                 SurfacePlacement surfacePlacement, QObject* parent) :
-  QObject(parent),
-  m_geoView(geoView),
-  m_renderer(renderer),
-  m_surfacePlacement(surfacePlacement),
-  m_graphicsOverlay(new GraphicsOverlay(this))
-{
-  m_graphicsOverlay->setOverlayId(messageType);
-  m_graphicsOverlay->setRenderingMode(GraphicsRenderingMode::Dynamic);
-  m_graphicsOverlay->setSceneProperties(LayerSceneProperties(m_surfacePlacement));
-  m_graphicsOverlay->setRenderer(m_renderer);
-  m_geoView->graphicsOverlays()->append(m_graphicsOverlay);
+  setLayerId(messageType);
+  setName(messageFeed->feedName());
+  messageFeed->setMessagesOverlay(this);
 }
 
 /*!
   \brief Destructor.
  */
-MessagesOverlay::~MessagesOverlay()
-{
-}
-
-/*!
-  \brief Returns the Esri:ArcGISRuntime::Renderer in use by the overlay.
- */
-Renderer* MessagesOverlay::renderer() const
-{
-  return m_renderer.data();
-}
-
-/*!
-  \brief Sets the Esri:ArcGISRuntime::Renderer for the overlay to \a renderer.
- */
-void MessagesOverlay::setRenderer(Renderer* renderer)
-{
-  if (m_renderer == renderer)
-    return;
-
-  m_renderer = renderer;
-
-  m_graphicsOverlay->setRenderer(m_renderer);
-}
-
-/*!
-  \brief Returns the Esri:ArcGISRuntime::SurfacePlacement for the overlay.
- */
-SurfacePlacement MessagesOverlay::surfacePlacement() const
-{
-  return m_surfacePlacement;
-}
-
-/*!
-  \brief Sets the Esri:ArcGISRuntime::SurfacePlacement for the overlay to \a surfacePlacement.
- */
-void MessagesOverlay::setSurfacePlacement(SurfacePlacement surfacePlacement)
-{
-  if (m_surfacePlacement == surfacePlacement)
-    return;
-
-  m_surfacePlacement = surfacePlacement;
-
-  m_graphicsOverlay->setSceneProperties(LayerSceneProperties(m_surfacePlacement));
-}
+MessagesOverlay::~MessagesOverlay() = default;
 
 /*!
   \brief Returns the message type for the overlay.
  */
 QString MessagesOverlay::messageType() const
 {
-  return m_graphicsOverlay->overlayId();
+  return layerId();
 }
 
 /*!
@@ -131,160 +76,20 @@ QString MessagesOverlay::messageType() const
  */
 void MessagesOverlay::setMessageType(const QString& messageType)
 {
-  if (m_graphicsOverlay->overlayId() == messageType)
+  if (layerId() == messageType)
     return;
 
-  m_graphicsOverlay->setOverlayId(messageType);
+  setLayerId(messageType);
 }
 
-/*!
-  \brief Returns the Esri:ArcGISRuntime::GraphicsOverlay object for the overlay.
- */
-GraphicsOverlay* MessagesOverlay::graphicsOverlay() const
+DynamicEntity* MessagesOverlay::getDynamicEntityById(quint64 entityId) const
 {
-  return m_graphicsOverlay;
+  return m_messageFeed->getDynamicEntityById(entityId);
 }
 
-/*!
-  \brief Returns the Esri:ArcGISRuntime::GeoView for the overlay.
- */
-GeoView* MessagesOverlay::geoView() const
+const QHash<quint64, DynamicEntity*>& MessagesOverlay::dynamicEntities() const
 {
-  return m_geoView;
-}
-
-/*!
-  \brief Adds the \l Message \a message to the overlay. Returns whether adding was successful.
- */
-bool MessagesOverlay::addMessage(const Message& message)
-{
-  const auto messageId = message.messageId();
-  if (messageId.isEmpty())
-  {
-    emit errorOccurred(QStringLiteral("Failed to add message - message ID is empty"));
-    return false;
-  }
-
-  if (message.messageType() != messageType())
-  {
-    emit errorOccurred(QStringLiteral("Failed to add message - message type mismatch"));
-    return false;
-  }
-
-  const auto symbolId = message.symbolId();
-  const auto geometry = message.geometry();
-  const auto messageAction = message.messageAction();
-
-  if (messageAction == Message::MessageAction::Update)
-  {
-    if (m_renderer && m_renderer->rendererType() == RendererType::DictionaryRenderer && symbolId.isEmpty())
-    {
-      emit errorOccurred(QStringLiteral("Failed to add message - symbol ID is empty"));
-      return false;
-    }
-
-    if (geometry.isEmpty())
-    {
-      emit errorOccurred(QStringLiteral("Failed to add message - geometry is empty"));
-      return false;
-    }
-
-    if (geometry.geometryType() != GeometryType::Point)
-    {
-      emit errorOccurred(QStringLiteral("Failed to add message - only point geometry types are supported"));
-      return false;
-    }
-  }
-
-  if (m_existingGraphics.contains(messageId))
-  {
-    // update existing graphic attributes and geometry
-    // if the graphic already exists in the hash
-    Graphic* graphic = m_existingGraphics[messageId];
-
-    switch (messageAction)
-    {
-    case Message::MessageAction::Update:
-    case Message::MessageAction::Select:
-    case Message::MessageAction::Unselect:
-    {
-      const Geometry geom = graphic->geometry();
-      if (geom.geometryType() != geometry.geometryType())
-        return false;
-
-      if (!(geom == geometry))
-        graphic->setGeometry(geometry);
-
-      graphic->attributes()->setAttributesMap(message.attributes());
-
-      if (messageAction == Message::MessageAction::Select)
-      {
-        graphic->setSelected(true);
-      }
-      else if (messageAction == Message::MessageAction::Unselect)
-      {
-        graphic->setSelected(false);
-      }
-
-      break;
-    }
-    case Message::MessageAction::Remove:
-    {
-      m_graphicsOverlay->graphics()->removeOne(graphic);
-      break;
-    }
-    default:
-      emit errorOccurred(QStringLiteral("Unknown message action"));
-      return false;
-    }
-
-    return true;
-  }
-
-  if (messageAction != Message::MessageAction::Update)
-  {
-    emit errorOccurred(QStringLiteral("Message action must be Update to add new message"));
-    return false;
-  }
-
-  // add new graphic
-  Graphic* graphic = new Graphic(geometry, message.attributes(), this);
-  m_graphicsOverlay->graphics()->append(graphic);
-  m_existingGraphics.insert(messageId, graphic);
-
-  return true;
-}
-
-/*!
-  \brief Returns whether the overlay is visible.
- */
-bool MessagesOverlay::isVisible() const
-{
-  return m_graphicsOverlay->isVisible();
-}
-
-/*!
-  \brief Sets the overlay to be \a visible.
- */
-void MessagesOverlay::setVisible(bool visible)
-{
-  if (m_graphicsOverlay->isVisible() == visible)
-    return;
-
-  m_graphicsOverlay->setVisible(visible);
-
-  emit visibleChanged();
+  return m_messageFeed->dynamicEntities();
 }
 
 } // Dsa
-
-// Signal Documentation
-/*!
-  \fn void MessagesOverlay::visibleChanged();
-  \brief Signal emitted when the visibility of the overlay changes.
- */
-
-/*!
-  \fn void MessagesOverlay::errorOccurred(const QString& error);
-  \brief Signal emitted when an \a error occurs.
- */

@@ -17,19 +17,20 @@
 #ifndef LOCATIONBROADCAST_H
 #define LOCATIONBROADCAST_H
 
-// dsa app headers
-#include "Message.h"
+// Qt headers
+#include <QObject>
 
 // C++ API headers
 #include "Point.h"
 
-// Qt headers
-#include <QObject>
+// dsa app headers
+#include "Message.h"
 
 class QTimer;
 
 namespace Dsa {
 
+class Message;
 class DataSender;
 
 class LocationBroadcast : public QObject

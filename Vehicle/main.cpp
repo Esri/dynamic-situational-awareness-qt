@@ -18,15 +18,32 @@
 // PCH header
 #include "pch.hpp"
 
-// dsa app headers
+// C++ API headers
+#include "PopupManager.h"
+#include "SceneQuickView.h"
+
+// Qt headers
+#include <QCommandLineParser>
+#include <QDir>
+#include <QGuiApplication>
+#include <QObject>
+#include <QQmlEngine>
+#include <QQuickView>
+#include <QSettings>
+
+// Toolkit headers
+#include <Esri/ArcGISRuntime/Toolkit/register.h>
+
+// DSA headers
 #include "AddLocalDataController.h"
 #include "AlertConditionsController.h"
 #include "AlertListController.h"
 #include "AnalysisListController.h"
 #include "AppInfo.h"
 #include "BasemapPickerController.h"
-#include "ObservationReportController.h"
+#include "ConfigurationController.h"
 #include "ContextMenuController.h"
+#include "CoordinateConversionToolProxy.h"
 #include "DsaResources.h"
 #include "FollowPositionController.h"
 #include "IdentifyController.h"
@@ -35,35 +52,17 @@
 #include "LocationTextController.h"
 #include "MarkupController.h"
 #include "MessageFeedsController.h"
-#include "OpenMobileScenePackageController.h"
 #include "NavigationController.h"
+#include "ObservationReportController.h"
+#include "OpenMobileScenePackageController.h"
 #include "OptionsController.h"
-#include "RuntimePermissionRequest.h"
+#include "PackageImageProvider.h"
 #include "TableOfContentsController.h"
 #include "Vehicle.h"
 #include "VehicleStyles.h"
 #include "ViewedAlertsController.h"
 #include "ViewshedController.h"
-#include "PackageImageProvider.h"
-#include "CoordinateConversionToolProxy.h"
 
-// toolkit headers
-#include <Esri/ArcGISRuntime/Toolkit/register.h>
-
-// C++ API headers
-#include "ArcGISRuntimeEnvironment.h"
-#include "PopupManager.h"
-#include "SceneQuickView.h"
-
-// Qt headers
-#include <QCommandLineParser>
-#include <QDir>
-#include <QGuiApplication>
-#include <QMessageBox>
-#include <QObject>
-#include <QQmlEngine>
-#include <QQuickView>
-#include <QSettings>
 
 #ifdef Q_OS_WIN
 #include <Windows.h>
@@ -96,10 +95,6 @@ QObject* dsaResourcesProvider(QQmlEngine* engine, QJSEngine* scriptEngine);
 
 int main(int argc, char *argv[])
 {
-#ifndef Q_OS_WIN
-  QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-#endif
-
   QGuiApplication app(argc, argv);
 
   QCoreApplication::setApplicationName(kApplicationName);
@@ -111,12 +106,6 @@ int main(int argc, char *argv[])
   QCoreApplication::setOrganizationDomain(kOrganizationDomain);
 #endif
   QSettings::setDefaultFormat(kSettingsFormat);
-
-  // Force DSA to accept certain permissions.
-  if (!Dsa::requestRequiredPermissions())
-  {
-    return -1;
-  }
 
   // Register the map view for QML
   qmlRegisterType<SceneQuickView>("Esri.ArcGISRuntime.OpenSourceApps.Vehicle", 1, 1, "SceneView");
@@ -147,12 +136,13 @@ int main(int argc, char *argv[])
   qmlRegisterType<Dsa::ObservationReportController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "ObservationReportController");
   qmlRegisterType<Dsa::OpenMobileScenePackageController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "OpenMobileScenePackageController");
   qmlRegisterType<Dsa::CoordinateConversionToolProxy>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "CoordinateConversionToolProxy");
+  qmlRegisterType<Dsa::ConfigurationController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "ConfigurationController");
 
   // Initialize application view
   QQuickView view;
   view.setResizeMode(QQuickView::SizeRootObjectToView);
 
-  view.engine()->addImageProvider(QStringLiteral("packages"), new Dsa::PackageImageProvider());
+  view.engine()->addImageProvider(QStringLiteral("packages"), new Dsa::PackageImageProvider);
 
   Esri::ArcGISRuntime::Toolkit::registerComponents(*view.engine());
 
@@ -236,5 +226,6 @@ QObject* dsaStylesProvider(QQmlEngine* engine, QJSEngine*)
 QObject* dsaResourcesProvider(QQmlEngine* engine, QJSEngine*)
 {
   static Dsa::DsaResources* dsaResources = new Dsa::DsaResources(engine);
+  dsaResources->setArcGISMapsSDKVersion(QUOTE(ARCGIS_MAPS_SDK_VERSION));
   return dsaResources;
 }

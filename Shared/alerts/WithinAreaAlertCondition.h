@@ -17,11 +17,11 @@
 #ifndef WITHINAREAALERTCONDITION_H
 #define WITHINAREAALERTCONDITION_H
 
-// dsa app headers
-#include "AlertCondition.h"
-
 // Qt headers
 #include <QObject>
+
+// dsa headers
+#include "AlertCondition.h"
 
 namespace Dsa {
 

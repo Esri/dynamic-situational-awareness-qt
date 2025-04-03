@@ -17,20 +17,19 @@
 #ifndef LOCATIONCONTROLLER_H
 #define LOCATIONCONTROLLER_H
 
-// toolkit headers
-#include "AbstractTool.h"
+// Qt headers
+#include <QString>
 
 // C++ API headers
 #include "Point.h"
 
-// Qt headers
-#include <QString>
+// dsa headers
+#include "AbstractTool.h"
 
-namespace Esri {
-namespace ArcGISRuntime {
-  class SceneQuickView;
+namespace Esri::ArcGISRuntime {
   class GraphicsOverlay;
-}}
+  class SceneQuickView;
+}
 
 class QGeoPositionInfoSource;
 class QCompass;

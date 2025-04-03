@@ -17,11 +17,11 @@
 #ifndef FIXEDVALUEALERTTARGET_H
 #define FIXEDVALUEALERTTARGET_H
 
-// dsa app headers
-#include "AlertTarget.h"
-
 // Qt headers
 #include <QVariant>
+
+// dsa headers
+#include "AlertTarget.h"
 
 namespace Dsa {
 

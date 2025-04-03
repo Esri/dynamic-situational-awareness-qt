@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -20,14 +19,17 @@
 
 #include "LocationTextController.h"
 
-// toolkit headers
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
-
 // C++ API headers
 #include "CoordinateFormatter.h"
 #include "Scene.h"
 #include "Surface.h"
+
+// Qt headers
+#include <QFuture>
+
+// DSA headers
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -129,10 +131,22 @@ void LocationTextController::onLocationChanged(const Point& pt)
     formatElevationText(pt.z());
   else
   {
-    if (!m_surface)
+    // TODO:
+    // fixed a missing reference to the baseSurface possibly because the geoView changed signal
+    // was not emitted just by adding the .dted layer as an elevation source
+    // this should probably be updated to connect to the layers changed event
+    auto* scene = ToolResourceProvider::instance()->scene();
+    if (!scene)
+      return;
+    auto* surface = scene->baseSurface();
+    if (!surface)
       return;
 
-    m_surface->locationToElevation(pt);
+    // set the elevation text in the continuation block
+    surface->elevationAsync(pt).then(this, [this](double elevation)
+    {
+      formatElevationText(elevation);
+    });
   }
 }
 
@@ -145,13 +159,6 @@ void LocationTextController::onGeoViewChanged()
   if (scene)
   {
     m_surface = scene->baseSurface();
-
-    // connect the Surface::locationToElevationCompleted signal
-    connect(m_surface, &Surface::locationToElevationCompleted, this, [this](QUuid, double elevation)
-    {
-      // format the elevation for display in QML
-      formatElevationText(elevation);
-    });
   }
 }
 

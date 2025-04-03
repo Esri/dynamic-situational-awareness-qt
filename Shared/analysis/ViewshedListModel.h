@@ -20,12 +20,6 @@
 // Qt headers
 #include <QAbstractListModel>
 
-namespace Esri {
-  namespace ArcGISRuntime {
-    class AnalysisOverlay;
-  }
-}
-
 namespace Dsa {
 
 class Viewshed360;

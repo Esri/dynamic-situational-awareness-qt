@@ -19,9 +19,8 @@
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
-#include "Esri/ArcGISRuntime/Toolkit/CoordinateConversionController.h"
-#include "Esri/ArcGISRuntime/Toolkit/CoordinateConversionConstants.h"
-#include "Esri/ArcGISRuntime/Toolkit/CoordinateConversionResult.h"
+#include "CoordinateConversionController.h"
+#include "CoordinateConversionResult.h"
 
 #include <SceneQuickView.h>
 

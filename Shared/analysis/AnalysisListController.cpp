@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -20,18 +19,21 @@
 
 #include "AnalysisListController.h"
 
-// dsa app headers
+// C++ API headers
+#include "AnalysisOverlay.h"
+#include "AnalysisOverlayListModel.h"
+#include "Camera.h"
+#include "SceneView.h"
+
+// Qt headers
+#include <QFuture>
+
+// DSA headers
 #include "CombinedAnalysisListModel.h"
 #include "LineOfSightController.h"
-#include "ViewshedController.h"
-
-// toolkit headers
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
-
-// C++ API headers
-#include "AnalysisOverlayListModel.h"
-#include "SceneView.h"
+#include "ViewshedController.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -159,7 +161,7 @@ void AnalysisListController::zoomToLocation(const Point& point)
   constexpr double targetDistance = 1500.0;
   const Camera newCam(point, targetDistance, currentCam.heading(), currentCam.pitch(), currentCam.roll());
 
-  m_sceneView->setViewpointCamera(newCam, 1.0);
+  m_sceneView->setViewpointCameraAsync(newCam, 1.0);
 }
 
 } // Dsa

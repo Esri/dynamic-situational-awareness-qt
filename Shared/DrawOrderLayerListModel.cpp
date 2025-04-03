@@ -18,6 +18,10 @@
 #include "pch.hpp"
 
 #include "DrawOrderLayerListModel.h"
+#include "MapTypes.h"
+#include "LayerListModel.h"
+
+using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
 
@@ -45,6 +49,14 @@ DrawOrderLayerListModel::DrawOrderLayerListModel(QObject* parent):
 DrawOrderLayerListModel::~DrawOrderLayerListModel()
 {
 
+}
+
+bool DrawOrderLayerListModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
+{
+  const auto index = sourceModel()->index(sourceRow, 0, sourceParent);
+  const auto layerTypeVariant = index.data(LayerListModel::LayerTypeRole);
+  const auto layerType = qvariant_cast<LayerType>(layerTypeVariant);
+  return layerType != LayerType::DynamicEntityLayer;
 }
 
 /*!

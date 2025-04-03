@@ -18,10 +18,13 @@ TARGET = DSA_Handheld_Qt
 TEMPLATE = app
 
 QT += core gui opengl network positioning sensors qml quick xml
-CONFIG += c++14
+CONFIG += c++17
 
-ARCGIS_RUNTIME_VERSION = 100.15.0
+ARCGIS_RUNTIME_VERSION = 200.6.0
+DEFINES += ARCGIS_MAPS_SDK_VERSION=$$ARCGIS_RUNTIME_VERSION
 include($$PWD/../Shared/build/arcgisruntime.pri)
+
+include($$PWD/../3rdparty/zlib-ng/zlib_minizip_ng.pri)
 
 INCLUDEPATH += $$PWD/../Shared/ \
     $$PWD/../Shared/alerts \
@@ -29,31 +32,34 @@ INCLUDEPATH += $$PWD/../Shared/ \
     $$PWD/../Shared/messages \
     $$PWD/../Shared/packages \
     $$PWD/../Shared/utilities \
-    $$PWD/../Shared/markup
+    $$PWD/../Shared/markup \
+    $$PWD/../Shared/configurations
 
 HEADERS += \
     AppInfo.h \
     Handheld.h \
     HandheldStyles.h \
-    $$files($$PWD/../Shared/*.h) \ 
-    $$files($$PWD/../Shared/alerts/*.h) \ 
-    $$files($$PWD/../Shared/analysis/*.h) \ 
-    $$files($$PWD/../Shared/messages/*.h) \ 
-    $$files($$PWD/../Shared/packages/*.h) \ 
-    $$files($$PWD/../Shared/utilities/*.h) \ 
-    $$files($$PWD/../Shared/markup/*.h)
+    $$files($$PWD/../Shared/*.h) \
+    $$files($$PWD/../Shared/alerts/*.h) \
+    $$files($$PWD/../Shared/analysis/*.h) \
+    $$files($$PWD/../Shared/messages/*.h) \
+    $$files($$PWD/../Shared/packages/*.h) \
+    $$files($$PWD/../Shared/utilities/*.h) \
+    $$files($$PWD/../Shared/markup/*.h) \
+    $$files($$PWD/../Shared/configurations/*.h)
 
 SOURCES += \
     main.cpp \
     Handheld.cpp \
     HandheldStyles.cpp \
-    $$files($$PWD/../Shared/*.cpp) \ 
-    $$files($$PWD/../Shared/alerts/*.cpp) \ 
-    $$files($$PWD/../Shared/analysis/*.cpp) \ 
-    $$files($$PWD/../Shared/messages/*.cpp) \ 
-    $$files($$PWD/../Shared/packages/*.cpp) \ 
-    $$files($$PWD/../Shared/utilities/*.cpp) \ 
-    $$files($$PWD/../Shared/markup/*.cpp)
+    $$files($$PWD/../Shared/*.cpp) \
+    $$files($$PWD/../Shared/alerts/*.cpp) \
+    $$files($$PWD/../Shared/analysis/*.cpp) \
+    $$files($$PWD/../Shared/messages/*.cpp) \
+    $$files($$PWD/../Shared/packages/*.cpp) \
+    $$files($$PWD/../Shared/utilities/*.cpp) \
+    $$files($$PWD/../Shared/markup/*.cpp) \
+    $$files($$PWD/../Shared/configurations/*.cpp)
 
 RESOURCES += \
     qml/qml.qrc \

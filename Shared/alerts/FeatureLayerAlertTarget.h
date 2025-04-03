@@ -17,18 +17,13 @@
 #ifndef FEATURELAYERALERTTARGET_H
 #define FEATURELAYERALERTTARGET_H
 
-// dsa app headers
+// DSA headers
 #include "AlertTarget.h"
 
-// Qt headers
-#include <QUuid>
-
-namespace Esri {
-namespace ArcGISRuntime {
-class Feature;
-class FeatureLayer;
-class FeatureQueryResult;
-}
+namespace Esri::ArcGISRuntime {
+  class Feature;
+  class FeatureLayer;
+  class FeatureQueryResult;
 }
 
 namespace Dsa {
@@ -45,9 +40,6 @@ public:
 
   QList<Esri::ArcGISRuntime::Geometry> targetGeometries(const Esri::ArcGISRuntime::Envelope& targetArea) const override;
   QVariant targetValue() const override;
-
-private slots:
-  void handleQueryFeaturesCompleted(QUuid taskId, Esri::ArcGISRuntime::FeatureQueryResult* featureQueryResult);
 
 private:
   void rebuildQuadtree();

@@ -14,11 +14,12 @@
  *  limitations under the License.
  ******************************************************************************/
 
-import QtQuick 2.6
-import QtQuick.Controls 2.1
-import QtQuick.Controls.Material 2.1
-import QtQuick.Window 2.2
-import Esri.ArcGISRuntime.OpenSourceApps.DSA 1.1
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Controls.Material
+import QtQuick.Layouts
+import QtQuick.Window
+import Esri.ArcGISRuntime.OpenSourceApps.DSA
 
 DsaPanel {
     id: observationReportRoot
@@ -29,6 +30,7 @@ DsaPanel {
     property alias pickMode: toolController.pickMode
     property bool  toolActive: toolController.active
     property bool readyToAdd: reportFrame.currentItem == reviewPage
+    readonly property real wizardButtonsFactoredMargin: 4 * scaleFactor
 
     ObservationReportController {
         id: toolController
@@ -73,7 +75,7 @@ DsaPanel {
         clip: true
         anchors {
             top: pageIndicator.bottom
-            bottom: nextButton.top
+            bottom: wizardButtonRow.top
             left: parent.left
             right: parent.right
             margins: 8 * scaleFactor
@@ -182,87 +184,104 @@ DsaPanel {
         }
     }
 
-    Button {
-        id: backButton
-        visible: reportFrame.currentIndex > 0
+    RowLayout {
+        id: wizardButtonRow
         anchors {
-            left: reportFrame.left
-            verticalCenter: nextButton.verticalCenter
-            margins: 8 * scaleFactor
-        }
-        height: nextButton.height
-        width: nextButton.width
-        text: "Back"
-        font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-
-        onClicked: reportFrame.decrementCurrentIndex();
-    }
-
-    Button {
-        id: nextButton
-        visible: reportFrame.currentIndex < (reportFrame.count -1) && reportFrame.currentItem.valid
-        anchors {
-            right: reportFrame.right
             bottom: parent.bottom
-            margins: 16 * scaleFactor
+            horizontalCenter: parent.horizontalCenter
+            margins: wizardButtonsFactoredMargin * 2
         }
-        height: 32 * scaleFactor
-        width: 64 * scaleFactor
-        text: "Next"
-        font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+        Button {
+            id: backButton
+            enabled: reportFrame.currentIndex > 0
+            opacity: enabled ? 1.0 : 0.0
+            Layout.margins: wizardButtonsFactoredMargin
+            Material.roundedScale: Material.NotRounded
+            height: nextButton.height
+            width: nextButton.width
+            text: "Back"
+            leftPadding: 0
+            rightPadding: 0
+            topPadding: 0
+            bottomPadding: 0
+            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor * 1.5
 
-        onClicked: reportFrame.incrementCurrentIndex();
+            onClicked: reportFrame.decrementCurrentIndex();
+        }
+
+        ToolIcon {
+            id: createButton
+            Layout.margins: {
+                left: 0
+                top: wizardButtonsFactoredMargin
+                right: wizardButtonsFactoredMargin
+                bottom: wizardButtonsFactoredMargin
+            }
+            enabled: readyToAdd
+            opacity: enabled ? 1.0 : 0.5
+            iconSource: DsaResources.iconComplete
+            toolName: "Create"
+            labelColor: Material.accent
+            onToolSelected: {
+                toolController.broadcastReport(sizePage.size,
+                                               locationPage.locationDescription,
+                                               descriptionPage.enemyUnit,
+                                               activityPage.activity,
+                                               observedTimePage.observedTime,
+                                               "");
+
+                for (var i = 0; i < reportFrame.count; ++i)
+                    reportFrame.itemAt(i).clear();
+                reportFrame.setCurrentIndex(0);
+
+                if (isMobile)
+                    observationReportRoot.visible = false;
+            }
+        }
+
+        ToolIcon {
+            id: cancelButton
+            Layout.margins: {
+                left: 0
+                top: wizardButtonsFactoredMargin
+                right: wizardButtonsFactoredMargin
+                bottom: wizardButtonsFactoredMargin
+            }
+            toolName: "Cancel"
+            iconSource: DsaResources.iconClose
+
+            onToolSelected: {
+                for (var i = 0; i < reportFrame.count; ++i)
+                    reportFrame.itemAt(i).clear();
+                reportFrame.setCurrentIndex(0);
+                toolController.cancelReport();
+
+                if (isMobile)
+                    observationReportRoot.visible = false;
+            }
+        }
+
+        Button {
+            id: nextButton
+            enabled: reportFrame.currentIndex < (reportFrame.count -1) && reportFrame.currentItem.valid
+            opacity: enabled ? 1.0 : 0.0
+            Layout.margins: {
+                left: 0
+                top: wizardButtonsFactoredMargin
+                right: wizardButtonsFactoredMargin
+                bottom: wizardButtonsFactoredMargin
+            }
+            Material.roundedScale: Material.NotRounded
+            height: 32 * scaleFactor
+            width: 64 * scaleFactor
+            text: "Next"
+            leftPadding: 0
+            rightPadding: 0
+            topPadding: 0
+            bottomPadding: 0
+            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor * 1.5
+
+            onClicked: reportFrame.incrementCurrentIndex();
+        }
     }
-
-    ToolIcon {
-        id: createButton
-        anchors {
-            verticalCenter: nextButton.verticalCenter
-            right: reportFrame.horizontalCenter
-            margins: 4 * scaleFactor
-        }
-        enabled: readyToAdd
-        opacity: enabled ? 1.0 : 0.5
-        iconSource: DsaResources.iconComplete
-        toolName: "Create"
-        labelColor: Material.accent
-        onToolSelected: {
-
-            toolController.broadcastReport(sizePage.size,
-                                      locationPage.locationDescription,
-                                      descriptionPage.enemyUnit,
-                                      activityPage.activity,
-                                      observedTimePage.observedTime,
-                                      "");
-
-            for (var i = 0; i < reportFrame.count; ++i)
-                reportFrame.itemAt(i).clear();
-            reportFrame.setCurrentIndex(0);
-
-            if (isMobile)
-                observationReportRoot.visible = false;
-        }
-    }
-
-    ToolIcon {
-        id: cancelButton
-        anchors {
-            verticalCenter: nextButton.verticalCenter
-            left: reportFrame.horizontalCenter
-            margins: 4 * scaleFactor
-        }
-        toolName: "Cancel"
-        iconSource: DsaResources.iconClose
-
-        onToolSelected: {
-            for (var i = 0; i < reportFrame.count; ++i)
-                reportFrame.itemAt(i).clear();
-            reportFrame.setCurrentIndex(0);
-            toolController.cancelReport();
-
-            if (isMobile)
-                observationReportRoot.visible = false;
-        }
-    }
-
 }

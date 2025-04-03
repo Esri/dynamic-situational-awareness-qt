@@ -17,68 +17,32 @@
 #ifndef MESSAGESOVERLAY_H
 #define MESSAGESOVERLAY_H
 
-// Qt headers
-#include <QObject>
-#include <QPointer>
+// C++ API headers
+#include "DynamicEntityLayer.h"
 
-namespace Esri
-{
-  namespace ArcGISRuntime
-  {
-    class GeoView;
-    class Renderer;
-    class GraphicsOverlay;
-    class Graphic;
-    enum class SurfacePlacement;
-  }
+namespace Esri::ArcGISRuntime {
+class DynamicEntity;
 }
 
 namespace Dsa {
 
-class Message;
+class MessageFeed;
 
-class MessagesOverlay : public QObject
+class MessagesOverlay : public Esri::ArcGISRuntime::DynamicEntityLayer
 {
   Q_OBJECT
-
 public:
-  explicit MessagesOverlay(Esri::ArcGISRuntime::GeoView* geoView, QObject* parent = nullptr);
-  MessagesOverlay(Esri::ArcGISRuntime::GeoView* geoView, Esri::ArcGISRuntime::Renderer* renderer,
-                  const QString& messageType, Esri::ArcGISRuntime::SurfacePlacement surfacePlacement,
-                  QObject* parent = nullptr);
+  explicit MessagesOverlay(MessageFeed* messageFeed, const QString& messageType, QObject* parent = nullptr);
   ~MessagesOverlay();
-
-  Esri::ArcGISRuntime::Renderer* renderer() const;
-  void setRenderer(Esri::ArcGISRuntime::Renderer* renderer);
-
-  Esri::ArcGISRuntime::SurfacePlacement surfacePlacement() const;
-  void setSurfacePlacement(Esri::ArcGISRuntime::SurfacePlacement surfacePlacement);
 
   QString messageType() const;
   void setMessageType(const QString& messageType);
-
-  Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlay() const;
-
-  Esri::ArcGISRuntime::GeoView* geoView() const;
-
-  bool addMessage(const Message& message);
-
-  bool isVisible() const;
-  void setVisible(bool visible);
-
-signals:
-  void visibleChanged();
-  void errorOccurred(const QString& error);
+  Esri::ArcGISRuntime::DynamicEntity* getDynamicEntityById(quint64 entityId) const;
+  const QHash<quint64, Esri::ArcGISRuntime::DynamicEntity*>& dynamicEntities() const;
 
 private:
   Q_DISABLE_COPY(MessagesOverlay)
-
-  Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
-  QPointer<Esri::ArcGISRuntime::Renderer> m_renderer;
-  Esri::ArcGISRuntime::SurfacePlacement m_surfacePlacement;
-
-  Esri::ArcGISRuntime::GraphicsOverlay* m_graphicsOverlay = nullptr;
-  QHash<QString, Esri::ArcGISRuntime::Graphic*> m_existingGraphics;
+  MessageFeed* m_messageFeed = nullptr;
 };
 
 } // Dsa

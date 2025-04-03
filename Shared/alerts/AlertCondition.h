@@ -17,20 +17,16 @@
 #ifndef ALERTCONDITION_H
 #define ALERTCONDITION_H
 
-// dsa app headers
-#include "AlertLevel.h"
-
 // Qt headers
 #include <QList>
 #include <QObject>
 #include <QVariantMap>
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
-class GraphicsOverlay;
-}
+// DSA headers
+#include "AlertLevel.h"
+
+namespace Esri::ArcGISRuntime {
+  class GraphicsOverlay;
 }
 
 namespace Dsa {
@@ -38,6 +34,7 @@ namespace Dsa {
 class AlertConditionData;
 class AlertSource;
 class AlertTarget;
+class MessagesOverlay;
 
 class AlertCondition : public QObject
 {
@@ -48,8 +45,9 @@ public:
                           const QString& name,
                           QObject* parent = nullptr);
 
-  void init(AlertSource* source, AlertTarget* target, const QString& sourceDescription, const QString& targetDescription);
+  void init(AlertSource* source, const QString& sourceDescription, AlertTarget* target, const QString& targetDescription);
   void init(Esri::ArcGISRuntime::GraphicsOverlay* sourceFeed, const QString& sourceDescription, AlertTarget* target, const QString& targetDescription);
+  void init(Dsa::MessagesOverlay* sourceFeed, const QString& sourceDescription, AlertTarget* target, const QString& targetDescription);
 
   ~AlertCondition();
 
@@ -76,7 +74,7 @@ public:
 
 signals:
   void noLongerValid();
-  void newConditionData(Dsa::AlertConditionData* newConditionData);
+  void newConditionData(AlertConditionData* newConditionData);
   void conditionChanged();
   void conditionEnabledChanged();
 

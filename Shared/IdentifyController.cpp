@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -20,20 +19,27 @@
 
 #include "IdentifyController.h"
 
-// dsa app headers
-#include "GraphicsOverlaysResultsManager.h"
-#include "LayerResultsManager.h"
-
-// toolkit headers
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
-
 // C++ API headers
+#include "AttributeListModel.h"
 #include "GeoElement.h"
 #include "GeoView.h"
 #include "Graphic.h"
+#include "GraphicsOverlay.h"
+#include "IdentifyGraphicsOverlayResult.h"
+#include "IdentifyLayerResult.h"
+#include "LayerContent.h"
 #include "Popup.h"
+#include "PopupAttributeListModel.h"
+#include "PopupDefinition.h"
+#include "PopupField.h"
+#include "PopupFieldFormat.h"
 #include "PopupManager.h"
+
+// DSA headers
+#include "GraphicsOverlaysResultsManager.h"
+#include "LayerResultsManager.h"
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -55,14 +61,6 @@ IdentifyController::IdentifyController(QObject* parent /* = nullptr */):
   // setup connection to handle mouse-clicking in the view (used to trigger the identify tasks)
   connect(ToolResourceProvider::instance(), &ToolResourceProvider::mouseClicked,
           this, &IdentifyController::onMouseClicked);
-
-  // setup connection to handle the results of an Identify Layers task
-  connect(ToolResourceProvider::instance(), &ToolResourceProvider::identifyLayersCompleted,
-          this, &IdentifyController::onIdentifyLayersCompleted);
-
-  // setup connection to handle the results of an Identify Graphic Overlays task
-  connect(ToolResourceProvider::instance(), &ToolResourceProvider::identifyGraphicsOverlaysCompleted,
-          this, &IdentifyController::onIdentifyGraphicsOverlaysCompleted);
 
   ToolManager::instance().addTool(this);
 }
@@ -93,13 +91,6 @@ void IdentifyController::setActive(bool active)
   if (active == m_active)
     return;
 
-  // if the tool is busy (identify tasks are in-progress), cancel those tasks and start new ones
-  if (busy())
-  {
-    m_layersWatcher.cancel();
-    m_graphicsOverlaysWatcher.cancel();
-  }
-
   m_active = active;
   emit activeChanged();
 }
@@ -110,8 +101,7 @@ void IdentifyController::setActive(bool active)
  */
 bool IdentifyController::busy() const
 {
-  return (m_layersWatcher.isValid() && !m_layersWatcher.isDone() && !m_layersWatcher.isCanceled()) ||
-      (m_graphicsOverlaysWatcher.isValid() && !m_graphicsOverlaysWatcher.isDone() && !m_graphicsOverlaysWatcher.isCanceled());
+  return m_isBusy;
 }
 
 /*!
@@ -184,19 +174,75 @@ void IdentifyController::onMouseClicked(QMouseEvent& event)
   if (event.button() != Qt::MouseButton::LeftButton)
     return;
 
-  // Ignore the event if the tool is cuurrently running tasks.
+  // Ignore the event if the tool is currently running tasks.
   if (busy())
     return;
 
-  GeoView* geoView = ToolResourceProvider::instance()->geoView();
+  auto* geoView = ToolResourceProvider::instance()->geoView();
   if (!geoView)
     return;
 
   // start new identifyLayers and identifyGraphicsOverlays tasks at the x and y position of the event and using the
   // specifed tolerance (m_tolerance) to determine how accurate a hit-test to perform.
-  // create a TaskWatcher to store the progress/state of the task.
-  m_layersWatcher = geoView->identifyLayers(event.pos().x(), event.pos().y(), m_tolerance, false);
-  m_graphicsOverlaysWatcher = geoView->identifyGraphicsOverlays(event.pos().x(), event.pos().y(), m_tolerance, false);
+  // invoke the identify operations on the geoview for layers and graphics overlays
+  auto identify_layers = geoView->identifyLayersAsync(event.position(), m_tolerance, false, -1, this);
+  auto identify_graphics = geoView->identifyGraphicsOverlaysAsync(event.position(), m_tolerance, false, -1, this);
+
+  // respond once all QFutures are complete (includes any cancel or failure as well)
+  QtFuture::whenAll(identify_layers, identify_graphics).then(this, [this](const QList<IdentifyResultsVariant::FutureType> &identify_results)
+  {
+    m_isBusy = true;
+    emit busyChanged();
+    // abort if tool is no longer the active tool
+    if (!isActive())
+      return;
+
+    // iterate over each type in the results variant
+    bool anyAdded = false;
+    for (const IdentifyResultsVariant::FutureType& identify_result : identify_results)
+    {
+      if (identify_result.index() == IdentifyResultsVariant::Types::LAYERS)
+      {
+        LayerResultsManager resultsManager(std::get<IdentifyResultsVariant::Types::LAYERS>(identify_result).result());
+        for (auto* result : resultsManager.m_results)
+        {
+          if (!result)
+            continue;
+
+          const auto& layerName = result->layerContent()->name();
+          for (auto* geoElement : result->geoElements())
+          {
+            if (addGeoElementPopup(geoElement, layerName))
+              anyAdded = true;
+          }
+        }
+      }
+      else if (identify_result.index() == IdentifyResultsVariant::Types::GRAPHICS)
+      {
+        GraphicsOverlaysResultsManager resultsManager(std::get<IdentifyResultsVariant::Types::GRAPHICS>(identify_result).result());
+        for (auto* result : resultsManager.m_results)
+        {
+          if (!result)
+            continue;
+
+          const auto& layerName = result->graphicsOverlay()->overlayId();
+          for (auto* graphic : result->graphics())
+          {
+            if (!addGeoElementPopup(graphic, layerName))
+              anyAdded = true;
+          }
+        }
+      }
+    }
+
+    m_isBusy = false;
+    emit busyChanged();
+
+    // emit popup manager changed signal when anyresults are found
+    if (anyAdded)
+      emit popupManagersChanged();
+  });
+
   emit busyChanged();
 
   m_popupManagers.clear();
@@ -204,93 +250,6 @@ void IdentifyController::onMouseClicked(QMouseEvent& event)
 
   // accept the event to prevent it being used by other tools etc.
   event.accept();
-}
-
-/*!
-  \brief Handles the output of an IdentifyLayers task with Id \a taskId and results \l identifyResults.
-
-  Creates a new \l Esri::ArcGISRuntime::PopupManager objects for every valid feature with attributes
- */
-void IdentifyController::onIdentifyLayersCompleted(const QUuid& taskId, QList<IdentifyLayerResult*> identifyResults)
-{
-  // if the task Id does not match the one we are tracking, ignore it
-  if (taskId != m_layersWatcher.taskId())
-    return;
-
-  // Create a RAII helper to ensure we clean up the results
-  LayerResultsManager resultsManager(identifyResults);
-
-  m_layersWatcher = TaskWatcher();
-  emit busyChanged();
-
-  if (!isActive())
-    return;
-
-  // iterate over the results and add a new PopupManager for any valid features, with attributes
-  bool anyAdded = false;
-  auto it = resultsManager.m_results.begin();
-  auto itEnd = resultsManager.m_results.end();
-  for (; it != itEnd; ++it)
-  {
-    IdentifyLayerResult* res = *it;
-    if (!res)
-      continue;
-
-    const QString resTitle = res->layerContent()->name();
-    const QList<GeoElement*> geoElements = res->geoElements();
-    for(GeoElement* g : geoElements)
-    {
-      if (addGeoElementPopup(g, resTitle))
-        anyAdded = true;
-    }
-  }
-
-  if (anyAdded)
-    emit popupManagersChanged();
-}
-
-/*!
-  \brief Handles the output of an IdentifyGraphicsOverlays task with Id \a taskId and results \l identifyResults.
-
-  Creates a new \l Esri::ArcGISRumtime::PopupManager objects for every valid graphic with attributes
- */
-void IdentifyController::onIdentifyGraphicsOverlaysCompleted(const QUuid& taskId, QList<IdentifyGraphicsOverlayResult*> identifyResults)
-{
-  // if the task Id does not match the one we are tracking, ignore it
-  if (taskId != m_graphicsOverlaysWatcher.taskId())
-    return;
-
-  // Create a RAII helper to ensure we clean up the results
-  GraphicsOverlaysResultsManager resultsManager(identifyResults);
-
-  m_graphicsOverlaysWatcher = TaskWatcher();
-  emit busyChanged();
-
-  if (!isActive())
-    return;
-
-  // iterate over the results and add a new PopupManager for any valid graphics, with attributes
-  bool anyAdded = false;
-  auto it = resultsManager.m_results.begin();
-  auto itEnd = resultsManager.m_results.end();
-  for (; it != itEnd; ++it)
-  {
-    IdentifyGraphicsOverlayResult* res = *it;
-    if (!res)
-      continue;
-
-    const QString resTitle = res->graphicsOverlay()->overlayId();
-    const QList<Graphic*> graphics = res->graphics();
-
-    for(Graphic* g : graphics)
-    {
-      if (addGeoElementPopup(g, resTitle))
-        anyAdded = true;
-    }
-  }
-
-  if (anyAdded)
-    emit popupManagersChanged();
 }
 
 /*!
@@ -311,7 +270,7 @@ bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QStrin
   PopupManager* newManager = new PopupManager(newPopup, this);
 
   for (auto popupfield : newManager->displayedFields()->popupFields())
-  {    
+  {
     if (!popupfield->format())
     {
       auto format = new PopupFieldFormat(newManager);

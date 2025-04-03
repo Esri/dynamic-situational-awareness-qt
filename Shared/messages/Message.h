@@ -17,12 +17,12 @@
 #ifndef MESSAGE_H
 #define MESSAGE_H
 
-// C++ API headers
-#include "Geometry.h"
-
 // Qt headers
 #include <QSharedData>
 #include <QVariantMap>
+
+// C++ API headers
+#include "Geometry.h"
 
 namespace Dsa {
 

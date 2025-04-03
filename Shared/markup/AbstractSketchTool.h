@@ -17,25 +17,21 @@
 #ifndef ABSTRACTSKETCHTOOL_H
 #define ABSTRACTSKETCHTOOL_H
 
-// toolkit headers
-#include "AbstractTool.h"
-
-// C++ API headers
-#include "GeometryTypes.h"
-
 // Qt headers
 #include <QList>
 
-namespace Esri {
-  namespace ArcGISRuntime {
-    class GeoView;
-    class GraphicsOverlay;
-    class GeometryBuilder;
-    class Graphic;
-    class Symbol;
-    class Geometry;
-    class Point;
-  }
+// dsa headers
+#include "AbstractTool.h"
+
+namespace Esri::ArcGISRuntime {
+  class GeoView;
+  class GraphicsOverlay;
+  class GeometryBuilder;
+  class Graphic;
+  class Symbol;
+  class Geometry;
+  class Point;
+  enum class GeometryType;
 }
 
 namespace Dsa {

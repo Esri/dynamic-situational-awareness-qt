@@ -23,6 +23,8 @@
 #include "GeometryQuadtree.h"
 
 // C++ API headers
+#include "Envelope.h"
+#include "Graphic.h"
 #include "GraphicListModel.h"
 #include "GraphicsOverlay.h"
 

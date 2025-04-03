@@ -20,12 +20,10 @@
 // dsa app headers
 #include "Viewshed360.h"
 
-namespace Esri {
-  namespace ArcGISRuntime {
-    class Point;
-    class GraphicsOverlay;
-    class Graphic;
-  }
+namespace Esri::ArcGISRuntime {
+  class Point;
+  class GraphicsOverlay;
+  class Graphic;
 }
 
 namespace Dsa {

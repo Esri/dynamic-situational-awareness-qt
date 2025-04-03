@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -20,31 +19,45 @@
 
 #include "ViewshedController.h"
 
-// dsa app headers
-#include "DsaUtility.h"
-#include "GeoElementViewshed360.h"
-#include "GraphicsOverlaysResultsManager.h"
-#include "LocationController.h"
-#include "LocationDisplay3d.h"
-#include "LocationViewshed360.h"
-#include "ViewshedListModel.h"
-#include "GeoElementUtils.h"
-
-// toolkit headers
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
-
 // C++ API headers
-#include "GeoElementViewshed.h"
+#include "AnalysisListModel.h"
+#include "AnalysisOverlay.h"
+#include "AnalysisOverlayListModel.h"
+#include "Camera.h"
+#include "DynamicEntity.h"
+#include "DynamicEntityObservation.h"
 #include "GlobeCameraController.h"
-#include "LocationViewshed.h"
+#include "Graphic.h"
+#include "GraphicsOverlay.h"
+#include "GraphicsOverlayListModel.h"
+#include "IdentifyGraphicsOverlayResult.h"
+#include "IdentifyLayerResult.h"
 #include "OrbitLocationCameraController.h"
-#include "SceneQuickView.h"
+#include "RendererSceneProperties.h"
 #include "SimpleMarkerSceneSymbol.h"
 #include "SimpleRenderer.h"
+#include "SymbolTypes.h"
+#include "Viewshed.h"
+
+// Qt headers
+#include <QFuture>
 
 // STL headers
 #include <cmath>
+
+// DSA headers
+#include "DsaUtility.h"
+#include "GeoElementUtils.h"
+#include "GeoElementViewshed360.h"
+#include "GraphicsOverlaysResultsManager.h"
+#include "IdentifyController.h"
+#include "LayerResultsManager.h"
+#include "LocationController.h"
+#include "LocationDisplay3d.h"
+#include "LocationViewshed360.h"
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
+#include "ViewshedListModel.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -57,6 +70,7 @@ static int s_viewshedCount = 0;
 
 constexpr double c_defaultOffsetZ = 5.0;
 constexpr double c_defaultIdentifyTolerance = 5.0;
+constexpr quint8 c_defaultIdentifyMaxRecords = 5;
 
 /*!
   \class Dsa::ViewshedController
@@ -162,49 +176,89 @@ void ViewshedController::onMouseClicked(QMouseEvent& event)
   if (!isActive() || !m_sceneView)
     return;
 
+  const auto position = event.position();
+
   switch (m_activeMode)
   {
-  case AddLocationViewshed360:
-  {
-    const Point pt = m_sceneView->screenToBaseSurface(event.x(), event.y());
-    addLocationViewshed360(pt);
-    break;
-  }
-  case AddGeoElementViewshed360:
-  {
-    if (!m_identifyConn)
+    case AddLocationViewshed360:
     {
-      // connect to the completion of the identify operation.
-      m_identifyConn = connect(ToolResourceProvider::instance(), &ToolResourceProvider::identifyGraphicsOverlaysCompleted,
-                               this, [this](const QUuid& taskId, const QList<IdentifyGraphicsOverlayResult*>& identifyResults)
-      {
-        // if the task ID does not match the current task, return.
-        if (taskId != m_identifyTaskWatcher.taskId())
-          return;
-
-        m_identifyTaskWatcher = TaskWatcher();
-
-        // Create a RAII helper to ensure we clean up the results
-        GraphicsOverlaysResultsManager resultsManager(identifyResults);
-
-        if (!isActive() || resultsManager.m_results.isEmpty() || resultsManager.m_results[0]->graphics().isEmpty())
-        {
-          return;
-        }
-
-        // create a viewshed centered upon the 1st graphic retrieved.
-        auto graphic = resultsManager.m_results[0]->graphics()[0];
-        graphic->setParent(nullptr);
-        addGeoElementViewshed360(graphic);
-      });
+      const Point pt = m_sceneView->screenToBaseSurface(position.x(), position.y());
+      addLocationViewshed360(pt);
+      return;
     }
+    case AddGeoElementViewshed360:
+    {
+      // invoke the identify operations on the sceneview for layers and graphics overlays
+      auto layersIdentify = m_sceneView->identifyLayersAsync(position, c_defaultIdentifyTolerance, false, c_defaultIdentifyMaxRecords, this);
+      auto graphicsOverlayIdentify = m_sceneView->identifyGraphicsOverlaysAsync(position, c_defaultIdentifyTolerance, false, c_defaultIdentifyMaxRecords, this);
 
-    // start an identify graphics overlays task at the clicked position.
-    m_identifyTaskWatcher = m_sceneView->identifyGraphicsOverlays(event.x(), event.y(), c_defaultIdentifyTolerance, false, 1);
-    break;
-  }
-  default:
-    break;
+      // respond once all QFutures are complete (includes any cancel or failure as well)
+      QtFuture::whenAll(layersIdentify, graphicsOverlayIdentify).then(this, [this](const QList<IdentifyResultsVariant::FutureType>& identifyResults)
+      {
+        // bail out if the tool became deactivated
+        if (!isActive() || !m_sceneView)
+          return;
+
+        for (const IdentifyResultsVariant::FutureType& identifyResult : identifyResults)
+        {
+          if (identifyResult.index() == IdentifyResultsVariant::Types::LAYERS)
+          {
+            LayerResultsManager resultsManager{std::get<IdentifyResultsVariant::Types::LAYERS>(identifyResult).result()};
+            for (auto* result : resultsManager.m_results)
+            {
+              // make sure the results for the current layer has at least one element in it
+              auto geoElements = result->geoElements();
+              if (!result || geoElements.count() < 1)
+                continue;
+
+              // loop through every element in the result
+              for (auto* geoElement : geoElements)
+              {
+                // skip anything that is not a point
+                if (geoElement->geometry().geometryType() != GeometryType::Point)
+                  continue;
+
+                // if the type returned was a dynamic entity observation then get the dynamic entity to use as the geoelement
+                if (auto* dynamicEntityObservation = dynamic_cast<DynamicEntityObservation*>(geoElement); dynamicEntityObservation)
+                {
+                  addGeoElementViewshed360(dynamicEntityObservation->dynamicEntity());
+                  return;
+                }
+
+                // any other types can be added via the geoelement itself
+                addGeoElementViewshed360(geoElement);
+                return;
+              }
+            }
+          }
+          else if (identifyResult.index() == IdentifyResultsVariant::Types::GRAPHICS)
+          {
+            GraphicsOverlaysResultsManager resultsManager{std::get<IdentifyResultsVariant::Types::GRAPHICS>(identifyResult).result()};
+            for (auto* result : resultsManager.m_results)
+            {
+              // make sure the results for the current layer has at least one element in it
+              auto geoElements = result->geoElements();
+              if (!result || geoElements.count() < 1)
+                continue;
+
+              // loop through every element in the result
+              for (auto* geoElement : geoElements)
+              {
+                // skip anything that is not a point
+                if (geoElement->geometry().geometryType() != GeometryType::Point)
+                  continue;
+
+                addGeoElementViewshed360(geoElement);
+                return;
+              }
+            }
+          }
+        }
+      });
+      break;
+    }
+    default:
+      break;
   }
 }
 
@@ -230,7 +284,7 @@ void ViewshedController::onMouseMoved(QMouseEvent& event)
   if (!locViewshed)
     return;
 
-  const Point point = m_sceneView->screenToBaseSurface(event.x(), event.y());
+  const Point point = m_sceneView->screenToBaseSurface(event.position().x(), event.position().y());
   locViewshed->setPoint(point);
 
   event.accept();

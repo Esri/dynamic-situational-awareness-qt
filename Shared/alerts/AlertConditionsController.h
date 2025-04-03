@@ -17,38 +17,40 @@
 #ifndef ALERTCONDITIONSCONTROLLER_H
 #define ALERTCONDITIONSCONTROLLER_H
 
-// toolkit headers
-#include "AbstractTool.h"
-
-// C++ API headers
-#include "TaskWatcher.h"
-
 // Qt headers
+#include <QFuture>
 #include <QHash>
 #include <QJsonObject>
 #include <QStringListModel>
 
-class QMouseEvent;
-class QStringList;
+// STL headers
+#include <optional>
 
-namespace Esri {
-namespace ArcGISRuntime {
-class IdentifyLayerResult;
-class IdentifyGraphicsOverlayResult;
-class FeatureLayer;
-class FeatureTable;
-class GraphicsOverlay;
+// DSA headers
+#include "AbstractTool.h"
+#include "AlertLevel.h"
+
+class QMouseEvent;
+
+namespace Esri::ArcGISRuntime {
+  class IdentifyLayerResult;
+  class IdentifyGraphicsOverlayResult;
+  class FeatureLayer;
+  class FeatureTable;
+  class GraphicsOverlay;
 }
-}
+
+Q_MOC_INCLUDE("IdentifyGraphicsOverlayResult.h")
+Q_MOC_INCLUDE("IdentifyLayerResult.h")
 
 namespace Dsa {
-
 class AlertCondition;
 class AlertConditionData;
 class AlertConditionListModel;
 class AlertTarget;
 class LocationAlertSource;
 class LocationAlertTarget;
+class MessagesOverlay;
 
 class AlertConditionsController : public AbstractTool
 {
@@ -71,13 +73,14 @@ public:
 
   void setActive(bool active) override;
 
-  Q_INVOKABLE bool addWithinDistanceAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, double distance, int itemId, int targetOverlayIndex);
-  Q_INVOKABLE bool addWithinAreaAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, int itemId, int targetOverlayIndex);
-  Q_INVOKABLE bool addAttributeEqualsAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, const QString& attributeName, const QVariant& targetValue);
+  Q_INVOKABLE QFuture<bool> addWithinDistanceAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, double distance, int itemId, const QString& targetOverlayName);
+  Q_INVOKABLE QFuture<bool> addWithinAreaAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, int itemId, const QString& targetOverlayName);
+  Q_INVOKABLE QFuture<bool> addAttributeEqualsAlert(const QString& conditionName, int levelIndex, const QString& sourceFeedname, const QString& attributeName, const QVariant& targetValue);
   Q_INVOKABLE void removeConditionAt(int rowIndex);
   Q_INVOKABLE void togglePickMode();
   Q_INVOKABLE void updateConditionName(int rowIndex, const QString& conditionName);
   Q_INVOKABLE void updateConditionLevel(int rowIndex, int level);
+  Q_INVOKABLE bool conditionAlreadyAdded(const QString& conditionName);
 
   QAbstractItemModel* sourceNames() const;
   QAbstractItemModel* targetNames() const;
@@ -97,8 +100,6 @@ private slots:
   void onGeoviewChanged();
   void onLayersChanged();
   void onMouseClicked(QMouseEvent& event);
-  void onIdentifyLayersCompleted(const QUuid& taskId, QList<Esri::ArcGISRuntime::IdentifyLayerResult*> identifyResults);
-  void onIdentifyGraphicsOverlaysCompleted(const QUuid& taskId, QList<Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult*> identifyResults);
   void handleNewAlertConditionData(AlertConditionData* newConditionData);
   void onConditionsChanged();
 
@@ -106,14 +107,25 @@ private:
   void setTargetNames(const QStringList& targetNames);
   void setSourceNames(const QStringList& sourceNames);
   QJsonObject conditionToJson(AlertCondition* condition) const;
-  bool addConditionFromJson(const QJsonObject& json);
+  QFuture<bool> addConditionFromJson(const QJsonObject& json);
   void addStoredConditions();
 
-  AlertTarget* targetFromItemIdAndIndex(int itemId, int targetOverlayIndex, QString& targetDescription) const;
-  AlertTarget* targetFromFeatureLayer(Esri::ArcGISRuntime::FeatureLayer* featureLayer, int itemId) const;
+  QFuture<AlertTarget*> targetFromItemIdAndOverlayName(int itemId, const QString& targetOverlayName, QString& targetDescription) const;
+  QFuture<AlertTarget*> targetFromFeatureLayer(Esri::ArcGISRuntime::FeatureLayer* featureLayer, int itemId) const;
   AlertTarget* targetFromGraphicsOverlay(Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlay, int itemId) const;
+  AlertTarget* targetFromMessagesOverlay(Dsa::MessagesOverlay* messagesOverlay, int itemId) const;
   Esri::ArcGISRuntime::GraphicsOverlay* graphicsOverlayFromName(const QString& overlayName);
+  MessagesOverlay* messagesOverlayFromName(const QString& layerName);
   QString primaryKeyFieldName(Esri::ArcGISRuntime::FeatureTable* featureTable) const;
+
+  template<typename T>
+  QFuture<bool> addWithinDistanceAlertBySourceLayerType(const QString& conditionName, AlertLevel level, const QString& sourceFeedName, double distance, AlertTarget* target, const QString& targetDescription, T* alertSourceLayer);
+
+  template<typename T>
+  QFuture<bool> addWithinAreaAlertBySourceLayerType(const QString& conditionName, AlertLevel level, const QString& sourceFeedName, AlertTarget* target, const QString& targetDescription, T* alertSourceLayer);
+
+  template<typename T>
+  QFuture<bool> addAttributeEqualsAlertBySourceLayerType(const QString& conditionName, AlertLevel level, const QString& sourceFeedName, const QString& attributeName, const QVariant& targetValue, T* alertTarget);
 
   QStringList realtimeFeedTypes() const;
   QStringList realtimeFeedNames() const;
@@ -126,16 +138,12 @@ private:
   double m_tolerance = 5;
   LocationAlertSource* m_locationSource = nullptr;
   LocationAlertTarget* m_locationTarget = nullptr;
-  Esri::ArcGISRuntime::TaskWatcher m_identifyLayersWatcher;
-  Esri::ArcGISRuntime::TaskWatcher m_identifyGraphicsWatcher;
   mutable QHash<QString,AlertTarget*> m_layerTargets;
   mutable QHash<QString,AlertTarget*> m_overlayTargets;
   QList<QJsonObject> m_storedConditions;
   QHash<QString,QString> m_messageFeedTypesToNames;
 
   QMetaObject::Connection m_mouseClickConnection;
-  QMetaObject::Connection m_identifyLayersConnection;
-  QMetaObject::Connection m_identifyGraphicsConnection;
 };
 
 } // Dsa

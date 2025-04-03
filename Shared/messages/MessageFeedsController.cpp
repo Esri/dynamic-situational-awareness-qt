@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -20,31 +19,32 @@
 
 #include "MessageFeedsController.h"
 
-// dsa app headers
+// C++ API headers
+#include "DictionaryRenderer.h"
+#include "DictionarySymbolStyle.h"
+#include "LayerListModel.h"
+#include "LayerSceneProperties.h"
+#include "PictureMarkerSymbol.h"
+#include "SceneViewTypes.h"
+#include "SimpleRenderer.h"
+
+// Qt headers
+#include <QFileInfo>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QUdpSocket>
+
+// DSA headers
 #include "AppConstants.h"
 #include "DataListener.h"
-#include "DataSender.h"
 #include "LocationBroadcast.h"
 #include "Message.h"
 #include "MessageFeed.h"
 #include "MessageFeedConstants.h"
 #include "MessageFeedListModel.h"
 #include "MessagesOverlay.h"
-
-// toolkit headers
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
-
-// C++ API headers
-#include "DictionaryRenderer.h"
-#include "DictionarySymbolStyle.h"
-#include "PictureMarkerSymbol.h"
-#include "SimpleRenderer.h"
-
-// Qt headers
-#include <QFileInfo>
-#include <QJsonArray>
-#include <QUdpSocket>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -142,7 +142,7 @@ void MessageFeedsController::addDataListener(DataListener* dataListener)
     if (!messageFeed)
       return;
 
-    messageFeed->messagesOverlay()->addMessage(m);
+    messageFeed->addMessage(m);
   });
 }
 
@@ -174,7 +174,6 @@ QString MessageFeedsController::toolName() const
 void MessageFeedsController::setupFeeds()
 {
   // parse and add message feeds
-
   const auto messageFeedsJson = QJsonArray::fromVariantList(m_messageFeedProperties);
   for (const auto& messageFeed : messageFeedsJson)
   {
@@ -191,8 +190,13 @@ void MessageFeedsController::setupFeeds()
     const auto rendererThumbnail = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL].toString();
     const auto surfacePlacement = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT].toString();
 
-    MessagesOverlay* overlay = new MessagesOverlay(m_geoView, createRenderer(rendererInfo, this), feedType, toSurfacePlacement(surfacePlacement), this);
-    MessageFeed* feed = new MessageFeed(feedName, feedType, overlay, this);
+    auto* feed = new MessageFeed(feedName, feedType, this);
+    m_messageFeeds->append(feed);
+    auto* overlay = new MessagesOverlay(feed, feedType, this);
+    overlay->setSceneProperties(LayerSceneProperties(toSurfacePlacement(surfacePlacement)));
+    overlay->setRenderer(createRenderer(rendererInfo, this));
+    SceneView* scene = static_cast<SceneView*>(m_geoView);
+    scene->arcGISScene()->operationalLayers()->append(overlay);
 
     if (!rendererThumbnail.isEmpty())
     {
@@ -203,8 +207,6 @@ void MessageFeedsController::setupFeeds()
       else
         emit toolErrorOccurred(QString("Failed to find icon %1").arg(rendererThumbnail), QString("Could not find icon %1 for feed %2").arg(rendererThumbnail, feedName));
     }
-
-    m_messageFeeds->append(feed);
   }
 
   // only needs to be cached until the geoView is ready
@@ -248,9 +250,7 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
 
   // only setup message feeds at startup
   if (m_geoView && m_messageFeeds->rowCount() == 0)
-  {
     setupFeeds();
-  }
 
   const auto locationBroadcastConfig = properties[MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME].toMap();
   if (locationBroadcastConfig.contains(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE) &&

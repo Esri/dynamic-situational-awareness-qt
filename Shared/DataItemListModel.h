@@ -18,11 +18,11 @@
 #define DATAITEMLISTMODEL_H
 
 // Qt headers
-#include <QAbstractListModel>
 #include <QByteArray>
 #include <QFileInfo>
 #include <QHash>
 #include <QList>
+#include <QAbstractListModel>
 
 namespace Dsa {
 

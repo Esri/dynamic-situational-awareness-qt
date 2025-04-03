@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -21,6 +20,8 @@
 #include "GeoElementUtils.h"
 
 // C++ API headers
+#include "DynamicEntity.h"
+#include "DynamicEntityObservation.h"
 #include "EncFeature.h"
 #include "Feature.h"
 #include "GeoElement.h"
@@ -29,6 +30,7 @@
 #include "RasterCell.h"
 #include "WmsFeature.h"
 
+// Qt headers
 #include <QDebug>
 
 using namespace Esri::ArcGISRuntime;
@@ -80,6 +82,16 @@ GeoElementSignaler::GeoElementSignaler(GeoElement* geoElement, QObject* parent) 
   else if (dynamic_cast<RasterCell*>(m_geoElement))
   {
     connect(static_cast<RasterCell*>(m_geoElement), &RasterCell::geometryChanged,
+            this, &GeoElementSignaler::geometryChanged);
+  }
+  else if (dynamic_cast<DynamicEntity*>(m_geoElement))
+  {
+    connect(static_cast<DynamicEntity*>(m_geoElement), &DynamicEntity::geometryChanged,
+            this, &GeoElementSignaler::geometryChanged);
+  }
+  else if (dynamic_cast<DynamicEntityObservation*>(m_geoElement))
+  {
+    connect(static_cast<DynamicEntityObservation*>(m_geoElement), &DynamicEntityObservation::geometryChanged,
             this, &GeoElementSignaler::geometryChanged);
   }
   else
@@ -155,6 +167,12 @@ QObject* GeoElementUtils::toQObject(GeoElement* geoElement)
 
   if (dynamic_cast<RasterCell*>(geoElement))
     return static_cast<RasterCell*>(geoElement);
+
+  if (dynamic_cast<DynamicEntity*>(geoElement))
+    return static_cast<DynamicEntity*>(geoElement);
+
+  if (dynamic_cast<DynamicEntityObservation*>(geoElement))
+    return static_cast<DynamicEntityObservation*>(geoElement);
 
   qWarning() << Q_FUNC_INFO << "Unhandled GeoElement type";
 

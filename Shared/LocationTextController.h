@@ -17,14 +17,12 @@
 #ifndef LOCATIONTEXTCONTROLLER_H
 #define LOCATIONTEXTCONTROLLER_H
 
-// toolkit headers
+// dsa headers
 #include "AbstractTool.h"
 
-namespace Esri {
-namespace ArcGISRuntime {
-class Point;
-class Surface;
-}
+namespace Esri::ArcGISRuntime {
+  class Point;
+  class Surface;
 }
 
 namespace Dsa {

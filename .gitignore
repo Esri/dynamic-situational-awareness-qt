@@ -38,5 +38,6 @@ Makefile*
 CMakeLists.txt.user*
 
 # Local ArcGIS Toolkit Repo
-arcgis-runtime-toolkit-qt
+arcgis-maps-sdk-toolkit-qt
 
+build

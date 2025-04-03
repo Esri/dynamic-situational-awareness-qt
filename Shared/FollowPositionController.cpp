@@ -20,15 +20,22 @@
 
 #include "FollowPositionController.h"
 
-// toolkit headers
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
-
 // C++ API headers
 #include "GlobeCameraController.h"
+#include "Graphic.h"
+#include "GraphicListModel.h"
+#include "GraphicsOverlay.h"
+#include "GraphicsOverlayListModel.h"
+#include "LocationDisplay.h"
 #include "MapView.h"
+#include "MapViewTypes.h"
 #include "OrbitGeoElementCameraController.h"
 #include "SceneView.h"
+
+// DSA headers
+#include "AppConstants.h"
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -208,14 +215,13 @@ GraphicListModel* FollowPositionController::locationGraphicsModel() const
   if (overlays->isEmpty())
     return nullptr;
 
-  QString locationOverlayId("SCENEVIEWLOCATIONOVERLAY");
   for (int i = 0; i < overlays->rowCount(); ++i)
   {
     GraphicsOverlay* candidateOverlay = overlays->at(i);
     if (!candidateOverlay)
       continue;
 
-    if (candidateOverlay->overlayId() != locationOverlayId)
+    if (candidateOverlay->overlayId() != AppConstants::LAYER_NAME_SCENEVIEW_LOCATION)
       continue;
 
     return candidateOverlay->graphics();

@@ -25,13 +25,12 @@
 
 // C++ API headers
 #include "AnalysisListModel.h"
-#include "AnalysisOverlay.h"
-#include "AnalysisOverlayListModel.h"
+#include "Envelope.h"
 #include "GeoElementLineOfSight.h"
 #include "GeoElementViewshed.h"
 #include "LocationLineOfSight.h"
 #include "LocationViewshed.h"
-#include "SceneView.h"
+#include "SceneViewTypes.h"
 #include "Viewshed.h"
 
 using namespace Esri::ArcGISRuntime;

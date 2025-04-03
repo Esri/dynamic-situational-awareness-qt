@@ -22,10 +22,8 @@
 #include <QList>
 #include <QMap>
 
-namespace Esri {
-namespace ArcGISRuntime {
+namespace Esri::ArcGISRuntime {
   class TileCache;
-}
 }
 
 namespace Dsa {

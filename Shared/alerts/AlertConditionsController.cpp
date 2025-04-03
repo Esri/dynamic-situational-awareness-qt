@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -20,41 +19,59 @@
 
 #include "AlertConditionsController.h"
 
-// dsa app headers
+// C++ API headers
+#include "ArcGISFeatureTable.h"
+#include "AttributeListModel.h"
+#include "DynamicEntity.h"
+#include "DynamicEntityObservation.h"
+#include "Error.h"
+#include "Feature.h"
+#include "FeatureIterator.h"
+#include "FeatureLayer.h"
+#include "FeatureQueryResult.h"
+#include "Field.h"
+#include "GeoView.h"
+#include "Graphic.h"
+#include "GraphicListModel.h"
+#include "GraphicsOverlay.h"
+#include "GraphicsOverlayListModel.h"
+#include "IdentifyGraphicsOverlayResult.h"
+#include "IdentifyLayerResult.h"
+#include "Layer.h"
+#include "LayerListModel.h"
+#include "MapTypes.h"
+#include "QueryParameters.h"
+#include "ServiceTypes.h"
+
+// Qt headers
+#include <QEventLoop>
+#include <QFuture>
+#include <QJsonArray>
+#include <QJsonObject>
+
+// DSA headers
 #include "AlertConditionData.h"
 #include "AlertConditionListModel.h"
 #include "AlertConstants.h"
 #include "AlertListModel.h"
+#include "AppConstants.h"
 #include "AttributeEqualsAlertCondition.h"
 #include "FeatureLayerAlertTarget.h"
 #include "FixedValueAlertTarget.h"
 #include "GeoElementAlertTarget.h"
 #include "GraphicsOverlayAlertTarget.h"
 #include "GraphicsOverlaysResultsManager.h"
+#include "IdentifyController.h"
 #include "LayerResultsManager.h"
 #include "LocationAlertSource.h"
 #include "LocationAlertTarget.h"
 #include "MessageFeedConstants.h"
-#include "WithinAreaAlertCondition.h"
-#include "WithinDistanceAlertCondition.h"
-
-// toolkit headers
+#include "MessagesOverlay.h"
+#include "MessagesOverlayAlertTarget.h"
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
-
-// C++ API headers
-#include "ArcGISFeatureTable.h"
-#include "FeatureLayer.h"
-#include "GeoView.h"
-#include "GraphicsOverlay.h"
-#include "GraphicsOverlayListModel.h"
-#include "Layer.h"
-#include "LayerListModel.h"
-
-// Qt headers
-#include <QEventLoop>
-#include <QJsonArray>
-#include <QJsonObject>
+#include "WithinAreaAlertCondition.h"
+#include "WithinDistanceAlertCondition.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -92,6 +109,8 @@ AlertConditionsController::AlertConditionsController(QObject* parent /* = nullpt
 {
   connect(ToolResourceProvider::instance(), &ToolResourceProvider::geoViewChanged,
           this, &AlertConditionsController::onGeoviewChanged);
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::sceneChanged,
+        this, &AlertConditionsController::onGeoviewChanged);
 
   connect(m_conditions, &AlertConditionListModel::rowsInserted, this, &AlertConditionsController::onConditionsChanged);
   connect(m_conditions, &AlertConditionListModel::rowsRemoved, this, &AlertConditionsController::onConditionsChanged);
@@ -194,9 +213,6 @@ void AlertConditionsController::setActive(bool active)
   if (active == m_active)
     return;
 
-  if (m_identifyLayersWatcher.isValid() && !m_identifyLayersWatcher.isDone() && !m_identifyLayersWatcher.isCanceled())
-    m_identifyLayersWatcher.cancel();
-
   m_active = active;
   emit activeChanged();
 
@@ -224,60 +240,68 @@ void AlertConditionsController::setActive(bool active)
 
   Returns \c true if the condition was successfully added.
  */
-bool AlertConditionsController::addWithinDistanceAlert(const QString& conditionName,
-                                                       int levelIndex,
-                                                       const QString& sourceFeedName,
-                                                       double distance,
-                                                       int itemId,
-                                                       int targetOverlayIndex)
+QFuture<bool> AlertConditionsController::addWithinDistanceAlert(const QString& conditionName,
+                                                                int levelIndex,
+                                                                const QString& sourceFeedName,
+                                                                double distance,
+                                                                int itemId,
+                                                                const QString& targetOverlayName)
 {
+  const auto future_false = QtFuture::makeReadyFuture(false);
   if (levelIndex < 0 ||
       sourceFeedName.isEmpty() ||
       distance < 0.0 ||
-      targetOverlayIndex < 0)
+      targetOverlayName.isEmpty())
   {
     emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QStringLiteral("Invalid inputs"));
-    return false;
+    return future_false;
   }
 
   AlertLevel level = static_cast<AlertLevel>(levelIndex);
   if (level > AlertLevel::Critical)
   {
     emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QStringLiteral("Invalid Alert Level"));
-    return false;
+    return future_false;
   }
 
   QString targetDescription;
-  AlertTarget* target = targetFromItemIdAndIndex(itemId, targetOverlayIndex, targetDescription);
-  if (!target)
+  return targetFromItemIdAndOverlayName(itemId, targetOverlayName, targetDescription).then(this, [=](AlertTarget* target) -> QFuture<bool>
   {
-    emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QStringLiteral("Invalid Target"));
-    return false;
-  }
+    if (!target)
+    {
+      emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QStringLiteral("Invalid Target"));
+      return future_false;
+    }
 
-  WithinDistanceAlertCondition* condition = new WithinDistanceAlertCondition(level, conditionName, distance, this);
+    if (sourceFeedName == AlertConstants::MY_LOCATION)
+      return addWithinDistanceAlertBySourceLayerType(conditionName, level, sourceFeedName, distance, target, targetDescription, m_locationSource);
+    else if (GraphicsOverlay* graphicsOverlay = graphicsOverlayFromName(sourceFeedName); graphicsOverlay)
+      return addWithinDistanceAlertBySourceLayerType(conditionName, level, sourceFeedName, distance, target, targetDescription, graphicsOverlay);
+    else if (MessagesOverlay* messagesOverlay = messagesOverlayFromName(sourceFeedName); messagesOverlay)
+      return addWithinDistanceAlertBySourceLayerType(conditionName, level, sourceFeedName, distance, target, targetDescription, messagesOverlay);
+
+    emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QString("Could not find source feed: %1").arg(sourceFeedName));
+    return future_false;
+  }).result();
+}
+
+template<typename T>
+QFuture<bool> AlertConditionsController::addWithinDistanceAlertBySourceLayerType(const QString& conditionName,
+                                                                                 AlertLevel level,
+                                                                                 const QString& sourceFeedName,
+                                                                                 double distance,
+                                                                                 AlertTarget* target,
+                                                                                 const QString& targetDescription,
+                                                                                 T* alertSourceLayer)
+{
+  // make sure the condition has not already been added
+  if (conditionAlreadyAdded(conditionName))
+    return QtFuture::makeReadyFuture(false);
+
+  auto* condition = new WithinDistanceAlertCondition(level, conditionName, distance, this);
   connect(condition, &WithinDistanceAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
-
-  if (sourceFeedName == AlertConstants::MY_LOCATION)
-  {
-    condition->init(m_locationSource, target, AlertConstants::MY_LOCATION, targetDescription);
-  }
-  else
-  {
-    GraphicsOverlay* sourceOverlay = graphicsOverlayFromName(sourceFeedName);
-    if (sourceOverlay)
-    {
-      condition->init(sourceOverlay, sourceFeedName, target, targetDescription);
-    }
-    else
-    {
-      emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QString("Could not find source feed: %1").arg(sourceFeedName));
-      delete condition;
-      return false;
-    }
-  }
-
-  return m_conditions->addAlertCondition(condition);
+  condition->init(alertSourceLayer, sourceFeedName, target, targetDescription);
+  return QtFuture::makeReadyFuture(m_conditions->addAlertCondition(condition));
 }
 
 /*!
@@ -298,58 +322,65 @@ bool AlertConditionsController::addWithinDistanceAlert(const QString& conditionN
 
   Returns \c true if the condition was successfully added.
  */
-bool AlertConditionsController::addWithinAreaAlert(const QString& conditionName,
-                                                   int levelIndex,
-                                                   const QString& sourceFeedName,
-                                                   int itemId,
-                                                   int targetOverlayIndex)
+QFuture<bool> AlertConditionsController::addWithinAreaAlert(const QString& conditionName,
+                                                            int levelIndex,
+                                                            const QString& sourceFeedName,
+                                                            int itemId,
+                                                            const QString& targetOverlayName)
 {
+  const auto future_false = QtFuture::makeReadyFuture(false);
   if (levelIndex < 0 ||
       sourceFeedName.isEmpty() ||
-      targetOverlayIndex < 0)
+      targetOverlayName.isEmpty())
   {
     emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QStringLiteral("Invalid inputs"));
-    return false;
+    return future_false;
   }
 
   AlertLevel level = static_cast<AlertLevel>(levelIndex);
   if (level > AlertLevel::Critical)
   {
     emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QStringLiteral("Invalid Alert Level"));
-    return false;
+    return future_false;
   }
 
   QString targetDescription;
-  AlertTarget* target = targetFromItemIdAndIndex(itemId, targetOverlayIndex, targetDescription);
-  if (!target)
+  return targetFromItemIdAndOverlayName(itemId, targetOverlayName, targetDescription).then(this, [=](AlertTarget* target) -> QFuture<bool>
   {
-    emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QStringLiteral("Invalid Target"));
-    return false;
-  }
+    if (!target)
+    {
+      emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QStringLiteral("Invalid Target"));
+      return future_false;
+    }
 
-  WithinAreaAlertCondition* condition = new WithinAreaAlertCondition(level, conditionName, this);
+    if (sourceFeedName == AlertConstants::MY_LOCATION)
+      return addWithinAreaAlertBySourceLayerType(conditionName, level, sourceFeedName, target, targetDescription, m_locationSource);
+    else if (GraphicsOverlay* graphicsOverlay = graphicsOverlayFromName(sourceFeedName); graphicsOverlay)
+      return addWithinAreaAlertBySourceLayerType(conditionName, level, sourceFeedName, target, targetDescription, graphicsOverlay);
+    else if (MessagesOverlay* messagesOverlay = messagesOverlayFromName(sourceFeedName); messagesOverlay)
+      return addWithinAreaAlertBySourceLayerType(conditionName, level, sourceFeedName, target, targetDescription, messagesOverlay);
+
+    emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QString("Could not find source feed: %1").arg(sourceFeedName));
+    return future_false;
+  }).unwrap();
+}
+
+template<typename T>
+QFuture<bool> AlertConditionsController::addWithinAreaAlertBySourceLayerType(const QString& conditionName,
+                                                                             AlertLevel level,
+                                                                             const QString& sourceFeedName,
+                                                                             AlertTarget* target,
+                                                                             const QString& targetDescription,
+                                                                             T* alertSourceLayer)
+{
+  // make sure the condition has not already been added
+  if (conditionAlreadyAdded(conditionName))
+    return QtFuture::makeReadyFuture(false);
+
+  auto* condition = new WithinAreaAlertCondition(level, conditionName, this);
   connect(condition, &WithinAreaAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
-
-  if (sourceFeedName == AlertConstants::MY_LOCATION)
-  {
-    condition->init(m_locationSource, target, AlertConstants::MY_LOCATION, targetDescription);
-  }
-  else
-  {
-    GraphicsOverlay* sourceOverlay = graphicsOverlayFromName(sourceFeedName);
-    if (sourceOverlay)
-    {
-      condition->init(sourceOverlay, sourceFeedName, target, targetDescription);
-    }
-    else
-    {
-      emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QString("Could not find source feed: %1").arg(sourceFeedName));
-      delete condition;
-      return false;
-    }
-  }
-
-  return m_conditions->addAlertCondition(condition);
+  condition->init(alertSourceLayer, sourceFeedName, target, targetDescription);
+  return QtFuture::makeReadyFuture(m_conditions->addAlertCondition(condition));
 }
 
 /*!
@@ -366,41 +397,56 @@ bool AlertConditionsController::addWithinAreaAlert(const QString& conditionName,
 
   Returns \c true if the condition was succesfully added
  */
-bool AlertConditionsController::addAttributeEqualsAlert(const QString& conditionName,
-                                                        int levelIndex,
-                                                        const QString& sourceFeedName,
-                                                        const QString& attributeName,
-                                                        const QVariant& targetValue)
+QFuture<bool> AlertConditionsController::addAttributeEqualsAlert(const QString& conditionName,
+                                                                 int levelIndex,
+                                                                 const QString& sourceFeedName,
+                                                                 const QString& attributeName,
+                                                                 const QVariant& targetValue)
 {
+  const auto future_false = QtFuture::makeReadyFuture(false);
   if (levelIndex < 0 ||
       sourceFeedName.isEmpty() ||
       attributeName.isEmpty() ||
       targetValue.isNull())
   {
     emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QStringLiteral("Invalid inputs"));
-    return false;
+    return future_false;
   }
 
   AlertLevel level = static_cast<AlertLevel>(levelIndex);
   if (level > AlertLevel::Critical)
   {
     emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QStringLiteral("Invalid Alert Level"));
-    return false;
+    return future_false;
   }
+
+  // pass the source layer that was found by name in either the graphics layers or dynamics layers in operationalLayers
+  if (GraphicsOverlay* graphicsOverlay = graphicsOverlayFromName(sourceFeedName); graphicsOverlay)
+    return addAttributeEqualsAlertBySourceLayerType(conditionName, level, sourceFeedName, attributeName, targetValue, graphicsOverlay);
+  else if (MessagesOverlay* messagesOverlay = messagesOverlayFromName(sourceFeedName); messagesOverlay)
+    return addAttributeEqualsAlertBySourceLayerType(conditionName, level, sourceFeedName, attributeName, targetValue, messagesOverlay);
+
+  emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QString("Could not find source feed: %1").arg(sourceFeedName));
+  return future_false;
+}
+
+template<typename T>
+QFuture<bool> AlertConditionsController::addAttributeEqualsAlertBySourceLayerType(const QString& conditionName,
+                                                                                  AlertLevel level,
+                                                                                  const QString& sourceFeedName,
+                                                                                  const QString& attributeName,
+                                                                                  const QVariant& targetValue,
+                                                                                  T* alertSourceLayer)
+{
+  // make sure the condition has not already been added
+  if (conditionAlreadyAdded(conditionName))
+    return QtFuture::makeReadyFuture(false);
 
   AlertTarget* target = new FixedValueAlertTarget(targetValue, this);
-
-  GraphicsOverlay* sourceOverlay = graphicsOverlayFromName(sourceFeedName);
-  if (!sourceOverlay)
-  {
-    emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QString("Could not find source feed: %1").arg(sourceFeedName));
-    return false;
-  }
-
   AttributeEqualsAlertCondition* condition = new AttributeEqualsAlertCondition(level, conditionName, attributeName, this);
   connect(condition, &AttributeEqualsAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
-  condition->init(sourceOverlay, sourceFeedName, target, targetValue.toString());
-  return m_conditions->addAlertCondition(condition);
+  condition->init(alertSourceLayer, sourceFeedName, target, targetValue.toString());
+  return QtFuture::makeReadyFuture(m_conditions->addAlertCondition(condition));
 }
 
 /*!
@@ -432,18 +478,10 @@ void AlertConditionsController::togglePickMode()
   {
     m_mouseClickConnection = connect(ToolResourceProvider::instance(), &ToolResourceProvider::mouseClicked,
                                      this, &AlertConditionsController::onMouseClicked);
-
-    m_identifyLayersConnection =  connect(ToolResourceProvider::instance(), &ToolResourceProvider::identifyLayersCompleted,
-                                          this, &AlertConditionsController::onIdentifyLayersCompleted);
-
-    m_identifyGraphicsConnection =  connect(ToolResourceProvider::instance(), &ToolResourceProvider::identifyGraphicsOverlaysCompleted,
-                                            this, &AlertConditionsController::onIdentifyGraphicsOverlaysCompleted);
   }
   else
   {
     disconnect(m_mouseClickConnection);
-    disconnect(m_identifyLayersConnection);
-    disconnect(m_identifyGraphicsConnection);
   }
 
   emit pickModeChanged();
@@ -580,6 +618,7 @@ void AlertConditionsController::onLayersChanged()
   }
 
   QStringList newTargetList;
+  QStringList newSourceList{AlertConstants::MY_LOCATION};
   QStringList existingLayerIds;
   LayerListModel* operationalLayers = ToolResourceProvider::instance()->operationalLayers();
   if (operationalLayers)
@@ -591,16 +630,32 @@ void AlertConditionsController::onLayersChanged()
       if (!lyr)
         continue;
 
-      FeatureLayer* featLayer = qobject_cast<FeatureLayer*>(lyr);
-      if (!featLayer)
-        continue;
-
-      if (featLayer->loadStatus() != LoadStatus::Loaded)
-        connect(featLayer, &FeatureLayer::doneLoading, this, &AlertConditionsController::onLayersChanged);
-      else
+      if (FeatureLayer* featureLayer = qobject_cast<FeatureLayer*>(lyr); featureLayer)
       {
-        newTargetList.append(featLayer->name());
-        existingLayerIds.append(featLayer->name());
+        if (featureLayer->loadStatus() != LoadStatus::Loaded)
+        {
+          connect(featureLayer, &FeatureLayer::doneLoading, this, &AlertConditionsController::onLayersChanged);
+        }
+        else
+        {
+          const auto featureLayerName = featureLayer->name();
+          newTargetList.append(featureLayerName);
+          existingLayerIds.append(featureLayerName);
+        }
+      }
+      else if (MessagesOverlay* messagesOverlay = qobject_cast<MessagesOverlay*>(lyr); messagesOverlay)
+      {
+        if (messagesOverlay->loadStatus() != LoadStatus::Loaded)
+        {
+          connect(messagesOverlay, &DynamicEntityLayer::doneLoading, this, &AlertConditionsController::onLayersChanged);
+        }
+        else
+        {
+          const auto messagesOverlayLayerName = messagesOverlay->name();
+          newTargetList.append(messagesOverlayLayerName);
+          newSourceList.append(messagesOverlayLayerName);
+          existingLayerIds.append(messagesOverlayLayerName);
+        }
       }
     }
   }
@@ -612,7 +667,6 @@ void AlertConditionsController::onLayersChanged()
       m_layerTargets.remove(key);
   }
 
-  QStringList newSourceList{AlertConstants::MY_LOCATION};
   GraphicsOverlayListModel* graphicsOverlays = geoView->graphicsOverlays();
   if (graphicsOverlays)
   {
@@ -633,7 +687,7 @@ void AlertConditionsController::onLayersChanged()
         newSourceList.append(overlayIt.value());
         newTargetList.append(overlayIt.value());
       }
-      else if (overlay->overlayId() == QStringLiteral("SCENEVIEWLOCATIONOVERLAY"))
+      else if (overlay->overlayId() == AppConstants::LAYER_NAME_SCENEVIEW_LOCATION)
       {
         newTargetList.append(AlertConstants::MY_LOCATION);
       }
@@ -664,154 +718,115 @@ void AlertConditionsController::onLayersChanged()
  */
 void AlertConditionsController::onMouseClicked(QMouseEvent &event)
 {
+  // abort if the tool is not the active tool for some unexplained reason
   if (!isActive())
     return;
 
+  // only respond to left click
   if (event.button() != Qt::MouseButton::LeftButton)
     return;
 
+  // abort if the tool is somehow not in pick mode
   if (!m_pickMode)
     return;
 
-  if (m_identifyLayersWatcher.isValid() && !m_identifyLayersWatcher.isDone())
-    return;
-
-  if (m_identifyGraphicsWatcher.isValid() && !m_identifyGraphicsWatcher.isDone())
-    return;
-
+  // get a pointer to the geoView for calling the identify operations
   GeoView* geoView = ToolResourceProvider::instance()->geoView();
   if (!geoView)
     return;
 
-  m_identifyLayersWatcher = geoView->identifyLayers(event.pos().x(), event.pos().y(), m_tolerance, false);
-  m_identifyGraphicsWatcher = geoView->identifyGraphicsOverlays(event.pos().x(), event.pos().y(), m_tolerance, false);
+  // dispatch identify calls to the graphics layers and operational layers of the GeoView
+  // TODO: can we do something here to search only the layer in the combobox? right now, the user must toggle visibility
+  //       in order to search only their desired layer in the combo of targets. perhaps a model property for selected index
+  auto identify_layers = geoView->identifyLayersAsync(event.position(), m_tolerance, false, 1, this);
+  auto identify_graphics = geoView->identifyGraphicsOverlaysAsync(event.position(), m_tolerance, false, 1, this);
 
+  // respond once all QFutures are complete (includes any cancel or failure as well)
+  QtFuture::whenAll(identify_layers, identify_graphics).then(this, [this](const QList<IdentifyResultsVariant::FutureType> &identify_results)
+  {
+    // abort if tool is no longer the active tool
+    if (!isActive())
+      return;
+
+    // iterate over each type in the results variant
+    for (const IdentifyResultsVariant::FutureType& identify_result : identify_results)
+    {
+      if (identify_result.index() == IdentifyResultsVariant::Types::LAYERS)
+      {
+        LayerResultsManager resultsManager(std::get<IdentifyResultsVariant::Types::LAYERS>(identify_result).result());
+        for (auto* result : resultsManager.m_results)
+        {
+          if (!result)
+            continue;
+
+          const auto& layerName = result->layerContent()->name();
+          for (auto* geoElement : result->geoElements())
+          {
+            if (!geoElement)
+              continue;
+
+            auto* attributes = geoElement->attributes();
+            if (!attributes)
+              continue;
+
+            // check for the type of GeoElement
+            if (auto* observation = dynamic_cast<DynamicEntityObservation*>(geoElement); observation)
+            {
+              emit pickedElement(layerName, observation->dynamicEntity()->entityId());
+              observation->deleteLater();
+              return;
+            }
+            else if (auto* feature = dynamic_cast<Feature*>(geoElement); feature)
+            {
+              auto* table = feature->featureTable();
+              if (!table)
+                continue;
+
+              auto primaryKeyField = primaryKeyFieldName(table);
+              if (primaryKeyField.isEmpty())
+                continue;
+
+              if (!attributes->containsAttribute(primaryKeyField))
+                continue;
+
+              emit pickedElement(layerName, attributes->attributeValue(primaryKeyField).toInt());
+              return;
+            }
+          }
+        }
+      }
+      else if (identify_result.index() == IdentifyResultsVariant::Types::GRAPHICS)
+      {
+        GraphicsOverlaysResultsManager resultsManager(std::get<IdentifyResultsVariant::Types::GRAPHICS>(identify_result).result());
+        for (auto* result : resultsManager.m_results)
+        {
+          if (!result)
+            continue;
+
+          for (auto* graphic : result->graphics())
+          {
+            if (!graphic || !graphic->graphicsOverlay() || !graphic->graphicsOverlay()->graphics())
+              continue;
+
+            emit pickedElement(result->graphicsOverlay()->overlayId(), graphic->graphicsOverlay()->graphics()->indexOf(graphic));
+            return;
+          }
+        }
+      }
+    }
+
+    // if the execution makes it to this point, then nothing was found
+    emit pickedElement(QStringLiteral(""), -1);
+  });
+
+  togglePickMode();
   event.accept();
-}
-
-/*!
-  \brief internal
-
-  Handle the result of an identify layers task.
- */
-void AlertConditionsController::onIdentifyLayersCompleted(const QUuid& taskId, QList<IdentifyLayerResult*> identifyResults)
-{
-  if (taskId != m_identifyLayersWatcher.taskId())
-    return;
-
-  LayerResultsManager resultsManager(identifyResults);
-
-  if (!isActive())
-    return;
-
-  m_identifyLayersWatcher = TaskWatcher();
-
-  auto it = resultsManager.m_results.begin();
-  auto itEnd = resultsManager.m_results.end();
-  for (; it != itEnd; ++it)
-  {
-    IdentifyLayerResult* res = *it;
-    if (!res)
-      continue;
-
-    const QString layerName = res->layerContent()->name();
-
-    const QList<GeoElement*> geoElements = res->geoElements();
-    auto geoElemIt = geoElements.begin();
-    auto geoElemEnd = geoElements.end();
-    for (; geoElemIt != geoElemEnd; ++geoElemIt)
-    {
-      GeoElement* geoElement = *geoElemIt;
-      if (!geoElement)
-        continue;
-
-      AttributeListModel* atts = geoElement->attributes();
-      if (!atts)
-        return;
-
-      Feature* feature = dynamic_cast<Feature*>(geoElement);
-      if (!feature)
-        continue;
-
-      FeatureTable* table = feature->featureTable();
-      if (!table)
-        continue;
-
-      QString primaryKeyField = primaryKeyFieldName(table);
-
-      if (primaryKeyField.isEmpty())
-        continue;
-
-      if (!atts->containsAttribute(primaryKeyField))
-        continue;
-
-      m_identifyGraphicsWatcher.cancel();
-      m_identifyGraphicsWatcher = TaskWatcher();
-      emit pickedElement(layerName, atts->attributeValue(primaryKeyField).toInt());
-
-      break;
-    }
-  }
-
-  if (!m_identifyGraphicsWatcher.isValid() || m_identifyGraphicsWatcher.isDone() || m_identifyGraphicsWatcher.isCanceled())
-    togglePickMode();
-}
-
-/*!
-  \brief internal
-
-  Handle the result of an identify graphic overlays task.
- */
-void AlertConditionsController::onIdentifyGraphicsOverlaysCompleted(const QUuid& taskId, QList<IdentifyGraphicsOverlayResult*> identifyResults)
-{
-  if (taskId != m_identifyGraphicsWatcher.taskId())
-    return;
-
-  GraphicsOverlaysResultsManager resultsManager(identifyResults);
-
-  if (!isActive())
-    return;
-
-  m_identifyGraphicsWatcher = TaskWatcher();
-
-  auto it = resultsManager.m_results.begin();
-  auto itEnd = resultsManager.m_results.end();
-  for (; it != itEnd; ++it)
-  {
-    IdentifyGraphicsOverlayResult* res = *it;
-    if (!res)
-      continue;
-
-    const QString overlayName = res->graphicsOverlay()->overlayId();
-
-    const QList<Graphic*> graphics = res->graphics();
-    auto graphicsIt = graphics.begin();
-    auto graphicsEnd = graphics.end();
-    for (; graphicsIt != graphicsEnd; ++graphicsIt)
-    {
-      Graphic* graphic = *graphicsIt;
-      if (!graphic || !graphic->graphicsOverlay() || !graphic->graphicsOverlay()->graphics())
-        continue;
-
-      const int index = graphic->graphicsOverlay()->graphics()->indexOf(graphic);
-
-      m_identifyLayersWatcher.cancel();
-      m_identifyLayersWatcher = TaskWatcher();
-      emit pickedElement(overlayName, index);
-
-      break;
-    }
-  }
-
-  if (!m_identifyLayersWatcher.isValid() || m_identifyLayersWatcher.isDone() || m_identifyLayersWatcher.isCanceled())
-    togglePickMode();
 }
 
 void AlertConditionsController::handleNewAlertConditionData(AlertConditionData* newConditionData)
 {
   if (!newConditionData)
     return;
-
   AlertListModel::instance()->addAlertConditionData(newConditionData);
 }
 
@@ -913,10 +928,11 @@ QJsonObject AlertConditionsController::conditionToJson(AlertCondition* condition
 
   Returns \c true if successful, \c false if not.
  */
-bool AlertConditionsController::addConditionFromJson(const QJsonObject& json)
+QFuture<bool> AlertConditionsController::addConditionFromJson(const QJsonObject& json)
 {
+  const auto future_false = QtFuture::makeReadyFuture(false);
   if (json.isEmpty())
-    return false;
+    return future_false;
 
   auto findString = [json](const QString& key)
   {
@@ -929,32 +945,32 @@ bool AlertConditionsController::addConditionFromJson(const QJsonObject& json)
 
   const QString conditionType = findString(AlertConstants::CONDITION_TYPE);
   if (conditionType.isEmpty())
-    return false;
+    return future_false;
 
   const bool isAttributeEquals = conditionType == AlertConstants::attributeEqualsAlertConditionType();
   const bool isWithinArea = conditionType == AlertConstants::withinAreaAlertConditionType();
   const bool isWithinDistance = conditionType == AlertConstants::withinDistanceAlertConditionType();
 
   if (!isAttributeEquals && !isWithinArea && !isWithinDistance)
-    return false;
+    return future_false;
 
   auto levelIt = json.constFind(AlertConstants::CONDITION_LEVEL);
   if (levelIt == json.constEnd())
-    return false;
+    return future_false;
 
   const int level = levelIt.value().toInt(0);
 
   const QString conditionName = findString(AlertConstants::CONDITION_NAME);
   if (conditionName.isEmpty())
-    return false;
+    return future_false;
 
   const QString sourceString = findString(AlertConstants::CONDITION_SOURCE);
   if (sourceString.isEmpty())
-    return false;
+    return future_false;
 
   const QString targetString = findString(AlertConstants::CONDITION_TARGET);
   if (targetString.isEmpty())
-    return false;
+    return future_false;
 
   QJsonObject queryObject = json.value(AlertConstants::CONDITION_QUERY).toObject();
   const QVariantMap queryComponents = queryObject.toVariantMap();
@@ -963,7 +979,7 @@ bool AlertConditionsController::addConditionFromJson(const QJsonObject& json)
   {
     const QString attributeName = AttributeEqualsAlertCondition::attributeNameFromQueryComponents(queryComponents);
     if (attributeName.isEmpty())
-      return false;
+      return future_false;
 
     return addAttributeEqualsAlert(conditionName, level, sourceString, attributeName, targetString );
   }
@@ -981,33 +997,37 @@ bool AlertConditionsController::addConditionFromJson(const QJsonObject& json)
       itemId = itemString.toInt(&ok);
 
       if (itemId == -1 || !ok)
-        return false;
+        return future_false;
     }
 
     int targetOverlayIndex = m_targetNames->stringList().indexOf(targetOverlayName);
     if (targetOverlayIndex == -1)
-      return false;
+      return future_false;
 
     QString targetDescription;
-    AlertTarget* target = targetFromItemIdAndIndex(itemId, targetOverlayIndex, targetDescription);
-    if (!target)
-      return false;
-
-    if (isWithinArea)
+    return targetFromItemIdAndOverlayName(itemId, targetOverlayName, targetDescription).then(QtFuture::Launch::Sync, [=](AlertTarget* target) -> QFuture<bool>
     {
-      return addWithinAreaAlert(conditionName, level, sourceString, itemId, targetOverlayIndex );
-    }
-    else if (isWithinDistance)
-    {
-      const double distance = WithinDistanceAlertCondition::getDistanceFromQueryComponents(queryComponents);
-      if (distance == -1.0)
-        return false;
+      if (!target)
+        return future_false;
 
-      return addWithinDistanceAlert(conditionName, level, sourceString, distance, itemId, targetOverlayIndex);
-    }
+      if (isWithinArea)
+      {
+        return addWithinAreaAlert(conditionName, level, sourceString, itemId, targetOverlayName);
+      }
+      else if (isWithinDistance)
+      {
+        const double distance = WithinDistanceAlertCondition::getDistanceFromQueryComponents(queryComponents);
+        if (distance == -1.0)
+          return future_false;
+
+        return addWithinDistanceAlert(conditionName, level, sourceString, distance, itemId, targetOverlayName);
+      }
+      else
+        return future_false;
+    }).unwrap();
   }
 
-  return false;
+  return future_false;
 }
 
 /*!
@@ -1017,37 +1037,63 @@ bool AlertConditionsController::addConditionFromJson(const QJsonObject& json)
  */
 void AlertConditionsController::addStoredConditions()
 {
-  QList<QJsonObject> addedConditions;
-  auto it = m_storedConditions.constBegin();
-  auto itEnd = m_storedConditions.constEnd();
-  for (; it != itEnd; ++it)
+  // block signals while we are adding each stored condition
+  this->blockSignals(true);
+  QList<QFuture<bool>> addStoredConditionFutures;
+  for (auto it = m_storedConditions.rbegin(); it != m_storedConditions.rend(); it++)
   {
-    // block signals while we are adding each stored condition
-    QSignalBlocker blocker(this);
-    Q_UNUSED(blocker)
-    const QJsonObject& stored = *it;
-    if (addConditionFromJson(stored))
-      addedConditions.append(stored);
+    // add this future to the list
+    addStoredConditionFutures.append(addConditionFromJson(*it));
   }
 
-  for (const QJsonObject& added : addedConditions)
-    m_storedConditions.removeOne(added);
+  // skip the when all if nothing was added
+  if (addStoredConditionFutures.count() == 0)
+  {
+    this->blockSignals(false);
+    return;
+  }
 
-  // emit once for all conditions (including stored)
-  onConditionsChanged();
+  // call the completion handler for all adds
+  QtFuture::whenAll(addStoredConditionFutures.rbegin(), addStoredConditionFutures.rend()).then(this, [this](const QList<QFuture<bool>> addStoredConditions)
+  {
+    // store the index of any condition that was successfully added
+    int currentConditionId = addStoredConditions.size() - 1;
+    for (auto it = addStoredConditions.rbegin(); it != addStoredConditions.rend(); it++)
+    {
+      if (it->result())
+        m_storedConditions.removeAt(currentConditionId);
+      currentConditionId--;
+    }
+
+    // emit once for all conditions (including stored)
+    this->blockSignals(false);
+    onConditionsChanged();
+  });
+}
+
+bool AlertConditionsController::conditionAlreadyAdded(const QString& conditionName)
+{
+  for (auto i = 0; i < m_conditions->rowCount(); i++)
+  {
+    const auto* condition = m_conditions->conditionAt(i);
+    if (condition->name() == conditionName)
+      return true;
+  }
+  return false;
 }
 
 /*!
   \brief internal
  */
-AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int targetOverlayIndex, QString& targetDescription) const
+QFuture<AlertTarget*> AlertConditionsController::targetFromItemIdAndOverlayName(int itemId, const QString& targetOverlayName, QString& targetDescription) const
 {
   GeoView* geoView = ToolResourceProvider::instance()->geoView();
+  AlertTarget* target = nullptr;
+  const auto future_null_target = QtFuture::makeReadyFuture(target);
   if (!geoView)
-    return nullptr;
+    return future_null_target;
 
-  int currIndex = -1;
-  LayerListModel* operationalLayers = ToolResourceProvider::instance()->operationalLayers();
+  auto* operationalLayers = ToolResourceProvider::instance()->operationalLayers();
   if (operationalLayers)
   {
     const int opLayersCount = operationalLayers->rowCount();
@@ -1057,26 +1103,39 @@ AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int
       if (!layer)
         continue;
 
-      FeatureLayer* featLayer = qobject_cast<FeatureLayer*>(layer);
-      if (!featLayer)
-        continue;
-
-      currIndex++;
-
-      if (currIndex == targetOverlayIndex)
+      if (layer->name() == targetOverlayName)
       {
-        if (itemId == -1)
+        if (FeatureLayer* featureLayer = qobject_cast<FeatureLayer*>(layer); featureLayer)
         {
-          if (!m_layerTargets.contains(featLayer->name()))
-            m_layerTargets.insert(featLayer->name(), new FeatureLayerAlertTarget(featLayer));
+          if (itemId == -1)
+          {
+            if (!m_layerTargets.contains(featureLayer->name()))
+              m_layerTargets.insert(featureLayer->name(), new FeatureLayerAlertTarget(featureLayer));
 
-          targetDescription = featLayer->name();
-          return m_layerTargets.value(featLayer->name(), nullptr);
+            targetDescription = featureLayer->name();
+            return QtFuture::makeReadyFuture(m_layerTargets.value(featureLayer->name(), nullptr));
+          }
+          else
+          {
+            targetDescription = QString("%1 [%2]").arg(featureLayer->name(), QString::number(itemId));
+            return targetFromFeatureLayer(featureLayer, itemId);
+          }
         }
-        else
+        else if (MessagesOverlay* messagesOverlay = qobject_cast<MessagesOverlay*>(layer); messagesOverlay)
         {
-          targetDescription = QString("%1 [%2]").arg(featLayer->name(), QString::number(itemId));
-          return targetFromFeatureLayer(featLayer, itemId);
+          if (itemId == -1)
+          {
+            if (!m_layerTargets.contains(messagesOverlay->name()))
+              m_layerTargets.insert(messagesOverlay->name(), new MessagesOverlayAlertTarget(messagesOverlay));
+
+            targetDescription = messagesOverlay->name();
+            return QtFuture::makeReadyFuture(m_layerTargets.value(messagesOverlay->name(), nullptr));
+          }
+          else
+          {
+            targetDescription = QString("%1 [%2]").arg(messagesOverlay->name(), QString::number(itemId));
+            return QtFuture::makeReadyFuture(targetFromMessagesOverlay(messagesOverlay, itemId));
+          }
         }
       }
     }
@@ -1095,16 +1154,15 @@ AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int
       if (overlay->overlayId().isEmpty())
         continue;
 
-      ++currIndex;
-
-      if (currIndex != targetOverlayIndex)
-        continue;
-
-      if (overlay->overlayId() == QStringLiteral("SCENEVIEWLOCATIONOVERLAY"))
+      if (overlay->overlayId() == AppConstants::LAYER_NAME_SCENEVIEW_LOCATION)
       {
         targetDescription = AlertConstants::MY_LOCATION;
-        return m_locationTarget;
+        auto* target = static_cast<AlertTarget*>(m_locationTarget);
+        return QtFuture::makeReadyFuture(target);
       }
+
+      if (overlay->overlayId() != targetOverlayName)
+        continue;
 
       const QString overlayIdOrName = m_messageFeedTypesToNames.value(overlay->overlayId(), overlay->overlayId());
 
@@ -1114,58 +1172,46 @@ AlertTarget* AlertConditionsController::targetFromItemIdAndIndex(int itemId, int
           m_overlayTargets.insert(overlayIdOrName, new GraphicsOverlayAlertTarget(overlay));
 
         targetDescription = overlayIdOrName;
-        return m_overlayTargets.value(overlayIdOrName, nullptr);
+        return QtFuture::makeReadyFuture(m_overlayTargets.value(overlayIdOrName, nullptr));
       }
       else
       {
         targetDescription = QString("%1 [%2]").arg(overlayIdOrName, QString::number(itemId));
-        return targetFromGraphicsOverlay(overlay, itemId);
+        return QtFuture::makeReadyFuture(targetFromGraphicsOverlay(overlay, itemId));
       }
     }
   }
 
-  return nullptr;
+  return future_null_target;
 }
 
 /*!
   \brief internal
  */
-AlertTarget* AlertConditionsController::targetFromFeatureLayer(FeatureLayer* featureLayer, int itemId) const
+QFuture<AlertTarget*> AlertConditionsController::targetFromFeatureLayer(FeatureLayer* featureLayer, int itemId) const
 {
+  AlertTarget* target = nullptr;
+  const auto future_null_target = QtFuture::makeReadyFuture(target);
   FeatureTable* tab = featureLayer->featureTable();
   if (!tab)
-    return nullptr;
+    return future_null_target;
 
   const QString primaryKey = primaryKeyFieldName(tab);
 
   QueryParameters qp;
   qp.setWhereClause(QString("\"%1\" = %2").arg(primaryKey, QString::number(itemId)));
-
-  QEventLoop loop;
-  tab->queryFeatures(qp);
-
-  connect(tab, &FeatureTable::errorOccurred, this, [&loop](Error)
+  auto* non_const_this = const_cast<AlertConditionsController*>(this);
+  return tab->queryFeaturesAsync(qp, non_const_this).then(non_const_this, [future_null_target](FeatureQueryResult* results) -> QFuture<AlertTarget*>
   {
-    loop.quit();
-  });
+    auto* feature = results->iterator().next();
 
-  Feature* feature = nullptr;
-  auto connection = loop.connect(tab, &FeatureTable::queryFeaturesCompleted, this, [&loop, &feature](QUuid, FeatureQueryResult* featureQueryResult)
-  {
-    loop.quit();
+    if (!feature)
+      return future_null_target;
 
-    if (featureQueryResult)
-      feature = featureQueryResult->iterator().next();
-  });
-
-  loop.exec();
-
-  disconnect(connection);
-
-  if (!feature)
-    return nullptr;
-
-  return new GeoElementAlertTarget(feature);
+    // capture the new GeoElementAlertTarget here as the parent type
+    AlertTarget* target = new GeoElementAlertTarget(feature);
+    return QtFuture::makeReadyFuture(target);
+  }).unwrap();
 }
 
 /*!
@@ -1185,6 +1231,18 @@ AlertTarget* AlertConditionsController::targetFromGraphicsOverlay(GraphicsOverla
     return nullptr;
 
   return new GeoElementAlertTarget(g);
+}
+
+AlertTarget* AlertConditionsController::targetFromMessagesOverlay(MessagesOverlay* messagesOverlay, int itemId) const
+{
+  if (!messagesOverlay)
+    return nullptr;
+
+  auto* e = messagesOverlay->getDynamicEntityById(itemId);
+  if (!e)
+    return nullptr;
+
+  return new GeoElementAlertTarget(e);
 }
 
 /*!
@@ -1213,6 +1271,28 @@ GraphicsOverlay* AlertConditionsController::graphicsOverlayFromName(const QStrin
 
       if (overlayId == overlay->overlayId())
         return overlay;
+    }
+  }
+
+  return nullptr;
+}
+
+/*!
+  \brief internal
+ */
+MessagesOverlay* AlertConditionsController::messagesOverlayFromName(const QString& layerName)
+{
+  auto* operationalLayers = ToolResourceProvider::instance()->operationalLayers();
+  if (!operationalLayers)
+    return nullptr;
+
+  const QString& layerId = m_messageFeedTypesToNames.key(layerName, layerName);
+  for (auto* layer : *operationalLayers)
+  {
+    if (auto* messagesOverlay = qobject_cast<MessagesOverlay*>(layer); messagesOverlay)
+    {
+      if (messagesOverlay->layerId() == layerId)
+        return messagesOverlay;
     }
   }
 

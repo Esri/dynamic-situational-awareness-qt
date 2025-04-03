@@ -17,26 +17,23 @@
 #ifndef VIEWSHEDCONTROLLER_H
 #define VIEWSHEDCONTROLLER_H
 
-// toolkit headers
-#include "AbstractTool.h"
-
-// C++ API headers
-#include "TaskWatcher.h"
-
 // Qt headers
-#include <QAbstractListModel>
+#include <qtmetamacros.h>
+class QAbstractListModel;
+Q_MOC_INCLUDE("qabstractitemmodel.h")
+
+// DSA headers
+#include "AbstractTool.h"
 
 class QMouseEvent;
 
-namespace Esri {
-  namespace ArcGISRuntime {
-    class SceneView;
-    class AnalysisOverlay;
-    class GeoElement;
-    class GlobeCameraController;
-    class GraphicsOverlay;
-    class OrbitLocationCameraController;
-  }
+namespace Esri::ArcGISRuntime {
+  class SceneView;
+  class AnalysisOverlay;
+  class GeoElement;
+  class GlobeCameraController;
+  class GraphicsOverlay;
+  class OrbitLocationCameraController;
 }
 
 namespace Dsa {
@@ -183,9 +180,6 @@ private:
   GeoElementViewshed360* m_locationDisplayViewshed = nullptr;
 
   ViewshedActiveMode m_activeMode = ViewshedActiveMode::NoActiveMode;
-
-  Esri::ArcGISRuntime::TaskWatcher m_identifyTaskWatcher;
-  QMetaObject::Connection m_identifyConn;
 
   QList<QMetaObject::Connection> m_activeViewshedConns;
 };

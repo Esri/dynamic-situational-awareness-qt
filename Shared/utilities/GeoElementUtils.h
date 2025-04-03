@@ -21,10 +21,8 @@
 #include <QList>
 #include <QObject>
 
-namespace Esri {
-namespace ArcGISRuntime {
+namespace Esri::ArcGISRuntime {
   class GeoElement;
-}
 }
 
 namespace Dsa {

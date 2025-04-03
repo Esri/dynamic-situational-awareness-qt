@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -20,9 +19,31 @@
 
 #include "DsaController.h"
 
-// dsa app headers
+// C++ API headers
+#include "Camera.h"
+#include "Error.h"
+#include "GeoView.h"
+#include "Layer.h"
+#include "LayerListModel.h"
+#include "Scene.h"
+#include "SelectionProperties.h"
+#include "Viewpoint.h"
+
+// Toolkit headers
+#include "CoordinateConversionConstants.h"
+
+// Qt headers
+#include <QDir>
+#include <QFileInfo>
+#include <QFuture>
+#include <QHostInfo>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QSettings>
+
+// DSA headers
 #include "AlertConstants.h"
-#include "AlertLevel.h"
 #include "AppConstants.h"
 #include "BasemapPickerController.h"
 #include "ContextMenuController.h"
@@ -30,24 +51,8 @@
 #include "LayerCacheManager.h"
 #include "MessageFeedConstants.h"
 #include "OpenMobileScenePackageController.h"
-
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
-
-// toolkit headers
-#include "Esri/ArcGISRuntime/Toolkit/CoordinateConversionConstants.h"
-
-// C++ API headers
-#include "GeoView.h"
-#include "Scene.h"
-
-// Qt headers
-#include <QDir>
-#include <QFileInfo>
-#include <QHostInfo>
-#include <QJsonArray>
-#include <QJsonDocument>
-#include <QSettings>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -341,7 +346,7 @@ void DsaController::setupConfig()
   createDefaultSettings();
 
   // get the app config
-  m_configFilePath = QString("%1/%2").arg(m_dsaSettings["RootDataDirectory"].toString(), QStringLiteral("DsaAppConfig.json"));
+  m_configFilePath = QString("%1/%2").arg(m_dsaSettings["RootDataDirectory"].toString(), DsaUtility::FILE_NAME_APP_CONFIG);
 
   // If the config file does not exist, create it, and set all of the defaults
   if (!QFileInfo::exists(m_configFilePath))
@@ -491,7 +496,7 @@ bool DsaController::isConflictingTool(const QString& toolName) const
 void DsaController::createDefaultSettings()
 {
   // setup the defaults
-  m_dsaSettings["RootDataDirectory"] = DsaUtility::dataPath();
+  m_dsaSettings["RootDataDirectory"] = DsaUtility::activeConfigurationPath();
   m_dsaSettings[AppConstants::USERNAME_PROPERTYNAME] = QHostInfo::localHostName();
   m_dsaSettings["BasemapDirectory"] = QString("%1/BasemapData").arg(m_dsaSettings["RootDataDirectory"].toString());
   m_dsaSettings["ElevationDirectory"] = QString("%1/ElevationData").arg(m_dsaSettings["RootDataDirectory"].toString());
@@ -507,7 +512,7 @@ void DsaController::createDefaultSettings()
   m_dsaSettings[AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME] = AppConstants::UNIT_METERS;
   m_dsaSettings["UseGpsForElevation"] = QStringLiteral("true");
   QJsonObject markupJson;
-  markupJson.insert(QStringLiteral("port"), 12345);
+  markupJson.insert(QStringLiteral("port"), 45680);
   m_dsaSettings[QStringLiteral("MarkupConfig")] = markupJson;
   writeDefaultConditions();
   m_dsaSettings[OpenMobileScenePackageController::PACKAGE_DIRECTORY_PROPERTYNAME] = QString("%1/Packages").arg(m_dsaSettings["RootDataDirectory"].toString());
@@ -582,7 +587,7 @@ void DsaController::updateInitialLocationOnSceneChange(bool isInitialization)
       // Note use of setViewPoint instead of setInitialLocation. The latter
       // only works if the scene is not loaded, but all MSPK scenes are loaded with
       // the MSPK so it can't be used.
-      geoView->setViewpoint(readInitialLocation(), 0);
+      geoView->setViewpointAsync(readInitialLocation(), 0);
     }
     else
     {
@@ -672,7 +677,7 @@ Viewpoint viewpointFromJson(const QJsonObject& initialLocation)
   double initialRoll = rollIt.value().toDouble(0.0);
 
   // Return the initial viewpoint
-  const Camera initCamera(newCenter, initialDistance, initialHeading, initialPitch, initialRoll);
+  const Camera initCamera(geometry_cast<Point>(newCenter), initialDistance, initialHeading, initialPitch, initialRoll);
   Viewpoint initViewpoint(newCenter, initCamera);
   return initViewpoint;
 }

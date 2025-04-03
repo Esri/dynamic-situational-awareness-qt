@@ -17,21 +17,16 @@
 #ifndef NAVIGATIONCONTROLLER_H
 #define NAVIGATIONCONTROLLER_H
 
-// toolkit headers
-#include "AbstractTool.h"
-
 // C++ API headers
 #include "Point.h"
 
-// Qt headers
-#include <QUuid>
+// DSA headers
+#include "AbstractTool.h"
 
-namespace Esri {
-namespace ArcGISRuntime {
+namespace Esri::ArcGISRuntime {
   class Camera;
   class GeoView;
   class SceneView;
-}
 }
 
 namespace Dsa {
@@ -68,7 +63,6 @@ public:
 signals:
   void verticalChanged();
   void zoomFactorChanged();
-  void screenToLocationCompleted(QUuid taskId, Esri::ArcGISRuntime::Point location);
   void cameraMoveDistanceChanged();
 
 private slots:

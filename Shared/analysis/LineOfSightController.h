@@ -17,28 +17,24 @@
 #ifndef LINEOFSIGHTCONTROLLER_H
 #define LINEOFSIGHTCONTROLLER_H
 
-// toolkit headers
+// DSA headers
 #include "AbstractTool.h"
 
-// C++ API headers
-#include "Point.h"
-#include "TaskWatcher.h"
+Q_MOC_INCLUDE("qabstractitemmodel.h")
 
-// Qt headers
-#include <QAbstractItemModel>
+class QAbstractItemModel;
+class QStringListModel;
 
-namespace Esri {
-namespace ArcGISRuntime {
+namespace Esri::ArcGISRuntime {
   class AnalysisOverlay;
   class GeoElement;
+  class GeoElementLineOfSight;
   class GeoView;
+  class Layer;
   class LayerListModel;
   class FeatureLayer;
   class FeatureQueryResult;
 }
-}
-
-class QStringListModel;
 
 namespace Dsa {
 
@@ -60,7 +56,7 @@ public:
 
   QAbstractItemModel* overlayNames() const;
 
-  Q_INVOKABLE bool selectOverlayIndex(int overlayIndex);
+  Q_INVOKABLE void selectOverlayIndex(int overlayIndex);
   Q_INVOKABLE void clearAnalysis();
 
   bool isAnalysisVisible() const;
@@ -77,25 +73,25 @@ signals:
   void overlayNamesChanged();
   void analysisVisibleChanged();
   void visibleByCountChanged();
+  void selectOverlayFailed();
 
 public slots:
   void onGeoViewChanged(Esri::ArcGISRuntime::GeoView* geoView);
   void onOperationalLayersChanged();
 
-private slots:
-  void onQueryFeaturesCompleted(QUuid taskId, Esri::ArcGISRuntime::FeatureQueryResult* featureQueryResult);
-
 private:
   void cancelTask();
   void getLocationGeoElement();
   void setVisibleByCount(int visibleByCount);
+  void updateLayerNames();
+  bool resetAnalysis(qsizetype featureCount);
+  void setupNewLineOfSight(Esri::ArcGISRuntime::GeoElementLineOfSight* lineOfSight);
 
   QStringListModel* m_overlayNames;
   Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
-  QList<Esri::ArcGISRuntime::FeatureLayer*> m_overlays;
+  QList<Esri::ArcGISRuntime::Layer*> m_overlays;
   Esri::ArcGISRuntime::AnalysisOverlay* m_lineOfSightOverlay = nullptr;
-  QObject* m_lineOfSightParent = nullptr;
-  Esri::ArcGISRuntime::TaskWatcher m_featuresTask;
+  std::unique_ptr<QObject> m_lineOfSightParent = std::make_unique<QObject>();
   Esri::ArcGISRuntime::GeoElement* m_locationGeoElement = nullptr;
   QMetaObject::Connection m_queryFeaturesConnection;
   bool m_analysisVisible = true;

@@ -24,9 +24,10 @@
 #include "AlertTarget.h"
 
 // C++ API headers
-#include "GeoElement.h"
+#include "Envelope.h"
 #include "GeometryEngine.h"
 #include "Point.h"
+#include "SpatialReference.h"
 
 using namespace Esri::ArcGISRuntime;
 

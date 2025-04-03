@@ -20,24 +20,14 @@
 
 #include "AddLocalDataController.h"
 
-// dsa app headers
-#include "DataItemListModel.h"
-#include "DsaUtility.h"
-#include "MarkupLayer.h"
-
-// toolkit headers
-#include "ToolManager.h"
-#include "ToolResourceProvider.h"
-
 // C++ API headers
 #include "ArcGISSceneLayer.h"
 #include "ArcGISTiledElevationSource.h"
 #include "ArcGISTiledLayer.h"
 #include "ArcGISVectorTiledLayer.h"
 #include "ElevationSource.h"
-#include "FeatureCollection.h"
-#include "FeatureCollectionLayer.h"
-#include "FeatureCollectionTable.h"
+#include "ElevationSourceListModel.h"
+#include "Error.h"
 #include "FeatureLayer.h"
 #include "GeoPackage.h"
 #include "GeoPackageFeatureTable.h"
@@ -47,12 +37,18 @@
 #include "KmlDataset.h"
 #include "KmlLayer.h"
 #include "LayerListModel.h"
+#include "LayerSceneProperties.h"
 #include "Raster.h"
 #include "RasterElevationSource.h"
 #include "RasterLayer.h"
 #include "Scene.h"
+#include "SceneViewTypes.h"
+#include "ServiceTypes.h"
 #include "ShapefileFeatureTable.h"
+#include "Surface.h"
 #include "TileCache.h"
+#include "TileInfo.h"
+#include "VectorTileCache.h"
 
 // Qt headers
 #include <QDir>
@@ -61,6 +57,13 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QTextStream>
+
+// DSA headers
+#include "DataItemListModel.h"
+#include "DsaUtility.h"
+#include "MarkupLayer.h"
+#include "ToolManager.h"
+#include "ToolResourceProvider.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -96,7 +99,7 @@ AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
   m_localDataModel(new DataItemListModel(this))
 {
   // add the base path to the string list
-  addPathToDirectoryList(DsaUtility::dataPath());
+  addPathToDirectoryList(DsaUtility::activeConfigurationPath());
 
   // create file filter list
   m_fileFilterList = QStringList{allData(), rasterData(), geodatabaseData(),
@@ -809,7 +812,7 @@ void AddLocalDataController::createTiledLayer(const QString& path, int layerInde
     if (operationalLayers)
       operationalLayers->append(vectorTiledLayer);
 
-    emit layerSelected(vectorTiledLayer);    
+    emit layerSelected(vectorTiledLayer);
   }
   else
   {
@@ -842,7 +845,7 @@ void AddLocalDataController::createTiledLayer(const QString& path, int layerInde
     if (operationalLayers)
       operationalLayers->append(kmlLayer);
 
-    emit layerSelected(kmlLayer);    
+    emit layerSelected(kmlLayer);
   }
   else
   {

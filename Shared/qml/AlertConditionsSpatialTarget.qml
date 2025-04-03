@@ -14,11 +14,11 @@
  *  limitations under the License.
  ******************************************************************************/
 
-import QtQuick 2.6
-import QtQuick.Controls 2.1
-import QtQuick.Controls.Material 2.1
-import QtQuick.Window 2.2
-import Esri.ArcGISRuntime.OpenSourceApps.DSA 1.1
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Controls.Material
+import QtQuick.Window
+import Esri.ArcGISRuntime.OpenSourceApps.DSA
 
 Item {
 
@@ -28,6 +28,7 @@ Item {
                          (featureIdEdit.text.length > 0 || allObjectRb.checked)
     property string instruction: "Set target"
     property alias targetIndex: targetCB.currentIndex
+    property alias targetName: targetCB.currentText
     property int targetFeatureId: singleFeatureRb.checked? Number(featureIdEdit.text) : -1
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
 
@@ -129,7 +130,9 @@ Item {
     Connections {
         target: toolController
 
-        function onPickedElement() {
+        function onPickedElement(overlayName, elementId) {
+            targetCB.currentIndex = -1;
+            featureIdEdit.text = "";
             for (var i = 0; i < targetCB.count; ++i) {
                 if (targetCB.textAt(i) === overlayName)
                 {

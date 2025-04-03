@@ -17,18 +17,18 @@
 #ifndef ANALYSISLISTCONTROLLER_H
 #define ANALYSISLISTCONTROLLER_H
 
-// toolkit headers
+// Qt headers
+#include <qtmetamacros.h>
+class QAbstractItemModel;
+Q_MOC_INCLUDE("qabstractitemmodel.h")
+
+// dsa headers
 #include "AbstractTool.h"
 
-// Qt headers
-#include <QAbstractItemModel>
-
-namespace Esri {
-namespace ArcGISRuntime {
+namespace Esri::ArcGISRuntime {
   class GeoView;
   class Point;
   class SceneView;
-}
 }
 
 namespace Dsa {

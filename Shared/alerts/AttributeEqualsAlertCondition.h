@@ -17,11 +17,11 @@
 #ifndef ATTRIBUTEEQUALSALERTCONDITION_H
 #define ATTRIBUTEEQUALSALERTCONDITION_H
 
-// dsa app headers
-#include "AlertCondition.h"
-
 // Qt headers
 #include <QObject>
+
+// dsa Headers
+#include "AlertCondition.h"
 
 namespace Dsa {
 

@@ -19,13 +19,20 @@
 
 #include "AlertCondition.h"
 
-// dsa app headers
-#include "AlertConditionData.h"
-#include "GraphicAlertSource.h"
-
 // C++ API headers
+#include "DynamicEntity.h"
+#include "DynamicEntityDataSource.h"
+#include "DynamicEntityInfo.h"
+#include "Graphic.h"
 #include "GraphicListModel.h"
 #include "GraphicsOverlay.h"
+
+// DSA headers
+#include "AlertConditionData.h"
+#include "AlertListModel.h"
+#include "DynamicEntityAlertSource.h"
+#include "GraphicAlertSource.h"
+#include "MessagesOverlay.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -73,7 +80,7 @@ AlertCondition::AlertCondition(const AlertLevel& level,
   A new \l AlertConditionData will be created to track changes to the
   source and target.
  */
-void AlertCondition::init(AlertSource* source, AlertTarget* target, const QString& sourceDescription, const QString& targetDescription)
+void AlertCondition::init(AlertSource* source, const QString& sourceDescription, AlertTarget* target, const QString& targetDescription)
 {
   if (!source || !target)
     return;
@@ -124,6 +131,37 @@ void AlertCondition::init(GraphicsOverlay* sourceFeed, const QString& sourceDesc
   const int count = graphics->rowCount();
   for (int i = 0; i < count; ++i)
     handleGraphicAt(i);
+}
+
+void AlertCondition::init(MessagesOverlay* sourceFeed, const QString& sourceDescription, AlertTarget* target, const QString& targetDescription)
+{
+  if (!sourceFeed || !target)
+    return;
+
+  m_sourceDescription = sourceDescription;
+  m_targetDescription = targetDescription;
+  const auto* dataSource = sourceFeed->dataSource();
+
+  // create a function to generate a new AlertSource for the DynamicEntity
+  const auto createNewSourceAndAdd = [this, sourceFeed, target](DynamicEntity* dynamicEntity)
+  {
+    auto* source = new DynamicEntityAlertSource(dynamicEntity, sourceFeed);
+    auto* data = createData(source, target);
+    addData(data);
+  };
+
+  // add all the existing DynamicEntities already in the layer as AlertSources
+  for (auto* dynamicEntity : sourceFeed->dynamicEntities())
+  {
+    createNewSourceAndAdd(dynamicEntity);
+  }
+
+  // add a listner to create AlertSource for any new entities added
+  connect(dataSource, &DynamicEntityDataSource::dynamicEntityReceived, this, [createNewSourceAndAdd](DynamicEntityInfo* info)
+  {
+    createNewSourceAndAdd(info->dynamicEntity());
+    info->deleteLater();
+  });
 }
 
 /*!

@@ -24,10 +24,13 @@
 #include "AlertTarget.h"
 
 // C++ API headers
-#include "GeoElement.h"
+#include "AngularUnit.h"
+#include "Envelope.h"
 #include "GeometryEngine.h"
-#include "Graphic.h"
+#include "LinearUnit.h"
 #include "Point.h"
+#include "Polygon.h"
+#include "SpatialReference.h"
 
 // STL headers
 #include <cmath>

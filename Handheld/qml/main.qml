@@ -14,15 +14,14 @@
  *  limitations under the License.
  ******************************************************************************/
 
-import QtQuick 2.9
-import QtQuick.Controls 2.2
-import QtQuick.Controls.Material 2.2
-import QtQuick.Window 2.2
-import QtQml.Models 2.2
-import QtGraphicalEffects 1.0
-import Esri.ArcGISRuntime.OpenSourceApps.DSA 1.1
-import Esri.ArcGISRuntime.OpenSourceApps.Handheld 1.1
-import Esri.ArcGISRuntime.Toolkit 100.10 as Toolkit
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Controls.Material
+import QtQuick.Window
+import QtQml.Models
+import Esri.ArcGISRuntime.OpenSourceApps.DSA
+import Esri.ArcGISRuntime.OpenSourceApps.Handheld
+import Esri.ArcGISRuntime.Toolkit as Toolkit
 
 Handheld {
     id: appRoot
@@ -34,6 +33,7 @@ Handheld {
     property real hudOpacity: 0.9
     property real hudRadius: 3 * scaleFactor
     property real hudMargins: 5 * scaleFactor
+    property bool configurationsChanged: false
 
     signal clearDialogAccepted();
     signal closeDialogAccepted();
@@ -43,6 +43,10 @@ Handheld {
     LocationController {
         id: locationController
         enabled: true
+    }
+
+    ConfigurationController {
+        id: configurationController
     }
 
     PrimaryToolbar {
@@ -526,7 +530,7 @@ Handheld {
         visible: false
     }
 
-    onErrorOccurred: {
+    onErrorOccurred: (message) => {
         // if the parent is null, the app is in a loading state and not yet ready to display errors
         if (parent) {
             msgDialog.informativeText = message;
@@ -540,6 +544,15 @@ Handheld {
     onParentChanged: {
         if (parent && msgDialog.informativeText.length > 0)
             msgDialog.open();
+
+        // skip if for any reason this method is called again
+        if (configurationsChanged)
+            return;
+
+        // set the skip flag on first run and prompt for download if nothing was available on device
+        configurationsChanged = true;
+        if (parent && !configurationController.configurationIsAvailable)
+            configurationDownloadDialog.open()
     }
 
     DsaMessageDialog {
@@ -599,5 +612,18 @@ Handheld {
 
         onAccepted: markupLayerReceived(path, true);
         onRejected: markupLayerReceived(path, false);
+    }
+
+    DsaYesNoDialog {
+        id: configurationDownloadDialog
+        informativeText: "Download the default configuration data from Esri (~450mb)?"
+        onAccepted: showConfigurations(true);
+        onRejected: showConfigurations(false);
+    }
+    function showConfigurations(downloadDefaultData) {
+        if (downloadDefaultData)
+            configurationController.downloadDefaultData();
+
+        optionsTool.showConfigurationsTab();
     }
 }

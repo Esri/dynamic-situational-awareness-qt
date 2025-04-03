@@ -17,19 +17,18 @@
 #ifndef LOCATIONDISPLAY3D_H
 #define LOCATIONDISPLAY3D_H
 
-// C++ API headers
-#include "Point.h"
-
 // Qt headers
 #include <QObject>
 
-namespace Esri {
-namespace ArcGISRuntime {
+// C++ API headers
+#include "Point.h"
+
+namespace Esri::ArcGISRuntime {
   class Graphic;
   class GraphicsOverlay;
   class Symbol;
   class SimpleRenderer;
-}}
+}
 
 class QGeoPositionInfoSource;
 class QCompass;

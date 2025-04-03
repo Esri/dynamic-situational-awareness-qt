@@ -21,15 +21,9 @@
 #include <QString>
 #include <QVariantMap>
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
-
-class Error;
-class Point;
-
-}
+namespace Esri::ArcGISRuntime {
+  class Error;
+  class Point;
 }
 
 namespace Dsa

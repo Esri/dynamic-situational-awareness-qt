@@ -21,13 +21,9 @@
 #include <QObject>
 #include <QVariant>
 
-namespace Esri
-{
-namespace ArcGISRuntime
-{
+namespace Esri::ArcGISRuntime {
   class Envelope;
   class Geometry;
-}
 }
 
 namespace Dsa {

@@ -22,9 +22,6 @@
 // dsa app headers
 #include "Viewshed360.h"
 
-// C++ API headers
-#include "AnalysisOverlay.h"
-
 using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {

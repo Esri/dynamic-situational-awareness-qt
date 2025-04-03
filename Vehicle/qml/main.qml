@@ -14,14 +14,14 @@
  *  limitations under the License.
  ******************************************************************************/
 
-import QtQuick 2.9
-import QtQuick.Controls 2.2
-import QtQuick.Controls.Material 2.2
-import QtQuick.Window 2.2
-import QtQml.Models 2.2
-import Esri.ArcGISRuntime.OpenSourceApps.DSA 1.1
-import Esri.ArcGISRuntime.OpenSourceApps.Vehicle 1.1
-import Esri.ArcGISRuntime.Toolkit 100.10 as Toolkit
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Controls.Material
+import QtQuick.Window
+import QtQml.Models
+import Esri.ArcGISRuntime.OpenSourceApps.DSA
+import Esri.ArcGISRuntime.OpenSourceApps.Vehicle
+import Esri.ArcGISRuntime.Toolkit as Toolkit
 
 Vehicle {
     id: appRoot
@@ -38,10 +38,15 @@ Vehicle {
     signal closeDialogAccepted();
     signal inputDialogAccepted(var input, var index);
     signal markupLayerReceived(var path, var overlayVisible);
+    property bool configurationsChanged: false
 
     LocationController {
         id: locationController
         enabled: true
+    }
+
+    ConfigurationController {
+        id: configurationController
     }
 
     PrimaryToolbar {
@@ -237,7 +242,7 @@ Vehicle {
                 bottom: sceneView.attributionTop
             }
             width: 56 * scaleFactor
-            appTitle: "DSA - V"            
+            appTitle: "DSA - V"
 
             onSettingsClicked: optionsTool.visible = true;
             onAboutClicked: aboutTool.visible = true;
@@ -501,7 +506,7 @@ Vehicle {
         }
     }
 
-    onErrorOccurred: {
+    onErrorOccurred: (message) => {
         // if the parent is null, the app is in a loading state and not yet ready to display errors
         msgDialog.title = "Error"
         if (parent) {
@@ -516,6 +521,15 @@ Vehicle {
     onParentChanged: {
         if (parent && msgDialog.informativeText.length > 0)
             msgDialog.open();
+
+        // skip if for any reason this method is called again
+        if (configurationsChanged)
+            return;
+
+        // set the skip flag on first run and prompt for download if nothing was available on device
+        configurationsChanged = true;
+        if (parent && !configurationController.configurationIsAvailable)
+            configurationDownloadDialog.open()
     }
 
     Options {
@@ -581,5 +595,18 @@ Vehicle {
 
         onAccepted: markupLayerReceived(path, true);
         onRejected: markupLayerReceived(path, false);
+    }
+
+    DsaYesNoDialog {
+        id: configurationDownloadDialog
+        informativeText: "Download the default configuration data from Esri (~450mb)?"
+        onAccepted: showConfigurations(true);
+        onRejected: showConfigurations(false);
+    }
+    function showConfigurations(downloadDefaultData) {
+        if (downloadDefaultData)
+            configurationController.downloadDefaultData();
+
+        optionsTool.showConfigurationsTab();
     }
 }

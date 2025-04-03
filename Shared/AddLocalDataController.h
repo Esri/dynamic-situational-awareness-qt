@@ -17,18 +17,18 @@
 #ifndef ADDLOCALDATACONTROLLER_H
 #define ADDLOCALDATACONTROLLER_H
 
-// toolkit headers
-#include "AbstractTool.h"
-
 // Qt headers
-#include <QAbstractListModel>
 #include <QStringList>
 
-namespace Esri {
-namespace ArcGISRuntime {
+class QAbstractListModel;
+Q_MOC_INCLUDE("qabstractitemmodel.h")
+
+// DSA headers
+#include "AbstractTool.h"
+
+namespace Esri::ArcGISRuntime {
   class Layer;
   class ElevationSource;
-}
 }
 
 namespace Dsa {

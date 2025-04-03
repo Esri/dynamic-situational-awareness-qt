@@ -14,12 +14,12 @@
  *  limitations under the License.
  ******************************************************************************/
 
-import QtQuick 2.9
-import QtQuick.Controls 2.2
-import QtQuick.Controls.Material 2.2
-import QtQuick.Window 2.2
-import QtQuick.Layouts 1.3
-import Esri.ArcGISRuntime.OpenSourceApps.DSA 1.1
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Controls.Material
+import QtQuick.Window
+import QtQuick.Layouts
+import Esri.ArcGISRuntime.OpenSourceApps.DSA
 
 Item {
     id: aboutRoot
@@ -105,7 +105,7 @@ Item {
 
             Text {
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: "Built with ArcGIS Runtime SDK 100.9 for Qt"
+                text: "Built with ArcGIS Maps SDK %1 for Qt".arg(DsaResources.arcGISMapsSDKVersion)
                 color: Material.foreground
                 font {
                     pixelSize: 12 * scaleFactor

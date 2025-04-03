@@ -17,17 +17,15 @@
 #ifndef POINTHIGHLIGHTER_H
 #define POINTHIGHLIGHTER_H
 
-// C++ API headers
-#include "Point.h"
-
 // Qt headers
 #include <QObject>
 
-namespace Esri {
-namespace ArcGISRuntime {
-class GraphicsOverlay;
-class SimpleMarkerSceneSymbol;
-}
+// C++ API headers
+#include "Point.h"
+
+namespace Esri::ArcGISRuntime {
+  class GraphicsOverlay;
+  class SimpleMarkerSceneSymbol;
 }
 
 class QTimer;

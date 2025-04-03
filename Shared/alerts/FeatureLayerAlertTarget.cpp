@@ -19,12 +19,21 @@
 
 #include "FeatureLayerAlertTarget.h"
 
-// dsa app headers
+// C++ API headers
+#include "Envelope.h"
+#include "Feature.h"
+#include "FeatureIterator.h"
+#include "FeatureLayer.h"
+#include "FeatureQueryResult.h"
+#include "FeatureTable.h"
+#include "QueryParameters.h"
+
+// Qt headers
+#include <QFuture>
+
+// DSA headers
 #include "FeatureQueryResultManager.h"
 #include "GeometryQuadtree.h"
-
-// C++ API headers
-#include "FeatureLayer.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -56,9 +65,36 @@ FeatureLayerAlertTarget::FeatureLayerAlertTarget(FeatureLayer* featureLayer):
   QueryParameters allFeaturesQuery;
   allFeaturesQuery.setWhereClause("1=1");
   allFeaturesQuery.setReturnGeometry(true);
+  table->queryFeaturesAsync(allFeaturesQuery).then(this, [this](FeatureQueryResult* featureQueryResult)
+  {
+    // Store the results in a RAII manager to ensure they are cleaned up
+    FeatureQueryResultManager results(featureQueryResult);
+    if (!results.m_results)
+    {
+      emit dataChanged();
+      return;
+    }
 
-  connect(table, &FeatureTable::queryFeaturesCompleted, this, &FeatureLayerAlertTarget::handleQueryFeaturesCompleted);
-  table->queryFeatures(allFeaturesQuery);
+    // cache all of the features
+    m_geomCache.clear();
+    m_features = results.m_results->iterator().features(this);
+    for (auto* feature : m_features)
+    {
+      if (!feature)
+        continue;
+
+      // for each feature, connect to the geometryChanged signal
+      connect(feature, &Feature::geometryChanged, this, [this]()
+      {
+        m_geomCache.clear();
+        rebuildQuadtree();
+        emit dataChanged();
+      });
+    }
+
+    rebuildQuadtree();
+    emit dataChanged();
+  });
 }
 
 /*!
@@ -85,15 +121,12 @@ QList<Geometry> FeatureLayerAlertTarget::targetGeometries(const Envelope& target
     return m_geomCache;
 
   // if there is no cached geometry, get the geometry for all features
-  auto it = m_features.begin();
-  auto itEnd = m_features.end();
-  for (; it != itEnd; ++it)
+  for (auto* feature : m_features)
   {
-    Feature* feat = *it;
-    if (!feat)
+    if (!feature)
       continue;
 
-    m_geomCache.append(feat->geometry());
+    m_geomCache.append(feature->geometry());
   }
 
   return m_geomCache;
@@ -104,46 +137,7 @@ QList<Geometry> FeatureLayerAlertTarget::targetGeometries(const Envelope& target
  */
 QVariant FeatureLayerAlertTarget::targetValue() const
 {
-  return QVariant();
-}
-
-/*!
-  \brief internal.
-
-  Handle the query to obtain all of the features in the layer.
- */
-void FeatureLayerAlertTarget::handleQueryFeaturesCompleted(QUuid, FeatureQueryResult* queryResults)
-{
-  // Store the results in a RAII manager to ensure they are cleaned up
-  FeatureQueryResultManager results(queryResults);
-  if (!results.m_results)
-  {
-    emit dataChanged();
-    return;
-  }
-
-  // cache all of the features
-  m_geomCache.clear();
-  m_features = results.m_results->iterator().features(this);
-  auto it = m_features.begin();
-  auto itEnd = m_features.end();
-  for (; it != itEnd; ++it)
-  {
-    Feature* feature = *it;
-    if (!feature)
-      continue;
-
-    // for each feature, connect to the geometryChanged signal
-    connect(feature, &Feature::geometryChanged, this, [this]()
-    {
-      m_geomCache.clear();
-      rebuildQuadtree();
-      emit dataChanged();
-    });
-  }
-
-  rebuildQuadtree();
-  emit dataChanged();
+  return QVariant{};
 }
 
 /*!

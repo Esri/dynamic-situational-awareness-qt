@@ -17,23 +17,19 @@
 #ifndef IDENTIFYFEATURESCONTROLLER_H
 #define IDENTIFYFEATURESCONTROLLER_H
 
-// toolkit headers
-#include "AbstractTool.h"
-
-// C++ API headers
-#include "TaskWatcher.h"
-
 // Qt headers
+#include <QFuture>
 #include <QMouseEvent>
 #include <QObject>
 
-namespace Esri {
-namespace ArcGISRuntime {
-class GeoElement;
-class IdentifyGraphicsOverlayResult;
-class IdentifyLayerResult;
-class PopupManager;
-}
+// DSA headers
+#include "AbstractTool.h"
+
+namespace Esri::ArcGISRuntime {
+  class GeoElement;
+  class IdentifyGraphicsOverlayResult;
+  class IdentifyLayerResult;
+  class PopupManager;
 }
 
 namespace Dsa {
@@ -62,8 +58,6 @@ public:
 
 private slots:
   void onMouseClicked(QMouseEvent& event);
-  void onIdentifyLayersCompleted(const QUuid& taskId, QList<Esri::ArcGISRuntime::IdentifyLayerResult*> identifyResults);
-  void onIdentifyGraphicsOverlaysCompleted(const QUuid& taskId, QList<Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult*> identifyResults);
 
 signals:
   void busyChanged();
@@ -72,11 +66,19 @@ signals:
 private:
   bool addGeoElementPopup(Esri::ArcGISRuntime::GeoElement* geoElement, const QString& popupTitle);
 
+  bool m_isBusy = false;
   double m_tolerance = 5.0;
-  Esri::ArcGISRuntime::TaskWatcher m_layersWatcher;
-  Esri::ArcGISRuntime::TaskWatcher m_graphicsOverlaysWatcher;
   QList<Esri::ArcGISRuntime::PopupManager*> m_popupManagers;
 };
+
+// some shortcuts for working with multiple identify operation futures in a single 'QtFuture::whenAll' handler
+namespace IdentifyResultsVariant {
+  using FutureType = std::variant<QFuture<QList<Esri::ArcGISRuntime::IdentifyLayerResult*>>, QFuture<QList<Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult*>>>;
+  namespace Types {
+    constexpr uchar LAYERS = 0;
+    constexpr uchar GRAPHICS = 1;
+  }
+}
 
 } // Dsa
 

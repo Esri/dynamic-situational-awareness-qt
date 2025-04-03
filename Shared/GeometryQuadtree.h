@@ -25,13 +25,11 @@
 // STL headers
 #include <memory>
 
-namespace Esri {
-namespace ArcGISRuntime {
-class Envelope;
-class GeoElement;
-class Geometry;
-class Point;
-}
+namespace Esri::ArcGISRuntime {
+  class Envelope;
+  class GeoElement;
+  class Geometry;
+  class Point;
 }
 
 namespace Dsa {

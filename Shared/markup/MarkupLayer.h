@@ -24,13 +24,11 @@
 // Qt headers
 #include <QHash>
 
-namespace Esri {
-namespace ArcGISRuntime {
-class FeatureCollection;
-class GraphicsOverlay;
-class SimpleLineSymbol;
-class Feature;
-}
+namespace Esri::ArcGISRuntime {
+  class FeatureCollection;
+  class GraphicsOverlay;
+  class SimpleLineSymbol;
+  class Feature;
 }
 
 namespace Dsa {

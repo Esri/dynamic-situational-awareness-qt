@@ -14,30 +14,17 @@
  *  limitations under the License.
  ******************************************************************************/
 
-import QtQuick 2.9
-import QtQuick.Controls 2.2
-import QtQuick.Controls 1.4 as QtQuick1
-import QtQuick.Controls.Material 2.2
-import QtGraphicalEffects 1.0
-import QtQuick.Window 2.2
-import Esri.ArcGISRuntime.OpenSourceApps.DSA 1.1
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Controls.Material
+import QtQuick.Window
+import Esri.ArcGISRuntime.OpenSourceApps.DSA
 
 Item {
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
     width : parent.width
     height: DsaStyles.mainToolbarHeight * scaleFactor
     visible: false
-
-    DropShadow {
-        anchors.fill: fill
-        horizontalOffset: -1 * scaleFactor
-        verticalOffset: 1 * scaleFactor
-        radius: 8 * scaleFactor
-        smooth: true
-        samples: 16
-        color: "#80000000"
-        source: fill
-    }
 
     Rectangle {
         id: fill

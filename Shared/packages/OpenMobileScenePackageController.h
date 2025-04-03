@@ -17,7 +17,7 @@
 #ifndef OPENMOBILESCENEPACKAGECONTROLLER_H
 #define OPENMOBILESCENEPACKAGECONTROLLER_H
 
-// toolkit headers
+// dsa headers
 #include "AbstractTool.h"
 
 // Qt headers
@@ -29,11 +29,9 @@
 
 class QImage;
 
-namespace Esri {
-namespace ArcGISRuntime {
-class MobileScenePackage;
-class Scene;
-}
+namespace Esri::ArcGISRuntime {
+  class MobileScenePackage;
+  class Scene;
 }
 
 namespace Dsa {

@@ -31,6 +31,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QStandardPaths>
+#include <QtGlobal>
 #include <QtSystemDetection>
 #include <QJsonValueConstRef>
 #include <QtMath>
@@ -58,21 +59,19 @@ QString DsaUtility::configurationsDirectoryPath()
   if (!fullPathToConfigurationsDirectory.isNull())
     return fullPathToConfigurationsDirectory;
 
-#if defined(Q_OS_LINUX) || defined(Q_OS_MACOS) || defined(Q_OS_WINDOWS)
-  // if running on a desktop system check the current application directory for the configurations file
-  QDir appDir{QCoreApplication::applicationDirPath()};
-  QFile configFile{appDir.absoluteFilePath(FILE_NAME_DSA_CONFIGURATIONS)};
-  if (configFile.exists())
+  // set the starting directory for where the config file should be found
+#if defined(Q_OS_IOS)
+  QDir dir{QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)};
+#elif defined(Q_OS_ANDROID)
+  QDir dir{QStandardPaths::writableLocation(QStandardPaths::HomeLocation)};
+#else
+  // check the app executable first for non-mobile systems
+  const QDir appDir{QCoreApplication::applicationDirPath()};
+  if (QFile::exists(appDir.absoluteFilePath(FILE_NAME_DSA_CONFIGURATIONS)))
   {
     fullPathToConfigurationsDirectory = appDir.absolutePath();
     return fullPathToConfigurationsDirectory;
   }
-#endif
-
-  // setup the root directory based on the os/platform
-#ifdef Q_OS_IOS
-  QDir dir{QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)};
-#else
   QDir dir{QStandardPaths::writableLocation(QStandardPaths::HomeLocation)};
 #endif
 

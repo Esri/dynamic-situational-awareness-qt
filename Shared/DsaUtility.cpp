@@ -60,11 +60,11 @@ QString DsaUtility::configurationsDirectoryPath()
 
 #if defined(Q_OS_LINUX) || defined(Q_OS_MACOS) || defined(Q_OS_WINDOWS)
   // if running on a desktop system check the current application directory for the configurations file
-  QDir applicationDirectory{QCoreApplication::applicationDirPath()};
-  QFile configurationsFileInExeFolderPath{applicationDirectory.absoluteFilePath(FILE_NAME_DSA_CONFIGURATIONS)};
-  if (configurationsFileInExeFolderPath.exists())
+  QDir appDir{QCoreApplication::applicationDirPath()};
+  QFile configFile{appDir.absoluteFilePath(FILE_NAME_DSA_CONFIGURATIONS)};
+  if (configFile.exists())
   {
-    fullPathToConfigurationsDirectory = applicationDirectory.absolutePath();
+    fullPathToConfigurationsDirectory = appDir.absolutePath();
     return fullPathToConfigurationsDirectory;
   }
 #endif

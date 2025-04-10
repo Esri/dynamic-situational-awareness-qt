@@ -72,14 +72,14 @@ Item {
                 rootMarkup.visible = false;
         }
 
-        onMarkupReceived: {
+        onMarkupReceived: (filePath) => {
             markupDialog.title = "Markup Received";
             markupDialog.path = filePath;
             markupDialog.informativeText = "%1 has sent you a markup. Would you like to view it now?".arg(sharedBy)
             markupDialog.open();
         }
 
-        onMarkupSent: {
+        onMarkupSent: (filePath) => {
             markupDialog.title = "Markup Shared";
             markupDialog.path = filePath;
             markupDialog.informativeText = "The shared markup has been added as an overlay. Would you like to view it now?";

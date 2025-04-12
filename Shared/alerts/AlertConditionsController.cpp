@@ -247,7 +247,7 @@ QFuture<bool> AlertConditionsController::addWithinDistanceAlert(const QString& c
                                                                 int itemId,
                                                                 const QString& targetOverlayName)
 {
-  const auto future_false = QtFuture::makeReadyFuture(false);
+  const auto future_false = QtFuture::makeReadyValueFuture(false);
   if (levelIndex < 0 ||
       sourceFeedName.isEmpty() ||
       distance < 0.0 ||
@@ -296,12 +296,12 @@ QFuture<bool> AlertConditionsController::addWithinDistanceAlertBySourceLayerType
 {
   // make sure the condition has not already been added
   if (conditionAlreadyAdded(conditionName))
-    return QtFuture::makeReadyFuture(false);
+    return QtFuture::makeReadyValueFuture(false);
 
   auto* condition = new WithinDistanceAlertCondition(level, conditionName, distance, this);
   connect(condition, &WithinDistanceAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
   condition->init(alertSourceLayer, sourceFeedName, target, targetDescription);
-  return QtFuture::makeReadyFuture(m_conditions->addAlertCondition(condition));
+  return QtFuture::makeReadyValueFuture(m_conditions->addAlertCondition(condition));
 }
 
 /*!
@@ -328,7 +328,7 @@ QFuture<bool> AlertConditionsController::addWithinAreaAlert(const QString& condi
                                                             int itemId,
                                                             const QString& targetOverlayName)
 {
-  const auto future_false = QtFuture::makeReadyFuture(false);
+  const auto future_false = QtFuture::makeReadyValueFuture(false);
   if (levelIndex < 0 ||
       sourceFeedName.isEmpty() ||
       targetOverlayName.isEmpty())
@@ -375,12 +375,12 @@ QFuture<bool> AlertConditionsController::addWithinAreaAlertBySourceLayerType(con
 {
   // make sure the condition has not already been added
   if (conditionAlreadyAdded(conditionName))
-    return QtFuture::makeReadyFuture(false);
+    return QtFuture::makeReadyValueFuture(false);
 
   auto* condition = new WithinAreaAlertCondition(level, conditionName, this);
   connect(condition, &WithinAreaAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
   condition->init(alertSourceLayer, sourceFeedName, target, targetDescription);
-  return QtFuture::makeReadyFuture(m_conditions->addAlertCondition(condition));
+  return QtFuture::makeReadyValueFuture(m_conditions->addAlertCondition(condition));
 }
 
 /*!
@@ -403,7 +403,7 @@ QFuture<bool> AlertConditionsController::addAttributeEqualsAlert(const QString& 
                                                                  const QString& attributeName,
                                                                  const QVariant& targetValue)
 {
-  const auto future_false = QtFuture::makeReadyFuture(false);
+  const auto future_false = QtFuture::makeReadyValueFuture(false);
   if (levelIndex < 0 ||
       sourceFeedName.isEmpty() ||
       attributeName.isEmpty() ||
@@ -440,13 +440,13 @@ QFuture<bool> AlertConditionsController::addAttributeEqualsAlertBySourceLayerTyp
 {
   // make sure the condition has not already been added
   if (conditionAlreadyAdded(conditionName))
-    return QtFuture::makeReadyFuture(false);
+    return QtFuture::makeReadyValueFuture(false);
 
   AlertTarget* target = new FixedValueAlertTarget(targetValue, this);
   AttributeEqualsAlertCondition* condition = new AttributeEqualsAlertCondition(level, conditionName, attributeName, this);
   connect(condition, &AttributeEqualsAlertCondition::newConditionData, this, &AlertConditionsController::handleNewAlertConditionData);
   condition->init(alertSourceLayer, sourceFeedName, target, targetValue.toString());
-  return QtFuture::makeReadyFuture(m_conditions->addAlertCondition(condition));
+  return QtFuture::makeReadyValueFuture(m_conditions->addAlertCondition(condition));
 }
 
 /*!
@@ -930,7 +930,7 @@ QJsonObject AlertConditionsController::conditionToJson(AlertCondition* condition
  */
 QFuture<bool> AlertConditionsController::addConditionFromJson(const QJsonObject& json)
 {
-  const auto future_false = QtFuture::makeReadyFuture(false);
+  const auto future_false = QtFuture::makeReadyValueFuture(false);
   if (json.isEmpty())
     return future_false;
 
@@ -1089,7 +1089,7 @@ QFuture<AlertTarget*> AlertConditionsController::targetFromItemIdAndOverlayName(
 {
   GeoView* geoView = ToolResourceProvider::instance()->geoView();
   AlertTarget* target = nullptr;
-  const auto future_null_target = QtFuture::makeReadyFuture(target);
+  const auto future_null_target = QtFuture::makeReadyValueFuture(target);
   if (!geoView)
     return future_null_target;
 
@@ -1113,7 +1113,7 @@ QFuture<AlertTarget*> AlertConditionsController::targetFromItemIdAndOverlayName(
               m_layerTargets.insert(featureLayer->name(), new FeatureLayerAlertTarget(featureLayer));
 
             targetDescription = featureLayer->name();
-            return QtFuture::makeReadyFuture(m_layerTargets.value(featureLayer->name(), nullptr));
+            return QtFuture::makeReadyValueFuture(m_layerTargets.value(featureLayer->name(), nullptr));
           }
           else
           {
@@ -1129,12 +1129,12 @@ QFuture<AlertTarget*> AlertConditionsController::targetFromItemIdAndOverlayName(
               m_layerTargets.insert(messagesOverlay->name(), new MessagesOverlayAlertTarget(messagesOverlay));
 
             targetDescription = messagesOverlay->name();
-            return QtFuture::makeReadyFuture(m_layerTargets.value(messagesOverlay->name(), nullptr));
+            return QtFuture::makeReadyValueFuture(m_layerTargets.value(messagesOverlay->name(), nullptr));
           }
           else
           {
             targetDescription = QString("%1 [%2]").arg(messagesOverlay->name(), QString::number(itemId));
-            return QtFuture::makeReadyFuture(targetFromMessagesOverlay(messagesOverlay, itemId));
+            return QtFuture::makeReadyValueFuture(targetFromMessagesOverlay(messagesOverlay, itemId));
           }
         }
       }
@@ -1158,7 +1158,7 @@ QFuture<AlertTarget*> AlertConditionsController::targetFromItemIdAndOverlayName(
       {
         targetDescription = AlertConstants::MY_LOCATION;
         auto* target = static_cast<AlertTarget*>(m_locationTarget);
-        return QtFuture::makeReadyFuture(target);
+        return QtFuture::makeReadyValueFuture(target);
       }
 
       if (overlay->overlayId() != targetOverlayName)
@@ -1172,12 +1172,12 @@ QFuture<AlertTarget*> AlertConditionsController::targetFromItemIdAndOverlayName(
           m_overlayTargets.insert(overlayIdOrName, new GraphicsOverlayAlertTarget(overlay));
 
         targetDescription = overlayIdOrName;
-        return QtFuture::makeReadyFuture(m_overlayTargets.value(overlayIdOrName, nullptr));
+        return QtFuture::makeReadyValueFuture(m_overlayTargets.value(overlayIdOrName, nullptr));
       }
       else
       {
         targetDescription = QString("%1 [%2]").arg(overlayIdOrName, QString::number(itemId));
-        return QtFuture::makeReadyFuture(targetFromGraphicsOverlay(overlay, itemId));
+        return QtFuture::makeReadyValueFuture(targetFromGraphicsOverlay(overlay, itemId));
       }
     }
   }
@@ -1191,7 +1191,7 @@ QFuture<AlertTarget*> AlertConditionsController::targetFromItemIdAndOverlayName(
 QFuture<AlertTarget*> AlertConditionsController::targetFromFeatureLayer(FeatureLayer* featureLayer, int itemId) const
 {
   AlertTarget* target = nullptr;
-  const auto future_null_target = QtFuture::makeReadyFuture(target);
+  const auto future_null_target = QtFuture::makeReadyValueFuture(target);
   FeatureTable* tab = featureLayer->featureTable();
   if (!tab)
     return future_null_target;
@@ -1210,7 +1210,7 @@ QFuture<AlertTarget*> AlertConditionsController::targetFromFeatureLayer(FeatureL
 
     // capture the new GeoElementAlertTarget here as the parent type
     AlertTarget* target = new GeoElementAlertTarget(feature);
-    return QtFuture::makeReadyFuture(target);
+    return QtFuture::makeReadyValueFuture(target);
   }).unwrap();
 }
 

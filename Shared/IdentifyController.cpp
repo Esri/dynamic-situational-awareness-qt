@@ -154,7 +154,7 @@ void IdentifyController::showPopups(const QHash<QString, QList<GeoElement*>>& ge
   for (auto it = geoElementsByTitle.cbegin(); it != geoElementsByTitle.cend(); ++it)
   {
     const QString& popupTitle = it.key();
-    for (GeoElement* geoElement : qAsConst(it.value()))
+    for (GeoElement* geoElement : std::as_const(it.value()))
       addGeoElementPopup(geoElement, popupTitle);
   }
 

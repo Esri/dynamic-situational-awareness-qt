@@ -836,7 +836,7 @@ void ViewshedController::disconnectActiveViewshedSignals()
 {
   if (!m_activeViewshedConns.isEmpty())
   {
-    for (const auto& conn : qAsConst(m_activeViewshedConns))
+    for (const auto& conn : std::as_const(m_activeViewshedConns))
     {
       disconnect(conn);
     }

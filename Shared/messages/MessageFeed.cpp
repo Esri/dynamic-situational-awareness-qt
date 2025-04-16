@@ -152,17 +152,17 @@ QFuture<DynamicEntityDataSourceInfo*> MessageFeed::onLoadAsync()
   });
 
   // return the new source future
-  return QtFuture::makeReadyFuture(dynamicEntityDataSourceInfo);
+  return QtFuture::makeReadyValueFuture(dynamicEntityDataSourceInfo);
 }
 
 QFuture<void> MessageFeed::onConnectAsync()
 {
-  return QtFuture::makeReadyFuture();
+  return QtFuture::makeReadyVoidFuture();
 }
 
 QFuture<void> MessageFeed::onDisconnectAsync()
 {
-  return QtFuture::makeReadyFuture();
+  return QtFuture::makeReadyVoidFuture();
 }
 
 QString MessageFeed::feedName() const

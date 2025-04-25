@@ -28,6 +28,7 @@ namespace Esri::ArcGISRuntime {
   class GraphicsOverlay;
   class Symbol;
   class SimpleRenderer;
+  enum class SurfacePlacement;
 }
 
 class QGeoPositionInfoSource;
@@ -46,6 +47,11 @@ public:
   void start();
   void stop();
   bool isStarted() const;
+
+  void setZOffset(double offset);
+  double zOffset() const;
+
+  void setSurfacePlacement(Esri::ArcGISRuntime::SurfacePlacement surfacePlacement);
 
   QGeoPositionInfoSource* positionSource() const;
   void setPositionSource(QGeoPositionInfoSource* positionSource);
@@ -77,6 +83,8 @@ private:
   QCompass* m_compass = nullptr;
   Esri::ArcGISRuntime::Point m_lastKnownLocation;
   bool m_isStarted = false;
+  double m_zOffset = 10.0;
+  Esri::ArcGISRuntime::SurfacePlacement m_surfacePlacement;
 
   QMetaObject::Connection m_positionErrorConnection;
   QMetaObject::Connection m_positionUpdateConnection;

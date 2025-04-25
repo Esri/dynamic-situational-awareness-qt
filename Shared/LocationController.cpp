@@ -35,6 +35,7 @@
 #include "ModelSceneSymbol.h"
 #include "Point.h"
 #include "SceneQuickView.h"
+#include "SceneViewTypes.h"
 #include "SpatialReference.h"
 #include "SymbolTypes.h"
 
@@ -49,10 +50,6 @@
 using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
-
-const QString LocationController::SIMULATE_LOCATION_PROPERTYNAME = "SimulateLocation";
-const QString LocationController::GPX_FILE_PROPERTYNAME = "GpxFile";
-const QString LocationController::RESOURCE_DIRECTORY_PROPERTYNAME = "ResourceDirectory";
 
 /*!
   \class Dsa::LocationController
@@ -205,10 +202,29 @@ QString LocationController::toolName() const
  */
 void LocationController::setProperties(const QVariantMap& properties)
 {
-  const bool simulate = QString::compare(properties[SIMULATE_LOCATION_PROPERTYNAME].toString(), QString("true"), Qt::CaseInsensitive) == 0;
-  setGpxFilePath(properties[GPX_FILE_PROPERTYNAME].toString());
+  // setup simulation from the configuration properties
+  const bool simulate = QString::compare(properties[PROPERTY_NAME_SIMULATE_LOCATION].toString(), QStringLiteral("true"), Qt::CaseInsensitive) == 0;
+  setGpxFilePath(properties[PROPERTY_NAME_GPX_FILE].toString());
   setSimulationEnabled(simulate);
-  setIconDataPath(properties[RESOURCE_DIRECTORY_PROPERTYNAME].toString());
+  setIconDataPath(properties[PROPERTY_NAME_RESOURCE_DIRECTORY].toString());
+
+  // skip if the location display was not ready
+  if (!m_locationDisplay3d)
+    return;
+
+  // make sure the value from the configuration file for
+  // the z offset is able to be converted to a double
+  bool ok;
+  double offset = properties[PROPERTY_NAME_CURRENT_LOCATION_Z_OFFSET].toString().toDouble(&ok);
+  if (ok)
+    m_locationDisplay3d->setZOffset(offset);
+
+  // allow for the option to use draped-flat style surface placement, otherwise default to relative
+  auto surfacePlacementValue = properties[PROPERTY_NAME_SURFACE_PLACEMENT].toString();
+  if (surfacePlacementValue == QStringLiteral("DrapedFlat"))
+    m_locationDisplay3d->setSurfacePlacement(SurfacePlacement::DrapedFlat);
+  else
+    m_locationDisplay3d->setSurfacePlacement(SurfacePlacement::Relative);
 }
 
 /*!
@@ -301,7 +317,7 @@ void LocationController::setSimulationEnabled(bool simulated)
   }
 
   emit simulationEnabledChanged();
-  emit propertyChanged(SIMULATE_LOCATION_PROPERTYNAME, m_simulated);
+  emit propertyChanged(PROPERTY_NAME_SIMULATE_LOCATION, m_simulated);
 }
 
 /*!
@@ -358,7 +374,7 @@ void LocationController::setGpxFilePath(const QString& gpxFilePath)
 
   m_gpxFilePath = gpxFilePath;
   emit gpxFilePathChanged();
-  emit propertyChanged(GPX_FILE_PROPERTYNAME, m_gpxFilePath);
+  emit propertyChanged(PROPERTY_NAME_GPX_FILE, m_gpxFilePath);
 }
 
 /*!
@@ -409,7 +425,7 @@ void LocationController::setIconDataPath(const QString& dataPath)
     return;
 
   m_iconDataPath = dataPath;
-  emit propertyChanged(RESOURCE_DIRECTORY_PROPERTYNAME, m_iconDataPath);
+  emit propertyChanged(PROPERTY_NAME_RESOURCE_DIRECTORY, m_iconDataPath);
 }
 
 /*!

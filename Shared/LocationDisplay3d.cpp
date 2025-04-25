@@ -114,6 +114,22 @@ bool LocationDisplay3d::isStarted() const
   return m_isStarted;
 }
 
+void LocationDisplay3d::setZOffset(double offset)
+{
+  m_zOffset = offset;
+}
+
+double LocationDisplay3d::zOffset() const
+{
+  return m_zOffset;
+}
+
+void LocationDisplay3d::setSurfacePlacement(SurfacePlacement surfacePlacement)
+{
+  m_surfacePlacement = surfacePlacement;
+  m_locationOverlay->setSceneProperties(LayerSceneProperties{surfacePlacement});
+}
+
 /*!
   \brief Returns the position source for the location display.
  */
@@ -158,9 +174,7 @@ void LocationDisplay3d::setPositionSource(QGeoPositionInfoSource* positionSource
       return;
     }
 
-    // display position 10m off the ground
-    constexpr double elevatedZ = 10.0;
-    m_lastKnownLocation = Point(pos.longitude(), pos.latitude(), elevatedZ, SpatialReference::wgs84());
+    m_lastKnownLocation = Point(pos.longitude(), pos.latitude(), zOffset(), SpatialReference::wgs84());
     m_locationGraphic->setGeometry(m_lastKnownLocation);
 
     emit locationChanged(m_lastKnownLocation);

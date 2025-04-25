@@ -49,6 +49,7 @@
 #include "ContextMenuController.h"
 #include "DsaUtility.h"
 #include "LayerCacheManager.h"
+#include "LocationController.h"
 #include "MessageFeedConstants.h"
 #include "OpenMobileScenePackageController.h"
 #include "ToolManager.h"
@@ -501,12 +502,14 @@ void DsaController::createDefaultSettings()
   m_dsaSettings["BasemapDirectory"] = QString("%1/BasemapData").arg(m_dsaSettings["RootDataDirectory"].toString());
   m_dsaSettings["ElevationDirectory"] = QString("%1/ElevationData").arg(m_dsaSettings["RootDataDirectory"].toString());
   m_dsaSettings["SimulationDirectory"] = QString("%1/SimulationData").arg(m_dsaSettings["RootDataDirectory"].toString());
-  m_dsaSettings["ResourceDirectory"] = QString("%1/ResourceData").arg(m_dsaSettings["RootDataDirectory"].toString());
+  m_dsaSettings[LocationController::PROPERTY_NAME_RESOURCE_DIRECTORY] = QString("%1/ResourceData").arg(m_dsaSettings["RootDataDirectory"].toString());
   writeDefaultLocalDataPaths();
   m_dsaSettings["DefaultBasemap"] = QStringLiteral("topographic");
   m_dsaSettings["DefaultElevationSource"] = QString("%1/CaDEM.tpk").arg(m_dsaSettings["ElevationDirectory"].toString());
-  m_dsaSettings["GpxFile"] = QString("%1/MontereyMounted.gpx").arg(m_dsaSettings["SimulationDirectory"].toString());
-  m_dsaSettings["SimulateLocation"] = QStringLiteral("true");
+  m_dsaSettings[LocationController::PROPERTY_NAME_GPX_FILE] = QString("%1/MontereyMounted.gpx").arg(m_dsaSettings["SimulationDirectory"].toString());
+  m_dsaSettings[LocationController::PROPERTY_NAME_SIMULATE_LOCATION] = QStringLiteral("true");
+  m_dsaSettings[LocationController::PROPERTY_NAME_CURRENT_LOCATION_Z_OFFSET] = QStringLiteral("10");
+  m_dsaSettings[LocationController::PROPERTY_NAME_SURFACE_PLACEMENT] = QStringLiteral("Relative");
   writeDefaultMessageFeeds();
   m_dsaSettings["CoordinateFormat"] = Esri::ArcGISRuntime::Toolkit::CoordinateConversionConstants::MGRS_FORMAT;
   m_dsaSettings[AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME] = AppConstants::UNIT_METERS;

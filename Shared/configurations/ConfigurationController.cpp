@@ -376,12 +376,12 @@ void ConfigurationController::fetchConfigurations()
 
     // check the folder recursively for other files
     QDirIterator dirIt(configurationDirectoryPath, QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
-    uint8_t filesInConfigurationFolder = 0;
+    quint8 filesInConfigurationFolder = 0;
     while (dirIt.hasNext())
     {
       dirIt.next();
       filesInConfigurationFolder++;
-      if (filesInConfigurationFolder > 1) // stop checking once more than 1 file has been found in the directory
+      if (filesInConfigurationFolder > 1) // download is valid if more than one file is found
       {
         downloaded = true;
         break;

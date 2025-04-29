@@ -73,6 +73,8 @@ signals:
 private:
   Q_DISABLE_COPY(LocationDisplay3d)
 
+  inline static const QString ATTRIBUTE_NAME_HEADING = QStringLiteral("heading");
+
   void postLastKnownLocationUpdate();
 
   mutable Esri::ArcGISRuntime::GraphicsOverlay* m_locationOverlay = nullptr;

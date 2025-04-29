@@ -46,8 +46,6 @@ using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
 
-static const QString s_headingAttribute{"heading"};
-
 /*!
   \class Dsa::LocationDisplay3d
   \inmodule Dsa
@@ -71,7 +69,7 @@ LocationDisplay3d::LocationDisplay3d(QObject* parent) :
   m_locationOverlay->setRenderingMode(GraphicsRenderingMode::Dynamic);
   m_locationOverlay->setVisible(false);
 
-  m_locationGraphic->attributes()->insertAttribute(s_headingAttribute, 0.0);
+  m_locationGraphic->attributes()->insertAttribute(ATTRIBUTE_NAME_HEADING, 0.0);
   m_locationOverlay->graphics()->append(m_locationGraphic);
 }
 
@@ -188,7 +186,7 @@ void LocationDisplay3d::setPositionSource(QGeoPositionInfoSource* positionSource
 
     m_headingConnection = connect(gpxLocationSimulator, &GPXLocationSimulator::headingChanged, this, [this](double heading)
     {
-      m_locationGraphic->attributes()->replaceAttribute(s_headingAttribute, heading);
+      m_locationGraphic->attributes()->replaceAttribute(ATTRIBUTE_NAME_HEADING, heading);
     });
   }
 
@@ -226,7 +224,7 @@ void LocationDisplay3d::setCompass(QCompass* compass)
     if (!reading)
       return;
 
-    m_locationGraphic->attributes()->replaceAttribute(s_headingAttribute, static_cast<double>(reading->azimuth()));
+    m_locationGraphic->attributes()->replaceAttribute(ATTRIBUTE_NAME_HEADING, static_cast<double>(reading->azimuth()));
 
     emit headingChanged();
   });
@@ -270,7 +268,7 @@ void LocationDisplay3d::setDefaultSymbol(Symbol* defaultSymbol)
     m_locationRenderer = new SimpleRenderer(defaultSymbol, this);
 
     RendererSceneProperties renderProperties = m_locationRenderer->sceneProperties();
-    renderProperties.setHeadingExpression(QString("[%1]").arg(s_headingAttribute));
+    renderProperties.setHeadingExpression(QString("[%1]").arg(ATTRIBUTE_NAME_HEADING));
     m_locationRenderer->setSceneProperties(renderProperties);
 
     m_locationOverlay->setRenderer(m_locationRenderer);

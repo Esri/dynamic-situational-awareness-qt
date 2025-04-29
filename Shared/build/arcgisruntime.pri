@@ -17,7 +17,7 @@
 CONFIG(deployment): DEFINES += DEPLOYMENT_BUILD
 
 # Run against the compiled toolkit.
-include($$PWD/../../arcgis-maps-sdk-toolkit-qt/uitools/toolkitcpp.pri)
+include($$PWD/../../arcgis-maps-sdk-toolkit-qt/uitools/toolkitcpp/toolkitcpp.pri)
 
 contains(QMAKE_HOST.os, Windows):{
   iniPath = $$(ALLUSERSPROFILE)\EsriRuntimeQt\ArcGIS Runtime SDK for Qt $${ARCGIS_RUNTIME_VERSION}.ini

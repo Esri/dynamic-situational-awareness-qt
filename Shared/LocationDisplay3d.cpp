@@ -46,8 +46,6 @@ using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
 
-static const QString s_headingAttribute{"heading"};
-
 /*!
   \class Dsa::LocationDisplay3d
   \inmodule Dsa
@@ -71,7 +69,7 @@ LocationDisplay3d::LocationDisplay3d(QObject* parent) :
   m_locationOverlay->setRenderingMode(GraphicsRenderingMode::Dynamic);
   m_locationOverlay->setVisible(false);
 
-  m_locationGraphic->attributes()->insertAttribute(s_headingAttribute, 0.0);
+  m_locationGraphic->attributes()->insertAttribute(ATTRIBUTE_NAME_HEADING, 0.0);
   m_locationOverlay->graphics()->append(m_locationGraphic);
 }
 
@@ -112,6 +110,22 @@ void LocationDisplay3d::stop()
 bool LocationDisplay3d::isStarted() const
 {
   return m_isStarted;
+}
+
+void LocationDisplay3d::setZOffset(double offset)
+{
+  m_zOffset = offset;
+}
+
+double LocationDisplay3d::zOffset() const
+{
+  return m_zOffset;
+}
+
+void LocationDisplay3d::setSurfacePlacement(SurfacePlacement surfacePlacement)
+{
+  m_surfacePlacement = surfacePlacement;
+  m_locationOverlay->setSceneProperties(LayerSceneProperties{surfacePlacement});
 }
 
 /*!
@@ -158,9 +172,7 @@ void LocationDisplay3d::setPositionSource(QGeoPositionInfoSource* positionSource
       return;
     }
 
-    // display position 10m off the ground
-    constexpr double elevatedZ = 10.0;
-    m_lastKnownLocation = Point(pos.longitude(), pos.latitude(), elevatedZ, SpatialReference::wgs84());
+    m_lastKnownLocation = Point(pos.longitude(), pos.latitude(), zOffset(), SpatialReference::wgs84());
     m_locationGraphic->setGeometry(m_lastKnownLocation);
 
     emit locationChanged(m_lastKnownLocation);
@@ -174,7 +186,7 @@ void LocationDisplay3d::setPositionSource(QGeoPositionInfoSource* positionSource
 
     m_headingConnection = connect(gpxLocationSimulator, &GPXLocationSimulator::headingChanged, this, [this](double heading)
     {
-      m_locationGraphic->attributes()->replaceAttribute(s_headingAttribute, heading);
+      m_locationGraphic->attributes()->replaceAttribute(ATTRIBUTE_NAME_HEADING, heading);
     });
   }
 
@@ -212,7 +224,7 @@ void LocationDisplay3d::setCompass(QCompass* compass)
     if (!reading)
       return;
 
-    m_locationGraphic->attributes()->replaceAttribute(s_headingAttribute, static_cast<double>(reading->azimuth()));
+    m_locationGraphic->attributes()->replaceAttribute(ATTRIBUTE_NAME_HEADING, static_cast<double>(reading->azimuth()));
 
     emit headingChanged();
   });
@@ -256,7 +268,7 @@ void LocationDisplay3d::setDefaultSymbol(Symbol* defaultSymbol)
     m_locationRenderer = new SimpleRenderer(defaultSymbol, this);
 
     RendererSceneProperties renderProperties = m_locationRenderer->sceneProperties();
-    renderProperties.setHeadingExpression(QString("[%1]").arg(s_headingAttribute));
+    renderProperties.setHeadingExpression(QString("[%1]").arg(ATTRIBUTE_NAME_HEADING));
     m_locationRenderer->setSceneProperties(renderProperties);
 
     m_locationOverlay->setRenderer(m_locationRenderer);

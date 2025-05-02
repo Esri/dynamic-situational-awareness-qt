@@ -214,14 +214,11 @@ void LocationController::setProperties(const QVariantMap& properties)
 
   // make sure the value from the configuration file for
   // the z offset is able to be converted to a double
-  bool ok;
-  double offset = properties[PROPERTY_NAME_CURRENT_LOCATION_Z_OFFSET].toString().toDouble(&ok);
-  if (ok)
-    m_locationDisplay3d->setZOffset(offset);
+  if (const auto zOffsetValue = properties[PROPERTY_NAME_CURRENT_LOCATION_Z_OFFSET]; zOffsetValue.canConvert<double>())
+    m_locationDisplay3d->setZOffset(zOffsetValue.toDouble());
 
   // allow for the option to use draped-flat style surface placement, otherwise default to relative
-  auto surfacePlacementValue = properties[PROPERTY_NAME_CURRENT_LOCATION_SURFACE_PLACEMENT].toString();
-  if (surfacePlacementValue == QStringLiteral("DrapedFlat"))
+  if (const auto surfacePlacementValue = properties[PROPERTY_NAME_CURRENT_LOCATION_SURFACE_PLACEMENT].toString(); surfacePlacementValue == QStringLiteral("DrapedFlat"))
     m_locationDisplay3d->setSurfacePlacement(SurfacePlacement::DrapedFlat);
   else
     m_locationDisplay3d->setSurfacePlacement(SurfacePlacement::Relative);

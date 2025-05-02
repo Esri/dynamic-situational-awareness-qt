@@ -53,7 +53,7 @@ public:
   inline static const QString PROPERTY_NAME_GPX_FILE = QStringLiteral("GpxFile");
   inline static const QString PROPERTY_NAME_RESOURCE_DIRECTORY = QStringLiteral("ResourceDirectory");
   inline static const QString PROPERTY_NAME_CURRENT_LOCATION_Z_OFFSET = QStringLiteral("CurrentLocationZOffset");
-  inline static const QString PROPERTY_NAME_SURFACE_PLACEMENT = QStringLiteral("SurfacePlacement");
+  inline static const QString PROPERTY_NAME_CURRENT_LOCATION_SURFACE_PLACEMENT = QStringLiteral("CurrentLocationSurfacePlacement");
 
   explicit LocationController(QObject* parent = nullptr);
   ~LocationController();

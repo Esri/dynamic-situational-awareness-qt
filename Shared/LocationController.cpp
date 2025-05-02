@@ -220,7 +220,7 @@ void LocationController::setProperties(const QVariantMap& properties)
     m_locationDisplay3d->setZOffset(offset);
 
   // allow for the option to use draped-flat style surface placement, otherwise default to relative
-  auto surfacePlacementValue = properties[PROPERTY_NAME_SURFACE_PLACEMENT].toString();
+  auto surfacePlacementValue = properties[PROPERTY_NAME_CURRENT_LOCATION_SURFACE_PLACEMENT].toString();
   if (surfacePlacementValue == QStringLiteral("DrapedFlat"))
     m_locationDisplay3d->setSurfacePlacement(SurfacePlacement::DrapedFlat);
   else

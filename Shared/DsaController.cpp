@@ -509,7 +509,7 @@ void DsaController::createDefaultSettings()
   m_dsaSettings[LocationController::PROPERTY_NAME_GPX_FILE] = QString("%1/MontereyMounted.gpx").arg(m_dsaSettings["SimulationDirectory"].toString());
   m_dsaSettings[LocationController::PROPERTY_NAME_SIMULATE_LOCATION] = QStringLiteral("true");
   m_dsaSettings[LocationController::PROPERTY_NAME_CURRENT_LOCATION_Z_OFFSET] = QStringLiteral("10");
-  m_dsaSettings[LocationController::PROPERTY_NAME_SURFACE_PLACEMENT] = QStringLiteral("Relative");
+  m_dsaSettings[LocationController::PROPERTY_NAME_CURRENT_LOCATION_SURFACE_PLACEMENT] = QStringLiteral("Relative");
   writeDefaultMessageFeeds();
   m_dsaSettings["CoordinateFormat"] = Esri::ArcGISRuntime::Toolkit::CoordinateConversionConstants::MGRS_FORMAT;
   m_dsaSettings[AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME] = AppConstants::UNIT_METERS;

@@ -30,7 +30,7 @@ public:
                 bool selected,
                 bool loaded,
                 int percentDownloaded);
-  Configuration(Configuration&) = default;
+  Configuration() = default;
   Configuration(const Configuration&) = default;
   Configuration(Configuration&&) = default;
   Configuration& operator=(const Configuration&) = default;

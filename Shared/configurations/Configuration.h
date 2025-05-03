@@ -30,11 +30,6 @@ public:
                 bool selected,
                 bool loaded,
                 int percentDownloaded);
-  Configuration() = default;
-  Configuration(const Configuration&) = default;
-  Configuration(Configuration&&) = default;
-  Configuration& operator=(const Configuration&) = default;
-  Configuration& operator=(Configuration&&) = default;
 
   QString name() const;
   void setName(const QString& name);

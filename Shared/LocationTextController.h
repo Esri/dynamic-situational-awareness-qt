@@ -57,13 +57,16 @@ signals:
 private slots:
   void onGeoViewChanged();
   void onLocationChanged(const Esri::ArcGISRuntime::Point& pt);
+  void onToolAdded(AbstractTool* newTool);
 
 private:
   std::function<QString(const Esri::ArcGISRuntime::Point&)> formatCoordinate;
+  QMetaObject::Connection m_conToolAdded;
 
   QString currentLocationText() const;
   QString currentElevationText() const;
   void formatElevationText(double elevation);
+  void resetSurface();
 
   static const QString COORDINATE_FORMAT_PROPERTYNAME;
   static const QString USE_GPS_PROPERTYNAME;
@@ -80,6 +83,7 @@ private:
   static const QString Feet;
 
   Esri::ArcGISRuntime::Surface* m_surface = nullptr;
+  quint8 m_elevationFailures = 0;
   QString m_currentLocationText = "Location Unavailable";
   QString m_currentElevationText = "Elevation Unavailable";
   QString m_coordinateFormat;

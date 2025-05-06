@@ -21,6 +21,7 @@
 
 // C++ API headers
 #include "CoordinateFormatter.h"
+#include "ErrorException.h"
 #include "Scene.h"
 #include "Surface.h"
 
@@ -28,6 +29,7 @@
 #include <QFuture>
 
 // DSA headers
+#include "AddLocalDataController.h"
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
@@ -72,6 +74,8 @@ LocationTextController::LocationTextController(QObject* parent) :
 
   connect(ToolResourceProvider::instance(), &ToolResourceProvider::locationChanged,
           this, &LocationTextController::onLocationChanged);
+
+  m_conToolAdded = connect(&ToolManager::instance(), &ToolManager::toolAdded, this, &LocationTextController::onToolAdded);
 
   ToolManager::instance().addTool(this);
 }
@@ -128,25 +132,49 @@ void LocationTextController::onLocationChanged(const Point& pt)
 
   // update the elevation text
   if (m_useGpsForElevation)
-    formatElevationText(pt.z());
-  else
   {
-    // TODO:
-    // fixed a missing reference to the baseSurface possibly because the geoView changed signal
-    // was not emitted just by adding the .dted layer as an elevation source
-    // this should probably be updated to connect to the layers changed event
-    auto* scene = ToolResourceProvider::instance()->scene();
-    if (!scene)
-      return;
-    auto* surface = scene->baseSurface();
-    if (!surface)
-      return;
+    formatElevationText(pt.z());
+    return;
+  }
 
-    // set the elevation text in the continuation block
-    surface->elevationAsync(pt).then(this, [this](double elevation)
+  // abort if there's no valid elevation surface
+  if (!m_surface)
+    return;
+
+  // call the elevation function and pass the result to the format method
+  m_surface->elevationAsync(pt).then(this, [this](double elevation)
+  {
+    formatElevationText(elevation);
+  }).onFailed(this, [this](const ErrorException& e)
+  {
+    Q_UNUSED(e);
+    // multiple failures likely indicate a failed loading of the
+    // elevation source for the surface. set the member to nullptr
+    // to prevent continued calls for fetching the elevation
+    m_elevationFailures++;
+    if (m_elevationFailures > 2)
+      m_surface = nullptr;
+  });
+}
+
+void LocationTextController::onToolAdded(AbstractTool* newTool)
+{
+  // skip if the tool pointed to is not valid
+  if (!newTool)
+    return;
+
+  // catch only the addition of the AddLocalDataController tool
+  if (auto* addlocalDataController = qobject_cast<AddLocalDataController*>(newTool); addlocalDataController)
+  {
+    // create a connection to the signal for when an elevation source is selected/changed
+    connect(addlocalDataController, &AddLocalDataController::elevationSourceSelected, this, [this](ElevationSource* source)
     {
-      formatElevationText(elevation);
+      Q_UNUSED(source);
+      resetSurface();
     });
+
+    // stop listening for new tools being added
+    disconnect(m_conToolAdded);
   }
 }
 
@@ -155,11 +183,7 @@ void LocationTextController::onLocationChanged(const Point& pt)
  */
 void LocationTextController::onGeoViewChanged()
 {
-  Scene* scene = ToolResourceProvider::instance()->scene();
-  if (scene)
-  {
-    m_surface = scene->baseSurface();
-  }
+  resetSurface();
 }
 
 /*!
@@ -294,6 +318,16 @@ void LocationTextController::formatElevationText(double elevation)
   }
   m_currentElevationText = QString("%1 %2 MSL").arg(QString::number(elevation), unitOfMeasurement());
   emit currentElevationTextChanged();
+}
+
+void LocationTextController::resetSurface()
+{
+  // update the current surface pointer
+  if (const auto* scene = ToolResourceProvider::instance()->scene(); scene)
+  {
+    m_elevationFailures = 0;
+    m_surface = scene->baseSurface();
+  }
 }
 
 /*!

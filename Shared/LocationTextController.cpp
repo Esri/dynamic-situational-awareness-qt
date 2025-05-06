@@ -164,7 +164,7 @@ void LocationTextController::onToolAdded(AbstractTool* newTool)
     return;
 
   // catch only the addition of the AddLocalDataController tool
-  if (auto* addlocalDataController = qobject_cast<AddLocalDataController*>(newTool); addlocalDataController)
+  if (const auto* addlocalDataController = qobject_cast<AddLocalDataController*>(newTool); addlocalDataController)
   {
     // create a connection to the signal for when an elevation source is selected/changed
     connect(addlocalDataController, &AddLocalDataController::elevationSourceSelected, this, [this](ElevationSource* source)

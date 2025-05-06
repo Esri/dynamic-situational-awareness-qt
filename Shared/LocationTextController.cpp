@@ -159,7 +159,6 @@ void LocationTextController::onLocationChanged(const Point& pt)
 
 void LocationTextController::onToolAdded(AbstractTool* newTool)
 {
-  // skip if the tool pointed to is not valid
   if (!newTool)
     return;
 
@@ -322,7 +321,6 @@ void LocationTextController::formatElevationText(double elevation)
 
 void LocationTextController::resetSurface()
 {
-  // update the current surface pointer
   if (const auto* scene = ToolResourceProvider::instance()->scene(); scene)
   {
     m_elevationFailures = 0;

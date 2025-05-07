@@ -238,31 +238,38 @@ void AddLocalDataController::addItemAsElevationSource(const QList<int>& indices)
 */
 void AddLocalDataController::createElevationSourceFromTpk(const QString& path)
 {
-  TileCache* tileCache = new TileCache(path, this);
+  const auto* scene = ToolResourceProvider::instance()->scene();
+  if (!scene)
+    return;
 
-  connect(tileCache, &TileCache::doneLoading, this, [this, tileCache](Error error)
+  auto* cache = new TileCache(path, this);
+  connect(cache, &TileCache::errorOccurred, this, &AddLocalDataController::errorOccurred);
+  connect(cache, &TileCache::doneLoading, this, [this, scene, cache](const Error& errorCache)
   {
-    if (!error.isEmpty())
+    if (!errorCache.isEmpty())
       return;
 
-    // Check if the tiles are LERC encoded
-    if (tileCache->tileInfo().format() == TileImageFormat::LERC)
+    // tiles must be LERC encoded
+    if (cache->tileInfo().format() != TileImageFormat::LERC)
+      return;
+
+    // create new elevation source from the tile cache
+    auto* source = new ArcGISTiledElevationSource(cache, this);
+    connect(source, &ArcGISTiledElevationSource::errorOccurred, this, &AddLocalDataController::errorOccurred);
+    connect(source, &ArcGISTiledElevationSource::doneLoading, this, [this, cache, scene, source](const Error& errorSource)
     {
-      // create the source from the tiled source
-      ArcGISTiledElevationSource* source = new ArcGISTiledElevationSource(tileCache, this);
+      if (!errorSource.isEmpty())
+        return;
 
-      connect(source, &ArcGISTiledElevationSource::errorOccurred, this, &AddLocalDataController::errorOccurred);
-
-      auto scene = ToolResourceProvider::instance()->scene();
-      if (scene)
-        scene->baseSurface()->elevationSources()->append(source);
-
+      scene->baseSurface()->elevationSources()->append(source);
       emit elevationSourceSelected(source);
-      emit propertyChanged(DEFAULT_ELEVATION_PROPERTYNAME, tileCache->path());
-    }
+      emit propertyChanged(DEFAULT_ELEVATION_PROPERTYNAME, cache->path());
+    });
+
+    source->load();
   });
 
-  tileCache->load();
+  cache->load();
 }
 
 /*!
@@ -270,15 +277,23 @@ void AddLocalDataController::createElevationSourceFromTpk(const QString& path)
 */
 void AddLocalDataController::createElevationSourceFromRasters(const QStringList& paths)
 {
-  RasterElevationSource* source = new RasterElevationSource(paths, this);
+  const auto* scene = ToolResourceProvider::instance()->scene();
+  if (!scene)
+    return;
 
+  // create new elevation source from the raster paths
+  auto* source = new RasterElevationSource(paths, this);
   connect(source, &RasterElevationSource::errorOccurred, this, &AddLocalDataController::errorOccurred);
+  connect(source, &RasterElevationSource::doneLoading, this, [this, scene, source](const Error& error)
+  {
+    if (!error.isEmpty())
+      return;
 
-  auto scene = ToolResourceProvider::instance()->scene();
-  if (scene)
     scene->baseSurface()->elevationSources()->append(source);
+    emit elevationSourceSelected(source);
+  });
 
-  emit elevationSourceSelected(source);
+  source->load();
 }
 
 /*!

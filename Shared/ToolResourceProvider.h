@@ -81,6 +81,7 @@ public slots:
 signals:
   void sceneChanged();
   void geoViewChanged();
+  void sceneDoneLoading();
   void mapChanged();
   void spatialReferenceChanged();
   void setMouseCursorRequested(const QCursor& cursor);

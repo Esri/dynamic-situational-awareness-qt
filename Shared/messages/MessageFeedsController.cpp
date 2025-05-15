@@ -67,10 +67,7 @@ MessageFeedsController::MessageFeedsController(QObject* parent) :
   m_messageFeeds(new MessageFeedListModel(this)),
   m_locationBroadcast(new LocationBroadcast(this))
 {
-  connect(ToolResourceProvider::instance(), &ToolResourceProvider::geoViewChanged, this, [this]
-  {
-    setGeoView(ToolResourceProvider::instance()->geoView());
-  });
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::sceneDoneLoading, this, &MessageFeedsController::setScene);
 
   ToolManager::instance().addTool(this);
 }
@@ -85,13 +82,22 @@ MessageFeedsController::~MessageFeedsController()
 /*!
   \brief Sets the GeoView for the MessagesOverlay objects to \a geoView.
  */
-void MessageFeedsController::setGeoView(GeoView* geoView)
+void MessageFeedsController::setScene()
 {
-  m_geoView = geoView;
+  const auto* sceneView = static_cast<const SceneView*>(ToolResourceProvider::instance()->geoView());
+  if (!sceneView)
+    return;
+
+  auto* scene = sceneView->arcGISScene();
+  if (!scene)
+    return;
+
+  if (m_messageFeeds->rowCount() != 0)
+    return;
 
   // now that the geoview is ready, setup the feeds
-  if (m_geoView && m_messageFeeds->rowCount() == 0)
-    setupFeeds();
+  m_scene = scene;
+  setupFeeds();
 }
 
 /*!
@@ -195,8 +201,7 @@ void MessageFeedsController::setupFeeds()
     auto* overlay = new MessagesOverlay(feed, feedType, this);
     overlay->setSceneProperties(LayerSceneProperties(toSurfacePlacement(surfacePlacement)));
     overlay->setRenderer(createRenderer(rendererInfo, this));
-    SceneView* scene = static_cast<SceneView*>(m_geoView);
-    scene->arcGISScene()->operationalLayers()->append(overlay);
+    m_scene->operationalLayers()->append(overlay);
 
     if (!rendererThumbnail.isEmpty())
     {
@@ -249,7 +254,7 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
   }
 
   // only setup message feeds at startup
-  if (m_geoView && m_messageFeeds->rowCount() == 0)
+  if (m_scene && m_messageFeeds->rowCount() == 0)
     setupFeeds();
 
   const auto locationBroadcastConfig = properties[MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME].toMap();

@@ -26,6 +26,7 @@
 #include "LayerSceneProperties.h"
 #include "PictureMarkerSymbol.h"
 #include "SceneViewTypes.h"
+#include "SceneQuickView.h"
 #include "SimpleRenderer.h"
 
 // Qt headers
@@ -67,7 +68,7 @@ MessageFeedsController::MessageFeedsController(QObject* parent) :
   m_messageFeeds(new MessageFeedListModel(this)),
   m_locationBroadcast(new LocationBroadcast(this))
 {
-  connect(ToolResourceProvider::instance(), &ToolResourceProvider::sceneDoneLoading, this, &MessageFeedsController::setScene);
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::geoViewChanged, this, &MessageFeedsController::setScene);
 
   ToolManager::instance().addTool(this);
 }
@@ -84,20 +85,20 @@ MessageFeedsController::~MessageFeedsController()
  */
 void MessageFeedsController::setScene()
 {
-  const auto* sceneView = static_cast<const SceneView*>(ToolResourceProvider::instance()->geoView());
+  const auto* sceneView = static_cast<const SceneQuickView*>(ToolResourceProvider::instance()->geoView());
   if (!sceneView)
     return;
 
-  auto* scene = sceneView->arcGISScene();
-  if (!scene)
-    return;
+  connect(sceneView, &SceneQuickView::sceneChanged, this, [this, sceneView]
+  {
+    auto* scene = sceneView->arcGISScene();
+    if (!scene)
+      return;
 
-  if (m_messageFeeds->rowCount() != 0)
-    return;
-
-  // now that the geoview is ready, setup the feeds
-  m_scene = scene;
-  setupFeeds();
+    m_scene = scene;
+    if (m_messageFeeds->rowCount() == 0)
+      setupFeeds();
+  });
 }
 
 /*!

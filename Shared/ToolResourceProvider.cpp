@@ -107,11 +107,6 @@ void ToolResourceProvider::setScene(Scene* newScene)
     m_scene = nullptr;
     emit sceneChanged();
   });
-
-  connect(m_scene, &Scene::doneLoading, this, [this]
-  {
-    emit sceneDoneLoading();
-  });
 }
 
 GeoView* ToolResourceProvider::geoView() const

@@ -81,9 +81,6 @@ public:
 
   static Esri::ArcGISRuntime::SurfacePlacement toSurfacePlacement(const QString& surfacePlacement);
 
-private slots:
-  void setScene();
-
 signals:
   void locationBroadcastEnabledChanged();
   void locationBroadcastFrequencyChanged();
@@ -91,6 +88,7 @@ signals:
   void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
 
 private:
+  void setSceneFromGeoView();
   void setupFeeds();
   Esri::ArcGISRuntime::Renderer* createRenderer(const QString& rendererInfo, QObject* parent = nullptr) const;
 

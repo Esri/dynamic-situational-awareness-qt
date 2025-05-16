@@ -68,7 +68,7 @@ MessageFeedsController::MessageFeedsController(QObject* parent) :
   m_messageFeeds(new MessageFeedListModel(this)),
   m_locationBroadcast(new LocationBroadcast(this))
 {
-  connect(ToolResourceProvider::instance(), &ToolResourceProvider::geoViewChanged, this, &MessageFeedsController::setScene);
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::geoViewChanged, this, &MessageFeedsController::setSceneFromGeoView);
 
   ToolManager::instance().addTool(this);
 }
@@ -81,9 +81,9 @@ MessageFeedsController::~MessageFeedsController()
 }
 
 /*!
-  \brief Sets the GeoView for the MessagesOverlay objects to \a geoView.
+  \brief Sets the Scene from the ToolResourceProvider's GeoView to use during setupFeeds().
  */
-void MessageFeedsController::setScene()
+void MessageFeedsController::setSceneFromGeoView()
 {
   const auto* sceneView = static_cast<const SceneQuickView*>(ToolResourceProvider::instance()->geoView());
   if (!sceneView)

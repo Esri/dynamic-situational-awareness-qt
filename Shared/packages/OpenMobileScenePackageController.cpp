@@ -314,10 +314,10 @@ void OpenMobileScenePackageController::loadMobileScenePackage(const QString& pac
     const auto& packageTitle = packageItem->title();
     m_packagesModel->setTitleAndDescription(packageName, packageTitle, packageItem->description());
 
-    auto scenes = package->scenes();
+    const auto scenes = package->scenes();
     QStringList sceneNames;
     sceneNames.reserve(scenes.length());
-    for (auto* scene : scenes)
+    for (const auto* scene : scenes)
     {
       if (!scene)
         continue;

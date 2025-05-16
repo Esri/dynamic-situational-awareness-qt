@@ -28,8 +28,8 @@ Q_MOC_INCLUDE("qabstractitemmodel.h")
 class QAbstractListModel;
 
 namespace Esri::ArcGISRuntime {
-  class GeoView;
   class Renderer;
+  class Scene;
   enum class SurfacePlacement;
 }
 
@@ -55,8 +55,6 @@ public:
 
   explicit MessageFeedsController(QObject* parent = nullptr);
   ~MessageFeedsController();
-
-  void setGeoView(Esri::ArcGISRuntime::GeoView* geoView);
 
   QAbstractListModel* messageFeeds() const;
 
@@ -90,10 +88,11 @@ signals:
   void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
 
 private:
+  void setSceneFromGeoView();
   void setupFeeds();
   Esri::ArcGISRuntime::Renderer* createRenderer(const QString& rendererInfo, QObject* parent = nullptr) const;
 
-  Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;
+  Esri::ArcGISRuntime::Scene* m_scene = nullptr;
 
   MessageFeedListModel* m_messageFeeds = nullptr;
   QList<DataListener*> m_dataListeners;

@@ -271,8 +271,10 @@ void ContextMenuController::processGeoElements()
     for (const auto* geoElement : geoElements)
     {
       if (geoElement->geometry().geometryType() == GeometryType::Point)
+      {
         if (++pointGeoElementCount > 1)
           break;
+      }
     }
 
     // no need to continue searching the results if more than

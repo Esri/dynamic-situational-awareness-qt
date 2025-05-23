@@ -133,13 +133,9 @@ void ContextMenuController::onMousePressedAndHeld(QMouseEvent& event)
     return;
 
   clearOptions();
-  for (const auto& feats : std::as_const(m_contextFeatures))
-    qDeleteAll(feats);
-  m_contextFeatures.clear();
-
-  for (const auto& graphics : std::as_const(m_contextGraphics))
-    qDeleteAll(graphics);
-  m_contextGraphics.clear();
+  for (const auto& geoElements : std::as_const(m_contextGeoElements))
+    qDeleteAll(geoElements);
+  m_contextGeoElements.clear();
 
   GeoView* geoView = ToolResourceProvider::instance()->geoView();
   if (!geoView)
@@ -263,43 +259,33 @@ void ContextMenuController::setResultTitle(const QString& resultTitle)
  */
 void ContextMenuController::processGeoElements()
 {
-  if (m_contextFeatures.isEmpty() && m_contextGraphics.isEmpty())
+  if (m_contextGeoElements.isEmpty())
     return;
 
   // if we have at least 1 GeoElement, we can identify
   addOption(IDENTIFY_OPTION);
 
-  int pointGraphicsCount = 0;
-  for (const auto& geoElements : std::as_const(m_contextGraphics))
+  quint8 pointGeoElementCount = 0;
+  for (const auto& geoElements : std::as_const(m_contextGeoElements))
   {
     for (const auto* geoElement : geoElements)
     {
       if (geoElement->geometry().geometryType() == GeometryType::Point)
-        pointGraphicsCount++;
+        if (++pointGeoElementCount > 1)
+          break;
     }
+
+    // no need to continue searching the results if more than
+    // one GeoElement of type point has already been found
+    if (pointGeoElementCount > 1)
+      break;
   }
 
-  if (pointGraphicsCount == 1) // if we have exactly 1 point graphic, we can follow it
+  if (pointGeoElementCount == 1) // if we have exactly 1 point graphic, we can follow it
     addOption(FOLLOW_OPTION);
 
-  if (pointGraphicsCount > 0) // if we have at least 1 point geometry, we can perform LOS
-  {
+  if (pointGeoElementCount > 0) // if we have at least 1 point geometry, we can perform LOS
     addOption(LINE_OF_SIGHT_OPTION);
-    return;
-  }
-
-  // if were have 0 point graphics, check whether we have any point features
-  for (const auto& geoElements : std::as_const(m_contextFeatures))
-  {
-    for (const auto* geoElement : geoElements)
-    {
-      if (geoElement && geoElement->geometry().geometryType() == GeometryType::Point)
-      {
-        addOption(LINE_OF_SIGHT_OPTION);
-        return;
-      }
-    }
-  }
 }
 
 void ContextMenuController::invokeIdentifyOnGeoView()
@@ -319,7 +305,7 @@ void ContextMenuController::invokeIdentifyOnGeoView()
       if (identify_result.index() == IdentifyResultsVariant::Types::LAYERS)
       {
         LayerResultsManager resultsManager(std::get<IdentifyResultsVariant::Types::LAYERS>(identify_result).result());
-        for (auto* result : resultsManager.m_results)
+        for (auto* result : std::as_const(resultsManager.m_results))
         {
           if (!result)
             continue;
@@ -329,13 +315,13 @@ void ContextMenuController::invokeIdentifyOnGeoView()
           GeoElementUtils::setParent(geoElements, this);
 
           // add the geoElements to the context hash using the layer name as the key
-          m_contextFeatures.insert(result->layerContent()->name(), geoElements);
+          m_contextGeoElements.insert(result->layerContent()->name(), geoElements);
         }
       }
       else if (identify_result.index() == IdentifyResultsVariant::Types::GRAPHICS)
       {
         GraphicsOverlaysResultsManager resultsManager(std::get<IdentifyResultsVariant::Types::GRAPHICS>(identify_result).result());
-        for (auto* result : resultsManager.m_results)
+        for (auto* result : std::as_const(resultsManager.m_results))
         {
           if (!result)
             continue;
@@ -356,7 +342,7 @@ void ContextMenuController::invokeIdentifyOnGeoView()
           }
 
           // add the geoElements to the context hash using the overlay id as the key
-          m_contextGraphics.insert(result->graphicsOverlay()->overlayId(), geoElements);
+          m_contextGeoElements.insert(result->graphicsOverlay()->overlayId(), geoElements);
         }
       }
     }
@@ -419,9 +405,7 @@ void ContextMenuController::selectOption(const QString& option)
     if (!identifyTool)
       return;
 
-    auto combinedGeoElementsByTitle = m_contextGraphics;
-    combinedGeoElementsByTitle.insert(m_contextFeatures);
-    identifyTool->showPopups(combinedGeoElementsByTitle);
+    identifyTool->showPopups(m_contextGeoElements);
   }
   else if (option == VIEWSHED_OPTION)
   {
@@ -441,14 +425,19 @@ void ContextMenuController::selectOption(const QString& option)
       return;
 
     // follow the 1st point graphic (should be only 1)
-    for(const auto& geoElements : std::as_const(m_contextGraphics))
+    for(const auto& geoElements : std::as_const(m_contextGeoElements))
     {
       for (auto* geoElement : geoElements)
       {
         if (!geoElement || geoElement->geometry().geometryType() != GeometryType::Point)
           continue;
 
-        followTool->followGeoElement(geoElement);
+        // follow the 'parent' DynamicEntity if the type was a DynamicEntityObservation
+        auto* geoElementToFollow = geoElement;
+        if (const auto* observation = dynamic_cast<DynamicEntityObservation*>(geoElement); observation)
+          geoElementToFollow = static_cast<DynamicEntity*>(observation->dynamicEntity());
+
+        followTool->followGeoElement(geoElementToFollow);
         return;
       }
     }
@@ -495,8 +484,7 @@ void ContextMenuController::selectOption(const QString& option)
       }
     };
 
-    losFunc(m_contextGraphics);
-    losFunc(m_contextFeatures);
+    losFunc(m_contextGeoElements);
   }
   else if (option == OBSERVATION_REPORT_OPTION)
   {

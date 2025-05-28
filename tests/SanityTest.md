@@ -617,6 +617,27 @@ Test 3: json values are written by the app
 - Turn the visibility of one of the layers off, and reorder the layers (move one of them up or down)
 - Close/Reopen the app, go to the Overlays/TOC tool, and the visibility and layer order should be retained
 
+## Current Location Placement and Z Offset Behavior
+Test 1: Verify default settings
+- Confirm `CurrentLocationSurfacePlacement` is set to `Relative`.
+- Confirm `CurrentLocationZOffset` is set to 10.
+
+Test 2: Offset behavior with valid numerical input
+- Change `CurrentLocationZOffset` to a different valid numerical value (e.g., 20). 
+- Close/Reopen the app. The current location symbol appears above the terrain by the specified offset (e.g., 20 meters above the surface).
+
+Test 3: 0ffset behavior with invalid (non-numerical) input
+- Set `CurrentLocationZOffset` to an invalid value (e.g., "abc").
+- Close/Reopen the app. The `CurrentLocationZOffset` defaults to 0. The current location symbol is rendered directly on the terrain surface.
+
+Test 4: DrapedFlat surface placement behavior
+- Change `CurrentLocationSurfacePlacement` to `DrapedFlat`.
+- Close/Reopen the app. The current location symbol is displayed directly on the surface, ignoring any Z offset.
+
+Test 5: non-DrapedFlat surface placement behavior
+- Change CurrentLocationSurfacePlacement to any value other than DrapedFlat.
+- Close/Reopen the app. The current location symbol behaves as if `CurrentLocationSurfacePlacement` is Relative and is positioned using the `CurrentLocationZOffset` value.
+
 ## Settings
 ## App Configuration
 

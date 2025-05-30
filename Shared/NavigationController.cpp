@@ -38,6 +38,7 @@
 
 // DSA headers
 #include "DsaUtility.h"
+#include "FollowPositionController.h"
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
@@ -113,11 +114,14 @@ void NavigationController::updateGeoView()
  */
 void NavigationController::zoomToInitialLocation()
 {
-  Viewpoint initViewpoint;
-  if (m_is3d)
-  {
-    m_sceneView->setViewpointAsync(m_sceneView->arcGISScene()->initialViewpoint(), 1.0f);
-  }
+  if (!m_is3d)
+    return;
+
+  // stop following if the home button is clicked
+  if (auto* followPositionController = ToolManager::instance().tool<FollowPositionController>(); followPositionController)
+    followPositionController->setFollowMode(FollowPositionController::FollowMode::Disabled);
+
+  m_sceneView->setViewpointAsync(m_sceneView->arcGISScene()->initialViewpoint(), 1.0f);
 }
 
 /*!

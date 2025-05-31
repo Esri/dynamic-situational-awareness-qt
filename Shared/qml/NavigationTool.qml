@@ -53,6 +53,7 @@ Item {
         OverlayButton {
             iconUrl: DsaResources.iconHome
             onClicked: {
+                followHud.stopFollowing();
                 navController.zoomToInitialLocation();
             }
         }

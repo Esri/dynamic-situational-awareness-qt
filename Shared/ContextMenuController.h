@@ -99,8 +99,7 @@ private:
   QString m_resultTitle;
   Esri::ArcGISRuntime::Point m_contextLocation;
   Esri::ArcGISRuntime::Point m_contextBaseSurfaceLocation;
-  QHash<QString, QList<Esri::ArcGISRuntime::GeoElement*>> m_contextFeatures;
-  QHash<QString, QList<Esri::ArcGISRuntime::GeoElement*>> m_contextGraphics;
+  QHash<QString, QList<Esri::ArcGISRuntime::GeoElement*>> m_contextGeoElements;
 };
 
 } // Dsa

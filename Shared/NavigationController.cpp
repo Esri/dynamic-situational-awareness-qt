@@ -113,11 +113,10 @@ void NavigationController::updateGeoView()
  */
 void NavigationController::zoomToInitialLocation()
 {
-  Viewpoint initViewpoint;
-  if (m_is3d)
-  {
-    m_sceneView->setViewpointAsync(m_sceneView->arcGISScene()->initialViewpoint(), 1.0f);
-  }
+  if (!m_is3d)
+    return;
+
+  m_sceneView->setViewpointAsync(m_sceneView->arcGISScene()->initialViewpoint(), 1.0f);
 }
 
 /*!

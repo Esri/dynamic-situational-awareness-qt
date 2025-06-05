@@ -26,6 +26,7 @@
 #include "LayerSceneProperties.h"
 #include "PictureMarkerSymbol.h"
 #include "SceneViewTypes.h"
+#include "SceneQuickView.h"
 #include "SimpleRenderer.h"
 
 // Qt headers
@@ -67,10 +68,7 @@ MessageFeedsController::MessageFeedsController(QObject* parent) :
   m_messageFeeds(new MessageFeedListModel(this)),
   m_locationBroadcast(new LocationBroadcast(this))
 {
-  connect(ToolResourceProvider::instance(), &ToolResourceProvider::geoViewChanged, this, [this]
-  {
-    setGeoView(ToolResourceProvider::instance()->geoView());
-  });
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::geoViewChanged, this, &MessageFeedsController::setSceneFromGeoView);
 
   ToolManager::instance().addTool(this);
 }
@@ -83,15 +81,24 @@ MessageFeedsController::~MessageFeedsController()
 }
 
 /*!
-  \brief Sets the GeoView for the MessagesOverlay objects to \a geoView.
+  \brief Sets the Scene from the ToolResourceProvider's GeoView to use during setupFeeds().
  */
-void MessageFeedsController::setGeoView(GeoView* geoView)
+void MessageFeedsController::setSceneFromGeoView()
 {
-  m_geoView = geoView;
+  const auto* sceneView = static_cast<const SceneQuickView*>(ToolResourceProvider::instance()->geoView());
+  if (!sceneView)
+    return;
 
-  // now that the geoview is ready, setup the feeds
-  if (m_geoView && m_messageFeeds->rowCount() == 0)
-    setupFeeds();
+  connect(sceneView, &SceneQuickView::sceneChanged, this, [this, sceneView]
+  {
+    auto* scene = sceneView->arcGISScene();
+    if (!scene)
+      return;
+
+    m_scene = scene;
+    if (m_messageFeeds->rowCount() == 0)
+      setupFeeds();
+  });
 }
 
 /*!
@@ -195,8 +202,7 @@ void MessageFeedsController::setupFeeds()
     auto* overlay = new MessagesOverlay(feed, feedType, this);
     overlay->setSceneProperties(LayerSceneProperties(toSurfacePlacement(surfacePlacement)));
     overlay->setRenderer(createRenderer(rendererInfo, this));
-    SceneView* scene = static_cast<SceneView*>(m_geoView);
-    scene->arcGISScene()->operationalLayers()->append(overlay);
+    m_scene->operationalLayers()->append(overlay);
 
     if (!rendererThumbnail.isEmpty())
     {
@@ -249,7 +255,7 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
   }
 
   // only setup message feeds at startup
-  if (m_geoView && m_messageFeeds->rowCount() == 0)
+  if (m_scene && m_messageFeeds->rowCount() == 0)
     setupFeeds();
 
   const auto locationBroadcastConfig = properties[MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME].toMap();

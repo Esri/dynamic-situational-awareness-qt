@@ -14,15 +14,27 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  ******************************************************************************/
+#include "pch.hpp"
+
 #include "CoordinateConversionToolProxy.h"
 
+// DSA headers
+#include "CoordinateConversionController.h"
+#include "LocationTextController.h"
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
-#include "CoordinateConversionController.h"
+// C++ API headers
+#include "CoordinateConversionConstants.h"
 #include "CoordinateConversionResult.h"
+#include "LatitudeLongitudeGrid.h"
+#include "MapViewTypes.h"
+#include "MGRSGrid.h"
+#include "SceneQuickView.h"
+#include "USNGGrid.h"
+#include "UTMGrid.h"
 
-#include <SceneQuickView.h>
+#include <vector>
 
 using namespace Esri::ArcGISRuntime;
 using namespace Esri::ArcGISRuntime::Toolkit;
@@ -170,16 +182,54 @@ CoordinateConversionResult* CoordinateConversionToolProxy::inputFormat() const
  */
 void CoordinateConversionToolProxy::connectController()
 {
-  auto geoView = ToolResourceProvider::instance()->geoView();
+  auto* geoView = ToolResourceProvider::instance()->geoView();
   m_controller->setGeoView(static_cast<SceneQuickView*>(geoView));
 
-  connect(ToolResourceProvider::instance(), &ToolResourceProvider::locationChanged,
-    m_controller,
-    [this](const Point& point)
+  connect(m_inputFormat, &CoordinateConversionResult::nameChanged, this, [this]()
+  {
+    auto* geoView = ToolResourceProvider::instance()->geoView();
+    if (!geoView)
+      return;
+
+    // create a string lookup to use lat long for everything but utm/mgrs/usng
+    const static std::vector<QString> nonDefaultFormatNames{
+      CoordinateConversionConstants::UTM_FORMAT,
+      CoordinateConversionConstants::MGRS_FORMAT,
+      CoordinateConversionConstants::USNG_FORMAT
+    };
+    const auto format = m_inputFormat->name();
+    auto formatLookup = QString{"default"};
+    if (std::find(nonDefaultFormatNames.cbegin(), nonDefaultFormatNames.cend(), format) != nonDefaultFormatNames.cend())
+      formatLookup = format;
+
+    // create an instance of the matching grid type if it has not been selected yet
+    if (m_grids.count(formatLookup) < 1)
     {
-      if (isActive() && !m_inInputMode)
-        m_controller->setCurrentPoint(point);
-    });
+      if (formatLookup == CoordinateConversionConstants::UTM_FORMAT)
+        m_grids[formatLookup] = new UTMGrid(this);
+      else if (formatLookup == CoordinateConversionConstants::MGRS_FORMAT)
+        m_grids[formatLookup] = new MGRSGrid(this);
+      else if (formatLookup == CoordinateConversionConstants::USNG_FORMAT)
+        m_grids[formatLookup] = new USNGGrid(this);
+      else
+      {
+        m_grids[formatLookup] = new LatitudeLongitudeGrid(this);
+        m_grids[formatLookup]->setLabelPosition(GridLabelPosition::Geographic);
+      }
+    }
+
+    auto* grid = m_grids[formatLookup];
+    if (!grid)
+      return;
+
+    geoView->setGrid(grid);
+  });
+
+  connect(ToolResourceProvider::instance(), &ToolResourceProvider::locationChanged, m_controller, [this](const Point& point)
+  {
+    if (isActive() && !m_inInputMode)
+      m_controller->setCurrentPoint(point);
+  });
 }
 
 }

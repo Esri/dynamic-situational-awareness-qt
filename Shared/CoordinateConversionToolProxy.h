@@ -17,12 +17,19 @@
 #ifndef COORDINATE_CONVERSION_TOOL_PROXY_H
 #define COORDINATE_CONVERSION_TOOL_PROXY_H
 
-// dsa headers
+// DSA headers
 #include "AbstractTool.h"
+
+// STL headers
+#include <unordered_map>
 
 namespace Esri::ArcGISRuntime::Toolkit {
 class CoordinateConversionController;
 class CoordinateConversionResult;
+}
+
+namespace Esri::ArcGISRuntime {
+class Grid;
 }
 
 Q_MOC_INCLUDE("CoordinateConversionController.h")
@@ -61,6 +68,7 @@ private:
   bool m_inInputMode;
   Esri::ArcGISRuntime::Toolkit::CoordinateConversionController* m_controller = nullptr;
   Esri::ArcGISRuntime::Toolkit::CoordinateConversionResult* m_inputFormat = nullptr;
+  std::unordered_map<QString, Esri::ArcGISRuntime::Grid*> m_grids;
 };
 
 } // Dsa

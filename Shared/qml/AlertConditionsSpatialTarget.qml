@@ -46,6 +46,7 @@ Item {
     function clear() {
         featureIdEdit.text = "";
         targetCB.currentIndex = -1;
+        toolController.setSelectedTargetNameIndex(-1);
     }
 
     Column {
@@ -124,6 +125,9 @@ Item {
             textRole: "display"
             model: toolController.targetNames
             currentIndex: -1
+            onCurrentIndexChanged: {
+                toolController.setSelectedTargetNameIndex(currentIndex);
+            }
         }
     }
 

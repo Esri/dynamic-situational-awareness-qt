@@ -82,7 +82,7 @@ public:
   Q_INVOKABLE void updateConditionName(int rowIndex, const QString& conditionName);
   Q_INVOKABLE void updateConditionLevel(int rowIndex, int level);
   Q_INVOKABLE bool conditionAlreadyAdded(const QString& conditionName);
-  Q_INVOKABLE void setSelectedTargetNameIndex(qint16 currentIndex);
+  Q_INVOKABLE void setSelectedTargetNameIndex(int currentIndex);
 
   QAbstractItemModel* sourceNames() const;
   QAbstractItemModel* targetNames() const;

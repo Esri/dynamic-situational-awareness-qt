@@ -1154,7 +1154,7 @@ bool AlertConditionsController::conditionAlreadyAdded(const QString& conditionNa
   return false;
 }
 
-void AlertConditionsController::setSelectedTargetNameIndex(qint16 currentIndex)
+void AlertConditionsController::setSelectedTargetNameIndex(int currentIndex)
 {
   m_selectedTargetNameIndex = currentIndex;
 }

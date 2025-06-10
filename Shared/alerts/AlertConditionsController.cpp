@@ -715,16 +715,16 @@ const std::optional<qint64> AlertConditionsController::getPickedElementId(const 
   // check again after the completion of the identify and abort if tool
   // is no longer the active tool or there were no geoelements returned
   if (!isActive())
-    return {};
-  if (geoElements.count() < 1)
-    return {};
+    return std::nullopt;
+  if (geoElements.isEmpty())
+    return std::nullopt;
 
   // get the entity id for dynamic entity types
   auto* geoElement = geoElements.first();
   if (auto* observation = dynamic_cast<DynamicEntityObservation*>(geoElement); observation)
   {
     observation->deleteLater();
-    return observation->dynamicEntity()->entityId();
+    return std::make_optional<qint64>(observation->dynamicEntity()->entityId());
   }
 
   // check the attribute table if feature type
@@ -733,17 +733,20 @@ const std::optional<qint64> AlertConditionsController::getPickedElementId(const 
     const auto* attributes = feature->attributes();
     auto* table = feature->featureTable();
     if (!attributes)
-      return {};
+      return std::nullopt;
     if (!table)
-      return {};
+      return std::nullopt;
 
     const auto primaryKeyField = primaryKeyFieldName(table);
     if (primaryKeyField.isEmpty())
-      return {};
+      return std::nullopt;
     if (!attributes->containsAttribute(primaryKeyField))
-      return {};
+      return std::nullopt;
 
-    return attributes->attributeValue(primaryKeyField).toInt();
+    if (auto primaryKeyValue = attributes->attributeValue(primaryKeyField); primaryKeyValue.canConvert<int>())
+      return attributes->attributeValue(primaryKeyField).toInt();
+    else
+      return std::nullopt;
   }
 
   // graphics, just use the index of the graphic in the layer. not sure we have a case where this
@@ -751,15 +754,15 @@ const std::optional<qint64> AlertConditionsController::getPickedElementId(const 
   if (auto* graphic = dynamic_cast<Graphic*>(geoElement); graphic)
   {
     if (!graphic->graphicsOverlay())
-      return {};
+      return std::nullopt;
     if (!graphic->graphicsOverlay()->graphics())
-      return {};
+      return std::nullopt;
 
     return graphic->graphicsOverlay()->graphics()->indexOf(graphic);
   }
 
   // if the execution makes it to this point, then nothing was found
-  return {};
+  return std::nullopt;
 }
 
 /*!

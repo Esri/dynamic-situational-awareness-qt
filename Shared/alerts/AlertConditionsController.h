@@ -37,6 +37,7 @@ namespace Esri::ArcGISRuntime {
   class IdentifyGraphicsOverlayResult;
   class FeatureLayer;
   class FeatureTable;
+  class GeoElement;
   class GraphicsOverlay;
 }
 
@@ -146,7 +147,7 @@ private:
   QHash<QString,QString> m_messageFeedTypesToNames;
 
   QMetaObject::Connection m_mouseClickConnection;
-  qint16 m_selectedTargetNameIndex = -1;
+  int m_selectedTargetNameIndex = -1;
 };
 
 } // Dsa

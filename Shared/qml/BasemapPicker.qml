@@ -38,8 +38,8 @@ DsaPanel {
             width: basemapsList.cellWidth - 10 * scaleFactor
             height: basemapsList.cellHeight - 10 * scaleFactor
 
-            border.color: index === basemapsList.currentIndex ? Material.accent : Material.background
-            border.width: index === basemapsList.currentIndex ? 2 * scaleFactor : 1 * scaleFactor
+            border.color: index === toolController.selectedBasemapIndex ? Material.accent : Material.background
+            border.width: index === toolController.selectedBasemapIndex ? 2 * scaleFactor : 1 * scaleFactor
             color: Material.background
             radius: 2 * scaleFactor
 
@@ -76,26 +76,18 @@ DsaPanel {
 
             MouseArea {
                 anchors.fill: parent
-                hoverEnabled: true
                 onClicked: {
-                    toolController.basemapSelected(index);
-                    basemapSelected();
-                }
-                onHoveredChanged: {
-                    if (containsMouse) {
-                        basemapsList.currentIndex = index
-                        basemapsList.currentPath = path
+                    if (index !== toolController.selectedBasemapIndex) {
+                        toolController.basemapSelected(index);
+                        basemapSelected();
                     }
                 }
-
             }
         }
     }
 
     GridView {
         id: basemapsList
-
-        property string currentPath: ""
 
         anchors{
             top: titleBar.bottom
@@ -110,6 +102,7 @@ DsaPanel {
         cellWidth: 128 * scaleFactor
         cellHeight: 128 * scaleFactor
         width: 2 * cellWidth
+        currentIndex: toolController.selectedBasemapIndex
 
         delegate: tileCacheDelegate
     }
@@ -129,7 +122,7 @@ DsaPanel {
         Label {
             id: pathText
             anchors.fill: parent
-            text: basemapsList.currentPath
+            text: toolController.selectedBasemapPath
             wrapMode: Text.WrapAnywhere
             elide: Text.ElideRight
             font.pixelSize: 12 * scaleFactor

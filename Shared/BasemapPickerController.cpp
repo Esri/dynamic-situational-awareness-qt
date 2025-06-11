@@ -21,6 +21,7 @@
 #include "BasemapPickerController.h"
 
 // dsa app headers
+#include "TileCache.h"
 #include "TileCacheListModel.h"
 
 // toolkit headers
@@ -160,6 +161,10 @@ void BasemapPickerController::basemapSelected(int row)
   TileCache* tileCache = m_tileCacheModel->tileCacheAt(row);
   if (!tileCache)
     return;
+
+  m_selectedBasemapIndex = row;
+  m_selectedBasemapPath = tileCache->path();
+  emit selectedBasemapIndexChanged();
 
   Basemap* selectedBasemap = new Basemap(new ArcGISTiledLayer(tileCache, this), this);
   connect(selectedBasemap, &Basemap::errorOccurred, this, &BasemapPickerController::errorOccurred);

@@ -82,7 +82,7 @@ private:
   QString             m_basemapDataPath;
   QString             m_defaultBasemap = "topographic";
   int                 m_selectedBasemapIndex = -1;
-  QString             m_selectedBasemapPath = "";
+  QString             m_selectedBasemapPath;
 
 private:
   void findBasemaps();

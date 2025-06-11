@@ -77,8 +77,7 @@ DsaPanel {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    if (index !== toolController.selectedBasemapIndex)
-                    {
+                    if (index !== toolController.selectedBasemapIndex) {
                         toolController.basemapSelected(index);
                         basemapSelected();
                     }

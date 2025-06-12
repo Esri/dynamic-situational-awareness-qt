@@ -710,6 +710,61 @@ void AlertConditionsController::onLayersChanged()
   addStoredConditions();
 }
 
+const std::optional<qint64> AlertConditionsController::getPickedElementId(const QList<GeoElement*>& geoElements) const
+{
+  // check again after the completion of the identify and abort if tool
+  // is no longer the active tool or there were no geoelements returned
+  if (!isActive())
+    return std::nullopt;
+  if (geoElements.isEmpty())
+    return std::nullopt;
+
+  // get the entity id for dynamic entity types
+  auto* geoElement = geoElements.first();
+  if (auto* observation = dynamic_cast<DynamicEntityObservation*>(geoElement); observation)
+  {
+    observation->deleteLater();
+    return std::make_optional<qint64>(observation->dynamicEntity()->entityId());
+  }
+
+  // check the attribute table if feature type
+  if (auto* feature = dynamic_cast<Feature*>(geoElement); feature)
+  {
+    const auto* attributes = feature->attributes();
+    auto* table = feature->featureTable();
+    if (!attributes)
+      return std::nullopt;
+    if (!table)
+      return std::nullopt;
+
+    const auto primaryKeyField = primaryKeyFieldName(table);
+    if (primaryKeyField.isEmpty())
+      return std::nullopt;
+    if (!attributes->containsAttribute(primaryKeyField))
+      return std::nullopt;
+
+    if (auto primaryKeyValue = attributes->attributeValue(primaryKeyField); primaryKeyValue.canConvert<int>())
+      return attributes->attributeValue(primaryKeyField).toInt();
+    else
+      return std::nullopt;
+  }
+
+  // graphics, just use the index of the graphic in the layer. not sure we have a case where this
+  // might be problematic, but a graphics layer that changes would be a potential issue here.
+  if (auto* graphic = dynamic_cast<Graphic*>(geoElement); graphic)
+  {
+    if (!graphic->graphicsOverlay())
+      return std::nullopt;
+    if (!graphic->graphicsOverlay()->graphics())
+      return std::nullopt;
+
+    return graphic->graphicsOverlay()->graphics()->indexOf(graphic);
+  }
+
+  // if the execution makes it to this point, then nothing was found
+  return std::nullopt;
+}
+
 /*!
   \brief internal
 
@@ -735,80 +790,97 @@ void AlertConditionsController::onMouseClicked(QMouseEvent &event)
   if (!geoView)
     return;
 
+  // check for a selected source layer
+  if (m_selectedTargetNameIndex > -1)
+  {
+    // check the graphics overlays for a match of the selected target name
+    const QString selectedTargetName = m_targetNames->stringList().at(m_selectedTargetNameIndex);
+    auto* graphicsOverlays = geoView->graphicsOverlays();
+    for (auto* graphicsOverlay : *graphicsOverlays)
+    {
+      if (graphicsOverlay->overlayId() == selectedTargetName)
+      {
+        geoView->identifyGraphicsOverlayAsync(graphicsOverlay, event.position(), m_tolerance,
+                                              false, 1, this).then(this, [this, selectedTargetName](IdentifyGraphicsOverlayResult* result)
+        {
+          const auto resultsManager = std::unique_ptr<IdentifyGraphicsOverlayResult>(result);
+          if (const auto pickedElementId = getPickedElementId(resultsManager->geoElements()); pickedElementId.has_value())
+          {
+            emit pickedElement(selectedTargetName, pickedElementId.value());
+            return;
+          }
+          emit pickedElement(selectedTargetName, -1);
+        });
+        break;
+      }
+    }
+
+    // check the dynamic entity layers (messagefeeds) and any feature layers (operationalLayers)
+    const auto* operationalLayers = static_cast<SceneView*>(geoView)->arcGISScene()->operationalLayers();
+    for (auto* operationalLayer : *operationalLayers)
+    {
+      if (operationalLayer->name() == selectedTargetName)
+      {
+        geoView->identifyLayerAsync(operationalLayer, event.position(), m_tolerance,
+                                    false, 1, this).then(this, [this, selectedTargetName](IdentifyLayerResult* result)
+        {
+          const auto resultsManager = std::unique_ptr<IdentifyLayerResult>(result);
+          if (const auto pickedElementId = getPickedElementId(resultsManager->geoElements()); pickedElementId.has_value())
+          {
+            emit pickedElement(selectedTargetName, pickedElementId.value());
+            return;
+          }
+          emit pickedElement(selectedTargetName, -1);
+        });
+        break;
+      }
+    }
+
+    togglePickMode();
+    event.accept();
+    return;
+  }
+
   // dispatch identify calls to the graphics layers and operational layers of the GeoView
-  // TODO: can we do something here to search only the layer in the combobox? right now, the user must toggle visibility
-  //       in order to search only their desired layer in the combo of targets. perhaps a model property for selected index
-  auto identify_layers = geoView->identifyLayersAsync(event.position(), m_tolerance, false, 1, this);
-  auto identify_graphics = geoView->identifyGraphicsOverlaysAsync(event.position(), m_tolerance, false, 1, this);
+  auto identifyLayers = geoView->identifyLayersAsync(event.position(), m_tolerance, false, 1, this);
+  auto identifyGraphics = geoView->identifyGraphicsOverlaysAsync(event.position(), m_tolerance, false, 1, this);
 
   // respond once all QFutures are complete (includes any cancel or failure as well)
-  QtFuture::whenAll(identify_layers, identify_graphics).then(this, [this](const QList<IdentifyResultsVariant::FutureType> &identify_results)
+  QtFuture::whenAll(identifyLayers, identifyGraphics).then(this, [this](const QList<IdentifyResultsVariant::FutureType> &identifyResults)
   {
     // abort if tool is no longer the active tool
     if (!isActive())
       return;
 
     // iterate over each type in the results variant
-    for (const IdentifyResultsVariant::FutureType& identify_result : identify_results)
+    for (const IdentifyResultsVariant::FutureType& identifyResult : identifyResults)
     {
-      if (identify_result.index() == IdentifyResultsVariant::Types::LAYERS)
+      if (identifyResult.index() == IdentifyResultsVariant::Types::LAYERS)
       {
-        LayerResultsManager resultsManager(std::get<IdentifyResultsVariant::Types::LAYERS>(identify_result).result());
-        for (auto* result : resultsManager.m_results)
+        LayerResultsManager resultsManager(std::get<IdentifyResultsVariant::Types::LAYERS>(identifyResult).result());
+        for (auto* result : std::as_const(resultsManager.m_results))
         {
           if (!result)
             continue;
 
-          const auto& layerName = result->layerContent()->name();
-          for (auto* geoElement : result->geoElements())
+          if (const auto pickedElementId = getPickedElementId(result->geoElements()); pickedElementId.has_value())
           {
-            if (!geoElement)
-              continue;
-
-            auto* attributes = geoElement->attributes();
-            if (!attributes)
-              continue;
-
-            // check for the type of GeoElement
-            if (auto* observation = dynamic_cast<DynamicEntityObservation*>(geoElement); observation)
-            {
-              emit pickedElement(layerName, observation->dynamicEntity()->entityId());
-              observation->deleteLater();
-              return;
-            }
-            else if (auto* feature = dynamic_cast<Feature*>(geoElement); feature)
-            {
-              auto* table = feature->featureTable();
-              if (!table)
-                continue;
-
-              auto primaryKeyField = primaryKeyFieldName(table);
-              if (primaryKeyField.isEmpty())
-                continue;
-
-              if (!attributes->containsAttribute(primaryKeyField))
-                continue;
-
-              emit pickedElement(layerName, attributes->attributeValue(primaryKeyField).toInt());
-              return;
-            }
+            emit pickedElement(result->layerContent()->name(), pickedElementId.value());
+            return;
           }
         }
       }
-      else if (identify_result.index() == IdentifyResultsVariant::Types::GRAPHICS)
+      else if (identifyResult.index() == IdentifyResultsVariant::Types::GRAPHICS)
       {
-        GraphicsOverlaysResultsManager resultsManager(std::get<IdentifyResultsVariant::Types::GRAPHICS>(identify_result).result());
-        for (auto* result : resultsManager.m_results)
+        GraphicsOverlaysResultsManager resultsManager(std::get<IdentifyResultsVariant::Types::GRAPHICS>(identifyResult).result());
+        for (auto* result : std::as_const(resultsManager.m_results))
         {
           if (!result)
             continue;
 
-          for (auto* graphic : result->graphics())
+          if (const auto pickedElementId = getPickedElementId(result->geoElements()); pickedElementId.has_value())
           {
-            if (!graphic || !graphic->graphicsOverlay() || !graphic->graphicsOverlay()->graphics())
-              continue;
-
-            emit pickedElement(result->graphicsOverlay()->overlayId(), graphic->graphicsOverlay()->graphics()->indexOf(graphic));
+            emit pickedElement(result->graphicsOverlay()->overlayId(), pickedElementId.value());
             return;
           }
         }
@@ -816,7 +888,7 @@ void AlertConditionsController::onMouseClicked(QMouseEvent &event)
     }
 
     // if the execution makes it to this point, then nothing was found
-    emit pickedElement(QStringLiteral(""), -1);
+    emit pickedElement(QString{}, -1);
   });
 
   togglePickMode();
@@ -1080,6 +1152,11 @@ bool AlertConditionsController::conditionAlreadyAdded(const QString& conditionNa
       return true;
   }
   return false;
+}
+
+void AlertConditionsController::setSelectedTargetNameIndex(int currentIndex)
+{
+  m_selectedTargetNameIndex = currentIndex;
 }
 
 /*!

@@ -126,6 +126,7 @@ Item {
             model: toolController.targetNames
             currentIndex: -1
             onCurrentIndexChanged: {
+                featureIdEdit.text = "";
                 toolController.setSelectedTargetNameIndex(currentIndex);
             }
         }
@@ -141,7 +142,7 @@ Item {
                 if (targetCB.textAt(i) === overlayName)
                 {
                     targetCB.currentIndex = i;
-                    featureIdEdit.text = elementId;
+                    featureIdEdit.text = elementId === -1 ? "" : elementId
                     break;
                 }
             }

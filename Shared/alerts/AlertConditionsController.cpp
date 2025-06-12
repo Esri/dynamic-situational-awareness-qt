@@ -809,7 +809,7 @@ void AlertConditionsController::onMouseClicked(QMouseEvent &event)
             emit pickedElement(selectedTargetName, pickedElementId.value());
             return;
           }
-          emit pickedElement(QString{}, -1);
+          emit pickedElement(selectedTargetName, -1);
         });
         break;
       }
@@ -830,7 +830,7 @@ void AlertConditionsController::onMouseClicked(QMouseEvent &event)
             emit pickedElement(selectedTargetName, pickedElementId.value());
             return;
           }
-          emit pickedElement(QString{}, -1);
+          emit pickedElement(selectedTargetName, -1);
         });
         break;
       }

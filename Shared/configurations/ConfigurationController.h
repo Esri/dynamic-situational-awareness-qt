@@ -30,6 +30,10 @@
 Q_MOC_INCLUDE("QAbstractListModel")
 class QAbstractListModel;
 
+namespace Esri::ArcGISRuntime {
+class PortalItem;
+}
+
 namespace Dsa {
 
 class ConfigurationListModel;
@@ -42,7 +46,6 @@ class ConfigurationController : public AbstractTool
   Q_OBJECT
 
   Q_PROPERTY(QAbstractListModel* configurations READ configurations NOTIFY configurationsChanged)
-  Q_PROPERTY(bool downloadInProgress READ downloadInProgress NOTIFY configurationsChanged)
   Q_PROPERTY(bool requiresRestart READ requiresRestart NOTIFY configurationsChanged)
   Q_PROPERTY(bool configurationIsAvailable READ configurationIsAvailable)
 
@@ -54,10 +57,10 @@ public:
   Q_INVOKABLE void cancel(int index);
   Q_INVOKABLE void remove(int index);
   Q_INVOKABLE void downloadDefaultData();
+  Q_INVOKABLE void addConfiguration(const QString& url, const QString& name);
   static bool createDefaultConfigurationsFile();
 
   QString toolName() const override;
-  bool downloadInProgress();
   bool requiresRestart();
   bool configurationIsAvailable();
 
@@ -67,27 +70,21 @@ signals:
   void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
   void configurationsChanged();
 
-private slots:
-  void downloadProgress(quint64 bytesReceived, quint64 bytesTotal);
-  void readyRead();
-  void finished();
-  void downloadErrorOccurred(QNetworkReply::NetworkError);
-  void extractCompleted();
-  void extractError(const QString& fileName, const QString& outputFileName, ZipHelper::Result result);
-
 private:
-  void setPercentComplete(int percentComplete);
   void fetchConfigurations();
   void storeConfigurations();
+  bool isDownloadCancelled(const QString& configurationName);
+  bool deviceHasRoomForDownload(qint64 bytesToDownload);
+  void readyRead(QNetworkReply* networkReply, const QString& downloadFilePath, const QString& configurationName);
+  void finished(QNetworkReply* networkReply, const QString& downloadFilePath, const QString& configurationName);
+  void errorOccurred(QNetworkReply::NetworkError);
+  QString generateUniqueDownloadFilePath() const;
+  void extractConfigurationDownload(const QString& pathToDownload, const QString& configurationName);
+  bool updateExtractedConfigurationFile(const QDir& configurationDirectory);
   ConfigurationListModel* m_configurationListModel = nullptr;
   QNetworkAccessManager m_networkAccessManager;
-  int m_activeDownloadIndex;
   QDir m_downloadFolder;
-  QString m_downloadFileName;
-  bool m_aborted = false;
-  bool m_downloadInProgress = false;
-  QPointer<QNetworkReply> m_networkReply;
-  ZipHelper* m_zipHelper = nullptr;
+  QDir m_configurationsDirectory;
 };
 
 }

@@ -100,7 +100,7 @@ DsaController::DsaController(QObject* parent):
   // setup config settings
   setupConfig();
   m_scene->setInitialViewpoint(viewpointFromJson(defaultViewpoint()));
-  m_dataPath = m_dsaSettings["RootDataDirectory"].toString();
+  m_dataPath = m_dsaSettings[AppConstants::PROPERTYNAME_ROOT_DATA_DIRECTORY].toString();
 
   connect(m_scene, &Scene::errorOccurred, this, &DsaController::onError);
 
@@ -161,7 +161,7 @@ void DsaController::init(GeoView* geoView)
   // Only set the default scene if the scene package tool hasn't set a scene.
   if (!hasActiveScene)
   {
-    if (!m_dsaSettings.contains(AppConstants::INITIALLOCATION_PROPERTYNAME))
+    if (!m_dsaSettings.contains(AppConstants::PROPERTYNAME_INITIAL_LOCATION))
     {
       // While a scene change would normally write out the viewpoint
       // to config if/when it is missing, this here is a special case. We
@@ -169,7 +169,7 @@ void DsaController::init(GeoView* geoView)
       // using a distance measure. Extracting the viewpoint from the scene
       // will give us a calculated viewpoint with no distance measure, so we have
       // to set this manually.
-      m_dsaSettings[AppConstants::INITIALLOCATION_PROPERTYNAME] = defaultViewpoint();
+      m_dsaSettings[AppConstants::PROPERTYNAME_INITIAL_LOCATION] = defaultViewpoint();
     }
 
     ToolResourceProvider::instance()->setScene(m_scene);
@@ -332,9 +332,9 @@ void DsaController::resetToDefaultScene()
   }
 
   // clear current scene and index in properties
-  onPropertyChanged(AppConstants::SCENEINDEX_PROPERTYNAME, -1);
-  onPropertyChanged(AppConstants::CURRENTSCENE_PROPERTYNAME, "");
-  onPropertyChanged(AppConstants::LAYERS_PROPERTYNAME, QJsonArray().toVariantList());
+  onPropertyChanged(AppConstants::PROPERTYNAME_SCENE_INDEX, -1);
+  onPropertyChanged(AppConstants::PROPERTYNAME_CURRENT_SCENE, "");
+  onPropertyChanged(AppConstants::PROPERTYNAME_LAYERS, QJsonArray().toVariantList());
   m_cacheManager->setProperties(m_dsaSettings);
 }
 
@@ -347,7 +347,7 @@ void DsaController::setupConfig()
   createDefaultSettings();
 
   // get the app config
-  m_configFilePath = QString("%1/%2").arg(m_dsaSettings["RootDataDirectory"].toString(), DsaUtility::FILE_NAME_APP_CONFIG);
+  m_configFilePath = QString("%1/%2").arg(m_dsaSettings[AppConstants::PROPERTYNAME_ROOT_DATA_DIRECTORY].toString(), DsaUtility::FILE_NAME_APP_CONFIG);
 
   // If the config file does not exist, create it, and set all of the defaults
   if (!QFileInfo::exists(m_configFilePath))
@@ -372,7 +372,7 @@ void DsaController::setupConfig()
  */
 void DsaController::writeDefaultLocalDataPaths()
 {
-  const QString rootDir = m_dsaSettings["RootDataDirectory"].toString();
+  const QString rootDir = m_dsaSettings[AppConstants::PROPERTYNAME_ROOT_DATA_DIRECTORY].toString();
   QStringList pathsList{QString("%1/").arg(rootDir),
         QString("%1/OperationalData").arg(rootDir)};
   m_dsaSettings[QStringLiteral("LocalDataPaths")] = pathsList;
@@ -497,28 +497,28 @@ bool DsaController::isConflictingTool(const QString& toolName) const
 void DsaController::createDefaultSettings()
 {
   // setup the defaults
-  m_dsaSettings["RootDataDirectory"] = DsaUtility::activeConfigurationPath();
-  m_dsaSettings[AppConstants::USERNAME_PROPERTYNAME] = QHostInfo::localHostName();
-  m_dsaSettings["BasemapDirectory"] = QString("%1/BasemapData").arg(m_dsaSettings["RootDataDirectory"].toString());
-  m_dsaSettings["ElevationDirectory"] = QString("%1/ElevationData").arg(m_dsaSettings["RootDataDirectory"].toString());
-  m_dsaSettings["SimulationDirectory"] = QString("%1/SimulationData").arg(m_dsaSettings["RootDataDirectory"].toString());
-  m_dsaSettings[LocationController::PROPERTY_NAME_RESOURCE_DIRECTORY] = QString("%1/ResourceData").arg(m_dsaSettings["RootDataDirectory"].toString());
+  m_dsaSettings[AppConstants::PROPERTYNAME_ROOT_DATA_DIRECTORY] = DsaUtility::activeConfigurationPath();
+  m_dsaSettings[AppConstants::PROPERTYNAME_USERNAME] = QHostInfo::localHostName();
+  m_dsaSettings[AppConstants::PROPERTYNAME_BASEMAP_DIRECTORY] = QString("%1/BasemapData").arg(m_dsaSettings[AppConstants::PROPERTYNAME_ROOT_DATA_DIRECTORY].toString());
+  m_dsaSettings[AppConstants::PROPERTYNAME_ELEVATION_DIRECTORY] = QString("%1/ElevationData").arg(m_dsaSettings[AppConstants::PROPERTYNAME_ROOT_DATA_DIRECTORY].toString());
+  m_dsaSettings[AppConstants::PROPERTYNAME_SIMULATION_DIRECTORY] = QString("%1/SimulationData").arg(m_dsaSettings[AppConstants::PROPERTYNAME_ROOT_DATA_DIRECTORY].toString());
+  m_dsaSettings[LocationController::PROPERTY_NAME_RESOURCE_DIRECTORY] = QString("%1/ResourceData").arg(m_dsaSettings[AppConstants::PROPERTYNAME_ROOT_DATA_DIRECTORY].toString());
   writeDefaultLocalDataPaths();
-  m_dsaSettings["DefaultBasemap"] = QStringLiteral("topographic");
-  m_dsaSettings["DefaultElevationSource"] = QString("%1/CaDEM.tpk").arg(m_dsaSettings["ElevationDirectory"].toString());
-  m_dsaSettings[LocationController::PROPERTY_NAME_GPX_FILE] = QString("%1/MontereyMounted.gpx").arg(m_dsaSettings["SimulationDirectory"].toString());
-  m_dsaSettings[LocationController::PROPERTY_NAME_SIMULATE_LOCATION] = QStringLiteral("true");
+  m_dsaSettings[AppConstants::PROPERTYNAME_DEFAULT_BASEMAP] = AppConstants::BASEMAP_NAME_TOPOGRAPHIC;
+  m_dsaSettings[AppConstants::PROPERTYNAME_DEFAULT_ELEVATION_SOURCE] = QString("%1/CaDEM.tpk").arg(m_dsaSettings[AppConstants::PROPERTYNAME_ELEVATION_DIRECTORY].toString());
+  m_dsaSettings[LocationController::PROPERTY_NAME_GPX_FILE] = QString("%1/MontereyMounted.gpx").arg(m_dsaSettings[AppConstants::PROPERTYNAME_SIMULATION_DIRECTORY].toString());
+  m_dsaSettings[LocationController::PROPERTY_NAME_SIMULATE_LOCATION] = AppConstants::BOOL_TRUE;
   m_dsaSettings[LocationController::PROPERTY_NAME_CURRENT_LOCATION_Z_OFFSET] = QStringLiteral("10");
   m_dsaSettings[LocationController::PROPERTY_NAME_CURRENT_LOCATION_SURFACE_PLACEMENT] = QStringLiteral("Relative");
   writeDefaultMessageFeeds();
-  m_dsaSettings["CoordinateFormat"] = Esri::ArcGISRuntime::Toolkit::CoordinateConversionConstants::MGRS_FORMAT;
-  m_dsaSettings[AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME] = AppConstants::UNIT_METERS;
-  m_dsaSettings["UseGpsForElevation"] = QStringLiteral("true");
+  m_dsaSettings[AppConstants::PROPERTYNAME_COORDINATE_FORMAT] = Esri::ArcGISRuntime::Toolkit::CoordinateConversionConstants::MGRS_FORMAT;
+  m_dsaSettings[AppConstants::PROPERTYNAME_UNIT_OF_MEASUREMENT] = AppConstants::UNIT_METERS;
+  m_dsaSettings[AppConstants::PROPERTYNAME_USE_GPS_FOR_ELEVATION] = AppConstants::BOOL_TRUE;
   QJsonObject markupJson;
   markupJson.insert(QStringLiteral("port"), 45680);
-  m_dsaSettings[QStringLiteral("MarkupConfig")] = markupJson;
+  m_dsaSettings[AppConstants::PROPERTYNAME_MARKUP_CONFIG] = markupJson;
   writeDefaultConditions();
-  m_dsaSettings[OpenMobileScenePackageController::PACKAGE_DIRECTORY_PROPERTYNAME] = QString("%1/Packages").arg(m_dsaSettings["RootDataDirectory"].toString());
+  m_dsaSettings[OpenMobileScenePackageController::PACKAGE_DIRECTORY_PROPERTYNAME] = QString("%1/Packages").arg(m_dsaSettings[AppConstants::PROPERTYNAME_ROOT_DATA_DIRECTORY].toString());
 }
 
 /*!
@@ -552,12 +552,12 @@ void DsaController::writeInitialLocation(const Viewpoint& viewpoint)
   initialLocationJson.insert( QStringLiteral("pitch"), initialCamera.pitch());
   initialLocationJson.insert( QStringLiteral("roll"), initialCamera.roll());
 
-  m_dsaSettings[AppConstants::INITIALLOCATION_PROPERTYNAME] = initialLocationJson.toVariantMap();
+  m_dsaSettings[AppConstants::PROPERTYNAME_INITIAL_LOCATION] = initialLocationJson.toVariantMap();
 }
 
 Viewpoint DsaController::readInitialLocation()
 {
-  return viewpointFromJson(m_dsaSettings[AppConstants::INITIALLOCATION_PROPERTYNAME].toJsonObject());
+  return viewpointFromJson(m_dsaSettings[AppConstants::PROPERTYNAME_INITIAL_LOCATION].toJsonObject());
 }
 
 void DsaController::updateInitialLocationOnSceneChange(bool isInitialization)

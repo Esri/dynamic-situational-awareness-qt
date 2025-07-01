@@ -46,9 +46,17 @@ void ConfigurationListModel::cancel(int index)
     return;
 
   auto& configuration = m_configurations[index];
-  configuration.setPercentDownloaded(0);
+  configuration.cancelDownload();
   auto idx = createIndex(index, 0);
   emit dataChanged(idx, idx);
+}
+
+Configuration ConfigurationListModel::at(int index) const
+{
+  if (index < 0 || index >= m_configurations.size())
+    return Configuration{};
+
+  return m_configurations[index];
 }
 
 int ConfigurationListModel::rowCount(const QModelIndex& parent) const
@@ -68,7 +76,7 @@ QVariant ConfigurationListModel::data(const QModelIndex& index, int role) const
     case Roles::Name:
       return configuration.name();
     case Roles::Url:
-      return configuration.url();
+      return configuration.urlStr();
     case Roles::Downloaded:
       return configuration.downloaded();
     case Roles::Selected:
@@ -83,8 +91,26 @@ QVariant ConfigurationListModel::data(const QModelIndex& index, int role) const
       return configuration.requiresRestart();
     case Roles::CanDownload:
       return configuration.canDownload();
+    case Roles::CanDelete:
+      return configuration.canDelete();
+    case Roles::DownloadCancelled:
+      return configuration.downloadCancelled();
+    case Roles::IsCancellable:
+      return configuration.isCancellable();
   }
 
+  return QVariant{};
+}
+
+QVariant ConfigurationListModel::dataByName(const QString& configurationName, int role)
+{
+  for (qsizetype i = 0; i < m_configurations.count(); i++)
+  {
+    if (m_configurations[i].name() == configurationName)
+    {
+      return data(createIndex(i, 0), role);
+    }
+  }
   return QVariant{};
 }
 
@@ -115,11 +141,41 @@ bool ConfigurationListModel::setData(const QModelIndex& index, const QVariant& v
   return true;
 }
 
+bool ConfigurationListModel::setDataByName(const QString& configurationName, const QVariant& value, int role)
+{
+  for (qsizetype i = 0; i < m_configurations.count(); i++)
+  {
+    if (m_configurations[i].name() == configurationName)
+    {
+      setData(createIndex(i, 0), value, role);
+      return true;
+    }
+  }
+  return false;
+}
+
 bool ConfigurationListModel::add(const QString& name, const QString& url, bool selected, bool loaded, int percentDownloaded)
 {
   beginInsertRows(QModelIndex{}, m_configurations.count(), m_configurations.count());
   m_configurations.emplaceBack(name, url, selected, loaded, percentDownloaded);
   endInsertRows();
+  return true;
+}
+
+bool ConfigurationListModel::remove(int index)
+{
+  beginRemoveRows(QModelIndex{}, index, index);
+  m_configurations.removeAt(index);
+  endRemoveRows();
+  return true;
+}
+
+bool ConfigurationListModel::clear()
+{
+  beginRemoveRows(QModelIndex{}, 0, m_configurations.count());
+  m_configurations.clear();
+  m_configurations.squeeze();
+  endRemoveRows();
   return true;
 }
 
@@ -134,7 +190,10 @@ QHash<int, QByteArray> ConfigurationListModel::roleNames() const
     { PercentDownloaded, "PercentDownloaded" },
     { Downloading, "Downloading" },
     { RequiresRestart, "RequiresRestart" },
-    { CanDownload, "CanDownload" }
+    { CanDownload, "CanDownload" },
+    { CanDelete, "CanDelete" },
+    { DownloadCancelled, "DownloadCancelled" },
+    { IsCancellable, "IsCancellable" }
   };
 
   return roles;

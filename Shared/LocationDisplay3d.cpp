@@ -64,7 +64,7 @@ LocationDisplay3d::LocationDisplay3d(QObject* parent) :
   m_locationOverlay(new GraphicsOverlay(this)),
   m_locationGraphic(new Graphic(this))
 {
-  m_locationOverlay->setOverlayId(AppConstants::LAYER_NAME_SCENEVIEW_LOCATION);
+  m_locationOverlay->setOverlayId(AppConstants::PROPERTYNAME_LAYER_NAME_SCENEVIEW_LOCATION);
   m_locationOverlay->setSceneProperties(LayerSceneProperties(SurfacePlacement::Relative));
   m_locationOverlay->setRenderingMode(GraphicsRenderingMode::Dynamic);
   m_locationOverlay->setVisible(false);

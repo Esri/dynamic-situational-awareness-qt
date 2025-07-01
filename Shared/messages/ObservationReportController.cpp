@@ -103,7 +103,7 @@ QString ObservationReportController::toolName() const
  */
 void ObservationReportController::setProperties(const QVariantMap& properties)
 {
-  auto findUserNameIt = properties.find(AppConstants::USERNAME_PROPERTYNAME);
+  auto findUserNameIt = properties.find(AppConstants::PROPERTYNAME_USERNAME);
   if (findUserNameIt != properties.end())
     setObservedBy(findUserNameIt.value().toString());
 

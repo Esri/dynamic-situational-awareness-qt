@@ -331,7 +331,7 @@ Rectangle {
                             id: imageCancel
                             source: "qrc:/Resources/icons/xhdpi/ic_menu_closeclear_dark.png"
                             height: parent.height
-                            width: model.Downloading ? parent.height : 0
+                            width: model.Downloading && model.IsCancellable ? parent.height : 0
                             anchors {
                                 right: imageDownload.left
                                 verticalCenter: parent.verticalCenter
@@ -348,10 +348,12 @@ Rectangle {
                             id: imageDownload
                             source: "qrc:/Resources/icons/xhdpi/ic_menu_sendmap_dark_d.png"
                             height: parent.height
-                            width: model.CanDownload && !configurationController.downloadInProgress ? parent.height : 0
-                            enabled: !configurationController.downloadInProgress
+                            // width: model.CanDownload && !configurationController.downloadInProgress ? parent.height : 0
+                            // enabled: model.CanDownload && !configurationController.downloadInProgress
+                            width: model.CanDownload ? parent.height : 0
+                            enabled: model.CanDownload
                             anchors {
-                                right: parent.right
+                                right: imageRemove.left
                                 verticalCenter: parent.verticalCenter
                             }
                             MouseArea {
@@ -363,23 +365,22 @@ Rectangle {
                             rotation: 180
                         }
 
-                        //
-                        // TODO: re-enable the delete function once users are able to add their own sources for download
-                        //
-                        // Image {
-                        //     id: imageRemove
-                        //     source: DsaResources.iconTrash
-                        //     height: parent.height
-                        //     width: model.Downloaded && !model.Selected && !model.Loaded ? parent.height / 2 : 0
-                        //     anchors {
-                        //         right: parent.right
-                        //         verticalCenter: parent.verticalCenter
-                        //     }
-                        //     MouseArea {
-                        //         anchors.fill: parent
-                        //         onClicked: configurationController.remove(index)
-                        //     }
-                        // }
+                        Image {
+                            id: imageRemove
+                            source: DsaResources.iconTrash
+                            height: parent.height
+                            width: model.CanDelete ? parent.height : 0
+                            anchors {
+                                right: parent.right
+                                verticalCenter: parent.verticalCenter
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    configurationController.remove(index)
+                                }
+                            }
+                        }
                     }
                 }
                 Label {
@@ -407,6 +408,35 @@ Rectangle {
                     spacing: 2 * scaleFactor
                     model: configurationController.configurations
                     delegate: configurationListItemDelegate
+                }
+
+                Rectangle {
+                    color: Material.accent
+                    radius: 5 * scaleFactor
+                    height: 40 * scaleFactor
+                    width: height
+                    anchors {
+                        right: parent.right
+                        bottom: parent.bottom
+                    }
+                    Image {
+                        id: imageAddConfiguration
+                        source: "qrc:/Resources/icons/xhdpi/ic_menu_add_dark_d.png"
+                        height: parent.height - 5 * scaleFactor
+                        width: parent.width - 5 * scaleFactor
+                        anchors {
+                            verticalCenter: parent.verticalCenter
+                            horizontalCenter: parent.horizontalCenter
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                toolRect.state = "add configuration";
+                                drawer.open();
+                            }
+                        }
+                    }
                 }
             }
 

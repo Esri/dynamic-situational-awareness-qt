@@ -333,7 +333,7 @@ void ContextMenuController::invokeIdentifyOnGeoView()
             continue;
 
           // don't process the location on the context menu
-          if (result->graphicsOverlay()->overlayId() == AppConstants::LAYER_NAME_SCENEVIEW_LOCATION)
+          if (result->graphicsOverlay()->overlayId() == AppConstants::PROPERTYNAME_LAYER_NAME_SCENEVIEW_LOCATION)
             continue;
 
           QList<GeoElement*> geoElements;

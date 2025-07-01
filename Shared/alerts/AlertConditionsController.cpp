@@ -687,7 +687,7 @@ void AlertConditionsController::onLayersChanged()
         newSourceList.append(overlayIt.value());
         newTargetList.append(overlayIt.value());
       }
-      else if (overlay->overlayId() == AppConstants::LAYER_NAME_SCENEVIEW_LOCATION)
+      else if (overlay->overlayId() == AppConstants::PROPERTYNAME_LAYER_NAME_SCENEVIEW_LOCATION)
       {
         newTargetList.append(AlertConstants::MY_LOCATION);
       }
@@ -1231,7 +1231,7 @@ QFuture<AlertTarget*> AlertConditionsController::targetFromItemIdAndOverlayName(
       if (overlay->overlayId().isEmpty())
         continue;
 
-      if (overlay->overlayId() == AppConstants::LAYER_NAME_SCENEVIEW_LOCATION)
+      if (overlay->overlayId() == AppConstants::PROPERTYNAME_LAYER_NAME_SCENEVIEW_LOCATION)
       {
         targetDescription = AlertConstants::MY_LOCATION;
         auto* target = static_cast<AlertTarget*>(m_locationTarget);

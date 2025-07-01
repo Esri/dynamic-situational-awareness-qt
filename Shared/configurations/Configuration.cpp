@@ -22,12 +22,13 @@ namespace Dsa {
 
 Configuration::Configuration(const QString& name, const QString& url, bool selected, bool loaded, int percentDownloaded):
   m_name(name),
-  m_url(url),
+  m_urlStr(url),
+  m_url(QUrl{url}),
   m_selected(selected),
   m_loaded(loaded),
   m_percentDownloaded(percentDownloaded)
 {
-
+  m_isCancellable = m_url.isLocalFile() || m_urlStr.endsWith(QStringLiteral(".zip"));
 }
 
 QString Configuration::name() const
@@ -40,14 +41,20 @@ void Configuration::setName(const QString& name)
   m_name = name;
 }
 
-QString Configuration::url() const
+QString Configuration::urlStr() const
 {
-  return m_url;
+  return m_urlStr;
 }
 
 void Configuration::setUrl(const QString& url)
 {
-  m_url = url;
+  m_urlStr = url;
+  m_url = QUrl{url};
+}
+
+QUrl Configuration::url() const
+{
+  return m_url;
 }
 
 bool Configuration::downloaded() const
@@ -67,7 +74,22 @@ bool Configuration::requiresRestart() const
 
 bool Configuration::canDownload() const
 {
-  return !downloaded() && !m_url.isEmpty();
+  return !downloaded() && !downloading() && !m_urlStr.isEmpty();
+}
+
+bool Configuration::canDelete() const
+{
+  return !m_selected && !m_loaded && !downloading();
+}
+
+bool Configuration::isCancellable() const
+{
+  return m_isCancellable;
+}
+
+bool Configuration::downloadCancelled() const
+{
+  return m_downloadCancelled;
 }
 
 bool Configuration::selected() const
@@ -93,6 +115,13 @@ int Configuration::percentDownloaded() const
 void Configuration::setPercentDownloaded(int percentDownloaded)
 {
   m_percentDownloaded = percentDownloaded;
+  m_downloadCancelled = percentDownloaded != 0;
+}
+
+void Configuration::cancelDownload()
+{
+  setPercentDownloaded(0);
+  m_downloadCancelled = true;
 }
 
 } // Dsa

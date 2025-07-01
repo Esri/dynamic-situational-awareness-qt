@@ -417,6 +417,7 @@ Handheld {
                 viewshedTool.state = "clear";
                 reportToolRow.state = "clear";
                 markupToolRow.state = "clear";
+                addConfigurationTool.state = "clear";
             }
 
             Rectangle {
@@ -451,6 +452,13 @@ Handheld {
                             target: openSceneTool
                             visible: true
                         }
+                    },
+                    State {
+                        name: "add configuration"
+                        PropertyChanges {
+                            target: addConfigurationTool
+                            visible: true
+                        }
                     }
                 ]
 
@@ -481,6 +489,13 @@ Handheld {
 
                 MessageFeeds {
                     id: messageFeedsTool
+                    anchors.fill: parent
+                    visible: false
+                    onClosed: drawer.close();
+                }
+
+                AddConfigurationTool {
+                    id: addConfigurationTool
                     anchors.fill: parent
                     visible: false
                     onClosed: drawer.close();

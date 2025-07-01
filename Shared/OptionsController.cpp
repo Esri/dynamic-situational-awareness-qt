@@ -153,7 +153,7 @@ void OptionsController::setProperties(const QVariantMap& properties)
   if (m_coordinateFormat.isEmpty())
     m_coordinateFormat = Esri::ArcGISRuntime::Toolkit::CoordinateConversionConstants::DEGREES_MINUTES_SECONDS_FORMAT;
 
-  m_unitOfMeasurement = properties[AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME].toString();
+  m_unitOfMeasurement = properties[AppConstants::PROPERTYNAME_UNIT_OF_MEASUREMENT].toString();
   if (m_unitOfMeasurement.isEmpty())
     m_unitOfMeasurement = AppConstants::UNIT_METERS;
 
@@ -163,7 +163,7 @@ void OptionsController::setProperties(const QVariantMap& properties)
   m_initialFormatIndex = m_coordinateFormatOptions.indexOf(m_coordinateFormat);
   emit initialFormatIndex();
 
-  auto userNameFindIt = properties.find(AppConstants::USERNAME_PROPERTYNAME);
+  auto userNameFindIt = properties.find(AppConstants::PROPERTYNAME_USERNAME);
   if (userNameFindIt != properties.end())
     setUserName(userNameFindIt.value().toString());
 
@@ -253,7 +253,7 @@ void OptionsController::setUserName(const QString& userName)
 
   m_userName = userName;
   emit userNameChanged();
-  emit propertyChanged(AppConstants::USERNAME_PROPERTYNAME, m_userName);
+  emit propertyChanged(AppConstants::PROPERTYNAME_USERNAME, m_userName);
 }
 
 /*!

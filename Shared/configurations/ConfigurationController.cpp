@@ -34,6 +34,7 @@
 #include "Error.h"
 #include "ErrorException.h"
 #include "NetworkRequestProgress.h"
+#include "Portal.h"
 #include "PortalItem.h"
 
 // DSA headers
@@ -176,13 +177,15 @@ void ConfigurationController::download(int index)
   static QRegularExpression regexPortalItem{QStringLiteral(R"(item\.html\?id=[A-Fa-f0-9]*$)")};
   if (regexPortalItem.match(configurationUrlStr).hasMatch())
   {
-    auto portalItem = new PortalItem(configurationUrl, this);
-    connect(portalItem, &PortalItem::doneLoading, this, [this, portalItem, configurationName](const Error& error)
+    PortalItem checkPortalItem{configurationUrl}; // using a local portal item here to parse the portal and item id out of the url
+    auto* portal = new Portal(checkPortalItem.portal()->url(), this);
+    auto* portalItem = new PortalItem(portal, checkPortalItem.itemId(), portal);
+    connect(portalItem, &PortalItem::doneLoading, this, [this, portal, portalItem, configurationName](const Error& error)
     {
       if (!error.isEmpty())
       {
         emit toolErrorOccurred(QString("Error fetching portal item info: %1").arg(error.message()), QStringLiteral("Download Error"));
-        portalItem->deleteLater();
+        portal->deleteLater();
         return;
       }
 
@@ -190,31 +193,27 @@ void ConfigurationController::download(int index)
       if (!deviceHasRoomForDownload(portalItem->size()))
       {
         emit toolErrorOccurred(QStringLiteral("The total download size exceeds storage available on the device"), QStringLiteral("Download Error"));
-        portalItem->deleteLater();
+        portal->deleteLater();
         return;
       }
 
-      qDebug() << "Name:" << portalItem->name() << " Size:" << portalItem->size() << " Owner:" << portalItem->owner();
-
       const auto downloadFilePath = generateUniqueDownloadFilePath();
-      portalItem->fetchDataAsync(downloadFilePath).then(this, [this, portalItem, downloadFilePath, configurationName]()
+      m_configurationListModel->download(configurationName);
+      portalItem->fetchDataAsync(downloadFilePath).then(this, [this, portal, downloadFilePath, configurationName]()
       {
-        qDebug() << "done";
         m_configurationListModel->setDataByName(configurationName, 100, ConfigurationListModel::PercentDownloaded);
-        portalItem->deleteLater();
+        portal->deleteLater();
         extractConfigurationDownload(downloadFilePath, configurationName);
         removeDownloadedFile(downloadFilePath);
-      }).onFailed(this, [this, configurationName, portalItem, downloadFilePath] (const ErrorException& e)
+      }).onFailed(this, [this, configurationName, portal, downloadFilePath] (const ErrorException& e)
       {
-        qDebug() << "failed";
-        portalItem->deleteLater();
+        portal->deleteLater();
         m_configurationListModel->setDataByName(configurationName, 0, ConfigurationListModel::PercentDownloaded);
         removeDownloadedFile(downloadFilePath);
         emit toolErrorOccurred(QString("Downloading the item failed: %1").arg(e.what()), QStringLiteral("Download Error"));
       });
       connect(portalItem, &PortalItem::fetchDataProgressChanged, this, [this, configurationName](const NetworkRequestProgress& progress)
       {
-        qDebug() << progress.progressPercentage();
         m_configurationListModel->setDataByName(configurationName, progress.progressPercentage(), ConfigurationListModel::PercentDownloaded);
       });
     });
@@ -223,9 +222,10 @@ void ConfigurationController::download(int index)
   }
 
   // make a head request to check the availabiity of the network as well as get the final size of the package to be downloaded
-  QNetworkRequest headRequest{configurationUrl};
-  auto* headReply = m_networkAccessManager.head(headRequest);
-  connect(headReply, &QNetworkReply::finished, this, [this, headReply, headRequest, configurationName, configurationUrl]()
+  QNetworkRequest zipRequest{configurationUrl};
+  auto* headReply = m_networkAccessManager.head(zipRequest);
+  headReply->ignoreSslErrors();
+  connect(headReply, &QNetworkReply::finished, this, [this, zipRequest, headReply, configurationName, configurationUrl]()
   {
     // get the total bytes that will be downloaded
     bool convertedOk = false;
@@ -237,7 +237,7 @@ void ConfigurationController::download(int index)
     // // abort if the download size could not be fetched
     if (!convertedOk || bytesToDownload <= 0)
     {
-      emit toolErrorOccurred("Unable to fetch the download size.", "Network Error");
+      emit toolErrorOccurred(QString("Unable to fetch the download size. (%1)").arg(headReply->errorString()), QStringLiteral("Network Error"));
       return;
     }
 
@@ -245,9 +245,10 @@ void ConfigurationController::download(int index)
     if (!deviceHasRoomForDownload(bytesToDownload))
       return;
 
-    // reset the properties for download status and use the network manager to download the file
-    QNetworkRequest contentRequest{configurationUrl};
-    auto contentReply = m_networkAccessManager.get(contentRequest);
+    // download the actual file
+    auto* contentReply = m_networkAccessManager.get(zipRequest);
+    contentReply->ignoreSslErrors();
+    m_configurationListModel->download(configurationName);
     const auto downloadFilePath = generateUniqueDownloadFilePath();
     connect(contentReply, &QNetworkReply::downloadProgress, this, [this, contentReply, configurationName](quint64 bytesReceived, quint64 bytesTotal)
     {
@@ -275,7 +276,7 @@ void ConfigurationController::download(int index)
     {
       contentReply->abort();
       if (error != QNetworkReply::NetworkError::OperationCanceledError)
-        emit toolErrorOccurred(QString("Network Error (%1)").arg(error), QStringLiteral("Error Downloading"));
+        emit toolErrorOccurred(QString("Network Error (%1)").arg(contentReply->errorString()), QStringLiteral("Error Downloading"));
     });
   });
 }
@@ -284,7 +285,6 @@ void ConfigurationController::cancel(int index)
 {
   // cancel the downloading item and reset all the
   m_configurationListModel->cancel(index);
-  // m_aborted = true;
 }
 
 void ConfigurationController::remove(int index)
@@ -322,9 +322,9 @@ bool ConfigurationController::deviceHasRoomForDownload(qint64 bytesToDownload)
 {
   QStorageInfo storageInfo(m_downloadFolder);
   auto bytesAvailable = storageInfo.bytesAvailable() * 0.95;
-  bool enoughSpaceAvailable = bytesToDownload < bytesAvailable;
+  bool enoughSpaceAvailable = bytesToDownload * 2.5 < bytesAvailable;
   if (!enoughSpaceAvailable)
-    emit toolErrorOccurred("The total download size exceeds storage available on the device", "Download Error");
+    emit toolErrorOccurred("The expected download/extracted file size exceeds storage available on the device", "Download Error");
 
   return enoughSpaceAvailable;
 }

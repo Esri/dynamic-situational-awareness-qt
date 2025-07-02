@@ -13,8 +13,8 @@ if "%APP_NAME%"=="" (
 set "QT_ROOT=C:\Qt6.8.2\6.8.2"
 set "QT_ANDROID_BIN=%QT_ROOT%\android_arm64_v8a\bin"
 set "QT_DEPLOY_TOOL=%QT_ROOT%\mingw_64\bin\androiddeployqt.exe"
-set "MAKE_EXE=%USERPROFILE%\AppData\Local\Android\Sdk\ndk\28.0.12433566\prebuilt\windows-x86_64\bin\make.exe"
 set "ANDROID_NDK_ROOT=%USERPROFILE%\AppData\Local\Android\Sdk\ndk\28.0.12433566"
+set "MAKE_EXE=%ANDROID_NDK_ROOT%\prebuilt\windows-x86_64\bin\make.exe"
 set "ANDROID_PLATFORM=android-34"
 
 :: =============================

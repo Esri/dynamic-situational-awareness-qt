@@ -19,6 +19,7 @@
 
 // Qt headers
 #include <QString>
+#include <QUrl>
 
 namespace Dsa {
 

@@ -376,8 +376,6 @@ Rectangle {
                             id: imageDownload
                             source: "qrc:/Resources/icons/xhdpi/ic_menu_sendmap_dark_d.png"
                             height: parent.height
-                            // width: model.CanDownload && !configurationController.downloadInProgress ? parent.height : 0
-                            // enabled: model.CanDownload && !configurationController.downloadInProgress
                             width: model.CanDownload ? parent.height : 0
                             enabled: model.CanDownload
                             anchors {
@@ -405,7 +403,20 @@ Rectangle {
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: {
-                                    configurationController.remove(index)
+                                    // if the data has not been downloaded just remove it from the
+                                    // list without any additional prompt
+                                    if (!model.Downloaded)
+                                    {
+                                        configurationController.remove(index, true);
+                                        return;
+                                    }
+
+                                    // setup the confirmation dialog and prompt the user if they also
+                                    // want the configuration entry itself removed from the list
+                                    confirmRemoveConfigurationDialog.confirmationMessage = "Also remove " + model.Name + " from the list?";
+                                    confirmRemoveConfigurationDialog.data = index;
+                                    confirmRemoveConfigurationDialog.buttonClicked = DialogButtonBox.Cancel;
+                                    confirmRemoveConfigurationDialog.open();
                                 }
                             }
                         }
@@ -495,6 +506,19 @@ Rectangle {
         onClicked: {
             optionsRoot.visible = false;
         }
+    }
+
+    DsaYesNoCancelDialog {
+        id: confirmRemoveConfigurationDialog
+        onAccepted: removeConfiguration()
+        onRejected: removeConfiguration()
+    }
+
+    function removeConfiguration() {
+        if (confirmRemoveConfigurationDialog.buttonClicked == DialogButtonBox.Cancel)
+            return;
+
+        configurationController.remove(confirmRemoveConfigurationDialog.data, confirmRemoveConfigurationDialog.buttonClicked == DialogButtonBox.Yes);
     }
 
     AuthenticationView {

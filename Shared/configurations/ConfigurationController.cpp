@@ -287,12 +287,25 @@ void ConfigurationController::cancel(int index)
   m_configurationListModel->cancel(index);
 }
 
-void ConfigurationController::remove(int index)
+void ConfigurationController::remove(int index, bool alsoRemoveEntry)
 {
-  // make extracted packages removeable from device
-  m_configurationListModel->remove(index);
-  storeConfigurations();
-  // add file cleanup for device/disk
+  // remove the directory containing the configuration files recursively
+  const auto& configuration = m_configurationListModel->at(index);
+  QDir configurationDirectory{m_configurationsDirectory.filePath(configuration.name())};
+  if (configurationDirectory.exists())
+  {
+    configurationDirectory.removeRecursively();
+    m_configurationListModel->setDataByName(configuration.name(), 0, ConfigurationListModel::PercentDownloaded);
+  }
+
+  // if user also requested to remove the configuration from the list
+  // remove it's corresponding model and update the list model
+  if (alsoRemoveEntry)
+  {
+    m_configurationListModel->remove(index);
+    storeConfigurations();
+  }
+
   emit configurationsChanged();
 }
 

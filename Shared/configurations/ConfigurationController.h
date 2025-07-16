@@ -55,7 +55,7 @@ public:
   Q_INVOKABLE void select(int index);
   Q_INVOKABLE void download(int index);
   Q_INVOKABLE void cancel(int index);
-  Q_INVOKABLE void remove(int index);
+  Q_INVOKABLE void remove(int index, bool alsoRemoveEntry);
   Q_INVOKABLE void downloadDefaultData();
   Q_INVOKABLE void addConfiguration(const QString& url, const QString& name);
   static bool createDefaultConfigurationsFile();

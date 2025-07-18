@@ -148,6 +148,11 @@ bool ConfigurationController::updateExtractedConfigurationFile(const QDir& confi
   if (rootDataDirectoryVar.isUndefined())
     return false;
 
+  // strip off any trailing slashes if they exist
+  auto rootDataDirectoryCleaned = rootDataDirectoryVar.toString();
+  while (rootDataDirectoryCleaned.back() == '\\' || rootDataDirectoryCleaned.back() == '/')
+    rootDataDirectoryCleaned.chop(1);
+
   // overwrite the app config file with the new json doc
   if (!dsaAppConfigFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
     return false;
@@ -155,7 +160,7 @@ bool ConfigurationController::updateExtractedConfigurationFile(const QDir& confi
   // re-write the entire document with the old root directory replaced by the extracted location
   QString configString{configBytes};
   const QString rootDataDirectoryNew{configurationDirectory.absolutePath()};
-  const QString configStringUpdated{configString.replace(rootDataDirectoryVar.toString(), rootDataDirectoryNew)};
+  const QString configStringUpdated{configString.replace(rootDataDirectoryCleaned, rootDataDirectoryNew)};
   dsaAppConfigFile.write(configStringUpdated.toUtf8());
   return true;
 }

@@ -52,11 +52,12 @@ public:
   // QAbstractItemModel interface
   int rowCount(const QModelIndex& parent) const override;
   QVariant data(const QModelIndex& index, int role) const override;
-  QVariant dataByName(const QString& configurationName, int role);
+  QVariant dataByName(const QString& name, int role);
   bool setData(const QModelIndex& index, const QVariant& value, int role) override;
-  bool setDataByName(const QString& configurationName, const QVariant& value, int role);
+  bool setDataByName(const QString& name, const QVariant& value, int role);
 
   Configuration at(int index) const;
+  Configuration byName(const QString& name) const;
   bool add(const QString& name, const QString& url, bool selected, bool loaded, int percentDownloaded);
   void select(int index);
   void cancel(int index);

@@ -59,6 +59,16 @@ Configuration ConfigurationListModel::at(int index) const
   return m_configurations[index];
 }
 
+Configuration ConfigurationListModel::byName(const QString& name) const
+{
+  for (qsizetype i = 0; i < m_configurations.count(); i++)
+  {
+    if (m_configurations[i].name() == name)
+      return m_configurations[i];
+  }
+  return Configuration{};
+}
+
 int ConfigurationListModel::rowCount(const QModelIndex& parent) const
 {
   Q_UNUSED(parent);
@@ -102,11 +112,11 @@ QVariant ConfigurationListModel::data(const QModelIndex& index, int role) const
   return QVariant{};
 }
 
-QVariant ConfigurationListModel::dataByName(const QString& configurationName, int role)
+QVariant ConfigurationListModel::dataByName(const QString& name, int role)
 {
   for (qsizetype i = 0; i < m_configurations.count(); i++)
   {
-    if (m_configurations[i].name() == configurationName)
+    if (m_configurations[i].name() == name)
     {
       return data(createIndex(i, 0), role);
     }
@@ -141,11 +151,11 @@ bool ConfigurationListModel::setData(const QModelIndex& index, const QVariant& v
   return true;
 }
 
-bool ConfigurationListModel::setDataByName(const QString& configurationName, const QVariant& value, int role)
+bool ConfigurationListModel::setDataByName(const QString& name, const QVariant& value, int role)
 {
   for (qsizetype i = 0; i < m_configurations.count(); i++)
   {
-    if (m_configurations[i].name() == configurationName)
+    if (m_configurations[i].name() == name)
     {
       setData(createIndex(i, 0), value, role);
       return true;

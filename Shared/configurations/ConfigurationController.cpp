@@ -98,7 +98,10 @@ void ConfigurationController::extractConfigurationDownload(const QString& downlo
   connect(zipHelper, &ZipHelper::extractCompleted, this, [this, configurationName, configurationDirectory, zipHelper, downloadFilePath]()
   {
     zipHelper->deleteLater();
-    removeDownloadedFile(downloadFilePath);
+
+    const auto configuration = m_configurationListModel->byName(configurationName);
+    if (!configuration.url().isLocalFile())
+      removeDownloadedFile(downloadFilePath);
 
     if (!updateExtractedConfigurationFile(configurationDirectory))
     {
@@ -173,13 +176,14 @@ void ConfigurationController::download(int index)
   const auto configurationName = configuration.name();
   if (configurationUrl.isLocalFile())
   {
+    m_configurationListModel->setDataByName(configurationName, 100, ConfigurationListModel::PercentDownloaded);
     extractConfigurationDownload(configurationUrl.toLocalFile(), configurationName);
     return;
   }
 
-  // attempt to download the data as a portal item if it is not a urlStr ending wth a zip file
+  // attempt to download the data as a portal item if it matches the item id url pattern
   const auto configurationUrlStr = configuration.urlStr();
-  static QRegularExpression regexPortalItem{QStringLiteral(R"(item\.html\?id=[A-Fa-f0-9]*$)")};
+  static QRegularExpression regexPortalItem{QStringLiteral(R"(^https:\/\/.+\/item\.html\?id=[A-Fa-f0-9]{32}?$)")};
   if (regexPortalItem.match(configurationUrlStr).hasMatch())
   {
     PortalItem checkPortalItem{configurationUrl}; // using a local portal item here to parse the portal and item id out of the url

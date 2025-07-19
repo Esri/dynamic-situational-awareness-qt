@@ -107,6 +107,12 @@ QVariant ConfigurationListModel::data(const QModelIndex& index, int role) const
       return configuration.downloadCancelled();
     case Roles::IsCancellable:
       return configuration.isCancellable();
+    case Roles::Extracting:
+      return configuration.extracting();
+    case Roles::Extracted:
+      return configuration.extracted();
+    case Roles::PercentExtracted:
+      return configuration.percentExtracted();
   }
 
   return QVariant{};
@@ -144,6 +150,9 @@ bool ConfigurationListModel::setData(const QModelIndex& index, const QVariant& v
       break;
     case Roles::PercentDownloaded:
       configuration.setPercentDownloaded(value.toInt());
+      break;
+    case Roles::PercentExtracted:
+      configuration.setPercentExtracted(value.toInt());
       break;
   }
 
@@ -217,7 +226,10 @@ QHash<int, QByteArray> ConfigurationListModel::roleNames() const
     { CanDownload, "CanDownload" },
     { CanDelete, "CanDelete" },
     { DownloadCancelled, "DownloadCancelled" },
-    { IsCancellable, "IsCancellable" }
+    { IsCancellable, "IsCancellable" },
+    { Extracting, "Extracting" },
+    { Extracted, "Extracted" },
+    { PercentExtracted, "PercentExtracted" }
   };
 
   return roles;

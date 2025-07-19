@@ -45,6 +45,9 @@ public:
     CanDelete,
     DownloadCancelled,
     IsCancellable,
+    Extracting,
+    Extracted,
+    PercentExtracted
   };
 
   explicit ConfigurationListModel(QObject* parent = nullptr);

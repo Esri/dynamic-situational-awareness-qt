@@ -288,6 +288,18 @@ Rectangle {
                             value: model.PercentDownloaded
                         }
 
+                        ProgressBar {
+                            id: progressBarPercentExtracted
+                            anchors {
+                                bottom: parent.bottom
+                                right: parent.right
+                                left: parent.left
+                            }
+                            visible: model.Extracting
+                            to: 100
+                            value: model.PercentExtracted
+                        }
+
                         RadioButton {
                             id: checkboxSelected
                             anchors {
@@ -391,6 +403,26 @@ Rectangle {
                                     confirmRemoveConfigurationDialog.buttonClicked = DialogButtonBox.Cancel;
                                     confirmRemoveConfigurationDialog.open();
                                 }
+                            }
+                        }
+
+                        Label {
+                            text: "downloading"
+                            visible: model.Downloading
+                            font.italic: true
+                            anchors {
+                                horizontalCenter: parent.horizontalCenter
+                                verticalCenter: parent.verticalCenter
+                            }
+                        }
+
+                        Label {
+                            text: "unzipping"
+                            visible: model.Extracting
+                            font.italic: true
+                            anchors {
+                                horizontalCenter: parent.horizontalCenter
+                                verticalCenter: parent.verticalCenter
                             }
                         }
                     }

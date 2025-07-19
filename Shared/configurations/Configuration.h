@@ -44,6 +44,8 @@ public:
   void download();
   bool downloaded() const;
   bool downloading() const;
+  bool extracted() const;
+  bool extracting() const;
   bool requiresRestart() const;
   bool canDownload() const;
   bool canDelete() const;
@@ -57,6 +59,8 @@ public:
 
   int percentDownloaded() const;
   void setPercentDownloaded(int percentDownloaded);
+  int percentExtracted() const;
+  void setPercentExtracted(int percentExtracted);
   void cancelDownload();
 
 private:
@@ -68,6 +72,7 @@ private:
   bool m_isCancellable = true;
   int m_percentDownloaded = 0;
   bool m_downloadCancelled = false;
+  int m_percentExtracted = 0;
 };
 
 }

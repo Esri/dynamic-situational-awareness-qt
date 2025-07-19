@@ -81,6 +81,7 @@ private:
   QString generateUniqueDownloadFilePath() const;
   void extractConfigurationDownload(const QString& pathToDownload, const QString& configurationName);
   bool updateExtractedConfigurationFile(const QDir& configurationDirectory);
+  void resetConfigurationDeviceStatus(const QString& configurationName);
   ConfigurationListModel* m_configurationListModel = nullptr;
   QNetworkAccessManager m_networkAccessManager;
   QDir m_downloadFolder;

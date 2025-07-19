@@ -27,6 +27,7 @@
 #include <QJsonObject>
 #include <QStandardPaths>
 #include <QStorageInfo>
+#include <QtConcurrent>
 #include <QtGlobal>
 #include <QUuid>
 
@@ -99,16 +100,25 @@ void ConfigurationController::extractConfigurationDownload(const QString& downlo
   {
     zipHelper->deleteLater();
 
+    // the zip file needs to be cleaned up from the downloads folder for anything
+    // other than a local file. don't delete local files becasue they are not copied
+    // and the extract is done pointing directly to the file url (file://...)
     const auto configuration = m_configurationListModel->byName(configurationName);
     if (!configuration.url().isLocalFile())
       removeDownloadedFile(downloadFilePath);
 
-    if (!updateExtractedConfigurationFile(configurationDirectory))
-    {
-      emit toolErrorOccurred(QStringLiteral("Error updating the DsaAppConfig.json file"), QStringLiteral("Configuration Error"));
-      m_configurationListModel->setDataByName(configurationName, 0, ConfigurationListModel::PercentDownloaded);
+    // we can exit early if the update of the DsaAppConfig.json file had no issues
+    if (updateExtractedConfigurationFile(configurationDirectory))
       return;
-    }
+
+    // alert the user if the package was anything other than the default from esri which
+    // is expected to fail because it contains no DsaAppConfig.json file
+    if (configuration.urlStr() != ConfigurationController::DEFAULT_DOWNLOAD_URL)
+      emit toolErrorOccurred(QStringLiteral("The DsaAppConfig.json file could not be updated. The application will create a default version for the configuration."), QStringLiteral("Configuration Error"));
+  });
+  connect(zipHelper, &ZipHelper::extractProgressTotal, this, [this, configurationName](qsizetype percentTotal)
+  {
+    m_configurationListModel->setDataByName(configurationName, percentTotal, ConfigurationListModel::PercentExtracted);
   });
   connect(zipHelper, &ZipHelper::extractError, this, [this, configurationName, zipHelper, downloadFilePath](const QString& fileName, const QString& outputFileName, ZipHelper::Result result)
   {
@@ -119,12 +129,15 @@ void ConfigurationController::extractConfigurationDownload(const QString& downlo
     removeDownloadedFile(downloadFilePath);
     emit toolErrorOccurred(QStringLiteral("Error unzipping the download"), QStringLiteral("Configuration Error"));
 
-    if (!m_configurationListModel->setDataByName(configurationName, 0, ConfigurationListModel::PercentDownloaded))
-      emit toolErrorOccurred(QStringLiteral("Error setting the configuration as not downloaded"), QStringLiteral("Configuration Error"));
+    resetConfigurationDeviceStatus(configurationName);
   });
 
-  // extract the downloaded file to the configuration folder
-  zipHelper->extractAll(configurationDirectory.absolutePath());
+  // extract the downloaded file to the configuration
+  auto extractFuture = QtConcurrent::run([configurationDirectory](ZipHelper* zh)
+  {
+    zh->extractAll(configurationDirectory.absolutePath());
+  }, zipHelper);
+  Q_UNUSED(extractFuture);
 }
 
 bool ConfigurationController::updateExtractedConfigurationFile(const QDir& configurationDirectory)
@@ -166,6 +179,13 @@ bool ConfigurationController::updateExtractedConfigurationFile(const QDir& confi
   const QString configStringUpdated{configString.replace(rootDataDirectoryCleaned, rootDataDirectoryNew)};
   dsaAppConfigFile.write(configStringUpdated.toUtf8());
   return true;
+}
+
+void ConfigurationController::resetConfigurationDeviceStatus(const QString& configurationName)
+{
+  if (!m_configurationListModel->setDataByName(configurationName, 0, ConfigurationListModel::PercentDownloaded) ||
+      !m_configurationListModel->setDataByName(configurationName, 0, ConfigurationListModel::PercentExtracted))
+    emit toolErrorOccurred(QStringLiteral("Error resetting the configurations status on the device"), QStringLiteral("Configuration Error"));
 }
 
 void ConfigurationController::download(int index)
@@ -217,7 +237,7 @@ void ConfigurationController::download(int index)
       }).onFailed(this, [this, configurationName, portal, downloadFilePath] (const ErrorException& e)
       {
         portal->deleteLater();
-        m_configurationListModel->setDataByName(configurationName, 0, ConfigurationListModel::PercentDownloaded);
+        resetConfigurationDeviceStatus(configurationName);
         removeDownloadedFile(downloadFilePath);
         emit toolErrorOccurred(QString("Downloading the item failed: %1").arg(e.what()), QStringLiteral("Download Error"));
       });
@@ -304,7 +324,7 @@ void ConfigurationController::remove(int index, bool alsoRemoveEntry)
   if (configurationDirectory.exists())
   {
     configurationDirectory.removeRecursively();
-    m_configurationListModel->setDataByName(configuration.name(), 0, ConfigurationListModel::PercentDownloaded);
+    resetConfigurationDeviceStatus(configuration.name());
   }
 
   // if user also requested to remove the configuration from the list

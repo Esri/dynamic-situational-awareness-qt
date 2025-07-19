@@ -18,6 +18,9 @@
 
 #include "Configuration.h"
 
+// Qt headers
+#include <QRegularExpression>
+
 namespace Dsa {
 
 Configuration::Configuration(const QString& name, const QString& url, bool selected, bool loaded, int percentDownloaded):
@@ -26,9 +29,11 @@ Configuration::Configuration(const QString& name, const QString& url, bool selec
   m_url(QUrl{url}),
   m_selected(selected),
   m_loaded(loaded),
-  m_percentDownloaded(percentDownloaded)
+  m_percentDownloaded(percentDownloaded),
+  m_percentExtracted(percentDownloaded == 100 ? 100 : 0)
 {
-  m_isCancellable = m_url.isLocalFile() || m_urlStr.endsWith(QStringLiteral(".zip"));
+  static QRegularExpression regexPortalItem{QStringLiteral(R"(^https:\/\/.+\/item\.html\?id=[A-Fa-f0-9]{32}?$)")};
+  m_isCancellable = !regexPortalItem.match(url).hasMatch();
 }
 
 QString Configuration::name() const
@@ -61,6 +66,7 @@ void Configuration::download()
 {
   m_downloadCancelled = false;
   m_percentDownloaded = 0;
+  m_percentExtracted = 0;
 }
 
 bool Configuration::downloaded() const
@@ -71,6 +77,16 @@ bool Configuration::downloaded() const
 bool Configuration::downloading() const
 {
   return m_percentDownloaded > 0 && m_percentDownloaded < 100;
+}
+
+bool Configuration::extracted() const
+{
+  return m_percentExtracted == 100;
+}
+
+bool Configuration::extracting() const
+{
+  return m_percentExtracted > 0 && m_percentExtracted < 100;
 }
 
 bool Configuration::requiresRestart() const
@@ -85,7 +101,7 @@ bool Configuration::canDownload() const
 
 bool Configuration::canDelete() const
 {
-  return !m_selected && !m_loaded && !downloading();
+  return !m_selected && !m_loaded && !downloading() && !extracting();
 }
 
 bool Configuration::isCancellable() const
@@ -123,9 +139,20 @@ void Configuration::setPercentDownloaded(int percentDownloaded)
   m_percentDownloaded = percentDownloaded;
 }
 
+int Configuration::percentExtracted() const
+{
+  return m_percentExtracted;
+}
+
+void Configuration::setPercentExtracted(int percentExtracted)
+{
+  m_percentExtracted = percentExtracted;
+}
+
 void Configuration::cancelDownload()
 {
   setPercentDownloaded(0);
+  setPercentExtracted(0);
   m_downloadCancelled = true;
 }
 

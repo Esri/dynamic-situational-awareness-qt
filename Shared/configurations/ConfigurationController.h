@@ -20,13 +20,11 @@
 // Qt headers
 #include <QDir>
 #include <QNetworkAccessManager>
-#include <QNetworkReply>
-#include <QPointer>
 
 // DSA headers
 #include "AbstractTool.h"
-#include "ZipHelper.h"
 
+class QNetworkReply;
 Q_MOC_INCLUDE("QAbstractListModel")
 class QAbstractListModel;
 
@@ -51,6 +49,7 @@ class ConfigurationController : public AbstractTool
 
 public:
   explicit ConfigurationController(QObject* parent = nullptr);
+  inline static const QString REGEX_PORTAL_ITEM_URL = QStringLiteral(R"(^https:\/\/.+\/item\.html\?id=[A-Fa-f0-9]{32}?$)");
 
   Q_INVOKABLE void select(int index);
   Q_INVOKABLE void download(int index);
@@ -77,7 +76,6 @@ private:
   bool deviceHasRoomForDownload(qint64 bytesToDownload);
   void readyRead(QNetworkReply* networkReply, const QString& downloadFilePath, const QString& configurationName);
   void finished(QNetworkReply* networkReply, const QString& downloadFilePath, const QString& configurationName);
-  void errorOccurred(QNetworkReply::NetworkError);
   QString generateUniqueDownloadFilePath() const;
   void extractConfigurationDownload(const QString& pathToDownload, const QString& configurationName);
   bool updateExtractedConfigurationFile(const QDir& configurationDirectory);

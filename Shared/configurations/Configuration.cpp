@@ -18,6 +18,9 @@
 
 #include "Configuration.h"
 
+// DSA headers
+#include "ConfigurationController.h"
+
 // Qt headers
 #include <QRegularExpression>
 
@@ -32,7 +35,7 @@ Configuration::Configuration(const QString& name, const QString& url, bool selec
   m_percentDownloaded(percentDownloaded),
   m_percentExtracted(percentDownloaded == 100 ? 100 : 0)
 {
-  static QRegularExpression regexPortalItem{QStringLiteral(R"(^https:\/\/.+\/item\.html\?id=[A-Fa-f0-9]{32}?$)")};
+  static QRegularExpression regexPortalItem{ConfigurationController::REGEX_PORTAL_ITEM_URL};
   m_isCancellable = !regexPortalItem.match(url).hasMatch();
 }
 

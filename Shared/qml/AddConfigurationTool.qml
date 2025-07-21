@@ -27,6 +27,27 @@ DsaPanel {
     width: 272 * scaleFactor
     title: qsTr("Add Configuration")
 
+    property RegularExpressionValidator configRegexName: RegularExpressionValidator { regularExpression: /^[A-z0-9_]+$/ }
+    property RegularExpressionValidator configRegexItem: RegularExpressionValidator { regularExpression: /^https:\/\/.+\/item\.html\?id=[A-Fa-f0-9]{32}?$/ }
+    property RegularExpressionValidator configRegexWeb: RegularExpressionValidator { regularExpression: /^https:\/\/.+/ }
+    property RegularExpressionValidator configRegexFile: RegularExpressionValidator { regularExpression: /^file:\/\/.+/ }
+
+    property var configTypeNames: [
+        "ArcGIS Online/Portal Item",
+        "Web Resource",
+        "File Resource"
+    ]
+    property var configHints: [
+        "https://.../item.html?id=82ce2d85e21c4326bc072d441b636e5e",
+        "https://server.com/folder/file.zip",
+        "file://server/folder/file.zip"
+    ]
+    property var configRegex: [
+        configRegexItem,
+        configRegexWeb,
+        configRegexFile
+    ]
+
     ColumnLayout {
         anchors.top: titleBar.bottom
         anchors.bottom: parent.bottom
@@ -47,11 +68,11 @@ DsaPanel {
             Layout.leftMargin: 5
             Layout.topMargin: 5
             Layout.rightMargin: 5
-            model: [
-                "ArcGIS Online/Portal item",
-                "Web resource",
-                "File resource"
-            ]
+            model: configTypeNames
+            onCurrentValueChanged: {
+                txtUrl.validator = configRegex[configTypeNames.indexOf(comboResourceType.currentValue)]
+                txtUrl.placeholderText = configHints[configTypeNames.indexOf(comboResourceType.currentValue)]
+            }
         }
 
         Text {
@@ -69,6 +90,7 @@ DsaPanel {
             Layout.leftMargin: 5
             Layout.topMargin: 5
             Layout.rightMargin: 5
+            validator: configRegexName
         }
 
         Label {
@@ -122,6 +144,7 @@ DsaPanel {
                 txtConfigurationName.clear();
                 drawer.close();
             }
+            enabled: txtUrl.length > 0 && txtConfigurationName.length > 0
         }
 
         Rectangle {

@@ -17,7 +17,7 @@
 TARGET = DSA_Vehicle_Qt
 TEMPLATE = app
 
-QT += core gui opengl network positioning sensors qml quick xml
+QT += core gui opengl network positioning sensors qml quick xml concurrent
 CONFIG += c++17
 
 ARCGIS_RUNTIME_VERSION = 200.7.0

@@ -25,9 +25,10 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QNetworkReply>
 #include <QStandardPaths>
 #include <QStorageInfo>
-#include <QtConcurrent>
+#include <QtConcurrentRun>
 #include <QtGlobal>
 #include <QUuid>
 
@@ -43,6 +44,7 @@
 #include "Configuration.h"
 #include "ConfigurationListModel.h"
 #include "DsaUtility.h"
+#include "ZipHelper.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -133,7 +135,7 @@ void ConfigurationController::extractConfigurationDownload(const QString& downlo
   });
 
   // extract the downloaded file to the configuration
-  auto extractFuture = QtConcurrent::run([configurationDirectory](ZipHelper* zh)
+  const auto extractFuture = QtConcurrent::run([configurationDirectory](ZipHelper* zh)
   {
     zh->extractAll(configurationDirectory.absolutePath());
   }, zipHelper);
@@ -203,7 +205,7 @@ void ConfigurationController::download(int index)
 
   // attempt to download the data as a portal item if it matches the item id url pattern
   const auto configurationUrlStr = configuration.urlStr();
-  static QRegularExpression regexPortalItem{QStringLiteral(R"(^https:\/\/.+\/item\.html\?id=[A-Fa-f0-9]{32}?$)")};
+  static QRegularExpression regexPortalItem{REGEX_PORTAL_ITEM_URL};
   if (regexPortalItem.match(configurationUrlStr).hasMatch())
   {
     PortalItem checkPortalItem{configurationUrl}; // using a local portal item here to parse the portal and item id out of the url
@@ -263,7 +265,7 @@ void ConfigurationController::download(int index)
     if (contentLengthVariant.isValid())
       bytesToDownload = contentLengthVariant.toInt(&convertedOk);
 
-    // // abort if the download size could not be fetched
+    // abort if the download size could not be fetched
     if (!convertedOk || bytesToDownload <= 0)
     {
       emit toolErrorOccurred(QString("Unable to fetch the download size. (%1)").arg(headReply->errorString()), QStringLiteral("Network Error"));

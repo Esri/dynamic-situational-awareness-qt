@@ -14,6 +14,8 @@
 #  limitations under the License.
 ################################################################################
 
+QT -= multimedia
+
 INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 

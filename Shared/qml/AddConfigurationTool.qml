@@ -27,7 +27,7 @@ DsaPanel {
     width: 272 * scaleFactor
     title: qsTr("Add Configuration")
 
-    property RegularExpressionValidator configRegexName: RegularExpressionValidator { regularExpression: /^[A-z0-9_]+$/ }
+    property RegularExpressionValidator configRegexName: RegularExpressionValidator { regularExpression: /^[A-Za-z0-9_]+$/ }
     property RegularExpressionValidator configRegexItem: RegularExpressionValidator { regularExpression: /^https:\/\/.+\/item\.html\?id=[A-Fa-f0-9]{32}?$/ }
     property RegularExpressionValidator configRegexWeb: RegularExpressionValidator { regularExpression: /^https:\/\/.+/ }
     property RegularExpressionValidator configRegexFile: RegularExpressionValidator { regularExpression: /^file:\/\/.+/ }

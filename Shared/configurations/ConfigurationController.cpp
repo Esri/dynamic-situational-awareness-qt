@@ -135,10 +135,10 @@ void ConfigurationController::extractConfigurationDownload(const QString& downlo
   });
 
   // extract the downloaded file to the configuration
-  const auto extractFuture = QtConcurrent::run([configurationDirectory](ZipHelper* zh)
+  const auto extractFuture = QtConcurrent::run([configurationDirectory, zipHelper]
   {
-    zh->extractAll(configurationDirectory.absolutePath());
-  }, zipHelper);
+    zipHelper->extractAll(configurationDirectory.absolutePath());
+  });
   Q_UNUSED(extractFuture);
 }
 
@@ -235,7 +235,6 @@ void ConfigurationController::download(int index)
         m_configurationListModel->setDataByName(configurationName, 100, ConfigurationListModel::PercentDownloaded);
         portal->deleteLater();
         extractConfigurationDownload(downloadFilePath, configurationName);
-        removeDownloadedFile(downloadFilePath);
       }).onFailed(this, [this, configurationName, portal, downloadFilePath] (const ErrorException& e)
       {
         portal->deleteLater();
@@ -480,7 +479,6 @@ void ConfigurationController::finished(QNetworkReply* networkReply, const QStrin
 
   m_configurationListModel->setDataByName(configurationName, 100, ConfigurationListModel::PercentDownloaded);
   extractConfigurationDownload(downloadFilePath, configurationName);
-  removeDownloadedFile(downloadFilePath);
 }
 
 void ConfigurationController::downloadDefaultData()

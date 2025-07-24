@@ -47,7 +47,9 @@ public:
     IsCancellable,
     Extracting,
     Extracted,
-    PercentExtracted
+    PercentExtracted,
+    InProgress,
+    PercentComplete
   };
 
   explicit ConfigurationListModel(QObject* parent = nullptr);

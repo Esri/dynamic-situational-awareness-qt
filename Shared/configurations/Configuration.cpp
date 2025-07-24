@@ -104,7 +104,7 @@ bool Configuration::canDownload() const
 
 bool Configuration::canDelete() const
 {
-  return !m_selected && !m_loaded && !downloading() && !extracting();
+  return !m_selected && !m_loaded && downloaded() && extracted();
 }
 
 bool Configuration::isCancellable() const
@@ -150,6 +150,17 @@ int Configuration::percentExtracted() const
 void Configuration::setPercentExtracted(int percentExtracted)
 {
   m_percentExtracted = percentExtracted;
+}
+
+bool Configuration::inProgress() const
+{
+  auto progress = m_percentDownloaded + m_percentExtracted;
+  return progress > 0 && progress < 200;
+}
+
+int Configuration::percentComplete() const
+{
+  return m_percentDownloaded * 0.75 + m_percentExtracted * 0.25;
 }
 
 void Configuration::cancelDownload()

@@ -304,27 +304,15 @@ Rectangle {
                         width: parent.width
 
                         ProgressBar {
-                            id: progressBarPercentDownloaded
+                            id: progressBarPercentComplete
                             anchors {
                                 bottom: parent.bottom
                                 right: parent.right
                                 left: parent.left
                             }
-                            visible: model.Downloading
+                            visible: model.InProgress
                             to: 100
-                            value: model.PercentDownloaded
-                        }
-
-                        ProgressBar {
-                            id: progressBarPercentExtracted
-                            anchors {
-                                bottom: parent.bottom
-                                right: parent.right
-                                left: parent.left
-                            }
-                            visible: model.Extracting
-                            to: 100
-                            value: model.PercentExtracted
+                            value: model.PercentComplete
                         }
 
                         RadioButton {
@@ -334,7 +322,7 @@ Rectangle {
                                 verticalCenter: parent.verticalCenter
                             }
                             checked: model.Selected
-                            enabled: model.Downloaded
+                            enabled: model.Downloaded && model.Extracted
                             onClicked: {
                                 configurationController.select(index);
                                 checked = Qt.binding(function () { // restore the binding
@@ -430,26 +418,6 @@ Rectangle {
                                     confirmRemoveConfigurationDialog.buttonClicked = DialogButtonBox.Cancel;
                                     confirmRemoveConfigurationDialog.open();
                                 }
-                            }
-                        }
-
-                        Label {
-                            text: "downloading"
-                            visible: model.Downloading
-                            font.italic: true
-                            anchors {
-                                horizontalCenter: parent.horizontalCenter
-                                verticalCenter: parent.verticalCenter
-                            }
-                        }
-
-                        Label {
-                            text: "unzipping"
-                            visible: model.Extracting
-                            font.italic: true
-                            anchors {
-                                horizontalCenter: parent.horizontalCenter
-                                verticalCenter: parent.verticalCenter
                             }
                         }
                     }

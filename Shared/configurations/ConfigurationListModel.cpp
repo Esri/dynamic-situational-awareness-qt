@@ -113,6 +113,10 @@ QVariant ConfigurationListModel::data(const QModelIndex& index, int role) const
       return configuration.extracted();
     case Roles::PercentExtracted:
       return configuration.percentExtracted();
+    case Roles::InProgress:
+      return configuration.inProgress();
+    case Roles::PercentComplete:
+      return configuration.percentComplete();
   }
 
   return QVariant{};
@@ -229,7 +233,9 @@ QHash<int, QByteArray> ConfigurationListModel::roleNames() const
     { IsCancellable, "IsCancellable" },
     { Extracting, "Extracting" },
     { Extracted, "Extracted" },
-    { PercentExtracted, "PercentExtracted" }
+    { PercentExtracted, "PercentExtracted" },
+    { InProgress, "InProgress" },
+    { PercentComplete, "PercentComplete" }
   };
 
   return roles;

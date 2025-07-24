@@ -51,6 +51,7 @@ public:
   bool canDelete() const;
   bool isCancellable() const;
   bool downloadCancelled() const;
+  bool inProgress() const;
 
   bool selected() const;
   void setSelected(bool selected);
@@ -61,6 +62,7 @@ public:
   void setPercentDownloaded(int percentDownloaded);
   int percentExtracted() const;
   void setPercentExtracted(int percentExtracted);
+  int percentComplete() const;
   void cancelDownload();
 
 private:

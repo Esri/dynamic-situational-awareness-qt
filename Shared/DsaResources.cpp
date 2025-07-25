@@ -168,6 +168,14 @@ QUrl DsaResources::iconAppLogo() const
 }
 
 /*!
+  \brief Returns the URL to the "Browse" icon.
+ */
+QUrl DsaResources::iconBrowse() const
+{
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/icon_browse.png"));
+}
+
+/*!
   \brief Returns the URL to the "Choose Basemap" icon.
  */
 QUrl DsaResources::iconChooseBasemap() const

@@ -37,6 +37,7 @@ class DsaResources : public QObject
   Q_PROPERTY(QUrl iconAlertConditionList READ iconAlertConditionList CONSTANT)
   Q_PROPERTY(QUrl iconAlertList READ iconAlertList CONSTANT)
   Q_PROPERTY(QUrl iconAppLogo READ iconAppLogo CONSTANT)
+  Q_PROPERTY(QUrl iconBrowse READ iconBrowse CONSTANT)
   Q_PROPERTY(QUrl iconChooseBasemap READ iconChooseBasemap CONSTANT)
   Q_PROPERTY(QUrl iconClose READ iconClose CONSTANT)
   Q_PROPERTY(QUrl iconColorPalette READ iconColorPalette CONSTANT)
@@ -111,6 +112,7 @@ private:
   QUrl iconAlertConditionList() const;
   QUrl iconAlertList() const;
   QUrl iconAppLogo() const;
+  QUrl iconBrowse() const;
   QUrl iconChooseBasemap() const;
   QUrl iconClose() const;
   QUrl iconColorPalette() const;

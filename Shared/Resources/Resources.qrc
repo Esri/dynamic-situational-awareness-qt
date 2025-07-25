@@ -68,5 +68,6 @@
         <file>icons/xhdpi/kml.png</file>
         <file>icons/xhdpi/icon_open_scene.png</file>
         <file>icons/xhdpi/scenelayer.png</file>
+        <file>icons/xhdpi/icon_browse.png</file>
     </qresource>
 </RCC>

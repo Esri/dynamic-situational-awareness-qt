@@ -113,7 +113,7 @@ DsaPanel {
             }
 
             Image {
-                source: DsaResources.iconSave
+                source: DsaResources.iconBrowse
                 visible: comboResourceType.currentIndex === 2
                 Layout.alignment: Qt.AlignRight
                 MouseArea {

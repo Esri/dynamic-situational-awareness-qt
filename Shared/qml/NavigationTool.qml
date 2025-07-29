@@ -32,6 +32,10 @@ Item {
     width: controlsColumn.width + 10 * scaleFactor
     property alias radius: backgroundRecatangle.radius
 
+    GridController {
+        id: gridController
+    }
+
     function startFollowing() {
         followingButton.selected = true;
         followHud.enabled = true;
@@ -99,6 +103,14 @@ Item {
                     navController.setRotation();
                 else
                     navController.pan();
+            }
+        }
+
+        OverlayButton {
+            iconUrl: DsaResources.iconRaster
+            onClicked: {
+                selected = !selected;
+                navController.setShowGrid(selected);
             }
         }
     }

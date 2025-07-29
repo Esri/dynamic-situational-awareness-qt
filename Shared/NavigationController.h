@@ -50,6 +50,7 @@ public:
   Q_INVOKABLE void pan();
   Q_INVOKABLE void setRotation();
   Q_INVOKABLE void set2D();
+  Q_INVOKABLE void setShowGrid(bool show);
 
   QString toolName() const override;
   void setProperties(const QVariantMap& properties) override;
@@ -64,6 +65,7 @@ signals:
   void verticalChanged();
   void zoomFactorChanged();
   void cameraMoveDistanceChanged();
+  void showGridChanged(bool show);
 
 private slots:
   void updateGeoView();

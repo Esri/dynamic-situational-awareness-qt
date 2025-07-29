@@ -44,9 +44,10 @@ public:
   void setProperties(const QVariantMap& properties) override;
 
   void setShowGrid(bool show);
-  void onToolAdded(AbstractTool* newTool);
 
 private:
+  void onToolAdded(AbstractTool* newTool);
+
   bool m_showGrid = false;
   QMetaObject::Connection m_conToolAdded;
   Esri::ArcGISRuntime::Grid* m_grid = nullptr;

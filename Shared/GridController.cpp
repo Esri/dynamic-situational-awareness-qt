@@ -62,7 +62,9 @@ void GridController::setProperties(const QVariantMap& properties)
   static const std::unordered_set<QString> nonDefaultFormatNames{
     CoordinateConversionConstants::UTM_FORMAT,
     CoordinateConversionConstants::MGRS_FORMAT,
-    CoordinateConversionConstants::USNG_FORMAT
+    CoordinateConversionConstants::USNG_FORMAT,
+    CoordinateConversionConstants::DECIMAL_DEGREES_FORMAT,
+    CoordinateConversionConstants::DEGREES_MINUTES_SECONDS_FORMAT
   };
 
   auto* geoView = ToolResourceProvider::instance()->geoView();
@@ -97,6 +99,16 @@ void GridController::setProperties(const QVariantMap& properties)
 
   geoView->setGrid(m_grid);
   m_grid->setVisible(m_showGrid);
+
+  if (m_grid->gridType() != GridType::LatitudeLongitudeGrid)
+    return;
+
+  // adjust the format string for lat/long style grids
+  auto* latLongGrid = static_cast<LatitudeLongitudeGrid*>(m_grid);
+  if (formatLookup == CoordinateConversionConstants::DEGREES_MINUTES_SECONDS_FORMAT)
+    latLongGrid->setLabelFormat(LatitudeLongitudeGridLabelFormat::DegreesMinutesSeconds);
+  else
+    latLongGrid->setLabelFormat(LatitudeLongitudeGridLabelFormat::DecimalDegrees);
 }
 
 bool GridController::showGrid() const

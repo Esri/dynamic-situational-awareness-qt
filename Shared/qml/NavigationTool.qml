@@ -30,10 +30,11 @@ Item {
     }
     height: controlsColumn.height + 10 * scaleFactor
     width: controlsColumn.width + 10 * scaleFactor
-    property alias radius: backgroundRecatangle.radius
+    property alias radius: backgroundRectangle.radius
 
     GridController {
         id: gridController
+        showGrid: overlayButtonGrid.selected
     }
 
     function startFollowing() {
@@ -43,7 +44,7 @@ Item {
     }
 
     Rectangle {
-        id: backgroundRecatangle
+        id: backgroundRectangle
         anchors.fill: parent
         color: Material.background
         opacity: parent.opacity
@@ -107,10 +108,10 @@ Item {
         }
 
         OverlayButton {
+            id: overlayButtonGrid
             iconUrl: DsaResources.iconRaster
             onClicked: {
                 selected = !selected;
-                navController.setShowGrid(selected);
             }
         }
     }

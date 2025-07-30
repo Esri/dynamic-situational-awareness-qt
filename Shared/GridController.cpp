@@ -33,9 +33,12 @@
 #include "USNGGrid.h"
 #include "UTMGrid.h"
 
+// Qt headers
+#include <QVariantMap>
+
 // STL headers
 #include <algorithm>
-#include <vector>
+#include <unordered_set>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -44,8 +47,6 @@ namespace Dsa {
 GridController::GridController(QObject* parent):
   AbstractTool(parent)
 {
-  m_conToolAdded = connect(&ToolManager::instance(), &ToolManager::toolAdded, this, &GridController::onToolAdded);
-
   ToolManager::instance().addTool(this);
 }
 
@@ -54,29 +55,11 @@ QString GridController::toolName() const
   return "GridController";
 }
 
-void GridController::onToolAdded(AbstractTool* newTool)
-{
-  // find the navigation controller
-  Q_UNUSED(newTool);
-  const auto* navigationController = ToolManager::instance().tool<NavigationController>();
-  if (!navigationController)
-    return;
-
-  // create a connection to the signal for when an elevation source is selected/changed
-  connect(navigationController, &NavigationController::showGridChanged, this, [this](bool show)
-  {
-    setShowGrid(show);
-  });
-
-  // stop listening for new tools being added
-  disconnect(m_conToolAdded);
-}
-
-void GridController::setProperties(const QVariantMap &properties)
+void GridController::setProperties(const QVariantMap& properties)
 {
   // create a string lookup to use lat long for everything but utm/mgrs/usng
   using namespace Esri::ArcGISRuntime::Toolkit;
-  const static std::vector<QString> nonDefaultFormatNames{
+  static const std::unordered_set<QString> nonDefaultFormatNames{
     CoordinateConversionConstants::UTM_FORMAT,
     CoordinateConversionConstants::MGRS_FORMAT,
     CoordinateConversionConstants::USNG_FORMAT
@@ -88,8 +71,8 @@ void GridController::setProperties(const QVariantMap &properties)
 
   // access tool properties from the config
   auto formatLookup = QString{QStringLiteral("default")};
-  auto coordinateFormat = properties["CoordinateFormat"].toString();
-  if (std::find(nonDefaultFormatNames.cbegin(), nonDefaultFormatNames.cend(), coordinateFormat) != nonDefaultFormatNames.cend())
+  const auto coordinateFormat = properties["CoordinateFormat"].toString();
+  if (std::find(std::cbegin(nonDefaultFormatNames), std::cend(nonDefaultFormatNames), coordinateFormat) != std::cend(nonDefaultFormatNames))
     formatLookup = coordinateFormat;
 
   // create an instance of the matching grid type if it has not been selected yet
@@ -116,11 +99,18 @@ void GridController::setProperties(const QVariantMap &properties)
   m_grid->setVisible(m_showGrid);
 }
 
+bool GridController::showGrid() const
+{
+  return m_showGrid;
+}
+
 void GridController::setShowGrid(bool show)
 {
   m_showGrid = show;
   if (m_grid)
     m_grid->setVisible(m_showGrid);
+
+  emit showGridChanged();
 }
 
 }

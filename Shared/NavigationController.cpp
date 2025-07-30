@@ -154,11 +154,6 @@ void NavigationController::set2D()
   center();
 }
 
-void NavigationController::setShowGrid(bool show)
-{
-  emit showGridChanged(show);
-}
-
 /*!
   \brief Switch the app to the default panning navogation mode.
  */

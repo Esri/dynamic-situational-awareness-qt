@@ -22,7 +22,7 @@
 
 // Qt headers
 #include <QString>
-#include <QVariantMap>
+#include <QtContainerFwd>
 
 // STL headers
 #include <unordered_map>
@@ -37,19 +37,22 @@ class GridController : public AbstractTool
 {
   Q_OBJECT
 
+  Q_PROPERTY(bool showGrid READ showGrid WRITE setShowGrid NOTIFY showGridChanged)
+
 public:
   explicit GridController(QObject* parent = nullptr);
 
   QString toolName() const override;
   void setProperties(const QVariantMap& properties) override;
 
+  bool showGrid() const;
   void setShowGrid(bool show);
 
-private:
-  void onToolAdded(AbstractTool* newTool);
+signals:
+  void showGridChanged();
 
+private:
   bool m_showGrid = false;
-  QMetaObject::Connection m_conToolAdded;
   Esri::ArcGISRuntime::Grid* m_grid = nullptr;
   std::unordered_map<QString, Esri::ArcGISRuntime::Grid*> m_grids;
 };

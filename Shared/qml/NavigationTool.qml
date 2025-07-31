@@ -32,11 +32,6 @@ Item {
     width: controlsColumn.width + 10 * scaleFactor
     property alias radius: backgroundRectangle.radius
 
-    GridController {
-        id: gridController
-        showGrid: overlayButtonGrid.selected
-    }
-
     function startFollowing() {
         followingButton.selected = true;
         followHud.enabled = true;
@@ -110,8 +105,10 @@ Item {
         OverlayButton {
             id: overlayButtonGrid
             iconUrl: DsaResources.iconRaster
+            Component.onCompleted: selected = gridController.gridVisible
             onClicked: {
                 selected = !selected;
+                gridController.gridVisible = selected;
             }
         }
     }

@@ -37,22 +37,49 @@ class GridController : public AbstractTool
 {
   Q_OBJECT
 
-  Q_PROPERTY(bool showGrid READ showGrid WRITE setShowGrid NOTIFY showGridChanged)
+  Q_PROPERTY(bool gridVisible READ gridVisible WRITE setGridVisible NOTIFY gridVisibleChanged)
+  Q_PROPERTY(QString gridColorScheme READ gridColorScheme WRITE setGridColorScheme NOTIFY gridColorSchemeChanged)
+  Q_PROPERTY(int gridColorSchemeIndex READ gridColorSchemeIndex NOTIFY gridColorSchemeIndexChanged)
+  Q_PROPERTY(QString coordinateFormat READ coordinateFormat WRITE setCoordinateFormat NOTIFY coordinateFormatChanged)
+  Q_PROPERTY(QStringList gridColorSchemes READ gridColorSchemes NOTIFY gridColorSchemesChanged)
 
 public:
+  inline static const QString PROPERTY_NAME_GRID_VISIBLE = QStringLiteral("GridVisible");
+  inline static const QString GRID_VISIBLE_VALUE_DEFAULT = QStringLiteral("false");
+  inline static const QString PROPERTY_NAME_GRID_COLOR_SCHEME = QStringLiteral("GridColorScheme");
+  inline static const QString GRID_COLOR_SCHEME_VALUE_DARK = QStringLiteral("Dark");
+  inline static const QString GRID_COLOR_SCHEME_VALUE_LIGHT = QStringLiteral("Light");
+  inline static const QString GRID_COLOR_SCHEME_VALUE_COLORS = QStringLiteral("Colors");
+  inline static const QString GRID_COLOR_SCHEME_VALUE_DEFAULT = GRID_COLOR_SCHEME_VALUE_DARK;
+
   explicit GridController(QObject* parent = nullptr);
 
   QString toolName() const override;
   void setProperties(const QVariantMap& properties) override;
 
-  bool showGrid() const;
-  void setShowGrid(bool show);
+  bool gridVisible() const;
+  void setGridVisible(bool gridVisible);
+  QString gridColorScheme();
+  void setGridColorScheme(const QString& gridColorScheme);
+  int gridColorSchemeIndex() const;
+  QString coordinateFormat() const;
+  void setCoordinateFormat(const QString& coordinateFormat);
+  QStringList gridColorSchemes() const;
 
 signals:
-  void showGridChanged();
+  void gridVisibleChanged();
+  void gridColorSchemeChanged();
+  void coordinateFormatChanged();
+  void gridColorSchemeIndexChanged();
+  void gridColorSchemesChanged();
 
 private:
-  bool m_showGrid = false;
+  bool m_gridVisible;
+  QString m_gridColorScheme;
+  int m_gridColorSchemeIndex;
+  QString m_coordinateFormat;
+  QStringList m_gridColorSchemes;
+
   Esri::ArcGISRuntime::Grid* m_grid = nullptr;
   std::unordered_map<QString, Esri::ArcGISRuntime::Grid*> m_grids;
 };

@@ -199,7 +199,34 @@ Rectangle {
                             anchors.verticalCenter: parent.verticalCenter
                             model: optionsController.coordinateFormats
                             Component.onCompleted: currentIndex = optionsController.initialFormatIndex
-                            onCurrentTextChanged: optionsController.setCoordinateFormat(currentText);
+                            onCurrentTextChanged: {
+                                optionsController.setCoordinateFormat(currentText);
+                                gridController.coordinateFormat = currentText;
+                            }
+                        }
+                    }
+
+                    Row {
+                        width: parent.width
+                        spacing: 10 * scaleFactor
+
+                        Label {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: "Grid Color Scheme"
+                            font {
+                                pixelSize: 12 * scaleFactor
+                                family: DsaStyles.fontFamily
+                            }
+                            color: Material.foreground
+                        }
+
+                        ComboBox {
+                            anchors.verticalCenter: parent.verticalCenter
+                            model: gridController.gridColorSchemes
+                            Component.onCompleted: currentIndex = gridController.gridColorSchemeIndex
+                            onCurrentTextChanged: {
+                                gridController.gridColorScheme = currentText;
+                            }
                         }
                     }
 

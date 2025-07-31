@@ -19,9 +19,6 @@
 
 #include "GridController.h"
 
-// DSA headers
-#include "NavigationController.h"
-
 // Toolkit headers
 #include "CoordinateConversionConstants.h"
 
@@ -30,6 +27,7 @@
 #include "LatitudeLongitudeGrid.h"
 #include "MapViewTypes.h"
 #include "MGRSGrid.h"
+#include "SimpleLineSymbol.h"
 #include "USNGGrid.h"
 #include "UTMGrid.h"
 
@@ -45,7 +43,12 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 GridController::GridController(QObject* parent):
-  AbstractTool(parent)
+  AbstractTool(parent),
+  m_gridVisible(false),
+  m_gridColorScheme(GRID_COLOR_SCHEME_VALUE_DEFAULT),
+  m_gridColorSchemes{GRID_COLOR_SCHEME_VALUE_DARK,
+                     GRID_COLOR_SCHEME_VALUE_LIGHT,
+                     GRID_COLOR_SCHEME_VALUE_COLORS}
 {
   ToolManager::instance().addTool(this);
 }
@@ -57,6 +60,87 @@ QString GridController::toolName() const
 
 void GridController::setProperties(const QVariantMap& properties)
 {
+  // set the member variables to the values from the config file initially
+  static bool initialized = false;
+  if (initialized)
+    return;
+  initialized = true;
+
+  // set the private
+  if (const auto gridVisibleVar = properties[PROPERTY_NAME_GRID_VISIBLE]; gridVisibleVar.canConvert<bool>())
+    setGridVisible(gridVisibleVar.toBool());
+
+  // make sure the color scheme is one of the available strings in the list
+  const auto gridColorSchemeVal = properties[PROPERTY_NAME_GRID_COLOR_SCHEME].toString();
+  for (const auto& gridColorSchemeName : std::as_const(m_gridColorSchemes))
+  {
+    if (gridColorSchemeName == gridColorSchemeVal)
+    {
+      setGridColorScheme(gridColorSchemeVal);
+      break;
+    }
+  }
+
+  // always set the coordinate format. the available values come from the toolkit
+  // control list and there is a default setting in the controller logic
+  setCoordinateFormat(properties["CoordinateFormat"].toString());
+}
+
+bool GridController::gridVisible() const
+{
+  return m_gridVisible;
+}
+
+void GridController::setGridVisible(bool gridVisible)
+{
+  m_gridVisible = gridVisible;
+  if (m_grid)
+    m_grid->setVisible(m_gridVisible);
+
+  emit gridVisibleChanged();
+  emit propertyChanged(PROPERTY_NAME_GRID_VISIBLE, m_gridVisible);
+}
+
+QString GridController::gridColorScheme()
+{
+  return m_gridColorScheme;
+}
+
+void GridController::setGridColorScheme(const QString& gridColorScheme)
+{
+  m_gridColorScheme = gridColorScheme;
+  m_gridColorSchemeIndex = m_gridColorSchemes.indexOf(m_gridColorScheme);
+
+  const static QHash<QString, QColor> gridLineColors
+  {
+    { GRID_COLOR_SCHEME_VALUE_DARK, QColorConstants::DarkGray },
+    { GRID_COLOR_SCHEME_VALUE_LIGHT, QColorConstants::LightGray },
+    { GRID_COLOR_SCHEME_VALUE_COLORS, QColorConstants::Blue }
+  };
+
+  if (m_grid)
+  {
+    if (auto* sls = static_cast<SimpleLineSymbol*>(m_grid->lineSymbol(0)); sls)
+    {
+      sls->setColor(gridLineColors[m_gridColorScheme]);
+      for (qsizetype i = 0; i < m_grid->levelCount(); i++)
+        m_grid->setLineSymbol(i, sls);
+    }
+  }
+  emit gridColorSchemeChanged();
+  emit gridColorSchemeIndexChanged();
+  emit propertyChanged(PROPERTY_NAME_GRID_COLOR_SCHEME, m_gridColorScheme);
+}
+
+QString GridController::coordinateFormat() const
+{
+  return m_coordinateFormat;
+}
+
+void GridController::setCoordinateFormat(const QString& coordinateFormat)
+{
+  m_coordinateFormat = coordinateFormat;
+
   // create a string lookup to use lat long for everything but utm/mgrs/usng
   using namespace Esri::ArcGISRuntime::Toolkit;
   static const std::unordered_set<QString> nonDefaultFormatNames{
@@ -73,7 +157,6 @@ void GridController::setProperties(const QVariantMap& properties)
 
   // access tool properties from the config
   auto formatLookup = QString{QStringLiteral("default")};
-  const auto coordinateFormat = properties["CoordinateFormat"].toString();
   if (std::find(std::cbegin(nonDefaultFormatNames), std::cend(nonDefaultFormatNames), coordinateFormat) != std::cend(nonDefaultFormatNames))
     formatLookup = coordinateFormat;
 
@@ -97,8 +180,10 @@ void GridController::setProperties(const QVariantMap& properties)
   if (!m_grid)
     return;
 
+  // apply the current state of the controller to the active grid
   geoView->setGrid(m_grid);
-  m_grid->setVisible(m_showGrid);
+  setGridVisible(m_gridVisible);
+  setGridColorScheme(m_gridColorScheme);
 
   if (m_grid->gridType() != GridType::LatitudeLongitudeGrid)
     return;
@@ -111,18 +196,14 @@ void GridController::setProperties(const QVariantMap& properties)
     latLongGrid->setLabelFormat(LatitudeLongitudeGridLabelFormat::DecimalDegrees);
 }
 
-bool GridController::showGrid() const
+int GridController::gridColorSchemeIndex() const
 {
-  return m_showGrid;
+  return m_gridColorSchemeIndex;
 }
 
-void GridController::setShowGrid(bool show)
+QStringList GridController::gridColorSchemes() const
 {
-  m_showGrid = show;
-  if (m_grid)
-    m_grid->setVisible(m_showGrid);
-
-  emit showGridChanged();
+  return m_gridColorSchemes;
 }
 
 }

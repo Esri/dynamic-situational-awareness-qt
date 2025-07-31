@@ -48,6 +48,7 @@
 #include "BasemapPickerController.h"
 #include "ContextMenuController.h"
 #include "DsaUtility.h"
+#include "GridController.h"
 #include "LayerCacheManager.h"
 #include "LocationController.h"
 #include "MessageFeedConstants.h"
@@ -517,6 +518,8 @@ void DsaController::createDefaultSettings()
   QJsonObject markupJson;
   markupJson.insert(QStringLiteral("port"), 45680);
   m_dsaSettings[QStringLiteral("MarkupConfig")] = markupJson;
+  m_dsaSettings[GridController::PROPERTY_NAME_GRID_VISIBLE] = GridController::GRID_VISIBLE_VALUE_DEFAULT;
+  m_dsaSettings[GridController::PROPERTY_NAME_GRID_COLOR_SCHEME] = GridController::GRID_COLOR_SCHEME_VALUE_DEFAULT;
   writeDefaultConditions();
   m_dsaSettings[OpenMobileScenePackageController::PACKAGE_DIRECTORY_PROPERTYNAME] = QString("%1/Packages").arg(m_dsaSettings["RootDataDirectory"].toString());
 }

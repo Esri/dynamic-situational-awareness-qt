@@ -49,6 +49,10 @@ Handheld {
         id: configurationController
     }
 
+    GridController {
+        id: gridController
+    }
+
     PrimaryToolbar {
         id: topToolbar
         anchors {

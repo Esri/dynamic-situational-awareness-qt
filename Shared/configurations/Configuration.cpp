@@ -104,7 +104,7 @@ bool Configuration::canDownload() const
 
 bool Configuration::canDelete() const
 {
-  return !m_selected && !m_loaded && downloaded() && extracted();
+  return !m_selected && !m_loaded && !downloading() && !extracting();
 }
 
 bool Configuration::isCancellable() const

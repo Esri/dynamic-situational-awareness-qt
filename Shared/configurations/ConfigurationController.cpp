@@ -267,8 +267,7 @@ void ConfigurationController::download(int index)
     // abort if the download size could not be fetched
     if (!convertedOk || bytesToDownload <= 0)
     {
-      emit toolErrorOccurred(QString("Unable to fetch the download size. (%1)").arg(headReply->errorString()), QStringLiteral("Network Error"));
-      return;
+      emit toolErrorOccurred(QStringLiteral("Unable to check the download size. Please verify there is enough room on the device for downloading this configuration."), QStringLiteral("Warning"));
     }
 
     // make sure the device has enough room for the download

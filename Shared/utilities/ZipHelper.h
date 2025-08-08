@@ -111,11 +111,11 @@ private:
   const QString& path() const { return m_Path; }
 
 private:
-  QString                     m_Path;
-  unzFile                     m_unzFile;
-  zipFile                     m_zipFile;
-  quint64 m_bytesExtracted;
-  quint64 m_bytesTotalUncompressed;
+  QString m_Path;
+  unzFile m_unzFile;
+  zipFile m_zipFile;
+  quint64 m_bytesExtracted = 0;
+  quint64 m_bytesTotalUncompressed = 0;
 };
 
 //--------------------------------------------------------------------

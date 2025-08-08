@@ -26,6 +26,8 @@
 
 namespace Dsa {
 
+Configuration::Configuration() = default;
+
 Configuration::Configuration(const QString& name, const QString& url, bool selected, bool loaded, int percentDownloaded):
   m_name(name),
   m_urlStr(url),
@@ -154,7 +156,7 @@ void Configuration::setPercentExtracted(int percentExtracted)
 
 bool Configuration::inProgress() const
 {
-  auto progress = m_percentDownloaded + m_percentExtracted;
+  const auto progress = m_percentDownloaded + m_percentExtracted;
   return progress > 0 && progress < 200;
 }
 

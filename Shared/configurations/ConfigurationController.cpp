@@ -79,14 +79,12 @@ void ConfigurationController::select(int index)
   emit configurationsChanged();
 }
 
-bool removeDownloadedFile(const QString& downloadFilePath)
+void removeDownloadedFile(const QString& downloadFilePath)
 {
   // remove any remaining progress if request was aborted or after the zip has been extracted
   QFile f{downloadFilePath};
   if (f.exists())
-    return f.remove();
-
-  return false;
+    f.remove();
 }
 
 void ConfigurationController::extractConfigurationDownload(const QString& downloadFilePath, const QString& configurationName)
@@ -166,10 +164,8 @@ bool ConfigurationController::updateExtractedConfigurationFile(const QDir& confi
   if (rootDataDirectoryVar.isUndefined())
     return false;
 
-  // strip off any trailing slashes if they exist
-  auto rootDataDirectoryCleaned = rootDataDirectoryVar.toString();
-  while (rootDataDirectoryCleaned.back() == '\\' || rootDataDirectoryCleaned.back() == '/')
-    rootDataDirectoryCleaned.chop(1);
+  // clean the path to make sure no trailing slashes are in the replacement string
+  auto rootDataDirectoryCleaned = QDir::cleanPath(rootDataDirectoryVar.toString());
 
   // overwrite the app config file with the new json doc
   if (!dsaAppConfigFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
@@ -205,7 +201,7 @@ void ConfigurationController::download(int index)
 
   // attempt to download the data as a portal item if it matches the item id url pattern
   const auto configurationUrlStr = configuration.urlStr();
-  static QRegularExpression regexPortalItem{REGEX_PORTAL_ITEM_URL};
+  static const QRegularExpression regexPortalItem{REGEX_PORTAL_ITEM_URL};
   if (regexPortalItem.match(configurationUrlStr).hasMatch())
   {
     PortalItem checkPortalItem{configurationUrl}; // using a local portal item here to parse the portal and item id out of the url
@@ -230,6 +226,10 @@ void ConfigurationController::download(int index)
 
       const auto downloadFilePath = generateUniqueDownloadFilePath();
       m_configurationListModel->download(configurationName);
+      connect(portalItem, &PortalItem::fetchDataProgressChanged, this, [this, configurationName](const NetworkRequestProgress& progress)
+      {
+        m_configurationListModel->setDataByName(configurationName, progress.progressPercentage(), ConfigurationListModel::PercentDownloaded);
+      });
       portalItem->fetchDataAsync(downloadFilePath).then(this, [this, portal, downloadFilePath, configurationName]()
       {
         m_configurationListModel->setDataByName(configurationName, 100, ConfigurationListModel::PercentDownloaded);
@@ -241,10 +241,6 @@ void ConfigurationController::download(int index)
         resetConfigurationDeviceStatus(configurationName);
         removeDownloadedFile(downloadFilePath);
         emit toolErrorOccurred(QString("Downloading the item failed: %1").arg(e.what()), QStringLiteral("Download Error"));
-      });
-      connect(portalItem, &PortalItem::fetchDataProgressChanged, this, [this, configurationName](const NetworkRequestProgress& progress)
-      {
-        m_configurationListModel->setDataByName(configurationName, progress.progressPercentage(), ConfigurationListModel::PercentDownloaded);
       });
     });
     portalItem->load();
@@ -275,10 +271,10 @@ void ConfigurationController::download(int index)
       return;
 
     // download the actual file
+    const auto downloadFilePath = generateUniqueDownloadFilePath();
+    m_configurationListModel->download(configurationName);
     auto* contentReply = m_networkAccessManager.get(zipRequest);
     contentReply->ignoreSslErrors();
-    m_configurationListModel->download(configurationName);
-    const auto downloadFilePath = generateUniqueDownloadFilePath();
     connect(contentReply, &QNetworkReply::downloadProgress, this, [this, contentReply, configurationName](quint64 bytesReceived, quint64 bytesTotal)
     {
       if (isDownloadCancelled(configurationName))
@@ -328,7 +324,7 @@ void ConfigurationController::remove(int index, bool alsoRemoveEntry)
   }
 
   // if user also requested to remove the configuration from the list
-  // remove it's corresponding model and update the list model
+  // remove its corresponding model and update the list model
   if (alsoRemoveEntry)
   {
     m_configurationListModel->remove(index);

@@ -26,7 +26,7 @@ namespace Dsa {
 class Configuration
 {
 public:
-  Configuration() = default;
+  Configuration();
   Configuration(const QString& name,
                 const QString& url,
                 bool selected,

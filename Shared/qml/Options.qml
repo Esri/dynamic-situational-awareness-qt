@@ -403,20 +403,11 @@ Rectangle {
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: {
-                                    // if the data has not been downloaded just remove it from the
-                                    // list without any additional prompt
-                                    if (!model.Downloaded)
-                                    {
-                                        configurationController.remove(index, true);
-                                        return;
-                                    }
-
-                                    // setup the confirmation dialog and prompt the user if they also
-                                    // want the configuration entry itself removed from the list
-                                    confirmRemoveConfigurationDialog.confirmationMessage = "Also remove " + model.Name + " from the list?";
-                                    confirmRemoveConfigurationDialog.data = index;
-                                    confirmRemoveConfigurationDialog.buttonClicked = DialogButtonBox.Cancel;
-                                    confirmRemoveConfigurationDialog.open();
+                                    configurationDialogConfirmRemove.configurationIndex = index;
+                                    configurationDialogConfirmRemove.alsoRemoveEntry = !model.Downloaded
+                                    var msg = "Remove '" + model.Name + "' " + (model.Downloaded ? "files from the device?" : "from the list?");
+                                    configurationDialogConfirmRemove.confirmationMessage = msg;
+                                    configurationDialogConfirmRemove.open();
                                 }
                             }
                         }
@@ -508,17 +499,25 @@ Rectangle {
         }
     }
 
-    DsaYesNoCancelDialog {
-        id: confirmRemoveConfigurationDialog
-        onAccepted: removeConfiguration()
-        onRejected: removeConfiguration()
-    }
+    Dialog {
+        id: configurationDialogConfirmRemove
+        anchors.centerIn: parent
+        title: "Confirm Remove"
+        standardButtons: Dialog.Yes | Dialog.No
+        property alias confirmationMessage: configurationDialogLabel.text
+        property int configurationIndex: -1
+        property bool alsoRemoveEntry: false
+        Label {
+            id: configurationDialogLabel
+            font {
+                pixelSize: 12 * scaleFactor
+                family: DsaStyles.fontFamily
+            }
+            wrapMode: Text.Wrap
+            width: parent.width
+        }
 
-    function removeConfiguration() {
-        if (confirmRemoveConfigurationDialog.buttonClicked == DialogButtonBox.Cancel)
-            return;
-
-        configurationController.remove(confirmRemoveConfigurationDialog.data, confirmRemoveConfigurationDialog.buttonClicked == DialogButtonBox.Yes);
+        onAccepted: configurationController.remove(configurationIndex, alsoRemoveEntry);
     }
 
     AuthenticationView {

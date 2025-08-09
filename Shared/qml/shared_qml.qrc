@@ -58,6 +58,5 @@
         <file>DsaYesNoDialog.qml</file>
         <file>OpenSceneTool.qml</file>
         <file>AddConfigurationTool.qml</file>
-        <file>DsaYesNoCancelDialog.qml</file>
     </qresource>
 </RCC>

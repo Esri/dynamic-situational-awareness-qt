@@ -61,11 +61,12 @@ Configuration ConfigurationListModel::at(int index) const
 
 Configuration ConfigurationListModel::byName(const QString& name) const
 {
-  for (qsizetype i = 0; i < m_configurations.count(); i++)
-  {
-    if (m_configurations[i].name() == name)
-      return m_configurations[i];
-  }
+  const auto it = std::find_if(std::cbegin(m_configurations),
+                               std::cend(m_configurations),
+                               [name](const auto& cfg) { return cfg.name() == name; });
+  if (it != m_configurations.cend())
+    return *it;
+
   return Configuration{};
 }
 

@@ -186,6 +186,97 @@ void ConfigurationController::resetConfigurationDeviceStatus(const QString& conf
     emit toolErrorOccurred(QStringLiteral("Error resetting the configurations status on the device"), QStringLiteral("Configuration Error"));
 }
 
+void ConfigurationController::portalItem_doneLoading(Portal* portal, PortalItem* portalItem, const QString& configurationName, const Error& error)
+{
+  if (!error.isEmpty())
+  {
+    emit toolErrorOccurred(QString("Error fetching portal item info: %1").arg(error.message()), QStringLiteral("Download Error"));
+    portal->deleteLater();
+    return;
+  }
+
+  // make sure the device has enough room for the download
+  if (!deviceHasRoomForDownload(portalItem->size()))
+  {
+    emit toolErrorOccurred(QStringLiteral("The total download size exceeds storage available on the device"), QStringLiteral("Download Error"));
+    portal->deleteLater();
+    return;
+  }
+
+  const auto downloadFilePath = generateUniqueDownloadFilePath();
+  m_configurationListModel->download(configurationName);
+  connect(portalItem, &PortalItem::fetchDataProgressChanged, this, [this, configurationName](const NetworkRequestProgress& progress)
+  {
+    m_configurationListModel->setDataByName(configurationName, progress.progressPercentage(), ConfigurationListModel::PercentDownloaded);
+  });
+  portalItem->fetchDataAsync(downloadFilePath).then(this, [this, portal, downloadFilePath, configurationName]()
+  {
+    m_configurationListModel->setDataByName(configurationName, 100, ConfigurationListModel::PercentDownloaded);
+    portal->deleteLater();
+    extractConfigurationDownload(downloadFilePath, configurationName);
+  }).onFailed(this, [this, configurationName, portal, downloadFilePath] (const ErrorException& e)
+  {
+    portal->deleteLater();
+    resetConfigurationDeviceStatus(configurationName);
+    removeDownloadedFile(downloadFilePath);
+    emit toolErrorOccurred(QString("Downloading the item failed: %1").arg(e.what()), QStringLiteral("Download Error"));
+  });
+}
+
+void ConfigurationController::zipHeadReply_finished(QNetworkRequest zipRequest, QNetworkReply* headReply, const QString& configurationName)
+{
+  // get the total bytes that will be downloaded
+  bool convertedOk = false;
+  int bytesToDownload = 0;
+  auto contentLengthVariant = headReply->header(QNetworkRequest::ContentLengthHeader);
+  if (contentLengthVariant.isValid())
+    bytesToDownload = contentLengthVariant.toInt(&convertedOk);
+
+  // abort if the download size could not be fetched
+  if (!convertedOk || bytesToDownload <= 0)
+  {
+    emit toolErrorOccurred(QStringLiteral("Unable to check the download size. Please verify there is enough room on the device for downloading this configuration."), QStringLiteral("Warning"));
+  }
+
+  // make sure the device has enough room for the download
+  if (!deviceHasRoomForDownload(bytesToDownload))
+    return;
+
+  // download the actual file
+  const auto downloadFilePath = generateUniqueDownloadFilePath();
+  m_configurationListModel->download(configurationName);
+  auto* contentReply = m_networkAccessManager.get(zipRequest);
+  contentReply->ignoreSslErrors();
+  connect(contentReply, &QNetworkReply::downloadProgress, this, [this, contentReply, configurationName](quint64 bytesReceived, quint64 bytesTotal)
+  {
+    if (isDownloadCancelled(configurationName))
+    {
+      contentReply->abort();
+      return;
+    }
+
+    // guard against dividing by zero
+    if (bytesTotal == 0)
+      return;
+
+    m_configurationListModel->setDataByName(configurationName, bytesReceived * 1.0 / bytesTotal * 1.0 * 100, ConfigurationListModel::PercentDownloaded);
+  });
+  connect(contentReply, &QNetworkReply::readyRead, this, [this, contentReply, downloadFilePath, configurationName]()
+  {
+    readyRead(contentReply, downloadFilePath, configurationName);
+  });
+  connect(contentReply, &QNetworkReply::finished, this, [this, contentReply, downloadFilePath, configurationName]()
+  {
+    finished(contentReply, downloadFilePath, configurationName);
+  });
+  connect(contentReply, &QNetworkReply::errorOccurred, this, [this, contentReply](QNetworkReply::NetworkError error)
+  {
+    contentReply->abort();
+    if (error != QNetworkReply::NetworkError::OperationCanceledError)
+      emit toolErrorOccurred(QString("Network Error (%1)").arg(contentReply->errorString()), QStringLiteral("Error Downloading"));
+  });
+}
+
 void ConfigurationController::download(int index)
 {
   // fetch a copy of the selected model item from the listview
@@ -209,39 +300,7 @@ void ConfigurationController::download(int index)
     auto* portalItem = new PortalItem(portal, checkPortalItem.itemId(), portal);
     connect(portalItem, &PortalItem::doneLoading, this, [this, portal, portalItem, configurationName](const Error& error)
     {
-      if (!error.isEmpty())
-      {
-        emit toolErrorOccurred(QString("Error fetching portal item info: %1").arg(error.message()), QStringLiteral("Download Error"));
-        portal->deleteLater();
-        return;
-      }
-
-      // make sure the device has enough room for the download
-      if (!deviceHasRoomForDownload(portalItem->size()))
-      {
-        emit toolErrorOccurred(QStringLiteral("The total download size exceeds storage available on the device"), QStringLiteral("Download Error"));
-        portal->deleteLater();
-        return;
-      }
-
-      const auto downloadFilePath = generateUniqueDownloadFilePath();
-      m_configurationListModel->download(configurationName);
-      connect(portalItem, &PortalItem::fetchDataProgressChanged, this, [this, configurationName](const NetworkRequestProgress& progress)
-      {
-        m_configurationListModel->setDataByName(configurationName, progress.progressPercentage(), ConfigurationListModel::PercentDownloaded);
-      });
-      portalItem->fetchDataAsync(downloadFilePath).then(this, [this, portal, downloadFilePath, configurationName]()
-      {
-        m_configurationListModel->setDataByName(configurationName, 100, ConfigurationListModel::PercentDownloaded);
-        portal->deleteLater();
-        extractConfigurationDownload(downloadFilePath, configurationName);
-      }).onFailed(this, [this, configurationName, portal, downloadFilePath] (const ErrorException& e)
-      {
-        portal->deleteLater();
-        resetConfigurationDeviceStatus(configurationName);
-        removeDownloadedFile(downloadFilePath);
-        emit toolErrorOccurred(QString("Downloading the item failed: %1").arg(e.what()), QStringLiteral("Download Error"));
-      });
+      portalItem_doneLoading(portal, portalItem, configurationName, error);
     });
     portalItem->load();
     return;
@@ -251,58 +310,9 @@ void ConfigurationController::download(int index)
   QNetworkRequest zipRequest{configurationUrl};
   auto* headReply = m_networkAccessManager.head(zipRequest);
   headReply->ignoreSslErrors();
-  connect(headReply, &QNetworkReply::finished, this, [this, zipRequest, headReply, configurationName, configurationUrl]()
+  connect(headReply, &QNetworkReply::finished, this, [this, zipRequest, headReply, configurationName]()
   {
-    // get the total bytes that will be downloaded
-    bool convertedOk = false;
-    int bytesToDownload = 0;
-    auto contentLengthVariant = headReply->header(QNetworkRequest::ContentLengthHeader);
-    if (contentLengthVariant.isValid())
-      bytesToDownload = contentLengthVariant.toInt(&convertedOk);
-
-    // abort if the download size could not be fetched
-    if (!convertedOk || bytesToDownload <= 0)
-    {
-      emit toolErrorOccurred(QStringLiteral("Unable to check the download size. Please verify there is enough room on the device for downloading this configuration."), QStringLiteral("Warning"));
-    }
-
-    // make sure the device has enough room for the download
-    if (!deviceHasRoomForDownload(bytesToDownload))
-      return;
-
-    // download the actual file
-    const auto downloadFilePath = generateUniqueDownloadFilePath();
-    m_configurationListModel->download(configurationName);
-    auto* contentReply = m_networkAccessManager.get(zipRequest);
-    contentReply->ignoreSslErrors();
-    connect(contentReply, &QNetworkReply::downloadProgress, this, [this, contentReply, configurationName](quint64 bytesReceived, quint64 bytesTotal)
-    {
-      if (isDownloadCancelled(configurationName))
-      {
-        contentReply->abort();
-        return;
-      }
-
-      // guard against dividing by zero
-      if (bytesTotal == 0)
-        return;
-
-      m_configurationListModel->setDataByName(configurationName, bytesReceived * 1.0 / bytesTotal * 1.0 * 100, ConfigurationListModel::PercentDownloaded);
-    });
-    connect(contentReply, &QNetworkReply::readyRead, this, [this, contentReply, downloadFilePath, configurationName]()
-    {
-      readyRead(contentReply, downloadFilePath, configurationName);
-    });
-    connect(contentReply, &QNetworkReply::finished, this, [this, contentReply, downloadFilePath, configurationName]()
-    {
-      finished(contentReply, downloadFilePath, configurationName);
-    });
-    connect(contentReply, &QNetworkReply::errorOccurred, this, [this, contentReply](QNetworkReply::NetworkError error)
-    {
-      contentReply->abort();
-      if (error != QNetworkReply::NetworkError::OperationCanceledError)
-        emit toolErrorOccurred(QString("Network Error (%1)").arg(contentReply->errorString()), QStringLiteral("Error Downloading"));
-    });
+    zipHeadReply_finished(zipRequest, headReply, configurationName);
   });
 }
 

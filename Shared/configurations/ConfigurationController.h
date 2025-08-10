@@ -20,6 +20,7 @@
 // Qt headers
 #include <QDir>
 #include <QNetworkAccessManager>
+#include <QNetworkRequest>
 
 // DSA headers
 #include "AbstractTool.h"
@@ -29,6 +30,8 @@ Q_MOC_INCLUDE("QAbstractListModel")
 class QAbstractListModel;
 
 namespace Esri::ArcGISRuntime {
+class Error;
+class Portal;
 class PortalItem;
 }
 
@@ -80,6 +83,8 @@ private:
   void extractConfigurationDownload(const QString& pathToDownload, const QString& configurationName);
   bool updateExtractedConfigurationFile(const QDir& configurationDirectory);
   void resetConfigurationDeviceStatus(const QString& configurationName);
+  void portalItem_doneLoading(Esri::ArcGISRuntime::Portal* portal, Esri::ArcGISRuntime::PortalItem* portalItem, const QString& configurationName, const Esri::ArcGISRuntime::Error& error);
+  void zipHeadReply_finished(QNetworkRequest zipRequest, QNetworkReply* headReply, const QString& configurationName);
   ConfigurationListModel* m_configurationListModel = nullptr;
   QNetworkAccessManager m_networkAccessManager;
   QDir m_downloadFolder;

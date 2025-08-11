@@ -60,6 +60,7 @@ public:
   Q_INVOKABLE void remove(int index, bool alsoRemoveEntry);
   Q_INVOKABLE void downloadDefaultData();
   Q_INVOKABLE void addConfiguration(const QString& url, const QString& name);
+  Q_INVOKABLE bool nameAlreadyInUse(const QString& configurationName) const;
   static bool createDefaultConfigurationsFile();
 
   QString toolName() const override;

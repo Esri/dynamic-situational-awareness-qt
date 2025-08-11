@@ -75,13 +75,29 @@ DsaPanel {
             }
         }
 
-        Text {
-            color: Material.foreground
-            Layout.alignment: Qt.AlignLeft
-            Layout.leftMargin: 5
-            Layout.topMargin: 5
-            Layout.rightMargin: 5
-            text: "Name for the configuration"
+        RowLayout {
+            Text {
+                Layout.leftMargin: 5
+                Layout.topMargin: 5
+                Layout.rightMargin: 5
+                Layout.fillWidth: true
+                color: Material.foreground
+                Layout.alignment: Qt.AlignLeft
+                text: "Name for the configuration"
+            }
+            Text {
+                Layout.leftMargin: 5
+                Layout.topMargin: 5
+                Layout.rightMargin: 5
+                id: txtNameAlreadyInUse
+                color: "red"
+                Layout.alignment: Qt.AlignRight
+                font {
+                    italic: true
+                }
+                visible: configurationController.nameAlreadyInUse(txtConfigurationName.text)
+                text: "already in use"
+            }
         }
 
         TextField {
@@ -144,7 +160,7 @@ DsaPanel {
                 txtConfigurationName.clear();
                 drawer.close();
             }
-            enabled: txtUrl.length > 0 && txtConfigurationName.length > 0
+            enabled: txtUrl.length > 0 && txtConfigurationName.length > 0 && !txtNameAlreadyInUse.visible
         }
 
         Rectangle {

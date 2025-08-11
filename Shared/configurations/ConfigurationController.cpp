@@ -508,6 +508,11 @@ void ConfigurationController::addConfiguration(const QString& url, const QString
   emit configurationsChanged();
 }
 
+bool ConfigurationController::nameAlreadyInUse(const QString& configurationName) const
+{
+  return !m_configurationListModel->byName(configurationName).name().isEmpty();
+}
+
 void ConfigurationController::fetchConfigurations()
 {
   // check for the default configurations file and create if it doesn't exist

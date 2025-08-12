@@ -146,7 +146,7 @@ QString OptionsController::toolName() const
 /*!
  \brief Sets \a properties from the configuration file.
  */
-void OptionsController::setProperties(const QVariantMap& properties)
+void OptionsController::toolInitProperties(const QVariantMap& properties)
 {
   // access tool properties from the config
   m_coordinateFormat = properties["CoordinateFormat"].toString();
@@ -171,12 +171,11 @@ void OptionsController::setProperties(const QVariantMap& properties)
   getUpdatedTools();
 }
 
-void OptionsController::setProperty(const QString& propertyName, const QVariantMap& properties)
+bool OptionsController::shouldSetProperties(const QString& propertyName)
 {
-  if (propertyName == QStringLiteral("CoordinateFormat") ||
-      propertyName == AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME ||
-      propertyName == AppConstants::USERNAME_PROPERTYNAME)
-    setProperties(properties);
+  return (propertyName == QStringLiteral("CoordinateFormat") ||
+          propertyName == AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME ||
+          propertyName == AppConstants::USERNAME_PROPERTYNAME);
 }
 
 /*!

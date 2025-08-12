@@ -182,19 +182,18 @@ void LocationTextController::onGeoViewChanged()
 /*!
  \brief Set \a properties from the configuration file.
  */
-void LocationTextController::setProperties(const QVariantMap& properties)
+void LocationTextController::toolInitProperties(const QVariantMap& properties)
 {
   setCoordinateFormat(properties[COORDINATE_FORMAT_PROPERTYNAME].toString());
   setUseGpsForElevation(properties[USE_GPS_PROPERTYNAME].toBool());
   setUnitOfMeasurement(properties[UNIT_OF_MEASUREMENT_PROPERTYNAME].toString());
 }
 
-void LocationTextController::setProperty(const QString& propertyName, const QVariantMap& properties)
+bool LocationTextController::shouldSetProperties(const QString& propertyName)
 {
-  if (propertyName == COORDINATE_FORMAT_PROPERTYNAME ||
-      propertyName == USE_GPS_PROPERTYNAME ||
-      propertyName == UNIT_OF_MEASUREMENT_PROPERTYNAME)
-    setProperties(properties);
+  return (propertyName == COORDINATE_FORMAT_PROPERTYNAME ||
+          propertyName == USE_GPS_PROPERTYNAME ||
+          propertyName == UNIT_OF_MEASUREMENT_PROPERTYNAME);
 }
 
 /*!

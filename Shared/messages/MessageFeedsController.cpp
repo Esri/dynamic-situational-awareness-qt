@@ -231,7 +231,7 @@ void MessageFeedsController::setupFeeds()
     \li \c UserName - the name of the user to be broadcast.
   \endlist
  */
-void MessageFeedsController::setProperties(const QVariantMap& properties)
+void MessageFeedsController::toolInitProperties(const QVariantMap& properties)
 {
   setResourcePath(properties[RESOURCE_DIRECTORY_PROPERTYNAME].toString());
   m_messageFeedProperties = properties[MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME].toList();
@@ -267,14 +267,13 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
   }
 }
 
-void MessageFeedsController::setProperty(const QString& propertyName, const QVariantMap& properties)
+bool MessageFeedsController::shouldSetProperties(const QString& propertyName)
 {
-  if (propertyName == RESOURCE_DIRECTORY_PROPERTYNAME ||
-      propertyName == MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME ||
-      propertyName == AppConstants::USERNAME_PROPERTYNAME ||
-      propertyName == MessageFeedConstants::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME ||
-      propertyName == MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME)
-    setProperties(properties);
+  return (propertyName == RESOURCE_DIRECTORY_PROPERTYNAME ||
+          propertyName == MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME ||
+          propertyName == AppConstants::USERNAME_PROPERTYNAME ||
+          propertyName == MessageFeedConstants::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME ||
+          propertyName == MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME);
 }
 
 /*!

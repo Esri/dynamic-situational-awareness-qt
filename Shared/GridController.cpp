@@ -58,7 +58,7 @@ QString GridController::toolName() const
   return "GridController";
 }
 
-void GridController::setProperties(const QVariantMap& properties)
+void GridController::toolInitProperties(const QVariantMap& properties)
 {
   // set the member variables to the values from the config file initially
   static bool initialized = false;
@@ -86,12 +86,11 @@ void GridController::setProperties(const QVariantMap& properties)
   setCoordinateFormat(properties["CoordinateFormat"].toString());
 }
 
-void GridController::setProperty(const QString& propertyName, const QVariantMap& properties)
+bool GridController::shouldSetProperties(const QString& propertyName)
 {
-  if (propertyName == PROPERTY_NAME_GRID_VISIBLE ||
-      propertyName == PROPERTY_NAME_GRID_COLOR_SCHEME ||
-      propertyName == QStringLiteral("CoordinateFormat"))
-    setProperties(properties);
+  return (propertyName == PROPERTY_NAME_GRID_VISIBLE ||
+          propertyName == PROPERTY_NAME_GRID_COLOR_SCHEME ||
+          propertyName == QStringLiteral("CoordinateFormat"));
 }
 
 bool GridController::gridVisible() const

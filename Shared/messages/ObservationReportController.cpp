@@ -101,7 +101,7 @@ QString ObservationReportController::toolName() const
  *  \li \c UserName. The user name (observed by) for observation reports.
  * \endlist
  */
-void ObservationReportController::setProperties(const QVariantMap& properties)
+void ObservationReportController::toolInitProperties(const QVariantMap& properties)
 {
   auto findUserNameIt = properties.find(AppConstants::USERNAME_PROPERTYNAME);
   if (findUserNameIt != properties.end())
@@ -118,11 +118,10 @@ void ObservationReportController::setProperties(const QVariantMap& properties)
   }
 }
 
-void ObservationReportController::setProperty(const QString& propertyName, const QVariantMap& properties)
+bool ObservationReportController::shouldSetProperties(const QString& propertyName)
 {
-  if (propertyName == AppConstants::USERNAME_PROPERTYNAME ||
-      propertyName == MessageFeedConstants::OBSERVATION_REPORT_CONFIG_PROPERTYNAME)
-    setProperties(properties);
+  return (propertyName == AppConstants::USERNAME_PROPERTYNAME ||
+          propertyName == MessageFeedConstants::OBSERVATION_REPORT_CONFIG_PROPERTYNAME);
 }
 
 /*!

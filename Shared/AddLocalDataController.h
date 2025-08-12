@@ -54,8 +54,7 @@ public:
   QAbstractListModel* localDataModel() const;
 
   QString toolName() const override;
-  void setProperties(const QVariantMap& properties) override;
-  void setProperty(const QString& propertyName, const QVariantMap& properties) override;
+  bool shouldSetProperties(const QString& propertyName) override;
 
   // helpers for creating the layers for a given string
   void createFeatureLayerGeodatabase(const QString& path);
@@ -83,6 +82,7 @@ signals:
   void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
 
 private:
+  void toolInitProperties(const QVariantMap& properties) override;
   QStringList determineFileFilters(const QString& fileType);
   QStringList fileFilterList() const { return m_fileFilterList; }
   static const QString allData() { return s_allData; }

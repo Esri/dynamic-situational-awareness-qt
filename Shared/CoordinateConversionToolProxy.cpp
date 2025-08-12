@@ -116,7 +116,7 @@ void CoordinateConversionToolProxy::setInInputMode(bool mode)
  * configuration data read from JSON. Here we do a lookup of all formats and
  * apply the one with the matching name to our inputFormat result object.
  */
-void CoordinateConversionToolProxy::setProperties(const QVariantMap& properties)
+void CoordinateConversionToolProxy::toolInitProperties(const QVariantMap& properties)
 {
   const auto formats = m_controller->coordinateFormats();
   if (!formats)
@@ -139,10 +139,9 @@ void CoordinateConversionToolProxy::setProperties(const QVariantMap& properties)
   }
 }
 
-void CoordinateConversionToolProxy::setProperty(const QString& propertyName, const QVariantMap& properties)
+bool CoordinateConversionToolProxy::shouldSetProperties(const QString& propertyName)
 {
-  if (propertyName == QStringLiteral("CoordinateFormat"))
-    setProperties(properties);
+  return (propertyName == QStringLiteral("CoordinateFormat"));
 }
 
 /*!

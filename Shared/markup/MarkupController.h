@@ -44,8 +44,8 @@ public:
   explicit MarkupController(QObject* parent = nullptr);
   ~MarkupController();
 
-  void setProperties(const QVariantMap& properties) override;
-  void setProperty(const QString& propertyName, const QVariantMap& properties) override;
+  void toolInitProperties(const QVariantMap& properties) override;
+  bool shouldSetProperties(const QString& propertyName) override;
 
   Q_INVOKABLE void setColor(const QColor& color);
   Q_INVOKABLE void setWidth(float width);

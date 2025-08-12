@@ -113,7 +113,7 @@ QString MarkupBroadcast::toolName() const
 /*!
  \brief Sets \a properties from the configuration file
  */
-void MarkupBroadcast::setProperties(const QVariantMap& properties)
+void MarkupBroadcast::toolInitProperties(const QVariantMap& properties)
 {
   m_username = properties[USERNAME_PROPERTYNAME].toString();
 
@@ -132,13 +132,12 @@ void MarkupBroadcast::setProperties(const QVariantMap& properties)
   updateDataListener();
 }
 
-void MarkupBroadcast::setProperty(const QString& propertyName, const QVariantMap& properties)
+bool MarkupBroadcast::shouldSetProperties(const QString& propertyName)
 {
-  if (propertyName == USERNAME_PROPERTYNAME ||
-      propertyName == ROOTDATA_PROPERTYNAME ||
-      propertyName == MARKUPCONFIG_PROPERTYNAME ||
-      propertyName == UDPPORT_PROPERTYNAME)
-    setProperties(properties);
+  return (propertyName == USERNAME_PROPERTYNAME ||
+          propertyName == ROOTDATA_PROPERTYNAME ||
+          propertyName == MARKUPCONFIG_PROPERTYNAME ||
+          propertyName == UDPPORT_PROPERTYNAME);
 }
 
 /*!

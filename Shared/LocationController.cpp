@@ -200,7 +200,7 @@ QString LocationController::toolName() const
  *  \li \c ResourceDirectory - The directory containing icons for the location display.
  * \endlist
  */
-void LocationController::setProperties(const QVariantMap& properties)
+void LocationController::toolInitProperties(const QVariantMap& properties)
 {
   // setup simulation from the configuration properties
   const bool simulate = QString::compare(properties[PROPERTY_NAME_SIMULATE_LOCATION].toString(), QStringLiteral("true"), Qt::CaseInsensitive) == 0;
@@ -224,14 +224,13 @@ void LocationController::setProperties(const QVariantMap& properties)
     m_locationDisplay3d->setSurfacePlacement(SurfacePlacement::Relative);
 }
 
-void LocationController::setProperty(const QString& propertyName, const QVariantMap& properties)
+bool LocationController::shouldSetProperties(const QString& propertyName)
 {
-  if (propertyName == PROPERTY_NAME_SIMULATE_LOCATION ||
-      propertyName == PROPERTY_NAME_GPX_FILE ||
-      propertyName == PROPERTY_NAME_RESOURCE_DIRECTORY ||
-      propertyName == PROPERTY_NAME_CURRENT_LOCATION_Z_OFFSET ||
-      propertyName == PROPERTY_NAME_CURRENT_LOCATION_SURFACE_PLACEMENT)
-    setProperties(properties);
+  return (propertyName == PROPERTY_NAME_SIMULATE_LOCATION ||
+          propertyName == PROPERTY_NAME_GPX_FILE ||
+          propertyName == PROPERTY_NAME_RESOURCE_DIRECTORY ||
+          propertyName == PROPERTY_NAME_CURRENT_LOCATION_Z_OFFSET ||
+          propertyName == PROPERTY_NAME_CURRENT_LOCATION_SURFACE_PLACEMENT);
 }
 
 /*!

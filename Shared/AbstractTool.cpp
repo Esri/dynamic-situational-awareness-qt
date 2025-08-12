@@ -71,14 +71,18 @@ bool AbstractTool::handleClick(const Point& pos)
   and the value is a QVariant. Properties are useful for general settings
   which you wish to persist for the tool, such as default modes.
  */
-void AbstractTool::setProperties(const QVariantMap&)
+void AbstractTool::toolInitProperties(const QVariantMap&)
 {
-
 }
 
-void AbstractTool::setProperty(const QString&, const QVariantMap&)
+/*
+ * Derived tools should override this method to implement logic that
+ * will determine whether or not the tool's setProperties method should
+ * be invoked again to re-initialize the tool when a property changes.
+ */
+bool AbstractTool::shouldSetProperties(const QString&)
 {
-
+  return false;
 }
 
 /*!

@@ -879,7 +879,7 @@ QString AddLocalDataController::toolName() const
 /*
  \brief Sets \a properties, such as the directories to search for local data.
 */
-void AddLocalDataController::setProperties(const QVariantMap& properties)
+void AddLocalDataController::toolInitProperties(const QVariantMap& properties)
 {
   const QStringList filePaths = properties[LOCAL_DATAPATHS_PROPERTYNAME].toStringList();
   if (filePaths.empty())
@@ -904,10 +904,9 @@ void AddLocalDataController::setProperties(const QVariantMap& properties)
   refreshLocalDataModel();
 }
 
-void AddLocalDataController::setProperty(const QString& propertyName, const QVariantMap& properties)
+bool AddLocalDataController::shouldSetProperties(const QString& propertyName)
 {
-  if (propertyName == LOCAL_DATAPATHS_PROPERTYNAME)
-    setProperties(properties);
+  return (propertyName == LOCAL_DATAPATHS_PROPERTYNAME);
 }
 
 } // Dsa

@@ -148,6 +148,13 @@ void LayerCacheManager::setProperties(const QVariantMap& properties)
   m_initialLoadCompleted = true;
 }
 
+void LayerCacheManager::setProperty(const QString& propertyName, const QVariantMap& properties)
+{
+  if (propertyName == LAYERS_PROPERTYNAME ||
+      propertyName == ELEVATION_PROPERTYNAME)
+    setProperties(properties);
+}
+
 /*!
  \brief Creates a Layer from the provided \a jsonObject and adds at the given \a layerIndex.
 

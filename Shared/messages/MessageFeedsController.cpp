@@ -267,6 +267,16 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
   }
 }
 
+void MessageFeedsController::setProperty(const QString& propertyName, const QVariantMap& properties)
+{
+  if (propertyName == RESOURCE_DIRECTORY_PROPERTYNAME ||
+      propertyName == MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME ||
+      propertyName == AppConstants::USERNAME_PROPERTYNAME ||
+      propertyName == MessageFeedConstants::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME ||
+      propertyName == MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME)
+    setProperties(properties);
+}
+
 /*!
   \brief Sets the data path to be used for symbol style resources as \a resourcePath.
  */

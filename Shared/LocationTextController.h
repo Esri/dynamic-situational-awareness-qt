@@ -40,6 +40,7 @@ public:
 
   QString toolName() const override;
   void setProperties(const QVariantMap& properties) override;
+  void setProperty(const QString& propertyName, const QVariantMap& properties) override;
   void setCoordinateFormat(const QString& format);
   QString coordinateFormat() const;
   void setUnitOfMeasurement(const QString& unit);

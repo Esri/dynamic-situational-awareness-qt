@@ -86,6 +86,14 @@ void GridController::setProperties(const QVariantMap& properties)
   setCoordinateFormat(properties["CoordinateFormat"].toString());
 }
 
+void GridController::setProperty(const QString& propertyName, const QVariantMap& properties)
+{
+  if (propertyName == PROPERTY_NAME_GRID_VISIBLE ||
+      propertyName == PROPERTY_NAME_GRID_COLOR_SCHEME ||
+      propertyName == QStringLiteral("CoordinateFormat"))
+    setProperties(properties);
+}
+
 bool GridController::gridVisible() const
 {
   return m_gridVisible;

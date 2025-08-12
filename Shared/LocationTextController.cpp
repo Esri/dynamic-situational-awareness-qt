@@ -189,6 +189,14 @@ void LocationTextController::setProperties(const QVariantMap& properties)
   setUnitOfMeasurement(properties[UNIT_OF_MEASUREMENT_PROPERTYNAME].toString());
 }
 
+void LocationTextController::setProperty(const QString& propertyName, const QVariantMap& properties)
+{
+  if (propertyName == COORDINATE_FORMAT_PROPERTYNAME ||
+      propertyName == USE_GPS_PROPERTYNAME ||
+      propertyName == UNIT_OF_MEASUREMENT_PROPERTYNAME)
+    setProperties(properties);
+}
+
 /*!
  \brief Changes the coordinate \a format.
  */

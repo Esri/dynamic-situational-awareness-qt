@@ -60,6 +60,7 @@ public:
 
   QString toolName() const override;
   void setProperties(const QVariantMap& properties) override;
+  void setProperty(const QString& propertyName, const QVariantMap& properties) override;
 
   bool isEnabled() const;
   void setEnabled(bool isEnabled);

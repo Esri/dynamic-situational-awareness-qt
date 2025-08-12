@@ -45,6 +45,7 @@ public:
   ~MarkupController();
 
   void setProperties(const QVariantMap& properties) override;
+  void setProperty(const QString& propertyName, const QVariantMap& properties) override;
 
   Q_INVOKABLE void setColor(const QColor& color);
   Q_INVOKABLE void setWidth(float width);

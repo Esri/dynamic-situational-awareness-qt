@@ -132,6 +132,15 @@ void MarkupBroadcast::setProperties(const QVariantMap& properties)
   updateDataListener();
 }
 
+void MarkupBroadcast::setProperty(const QString& propertyName, const QVariantMap& properties)
+{
+  if (propertyName == USERNAME_PROPERTYNAME ||
+      propertyName == ROOTDATA_PROPERTYNAME ||
+      propertyName == MARKUPCONFIG_PROPERTYNAME ||
+      propertyName == UDPPORT_PROPERTYNAME)
+    setProperties(properties);
+}
+
 /*!
    \brief Broadcasts the markup JSON (\a json) over a UDP port.
  */

@@ -46,6 +46,7 @@ public:
   bool handleClick(const Esri::ArcGISRuntime::Point& pos) override;
 
   void setProperties(const QVariantMap& properties) override;
+  void setProperty(const QString& propertyName, const QVariantMap& properties) override;
 
   Esri::ArcGISRuntime::Toolkit::CoordinateConversionController* controller() const;
 

@@ -55,6 +55,7 @@ public:
 
   QString toolName() const override;
   void setProperties(const QVariantMap& properties) override;
+  void setProperty(const QString& propertyName, const QVariantMap& properties) override;
 
   // helpers for creating the layers for a given string
   void createFeatureLayerGeodatabase(const QString& path);

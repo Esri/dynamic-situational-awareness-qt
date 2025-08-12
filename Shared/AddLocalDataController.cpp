@@ -904,6 +904,12 @@ void AddLocalDataController::setProperties(const QVariantMap& properties)
   refreshLocalDataModel();
 }
 
+void AddLocalDataController::setProperty(const QString& propertyName, const QVariantMap& properties)
+{
+  if (propertyName == LOCAL_DATAPATHS_PROPERTYNAME)
+    setProperties(properties);
+}
+
 } // Dsa
 
 // Signal Documentation

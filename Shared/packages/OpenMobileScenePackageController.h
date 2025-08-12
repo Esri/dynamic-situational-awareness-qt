@@ -56,6 +56,7 @@ public:
 
   QString toolName() const override;
   void setProperties(const QVariantMap& properties) override;
+  void setProperty(const QString& propertyName, const QVariantMap& properties) override;
 
   Q_INVOKABLE void selectPackageName(const QString& newPackageName);
   Q_INVOKABLE void selectScene(int newSceneIndex);

@@ -76,6 +76,11 @@ void AbstractTool::setProperties(const QVariantMap&)
 
 }
 
+void AbstractTool::setProperty(const QString&, const QVariantMap&)
+{
+
+}
+
 /*!
    \brief Sets whether this tool is active to \a active.
 

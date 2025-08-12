@@ -203,6 +203,13 @@ void AlertConditionsController::setProperties(const QVariantMap& properties)
   addStoredConditions();
 }
 
+void AlertConditionsController::setProperty(const QString& propertyName, const QVariantMap& properties)
+{
+  if (propertyName == AlertConstants::ALERT_CONDITIONS_PROPERTYNAME ||
+      propertyName == MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME)
+    setProperties(properties);
+}
+
 /*!
   \brief Sets the active state of this tool to \a active.
 

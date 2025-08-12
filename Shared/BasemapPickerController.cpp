@@ -221,6 +221,13 @@ void BasemapPickerController::setProperties(const QVariantMap& properties)
   }
 }
 
+void BasemapPickerController::setProperty(const QString& propertyName, const QVariantMap& properties)
+{
+  if (propertyName == DEFAULT_BASEMAP_PROPERTYNAME ||
+      propertyName == BASEMAP_DIRECTORY_PROPERTYNAME)
+    setProperties(properties);
+}
+
 } // Dsa
 
 // Signal Documentation

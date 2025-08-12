@@ -224,6 +224,16 @@ void LocationController::setProperties(const QVariantMap& properties)
     m_locationDisplay3d->setSurfacePlacement(SurfacePlacement::Relative);
 }
 
+void LocationController::setProperty(const QString& propertyName, const QVariantMap& properties)
+{
+  if (propertyName == PROPERTY_NAME_SIMULATE_LOCATION ||
+      propertyName == PROPERTY_NAME_GPX_FILE ||
+      propertyName == PROPERTY_NAME_RESOURCE_DIRECTORY ||
+      propertyName == PROPERTY_NAME_CURRENT_LOCATION_Z_OFFSET ||
+      propertyName == PROPERTY_NAME_CURRENT_LOCATION_SURFACE_PLACEMENT)
+    setProperties(properties);
+}
+
 /*!
   \property LocationController::enabled
   \brief Returns whether the tool is enabled.

@@ -171,6 +171,14 @@ void OptionsController::setProperties(const QVariantMap& properties)
   getUpdatedTools();
 }
 
+void OptionsController::setProperty(const QString& propertyName, const QVariantMap& properties)
+{
+  if (propertyName == QStringLiteral("CoordinateFormat") ||
+      propertyName == AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME ||
+      propertyName == AppConstants::USERNAME_PROPERTYNAME)
+    setProperties(properties);
+}
+
 /*!
  \property OptionsController::coordinateFormats
  \brief Returns the coordinate format list for display in the combo box.

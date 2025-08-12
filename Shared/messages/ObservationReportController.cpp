@@ -118,6 +118,13 @@ void ObservationReportController::setProperties(const QVariantMap& properties)
   }
 }
 
+void ObservationReportController::setProperty(const QString& propertyName, const QVariantMap& properties)
+{
+  if (propertyName == AppConstants::USERNAME_PROPERTYNAME ||
+      propertyName == MessageFeedConstants::OBSERVATION_REPORT_CONFIG_PROPERTYNAME)
+    setProperties(properties);
+}
+
 /*!
   \property ObservationReportController::observedBy
   \brief Returns the name of the unit making the observation report.

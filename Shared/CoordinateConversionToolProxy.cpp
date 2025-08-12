@@ -139,6 +139,12 @@ void CoordinateConversionToolProxy::setProperties(const QVariantMap& properties)
   }
 }
 
+void CoordinateConversionToolProxy::setProperty(const QString& propertyName, const QVariantMap& properties)
+{
+  if (propertyName == QStringLiteral("CoordinateFormat"))
+    setProperties(properties);
+}
+
 /*!
  * \brief Returns a controller that is fed with DSA and GeoView updates when
  * applicable.

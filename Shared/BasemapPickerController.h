@@ -58,6 +58,7 @@ public:
 
   QString toolName() const override;
   void setProperties(const QVariantMap& properties) override;
+  void setProperty(const QString& propertyName, const QVariantMap& properties) override;
 
   QString basemapDataPath() const { return m_basemapDataPath; }
   void setBasemapDataPath(const QString& dataPath);

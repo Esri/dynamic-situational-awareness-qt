@@ -52,6 +52,7 @@ public:
   QString toolName() const override;
 
   void setProperties(const QVariantMap& properties) override;
+  void setProperty(const QString& propertyName, const QVariantMap& properties) override;
 
   QString observedBy() const;
   void setObservedBy(const QString& observedBy);

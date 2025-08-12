@@ -100,6 +100,12 @@ void MarkupController::setProperties(const QVariantMap& properties)
   m_username = properties.value(USERNAME_PROPERTYNAME).toString();
 }
 
+void MarkupController::setProperty(const QString& propertyName, const QVariantMap& properties)
+{
+  if (propertyName == USERNAME_PROPERTYNAME)
+    setProperties(properties);
+}
+
 /*!
  \brief Sets the tool to be \a active.
  */

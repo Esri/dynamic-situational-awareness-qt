@@ -118,6 +118,14 @@ void OpenMobileScenePackageController::setProperties(const QVariantMap& properti
   }
 }
 
+void OpenMobileScenePackageController::setProperty(const QString& propertyName, const QVariantMap& properties)
+{
+  if (propertyName == PACKAGE_DIRECTORY_PROPERTYNAME ||
+      propertyName == CURRENT_PACKAGE_PROPERTYNAME ||
+      propertyName == SCENE_INDEX_PROPERTYNAME)
+    setProperties(properties);
+}
+
 /*!
   \internal
 

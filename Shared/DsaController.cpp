@@ -294,7 +294,7 @@ void DsaController::onPropertyChanged(const QString& propertyName, const QVarian
       continue;
 
     disconnect(tool, &AbstractTool::propertyChanged,this, &DsaController::onPropertyChanged);
-    tool->setProperties(m_dsaSettings);
+    tool->setProperty(propertyName, m_dsaSettings);
     connect(tool, &AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
   }
 }

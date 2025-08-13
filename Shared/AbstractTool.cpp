@@ -114,7 +114,7 @@ bool AbstractTool::isActive() const
 
 bool AbstractTool::setContainsString(const std::unordered_set<QString>& strSet, const QString& str)
 {
-  return std::any_of(std::cbegin(strSet), std::end(strSet), [str](const QString& p) { return str == p; });
+  return std::any_of(std::cbegin(strSet), std::cend(strSet), [str](const QString& p) { return str == p; });
 }
 
 // Signals

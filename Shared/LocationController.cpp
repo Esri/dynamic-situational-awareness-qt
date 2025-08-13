@@ -200,7 +200,7 @@ QString LocationController::toolName() const
  *  \li \c ResourceDirectory - The directory containing icons for the location display.
  * \endlist
  */
-void LocationController::setProperties(const QVariantMap& properties)
+void LocationController::toolInitProperties(const QVariantMap& properties)
 {
   // setup simulation from the configuration properties
   const bool simulate = QString::compare(properties[PROPERTY_NAME_SIMULATE_LOCATION].toString(), QStringLiteral("true"), Qt::CaseInsensitive) == 0;
@@ -222,6 +222,21 @@ void LocationController::setProperties(const QVariantMap& properties)
     m_locationDisplay3d->setSurfacePlacement(SurfacePlacement::DrapedFlat);
   else
     m_locationDisplay3d->setSurfacePlacement(SurfacePlacement::Relative);
+}
+
+bool LocationController::shouldSetProperties(const QString& propertyName)
+{
+  // list all property names that should cause the tool to re-initialize
+  static const std::unordered_set<QString> propertyNames
+  {
+    PROPERTY_NAME_SIMULATE_LOCATION,
+    PROPERTY_NAME_GPX_FILE,
+    PROPERTY_NAME_RESOURCE_DIRECTORY,
+    PROPERTY_NAME_CURRENT_LOCATION_Z_OFFSET,
+    PROPERTY_NAME_CURRENT_LOCATION_SURFACE_PLACEMENT
+  };
+
+  return setContainsString(propertyNames, propertyName);
 }
 
 /*!

@@ -231,7 +231,7 @@ void MessageFeedsController::setupFeeds()
     \li \c UserName - the name of the user to be broadcast.
   \endlist
  */
-void MessageFeedsController::setProperties(const QVariantMap& properties)
+void MessageFeedsController::toolInitProperties(const QVariantMap& properties)
 {
   setResourcePath(properties[RESOURCE_DIRECTORY_PROPERTYNAME].toString());
   m_messageFeedProperties = properties[MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME].toList();
@@ -265,6 +265,21 @@ void MessageFeedsController::setProperties(const QVariantMap& properties)
     m_locationBroadcast->setMessageType(locationBroadcastConfig.value(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE).toString());
     m_locationBroadcast->setUdpPort(locationBroadcastConfig.value(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PORT).toInt());
   }
+}
+
+bool MessageFeedsController::shouldSetProperties(const QString& propertyName)
+{
+  // list all property names that should cause the tool to re-initialize
+  static const std::unordered_set<QString> propertyNames
+  {
+    RESOURCE_DIRECTORY_PROPERTYNAME,
+    MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME,
+    AppConstants::USERNAME_PROPERTYNAME,
+    MessageFeedConstants::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME,
+    MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME
+  };
+
+  return setContainsString(propertyNames, propertyName);
 }
 
 /*!

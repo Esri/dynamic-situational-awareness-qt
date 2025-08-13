@@ -81,13 +81,6 @@ QString NavigationController::toolName() const
 }
 
 /*!
- * \brief Sets any values in \a properties which are relevant for the navigation controller.
- */
-void NavigationController::setProperties(const QVariantMap&)
-{
-}
-
-/*!
   \internal
  */
 void NavigationController::updateGeoView()

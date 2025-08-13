@@ -55,7 +55,8 @@ public:
   explicit GridController(QObject* parent = nullptr);
 
   QString toolName() const override;
-  void setProperties(const QVariantMap& properties) override;
+  void toolInitProperties(const QVariantMap& properties) override;
+  bool shouldSetProperties(const QString& propertyName) override;
 
   bool gridVisible() const;
   void setGridVisible(bool gridVisible);

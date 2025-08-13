@@ -95,9 +95,14 @@ MarkupController::~MarkupController()
 /*!
  \brief Sets \a properties from the configuration file
  */
-void MarkupController::setProperties(const QVariantMap& properties)
+void MarkupController::toolInitProperties(const QVariantMap& properties)
 {
   m_username = properties.value(USERNAME_PROPERTYNAME).toString();
+}
+
+bool MarkupController::shouldSetProperties(const QString& propertyName)
+{
+  return (propertyName == USERNAME_PROPERTYNAME);
 }
 
 /*!

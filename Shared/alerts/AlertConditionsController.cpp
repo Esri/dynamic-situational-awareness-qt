@@ -146,7 +146,7 @@ QString AlertConditionsController::toolName() const
  *  \li MessageFeeds. A list of real-time feeds to be used as condition sources.
  * \endlist
  */
-void AlertConditionsController::setProperties(const QVariantMap& properties)
+void AlertConditionsController::toolInitProperties(const QVariantMap& properties)
 {
   const auto conditionsData = properties[AlertConstants::ALERT_CONDITIONS_PROPERTYNAME];
 
@@ -201,6 +201,12 @@ void AlertConditionsController::setProperties(const QVariantMap& properties)
   };
 
   addStoredConditions();
+}
+
+bool AlertConditionsController::shouldSetProperties(const QString& propertyName)
+{
+  return (propertyName == AlertConstants::ALERT_CONDITIONS_PROPERTYNAME ||
+          propertyName == MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME);
 }
 
 /*!

@@ -146,7 +146,7 @@ QString OptionsController::toolName() const
 /*!
  \brief Sets \a properties from the configuration file.
  */
-void OptionsController::setProperties(const QVariantMap& properties)
+void OptionsController::toolInitProperties(const QVariantMap& properties)
 {
   // access tool properties from the config
   m_coordinateFormat = properties["CoordinateFormat"].toString();
@@ -169,6 +169,19 @@ void OptionsController::setProperties(const QVariantMap& properties)
 
   // get access to the various tool controllers
   getUpdatedTools();
+}
+
+bool OptionsController::shouldSetProperties(const QString& propertyName)
+{
+  // list all property names that should cause the tool to re-initialize
+  static const std::unordered_set<QString> propertyNames
+  {
+    QStringLiteral("CoordinateFormat"),
+    AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME,
+    AppConstants::USERNAME_PROPERTYNAME
+  };
+
+  return setContainsString(propertyNames, propertyName);
 }
 
 /*!

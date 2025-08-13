@@ -63,7 +63,8 @@ public:
   void removeDataListener(DataListener* dataListener);
 
   QString toolName() const override;
-  void setProperties(const QVariantMap& properties) override;
+  void toolInitProperties(const QVariantMap& properties) override;
+  bool shouldSetProperties(const QString& propertyName) override;
 
   QString resourcePath() const { return m_resourcePath; }
   void setResourcePath(const QString& resourcePath);

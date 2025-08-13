@@ -113,7 +113,7 @@ QString MarkupBroadcast::toolName() const
 /*!
  \brief Sets \a properties from the configuration file
  */
-void MarkupBroadcast::setProperties(const QVariantMap& properties)
+void MarkupBroadcast::toolInitProperties(const QVariantMap& properties)
 {
   m_username = properties[USERNAME_PROPERTYNAME].toString();
 
@@ -130,6 +130,20 @@ void MarkupBroadcast::setProperties(const QVariantMap& properties)
   }
   updateDataSender();
   updateDataListener();
+}
+
+bool MarkupBroadcast::shouldSetProperties(const QString& propertyName)
+{
+  // list all property names that should cause the tool to re-initialize
+  static const std::unordered_set<QString> propertyNames
+  {
+    USERNAME_PROPERTYNAME,
+    ROOTDATA_PROPERTYNAME,
+    MARKUPCONFIG_PROPERTYNAME,
+    UDPPORT_PROPERTYNAME
+  };
+
+  return setContainsString(propertyNames, propertyName);
 }
 
 /*!

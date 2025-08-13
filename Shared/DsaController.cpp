@@ -43,7 +43,6 @@
 #include <QSettings>
 
 // DSA headers
-#include "AddLocalDataController.h"
 #include "AlertConstants.h"
 #include "AppConstants.h"
 #include "BasemapPickerController.h"

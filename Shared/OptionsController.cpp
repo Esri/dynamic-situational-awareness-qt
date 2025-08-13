@@ -173,9 +173,15 @@ void OptionsController::toolInitProperties(const QVariantMap& properties)
 
 bool OptionsController::shouldSetProperties(const QString& propertyName)
 {
-  return (propertyName == QStringLiteral("CoordinateFormat") ||
-          propertyName == AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME ||
-          propertyName == AppConstants::USERNAME_PROPERTYNAME);
+  // list all property names that should cause the tool to re-initialize
+  static const std::unordered_set<QString> propertyNames
+  {
+    QStringLiteral("CoordinateFormat"),
+    AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME,
+    AppConstants::USERNAME_PROPERTYNAME
+  };
+
+  return setContainsString(propertyNames, propertyName);
 }
 
 /*!

@@ -134,10 +134,16 @@ void MarkupBroadcast::toolInitProperties(const QVariantMap& properties)
 
 bool MarkupBroadcast::shouldSetProperties(const QString& propertyName)
 {
-  return (propertyName == USERNAME_PROPERTYNAME ||
-          propertyName == ROOTDATA_PROPERTYNAME ||
-          propertyName == MARKUPCONFIG_PROPERTYNAME ||
-          propertyName == UDPPORT_PROPERTYNAME);
+  // list all property names that should cause the tool to re-initialize
+  static const std::unordered_set<QString> propertyNames
+  {
+    USERNAME_PROPERTYNAME,
+    ROOTDATA_PROPERTYNAME,
+    MARKUPCONFIG_PROPERTYNAME,
+    UDPPORT_PROPERTYNAME
+  };
+
+  return setContainsString(propertyNames, propertyName);
 }
 
 /*!

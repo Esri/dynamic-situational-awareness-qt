@@ -226,11 +226,17 @@ void LocationController::toolInitProperties(const QVariantMap& properties)
 
 bool LocationController::shouldSetProperties(const QString& propertyName)
 {
-  return (propertyName == PROPERTY_NAME_SIMULATE_LOCATION ||
-          propertyName == PROPERTY_NAME_GPX_FILE ||
-          propertyName == PROPERTY_NAME_RESOURCE_DIRECTORY ||
-          propertyName == PROPERTY_NAME_CURRENT_LOCATION_Z_OFFSET ||
-          propertyName == PROPERTY_NAME_CURRENT_LOCATION_SURFACE_PLACEMENT);
+  // list all property names that should cause the tool to re-initialize
+  static const std::unordered_set<QString> propertyNames
+  {
+    PROPERTY_NAME_SIMULATE_LOCATION,
+    PROPERTY_NAME_GPX_FILE,
+    PROPERTY_NAME_RESOURCE_DIRECTORY,
+    PROPERTY_NAME_CURRENT_LOCATION_Z_OFFSET,
+    PROPERTY_NAME_CURRENT_LOCATION_SURFACE_PLACEMENT
+  };
+
+  return setContainsString(propertyNames, propertyName);
 }
 
 /*!

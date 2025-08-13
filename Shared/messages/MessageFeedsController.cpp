@@ -269,11 +269,17 @@ void MessageFeedsController::toolInitProperties(const QVariantMap& properties)
 
 bool MessageFeedsController::shouldSetProperties(const QString& propertyName)
 {
-  return (propertyName == RESOURCE_DIRECTORY_PROPERTYNAME ||
-          propertyName == MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME ||
-          propertyName == AppConstants::USERNAME_PROPERTYNAME ||
-          propertyName == MessageFeedConstants::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME ||
-          propertyName == MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME);
+  // list all property names that should cause the tool to re-initialize
+  static const std::unordered_set<QString> propertyNames
+  {
+    RESOURCE_DIRECTORY_PROPERTYNAME,
+    MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME,
+    AppConstants::USERNAME_PROPERTYNAME,
+    MessageFeedConstants::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME,
+    MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME
+  };
+
+  return setContainsString(propertyNames, propertyName);
 }
 
 /*!

@@ -88,9 +88,15 @@ void GridController::toolInitProperties(const QVariantMap& properties)
 
 bool GridController::shouldSetProperties(const QString& propertyName)
 {
-  return (propertyName == PROPERTY_NAME_GRID_VISIBLE ||
-          propertyName == PROPERTY_NAME_GRID_COLOR_SCHEME ||
-          propertyName == QStringLiteral("CoordinateFormat"));
+  // list all property names that should cause the tool to re-initialize
+  static const std::unordered_set<QString> propertyNames
+  {
+    PROPERTY_NAME_GRID_VISIBLE,
+    PROPERTY_NAME_GRID_COLOR_SCHEME,
+    QStringLiteral("CoordinateFormat")
+  };
+
+  return setContainsString(propertyNames, propertyName);
 }
 
 bool GridController::gridVisible() const
@@ -118,7 +124,7 @@ void GridController::setGridColorScheme(const QString& gridColorScheme)
   m_gridColorScheme = gridColorScheme;
   m_gridColorSchemeIndex = m_gridColorSchemes.indexOf(m_gridColorScheme);
 
-  const static QHash<QString, QColor> gridLineColors
+  static const QHash<QString, QColor> gridLineColors
   {
     { GRID_COLOR_SCHEME_VALUE_DARK, QColorConstants::DarkGray },
     { GRID_COLOR_SCHEME_VALUE_LIGHT, QColorConstants::LightGray },

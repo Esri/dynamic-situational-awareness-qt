@@ -120,9 +120,15 @@ void OpenMobileScenePackageController::toolInitProperties(const QVariantMap& pro
 
 bool OpenMobileScenePackageController::shouldSetProperties(const QString& propertyName)
 {
-  return (propertyName == PACKAGE_DIRECTORY_PROPERTYNAME ||
-          propertyName == CURRENT_PACKAGE_PROPERTYNAME ||
-          propertyName == SCENE_INDEX_PROPERTYNAME);
+  // list all property names that should cause the tool to re-initialize
+  static const std::unordered_set<QString> propertyNames
+  {
+    PACKAGE_DIRECTORY_PROPERTYNAME,
+    CURRENT_PACKAGE_PROPERTYNAME,
+    SCENE_INDEX_PROPERTYNAME
+  };
+
+  return setContainsString(propertyNames, propertyName);
 }
 
 /*!

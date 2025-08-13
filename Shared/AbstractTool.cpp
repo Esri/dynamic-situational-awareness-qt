@@ -16,10 +16,14 @@
 
 #include "AbstractTool.h"
 
+// STL headers
+#include <algorithm>
+
 using namespace Esri::ArcGISRuntime;
 
 namespace Dsa
 {
+
 /*!
   \class Dsa::AbstractTool
   \inmodule ArcGISQtToolkit
@@ -106,6 +110,11 @@ void AbstractTool::setActive(bool active)
 bool AbstractTool::isActive() const
 {
   return m_active;
+}
+
+bool AbstractTool::setContainsString(const std::unordered_set<QString>& strSet, const QString& str)
+{
+  return std::any_of(std::cbegin(strSet), std::end(strSet), [str](const QString& p) { return str == p; });
 }
 
 // Signals

@@ -191,9 +191,15 @@ void LocationTextController::toolInitProperties(const QVariantMap& properties)
 
 bool LocationTextController::shouldSetProperties(const QString& propertyName)
 {
-  return (propertyName == COORDINATE_FORMAT_PROPERTYNAME ||
-          propertyName == USE_GPS_PROPERTYNAME ||
-          propertyName == UNIT_OF_MEASUREMENT_PROPERTYNAME);
+  // list all property names that should cause the tool to re-initialize
+  static const std::unordered_set<QString> propertyNames
+  {
+    COORDINATE_FORMAT_PROPERTYNAME,
+    USE_GPS_PROPERTYNAME,
+    UNIT_OF_MEASUREMENT_PROPERTYNAME
+  };
+
+  return setContainsString(propertyNames, propertyName);
 }
 
 /*!

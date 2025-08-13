@@ -292,7 +292,7 @@ void DsaController::onPropertyChanged(const QString& propertyName, const QVarian
 
     if (tool->shouldSetProperties(propertyName))
     {
-      disconnect(tool, &AbstractTool::propertyChanged,this, &DsaController::onPropertyChanged);
+      disconnect(tool, &AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
       tool->toolInitProperties(m_dsaSettings);
       connect(tool, &AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
     }

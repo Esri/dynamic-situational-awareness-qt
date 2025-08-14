@@ -122,9 +122,9 @@ void ConfigurationController::extractConfigurationDownload(const QString& downlo
   });
   connect(zipHelper, &ZipHelper::extractError, this, [this, configurationName, zipHelper, downloadFilePath](const QString& fileName, const QString& outputFileName, ZipHelper::Result result)
   {
-    Q_UNUSED(result);
     Q_UNUSED(fileName);
     Q_UNUSED(outputFileName);
+    Q_UNUSED(result);
     zipHelper->deleteLater();
     removeDownloadedFile(downloadFilePath);
     emit toolErrorOccurred(QStringLiteral("Error unzipping the download"), QStringLiteral("Configuration Error"));
@@ -282,7 +282,47 @@ void ConfigurationController::download(int index)
   // fetch a copy of the selected model item from the listview
   const auto configuration = m_configurationListModel->at(index);
   const auto configurationUrl = configuration.url();
+  const auto configurationUrlStr = configuration.urlStr();
   const auto configurationName = configuration.name();
+
+#ifdef Q_OS_ANDROID
+  if (configurationUrl.scheme() == QStringLiteral("content"))
+  {
+    // copy file from the content provider as if it was a downloaded file
+    QString contentDownloadStr{generateUniqueDownloadFilePath()};
+    QtConcurrent::run([this, configurationUrlStr, configurationName, contentDownloadStr]
+    {
+      QFile fileContent{configurationUrlStr};
+      const auto bytesTotal = fileContent.size();
+      fileContent.open(QIODevice::ReadOnly);
+
+      QFile fileDownload{contentDownloadStr};
+      fileDownload.open(QIODevice::WriteOnly);
+      quint64 bytesWritten = 0;
+      quint8 percentTotal = 0;
+      constexpr qint64 sizeLine = 1024 * 16;
+
+      // write the lines to the temporary 'download' file and update the
+      // percentage downloaded by whole integers only to limit updates to the UI
+      while (!fileContent.atEnd())
+      {
+        bytesWritten += fileDownload.write(fileContent.readLine(sizeLine));
+        const quint8 percentLine = bytesWritten * 1.0 / bytesTotal * 100.0;
+        if (percentTotal != percentLine)
+        {
+          percentTotal = percentLine;
+          m_configurationListModel->setDataByName(configurationName, percentTotal, ConfigurationListModel::PercentDownloaded);
+        }
+      }
+    }).then([this, configurationName, contentDownloadStr]()
+    {
+      m_configurationListModel->setDataByName(configurationName, 100, ConfigurationListModel::PercentDownloaded);
+      extractConfigurationDownload(contentDownloadStr, configurationName);
+    });
+    return;
+  }
+#endif
+
   if (configurationUrl.isLocalFile())
   {
     m_configurationListModel->setDataByName(configurationName, 100, ConfigurationListModel::PercentDownloaded);
@@ -291,7 +331,6 @@ void ConfigurationController::download(int index)
   }
 
   // attempt to download the data as a portal item if it matches the item id url pattern
-  const auto configurationUrlStr = configuration.urlStr();
   static const QRegularExpression regexPortalItem{REGEX_PORTAL_ITEM_URL};
   if (regexPortalItem.match(configurationUrlStr).hasMatch())
   {

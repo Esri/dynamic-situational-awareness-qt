@@ -294,8 +294,10 @@ void ConfigurationController::download(int index)
     {
       QFile fileContent{configurationUrlStr};
       const auto bytesTotal = fileContent.size();
-      fileContent.open(QIODevice::ReadOnly);
+      if (bytesTotal == 0)
+        return;
 
+      fileContent.open(QIODevice::ReadOnly);
       QFile fileDownload{contentDownloadStr};
       fileDownload.open(QIODevice::WriteOnly);
       quint64 bytesWritten = 0;
@@ -407,9 +409,9 @@ bool ConfigurationController::isDownloadCancelled(const QString& configurationNa
 
 bool ConfigurationController::deviceHasRoomForDownload(qint64 bytesToDownload)
 {
-  QStorageInfo storageInfo(m_downloadFolder);
-  auto bytesAvailable = storageInfo.bytesAvailable() * 0.95;
-  bool enoughSpaceAvailable = bytesToDownload * 2.5 < bytesAvailable;
+  const QStorageInfo storageInfo{m_downloadFolder};
+  const auto bytesAllowed = storageInfo.bytesAvailable() * 0.95;
+  const bool enoughSpaceAvailable = bytesToDownload * 2.5 < bytesAllowed;
   if (!enoughSpaceAvailable)
     emit toolErrorOccurred("The expected download/extracted file size exceeds storage available on the device", "Download Error");
 

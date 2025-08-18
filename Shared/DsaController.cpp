@@ -145,6 +145,7 @@ Scene* DsaController::scene() const
 void DsaController::init(GeoView* geoView)
 {
   ToolResourceProvider::instance()->setGeoView(geoView);
+  ToolManager::instance().setDsaController(this);
 
   bool hasActiveScene = false;
   auto openScenePackageTool = ToolManager::instance().tool<OpenMobileScenePackageController>();
@@ -555,7 +556,7 @@ void DsaController::writeInitialLocation(const Viewpoint& viewpoint)
   m_dsaSettings[AppConstants::INITIALLOCATION_PROPERTYNAME] = initialLocationJson.toVariantMap();
 }
 
-Viewpoint DsaController::readInitialLocation()
+Viewpoint DsaController::readInitialLocation() const
 {
   return viewpointFromJson(m_dsaSettings[AppConstants::INITIALLOCATION_PROPERTYNAME].toJsonObject());
 }

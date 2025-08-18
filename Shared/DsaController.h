@@ -49,6 +49,7 @@ public:
   void init(Esri::ArcGISRuntime::GeoView* geoView);
 
   void resetToDefaultScene();
+  Esri::ArcGISRuntime::Viewpoint readInitialLocation() const;
 
 public slots:
   void onError(const Esri::ArcGISRuntime::Error& error);
@@ -71,7 +72,6 @@ private:
   void updateInitialLocationOnSceneChange(bool isInitialization);
 
   void writeInitialLocation(const Esri::ArcGISRuntime::Viewpoint& viewpoint);
-  Esri::ArcGISRuntime::Viewpoint readInitialLocation();
 
   Esri::ArcGISRuntime::Scene* m_scene = nullptr;
   LayerCacheManager* m_cacheManager = nullptr;

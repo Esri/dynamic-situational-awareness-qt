@@ -110,6 +110,16 @@ AbstractTool* ToolManager::tool(const QString& toolName) const
   return m_tools[toolName];
 }
 
+void ToolManager::setDsaController(const DsaController* dsaController)
+{
+  m_dsaController = dsaController;
+}
+
+const DsaController* ToolManager::dsaController() const
+{
+  return m_dsaController;
+}
+
 /*! \brief Returns a begin iterator to the list of tools.
  *
  */

@@ -69,7 +69,7 @@ private:
   ToolManager();
 
   ToolsList m_tools;
-  const DsaController* m_dsaController;
+  const DsaController* m_dsaController = nullptr;
 };
 
 template<class T>

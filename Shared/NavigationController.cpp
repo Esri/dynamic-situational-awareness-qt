@@ -118,13 +118,10 @@ void NavigationController::zoomToInitialLocation()
     return;
 
   // read the users defined viewpoint from the config file
-  if (const auto* dsaController = ToolManager::instance().dsaController(); dsaController)
+  if (const auto initialViewpoint = DsaController::instance().readInitialLocation(); !initialViewpoint.isEmpty())
   {
-    if (const auto initialViewpoint = dsaController->readInitialLocation(); !initialViewpoint.isEmpty())
-    {
-      m_sceneView->setViewpointAsync(initialViewpoint, 1.0f);
-      return;
-    }
+    m_sceneView->setViewpointAsync(initialViewpoint, 1.0f);
+    return;
   }
 
   // default to the scene view object initial viewpoint

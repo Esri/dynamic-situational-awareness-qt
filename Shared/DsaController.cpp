@@ -88,8 +88,7 @@ QJsonObject defaultViewpoint();
 /*!
   \brief Constructor for a model taking an optional \a parent.
  */
-DsaController::DsaController(QObject* parent):
-  QObject(parent),
+DsaController::DsaController():
   m_scene(new Scene(this)),
   m_jsonFormat(QSettings::registerFormat("json", &readJsonFile, &writeJsonFile)),
   m_conflictingToolNames{QStringLiteral("Alert Conditions"),
@@ -129,6 +128,13 @@ DsaController::~DsaController()
   saveSettings();
 }
 
+DsaController& DsaController::instance()
+{
+  static DsaController instance{};
+
+  return instance;
+}
+
 /*!
   \brief Returns the Esri::ArcGISRuntime::Scene used by the app.
  */
@@ -145,7 +151,6 @@ Scene* DsaController::scene() const
 void DsaController::init(GeoView* geoView)
 {
   ToolResourceProvider::instance()->setGeoView(geoView);
-  ToolManager::instance().setDsaController(this);
 
   bool hasActiveScene = false;
   auto openScenePackageTool = ToolManager::instance().tool<OpenMobileScenePackageController>();

@@ -45,8 +45,8 @@ signals:
   void errorOccurred(const QString& message, const QString& additionalMessage);
 
 private:
-  Esri::ArcGISRuntime::SceneQuickView*    m_sceneView = nullptr;
-  DsaController*                          m_controller = nullptr;
+  Esri::ArcGISRuntime::SceneQuickView* m_sceneView = nullptr;
+  DsaController& m_controller;
 };
 
 } // Handheld

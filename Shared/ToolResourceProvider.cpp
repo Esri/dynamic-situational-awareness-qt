@@ -34,14 +34,13 @@ namespace Dsa
 ToolResourceProvider::ToolResourceProvider(QObject* parent /*= nullptr*/):
   QObject(parent)
 {
-
 }
 
 ToolResourceProvider* ToolResourceProvider::instance()
 {
-  static ToolResourceProvider s_instance;
+  static ToolResourceProvider instance{};
 
-  return &s_instance;
+  return &instance;
 }
 
 ToolResourceProvider::~ToolResourceProvider()

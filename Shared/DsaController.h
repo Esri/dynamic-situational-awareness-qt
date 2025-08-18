@@ -41,8 +41,9 @@ class DsaController : public QObject
   Q_OBJECT
 
 public:
-  DsaController(QObject* parent = nullptr);
   ~DsaController();
+
+  static DsaController& instance();
 
   Esri::ArcGISRuntime::Scene* scene() const;
 
@@ -62,6 +63,7 @@ signals:
   void errorOccurred(const QString& message, const QString& additionalMessage);
 
 private:
+  DsaController();
   void setupConfig();
   void createDefaultSettings();
   void saveSettings();

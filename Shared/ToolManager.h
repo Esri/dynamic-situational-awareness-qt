@@ -49,9 +49,6 @@ public:
 
   AbstractTool* tool(const QString& toolName) const;
 
-  void setDsaController(const DsaController* dsaController);
-  const DsaController* dsaController() const;
-
   template<class T>
   T* tool() const;
 
@@ -69,7 +66,6 @@ private:
   ToolManager();
 
   ToolsList m_tools;
-  const DsaController* m_dsaController = nullptr;
 };
 
 template<class T>

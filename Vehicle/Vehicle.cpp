@@ -35,7 +35,7 @@ namespace Vehicle {
 
 Vehicle::Vehicle(QQuickItem* parent /* = nullptr */):
   QQuickItem(parent),
-  m_controller(new DsaController(this))
+  m_controller(DsaController::instance())
 {
 }
 
@@ -49,45 +49,34 @@ void Vehicle::componentComplete()
 
   // find QML SceneView component
   m_sceneView = findChild<SceneQuickView*>("sceneView");
-  connect(m_sceneView, &SceneQuickView::errorOccurred, m_controller, &DsaController::onError);
+  connect(m_sceneView, &SceneQuickView::errorOccurred, &m_controller, &DsaController::onError);
 
   // connect to the DSA controller errors
-  connect(m_controller, &DsaController::errorOccurred, this, [this]
-          (const QString& message, const QString& additionalMessage)
+  connect(&m_controller, &DsaController::errorOccurred, this, [this](const QString& message, const QString& additionalMessage)
   {
     emit errorOccurred(message, additionalMessage);
   });
 
-  connect(ToolResourceProvider::instance(), &ToolResourceProvider::sceneChanged, this, [this]()
+  auto* trp = ToolResourceProvider::instance();
+  connect(trp, &ToolResourceProvider::sceneChanged, this, [this, trp]()
   {
-    m_sceneView->setArcGISScene(ToolResourceProvider::instance()->scene());
+    m_sceneView->setArcGISScene(trp->scene());
   });
 
-  m_controller->init(m_sceneView);
+  m_controller.init(m_sceneView);
 
   // setup the connections from the view to the resource provider
-  connect(m_sceneView, &SceneQuickView::spatialReferenceChanged,
-          ToolResourceProvider::instance(), &ToolResourceProvider::spatialReferenceChanged);
-
-  connect(m_sceneView, &SceneQuickView::mouseClicked,
-          ToolResourceProvider::instance(), &ToolResourceProvider::onMouseClicked);
-
-  connect(m_sceneView, &SceneQuickView::mousePressed,
-          ToolResourceProvider::instance(), &ToolResourceProvider::onMousePressed);
-
-  connect(m_sceneView, &SceneQuickView::mousePressedAndHeld,
-          ToolResourceProvider::instance(), &ToolResourceProvider::onMousePressedAndHeld);
-
-  connect(m_sceneView, &SceneQuickView::mouseMoved,
-          ToolResourceProvider::instance(), &ToolResourceProvider::onMouseMoved);
-
-  connect(m_sceneView, &SceneQuickView::mouseReleased,
-          ToolResourceProvider::instance(), &ToolResourceProvider::onMouseReleased);
+  connect(m_sceneView, &SceneQuickView::spatialReferenceChanged, trp, &ToolResourceProvider::spatialReferenceChanged);
+  connect(m_sceneView, &SceneQuickView::mouseClicked,            trp, &ToolResourceProvider::onMouseClicked);
+  connect(m_sceneView, &SceneQuickView::mousePressed,            trp, &ToolResourceProvider::onMousePressed);
+  connect(m_sceneView, &SceneQuickView::mousePressedAndHeld,     trp, &ToolResourceProvider::onMousePressedAndHeld);
+  connect(m_sceneView, &SceneQuickView::mouseMoved,              trp, &ToolResourceProvider::onMouseMoved);
+  connect(m_sceneView, &SceneQuickView::mouseReleased,           trp, &ToolResourceProvider::onMouseReleased);
 }
 
 void Vehicle::resetToDefaultScene()
 {
-  m_controller->resetToDefaultScene();
+  DsaController::instance().resetToDefaultScene();
 }
 
 } // Vehicle

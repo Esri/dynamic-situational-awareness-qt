@@ -64,7 +64,7 @@ signals:
   void errorOccurred(const QString& message, const QString& additionalMessage);
 
 private:
-  static const DsaController* s_instance;
+  static inline const DsaController* s_instance = nullptr;
   void setupConfig();
   void createDefaultSettings();
   void saveSettings();

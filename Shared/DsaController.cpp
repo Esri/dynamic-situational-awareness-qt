@@ -69,8 +69,6 @@ QJsonObject defaultViewpoint();
 
 } // namespace
 
-const DsaController* DsaController::s_instance = nullptr;
-
 /*!
   \class Dsa::DsaController
   \inmodule Dsa
@@ -121,6 +119,7 @@ DsaController::DsaController(QObject* parent):
     firstLoad = false;
   });
 
+  Q_ASSERT(s_instance == nullptr); // there should never be more than one DsaController created
   s_instance = this;
 }
 

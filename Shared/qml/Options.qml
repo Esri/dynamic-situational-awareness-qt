@@ -20,6 +20,7 @@ import QtQuick.Controls.Material
 import QtQuick.Window
 import Esri.ArcGISRuntime.OpenSourceApps.DSA
 import QtQuick.Layouts
+import Esri.ArcGISRuntime.Toolkit
 
 Rectangle {
     id: optionsRoot
@@ -494,5 +495,9 @@ Rectangle {
         onClicked: {
             optionsRoot.visible = false;
         }
+    }
+
+    AuthenticationView {
+        anchors.centerIn: parent
     }
 }

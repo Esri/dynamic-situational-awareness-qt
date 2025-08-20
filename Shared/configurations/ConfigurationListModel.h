@@ -49,11 +49,6 @@ public:
 
   explicit ConfigurationListModel(QObject* parent = nullptr);
 
-  void select(int index);
-  void cancel(int index);
-
-  Configuration at(int index) const;
-
   // QAbstractItemModel interface
   int rowCount(const QModelIndex& parent) const override;
   QVariant data(const QModelIndex& index, int role) const override;
@@ -61,8 +56,12 @@ public:
   bool setData(const QModelIndex& index, const QVariant& value, int role) override;
   bool setDataByName(const QString& configurationName, const QVariant& value, int role);
 
+  Configuration at(int index) const;
   bool add(const QString& name, const QString& url, bool selected, bool loaded, int percentDownloaded);
+  void select(int index);
+  void cancel(int index);
   bool remove(int index);
+  void download(const QString& configurationName);
   bool clear();
 
   QList<Configuration>::iterator begin() { return m_configurations.begin(); }

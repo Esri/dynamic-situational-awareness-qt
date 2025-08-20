@@ -40,6 +40,7 @@ public:
 
   QUrl url() const;
 
+  void download();
   bool downloaded() const;
   bool downloading() const;
   bool requiresRestart() const;

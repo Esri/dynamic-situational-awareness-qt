@@ -170,6 +170,20 @@ bool ConfigurationListModel::remove(int index)
   return true;
 }
 
+void ConfigurationListModel::download(const QString& configurationName)
+{
+  for (qsizetype i = 0; i < m_configurations.count(); i++)
+  {
+    if (m_configurations[i].name() == configurationName)
+    {
+      m_configurations[i].download();
+      const auto idx = createIndex(i, 0);
+      emit dataChanged(idx, idx);
+      return;
+    }
+  }
+}
+
 bool ConfigurationListModel::clear()
 {
   beginRemoveRows(QModelIndex{}, 0, m_configurations.count());

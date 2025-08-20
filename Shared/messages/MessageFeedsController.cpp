@@ -236,7 +236,7 @@ void MessageFeedsController::toolInitProperties(const QVariantMap& properties)
   setResourcePath(properties[RESOURCE_DIRECTORY_PROPERTYNAME].toString());
   m_messageFeedProperties = properties[MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME].toList();
 
-  auto userNameFindIt = properties.find(AppConstants::USERNAME_PROPERTYNAME);
+  auto userNameFindIt = properties.find(AppConstants::PROPERTYNAME_USERNAME);
   if (userNameFindIt != properties.end())
     m_locationBroadcast->setUserName(userNameFindIt.value().toString());
 
@@ -274,7 +274,7 @@ bool MessageFeedsController::shouldSetProperties(const QString& propertyName)
   {
     RESOURCE_DIRECTORY_PROPERTYNAME,
     MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME,
-    AppConstants::USERNAME_PROPERTYNAME,
+    AppConstants::PROPERTYNAME_USERNAME,
     MessageFeedConstants::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME,
     MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME
   };

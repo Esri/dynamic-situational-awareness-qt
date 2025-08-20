@@ -46,6 +46,7 @@
 #include "CoordinateConversionToolProxy.h"
 #include "DsaResources.h"
 #include "FollowPositionController.h"
+#include "GridController.h"
 #include "Handheld.h"
 #include "HandheldStyles.h"
 #include "IdentifyController.h"
@@ -136,6 +137,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<Dsa::OpenMobileScenePackageController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "OpenMobileScenePackageController");
   qmlRegisterType<Dsa::CoordinateConversionToolProxy>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "CoordinateConversionToolProxy");
   qmlRegisterType<Dsa::ConfigurationController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "ConfigurationController");
+  qmlRegisterType<Dsa::GridController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "GridController");
 
   // Initialize application view
   QQuickView view;

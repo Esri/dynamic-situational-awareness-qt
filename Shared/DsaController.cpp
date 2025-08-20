@@ -48,6 +48,7 @@
 #include "BasemapPickerController.h"
 #include "ContextMenuController.h"
 #include "DsaUtility.h"
+#include "GridController.h"
 #include "LayerCacheManager.h"
 #include "LocationController.h"
 #include "MessageFeedConstants.h"
@@ -150,7 +151,7 @@ void DsaController::init(GeoView* geoView)
   auto openScenePackageTool = ToolManager::instance().tool<OpenMobileScenePackageController>();
   if (openScenePackageTool)
   {
-    openScenePackageTool->setProperties(m_dsaSettings);
+    openScenePackageTool->toolInitProperties(m_dsaSettings);
     hasActiveScene = openScenePackageTool->hasActiveScene();
   }
 
@@ -183,7 +184,7 @@ void DsaController::init(GeoView* geoView)
     if (!abstractTool)
       continue;
 
-    abstractTool->setProperties(m_dsaSettings);
+    abstractTool->toolInitProperties(m_dsaSettings);
 
     connect(abstractTool, &AbstractTool::errorOccurred, this, &DsaController::onError);
     connect(abstractTool, &AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
@@ -284,17 +285,17 @@ void DsaController::onPropertyChanged(const QString& propertyName, const QVarian
   saveSettings();
 
   // inform tools of the change
-  auto it = ToolManager::instance().begin();
-  auto itEnd = ToolManager::instance().end();
-  for (;it != itEnd; ++it)
+  for (auto* tool : ToolManager::instance())
   {
-    AbstractTool* tool = *it;
     if (!tool)
       continue;
 
-    disconnect(tool, &AbstractTool::propertyChanged,this, &DsaController::onPropertyChanged);
-    tool->setProperties(m_dsaSettings);
-    connect(tool, &AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
+    if (tool->shouldSetProperties(propertyName))
+    {
+      disconnect(tool, &AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
+      tool->toolInitProperties(m_dsaSettings);
+      connect(tool, &AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
+    }
   }
 }
 
@@ -335,7 +336,7 @@ void DsaController::resetToDefaultScene()
   onPropertyChanged(AppConstants::SCENEINDEX_PROPERTYNAME, -1);
   onPropertyChanged(AppConstants::CURRENTSCENE_PROPERTYNAME, "");
   onPropertyChanged(AppConstants::LAYERS_PROPERTYNAME, QJsonArray().toVariantList());
-  m_cacheManager->setProperties(m_dsaSettings);
+  m_cacheManager->toolInitProperties(m_dsaSettings);
 }
 
 /*!
@@ -517,6 +518,8 @@ void DsaController::createDefaultSettings()
   QJsonObject markupJson;
   markupJson.insert(QStringLiteral("port"), 45680);
   m_dsaSettings[QStringLiteral("MarkupConfig")] = markupJson;
+  m_dsaSettings[GridController::PROPERTY_NAME_GRID_VISIBLE] = GridController::GRID_VISIBLE_VALUE_DEFAULT;
+  m_dsaSettings[GridController::PROPERTY_NAME_GRID_COLOR_SCHEME] = GridController::GRID_COLOR_SCHEME_VALUE_DEFAULT;
   writeDefaultConditions();
   m_dsaSettings[OpenMobileScenePackageController::PACKAGE_DIRECTORY_PROPERTYNAME] = QString("%1/Packages").arg(m_dsaSettings["RootDataDirectory"].toString());
 }

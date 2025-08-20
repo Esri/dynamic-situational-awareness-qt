@@ -101,7 +101,7 @@ QString ObservationReportController::toolName() const
  *  \li \c UserName. The user name (observed by) for observation reports.
  * \endlist
  */
-void ObservationReportController::setProperties(const QVariantMap& properties)
+void ObservationReportController::toolInitProperties(const QVariantMap& properties)
 {
   auto findUserNameIt = properties.find(AppConstants::USERNAME_PROPERTYNAME);
   if (findUserNameIt != properties.end())
@@ -116,6 +116,12 @@ void ObservationReportController::setProperties(const QVariantMap& properties)
     if (ok)
       setUdpPort(newPort);
   }
+}
+
+bool ObservationReportController::shouldSetProperties(const QString& propertyName)
+{
+  return (propertyName == AppConstants::USERNAME_PROPERTYNAME ||
+          propertyName == MessageFeedConstants::OBSERVATION_REPORT_CONFIG_PROPERTYNAME);
 }
 
 /*!

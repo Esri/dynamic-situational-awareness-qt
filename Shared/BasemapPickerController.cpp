@@ -202,7 +202,7 @@ QString BasemapPickerController::toolName() const
  *  \li BasemapDirectory. The directory containing basemap data.
  * \endlist
  */
-void BasemapPickerController::setProperties(const QVariantMap& properties)
+void BasemapPickerController::toolInitProperties(const QVariantMap& properties)
 {
   const QString newDefaultBasemap = properties.value(DEFAULT_BASEMAP_PROPERTYNAME).toString();
   const bool basemapChanged = !newDefaultBasemap.isEmpty() && newDefaultBasemap != m_defaultBasemap;
@@ -219,6 +219,12 @@ void BasemapPickerController::setProperties(const QVariantMap& properties)
     onBasemapDataPathChanged();
     selectInitialBasemap();
   }
+}
+
+bool BasemapPickerController::shouldSetProperties(const QString& propertyName)
+{
+  return (propertyName == DEFAULT_BASEMAP_PROPERTYNAME ||
+          propertyName == BASEMAP_DIRECTORY_PROPERTYNAME);
 }
 
 } // Dsa

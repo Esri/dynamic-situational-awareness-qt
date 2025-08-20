@@ -30,7 +30,7 @@ Item {
     }
     height: controlsColumn.height + 10 * scaleFactor
     width: controlsColumn.width + 10 * scaleFactor
-    property alias radius: backgroundRecatangle.radius
+    property alias radius: backgroundRectangle.radius
 
     function startFollowing() {
         followingButton.selected = true;
@@ -39,7 +39,7 @@ Item {
     }
 
     Rectangle {
-        id: backgroundRecatangle
+        id: backgroundRectangle
         anchors.fill: parent
         color: Material.background
         opacity: parent.opacity
@@ -99,6 +99,16 @@ Item {
                     navController.setRotation();
                 else
                     navController.pan();
+            }
+        }
+
+        OverlayButton {
+            id: overlayButtonGrid
+            iconUrl: DsaResources.iconRaster
+            Component.onCompleted: selected = gridController.gridVisible
+            onClicked: {
+                selected = !selected;
+                gridController.gridVisible = selected;
             }
         }
     }

@@ -52,7 +52,6 @@ public:
   Q_INVOKABLE void set2D();
 
   QString toolName() const override;
-  void setProperties(const QVariantMap& properties) override;
 
   bool isVertical() const;
   double zoomFactor() const;

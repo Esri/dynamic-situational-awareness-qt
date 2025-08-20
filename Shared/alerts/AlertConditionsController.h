@@ -70,7 +70,8 @@ public:
 
   // AbstractTool interface
   QString toolName() const override;
-  void setProperties(const QVariantMap& properties) override;
+  void toolInitProperties(const QVariantMap& properties) override;
+  bool shouldSetProperties(const QString& propertyName) override;
 
   void setActive(bool active) override;
 

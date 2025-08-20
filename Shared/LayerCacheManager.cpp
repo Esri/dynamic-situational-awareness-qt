@@ -131,7 +131,7 @@ QString LayerCacheManager::toolName() const
 /*!
  \brief Sets \a properties from the configuration file
  */
-void LayerCacheManager::setProperties(const QVariantMap& properties)
+void LayerCacheManager::toolInitProperties(const QVariantMap& properties)
 {
   if (m_initialLoadCompleted || !m_localDataController)
     return;
@@ -146,6 +146,12 @@ void LayerCacheManager::setProperties(const QVariantMap& properties)
   addElevation(properties);
 
   m_initialLoadCompleted = true;
+}
+
+bool LayerCacheManager::shouldSetProperties(const QString& propertyName)
+{
+  return (propertyName == LAYERS_PROPERTYNAME ||
+          propertyName == ELEVATION_PROPERTYNAME);
 }
 
 /*!

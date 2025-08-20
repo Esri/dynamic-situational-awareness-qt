@@ -16,10 +16,14 @@
 
 #include "AbstractTool.h"
 
+// STL headers
+#include <algorithm>
+
 using namespace Esri::ArcGISRuntime;
 
 namespace Dsa
 {
+
 /*!
   \class Dsa::AbstractTool
   \inmodule ArcGISQtToolkit
@@ -71,9 +75,18 @@ bool AbstractTool::handleClick(const Point& pos)
   and the value is a QVariant. Properties are useful for general settings
   which you wish to persist for the tool, such as default modes.
  */
-void AbstractTool::setProperties(const QVariantMap&)
+void AbstractTool::toolInitProperties(const QVariantMap&)
 {
+}
 
+/*
+ * Derived tools should override this method to implement logic that
+ * will determine whether or not the tool's setProperties method should
+ * be invoked again to re-initialize the tool when a property changes.
+ */
+bool AbstractTool::shouldSetProperties(const QString&)
+{
+  return false;
 }
 
 /*!
@@ -97,6 +110,11 @@ void AbstractTool::setActive(bool active)
 bool AbstractTool::isActive() const
 {
   return m_active;
+}
+
+bool AbstractTool::setContainsString(const std::unordered_set<QString>& strSet, const QString& str)
+{
+  return std::any_of(std::cbegin(strSet), std::cend(strSet), [str](const QString& p) { return str == p; });
 }
 
 // Signals

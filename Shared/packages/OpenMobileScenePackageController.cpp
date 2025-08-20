@@ -94,7 +94,7 @@ QString OpenMobileScenePackageController::toolName() const
  *  \li SceneIndex. The index of the scene in the current package.
  * \endlist
  */
-void OpenMobileScenePackageController::setProperties(const QVariantMap& properties)
+void OpenMobileScenePackageController::toolInitProperties(const QVariantMap& properties)
 {
   const QString newPackageDirectoryPath = properties.value(PACKAGE_DIRECTORY_PROPERTYNAME).toString();
   const bool dataPathChanged = setPackageDataPath(newPackageDirectoryPath);
@@ -116,6 +116,19 @@ void OpenMobileScenePackageController::setProperties(const QVariantMap& properti
   {
     loadScene();
   }
+}
+
+bool OpenMobileScenePackageController::shouldSetProperties(const QString& propertyName)
+{
+  // list all property names that should cause the tool to re-initialize
+  static const std::unordered_set<QString> propertyNames
+  {
+    PACKAGE_DIRECTORY_PROPERTYNAME,
+    CURRENT_PACKAGE_PROPERTYNAME,
+    SCENE_INDEX_PROPERTYNAME
+  };
+
+  return setContainsString(propertyNames, propertyName);
 }
 
 /*!

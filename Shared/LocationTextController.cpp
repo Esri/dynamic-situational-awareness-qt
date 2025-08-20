@@ -182,11 +182,24 @@ void LocationTextController::onGeoViewChanged()
 /*!
  \brief Set \a properties from the configuration file.
  */
-void LocationTextController::setProperties(const QVariantMap& properties)
+void LocationTextController::toolInitProperties(const QVariantMap& properties)
 {
   setCoordinateFormat(properties[COORDINATE_FORMAT_PROPERTYNAME].toString());
   setUseGpsForElevation(properties[USE_GPS_PROPERTYNAME].toBool());
   setUnitOfMeasurement(properties[UNIT_OF_MEASUREMENT_PROPERTYNAME].toString());
+}
+
+bool LocationTextController::shouldSetProperties(const QString& propertyName)
+{
+  // list all property names that should cause the tool to re-initialize
+  static const std::unordered_set<QString> propertyNames
+  {
+    COORDINATE_FORMAT_PROPERTYNAME,
+    USE_GPS_PROPERTYNAME,
+    UNIT_OF_MEASUREMENT_PROPERTYNAME
+  };
+
+  return setContainsString(propertyNames, propertyName);
 }
 
 /*!

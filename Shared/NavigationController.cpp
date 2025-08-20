@@ -37,6 +37,7 @@
 #include <QScreen>
 
 // DSA headers
+#include "DsaController.h"
 #include "DsaUtility.h"
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
@@ -115,6 +116,15 @@ void NavigationController::zoomToInitialLocation()
 {
   if (!m_is3d)
     return;
+
+  if (const auto* dsaController = DsaController::instance(); dsaController)
+  {
+    if (const auto initialViewpoint = dsaController->readInitialLocation(); !initialViewpoint.isEmpty())
+    {
+      m_sceneView->setViewpointAsync(initialViewpoint, 1.0f);
+      return;
+    }
+  }
 
   m_sceneView->setViewpointAsync(m_sceneView->arcGISScene()->initialViewpoint(), 1.0f);
 }

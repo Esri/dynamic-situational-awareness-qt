@@ -69,6 +69,8 @@ QJsonObject defaultViewpoint();
 
 } // namespace
 
+const DsaController* DsaController::s_instance = nullptr;
+
 /*!
   \class Dsa::DsaController
   \inmodule Dsa
@@ -118,6 +120,8 @@ DsaController::DsaController(QObject* parent):
     updateInitialLocationOnSceneChange(firstLoad);
     firstLoad = false;
   });
+
+  s_instance = this;
 }
 
 /*!
@@ -338,6 +342,11 @@ void DsaController::resetToDefaultScene()
   m_cacheManager->setProperties(m_dsaSettings);
 }
 
+const DsaController* DsaController::instance()
+{
+  return s_instance;
+}
+
 /*!
  * \internal
  */
@@ -555,7 +564,7 @@ void DsaController::writeInitialLocation(const Viewpoint& viewpoint)
   m_dsaSettings[AppConstants::INITIALLOCATION_PROPERTYNAME] = initialLocationJson.toVariantMap();
 }
 
-Viewpoint DsaController::readInitialLocation()
+Viewpoint DsaController::readInitialLocation() const
 {
   return viewpointFromJson(m_dsaSettings[AppConstants::INITIALLOCATION_PROPERTYNAME].toJsonObject());
 }

@@ -26,6 +26,19 @@ Rectangle {
     id: optionsRoot
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
 
+    Connections {
+        target: configurationController
+        function onConfigurationDownloadFailed(configurationIndex, configurationName) {
+            if (configurationIndex === -1)
+                return;
+
+            configurationDialogConfirmRemove.configurationIndex = configurationIndex;
+            configurationDialogConfirmRemove.alsoRemoveEntry = true;
+            configurationDialogConfirmRemove.confirmationMessage = configurationName + " could not be downloaded. Remove it from the list?";
+            configurationDialogConfirmRemove.open();
+        }
+    }
+
     color: Material.primary
 
     function showConfigurationsTab() {

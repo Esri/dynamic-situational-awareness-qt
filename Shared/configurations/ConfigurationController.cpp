@@ -232,11 +232,8 @@ void ConfigurationController::zipHeadReply_finished(QNetworkRequest zipRequest, 
   if (contentLengthVariant.isValid())
     bytesToDownload = contentLengthVariant.toInt(&convertedOk);
 
-  // abort if the download size could not be fetched
-  if (!convertedOk || bytesToDownload <= 0)
-  {
-    emit toolErrorOccurred(QStringLiteral("Unable to check the download size. Please verify there is enough room on the device for downloading this configuration."), QStringLiteral("Warning"));
-  }
+  // note the failure of the file size check
+  bool fileSizeCheckFailed = !convertedOk || bytesToDownload <= 0;
 
   // make sure the device has enough room for the download
   if (!deviceHasRoomForDownload(bytesToDownload))
@@ -257,23 +254,28 @@ void ConfigurationController::zipHeadReply_finished(QNetworkRequest zipRequest, 
 
     // guard against dividing by zero
     if (bytesTotal == 0)
+    {
+      contentReply->abort();
       return;
+    }
 
     m_configurationListModel->setDataByName(configurationName, bytesReceived * 1.0 / bytesTotal * 1.0 * 100, ConfigurationListModel::PercentDownloaded);
   });
-  connect(contentReply, &QNetworkReply::readyRead, this, [this, contentReply, downloadFilePath, configurationName]()
+  connect(contentReply, &QNetworkReply::readyRead, this, [this, contentReply, downloadFilePath, configurationName, fileSizeCheckFailed]()
   {
-    readyRead(contentReply, downloadFilePath, configurationName);
+    readyRead(contentReply, downloadFilePath, configurationName, fileSizeCheckFailed);
   });
   connect(contentReply, &QNetworkReply::finished, this, [this, contentReply, downloadFilePath, configurationName]()
   {
+    if (contentReply->error() != QNetworkReply::NetworkError::NoError)
+      return;
+
     finished(contentReply, downloadFilePath, configurationName);
   });
-  connect(contentReply, &QNetworkReply::errorOccurred, this, [this, contentReply](QNetworkReply::NetworkError error)
+  connect(contentReply, &QNetworkReply::errorOccurred, this, [this, configurationName](QNetworkReply::NetworkError error)
   {
-    contentReply->abort();
     if (error != QNetworkReply::NetworkError::OperationCanceledError)
-      emit toolErrorOccurred(QString("Network Error (%1)").arg(contentReply->errorString()), QStringLiteral("Error Downloading"));
+      emit configurationDownloadFailed(m_configurationListModel->indexByName(configurationName), configurationName);
   });
 }
 
@@ -479,7 +481,7 @@ QAbstractListModel* ConfigurationController::configurations() const
   return m_configurationListModel;
 }
 
-void ConfigurationController::readyRead(QNetworkReply* networkReply, const QString& downloadFilePath, const QString& configurationName)
+void ConfigurationController::readyRead(QNetworkReply* networkReply, const QString& downloadFilePath, const QString& configurationName, bool fileSizeCheckFailed)
 {
   // check if the configuration download associated with this request was cancelled by the user
   if (isDownloadCancelled(configurationName))
@@ -495,6 +497,11 @@ void ConfigurationController::readyRead(QNetworkReply* networkReply, const QStri
     networkReply->abort();
     return;
   }
+
+  // if the check for the download file size failed and the file has no bytes
+  // written yet, let the user know
+  if (fileSizeCheckFailed && file.size() == 0)
+    emit toolErrorOccurred(QStringLiteral("Unable to check the download size. Please verify there is enough room on the device for downloading this configuration."), QStringLiteral("Warning"));
 
   // append the latest chunk to the download file in progress
   file.write(networkReply->readAll());

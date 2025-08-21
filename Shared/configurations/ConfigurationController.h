@@ -72,13 +72,14 @@ public:
 signals:
   void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
   void configurationsChanged();
+  void configurationDownloadFailed(int configurationIndex, const QString& configurationName);
 
 private:
   void fetchConfigurations();
   void storeConfigurations();
   bool isDownloadCancelled(const QString& configurationName);
   bool deviceHasRoomForDownload(qint64 bytesToDownload);
-  void readyRead(QNetworkReply* networkReply, const QString& downloadFilePath, const QString& configurationName);
+  void readyRead(QNetworkReply* networkReply, const QString& downloadFilePath, const QString& configurationName, bool fileSizeCheckFailed);
   void finished(QNetworkReply* networkReply, const QString& downloadFilePath, const QString& configurationName);
   QString generateUniqueDownloadFilePath() const;
   void extractConfigurationDownload(const QString& pathToDownload, const QString& configurationName);

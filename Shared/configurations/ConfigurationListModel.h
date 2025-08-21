@@ -60,6 +60,7 @@ public:
   QVariant dataByName(const QString& name, int role);
   bool setData(const QModelIndex& index, const QVariant& value, int role) override;
   bool setDataByName(const QString& name, const QVariant& value, int role);
+  qsizetype indexByName(const QString& name) const;
 
   Configuration at(int index) const;
   Configuration byName(const QString& name) const;

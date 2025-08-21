@@ -178,6 +178,16 @@ bool ConfigurationListModel::setDataByName(const QString& name, const QVariant& 
   return false;
 }
 
+qsizetype ConfigurationListModel::indexByName(const QString& name) const
+{
+  for (qsizetype i = 0; i < m_configurations.count(); i++)
+  {
+    if (m_configurations[i].name() == name)
+      return i;
+  }
+  return -1;
+}
+
 bool ConfigurationListModel::add(const QString& name, const QString& url, bool selected, bool loaded, int percentDownloaded)
 {
   beginInsertRows(QModelIndex{}, m_configurations.count(), m_configurations.count());

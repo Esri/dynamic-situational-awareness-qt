@@ -34,7 +34,7 @@ Rectangle {
 
             configurationDialogConfirmRemove.configurationIndex = configurationIndex;
             configurationDialogConfirmRemove.alsoRemoveEntry = true;
-            configurationDialogConfirmRemove.confirmationMessage = configurationName + " could not be downloaded. Remove it from the list?";
+            configurationDialogConfirmRemove.confirmationMessage = configurationName + " could not be loaded. Remove it from the list?";
             configurationDialogConfirmRemove.open();
         }
     }

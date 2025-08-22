@@ -329,8 +329,16 @@ void ConfigurationController::download(int index)
 
   if (configurationUrl.isLocalFile())
   {
+    const QString configurationFileNameLocal{configurationUrl.toLocalFile()};
+    const QFile configurationFileLocal{configurationFileNameLocal};
+    if (!configurationFileLocal.exists() || configurationFileLocal.size() == 0)
+    {
+      emit configurationDownloadFailed(m_configurationListModel->indexByName(configurationName), configurationName);
+      return;
+    }
+
     m_configurationListModel->setDataByName(configurationName, 100, ConfigurationListModel::PercentDownloaded);
-    extractConfigurationDownload(configurationUrl.toLocalFile(), configurationName);
+    extractConfigurationDownload(configurationFileNameLocal, configurationName);
     return;
   }
 
@@ -498,10 +506,26 @@ void ConfigurationController::readyRead(QNetworkReply* networkReply, const QStri
     return;
   }
 
-  // if the check for the download file size failed and the file has no bytes
-  // written yet, let the user know
-  if (fileSizeCheckFailed && file.size() == 0)
-    emit toolErrorOccurred(QStringLiteral("Unable to check the download size. Please verify there is enough room on the device for downloading this configuration."), QStringLiteral("Warning"));
+  // checks on first read
+  if (file.size() == 0)
+  {
+    // abort if the response from the server was not a zip file type
+    // in testing, some responses for expired urls or bad urls will respond with
+    // text as json or xml which causes the download to 'finish' but fail
+    const QString contentType{networkReply->header(QNetworkRequest::KnownHeaders::ContentTypeHeader).toString()};
+    if (contentType != "application/zip" && contentType != "application/x-zip-compressed")
+    {
+      networkReply->abort();
+      resetConfigurationDeviceStatus(configurationName);
+      emit configurationDownloadFailed(m_configurationListModel->indexByName(configurationName), configurationName);
+      return;
+    }
+
+    // if the check for the download file size failed and the file has no bytes
+    // written yet, let the user know
+    if (fileSizeCheckFailed)
+      emit toolErrorOccurred(QStringLiteral("Unable to check the download size. Please verify there is enough room on the device for downloading this configuration."), QStringLiteral("Warning"));
+  }
 
   // append the latest chunk to the download file in progress
   file.write(networkReply->readAll());

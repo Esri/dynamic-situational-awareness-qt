@@ -296,8 +296,12 @@ void ConfigurationController::download(int index)
     {
       QFile fileContent{configurationUrlStr};
       const auto bytesTotal = fileContent.size();
-      if (bytesTotal == 0)
-        return;
+      if (!fileContent.exists() || bytesTotal == 0)
+      {
+        resetConfigurationDeviceStatus(configurationName);
+        emit configurationDownloadFailed(m_configurationListModel->indexByName(configurationName), configurationName);
+        return false;
+      }
 
       fileContent.open(QIODevice::ReadOnly);
       QFile fileDownload{contentDownloadStr};
@@ -318,8 +322,12 @@ void ConfigurationController::download(int index)
           m_configurationListModel->setDataByName(configurationName, percentTotal, ConfigurationListModel::PercentDownloaded);
         }
       }
-    }).then([this, configurationName, contentDownloadStr]()
+      return true;
+    }).then([this, configurationName, contentDownloadStr](bool success)
     {
+      if (!success)
+        return;
+
       m_configurationListModel->setDataByName(configurationName, 100, ConfigurationListModel::PercentDownloaded);
       extractConfigurationDownload(contentDownloadStr, configurationName);
     });

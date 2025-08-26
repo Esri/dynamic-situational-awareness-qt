@@ -313,7 +313,8 @@ void DsaController::resetToDefaultScene()
 
   // create scene
   Scene* newScene = new Scene(this);
-  newScene->setInitialViewpoint(viewpointFromJson(defaultViewpoint()));
+  if (const auto initialViewpoint = readInitialLocation(); !initialViewpoint.isEmpty())
+    newScene->setInitialViewpoint(initialViewpoint);
 
   // set on sceneview
   ToolResourceProvider::instance()->setScene(newScene);

@@ -28,13 +28,13 @@ Rectangle {
 
     Connections {
         target: configurationController
-        function onConfigurationDownloadFailed(configurationIndex, configurationName) {
+        function onConfigurationDownloadFailed(configurationIndex, configurationName, message) {
             if (configurationIndex === -1)
                 return;
 
             configurationDialogConfirmRemove.configurationIndex = configurationIndex;
             configurationDialogConfirmRemove.alsoRemoveEntry = true;
-            configurationDialogConfirmRemove.confirmationMessage = configurationName + " could not be loaded. Remove it from the list?";
+            configurationDialogConfirmRemove.confirmationMessage = "'" + configurationName + "' " + message + "\nRemove it from the list?";
             configurationDialogConfirmRemove.open();
         }
     }

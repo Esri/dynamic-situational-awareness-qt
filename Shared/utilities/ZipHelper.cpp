@@ -462,6 +462,7 @@ bool ZipHelper::extractAll(const QString &outputPath)
 {
     if (!zrOpen())
     {
+        emit extractError(m_Path, outputPath, Result::BadZipFile);
 #ifdef ZIP_LOGGING_ENABLED
         qDebug() << "ZIP not open" << path();
 #endif

@@ -35,6 +35,8 @@ class Portal;
 class PortalItem;
 }
 
+class ZipHelper;
+
 namespace Dsa {
 
 class ConfigurationListModel;
@@ -72,7 +74,7 @@ public:
 signals:
   void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
   void configurationsChanged();
-  void configurationDownloadFailed(int configurationIndex, const QString& configurationName);
+  void configurationDownloadFailed(int configurationIndex, const QString& configurationName, const QString& message = "");
 
 private:
   void fetchConfigurations();
@@ -86,6 +88,8 @@ private:
   bool updateExtractedConfigurationFile(const QDir& configurationDirectory);
   void resetConfigurationDeviceStatus(const QString& configurationName);
   void portalItem_doneLoading(Esri::ArcGISRuntime::Portal* portal, Esri::ArcGISRuntime::PortalItem* portalItem, const QString& configurationName, const Esri::ArcGISRuntime::Error& error);
+  void cleanupZipFile(ZipHelper* zipHelper, const QString& configurationName, const QString& downloadFilePath) const;
+  void removeConfigurationDirectory(const QString& configurationName) const;
   void zipHeadReply_finished(QNetworkRequest zipRequest, QNetworkReply* headReply, const QString& configurationName);
   ConfigurationListModel* m_configurationListModel = nullptr;
   QNetworkAccessManager m_networkAccessManager;

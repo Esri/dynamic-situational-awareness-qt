@@ -87,6 +87,25 @@ void removeDownloadedFile(const QString& downloadFilePath)
     f.remove();
 }
 
+void ConfigurationController::cleanupZipFile(ZipHelper* zipHelper, const QString& configurationName, const QString& downloadFilePath) const
+{
+  // the zip file needs to be cleaned up from the downloads folder for anything
+  // other than a local file. don't delete local files becasue they are not copied
+  // and the extract is done pointing directly to the file url (file://...)
+  zipHelper->deleteLater();
+  const auto configuration = m_configurationListModel->byName(configurationName);
+  if (!configuration.url().isLocalFile())
+    removeDownloadedFile(downloadFilePath);
+}
+
+void ConfigurationController::removeConfigurationDirectory(const QString& configurationName) const
+{
+  // remove the directory containing the configuration files recursively
+  QDir configurationDirectory{m_configurationsDirectory.filePath(configurationName)};
+  if (configurationDirectory.exists())
+    configurationDirectory.removeRecursively();
+}
+
 void ConfigurationController::extractConfigurationDownload(const QString& downloadFilePath, const QString& configurationName)
 {
   // create the folder to unpack the zip contents to
@@ -98,23 +117,21 @@ void ConfigurationController::extractConfigurationDownload(const QString& downlo
   auto* zipHelper = new ZipHelper(downloadFilePath, this);
   connect(zipHelper, &ZipHelper::extractCompleted, this, [this, configurationName, configurationDirectory, zipHelper, downloadFilePath]()
   {
-    zipHelper->deleteLater();
-
-    // the zip file needs to be cleaned up from the downloads folder for anything
-    // other than a local file. don't delete local files becasue they are not copied
-    // and the extract is done pointing directly to the file url (file://...)
-    const auto configuration = m_configurationListModel->byName(configurationName);
-    if (!configuration.url().isLocalFile())
-      removeDownloadedFile(downloadFilePath);
+    cleanupZipFile(zipHelper, configurationName, downloadFilePath);
 
     // we can exit early if the update of the DsaAppConfig.json file had no issues
     if (updateExtractedConfigurationFile(configurationDirectory))
       return;
 
-    // alert the user if the package was anything other than the default from esri which
-    // is expected to fail because it contains no DsaAppConfig.json file
-    if (configuration.urlStr() != ConfigurationController::DEFAULT_DOWNLOAD_URL)
-      emit toolErrorOccurred(QStringLiteral("The DsaAppConfig.json file could not be updated. The application will create a default version for the configuration."), QStringLiteral("Configuration Error"));
+    // still exit early if the configuration is the default download from Esri
+    const auto configuration = m_configurationListModel->byName(configurationName);
+    if (configuration.urlStr() == ConfigurationController::DEFAULT_DOWNLOAD_URL)
+      return;
+
+    // cleanup unusable files and reset the model item for the UI
+    resetConfigurationDeviceStatus(configurationName);
+
+    emit configurationDownloadFailed(m_configurationListModel->indexByName(configurationName), configurationName, QStringLiteral("The configuration zip did not contain a valid DsaAppConfig.json file."));
   });
   connect(zipHelper, &ZipHelper::extractProgressTotal, this, [this, configurationName](qsizetype percentTotal)
   {
@@ -125,11 +142,13 @@ void ConfigurationController::extractConfigurationDownload(const QString& downlo
     Q_UNUSED(fileName);
     Q_UNUSED(outputFileName);
     Q_UNUSED(result);
-    zipHelper->deleteLater();
-    removeDownloadedFile(downloadFilePath);
-    emit toolErrorOccurred(QStringLiteral("Error unzipping the download"), QStringLiteral("Configuration Error"));
 
+    cleanupZipFile(zipHelper, configurationName, downloadFilePath);
+
+    // cleanup unusable files and reset the model item for the UI
     resetConfigurationDeviceStatus(configurationName);
+
+    emit configurationDownloadFailed(m_configurationListModel->indexByName(configurationName), configurationName, QStringLiteral("Failed to extract the configuration zip."));
   });
 
   // extract the downloaded file to the configuration
@@ -181,6 +200,7 @@ bool ConfigurationController::updateExtractedConfigurationFile(const QDir& confi
 
 void ConfigurationController::resetConfigurationDeviceStatus(const QString& configurationName)
 {
+  removeConfigurationDirectory(configurationName);
   if (!m_configurationListModel->setDataByName(configurationName, 0, ConfigurationListModel::PercentDownloaded) ||
       !m_configurationListModel->setDataByName(configurationName, 0, ConfigurationListModel::PercentExtracted))
     emit toolErrorOccurred(QStringLiteral("Error resetting the configurations status on the device"), QStringLiteral("Configuration Error"));
@@ -268,14 +288,18 @@ void ConfigurationController::zipHeadReply_finished(QNetworkRequest zipRequest, 
   connect(contentReply, &QNetworkReply::finished, this, [this, contentReply, downloadFilePath, configurationName]()
   {
     if (contentReply->error() != QNetworkReply::NetworkError::NoError)
+    {
+      removeDownloadedFile(downloadFilePath);
+      resetConfigurationDeviceStatus(configurationName);
       return;
+    }
 
     finished(contentReply, downloadFilePath, configurationName);
   });
   connect(contentReply, &QNetworkReply::errorOccurred, this, [this, configurationName](QNetworkReply::NetworkError error)
   {
     if (error != QNetworkReply::NetworkError::OperationCanceledError)
-      emit configurationDownloadFailed(m_configurationListModel->indexByName(configurationName), configurationName);
+      emit configurationDownloadFailed(m_configurationListModel->indexByName(configurationName), configurationName, QStringLiteral("The configuration zip failed to download."));
   });
 }
 
@@ -299,7 +323,7 @@ void ConfigurationController::download(int index)
       if (!fileContent.exists() || bytesTotal == 0)
       {
         resetConfigurationDeviceStatus(configurationName);
-        emit configurationDownloadFailed(m_configurationListModel->indexByName(configurationName), configurationName);
+        emit configurationDownloadFailed(m_configurationListModel->indexByName(configurationName), configurationName, QStringLiteral("Failed to extract the configuration zip."));
         return false;
       }
 
@@ -341,7 +365,7 @@ void ConfigurationController::download(int index)
     const QFile configurationFileLocal{configurationFileNameLocal};
     if (!configurationFileLocal.exists() || configurationFileLocal.size() == 0)
     {
-      emit configurationDownloadFailed(m_configurationListModel->indexByName(configurationName), configurationName);
+      emit configurationDownloadFailed(m_configurationListModel->indexByName(configurationName), configurationName, QStringLiteral("Failed to extract the configuration zip."));
       return;
     }
 
@@ -383,14 +407,9 @@ void ConfigurationController::cancel(int index)
 
 void ConfigurationController::remove(int index, bool alsoRemoveEntry)
 {
-  // remove the directory containing the configuration files recursively
-  const auto& configuration = m_configurationListModel->at(index);
-  QDir configurationDirectory{m_configurationsDirectory.filePath(configuration.name())};
-  if (configurationDirectory.exists())
-  {
-    configurationDirectory.removeRecursively();
-    resetConfigurationDeviceStatus(configuration.name());
-  }
+  const auto configuration = m_configurationListModel->at(index);
+
+  resetConfigurationDeviceStatus(configuration.name());
 
   // if user also requested to remove the configuration from the list
   // remove its corresponding model and update the list model
@@ -525,7 +544,7 @@ void ConfigurationController::readyRead(QNetworkReply* networkReply, const QStri
     {
       networkReply->abort();
       resetConfigurationDeviceStatus(configurationName);
-      emit configurationDownloadFailed(m_configurationListModel->indexByName(configurationName), configurationName);
+      emit configurationDownloadFailed(m_configurationListModel->indexByName(configurationName), configurationName, QStringLiteral("The configuration zip failed to download."));
       return;
     }
 

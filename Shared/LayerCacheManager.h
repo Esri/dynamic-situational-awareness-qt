@@ -57,6 +57,7 @@ public:
 signals:
   void layerJsonChanged();
   void jsonToLayerCompleted(Esri::ArcGISRuntime::Layer* layer);
+  void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
 
 private slots:
   void onLayerListChanged();

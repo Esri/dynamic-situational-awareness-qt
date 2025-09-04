@@ -34,6 +34,7 @@
 #include "ArcGISSceneLayer.h"
 #include "ArcGISTiledLayer.h"
 #include "ArcGISVectorTiledLayer.h"
+#include "Error.h"
 #include "FeatureLayer.h"
 #include "FeatureTable.h"
 #include "GeoPackage.h"
@@ -48,6 +49,7 @@
 #include "RasterLayer.h"
 #include "Scene.h"
 #include "ShapefileFeatureTable.h"
+#include "SpatialReference.h"
 #include "TileCache.h"
 #include "VectorTileCache.h"
 
@@ -390,6 +392,7 @@ void LayerCacheManager::addLayers(const QVariantMap& properties)
 void LayerCacheManager::connectSignals()
 {
   // obtain Scene and connect slot
+  static const QString rasterFailedAdditionalMsg = QStringLiteral("Unable to add raster layer");
   m_scene = ToolResourceProvider::instance()->scene();
   if (!m_scene)
     return;
@@ -442,7 +445,43 @@ void LayerCacheManager::connectSignals()
 
       for (int i = 0; i < layerCount; i++)
       {
-        m_scene->operationalLayers()->append(m_initialLayerCache.value(i));
+        auto* lyr = m_initialLayerCache.value(i);
+        if (!lyr)
+          continue;
+
+        if (auto* rasterLayer = dynamic_cast<RasterLayer*>(lyr); rasterLayer)
+        {
+          connect(rasterLayer, &RasterLayer::doneLoading, this, [this, rasterLayer](const Error& loadError)
+          {
+            // not much we can do here if the operational layers pointer is null...
+            auto* operationalLayers = ToolResourceProvider::instance()->operationalLayers();
+            if (!operationalLayers)
+              return;
+
+            auto rasterPath = rasterLayer->raster()->path();
+            if (!loadError.isEmpty())
+            {
+              operationalLayers->removeOne(rasterLayer);
+              rasterLayer->raster()->deleteLater();
+              rasterLayer->deleteLater();
+              emit toolErrorOccurred(QString("The raster (%1), failed to load. [%2][%3]").arg(rasterPath, loadError.message(), loadError.additionalMessage()), rasterFailedAdditionalMsg);
+              return;
+            }
+
+            // check the spatial reference for the new layer for:
+            // - non-georeferenced PDFs may have been added
+            if (const auto spatialReference = rasterLayer->spatialReference(); spatialReference.isEmpty())
+            {
+              operationalLayers->removeOne(rasterLayer);
+              rasterLayer->raster()->deleteLater();
+              rasterLayer->deleteLater();
+              emit toolErrorOccurred(QString("The raster (%1), did not contain spatial reference information.").arg(rasterPath), rasterFailedAdditionalMsg);
+              return;
+            }
+
+          }, Qt::SingleShotConnection);
+        }
+        m_scene->operationalLayers()->append(lyr);
       }
     }
   });

@@ -62,6 +62,7 @@ DsaPanel {
         highlightFollowsCurrentItem: isMobile
         highlightMoveVelocity: 10000
         delegate: ListItemDelegate {
+            id: tocItemDelegate
             width: parent.width
             height: 40 * scaleFactor
             itemChecked: layerVisible
@@ -69,9 +70,10 @@ DsaPanel {
             imageVisible: true
             imageFrameVisible: false
             menuIconVisible: true
-            mainText: name && name !== "" ?
-                          name :
-                          toolController.alternateName(index)
+            property bool spatialReferenceOk: toolController.spatialReferenceOk(index)
+            mainText: name && name !== "" ? name : toolController.alternateName(index)
+            mainTextColor:  spatialReferenceOk ? Material.foreground : "red"
+            mainTextItalic: !spatialReferenceOk
             onItemCheckedChanged: layerVisible = itemChecked
 
             Image {
@@ -113,6 +115,7 @@ DsaPanel {
                         ListLabel {
                             text: "Zoom to"
                             separatorVisible: visible
+                            available: tocItemDelegate.spatialReferenceOk
                             onTriggered: {
                                 vehicleMenu.close();
                                 tocRoot.closed();
@@ -253,6 +256,7 @@ DsaPanel {
             ListLabel {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: "Zoom to"
+                available: toolController.spatialReferenceOk(layersList.currentIndex)
                 onTriggered: {
                     var i = layersList.currentIndex;
                     mobileMenu.close();

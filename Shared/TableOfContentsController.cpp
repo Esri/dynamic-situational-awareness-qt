@@ -33,6 +33,7 @@
 #include "MapTypes.h"
 #include "Raster.h"
 #include "RasterLayer.h"
+#include "SpatialReference.h"
 #include "Viewpoint.h"
 
 // Qt headers
@@ -222,6 +223,25 @@ QString TableOfContentsController::alternateName(int layerIndex)
   QFileInfo rasterFile(raster->path());
 
   return rasterFile.baseName();
+}
+
+bool TableOfContentsController::spatialReferenceOk(int layerIndex) const
+{
+  if (!m_layerListModel)
+    return false;
+
+  const auto modelIndex = mappedIndex(layerIndex);
+  if (modelIndex >= m_layerListModel->rowCount())
+    return false;
+
+  const auto* layer = m_layerListModel->at(modelIndex);
+  if (!layer)
+    return false;
+
+  if (layer->loadStatus() != LoadStatus::Loaded)
+    return false;
+
+  return !layer->spatialReference().isEmpty();
 }
 
 /*!

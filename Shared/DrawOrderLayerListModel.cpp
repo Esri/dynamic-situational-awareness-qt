@@ -18,8 +18,10 @@
 #include "pch.hpp"
 
 #include "DrawOrderLayerListModel.h"
-#include "MapTypes.h"
+
+// C++ API headers
 #include "LayerListModel.h"
+#include "MapTypes.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -37,10 +39,15 @@ namespace Dsa {
   \brief Constructor for a model taking an optional \a parent.
  */
 
-DrawOrderLayerListModel::DrawOrderLayerListModel(QObject* parent):
+DrawOrderLayerListModel::DrawOrderLayerListModel(LayerListModel* layerListModel, QObject* parent):
   QSortFilterProxyModel(parent)
 {
+  setSourceModel(layerListModel);
+
   sort(0);
+
+  if (layerListModel)
+    connect(layerListModel, &QAbstractItemModel::dataChanged, this, [this](const QModelIndex&, const QModelIndex&) { invalidate(); });
 }
 
 /*!

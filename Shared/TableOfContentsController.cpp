@@ -347,10 +347,7 @@ void TableOfContentsController::updateLayerListModel()
   }
 
   if (m_layerListModel)
-  {
-    m_drawOrderModel = new DrawOrderLayerListModel(this);
-    m_drawOrderModel->setSourceModel(m_layerListModel);
-  }
+    m_drawOrderModel = new DrawOrderLayerListModel(m_layerListModel, this);
 
   emit layerListModelChanged();
 }

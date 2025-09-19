@@ -159,9 +159,9 @@ bool ZipHelper::extractCurrentFile(const QString& outputFilePath)
             emit extractProgress(fileName, outputFilePath, percent);
 
             // check for a new percentage but only by whole numbers
-            auto oldPercentTotal = (int)percentTotal();
+            auto oldPercentTotal = static_cast<int>(percentTotal());
             m_bytesExtracted += result;
-            auto newPercentTotal = (int)percentTotal();
+            auto newPercentTotal = static_cast<int>(percentTotal());
             if (newPercentTotal != oldPercentTotal)
                 emit extractProgressTotal(newPercentTotal);
 
@@ -421,7 +421,7 @@ bool ZipHelper::zrOpen()
     return ok;
 }
 
-qreal ZipHelper::percentTotal()
+qreal ZipHelper::percentTotal() const
 {
     qreal percent = 0.0;
     if (m_bytesTotalUncompressed != 0)

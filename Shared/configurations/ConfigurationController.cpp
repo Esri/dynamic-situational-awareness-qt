@@ -392,7 +392,6 @@ void ConfigurationController::download(int index)
   // make a head request to check the availabiity of the network as well as get the final size of the package to be downloaded
   QNetworkRequest zipRequest{configurationUrl};
   auto* headReply = m_networkAccessManager.head(zipRequest);
-  headReply->ignoreSslErrors();
   connect(headReply, &QNetworkReply::finished, this, [this, zipRequest, headReply, configurationName]()
   {
     zipHeadReply_finished(zipRequest, headReply, configurationName);

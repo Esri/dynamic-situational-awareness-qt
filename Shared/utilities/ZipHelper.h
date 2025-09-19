@@ -107,7 +107,7 @@ private:
   void zwClose(const QString& globalComment = QString());
   bool exists() const;
   bool zrOpen();
-  qreal percentTotal();
+  qreal percentTotal() const;
   const QString& path() const { return m_Path; }
 
 private:

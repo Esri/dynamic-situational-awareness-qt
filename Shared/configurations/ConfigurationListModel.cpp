@@ -178,16 +178,6 @@ bool ConfigurationListModel::setDataByName(const QString& name, const QVariant& 
   return false;
 }
 
-qsizetype ConfigurationListModel::indexByName(const QString& name) const
-{
-  for (qsizetype i = 0; i < m_configurations.count(); i++)
-  {
-    if (m_configurations[i].name() == name)
-      return i;
-  }
-  return -1;
-}
-
 bool ConfigurationListModel::add(const QString& name, const QString& url, bool selected, bool loaded, int percentDownloaded)
 {
   beginInsertRows(QModelIndex{}, m_configurations.count(), m_configurations.count());
@@ -196,12 +186,20 @@ bool ConfigurationListModel::add(const QString& name, const QString& url, bool s
   return true;
 }
 
-bool ConfigurationListModel::remove(int index)
+bool ConfigurationListModel::remove(const QString& configurationName)
 {
-  beginRemoveRows(QModelIndex{}, index, index);
-  m_configurations.removeAt(index);
-  endRemoveRows();
-  return true;
+  for (qsizetype index = 0; index < m_configurations.count(); ++index)
+  {
+    if (m_configurations[index].name() == configurationName)
+    {
+      beginRemoveRows(QModelIndex{}, index, index);
+      m_configurations.removeAt(index);
+      endRemoveRows();
+      return true;
+    }
+  }
+
+  return false;
 }
 
 void ConfigurationListModel::download(const QString& configurationName)

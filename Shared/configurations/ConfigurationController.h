@@ -59,7 +59,7 @@ public:
   Q_INVOKABLE void select(int index);
   Q_INVOKABLE void download(int index);
   Q_INVOKABLE void cancel(int index);
-  Q_INVOKABLE void remove(int index, bool alsoRemoveEntry);
+  Q_INVOKABLE void remove(const QString& configurationName, bool alsoRemoveEntry);
   Q_INVOKABLE void downloadDefaultData();
   Q_INVOKABLE void addConfiguration(const QString& url, const QString& name);
   Q_INVOKABLE bool nameAlreadyInUse(const QString& configurationName) const;
@@ -74,7 +74,7 @@ public:
 signals:
   void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
   void configurationsChanged();
-  void configurationDownloadFailed(int configurationIndex, const QString& configurationName, const QString& message = "");
+  void configurationDownloadFailed(const QString& configurationName, const QString& message = "");
 
 private:
   void fetchConfigurations();
@@ -91,6 +91,7 @@ private:
   void cleanupZipFile(ZipHelper* zipHelper, const QString& configurationName, const QString& downloadFilePath) const;
   void removeConfigurationDirectory(const QString& configurationName) const;
   void zipHeadReply_finished(QNetworkRequest zipRequest, QNetworkReply* headReply, const QString& configurationName);
+  void sendRemoveConfigurationSignal(const QString& configurationName, const QString& confirmationMessage);
   ConfigurationListModel* m_configurationListModel = nullptr;
   QNetworkAccessManager m_networkAccessManager;
   QDir m_downloadFolder;

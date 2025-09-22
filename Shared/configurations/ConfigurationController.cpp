@@ -131,7 +131,7 @@ void ConfigurationController::extractConfigurationDownload(const QString& downlo
     // cleanup unusable files and reset the model item for the UI
     resetConfigurationDeviceStatus(configurationName);
 
-    emit configurationDownloadFailed(m_configurationListModel->indexByName(configurationName), configurationName, QStringLiteral("The configuration zip did not contain a valid DsaAppConfig.json file."));
+    sendRemoveConfigurationSignal(configurationName, QStringLiteral("The configuration zip did not contain a valid DsaAppConfig.json file."));
   });
   connect(zipHelper, &ZipHelper::extractProgressTotal, this, [this, configurationName](qsizetype percentTotal)
   {
@@ -148,7 +148,7 @@ void ConfigurationController::extractConfigurationDownload(const QString& downlo
     // cleanup unusable files and reset the model item for the UI
     resetConfigurationDeviceStatus(configurationName);
 
-    emit configurationDownloadFailed(m_configurationListModel->indexByName(configurationName), configurationName, QStringLiteral("Failed to extract the configuration zip."));
+    sendRemoveConfigurationSignal(configurationName, QStringLiteral("Failed to extract the configuration zip."));
   });
 
   // extract the downloaded file to the configuration
@@ -299,8 +299,17 @@ void ConfigurationController::zipHeadReply_finished(QNetworkRequest zipRequest, 
   connect(contentReply, &QNetworkReply::errorOccurred, this, [this, configurationName](QNetworkReply::NetworkError error)
   {
     if (error != QNetworkReply::NetworkError::OperationCanceledError)
-      emit configurationDownloadFailed(m_configurationListModel->indexByName(configurationName), configurationName, QStringLiteral("The configuration zip failed to download."));
+      sendRemoveConfigurationSignal(configurationName, QStringLiteral("The configuration zip failed to download."));
   });
+}
+
+void ConfigurationController::sendRemoveConfigurationSignal(const QString& configurationName, const QString& confirmationMessage)
+{
+  const auto configuration = m_configurationListModel->byName(configurationName);
+  if (configuration.name().isEmpty())
+    return;
+
+  emit configurationDownloadFailed(configurationName, confirmationMessage);
 }
 
 void ConfigurationController::download(int index)
@@ -323,7 +332,7 @@ void ConfigurationController::download(int index)
       if (!fileContent.exists() || bytesTotal == 0)
       {
         resetConfigurationDeviceStatus(configurationName);
-        emit configurationDownloadFailed(m_configurationListModel->indexByName(configurationName), configurationName, QStringLiteral("Failed to extract the configuration zip."));
+        sendRemoveConfigurationSignal(configurationName, QStringLiteral("Failed to extract the configuration zip."));
         return false;
       }
 
@@ -365,7 +374,7 @@ void ConfigurationController::download(int index)
     const QFile configurationFileLocal{configurationFileNameLocal};
     if (!configurationFileLocal.exists() || configurationFileLocal.size() == 0)
     {
-      emit configurationDownloadFailed(m_configurationListModel->indexByName(configurationName), configurationName, QStringLiteral("Failed to extract the configuration zip."));
+      sendRemoveConfigurationSignal(configurationName, QStringLiteral("Failed to extract the configuration zip."));
       return;
     }
 
@@ -404,9 +413,9 @@ void ConfigurationController::cancel(int index)
   m_configurationListModel->cancel(index);
 }
 
-void ConfigurationController::remove(int index, bool alsoRemoveEntry)
+void ConfigurationController::remove(const QString& configurationName, bool alsoRemoveEntry)
 {
-  const auto configuration = m_configurationListModel->at(index);
+  const auto configuration = m_configurationListModel->byName(configurationName);
 
   resetConfigurationDeviceStatus(configuration.name());
 
@@ -414,8 +423,10 @@ void ConfigurationController::remove(int index, bool alsoRemoveEntry)
   // remove its corresponding model and update the list model
   if (alsoRemoveEntry)
   {
-    m_configurationListModel->remove(index);
-    storeConfigurations();
+    if (m_configurationListModel->remove(configuration.name()))
+      storeConfigurations();
+    else
+      emit toolErrorOccurred(QStringLiteral("Unable to remove the configuration"), QStringLiteral("Configurations Error"));
   }
 
   emit configurationsChanged();
@@ -543,7 +554,7 @@ void ConfigurationController::readyRead(QNetworkReply* networkReply, const QStri
     {
       networkReply->abort();
       resetConfigurationDeviceStatus(configurationName);
-      emit configurationDownloadFailed(m_configurationListModel->indexByName(configurationName), configurationName, QStringLiteral("The configuration zip failed to download."));
+      sendRemoveConfigurationSignal(configurationName, QStringLiteral("The configuration zip failed to download."));
       return;
     }
 

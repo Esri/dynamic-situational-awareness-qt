@@ -28,11 +28,8 @@ Rectangle {
 
     Connections {
         target: configurationController
-        function onConfigurationDownloadFailed(configurationIndex, configurationName, message) {
-            if (configurationIndex === -1)
-                return;
-
-            configurationDialogConfirmRemove.configurationIndex = configurationIndex;
+        function onConfigurationDownloadFailed(configurationName, message) {
+            configurationDialogConfirmRemove.configurationName = configurationName;
             configurationDialogConfirmRemove.alsoRemoveEntry = true;
             configurationDialogConfirmRemove.confirmationMessage = "'" + configurationName + "' " + message + "\nRemove it from the list?";
             configurationDialogConfirmRemove.open();
@@ -416,7 +413,7 @@ Rectangle {
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: {
-                                    configurationDialogConfirmRemove.configurationIndex = index;
+                                    configurationDialogConfirmRemove.configurationName = model.Name
                                     configurationDialogConfirmRemove.alsoRemoveEntry = !model.Downloaded
                                     var msg = "Remove '" + model.Name + "' " + (model.Downloaded ? "files from the device?" : "from the list?");
                                     configurationDialogConfirmRemove.confirmationMessage = msg;
@@ -518,7 +515,7 @@ Rectangle {
         title: "Confirm Remove"
         standardButtons: Dialog.Yes | Dialog.No
         property alias confirmationMessage: configurationDialogLabel.text
-        property int configurationIndex: -1
+        property string configurationName: ""
         property bool alsoRemoveEntry: false
         Label {
             id: configurationDialogLabel
@@ -530,7 +527,7 @@ Rectangle {
             width: parent.width
         }
 
-        onAccepted: configurationController.remove(configurationIndex, alsoRemoveEntry);
+        onAccepted: configurationController.remove(configurationName, alsoRemoveEntry);
     }
 
     AuthenticationView {

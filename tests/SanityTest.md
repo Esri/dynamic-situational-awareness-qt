@@ -22,9 +22,11 @@ Sanity test list to perform on several platforms prior to release.
   - [ ] confirm that the app starts with the topographic basemap
 - Select the basemap tool
   - [ ] confirm that you see a list of all the .tpk files in the BasemapData folder (default is `ImageryMonterey` & `Topographic`)
+  - [ ] confirm that the `Topographic` basemap is highlighted
 - select one of the tpks
   - [ ] confirm that the tool closes and the basemap changes
 - reopen the tool
+  - [ ] The basemap that is highlighted should be the basemap that is displayed in the scene
 - click the close button (`X`)
   - [ ] confirm that the tool closes without changing the basemap   
 DONE
@@ -46,6 +48,7 @@ DONE
 - Select the 'Add as elevation source' checkbox and click ADD SELECTED
   - [ ] Confirm the DTED file is added as an elevation source to the scene (you should see the terrain surface reload)
 DONE  
+  - [ ] Select the Add Data tool again, confirm the 'Add as elevation source' checkbox is unchecked
 
 > _In preparation for the next test, do NOT remove the layers from the Overlays list_
 
@@ -346,9 +349,21 @@ Test case 4: Go to position
 - click the Go to coordinate button
 - [ ] the view should zoom to the current position of the app (you can confirm by turning on the location display)
 
+## Add Grid tool
 
-
-
+- Open the app
+- Switch to 2D view by clicking the 2D view icon on the toolbar
+- Add a grid by clicking the Add Grid icon located at the bottom of the toolbar
+  - [ ] The grid should now be visible
+- Open the settings panel
+- Change the coordinate format to any alternative format, then close the panel
+  - [ ] The grid should reflect the new coordinate format
+- Reopen the settings panel
+- Set the Grid Color Scheme to "Light", then close the panel
+  - [ ] The grid color should change to light
+- Reopen the settings panel again
+- Set the Grid Color Scheme to "Colors", then close the panel
+  - [ ] The grid color should turn into blue
 
 # 4. Message Feeds
 ## Broadcast Current Location
@@ -637,6 +652,12 @@ Test 4: DrapedFlat surface placement behavior
 Test 5: non-DrapedFlat surface placement behavior
 - Change CurrentLocationSurfacePlacement to any value other than DrapedFlat.
 - Close/Reopen the app. The current location symbol behaves as if `CurrentLocationSurfacePlacement` is Relative and is positioned using the `CurrentLocationZOffset` value.
+
+## Default Elevation Source Behavior
+- Start the DSA app with `DefaultElevationSource` pointing to a non-existent or invalid source. The app do not crash.
+- After adding a valid elevation source, and  unchecking 'Use GPS for current elevation display' in Settings, the app displays the elevation in the location text area.
+- The `DefaultElevationSource` in DsaAppConfig.json will be updated to use the selection made.
+- Update the `DefaultElevationSource` to a invalid path, location text area will either have 'Elevation Unavailable' or the last value that was set by the GPS feed.
 
 ## Settings
 ## App Configuration

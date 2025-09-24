@@ -654,7 +654,7 @@ Test 5: non-DrapedFlat surface placement behavior
 - Close/Reopen the app. The current location symbol behaves as if `CurrentLocationSurfacePlacement` is Relative and is positioned using the `CurrentLocationZOffset` value.
 
 ## Default Elevation Source Behavior
-- Start the DSA app with `DefaultElevationSource` pointing to a non-existent or invalid source. The app do not crash.
+- Start the DSA app with `DefaultElevationSource` pointing to a non-existent or invalid source. The app does not crash.
 - After adding a valid elevation source, and  unchecking 'Use GPS for current elevation display' in Settings, the app displays the elevation in the location text area.
 - The `DefaultElevationSource` in DsaAppConfig.json will be updated to use the selection made.
 - Update the `DefaultElevationSource` to a invalid path, location text area will either have 'Elevation Unavailable' or the last value that was set by the GPS feed.

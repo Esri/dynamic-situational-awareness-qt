@@ -61,7 +61,7 @@ QString DsaUtility::configurationsDirectoryPath()
 
   // set the starting directory for where the config file should be found
 #if defined(Q_OS_IOS)
-  QDir dir{QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)};
+  QDir dir{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
 #elif defined(Q_OS_ANDROID)
   QDir dir{QStandardPaths::writableLocation(QStandardPaths::HomeLocation)};
 #else

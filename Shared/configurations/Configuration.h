@@ -19,12 +19,14 @@
 
 // Qt headers
 #include <QString>
+#include <QUrl>
 
 namespace Dsa {
 
 class Configuration
 {
 public:
+  Configuration();
   Configuration(const QString& name,
                 const QString& url,
                 bool selected,
@@ -34,13 +36,22 @@ public:
   QString name() const;
   void setName(const QString& name);
 
-  QString url() const;
+  QString urlStr() const;
   void setUrl(const QString& url);
 
+  QUrl url() const;
+
+  void download();
   bool downloaded() const;
   bool downloading() const;
+  bool extracted() const;
+  bool extracting() const;
   bool requiresRestart() const;
   bool canDownload() const;
+  bool canDelete() const;
+  bool isCancellable() const;
+  bool downloadCancelled() const;
+  bool inProgress() const;
 
   bool selected() const;
   void setSelected(bool selected);
@@ -49,13 +60,21 @@ public:
 
   int percentDownloaded() const;
   void setPercentDownloaded(int percentDownloaded);
+  int percentExtracted() const;
+  void setPercentExtracted(int percentExtracted);
+  int percentComplete() const;
+  void cancelDownload();
 
 private:
   QString m_name;
-  QString m_url;
+  QString m_urlStr;
+  QUrl m_url;
   bool m_selected = false;
   bool m_loaded = false;
+  bool m_isCancellable = true;
   int m_percentDownloaded = 0;
+  bool m_downloadCancelled = false;
+  int m_percentExtracted = 0;
 };
 
 }

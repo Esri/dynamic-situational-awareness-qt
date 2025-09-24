@@ -20,15 +20,22 @@
 // Qt headers
 #include <QDir>
 #include <QNetworkAccessManager>
-#include <QNetworkReply>
-#include <QPointer>
+#include <QNetworkRequest>
 
 // DSA headers
 #include "AbstractTool.h"
-#include "ZipHelper.h"
 
+class QNetworkReply;
 Q_MOC_INCLUDE("QAbstractListModel")
 class QAbstractListModel;
+
+namespace Esri::ArcGISRuntime {
+class Error;
+class Portal;
+class PortalItem;
+}
+
+class ZipHelper;
 
 namespace Dsa {
 
@@ -42,22 +49,23 @@ class ConfigurationController : public AbstractTool
   Q_OBJECT
 
   Q_PROPERTY(QAbstractListModel* configurations READ configurations NOTIFY configurationsChanged)
-  Q_PROPERTY(bool downloadInProgress READ downloadInProgress NOTIFY configurationsChanged)
   Q_PROPERTY(bool requiresRestart READ requiresRestart NOTIFY configurationsChanged)
   Q_PROPERTY(bool configurationIsAvailable READ configurationIsAvailable)
 
 public:
   explicit ConfigurationController(QObject* parent = nullptr);
+  inline static const QString REGEX_PORTAL_ITEM_URL = QStringLiteral(R"(^https:\/\/.+\/item\.html\?id=[A-Fa-f0-9]{32}?$)");
 
   Q_INVOKABLE void select(int index);
   Q_INVOKABLE void download(int index);
   Q_INVOKABLE void cancel(int index);
-  Q_INVOKABLE void remove(int index);
+  Q_INVOKABLE void remove(const QString& configurationName, bool alsoRemoveEntry);
   Q_INVOKABLE void downloadDefaultData();
+  Q_INVOKABLE void addConfiguration(const QString& url, const QString& name);
+  Q_INVOKABLE bool nameAlreadyInUse(const QString& configurationName) const;
   static bool createDefaultConfigurationsFile();
 
   QString toolName() const override;
-  bool downloadInProgress();
   bool requiresRestart();
   bool configurationIsAvailable();
 
@@ -66,28 +74,28 @@ public:
 signals:
   void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
   void configurationsChanged();
-
-private slots:
-  void downloadProgress(quint64 bytesReceived, quint64 bytesTotal);
-  void readyRead();
-  void finished();
-  void downloadErrorOccurred(QNetworkReply::NetworkError);
-  void extractCompleted();
-  void extractError(const QString& fileName, const QString& outputFileName, ZipHelper::Result result);
+  void configurationDownloadFailed(const QString& configurationName, const QString& message = "");
 
 private:
-  void setPercentComplete(int percentComplete);
   void fetchConfigurations();
   void storeConfigurations();
+  bool isDownloadCancelled(const QString& configurationName);
+  bool deviceHasRoomForDownload(qint64 bytesToDownload);
+  void readyRead(QNetworkReply* networkReply, const QString& downloadFilePath, const QString& configurationName, bool fileSizeCheckFailed);
+  void finished(QNetworkReply* networkReply, const QString& downloadFilePath, const QString& configurationName);
+  QString generateUniqueDownloadFilePath() const;
+  void extractConfigurationDownload(const QString& pathToDownload, const QString& configurationName);
+  bool updateExtractedConfigurationFile(const QDir& configurationDirectory);
+  void resetConfigurationDeviceStatus(const QString& configurationName);
+  void portalItem_doneLoading(Esri::ArcGISRuntime::Portal* portal, Esri::ArcGISRuntime::PortalItem* portalItem, const QString& configurationName, const Esri::ArcGISRuntime::Error& error);
+  void cleanupZipFile(ZipHelper* zipHelper, const QString& configurationName, const QString& downloadFilePath) const;
+  void removeConfigurationDirectory(const QString& configurationName) const;
+  void zipHeadReply_finished(QNetworkRequest zipRequest, QNetworkReply* headReply, const QString& configurationName);
+  void sendRemoveConfigurationSignal(const QString& configurationName, const QString& confirmationMessage);
   ConfigurationListModel* m_configurationListModel = nullptr;
   QNetworkAccessManager m_networkAccessManager;
-  int m_activeDownloadIndex;
   QDir m_downloadFolder;
-  QString m_downloadFileName;
-  bool m_aborted = false;
-  bool m_downloadInProgress = false;
-  QPointer<QNetworkReply> m_networkReply;
-  ZipHelper* m_zipHelper = nullptr;
+  QDir m_configurationsDirectory;
 };
 
 }

@@ -41,24 +41,34 @@ public:
     PercentDownloaded,
     Downloading,
     RequiresRestart,
-    CanDownload
+    CanDownload,
+    CanDelete,
+    DownloadCancelled,
+    IsCancellable,
+    Extracting,
+    Extracted,
+    PercentExtracted,
+    InProgress,
+    PercentComplete
   };
 
   explicit ConfigurationListModel(QObject* parent = nullptr);
 
-  void select(int index);
-  void cancel(int index);
-
-  // to be implemented when additional packages can be setup for download by the end user
-  // void remove(int index);
-  // void download(int index);
-
   // QAbstractItemModel interface
   int rowCount(const QModelIndex& parent) const override;
   QVariant data(const QModelIndex& index, int role) const override;
+  QVariant dataByName(const QString& name, int role);
   bool setData(const QModelIndex& index, const QVariant& value, int role) override;
+  bool setDataByName(const QString& name, const QVariant& value, int role);
 
+  Configuration at(int index) const;
+  Configuration byName(const QString& name) const;
   bool add(const QString& name, const QString& url, bool selected, bool loaded, int percentDownloaded);
+  void select(int index);
+  void cancel(int index);
+  bool remove(const QString& configurationName);
+  void download(const QString& configurationName);
+  bool clear();
 
   QList<Configuration>::iterator begin() { return m_configurations.begin(); }
   QList<Configuration>::iterator end() { return m_configurations.end(); }

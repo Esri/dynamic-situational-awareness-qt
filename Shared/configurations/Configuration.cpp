@@ -18,16 +18,27 @@
 
 #include "Configuration.h"
 
+// DSA headers
+#include "ConfigurationController.h"
+
+// Qt headers
+#include <QRegularExpression>
+
 namespace Dsa {
+
+Configuration::Configuration() = default;
 
 Configuration::Configuration(const QString& name, const QString& url, bool selected, bool loaded, int percentDownloaded):
   m_name(name),
-  m_url(url),
+  m_urlStr(url),
+  m_url(QUrl{url}),
   m_selected(selected),
   m_loaded(loaded),
-  m_percentDownloaded(percentDownloaded)
+  m_percentDownloaded(percentDownloaded),
+  m_percentExtracted(percentDownloaded == 100 ? 100 : 0)
 {
-
+  static QRegularExpression regexPortalItem{ConfigurationController::REGEX_PORTAL_ITEM_URL};
+  m_isCancellable = !regexPortalItem.match(url).hasMatch();
 }
 
 QString Configuration::name() const
@@ -40,14 +51,27 @@ void Configuration::setName(const QString& name)
   m_name = name;
 }
 
-QString Configuration::url() const
+QString Configuration::urlStr() const
 {
-  return m_url;
+  return m_urlStr;
 }
 
 void Configuration::setUrl(const QString& url)
 {
-  m_url = url;
+  m_urlStr = url;
+  m_url = QUrl{url};
+}
+
+QUrl Configuration::url() const
+{
+  return m_url;
+}
+
+void Configuration::download()
+{
+  m_downloadCancelled = false;
+  m_percentDownloaded = 0;
+  m_percentExtracted = 0;
 }
 
 bool Configuration::downloaded() const
@@ -60,6 +84,16 @@ bool Configuration::downloading() const
   return m_percentDownloaded > 0 && m_percentDownloaded < 100;
 }
 
+bool Configuration::extracted() const
+{
+  return m_percentExtracted == 100;
+}
+
+bool Configuration::extracting() const
+{
+  return m_percentExtracted > 0 && m_percentExtracted < 100;
+}
+
 bool Configuration::requiresRestart() const
 {
   return m_selected && downloaded() && !m_loaded;
@@ -67,7 +101,22 @@ bool Configuration::requiresRestart() const
 
 bool Configuration::canDownload() const
 {
-  return !downloaded() && !m_url.isEmpty();
+  return !downloaded() && !downloading() && !m_urlStr.isEmpty();
+}
+
+bool Configuration::canDelete() const
+{
+  return !m_selected && !m_loaded && !downloading() && !extracting();
+}
+
+bool Configuration::isCancellable() const
+{
+  return m_isCancellable;
+}
+
+bool Configuration::downloadCancelled() const
+{
+  return m_downloadCancelled;
 }
 
 bool Configuration::selected() const
@@ -93,6 +142,34 @@ int Configuration::percentDownloaded() const
 void Configuration::setPercentDownloaded(int percentDownloaded)
 {
   m_percentDownloaded = percentDownloaded;
+}
+
+int Configuration::percentExtracted() const
+{
+  return m_percentExtracted;
+}
+
+void Configuration::setPercentExtracted(int percentExtracted)
+{
+  m_percentExtracted = percentExtracted;
+}
+
+bool Configuration::inProgress() const
+{
+  const auto progress = m_percentDownloaded + m_percentExtracted;
+  return progress > 0 && progress < 200;
+}
+
+int Configuration::percentComplete() const
+{
+  return m_percentDownloaded * 0.75 + m_percentExtracted * 0.25;
+}
+
+void Configuration::cancelDownload()
+{
+  setPercentDownloaded(0);
+  setPercentExtracted(0);
+  m_downloadCancelled = true;
 }
 
 } // Dsa

@@ -103,7 +103,7 @@ QString ObservationReportController::toolName() const
  */
 void ObservationReportController::toolInitProperties(const QVariantMap& properties)
 {
-  auto findUserNameIt = properties.find(AppConstants::USERNAME_PROPERTYNAME);
+  auto findUserNameIt = properties.find(AppConstants::PROPERTYNAME_USERNAME);
   if (findUserNameIt != properties.end())
     setObservedBy(findUserNameIt.value().toString());
 
@@ -120,7 +120,7 @@ void ObservationReportController::toolInitProperties(const QVariantMap& properti
 
 bool ObservationReportController::shouldSetProperties(const QString& propertyName)
 {
-  return (propertyName == AppConstants::USERNAME_PROPERTYNAME ||
+  return (propertyName == AppConstants::PROPERTYNAME_USERNAME ||
           propertyName == MessageFeedConstants::OBSERVATION_REPORT_CONFIG_PROPERTYNAME);
 }
 

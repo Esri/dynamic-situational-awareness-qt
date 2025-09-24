@@ -158,6 +158,13 @@ bool ZipHelper::extractCurrentFile(const QString& outputFilePath)
 
             emit extractProgress(fileName, outputFilePath, percent);
 
+            // check for a new percentage but only by whole numbers
+            auto oldPercentTotal = static_cast<int>(percentTotal());
+            m_bytesExtracted += result;
+            auto newPercentTotal = static_cast<int>(percentTotal());
+            if (newPercentTotal != oldPercentTotal)
+                emit extractProgressTotal(newPercentTotal);
+
             outputFile.write(buffer.data(), result);
             readBytes += result;
         }
@@ -183,7 +190,17 @@ bool ZipHelper::extractCurrentFile(const QString& outputFilePath)
 
 bool ZipHelper::extractAll(QDir& outputDir)
 {
+    m_bytesExtracted = 0;
+    m_bytesTotalUncompressed = 0;
     bool haveFile = gotoFirstFile();
+    while (haveFile)
+    {
+        auto fileInfo = currentFileInfo();
+        m_bytesTotalUncompressed += fileInfo.uncompressed_size;
+        haveFile = gotoNextFile();
+    }
+
+    haveFile = gotoFirstFile();
     while (haveFile)
     {
         const auto fileName = currentFileName();
@@ -404,6 +421,15 @@ bool ZipHelper::zrOpen()
     return ok;
 }
 
+qreal ZipHelper::percentTotal() const
+{
+    qreal percent = 0.0;
+    if (m_bytesTotalUncompressed != 0)
+        percent = (qreal)m_bytesExtracted / (qreal)m_bytesTotalUncompressed * 100.0;
+
+    return percent;
+}
+
 void ZipHelper::setPath(const QString& path)
 {
     auto resolvedPath = ZipHelper::resolvedPath(path);
@@ -436,6 +462,7 @@ bool ZipHelper::extractAll(const QString &outputPath)
 {
     if (!zrOpen())
     {
+        emit extractError(m_Path, outputPath, Result::BadZipFile);
 #ifdef ZIP_LOGGING_ENABLED
         qDebug() << "ZIP not open" << path();
 #endif

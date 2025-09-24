@@ -21,18 +21,32 @@
 
 // Qt headers
 #include <QDirIterator>
+#include <QFuture>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QNetworkReply>
 #include <QStandardPaths>
 #include <QStorageInfo>
+#include <QtConcurrentRun>
 #include <QtGlobal>
 #include <QUuid>
 
+// C++ API headers
+#include "Error.h"
+#include "ErrorException.h"
+#include "NetworkRequestProgress.h"
+#include "Portal.h"
+#include "PortalItem.h"
+
 // DSA headers
+#include "AppConstants.h"
 #include "Configuration.h"
 #include "ConfigurationListModel.h"
 #include "DsaUtility.h"
+#include "ZipHelper.h"
+
+using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
 
@@ -54,6 +68,7 @@ ConfigurationController::ConfigurationController(QObject* parent /* = nullptr */
 #endif
 
   // populate the configurations from disk
+  m_configurationsDirectory = QDir(DsaUtility::configurationsDirectoryPath());
   fetchConfigurations();
 }
 
@@ -64,77 +79,357 @@ void ConfigurationController::select(int index)
   emit configurationsChanged();
 }
 
-void ConfigurationController::download(int index)
+void removeDownloadedFile(const QString& downloadFilePath)
 {
-  // prevent calling the download function if something is already in progress
-  if (m_downloadInProgress)
+  // remove any remaining progress if request was aborted or after the zip has been extracted
+  QFile f{downloadFilePath};
+  if (f.exists())
+    f.remove();
+}
+
+void ConfigurationController::cleanupZipFile(ZipHelper* zipHelper, const QString& configurationName, const QString& downloadFilePath) const
+{
+  // the zip file needs to be cleaned up from the downloads folder for anything
+  // other than a local file. don't delete local files becasue they are not copied
+  // and the extract is done pointing directly to the file url (file://...)
+  zipHelper->deleteLater();
+  const auto configuration = m_configurationListModel->byName(configurationName);
+  if (!configuration.url().isLocalFile())
+    removeDownloadedFile(downloadFilePath);
+}
+
+void ConfigurationController::removeConfigurationDirectory(const QString& configurationName) const
+{
+  // remove the directory containing the configuration files recursively
+  QDir configurationDirectory{m_configurationsDirectory.filePath(configurationName)};
+  if (configurationDirectory.exists())
+    configurationDirectory.removeRecursively();
+}
+
+void ConfigurationController::extractConfigurationDownload(const QString& downloadFilePath, const QString& configurationName)
+{
+  // create the folder to unpack the zip contents to
+  const QDir configurationDirectory{m_configurationsDirectory.filePath(configurationName)};
+  if (!configurationDirectory.exists())
+    m_configurationsDirectory.mkdir(configurationName);
+
+  // initialize the zip helper with the path to the downloaded file
+  auto* zipHelper = new ZipHelper(downloadFilePath, this);
+  connect(zipHelper, &ZipHelper::extractCompleted, this, [this, configurationName, configurationDirectory, zipHelper, downloadFilePath]()
+  {
+    cleanupZipFile(zipHelper, configurationName, downloadFilePath);
+
+    // we can exit early if the update of the DsaAppConfig.json file had no issues
+    if (updateExtractedConfigurationFile(configurationDirectory))
+      return;
+
+    // still exit early if the configuration is the default download from Esri
+    const auto configuration = m_configurationListModel->byName(configurationName);
+    if (configuration.urlStr() == ConfigurationController::DEFAULT_DOWNLOAD_URL)
+      return;
+
+    // cleanup unusable files and reset the model item for the UI
+    resetConfigurationDeviceStatus(configurationName);
+
+    sendRemoveConfigurationSignal(configurationName, QStringLiteral("The configuration zip did not contain a valid DsaAppConfig.json file."));
+  });
+  connect(zipHelper, &ZipHelper::extractProgressTotal, this, [this, configurationName](qsizetype percentTotal)
+  {
+    m_configurationListModel->setDataByName(configurationName, percentTotal, ConfigurationListModel::PercentExtracted);
+  });
+  connect(zipHelper, &ZipHelper::extractError, this, [this, configurationName, zipHelper, downloadFilePath](const QString& fileName, const QString& outputFileName, ZipHelper::Result result)
+  {
+    Q_UNUSED(fileName);
+    Q_UNUSED(outputFileName);
+    Q_UNUSED(result);
+
+    cleanupZipFile(zipHelper, configurationName, downloadFilePath);
+
+    // cleanup unusable files and reset the model item for the UI
+    resetConfigurationDeviceStatus(configurationName);
+
+    sendRemoveConfigurationSignal(configurationName, QStringLiteral("Failed to extract the configuration zip."));
+  });
+
+  // extract the downloaded file to the configuration
+  const auto extractFuture = QtConcurrent::run([configurationDirectory, zipHelper]
+  {
+    zipHelper->extractAll(configurationDirectory.absolutePath());
+  });
+  Q_UNUSED(extractFuture);
+}
+
+bool ConfigurationController::updateExtractedConfigurationFile(const QDir& configurationDirectory)
+{
+  // any download other than the default from Esri should have it's own DsaAppConfig.json
+  // file present. if it is not present, the default will be created when the app is
+  // relaunched with this configuration selected.
+  const auto dsaAppConfigFilePath = configurationDirectory.absoluteFilePath(DsaUtility::FILE_NAME_APP_CONFIG);
+  QFile dsaAppConfigFile{dsaAppConfigFilePath};
+  if (!dsaAppConfigFile.exists() || !dsaAppConfigFile.open(QIODevice::ReadOnly))
+    return false;
+
+  // parse the file as a json document
+  QJsonParseError parseError;
+  const QByteArray configBytes{dsaAppConfigFile.readAll()};
+  const auto configDoc = QJsonDocument::fromJson(configBytes, &parseError);
+  dsaAppConfigFile.close();
+  if (configDoc.isNull() || configDoc.isEmpty() || !configDoc.isObject())
+    return false;
+
+  // find the previous root data directory value that was configured
+  auto configObj = configDoc.object();
+  const auto rootDataDirectoryVar = configObj.value(AppConstants::PROPERTYNAME_ROOT_DATA_DIRECTORY);
+  if (rootDataDirectoryVar.isUndefined())
+    return false;
+
+  // clean the path to make sure no trailing slashes are in the replacement string
+  auto rootDataDirectoryCleaned = QDir::cleanPath(rootDataDirectoryVar.toString());
+
+  // overwrite the app config file with the new json doc
+  if (!dsaAppConfigFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
+    return false;
+
+  // re-write the entire document with the old root directory replaced by the extracted location
+  QString configString{configBytes};
+  const QString rootDataDirectoryNew{configurationDirectory.absolutePath()};
+  const QString configStringUpdated{configString.replace(rootDataDirectoryCleaned, rootDataDirectoryNew)};
+  dsaAppConfigFile.write(configStringUpdated.toUtf8());
+  return true;
+}
+
+void ConfigurationController::resetConfigurationDeviceStatus(const QString& configurationName)
+{
+  removeConfigurationDirectory(configurationName);
+  if (!m_configurationListModel->setDataByName(configurationName, 0, ConfigurationListModel::PercentDownloaded) ||
+      !m_configurationListModel->setDataByName(configurationName, 0, ConfigurationListModel::PercentExtracted))
+    emit toolErrorOccurred(QStringLiteral("Error resetting the configurations status on the device"), QStringLiteral("Configuration Error"));
+}
+
+void ConfigurationController::portalItem_doneLoading(Portal* portal, PortalItem* portalItem, const QString& configurationName, const Error& error)
+{
+  if (!error.isEmpty())
+  {
+    emit toolErrorOccurred(QString("Error fetching portal item info: %1").arg(error.message()), QStringLiteral("Download Error"));
+    portal->deleteLater();
+    return;
+  }
+
+  // make sure the device has enough room for the download
+  if (!deviceHasRoomForDownload(portalItem->size()))
+  {
+    emit toolErrorOccurred(QStringLiteral("The total download size exceeds storage available on the device"), QStringLiteral("Download Error"));
+    portal->deleteLater();
+    return;
+  }
+
+  const auto downloadFilePath = generateUniqueDownloadFilePath();
+  m_configurationListModel->download(configurationName);
+  connect(portalItem, &PortalItem::fetchDataProgressChanged, this, [this, configurationName](const NetworkRequestProgress& progress)
+  {
+    m_configurationListModel->setDataByName(configurationName, progress.progressPercentage(), ConfigurationListModel::PercentDownloaded);
+  });
+  portalItem->fetchDataAsync(downloadFilePath).then(this, [this, portal, downloadFilePath, configurationName]()
+  {
+    m_configurationListModel->setDataByName(configurationName, 100, ConfigurationListModel::PercentDownloaded);
+    portal->deleteLater();
+    extractConfigurationDownload(downloadFilePath, configurationName);
+  }).onFailed(this, [this, configurationName, portal, downloadFilePath] (const ErrorException& e)
+  {
+    portal->deleteLater();
+    resetConfigurationDeviceStatus(configurationName);
+    removeDownloadedFile(downloadFilePath);
+    emit toolErrorOccurred(QString("Downloading the item failed: %1").arg(e.what()), QStringLiteral("Download Error"));
+  });
+}
+
+void ConfigurationController::zipHeadReply_finished(QNetworkRequest zipRequest, QNetworkReply* headReply, const QString& configurationName)
+{
+  // get the total bytes that will be downloaded
+  bool convertedOk = false;
+  int bytesToDownload = 0;
+  auto contentLengthVariant = headReply->header(QNetworkRequest::ContentLengthHeader);
+  if (contentLengthVariant.isValid())
+    bytesToDownload = contentLengthVariant.toInt(&convertedOk);
+
+  // note the failure of the file size check
+  bool fileSizeCheckFailed = !convertedOk || bytesToDownload <= 0;
+
+  // make sure the device has enough room for the download
+  if (!deviceHasRoomForDownload(bytesToDownload))
     return;
 
-  // get the url from the selected item
-  auto i = m_configurationListModel->index(index, 0);
-  auto url = m_configurationListModel->data(i, ConfigurationListModel::Roles::Url);
-  m_activeDownloadIndex = index;
+  // download the actual file
+  const auto downloadFilePath = generateUniqueDownloadFilePath();
+  m_configurationListModel->download(configurationName);
+  auto* contentReply = m_networkAccessManager.get(zipRequest);
+  contentReply->ignoreSslErrors();
+  connect(contentReply, &QNetworkReply::downloadProgress, this, [this, contentReply, configurationName](quint64 bytesReceived, quint64 bytesTotal)
+  {
+    if (isDownloadCancelled(configurationName))
+    {
+      contentReply->abort();
+      return;
+    }
 
-  // generate a unique name for the download
-  QDir downloadFolder(m_downloadFolder);
-  m_downloadFileName = downloadFolder.absoluteFilePath((QString("dsa_%1").arg(QUuid::createUuid().toString(QUuid::WithoutBraces))));
-  QNetworkRequest networkRequest{QUrl{url.toString()}};
+    // guard against dividing by zero
+    if (bytesTotal == 0)
+    {
+      contentReply->abort();
+      return;
+    }
+
+    m_configurationListModel->setDataByName(configurationName, bytesReceived * 1.0 / bytesTotal * 1.0 * 100, ConfigurationListModel::PercentDownloaded);
+  });
+  connect(contentReply, &QNetworkReply::readyRead, this, [this, contentReply, downloadFilePath, configurationName, fileSizeCheckFailed]()
+  {
+    readyRead(contentReply, downloadFilePath, configurationName, fileSizeCheckFailed);
+  });
+  connect(contentReply, &QNetworkReply::finished, this, [this, contentReply, downloadFilePath, configurationName]()
+  {
+    if (contentReply->error() != QNetworkReply::NetworkError::NoError)
+    {
+      removeDownloadedFile(downloadFilePath);
+      resetConfigurationDeviceStatus(configurationName);
+      return;
+    }
+
+    finished(contentReply, downloadFilePath, configurationName);
+  });
+  connect(contentReply, &QNetworkReply::errorOccurred, this, [this, configurationName](QNetworkReply::NetworkError error)
+  {
+    if (error != QNetworkReply::NetworkError::OperationCanceledError)
+      sendRemoveConfigurationSignal(configurationName, QStringLiteral("The configuration zip failed to download."));
+  });
+}
+
+void ConfigurationController::sendRemoveConfigurationSignal(const QString& configurationName, const QString& confirmationMessage)
+{
+  const auto configuration = m_configurationListModel->byName(configurationName);
+  if (configuration.name().isEmpty())
+    return;
+
+  emit configurationDownloadFailed(configurationName, confirmationMessage);
+}
+
+void ConfigurationController::download(int index)
+{
+  // fetch a copy of the selected model item from the listview
+  const auto configuration = m_configurationListModel->at(index);
+  const auto configurationUrl = configuration.url();
+  const auto configurationUrlStr = configuration.urlStr();
+  const auto configurationName = configuration.name();
+
+#ifdef Q_OS_ANDROID
+  if (configurationUrl.scheme() == QStringLiteral("content"))
+  {
+    // copy file from the content provider as if it was a downloaded file
+    QString contentDownloadStr{generateUniqueDownloadFilePath()};
+    QtConcurrent::run([this, configurationUrlStr, configurationName, contentDownloadStr]
+    {
+      QFile fileContent{configurationUrlStr};
+      const auto bytesTotal = fileContent.size();
+      if (!fileContent.exists() || bytesTotal == 0)
+      {
+        resetConfigurationDeviceStatus(configurationName);
+        sendRemoveConfigurationSignal(configurationName, QStringLiteral("Failed to extract the configuration zip."));
+        return false;
+      }
+
+      fileContent.open(QIODevice::ReadOnly);
+      QFile fileDownload{contentDownloadStr};
+      fileDownload.open(QIODevice::WriteOnly);
+      quint64 bytesWritten = 0;
+      quint8 percentTotal = 0;
+      constexpr qint64 sizeLine = 1024 * 16;
+
+      // write the lines to the temporary 'download' file and update the
+      // percentage downloaded by whole integers only to limit updates to the UI
+      while (!fileContent.atEnd())
+      {
+        bytesWritten += fileDownload.write(fileContent.readLine(sizeLine));
+        const quint8 percentLine = bytesWritten * 1.0 / bytesTotal * 100.0;
+        if (percentTotal != percentLine)
+        {
+          percentTotal = percentLine;
+          m_configurationListModel->setDataByName(configurationName, percentTotal, ConfigurationListModel::PercentDownloaded);
+        }
+      }
+      return true;
+    }).then([this, configurationName, contentDownloadStr](bool success)
+    {
+      if (!success)
+        return;
+
+      m_configurationListModel->setDataByName(configurationName, 100, ConfigurationListModel::PercentDownloaded);
+      extractConfigurationDownload(contentDownloadStr, configurationName);
+    });
+    return;
+  }
+#endif
+
+  if (configurationUrl.isLocalFile())
+  {
+    const QString configurationFileNameLocal{configurationUrl.toLocalFile()};
+    const QFile configurationFileLocal{configurationFileNameLocal};
+    if (!configurationFileLocal.exists() || configurationFileLocal.size() == 0)
+    {
+      sendRemoveConfigurationSignal(configurationName, QStringLiteral("Failed to extract the configuration zip."));
+      return;
+    }
+
+    m_configurationListModel->setDataByName(configurationName, 100, ConfigurationListModel::PercentDownloaded);
+    extractConfigurationDownload(configurationFileNameLocal, configurationName);
+    return;
+  }
+
+  // attempt to download the data as a portal item if it matches the item id url pattern
+  static const QRegularExpression regexPortalItem{REGEX_PORTAL_ITEM_URL};
+  if (regexPortalItem.match(configurationUrlStr).hasMatch())
+  {
+    PortalItem checkPortalItem{configurationUrl}; // using a local portal item here to parse the portal and item id out of the url
+    auto* portal = new Portal(checkPortalItem.portal()->url(), this);
+    auto* portalItem = new PortalItem(portal, checkPortalItem.itemId(), portal);
+    connect(portalItem, &PortalItem::doneLoading, this, [this, portal, portalItem, configurationName](const Error& error)
+    {
+      portalItem_doneLoading(portal, portalItem, configurationName, error);
+    });
+    portalItem->load();
+    return;
+  }
 
   // make a head request to check the availabiity of the network as well as get the final size of the package to be downloaded
-  m_aborted = false;
-  auto* headReply = m_networkAccessManager.head(networkRequest);
-  connect(headReply, &QNetworkReply::finished, this, [this, headReply, networkRequest]()
+  QNetworkRequest zipRequest{configurationUrl};
+  auto* headReply = m_networkAccessManager.head(zipRequest);
+  connect(headReply, &QNetworkReply::finished, this, [this, zipRequest, headReply, configurationName]()
   {
-    // get the total bytes that will be downloaded
-    bool convertedOk = false;
-    int bytesToDownload = 0;
-    auto contentLengthVariant = headReply->header(QNetworkRequest::ContentLengthHeader);
-    if (contentLengthVariant.isValid())
-      bytesToDownload = contentLengthVariant.toInt(&convertedOk);
-
-    // abort if the download size could not be fetched
-    if (!convertedOk || bytesToDownload <= 0)
-    {
-      emit toolErrorOccurred("Unable to fetch the download size.", "Network Error");
-      return;
-    }
-
-    // make sure the device has enough room for the download
-    QStorageInfo storageInfo(m_downloadFolder);
-    auto bytesAvailable = storageInfo.bytesAvailable() * 0.95;
-    if (bytesToDownload > bytesAvailable)
-    {
-      emit toolErrorOccurred("The total download size exceeds storage available on the device", "Download Error");
-      return;
-    }
-
-    // reset the properties for download status and use the network manager to download the file
-    m_networkReply = m_networkAccessManager.get(networkRequest);
-    m_downloadInProgress = true;
-    connect(m_networkReply, &QNetworkReply::downloadProgress, this, &ConfigurationController::downloadProgress);
-    connect(m_networkReply, &QNetworkReply::readyRead, this, &ConfigurationController::readyRead);
-    connect(m_networkReply, &QNetworkReply::finished, this, &ConfigurationController::finished);
-    connect(m_networkReply, &QNetworkReply::errorOccurred, this, &ConfigurationController::downloadErrorOccurred);
+    zipHeadReply_finished(zipRequest, headReply, configurationName);
   });
 }
 
 void ConfigurationController::cancel(int index)
 {
-  Q_UNUSED(index); // TODO: supporting multiple downloads at a time will require additional management
-  if (m_networkReply && m_networkReply->isOpen())
-  {
-    // cancel the downloading item and reset all the
-    m_configurationListModel->cancel(index);
-    m_aborted = true;
-    m_downloadInProgress = false;
-    m_networkReply->abort();
-  }
+  // cancel the downloading item and reset all the
+  m_configurationListModel->cancel(index);
 }
 
-void ConfigurationController::remove(int index)
+void ConfigurationController::remove(const QString& configurationName, bool alsoRemoveEntry)
 {
-  // make extracted packages removeable from device
-  Q_UNUSED(index);
+  const auto configuration = m_configurationListModel->byName(configurationName);
+
+  resetConfigurationDeviceStatus(configuration.name());
+
+  // if user also requested to remove the configuration from the list
+  // remove its corresponding model and update the list model
+  if (alsoRemoveEntry)
+  {
+    if (m_configurationListModel->remove(configuration.name()))
+      storeConfigurations();
+    else
+      emit toolErrorOccurred(QStringLiteral("Unable to remove the configuration"), QStringLiteral("Configurations Error"));
+  }
+
+  emit configurationsChanged();
 }
 
 void ConfigurationController::storeConfigurations()
@@ -145,13 +440,34 @@ void ConfigurationController::storeConfigurations()
     QJsonObject obj;
     obj["selected"] = cfg.selected();
     obj["name"] = cfg.name();
-    obj["url"] = cfg.url();
+    obj["url"] = cfg.urlStr();
     array.append(obj);
   }
   const QJsonDocument doc{array};
   QFile file{DsaUtility::configurationsFilePath()};
   if (file.open(QIODevice::WriteOnly))
     file.write(doc.toJson());
+}
+
+bool ConfigurationController::isDownloadCancelled(const QString& configurationName)
+{
+  return m_configurationListModel->dataByName(configurationName, ConfigurationListModel::DownloadCancelled).toBool();
+}
+
+bool ConfigurationController::deviceHasRoomForDownload(qint64 bytesToDownload)
+{
+  const QStorageInfo storageInfo{m_downloadFolder};
+  const auto bytesAllowed = storageInfo.bytesAvailable() * 0.95;
+  const bool enoughSpaceAvailable = bytesToDownload * 2.5 < bytesAllowed;
+  if (!enoughSpaceAvailable)
+    emit toolErrorOccurred("The expected download/extracted file size exceeds storage available on the device", "Download Error");
+
+  return enoughSpaceAvailable;
+}
+
+QString ConfigurationController::generateUniqueDownloadFilePath() const
+{
+  return m_downloadFolder.absoluteFilePath((QString("dsa_%1").arg(QUuid::createUuid().toString(QUuid::WithoutBraces))));
 }
 
 bool ConfigurationController::createDefaultConfigurationsFile()
@@ -182,10 +498,6 @@ QString ConfigurationController::toolName() const
   return QStringLiteral("configurations");
 }
 
-bool ConfigurationController::downloadInProgress()
-{
-  return m_downloadInProgress;
-}
 
 bool ConfigurationController::requiresRestart()
 {
@@ -214,99 +526,73 @@ QAbstractListModel* ConfigurationController::configurations() const
   return m_configurationListModel;
 }
 
-void ConfigurationController::downloadProgress(quint64 bytesReceived, quint64 bytesTotal)
+void ConfigurationController::readyRead(QNetworkReply* networkReply, const QString& downloadFilePath, const QString& configurationName, bool fileSizeCheckFailed)
 {
-  // guard against dividing by zero
-  if (bytesTotal == 0)
-    return;
-
-  setPercentComplete(bytesReceived * 1.0 / bytesTotal * 1.0 * 100);
-}
-
-void ConfigurationController::readyRead()
-{
-  // make sure the download file can be opened for appending
-  QFile file(m_downloadFileName);
-  if (!file.open(QIODevice::Append))
+  // check if the configuration download associated with this request was cancelled by the user
+  if (isDownloadCancelled(configurationName))
   {
-    m_aborted = true;
+    networkReply->abort();
     return;
   }
 
+  // make sure the download file can be opened for appending
+  QFile file{downloadFilePath};
+  if (!file.open(QIODevice::Append))
+  {
+    networkReply->abort();
+    return;
+  }
+
+  // checks on first read
+  if (file.size() == 0)
+  {
+    // abort if the response from the server was not a zip file type
+    // in testing, some responses for expired urls or bad urls will respond with
+    // text as json or xml which causes the download to 'finish' but fail
+    const QString contentType{networkReply->header(QNetworkRequest::KnownHeaders::ContentTypeHeader).toString()};
+    if (contentType != "application/zip" && contentType != "application/x-zip-compressed")
+    {
+      networkReply->abort();
+      resetConfigurationDeviceStatus(configurationName);
+      sendRemoveConfigurationSignal(configurationName, QStringLiteral("The configuration zip failed to download."));
+      return;
+    }
+
+    // if the check for the download file size failed and the file has no bytes
+    // written yet, let the user know
+    if (fileSizeCheckFailed)
+      emit toolErrorOccurred(QStringLiteral("Unable to check the download size. Please verify there is enough room on the device for downloading this configuration."), QStringLiteral("Warning"));
+  }
+
   // append the latest chunk to the download file in progress
-  file.write(m_networkReply->readAll());
+  file.write(networkReply->readAll());
 }
 
-void ConfigurationController::finished()
+void ConfigurationController::finished(QNetworkReply* networkReply, const QString& downloadFilePath, const QString& configurationName)
 {
-  // turn off the downloading state and clean up any aborted download files remaining
-  m_downloadInProgress = false;
-  if (m_aborted)
+  // check if the configuration download associated with this request was cancelled by the user
+  if (isDownloadCancelled(configurationName))
   {
-    QFile fileAbort(m_downloadFileName);
-    if (fileAbort.exists())
-      fileAbort.remove();
-
-    // reset the abort state and percent complete
-    m_aborted = false;
-    setPercentComplete(0);
+    // remove any remaining progress if request was aborted
+    networkReply->abort();
+    removeDownloadedFile(downloadFilePath);
     return;
   }
 
   // scope block to cleanup qfile to finish the writing of the stream
   {
-    QFile fileFinish{m_downloadFileName};
+    QFile fileFinish{downloadFilePath};
     if (!fileFinish.open(QIODevice::Append))
     {
       emit toolErrorOccurred("Unable to complete download", "Error Downloading");
       return;
     }
 
-    fileFinish.write(m_networkReply->readAll());
+    fileFinish.write(networkReply->readAll());
   }
-  setPercentComplete(100);
 
-  // initialize the zip helper with the path to the downloaded file
-  m_zipHelper = new ZipHelper(m_downloadFileName, this);
-  connect(m_zipHelper, &ZipHelper::extractCompleted, this, &ConfigurationController::extractCompleted);
-  connect(m_zipHelper, &ZipHelper::extractError, this, &ConfigurationController::extractError);
-
-  // resolve the download directory from the active item index
-  auto activeDownloadIndex = m_configurationListModel->index(m_activeDownloadIndex);
-  auto activeDownloadName = m_configurationListModel->data(activeDownloadIndex, ConfigurationListModel::Roles::Name).toString();
-  QDir dirConfigurations{DsaUtility::configurationsDirectoryPath()};
-  QDir dirActiveDownloadConfiguration{dirConfigurations.filePath(activeDownloadName)};
-  if (!dirActiveDownloadConfiguration.exists())
-    dirConfigurations.mkdir(activeDownloadName);
-
-  // extract the downloaded file to the configuration folder
-  m_zipHelper->extractAll(dirActiveDownloadConfiguration.absolutePath());
-}
-
-void ConfigurationController::downloadErrorOccurred(QNetworkReply::NetworkError error)
-{
-  m_aborted = true;
-  if (error != QNetworkReply::NetworkError::OperationCanceledError)
-    emit toolErrorOccurred(QString("Network Error (%1)").arg(error), "Error Downloading");
-}
-
-void ConfigurationController::extractCompleted()
-{
-  // delete the temporary download from the device
-  QFile::remove(m_downloadFileName);
-  setPercentComplete(100);
-  m_zipHelper->deleteLater();
-  m_zipHelper = nullptr;
-}
-
-void ConfigurationController::extractError(const QString& fileName, const QString& outputFileName, ZipHelper::Result result)
-{
-  Q_UNUSED(result);
-  emit toolErrorOccurred(QString("error %1, %2").arg(fileName, outputFileName), "Error Unzipping");
-  QFile::remove(m_downloadFileName);
-  setPercentComplete(0);
-  m_zipHelper->deleteLater();
-  m_zipHelper = nullptr;
+  m_configurationListModel->setDataByName(configurationName, 100, ConfigurationListModel::PercentDownloaded);
+  extractConfigurationDownload(downloadFilePath, configurationName);
 }
 
 void ConfigurationController::downloadDefaultData()
@@ -323,19 +609,24 @@ void ConfigurationController::downloadDefaultData()
   }
 }
 
-void ConfigurationController::setPercentComplete(int percentComplete)
+void ConfigurationController::addConfiguration(const QString& url, const QString& name)
 {
-  auto i = m_configurationListModel->index(m_activeDownloadIndex, 0);
-  m_configurationListModel->setData(i, percentComplete, ConfigurationListModel::Roles::PercentDownloaded);
+  // add the new entry
+  m_configurationListModel->add(name, url, false, false, 0);
+  storeConfigurations();
   emit configurationsChanged();
+}
+
+bool ConfigurationController::nameAlreadyInUse(const QString& configurationName) const
+{
+  return !m_configurationListModel->byName(configurationName).name().isEmpty();
 }
 
 void ConfigurationController::fetchConfigurations()
 {
   // check for the default configurations file and create if it doesn't exist
-  m_configurationListModel->removeRows(0, m_configurationListModel->rowCount(QModelIndex{}));
+  m_configurationListModel->clear();
   QFile fileConfigurations{DsaUtility::configurationsFilePath()};
-  QDir dirConfigurations{DsaUtility::configurationsDirectoryPath()};
 
   // abort if io failure and file couldnt be opened
   if (!fileConfigurations.open(QIODevice::ReadOnly))
@@ -363,16 +654,16 @@ void ConfigurationController::fetchConfigurations()
     // some other files in the directory
     bool downloaded = false;
     auto configurationName = configurationObject["name"].toString();
-    auto configurationDirectoryPath = dirConfigurations.filePath(configurationName);
+    auto configurationDirectoryPath = m_configurationsDirectory.filePath(configurationName);
     QDir dirConfiguration{configurationDirectoryPath};
 
     // skip directories that are not found on disk
     if (!dirConfiguration.exists())
+    {
+      // add a new empty entry as a place holder for downloading later
+      m_configurationListModel->add(configurationName, configurationObject["url"].toString(), false, false, 0);
       continue;
-
-    // skip if the app config cannot be found in the directory
-    if (!QFile::exists(dirConfiguration.filePath(DsaUtility::FILE_NAME_APP_CONFIG)))
-      continue;
+    }
 
     // check the folder recursively for other files
     QDirIterator dirIt(configurationDirectoryPath, QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);

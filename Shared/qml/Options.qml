@@ -20,10 +20,21 @@ import QtQuick.Controls.Material
 import QtQuick.Window
 import Esri.ArcGISRuntime.OpenSourceApps.DSA
 import QtQuick.Layouts
+import Esri.ArcGISRuntime.Toolkit
 
 Rectangle {
     id: optionsRoot
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
+
+    Connections {
+        target: configurationController
+        function onConfigurationDownloadFailed(configurationName, message) {
+            configurationDialogConfirmRemove.configurationName = configurationName;
+            configurationDialogConfirmRemove.alsoRemoveEntry = true;
+            configurationDialogConfirmRemove.confirmationMessage = "'" + configurationName + "' " + message + "\nRemove it from the list?";
+            configurationDialogConfirmRemove.open();
+        }
+    }
 
     color: Material.primary
 
@@ -303,15 +314,15 @@ Rectangle {
                         width: parent.width
 
                         ProgressBar {
-                            id: progressBarPercentDownloaded
+                            id: progressBarPercentComplete
                             anchors {
                                 bottom: parent.bottom
                                 right: parent.right
                                 left: parent.left
                             }
-                            visible: model.Downloading
+                            visible: model.InProgress
                             to: 100
-                            value: model.PercentDownloaded
+                            value: model.PercentComplete
                         }
 
                         RadioButton {
@@ -321,7 +332,7 @@ Rectangle {
                                 verticalCenter: parent.verticalCenter
                             }
                             checked: model.Selected
-                            enabled: model.Downloaded
+                            enabled: model.Downloaded && model.Extracted
                             onClicked: {
                                 configurationController.select(index);
                                 checked = Qt.binding(function () { // restore the binding
@@ -358,7 +369,7 @@ Rectangle {
                             id: imageCancel
                             source: "qrc:/Resources/icons/xhdpi/ic_menu_closeclear_dark.png"
                             height: parent.height
-                            width: model.Downloading ? parent.height : 0
+                            width: model.Downloading && model.IsCancellable ? parent.height : 0
                             anchors {
                                 right: imageDownload.left
                                 verticalCenter: parent.verticalCenter
@@ -375,10 +386,10 @@ Rectangle {
                             id: imageDownload
                             source: "qrc:/Resources/icons/xhdpi/ic_menu_sendmap_dark_d.png"
                             height: parent.height
-                            width: model.CanDownload && !configurationController.downloadInProgress ? parent.height : 0
-                            enabled: !configurationController.downloadInProgress
+                            width: model.CanDownload ? parent.height : 0
+                            enabled: model.CanDownload
                             anchors {
-                                right: parent.right
+                                right: imageRemove.left
                                 verticalCenter: parent.verticalCenter
                             }
                             MouseArea {
@@ -390,23 +401,26 @@ Rectangle {
                             rotation: 180
                         }
 
-                        //
-                        // TODO: re-enable the delete function once users are able to add their own sources for download
-                        //
-                        // Image {
-                        //     id: imageRemove
-                        //     source: DsaResources.iconTrash
-                        //     height: parent.height
-                        //     width: model.Downloaded && !model.Selected && !model.Loaded ? parent.height / 2 : 0
-                        //     anchors {
-                        //         right: parent.right
-                        //         verticalCenter: parent.verticalCenter
-                        //     }
-                        //     MouseArea {
-                        //         anchors.fill: parent
-                        //         onClicked: configurationController.remove(index)
-                        //     }
-                        // }
+                        Image {
+                            id: imageRemove
+                            source: DsaResources.iconTrash
+                            height: parent.height
+                            width: model.CanDelete ? parent.height : 0
+                            anchors {
+                                right: parent.right
+                                verticalCenter: parent.verticalCenter
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    configurationDialogConfirmRemove.configurationName = model.Name
+                                    configurationDialogConfirmRemove.alsoRemoveEntry = !model.Downloaded
+                                    var msg = "Remove '" + model.Name + "' " + (model.Downloaded ? "files from the device?" : "from the list?");
+                                    configurationDialogConfirmRemove.confirmationMessage = msg;
+                                    configurationDialogConfirmRemove.open();
+                                }
+                            }
+                        }
                     }
                 }
                 Label {
@@ -434,6 +448,35 @@ Rectangle {
                     spacing: 2 * scaleFactor
                     model: configurationController.configurations
                     delegate: configurationListItemDelegate
+                }
+
+                Rectangle {
+                    color: Material.accent
+                    radius: 5 * scaleFactor
+                    height: 40 * scaleFactor
+                    width: height
+                    anchors {
+                        right: parent.right
+                        bottom: parent.bottom
+                    }
+                    Image {
+                        id: imageAddConfiguration
+                        source: "qrc:/Resources/icons/xhdpi/ic_menu_add_dark_d.png"
+                        height: parent.height - 5 * scaleFactor
+                        width: parent.width - 5 * scaleFactor
+                        anchors {
+                            verticalCenter: parent.verticalCenter
+                            horizontalCenter: parent.horizontalCenter
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                toolRect.state = "add configuration";
+                                drawer.open();
+                            }
+                        }
+                    }
                 }
             }
 
@@ -464,5 +507,30 @@ Rectangle {
         onClicked: {
             optionsRoot.visible = false;
         }
+    }
+
+    Dialog {
+        id: configurationDialogConfirmRemove
+        anchors.centerIn: parent
+        title: "Confirm Remove"
+        standardButtons: Dialog.Yes | Dialog.No
+        property alias confirmationMessage: configurationDialogLabel.text
+        property string configurationName: ""
+        property bool alsoRemoveEntry: false
+        Label {
+            id: configurationDialogLabel
+            font {
+                pixelSize: 12 * scaleFactor
+                family: DsaStyles.fontFamily
+            }
+            wrapMode: Text.Wrap
+            width: parent.width
+        }
+
+        onAccepted: configurationController.remove(configurationName, alsoRemoveEntry);
+    }
+
+    AuthenticationView {
+        anchors.centerIn: parent
     }
 }

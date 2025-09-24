@@ -9,63 +9,65 @@
 	<key>CFBundleGetInfoString</key>
 	<string>ArcGIS</string>
 	<key>CFBundleIcons</key>
-    <dict>
-       <key>CFBundlePrimaryIcon</key>
-       <dict>
-           <key>CFBundleIconFiles</key>
-           <array>
-               <string>Icon-29.png</string>
-               <string>Icon-40.png</string>
-               <string>Icon-58.png</string>
-               <string>Icon-60.png</string>
-               <string>Icon-76.png</string>
-               <string>Icon-80.png</string>
-               <string>Icon-87.png</string>
-               <string>Icon-120.png</string>
-               <string>Icon-152.png</string>
-               <string>Icon-167.png</string>
-               <string>Icon-180.png</string>
-               <string>Icon-512.png</string>
-               <string>Icon-1024.png</string>
-           </array>
-       </dict>
-    </dict>
-    <key>CFBundleIcons~ipad</key>
-    <dict>
-       <key>CFBundlePrimaryIcon</key>
-       <dict>
-           <key>CFBundleIconFiles</key>
-           <array>
-               <string>Icon-29.png</string>
-               <string>Icon-40.png</string>
-               <string>Icon-58.png</string>
-               <string>Icon-60.png</string>
-               <string>Icon-76.png</string>
-               <string>Icon-80.png</string>
-               <string>Icon-87.png</string>
-               <string>Icon-120.png</string>
-               <string>Icon-152.png</string>
-               <string>Icon-167.png</string>
-               <string>Icon-180.png</string>
-               <string>Icon-512.png</string>
-               <string>Icon-1024.png</string>
-           </array>
-       </dict>
-    </dict>
+	<dict>
+		<key>CFBundlePrimaryIcon</key>
+		<dict>
+			<key>CFBundleIconFiles</key>
+			<array>
+				<string>Icon-29.png</string>
+				<string>Icon-40.png</string>
+				<string>Icon-58.png</string>
+				<string>Icon-60.png</string>
+				<string>Icon-76.png</string>
+				<string>Icon-80.png</string>
+				<string>Icon-87.png</string>
+				<string>Icon-120.png</string>
+				<string>Icon-152.png</string>
+				<string>Icon-167.png</string>
+				<string>Icon-180.png</string>
+				<string>Icon-512.png</string>
+				<string>Icon-1024.png</string>
+			</array>
+		</dict>
+	</dict>
+	<key>CFBundleIcons~ipad</key>
+	<dict>
+		<key>CFBundlePrimaryIcon</key>
+		<dict>
+			<key>CFBundleIconFiles</key>
+			<array>
+				<string>Icon-29.png</string>
+				<string>Icon-40.png</string>
+				<string>Icon-58.png</string>
+				<string>Icon-60.png</string>
+				<string>Icon-76.png</string>
+				<string>Icon-80.png</string>
+				<string>Icon-87.png</string>
+				<string>Icon-120.png</string>
+				<string>Icon-152.png</string>
+				<string>Icon-167.png</string>
+				<string>Icon-180.png</string>
+				<string>Icon-512.png</string>
+				<string>Icon-1024.png</string>
+			</array>
+		</dict>
+	</dict>
 	<key>CFBundleIdentifier</key>
-  <string>${PRODUCT_BUNDLE_IDENTIFIER}</string>
+	<string>${PRODUCT_BUNDLE_IDENTIFIER}</string>
 	<key>CFBundleName</key>
 	<string>${PRODUCT_NAME}</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-  <string>1.1.6</string>
+	<string>1.1.6</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-  <string>1.1.6</string>
+	<string>1.1.6</string>
 	<key>NOTE</key>
 	<string>Built with ArcGIS Runtime SDK for Qt.</string>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
 	<key>UIFileSharingEnabled</key>
 	<string>YES</string>
 	<key>UIRequiresPersistentWiFi</key>
@@ -93,6 +95,6 @@
 	<key>UIRequiresFullScreen</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
-    <string>LaunchScreen</string>
+	<string>LaunchScreen</string>
 </dict>
 </plist>

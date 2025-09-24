@@ -221,7 +221,7 @@ GraphicListModel* FollowPositionController::locationGraphicsModel() const
     if (!candidateOverlay)
       continue;
 
-    if (candidateOverlay->overlayId() != AppConstants::LAYER_NAME_SCENEVIEW_LOCATION)
+    if (candidateOverlay->overlayId() != AppConstants::PROPERTYNAME_LAYER_NAME_SCENEVIEW_LOCATION)
       continue;
 
     return candidateOverlay->graphics();

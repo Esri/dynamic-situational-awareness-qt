@@ -57,5 +57,6 @@
         <file>ObservationReportObservedTimePage.qml</file>
         <file>DsaYesNoDialog.qml</file>
         <file>OpenSceneTool.qml</file>
+        <file>AddConfigurationTool.qml</file>
     </qresource>
 </RCC>

@@ -363,7 +363,7 @@ Test case 4: Go to position
   - [ ] The grid color should change to light
 - Reopen the settings panel again
 - Set the Grid Color Scheme to "Colors", then close the panel
-  - [ ] The grid color should turn into blue
+  - [ ] The grid color should change to blue
 
 # 4. Message Feeds
 ## Broadcast Current Location

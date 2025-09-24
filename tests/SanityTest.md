@@ -657,7 +657,7 @@ Test 5: non-DrapedFlat surface placement behavior
 - Start the DSA app with `DefaultElevationSource` pointing to a non-existent or invalid source. The app does not crash.
 - After adding a valid elevation source, and  unchecking 'Use GPS for current elevation display' in Settings, the app displays the elevation in the location text area.
 - The `DefaultElevationSource` in DsaAppConfig.json will be updated to use the selection made.
-- Update the `DefaultElevationSource` to a invalid path, location text area will either have 'Elevation Unavailable' or the last value that was set by the GPS feed.
+- Update the `DefaultElevationSource` to an invalid path, location text area will either have 'Elevation Unavailable' or the last value that was set by the GPS feed.
 
 ## Settings
 ## App Configuration

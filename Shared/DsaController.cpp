@@ -119,6 +119,9 @@ DsaController::DsaController(QObject* parent):
     updateInitialLocationOnSceneChange(firstLoad);
     firstLoad = false;
   });
+
+  Q_ASSERT(s_instance == nullptr); // there should never be more than one DsaController created
+  s_instance = this;
 }
 
 /*!
@@ -311,7 +314,8 @@ void DsaController::resetToDefaultScene()
 
   // create scene
   Scene* newScene = new Scene(this);
-  newScene->setInitialViewpoint(viewpointFromJson(defaultViewpoint()));
+  if (const auto initialViewpoint = readInitialLocation(); !initialViewpoint.isEmpty())
+    newScene->setInitialViewpoint(initialViewpoint);
 
   // set on sceneview
   ToolResourceProvider::instance()->setScene(newScene);
@@ -337,6 +341,11 @@ void DsaController::resetToDefaultScene()
   onPropertyChanged(AppConstants::CURRENTSCENE_PROPERTYNAME, "");
   onPropertyChanged(AppConstants::LAYERS_PROPERTYNAME, QJsonArray().toVariantList());
   m_cacheManager->toolInitProperties(m_dsaSettings);
+}
+
+const DsaController* DsaController::instance()
+{
+  return s_instance;
 }
 
 /*!
@@ -558,7 +567,7 @@ void DsaController::writeInitialLocation(const Viewpoint& viewpoint)
   m_dsaSettings[AppConstants::INITIALLOCATION_PROPERTYNAME] = initialLocationJson.toVariantMap();
 }
 
-Viewpoint DsaController::readInitialLocation()
+Viewpoint DsaController::readInitialLocation() const
 {
   return viewpointFromJson(m_dsaSettings[AppConstants::INITIALLOCATION_PROPERTYNAME].toJsonObject());
 }

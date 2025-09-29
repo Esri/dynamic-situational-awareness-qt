@@ -45,13 +45,13 @@ class ContextMenuController : public AbstractTool
   Q_PROPERTY(QString resultTitle READ resultTitle NOTIFY resultTitleChanged)
 
 public:
-  static const QString COORDINATES_OPTION;
-  static const QString ELEVATION_OPTION;
-  static const QString FOLLOW_OPTION;
-  static const QString IDENTIFY_OPTION;
-  static const QString LINE_OF_SIGHT_OPTION;
-  static const QString VIEWSHED_OPTION;
-  static const QString OBSERVATION_REPORT_OPTION;
+  inline static const QString OPTION_COORDINATES = QStringLiteral("Coordinates");
+  inline static const QString OPTION_ELEVATION = QStringLiteral("Elevation");
+  inline static const QString OPTION_FOLLOW = QStringLiteral("Follow");
+  inline static const QString OPTION_IDENTIFY = QStringLiteral("Identify");
+  inline static const QString OPTION_LINE_OF_SIGHT = QStringLiteral("Line of sight");
+  inline static const QString OPTION_VIEWSHED = QStringLiteral("Viewshed");
+  inline static const QString OPTION_OBSERVATION_REPORT = QStringLiteral("Observation");
 
   explicit ContextMenuController(QObject* parent = nullptr);
   ~ContextMenuController();

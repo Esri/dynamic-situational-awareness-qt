@@ -22,14 +22,22 @@
 #include <QMouseEvent>
 #include <QObject>
 
+// C++ API headers
+#include "Popup.h"
+
 // DSA headers
 #include "AbstractTool.h"
+
+// STL headers
+#include <memory>
+#include <vector>
+
 
 namespace Esri::ArcGISRuntime {
   class GeoElement;
   class IdentifyGraphicsOverlayResult;
   class IdentifyLayerResult;
-  class PopupManager;
+  class Popup;
 }
 
 namespace Dsa {
@@ -38,8 +46,9 @@ class IdentifyController : public AbstractTool
 {
   Q_OBJECT
 
-  Q_PROPERTY(bool busy READ busy NOTIFY busyChanged)
-  Q_PROPERTY(QVariantList popupManagers READ popupManagers NOTIFY popupManagersChanged)
+  Q_PROPERTY(Esri::ArcGISRuntime::Popup* popup READ popup NOTIFY popupChanged)
+  Q_PROPERTY(bool canNext READ canNext NOTIFY popupChanged)
+  Q_PROPERTY(bool canPrev READ canPrev NOTIFY popupChanged)
 
 public:
 
@@ -48,27 +57,22 @@ public:
 
   QString toolName() const override;
 
-  void setActive(bool active) override;
-
-  bool busy() const;
-  QVariantList popupManagers() const;
-
-  void showPopup(Esri::ArcGISRuntime::GeoElement* geoElement, const QString& popupTitle);
   void showPopups(const QHash<QString, QList<Esri::ArcGISRuntime::GeoElement*>>& geoElementsByTitle);
-
-private slots:
-  void onMouseClicked(QMouseEvent& event);
+  Q_INVOKABLE void nextPopup();
+  Q_INVOKABLE void prevPopup();
 
 signals:
-  void busyChanged();
-  void popupManagersChanged();
+  void popupChanged();
 
 private:
   bool addGeoElementPopup(Esri::ArcGISRuntime::GeoElement* geoElement, const QString& popupTitle);
+  Esri::ArcGISRuntime::Popup* popup() const;
+  bool canNext() const;
+  bool canPrev() const;
 
-  bool m_isBusy = false;
   double m_tolerance = 5.0;
-  QList<Esri::ArcGISRuntime::PopupManager*> m_popupManagers;
+  size_t m_currentPopup = -1;
+  std::vector<std::unique_ptr<Esri::ArcGISRuntime::Popup>> m_popups;
 };
 
 // some shortcuts for working with multiple identify operation futures in a single 'QtFuture::whenAll' handler

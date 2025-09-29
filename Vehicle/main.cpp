@@ -19,7 +19,6 @@
 #include "pch.hpp"
 
 // C++ API headers
-#include "PopupManager.h"
 #include "SceneQuickView.h"
 
 // Qt headers
@@ -110,7 +109,6 @@ int main(int argc, char *argv[])
 
   // Register the map view for QML
   qmlRegisterType<SceneQuickView>("Esri.ArcGISRuntime.OpenSourceApps.Vehicle", 1, 1, "SceneView");
-  qRegisterMetaType<PopupManager*>("PopupManager*");
 
   // Register the Vehicle (QQuickItem) for QML
   qmlRegisterType<Dsa::Vehicle::Vehicle>("Esri.ArcGISRuntime.OpenSourceApps.Vehicle", 1, 1, "Vehicle");

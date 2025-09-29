@@ -98,15 +98,15 @@ void IdentifyController::prevPopup()
 
 bool isObjectIdFieldName(QStringView fieldName)
 {
-  static const std::vector<QString> names {
+  static const std::array<QStringView, 3> names{
     QStringLiteral("OBJECTID"),
     QStringLiteral("FID"),
     QStringLiteral("OID"),
   };
 
-  return std::find_if(std::cbegin(names), std::cend(names), [&](QStringView name)
+  return std::find_if(std::cbegin(names), std::cend(names), [fieldName](QStringView name)
   {
-    return name.compare(fieldName, Qt::CaseInsensitive);
+    return fieldName.compare(name, Qt::CaseInsensitive) == 0;
   }) != std::cend(names);
 }
 

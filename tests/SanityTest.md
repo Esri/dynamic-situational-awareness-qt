@@ -592,7 +592,65 @@ Test 5: Manually add layer
 - It should add the markup as a layer
 - Close and reopen the app, and the markup should persist
 
+# 8. Ability to download and manage custom DSA packages
+- Navigate to Settings > Configurations.
+- Click the ➕ icon to add a custom configuration.
+- Under Resource Type, choose one of the following options to add a custom data package:
+  1. File Resource – Provide a local file path to the ZIP file.
+  2. Web Resource – Provide a URL pointing to the ZIP file.
+  3. Portal Item – Use an Enterprise or Online item endpoint URL that contains a ZIP file.
 
+Test 1: Valid ZIP File with Config File
+- Select any Resource Type.
+- Enter a name under Name for the configuration.
+- Provide a valid URL or file path to a ZIP file containing a valid DsaAppConfig.json file.
+- Click the Download icon.
+  - [ ] The data downloads to the default data path.
+  - [ ] You can switch between packages.
+- Click the Delete icon on the package.
+  - [ ] The data is deleted from the default location.
+  - [ ] The download icon appears again.
+- Click the Delete icon once more.
+  - [ ] The package is removed from the configuration list.
+
+Test 2: Valid ZIP File Without Config File
+- Select any Resource Type.
+- Enter a name under Name for the configuration.
+- Provide a URL or file path to a ZIP file that does not contain DsaAppConfig.json.
+- Click the Download icon.
+  - [ ] A popup appears: DsaAppConfig.json not found in the ZIP file.
+  - [ ] Click No on the popup.
+  - [ ] The package remains in the list.
+- Click the Download icon again.
+  - [ ] Click Yes on the popup.
+  - [ ] The package is removed from the list.
+
+Test 3: Invalid ZIP File
+- Select any Resource Type.
+- Rename a non-ZIP file (e.g. .txt) to .zip.
+- Enter a name under Name for the configuration.
+- Provide the path or URL to the renamed file.
+- Click the Download icon.
+  - [ ] A popup appears: Failed to extract the configuration ZIP.
+  - [ ] Click Yes on the popup.
+  - [ ] The package is removed from the list.
+
+Test 4: Valid ZIP File with Different Extension
+- Select any Resource Type.
+- Rename a valid ZIP file to use a different extension (e.g. .nope).
+- Enter a name under Name for the configuration.
+- Provide the URL or file path.
+- Click the Download icon.
+  - [ ] The data should still download to the default data path.
+
+Test 5: Invalid URL
+- Select any Resource Type.
+- Enter a name under Name for the configuration.
+- Provide an invalid URL.
+- Click the Download icon.
+  - [ ] A popup appears: Failed to download the ZIP file.
+  - [ ] Click Yes on the popup.
+  - [ ] The package is removed from the list.
 
 
 # 9. App Config and Settings
@@ -658,6 +716,14 @@ Test 5: non-DrapedFlat surface placement behavior
 - After adding a valid elevation source, and  unchecking 'Use GPS for current elevation display' in Settings, the app displays the elevation in the location text area.
 - The `DefaultElevationSource` in DsaAppConfig.json will be updated to use the selection made.
 - Update the `DefaultElevationSource` to an invalid path, location text area will either have 'Elevation Unavailable' or the last value that was set by the GPS feed.
+
+## Initial location Behaviour
+- Modify the `InitialLocation` property in the config file
+- Start the DSA app.
+- Confirm that the map loads with the location specified in the updated `InitialLocation` property.
+- Zoom/pan the map.
+- Click the home button and the map should go back to the `InitialLocation` property set in the config file.
+- Confirm that the map resets to the location defined by the `InitialLocation` property in the config file.
 
 ## Settings
 ## App Configuration

@@ -530,7 +530,7 @@ Rectangle {
         onAccepted: configurationController.remove(configurationName, alsoRemoveEntry);
     }
 
-    AuthenticationView {
+    Authenticator {
         anchors.centerIn: parent
     }
 }

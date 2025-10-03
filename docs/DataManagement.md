@@ -1,3 +1,62 @@
+# Creating a zip file for use as a DSA 'Configuration'
+
+Zip files for custom configurations follow the same format as the sample data provided from Esri. As of version 2.1.0, the `Settings > Options` panel will allow you to download your own configurations. The Zip file format itself has no real restrictions on the structure or contents. However, the DSA application expects a specific arrangement of the files contained in the archive. The 'base' folders like 'OperationalData', 'BasemapData', etc must be directly at the root folder level. The zip must also contain a valid `DsaAppConfig.json` file at the root of the archive. The following steps can be followed to ensure the zip file is packaged so DSA can unpack it properly.
+- Navigate to the configuration folder in the file system browser
+![image](./images/dsa-data-management-create-zips-1.png)
+- Verify that your zip folder contains a valid `DsaAppConfig.json`
+![image](./images/dsa-data-management-create-zips-2.png)
+- From within the folder, select all the items, right click on the `DsaAppConfig.json` file and select `Compress` on Mac or `Send to > Compressed (zipped) folder` on Windows.
+![image](./images/dsa-data-management-create-zips-3.png)
+- The archive/zip that is created is now ready to be used with the DSA application. The name of the zip itself is not critical. It can be renamed to any valid file name.
+![image](./images/dsa-data-management-create-zips-4.png)
+
+# Using custom configurations on mobile platforms
+
+Using your own data within the DSA application can still be done manually for the most part when it comes to desktop platforms. However, working on a mobile device comes with a few challenges that make using your own data on iOS or Android a bit more cumbersome. With the 2.1.0 release, several improvements have been made that make managing data on mobile devices significantly simpler. Configuration zip files that have been created following the steps in the previous section can be downloaded to a device depending on what method works best for you. Here are some steps that can be used for each option that is available in the DSA application's Options panel.
+
+## File Resource
+
+Likely the simplest way to get your new data to your mobile device is to upload it to your organizations file sharing system or through a cloud resource such as Azure Storage, Amazon S3, OneDrive, Google Drive, Drop Box, etc. The DSA application supports accessing files that have been downloaded to the device's 'Downloads' folder on both Android and iOS through the 'File Resource' option in the 'Add Configuration' form. The steps are slightly different for each platform so we will step through them here.
+
+### iOS
+- Ensure the zip file you wish to use has been downloaded to your device. In our example here, the file has been downloaded to the 'Downloads' folder from OneDrive's web interface in Safari.
+- From the DSA application, select the 'Settings' from the gear icon menu, go to the 'Options' panel and click the blue plus button to add a new Configuration.
+- Select 'File Resource' as the 'Resource Type' and enter a name for the configuration. The name needs to be a valid file system folder name.
+
+<img src="./images/dsa-data-management-add-ios-1.png" width="300" />
+
+- Click on the folder icon button to browse the file system. In this example, the file that will be used is in the 'Downloads' folder. Tap to open the 'Downloads' folder and tap-hold on the zip file to bring up the context menu. Tap 'Copy'.
+
+<img src="./images/dsa-data-management-add-ios-2.png" width="300" />
+<img src="./images/dsa-data-management-add-ios-3.png" width="300" />
+
+- Navigate back to the previous list of folders and select the application data folder for the DSA app. It should have the DSA application icon symbol on it. In this example it is named 'DSA_H_Qt'. Tap to open it, then tap-hold within the main folder content area to bring up the context menu. If you wish to leave the original copy (in this example in Downloads), click 'Paste'. If not, click 'Move Item Here'.
+
+<img src="./images/dsa-data-management-add-ios-4.png" width="300" />
+
+- Now that the zip file is within the DSA application's folder, it can be selected as the file for your new configuration. Tap the new file to select it.
+
+<img src="./images/dsa-data-management-add-ios-5.png" width="300" />
+
+- Click the <img src="../Shared/Resources/icons/xhdpi/ic_menu_sendmap_dark_d.png" style="transform:rotate(180deg);" height="32" /> icon to download the zip to the device. Once the configuration has been unzipped, you can select the new configuration and reload the application to see the changes. If you are working with large configurations and need to make as much room on your device as possible, you can actually remove the copy of the zip file you have in the DSA app folder. You are also not required to keep the file that was originally downloaded. The DSA app keeps the unzipped file contents internally and does not depend on any of the original zip files. However, if you do remove the zips, you will not be able to restore them from the UI if you have deleted them with the <img src="../Shared/Resources/icons/xhdpi/ic_menu_trash_dark_d.png" height="32" /> button.
+
+<img src="./images/dsa-data-management-add-ios-6.png" width="300" />
+
+## ArcGIS Online/Portal Item
+- In your portal/org, from your 'Content' page, click 'New Item' and choose 'Application' as the type.
+- For the 'Application Type' select the 'Desktop' option
+- The 'URL' for the new item is not critical. But if you have a valid organization url you want to associate with it you can put it here.
+- In the 'File' input, click the 'Browse' button and select the zip file that you have created for DSA. Click 'Next'.
+- The next page you can enter any properties to describe the item and click 'Save'
+- Once the upload completes and the item has been created, copy the URL directly from the browser's address bar. The url should have the following format: https://your_organization.maps.arcgis.com/home/item.html?id=51ba17fb287f49e8a634e174bed7af2b
+- You can then copy this url into the form in the DSA application shown below. You must also give the configuration a name. The name can be whatever you like. But it must be a valid file system name for the system you are running the application on.
+
+![image](./images/dsa-data-management-add-portal-item.png)
+- Click 'Add' to finish adding this zip file to the list.
+- You should will see a new entry in the list on the Configurations tab of the Options panel.
+- Click the <img src="../Shared/Resources/icons/xhdpi/ic_menu_sendmap_dark_d.png" style="transform:rotate(180deg);" height="32" /> icon to download the zip to the device.
+- Once downloading and unzipping is complete, select the new configuration and click the 'Close' button. The next time you load the app, your new data will be used for configuring the DSA application.
+
 # Migrating DSA data used prior to the 2.0.0 release
 
 The DSA application has a base file structure at which the mapping and configuration data is expected to exist. Prior to the 2.0.0 release of DSA, this location was <%home%>/ArcGIS/Runtime/Data/DSA. At the 2.0.0 release, a new feature was introduced in order to give users the ability to manage multiple configurations for the application. For example, you may wish to use the Esri provided dataset. But you may also have data for a relevant geographic location that covers your area of operations. Prior to the introduction of 'Configurations' the user would need to shutdown the application and copy, move or strategically rename folders in order to load a new set of data and application settings. The Configuration feature adds a new folder level at the very bottom of the structure to allow users to host more than 1 set of DSA data at a time.

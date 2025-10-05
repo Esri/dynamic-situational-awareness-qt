@@ -1,4 +1,9 @@
-# Creating a zip file for use as a DSA 'Configuration'
+**Contents**
+[Creating a configuration zip file](#creating-a-configuration-zip-file) | [Using custom configurations on mobile platforms](#using-custom-configurations-on-mobile-platforms) | [Migrating DSA data used prior to the 2.0.0 release](#migrating-dsa-data-used-prior-to-the-200-release)
+
+The purpose of this section is to provide instructions on how to manage and use data that the DSA application requires or can make use of from within the file system.
+
+# Creating a configuration zip file
 
 Zip files for custom configurations follow the same format as the sample data provided from Esri. As of version 2.1.0, the `Settings > Options` panel will allow you to download your own configurations. The Zip file format itself has no real restrictions on the structure or contents. However, the DSA application expects a specific arrangement of the files contained in the archive. The 'base' folders like 'OperationalData', 'BasemapData', etc must be directly at the root folder level. The zip must also contain a valid `DsaAppConfig.json` file at the root of the archive. The following steps can be followed to ensure the zip file is packaged so DSA can unpack it properly.
 - Navigate to the configuration folder in the file system browser
@@ -38,9 +43,13 @@ Likely the simplest way to get your new data to your mobile device is to upload 
 
 <img src="./images/dsa-data-management-add-ios-5.png" width="300" />
 
-- Click the <img src="../Shared/Resources/icons/xhdpi/ic_menu_sendmap_dark_d.png" style="transform:rotate(180deg);" height="32" /> icon to download the zip to the device. Once the configuration has been unzipped, you can select the new configuration and reload the application to see the changes. If you are working with large configurations and need to make as much room on your device as possible, you can actually remove the copy of the zip file you have in the DSA app folder. You are also not required to keep the file that was originally downloaded. The DSA app keeps the unzipped file contents internally and does not depend on any of the original zip files. However, if you do remove the zips, you will not be able to restore them from the UI if you have deleted them with the <img src="../Shared/Resources/icons/xhdpi/ic_menu_trash_dark_d.png" height="32" /> button.
+- Click the <img src="../Shared/Resources/icons/xhdpi/ic_menu_sendmap_dark_d.png" style="transform:rotate(180deg);" height="32" /> icon to download the zip to the device. Once the configuration has been unzipped, you can select the new configuration and reload the application to see the changes. If you are working with large configurations and need to make as much room on your device as possible, you can actually remove the copy of the zip file you have in the DSA app folder. You are also not required to keep the file that was originally downloaded. The DSA app keeps the unzipped file contents internally and does not depend on any of the original zip files. However, if you do remove the zips, you will not be able to restore them from the UI if you have deleted them with the <img src="../Shared/Resources/icons/xhdpi/ic_menu_trash_dark_d.png" height="32" /> button. You will need to repeat the download+copy procedure.
 
 <img src="./images/dsa-data-management-add-ios-6.png" width="300" />
+
+### Android
+
+- The process for creating a new configuration from a downloaded zip file on Android is the same as iOS. The only difference is that you are not required to 'Copy' the zip file from where you have downloaded it into the 'DSA_H_Qt' folder. You can browse to the 'Downloads' folder and tap the file directly. Android applications have the ability to share file resources from outside their application folder. The same details apply for saving space on Android devices. DSA does not require you to keep the original copy. But if you remove it after you have unpacked it, you will not be able to restore it without downloading again.
 
 ## ArcGIS Online/Portal Item
 - In your portal/org, from your 'Content' page, click 'New Item' and choose 'Application' as the type.

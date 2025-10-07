@@ -49,7 +49,9 @@ Item {
             id: visibleCheckBox
             anchors.verticalCenter: parent.verticalCenter
             checked: itemChecked
-            onClicked: itemChecked = checked;
+            onClicked: {
+                itemChecked = visibleCheckBox.checked;
+            }
         }
 
         Rectangle {

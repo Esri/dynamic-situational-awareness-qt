@@ -74,7 +74,9 @@ DsaPanel {
             mainText: name && name !== "" ? name : toolController.alternateName(index)
             mainTextColor:  spatialReferenceOk ? Material.foreground : "red"
             mainTextItalic: !spatialReferenceOk
-            onItemCheckedChanged: layerVisible = itemChecked
+            onItemCheckedChanged: {
+                model.layerVisible = itemChecked
+            }
 
             Image {
                 anchors {

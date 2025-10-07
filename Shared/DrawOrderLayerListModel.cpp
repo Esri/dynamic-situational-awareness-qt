@@ -39,15 +39,10 @@ namespace Dsa {
   \brief Constructor for a model taking an optional \a parent.
  */
 
-DrawOrderLayerListModel::DrawOrderLayerListModel(LayerListModel* layerListModel, QObject* parent):
+DrawOrderLayerListModel::DrawOrderLayerListModel(QObject* parent):
   QSortFilterProxyModel(parent)
 {
-  setSourceModel(layerListModel);
-
   sort(0);
-
-  if (layerListModel)
-    connect(layerListModel, &QAbstractItemModel::dataChanged, this, [this](const QModelIndex&, const QModelIndex&) { invalidate(); });
 }
 
 /*!

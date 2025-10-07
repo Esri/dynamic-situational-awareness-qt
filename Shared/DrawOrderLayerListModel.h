@@ -20,10 +20,6 @@
 // Qt headers
 #include <QSortFilterProxyModel>
 
-namespace Esri::ArcGISRuntime {
-class LayerListModel;
-}
-
 namespace Dsa {
 
 class DrawOrderLayerListModel : public QSortFilterProxyModel
@@ -31,7 +27,7 @@ class DrawOrderLayerListModel : public QSortFilterProxyModel
   Q_OBJECT
 
 public:
-  DrawOrderLayerListModel(Esri::ArcGISRuntime::LayerListModel* layerListModel, QObject* parent = nullptr);
+  DrawOrderLayerListModel(QObject* parent = nullptr);
   ~DrawOrderLayerListModel();
 
 protected:

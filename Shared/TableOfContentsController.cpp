@@ -347,7 +347,14 @@ void TableOfContentsController::updateLayerListModel()
   }
 
   if (m_layerListModel)
-    m_drawOrderModel = new DrawOrderLayerListModel(m_layerListModel, this);
+  {
+    m_drawOrderModel = new DrawOrderLayerListModel(this);
+    m_drawOrderModel->setSourceModel(m_layerListModel);
+    connect(m_layerListModel, &LayerListModel::dataChanged, this, [this](const QModelIndex&, const QModelIndex&)
+    {
+      m_drawOrderModel->invalidate();
+    });
+  }
 
   emit layerListModelChanged();
 }

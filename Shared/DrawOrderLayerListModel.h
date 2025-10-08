@@ -27,7 +27,7 @@ class DrawOrderLayerListModel : public QSortFilterProxyModel
   Q_OBJECT
 
 public:
-  DrawOrderLayerListModel(QObject* parent = nullptr);
+  explicit DrawOrderLayerListModel(QObject* parent = nullptr);
   ~DrawOrderLayerListModel();
 
 protected:

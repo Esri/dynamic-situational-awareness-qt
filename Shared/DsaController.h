@@ -68,7 +68,6 @@ private:
   void setupConfig();
   void createDefaultSettings();
   void saveSettings();
-  void writeDefaultLocalDataPaths();
   void writeDefaultConditions();
   void writeDefaultMessageFeeds();
   bool isConflictingTool(const QString& toolName) const;

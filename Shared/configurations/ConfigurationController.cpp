@@ -192,8 +192,7 @@ bool ConfigurationController::updateExtractedConfigurationFile(const QDir& confi
 
   // re-write the entire document with the old root directory replaced by the extracted location
   QString configString{configBytes};
-  const QString rootDataDirectoryNew{configurationDirectory.absolutePath()};
-  const QString configStringUpdated{configString.replace(rootDataDirectoryCleaned, rootDataDirectoryNew)};
+  const QString configStringUpdated{configString.replace(rootDataDirectoryCleaned, DsaUtility::FILE_PATH_CURRENT_DIRECTORY)};
   dsaAppConfigFile.write(configStringUpdated.toUtf8());
   return true;
 }

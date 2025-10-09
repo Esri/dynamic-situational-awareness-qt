@@ -184,7 +184,10 @@ bool ConfigurationController::updateExtractedConfigurationFile(const QDir& confi
     return false;
 
   // clean the path to make sure no trailing slashes are in the replacement string
+  // if the root directory value is anything other than the symbolic reference to the current directory '.'
   auto rootDataDirectoryCleaned = QDir::cleanPath(rootDataDirectoryVar.toString());
+  if (rootDataDirectoryCleaned == DsaUtility::FILE_PATH_CURRENT_DIRECTORY)
+    return true;
 
   // overwrite the app config file with the new json doc
   if (!dsaAppConfigFile.open(QIODevice::WriteOnly | QIODevice::Truncate))

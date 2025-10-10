@@ -98,16 +98,15 @@ void IdentifyController::prevPopup()
 
 bool isObjectIdFieldName(QStringView fieldName)
 {
-  static const std::array<QStringView, 3> names{
-    QStringLiteral("OBJECTID"),
-    QStringLiteral("FID"),
-    QStringLiteral("OID"),
+  static constexpr std::array<std::string_view, 3> oidFieldNames{
+    "OBJECTID",
+    "FID",
+    "OID",
   };
+  static constexpr auto cbegin = std::cbegin(oidFieldNames);
+  static constexpr auto cend = std::cend(oidFieldNames);
 
-  return std::find_if(std::cbegin(names), std::cend(names), [fieldName](QStringView name)
-  {
-    return fieldName.compare(name, Qt::CaseInsensitive) == 0;
-  }) != std::cend(names);
+  return std::any_of(cbegin, cend, [=](auto oidFieldName) { return fieldName.compare(oidFieldName, Qt::CaseInsensitive) == 0; });
 }
 
 bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QString& popupTitle)

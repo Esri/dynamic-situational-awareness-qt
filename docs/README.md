@@ -1,48 +1,7 @@
 **Contents**
 
-<!-- MDTOC maxdepth:6 firsth1:1 numbering:0 flatten:0 bullets:1 updateOnSave:1 -->
-
 [Overview](#dynamic-situational-awareness-dsa) | [Tools and settings](#overview) | [Workflows and best practices](#workflows-and-best-practices) | [App architecture](#app-architecture)     
-[Get the DSA apps](#get-the-dsa-apps) | [App configuration settings](#app-configuration-settings) | [Add your own local data](#add-your-own-local-data) | [Message simulator](#message-simulator)    
-
-<!---- [Overview](#dynamic-situational-awareness-dsa)   
-   - [What is DSA?](#what-is-dsa)   
-   - [Capabilities](#capabilities)   
-   - [Supported platforms](#supported-platforms)   
-- [Tools and settings](#overview)   
-<!---    - [Tools](#tools)   
-     - [Navigation toolbar](#navigation-toolbar)   
-      - [Compass](#compass)   
-      - [Map context menu](#map-context-menu)   
-      - [Tool categories](#tool-categories)   
-   - [Settings panel](#settings-panel)   
-   - [Map tools](#map-tools)   
-      - [Convert X/Y](#convert-xy)   
-      - [Feeds](#feeds)   
-      - [Add data](#add-data)   
-      - [Overlays](#overlays)   
-      - [Basemaps](#basemaps)    
-- [Workflows and best practices](#workflows-and-best-practices)   
-<!---   - [Real-time feeds](#real-time-feeds)   
-   - [Exploratory visual analysis](#exploratory-visual-analysis)   
-      - [Viewshed](#viewshed)   
-      - [Line of sight](#line-of-sight)   
-   - [Alerts and conditions](#alerts-and-conditions)   
-      - [New alert notification](#new-alert-notification)   
-      - [Alerts view](#alerts-view)   
-      - [Conditions](#conditions)   
-   - [Collaboration](#collaboration)   
-      - [Create report tools](#create-report-tools)   
-      - [Observation report](#observation-report)   
-      - [Markup tools](#markup-tools)    
-- [App architecture](#app-architecture)   
-- [Get the DSA apps](#get-the-dsa-apps)   
-- [App configuration settings](#app-configuration-settings)   
-- [Add your own local data](#add-your-own-local-data)   
-- [Message simulator](#message-simulator)   --->
-
-<!-- /MDTOC -->
----
+[Get the DSA apps](#get-the-dsa-apps) | [App configuration settings](#app-configuration-settings) | [Add your own local data](#add-your-own-local-data) | [Message simulator](#message-simulator)
 
 # Dynamic Situational Awareness (DSA)
 
@@ -450,8 +409,12 @@ The following lists some of the app configuration settings that you can change.
 | ElevationDirectory | `**/ElevationData` | Location to search for DEMs and LERC encoded TPK |
 | ResourceDirectory | `**/ResourceData` | Location to search for images, style files, and other similar files used by the app |
 | SimulationDirectory | `**/SimulationData` | Location to search for GPX and Message Simulation files |
-| LocalDataPaths | `**`, `**/OperationalData` | Locations that the Add Local Data tool searches for GIS Data. This should be a comma-separated list. Folders are NOT recursively searched |
+| LocalDataPaths | `**/OperationalData` | Locations that the Add Local Data tool searches for GIS Data. This should be a comma-separated list. Folders are NOT recursively searched |
 | GpxFile | `**/SimulationData/MontereyMounted.gpx` | GPX file to use for simulating location |
+| GridColorScheme | `Light` | String, option for appearance of the grid lines `Light, Dark, Colors` |
+| GridVisible | `false` | Grid should be displayed on the secene |
+| CurrentLocationSurfacePlacement | `Relative` | String. Option for the current location symbol placement on the surface used in the scene `DrapedFlat, Relative`. If `DrapedFlat` the CurrentLocationZOffset setting is ignored
+| CurrentLocationZOffset | `10` | Number. An optional distance in meters to offset the current location symbol
 | DefaultBasemap | `Topographic` | Name of the TPK file to use as the basemap, without the .tpk file extension (not case sensitive) |
 | DefaultElevationSource | `**/ElevationData/CaDEM.tpk` | Default elevation source |
 | CurrentPackage | "" | String representing the path to a Mobile Scene Package (.mspk) file |
@@ -487,24 +450,17 @@ The default data directory should look like this:
 
 ```
 
-## Configure multiple app configurations using the DSA Configurations file
+### Packaging your data into a configuration zip file
 
-DSA also includes a file to allow you to save more than one configuration of the app. This is useful if you use DSA to demonstrate more than one area of interest, each with different data sources.  The DSA configuration file is located at `~/ArcGIS/Runtime/Data/DSA/DsaConfigurations.json`. If the file does not already exist when the app starts, it will be created automatically and will refer to the Default DSA data package, referenced in the section above.  
-
-To set up an additional 'Configuration' for DSA, create a folder with the desired name at the same level as the 'Default' configuration folder (i.e. "MyLocalData"). Place all your data in the new folder using the structure described in the section above. Update the **DsaConfiguration.json** file to include your new folder, as shown in the screenshot below. 
-
-Note: 
-- You do not need to provide a `url` value for this configuration
-- Be sure to add a comma to separate this from the Default configuration entity
-- If you want your configuration to be loaded on startup, set the `selected` value to `true` for your new item and set the Default entity's `selected` property to `false` (as shown in the highlighted section in the image below)
-
-![](./images/dsa-tool-configurations-setup.png)
-
-Once the DSA configuration file is updated and saved, the next time you open the app you will see the new configuration listed on the Configurations tab, which is part of the Settings page. Here, you can select which configuration you want activated by selecting it in the list. Changes are made to the DSA configuration file immediately, however, an app restart will be necessary to see the new app configuration reflected in the app. 
-
-
-
-
+Zip files for custom configurations follow the same format as the sample data provided from Esri. As of version 2.1.0, the `Settings > Options` panel will allow you to download your own configurations. The Zip file format itself has no real restrictions on the structure or contents. However, the DSA application expects a specific arrangement of the files contained in the archive. The 'base' folders like 'OperationalData', 'BasemapData', etc must be directly at the root folder level. The zip must also contain a valid `DsaAppConfig.json` file at the root of the archive. The following steps can be followed to ensure the zip file is packaged so DSA can unpack it properly.
+- Navigate to the configuration folder in the file system browser
+![image](./images/dsa-data-management-create-zips-1.png)
+- Verify that your zip folder contains a valid `DsaAppConfig.json`
+![image](./images/dsa-data-management-create-zips-2.png)
+- From within the folder, select all the items, right click on the `DsaAppConfig.json` file and select `Compress` on Mac or `Send to > Compressed (zipped) folder` on Windows.
+![image](./images/dsa-data-management-create-zips-3.png)
+- The archive/zip that is created is now ready to be used with the DSA application. The name of the zip itself is not critical. It can be renamed to any valid file name.
+![image](./images/dsa-data-management-create-zips-4.png)
 
 # Message simulator
 

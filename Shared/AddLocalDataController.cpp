@@ -99,9 +99,6 @@ AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
   AbstractTool(parent),
   m_localDataModel(new DataItemListModel(this))
 {
-  // add the base path to the string list
-  addPathToDirectoryList(".");
-
   // create file filter list
   m_fileFilterList = QStringList{allData(), rasterData(), geodatabaseData(),
       sceneLayerData(), tilePackageData(), shapefileData(), geopackageData(),

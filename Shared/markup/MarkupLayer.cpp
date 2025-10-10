@@ -1,3 +1,21 @@
+// COPYRIGHT 2025 ESRI
+// TRADE SECRETS: ESRI PROPRIETARY AND CONFIDENTIAL
+// Unpublished material - all rights reserved under the
+// Copyright Laws of the United States and applicable international
+// laws, treaties, and conventions.
+//
+// For additional information, contact:
+// Environmental Systems Research Institute, Inc.
+// Attn: Contracts and Legal Services Department
+// 380 New York Street
+// Redlands, California, 92373
+// USA
+//
+// email: contracts@esri.com
+/// \file MarkupLayer.cpp
+
+#include "pch.hpp"
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -15,7 +33,6 @@
  ******************************************************************************/
 
 // PCH header
-#include "pch.hpp"
 
 #include "MarkupLayer.h"
 
@@ -30,10 +47,13 @@
 #include "Graphic.h"
 #include "GraphicListModel.h"
 #include "GraphicsOverlay.h"
+#include "Point.h"
+#include "SceneView.h"
 #include "SimpleLineSymbol.h"
 #include "SimpleRenderer.h"
 #include "SpatialReference.h"
 #include "SymbolTypes.h"
+#include "ToolResourceProvider.h"
 
 // Qt headers
 #include <QFile>
@@ -60,8 +80,8 @@ namespace Dsa {
  */
 
 /*!
- \internal
- \brief Constructor that takes a \a featureCollection and an optional \a parent.
+  \internal
+  \brief Constructor that takes a \a featureCollection and an optional \a parent.
  */
 MarkupLayer::MarkupLayer(const QString& json, FeatureCollection* featureCollection, QObject* parent) :
   FeatureCollectionLayer(featureCollection, parent),
@@ -99,46 +119,46 @@ MarkupLayer::MarkupLayer(const QString& json, FeatureCollection* featureCollecti
 }
 
 /*!
- \brief Destructor
+  \brief Destructor
  */
 MarkupLayer::~MarkupLayer()
 {
 }
 
 /*!
- \brief Sets the layer path to \a path.
-*/
+  \brief Sets the layer path to \a path.
+ */
 void MarkupLayer::setPath(const QString& path)
 {
   m_path = path;
 }
 
 /*!
- \brief Returns the layer path.
-*/
+  \brief Returns the layer path.
+ */
 QString MarkupLayer::path() const
 {
   return m_path;
 }
 
 /*!
- \brief Returns the JSON string in \c .markup format.
-*/
+  \brief Returns the JSON string in \c .markup format.
+ */
 QString MarkupLayer::toJson() const
 {
   return m_json;
 }
 
 /*!
- \brief Returns the FeatureCollection used by this layer.
-*/
+  \brief Returns the FeatureCollection used by this layer.
+ */
 FeatureCollection* MarkupLayer::featureCollection()
 {
   return m_featureCollection;
 }
 
 /*!
- \brief Converts the input \a graphicsOverlay to \c .markup JSON.
+  \brief Converts the input \a graphicsOverlay to \c .markup JSON.
  */
 MarkupLayer* MarkupLayer::createFromGraphics(GraphicsOverlay* graphicsOverlay, const QString& authorName, QObject* parent)
 {
@@ -187,8 +207,8 @@ MarkupLayer* MarkupLayer::createFromGraphics(GraphicsOverlay* graphicsOverlay, c
 }
 
 /*!
- \brief Returns a MarkupLayer for the input \a json.
-*/
+  \brief Returns a MarkupLayer for the input \a json.
+ */
 MarkupLayer* MarkupLayer::fromJson(const QString& json, QObject* parent)
 {
   bool useZ = json.contains(R"("hasZ":true)");
@@ -210,8 +230,8 @@ MarkupLayer* MarkupLayer::fromJson(const QString& json, QObject* parent)
 }
 
 /*!
- \brief Creates a new MarkupLayer from a \a path to a \c .markup JSON file.
-*/
+  \brief Creates a new MarkupLayer from a \a path to a \c .markup JSON file.
+ */
 MarkupLayer* MarkupLayer::createFromPath(const QString& path, QObject* parent)
 {
   // Read the input file
@@ -229,8 +249,8 @@ MarkupLayer* MarkupLayer::createFromPath(const QString& path, QObject* parent)
 }
 
 /*!
- \brief Returns a list of colors to be used in the Markup tool.
-*/
+  \brief Returns a list of colors to be used in the Markup tool.
+ */
 QStringList MarkupLayer::colors()
 {
   return QStringList{QStringLiteral("#ff0000"), QStringLiteral("#ffd700"),
@@ -238,10 +258,9 @@ QStringList MarkupLayer::colors()
         QStringLiteral("#800080"), QStringLiteral("#ff00ff")};
 }
 
-
 /*!
   \brief Gets the unknown JSON of this object.
-*/
+ */
 QJsonObject MarkupLayer::unknownJson() const
 {
   return QJsonObject();
@@ -249,7 +268,7 @@ QJsonObject MarkupLayer::unknownJson() const
 
 /*!
   \brief Gets the unsupported JSON of this object.
-*/
+ */
 QJsonObject MarkupLayer::unsupportedJson() const
 {
   return QJsonObject();
@@ -257,7 +276,7 @@ QJsonObject MarkupLayer::unsupportedJson() const
 
 /*!
   \brief Gets the author of the Markup.
-*/
+ */
 QString MarkupLayer::author() const
 {
   return m_author;

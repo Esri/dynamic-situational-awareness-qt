@@ -1,3 +1,20 @@
+// COPYRIGHT 2025 ESRI
+// TRADE SECRETS: ESRI PROPRIETARY AND CONFIDENTIAL
+// Unpublished material - all rights reserved under the
+// Copyright Laws of the United States and applicable international
+// laws, treaties, and conventions.
+//
+// For additional information, contact:
+// Environmental Systems Research Institute, Inc.
+// Attn: Contracts and Legal Services Department
+// 380 New York Street
+// Redlands, California, 92373
+// USA
+//
+// email: contracts@esri.com
+/// \file MarkupBroadcast.cpp
+
+#include "pch.hpp"
 
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
@@ -16,13 +33,13 @@
  ******************************************************************************/
 
 // PCH header
-#include "pch.hpp"
 
 #include "MarkupBroadcast.h"
 
 // dsa app headers
 #include "DataListener.h"
 #include "DataSender.h"
+#include "ToolManager.h"
 
 // Qt headers
 #include <QDateTime>
@@ -55,7 +72,7 @@ const QString MarkupBroadcast::SHAREDBYKEY = QStringLiteral("sharedBy");
  */
 
 /*!
- \brief Constructor that takes an optional \a parent.
+  \brief Constructor that takes an optional \a parent.
  */
 MarkupBroadcast::MarkupBroadcast(QObject *parent) :
   AbstractTool(parent),
@@ -96,14 +113,14 @@ MarkupBroadcast::MarkupBroadcast(QObject *parent) :
 }
 
 /*!
- \brief Destructor
+  \brief Destructor
  */
 MarkupBroadcast::~MarkupBroadcast()
 {
 }
 
 /*!
- \brief Returns the tool's name
+  \brief Returns the tool's name
  */
 QString MarkupBroadcast::toolName() const
 {
@@ -111,7 +128,7 @@ QString MarkupBroadcast::toolName() const
 }
 
 /*!
- \brief Sets \a properties from the configuration file
+  \brief Sets \a properties from the configuration file
  */
 void MarkupBroadcast::toolInitProperties(const QVariantMap& properties)
 {
@@ -147,7 +164,7 @@ bool MarkupBroadcast::shouldSetProperties(const QString& propertyName)
 }
 
 /*!
-   \brief Broadcasts the markup JSON (\a json) over a UDP port.
+  \brief Broadcasts the markup JSON (\a json) over a UDP port.
  */
 void MarkupBroadcast::broadcastMarkup(const QString& json)
 {
@@ -158,7 +175,7 @@ void MarkupBroadcast::broadcastMarkup(const QString& json)
 }
 
 /*!
- \brief Updates the UDP Socket used for the DataSender.
+  \brief Updates the UDP Socket used for the DataSender.
  */
 void MarkupBroadcast::updateDataSender()
 {
@@ -171,7 +188,7 @@ void MarkupBroadcast::updateDataSender()
 }
 
 /*!
- \brief Updates the UDP Socket used for the DataListener.
+  \brief Updates the UDP Socket used for the DataListener.
  */
 void MarkupBroadcast::updateDataListener()
 {

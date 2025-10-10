@@ -1,3 +1,20 @@
+// COPYRIGHT 2025 ESRI
+// TRADE SECRETS: ESRI PROPRIETARY AND CONFIDENTIAL
+// Unpublished material - all rights reserved under the
+// Copyright Laws of the United States and applicable international
+// laws, treaties, and conventions.
+//
+// For additional information, contact:
+// Environmental Systems Research Institute, Inc.
+// Attn: Contracts and Legal Services Department
+// 380 New York Street
+// Redlands, California, 92373
+// USA
+//
+// email: contracts@esri.com
+/// \file GeoElementViewshed360.cpp
+
+#include "pch.hpp"
 
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
@@ -16,7 +33,6 @@
  ******************************************************************************/
 
 // PCH header
-#include "pch.hpp"
 
 #include "GeoElementViewshed360.h"
 
@@ -25,6 +41,7 @@
 // C++ API headers
 #include "AnalysisOverlay.h"
 #include "AttributeListModel.h"
+#include "GeoElement.h"
 #include "GeoElementViewshed.h"
 
 // STL headers
@@ -46,7 +63,7 @@ constexpr double c_defaultMaxDistance = 500.0;
   \brief A 360 degree viewshed centered upon a GeoElement.
 
   \sa Esri::ArcGISRuntime::GeoElement
-  */
+ */
 
 /*!
   \brief Constructor for a 360 degree viewshed centered upon a GeoElement.

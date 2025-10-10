@@ -1,3 +1,21 @@
+// COPYRIGHT 2025 ESRI
+// TRADE SECRETS: ESRI PROPRIETARY AND CONFIDENTIAL
+// Unpublished material - all rights reserved under the
+// Copyright Laws of the United States and applicable international
+// laws, treaties, and conventions.
+//
+// For additional information, contact:
+// Environmental Systems Research Institute, Inc.
+// Attn: Contracts and Legal Services Department
+// 380 New York Street
+// Redlands, California, 92373
+// USA
+//
+// email: contracts@esri.com
+/// \file OpenMobileScenePackageController.cpp
+
+#include "pch.hpp"
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -15,7 +33,6 @@
  ******************************************************************************/
 
 // PCH header
-#include "pch.hpp"
 
 #include "OpenMobileScenePackageController.h"
 
@@ -25,6 +42,7 @@
 #include "Item.h"
 #include "MapTypes.h"
 #include "MobileScenePackage.h"
+#include "ToolResourceProvider.h"
 #include "Scene.h"
 
 // Qt headers
@@ -412,7 +430,7 @@ QAbstractListModel* OpenMobileScenePackageController::packages() const
   \brief Indicates whether the user selected the scene or if it was the default.
 
   By default, the value is \c false.
-*/
+ */
 bool OpenMobileScenePackageController::userSelected() const
 {
   return m_userSelected;
@@ -518,8 +536,6 @@ bool OpenMobileScenePackageController::hasActiveScene() const
 } // Dsa
 
 // Signal Documentation
-
-
 
 /*!
   \fn void OpenMobileScenePackageController::toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);

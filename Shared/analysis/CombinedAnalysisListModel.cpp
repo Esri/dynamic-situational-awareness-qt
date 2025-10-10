@@ -1,3 +1,21 @@
+// COPYRIGHT 2025 ESRI
+// TRADE SECRETS: ESRI PROPRIETARY AND CONFIDENTIAL
+// Unpublished material - all rights reserved under the
+// Copyright Laws of the United States and applicable international
+// laws, treaties, and conventions.
+//
+// For additional information, contact:
+// Environmental Systems Research Institute, Inc.
+// Attn: Contracts and Legal Services Department
+// 380 New York Street
+// Redlands, California, 92373
+// USA
+//
+// email: contracts@esri.com
+/// \file CombinedAnalysisListModel.cpp
+
+#include "pch.hpp"
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -15,11 +33,11 @@
  ******************************************************************************/
 
 // PCH header
-#include "pch.hpp"
 
 #include "CombinedAnalysisListModel.h"
 
 // dsa app headers
+#include "GeoElement.h"
 #include "Viewshed360.h"
 #include "ViewshedListModel.h"
 
@@ -32,6 +50,7 @@
 #include "LocationViewshed.h"
 #include "SceneViewTypes.h"
 #include "Viewshed.h"
+#include "Point.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -49,23 +68,23 @@ namespace Dsa {
   The model returns data for the following roles:
   \table
     \header
-        \li Role
-        \li Type
-        \li Description
+      \li Role
+      \li Type
+      \li Description
     \row
-        \li analysisName
-        \li QString
-        \li The name of the analysis.
-    \row
-        \li analysisType
-        \li int
-        \li The type of analysis
-    \row
-        \li analysisVisible
-        \li bool
-        \li Whether the analysis is visible.
+    \li analysisName
+    \li QString
+    \li The name of the analysis.
+  \row
+  \li analysisType
+  \li int
+  \li The type of analysis
+  \row
+  \li analysisVisible
+  \li bool
+  \li Whether the analysis is visible.
   \endtable
-  */
+ */
 
 /*!
   \brief Constructor taking an optional \a parent.

@@ -1,3 +1,21 @@
+// COPYRIGHT 2025 ESRI
+// TRADE SECRETS: ESRI PROPRIETARY AND CONFIDENTIAL
+// Unpublished material - all rights reserved under the
+// Copyright Laws of the United States and applicable international
+// laws, treaties, and conventions.
+//
+// For additional information, contact:
+// Environmental Systems Research Institute, Inc.
+// Attn: Contracts and Legal Services Department
+// 380 New York Street
+// Redlands, California, 92373
+// USA
+//
+// email: contracts@esri.com
+/// \file MessageFeedsController.cpp
+
+#include "pch.hpp"
+
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -15,7 +33,6 @@
  ******************************************************************************/
 
 // PCH header
-#include "pch.hpp"
 
 #include "MessageFeedsController.h"
 
@@ -25,6 +42,7 @@
 #include "LayerListModel.h"
 #include "LayerSceneProperties.h"
 #include "PictureMarkerSymbol.h"
+#include "Scene.h"
 #include "SceneViewTypes.h"
 #include "SceneQuickView.h"
 #include "SimpleRenderer.h"
@@ -111,8 +129,8 @@ QAbstractListModel* MessageFeedsController::messageFeeds() const
 }
 
 /*!
-   \brief Returns the list of data listener objects that exist for
-   the message feeds.
+  \brief Returns the list of data listener objects that exist for
+  the message feeds.
  */
 QList<DataListener*> MessageFeedsController::dataListeners() const
 {
@@ -404,7 +422,7 @@ SurfacePlacement MessageFeedsController::toSurfacePlacement(const QString& surfa
 
   \list
     \li the ":/Resources/icons/xhdpi/message" path, such
-    as ":/Resources/icons/xhdpi/message/observation1600.png".
+      as ":/Resources/icons/xhdpi/message/observation1600.png".
     \li an "icons" sub-directory under the \l resourcePath directory
   \endlist
  */

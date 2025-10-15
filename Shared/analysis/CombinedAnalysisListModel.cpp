@@ -20,7 +20,6 @@
 #include "CombinedAnalysisListModel.h"
 
 // dsa app headers
-#include "GeoElement.h"
 #include "Viewshed360.h"
 #include "ViewshedListModel.h"
 

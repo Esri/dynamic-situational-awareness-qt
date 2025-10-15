@@ -23,7 +23,6 @@
 // dsa app headers
 #include "DataListener.h"
 #include "DataSender.h"
-#include "ToolManager.h"
 
 // Qt headers
 #include <QDateTime>

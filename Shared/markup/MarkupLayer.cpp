@@ -30,7 +30,6 @@
 #include "Graphic.h"
 #include "GraphicListModel.h"
 #include "GraphicsOverlay.h"
-#include "Point.h"
 #include "SceneView.h"
 #include "SimpleLineSymbol.h"
 #include "SimpleRenderer.h"

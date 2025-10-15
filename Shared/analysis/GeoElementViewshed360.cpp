@@ -25,7 +25,6 @@
 // C++ API headers
 #include "AnalysisOverlay.h"
 #include "AttributeListModel.h"
-#include "GeoElement.h"
 #include "GeoElementViewshed.h"
 
 // STL headers

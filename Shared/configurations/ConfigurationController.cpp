@@ -38,7 +38,6 @@
 #include "NetworkRequestProgress.h"
 #include "Portal.h"
 #include "PortalItem.h"
-#include "ToolManager.h"
 
 // DSA headers
 #include "AppConstants.h"

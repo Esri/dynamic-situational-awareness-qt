@@ -29,7 +29,6 @@
 #include "DynamicEntityObservationInfo.h"
 #include "Error.h"
 #include "Field.h"
-#include "GeometryTypes.h"
 #include "Renderer.h"
 #include "ServiceTypes.h"
 #include "SpatialReference.h"

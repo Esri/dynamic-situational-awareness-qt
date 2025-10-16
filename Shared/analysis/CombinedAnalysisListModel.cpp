@@ -50,23 +50,23 @@ namespace Dsa {
   The model returns data for the following roles:
   \table
     \header
-      \li Role
-      \li Type
-      \li Description
+        \li Role
+        \li Type
+        \li Description
     \row
-    \li analysisName
-    \li QString
-    \li The name of the analysis.
-  \row
-  \li analysisType
-  \li int
-  \li The type of analysis
-  \row
-  \li analysisVisible
-  \li bool
-  \li Whether the analysis is visible.
+        \li analysisName
+        \li QString
+        \li The name of the analysis.
+    \row
+        \li analysisType
+        \li int
+        \li The type of analysis
+    \row
+        \li analysisVisible
+        \li bool
+        \li Whether the analysis is visible.
   \endtable
- */
+  */
 
 /*!
   \brief Constructor taking an optional \a parent.

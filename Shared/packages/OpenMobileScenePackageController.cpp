@@ -413,7 +413,7 @@ QAbstractListModel* OpenMobileScenePackageController::packages() const
   \brief Indicates whether the user selected the scene or if it was the default.
 
   By default, the value is \c false.
- */
+*/
 bool OpenMobileScenePackageController::userSelected() const
 {
   return m_userSelected;
@@ -519,6 +519,8 @@ bool OpenMobileScenePackageController::hasActiveScene() const
 } // Dsa
 
 // Signal Documentation
+
+
 
 /*!
   \fn void OpenMobileScenePackageController::toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);

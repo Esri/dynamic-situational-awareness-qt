@@ -55,7 +55,7 @@ const QString MarkupBroadcast::SHAREDBYKEY = QStringLiteral("sharedBy");
  */
 
 /*!
-  \brief Constructor that takes an optional \a parent.
+ \brief Constructor that takes an optional \a parent.
  */
 MarkupBroadcast::MarkupBroadcast(QObject *parent) :
   AbstractTool(parent),
@@ -96,14 +96,14 @@ MarkupBroadcast::MarkupBroadcast(QObject *parent) :
 }
 
 /*!
-  \brief Destructor
+ \brief Destructor
  */
 MarkupBroadcast::~MarkupBroadcast()
 {
 }
 
 /*!
-  \brief Returns the tool's name
+ \brief Returns the tool's name
  */
 QString MarkupBroadcast::toolName() const
 {
@@ -111,7 +111,7 @@ QString MarkupBroadcast::toolName() const
 }
 
 /*!
-  \brief Sets \a properties from the configuration file
+ \brief Sets \a properties from the configuration file
  */
 void MarkupBroadcast::toolInitProperties(const QVariantMap& properties)
 {
@@ -147,7 +147,7 @@ bool MarkupBroadcast::shouldSetProperties(const QString& propertyName)
 }
 
 /*!
-  \brief Broadcasts the markup JSON (\a json) over a UDP port.
+   \brief Broadcasts the markup JSON (\a json) over a UDP port.
  */
 void MarkupBroadcast::broadcastMarkup(const QString& json)
 {
@@ -158,7 +158,7 @@ void MarkupBroadcast::broadcastMarkup(const QString& json)
 }
 
 /*!
-  \brief Updates the UDP Socket used for the DataSender.
+ \brief Updates the UDP Socket used for the DataSender.
  */
 void MarkupBroadcast::updateDataSender()
 {
@@ -171,7 +171,7 @@ void MarkupBroadcast::updateDataSender()
 }
 
 /*!
-  \brief Updates the UDP Socket used for the DataListener.
+ \brief Updates the UDP Socket used for the DataListener.
  */
 void MarkupBroadcast::updateDataListener()
 {

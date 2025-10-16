@@ -50,7 +50,7 @@ namespace Dsa {
   \sa AlertSource
   \sa AlertTarget
   \sa AlertCondition
- */
+  */
 
 /*!
   \brief Constructor for a new condition data object.

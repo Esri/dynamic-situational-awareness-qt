@@ -46,7 +46,7 @@ constexpr double c_defaultMaxDistance = 500.0;
   \brief A 360 degree viewshed centered upon a GeoElement.
 
   \sa Esri::ArcGISRuntime::GeoElement
- */
+  */
 
 /*!
   \brief Constructor for a 360 degree viewshed centered upon a GeoElement.

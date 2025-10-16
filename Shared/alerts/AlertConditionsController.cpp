@@ -243,7 +243,7 @@ void AlertConditionsController::setActive(bool active)
       index of the graphic. In the case where the target is a \l Esri::ArcGISRuntime::FeatureLayer, the
       id should be the primary key value (e.g. the OID).
     \li \a targetOverlayIndex. The index of the target for the condition in the \l targetNames list. A target can be either
-      a \l Esri::ArcGISRuntime::GraphicsOverlay or a \l Esri::ArcGISRuntime::FeatureLayer.
+    a \l Esri::ArcGISRuntime::GraphicsOverlay or a \l Esri::ArcGISRuntime::FeatureLayer.
   \endlist
 
   Returns \c true if the condition was successfully added.
@@ -325,7 +325,7 @@ QFuture<bool> AlertConditionsController::addWithinDistanceAlertBySourceLayerType
       index of the graphic. In the case where the target is a \l Esri::ArcGISRuntime::FeatureLayer, the
       id should be the primary key value (e.g. the OID).
     \li \a targetOverlayIndex. The index of the target for the condition in the \l targetNames list. A target can be either
-      a \l Esri::ArcGISRuntime::GraphicsOverlay or a \l Esri::ArcGISRuntime::FeatureLayer.
+    a \l Esri::ArcGISRuntime::GraphicsOverlay or a \l Esri::ArcGISRuntime::FeatureLayer.
   \endlist
 
   Returns \c true if the condition was successfully added.
@@ -497,7 +497,7 @@ void AlertConditionsController::togglePickMode()
 
 /*
  \brief Updates the name of the given \a rowIndex with \a conditionName.
- */
+*/
 void AlertConditionsController::updateConditionName(int rowIndex, const QString& conditionName)
 {
   auto alertCondition = m_conditions->conditionAt(rowIndex);
@@ -509,7 +509,7 @@ void AlertConditionsController::updateConditionName(int rowIndex, const QString&
 
 /*
  \brief Updates the level of the given \a rowIndex with \a level.
- */
+*/
 void AlertConditionsController::updateConditionLevel(int rowIndex, int level)
 {
   auto alertCondition = m_conditions->conditionAt(rowIndex);

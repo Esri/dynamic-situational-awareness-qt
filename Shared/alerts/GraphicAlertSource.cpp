@@ -23,6 +23,7 @@
 #include "AttributeListModel.h"
 #include "Envelope.h"
 #include "Graphic.h"
+#include "Point.h"
 
 using namespace Esri::ArcGISRuntime;
 

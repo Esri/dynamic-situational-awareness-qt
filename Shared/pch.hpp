@@ -28,18 +28,15 @@
 // toolkit headers
 #include "AbstractTool.h"
 #include "ToolManager.h"
-#include "ToolResourceProvider.h"
 
 // C++ API headers
 #include "GeoElement.h"
 #include "GeometryTypes.h"
-#include "Point.h"
-#include "Scene.h"
-#include "SceneView.h"
 
 // Qt headers
 #include <QAbstractListModel>
 #include <QHash>
+#include <QImage>
 #include <QList>
 #include <QObject>
 #include <QPointer>

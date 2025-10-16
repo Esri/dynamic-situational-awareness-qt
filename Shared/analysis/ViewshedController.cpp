@@ -34,6 +34,7 @@
 #include "IdentifyLayerResult.h"
 #include "OrbitLocationCameraController.h"
 #include "RendererSceneProperties.h"
+#include "SceneView.h"
 #include "SimpleMarkerSceneSymbol.h"
 #include "SimpleRenderer.h"
 #include "SymbolTypes.h"

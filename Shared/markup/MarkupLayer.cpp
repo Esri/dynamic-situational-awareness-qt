@@ -30,10 +30,12 @@
 #include "Graphic.h"
 #include "GraphicListModel.h"
 #include "GraphicsOverlay.h"
+#include "SceneView.h"
 #include "SimpleLineSymbol.h"
 #include "SimpleRenderer.h"
 #include "SpatialReference.h"
 #include "SymbolTypes.h"
+#include "ToolResourceProvider.h"
 
 // Qt headers
 #include <QFile>

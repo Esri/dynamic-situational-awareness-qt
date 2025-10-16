@@ -20,6 +20,7 @@
 #include "DsaUtility.h"
 
 // C++ API headers
+#include "Point.h"
 #include "SpatialReference.h"
 
 // Qt headers

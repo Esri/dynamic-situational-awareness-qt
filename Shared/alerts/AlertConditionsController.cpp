@@ -41,6 +41,8 @@
 #include "LayerListModel.h"
 #include "MapTypes.h"
 #include "QueryParameters.h"
+#include "Scene.h"
+#include "SceneView.h"
 #include "ServiceTypes.h"
 
 // Qt headers

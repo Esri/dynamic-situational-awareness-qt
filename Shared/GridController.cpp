@@ -28,6 +28,7 @@
 #include "MapViewTypes.h"
 #include "MGRSGrid.h"
 #include "SimpleLineSymbol.h"
+#include "ToolResourceProvider.h"
 #include "USNGGrid.h"
 #include "UTMGrid.h"
 

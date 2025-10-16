@@ -18,6 +18,7 @@
 #include "pch.hpp"
 
 #include "AlertConditionData.h"
+#include "Point.h"
 
 // dsa app headers
 #include "AlertSource.h"

@@ -25,6 +25,7 @@
 #include "LayerListModel.h"
 #include "LayerSceneProperties.h"
 #include "PictureMarkerSymbol.h"
+#include "Scene.h"
 #include "SceneViewTypes.h"
 #include "SceneQuickView.h"
 #include "SimpleRenderer.h"

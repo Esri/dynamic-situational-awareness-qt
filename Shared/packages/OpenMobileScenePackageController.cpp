@@ -25,6 +25,7 @@
 #include "Item.h"
 #include "MapTypes.h"
 #include "MobileScenePackage.h"
+#include "MobileScenePackagesListModel.h"
 #include "Scene.h"
 
 // Qt headers
@@ -36,7 +37,7 @@
 #include <QQmlEngine>
 
 // DSA headers
-#include "MobileScenePackagesListModel.h"
+#include "ToolResourceProvider.h"
 #include "ToolManager.h"
 
 using namespace Esri::ArcGISRuntime;

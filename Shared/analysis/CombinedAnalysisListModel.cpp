@@ -32,6 +32,7 @@
 #include "LocationViewshed.h"
 #include "SceneViewTypes.h"
 #include "Viewshed.h"
+#include "Point.h"
 
 using namespace Esri::ArcGISRuntime;
 

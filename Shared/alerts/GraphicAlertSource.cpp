@@ -14,8 +14,6 @@
 // email: contracts@esri.com
 /// \file GraphicAlertSource.cpp
 
-#include "pch.hpp"
-
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *

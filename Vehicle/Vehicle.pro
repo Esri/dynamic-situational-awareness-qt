@@ -22,7 +22,6 @@ CONFIG += c++17
 
 ARCGIS_RUNTIME_VERSION = 200.8.0
 DEFINES += ARCGIS_MAPS_SDK_VERSION=$$ARCGIS_RUNTIME_VERSION
-
 include($$PWD/../Shared/build/arcgisruntime.pri)
 
 include($$PWD/../3rdparty/zlib-ng/zlib_minizip_ng.pri)

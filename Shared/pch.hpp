@@ -41,6 +41,14 @@
 #include "AlertLevel.h"
 #include "AlertTarget.h"
 
+// toolkit headers
+#include "AbstractTool.h"
+#include "ToolManager.h"
+
+// C++ API headers
+#include "GeoElement.h"
+#include "GeometryTypes.h"
+
 // Qt headers
 #include <QAbstractListModel>
 #include <QHash>

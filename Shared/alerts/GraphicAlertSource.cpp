@@ -31,6 +31,7 @@
  ******************************************************************************/
 
 // PCH header
+#include "pch.hpp"
 
 #include "GraphicAlertSource.h"
 

@@ -720,19 +720,22 @@ void AddLocalDataController::createFeatureLayerShapefile(const QString& path, in
 void AddLocalDataController::createRasterLayer(const QString& path, int layerIndex, bool visible, bool autoAdd)
 {
   static const QString failedAdditionalMsg = QStringLiteral("Unable to add raster layer");
-  auto* raster = new Raster(path, this);
+
+  // set the raster layer to be the parent of the raster object
+  // so it will be cleaned up if the layer is removed in the ToC
+  auto* raster = new Raster(path);
   auto* rasterLayer = new RasterLayer(raster, this);
+  raster->setParent(dynamic_cast<QObject*>(rasterLayer));
   rasterLayer->setVisible(visible);
   connect(rasterLayer, &RasterLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
   if (autoAdd)
   {
-    connect(rasterLayer, &RasterLayer::doneLoading, this, [this, path, raster, rasterLayer](const Esri::ArcGISRuntime::Error& loadError)
+    connect(rasterLayer, &RasterLayer::doneLoading, this, [this, path, rasterLayer](const Error& loadError)
     {
       if (!loadError.isEmpty())
       {
         rasterLayer->deleteLater();
-        raster->deleteLater();
         emit toolErrorOccurred(QString("The raster (%1), failed to load. [%2][%3]").arg(path, loadError.message(), loadError.additionalMessage()), failedAdditionalMsg);
         return;
       }
@@ -742,7 +745,6 @@ void AddLocalDataController::createRasterLayer(const QString& path, int layerInd
       if (const auto spatialReference = rasterLayer->spatialReference(); spatialReference.isEmpty())
       {
         rasterLayer->deleteLater();
-        raster->deleteLater();
         emit toolErrorOccurred(QString("The raster (%1), did not contain spatial reference information.").arg(path), failedAdditionalMsg);
         return;
       }

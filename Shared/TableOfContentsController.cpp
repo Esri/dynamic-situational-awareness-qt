@@ -132,7 +132,8 @@ void TableOfContentsController::removeAt(int layerIndex)
 
   const int modelIndex = mappedIndex(layerIndex);
 
-  m_layerListModel->removeAt(modelIndex);
+  std::unique_ptr<Layer> layer{m_layerListModel->at(modelIndex)};
+  m_layerListModel->removeOne(layer.get());
 }
 
 /*!

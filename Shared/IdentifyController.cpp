@@ -80,7 +80,7 @@ void IdentifyController::showPopups(const QHash<QString, QList<GeoElement*>>& ge
 
 void IdentifyController::nextPopup()
 {
-  if (m_currentPopup == m_popups.size() - 1)
+  if (m_currentPopup == static_cast<int>(m_popups.size() - 1))
     return;
 
   ++m_currentPopup;
@@ -118,7 +118,7 @@ bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QStrin
     return false;
 
   // create a new Popup from the geoElement
-  std::unique_ptr<Popup> newPopup{new Popup(geoElement)};
+  std::unique_ptr<Popup> newPopup{new Popup(geoElement, this)};
   newPopup->popupDefinition()->setTitle(popupTitle);
   const auto popupElements = newPopup->popupDefinition()->elements();
   for (const auto popupElement : popupElements)
@@ -148,7 +148,7 @@ bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QStrin
 
 bool IdentifyController::canNext() const
 {
-  return m_currentPopup < m_popups.size() - 1;
+  return m_currentPopup < static_cast<int>(m_popups.size() - 1);
 }
 
 bool IdentifyController::canPrev() const
@@ -158,7 +158,7 @@ bool IdentifyController::canPrev() const
 
 Popup* IdentifyController::popup() const
 {
-  if (m_currentPopup < 0)
+  if (m_currentPopup < 0 || m_currentPopup >= static_cast<int>(m_popups.size()))
     return nullptr;
 
   return m_popups.at(m_currentPopup).get();

@@ -71,7 +71,7 @@ DsaPanel {
             imageFrameVisible: false
             menuIconVisible: true
             property bool spatialReferenceOk: toolController.spatialReferenceOk(index)
-            mainText: name && name !== "" ? name : toolController.alternateName(index)
+            mainText: name !== "" ? name : toolController.alternateName(index)
             mainTextColor:  spatialReferenceOk ? Material.foreground : "red"
             mainTextItalic: !spatialReferenceOk
             onItemCheckedChanged: {

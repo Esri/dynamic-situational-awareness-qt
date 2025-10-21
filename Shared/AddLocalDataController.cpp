@@ -742,7 +742,7 @@ void AddLocalDataController::createRasterLayer(const QString& path, int layerInd
 
       // check the spatial reference for the new layer for:
       // - non-georeferenced PDFs may have been added
-      if (const auto spatialReference = rasterLayer->spatialReference(); spatialReference.isEmpty())
+      if (rasterLayer->spatialReference().isEmpty())
       {
         rasterLayer->deleteLater();
         emit toolErrorOccurred(QString("The raster (%1), did not contain spatial reference information.").arg(path), failedAdditionalMsg);

@@ -71,7 +71,7 @@ private:
   bool canPrev() const;
 
   double m_tolerance = 5.0;
-  int m_currentPopup = -1;
+  int m_currentPopupIndex = -1;
   std::vector<std::unique_ptr<Esri::ArcGISRuntime::Popup>> m_popups;
 };
 

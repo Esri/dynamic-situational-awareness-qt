@@ -57,7 +57,7 @@ void IdentifyController::showPopups(const QHash<QString, QList<GeoElement*>>& ge
 {
   // reset the popups container properties
   m_popups.clear();
-  m_currentPopup = -1;
+  m_currentPopupIndex = -1;
 
   if (geoElementsByTitle.isEmpty())
   {
@@ -73,26 +73,26 @@ void IdentifyController::showPopups(const QHash<QString, QList<GeoElement*>>& ge
 
   // verify at least one popup was added and set the pointer to the start
   if (!m_popups.empty())
-    m_currentPopup = 0;
+    m_currentPopupIndex = 0;
 
   emit popupChanged();
 }
 
 void IdentifyController::nextPopup()
 {
-  if (m_currentPopup == static_cast<int>(m_popups.size() - 1))
+  if (!canNext())
     return;
 
-  ++m_currentPopup;
+  ++m_currentPopupIndex;
   emit popupChanged();
 }
 
 void IdentifyController::prevPopup()
 {
-  if (m_currentPopup < 1)
+  if (!canPrev())
     return;
 
-  --m_currentPopup;
+  --m_currentPopupIndex;
   emit popupChanged();
 }
 
@@ -118,7 +118,7 @@ bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QStrin
     return false;
 
   // create a new Popup from the geoElement
-  std::unique_ptr<Popup> newPopup{new Popup(geoElement, this)};
+  auto newPopup = std::make_unique<Popup>(geoElement);
   newPopup->popupDefinition()->setTitle(popupTitle);
   const auto popupElements = newPopup->popupDefinition()->elements();
   for (const auto popupElement : popupElements)
@@ -148,20 +148,20 @@ bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QStrin
 
 bool IdentifyController::canNext() const
 {
-  return m_currentPopup < static_cast<int>(m_popups.size() - 1);
+  return m_currentPopupIndex < static_cast<int>(m_popups.size() - 1);
 }
 
 bool IdentifyController::canPrev() const
 {
-  return m_currentPopup > 0;
+  return m_currentPopupIndex > 0;
 }
 
 Popup* IdentifyController::popup() const
 {
-  if (m_currentPopup < 0 || m_currentPopup >= static_cast<int>(m_popups.size()))
+  if (m_currentPopupIndex < 0 || m_currentPopupIndex >= static_cast<int>(m_popups.size()))
     return nullptr;
 
-  return m_popups.at(m_currentPopup).get();
+  return m_popups.at(m_currentPopupIndex).get();
 }
 
 } // Dsa

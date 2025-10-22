@@ -136,12 +136,12 @@ void GeoElementUtils::setParent(const QList<GeoElement*>& geoElements, QObject* 
  */
 void GeoElementUtils::setParent(GeoElement* geoElement, QObject* parent)
 {
-  if (geoElement)
-  {
-    auto object = toQObject(geoElement);
-    if (object)
-      object->setParent(parent);
-  }
+  if (!geoElement)
+    return;
+
+  auto object = toQObject(geoElement);
+  if (object)
+    object->setParent(parent);
 }
 
 /*!

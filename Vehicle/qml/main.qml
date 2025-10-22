@@ -381,20 +381,58 @@ Vehicle {
             }
         }
 
-        Toolkit.PopupStackView {
-            id: identifyResults
+        Rectangle {
+            id: identifyResultsContainer
+            width: identifyResults.width
             anchors {
                 top: sceneView.top
                 right: sceneView.right
                 bottom: sceneView.attributionTop
             }
-            palette {
-                text: Material.foreground
-            }
-            background: Rectangle {
-                color: Material.primary
-            }
             visible: false
+
+            Toolkit.PopupView {
+                id: identifyResults
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+
+                closeCallback: () => {
+                    identifyResultsContainer.visible = false;
+                }
+            }
+
+            Rectangle {
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                    bottom: parent.bottom
+                    margins: 5
+                }
+
+                Button {
+                    text: "Back"
+                    visible: identifyController.canPrev
+                    anchors {
+                        left: parent.left
+                        bottom: parent.bottom
+                    }
+                    onClicked: {
+                        identifyController.prevPopup();
+                    }
+                }
+
+                Button {
+                    text: "Next"
+                    visible: identifyController.canNext
+                    anchors {
+                        right: parent.right
+                        bottom: parent.bottom
+                    }
+                    onClicked: {
+                        identifyController.nextPopup();
+                    }
+                }
+            }
         }
 
         Drawer {
@@ -517,10 +555,10 @@ Vehicle {
             }
         }
 
-        onPopupManagersChanged: {
-            if (popupManagers.length > 0) {
-                identifyResults.popupManagers = popupManagers;
-                identifyResults.visible = true;
+        onPopupChanged: {
+            if (popup) {
+                identifyResults.popup = popup;
+                identifyResultsContainer.visible = true;
             }
         }
     }
@@ -560,11 +598,6 @@ Vehicle {
     DsaMessageDialog {
         id: msgDialog
         title: "Error"
-    }
-
-    BusyIndicator {
-        anchors.centerIn: parent
-        visible: identifyController.busy
     }
 
     Shortcut {

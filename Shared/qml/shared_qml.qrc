@@ -58,5 +58,6 @@
         <file>DsaYesNoDialog.qml</file>
         <file>OpenSceneTool.qml</file>
         <file>AddConfigurationTool.qml</file>
+        <file>CalciteIcon.qml</file>
     </qresource>
 </RCC>

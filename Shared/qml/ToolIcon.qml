@@ -25,7 +25,7 @@ Item {
     anchors.verticalCenter: parent.verticalCenter
     width: DsaStyles.primaryIconSize * scaleFactor
     height: width
-    property alias iconSource: image.source
+    property alias iconSource: image.iconName
     property alias toolName: toolText.text
     property bool selected: false
     signal toolSelected()
@@ -35,7 +35,7 @@ Item {
         anchors.fill: parent
         spacing: 2 * scaleFactor
 
-        Image {
+        CalciteIcon {
             id: image
             anchors.horizontalCenter: parent.horizontalCenter
             width: parent.width * 0.75

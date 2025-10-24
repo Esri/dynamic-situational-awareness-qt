@@ -219,7 +219,7 @@ DsaPanel {
             }
             enabled: readyToAdd
             opacity: enabled ? 1.0 : 0.5
-            iconSource: DsaResources.iconComplete
+            iconSource: CalciteIcons.Calcite_check
             toolName: "Create"
             labelColor: Material.accent
             onToolSelected: {
@@ -248,7 +248,7 @@ DsaPanel {
                 bottom: wizardButtonsFactoredMargin
             }
             toolName: "Cancel"
-            iconSource: DsaResources.iconClose
+            iconSource: CalciteIcons.Calcite_x
 
             onToolSelected: {
                 for (var i = 0; i < reportFrame.count; ++i)

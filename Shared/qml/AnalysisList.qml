@@ -66,14 +66,13 @@ DsaPanel {
                     analysisVisible = itemChecked
             }
 
-            Image {
+            CalciteIcon {
                 anchors {
                     right: parent.right
                     verticalCenter: parent.verticalCenter
                     margins: 5 * scaleFactor
                 }
-                rotation: 90
-                source: DsaResources.iconMenu
+                iconName: CalciteIcons.Calcite_handle_vertical
                 height: 32 * scaleFactor
                 width: height
 
@@ -126,9 +125,9 @@ DsaPanel {
             function imageSourceForAnalysisType(analysisType){
 
                 if (analysisType === "lineOfSight") {
-                    return DsaResources.iconLineOfSight;
+                    return CalciteIcons.Calcite_line_of_sight;
                 } else if (analysisType === "viewshed") {
-                    return DsaResources.iconViewshed;
+                    return CalciteIcons.Calcite_surface;
                 }
 
                 return "";

@@ -39,7 +39,7 @@ CategoryToolbar {
         CategoryIcon {
             id: homeIcon
             anchors.horizontalCenter: parent.horizontalCenter
-            iconSource: DsaResources.iconDsaHome
+            iconSource: CalciteIcons.Calcite_home
             categoryName: "home"
             onCategorySelected: categoryToolbar.state = categoryName
         }
@@ -47,7 +47,7 @@ CategoryToolbar {
         CategoryIcon {
             id: mapIcon
             anchors.horizontalCenter: parent.horizontalCenter
-            iconSource: DsaResources.iconMap
+            iconSource: CalciteIcons.Calcite_map
             categoryName: "map"
             onCategorySelected: categoryToolbar.state = categoryName
         }
@@ -55,7 +55,7 @@ CategoryToolbar {
         CategoryIcon {
             id: reportsIcon
             anchors.horizontalCenter: parent.horizontalCenter
-            iconSource: DsaResources.iconReport
+            iconSource: CalciteIcons.Calcite_file_text
             categoryName: "reports"
             onCategorySelected: categoryToolbar.state = categoryName
         }
@@ -63,7 +63,7 @@ CategoryToolbar {
         CategoryIcon {
             id: analysisIcon
             anchors.horizontalCenter: parent.horizontalCenter
-            iconSource: DsaResources.iconTools
+            iconSource: CalciteIcons.Calcite_hammer
             categoryName: "analysis"
             onCategorySelected: categoryToolbar.state = categoryName
         }
@@ -71,7 +71,7 @@ CategoryToolbar {
         CategoryIcon {
             id: alertIcon
             anchors.horizontalCenter: parent.horizontalCenter
-            iconSource: DsaResources.iconAlert
+            iconSource: CalciteIcons.Calcite_exclamation_mark_triangle
             categoryName: "alerts"
             onCategorySelected: categoryToolbar.state = categoryName
 
@@ -86,7 +86,7 @@ CategoryToolbar {
         CategoryIcon {
             id: markupIcon
             anchors.horizontalCenter: parent.horizontalCenter
-            iconSource: DsaResources.iconDraw
+            iconSource: CalciteIcons.Calcite_pencil
             categoryName: "markup"
             onCategorySelected: categoryToolbar.state = categoryName
         }
@@ -98,7 +98,7 @@ CategoryToolbar {
             bottom: parent.bottom
             horizontalCenter: parent.horizontalCenter
         }
-        iconSource: DsaResources.iconSettings
+        iconSource: CalciteIcons.Calcite_gear
         categoryName: "options"
         onCategorySelected: menu.open()
 

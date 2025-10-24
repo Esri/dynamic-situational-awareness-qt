@@ -58,6 +58,26 @@ Item {
         id: levelGroup
     }
 
+    component AlertLevelOption: Row {
+        property alias iconName: calciteIcon.iconName
+        property alias color: calciteIcon.color
+        property alias label: radioButton.text
+        property alias checked: radioButton.checked
+        CalciteIcon {
+            id: calciteIcon
+            iconName: CalciteIcons.Calcite_exclamation_mark_triangle_f
+            height: 24 * scaleFactor
+            width: height
+        }
+        RadioButton {
+            id: radioButton
+            ButtonGroup.group: levelGroup
+            checked: false
+            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+            anchors.verticalCenter: calciteIcon.verticalCenter
+        }
+    }
+
     Column {
         id: col
         anchors {
@@ -67,78 +87,27 @@ Item {
         spacing: 6 * scaleFactor
         leftPadding: parent.width * 0.25
 
-        Row {
-            Image {
-                id: lowIcon
-                source: DsaResources.iconAlertLow
-                height: 24 * scaleFactor
-                width: height
-            }
-
-            RadioButton {
-                id: lowCB
-
-                text: "Low"
-                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                ButtonGroup.group: levelGroup
-                height: lowIcon.height
-                anchors.verticalCenter: lowIcon.verticalCenter
-            }
+        AlertLevelOption {
+            id: lowCB
+            iconName: CalciteIcons.Calcite_information_f
+            color: "blue"
+            label: "Low"
         }
-
-        Row {
-            Image {
-                id: mediumIcon
-                source: DsaResources.iconAlertModerate
-                height: lowIcon.height
-                width: height
-            }
-
-            RadioButton {
-                id: mediumCB
-                text: "Moderate"
-                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                ButtonGroup.group: levelGroup
-                height: lowIcon.height
-                checked: true
-                anchors.verticalCenter: mediumIcon.verticalCenter
-            }
+        AlertLevelOption {
+            id: mediumCB
+            color: "yellow"
+            label: "Moderate"
+            checked: true
         }
-
-        Row {
-            Image {
-                id: highIcon
-                source: DsaResources.iconAlertHigh
-                height: lowIcon.height
-                width: height
-            }
-
-            RadioButton {
-                id: highCB
-                text: "High"
-                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                ButtonGroup.group: levelGroup
-                height: lowIcon.height
-                anchors.verticalCenter: highIcon.verticalCenter
-            }
+        AlertLevelOption {
+            id: highCB
+            color: "orange"
+            label: "High"
         }
-
-        Row {
-            id: critRow
-            Image {
-                id: criticalIcon
-                source: DsaResources.iconAlertCritical
-                height: lowIcon.height
-                width: height
-            }
-
-            RadioButton {
-                id: criticalCB
-                text: "Critical"
-                font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
-                ButtonGroup.group: levelGroup
-                anchors.verticalCenter: criticalIcon.verticalCenter
-            }
+        AlertLevelOption {
+            id: criticalCB
+            color: "red"
+            label: "Critical"
         }
     }
 }

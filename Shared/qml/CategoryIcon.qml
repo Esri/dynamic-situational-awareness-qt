@@ -23,7 +23,7 @@ import QtQuick.Controls.Material
 Item {
     width: DsaStyles.secondaryIconSize * scaleFactor
     height: width
-    property alias iconSource: image.source
+    property alias iconSource: image.iconName
     property string categoryName
     property bool selected: false
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
@@ -33,7 +33,7 @@ Item {
         anchors.fill: parent
         spacing: 2 * scaleFactor
 
-        Image {
+        CalciteIcon {
             id: image
             anchors.horizontalCenter: parent.horizontalCenter
             width: parent.width * 0.75

@@ -26,7 +26,6 @@ Rectangle {
     property string title: ""
     property alias titleBar: titleBar
     signal closed()
-    property string iconSource: DsaResources.iconClose
     color: Material.primary
 
     Column {
@@ -67,10 +66,9 @@ Rectangle {
                     color: Material.primary
                 }
 
-                Image {
+                CalciteIcon {
                     anchors.fill: parent
-                    source: iconSource
-                    fillMode: Image.PreserveAspectFit
+                    iconName: CalciteIcons.Calcite_x
                 }
 
                 onClicked: closed();

@@ -128,10 +128,11 @@ DsaPanel {
                 Layout.rightMargin: 5
             }
 
-            Image {
-                source: DsaResources.iconBrowse
+            CalciteIcon {
+                iconName: CalciteIcons.Calcite_folder_open
                 visible: comboResourceType.currentIndex === 2
-                Layout.alignment: Qt.AlignRight
+                height: 24 * scaleFactor
+                width: height
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {

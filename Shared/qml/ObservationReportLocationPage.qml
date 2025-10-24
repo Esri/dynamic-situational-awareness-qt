@@ -82,7 +82,7 @@ Item {
 
             selected: toolController.pickMode
             toolName: "From Map"
-            iconSource: DsaResources.iconTouch
+            iconSource: CalciteIcons.Calcite_touch
             opacity: enabled ? 1.0 : 0.8
 
             onToolSelected: {
@@ -94,7 +94,7 @@ Item {
             id: myLocationButton
 
             toolName: "My Location"
-            iconSource: DsaResources.iconGps
+            iconSource: CalciteIcons.Calcite_gps_on
             opacity: enabled ? 1.0 : 0.8
 
             onToolSelected: {

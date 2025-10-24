@@ -41,6 +41,7 @@
 #include "AnalysisListController.h"
 #include "AppInfo.h"
 #include "BasemapPickerController.h"
+#include "CalciteIcons.h"
 #include "ConfigurationController.h"
 #include "ContextMenuController.h"
 #include "CoordinateConversionToolProxy.h"
@@ -91,8 +92,9 @@
 
 using namespace Esri::ArcGISRuntime;
 
-QObject* dsaStylesProvider(QQmlEngine* engine, QJSEngine* scriptEngine);
-QObject* dsaResourcesProvider(QQmlEngine* engine, QJSEngine* scriptEngine);
+QObject* dsaStylesProvider(QQmlEngine* engine, QJSEngine*);
+QObject* dsaResourcesProvider(QQmlEngine* engine, QJSEngine*);
+QObject* dsaCalciteIconsProvider(QQmlEngine* engine, QJSEngine*);
 
 int main(int argc, char *argv[])
 {
@@ -125,6 +127,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<Dsa::OptionsController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "OptionsController");
   qmlRegisterSingletonType<Dsa::Vehicle::VehicleStyles>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "DsaStyles", &dsaStylesProvider);
   qmlRegisterSingletonType<Dsa::DsaResources>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "DsaResources", &dsaResourcesProvider);
+  qmlRegisterSingletonType<Dsa::CalciteIcons>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "CalciteIcons", &dsaCalciteIconsProvider);
   qmlRegisterType<Dsa::IdentifyController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "IdentifyController");
   qmlRegisterType<Dsa::AlertListController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "AlertListController");
   qmlRegisterType<Dsa::ViewedAlertsController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "ViewedAlertsController");
@@ -230,4 +233,10 @@ QObject* dsaResourcesProvider(QQmlEngine* engine, QJSEngine*)
   static Dsa::DsaResources* dsaResources = new Dsa::DsaResources(engine);
   dsaResources->setArcGISMapsSDKVersion(QUOTE(ARCGIS_MAPS_SDK_VERSION));
   return dsaResources;
+}
+
+QObject* dsaCalciteIconsProvider(QQmlEngine* engine, QJSEngine*)
+{
+  static Dsa::CalciteIcons* dsaCalciteIcons = new Dsa::CalciteIcons(engine);
+  return dsaCalciteIcons;
 }

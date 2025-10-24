@@ -21,9 +21,8 @@ OverlayButton {
     id: distressButton
     property var messageFeedsController
 
-    iconUrl: messageFeedsController.locationBroadcastInDistress ?
-                 DsaResources.iconDistressRed :
-                 DsaResources.iconDistressGray
+    iconName: CalciteIcons.Calcite_exclamation_mark_triangle_f
+    iconColor: messageFeedsController.locationBroadcastInDistress ? "red" : "white"
 
     onClicked: {
         messageFeedsController.locationBroadcastInDistress = !messageFeedsController.locationBroadcastInDistress;

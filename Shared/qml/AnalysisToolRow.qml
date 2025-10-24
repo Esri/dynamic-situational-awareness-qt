@@ -94,7 +94,7 @@ Row {
     // Viewshed Tool
     ToolIcon {
         id: viewshedIcon
-        iconSource: DsaResources.iconViewshed
+        iconSource: CalciteIcons.Calcite_surface
         toolName: "Viewshed"
 
         onToolSelected: {
@@ -115,7 +115,7 @@ Row {
     // Line of sight Tool
     ToolIcon {
         id: lineOfSightIcon
-        iconSource: DsaResources.iconLineOfSight
+        iconSource: CalciteIcons.Calcite_line_of_sight
         toolName: "Line of Sight"
         onToolSelected: {
             if (selected ) {
@@ -135,7 +135,7 @@ Row {
     // Analysis List Tool
     ToolIcon {
         id: analysisListIcon
-        iconSource: DsaResources.iconListView
+        iconSource: CalciteIcons.Calcite_list_bullet
         toolName: "View List"
         onToolSelected: {
             if (selected ) {

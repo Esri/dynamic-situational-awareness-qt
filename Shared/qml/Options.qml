@@ -365,11 +365,12 @@ Rectangle {
                             visible: model.RequiresRestart
                         }
 
-                        Image {
+                        CalciteIcon {
                             id: imageCancel
-                            source: "qrc:/Resources/icons/xhdpi/ic_menu_closeclear_dark.png"
+                            iconName: CalciteIcons.Calcite_x
                             height: parent.height
-                            width: model.Downloading && model.IsCancellable ? parent.height : 0
+                            width: visible ? height : 0
+                            visible: model.Downloading && model.IsCancellable
                             anchors {
                                 right: imageDownload.left
                                 verticalCenter: parent.verticalCenter
@@ -382,11 +383,12 @@ Rectangle {
                             }
                         }
 
-                        Image {
+                        CalciteIcon {
                             id: imageDownload
-                            source: "qrc:/Resources/icons/xhdpi/ic_menu_sendmap_dark_d.png"
+                            iconName: CalciteIcons.Calcite_download
                             height: parent.height
-                            width: model.CanDownload ? parent.height : 0
+                            visible: model.CanDownload
+                            width: visible ? height : 0
                             enabled: model.CanDownload
                             anchors {
                                 right: imageRemove.left
@@ -398,14 +400,14 @@ Rectangle {
                                     configurationController.download(index);
                                 }
                             }
-                            rotation: 180
                         }
 
-                        Image {
+                        CalciteIcon {
                             id: imageRemove
-                            source: DsaResources.iconTrash
+                            iconName: CalciteIcons.Calcite_trash
                             height: parent.height
-                            width: model.CanDelete ? parent.height : 0
+                            width: visible ? height : 0
+                            visible: model.CanDelete
                             anchors {
                                 right: parent.right
                                 verticalCenter: parent.verticalCenter
@@ -459,11 +461,12 @@ Rectangle {
                         right: parent.right
                         bottom: parent.bottom
                     }
-                    Image {
+                    CalciteIcon {
                         id: imageAddConfiguration
-                        source: "qrc:/Resources/icons/xhdpi/ic_menu_add_dark_d.png"
+                        iconName: CalciteIcons.Calcite_browser_plus
                         height: parent.height - 5 * scaleFactor
                         width: parent.width - 5 * scaleFactor
+                        color: "black"
                         anchors {
                             verticalCenter: parent.verticalCenter
                             horizontalCenter: parent.horizontalCenter

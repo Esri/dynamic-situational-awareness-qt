@@ -448,7 +448,7 @@ QImage LocationController::iconImage() const
   const QString imagePath = m_iconDataPath + "/navigation.png";
 
   return (QFile::exists(imagePath)) ? QImage(imagePath)
-                                    : QImage(":Resources/icons/xhdpi/navigation.png");
+                                    : QImage(":Resources/icons/navigation.png");
 }
 
 QUrl LocationController::modelSymbolPath() const
@@ -472,7 +472,7 @@ QUrl LocationController::modelSymbolPath() const
     // if they're not both available, save both from resources to temp
     // and access from there
     QFile modelResource(":Resources/LocationDisplay.dae");
-    QFile imageResource(":Resources/icons/xhdpi/navigation.png");
+    QFile imageResource(":Resources/icons/navigation.png");
 
     modelResource.open(QIODevice::ReadOnly);
     imageResource.open(QIODevice::ReadOnly);

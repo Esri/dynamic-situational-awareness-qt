@@ -51,7 +51,7 @@ Item {
         spacing: 5 * scaleFactor
 
         OverlayButton {
-            iconUrl: DsaResources.iconHome
+            iconName: CalciteIcons.Calcite_home
             onClicked: {
                 followHud.stopFollowing();
                 navController.zoomToInitialLocation();
@@ -59,7 +59,7 @@ Item {
         }
 
         OverlayButton {
-            iconUrl: DsaResources.iconAdd
+            iconName: CalciteIcons.Calcite_plus
             onClicked: {
                 navController.zoomFactor = 2.0;
                 navController.zoomIn();
@@ -67,7 +67,7 @@ Item {
         }
 
         OverlayButton {
-            iconUrl: DsaResources.iconRemove
+            iconName: CalciteIcons.Calcite_minus
             onClicked: {
                 navController.zoomFactor = 0.5;
                 navController.zoomOut();
@@ -75,7 +75,7 @@ Item {
         }
 
         OverlayButton {
-            iconUrl: DsaResources.icon2d
+            iconName: CalciteIcons.Calcite_2d
             onClicked: {
                 navController.set2D();
             }
@@ -83,7 +83,7 @@ Item {
 
         OverlayButton {
             id: followingButton
-            iconUrl: selected ? DsaResources.iconGps : DsaResources.iconGpsOff
+            iconName: selected ? CalciteIcons.Calcite_gps_on : CalciteIcons.Calcite_gps_off
             onClicked: {
                 selected = !selected;
                 followHud.enabled = selected;
@@ -92,7 +92,7 @@ Item {
         }
 
         OverlayButton {
-            iconUrl: DsaResources.iconRotate
+            iconName: CalciteIcons.Calcite_rotate
             onClicked: {
                 selected = !selected;
                 if (selected)
@@ -104,7 +104,7 @@ Item {
 
         OverlayButton {
             id: overlayButtonGrid
-            iconUrl: DsaResources.iconRaster
+            iconName: CalciteIcons.Calcite_coordinate_system
             Component.onCompleted: selected = gridController.gridVisible
             onClicked: {
                 selected = !selected;

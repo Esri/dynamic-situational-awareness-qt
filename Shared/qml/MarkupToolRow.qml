@@ -109,7 +109,7 @@ Row {
     // Draw
     ToolIcon {
         id: drawIcon
-        iconSource: DsaResources.iconSketch
+        iconSource: CalciteIcons.Calcite_freehand
         toolName: "Draw"
         onToolSelected: {
             if (markupToolRow.state === toolName) {
@@ -125,7 +125,7 @@ Row {
     // Color
     ToolIcon {
         id: colorIcon
-        iconSource: DsaResources.iconColorPalette
+        iconSource: CalciteIcons.Calcite_palette
         toolName: "Color"
         onToolSelected: {
             if (markupToolRow.state === toolName) {
@@ -142,10 +142,12 @@ Row {
     // Width
     ToolIcon {
         id: widthIcon
-        iconSource: DsaResources.iconLineWidth
+        iconSource: CalciteIcons.Calcite_switch
         toolName: "Width"
         visible: false
         onToolSelected: {
+            // TODO: this looks like it might have been left incomplete
+            // can we add a drop down control here with line thicknesses
             if (markupToolRow.state === toolName) {
                 selected = false;
                 markupToolRow.state = drawIcon.toolName
@@ -160,7 +162,7 @@ Row {
     // Clear
     ToolIcon {
         id: clearIcon
-        iconSource: DsaResources.iconTrash
+        iconSource: CalciteIcons.Calcite_trash
         toolName: "Clear All"
         onToolSelected: appRoot.showClearDialog("Are you sure you want to clear the current markup sketch?")
     }

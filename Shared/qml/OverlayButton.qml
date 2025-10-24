@@ -22,7 +22,8 @@ import Esri.ArcGISRuntime.OpenSourceApps.DSA
 
 Rectangle {
     id: overlayButton
-    property alias iconUrl: buttonIcon.source
+    property alias iconName: textMain.text
+    property alias iconColor: textMain.color
     property bool selected: false
     property string name: ""
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
@@ -34,18 +35,21 @@ Rectangle {
     radius: 5 * scaleFactor
     opacity: 0.9
 
-    Image {
-        id: buttonIcon
+    Text {
+        id: textMain
         anchors.centerIn: parent
-        width: parent.width * 0.8
-        height: width
+        color: "white"
+        font {
+            pixelSize: 24 * scaleFactor
+            family: CalciteIcons.FontFamily32
+        }
     }
 
     Rectangle {
         anchors {
             topMargin: 2 * scaleFactor
             horizontalCenter: parent.horizontalCenter
-            top: buttonIcon.bottom
+            top: textMain.bottom
         }
         visible: selected
         height: 2 * scaleFactor

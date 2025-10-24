@@ -32,6 +32,7 @@ Item {
     property bool menuIconVisible: false
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
     property color imageFrameColor: Material.foreground
+    property color iconColor: "white"
 
     Row {
         anchors {
@@ -63,12 +64,13 @@ Item {
             color: imageFrameVisible ? imageFrameColor : "transparent"
             visible: imageVisible
 
-            Image {
+            CalciteIcon {
                 anchors {
                     fill: parent
                     margins: 2 * scaleFactor
                 }
-                source: imageUrl
+                iconName: imageUrl
+                color: iconColor
             }
         }
 

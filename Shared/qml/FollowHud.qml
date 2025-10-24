@@ -73,7 +73,7 @@ Item {
         id: backgroundRecatangle
         anchors {
             fill: followHudRow
-
+            margins: -5
         }
         color: Material.primary
         opacity: parent.opacity
@@ -81,15 +81,13 @@ Item {
 
     Row {
         id: followHudRow
-
-        anchors.margins: 5 * scaleFactor
-        spacing: 10 * scaleFactor
+        spacing: 5 * scaleFactor
 
         OverlayButton {
             id: disableLocation
             anchors.verticalCenter: parent.verticalCenter
-            iconUrl: DsaResources.iconFollowLocationOff
-            color: "transparent"
+            iconName: CalciteIcons.Calcite_compass_north_circle
+            color: "darkgray"
             name: "Off"
             onClicked: {
                 followHudRoot.state = name;
@@ -100,8 +98,8 @@ Item {
         OverlayButton {
             id: followLocation
             anchors.verticalCenter: parent.verticalCenter
-            iconUrl: DsaResources.iconFollowLocation
-            color: "transparent"
+            iconName: CalciteIcons.Calcite_compass_north_circle
+            color: "deepskyblue"
             name: "Follow"
             onClicked: {
                 followHudRoot.state = name;
@@ -112,8 +110,8 @@ Item {
         OverlayButton {
             id: northUpLocation
             anchors.verticalCenter: parent.verticalCenter
-            iconUrl: DsaResources.iconFollowLocationNorthUp
-            color: "transparent"
+            iconName: CalciteIcons.Calcite_compass_needle
+            color: "deepskyblue"
             name: "North Up"
             onClicked: {
                 followHudRoot.state = name;

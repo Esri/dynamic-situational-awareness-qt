@@ -207,8 +207,8 @@ void MessageFeedsController::setupFeeds()
 
     if (!rendererThumbnail.isEmpty())
     {
-      if (QFile::exists(QString(":/Resources/icons/xhdpi/message/%1").arg(rendererThumbnail)))
-        feed->setThumbnailUrl(QString("qrc:/Resources/icons/xhdpi/message/%1").arg(rendererThumbnail));
+      if (QFile::exists(QString(":/Resources/icons/message/%1").arg(rendererThumbnail)))
+        feed->setThumbnailUrl(QString("qrc:/Resources/icons/message/%1").arg(rendererThumbnail));
       else if (QFile::exists(m_resourcePath + QString("/icons/%1").arg(rendererThumbnail)))
         feed->setThumbnailUrl(QUrl::fromLocalFile(m_resourcePath + QString("/icons/%1").arg(rendererThumbnail)));
       else
@@ -404,8 +404,8 @@ SurfacePlacement MessageFeedsController::toSurfacePlacement(const QString& surfa
   it can be the name of an image file located in:
 
   \list
-    \li the ":/Resources/icons/xhdpi/message" path, such
-    as ":/Resources/icons/xhdpi/message/observation1600.png".
+    \li the ":/Resources/icons/message" path, such
+    as ":/Resources/icons/message/observation1600.png".
     \li an "icons" sub-directory under the \l resourcePath directory
   \endlist
  */
@@ -450,7 +450,7 @@ Renderer* MessageFeedsController::createRenderer(const QString& rendererInfo, QO
 
   // else default to simple renderer with picture marker symbol
   PictureMarkerSymbol* symbol = nullptr;
-  const QString qrcFile = QString(":/Resources/icons/xhdpi/message/%1").arg(rendererInfo);
+  const QString qrcFile = QString(":/Resources/icons/message/%1").arg(rendererInfo);
 
   if (QFile::exists(qrcFile))
   {

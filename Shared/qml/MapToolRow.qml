@@ -177,7 +177,7 @@ Row {
     // Identify Tool
     ToolIcon {
         id: identifyIcon
-        iconSource: DsaResources.iconAboutMap
+        iconSource: CalciteIcons.Calcite_map_information
         toolName: "Query"
         visible: false
         onToolSelected: {
@@ -200,7 +200,7 @@ Row {
     // Coordinate Conversion Tool
     ToolIcon {
         id: coordinateConversionIcon
-        iconSource: DsaResources.iconCoordinateConversion
+        iconSource: CalciteIcons.Calcite_crosshair
         toolName: "Convert XY"
         onToolSelected: {
             if (selected)
@@ -221,7 +221,7 @@ Row {
     // Message Feeds
     ToolIcon {
         id: messageFeedsIcon
-        iconSource: DsaResources.iconMessages
+        iconSource: CalciteIcons.Calcite_rss
         toolName: "Feeds"
         onToolSelected: {
             if (drawer.visible)
@@ -237,7 +237,7 @@ Row {
     // Table of Contents
     ToolIcon {
         id: tocIcon
-        iconSource: DsaResources.iconLayers
+        iconSource: CalciteIcons.Calcite_layers
         toolName: "Overlays"
         onToolSelected: {
             if (selected)
@@ -258,7 +258,7 @@ Row {
     // Add Local Data Tool
     ToolIcon {
         id: addLocalDataIcon
-        iconSource: DsaResources.iconAddLayer
+        iconSource: CalciteIcons.Calcite_add_layer
         toolName: "Add Data"
         onToolSelected: {
             if (drawer.visible)
@@ -274,7 +274,7 @@ Row {
     // Basemap Tool
     ToolIcon {
         id: basemapIcon
-        iconSource: DsaResources.iconChooseBasemap
+        iconSource: CalciteIcons.Calcite_basemap
         toolName: "Basemap"
         onToolSelected: {
             if (drawer.visible)
@@ -290,7 +290,7 @@ Row {
     // Open Scene Tool
     ToolIcon {
         id: packageIcon
-        iconSource: DsaResources.iconOpenScene
+        iconSource: CalciteIcons.Calcite_map_from_template
         toolName: "Open"
         onToolSelected: {
             if (drawer.visible)

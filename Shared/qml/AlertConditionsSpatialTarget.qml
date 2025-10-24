@@ -105,7 +105,7 @@ Item {
                 id: pickButton
                 enabled: singleFeatureRb.checked
                 selected: toolController.pickMode
-                iconUrl: DsaResources.iconTouch
+                iconName: CalciteIcons.Calcite_touch
                 opacity: enabled ? 1.0 : 0.8
                 anchors.verticalCenter: featureIdEdit.verticalCenter
                 onClicked: {

@@ -36,11 +36,12 @@ ToolBar {
 
         spacing: 5 * scaleFactor
 
-        Image {
+        CalciteIcon {
             anchors.verticalCenter: parent.verticalCenter
-            width: DsaStyles.secondaryIconSize * scaleFactor
-            height: width
-            source: DsaResources.iconDrawer
+            iconName: CalciteIcons.Calcite_hamburger
+            pixelSize: DsaStyles.secondaryIconSize * scaleFactor
+            height: pixelSize
+            width: pixelSize
             visible: menuVisible
 
             MouseArea {

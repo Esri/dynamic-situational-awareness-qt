@@ -75,7 +75,7 @@ Row {
     // View Alert Tool
     ToolIcon {
         id: viewAlertIcon
-        iconSource: DsaResources.iconAlertList
+        iconSource: CalciteIcons.Calcite_initiative_template
         toolName: "View"
         onToolSelected: {
             alertConditionsTool.visible = false;
@@ -92,7 +92,7 @@ Row {
     // Create Alert Tool
     ToolIcon {
         id: createAlertIcon
-        iconSource: DsaResources.iconAlertConditionList
+        iconSource: CalciteIcons.Calcite_initiative
         toolName: "Conditions"
         onToolSelected: {
             alertsTool.visible = false;

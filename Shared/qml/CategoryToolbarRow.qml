@@ -36,7 +36,7 @@ CategoryToolbar {
         CategoryIcon {
             id: homeIcon
             anchors.verticalCenter: parent.verticalCenter
-            iconSource: DsaResources.iconDsaHome
+            iconSource: CalciteIcons.Calcite_home
             categoryName: "home"
             onCategorySelected: categoryToolbar.state = categoryName
         }
@@ -44,7 +44,7 @@ CategoryToolbar {
         CategoryIcon {
             id: mapIcon
             anchors.verticalCenter: parent.verticalCenter
-            iconSource: DsaResources.iconMap
+            iconSource: CalciteIcons.Calcite_map
             categoryName: "map"
             onCategorySelected: categoryToolbar.state = categoryName
         }
@@ -52,7 +52,7 @@ CategoryToolbar {
         CategoryIcon {
             id: reportsIcon
             anchors.verticalCenter: parent.verticalCenter
-            iconSource: DsaResources.iconReport
+            iconSource: CalciteIcons.Calcite_file_text
             categoryName: "reports"
             onCategorySelected: categoryToolbar.state = categoryName
         }
@@ -60,7 +60,7 @@ CategoryToolbar {
         CategoryIcon {
             id: analysisIcon
             anchors.verticalCenter: parent.verticalCenter
-            iconSource: DsaResources.iconTools
+            iconSource: CalciteIcons.Calcite_hammer
             categoryName: "analysis"
             onCategorySelected: categoryToolbar.state = categoryName
         }
@@ -68,7 +68,7 @@ CategoryToolbar {
         CategoryIcon {
             id: alertIcon
             anchors.verticalCenter: parent.verticalCenter
-            iconSource: DsaResources.iconAlert
+            iconSource: CalciteIcons.Calcite_exclamation_mark_triangle
             categoryName: "alerts"
             onCategorySelected: categoryToolbar.state = categoryName
 
@@ -83,7 +83,7 @@ CategoryToolbar {
         CategoryIcon {
             id: markupIcon
             anchors.verticalCenter: parent.verticalCenter
-            iconSource: DsaResources.iconDraw
+            iconSource: CalciteIcons.Calcite_pencil
             categoryName: "markup"
             onCategorySelected: categoryToolbar.state = categoryName
         }

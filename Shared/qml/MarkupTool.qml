@@ -229,7 +229,7 @@ Item {
 
             ToolIcon {
                 anchors.verticalCenter: parent.verticalCenter
-                iconSource: DsaResources.iconSendMap
+                iconSource: CalciteIcons.Calcite_share
                 toolName: "Share"
                 onToolSelected: appRoot.showInputDialog("Share Markup", "Markup name", "ex: Markup 1");
             }
@@ -308,12 +308,13 @@ Item {
                     radius: 100 * scaleFactor
                     color: markupController.colors[index]
 
-                    Image {
+                    CalciteIcon {
                         anchors.centerIn: parent
                         height: parent.height
                         width: height
-                        source: DsaResources.iconComplete
+                        iconName: CalciteIcons.Calcite_check
                         visible: selected
+                        color: "black"
                     }
 
                     MouseArea {

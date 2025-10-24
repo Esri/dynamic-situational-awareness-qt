@@ -34,6 +34,21 @@ DsaPanel {
         onHighlightStopped: hightlightIndex = -1;
     }
 
+    function getColor(level) {
+        switch (level) {
+        case 1:
+            return "blue";
+        case 2:
+            return "yellow";
+        case 3:
+            return "orange";
+        case 4:
+            return "red";
+        default:
+            return "";
+        }
+    }
+
     ListView {
         id: alertsView
         anchors {
@@ -59,30 +74,26 @@ DsaPanel {
             width: parent.width
             height: 40 * scaleFactor
             itemChecked: true
-            imageUrl: level === 1 ?
-                          DsaResources.iconAlertLow
-                        : ( level === 2 ? DsaResources.iconAlertModerate
-                                        : ( level === 3 ? DsaResources.iconAlertHigh
-                                                        : DsaResources.iconAlertCritical) )
+            imageUrl: level === 1 ? CalciteIcons.Calcite_information_f : CalciteIcons.Calcite_exclamation_mark_triangle_f
             imageVisible: true
             imageFrameVisible: false
             checkBoxVisible: false
             mainText: name
             menuIconVisible: true
+            iconColor: getColor(level)
 
             Component.onCompleted: {
                 if (visible)
                     toolController.setViewed(index);
             }
 
-            Image {
+            CalciteIcon {
                 anchors {
                     right: parent.right
                     verticalCenter: parent.verticalCenter
                     margins: 5 * scaleFactor
                 }
-                rotation: 90
-                source: DsaResources.iconMenu
+                iconName: CalciteIcons.Calcite_handle_vertical
                 height: 32 * scaleFactor
                 width: height
 

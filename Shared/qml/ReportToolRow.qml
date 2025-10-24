@@ -51,7 +51,7 @@ Row {
     // Observation Tool
     ToolIcon {
         id: observationIcon
-        iconSource: DsaResources.iconCreateReport
+        iconSource: CalciteIcons.Calcite_notepad_edit
         toolName: "Observation"
         onToolSelected: {
             if (selected) {

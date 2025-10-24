@@ -40,6 +40,21 @@ DsaPanel {
         }
     }
 
+    function getColor(level) {
+        switch (level) {
+        case 1:
+            return "blue";
+        case 2:
+            return "yellow";
+        case 3:
+            return "orange";
+        case 4:
+            return "red";
+        default:
+            return "";
+        }
+    }
+
     ListView {
         id: conditionsList
         property string currentName
@@ -78,12 +93,8 @@ DsaPanel {
                     height: 40 * scaleFactor
                     itemChecked: conditionEnabled
                     menuIconVisible: true
-                    imageUrl: level === 1 ?
-                                  DsaResources.iconAlertLow
-                                : ( level === 2 ? DsaResources.iconAlertModerate
-                                                : ( level === 3 ? DsaResources.iconAlertHigh
-                                                                : level === 4 ? DsaResources.iconAlertCritical
-                                                                              : "") )
+                    imageUrl: level === 1 ? CalciteIcons.Calcite_information_f : CalciteIcons.Calcite_exclamation_mark_triangle_f
+                    iconColor: getColor(level)
                     imageVisible: true
                     imageFrameVisible: false
 
@@ -94,15 +105,14 @@ DsaPanel {
 
                     mainText: conditionName
 
-                    Image {
+                    CalciteIcon {
                         id: menuButton
                         anchors {
                             right: parent.right
                             verticalCenter: parent.verticalCenter
                             margins: 5 * scaleFactor
                         }
-                        rotation: 90
-                        source: DsaResources.iconMenu
+                        iconName: CalciteIcons.Calcite_handle_vertical
                         height: 32 * scaleFactor
                         width: height
 
@@ -209,7 +219,7 @@ DsaPanel {
 
                         OverlayButton {
                             id: keepEditsButton
-                            iconUrl: DsaResources.iconComplete
+                            iconName: CalciteIcons.Calcite_check
                             enabled: parent.parent.valid
                             opacity: parent.parent.valid ? 1.0 : 0.5
 
@@ -226,7 +236,7 @@ DsaPanel {
 
                         OverlayButton {
                             id: cancelEditsButton
-                            iconUrl: DsaResources.iconClose
+                            iconName: CalciteIcons.Calcite_x
 
                             onClicked: {
                                 editMenu.close();
@@ -275,7 +285,7 @@ DsaPanel {
                 spacing: 10 * scaleFactor
 
                 OverlayButton {
-                    iconUrl: DsaResources.iconComplete
+                    iconName: CalciteIcons.Calcite_check
                     enabled: parent.parent.validMobile
                     opacity: parent.parent.validMobile ? 1.0 : 0.5
 
@@ -292,7 +302,7 @@ DsaPanel {
                 }
 
                 OverlayButton {
-                    iconUrl: DsaResources.iconClose
+                    iconName: CalciteIcons.Calcite_x
 
                     onClicked: {
                         editMobileMenu.close();

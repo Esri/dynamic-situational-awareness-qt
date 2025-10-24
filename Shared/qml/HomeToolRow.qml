@@ -27,10 +27,10 @@ Row {
     spacing: 10 * scaleFactor
     visible: categoryToolbar.state === "home"
 
-    Image {
+    CalciteIcon {
         id: optionsIcon
         visible: isMobile
-        source: DsaResources.iconSettings
+        iconName: CalciteIcons.Calcite_gear
         width: DsaStyles.primaryIconSize
         height: width
 

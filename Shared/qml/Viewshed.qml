@@ -98,8 +98,7 @@ Item {
 
             OverlayButton {
                 anchors.horizontalCenter: parent.horizontalCenter
-                iconUrl: DsaResources.iconCurrentLocation
-                color: "transparent"
+                iconName: CalciteIcons.Calcite_map_pin
                 opacity: enabled ? 1 : 0.5
                 enabled: !toolController.locationDisplayViewshedActive
                 selected: toolController.activeMode === ViewshedController.AddMyLocationViewshed360;
@@ -134,10 +133,9 @@ Item {
             }
 
             OverlayButton {
-                iconUrl: DsaResources.iconPin
+                iconName: CalciteIcons.Calcite_pin
                 selected: toolController.activeMode === ViewshedController.AddGeoElementViewshed360;
                 anchors.horizontalCenter: parent.horizontalCenter
-                color: "transparent"
                 onClicked: {
                     if (toolController.activeMode !== ViewshedController.AddGeoElementViewshed360)
                         toolController.activeMode = ViewshedController.AddGeoElementViewshed360;
@@ -167,10 +165,9 @@ Item {
             }
 
             OverlayButton {
-                iconUrl: DsaResources.iconTouch
+                iconName: CalciteIcons.Calcite_touch
                 selected: toolController.activeMode === ViewshedController.AddLocationViewshed360;
                 anchors.horizontalCenter: parent.horizontalCenter
-                color: "transparent"
                 onClicked: {
                     if (toolController.activeMode !== ViewshedController.AddLocationViewshed360)
                         toolController.activeMode = ViewshedController.AddLocationViewshed360;
@@ -459,7 +456,7 @@ Item {
         ToolIcon {
             id: finishIcon
             anchors.verticalCenter: parent.verticalCenter
-            iconSource: DsaResources.iconComplete
+            iconSource: CalciteIcons.Calcite_check
             toolName: "Save"
             onToolSelected: {
                 toolController.finishActiveViewshed();
@@ -470,7 +467,7 @@ Item {
 
         ToolIcon {
             anchors.verticalCenter: parent.verticalCenter
-            iconSource: DsaResources.iconClose
+            iconSource: CalciteIcons.Calcite_x
             toolName: "Cancel"
             onToolSelected: {
                 cancelViewshed();

@@ -78,14 +78,12 @@ DsaPanel {
                 model.layerVisible = itemChecked
             }
 
-            Image {
+            CalciteIcon {
                 anchors {
                     right: parent.right
                     verticalCenter: parent.verticalCenter
-                    margins: 5 * scaleFactor
                 }
-                rotation: 90
-                source: DsaResources.iconMenu
+                iconName: CalciteIcons.Calcite_handle_vertical
                 height: 32 * scaleFactor
                 width: height
 
@@ -165,19 +163,19 @@ DsaPanel {
                 case TableOfContentsController.Unknown:
                     return "";
                 case TableOfContentsController.Points:
-                    return DsaResources.iconPoint;
+                    return CalciteIcons.Calcite_layer_points
                 case TableOfContentsController.Polylines:
-                    return DsaResources.iconPolyline;
+                    return CalciteIcons.Calcite_layer_line;
                 case TableOfContentsController.Polygons:
-                    return DsaResources.iconPolygon;
+                    return CalciteIcons.Calcite_layer_polygon;
                 case TableOfContentsController.Raster:
-                    return DsaResources.iconRaster;
+                    return CalciteIcons.Calcite_grid_unit;
                 case TableOfContentsController.FreehandMarkup:
-                    return DsaResources.iconSketch;
+                    return CalciteIcons.Calcite_freehand;
                 case TableOfContentsController.Kml:
-                    return DsaResources.iconKml;
+                    return CalciteIcons.Calcite_layer_kml;
                 case TableOfContentsController.SceneLayer:
-                    return DsaResources.iconSceneLayer;
+                    return CalciteIcons.Calcite_layer_3d;
                 }
             }
         }

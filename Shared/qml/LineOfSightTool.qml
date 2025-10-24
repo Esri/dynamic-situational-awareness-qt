@@ -99,7 +99,7 @@ Item {
             right: parent.right
             margins: 5 * scaleFactor
         }
-        iconUrl: DsaResources.iconClose
+        iconName: CalciteIcons.Calcite_x
 
         onClicked: {
             toolController.clearAnalysis();

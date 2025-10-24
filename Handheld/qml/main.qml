@@ -34,6 +34,7 @@ Handheld {
     property real hudRadius: 3 * scaleFactor
     property real hudMargins: 5 * scaleFactor
     property bool configurationsChanged: false
+    property bool isMobile: true
 
     signal clearDialogAccepted();
     signal closeDialogAccepted();

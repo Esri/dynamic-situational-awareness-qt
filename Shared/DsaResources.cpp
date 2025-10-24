@@ -40,7 +40,7 @@ QString DsaResources::arcGISMapsSDKVersion() const
 
 QUrl DsaResources::iconAppLogo() const
 {
-  return QUrl(QStringLiteral("qrc:/Resources/applogo.png"));
+  return QUrl(QStringLiteral("qrc:/Resources/icons/applogo.png"));
 }
 
 } // Dsa

@@ -51,6 +51,7 @@ DsaPanel {
             width: parent.width
             height: 40 * scaleFactor
             mainText: feedName
+            useCalcite: false
             itemChecked: feedVisible
             onItemCheckedChanged: feedVisible = itemChecked
             imageUrl: thumbnailUrl

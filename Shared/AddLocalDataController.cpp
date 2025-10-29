@@ -45,6 +45,7 @@
 #include "SceneViewTypes.h"
 #include "ServiceTypes.h"
 #include "ShapefileFeatureTable.h"
+#include "SpatialReference.h"
 #include "Surface.h"
 #include "TileCache.h"
 #include "TileInfo.h"
@@ -73,8 +74,8 @@ namespace Dsa
 const QString AddLocalDataController::LOCAL_DATAPATHS_PROPERTYNAME = "LocalDataPaths";
 const QString AddLocalDataController::DEFAULT_ELEVATION_PROPERTYNAME = "DefaultElevationSource";
 
-const QString AddLocalDataController::s_allData = QStringLiteral("All Data (*.geodatabase *.tpk *.shp *.gpkg *.slpk *.img *.tif *.tiff *.i1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr *.markup *.sid *.kml *.kmz)");
-const QString AddLocalDataController::s_rasterData = QStringLiteral("Raster Files (*.img *.tif *.tiff *.I1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr *.sid)");
+const QString AddLocalDataController::s_allData = QStringLiteral("All Data (*.geodatabase *.tpk *.shp *.gpkg *.slpk *.img *.tif *.tiff *.i1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr *.markup *.sid *.kml *.kmz *.pdf)");
+const QString AddLocalDataController::s_rasterData = QStringLiteral("Raster Files (*.img *.tif *.tiff *.I1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr *.sid *.pdf)");
 const QString AddLocalDataController::s_geodatabaseData = QStringLiteral("Geodatabase (*.geodatabase)");
 const QString AddLocalDataController::s_shapefileData = QStringLiteral("Shapefile (*.shp)");
 const QString AddLocalDataController::s_geopackageData = QStringLiteral("GeoPackage (*.gpkg)");
@@ -171,7 +172,7 @@ void AddLocalDataController::refreshLocalDataModel(const QString& fileType)
 QStringList AddLocalDataController::determineFileFilters(const QString& fileType)
 {
   QStringList fileFilter;
-  QStringList rasterExtensions{"*.img", "*.tif", "*.tiff", "*.i1", "*.dt0", "*.dt1", "*.dt2", "*.tc2", "*.geotiff", "*.hr1", "*.jpg", "*.jpeg", "*.jp2", "*.ntf", "*.png", "*.i21", "*.sid"};
+  QStringList rasterExtensions{"*.img", "*.tif", "*.tiff", "*.i1", "*.dt0", "*.dt1", "*.dt2", "*.tc2", "*.geotiff", "*.hr1", "*.jpg", "*.jpeg", "*.jp2", "*.ntf", "*.png", "*.i21", "*.sid", "*.pdf"};
 
   if (fileType == geodatabaseData())
     fileFilter << "*.geodatabase";
@@ -391,7 +392,7 @@ void AddLocalDataController::addLayerFromPath(const QString& path, int layerInde
     return;
   }
 
-  QStringList rasterExtensions{"img", "tif", "tiff", "i1", "dt0", "dt1", "dt2", "tc2", "geotiff", "hr1", "jpg", "jpeg", "jp2", "ntf", "png", "i21", "sid"};
+  QStringList rasterExtensions{"img", "tif", "tiff", "i1", "dt0", "dt1", "dt2", "tc2", "geotiff", "hr1", "jpg", "jpeg", "jp2", "ntf", "png", "i21", "sid", "pdf"};
 
   // determine the layer type
   QString fileExtension = fileInfo.completeSuffix();
@@ -718,23 +719,46 @@ void AddLocalDataController::createFeatureLayerShapefile(const QString& path, in
 */
 void AddLocalDataController::createRasterLayer(const QString& path, int layerIndex, bool visible, bool autoAdd)
 {
-  Raster* raster = new Raster(path, this);
-  RasterLayer* rasterLayer = new RasterLayer(raster, this);
+  static const QString failedAdditionalMsg = QStringLiteral("Unable to add raster layer");
+
+  // set the raster layer to be the parent of the raster object
+  // so it will be cleaned up if the layer is removed in the ToC
+  auto* raster = new Raster(path);
+  auto* rasterLayer = new RasterLayer(raster, this);
+  raster->setParent(dynamic_cast<QObject*>(rasterLayer));
   rasterLayer->setVisible(visible);
   connect(rasterLayer, &RasterLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
   if (autoAdd)
   {
-    auto operationalLayers = ToolResourceProvider::instance()->operationalLayers();
-    if (operationalLayers)
-      operationalLayers->append(rasterLayer);
+    connect(rasterLayer, &RasterLayer::doneLoading, this, [this, path, rasterLayer](const Error& loadError)
+    {
+      if (!loadError.isEmpty())
+      {
+        rasterLayer->deleteLater();
+        emit toolErrorOccurred(QString("The raster (%1), failed to load. [%2][%3]").arg(path, loadError.message(), loadError.additionalMessage()), failedAdditionalMsg);
+        return;
+      }
+
+      // check the spatial reference for the new layer for:
+      // - non-georeferenced PDFs may have been added
+      if (rasterLayer->spatialReference().isEmpty())
+      {
+        rasterLayer->deleteLater();
+        emit toolErrorOccurred(QString("The raster (%1), did not contain spatial reference information.").arg(path), failedAdditionalMsg);
+        return;
+      }
+
+      if (auto* operationalLayers = ToolResourceProvider::instance()->operationalLayers(); operationalLayers)
+        operationalLayers->append(rasterLayer);
+
+    }, Qt::SingleShotConnection);
+    rasterLayer->load();
 
     emit layerSelected(rasterLayer);
   }
   else
-  {
     emit layerCreated(layerIndex, rasterLayer);
-  }
 }
 
 /*!

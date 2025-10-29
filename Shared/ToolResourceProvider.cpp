@@ -95,6 +95,10 @@ void ToolResourceProvider::setScene(Scene* newScene)
   if (newScene == m_scene)
     return;
 
+  // force update to UI on scene change; this is caused by package switches
+  m_scene = nullptr;
+  emit sceneChanged();
+
   m_scene = newScene;
 
   emit sceneChanged();

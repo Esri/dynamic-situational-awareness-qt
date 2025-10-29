@@ -78,7 +78,7 @@ private:
   bool m_initialLoadCompleted = false;
   AddLocalDataController* m_localDataController = nullptr;
   Esri::ArcGISRuntime::Scene* m_scene = nullptr;
-  QHash<int, Esri::ArcGISRuntime::Layer*> m_initialLayerCache;
+  QHash<qsizetype, Esri::ArcGISRuntime::Layer*> m_initialLayerCache;
   QStringList m_excludedPaths;
   QVariantMap m_initialSettings;
   QMetaObject::Connection m_layerAddedConnection;

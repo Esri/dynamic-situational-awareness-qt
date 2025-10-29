@@ -26,7 +26,9 @@ Item {
     property bool imageVisible
     property bool imageFrameVisible: true
     property alias checkBoxVisible: visibleCheckBox.visible
-    property string mainText
+    property alias mainText: labelMainText.text
+    property alias mainTextColor: labelMainText.color
+    property alias mainTextItalic: labelMainText.font.italic
     property bool menuIconVisible: false
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
     property color imageFrameColor: Material.foreground
@@ -47,7 +49,9 @@ Item {
             id: visibleCheckBox
             anchors.verticalCenter: parent.verticalCenter
             checked: itemChecked
-            onClicked: itemChecked = checked;
+            onClicked: {
+                itemChecked = visibleCheckBox.checked;
+            }
         }
 
         Rectangle {
@@ -69,12 +73,11 @@ Item {
         }
 
         Label {
+            id: labelMainText
             anchors.verticalCenter: parent.verticalCenter
             elide: Text.ElideMiddle
-            text: mainText
             verticalAlignment: Text.AlignVCenter
             width: menuIconVisible ? parent.width * 0.6 : parent.width
-            color: Material.foreground
             font {
                 pixelSize: 14 * scaleFactor
                 bold: true

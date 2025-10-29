@@ -725,6 +725,19 @@ Test 5: non-DrapedFlat surface placement behavior
 - Click the home button and the map should go back to the `InitialLocation` property set in the config file.
 - Confirm that the map resets to the location defined by the `InitialLocation` property in the config file.
 
+## Relative and absolute paths in the DsaAppConfig file
+- Move the `OperationalData` folder from `~\ArcGIS\Runtime\Data\DSA\Default\` to a new location like `~\Documents\`.
+- Update the `LocalDataPaths` property to use the absolute path `~\Documents\OperationalData`.
+- Restart the DSA app. Open the Add Data tool.
+  - [ ] Confirm the data is listed.
+- Move the contents of `~\ArcGIS\Runtime\Data\DSA` to the same location where the DSA executable file is located.
+- Start the DSA app. 
+  - [ ] Verify that the app runs as expected and the data loads correctly.
+- Change the `LocalDataPaths` property back to relative path `./OperationalData`.
+- Restart the DSA app. Open the Add Data tool.
+  - [ ] Confirm the data is listed.
+
+
 ## Settings
 ## App Configuration
 
@@ -743,7 +756,7 @@ Test Case 2: No Data
 - [ ] you should not see an error
 
 Test Case 3: Error on startup
-- rename `~\ArcGIS\Runtime\Data\DSA\Default\BasemapData\Topographic.tpk` to `Topographic2.tpk`
+- rename `./BasemapData/Topographic.tpk` to `Topographic2.tpk`
 - open the app
 - [ ] you should see an error on startup informing you that the default basemap could not be found
 _NOTE - the error may be duplicated (I think that's ok)_
@@ -757,6 +770,6 @@ _this test is for errors we create at the app level_
 
 Test Case 5: Error from the API
 _this test is for errors we receive from the API_
-- rename `~\ArcGIS\Runtime\Data\DSA\Default\OperationalData\AOI.dbf` to `AOI2.dbf` (this will make the AOI shapefile invalid when we try to add it)
+- rename `./OperationalData/AOI.dbf` to `AOI2.dbf` (this will make the AOI shapefile invalid when we try to add it)
 - go to the add data tool and select the `AOI.shp` to add
 - [ ] you should see an error

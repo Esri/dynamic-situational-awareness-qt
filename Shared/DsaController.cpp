@@ -98,6 +98,10 @@ DsaController::DsaController(QObject* parent):
                          QStringLiteral("viewshed"),
                          QStringLiteral("Observation Report")}
 {
+  // set the current path for the application to the active configuration directory
+  // so we can use relative paths for data in the configuration file
+  QDir::setCurrent(DsaUtility::activeConfigurationPath());
+
   // setup config settings
   setupConfig();
   m_scene->setInitialViewpoint(viewpointFromJson(defaultViewpoint()));
@@ -378,18 +382,6 @@ void DsaController::setupConfig()
 
 /*! \brief internal
  *
- * Writes the default local data paths as JSON to the settings map.
- */
-void DsaController::writeDefaultLocalDataPaths()
-{
-  const QString rootDir = m_dsaSettings[AppConstants::PROPERTYNAME_ROOT_DATA_DIRECTORY].toString();
-  QStringList pathsList{QString("%1/").arg(rootDir),
-        QString("%1/OperationalData").arg(rootDir)};
-  m_dsaSettings[QStringLiteral("LocalDataPaths")] = pathsList;
-}
-
-/*! \brief internal
- *
  * Writes the default Alert Conditions as JSON to the settings map.
  */
 void DsaController::writeDefaultConditions()
@@ -507,13 +499,13 @@ bool DsaController::isConflictingTool(const QString& toolName) const
 void DsaController::createDefaultSettings()
 {
   // setup the defaults
-  m_dsaSettings[AppConstants::PROPERTYNAME_ROOT_DATA_DIRECTORY] = DsaUtility::activeConfigurationPath();
+  m_dsaSettings[AppConstants::PROPERTYNAME_ROOT_DATA_DIRECTORY] = DsaUtility::FILE_PATH_CURRENT_DIRECTORY;
   m_dsaSettings[AppConstants::PROPERTYNAME_USERNAME] = QHostInfo::localHostName();
-  m_dsaSettings[AppConstants::PROPERTYNAME_BASEMAP_DIRECTORY] = QString("%1/BasemapData").arg(m_dsaSettings[AppConstants::PROPERTYNAME_ROOT_DATA_DIRECTORY].toString());
-  m_dsaSettings[AppConstants::PROPERTYNAME_ELEVATION_DIRECTORY] = QString("%1/ElevationData").arg(m_dsaSettings[AppConstants::PROPERTYNAME_ROOT_DATA_DIRECTORY].toString());
-  m_dsaSettings[AppConstants::PROPERTYNAME_SIMULATION_DIRECTORY] = QString("%1/SimulationData").arg(m_dsaSettings[AppConstants::PROPERTYNAME_ROOT_DATA_DIRECTORY].toString());
-  m_dsaSettings[LocationController::PROPERTY_NAME_RESOURCE_DIRECTORY] = QString("%1/ResourceData").arg(m_dsaSettings[AppConstants::PROPERTYNAME_ROOT_DATA_DIRECTORY].toString());
-  writeDefaultLocalDataPaths();
+  m_dsaSettings[AppConstants::PROPERTYNAME_BASEMAP_DIRECTORY] = QStringLiteral("./BasemapData");
+  m_dsaSettings[AppConstants::PROPERTYNAME_ELEVATION_DIRECTORY] = QStringLiteral("./ElevationData");
+  m_dsaSettings[AppConstants::PROPERTYNAME_SIMULATION_DIRECTORY] = QStringLiteral("./SimulationData");
+  m_dsaSettings[LocationController::PROPERTY_NAME_RESOURCE_DIRECTORY] = QStringLiteral("./ResourceData");
+  m_dsaSettings[AppConstants::PROPERTYNAME_LOCAL_DATA_PATHS] = QStringList{ QStringLiteral("./OperationalData") };
   m_dsaSettings[AppConstants::PROPERTYNAME_DEFAULT_BASEMAP] = AppConstants::BASEMAP_NAME_TOPOGRAPHIC;
   m_dsaSettings[AppConstants::PROPERTYNAME_DEFAULT_ELEVATION_SOURCE] = QString("%1/CaDEM.tpk").arg(m_dsaSettings[AppConstants::PROPERTYNAME_ELEVATION_DIRECTORY].toString());
   m_dsaSettings[LocationController::PROPERTY_NAME_GPX_FILE] = QString("%1/MontereyMounted.gpx").arg(m_dsaSettings[AppConstants::PROPERTYNAME_SIMULATION_DIRECTORY].toString());
@@ -530,7 +522,7 @@ void DsaController::createDefaultSettings()
   m_dsaSettings[GridController::PROPERTY_NAME_GRID_VISIBLE] = GridController::GRID_VISIBLE_VALUE_DEFAULT;
   m_dsaSettings[GridController::PROPERTY_NAME_GRID_COLOR_SCHEME] = GridController::GRID_COLOR_SCHEME_VALUE_DEFAULT;
   writeDefaultConditions();
-  m_dsaSettings[OpenMobileScenePackageController::PACKAGE_DIRECTORY_PROPERTYNAME] = QString("%1/Packages").arg(m_dsaSettings[AppConstants::PROPERTYNAME_ROOT_DATA_DIRECTORY].toString());
+  m_dsaSettings[OpenMobileScenePackageController::PACKAGE_DIRECTORY_PROPERTYNAME] = QStringLiteral("./Packages");
 }
 
 /*!

@@ -35,6 +35,7 @@ public:
   inline static const QString FILE_NAME_APP_CONFIG = QStringLiteral("DsaAppConfig.json");
   inline static const QString FILE_NAME_DSA_CONFIGURATIONS = QStringLiteral("DsaConfigurations.json");
   inline static const QString FILE_PATH_HOME_DATA = QStringLiteral("ArcGIS/Runtime/Data/DSA");
+  inline static const QString FILE_PATH_CURRENT_DIRECTORY = QStringLiteral(".");
 
   static QString configurationsDirectoryPath();
   static QString configurationsFilePath();

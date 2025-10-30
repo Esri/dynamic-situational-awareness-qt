@@ -99,9 +99,6 @@ AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
   AbstractTool(parent),
   m_localDataModel(new DataItemListModel(this))
 {
-  // add the base path to the string list
-  addPathToDirectoryList(DsaUtility::activeConfigurationPath());
-
   // create file filter list
   m_fileFilterList = QStringList{allData(), rasterData(), geodatabaseData(),
       sceneLayerData(), tilePackageData(), shapefileData(), geopackageData(),
@@ -147,21 +144,21 @@ void AddLocalDataController::addPathToDirectoryList(const QString& path)
  */
 void AddLocalDataController::refreshLocalDataModel(const QString& fileType)
 {
-  QStringList fileFilters = determineFileFilters(fileType);
+  const auto fileFilters = determineFileFilters(fileType);
   m_localDataModel->clear();
 
-  for (const QString& path : m_dataPaths)
+  for (const auto& path : std::as_const(m_dataPaths))
   {
-    QDir localDir(path);
+    QDir localDir{path};
 
     if (fileFilters.length() > 0)
       localDir.setNameFilters(fileFilters);
 
-    for (const QString& file : localDir.entryList(QDir::Files, QDir::Name))
+    const auto localFiles = localDir.entryList(QDir::Files, QDir::Name);
+    std::for_each(std::cbegin(localFiles), std::cend(localFiles), [&](const auto& localFile)
     {
-      QFileInfo fileInfo(localDir, file);
-      m_localDataModel->addDataItem(fileInfo.absoluteFilePath());
-    }
+      m_localDataModel->addDataItem(localDir.filePath(localFile));
+    });
   }
 }
 

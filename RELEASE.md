@@ -1,5 +1,17 @@
 # Release notes
 
+## 2.1.0
+
+- Minimum ArcGIS Maps SDK for Qt version is 200.8
+- Minimum Qt SDK version is 6.8.2
+- `Configurations` have been expanded to allow the use of custom zip files. Documentation has been updated with:
+	- requirements for creating a valid configuration zip file [readme.md](/docs/README.md#add-your-own-local-data)
+	- best practices for getting your configurations to a mobile device [DataManagement.md](/docs/DataManagement.md)
+- Added configuration properties to control surface placement and Z offset values
+- DsaAppConfig.json can be placed alongside the application executable for portability on desktop platforms
+- Added a new control for toggling on and off grids on the scene
+- Added support for georeferenced PDF files as raster layers
+
 ## 2.0.0
 
 - Minimum ArcGIS Maps SDK for Qt version is 200.6

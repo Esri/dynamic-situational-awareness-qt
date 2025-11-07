@@ -128,7 +128,7 @@ The settings panel accesses the app's About information, app settings, and app c
 
 <!-- TODO - Verify the following paragraph: Some settings are persisted, but ALL of them? -->
 
-When you change settings on the Options tab, they are persisted in the application's settings file. The Configurations tab will allow you to switch the active configuration (data + application settings) or download a sample configuration from Esri.
+When you change settings on the `Options` tab, they are persisted in the application's settings file. The `Configurations` tab will allow you to switch the active configuration (data + application settings), download a sample configuration from Esri, or download a custom configuration (see more info [in this section](#packaging-your-data-into-a-configuration-zip-file) or in the [Data Management](DataManagement.md#using-custom-configurations-on-mobile-platforms) doc. 
 
 ## Map tools
 

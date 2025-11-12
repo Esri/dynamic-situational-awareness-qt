@@ -30,7 +30,7 @@ void test_Configuration::initTestCase()
 
 void test_Configuration::test_constructor()
 {
-  //Configuration(const QString& name, const QString& url, bool selected, bool loaded, int percentDownloaded);
+  //Configuration(const QString&, const QString&, bool, bool, int);
   Configuration c{TEST_CONFIGURATION_NAME_1, TEST_CONFIGURATION_URL_1, true, true, 100};
   QCOMPARE(c.canDelete(), false);
   QCOMPARE(c.canDownload(), false);

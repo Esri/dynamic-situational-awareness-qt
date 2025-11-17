@@ -24,13 +24,7 @@ class test_Message : public QObject
 {
   Q_OBJECT
 
-  inline static const QString TEST_ATTRIBUTE_NAME_1 = QStringLiteral("TEST_ATTRIBUTE_NAME_1");
-  inline static const QString TEST_ATTRIBUTE_VALUE_1 = QStringLiteral("TEST_ATTRIBUTE_VALUE_1");
-  inline static const QString TEST_STRING_1 = QStringLiteral("TEST_STRING_1");
-
 private slots:
-  void initTestCase();
-
   void test_constructor() const;
   void test_isEmpty() const;
   void test_setMessageAction() const;
@@ -41,8 +35,6 @@ private slots:
   void test_setMessageType() const;
   void test_setSymbolId() const;
   void test_toGeoMessage() const;
-
-  void cleanupTestCase();
 };
 
 #endif // TEST_MESSAGE_H

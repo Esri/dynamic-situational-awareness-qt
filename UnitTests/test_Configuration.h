@@ -24,24 +24,15 @@ class test_Configuration : public QObject
 {
   Q_OBJECT
 
-  inline static const QString TEST_CONFIGURATION_NAME_1 = "TEST_CONFIGURATION_NAME_1";
-  inline static const QString TEST_CONFIGURATION_NAME_2 = "TEST_CONFIGURATION_NAME_2";
-  inline static const QString TEST_CONFIGURATION_URL_1 = "TEST_CONFIGURATION_URL_1";
-  inline static const int TEST_PERCENTAGE_1 = 50;
-
 private slots:
-  void initTestCase();
-
-  void test_constructor();
-  void test_cancelDownload();
-  void test_download();
-  void test_setName();
-  void test_setPercentDownloaded();
-  void test_setPercentExtracted();
-  void test_setSelected();
-  void test_setUrl();
-
-  void cleanupTestCase();
+  void test_constructor() const;
+  void test_cancelDownload() const;
+  void test_download() const;
+  void test_setName() const;
+  void test_setPercentDownloaded() const;
+  void test_setPercentExtracted() const;
+  void test_setSelected() const;
+  void test_setUrl() const;
 };
 
 #endif // TEST_CONFIGURATION_H

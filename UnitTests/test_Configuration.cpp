@@ -24,14 +24,15 @@
 
 using namespace Dsa;
 
-void test_Configuration::initTestCase()
-{
-}
+static const QString TEST_CONFIGURATION_NAME_1 = "TEST_CONFIGURATION_NAME_1";
+static const QString TEST_CONFIGURATION_NAME_2 = "TEST_CONFIGURATION_NAME_2";
+static const QString TEST_CONFIGURATION_URL_1 = "TEST_CONFIGURATION_URL_1";
+static constexpr int TEST_PERCENTAGE_1 = 50;
 
-void test_Configuration::test_constructor()
+void test_Configuration::test_constructor() const
 {
   //Configuration(const QString&, const QString&, bool, bool, int);
-  Configuration c{TEST_CONFIGURATION_NAME_1, TEST_CONFIGURATION_URL_1, true, true, 100};
+  const Configuration c{TEST_CONFIGURATION_NAME_1, TEST_CONFIGURATION_URL_1, true, true, 100};
   QCOMPARE(c.canDelete(), false);
   QCOMPARE(c.canDownload(), false);
   QCOMPARE(c.downloadCancelled(), false);
@@ -53,7 +54,7 @@ void test_Configuration::test_constructor()
   QCOMPARE(c.urlStr(), TEST_CONFIGURATION_URL_1);
 }
 
-void test_Configuration::test_cancelDownload()
+void test_Configuration::test_cancelDownload() const
 {
   Configuration c{TEST_CONFIGURATION_NAME_1, TEST_CONFIGURATION_URL_1, false, false, 100};
   c.cancelDownload();
@@ -62,7 +63,7 @@ void test_Configuration::test_cancelDownload()
   QCOMPARE(c.downloadCancelled(), true);
 }
 
-void test_Configuration::test_download()
+void test_Configuration::test_download() const
 {
   Configuration c{TEST_CONFIGURATION_NAME_1, TEST_CONFIGURATION_URL_1, false, false, 100};
   c.download();
@@ -71,41 +72,37 @@ void test_Configuration::test_download()
   QCOMPARE(c.percentExtracted(), 0);
 }
 
-void test_Configuration::test_setName()
+void test_Configuration::test_setName() const
 {
   Configuration c{};
   c.setName(TEST_CONFIGURATION_NAME_1);
   QCOMPARE(c.name(), TEST_CONFIGURATION_NAME_1);
 }
 
-void test_Configuration::test_setPercentDownloaded()
+void test_Configuration::test_setPercentDownloaded() const
 {
   Configuration c{};
   c.setPercentDownloaded(TEST_PERCENTAGE_1);
   QCOMPARE(c.percentDownloaded(), TEST_PERCENTAGE_1);
 }
 
-void test_Configuration::test_setPercentExtracted()
+void test_Configuration::test_setPercentExtracted() const
 {
   Configuration c{};
   c.setPercentExtracted(TEST_PERCENTAGE_1);
   QCOMPARE(c.percentExtracted(), TEST_PERCENTAGE_1);
 }
 
-void test_Configuration::test_setSelected()
+void test_Configuration::test_setSelected() const
 {
   Configuration c{};
   c.setSelected(true);
   QCOMPARE(c.selected(), true);
 }
 
-void test_Configuration::test_setUrl()
+void test_Configuration::test_setUrl() const
 {
   Configuration c{};
   c.setUrl(TEST_CONFIGURATION_URL_1);
   QCOMPARE(c.urlStr(), TEST_CONFIGURATION_URL_1);
-}
-
-void test_Configuration::cleanupTestCase()
-{
 }

@@ -31,15 +31,14 @@
 using namespace Dsa;
 namespace esri_rt = Esri::ArcGISRuntime;
 
-void test_Message::initTestCase()
-{
-
-}
+static const QString TEST_ATTRIBUTE_NAME_1 = QStringLiteral("TEST_ATTRIBUTE_NAME_1");
+static const QString TEST_ATTRIBUTE_VALUE_1 = QStringLiteral("TEST_ATTRIBUTE_VALUE_1");
+static const QString TEST_STRING_1 = QStringLiteral("TEST_STRING_1");
 
 void test_Message::test_constructor() const
 {
   // Message()
-  Message mEmpty{};
+  const Message mEmpty{};
   QCOMPARE(mEmpty.attributes().isEmpty(), true);
   QCOMPARE(mEmpty.geometry().isEmpty(), true);
   QCOMPARE(mEmpty.isEmpty(), true);
@@ -50,7 +49,7 @@ void test_Message::test_constructor() const
   QCOMPARE(mEmpty.symbolId().isEmpty(), true);
 
   // Message(MessageAction messageAction, const Esri::ArcGISRuntime::Geometry& geometry);
-  Message mActionGeometry{Message::MessageAction::Remove, esri_rt::Point{0, 0}};
+  const Message mActionGeometry{Message::MessageAction::Remove, esri_rt::Point{0, 0}};
   QCOMPARE(mActionGeometry.attributes().isEmpty(), true);
   QCOMPARE(mActionGeometry.geometry().isEmpty(), false);
   QCOMPARE(mActionGeometry.isEmpty(), false);
@@ -63,7 +62,7 @@ void test_Message::test_constructor() const
 
 void test_Message::test_isEmpty() const
 {
-  Message m{Message::MessageAction::Remove, esri_rt::Point{}};
+  const Message m{Message::MessageAction::Remove, esri_rt::Point{}};
   QCOMPARE(m.isEmpty(), false);
 }
 
@@ -131,9 +130,4 @@ void test_Message::test_toGeoMessage() const
   m.setGeometry(esri_rt::Point(1.0f, 2.0f, esri_rt::SpatialReference{4326}));
   QByteArray b2{pointAndSrXML};
   QCOMPARE(m.toGeoMessage(), b2);
-}
-
-void test_Message::cleanupTestCase()
-{
-
 }

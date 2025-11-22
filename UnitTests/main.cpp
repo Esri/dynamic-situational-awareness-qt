@@ -22,23 +22,20 @@
 #include <QCoreApplication>
 #include <QTest>
 
-// StdLib headers
-#include <cstdlib>
-
 template<typename T>
-bool runTest()
+int runTest()
 {
   T t{};
-  return QTest::qExec(&t) == 0;
+  return QTest::qExec(&t);
 }
 
 int main(int argc, char* argv[])
 {
   QCoreApplication{argc, argv};
 
-  bool success = true;
-  success &= runTest<test_Configuration>();
-  success &= runTest<test_Message>();
+  int failureCount = 0;
+  failureCount += runTest<test_Configuration>();
+  failureCount += runTest<test_Message>();
 
-  return success ? EXIT_SUCCESS : EXIT_FAILURE;
+  return failureCount;
 }

@@ -34,6 +34,7 @@ Item {
     property color imageFrameColor: Material.foreground
     property color iconColor: "white"
     property bool useCalcite: true
+    property alias iconSize: calciteIcon.pixelSize
 
     Row {
         anchors {
@@ -66,6 +67,7 @@ Item {
             visible: imageVisible
 
             CalciteIcon {
+                id: calciteIcon
                 visible: useCalcite
                 anchors {
                     fill: parent

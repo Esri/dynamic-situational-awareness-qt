@@ -74,6 +74,7 @@ DsaPanel {
             mainText: name !== "" ? name : toolController.alternateName(index)
             mainTextColor:  spatialReferenceOk ? Material.foreground : "red"
             mainTextItalic: !spatialReferenceOk
+            iconSize: 24 * scaleFactor
             onItemCheckedChanged: {
                 model.layerVisible = itemChecked
             }

@@ -30,7 +30,7 @@ CategoryToolbar {
     }
 
     Column {
-        spacing: 2 * scaleFactor
+        spacing: 10 * scaleFactor
         anchors {
             fill: parent
             topMargin: 10 * scaleFactor
@@ -41,6 +41,7 @@ CategoryToolbar {
             anchors.horizontalCenter: parent.horizontalCenter
             iconSource: CalciteIcons.Calcite_home
             categoryName: "home"
+            tooltipText: "Home"
             onCategorySelected: categoryToolbar.state = categoryName
         }
 
@@ -49,6 +50,7 @@ CategoryToolbar {
             anchors.horizontalCenter: parent.horizontalCenter
             iconSource: CalciteIcons.Calcite_map
             categoryName: "map"
+            tooltipText: "Map"
             onCategorySelected: categoryToolbar.state = categoryName
         }
 
@@ -57,6 +59,7 @@ CategoryToolbar {
             anchors.horizontalCenter: parent.horizontalCenter
             iconSource: CalciteIcons.Calcite_file_text
             categoryName: "reports"
+            tooltipText: "Reports"
             onCategorySelected: categoryToolbar.state = categoryName
         }
 
@@ -65,6 +68,7 @@ CategoryToolbar {
             anchors.horizontalCenter: parent.horizontalCenter
             iconSource: CalciteIcons.Calcite_hammer
             categoryName: "analysis"
+            tooltipText: "Analysis"
             onCategorySelected: categoryToolbar.state = categoryName
         }
 
@@ -73,6 +77,7 @@ CategoryToolbar {
             anchors.horizontalCenter: parent.horizontalCenter
             iconSource: CalciteIcons.Calcite_exclamation_mark_triangle
             categoryName: "alerts"
+            tooltipText: "Alerts"
             onCategorySelected: categoryToolbar.state = categoryName
 
             ViewedAlerts {
@@ -88,6 +93,7 @@ CategoryToolbar {
             anchors.horizontalCenter: parent.horizontalCenter
             iconSource: CalciteIcons.Calcite_pencil
             categoryName: "markup"
+            tooltipText: "Markup"
             onCategorySelected: categoryToolbar.state = categoryName
         }
     }
@@ -100,6 +106,7 @@ CategoryToolbar {
         }
         iconSource: CalciteIcons.Calcite_gear
         categoryName: "options"
+        tooltipText: "Options"
         onCategorySelected: menu.open()
 
         Menu {

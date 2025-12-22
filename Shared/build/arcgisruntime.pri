@@ -16,6 +16,9 @@
 
 CONFIG(deployment): DEFINES += DEPLOYMENT_BUILD
 
+ARCGIS_RUNTIME_VERSION = 200.8.0
+DEFINES += ARCGIS_MAPS_SDK_VERSION=$$ARCGIS_RUNTIME_VERSION
+
 # Run against the compiled toolkit.
 include($$PWD/../../arcgis-maps-sdk-toolkit-qt/uitools/toolkitcpp/toolkitcpp.pri)
 

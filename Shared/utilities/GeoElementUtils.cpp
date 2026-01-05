@@ -119,15 +119,12 @@ GeoElement* GeoElementSignaler::geoElement() const
  */
 void GeoElementUtils::setParent(const QList<GeoElement*>& geoElements, QObject* parent)
 {
-  if (geoElements.isEmpty())
-    return;
-
-  for (auto* geoElement : geoElements)
+  std::for_each(std::cbegin(geoElements), std::cend(geoElements), [&](GeoElement* ge)
   {
-    auto object = toQObject(geoElement);
+    QObject* object = toQObject(ge);
     if (object)
       object->setParent(parent);
-  }
+  });
 }
 
 /*!

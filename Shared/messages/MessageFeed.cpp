@@ -102,12 +102,12 @@ QFuture<DynamicEntityDataSourceInfo*> MessageFeed::onLoadAsync()
   field_names.emplace_back(entity_id_field_name);
   field_names.emplace_back(Message::SIDC_NAME);
 
-  QList<Field> fields;
-  fields.reserve(field_names.count());
-  for (auto& fn : field_names)
+  QList<Field> fields{};
+  fields.reserve(field_names.size());
+  std::for_each(std::cbegin(field_names), std::cend(field_names), [&](const QString& fn)
   {
-    fields.emplace_back(FieldType::Text, fn, "", 256, Domain(), false, true);
-  }
+    fields.emplace_back(FieldType::Text, fn, "", 256, Domain{}, false, true);
+  });
 
   // build the dynamic entity data source info from the fields and the entity id field name
   auto* dynamicEntityDataSourceInfo = new DynamicEntityDataSourceInfo(entity_id_field_name, fields, this);
@@ -121,9 +121,6 @@ QFuture<DynamicEntityDataSourceInfo*> MessageFeed::onLoadAsync()
     dynamicEntity->setParent(this);
     m_dynamicEntities[dynamicEntity->entityId()] = dynamicEntity;
     checkEntityForSelectAction(dynamicEntity);
-
-    // mark the info as delete later so it can be cleaned up
-    // info in the source cannot be cleaned up immediately since alert targets might need a reference to the related DynamicEntity
     info->deleteLater();
   });
 

@@ -106,7 +106,7 @@ bool isObjectIdFieldName(QStringView fieldName)
   static constexpr auto cbegin = std::cbegin(oidFieldNames);
   static constexpr auto cend = std::cend(oidFieldNames);
 
-  return std::any_of(cbegin, cend, [=](auto oidFieldName) { return fieldName.compare(oidFieldName, Qt::CaseInsensitive) == 0; });
+  return std::any_of(cbegin, cend, [&](auto oidFieldName) { return fieldName.compare(oidFieldName, Qt::CaseInsensitive) == 0; });
 }
 
 bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QString& popupTitle)
@@ -121,12 +121,12 @@ bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QStrin
   auto newPopup = std::make_unique<Popup>(geoElement);
   newPopup->popupDefinition()->setTitle(popupTitle);
   const auto popupElements = newPopup->popupDefinition()->elements();
-  for (const auto popupElement : popupElements)
+  for (const PopupElement* popupElement : popupElements)
   {
     if (popupElement->popupElementType() != PopupElementType::FieldsPopupElement)
       continue;
 
-    const auto* fieldsPE = static_cast<FieldsPopupElement*>(popupElement);
+    const auto* fieldsPE = static_cast<const FieldsPopupElement*>(popupElement);
     const auto* fields = fieldsPE->fields();
     for (PopupField* field : *fields)
     {

@@ -81,6 +81,7 @@ DsaPanel {
             mainText: name
             menuIconVisible: true
             iconColor: getColor(level)
+            iconSize: 24 * scaleFactor
 
             Component.onCompleted: {
                 if (visible)

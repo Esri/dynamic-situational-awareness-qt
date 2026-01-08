@@ -95,6 +95,7 @@ DsaPanel {
                     menuIconVisible: true
                     imageUrl: level === 1 ? CalciteIcons.Calcite_information_f : CalciteIcons.Calcite_exclamation_mark_triangle_f
                     iconColor: getColor(level)
+                    iconSize: 24 * scaleFactor
                     imageVisible: true
                     imageFrameVisible: false
 

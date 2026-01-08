@@ -25,6 +25,7 @@ Item {
     height: width
     property alias iconSource: image.iconName
     property string categoryName
+    property string tooltipText: ""
     property bool selected: false
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
     signal categorySelected()
@@ -52,5 +53,15 @@ Item {
     MouseArea {
         anchors.fill: parent
         onClicked: categorySelected()
+    }
+
+    HoverHandler { id: hoverHandler }
+    ToolTip {
+        text: tooltipText
+        visible: hoverHandler.hovered && tooltipText.length > 0
+        delay: 300
+        timeout: 2000
+        x: parent.width + 6 * scaleFactor
+        y: parent.height / 2
     }
 }

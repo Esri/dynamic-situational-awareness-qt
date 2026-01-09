@@ -16,10 +16,9 @@
 
 #include "test_Configuration.h"
 
-// DSA headers
+// DSA
 #include "Configuration.h"
-
-// Qt headers
+// Qt
 #include <QTest>
 
 using namespace Dsa;

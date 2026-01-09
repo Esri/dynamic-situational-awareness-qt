@@ -72,21 +72,37 @@ void IdentifyController::setGeoElements(const std::vector<ContextMenu::Element>&
   std::for_each(std::cbegin(contextElements), std::cend(contextElements), [&](const ContextMenu::Element& ce)
   {
     GeoElement* ge = std::get<GeoElement*>(ce);
-    if (!ge || !ge->attributes() || ge->attributes()->isEmpty())
+    if (!ge)
       return;
 
     // dynamic entities do not need to be re-parented but a weak pointer should be captured for them
     const ContextMenu::DynamicEntityPtr dePtr = std::get<ContextMenu::DynamicEntityPtr>(ce);
-    if (dePtr.has_value())
-    {
-      if (dePtr->isNull())
+    if (dePtr.has_value() && dePtr->isNull())
         return;
-    }
     else
-      dynamic_cast<QObject*>(ge)->setParent(this);
+    {
+      // if no popup can be created for the element because it has no
+      // attributes, it should be released and skipped
+      QObject* o = dynamic_cast<QObject*>(ge);
+      if (!ge->attributes() || ge->attributes()->isEmpty())
+      {
+        o->deleteLater();
+        return;
+      }
+
+      o->setParent(this);
+    }
 
     m_contextElements.emplace_back(ce);
   });
+
+  // abort if nothing could be added due to missing attributes
+  // or expired dynamic entity pointers
+  if (m_contextElements.empty())
+  {
+    emit popupChanged();
+    return;
+  }
 
   nextPopup();
 }

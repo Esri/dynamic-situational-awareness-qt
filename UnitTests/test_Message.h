@@ -17,7 +17,7 @@
 #ifndef TEST_MESSAGE_H
 #define TEST_MESSAGE_H
 
-// Qt headers
+// Qt
 #include <QObject>
 
 class test_Message : public QObject

@@ -17,7 +17,7 @@
 #ifndef TEST_GEOELEMENTUTILS_H
 #define TEST_GEOELEMENTUTILS_H
 
-// Qt headers
+// Qt
 #include <QObject>
 
 class test_GeoElementUtils : public QObject

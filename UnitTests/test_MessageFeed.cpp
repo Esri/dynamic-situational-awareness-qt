@@ -16,14 +16,12 @@
 
 #include "test_MessageFeed.h"
 
-// C++ headers
+// C++ API
 #include <MapTypes.h>
-
-// DSA headers
+// DSA
 #include "Message.h"
 #include "MessageFeed.h"
-
-// Qt headers
+// Qt
 #include <QTest>
 
 using namespace Dsa;

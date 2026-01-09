@@ -17,6 +17,7 @@
 // DSA headers
 #include "test_Configuration.h"
 #include "test_GeoElementUtils.h"
+#include "test_IdentifyController.h"
 #include "test_Message.h"
 #include "test_MessageFeed.h"
 
@@ -38,6 +39,7 @@ int main(int argc, char* argv[])
   int failureCount = 0;
   failureCount += runTest<test_Configuration>();
   failureCount += runTest<test_GeoElementUtils>();
+  failureCount += runTest<test_IdentifyController>();
   failureCount += runTest<test_Message>();
   failureCount += runTest<test_MessageFeed>();
 

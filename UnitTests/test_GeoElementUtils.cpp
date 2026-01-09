@@ -16,13 +16,11 @@
 
 #include "test_GeoElementUtils.h"
 
-// C++ headers
+// C++ API
 #include "Graphic.h"
-
-// DSA headers
+// DSA
 #include "GeoElementUtils.h"
-
-// Qt headers
+// Qt
 #include <QTest>
 
 using namespace Dsa;
@@ -46,9 +44,11 @@ void test_GeoElementUtils::test_setParent() const
   QCOMPARE(g.parent(), &o);
 
   const QList<esri_rt::GeoElement*> graphics = getListOfGraphics(50);
-  GeoElementUtils::setParent(graphics, &o);
   const auto itBeg = std::cbegin(graphics);
   const auto itEnd = std::cend(graphics);
-  const auto it = std::find_if(itBeg, itEnd, [&](const esri_rt::GeoElement* ge) { return dynamic_cast<const QObject*>(ge)->parent() != &o; });
-  QCOMPARE(it, itEnd);
+  const auto itNoParent = std::find_if(itBeg, itEnd, [&](const esri_rt::GeoElement* ge) { return dynamic_cast<const QObject*>(ge)->parent() != nullptr; });
+  QCOMPARE(itNoParent, itEnd); // verify all graphics have no parent
+  GeoElementUtils::setParent(graphics, &o);
+  const auto itParent = std::find_if(itBeg, itEnd, [&](const esri_rt::GeoElement* ge) { return dynamic_cast<const QObject*>(ge)->parent() != &o; });
+  QCOMPARE(itParent, itEnd); // ensure all graphics are now all parented to the local qobject
 }

@@ -16,14 +16,12 @@
 
 #include "test_Message.h"
 
-// DSA headers
-#include "Message.h"
-
-// C++ API headers
+// C++ API
 #include "Point.h"
 #include "SpatialReference.h"
-
-// Qt headers
+// DSA
+#include "Message.h"
+// Qt
 #include <QByteArray>
 #include <QString>
 #include <QTest>

@@ -14,25 +14,18 @@
  *  limitations under the License.
  ******************************************************************************/
 
-#ifndef TEST_CONFIGURATION_H
-#define TEST_CONFIGURATION_H
+#ifndef TEST_IDENTIFYCONTROLLER_H
+#define TEST_IDENTIFYCONTROLLER_H
 
 // Qt
 #include <QObject>
 
-class test_Configuration : public QObject
+class test_IdentifyController : public QObject
 {
   Q_OBJECT
 
 private slots:
-  void test_constructor() const;
-  void test_cancelDownload() const;
-  void test_download() const;
-  void test_setName() const;
-  void test_setPercentDownloaded() const;
-  void test_setPercentExtracted() const;
-  void test_setSelected() const;
-  void test_setUrl() const;
+  void test_setGeoElements() const;
 };
 
-#endif // TEST_CONFIGURATION_H
+#endif // TEST_IDENTIFYCONTROLLER_H

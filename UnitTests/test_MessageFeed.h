@@ -14,32 +14,18 @@
  *  limitations under the License.
  ******************************************************************************/
 
-// DSA headers
-#include "test_Configuration.h"
-#include "test_GeoElementUtils.h"
-#include "test_Message.h"
-#include "test_MessageFeed.h"
+#ifndef TEST_MESSAGEFEED_H
+#define TEST_MESSAGEFEED_H
 
 // Qt headers
-#include <QCoreApplication>
-#include <QTest>
+#include <QObject>
 
-template<typename T>
-int runTest()
+class test_MessageFeed : public QObject
 {
-  T t{};
-  return QTest::qExec(&t);
-}
+  Q_OBJECT
 
-int main(int argc, char* argv[])
-{
-  QCoreApplication{argc, argv};
+private slots:
+  void test_onLoadedAsync() const;
+};
 
-  int failureCount = 0;
-  failureCount += runTest<test_Configuration>();
-  failureCount += runTest<test_GeoElementUtils>();
-  failureCount += runTest<test_Message>();
-  failureCount += runTest<test_MessageFeed>();
-
-  return failureCount;
-}
+#endif // TEST_MESSAGEFEED_H

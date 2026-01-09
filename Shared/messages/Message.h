@@ -31,6 +31,9 @@ class MessageData;
 class Message
 {
 public:
+  inline static const QString MESSAGE_TYPE_VALUE_COT = QStringLiteral("cot");
+  inline static const QString MESSAGE_TYPE_VALUE_GEOMESSAGE = QStringLiteral("geomessage");
+
   static const QString COT_ROOT_ELEMENT_NAME;
   static const QString COT_ELEMENT_NAME;
   static const QString COT_TYPE_NAME;

@@ -21,6 +21,9 @@
 
 // C++ API headers
 #include "AttributeListModel.h"
+#include "DynamicEntity.h"
+#include "DynamicEntityChangedInfo.h"
+#include "DynamicEntityObservation.h"
 #include "FieldsPopupElement.h"
 #include "GeoElement.h"
 #include "GeoView.h"
@@ -35,6 +38,8 @@
 // DSA headers
 #include "ToolManager.h"
 
+// STL headers
+#include <iterator>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -53,29 +58,37 @@ QString IdentifyController::toolName() const
   return QStringLiteral("identify");
 }
 
-void IdentifyController::showPopups(const QHash<QString, QList<GeoElement*>>& geoElementsByTitle)
+void IdentifyController::setGeoElements(const std::vector<ContextMenu::Element>& contextElements)
 {
-  // reset the popups container properties
-  m_popups.clear();
-  m_currentPopupIndex = -1;
+  reset();
 
-  if (geoElementsByTitle.isEmpty())
+  if (contextElements.empty())
   {
     emit popupChanged();
     return;
   }
 
-  for (const auto& [title, geoElements] : geoElementsByTitle.asKeyValueRange())
+  m_contextElements.reserve(contextElements.size());
+  std::for_each(std::cbegin(contextElements), std::cend(contextElements), [&](const ContextMenu::Element& ce)
   {
-    for (auto* geoElement : geoElements)
-      addGeoElementPopup(geoElement, title);
-  }
+    GeoElement* ge = std::get<GeoElement*>(ce);
+    if (!ge || !ge->attributes() || ge->attributes()->isEmpty())
+      return;
 
-  // verify at least one popup was added and set the pointer to the start
-  if (!m_popups.empty())
-    m_currentPopupIndex = 0;
+    // dynamic entities do not need to be re-parented but a weak pointer should be captured for them
+    const ContextMenu::DynamicEntityPtr dePtr = std::get<ContextMenu::DynamicEntityPtr>(ce);
+    if (dePtr.has_value())
+    {
+      if (dePtr->isNull())
+        return;
+    }
+    else
+      dynamic_cast<QObject*>(ge)->setParent(this);
 
-  emit popupChanged();
+    m_contextElements.emplace_back(ce);
+  });
+
+  nextPopup();
 }
 
 void IdentifyController::nextPopup()
@@ -83,8 +96,8 @@ void IdentifyController::nextPopup()
   if (!canNext())
     return;
 
-  ++m_currentPopupIndex;
-  emit popupChanged();
+  ++m_geoElementIndex;
+  setPopup();
 }
 
 void IdentifyController::prevPopup()
@@ -92,8 +105,35 @@ void IdentifyController::prevPopup()
   if (!canPrev())
     return;
 
-  --m_currentPopupIndex;
-  emit popupChanged();
+  --m_geoElementIndex;
+  setPopup();
+}
+
+void IdentifyController::reset()
+{
+  if (m_dynamicEntityConnection)
+    disconnect(m_dynamicEntityConnection);
+
+  m_geoElementIndex = -1;
+  if (m_popup)
+  {
+    m_popup->deleteLater();
+    delete m_popup;
+  }
+  m_popup = nullptr;
+
+  std::for_each(std::cbegin(m_contextElements), std::cend(m_contextElements), [&](const ContextMenu::Element& ce)
+  {
+    const ContextMenu::DynamicEntityPtr dePtr = std::get<ContextMenu::DynamicEntityPtr>(ce);
+    if (dePtr.has_value())
+      return;
+
+    QObject* o = dynamic_cast<QObject*>(std::get<GeoElement*>(ce));
+    o->deleteLater();
+    delete o;
+  });
+
+  m_contextElements.clear();
 }
 
 bool isObjectIdFieldName(QStringView fieldName)
@@ -109,16 +149,31 @@ bool isObjectIdFieldName(QStringView fieldName)
   return std::any_of(cbegin, cend, [&](auto oidFieldName) { return fieldName.compare(oidFieldName, Qt::CaseInsensitive) == 0; });
 }
 
-bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QString& popupTitle)
+void IdentifyController::setPopup()
 {
-  if (!geoElement)
-    return false;
+  if (m_dynamicEntityConnection)
+    disconnect(m_dynamicEntityConnection);
 
-  if (!geoElement->attributes() || geoElement->attributes()->isEmpty())
-    return false;
+  const ContextMenu::Element ce = m_contextElements[m_geoElementIndex];
+  GeoElement* ge = std::get<GeoElement*>(ce);
+  const QString popupTitle = std::get<QString>(ce);
+  const ContextMenu::DynamicEntityPtr dePtr = std::get<ContextMenu::DynamicEntityPtr>(ce);
+
+  if (dePtr.has_value() && dePtr->isNull())
+  {
+    std::vector<ContextMenu::Element> validElements{};
+    validElements.reserve(m_contextElements.size() - 1); // we know we will at least remove 1
+    std::copy_if(std::cbegin(m_contextElements), std::cend(m_contextElements), std::back_inserter(validElements), [&](const ContextMenu::Element& ce)
+    {
+      const ContextMenu::DynamicEntityPtr dePtr = std::get<ContextMenu::DynamicEntityPtr>(ce);
+      return !dePtr.has_value() || !dePtr->isNull();
+    });
+    resetGeoElements(validElements);
+    return;
+  }
 
   // create a new Popup from the geoElement
-  auto newPopup = std::make_unique<Popup>(geoElement);
+  Popup* newPopup = new Popup(ge, this);
   newPopup->popupDefinition()->setTitle(popupTitle);
   const auto popupElements = newPopup->popupDefinition()->elements();
   for (const PopupElement* popupElement : popupElements)
@@ -135,33 +190,85 @@ bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QStrin
         continue;
 
       // set parent to Popup
-      auto popupFF = new PopupFieldFormat(dynamic_cast<QObject*>(newPopup.get()));
+      auto popupFF = new PopupFieldFormat(dynamic_cast<QObject*>(newPopup));
       popupFF->setDecimalPlaces(2);
       popupFF->setUseThousandsSeparator(true);
       field->setFormat(popupFF);
     }
   }
-  m_popups.emplace_back(std::move(newPopup));
 
-  return true;
+  if (dePtr.has_value() && !dePtr->isNull())
+    m_dynamicEntityConnection = connect(dePtr.value(), &DynamicEntity::dynamicEntityChanged, this, &IdentifyController::dynamicEntityChanged);
+
+  if (m_popup)
+  {
+    m_popup->deleteLater();
+    delete m_popup;
+  }
+
+  m_popup = newPopup;
+  emit popupChanged();
+}
+
+void IdentifyController::resetGeoElements(const std::vector<ContextMenu::Element> &contextElements)
+{
+  if (m_dynamicEntityConnection)
+    disconnect(m_dynamicEntityConnection);
+
+  m_geoElementIndex = -1;
+  if (m_popup)
+  {
+    m_popup->deleteLater();
+    delete m_popup;
+  }
+  m_popup = nullptr;
+
+  m_contextElements.clear();
+
+  if (contextElements.empty())
+  {
+    emit popupChanged();
+    return;
+  }
+
+  m_contextElements.reserve(contextElements.size());
+  std::for_each(std::begin(contextElements), std::end(contextElements), [&](const ContextMenu::Element& ce)
+  {
+    m_contextElements.emplace_back(ce);
+  });
+
+  nextPopup();
 }
 
 bool IdentifyController::canNext() const
 {
-  return m_currentPopupIndex < static_cast<int>(m_popups.size() - 1);
+  return m_geoElementIndex < static_cast<int>(m_contextElements.size() - 1);
 }
 
 bool IdentifyController::canPrev() const
 {
-  return m_currentPopupIndex > 0;
+  return m_geoElementIndex > 0;
+}
+
+void IdentifyController::dynamicEntityChanged(Esri::ArcGISRuntime::DynamicEntityChangedInfo* deci)
+{
+  deci->deleteLater();
+
+  // if the entity has been purged, break the connection and skip setting the popup
+  // this leaves the UI populated with the latest observation info until navigating
+  // to another element with back/next buttons
+  if (deci->isDynamicEntityPurged())
+    disconnect(m_dynamicEntityConnection);
+  else
+    setPopup();
 }
 
 Popup* IdentifyController::popup() const
 {
-  if (m_currentPopupIndex < 0 || m_currentPopupIndex >= static_cast<int>(m_popups.size()))
+  if (!m_popup || m_contextElements.size() < 1)
     return nullptr;
 
-  return m_popups.at(m_currentPopupIndex).get();
+  return m_popup;
 }
 
 } // Dsa

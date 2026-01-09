@@ -24,7 +24,6 @@
 #include "DynamicEntityObservation.h"
 #include "Graphic.h"
 #include "GraphicsOverlay.h"
-#include "IdentifyGraphicsOverlayResult.h"
 #include "IdentifyLayerResult.h"
 #include "LayerContent.h"
 #include "MapView.h"
@@ -125,9 +124,16 @@ void ContextMenuController::onMousePressedAndHeld(QMouseEvent& event)
     return;
 
   clearOptions();
-  for (const auto& geoElements : std::as_const(m_contextGeoElements))
-    qDeleteAll(geoElements);
-  m_contextGeoElements.clear();
+  std::for_each(std::cbegin(m_contextElements), std::cend(m_contextElements), [&](const ContextMenu::Element& ce)
+  {
+    const ContextMenu::DynamicEntityPtr dePtr = std::get<ContextMenu::DynamicEntityPtr>(ce);
+    if (dePtr.has_value())
+      return;
+
+    GeoElement* ge = std::get<GeoElement*>(ce);
+    delete ge;
+  });
+  m_contextElements.clear();
 
   GeoView* geoView = ToolResourceProvider::instance()->geoView();
   if (!geoView)
@@ -251,28 +257,21 @@ void ContextMenuController::setResultTitle(const QString& resultTitle)
  */
 void ContextMenuController::processGeoElements()
 {
-  if (m_contextGeoElements.isEmpty())
+  if (m_contextElements.empty())
     return;
 
   // if we have at least 1 GeoElement, we can identify
   addOption(OPTION_IDENTIFY);
 
   quint8 pointGeoElementCount = 0;
-  for (const auto& geoElements : std::as_const(m_contextGeoElements))
+  for (const ContextMenu::Element& ce : m_contextElements)
   {
-    for (const auto* geoElement : geoElements)
+    GeoElement* ge = std::get<GeoElement*>(ce);
+    if (ge->geometry().geometryType() == GeometryType::Point)
     {
-      if (geoElement->geometry().geometryType() == GeometryType::Point)
-      {
-        if (++pointGeoElementCount > 1)
-          break;
-      }
+      if (++pointGeoElementCount > 1)
+        break;
     }
-
-    // no need to continue searching the results if more than
-    // one GeoElement of type point has already been found
-    if (pointGeoElementCount > 1)
-      break;
   }
 
   if (pointGeoElementCount == 1) // if we have exactly 1 point graphic, we can follow it
@@ -292,13 +291,13 @@ void ContextMenuController::invokeIdentifyOnGeoView()
   auto idenfityLayers = geoView->identifyLayersAsync(m_contextScreenPosition, 5.0, false, -1, this);
   auto identifyGraphicsOverlays = geoView->identifyGraphicsOverlaysAsync(m_contextScreenPosition, 5.0, false, -1, this);
 
-  QtFuture::whenAll(idenfityLayers, identifyGraphicsOverlays).then(this, [this](const QList<IdentifyResultsVariant::FutureType> &identifyResults)
+  QtFuture::whenAll(idenfityLayers, identifyGraphicsOverlays).then(this, [this](const QList<IdentifyResults::Variant>& identifyResults)
   {
-    for (const IdentifyResultsVariant::FutureType& identifyResult : identifyResults)
+    for (const IdentifyResults::Variant& identifyResult : identifyResults)
     {
-      if (identifyResult.index() == IdentifyResultsVariant::Types::LAYERS)
+      if (std::holds_alternative<IdentifyResults::Layer>(identifyResult))
       {
-        LayerResultsManager resultsManager(std::get<IdentifyResultsVariant::Types::LAYERS>(identifyResult).result());
+        LayerResultsManager resultsManager(std::get<IdentifyResults::Layer>(identifyResult).result());
         for (IdentifyLayerResult* result : std::as_const(resultsManager.m_results))
         {
           if (!result)
@@ -308,23 +307,44 @@ void ContextMenuController::invokeIdentifyOnGeoView()
           if (geoElements.isEmpty())
             continue;
 
-          // set the GeoElements to be managed by the tool
-          GeoElementUtils::setParent(geoElements, this);
+          // IF/WHEN WE ARE DISPLAYING TRACKS ON THE MAP!!!
+          // keep a record of entityIds per layer to prevent adding the same
+          // dynamic entity for more than one observation that is clicked
+          std::vector<quint64> entityIds{};
+          QString layerName{result->layerContent()->name()};
+          std::for_each(std::begin(geoElements), std::end(geoElements), [&](GeoElement* ge)
+          {
+            ContextMenu::DynamicEntityPtr dePtr = std::nullopt;
+            GeoElement* geCandidate = ge;
+            if (DynamicEntityObservation* deo = dynamic_cast<DynamicEntityObservation*>(ge); deo)
+            {
+              DynamicEntity* de = deo->dynamicEntity();
+              const quint64 eId = de->entityId();
+              const auto itEnd = std::cend(entityIds);
+              if (std::find_if(std::cbegin(entityIds), itEnd, [&](quint64 i) { return eId == i; }) != itEnd)
+                return;
 
-          // add the geoElements to the context hash using the layer name as the key
-          m_contextGeoElements.insert(result->layerContent()->name(), geoElements);
+              dePtr = QPointer{deo->dynamicEntity()};
+              geCandidate = de;
+            }
+            else
+              GeoElementUtils::setParent(ge, this);
+
+            m_contextElements.emplace_back(layerName, geCandidate, dePtr);
+          });
         }
       }
-      else if (identifyResult.index() == IdentifyResultsVariant::Types::GRAPHICS)
+      else if (std::holds_alternative<IdentifyResults::Graphics>(identifyResult))
       {
-        GraphicsOverlaysResultsManager resultsManager(std::get<IdentifyResultsVariant::Types::GRAPHICS>(identifyResult).result());
+        GraphicsOverlaysResultsManager resultsManager(std::get<IdentifyResults::Graphics>(identifyResult).result());
         for (IdentifyGraphicsOverlayResult* result : std::as_const(resultsManager.m_results))
         {
           if (!result)
             continue;
 
           // don't process the location on the context menu
-          if (result->graphicsOverlay()->overlayId() == AppConstants::PROPERTYNAME_LAYER_NAME_SCENEVIEW_LOCATION)
+          const QString overlayId{result->graphicsOverlay()->overlayId()};
+          if (overlayId == AppConstants::PROPERTYNAME_LAYER_NAME_SCENEVIEW_LOCATION)
             continue;
 
           const auto geoElements = result->geoElements();
@@ -335,7 +355,10 @@ void ContextMenuController::invokeIdentifyOnGeoView()
           GeoElementUtils::setParent(geoElements, this);
 
           // add the geoElements to the context hash using the overlay id as the key
-          m_contextGeoElements.insert(result->graphicsOverlay()->overlayId(), geoElements);
+          std::for_each(std::cbegin(geoElements), std::cend(geoElements), [&](GeoElement* geoElement)
+          {
+            m_contextElements.emplace_back(overlayId, geoElement, std::nullopt);
+          });
         }
       }
     }
@@ -398,7 +421,11 @@ void ContextMenuController::selectOption(const QString& option)
     if (!identifyTool)
       return;
 
-    identifyTool->showPopups(m_contextGeoElements);
+    // send geoelements to the identify controller which will take ownership of non-dynamic entities
+    identifyTool->setGeoElements(m_contextElements);
+
+    // clear the collections
+    m_contextElements.clear();
   }
   else if (option == OPTION_VIEWSHED)
   {
@@ -418,21 +445,14 @@ void ContextMenuController::selectOption(const QString& option)
       return;
 
     // follow the 1st point graphic (should be only 1)
-    for(const auto& geoElements : std::as_const(m_contextGeoElements))
+    for (const ContextMenu::Element& e : m_contextElements)
     {
-      for (auto* geoElement : geoElements)
-      {
-        if (!geoElement || geoElement->geometry().geometryType() != GeometryType::Point)
-          continue;
+      GeoElement* ge = std::get<GeoElement*>(e);
+      if (ge->geometry().geometryType() != GeometryType::Point)
+        continue;
 
-        // follow the 'parent' DynamicEntity if the type was a DynamicEntityObservation
-        auto* geoElementToFollow = geoElement;
-        if (const auto* observation = dynamic_cast<DynamicEntityObservation*>(geoElement); observation)
-          geoElementToFollow = static_cast<DynamicEntity*>(observation->dynamicEntity());
-
-        followTool->followGeoElement(geoElementToFollow);
-        return;
-      }
+      followTool->followGeoElement(ge);
+      return;
     }
   }
   else if (option == OPTION_COORDINATES)
@@ -452,32 +472,18 @@ void ContextMenuController::selectOption(const QString& option)
       return;
 
     // perform LOS to each point geoElement found
-    // follow the 1st point graphic (should be only 1)
-    auto losFunc = [lineOfSightTool](const QHash<QString, QList<GeoElement*>>& geoElementsByTitle)
+    std::for_each(std::cbegin(m_contextElements), std::cend(m_contextElements), [&](const ContextMenu::Element& ce)
     {
-      for(auto gIt = geoElementsByTitle.cbegin(); gIt != geoElementsByTitle.cend(); ++gIt)
-      {
-        const QList<GeoElement*>& geoElements = gIt.value();
-        for (auto* geoElement : geoElements)
-        {
-          if (!geoElement || geoElement->geometry().geometryType() != GeometryType::Point)
-            continue;
+      GeoElement* ge = std::get<GeoElement*>(ce);
+      if (ge && ge->geometry().geometryType() != GeometryType::Point)
+        return;
 
-          // identify results of type observation require the dynamic entity they belong to
-          if (auto* dynamicEntityObservation = dynamic_cast<DynamicEntityObservation*>(geoElement); dynamicEntityObservation)
-          {
-            auto* dynamicEntityGeoElement = static_cast<GeoElement*>(dynamicEntityObservation->dynamicEntity());
-            lineOfSightTool->lineOfSightFromLocationToGeoElement(dynamicEntityGeoElement);
-          }
-          else
-          {
-            lineOfSightTool->lineOfSightFromLocationToGeoElement(geoElement);
-          }
-        }
-      }
-    };
+      ContextMenu::DynamicEntityPtr dePtr = std::get<ContextMenu::DynamicEntityPtr>(ce);
+      if (dePtr.has_value() && dePtr->isNull())
+        return;
 
-    losFunc(m_contextGeoElements);
+      lineOfSightTool->lineOfSightFromLocationToGeoElement(ge);
+    });
   }
   else if (option == OPTION_OBSERVATION_REPORT)
   {

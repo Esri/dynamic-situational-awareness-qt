@@ -26,11 +26,11 @@
 #include <QStringListModel>
 
 // DSA headers
+#include "utilities/common.h"
 #include "AbstractTool.h"
 
-namespace Esri::ArcGISRuntime {
-  class GeoElement;
-}
+// STL headers
+#include <vector>
 
 namespace Dsa {
 
@@ -99,7 +99,7 @@ private:
   QString m_resultTitle;
   Esri::ArcGISRuntime::Point m_contextLocation;
   Esri::ArcGISRuntime::Point m_contextBaseSurfaceLocation;
-  QHash<QString, QList<Esri::ArcGISRuntime::GeoElement*>> m_contextGeoElements;
+  std::vector<ContextMenu::Element> m_contextElements;
 };
 
 } // Dsa

@@ -24,7 +24,6 @@
 #include "AttributeListModel.h"
 #include "DynamicEntity.h"
 #include "DynamicEntityObservation.h"
-#include "Error.h"
 #include "Feature.h"
 #include "FeatureIterator.h"
 #include "FeatureLayer.h"
@@ -35,8 +34,6 @@
 #include "GraphicListModel.h"
 #include "GraphicsOverlay.h"
 #include "GraphicsOverlayListModel.h"
-#include "IdentifyGraphicsOverlayResult.h"
-#include "IdentifyLayerResult.h"
 #include "Layer.h"
 #include "LayerListModel.h"
 #include "MapTypes.h"
@@ -52,6 +49,7 @@
 #include <QJsonObject>
 
 // DSA headers
+#include "utilities/common.h"
 #include "AlertConditionData.h"
 #include "AlertConditionListModel.h"
 #include "AlertConstants.h"
@@ -63,7 +61,6 @@
 #include "GeoElementAlertTarget.h"
 #include "GraphicsOverlayAlertTarget.h"
 #include "GraphicsOverlaysResultsManager.h"
-#include "IdentifyController.h"
 #include "LayerResultsManager.h"
 #include "LocationAlertSource.h"
 #include "LocationAlertTarget.h"
@@ -854,19 +851,19 @@ void AlertConditionsController::onMouseClicked(QMouseEvent &event)
   auto identifyGraphics = geoView->identifyGraphicsOverlaysAsync(event.position(), m_tolerance, false, 1, this);
 
   // respond once all QFutures are complete (includes any cancel or failure as well)
-  QtFuture::whenAll(identifyLayers, identifyGraphics).then(this, [this](const QList<IdentifyResultsVariant::FutureType> &identifyResults)
+  QtFuture::whenAll(identifyLayers, identifyGraphics).then(this, [this](const QList<IdentifyResults::Variant>& identifyResults)
   {
     // abort if tool is no longer the active tool
     if (!isActive())
       return;
 
     // iterate over each type in the results variant
-    for (const IdentifyResultsVariant::FutureType& identifyResult : identifyResults)
+    for (const IdentifyResults::Variant& identifyResult : identifyResults)
     {
-      if (identifyResult.index() == IdentifyResultsVariant::Types::LAYERS)
+      if (std::holds_alternative<IdentifyResults::Layer>(identifyResult))
       {
-        LayerResultsManager resultsManager(std::get<IdentifyResultsVariant::Types::LAYERS>(identifyResult).result());
-        for (auto* result : std::as_const(resultsManager.m_results))
+        LayerResultsManager resultsManager(std::get<IdentifyResults::Layer>(identifyResult).result());
+        for (const auto* result : std::as_const(resultsManager.m_results))
         {
           if (!result)
             continue;
@@ -878,10 +875,10 @@ void AlertConditionsController::onMouseClicked(QMouseEvent &event)
           }
         }
       }
-      else if (identifyResult.index() == IdentifyResultsVariant::Types::GRAPHICS)
+      else if (std::holds_alternative<IdentifyResults::Graphics>(identifyResult))
       {
-        GraphicsOverlaysResultsManager resultsManager(std::get<IdentifyResultsVariant::Types::GRAPHICS>(identifyResult).result());
-        for (auto* result : std::as_const(resultsManager.m_results))
+        GraphicsOverlaysResultsManager resultsManager(std::get<IdentifyResults::Graphics>(identifyResult).result());
+        for (const auto* result : std::as_const(resultsManager.m_results))
         {
           if (!result)
             continue;

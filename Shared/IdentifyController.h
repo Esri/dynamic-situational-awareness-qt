@@ -26,17 +26,12 @@
 #include "Popup.h"
 
 // DSA headers
+#include "utilities/common.h"
 #include "AbstractTool.h"
 
-// STL headers
-#include <memory>
-#include <vector>
-
-
 namespace Esri::ArcGISRuntime {
-  class GeoElement;
-  class IdentifyGraphicsOverlayResult;
-  class IdentifyLayerResult;
+  class DynamicEntity;
+  class DynamicEntityChangedInfo;
   class Popup;
 }
 
@@ -57,32 +52,28 @@ public:
 
   QString toolName() const override;
 
-  void showPopups(const QHash<QString, QList<Esri::ArcGISRuntime::GeoElement*>>& geoElementsByTitle);
+  void setGeoElements(const std::vector<ContextMenu::Element>& contextElements);
   Q_INVOKABLE void nextPopup();
   Q_INVOKABLE void prevPopup();
+  Q_INVOKABLE void reset();
 
 signals:
   void popupChanged();
 
 private:
-  bool addGeoElementPopup(Esri::ArcGISRuntime::GeoElement* geoElement, const QString& popupTitle);
+  void setPopup();
+  void resetGeoElements(const std::vector<ContextMenu::Element>& contextElements);
   Esri::ArcGISRuntime::Popup* popup() const;
   bool canNext() const;
   bool canPrev() const;
+  void dynamicEntityChanged(Esri::ArcGISRuntime::DynamicEntityChangedInfo* deci);
 
   double m_tolerance = 5.0;
-  int m_currentPopupIndex = -1;
-  std::vector<std::unique_ptr<Esri::ArcGISRuntime::Popup>> m_popups;
+  int m_geoElementIndex = -1;
+  Esri::ArcGISRuntime::Popup* m_popup = nullptr;
+  std::vector<ContextMenu::Element> m_contextElements;
+  QMetaObject::Connection m_dynamicEntityConnection;
 };
-
-// some shortcuts for working with multiple identify operation futures in a single 'QtFuture::whenAll' handler
-namespace IdentifyResultsVariant {
-  using FutureType = std::variant<QFuture<QList<Esri::ArcGISRuntime::IdentifyLayerResult*>>, QFuture<QList<Esri::ArcGISRuntime::IdentifyGraphicsOverlayResult*>>>;
-  namespace Types {
-    constexpr uchar LAYERS = 0;
-    constexpr uchar GRAPHICS = 1;
-  }
-}
 
 } // Dsa
 

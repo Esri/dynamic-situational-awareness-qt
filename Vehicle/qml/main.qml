@@ -397,6 +397,7 @@ Vehicle {
                 anchors.bottom: parent.bottom
 
                 closeCallback: () => {
+                    identifyController.reset();
                     identifyResultsContainer.visible = false;
                 }
             }

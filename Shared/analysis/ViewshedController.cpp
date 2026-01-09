@@ -30,8 +30,6 @@
 #include "Graphic.h"
 #include "GraphicsOverlay.h"
 #include "GraphicsOverlayListModel.h"
-#include "IdentifyGraphicsOverlayResult.h"
-#include "IdentifyLayerResult.h"
 #include "OrbitLocationCameraController.h"
 #include "RendererSceneProperties.h"
 #include "SceneView.h"
@@ -47,11 +45,11 @@
 #include <cmath>
 
 // DSA headers
+#include "utilities/common.h"
 #include "DsaUtility.h"
 #include "GeoElementUtils.h"
 #include "GeoElementViewshed360.h"
 #include "GraphicsOverlaysResultsManager.h"
-#include "IdentifyController.h"
 #include "LayerResultsManager.h"
 #include "LocationController.h"
 #include "LocationDisplay3d.h"
@@ -194,21 +192,21 @@ void ViewshedController::onMouseClicked(QMouseEvent& event)
       auto graphicsOverlayIdentify = m_sceneView->identifyGraphicsOverlaysAsync(position, c_defaultIdentifyTolerance, false, c_defaultIdentifyMaxRecords, this);
 
       // respond once all QFutures are complete (includes any cancel or failure as well)
-      QtFuture::whenAll(layersIdentify, graphicsOverlayIdentify).then(this, [this](const QList<IdentifyResultsVariant::FutureType>& identifyResults)
+      QtFuture::whenAll(layersIdentify, graphicsOverlayIdentify).then(this, [this](const QList<IdentifyResults::Variant>& identifyResults)
       {
         // bail out if the tool became deactivated
         if (!isActive() || !m_sceneView)
           return;
 
-        for (const IdentifyResultsVariant::FutureType& identifyResult : identifyResults)
+        for (const IdentifyResults::Variant& identifyResult : identifyResults)
         {
-          if (identifyResult.index() == IdentifyResultsVariant::Types::LAYERS)
+          if (std::holds_alternative<IdentifyResults::Layer>(identifyResult))
           {
-            LayerResultsManager resultsManager{std::get<IdentifyResultsVariant::Types::LAYERS>(identifyResult).result()};
-            for (auto* result : resultsManager.m_results)
+            LayerResultsManager resultsManager{std::get<IdentifyResults::Layer>(identifyResult).result()};
+            for (const auto* result : std::as_const(resultsManager.m_results))
             {
               // make sure the results for the current layer has at least one element in it
-              auto geoElements = result->geoElements();
+              const auto geoElements = result->geoElements();
               if (!result || geoElements.count() < 1)
                 continue;
 
@@ -232,13 +230,13 @@ void ViewshedController::onMouseClicked(QMouseEvent& event)
               }
             }
           }
-          else if (identifyResult.index() == IdentifyResultsVariant::Types::GRAPHICS)
+          else if (std::holds_alternative<IdentifyResults::Graphics>(identifyResult))
           {
-            GraphicsOverlaysResultsManager resultsManager{std::get<IdentifyResultsVariant::Types::GRAPHICS>(identifyResult).result()};
-            for (auto* result : resultsManager.m_results)
+            GraphicsOverlaysResultsManager resultsManager{std::get<IdentifyResults::Graphics>(identifyResult).result()};
+            for (const auto* result : std::as_const(resultsManager.m_results))
             {
               // make sure the results for the current layer has at least one element in it
-              auto geoElements = result->geoElements();
+              const auto geoElements = result->geoElements();
               if (!result || geoElements.count() < 1)
                 continue;
 

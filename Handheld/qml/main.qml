@@ -405,6 +405,7 @@ Handheld {
                 anchors.fill: parent
 
                 closeCallback: () => {
+                    identifyController.reset();
                     identifyResultsContainer.visible = false;
                 }
             }

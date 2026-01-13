@@ -95,6 +95,12 @@ QObject* dsaResourcesProvider(QQmlEngine* engine, QJSEngine* scriptEngine);
 
 int main(int argc, char *argv[])
 {
+#if defined(Q_OS_ANDROID)
+    if (!QSslSocket::supportsSsl()) {
+        qCritical() << "OpenSSL libraries not found";
+        return EXIT_FAILURE;
+    }
+#endif
   QGuiApplication app(argc, argv);
 
   QCoreApplication::setApplicationName(kApplicationName);

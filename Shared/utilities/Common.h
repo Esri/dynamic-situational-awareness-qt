@@ -11,14 +11,12 @@
 #include <QPointer>
 #include <QString>
 
-#include <optional>
 #include <tuple>
 #include <variant>
 
 namespace Dsa {
   namespace ContextMenu {
-    using DynamicEntityPtr = std::optional<QPointer<Esri::ArcGISRuntime::DynamicEntity>>;
-    using Element = std::tuple<QString, Esri::ArcGISRuntime::GeoElement*, DynamicEntityPtr>;
+    using Element = std::tuple<QString, Esri::ArcGISRuntime::GeoElement*, QPointer<Esri::ArcGISRuntime::DynamicEntity>>;
   }
   namespace IdentifyResults {
     using Layer = QFuture<QList<Esri::ArcGISRuntime::IdentifyLayerResult*>>;

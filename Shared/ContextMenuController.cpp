@@ -328,7 +328,9 @@ void ContextMenuController::invokeIdentifyOnGeoView()
               geCandidate = de;
             }
             else
+            {
               GeoElementUtils::setParent(ge, this);
+            }
 
             m_contextElements.emplace_back(layerName, geCandidate, dePtr);
           });

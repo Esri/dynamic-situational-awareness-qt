@@ -76,9 +76,12 @@ void IdentifyController::setGeoElements(const std::vector<ContextMenu::Element>&
       return;
 
     // dynamic entities do not need to be re-parented but a weak pointer should be captured for them
-    const ContextMenu::DynamicEntityPtr dePtr = std::get<ContextMenu::DynamicEntityPtr>(ce);
-    if (dePtr.has_value() && dePtr->isNull())
+    const QPointer<DynamicEntity> dePtr = std::get<QPointer<DynamicEntity>>(ce);
+    if (dePtr)
+    {
+      if (dePtr.isNull())
         return;
+    }
     else
     {
       // if no popup can be created for the element because it has no
@@ -140,8 +143,8 @@ void IdentifyController::reset()
 
   std::for_each(std::cbegin(m_contextElements), std::cend(m_contextElements), [&](const ContextMenu::Element& ce)
   {
-    const ContextMenu::DynamicEntityPtr dePtr = std::get<ContextMenu::DynamicEntityPtr>(ce);
-    if (dePtr.has_value())
+    const QPointer<DynamicEntity> dePtr = std::get<QPointer<DynamicEntity>>(ce);
+    if (dePtr)
       return;
 
     QObject* o = dynamic_cast<QObject*>(std::get<GeoElement*>(ce));
@@ -173,16 +176,16 @@ void IdentifyController::setPopup()
   const ContextMenu::Element ce = m_contextElements[m_geoElementIndex];
   GeoElement* ge = std::get<GeoElement*>(ce);
   const QString popupTitle = std::get<QString>(ce);
-  const ContextMenu::DynamicEntityPtr dePtr = std::get<ContextMenu::DynamicEntityPtr>(ce);
+  const QPointer<DynamicEntity> dePtr = std::get<QPointer<DynamicEntity>>(ce);
 
-  if (dePtr.has_value() && dePtr->isNull())
+  if (dePtr && dePtr.isNull())
   {
     std::vector<ContextMenu::Element> validElements{};
     validElements.reserve(m_contextElements.size() - 1); // we know we will at least remove 1
     std::copy_if(std::cbegin(m_contextElements), std::cend(m_contextElements), std::back_inserter(validElements), [&](const ContextMenu::Element& ce)
     {
-      const ContextMenu::DynamicEntityPtr dePtr = std::get<ContextMenu::DynamicEntityPtr>(ce);
-      return !dePtr.has_value() || !dePtr->isNull();
+      const QPointer<DynamicEntity> dePtr = std::get<QPointer<DynamicEntity>>(ce);
+      return !dePtr || !dePtr.isNull();
     });
     resetGeoElements(validElements);
     return;
@@ -213,8 +216,8 @@ void IdentifyController::setPopup()
     }
   }
 
-  if (dePtr.has_value() && !dePtr->isNull())
-    m_dynamicEntityConnection = connect(dePtr.value(), &DynamicEntity::dynamicEntityChanged, this, &IdentifyController::dynamicEntityChanged);
+  if (dePtr && !dePtr.isNull())
+    m_dynamicEntityConnection = connect(dePtr, &DynamicEntity::dynamicEntityChanged, this, &IdentifyController::dynamicEntityChanged);
 
   if (m_popup)
   {

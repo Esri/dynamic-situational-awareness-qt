@@ -126,8 +126,8 @@ void ContextMenuController::onMousePressedAndHeld(QMouseEvent& event)
   clearOptions();
   std::for_each(std::cbegin(m_contextElements), std::cend(m_contextElements), [&](const ContextMenu::Element& ce)
   {
-    const ContextMenu::DynamicEntityPtr dePtr = std::get<ContextMenu::DynamicEntityPtr>(ce);
-    if (dePtr.has_value())
+    const QPointer<DynamicEntity> dePtr = std::get<QPointer<DynamicEntity>>(ce);
+    if (dePtr)
       return;
 
     GeoElement* ge = std::get<GeoElement*>(ce);
@@ -314,7 +314,7 @@ void ContextMenuController::invokeIdentifyOnGeoView()
           QString layerName{result->layerContent()->name()};
           std::for_each(std::begin(geoElements), std::end(geoElements), [&](GeoElement* ge)
           {
-            ContextMenu::DynamicEntityPtr dePtr = std::nullopt;
+            QPointer<DynamicEntity> dePtr = nullptr;
             GeoElement* geCandidate = ge;
             if (DynamicEntityObservation* deo = dynamic_cast<DynamicEntityObservation*>(ge); deo)
             {
@@ -324,7 +324,7 @@ void ContextMenuController::invokeIdentifyOnGeoView()
               if (std::find_if(std::cbegin(entityIds), itEnd, [&](quint64 i) { return eId == i; }) != itEnd)
                 return;
 
-              dePtr = QPointer{deo->dynamicEntity()};
+              dePtr = de;
               geCandidate = de;
             }
             else
@@ -359,7 +359,7 @@ void ContextMenuController::invokeIdentifyOnGeoView()
           // add the geoElements to the context hash using the overlay id as the key
           std::for_each(std::cbegin(geoElements), std::cend(geoElements), [&](GeoElement* geoElement)
           {
-            m_contextElements.emplace_back(overlayId, geoElement, std::nullopt);
+            m_contextElements.emplace_back(overlayId, geoElement, nullptr);
           });
         }
       }
@@ -480,8 +480,8 @@ void ContextMenuController::selectOption(const QString& option)
       if (ge && ge->geometry().geometryType() != GeometryType::Point)
         return;
 
-      ContextMenu::DynamicEntityPtr dePtr = std::get<ContextMenu::DynamicEntityPtr>(ce);
-      if (dePtr.has_value() && dePtr->isNull())
+      QPointer<DynamicEntity> dePtr = std::get<QPointer<DynamicEntity>>(ce);
+      if (dePtr && dePtr.isNull())
         return;
 
       lineOfSightTool->lineOfSightFromLocationToGeoElement(ge);

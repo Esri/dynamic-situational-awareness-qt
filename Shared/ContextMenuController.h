@@ -26,7 +26,7 @@
 #include <QStringListModel>
 
 // DSA headers
-#include "utilities/common.h"
+#include "utilities/Common.h"
 #include "AbstractTool.h"
 
 // STL headers

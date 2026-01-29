@@ -45,7 +45,7 @@
 #include <cmath>
 
 // DSA headers
-#include "utilities/common.h"
+#include "utilities/Common.h"
 #include "DsaUtility.h"
 #include "GeoElementUtils.h"
 #include "GeoElementViewshed360.h"

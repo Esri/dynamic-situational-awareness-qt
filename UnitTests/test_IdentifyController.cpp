@@ -20,7 +20,7 @@
 #include "Graphic.h"
 #include "Point.h"
 // DSA
-#include "utilities/common.h"
+#include "utilities/Common.h"
 #include "IdentifyController.h"
 // Qt
 #include <QList>

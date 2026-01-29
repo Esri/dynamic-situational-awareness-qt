@@ -26,7 +26,7 @@
 #include "Popup.h"
 
 // DSA headers
-#include "utilities/common.h"
+#include "utilities/Common.h"
 #include "AbstractTool.h"
 
 namespace Esri::ArcGISRuntime {

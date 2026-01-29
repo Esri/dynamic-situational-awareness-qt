@@ -49,7 +49,7 @@
 #include <QJsonObject>
 
 // DSA headers
-#include "utilities/common.h"
+#include "utilities/Common.h"
 #include "AlertConditionData.h"
 #include "AlertConditionListModel.h"
 #include "AlertConstants.h"

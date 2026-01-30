@@ -38,11 +38,14 @@ static const QString TEST_ATTRIBUTE_VALUE_1 = QStringLiteral("TEST_ATTRIBUTE_VAL
 
 static bool popupChangedEmitted = false;
 
+// helpers
+namespace {
 bool checkReturnAndReset()
 {
   bool checkedValue = popupChangedEmitted;
   popupChangedEmitted = false;
   return checkedValue;
+}
 }
 
 void test_IdentifyController::test_setGeoElements() const

@@ -26,6 +26,8 @@
 using namespace Dsa;
 namespace esri_rt = Esri::ArcGISRuntime;
 
+// helpers
+namespace {
 QList<esri_rt::GeoElement*> getListOfGraphics(qsizetype count)
 {
   QList<esri_rt::GeoElement*> geoElements{};
@@ -33,6 +35,7 @@ QList<esri_rt::GeoElement*> getListOfGraphics(qsizetype count)
   for (int i = 0; i < count; ++i)
     geoElements.emplaceBack(new esri_rt::Graphic());
   return geoElements;
+}
 }
 
 void test_GeoElementUtils::test_setParent() const

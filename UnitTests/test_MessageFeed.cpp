@@ -30,6 +30,8 @@ namespace esri_rt = Esri::ArcGISRuntime;
 static const QString TEST_FEED_NAME_1 = QStringLiteral("TEST_FEED_NAME_1");
 static const QString TEST_FEED_NAME_2 = QStringLiteral("TEST_FEED_NAME_2");
 
+// helpers
+namespace {
 void runFeedMessageTypeTest(const QString& feedName, const QString& feedMessageType, QObject* o)
 {
   MessageFeed mf{feedName, feedMessageType};
@@ -40,6 +42,7 @@ void runFeedMessageTypeTest(const QString& feedName, const QString& feedMessageT
   });
   mf.load();
   while (mf.loadStatus() == esri_rt::LoadStatus::Loading);
+}
 }
 
 void test_MessageFeed::test_onLoadedAsync() const

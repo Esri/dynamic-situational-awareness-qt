@@ -307,9 +307,7 @@ void ContextMenuController::invokeIdentifyOnGeoView()
           if (geoElements.isEmpty())
             continue;
 
-          // IF/WHEN WE ARE DISPLAYING TRACKS ON THE MAP!!!
-          // keep a record of entityIds per layer to prevent adding the same
-          // dynamic entity for more than one observation that is clicked
+          // in the case of DynamicEntityObservations, take the parent DynamicEntity as the GeoElement to be used for building the popup
           std::vector<quint64> entityIds{};
           QString layerName{result->layerContent()->name()};
           std::for_each(std::begin(geoElements), std::end(geoElements), [&](GeoElement* ge)

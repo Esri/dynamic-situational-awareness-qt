@@ -25,7 +25,7 @@ class test_MessageFeed : public QObject
   Q_OBJECT
 
 private slots:
-  void test_onLoadedAsync() const;
+  void test_constructor() const;
 };
 
 #endif // TEST_MESSAGEFEED_H

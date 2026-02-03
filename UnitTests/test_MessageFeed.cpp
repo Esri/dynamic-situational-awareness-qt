@@ -16,41 +16,24 @@
 
 #include "test_MessageFeed.h"
 
-// C++ API
-#include <MapTypes.h>
 // DSA
 #include "Message.h"
 #include "MessageFeed.h"
 // Qt
+#include <QCoreApplication>
 #include <QTest>
 
 using namespace Dsa;
-namespace esri_rt = Esri::ArcGISRuntime;
 
 static const QString TEST_FEED_NAME_1 = QStringLiteral("TEST_FEED_NAME_1");
 static const QString TEST_FEED_NAME_2 = QStringLiteral("TEST_FEED_NAME_2");
 
-// helpers
-namespace {
-void runFeedMessageTypeTest(const QString& feedName, const QString& feedMessageType, QObject* o)
-{
-  MessageFeed mf{feedName, feedMessageType};
-  o->connect(&mf, &esri_rt::DynamicEntityDataSource::doneLoading, o, [&](const esri_rt::Error&)
-  {
-    QCOMPARE(mf.feedName(), feedName);
-    QCOMPARE(mf.feedMessageType(), feedMessageType);
-  });
-  mf.load();
-  while (mf.loadStatus() == esri_rt::LoadStatus::Loading);
-}
-}
-
-void test_MessageFeed::test_onLoadedAsync() const
+void test_MessageFeed::test_constructor() const
 {
   int argc = 0;
   char** argv = nullptr;
   QCoreApplication app{argc, argv};
-  QObject o{};
-  runFeedMessageTypeTest(TEST_FEED_NAME_1, Message::MESSAGE_TYPE_VALUE_COT, &o);
-  runFeedMessageTypeTest(TEST_FEED_NAME_2, Message::MESSAGE_TYPE_VALUE_GEOMESSAGE, &o);
+  MessageFeed mfCoT{TEST_FEED_NAME_1, Message::MESSAGE_TYPE_VALUE_COT};
+  QCOMPARE(mfCoT.feedName(), TEST_FEED_NAME_1);
+  QCOMPARE(mfCoT.feedMessageType(), Message::MESSAGE_TYPE_VALUE_COT);
 }

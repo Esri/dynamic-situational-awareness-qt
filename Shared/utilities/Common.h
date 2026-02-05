@@ -16,7 +16,8 @@
 
 namespace Dsa {
   namespace ContextMenu {
-    using Element = std::tuple<QString, Esri::ArcGISRuntime::GeoElement*, QPointer<Esri::ArcGISRuntime::DynamicEntity>>;
+    using IsDynamicEntity = bool;
+    using Element = std::tuple<QString, Esri::ArcGISRuntime::GeoElement*, IsDynamicEntity, QPointer<Esri::ArcGISRuntime::DynamicEntity>>;
   }
   namespace IdentifyResults {
     using Layer = QFuture<QList<Esri::ArcGISRuntime::IdentifyLayerResult*>>;

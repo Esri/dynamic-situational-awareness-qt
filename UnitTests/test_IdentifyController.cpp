@@ -65,6 +65,7 @@ void test_IdentifyController::test_setGeoElements() const
   // a single graphic with a single attribute
   elements1.emplace_back(TEST_LAYER_NAME_1,
                          new esri_rt::Graphic(esri_rt::Point{0.0, 0.0}, {{TEST_ATTRIBUTE_NAME_1, TEST_ATTRIBUTE_VALUE_1}}, &o),
+                         false, /* not a dynamic entity */
                          nullptr);
   i.setGeoElements(elements1);
   QCOMPARE(checkReturnAndReset(), true);
@@ -74,6 +75,7 @@ void test_IdentifyController::test_setGeoElements() const
   std::vector<ContextMenu::Element> elements2{};
   elements2.emplace_back(TEST_LAYER_NAME_1,
                          new esri_rt::Graphic(&o),
+                         false, /* not a dynamic entity */
                          nullptr);
   i.setGeoElements(elements2);
   QCOMPARE(checkReturnAndReset(), true);

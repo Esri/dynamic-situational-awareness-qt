@@ -126,8 +126,7 @@ void ContextMenuController::onMousePressedAndHeld(QMouseEvent& event)
   clearOptions();
   std::for_each(std::cbegin(m_contextElements), std::cend(m_contextElements), [&](const ContextMenu::Element& ce)
   {
-    const QPointer<DynamicEntity> dePtr = std::get<QPointer<DynamicEntity>>(ce);
-    if (dePtr)
+    if (std::get<ContextMenu::IsDynamicEntity>(ce))
       return;
 
     GeoElement* ge = std::get<GeoElement*>(ce);
@@ -266,6 +265,11 @@ void ContextMenuController::processGeoElements()
   quint8 pointGeoElementCount = 0;
   for (const ContextMenu::Element& ce : m_contextElements)
   {
+    // if dynamic entities are no longer valid, don't count them toward the limitation of 2
+    // geoelements that prevent the follow or los option being added
+    if (std::get<ContextMenu::IsDynamicEntity>(ce) && std::get<QPointer<DynamicEntity>>(ce).isNull())
+        continue;
+
     GeoElement* ge = std::get<GeoElement*>(ce);
     if (ge->geometry().geometryType() == GeometryType::Point)
     {
@@ -310,6 +314,7 @@ void ContextMenuController::invokeIdentifyOnGeoView()
           // in the case of DynamicEntityObservations, take the parent DynamicEntity as the GeoElement to be used for building the popup
           std::vector<quint64> entityIds{};
           QString layerName{result->layerContent()->name()};
+          bool isDynamicEntity = false;
           std::for_each(std::begin(geoElements), std::end(geoElements), [&](GeoElement* ge)
           {
             QPointer<DynamicEntity> dePtr = nullptr;
@@ -322,6 +327,9 @@ void ContextMenuController::invokeIdentifyOnGeoView()
               if (std::find_if(std::cbegin(entityIds), itEnd, [&](quint64 i) { return eId == i; }) != itEnd)
                 return;
 
+              // capture the flag for dynamic entity explicitly here since it could be
+              // destroyed before the tuple is added to the container
+              isDynamicEntity = true;
               dePtr = de;
               geCandidate = de;
             }
@@ -330,7 +338,7 @@ void ContextMenuController::invokeIdentifyOnGeoView()
               GeoElementUtils::setParent(ge, this);
             }
 
-            m_contextElements.emplace_back(layerName, geCandidate, dePtr);
+            m_contextElements.emplace_back(layerName, geCandidate, isDynamicEntity, dePtr);
           });
         }
       }
@@ -357,7 +365,7 @@ void ContextMenuController::invokeIdentifyOnGeoView()
           // add the geoElements to the context hash using the overlay id as the key
           std::for_each(std::cbegin(geoElements), std::cend(geoElements), [&](GeoElement* geoElement)
           {
-            m_contextElements.emplace_back(overlayId, geoElement, nullptr);
+            m_contextElements.emplace_back(overlayId, geoElement, false /* not a dynamic entity */, nullptr);
           });
         }
       }
@@ -445,9 +453,12 @@ void ContextMenuController::selectOption(const QString& option)
       return;
 
     // follow the 1st point graphic (should be only 1)
-    for (const ContextMenu::Element& e : m_contextElements)
+    for (const ContextMenu::Element& ce : m_contextElements)
     {
-      GeoElement* ge = std::get<GeoElement*>(e);
+      if (std::get<ContextMenu::IsDynamicEntity>(ce) && std::get<QPointer<DynamicEntity>>(ce).isNull())
+          continue;
+
+      GeoElement* ge = std::get<GeoElement*>(ce);
       if (ge->geometry().geometryType() != GeometryType::Point)
         continue;
 
@@ -474,12 +485,12 @@ void ContextMenuController::selectOption(const QString& option)
     // perform LOS to each point geoElement found
     std::for_each(std::cbegin(m_contextElements), std::cend(m_contextElements), [&](const ContextMenu::Element& ce)
     {
-      GeoElement* ge = std::get<GeoElement*>(ce);
-      if (ge && ge->geometry().geometryType() != GeometryType::Point)
+      // skip dynamic entities that are no longer valid
+      if (std::get<ContextMenu::IsDynamicEntity>(ce) && std::get<QPointer<DynamicEntity>>(ce).isNull())
         return;
 
-      QPointer<DynamicEntity> dePtr = std::get<QPointer<DynamicEntity>>(ce);
-      if (dePtr && dePtr.isNull())
+      GeoElement* ge = std::get<GeoElement*>(ce);
+      if (ge && ge->geometry().geometryType() != GeometryType::Point)
         return;
 
       lineOfSightTool->lineOfSightFromLocationToGeoElement(ge);

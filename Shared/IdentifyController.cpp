@@ -71,21 +71,17 @@ void IdentifyController::setGeoElements(const std::vector<ContextMenu::Element>&
   m_contextElements.reserve(contextElements.size());
   std::for_each(std::cbegin(contextElements), std::cend(contextElements), [&](const ContextMenu::Element& ce)
   {
-    GeoElement* ge = std::get<GeoElement*>(ce);
-    if (!ge)
-      return;
-
-    // dynamic entities do not need to be re-parented but a weak pointer should be captured for them
-    const QPointer<DynamicEntity> dePtr = std::get<QPointer<DynamicEntity>>(ce);
-    if (dePtr)
+    // skip dynamic entities that are no longer valid
+    if (std::get<ContextMenu::IsDynamicEntity>(ce))
     {
-      if (dePtr.isNull())
+      if (std::get<QPointer<DynamicEntity>>(ce).isNull())
         return;
     }
     else
     {
       // if no popup can be created for the element because it has no
       // attributes, it should be released and skipped
+      GeoElement* ge = std::get<GeoElement*>(ce);
       QObject* o = dynamic_cast<QObject*>(ge);
       if (!ge->attributes() || ge->attributes()->isEmpty())
       {
@@ -143,8 +139,7 @@ void IdentifyController::reset()
 
   std::for_each(std::cbegin(m_contextElements), std::cend(m_contextElements), [&](const ContextMenu::Element& ce)
   {
-    const QPointer<DynamicEntity> dePtr = std::get<QPointer<DynamicEntity>>(ce);
-    if (dePtr)
+    if (std::get<ContextMenu::IsDynamicEntity>(ce))
       return;
 
     QObject* o = dynamic_cast<QObject*>(std::get<GeoElement*>(ce));
@@ -170,28 +165,30 @@ bool isObjectIdFieldName(QStringView fieldName)
 
 void IdentifyController::setPopup()
 {
+  // always disconnect the dynamic entity connection as soon as possible
+  // if this function is called. no-op for non DEs
   if (m_dynamicEntityConnection)
     disconnect(m_dynamicEntityConnection);
 
+  // if the current element is a DE but it's no longer valid, remove it and reset the
+  // list of context menu, making a pass through all of them to check their state
   const ContextMenu::Element ce = m_contextElements[m_geoElementIndex];
-  GeoElement* ge = std::get<GeoElement*>(ce);
-  const QString popupTitle = std::get<QString>(ce);
-  const QPointer<DynamicEntity> dePtr = std::get<QPointer<DynamicEntity>>(ce);
-
-  if (dePtr && dePtr.isNull())
+  QPointer<DynamicEntity> dePtr{std::get<QPointer<DynamicEntity>>(ce)};
+  if (std::get<ContextMenu::IsDynamicEntity>(ce) && dePtr.isNull())
   {
     std::vector<ContextMenu::Element> validElements{};
     validElements.reserve(m_contextElements.size() - 1); // we know we will at least remove 1
     std::copy_if(std::cbegin(m_contextElements), std::cend(m_contextElements), std::back_inserter(validElements), [&](const ContextMenu::Element& ce)
     {
-      const QPointer<DynamicEntity> dePtr = std::get<QPointer<DynamicEntity>>(ce);
-      return !dePtr || !dePtr.isNull();
+      return !std::get<QPointer<DynamicEntity>>(ce).isNull();
     });
     resetGeoElements(validElements);
     return;
   }
 
   // create a new Popup from the geoElement
+  const QString popupTitle = std::get<QString>(ce);
+  GeoElement* ge = std::get<GeoElement*>(ce);
   Popup* newPopup = new Popup(ge, this);
   newPopup->popupDefinition()->setTitle(popupTitle);
   const auto popupElements = newPopup->popupDefinition()->elements();
@@ -216,7 +213,7 @@ void IdentifyController::setPopup()
     }
   }
 
-  if (dePtr && !dePtr.isNull())
+  if (!dePtr.isNull())
     m_dynamicEntityConnection = connect(dePtr, &DynamicEntity::dynamicEntityChanged, this, &IdentifyController::dynamicEntityChanged);
 
   if (m_popup)

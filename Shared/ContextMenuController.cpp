@@ -314,9 +314,9 @@ void ContextMenuController::invokeIdentifyOnGeoView()
           // in the case of DynamicEntityObservations, take the parent DynamicEntity as the GeoElement to be used for building the popup
           std::vector<quint64> entityIds{};
           QString layerName{result->layerContent()->name()};
-          bool isDynamicEntity = false;
           std::for_each(std::begin(geoElements), std::end(geoElements), [&](GeoElement* ge)
           {
+            bool isDynamicEntity = false;
             QPointer<DynamicEntity> dePtr = nullptr;
             GeoElement* geCandidate = ge;
             if (DynamicEntityObservation* deo = dynamic_cast<DynamicEntityObservation*>(ge); deo)

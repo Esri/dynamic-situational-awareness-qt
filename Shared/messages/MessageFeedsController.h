@@ -36,9 +36,7 @@ namespace Esri::ArcGISRuntime {
 namespace Dsa {
 
 class DataListener;
-
 class LocationBroadcast;
-
 class MessageFeedListModel;
 
 class MessageFeedsController : public AbstractTool
@@ -49,6 +47,10 @@ class MessageFeedsController : public AbstractTool
   Q_PROPERTY(bool locationBroadcastEnabled READ isLocationBroadcastEnabled WRITE setLocationBroadcastEnabled NOTIFY locationBroadcastEnabledChanged)
   Q_PROPERTY(int locationBroadcastFrequency READ locationBroadcastFrequency WRITE setLocationBroadcastFrequency NOTIFY locationBroadcastFrequencyChanged)
   Q_PROPERTY(bool locationBroadcastInDistress READ isLocationBroadcastInDistress WRITE setLocationBroadcastInDistress NOTIFY locationBroadcastInDistressChanged)
+  Q_PROPERTY(int selectedFeedIndex READ selectedFeedIndex WRITE setSelectedFeedIndex NOTIFY selectedFeedChanged)
+  Q_PROPERTY(bool selectedFeedShowPreviousObservations READ selectedFeedShowPreviousObservations WRITE setSelectedFeedShowPreviousObservations NOTIFY selectedFeedChanged)
+  Q_PROPERTY(int selectedFeedMaximumObservations READ selectedFeedMaximumObservations WRITE setSelectedFeedMaximumObservations NOTIFY selectedFeedChanged)
+  Q_PROPERTY(bool selectedFeedShowTrackLine READ selectedFeedShowTrackLine WRITE setSelectedFeedShowTrackLine NOTIFY selectedFeedChanged)
 
 public:
   static const QString RESOURCE_DIRECTORY_PROPERTYNAME;
@@ -82,10 +84,22 @@ public:
 
   static Esri::ArcGISRuntime::SurfacePlacement toSurfacePlacement(const QString& surfacePlacement);
 
+  int selectedFeedIndex() const;
+  bool selectedFeedShowPreviousObservations() const;
+  int selectedFeedMaximumObservations() const;
+  bool selectedFeedShowTrackLine() const;
+
+  void setSelectedFeedIndex(int index);
+  void setSelectedFeedShowPreviousObservations(bool showPreviousObservations);
+  void setSelectedFeedMaximumObservations(int maximumObservations);
+  void setSelectedFeedShowTrackLine(bool showTrackLine);
+
 signals:
   void locationBroadcastEnabledChanged();
   void locationBroadcastFrequencyChanged();
   void locationBroadcastInDistressChanged();
+  void selectedFeedChanged(int newIndex);
+
   void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
 
 private:
@@ -100,6 +114,7 @@ private:
   QString m_resourcePath;
   LocationBroadcast* m_locationBroadcast = nullptr;
   QVariantList m_messageFeedProperties;
+  int m_selectedFeedIndex = -1;
 };
 
 } // Dsa

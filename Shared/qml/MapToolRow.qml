@@ -26,137 +26,27 @@ Row {
     spacing: 10 * scaleFactor
     visible: categoryToolbar.state === "map"
     onVisibleChanged: {
+        messageFeedsTool.visible    = false;
         tableOfContentsTool.visible = false;
+        addLocalDataTool.visible    = false;
+        basemapsTool.visible        = false;
+        openSceneTool.visible       = false;
         state = "clear";
     }
-    property alias tocIconSelected: tocIcon.selected
 
     states: [
         State {
-            name: packageIcon.toolName
-            PropertyChanges {
-                target: packageIcon
-                selected: true
-            }
-            PropertyChanges {
-                target: tocIcon
-                selected: selected
-            }
-            PropertyChanges {
-                target: coordinateConversionIcon
-                selected: selected
-            }
-            PropertyChanges {
-                target: identifyIcon
-                selected: selected
-            }
-        },
-        State {
-            name: identifyIcon.toolName
-            PropertyChanges {
-                target: identifyIcon
-                selected: true
-            }
-            PropertyChanges {
-                target: tocIcon
-                selected: selected
-            }
-        },
-        State {
-            name: coordinateConversionIcon.toolName
-            PropertyChanges {
-                target: coordinateConversionIcon
-                selected: true
-            }
-            PropertyChanges {
-                target: tocIcon
-                selected: selected
-            }
-        },
-        State {
-            name: messageFeedsIcon.toolName
-            PropertyChanges {
-                target: messageFeedsIcon
-                selected: true
-            }
-            PropertyChanges {
-                target: tocIcon
-                selected: selected
-            }
-            PropertyChanges {
-                target: coordinateConversionIcon
-                selected: selected
-            }
-            PropertyChanges {
-                target: identifyIcon
-                selected: selected
-            }
-        },
-        State {
-            name: addLocalDataIcon.toolName
-            PropertyChanges {
-                target: addLocalDataIcon
-                selected: true
-            }
-            PropertyChanges {
-                target: tocIcon
-                selected: selected
-            }
-            PropertyChanges {
-                target: coordinateConversionIcon
-                selected: selected
-            }
-            PropertyChanges {
-                target: identifyIcon
-                selected: selected
-            }
-        },
-        State {
-            name: tocIcon.toolName
-            PropertyChanges {
-                target: tocIcon
-                selected: true
-            }
-            PropertyChanges {
-                target: coordinateConversionIcon
-                selected: selected
-            }
-            PropertyChanges {
-                target: identifyIcon
-                selected: selected
-            }
-        },
-        State {
-            name: basemapIcon.toolName
-            PropertyChanges {
-                target: basemapIcon
-                selected: selected
-            }
-            PropertyChanges {
-                target: tocIcon
-                selected: selected
-            }
-            PropertyChanges {
-                target: coordinateConversionIcon
-                selected: selected
-            }
-            PropertyChanges {
-                target: identifyIcon
-                selected: selected
-            }
-        },
-        State {
             name: "clear"
             PropertyChanges {
-                target: identifyIcon
-                selected: false
-            }
-            PropertyChanges {
                 target: coordinateConversionIcon
                 selected: selected
             }
             PropertyChanges {
                 target: messageFeedsIcon
+                selected: false
+            }
+            PropertyChanges {
+                target: tocIcon
                 selected: false
             }
             PropertyChanges {
@@ -168,34 +58,11 @@ Row {
                 selected: false
             }
             PropertyChanges {
-                target: tocIcon
+                target: packageIcon
                 selected: false
             }
         }
     ]
-
-    // Identify Tool
-    ToolIcon {
-        id: identifyIcon
-        iconSource: DsaResources.iconAboutMap
-        toolName: "Query"
-        visible: false
-        onToolSelected: {
-            if (selected) {
-                selected = false;
-                mapToolRow.state = "clear";
-            } else
-                mapToolRow.state = toolName;
-
-            identifyController.active = selected;
-
-            if (identifyResults.visible) {
-                identifyResults.visible = false;
-                mapToolRow.state = "clear";
-                selected = false;
-            }
-        }
-    }
 
     // Coordinate Conversion Tool
     ToolIcon {
@@ -203,18 +70,8 @@ Row {
         iconSource: DsaResources.iconCoordinateConversion
         toolName: "Convert XY"
         onToolSelected: {
-            if (selected)
-                mapToolRow.state = "clear"
-            else
-                mapToolRow.state = toolName;
-
-            if (dsaCoordinateController.active) {
-                dsaCoordinateController.active = false;
-                mapToolRow.state = "clear";
-                selected = false;
-            } else {
-                dsaCoordinateController.active = true;
-            }
+            selected = !selected;
+            dsaCoordinateController.active = selected;
         }
     }
 
@@ -224,13 +81,11 @@ Row {
         iconSource: DsaResources.iconMessages
         toolName: "Feeds"
         onToolSelected: {
-            if (drawer.visible)
-                drawer.close();
-            else {
-                mapToolRow.state = toolName;
-                toolRect.state = "message";
-                drawer.open();
-            }
+            messageFeedsTool.visible    = messageFeedsIcon.selected = !selected;
+            tableOfContentsTool.visible = tocIcon.selected          = false;
+            addLocalDataTool.visible    = addLocalDataIcon.selected = false;
+            basemapsTool.visible        = basemapIcon.selected      = false;
+            openSceneTool.visible       = packageIcon.selected      = false;
         }
     }
 
@@ -240,18 +95,11 @@ Row {
         iconSource: DsaResources.iconLayers
         toolName: "Overlays"
         onToolSelected: {
-            if (selected)
-                mapToolRow.state = "clear"
-            else
-                mapToolRow.state = toolName;
-
-            if (tableOfContentsTool.visible) {
-                tableOfContentsTool.visible = false;
-                mapToolRow.state = "clear";
-                selected = false;
-            } else {
-                tableOfContentsTool.visible = true;
-            }
+            messageFeedsTool.visible    = messageFeedsIcon.selected = false;
+            tableOfContentsTool.visible = tocIcon.selected          = !selected;
+            addLocalDataTool.visible    = addLocalDataIcon.selected = false;
+            basemapsTool.visible        = basemapIcon.selected      = false;
+            openSceneTool.visible       = packageIcon.selected      = false;
         }
     }
 
@@ -261,13 +109,11 @@ Row {
         iconSource: DsaResources.iconAddLayer
         toolName: "Add Data"
         onToolSelected: {
-            if (drawer.visible)
-                drawer.close();
-            else {
-                mapToolRow.state = toolName;
-                toolRect.state = "data";
-                drawer.open();
-            }
+            messageFeedsTool.visible    = messageFeedsIcon.selected = false;
+            tableOfContentsTool.visible = tocIcon.selected          = false;
+            addLocalDataTool.visible    = addLocalDataIcon.selected = !selected;
+            basemapsTool.visible        = basemapIcon.selected      = false;
+            openSceneTool.visible       = packageIcon.selected      = false;
         }
     }
 
@@ -277,13 +123,11 @@ Row {
         iconSource: DsaResources.iconChooseBasemap
         toolName: "Basemap"
         onToolSelected: {
-            if (drawer.visible)
-                drawer.close();
-            else {
-                toolRect.state = "basemap";
-                mapToolRow.state = toolName;
-                drawer.open();
-            }
+            messageFeedsTool.visible    = messageFeedsIcon.selected = false;
+            tableOfContentsTool.visible = tocIcon.selected          = false;
+            addLocalDataTool.visible    = addLocalDataIcon.selected = false;
+            basemapsTool.visible        = basemapIcon.selected      = !selected;
+            openSceneTool.visible       = packageIcon.selected      = false;
         }
     }
 
@@ -293,13 +137,11 @@ Row {
         iconSource: DsaResources.iconOpenScene
         toolName: "Open"
         onToolSelected: {
-            if (drawer.visible)
-                drawer.close();
-            else {
-                mapToolRow.state = toolName;
-                toolRect.state = "open scene";
-                drawer.open();
-            }
+            messageFeedsTool.visible    = messageFeedsIcon.selected = false;
+            tableOfContentsTool.visible = tocIcon.selected          = false;
+            addLocalDataTool.visible    = addLocalDataIcon.selected = false;
+            basemapsTool.visible        = basemapIcon.selected      = false;
+            openSceneTool.visible       = packageIcon.selected      = !selected;
         }
     }
 }

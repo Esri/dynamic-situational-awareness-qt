@@ -33,6 +33,7 @@
 #include "ServiceTypes.h"
 #include "SpatialReference.h"
 #include "SymbolTypes.h"
+#include "TrackDisplayProperties.h"
 
 // DSA headers
 #include "Message.h"
@@ -305,6 +306,54 @@ bool MessageFeed::addMessage(const Message& message)
   }
 
   return true;
+}
+
+bool MessageFeed::showPreviousObservations() const
+{
+  if (!m_messagesOverlay)
+    return false;
+
+  return m_messagesOverlay->trackDisplayProperties()->isShowPreviousObservations();
+}
+
+int MessageFeed::maximumObservations() const
+{
+  if (!m_messagesOverlay)
+    return -1;
+
+  return m_messagesOverlay->trackDisplayProperties()->maximumObservations();
+}
+
+bool MessageFeed::showTrackLine() const
+{
+  if (!m_messagesOverlay)
+    return false;
+
+  return m_messagesOverlay->trackDisplayProperties()->isShowTrackLine();
+}
+
+void MessageFeed::setShowPreviousObservations(bool showPreviousObservations)
+{
+  if (!m_messagesOverlay)
+    return;
+
+  m_messagesOverlay->trackDisplayProperties()->setShowPreviousObservations(showPreviousObservations);
+}
+
+void MessageFeed::setMaximumObservations(int maximumObservations)
+{
+  if (!m_messagesOverlay)
+    return;
+
+  m_messagesOverlay->trackDisplayProperties()->setMaximumObservations(maximumObservations);
+}
+
+void MessageFeed::setShowTrackLine(bool showTrackLine)
+{
+  if (!m_messagesOverlay)
+    return;
+
+  m_messagesOverlay->trackDisplayProperties()->setShowTrackLine(showTrackLine);
 }
 
 /*!

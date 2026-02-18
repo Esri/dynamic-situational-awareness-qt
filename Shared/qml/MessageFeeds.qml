@@ -18,6 +18,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Material
 import Esri.ArcGISRuntime.OpenSourceApps.DSA
+import QtQuick.Layouts
 
 DsaPanel {
     id: messageFeedsRoot
@@ -25,41 +26,134 @@ DsaPanel {
     title: qsTr("Message Feeds")
 
     property alias controller: toolController
+    property bool isMobile
 
     // Create the controller
     MessageFeedsController {
         id: toolController
     }
 
-    // Declare the ListView, which will display the list of message overlay feeds
-    ListView {
-        id: messageFeedsList
+    StackLayout {
+        currentIndex: bar.currentIndex
 
         anchors {
             top: titleBar.bottom
             left: parent.left
             right: parent.right
-            bottom: parent.bottom
+            bottom: bar.top
             margins: 8 * scaleFactor
         }
 
-        clip: true
-        model: toolController.messageFeeds
-        width: parent.width
-        delegate:  ListItemDelegate {
-            id: control
-            width: parent.width
-            height: 40 * scaleFactor
-            mainText: feedName
-            itemChecked: feedVisible
-            onItemCheckedChanged: {
-                if (feedVisible == itemChecked)
-                    return;
-                feedVisible = itemChecked
+        ListView {
+            id: messageFeedsList
+
+            anchors {
+                left: parent.left
+                right: parent.right
+                top: parent.top
+                bottom: bar.top
             }
-            imageUrl: thumbnailUrl
-            imageVisible: true
-            imageFrameVisible: false
+
+            clip: true
+            model: toolController.messageFeeds
+            delegate:  ListItemDelegate {
+                id: control
+                width: parent.width
+                height: 40 * scaleFactor
+                mainText: feedName
+                itemChecked: feedVisible
+                onItemCheckedChanged: feedVisible = itemChecked
+                imageUrl: thumbnailUrl
+                imageVisible: true
+                imageFrameVisible: false
+                menuIconVisible: true
+            }
+        }
+
+        Item {
+            anchors {
+                left: parent.left
+                right: parent.right
+                top: parent.top
+                bottom: bar.top
+            }
+            ComboBox {
+                id: cboFeeds
+                width: parent.width
+                textRole: "feedName"
+                model: toolController.messageFeeds
+                currentIndex: toolController.selectedFeedIndex
+                onCurrentIndexChanged: toolController.selectedFeedIndex = currentIndex
+            }
+
+            Text {
+                id: txtObservations
+                text: "Observations"
+                anchors {
+                    top: cboFeeds.bottom
+                    left: parent.left
+                    right: parent.right
+                }
+                color: Material.foreground
+                font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
+            }
+            Switch {
+                id: chkObservations
+                anchors {
+                    top: txtObservations.bottom
+                    left: parent.left
+                }
+                checked: toolController.selectedFeedShowPreviousObservations
+                onCheckedChanged: toolController.selectedFeedShowPreviousObservations = checked
+            }
+            Slider {
+                anchors {
+                    top: txtObservations.bottom
+                    left: chkObservations.right
+                    right: parent.right
+                }
+                from: 1
+                to: 25
+                value: toolController.selectedFeedMaximumObservations
+                onValueChanged: toolController.selectedFeedMaximumObservations = value
+            }
+
+            Text {
+                id: txtTracks
+                text: "Tracks"
+                anchors {
+                    top: chkObservations.bottom
+                    left: parent.left
+                    right: parent.right
+                }
+                color: Material.foreground
+                font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
+            }
+            Switch {
+                id: chkTracks
+                anchors {
+                    top: txtTracks.bottom
+                    left: parent.left
+                }
+                checked: toolController.selectedFeedShowTrackLine
+                onCheckedChanged: toolController.selectedFeedShowTrackLine = checked
+            }
+        }
+    }
+
+    TabBar {
+        id: bar
+        anchors {
+            bottom: parent.bottom
+        }
+        width: parent.width
+
+        TabButton {
+            text: qsTr("Layers")
+        }
+
+        TabButton {
+            text: qsTr("Observations")
         }
     }
 }

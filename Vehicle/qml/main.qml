@@ -252,6 +252,22 @@ Vehicle {
             onAboutClicked: aboutTool.visible = true;
         }
 
+        MessageFeeds {
+            id: messageFeedsTool
+            anchors {
+                right: parent.right
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+            isMobile: false
+            onClosed: {
+                visible = false;
+                mapToolRow.state = "clear";
+            }
+        }
+
         TableOfContents {
             id: tableOfContentsTool
             anchors {
@@ -263,7 +279,51 @@ Vehicle {
             visible: false
             isMobile: false
             onClosed: {
-                mapToolRow.tocIconSelected = false;
+                visible = false;
+                mapToolRow.state = "clear";
+            }
+        }
+
+        AddLocalData {
+            id: addLocalDataTool
+            anchors {
+                right: parent.right
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+            onClosed: {
+                visible = false;
+                mapToolRow.state = "clear";
+            }
+        }
+
+        BasemapPicker {
+            id: basemapsTool
+            anchors {
+                right: parent.right
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+            onClosed: {
+                visible = false;
+                mapToolRow.state = "clear";
+            }
+        }
+
+        OpenSceneTool {
+            id: openSceneTool
+            anchors {
+                right: parent.right
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+            onClosed: {
                 visible = false;
                 mapToolRow.state = "clear";
             }
@@ -445,12 +505,12 @@ Vehicle {
 
             onClosed: {
                 // update state for each category
-                mapToolRow.state = "clear";
-                alertToolRow.state = "clear";
-                viewshedTool.state = "clear";
-                reportToolRow.state = "clear";
-                markupToolRow.state = "clear";
-                addConfigurationTool.state = "clear";
+                // mapToolRow.state = "clear";
+                // alertToolRow.state = "clear";
+                // viewshedTool.state = "clear";
+                // reportToolRow.state = "clear";
+                // markupToolRow.state = "clear";
+                // addConfigurationTool.state = "clear";
             }
 
             Rectangle {
@@ -459,34 +519,6 @@ Vehicle {
 
                 states: [
                     State {
-                        name: "basemap"
-                        PropertyChanges {
-                            target: basemapsTool
-                            visible: true
-                        }
-                    },
-                    State {
-                        name: "data"
-                        PropertyChanges {
-                            target: addLocalDataTool
-                            visible: true
-                        }
-                    },
-                    State {
-                        name: "message"
-                        PropertyChanges {
-                            target: messageFeedsTool
-                            visible: true
-                        }
-                    },
-                    State {
-                        name: "open scene"
-                        PropertyChanges {
-                            target: openSceneTool
-                            visible: true
-                        }
-                    },
-                    State {
                         name: "add configuration"
                         PropertyChanges {
                             target: addConfigurationTool
@@ -494,38 +526,6 @@ Vehicle {
                         }
                     }
                 ]
-
-                OpenSceneTool {
-                    id: openSceneTool
-                    anchors.fill: parent
-                    onSceneSelected: closed();
-                    visible: false
-                    onClosed: drawer.close();
-                    onResetToDefaultSelected: resetToDefaultScene();
-                }
-
-                BasemapPicker {
-                    id: basemapsTool
-                    anchors.fill: parent
-                    onBasemapSelected: closed();
-                    visible: false
-                    onClosed: drawer.close();
-                }
-
-                AddLocalData {
-                    id: addLocalDataTool
-                    anchors.fill: parent
-                    showDataConnectionPane: true
-                    visible: false
-                    onClosed: drawer.close();
-                }
-
-                MessageFeeds {
-                    id: messageFeedsTool
-                    anchors.fill: parent
-                    visible: false
-                    onClosed: drawer.close();
-                }
 
                 AddConfigurationTool {
                     id: addConfigurationTool

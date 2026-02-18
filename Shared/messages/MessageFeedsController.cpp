@@ -205,6 +205,14 @@ void MessageFeedsController::setupFeeds()
     overlay->setRenderer(createRenderer(rendererInfo, this));
     m_scene->operationalLayers()->append(overlay);
 
+    // check for and apply the observation/trackline related properties to the message overlay
+    if (QJsonValue showPreviousObservations = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_SHOW_PREVIOUS_OBSERVATIONS]; showPreviousObservations.isBool())
+      feed->setShowPreviousObservations(showPreviousObservations.toBool());
+    if (QJsonValue showTrackLine = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_SHOW_TRACK_LINE]; showTrackLine.isBool())
+      feed->setShowTrackLine(showTrackLine.toBool());
+
+    const QString showPreviousObservations = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_SHOW_PREVIOUS_OBSERVATIONS].toString();
+
     if (!rendererThumbnail.isEmpty())
     {
       if (QFile::exists(QString(":/Resources/icons/xhdpi/message/%1").arg(rendererThumbnail)))
@@ -214,6 +222,12 @@ void MessageFeedsController::setupFeeds()
       else
         emit toolErrorOccurred(QString("Failed to find icon %1").arg(rendererThumbnail), QString("Could not find icon %1 for feed %2").arg(rendererThumbnail, feedName));
     }
+  }
+
+  if (m_messageFeeds->count() > 0)
+  {
+    m_selectedFeedIndex = 0;
+    emit selectedFeedChanged(0);
   }
 
   // only needs to be cached until the geoView is ready
@@ -277,7 +291,9 @@ bool MessageFeedsController::shouldSetProperties(const QString& propertyName)
     MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME,
     AppConstants::PROPERTYNAME_USERNAME,
     MessageFeedConstants::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME,
-    MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME
+    MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME,
+    MessageFeedConstants::MESSAGE_FEEDS_SHOW_PREVIOUS_OBSERVATIONS,
+    MessageFeedConstants::MESSAGE_FEEDS_SHOW_TRACK_LINE,
   };
 
   return setContainsString(propertyNames, propertyName);
@@ -383,6 +399,70 @@ void MessageFeedsController::setLocationBroadcastInDistress(bool inDistress)
   m_locationBroadcast->setInDistress(inDistress);
 
   emit locationBroadcastInDistressChanged();
+}
+
+int MessageFeedsController::selectedFeedIndex() const
+{
+  return m_selectedFeedIndex;
+}
+
+bool MessageFeedsController::selectedFeedShowPreviousObservations() const
+{
+  const MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
+  if (feed)
+    return feed->showPreviousObservations();
+
+  return false;
+}
+
+int MessageFeedsController::selectedFeedMaximumObservations() const
+{
+  const MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
+  if (feed)
+    return feed->maximumObservations();
+
+  return -1;
+}
+
+bool MessageFeedsController::selectedFeedShowTrackLine() const
+{
+  const MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
+  if (feed)
+    return feed->showTrackLine();
+
+  return false;
+}
+
+void MessageFeedsController::setSelectedFeedIndex(int index)
+{
+  m_selectedFeedIndex = -1;
+
+  const MessageFeed* feed = m_messageFeeds->at(index);
+  if (feed)
+    m_selectedFeedIndex = index;
+
+  emit selectedFeedChanged(index);
+}
+
+void MessageFeedsController::setSelectedFeedShowPreviousObservations(bool showPreviousObservations)
+{
+  MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
+  if (feed)
+    feed->setShowPreviousObservations(showPreviousObservations);
+}
+
+void MessageFeedsController::setSelectedFeedShowTrackLine(bool showTrackLine)
+{
+  MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
+  if (feed)
+    feed->setShowTrackLine(showTrackLine);
+}
+
+void MessageFeedsController::setSelectedFeedMaximumObservations(int maximumObservations)
+{
+  MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
+  if (feed)
+    feed->setMaximumObservations(maximumObservations);
 }
 
 SurfacePlacement MessageFeedsController::toSurfacePlacement(const QString& surfacePlacement)

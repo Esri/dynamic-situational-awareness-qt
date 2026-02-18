@@ -69,6 +69,13 @@ public:
 
   const QHash<quint64, Esri::ArcGISRuntime::DynamicEntity*>& dynamicEntities() const;
 
+  bool showPreviousObservations() const;
+  int maximumObservations() const;
+  bool showTrackLine() const;
+  void setShowPreviousObservations(bool showPreviousObservations);
+  void setMaximumObservations(int maximumObservations);
+  void setShowTrackLine(bool showTrackLine);
+
 private:
   Q_DISABLE_COPY(MessageFeed)
 

@@ -33,6 +33,11 @@ DsaPanel {
         id: toolController
     }
 
+    onVisibleChanged: {
+        // always switch back to the 'Layers' tab if the panel is hidden
+        bar.currentIndex = 0;
+    }
+
     StackLayout {
         currentIndex: bar.currentIndex
 
@@ -67,6 +72,28 @@ DsaPanel {
                 imageVisible: true
                 imageFrameVisible: false
                 menuIconVisible: true
+
+                Image {
+                    anchors {
+                        right: parent.right
+                        verticalCenter: parent.verticalCenter
+                        margins: 5 * scaleFactor
+                    }
+                    rotation: 90
+                    source: DsaResources.iconMenu
+                    height: 32 * scaleFactor
+                    width: height
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            // select the feed that was clicked on in the combo box
+                            // in the 'Tracks' panel
+                            cboFeeds.currentIndex = index;
+                            bar.currentIndex = 1;
+                        }
+                    }
+                }
             }
         }
 
@@ -153,7 +180,7 @@ DsaPanel {
         }
 
         TabButton {
-            text: qsTr("Observations")
+            text: qsTr("Tracks")
         }
     }
 }

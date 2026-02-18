@@ -222,16 +222,6 @@ Vehicle {
                 opacity: hudOpacity
                 radius: hudRadius
             }
-
-            onVisibleChanged: {
-                if (!visible)
-                    return;
-
-                if (mapToolRow.state !== "Convert XY") {
-                    mapToolRow.state = "Convert XY";
-                    categoryToolbar.state = "map";
-                }
-            }
         }
 
         MapContextMenu {
@@ -263,8 +253,7 @@ Vehicle {
             visible: false
             isMobile: false
             onClosed: {
-                visible = false;
-                mapToolRow.state = "clear";
+                mapToolRow.reset();
             }
         }
 
@@ -279,8 +268,7 @@ Vehicle {
             visible: false
             isMobile: false
             onClosed: {
-                visible = false;
-                mapToolRow.state = "clear";
+                mapToolRow.reset();
             }
         }
 
@@ -294,8 +282,7 @@ Vehicle {
             width: drawer.width
             visible: false
             onClosed: {
-                visible = false;
-                mapToolRow.state = "clear";
+                mapToolRow.reset();
             }
         }
 
@@ -309,8 +296,7 @@ Vehicle {
             width: drawer.width
             visible: false
             onClosed: {
-                visible = false;
-                mapToolRow.state = "clear";
+                mapToolRow.reset();
             }
         }
 
@@ -324,8 +310,7 @@ Vehicle {
             width: drawer.width
             visible: false
             onClosed: {
-                visible = false;
-                mapToolRow.state = "clear";
+                mapToolRow.reset();
             }
         }
 

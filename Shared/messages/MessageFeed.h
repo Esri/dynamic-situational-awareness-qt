@@ -17,11 +17,11 @@
 #ifndef MESSAGEFEED_H
 #define MESSAGEFEED_H
 
-// C++ API headers
+// C++ API
 #include "DynamicEntityDataSource.h"
-
-// Qt headers
+// Qt
 #include <QHash>
+#include <QJsonObject>
 #include <QObject>
 #include <QUrl>
 
@@ -29,6 +29,7 @@ namespace Esri::ArcGISRuntime {
 
 class DynamicEntityDataSourceInfo;
 class DynamicEntity;
+class Renderer;
 
 }
 
@@ -42,7 +43,7 @@ class MessageFeed : public Esri::ArcGISRuntime::DynamicEntityDataSource
   Q_OBJECT
 
 public:
-  MessageFeed(const QString& name, const QString& type, QObject* parent = nullptr);
+  MessageFeed(const QJsonObject& properties, const QString& resourcePath, QObject* parent = nullptr);
   ~MessageFeed() override;
 
   QFuture<Esri::ArcGISRuntime::DynamicEntityDataSourceInfo*> onLoadAsync() override;
@@ -61,8 +62,14 @@ public:
   MessagesOverlay* messagesOverlay() const;
   void setMessagesOverlay(MessagesOverlay* messagesOverlay);
 
+  QString thumbnail() const;
   QUrl thumbnailUrl() const;
   void setThumbnailUrl(const QUrl& thumbnailUrl);
+
+  QString renderer() const;
+  QString surfacePlacement() const;
+
+  Esri::ArcGISRuntime::Renderer* createRenderer(const QString& resourcePath);
 
   bool addMessage(const Message& message);
   Esri::ArcGISRuntime::DynamicEntity* getDynamicEntityById(quint64 entityId) const;
@@ -70,17 +77,26 @@ public:
   const QHash<quint64, Esri::ArcGISRuntime::DynamicEntity*>& dynamicEntities() const;
 
   bool showPreviousObservations() const;
-  int maximumObservations() const;
-  bool showTrackLine() const;
   void setShowPreviousObservations(bool showPreviousObservations);
+  int maximumObservations() const;
   void setMaximumObservations(int maximumObservations);
+  bool showTrackLine() const;
   void setShowTrackLine(bool showTrackLine);
+  QString colorObservations() const;
+  void setColorObservations(const QString& color);
+  QString colorTrackLine() const;
+  void setColorTrackLine(const QString& color);
 
 private:
   Q_DISABLE_COPY(MessageFeed)
 
   QString m_feedName;
   QString m_feedMessageType;
+  QString m_renderer;
+  QString m_thumbnail;
+  QString m_surfacePlacement;
+  QString m_colorObservations;
+  QString m_colorTrackLine;
   bool m_isCoT;
   QString m_entityIdAttributeName;
   MessagesOverlay* m_messagesOverlay = nullptr;

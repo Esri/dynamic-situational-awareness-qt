@@ -34,7 +34,7 @@ DsaPanel {
     }
 
     onVisibleChanged: {
-        // always switch back to the 'Layers' tab if the panel is hidden
+        // always switch back to the 'Feeds' tab if the panel is hidden
         bar.currentIndex = 0;
     }
 
@@ -89,7 +89,7 @@ DsaPanel {
                         onClicked: {
                             // select the feed that was clicked on in the combo box
                             // in the 'Tracks' panel
-                            cboFeeds.currentIndex = index;
+                            comboFeeds.currentIndex = index;
                             bar.currentIndex = 1;
                         }
                     }
@@ -105,7 +105,7 @@ DsaPanel {
                 bottom: bar.top
             }
             ComboBox {
-                id: cboFeeds
+                id: comboFeeds
                 width: parent.width
                 textRole: "feedName"
                 model: toolController.messageFeeds
@@ -117,53 +117,82 @@ DsaPanel {
                 id: txtObservations
                 text: "Observations"
                 anchors {
-                    top: cboFeeds.bottom
+                    top: comboFeeds.bottom
                     left: parent.left
-                    right: parent.right
                 }
                 color: Material.foreground
                 font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
             }
             Switch {
-                id: chkObservations
+                id: switchObservations
                 anchors {
-                    top: txtObservations.bottom
-                    left: parent.left
+                    top: comboFeeds.bottom
+                    right: parent.right
                 }
                 checked: toolController.selectedFeedShowPreviousObservations
                 onCheckedChanged: toolController.selectedFeedShowPreviousObservations = checked
             }
-            Slider {
+            SpinBox {
+                id: spinObservations
                 anchors {
                     top: txtObservations.bottom
-                    left: chkObservations.right
+                    left: parent.left
                     right: parent.right
                 }
-                from: 1
-                to: 25
+                from: 0
+                to: 9999
+                editable: true
+                enabled: switchObservations.checked
+                live: true
+                textFromValue: function(value) {
+                    if (value < 1)
+                        return "All"
+                    else
+                        return value
+                }
+
                 value: toolController.selectedFeedMaximumObservations
                 onValueChanged: toolController.selectedFeedMaximumObservations = value
             }
-
-            Text {
-                id: txtTracks
-                text: "Tracks"
+            ColorsComboBox {
+                id: colorsComboObservations
                 anchors {
-                    top: chkObservations.bottom
+                    top: spinObservations.bottom
                     left: parent.left
                     right: parent.right
+                }
+                currentIndex: colorsComboObservations.model.indexOf(toolController.selectedFeedColorObservations)
+                onCurrentIndexChanged: toolController.selectedFeedColorObservations = colorsComboObservations.model[currentIndex]
+            }
+
+            Text {
+                id: txtTrackLine
+                text: "Track Line"
+                anchors {
+                    top: colorsComboObservations.bottom
+                    left: parent.left
                 }
                 color: Material.foreground
                 font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
             }
             Switch {
-                id: chkTracks
+                id: switchTrackLine
                 anchors {
-                    top: txtTracks.bottom
-                    left: parent.left
+                    top: colorsComboObservations.bottom
+                    right: parent.right
                 }
                 checked: toolController.selectedFeedShowTrackLine
                 onCheckedChanged: toolController.selectedFeedShowTrackLine = checked
+            }
+            ColorsComboBox {
+                id: colorsComboTrackLine
+                anchors {
+                    top: txtTrackLine.bottom
+                    left: parent.left
+                    right: parent.right
+                }
+                currentIndex: colorsComboTrackLine.model.indexOf(toolController.selectedFeedColorTrackLine)
+                onCurrentIndexChanged: toolController.selectedFeedColorTrackLine = colorsComboTrackLine.model[currentIndex]
             }
         }
     }
@@ -176,11 +205,11 @@ DsaPanel {
         width: parent.width
 
         TabButton {
-            text: qsTr("Layers")
+            text: qsTr("Feeds")
         }
 
         TabButton {
-            text: qsTr("Tracks")
+            text: qsTr("Track Display")
         }
     }
 }

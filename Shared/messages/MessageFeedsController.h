@@ -17,11 +17,10 @@
 #ifndef MESSAGEFEEDSCONTROLLER_H
 #define MESSAGEFEEDSCONTROLLER_H
 
-// Qt headers
-#include <QVariantList>
-
-// DSA headers
+// DSA
 #include "AbstractTool.h"
+// Qt
+#include <QVariantList>
 
 Q_MOC_INCLUDE("qabstractitemmodel.h")
 
@@ -30,7 +29,6 @@ class QAbstractListModel;
 namespace Esri::ArcGISRuntime {
   class Renderer;
   class Scene;
-  enum class SurfacePlacement;
 }
 
 namespace Dsa {
@@ -50,7 +48,9 @@ class MessageFeedsController : public AbstractTool
   Q_PROPERTY(int selectedFeedIndex READ selectedFeedIndex WRITE setSelectedFeedIndex NOTIFY selectedFeedChanged)
   Q_PROPERTY(bool selectedFeedShowPreviousObservations READ selectedFeedShowPreviousObservations WRITE setSelectedFeedShowPreviousObservations NOTIFY selectedFeedChanged)
   Q_PROPERTY(int selectedFeedMaximumObservations READ selectedFeedMaximumObservations WRITE setSelectedFeedMaximumObservations NOTIFY selectedFeedChanged)
+  Q_PROPERTY(QString selectedFeedColorObservations READ selectedFeedColorObservations WRITE setSelectedFeedColorObservations NOTIFY selectedFeedChanged)
   Q_PROPERTY(bool selectedFeedShowTrackLine READ selectedFeedShowTrackLine WRITE setSelectedFeedShowTrackLine NOTIFY selectedFeedChanged)
+  Q_PROPERTY(QString selectedFeedColorTrackLine READ selectedFeedColorTrackLine WRITE setSelectedFeedColorTrackLine NOTIFY selectedFeedChanged)
 
 public:
   static const QString RESOURCE_DIRECTORY_PROPERTYNAME;
@@ -82,17 +82,20 @@ public:
   bool isLocationBroadcastInDistress() const;
   void setLocationBroadcastInDistress(bool inDistress);
 
-  static Esri::ArcGISRuntime::SurfacePlacement toSurfacePlacement(const QString& surfacePlacement);
-
   int selectedFeedIndex() const;
-  bool selectedFeedShowPreviousObservations() const;
-  int selectedFeedMaximumObservations() const;
-  bool selectedFeedShowTrackLine() const;
-
   void setSelectedFeedIndex(int index);
+  bool selectedFeedShowPreviousObservations() const;
   void setSelectedFeedShowPreviousObservations(bool showPreviousObservations);
+  int selectedFeedMaximumObservations() const;
   void setSelectedFeedMaximumObservations(int maximumObservations);
+  QString selectedFeedColorObservations() const;
+  void setSelectedFeedColorObservations(const QString& color);
+  bool selectedFeedShowTrackLine() const;
   void setSelectedFeedShowTrackLine(bool showTrackLine);
+  QString selectedFeedColorTrackLine() const;
+  void setSelectedFeedColorTrackLine(const QString& color);
+
+  void notifyPropertyChanged();
 
 signals:
   void locationBroadcastEnabledChanged();

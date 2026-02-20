@@ -19,9 +19,11 @@
 
 #include "MessageFeed.h"
 
-// C++ API headers
+// C++ API
 #include "AttributeListModel.h"
 #include "Domain.h"
+#include "DictionaryRenderer.h"
+#include "DictionarySymbolStyle.h"
 #include "DynamicEntity.h"
 #include "DynamicEntityDataSourceInfo.h"
 #include "DynamicEntityInfo.h"
@@ -29,36 +31,97 @@
 #include "DynamicEntityObservationInfo.h"
 #include "Error.h"
 #include "Field.h"
+#include "LayerSceneProperties.h"
+#include "PictureMarkerSymbol.h"
 #include "Renderer.h"
+#include "SceneViewTypes.h"
 #include "ServiceTypes.h"
+#include "SimpleLineSymbol.h"
+#include "SimpleMarkerSymbol.h"
+#include "SimpleRenderer.h"
 #include "SpatialReference.h"
 #include "SymbolTypes.h"
 #include "TrackDisplayProperties.h"
-
-// DSA headers
+// DSA
 #include "Message.h"
+#include "MessageFeedConstants.h"
 #include "MessagesOverlay.h"
+// Qt
+#include <QFile>
+#include <QFileInfo>
 
 using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
 
-/*!
-  \class Dsa::MessageFeed
-  \inmodule Dsa
-  \inherits DynamicEntityDataSource
-  \brief Represents a feed for a given message type which will be displayed on a
-  \l MessageOverlay.
- */
-
-/*!
-  \brief Constructor accepting a feed \a name, a message \a type, and \a overlay and an optional \a parent.
- */
-MessageFeed::MessageFeed(const QString& name, const QString& type, QObject* parent) :
-  DynamicEntityDataSource(parent),
-  m_feedName(name),
-  m_feedMessageType(type)
+MessageFeed::MessageFeed(const QJsonObject& properties, const QString& resourcePath, QObject* parent):
+  DynamicEntityDataSource(parent)
 {
+  using namespace MessageFeedConstants;
+  qint8 validRequiredProperties = 0;
+  if (const QJsonValue p = properties[MESSAGE_FEEDS_NAME]; !p.isUndefined())
+  {
+    m_feedName = p.toString();
+    ++validRequiredProperties;
+  }
+
+  if (const QJsonValue p = properties[MESSAGE_FEEDS_TYPE]; !p.isUndefined())
+  {
+    m_feedMessageType = p.toString();
+    ++validRequiredProperties;
+  }
+
+  if (const QJsonValue p = properties[MESSAGE_FEEDS_RENDERER]; !p.isUndefined())
+  {
+    m_renderer = p.toString();
+    ++validRequiredProperties;
+  }
+
+  // all message feed configurations are required to have name, type and renderer
+  if (validRequiredProperties < 3)
+    return;
+
+  if (const QJsonValue p = properties[MESSAGE_FEEDS_THUMBNAIL]; !p.isUndefined())
+  {
+    m_thumbnail = p.toString();
+    if (m_thumbnail.isEmpty())
+    {
+      if (QFile::exists(QString{QStringLiteral(":/Resources/icons/xhdpi/message/%1")}.arg(m_thumbnail)))
+        setThumbnailUrl(QString{QStringLiteral("qrc:/Resources/icons/xhdpi/message/%1")}.arg(m_thumbnail));
+      else if (QFile::exists(QString{QStringLiteral("%1/icons/%2")}.arg(resourcePath, m_thumbnail)))
+        setThumbnailUrl(QUrl::fromLocalFile(QString{QStringLiteral("%1/icons/%2")}.arg(resourcePath, m_thumbnail)));
+    }
+  }
+
+  m_messagesOverlay = new MessagesOverlay(this, m_feedMessageType, this);
+
+  SurfacePlacement surfacePlacement = SurfacePlacement::DrapedBillboarded;
+  if (const QJsonValue p = properties[MESSAGE_FEEDS_PLACEMENT]; !p.isUndefined())
+  {
+    m_surfacePlacement = p.toString();
+    if (m_surfacePlacement.compare("relative", Qt::CaseInsensitive) == 0)
+      surfacePlacement = SurfacePlacement::Relative;
+    else if (m_surfacePlacement.compare("absolute", Qt::CaseInsensitive) == 0)
+      surfacePlacement = SurfacePlacement::Absolute;
+  }
+  m_messagesOverlay->setSceneProperties(LayerSceneProperties(surfacePlacement));
+
+  m_messagesOverlay->setRenderer(createRenderer(resourcePath));
+
+  if (const QJsonValue p = properties[MESSAGE_FEEDS_SHOW_PREVIOUS_OBSERVATIONS]; p.isBool())
+    setShowPreviousObservations(p.toBool());
+
+  if (const QJsonValue p = properties[MESSAGE_FEEDS_SHOW_TRACK_LINE]; p.isBool())
+    setShowTrackLine(p.toBool());
+
+  if (const QJsonValue p = properties[MESSAGE_FEEDS_MAXIMUM_OBSERVATIONS]; !p.isUndefined())
+    setMaximumObservations(p.toInt());
+
+  if (const QJsonValue p = properties[MESSAGE_FEEDS_COLOR_OBSERVATIONS]; !p.isUndefined())
+    setColorObservations(p.toString());
+
+  if (const QJsonValue p = properties[MESSAGE_FEEDS_COLOR_TRACK_LINE]; !p.isUndefined())
+    setColorTrackLine(p.toString());
 }
 
 MessageFeed::~MessageFeed() = default;
@@ -230,6 +293,11 @@ void MessageFeed::setMessagesOverlay(MessagesOverlay* messagesOverlay)
   m_messagesOverlay = messagesOverlay;
 }
 
+QString MessageFeed::thumbnail() const
+{
+  return m_thumbnail;
+}
+
 /*!
   \brief Returns the (local file) URL of the thumbnail to use for this feed.
  */
@@ -246,9 +314,79 @@ void MessageFeed::setThumbnailUrl(const QUrl& thumbnailUrl)
   m_thumbnailUrl = thumbnailUrl;
 }
 
-/*!
-  \brief Adds the \l Message \a message to the overlay. Returns whether adding was successful.
- */
+QString MessageFeed::renderer() const
+{
+  return m_renderer;
+}
+
+QString MessageFeed::surfacePlacement() const
+{
+  return m_surfacePlacement;
+}
+
+Renderer *MessageFeed::createRenderer(const QString& resourcePath)
+{
+  // hold mil2525 symbol styles as statics to be shared by multiple renderers if needed
+  static DictionarySymbolStyle* dictionarySymbolStyleMil2525c = nullptr;
+  static DictionarySymbolStyle* dictionarySymbolStyleMil2525d = nullptr;
+  QObject* parent = dynamic_cast<QObject*>(this);
+
+  if (m_renderer.compare("mil2525c", Qt::CaseInsensitive) == 0)
+  {
+    if (!dictionarySymbolStyleMil2525c)
+    {
+      const QString stylePath = QString{QStringLiteral("%1/styles/arcade/mil2525c.stylx")}.arg(resourcePath);
+      if (!QFileInfo::exists(stylePath))
+      {
+        emit errorOccurred(Error(QStringLiteral("mil2525c.stylx not found"), QString{QStringLiteral("Could not find %1")}.arg(stylePath), ExtendedErrorType::None));
+        return nullptr;
+      }
+
+      dictionarySymbolStyleMil2525c = DictionarySymbolStyle::createFromFile(stylePath, parent);
+    }
+
+    return new DictionaryRenderer(dictionarySymbolStyleMil2525c, parent);
+  }
+  else if (m_renderer.compare("mil2525d", Qt::CaseInsensitive) == 0)
+  {
+    if (!dictionarySymbolStyleMil2525d)
+    {
+      const QString stylePath = QString{QStringLiteral("%1/styles/arcade/mil2525d.stylx")}.arg(resourcePath);
+      if (!QFileInfo::exists(stylePath))
+      {
+        emit errorOccurred(Error(QStringLiteral("mil2525d.stylx not found"), QString{QStringLiteral("Could not find %1")}.arg(stylePath), ExtendedErrorType::None));
+        return nullptr;
+      }
+
+      dictionarySymbolStyleMil2525d = DictionarySymbolStyle::createFromFile(stylePath, parent);
+    }
+
+    return new DictionaryRenderer(dictionarySymbolStyleMil2525d, parent);
+  }
+
+  // else default to simple renderer with picture marker symbol
+  PictureMarkerSymbol* symbol = nullptr;
+  const QString qrcFile = QString{QStringLiteral(":/Resources/icons/xhdpi/message/%1")}.arg(m_renderer);
+
+  if (QFile::exists(qrcFile))
+  {
+    symbol = new PictureMarkerSymbol(QImage(qrcFile), parent);
+  }
+  else
+  {
+    const QString dataFile = resourcePath + QString{QStringLiteral("/icons/%1")}.arg(m_renderer);
+    if (QFile::exists(dataFile))
+      symbol = new PictureMarkerSymbol(QImage(dataFile), parent);
+  }
+
+  if (symbol == nullptr)
+    return nullptr;
+
+  symbol->setWidth(40.0f);
+  symbol->setHeight(40.0f);
+  return new SimpleRenderer(symbol, parent);
+}
+
 bool MessageFeed::addMessage(const Message& message)
 {
   static QString additionalErrorMessage = "DSA - MessageFeed";
@@ -316,28 +454,20 @@ bool MessageFeed::showPreviousObservations() const
   return m_messagesOverlay->trackDisplayProperties()->isShowPreviousObservations();
 }
 
-int MessageFeed::maximumObservations() const
-{
-  if (!m_messagesOverlay)
-    return -1;
-
-  return m_messagesOverlay->trackDisplayProperties()->maximumObservations();
-}
-
-bool MessageFeed::showTrackLine() const
-{
-  if (!m_messagesOverlay)
-    return false;
-
-  return m_messagesOverlay->trackDisplayProperties()->isShowTrackLine();
-}
-
 void MessageFeed::setShowPreviousObservations(bool showPreviousObservations)
 {
   if (!m_messagesOverlay)
     return;
 
   m_messagesOverlay->trackDisplayProperties()->setShowPreviousObservations(showPreviousObservations);
+}
+
+int MessageFeed::maximumObservations() const
+{
+  if (!m_messagesOverlay)
+    return -1;
+
+  return m_messagesOverlay->trackDisplayProperties()->maximumObservations();
 }
 
 void MessageFeed::setMaximumObservations(int maximumObservations)
@@ -348,12 +478,68 @@ void MessageFeed::setMaximumObservations(int maximumObservations)
   m_messagesOverlay->trackDisplayProperties()->setMaximumObservations(maximumObservations);
 }
 
+bool MessageFeed::showTrackLine() const
+{
+  if (!m_messagesOverlay)
+    return false;
+
+  return m_messagesOverlay->trackDisplayProperties()->isShowTrackLine();
+}
+
 void MessageFeed::setShowTrackLine(bool showTrackLine)
 {
   if (!m_messagesOverlay)
     return;
 
   m_messagesOverlay->trackDisplayProperties()->setShowTrackLine(showTrackLine);
+}
+
+QString MessageFeed::colorObservations() const
+{
+  if (!m_messagesOverlay)
+    return QString{};
+
+  return m_colorObservations;
+}
+
+void MessageFeed::setColorObservations(const QString& color)
+{
+  m_colorObservations = color;
+  if (!m_messagesOverlay)
+    return;
+
+  QColor c{color};
+  if (!c.isValid())
+    return;
+
+  SimpleRenderer* renderer = dynamic_cast<SimpleRenderer*>(m_messagesOverlay->trackDisplayProperties()->previousObservationRenderer());
+  std::unique_ptr<SimpleMarkerSymbol> symbol = std::make_unique<SimpleMarkerSymbol>();
+  symbol->setColor(c);
+  renderer->setSymbol(symbol.get());
+}
+
+QString MessageFeed::colorTrackLine() const
+{
+  if (!m_messagesOverlay)
+    return QString{};
+
+  return m_colorTrackLine;
+}
+
+void MessageFeed::setColorTrackLine(const QString& color)
+{
+  m_colorTrackLine = color;
+  if (!m_messagesOverlay)
+    return;
+
+  QColor c{color};
+  if (!c.isValid())
+    return;
+
+  SimpleRenderer* renderer = dynamic_cast<SimpleRenderer*>(m_messagesOverlay->trackDisplayProperties()->trackLineRenderer());
+  std::unique_ptr<SimpleLineSymbol> symbol = std::make_unique<SimpleLineSymbol>();
+  symbol->setColor(c);
+  renderer->setSymbol(symbol.get());
 }
 
 /*!

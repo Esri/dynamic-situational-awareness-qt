@@ -19,24 +19,11 @@
 
 #include "MessageFeedsController.h"
 
-// C++ API headers
-#include "DictionaryRenderer.h"
-#include "DictionarySymbolStyle.h"
+// C++ API
 #include "LayerListModel.h"
-#include "LayerSceneProperties.h"
-#include "PictureMarkerSymbol.h"
 #include "Scene.h"
-#include "SceneViewTypes.h"
 #include "SceneQuickView.h"
-#include "SimpleRenderer.h"
-
-// Qt headers
-#include <QFileInfo>
-#include <QJsonArray>
-#include <QJsonObject>
-#include <QUdpSocket>
-
-// DSA headers
+// DSA
 #include "AppConstants.h"
 #include "DataListener.h"
 #include "LocationBroadcast.h"
@@ -47,6 +34,11 @@
 #include "MessagesOverlay.h"
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
+// Qt
+#include <QFileInfo>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QUdpSocket>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -182,47 +174,14 @@ QString MessageFeedsController::toolName() const
 void MessageFeedsController::setupFeeds()
 {
   // parse and add message feeds
-  const auto messageFeedsJson = QJsonArray::fromVariantList(m_messageFeedProperties);
-  for (const auto& messageFeed : messageFeedsJson)
+  const QJsonArray propertiesList = QJsonArray::fromVariantList(m_messageFeedProperties);
+  std::for_each(std::cbegin(propertiesList), std::cend(propertiesList), [&](const QJsonValue& properties)
   {
-    const auto messageFeedJsonObject = messageFeed.toObject();
-    if (messageFeedJsonObject.size() < 4)
-    {
-      emit toolErrorOccurred(QStringLiteral("Invalid Message JSON recieved"), messageFeed.toString());
-      continue;
-    }
-
-    const auto feedName = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_NAME].toString();
-    const auto feedType = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_TYPE].toString();
-    const auto rendererInfo = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_RENDERER].toString();
-    const auto rendererThumbnail = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL].toString();
-    const auto surfacePlacement = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT].toString();
-
-    auto* feed = new MessageFeed(feedName, feedType, this);
+    const QJsonObject propertiesObject = properties.toObject();
+    MessageFeed* feed = new MessageFeed(propertiesObject, m_resourcePath, this);
     m_messageFeeds->append(feed);
-    auto* overlay = new MessagesOverlay(feed, feedType, this);
-    overlay->setSceneProperties(LayerSceneProperties(toSurfacePlacement(surfacePlacement)));
-    overlay->setRenderer(createRenderer(rendererInfo, this));
-    m_scene->operationalLayers()->append(overlay);
-
-    // check for and apply the observation/trackline related properties to the message overlay
-    if (QJsonValue showPreviousObservations = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_SHOW_PREVIOUS_OBSERVATIONS]; showPreviousObservations.isBool())
-      feed->setShowPreviousObservations(showPreviousObservations.toBool());
-    if (QJsonValue showTrackLine = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_SHOW_TRACK_LINE]; showTrackLine.isBool())
-      feed->setShowTrackLine(showTrackLine.toBool());
-
-    const QString showPreviousObservations = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_SHOW_PREVIOUS_OBSERVATIONS].toString();
-
-    if (!rendererThumbnail.isEmpty())
-    {
-      if (QFile::exists(QString(":/Resources/icons/xhdpi/message/%1").arg(rendererThumbnail)))
-        feed->setThumbnailUrl(QString("qrc:/Resources/icons/xhdpi/message/%1").arg(rendererThumbnail));
-      else if (QFile::exists(m_resourcePath + QString("/icons/%1").arg(rendererThumbnail)))
-        feed->setThumbnailUrl(QUrl::fromLocalFile(m_resourcePath + QString("/icons/%1").arg(rendererThumbnail)));
-      else
-        emit toolErrorOccurred(QString("Failed to find icon %1").arg(rendererThumbnail), QString("Could not find icon %1 for feed %2").arg(rendererThumbnail, feedName));
-    }
-  }
+    m_scene->operationalLayers()->append(feed->messagesOverlay());
+  });
 
   if (m_messageFeeds->count() > 0)
   {
@@ -248,8 +207,9 @@ void MessageFeedsController::setupFeeds()
  */
 void MessageFeedsController::toolInitProperties(const QVariantMap& properties)
 {
+  using namespace MessageFeedConstants;
   setResourcePath(properties[RESOURCE_DIRECTORY_PROPERTYNAME].toString());
-  m_messageFeedProperties = properties[MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME].toList();
+  m_messageFeedProperties = properties[MESSAGE_FEEDS_PROPERTYNAME].toList();
 
   auto userNameFindIt = properties.find(AppConstants::PROPERTYNAME_USERNAME);
   if (userNameFindIt != properties.end())
@@ -259,7 +219,7 @@ void MessageFeedsController::toolInitProperties(const QVariantMap& properties)
   if (m_dataListeners.isEmpty())
   {
     // parse and add data listeners on specified UDP ports
-    const auto messageFeedUdpPorts = properties[MessageFeedConstants::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME].toStringList();
+    const auto messageFeedUdpPorts = properties[MESSAGE_FEED_UDP_PORTS_PROPERTYNAME].toStringList();
     for (const auto& udpPort : messageFeedUdpPorts)
     {
       QUdpSocket* udpSocket = new QUdpSocket(this);
@@ -273,27 +233,30 @@ void MessageFeedsController::toolInitProperties(const QVariantMap& properties)
   if (m_scene && m_messageFeeds->rowCount() == 0)
     setupFeeds();
 
-  const auto locationBroadcastConfig = properties[MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME].toMap();
-  if (locationBroadcastConfig.contains(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE) &&
-      locationBroadcastConfig.contains(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PORT))
+  const auto locationBroadcastConfig = properties[LOCATION_BROADCAST_CONFIG_PROPERTYNAME].toMap();
+  if (locationBroadcastConfig.contains(LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE) &&
+      locationBroadcastConfig.contains(LOCATION_BROADCAST_CONFIG_PORT))
   {
-    m_locationBroadcast->setMessageType(locationBroadcastConfig.value(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE).toString());
-    m_locationBroadcast->setUdpPort(locationBroadcastConfig.value(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PORT).toInt());
+    m_locationBroadcast->setMessageType(locationBroadcastConfig.value(LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE).toString());
+    m_locationBroadcast->setUdpPort(locationBroadcastConfig.value(LOCATION_BROADCAST_CONFIG_PORT).toInt());
   }
 }
 
 bool MessageFeedsController::shouldSetProperties(const QString& propertyName)
 {
   // list all property names that should cause the tool to re-initialize
+  using namespace MessageFeedConstants;
   static const std::unordered_set<QString> propertyNames
   {
     RESOURCE_DIRECTORY_PROPERTYNAME,
-    MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME,
+    MESSAGE_FEEDS_PROPERTYNAME,
     AppConstants::PROPERTYNAME_USERNAME,
-    MessageFeedConstants::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME,
-    MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME,
-    MessageFeedConstants::MESSAGE_FEEDS_SHOW_PREVIOUS_OBSERVATIONS,
-    MessageFeedConstants::MESSAGE_FEEDS_SHOW_TRACK_LINE,
+    MESSAGE_FEED_UDP_PORTS_PROPERTYNAME,
+    LOCATION_BROADCAST_CONFIG_PROPERTYNAME,
+    MESSAGE_FEEDS_SHOW_PREVIOUS_OBSERVATIONS,
+    MESSAGE_FEEDS_SHOW_TRACK_LINE,
+    MESSAGE_FEEDS_COLOR_OBSERVATIONS,
+    MESSAGE_FEEDS_COLOR_TRACK_LINE,
   };
 
   return setContainsString(propertyNames, propertyName);
@@ -406,33 +369,6 @@ int MessageFeedsController::selectedFeedIndex() const
   return m_selectedFeedIndex;
 }
 
-bool MessageFeedsController::selectedFeedShowPreviousObservations() const
-{
-  const MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
-  if (feed)
-    return feed->showPreviousObservations();
-
-  return false;
-}
-
-int MessageFeedsController::selectedFeedMaximumObservations() const
-{
-  const MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
-  if (feed)
-    return feed->maximumObservations();
-
-  return -1;
-}
-
-bool MessageFeedsController::selectedFeedShowTrackLine() const
-{
-  const MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
-  if (feed)
-    return feed->showTrackLine();
-
-  return false;
-}
-
 void MessageFeedsController::setSelectedFeedIndex(int index)
 {
   m_selectedFeedIndex = -1;
@@ -444,112 +380,114 @@ void MessageFeedsController::setSelectedFeedIndex(int index)
   emit selectedFeedChanged(index);
 }
 
+bool MessageFeedsController::selectedFeedShowPreviousObservations() const
+{
+  const MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
+  if (feed)
+    return feed->showPreviousObservations();
+
+  return false;
+}
+
 void MessageFeedsController::setSelectedFeedShowPreviousObservations(bool showPreviousObservations)
 {
   MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
   if (feed)
+  {
     feed->setShowPreviousObservations(showPreviousObservations);
+    notifyPropertyChanged();
+  }
+}
+
+int MessageFeedsController::selectedFeedMaximumObservations() const
+{
+  const MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
+  if (feed)
+  {
+    int maximumObservations = feed->maximumObservations();
+    if (maximumObservations == INT32_MAX)
+      maximumObservations = 0;
+    return maximumObservations;
+  }
+
+  return -1;
+}
+
+void MessageFeedsController::setSelectedFeedMaximumObservations(int maximumObservations)
+{
+  MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
+  if (!feed)
+    return;
+
+  if (maximumObservations == 0)
+    maximumObservations = INT32_MAX;
+  feed->setMaximumObservations(maximumObservations);
+  notifyPropertyChanged();
+}
+
+QString MessageFeedsController::selectedFeedColorObservations() const
+{
+  const MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
+  if (feed)
+    return feed->colorObservations();
+
+  return QString{};
+}
+
+void MessageFeedsController::setSelectedFeedColorObservations(const QString& color)
+{
+  MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
+  if (!feed)
+    return;
+
+  feed->setColorObservations(color);
+  notifyPropertyChanged();
+}
+
+bool MessageFeedsController::selectedFeedShowTrackLine() const
+{
+  const MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
+  if (feed)
+    return feed->showTrackLine();
+
+  return false;
 }
 
 void MessageFeedsController::setSelectedFeedShowTrackLine(bool showTrackLine)
 {
   MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
   if (feed)
+  {
     feed->setShowTrackLine(showTrackLine);
+    notifyPropertyChanged();
+  }
 }
 
-void MessageFeedsController::setSelectedFeedMaximumObservations(int maximumObservations)
+QString MessageFeedsController::selectedFeedColorTrackLine() const
+{
+  const MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
+  if (feed)
+    return feed->colorTrackLine();
+
+  return QString{};
+}
+
+void MessageFeedsController::setSelectedFeedColorTrackLine(const QString& color)
 {
   MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
-  if (feed)
-    feed->setMaximumObservations(maximumObservations);
+  if (!feed)
+    return;
+
+  feed->setColorTrackLine(color);
+  notifyPropertyChanged();
 }
 
-SurfacePlacement MessageFeedsController::toSurfacePlacement(const QString& surfacePlacement)
+
+void MessageFeedsController::notifyPropertyChanged()
 {
-  if (surfacePlacement.compare("relative", Qt::CaseInsensitive) == 0)
-    return SurfacePlacement::Relative;
-
-  if (surfacePlacement.compare("absolute", Qt::CaseInsensitive) == 0)
-    return SurfacePlacement::Absolute;
-
-  return SurfacePlacement::DrapedBillboarded; // default
+  emit propertyChanged(MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME, m_messageFeeds->toJsonArray());
 }
 
-/*!
-  \internal
-  \brief Creates and returns a renderer from the provided \a rendererInfo with an optional \a parent.
-
-  The \a rendererInfo parameter can be the symbol specification type (i.e. "mil2525c" or "mil2525d") or
-  it can be the name of an image file located in:
-
-  \list
-    \li the ":/Resources/icons/xhdpi/message" path, such
-    as ":/Resources/icons/xhdpi/message/observation1600.png".
-    \li an "icons" sub-directory under the \l resourcePath directory
-  \endlist
- */
-Renderer* MessageFeedsController::createRenderer(const QString& rendererInfo, QObject* parent) const
-{
-  // hold mil2525 symbol styles as statics to be shared by multiple renderers if needed
-  static DictionarySymbolStyle* dictionarySymbolStyleMil2525c = nullptr;
-  static DictionarySymbolStyle* dictionarySymbolStyleMil2525d = nullptr;
-
-  if (rendererInfo.compare("mil2525c", Qt::CaseInsensitive) == 0)
-  {
-    if (!dictionarySymbolStyleMil2525c)
-    {
-      const auto stylePath = m_resourcePath + "/styles/arcade/mil2525c.stylx";
-      if (!QFileInfo::exists(stylePath))
-      {
-        emit const_cast<MessageFeedsController*>(this)->toolErrorOccurred(QStringLiteral("mil2525c.stylx not found"), QString("Could not find %1").arg(stylePath));
-        return nullptr;
-      }
-
-      dictionarySymbolStyleMil2525c = DictionarySymbolStyle::createFromFile(stylePath, parent);
-    }
-
-    return new DictionaryRenderer(dictionarySymbolStyleMil2525c, parent);
-  }
-  else if (rendererInfo.compare("mil2525d", Qt::CaseInsensitive) == 0)
-  {
-    if (!dictionarySymbolStyleMil2525d)
-    {
-      const auto stylePath = m_resourcePath + "/styles/arcade/mil2525d.stylx";
-      if (!QFileInfo::exists(stylePath))
-      {
-        emit const_cast<MessageFeedsController*>(this)->toolErrorOccurred(QStringLiteral("mil2525d.stylx not found"), QString("Could not find %1").arg(stylePath));
-        return nullptr;
-      }
-
-      dictionarySymbolStyleMil2525d = DictionarySymbolStyle::createFromFile(stylePath, parent);
-    }
-
-    return new DictionaryRenderer(dictionarySymbolStyleMil2525d, parent);
-  }
-
-  // else default to simple renderer with picture marker symbol
-  PictureMarkerSymbol* symbol = nullptr;
-  const QString qrcFile = QString(":/Resources/icons/xhdpi/message/%1").arg(rendererInfo);
-
-  if (QFile::exists(qrcFile))
-  {
-    symbol = new PictureMarkerSymbol(QImage(qrcFile), parent);
-  }
-  else
-  {
-    const QString dataFile = m_resourcePath + QString("/icons/%1").arg(rendererInfo);
-    if (QFile::exists(dataFile))
-      symbol = new PictureMarkerSymbol(QImage(dataFile), parent);
-  }
-
-  if (symbol == nullptr)
-    return nullptr;
-
-  symbol->setWidth(40.0f);
-  symbol->setHeight(40.0f);
-  return new SimpleRenderer(symbol, parent);
-}
 
 // Properties:
 

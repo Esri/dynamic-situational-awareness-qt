@@ -129,8 +129,8 @@ DsaPanel {
                     top: comboFeeds.bottom
                     right: parent.right
                 }
-                checked: toolController.selectedFeedShowPreviousObservations
-                onCheckedChanged: toolController.selectedFeedShowPreviousObservations = checked
+                checked: toolController.selectedFeed.showPreviousObservations
+                onCheckedChanged: toolController.selectedFeed.showPreviousObservations = checked
             }
             SpinBox {
                 id: spinObservations
@@ -151,8 +151,8 @@ DsaPanel {
                         return value
                 }
 
-                value: toolController.selectedFeedMaximumObservations
-                onValueChanged: toolController.selectedFeedMaximumObservations = value
+                value: toolController.selectedFeed.maximumObservations
+                onValueChanged: toolController.selectedFeed.maximumObservations = value
             }
             ColorsComboBox {
                 id: colorsComboObservations
@@ -161,8 +161,8 @@ DsaPanel {
                     left: parent.left
                     right: parent.right
                 }
-                currentIndex: colorsComboObservations.model.indexOf(toolController.selectedFeedColorObservations)
-                onCurrentIndexChanged: toolController.selectedFeedColorObservations = colorsComboObservations.model[currentIndex]
+                currentIndex: colorsComboObservations.model.indexOf(toolController.selectedFeed.colorObservations)
+                onCurrentIndexChanged: toolController.selectedFeed.colorObservations = colorsComboObservations.model[currentIndex]
             }
 
             Text {
@@ -181,8 +181,8 @@ DsaPanel {
                     top: colorsComboObservations.bottom
                     right: parent.right
                 }
-                checked: toolController.selectedFeedShowTrackLine
-                onCheckedChanged: toolController.selectedFeedShowTrackLine = checked
+                checked: toolController.selectedFeed.showTrackLine
+                onCheckedChanged: toolController.selectedFeed.showTrackLine = checked
             }
             ColorsComboBox {
                 id: colorsComboTrackLine
@@ -191,8 +191,8 @@ DsaPanel {
                     left: parent.left
                     right: parent.right
                 }
-                currentIndex: colorsComboTrackLine.model.indexOf(toolController.selectedFeedColorTrackLine)
-                onCurrentIndexChanged: toolController.selectedFeedColorTrackLine = colorsComboTrackLine.model[currentIndex]
+                currentIndex: colorsComboTrackLine.model.indexOf(toolController.selectedFeed.colorTrackLine)
+                onCurrentIndexChanged: toolController.selectedFeed.colorTrackLine = colorsComboTrackLine.model[currentIndex]
             }
         }
     }

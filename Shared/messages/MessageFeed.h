@@ -42,6 +42,12 @@ class MessageFeed : public Esri::ArcGISRuntime::DynamicEntityDataSource
 {
   Q_OBJECT
 
+  Q_PROPERTY(bool showPreviousObservations READ showPreviousObservations WRITE setShowPreviousObservations NOTIFY feedChanged)
+  Q_PROPERTY(int maximumObservations READ maximumObservations WRITE setMaximumObservations NOTIFY feedChanged)
+  Q_PROPERTY(QString colorObservations READ colorObservations WRITE setColorObservations NOTIFY feedChanged)
+  Q_PROPERTY(bool showTrackLine READ showTrackLine WRITE setShowTrackLine NOTIFY feedChanged)
+  Q_PROPERTY(QString colorTrackLine READ colorTrackLine WRITE setColorTrackLine NOTIFY feedChanged)
+
 public:
   MessageFeed(const QJsonObject& properties, const QString& resourcePath, QObject* parent = nullptr);
   ~MessageFeed() override;
@@ -86,6 +92,9 @@ public:
   void setColorObservations(const QString& color);
   QString colorTrackLine() const;
   void setColorTrackLine(const QString& color);
+
+signals:
+  void feedChanged();
 
 private:
   Q_DISABLE_COPY(MessageFeed)

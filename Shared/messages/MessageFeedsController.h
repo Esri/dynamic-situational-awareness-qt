@@ -19,6 +19,7 @@
 
 // DSA
 #include "AbstractTool.h"
+#include "MessageFeed.h"
 // Qt
 #include <QVariantList>
 
@@ -46,11 +47,7 @@ class MessageFeedsController : public AbstractTool
   Q_PROPERTY(int locationBroadcastFrequency READ locationBroadcastFrequency WRITE setLocationBroadcastFrequency NOTIFY locationBroadcastFrequencyChanged)
   Q_PROPERTY(bool locationBroadcastInDistress READ isLocationBroadcastInDistress WRITE setLocationBroadcastInDistress NOTIFY locationBroadcastInDistressChanged)
   Q_PROPERTY(int selectedFeedIndex READ selectedFeedIndex WRITE setSelectedFeedIndex NOTIFY selectedFeedChanged)
-  Q_PROPERTY(bool selectedFeedShowPreviousObservations READ selectedFeedShowPreviousObservations WRITE setSelectedFeedShowPreviousObservations NOTIFY selectedFeedChanged)
-  Q_PROPERTY(int selectedFeedMaximumObservations READ selectedFeedMaximumObservations WRITE setSelectedFeedMaximumObservations NOTIFY selectedFeedChanged)
-  Q_PROPERTY(QString selectedFeedColorObservations READ selectedFeedColorObservations WRITE setSelectedFeedColorObservations NOTIFY selectedFeedChanged)
-  Q_PROPERTY(bool selectedFeedShowTrackLine READ selectedFeedShowTrackLine WRITE setSelectedFeedShowTrackLine NOTIFY selectedFeedChanged)
-  Q_PROPERTY(QString selectedFeedColorTrackLine READ selectedFeedColorTrackLine WRITE setSelectedFeedColorTrackLine NOTIFY selectedFeedChanged)
+  Q_PROPERTY(MessageFeed* selectedFeed READ selectedFeed NOTIFY selectedFeedChanged);
 
 public:
   static const QString RESOURCE_DIRECTORY_PROPERTYNAME;
@@ -82,18 +79,10 @@ public:
   bool isLocationBroadcastInDistress() const;
   void setLocationBroadcastInDistress(bool inDistress);
 
+  MessageFeed* selectedFeed();
+
   int selectedFeedIndex() const;
   void setSelectedFeedIndex(int index);
-  bool selectedFeedShowPreviousObservations() const;
-  void setSelectedFeedShowPreviousObservations(bool showPreviousObservations);
-  int selectedFeedMaximumObservations() const;
-  void setSelectedFeedMaximumObservations(int maximumObservations);
-  QString selectedFeedColorObservations() const;
-  void setSelectedFeedColorObservations(const QString& color);
-  bool selectedFeedShowTrackLine() const;
-  void setSelectedFeedShowTrackLine(bool showTrackLine);
-  QString selectedFeedColorTrackLine() const;
-  void setSelectedFeedColorTrackLine(const QString& color);
 
   void notifyPropertyChanged();
 

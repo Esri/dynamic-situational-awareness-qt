@@ -108,6 +108,9 @@ MessageFeed::MessageFeed(const QJsonObject& properties, const QString& resourceP
 
   m_messagesOverlay->setRenderer(createRenderer(resourcePath));
 
+  if (const QJsonValue p = properties[MESSAGE_FEEDS_VISIBLE]; p.isBool())
+    setFeedVisible(p.toBool());
+
   if (const QJsonValue p = properties[MESSAGE_FEEDS_SHOW_PREVIOUS_OBSERVATIONS]; p.isBool())
     setShowPreviousObservations(p.toBool());
 
@@ -261,7 +264,10 @@ void MessageFeed::setFeedMessageType(const QString& feedMessageType)
  */
 bool MessageFeed::isFeedVisible() const
 {
-  return m_messagesOverlay == nullptr ? false : m_messagesOverlay->isVisible();
+  if (!m_messagesOverlay)
+    return false;
+
+  return m_messagesOverlay->isVisible();
 }
 
 /*!
@@ -275,6 +281,7 @@ void MessageFeed::setFeedVisible(bool feedVisible)
     return;
 
   m_messagesOverlay->setVisible(feedVisible);
+  emit feedChanged();
 }
 
 /*!
@@ -460,6 +467,7 @@ void MessageFeed::setShowPreviousObservations(bool showPreviousObservations)
     return;
 
   m_messagesOverlay->trackDisplayProperties()->setShowPreviousObservations(showPreviousObservations);
+  emit feedChanged();
 }
 
 int MessageFeed::maximumObservations() const
@@ -467,7 +475,11 @@ int MessageFeed::maximumObservations() const
   if (!m_messagesOverlay)
     return -1;
 
-  return m_messagesOverlay->trackDisplayProperties()->maximumObservations();
+  int maximumObservations = m_messagesOverlay->trackDisplayProperties()->maximumObservations();
+  if (maximumObservations == INT32_MAX)
+    maximumObservations = 0;
+
+  return maximumObservations;
 }
 
 void MessageFeed::setMaximumObservations(int maximumObservations)
@@ -475,7 +487,11 @@ void MessageFeed::setMaximumObservations(int maximumObservations)
   if (!m_messagesOverlay)
     return;
 
+  if (maximumObservations == 0)
+    maximumObservations = INT32_MAX;
+
   m_messagesOverlay->trackDisplayProperties()->setMaximumObservations(maximumObservations);
+  emit feedChanged();
 }
 
 bool MessageFeed::showTrackLine() const
@@ -492,6 +508,7 @@ void MessageFeed::setShowTrackLine(bool showTrackLine)
     return;
 
   m_messagesOverlay->trackDisplayProperties()->setShowTrackLine(showTrackLine);
+  emit feedChanged();
 }
 
 QString MessageFeed::colorObservations() const
@@ -516,6 +533,7 @@ void MessageFeed::setColorObservations(const QString& color)
   std::unique_ptr<SimpleMarkerSymbol> symbol = std::make_unique<SimpleMarkerSymbol>();
   symbol->setColor(c);
   renderer->setSymbol(symbol.get());
+  emit feedChanged();
 }
 
 QString MessageFeed::colorTrackLine() const
@@ -540,6 +558,7 @@ void MessageFeed::setColorTrackLine(const QString& color)
   std::unique_ptr<SimpleLineSymbol> symbol = std::make_unique<SimpleLineSymbol>();
   symbol->setColor(c);
   renderer->setSymbol(symbol.get());
+  emit feedChanged();
 }
 
 /*!

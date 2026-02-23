@@ -32,6 +32,7 @@ namespace MessageFeedConstants {
   inline static const QString MESSAGE_FEEDS_NAME                       = QStringLiteral("name");
   inline static const QString MESSAGE_FEEDS_TYPE                       = QStringLiteral("type");
   inline static const QString MESSAGE_FEEDS_RENDERER                   = QStringLiteral("renderer");
+  inline static const QString MESSAGE_FEEDS_VISIBLE                    = QStringLiteral("visible");
   inline static const QString MESSAGE_FEEDS_THUMBNAIL                  = QStringLiteral("thumbnail");
   inline static const QString MESSAGE_FEEDS_PLACEMENT                  = QStringLiteral("placement");
   inline static const QString MESSAGE_FEEDS_SHOW_PREVIOUS_OBSERVATIONS = QStringLiteral("showPreviousObservations");

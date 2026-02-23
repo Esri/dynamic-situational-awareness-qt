@@ -181,6 +181,7 @@ void MessageFeedsController::setupFeeds()
     MessageFeed* feed = new MessageFeed(propertiesObject, m_resourcePath, this);
     m_messageFeeds->append(feed);
     m_scene->operationalLayers()->append(feed->messagesOverlay());
+    connect(feed, &MessageFeed::feedChanged, this, &MessageFeedsController::notifyPropertyChanged);
   });
 
   if (m_messageFeeds->count() > 0)
@@ -364,6 +365,11 @@ void MessageFeedsController::setLocationBroadcastInDistress(bool inDistress)
   emit locationBroadcastInDistressChanged();
 }
 
+MessageFeed *MessageFeedsController::selectedFeed()
+{
+  return m_messageFeeds->at(m_selectedFeedIndex);
+}
+
 int MessageFeedsController::selectedFeedIndex() const
 {
   return m_selectedFeedIndex;
@@ -379,109 +385,6 @@ void MessageFeedsController::setSelectedFeedIndex(int index)
 
   emit selectedFeedChanged(index);
 }
-
-bool MessageFeedsController::selectedFeedShowPreviousObservations() const
-{
-  const MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
-  if (feed)
-    return feed->showPreviousObservations();
-
-  return false;
-}
-
-void MessageFeedsController::setSelectedFeedShowPreviousObservations(bool showPreviousObservations)
-{
-  MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
-  if (feed)
-  {
-    feed->setShowPreviousObservations(showPreviousObservations);
-    notifyPropertyChanged();
-  }
-}
-
-int MessageFeedsController::selectedFeedMaximumObservations() const
-{
-  const MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
-  if (feed)
-  {
-    int maximumObservations = feed->maximumObservations();
-    if (maximumObservations == INT32_MAX)
-      maximumObservations = 0;
-    return maximumObservations;
-  }
-
-  return -1;
-}
-
-void MessageFeedsController::setSelectedFeedMaximumObservations(int maximumObservations)
-{
-  MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
-  if (!feed)
-    return;
-
-  if (maximumObservations == 0)
-    maximumObservations = INT32_MAX;
-  feed->setMaximumObservations(maximumObservations);
-  notifyPropertyChanged();
-}
-
-QString MessageFeedsController::selectedFeedColorObservations() const
-{
-  const MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
-  if (feed)
-    return feed->colorObservations();
-
-  return QString{};
-}
-
-void MessageFeedsController::setSelectedFeedColorObservations(const QString& color)
-{
-  MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
-  if (!feed)
-    return;
-
-  feed->setColorObservations(color);
-  notifyPropertyChanged();
-}
-
-bool MessageFeedsController::selectedFeedShowTrackLine() const
-{
-  const MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
-  if (feed)
-    return feed->showTrackLine();
-
-  return false;
-}
-
-void MessageFeedsController::setSelectedFeedShowTrackLine(bool showTrackLine)
-{
-  MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
-  if (feed)
-  {
-    feed->setShowTrackLine(showTrackLine);
-    notifyPropertyChanged();
-  }
-}
-
-QString MessageFeedsController::selectedFeedColorTrackLine() const
-{
-  const MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
-  if (feed)
-    return feed->colorTrackLine();
-
-  return QString{};
-}
-
-void MessageFeedsController::setSelectedFeedColorTrackLine(const QString& color)
-{
-  MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
-  if (!feed)
-    return;
-
-  feed->setColorTrackLine(color);
-  notifyPropertyChanged();
-}
-
 
 void MessageFeedsController::notifyPropertyChanged()
 {

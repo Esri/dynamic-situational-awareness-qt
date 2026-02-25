@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls.Basic
+import QtQuick.Controls.Fusion
 
 ComboBox {
     id: comboBox
@@ -16,6 +16,7 @@ ComboBox {
     }
 
     background: Rectangle {
+        radius: 5
         color: comboBox.model[comboBox.currentIndex]
     }
 }

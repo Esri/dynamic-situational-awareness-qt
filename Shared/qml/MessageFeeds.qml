@@ -113,31 +113,45 @@ DsaPanel {
                 onCurrentIndexChanged: toolController.selectedFeedIndex = currentIndex
             }
 
-            Text {
-                id: txtObservations
-                text: "Observations"
-                anchors {
-                    top: comboFeeds.bottom
-                    left: parent.left
-                }
-                color: Material.foreground
-                font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
-            }
             Switch {
                 id: switchObservations
                 anchors {
                     top: comboFeeds.bottom
-                    right: parent.right
+                    left: parent.left
+                    topMargin: 5
                 }
                 checked: toolController.selectedFeed.showPreviousObservations
                 onCheckedChanged: toolController.selectedFeed.showPreviousObservations = checked
             }
+            Text {
+                id: txtObservations
+                text: "Observations"
+                anchors {
+                    left: switchObservations.right
+                    verticalCenter: switchObservations.verticalCenter
+                }
+                color: Material.foreground
+                font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor * (isMobile ? 1.0 : 0.6)
+            }
+            ColorsComboBox {
+                id: colorsComboObservations
+                anchors {
+                    right: parent.right
+                    verticalCenter: switchObservations.verticalCenter
+                    rightMargin: 5
+                }
+                height: switchObservations.height
+                width: 80
+                currentIndex: colorsComboObservations.model.indexOf(toolController.selectedFeed.colorObservations)
+                onCurrentIndexChanged: toolController.selectedFeed.colorObservations = colorsComboObservations.model[currentIndex]
+            }
             SpinBox {
                 id: spinObservations
                 anchors {
-                    top: txtObservations.bottom
+                    top: switchObservations.bottom
                     left: parent.left
                     right: parent.right
+                    topMargin: 5
                 }
                 from: 0
                 to: 9999
@@ -154,43 +168,36 @@ DsaPanel {
                 value: toolController.selectedFeed.maximumObservations
                 onValueChanged: toolController.selectedFeed.maximumObservations = value
             }
-            ColorsComboBox {
-                id: colorsComboObservations
-                anchors {
-                    top: spinObservations.bottom
-                    left: parent.left
-                    right: parent.right
-                }
-                currentIndex: colorsComboObservations.model.indexOf(toolController.selectedFeed.colorObservations)
-                onCurrentIndexChanged: toolController.selectedFeed.colorObservations = colorsComboObservations.model[currentIndex]
-            }
 
-            Text {
-                id: txtTrackLine
-                text: "Track Line"
-                anchors {
-                    top: colorsComboObservations.bottom
-                    left: parent.left
-                }
-                color: Material.foreground
-                font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
-            }
             Switch {
                 id: switchTrackLine
                 anchors {
-                    top: colorsComboObservations.bottom
-                    right: parent.right
+                    top: spinObservations.bottom
+                    left: parent.left
+                    topMargin: 10
                 }
                 checked: toolController.selectedFeed.showTrackLine
                 onCheckedChanged: toolController.selectedFeed.showTrackLine = checked
             }
+            Text {
+                id: txtTrackLine
+                text: "Track Line"
+                anchors {
+                    left: switchTrackLine.right
+                    verticalCenter: switchTrackLine.verticalCenter
+                }
+                color: Material.foreground
+                font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor * (isMobile ? 1.0 : 0.6)
+            }
             ColorsComboBox {
                 id: colorsComboTrackLine
                 anchors {
-                    top: txtTrackLine.bottom
-                    left: parent.left
+                    verticalCenter: switchTrackLine.verticalCenter
                     right: parent.right
+                    rightMargin: 5
                 }
+                height: switchTrackLine.height
+                width: 80
                 currentIndex: colorsComboTrackLine.model.indexOf(toolController.selectedFeed.colorTrackLine)
                 onCurrentIndexChanged: toolController.selectedFeed.colorTrackLine = colorsComboTrackLine.model[currentIndex]
             }

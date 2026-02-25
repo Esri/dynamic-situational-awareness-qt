@@ -179,6 +179,13 @@ void MessageFeedsController::setupFeeds()
   {
     const QVariantMap properties = propertiesItem.toObject().toVariantMap();
     MessageFeed* feed = new MessageFeed(properties, m_resourcePath, this);
+    if (!feed->configurationWasValid())
+      return;
+
+    connect(feed, &MessageFeed::doneLoading, this, [feed](const Esri::ArcGISRuntime::Error&)
+    {
+      feed->refreshOverlay();
+    });
     m_scene->operationalLayers()->append(feed->messagesOverlay());
     m_messageFeeds->append(feed);
     connect(feed, &MessageFeed::feedChanged, this, &MessageFeedsController::notifyPropertyChanged);

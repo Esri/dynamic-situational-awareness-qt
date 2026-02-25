@@ -75,7 +75,7 @@ public:
   QString renderer() const;
   QString surfacePlacement() const;
 
-  Esri::ArcGISRuntime::Renderer* createRenderer(const QString& resourcePath);
+  Esri::ArcGISRuntime::Renderer* createRenderer();
 
   bool addMessage(const Message& message);
   Esri::ArcGISRuntime::DynamicEntity* getDynamicEntityById(quint64 entityId) const;
@@ -93,6 +93,9 @@ public:
   QString colorTrackLine() const;
   void setColorTrackLine(const QString& color);
 
+  void refreshOverlay();
+  bool configurationWasValid() const;
+
 signals:
   void feedChanged();
 
@@ -104,12 +107,18 @@ private:
   QString m_renderer;
   QString m_thumbnail;
   QString m_surfacePlacement;
+  bool m_showPreviousObservations = false;
+  int m_maximumObservations = 5;
   QString m_colorObservations;
+  bool m_showTrackLine = false;
   QString m_colorTrackLine;
+  bool m_isFeedVisible = false;
   bool m_isCoT;
+  bool m_configurationWasValid = false;
   QString m_entityIdAttributeName;
   MessagesOverlay* m_messagesOverlay = nullptr;
   QUrl m_thumbnailUrl;
+  QString m_resourcePath;
   QHash<quint64, Esri::ArcGISRuntime::DynamicEntity*> m_dynamicEntities;
   void checkEntityForSelectAction(Esri::ArcGISRuntime::DynamicEntity* dynamicEntity);
 };

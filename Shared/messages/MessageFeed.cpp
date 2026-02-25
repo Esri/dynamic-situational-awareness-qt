@@ -55,23 +55,23 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourcePath, QObject* parent):
-  DynamicEntityDataSource(parent)
+  DynamicEntityDataSource(parent), m_resourcePath(resourcePath)
 {
   using namespace MessageFeedConstants;
   qint8 validRequiredProperties = 0;
 
   // set all the string properties and keep track of any required that are not found
-  using PropertySet = std::tuple<QString, QString*, bool>;
-  std::vector<PropertySet> propertySets{};
-  propertySets.reserve(7);
-  propertySets.emplace_back(MESSAGE_FEEDS_NAME, &m_feedName, true);
-  propertySets.emplace_back(MESSAGE_FEEDS_TYPE, &m_feedMessageType, true);
-  propertySets.emplace_back(MESSAGE_FEEDS_RENDERER, &m_renderer, true);
-  propertySets.emplace_back(MESSAGE_FEEDS_THUMBNAIL, &m_thumbnail, false);
-  propertySets.emplace_back(MESSAGE_FEEDS_PLACEMENT, &m_surfacePlacement, false);
-  propertySets.emplace_back(MESSAGE_FEEDS_COLOR_OBSERVATIONS, &m_colorObservations, false);
-  propertySets.emplace_back(MESSAGE_FEEDS_COLOR_TRACK_LINE, &m_colorTrackLine, false);
-  std::for_each(std::cbegin(propertySets), std::cend(propertySets), [&](const PropertySet& ps)
+  using PropString = std::tuple<QString, QString*, bool>;
+  std::vector<PropString> stringProperties{};
+  stringProperties.reserve(7);
+  stringProperties.emplace_back(MESSAGE_FEEDS_NAME, &m_feedName, true);
+  stringProperties.emplace_back(MESSAGE_FEEDS_TYPE, &m_feedMessageType, true);
+  stringProperties.emplace_back(MESSAGE_FEEDS_RENDERER, &m_renderer, true);
+  stringProperties.emplace_back(MESSAGE_FEEDS_THUMBNAIL, &m_thumbnail, false);
+  stringProperties.emplace_back(MESSAGE_FEEDS_PLACEMENT, &m_surfacePlacement, false);
+  stringProperties.emplace_back(MESSAGE_FEEDS_COLOR_OBSERVATIONS, &m_colorObservations, false);
+  stringProperties.emplace_back(MESSAGE_FEEDS_COLOR_TRACK_LINE, &m_colorTrackLine, false);
+  std::for_each(std::cbegin(stringProperties), std::cend(stringProperties), [&](const PropString& ps)
   {
     if (const QString p = properties[std::get<QString>(ps)].toString(); !p.isEmpty())
     {
@@ -82,7 +82,8 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
   });
 
   // all message feed configurations are required to have name, type and renderer
-  if (validRequiredProperties < 3)
+  m_configurationWasValid = validRequiredProperties > 2;
+  if (!m_configurationWasValid)
     return;
 
   // build the thumbnail url if it was not empty
@@ -90,41 +91,30 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
   {
     if (QFile::exists(QString{QStringLiteral(":/Resources/icons/xhdpi/message/%1")}.arg(m_thumbnail)))
       setThumbnailUrl(QString{QStringLiteral("qrc:/Resources/icons/xhdpi/message/%1")}.arg(m_thumbnail));
-    else if (QFile::exists(QString{QStringLiteral("%1/icons/%2")}.arg(resourcePath, m_thumbnail)))
-      setThumbnailUrl(QUrl::fromLocalFile(QString{QStringLiteral("%1/icons/%2")}.arg(resourcePath, m_thumbnail)));
+    else if (QFile::exists(QString{QStringLiteral("%1/icons/%2")}.arg(m_resourcePath, m_thumbnail)))
+      setThumbnailUrl(QUrl::fromLocalFile(QString{QStringLiteral("%1/icons/%2")}.arg(m_resourcePath, m_thumbnail)));
   }
 
   m_messagesOverlay = new MessagesOverlay(this, m_feedMessageType, this);
 
-  // update the surface placement and set the overlay scene properties
-  SurfacePlacement surfacePlacement = SurfacePlacement::DrapedBillboarded;
-  if (m_surfacePlacement.compare("relative", Qt::CaseInsensitive) == 0)
-    surfacePlacement = SurfacePlacement::Relative;
-  else if (m_surfacePlacement.compare("absolute", Qt::CaseInsensitive) == 0)
-    surfacePlacement = SurfacePlacement::Absolute;
-  m_messagesOverlay->setSceneProperties(LayerSceneProperties(surfacePlacement));
-
-  m_messagesOverlay->setRenderer(createRenderer(resourcePath));
-
   // initialize all the boolean properties
-  using SetterBool = std::function<void(bool)>;
-  using PropertySetterBool = std::tuple<QString, SetterBool>;
-  std::vector<PropertySetterBool> propSettersBool{};
-  propSettersBool.reserve(3);
-  propSettersBool.emplace_back(MESSAGE_FEEDS_VISIBLE, [&](bool b) { setFeedVisible(b); });
-  propSettersBool.emplace_back(MESSAGE_FEEDS_SHOW_PREVIOUS_OBSERVATIONS, [&](bool b) { setShowPreviousObservations(b); });
-  propSettersBool.emplace_back(MESSAGE_FEEDS_SHOW_TRACK_LINE, [&](bool b) { setShowTrackLine(b); });
-  std::for_each(std::cbegin(propSettersBool), std::cend(propSettersBool), [&](const PropertySetterBool& psb)
+  using PropBool = std::tuple<QString, bool*>;
+  std::vector<PropBool> boolProperties{};
+  boolProperties.reserve(3);
+  boolProperties.emplace_back(MESSAGE_FEEDS_VISIBLE, &m_isFeedVisible);
+  boolProperties.emplace_back(MESSAGE_FEEDS_SHOW_PREVIOUS_OBSERVATIONS, &m_showPreviousObservations);
+  boolProperties.emplace_back(MESSAGE_FEEDS_SHOW_TRACK_LINE, &m_showTrackLine);
+  std::for_each(std::cbegin(boolProperties), std::cend(boolProperties), [&](const PropBool& pb)
   {
     bool b = false;
-    if (const QVariant v = properties[std::get<QString>(psb)]; v.canConvert<bool>())
+    if (const QVariant v = properties[std::get<QString>(pb)]; v.canConvert<bool>())
       b = v.toBool();
 
-    std::get<SetterBool>(psb)(b);
+    *std::get<bool*>(pb) = b;
   });
 
   if (const QVariant p = properties[MESSAGE_FEEDS_MAXIMUM_OBSERVATIONS]; p.canConvert<int>())
-    setMaximumObservations(p.toInt());
+    m_maximumObservations = p.toInt();
 }
 
 MessageFeed::~MessageFeed() = default;
@@ -264,10 +254,7 @@ void MessageFeed::setFeedMessageType(const QString& feedMessageType)
  */
 bool MessageFeed::isFeedVisible() const
 {
-  if (!m_messagesOverlay)
-    return false;
-
-  return m_messagesOverlay->isVisible();
+  return m_isFeedVisible;
 }
 
 /*!
@@ -275,13 +262,18 @@ bool MessageFeed::isFeedVisible() const
  */
 void MessageFeed::setFeedVisible(bool feedVisible)
 {
+  if (m_isFeedVisible == feedVisible)
+    return;
+
+  m_isFeedVisible = feedVisible;
+  emit feedChanged();
+
   if (m_messagesOverlay == nullptr)
     return;
   if (m_messagesOverlay->isVisible() == feedVisible)
     return;
 
   m_messagesOverlay->setVisible(feedVisible);
-  emit feedChanged();
 }
 
 /*!
@@ -331,7 +323,7 @@ QString MessageFeed::surfacePlacement() const
   return m_surfacePlacement;
 }
 
-Renderer *MessageFeed::createRenderer(const QString& resourcePath)
+Renderer *MessageFeed::createRenderer()
 {
   // hold mil2525 symbol styles as statics to be shared by multiple renderers if needed
   static DictionarySymbolStyle* dictionarySymbolStyleMil2525c = nullptr;
@@ -342,7 +334,7 @@ Renderer *MessageFeed::createRenderer(const QString& resourcePath)
   {
     if (!dictionarySymbolStyleMil2525c)
     {
-      const QString stylePath = QString{QStringLiteral("%1/styles/arcade/mil2525c.stylx")}.arg(resourcePath);
+      const QString stylePath = QString{QStringLiteral("%1/styles/arcade/mil2525c.stylx")}.arg(m_resourcePath);
       if (!QFileInfo::exists(stylePath))
       {
         emit errorOccurred(Error(QStringLiteral("mil2525c.stylx not found"), QString{QStringLiteral("Could not find %1")}.arg(stylePath), ExtendedErrorType::None));
@@ -358,7 +350,7 @@ Renderer *MessageFeed::createRenderer(const QString& resourcePath)
   {
     if (!dictionarySymbolStyleMil2525d)
     {
-      const QString stylePath = QString{QStringLiteral("%1/styles/arcade/mil2525d.stylx")}.arg(resourcePath);
+      const QString stylePath = QString{QStringLiteral("%1/styles/arcade/mil2525d.stylx")}.arg(m_resourcePath);
       if (!QFileInfo::exists(stylePath))
       {
         emit errorOccurred(Error(QStringLiteral("mil2525d.stylx not found"), QString{QStringLiteral("Could not find %1")}.arg(stylePath), ExtendedErrorType::None));
@@ -381,7 +373,7 @@ Renderer *MessageFeed::createRenderer(const QString& resourcePath)
   }
   else
   {
-    const QString dataFile = resourcePath + QString{QStringLiteral("/icons/%1")}.arg(m_renderer);
+    const QString dataFile = m_resourcePath + QString{QStringLiteral("/icons/%1")}.arg(m_renderer);
     if (QFile::exists(dataFile))
       symbol = new PictureMarkerSymbol(QImage(dataFile), parent);
   }
@@ -455,14 +447,13 @@ bool MessageFeed::addMessage(const Message& message)
 
 bool MessageFeed::showPreviousObservations() const
 {
-  if (!m_messagesOverlay)
-    return false;
-
-  return m_messagesOverlay->trackDisplayProperties()->isShowPreviousObservations();
+  return m_showPreviousObservations;
 }
 
 void MessageFeed::setShowPreviousObservations(bool showPreviousObservations)
 {
+  m_showPreviousObservations = showPreviousObservations;
+
   if (!m_messagesOverlay)
     return;
 
@@ -472,10 +463,7 @@ void MessageFeed::setShowPreviousObservations(bool showPreviousObservations)
 
 int MessageFeed::maximumObservations() const
 {
-  if (!m_messagesOverlay)
-    return -1;
-
-  int maximumObservations = m_messagesOverlay->trackDisplayProperties()->maximumObservations();
+  int maximumObservations = m_maximumObservations;
   if (maximumObservations == INT32_MAX)
     maximumObservations = 0;
 
@@ -484,11 +472,13 @@ int MessageFeed::maximumObservations() const
 
 void MessageFeed::setMaximumObservations(int maximumObservations)
 {
-  if (!m_messagesOverlay)
-    return;
-
   if (maximumObservations == 0)
     maximumObservations = INT32_MAX;
+
+  m_maximumObservations = maximumObservations;
+
+  if (!m_messagesOverlay)
+    return;
 
   m_messagesOverlay->trackDisplayProperties()->setMaximumObservations(maximumObservations);
   emit feedChanged();
@@ -496,14 +486,13 @@ void MessageFeed::setMaximumObservations(int maximumObservations)
 
 bool MessageFeed::showTrackLine() const
 {
-  if (!m_messagesOverlay)
-    return false;
-
-  return m_messagesOverlay->trackDisplayProperties()->isShowTrackLine();
+  return m_showTrackLine;
 }
 
 void MessageFeed::setShowTrackLine(bool showTrackLine)
 {
+  m_showTrackLine = showTrackLine;
+
   if (!m_messagesOverlay)
     return;
 
@@ -513,15 +502,13 @@ void MessageFeed::setShowTrackLine(bool showTrackLine)
 
 QString MessageFeed::colorObservations() const
 {
-  if (!m_messagesOverlay)
-    return QString{};
-
   return m_colorObservations;
 }
 
 void MessageFeed::setColorObservations(const QString& color)
 {
   m_colorObservations = color;
+
   if (!m_messagesOverlay)
     return;
 
@@ -538,15 +525,13 @@ void MessageFeed::setColorObservations(const QString& color)
 
 QString MessageFeed::colorTrackLine() const
 {
-  if (!m_messagesOverlay)
-    return QString{};
-
   return m_colorTrackLine;
 }
 
 void MessageFeed::setColorTrackLine(const QString& color)
 {
   m_colorTrackLine = color;
+
   if (!m_messagesOverlay)
     return;
 
@@ -559,6 +544,32 @@ void MessageFeed::setColorTrackLine(const QString& color)
   symbol->setColor(c);
   renderer->setSymbol(symbol.get());
   emit feedChanged();
+}
+
+void MessageFeed::refreshOverlay()
+{
+
+  m_messagesOverlay->setRenderer(createRenderer());
+
+  setShowPreviousObservations(m_showPreviousObservations);
+  setColorObservations(m_colorObservations);
+  setMaximumObservations(m_maximumObservations);
+  setColorTrackLine(m_colorTrackLine);
+  setShowTrackLine(m_showTrackLine);
+  setFeedVisible(m_isFeedVisible);
+
+  // update the surface placement and set the overlay scene properties
+  SurfacePlacement surfacePlacement = SurfacePlacement::DrapedBillboarded;
+  if (m_surfacePlacement.compare("relative", Qt::CaseInsensitive) == 0)
+    surfacePlacement = SurfacePlacement::Relative;
+  else if (m_surfacePlacement.compare("absolute", Qt::CaseInsensitive) == 0)
+    surfacePlacement = SurfacePlacement::Absolute;
+  m_messagesOverlay->setSceneProperties(LayerSceneProperties(surfacePlacement));
+}
+
+bool MessageFeed::configurationWasValid() const
+{
+  return m_configurationWasValid;
 }
 
 /*!

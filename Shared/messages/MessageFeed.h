@@ -21,9 +21,9 @@
 #include "DynamicEntityDataSource.h"
 // Qt
 #include <QHash>
-#include <QJsonObject>
 #include <QObject>
 #include <QUrl>
+#include <QVariantMap>
 
 namespace Esri::ArcGISRuntime {
 
@@ -49,7 +49,7 @@ class MessageFeed : public Esri::ArcGISRuntime::DynamicEntityDataSource
   Q_PROPERTY(QString colorTrackLine READ colorTrackLine WRITE setColorTrackLine NOTIFY feedChanged)
 
 public:
-  MessageFeed(const QJsonObject& properties, const QString& resourcePath, QObject* parent = nullptr);
+  MessageFeed(const QVariantMap& properties, const QString& resourcePath, QObject* parent = nullptr);
   ~MessageFeed() override;
 
   QFuture<Esri::ArcGISRuntime::DynamicEntityDataSourceInfo*> onLoadAsync() override;

@@ -175,12 +175,12 @@ void MessageFeedsController::setupFeeds()
 {
   // parse and add message feeds
   const QJsonArray propertiesList = QJsonArray::fromVariantList(m_messageFeedProperties);
-  std::for_each(std::cbegin(propertiesList), std::cend(propertiesList), [&](const QJsonValue& properties)
+  std::for_each(std::cbegin(propertiesList), std::cend(propertiesList), [&](const QJsonValue& propertiesItem)
   {
-    const QJsonObject propertiesObject = properties.toObject();
-    MessageFeed* feed = new MessageFeed(propertiesObject, m_resourcePath, this);
-    m_messageFeeds->append(feed);
+    const QVariantMap properties = propertiesItem.toObject().toVariantMap();
+    MessageFeed* feed = new MessageFeed(properties, m_resourcePath, this);
     m_scene->operationalLayers()->append(feed->messagesOverlay());
+    m_messageFeeds->append(feed);
     connect(feed, &MessageFeed::feedChanged, this, &MessageFeedsController::notifyPropertyChanged);
   });
 

@@ -54,77 +54,77 @@ using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
 
-MessageFeed::MessageFeed(const QJsonObject& properties, const QString& resourcePath, QObject* parent):
+MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourcePath, QObject* parent):
   DynamicEntityDataSource(parent)
 {
   using namespace MessageFeedConstants;
   qint8 validRequiredProperties = 0;
-  if (const QJsonValue p = properties[MESSAGE_FEEDS_NAME]; !p.isUndefined())
-  {
-    m_feedName = p.toString();
-    ++validRequiredProperties;
-  }
 
-  if (const QJsonValue p = properties[MESSAGE_FEEDS_TYPE]; !p.isUndefined())
+  // set all the string properties and keep track of any required that are not found
+  using PropertySet = std::tuple<QString, QString*, bool>;
+  std::vector<PropertySet> propertySets{};
+  propertySets.reserve(7);
+  propertySets.emplace_back(MESSAGE_FEEDS_NAME, &m_feedName, true);
+  propertySets.emplace_back(MESSAGE_FEEDS_TYPE, &m_feedMessageType, true);
+  propertySets.emplace_back(MESSAGE_FEEDS_RENDERER, &m_renderer, true);
+  propertySets.emplace_back(MESSAGE_FEEDS_THUMBNAIL, &m_thumbnail, false);
+  propertySets.emplace_back(MESSAGE_FEEDS_PLACEMENT, &m_surfacePlacement, false);
+  propertySets.emplace_back(MESSAGE_FEEDS_COLOR_OBSERVATIONS, &m_colorObservations, false);
+  propertySets.emplace_back(MESSAGE_FEEDS_COLOR_TRACK_LINE, &m_colorTrackLine, false);
+  std::for_each(std::cbegin(propertySets), std::cend(propertySets), [&](const PropertySet& ps)
   {
-    m_feedMessageType = p.toString();
-    ++validRequiredProperties;
-  }
-
-  if (const QJsonValue p = properties[MESSAGE_FEEDS_RENDERER]; !p.isUndefined())
-  {
-    m_renderer = p.toString();
-    ++validRequiredProperties;
-  }
+    if (const QString p = properties[std::get<QString>(ps)].toString(); !p.isEmpty())
+    {
+      *std::get<QString*>(ps) = p;
+      if (std::get<bool>(ps))
+        ++validRequiredProperties;
+    }
+  });
 
   // all message feed configurations are required to have name, type and renderer
   if (validRequiredProperties < 3)
     return;
 
-  if (const QJsonValue p = properties[MESSAGE_FEEDS_THUMBNAIL]; !p.isUndefined())
+  // build the thumbnail url if it was not empty
+  if (m_thumbnail.isEmpty())
   {
-    m_thumbnail = p.toString();
-    if (m_thumbnail.isEmpty())
-    {
-      if (QFile::exists(QString{QStringLiteral(":/Resources/icons/xhdpi/message/%1")}.arg(m_thumbnail)))
-        setThumbnailUrl(QString{QStringLiteral("qrc:/Resources/icons/xhdpi/message/%1")}.arg(m_thumbnail));
-      else if (QFile::exists(QString{QStringLiteral("%1/icons/%2")}.arg(resourcePath, m_thumbnail)))
-        setThumbnailUrl(QUrl::fromLocalFile(QString{QStringLiteral("%1/icons/%2")}.arg(resourcePath, m_thumbnail)));
-    }
+    if (QFile::exists(QString{QStringLiteral(":/Resources/icons/xhdpi/message/%1")}.arg(m_thumbnail)))
+      setThumbnailUrl(QString{QStringLiteral("qrc:/Resources/icons/xhdpi/message/%1")}.arg(m_thumbnail));
+    else if (QFile::exists(QString{QStringLiteral("%1/icons/%2")}.arg(resourcePath, m_thumbnail)))
+      setThumbnailUrl(QUrl::fromLocalFile(QString{QStringLiteral("%1/icons/%2")}.arg(resourcePath, m_thumbnail)));
   }
 
   m_messagesOverlay = new MessagesOverlay(this, m_feedMessageType, this);
 
+  // update the surface placement and set the overlay scene properties
   SurfacePlacement surfacePlacement = SurfacePlacement::DrapedBillboarded;
-  if (const QJsonValue p = properties[MESSAGE_FEEDS_PLACEMENT]; !p.isUndefined())
-  {
-    m_surfacePlacement = p.toString();
-    if (m_surfacePlacement.compare("relative", Qt::CaseInsensitive) == 0)
-      surfacePlacement = SurfacePlacement::Relative;
-    else if (m_surfacePlacement.compare("absolute", Qt::CaseInsensitive) == 0)
-      surfacePlacement = SurfacePlacement::Absolute;
-  }
+  if (m_surfacePlacement.compare("relative", Qt::CaseInsensitive) == 0)
+    surfacePlacement = SurfacePlacement::Relative;
+  else if (m_surfacePlacement.compare("absolute", Qt::CaseInsensitive) == 0)
+    surfacePlacement = SurfacePlacement::Absolute;
   m_messagesOverlay->setSceneProperties(LayerSceneProperties(surfacePlacement));
 
   m_messagesOverlay->setRenderer(createRenderer(resourcePath));
 
-  if (const QJsonValue p = properties[MESSAGE_FEEDS_VISIBLE]; p.isBool())
-    setFeedVisible(p.toBool());
+  // initialize all the boolean properties
+  using SetterBool = std::function<void(bool)>;
+  using PropertySetterBool = std::tuple<QString, SetterBool>;
+  std::vector<PropertySetterBool> propSettersBool{};
+  propSettersBool.reserve(3);
+  propSettersBool.emplace_back(MESSAGE_FEEDS_VISIBLE, [&](bool b) { setFeedVisible(b); });
+  propSettersBool.emplace_back(MESSAGE_FEEDS_SHOW_PREVIOUS_OBSERVATIONS, [&](bool b) { setShowPreviousObservations(b); });
+  propSettersBool.emplace_back(MESSAGE_FEEDS_SHOW_TRACK_LINE, [&](bool b) { setShowTrackLine(b); });
+  std::for_each(std::cbegin(propSettersBool), std::cend(propSettersBool), [&](const PropertySetterBool& psb)
+  {
+    bool b = false;
+    if (const QVariant v = properties[std::get<QString>(psb)]; v.canConvert<bool>())
+      b = v.toBool();
 
-  if (const QJsonValue p = properties[MESSAGE_FEEDS_SHOW_PREVIOUS_OBSERVATIONS]; p.isBool())
-    setShowPreviousObservations(p.toBool());
+    std::get<SetterBool>(psb)(b);
+  });
 
-  if (const QJsonValue p = properties[MESSAGE_FEEDS_SHOW_TRACK_LINE]; p.isBool())
-    setShowTrackLine(p.toBool());
-
-  if (const QJsonValue p = properties[MESSAGE_FEEDS_MAXIMUM_OBSERVATIONS]; !p.isUndefined())
+  if (const QVariant p = properties[MESSAGE_FEEDS_MAXIMUM_OBSERVATIONS]; p.canConvert<int>())
     setMaximumObservations(p.toInt());
-
-  if (const QJsonValue p = properties[MESSAGE_FEEDS_COLOR_OBSERVATIONS]; !p.isUndefined())
-    setColorObservations(p.toString());
-
-  if (const QJsonValue p = properties[MESSAGE_FEEDS_COLOR_TRACK_LINE]; !p.isUndefined())
-    setColorTrackLine(p.toString());
 }
 
 MessageFeed::~MessageFeed() = default;

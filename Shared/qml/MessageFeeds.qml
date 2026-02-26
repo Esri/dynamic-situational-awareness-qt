@@ -96,17 +96,17 @@ DsaPanel {
                 }
             }
         }
-
-        Item {
+        ColumnLayout {
             anchors {
                 left: parent.left
                 right: parent.right
                 top: parent.top
                 bottom: bar.top
             }
+
             ComboBox {
                 id: comboFeeds
-                width: parent.width
+                Layout.fillWidth: true
                 textRole: "feedName"
                 model: toolController.messageFeeds
                 currentIndex: toolController.selectedFeedIndex
@@ -115,48 +115,104 @@ DsaPanel {
 
             Switch {
                 id: switchObservations
-                anchors {
-                    top: comboFeeds.bottom
-                    left: parent.left
-                    topMargin: 5
-                }
                 checked: toolController.selectedFeed.showPreviousObservations
                 onCheckedChanged: toolController.selectedFeed.showPreviousObservations = checked
-            }
-            Text {
-                id: txtObservations
                 text: "Observations"
-                anchors {
-                    left: switchObservations.right
-                    verticalCenter: switchObservations.verticalCenter
-                }
-                color: Material.foreground
-                font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor * (isMobile ? 1.0 : 0.6)
+                font.pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
             }
-            ColorsComboBox {
-                id: colorsComboObservations
-                anchors {
-                    right: parent.right
-                    verticalCenter: switchObservations.verticalCenter
-                    rightMargin: 5
+
+            RowLayout {
+                visible: switchObservations.checked
+                ColumnLayout {
+                    SpinBox {
+                        id: spinObservationsSize
+                        from: 1
+                        to: 25
+                    }
+                    Label {
+                        Layout.alignment: Qt.AlignCenter
+                        text: "Size"
+                        font.pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
+                    }
                 }
-                height: switchObservations.height
-                width: 80
-                currentIndex: colorsComboObservations.model.indexOf(toolController.selectedFeed.colorObservations)
-                onCurrentIndexChanged: toolController.selectedFeed.colorObservations = colorsComboObservations.model[currentIndex]
+
+                ColumnLayout {
+                    ColorsComboBox {
+                        id: colorsComboObservations
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        Layout.maximumHeight: spinObservationsSize.height
+                        currentIndex: colorsComboObservations.model.indexOf(toolController.selectedFeed.colorObservations)
+                        onCurrentIndexChanged: toolController.selectedFeed.colorObservations = colorsComboObservations.model[currentIndex]
+                    }
+                    Label {
+                        Layout.alignment: Qt.AlignCenter
+                        text: "Color"
+                        font.pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
+                    }
+                }
             }
+            Rectangle {
+                visible: switchObservations.checked
+                color: "gray"
+                Layout.fillWidth: true
+                radius: 5
+                height: 5
+            }
+
+            Switch {
+                id: switchTrackLine
+                checked: toolController.selectedFeed.showTrackLine
+                onCheckedChanged: toolController.selectedFeed.showTrackLine = checked
+                text: "Track Line"
+                font.pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
+            }
+            RowLayout {
+                visible: switchTrackLine.checked
+                ColumnLayout {
+                    SpinBox {
+                        id: spinTrackLineSize
+                        from: 1
+                        to: 25
+                    }
+                    Label {
+                        Layout.alignment: Qt.AlignCenter
+                        text: "Size"
+                        font.pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
+                    }
+                }
+
+                ColumnLayout {
+                    ColorsComboBox {
+                        id: colorsComboTrackLine
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        Layout.maximumHeight: spinTrackLineSize.height
+                        currentIndex: colorsComboTrackLine.model.indexOf(toolController.selectedFeed.colorTrackLine)
+                        onCurrentIndexChanged: toolController.selectedFeed.colorTrackLine = colorsComboTrackLine.model[currentIndex]
+                    }
+                    Label {
+                        Layout.alignment: Qt.AlignCenter
+                        text: "Color"
+                        font.pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
+                    }
+                }
+            }
+            Rectangle {
+                visible: switchTrackLine.checked
+                color: "gray"
+                Layout.fillWidth: true
+                radius: 5
+                height: 5
+            }
+
             SpinBox {
                 id: spinObservations
-                anchors {
-                    top: switchObservations.bottom
-                    left: parent.left
-                    right: parent.right
-                    topMargin: 5
-                }
+                Layout.fillWidth: true
                 from: 0
                 to: 9999
                 editable: true
-                enabled: switchObservations.checked
+                visible: switchObservations.checked || switchTrackLine.checked
                 live: true
                 textFromValue: function(value) {
                     if (value < 1)
@@ -167,39 +223,6 @@ DsaPanel {
 
                 value: toolController.selectedFeed.maximumObservations
                 onValueChanged: toolController.selectedFeed.maximumObservations = value
-            }
-
-            Switch {
-                id: switchTrackLine
-                anchors {
-                    top: spinObservations.bottom
-                    left: parent.left
-                    topMargin: 10
-                }
-                checked: toolController.selectedFeed.showTrackLine
-                onCheckedChanged: toolController.selectedFeed.showTrackLine = checked
-            }
-            Text {
-                id: txtTrackLine
-                text: "Track Line"
-                anchors {
-                    left: switchTrackLine.right
-                    verticalCenter: switchTrackLine.verticalCenter
-                }
-                color: Material.foreground
-                font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor * (isMobile ? 1.0 : 0.6)
-            }
-            ColorsComboBox {
-                id: colorsComboTrackLine
-                anchors {
-                    verticalCenter: switchTrackLine.verticalCenter
-                    right: parent.right
-                    rightMargin: 5
-                }
-                height: switchTrackLine.height
-                width: 80
-                currentIndex: colorsComboTrackLine.model.indexOf(toolController.selectedFeed.colorTrackLine)
-                onCurrentIndexChanged: toolController.selectedFeed.colorTrackLine = colorsComboTrackLine.model[currentIndex]
             }
         }
     }
@@ -213,10 +236,12 @@ DsaPanel {
 
         TabButton {
             text: qsTr("Feeds")
+            font.pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
         }
 
         TabButton {
             text: qsTr("Track Display")
+            font.pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
         }
     }
 }

@@ -323,7 +323,7 @@ QString MessageFeed::surfacePlacement() const
   return m_surfacePlacement;
 }
 
-Renderer *MessageFeed::createRenderer()
+Renderer* MessageFeed::createRenderer()
 {
   // hold mil2525 symbol styles as statics to be shared by multiple renderers if needed
   static DictionarySymbolStyle* dictionarySymbolStyleMil2525c = nullptr;
@@ -546,9 +546,8 @@ void MessageFeed::setColorTrackLine(const QString& color)
   emit feedChanged();
 }
 
-void MessageFeed::refreshOverlay()
+void MessageFeed::setupOverlay()
 {
-
   m_messagesOverlay->setRenderer(createRenderer());
 
   setShowPreviousObservations(m_showPreviousObservations);

@@ -182,11 +182,8 @@ void MessageFeedsController::setupFeeds()
     if (!feed->configurationWasValid())
       return;
 
-    connect(feed, &MessageFeed::doneLoading, this, [feed](const Esri::ArcGISRuntime::Error&)
-    {
-      feed->refreshOverlay();
-    });
     m_scene->operationalLayers()->append(feed->messagesOverlay());
+    feed->setupOverlay();
     m_messageFeeds->append(feed);
     connect(feed, &MessageFeed::feedChanged, this, &MessageFeedsController::notifyPropertyChanged);
   });

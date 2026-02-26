@@ -93,7 +93,7 @@ public:
   QString colorTrackLine() const;
   void setColorTrackLine(const QString& color);
 
-  void refreshOverlay();
+  void setupOverlay();
   bool configurationWasValid() const;
 
 signals:

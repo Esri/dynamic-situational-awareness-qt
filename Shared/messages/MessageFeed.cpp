@@ -61,7 +61,7 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourcePath, QObject* parent):
-  DynamicEntityDataSource(parent), m_resourcePath(resourcePath)
+  DynamicEntityDataSource(parent), m_resourcePath(resourcePath), m_maximumDurationUnits(QStringLiteral("minutes"))
 {
   using namespace MessageFeedConstants;
   qint8 validRequiredProperties = 0;
@@ -69,7 +69,7 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
   // set all the string properties and keep track of any required that are not found
   using PropString = std::tuple<QString, QString*, bool>;
   std::vector<PropString> stringProperties{};
-  stringProperties.reserve(7);
+  stringProperties.reserve(8);
   stringProperties.emplace_back(MESSAGE_FEEDS_NAME, &m_feedName, true);
   stringProperties.emplace_back(MESSAGE_FEEDS_TYPE, &m_feedMessageType, true);
   stringProperties.emplace_back(MESSAGE_FEEDS_RENDERER, &m_renderer, true);
@@ -77,6 +77,7 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
   stringProperties.emplace_back(MESSAGE_FEEDS_PLACEMENT, &m_surfacePlacement, false);
   stringProperties.emplace_back(MESSAGE_FEEDS_COLOR_OBSERVATIONS, &m_colorObservations, false);
   stringProperties.emplace_back(MESSAGE_FEEDS_COLOR_TRACK_LINE, &m_colorTrackLine, false);
+  stringProperties.emplace_back(MESSAGE_FEEDS_MAXIMUM_DURATION_UNITS, &m_maximumDurationUnits, false);
   std::for_each(std::cbegin(stringProperties), std::cend(stringProperties), [&](const PropString& ps)
   {
     if (const QString p = properties[std::get<QString>(ps)].toString(); !p.isEmpty())
@@ -121,10 +122,11 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
 
   using PropInt = std::tuple<QString, int*>;
   std::vector<PropInt> intProperties{};
-  intProperties.reserve(3);
+  intProperties.reserve(4);
   intProperties.emplace_back(MESSAGE_FEEDS_MAXIMUM_OBSERVATIONS, &m_maximumObservations);
   intProperties.emplace_back(MESSAGE_FEEDS_SIZE_OBSERVATIONS, &m_sizeObservations);
   intProperties.emplace_back(MESSAGE_FEEDS_SIZE_TRACK_LINE, &m_sizeTrackLine);
+  intProperties.emplace_back(MESSAGE_FEEDS_MAXIMUM_DURATION, &m_maximumDuration);
   std::for_each(std::cbegin(intProperties), std::cend(intProperties), [&](const PropInt& pi)
   {
     if (const QVariant p = properties[std::get<QString>(pi)]; p.canConvert<int>())
@@ -593,10 +595,52 @@ void MessageFeed::updateSymbolTrackLine()
   emit feedChanged();
 }
 
+int MessageFeed::maximumDuration() const
+{
+  return m_maximumDuration;
+}
+
+void MessageFeed::setMaximumDuration(int duration)
+{
+  m_maximumDuration = duration;
+  updateDuration();
+}
+
+QString MessageFeed::maximumDurationUnits() const
+{
+  return m_maximumDurationUnits;
+}
+
+void MessageFeed::setMaximumDurationUnits(const QString& units)
+{
+  m_maximumDurationUnits = units;
+  updateDuration();
+}
+
+void MessageFeed::updateDuration()
+{
+  if (!m_messagesOverlay)
+    return;
+
+  // scale seconds by the selected units
+  double seconds = static_cast<double>(m_maximumDuration);
+  if (m_maximumDurationUnits == QStringLiteral("minutes"))
+    seconds *= 60.0;
+  else if (m_maximumDurationUnits == QStringLiteral("hours"))
+    seconds *= 3600.0;
+
+  m_messagesOverlay->trackDisplayProperties()->setMaximumDuration(seconds);
+
+  emit feedChanged();
+}
+
+
+
 void MessageFeed::setupOverlay()
 {
+  // call setters for all the properties of the class that affect the display
+  // properties of the layer itself
   m_messagesOverlay->setRenderer(createRenderer());
-
   setShowPreviousObservations(m_showPreviousObservations);
   setColorObservations(m_colorObservations);
   setMaximumObservations(m_maximumObservations);
@@ -605,6 +649,7 @@ void MessageFeed::setupOverlay()
   setFeedVisible(m_isFeedVisible);
   setSizeObservations(m_sizeObservations);
   setSizeTrackLine(m_sizeTrackLine);
+  setMaximumDuration(m_maximumDuration);
 
   // update the surface placement and set the overlay scene properties
   SurfacePlacement surfacePlacement = SurfacePlacement::DrapedBillboarded;

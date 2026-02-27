@@ -42,6 +42,8 @@ namespace MessageFeedConstants {
   inline static const QString MESSAGE_FEEDS_SIZE_OBSERVATIONS          = QStringLiteral("observationsSize");
   inline static const QString MESSAGE_FEEDS_COLOR_TRACK_LINE           = QStringLiteral("trackLineColor");
   inline static const QString MESSAGE_FEEDS_SIZE_TRACK_LINE            = QStringLiteral("trackLineSize");
+  inline static const QString MESSAGE_FEEDS_MAXIMUM_DURATION           = QStringLiteral("maximumDuration");
+  inline static const QString MESSAGE_FEEDS_MAXIMUM_DURATION_UNITS     = QStringLiteral("maximumDurationUnits");
   inline static const QString MESSAGE_FEED_UDP_PORTS_PROPERTYNAME      = QStringLiteral("MessageFeedUdpPorts");
 }
 

@@ -27,6 +27,7 @@ DsaPanel {
 
     property alias controller: toolController
     property bool isMobile
+    property real spinBoxHeight: DsaStyles.titleFontPixelSize * 1.6
 
     // Create the controller
     MessageFeedsController {
@@ -113,6 +114,7 @@ DsaPanel {
                 onCurrentIndexChanged: toolController.selectedFeedIndex = currentIndex
             }
 
+            // OBSERVATIONS
             Switch {
                 id: switchObservations
                 checked: toolController.selectedFeed.showPreviousObservations
@@ -120,48 +122,46 @@ DsaPanel {
                 text: "Observations"
                 font.pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
             }
-
-            RowLayout {
+            GridLayout {
                 visible: switchObservations.checked
-                ColumnLayout {
-                    SpinBox {
-                        id: spinObservationsSize
-                        from: 1
-                        to: 25
-                        value: toolController.selectedFeed.sizeObservations
-                        onValueChanged: toolController.selectedFeed.sizeObservations = value
-                    }
-                    Label {
-                        Layout.alignment: Qt.AlignCenter
-                        text: "Size"
-                        font.pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
-                    }
+                rows: 3
+                columns: 2
+                SpinBox {
+                    id: spinObservationsSize
+                    from: 1
+                    to: 25
+                    Layout.preferredHeight: spinBoxHeight
+                    Layout.preferredWidth: drawer.width / 2.0
+                    value: toolController.selectedFeed.sizeObservations
+                    onValueChanged: toolController.selectedFeed.sizeObservations = value
                 }
-
-                ColumnLayout {
-                    ColorsComboBox {
-                        id: colorsComboObservations
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        Layout.maximumHeight: spinObservationsSize.height
-                        currentIndex: colorsComboObservations.model.indexOf(toolController.selectedFeed.colorObservations)
-                        onCurrentIndexChanged: toolController.selectedFeed.colorObservations = colorsComboObservations.model[currentIndex]
-                    }
-                    Label {
-                        Layout.alignment: Qt.AlignCenter
-                        text: "Color"
-                        font.pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
-                    }
+                ColorsComboBox {
+                    id: colorsComboObservations
+                    Layout.preferredHeight: spinBoxHeight
+                    Layout.fillWidth: true
+                    currentIndex: model.indexOf(toolController.selectedFeed.colorObservations)
+                    onCurrentIndexChanged: toolController.selectedFeed.colorObservations = model[currentIndex]
+                }
+                Label {
+                    Layout.alignment: Qt.AlignCenter
+                    text: "Size"
+                    font.pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
+                }
+                Label {
+                    Layout.alignment: Qt.AlignCenter
+                    text: "Color"
+                    font.pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
+                }
+                Rectangle {
+                    Layout.columnSpan: 2
+                    color: "gray"
+                    Layout.fillWidth: true
+                    radius: 5
+                    height: 5
                 }
             }
-            Rectangle {
-                visible: switchObservations.checked
-                color: "gray"
-                Layout.fillWidth: true
-                radius: 5
-                height: 5
-            }
 
+            // TRACK LINE
             Switch {
                 id: switchTrackLine
                 checked: toolController.selectedFeed.showTrackLine
@@ -169,64 +169,96 @@ DsaPanel {
                 text: "Track Line"
                 font.pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
             }
-            RowLayout {
+            GridLayout {
                 visible: switchTrackLine.checked
-                ColumnLayout {
-                    SpinBox {
-                        id: spinTrackLineSize
-                        from: 1
-                        to: 25
-                        value: toolController.selectedFeed.sizeTrackLine
-                        onValueChanged: toolController.selectedFeed.sizeTrackLine = value
-                    }
-                    Label {
-                        Layout.alignment: Qt.AlignCenter
-                        text: "Size"
-                        font.pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
-                    }
+                rows: 3
+                columns: 2
+                SpinBox {
+                    id: spinTrackLineSize
+                    from: 1
+                    to: 25
+                    Layout.preferredHeight: spinBoxHeight
+                    Layout.preferredWidth: drawer.width / 2.0
+                    value: toolController.selectedFeed.sizeTrackLine
+                    onValueChanged: toolController.selectedFeed.sizeTrackLine = value
                 }
-
-                ColumnLayout {
-                    ColorsComboBox {
-                        id: colorsComboTrackLine
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        Layout.maximumHeight: spinTrackLineSize.height
-                        currentIndex: colorsComboTrackLine.model.indexOf(toolController.selectedFeed.colorTrackLine)
-                        onCurrentIndexChanged: toolController.selectedFeed.colorTrackLine = colorsComboTrackLine.model[currentIndex]
-                    }
-                    Label {
-                        Layout.alignment: Qt.AlignCenter
-                        text: "Color"
-                        font.pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
-                    }
+                ColorsComboBox {
+                    id: colorsComboTrackLine
+                    Layout.preferredHeight: spinBoxHeight
+                    Layout.fillWidth: true
+                    currentIndex: model.indexOf(toolController.selectedFeed.colorTrackLine)
+                    onCurrentIndexChanged: toolController.selectedFeed.colorTrackLine = model[currentIndex]
+                }
+                Label {
+                    Layout.alignment: Qt.AlignCenter
+                    text: "Size"
+                    font.pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
+                }
+                Label {
+                    Layout.alignment: Qt.AlignCenter
+                    text: "Color"
+                    font.pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
+                }
+                Rectangle {
+                    Layout.columnSpan: 2
+                    color: "gray"
+                    Layout.fillWidth: true
+                    radius: 5
+                    height: 5
                 }
             }
-            Rectangle {
-                visible: switchTrackLine.checked
-                color: "gray"
-                Layout.fillWidth: true
-                radius: 5
-                height: 5
-            }
 
-            SpinBox {
-                id: spinObservations
-                Layout.fillWidth: true
-                from: 0
-                to: 9999
-                editable: true
+
+            // LIMITS
+            GridLayout {
                 visible: switchObservations.checked || switchTrackLine.checked
-                live: true
-                textFromValue: function(value) {
-                    if (value < 1)
-                        return "All"
-                    else
-                        return value
-                }
+                rows: 2
+                columns: 2
 
-                value: toolController.selectedFeed.maximumObservations
-                onValueChanged: toolController.selectedFeed.maximumObservations = value
+                SpinBox {
+                    id: spinObservations
+                    Layout.columnSpan: 2
+                    Layout.preferredHeight: spinBoxHeight
+                    Layout.fillWidth: true
+                    from: 0
+                    to: 9999
+                    editable: true
+                    live: true
+                    textFromValue: function(value) {
+                        if (value < 1)
+                            return "All"
+                        else
+                            return value
+                    }
+
+                    value: toolController.selectedFeed.maximumObservations
+                    onValueChanged: toolController.selectedFeed.maximumObservations = value
+                }
+                SpinBox {
+                    id: spinDuration
+                    from: 0
+                    to: 60
+                    editable: true
+                    Layout.preferredHeight: spinBoxHeight
+                    Layout.preferredWidth: drawer.width / 2.0
+                    textFromValue: function(value) {
+                        if (value < 1)
+                            return "N/A"
+                        else
+                            return value
+                    }
+
+                    value: toolController.selectedFeed.maximumDuration
+                    onValueChanged: toolController.selectedFeed.maximumDuration = value
+                }
+                ComboBox {
+                    id: comboDuration
+                    model: ["seconds", "minutes", "hours"]
+                    Layout.preferredHeight: spinBoxHeight
+                    Layout.fillWidth: true
+                    currentIndex: model.indexOf(toolController.selectedFeed.maximumDurationUnits)
+                    onCurrentIndexChanged: toolController.selectedFeed.maximumDurationUnits = model[currentIndex]
+                }
             }
         }
     }

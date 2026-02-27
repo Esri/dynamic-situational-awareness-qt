@@ -137,7 +137,7 @@ QJsonArray MessageFeedListModel::toJsonArray() const
       { MESSAGE_FEEDS_NAME, mf->feedName() },
       { MESSAGE_FEEDS_TYPE, mf->feedMessageType() },
       { MESSAGE_FEEDS_RENDERER, mf->renderer() },
-      { MESSAGE_FEEDS_VISIBLE, mf->isFeedVisible() },
+      // { MESSAGE_FEEDS_VISIBLE, mf->isFeedVisible() },
       { MESSAGE_FEEDS_THUMBNAIL, mf->thumbnail() },
       { MESSAGE_FEEDS_PLACEMENT, mf->surfacePlacement() },
       { MESSAGE_FEEDS_SHOW_PREVIOUS_OBSERVATIONS, mf->showPreviousObservations() },
@@ -145,6 +145,8 @@ QJsonArray MessageFeedListModel::toJsonArray() const
       { MESSAGE_FEEDS_MAXIMUM_OBSERVATIONS, mf->maximumObservations() },
       { MESSAGE_FEEDS_COLOR_OBSERVATIONS, mf->colorObservations() },
       { MESSAGE_FEEDS_COLOR_TRACK_LINE, mf->colorTrackLine() },
+      { MESSAGE_FEEDS_SIZE_OBSERVATIONS, mf->sizeObservations() },
+      { MESSAGE_FEEDS_SIZE_TRACK_LINE, mf->sizeTrackLine() },
     });
   });
 

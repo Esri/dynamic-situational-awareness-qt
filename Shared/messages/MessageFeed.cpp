@@ -49,6 +49,12 @@
 // Qt
 #include <QFile>
 #include <QFileInfo>
+// STD
+#include <algorithm>
+#include <iterator>
+#include <memory>
+#include <tuple>
+#include <vector>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -101,7 +107,7 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
   using PropBool = std::tuple<QString, bool*>;
   std::vector<PropBool> boolProperties{};
   boolProperties.reserve(3);
-  boolProperties.emplace_back(MESSAGE_FEEDS_VISIBLE, &m_isFeedVisible);
+  // boolProperties.emplace_back(MESSAGE_FEEDS_VISIBLE, &m_isFeedVisible);
   boolProperties.emplace_back(MESSAGE_FEEDS_SHOW_PREVIOUS_OBSERVATIONS, &m_showPreviousObservations);
   boolProperties.emplace_back(MESSAGE_FEEDS_SHOW_TRACK_LINE, &m_showTrackLine);
   std::for_each(std::cbegin(boolProperties), std::cend(boolProperties), [&](const PropBool& pb)
@@ -113,8 +119,17 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
     *std::get<bool*>(pb) = b;
   });
 
-  if (const QVariant p = properties[MESSAGE_FEEDS_MAXIMUM_OBSERVATIONS]; p.canConvert<int>())
-    m_maximumObservations = p.toInt();
+  using PropInt = std::tuple<QString, int*>;
+  std::vector<PropInt> intProperties{};
+  intProperties.reserve(3);
+  intProperties.emplace_back(MESSAGE_FEEDS_MAXIMUM_OBSERVATIONS, &m_maximumObservations);
+  intProperties.emplace_back(MESSAGE_FEEDS_SIZE_OBSERVATIONS, &m_sizeObservations);
+  intProperties.emplace_back(MESSAGE_FEEDS_SIZE_TRACK_LINE, &m_sizeTrackLine);
+  std::for_each(std::cbegin(intProperties), std::cend(intProperties), [&](const PropInt& pi)
+  {
+    if (const QVariant p = properties[std::get<QString>(pi)]; p.canConvert<int>())
+      *std::get<int*>(pi) = p.toInt();
+  });
 }
 
 MessageFeed::~MessageFeed() = default;
@@ -508,17 +523,33 @@ QString MessageFeed::colorObservations() const
 void MessageFeed::setColorObservations(const QString& color)
 {
   m_colorObservations = color;
+  updateSymbolObservations();
+}
 
+int MessageFeed::sizeObservations() const
+{
+  return m_sizeObservations;
+}
+
+void MessageFeed::setSizeObservations(int symbolSize)
+{
+  m_sizeObservations = symbolSize;
+  updateSymbolObservations();
+}
+
+void MessageFeed::updateSymbolObservations()
+{
   if (!m_messagesOverlay)
     return;
 
-  QColor c{color};
+  QColor c{m_colorObservations};
   if (!c.isValid())
     return;
 
   SimpleRenderer* renderer = dynamic_cast<SimpleRenderer*>(m_messagesOverlay->trackDisplayProperties()->previousObservationRenderer());
   std::unique_ptr<SimpleMarkerSymbol> symbol = std::make_unique<SimpleMarkerSymbol>();
   symbol->setColor(c);
+  symbol->setSize(static_cast<float>(m_sizeObservations));
   renderer->setSymbol(symbol.get());
   emit feedChanged();
 }
@@ -531,17 +562,33 @@ QString MessageFeed::colorTrackLine() const
 void MessageFeed::setColorTrackLine(const QString& color)
 {
   m_colorTrackLine = color;
+  updateSymbolTrackLine();
+}
 
+int MessageFeed::sizeTrackLine() const
+{
+  return m_sizeTrackLine;
+}
+
+void MessageFeed::setSizeTrackLine(int symbolSize)
+{
+  m_sizeTrackLine = symbolSize;
+  updateSymbolTrackLine();
+}
+
+void MessageFeed::updateSymbolTrackLine()
+{
   if (!m_messagesOverlay)
     return;
 
-  QColor c{color};
+  QColor c{m_colorTrackLine};
   if (!c.isValid())
     return;
 
   SimpleRenderer* renderer = dynamic_cast<SimpleRenderer*>(m_messagesOverlay->trackDisplayProperties()->trackLineRenderer());
   std::unique_ptr<SimpleLineSymbol> symbol = std::make_unique<SimpleLineSymbol>();
   symbol->setColor(c);
+  symbol->setWidth(static_cast<float>(m_sizeTrackLine));
   renderer->setSymbol(symbol.get());
   emit feedChanged();
 }
@@ -556,6 +603,8 @@ void MessageFeed::setupOverlay()
   setColorTrackLine(m_colorTrackLine);
   setShowTrackLine(m_showTrackLine);
   setFeedVisible(m_isFeedVisible);
+  setSizeObservations(m_sizeObservations);
+  setSizeTrackLine(m_sizeTrackLine);
 
   // update the surface placement and set the overlay scene properties
   SurfacePlacement surfacePlacement = SurfacePlacement::DrapedBillboarded;

@@ -128,6 +128,8 @@ DsaPanel {
                         id: spinObservationsSize
                         from: 1
                         to: 25
+                        value: toolController.selectedFeed.sizeObservations
+                        onValueChanged: toolController.selectedFeed.sizeObservations = value
                     }
                     Label {
                         Layout.alignment: Qt.AlignCenter
@@ -174,6 +176,8 @@ DsaPanel {
                         id: spinTrackLineSize
                         from: 1
                         to: 25
+                        value: toolController.selectedFeed.sizeTrackLine
+                        onValueChanged: toolController.selectedFeed.sizeTrackLine = value
                     }
                     Label {
                         Layout.alignment: Qt.AlignCenter

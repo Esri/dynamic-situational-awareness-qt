@@ -32,14 +32,16 @@ namespace MessageFeedConstants {
   inline static const QString MESSAGE_FEEDS_NAME                       = QStringLiteral("name");
   inline static const QString MESSAGE_FEEDS_TYPE                       = QStringLiteral("type");
   inline static const QString MESSAGE_FEEDS_RENDERER                   = QStringLiteral("renderer");
-  inline static const QString MESSAGE_FEEDS_VISIBLE                    = QStringLiteral("visible");
+  // inline static const QString MESSAGE_FEEDS_VISIBLE                    = QStringLiteral("visible");
   inline static const QString MESSAGE_FEEDS_THUMBNAIL                  = QStringLiteral("thumbnail");
   inline static const QString MESSAGE_FEEDS_PLACEMENT                  = QStringLiteral("placement");
   inline static const QString MESSAGE_FEEDS_SHOW_PREVIOUS_OBSERVATIONS = QStringLiteral("showPreviousObservations");
   inline static const QString MESSAGE_FEEDS_SHOW_TRACK_LINE            = QStringLiteral("showTrackLine");
   inline static const QString MESSAGE_FEEDS_MAXIMUM_OBSERVATIONS       = QStringLiteral("maximumObservations");
   inline static const QString MESSAGE_FEEDS_COLOR_OBSERVATIONS         = QStringLiteral("observationsColor");
+  inline static const QString MESSAGE_FEEDS_SIZE_OBSERVATIONS          = QStringLiteral("observationsSize");
   inline static const QString MESSAGE_FEEDS_COLOR_TRACK_LINE           = QStringLiteral("trackLineColor");
+  inline static const QString MESSAGE_FEEDS_SIZE_TRACK_LINE            = QStringLiteral("trackLineSize");
   inline static const QString MESSAGE_FEED_UDP_PORTS_PROPERTYNAME      = QStringLiteral("MessageFeedUdpPorts");
 }
 

@@ -43,10 +43,12 @@ class MessageFeed : public Esri::ArcGISRuntime::DynamicEntityDataSource
   Q_OBJECT
 
   Q_PROPERTY(bool showPreviousObservations READ showPreviousObservations WRITE setShowPreviousObservations NOTIFY feedChanged)
-  Q_PROPERTY(int maximumObservations READ maximumObservations WRITE setMaximumObservations NOTIFY feedChanged)
   Q_PROPERTY(QString colorObservations READ colorObservations WRITE setColorObservations NOTIFY feedChanged)
+  Q_PROPERTY(int sizeObservations READ sizeObservations WRITE setSizeObservations NOTIFY feedChanged)
   Q_PROPERTY(bool showTrackLine READ showTrackLine WRITE setShowTrackLine NOTIFY feedChanged)
   Q_PROPERTY(QString colorTrackLine READ colorTrackLine WRITE setColorTrackLine NOTIFY feedChanged)
+  Q_PROPERTY(int sizeTrackLine READ sizeTrackLine WRITE setSizeTrackLine NOTIFY feedChanged)
+  Q_PROPERTY(int maximumObservations READ maximumObservations WRITE setMaximumObservations NOTIFY feedChanged)
 
 public:
   MessageFeed(const QVariantMap& properties, const QString& resourcePath, QObject* parent = nullptr);
@@ -86,12 +88,18 @@ public:
   void setShowPreviousObservations(bool showPreviousObservations);
   int maximumObservations() const;
   void setMaximumObservations(int maximumObservations);
-  bool showTrackLine() const;
-  void setShowTrackLine(bool showTrackLine);
   QString colorObservations() const;
   void setColorObservations(const QString& color);
+  int sizeObservations() const;
+  void setSizeObservations(int symbolSize);
+  void updateSymbolObservations();
+  bool showTrackLine() const;
+  void setShowTrackLine(bool showTrackLine);
   QString colorTrackLine() const;
   void setColorTrackLine(const QString& color);
+  int sizeTrackLine() const;
+  void setSizeTrackLine(int symbolSize);
+  void updateSymbolTrackLine();
 
   void setupOverlay();
   bool configurationWasValid() const;
@@ -107,14 +115,16 @@ private:
   QString m_renderer;
   QString m_thumbnail;
   QString m_surfacePlacement;
+  bool m_isFeedVisible = true;
+  bool m_isCoT = false;
+  bool m_configurationWasValid = false;
   bool m_showPreviousObservations = false;
   int m_maximumObservations = 5;
   QString m_colorObservations;
+  int m_sizeObservations = 6;
   bool m_showTrackLine = false;
   QString m_colorTrackLine;
-  bool m_isFeedVisible = false;
-  bool m_isCoT;
-  bool m_configurationWasValid = false;
+  int m_sizeTrackLine = 6;
   QString m_entityIdAttributeName;
   MessagesOverlay* m_messagesOverlay = nullptr;
   QUrl m_thumbnailUrl;

@@ -237,13 +237,13 @@ DsaPanel {
                 SpinBox {
                     id: spinDuration
                     from: 0
-                    to: 60
+                    to: 120
                     editable: true
                     Layout.preferredHeight: spinBoxHeight
                     Layout.preferredWidth: drawer.width / 2.0
                     textFromValue: function(value) {
                         if (value < 1)
-                            return "N/A"
+                            return "---"
                         else
                             return value
                     }

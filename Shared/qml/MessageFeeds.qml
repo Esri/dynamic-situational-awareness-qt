@@ -28,6 +28,7 @@ DsaPanel {
     property alias controller: toolController
     property bool isMobile
     property real spinBoxHeight: DsaStyles.titleFontPixelSize * 1.6
+    property real fontPixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
 
     // Create the controller
     MessageFeedsController {
@@ -97,6 +98,7 @@ DsaPanel {
                 }
             }
         }
+
         ColumnLayout {
             anchors {
                 left: parent.left
@@ -115,12 +117,12 @@ DsaPanel {
             }
 
             // OBSERVATIONS
-            Switch {
+            CheckBox {
                 id: switchObservations
                 checked: toolController.selectedFeed.showPreviousObservations
                 onCheckedChanged: toolController.selectedFeed.showPreviousObservations = checked
                 text: "Observations"
-                font.pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
+                font.pixelSize: fontPixelSize
             }
             GridLayout {
                 visible: switchObservations.checked
@@ -145,12 +147,12 @@ DsaPanel {
                 Label {
                     Layout.alignment: Qt.AlignCenter
                     text: "Size"
-                    font.pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
+                    font.pixelSize: fontPixelSize
                 }
                 Label {
                     Layout.alignment: Qt.AlignCenter
                     text: "Color"
-                    font.pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
+                    font.pixelSize: fontPixelSize
                 }
                 Rectangle {
                     Layout.columnSpan: 2
@@ -162,12 +164,12 @@ DsaPanel {
             }
 
             // TRACK LINE
-            Switch {
+            CheckBox {
                 id: switchTrackLine
                 checked: toolController.selectedFeed.showTrackLine
                 onCheckedChanged: toolController.selectedFeed.showTrackLine = checked
                 text: "Track Line"
-                font.pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
+                font.pixelSize: fontPixelSize
             }
             GridLayout {
                 visible: switchTrackLine.checked
@@ -192,12 +194,12 @@ DsaPanel {
                 Label {
                     Layout.alignment: Qt.AlignCenter
                     text: "Size"
-                    font.pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
+                    font.pixelSize: fontPixelSize
                 }
                 Label {
                     Layout.alignment: Qt.AlignCenter
                     text: "Color"
-                    font.pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
+                    font.pixelSize: fontPixelSize
                 }
                 Rectangle {
                     Layout.columnSpan: 2
@@ -209,15 +211,26 @@ DsaPanel {
             }
 
 
-            // LIMITS
+            // TRACK LENGTH
             GridLayout {
                 visible: switchObservations.checked || switchTrackLine.checked
-                rows: 2
+                rows: 4
                 columns: 2
 
+                Label {
+                    text: "Track Length"
+                    Layout.columnSpan: 2
+                    font.pixelSize: fontPixelSize
+                    Layout.alignment: Qt.AlignLeft
+                }
+                Label {
+                    text: "Amount"
+                    font.pixelSize: fontPixelSize
+                    Layout.alignment: Qt.AlignLeft
+                    Layout.preferredWidth: drawer.width / 2.0
+                }
                 SpinBox {
                     id: spinObservations
-                    Layout.columnSpan: 2
                     Layout.preferredHeight: spinBoxHeight
                     Layout.fillWidth: true
                     from: 0
@@ -234,13 +247,19 @@ DsaPanel {
                     value: toolController.selectedFeed.maximumObservations
                     onValueChanged: toolController.selectedFeed.maximumObservations = value
                 }
+                Label {
+                    text: "Duration"
+                    font.pixelSize: fontPixelSize
+                    Layout.alignment: Qt.AlignLeft
+                    Layout.preferredWidth: drawer.width / 2.0
+                }
                 SpinBox {
                     id: spinDuration
                     from: 0
                     to: 120
                     editable: true
                     Layout.preferredHeight: spinBoxHeight
-                    Layout.preferredWidth: drawer.width / 2.0
+                    Layout.fillWidth: true
                     textFromValue: function(value) {
                         if (value < 1)
                             return "---"
@@ -256,6 +275,8 @@ DsaPanel {
                     model: ["seconds", "minutes", "hours"]
                     Layout.preferredHeight: spinBoxHeight
                     Layout.fillWidth: true
+                    Layout.row: 3
+                    Layout.column: 1
                     currentIndex: model.indexOf(toolController.selectedFeed.maximumDurationUnits)
                     onCurrentIndexChanged: toolController.selectedFeed.maximumDurationUnits = model[currentIndex]
                 }
@@ -272,12 +293,12 @@ DsaPanel {
 
         TabButton {
             text: qsTr("Feeds")
-            font.pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
+            font.pixelSize: fontPixelSize
         }
 
         TabButton {
             text: qsTr("Track Display")
-            font.pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
+            font.pixelSize: fontPixelSize
         }
     }
 }

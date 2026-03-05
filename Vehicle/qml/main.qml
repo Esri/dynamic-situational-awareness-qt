@@ -234,7 +234,7 @@ Vehicle {
             }
         }
 
-        ContextMenu {
+        MapContextMenu {
             id: contextMenu
         }
 

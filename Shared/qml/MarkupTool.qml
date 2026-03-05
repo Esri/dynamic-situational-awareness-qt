@@ -72,7 +72,7 @@ Item {
                 rootMarkup.visible = false;
         }
 
-        onMarkupReceived: (filePath) => {
+        onMarkupReceived: (filePath, sharedBy) => {
             markupDialog.title = "Markup Received";
             markupDialog.path = filePath;
             markupDialog.informativeText = "%1 has sent you a markup. Would you like to view it now?".arg(sharedBy)

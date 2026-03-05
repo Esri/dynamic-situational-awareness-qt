@@ -236,7 +236,7 @@ Handheld {
             }
         }
 
-        ContextMenu {
+        MapContextMenu {
             id: contextMenu
         }
 

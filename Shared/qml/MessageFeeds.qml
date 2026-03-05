@@ -201,6 +201,15 @@ DsaPanel {
                     text: "Color"
                     font.pixelSize: fontPixelSize
                 }
+            }
+
+
+            // TRACK LENGTH
+            GridLayout {
+                visible: switchObservations.checked || switchTrackLine.checked
+                rows: 5
+                columns: 2
+
                 Rectangle {
                     Layout.columnSpan: 2
                     color: "gray"
@@ -208,14 +217,6 @@ DsaPanel {
                     radius: 5
                     height: 5
                 }
-            }
-
-
-            // TRACK LENGTH
-            GridLayout {
-                visible: switchObservations.checked || switchTrackLine.checked
-                rows: 4
-                columns: 2
 
                 Label {
                     text: "Track Length"
@@ -275,7 +276,7 @@ DsaPanel {
                     model: ["seconds", "minutes", "hours"]
                     Layout.preferredHeight: spinBoxHeight
                     Layout.fillWidth: true
-                    Layout.row: 3
+                    Layout.row: 4
                     Layout.column: 1
                     currentIndex: model.indexOf(toolController.selectedFeed.maximumDurationUnits)
                     onCurrentIndexChanged: toolController.selectedFeed.maximumDurationUnits = model[currentIndex]

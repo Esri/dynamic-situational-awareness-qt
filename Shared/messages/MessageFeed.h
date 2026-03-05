@@ -128,10 +128,10 @@ private:
   bool m_showPreviousObservations = false;
   int m_maximumObservations = 5;
   QString m_colorObservations;
-  int m_sizeObservations = 6;
+  int m_sizeObservations = 10;
   bool m_showTrackLine = false;
   QString m_colorTrackLine;
-  int m_sizeTrackLine = 6;
+  int m_sizeTrackLine = 4;
   QString m_entityIdAttributeName;
   MessagesOverlay* m_messagesOverlay = nullptr;
   QUrl m_thumbnailUrl;

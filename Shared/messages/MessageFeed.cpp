@@ -94,7 +94,7 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
     return;
 
   // build the thumbnail url if it was not empty
-  if (m_thumbnail.isEmpty())
+  if (!m_thumbnail.isEmpty())
   {
     if (QFile::exists(QString{QStringLiteral(":/Resources/icons/xhdpi/message/%1")}.arg(m_thumbnail)))
       setThumbnailUrl(QString{QStringLiteral("qrc:/Resources/icons/xhdpi/message/%1")}.arg(m_thumbnail));
@@ -469,6 +469,9 @@ bool MessageFeed::showPreviousObservations() const
 
 void MessageFeed::setShowPreviousObservations(bool showPreviousObservations)
 {
+  if (m_showPreviousObservations == showPreviousObservations)
+    return;
+
   m_showPreviousObservations = showPreviousObservations;
 
   if (!m_messagesOverlay)
@@ -489,6 +492,9 @@ int MessageFeed::maximumObservations() const
 
 void MessageFeed::setMaximumObservations(int maximumObservations)
 {
+  if (m_maximumObservations == maximumObservations)
+    return;
+
   if (maximumObservations == 0)
     maximumObservations = INT32_MAX;
 
@@ -508,6 +514,9 @@ bool MessageFeed::showTrackLine() const
 
 void MessageFeed::setShowTrackLine(bool showTrackLine)
 {
+  if (m_showTrackLine == showTrackLine)
+    return;
+
   m_showTrackLine = showTrackLine;
 
   if (!m_messagesOverlay)
@@ -524,6 +533,9 @@ QString MessageFeed::colorObservations() const
 
 void MessageFeed::setColorObservations(const QString& color)
 {
+  if (m_colorObservations == color)
+    return;
+
   m_colorObservations = color;
   updateSymbolObservations();
 }
@@ -535,6 +547,9 @@ int MessageFeed::sizeObservations() const
 
 void MessageFeed::setSizeObservations(int symbolSize)
 {
+  if (m_sizeObservations == symbolSize)
+    return;
+
   m_sizeObservations = symbolSize;
   updateSymbolObservations();
 }
@@ -563,6 +578,9 @@ QString MessageFeed::colorTrackLine() const
 
 void MessageFeed::setColorTrackLine(const QString& color)
 {
+  if (m_colorTrackLine == color)
+    return;
+
   m_colorTrackLine = color;
   updateSymbolTrackLine();
 }
@@ -574,6 +592,9 @@ int MessageFeed::sizeTrackLine() const
 
 void MessageFeed::setSizeTrackLine(int symbolSize)
 {
+  if (m_sizeTrackLine == symbolSize)
+    return;
+
   m_sizeTrackLine = symbolSize;
   updateSymbolTrackLine();
 }
@@ -602,6 +623,9 @@ int MessageFeed::maximumDuration() const
 
 void MessageFeed::setMaximumDuration(int duration)
 {
+  if (m_maximumDuration == duration)
+    return;
+
   m_maximumDuration = duration;
   updateDuration();
 }
@@ -613,6 +637,9 @@ QString MessageFeed::maximumDurationUnits() const
 
 void MessageFeed::setMaximumDurationUnits(const QString& units)
 {
+  if (m_maximumDurationUnits == units)
+    return;
+
   m_maximumDurationUnits = units;
   updateDuration();
 }

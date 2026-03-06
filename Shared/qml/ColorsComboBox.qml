@@ -3,7 +3,7 @@ import QtQuick.Controls.Material
 
 ComboBox {
     id: comboBox
-    model: ["red", "orange", "yellow", "green", "blue", "indigo", "violet", "black", "white", "gray"]
+    model: ["#e41a1c", "#377eb8", "#4daf4a", "#984ea3", "#ff7f00", "#ffff33", "#a65628", "#f781bf", "#999999"]
     delegate: ItemDelegate {
         Rectangle {
             anchors.fill: parent

@@ -182,7 +182,7 @@ int MessageFeedListModel::rowCount(const QModelIndex&) const
 QVariant MessageFeedListModel::data(const QModelIndex& index, int role) const
 {
   if (index.row() < 0 || index.row() >= m_messageFeeds.count())
-    return QVariant();
+    return QVariant{};
 
   QVariant retVal;
 

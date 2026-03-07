@@ -183,7 +183,6 @@ void MessageFeedsController::setupFeeds()
       return;
 
     m_scene->operationalLayers()->append(feed->messagesOverlay());
-    feed->setupOverlay();
     m_messageFeeds->append(feed);
     connect(feed, &MessageFeed::feedChanged, this, &MessageFeedsController::notifyPropertyChanged);
   });
@@ -381,8 +380,11 @@ int MessageFeedsController::selectedFeedIndex() const
 
 void MessageFeedsController::setSelectedFeedIndex(int index)
 {
-  m_selectedFeedIndex = -1;
+  if (m_selectedFeedIndex == index)
+    return;
 
+  // default to the unselected state and try to get the element at the provided index
+  m_selectedFeedIndex = -1;
   const MessageFeed* feed = m_messageFeeds->at(index);
   if (feed)
     m_selectedFeedIndex = index;

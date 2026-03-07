@@ -61,35 +61,42 @@ using namespace Esri::ArcGISRuntime;
 namespace Dsa {
 
 MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourcePath, QObject* parent):
-  DynamicEntityDataSource(parent), m_resourcePath(resourcePath), m_maximumDurationUnits(QStringLiteral("minutes"))
+  DynamicEntityDataSource(parent), m_resourcePath(resourcePath)
 {
   using namespace MessageFeedConstants;
-  qint8 validRequiredProperties = 0;
+  qint8 requiredProperties = 0;
+  qint8 requiredPropertiesValid = 0;
 
   // set all the string properties and keep track of any required that are not found
-  using PropString = std::tuple<QString, QString*, bool>;
+  // tuple<JsonName, Member*, Required, Default>
+  using PropString = std::tuple<const QString&, QString*, bool, const QString&>;
   std::vector<PropString> stringProperties{};
   stringProperties.reserve(8);
-  stringProperties.emplace_back(MESSAGE_FEEDS_NAME, &m_feedName, true);
-  stringProperties.emplace_back(MESSAGE_FEEDS_TYPE, &m_feedMessageType, true);
-  stringProperties.emplace_back(MESSAGE_FEEDS_RENDERER, &m_renderer, true);
-  stringProperties.emplace_back(MESSAGE_FEEDS_THUMBNAIL, &m_thumbnail, false);
-  stringProperties.emplace_back(MESSAGE_FEEDS_PLACEMENT, &m_surfacePlacement, false);
-  stringProperties.emplace_back(MESSAGE_FEEDS_COLOR_OBSERVATIONS, &m_colorObservations, false);
-  stringProperties.emplace_back(MESSAGE_FEEDS_COLOR_TRACK_LINE, &m_colorTrackLine, false);
-  stringProperties.emplace_back(MESSAGE_FEEDS_MAXIMUM_DURATION_UNITS, &m_maximumDurationUnits, false);
+  stringProperties.emplace_back(MESSAGE_FEEDS_NAME, &m_feedName, true, QString{});
+  stringProperties.emplace_back(MESSAGE_FEEDS_TYPE, &m_feedMessageType, true, QString{});
+  stringProperties.emplace_back(MESSAGE_FEEDS_RENDERER, &m_renderer, true, QString{});
+  stringProperties.emplace_back(MESSAGE_FEEDS_THUMBNAIL, &m_thumbnail, false, QString{});
+  stringProperties.emplace_back(MESSAGE_FEEDS_PLACEMENT, &m_surfacePlacement, false, QStringLiteral("draped"));
+  stringProperties.emplace_back(MESSAGE_FEEDS_COLOR_OBSERVATIONS, &m_colorObservations, false, QStringLiteral("#377eb8"));
+  stringProperties.emplace_back(MESSAGE_FEEDS_COLOR_TRACK_LINE, &m_colorTrackLine, false, QStringLiteral("#377eb8"));
+  stringProperties.emplace_back(MESSAGE_FEEDS_MAXIMUM_DURATION_UNITS, &m_maximumDurationUnits, false, QStringLiteral("minutes"));
   std::for_each(std::cbegin(stringProperties), std::cend(stringProperties), [&](const PropString& ps)
   {
-    if (const QString p = properties[std::get<QString>(ps)].toString(); !p.isEmpty())
+    QString* pMember = std::get<QString*>(ps);
+    *pMember = std::get<3>(ps);
+    const QString& propertyName = std::get<0>(ps);
+    const bool propertyRequired = std::get<bool>(ps);
+    requiredProperties += propertyRequired ? 1 : 0;
+    if (const QString s = properties[propertyName].toString(); !s.isEmpty())
     {
-      *std::get<QString*>(ps) = p;
-      if (std::get<bool>(ps))
-        ++validRequiredProperties;
+      *pMember = s;
+      if (propertyRequired)
+        ++requiredPropertiesValid;
     }
   });
 
   // all message feed configurations are required to have name, type and renderer
-  m_configurationWasValid = validRequiredProperties > 2;
+  m_configurationWasValid = requiredPropertiesValid == requiredProperties;
   if (!m_configurationWasValid)
     return;
 
@@ -104,34 +111,60 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
 
   m_messagesOverlay = new MessagesOverlay(this, m_feedMessageType, this);
 
-  // initialize all the boolean properties
-  using PropBool = std::tuple<QString, bool*>;
+  // tuple<JsonName, Member*, Default>
+  using PropBool = std::tuple<QString, bool*, bool>;
   std::vector<PropBool> boolProperties{};
-  boolProperties.reserve(3);
-  // boolProperties.emplace_back(MESSAGE_FEEDS_VISIBLE, &m_isFeedVisible);
-  boolProperties.emplace_back(MESSAGE_FEEDS_SHOW_PREVIOUS_OBSERVATIONS, &m_showPreviousObservations);
-  boolProperties.emplace_back(MESSAGE_FEEDS_SHOW_TRACK_LINE, &m_showTrackLine);
+  boolProperties.reserve(2);
+  // boolProperties.emplace_back(MESSAGE_FEEDS_VISIBLE, &m_isFeedVisible, true);
+  boolProperties.emplace_back(MESSAGE_FEEDS_SHOW_PREVIOUS_OBSERVATIONS, &m_showPreviousObservations, false);
+  boolProperties.emplace_back(MESSAGE_FEEDS_SHOW_TRACK_LINE, &m_showTrackLine, false);
   std::for_each(std::cbegin(boolProperties), std::cend(boolProperties), [&](const PropBool& pb)
   {
-    bool b = false;
+    bool* pMember = std::get<bool*>(pb);
+    *pMember = std::get<bool>(pb);
     if (const QVariant v = properties[std::get<QString>(pb)]; v.canConvert<bool>())
-      b = v.toBool();
-
-    *std::get<bool*>(pb) = b;
+      *pMember = v.toBool();
   });
 
-  using PropInt = std::tuple<QString, int*>;
+  // tuple<JsonName, Member*, Default>
+  using PropInt = std::tuple<QString, int*, int>;
   std::vector<PropInt> intProperties{};
   intProperties.reserve(4);
-  intProperties.emplace_back(MESSAGE_FEEDS_MAXIMUM_OBSERVATIONS, &m_maximumObservations);
-  intProperties.emplace_back(MESSAGE_FEEDS_SIZE_OBSERVATIONS, &m_sizeObservations);
-  intProperties.emplace_back(MESSAGE_FEEDS_SIZE_TRACK_LINE, &m_sizeTrackLine);
-  intProperties.emplace_back(MESSAGE_FEEDS_MAXIMUM_DURATION, &m_maximumDuration);
+  intProperties.emplace_back(MESSAGE_FEEDS_MAXIMUM_OBSERVATIONS, &m_maximumObservations, 5);
+  intProperties.emplace_back(MESSAGE_FEEDS_SIZE_OBSERVATIONS, &m_sizeObservations, 10);
+  intProperties.emplace_back(MESSAGE_FEEDS_SIZE_TRACK_LINE, &m_sizeTrackLine, 4);
+  intProperties.emplace_back(MESSAGE_FEEDS_MAXIMUM_DURATION, &m_maximumDuration, 0);
   std::for_each(std::cbegin(intProperties), std::cend(intProperties), [&](const PropInt& pi)
   {
-    if (const QVariant p = properties[std::get<QString>(pi)]; p.canConvert<int>())
-      *std::get<int*>(pi) = p.toInt();
+    int* pMember = std::get<int*>(pi);
+    *pMember = std::get<int>(pi);
+    if (const QVariant v = properties[std::get<QString>(pi)]; v.canConvert<int>())
+      *pMember = v.toInt();
   });
+
+  // turn the layer on and create/assign it's renderer
+  setFeedVisible(m_isFeedVisible);
+  m_messagesOverlay->setRenderer(createRenderer());
+
+  // update the surface placement and set the overlay scene properties
+  SurfacePlacement surfacePlacement = SurfacePlacement::DrapedBillboarded;
+  if (m_surfacePlacement.compare("relative", Qt::CaseInsensitive) == 0)
+    surfacePlacement = SurfacePlacement::Relative;
+  else if (m_surfacePlacement.compare("absolute", Qt::CaseInsensitive) == 0)
+    surfacePlacement = SurfacePlacement::Absolute;
+  m_messagesOverlay->setSceneProperties(LayerSceneProperties(surfacePlacement));
+
+  // initialize the track display renderer properties
+  // OBSERVATIONS
+  TrackDisplayProperties* tdp = m_messagesOverlay->trackDisplayProperties();
+  tdp->setShowPreviousObservations(m_showPreviousObservations);
+  updateSymbolObservations();
+  // TRACKLINE
+  tdp->setShowTrackLine(m_showTrackLine);
+  updateSymbolTrackLine();
+  // LIMITS
+  tdp->setMaximumObservations(m_maximumObservations);
+  tdp->setMaximumDuration(m_maximumDuration);
 }
 
 MessageFeed::~MessageFeed() = default;
@@ -659,32 +692,6 @@ void MessageFeed::updateDuration()
   m_messagesOverlay->trackDisplayProperties()->setMaximumDuration(seconds);
 
   emit feedChanged();
-}
-
-
-
-void MessageFeed::setupOverlay()
-{
-  // call setters for all the properties of the class that affect the display
-  // properties of the layer itself
-  m_messagesOverlay->setRenderer(createRenderer());
-  setShowPreviousObservations(m_showPreviousObservations);
-  setColorObservations(m_colorObservations);
-  setMaximumObservations(m_maximumObservations);
-  setColorTrackLine(m_colorTrackLine);
-  setShowTrackLine(m_showTrackLine);
-  setFeedVisible(m_isFeedVisible);
-  setSizeObservations(m_sizeObservations);
-  setSizeTrackLine(m_sizeTrackLine);
-  setMaximumDuration(m_maximumDuration);
-
-  // update the surface placement and set the overlay scene properties
-  SurfacePlacement surfacePlacement = SurfacePlacement::DrapedBillboarded;
-  if (m_surfacePlacement.compare("relative", Qt::CaseInsensitive) == 0)
-    surfacePlacement = SurfacePlacement::Relative;
-  else if (m_surfacePlacement.compare("absolute", Qt::CaseInsensitive) == 0)
-    surfacePlacement = SurfacePlacement::Absolute;
-  m_messagesOverlay->setSceneProperties(LayerSceneProperties(surfacePlacement));
 }
 
 bool MessageFeed::configurationWasValid() const

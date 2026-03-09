@@ -163,7 +163,8 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
   tdp->setShowTrackLine(m_showTrackLine);
   updateSymbolTrackLine();
   // LIMITS
-  tdp->setMaximumObservations(m_maximumObservations);
+  int maximumObservations = m_maximumObservations == 0 ? INT32_MAX : m_maximumObservations;
+  tdp->setMaximumObservations(maximumObservations);
   tdp->setMaximumDuration(m_maximumDuration);
 }
 

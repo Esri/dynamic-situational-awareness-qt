@@ -290,7 +290,7 @@ QFuture<bool> AlertConditionsController::addWithinDistanceAlert(const QString& c
 
     emit toolErrorOccurred(QStringLiteral("Failed to create Condition"), QString("Could not find source feed: %1").arg(sourceFeedName));
     return future_false;
-  }).result();
+  }).unwrap();
 }
 
 template<typename T>

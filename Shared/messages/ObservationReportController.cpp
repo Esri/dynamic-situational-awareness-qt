@@ -40,6 +40,7 @@
 // Qt headers
 #include <QDateTime>
 #include <QHostInfo>
+#include <QtSystemDetection>
 #include <QUdpSocket>
 #include <QUuid>
 
@@ -360,8 +361,10 @@ void ObservationReportController::onMouseClicked(QMouseEvent& event)
   if (!isActive())
     return;
 
+#if !defined(Q_OS_IOS) && !defined(Q_OS_ANDROID)
   if (event.button() != Qt::MouseButton::LeftButton)
     return;
+#endif
 
   if (!m_pickMode)
     return;

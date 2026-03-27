@@ -73,9 +73,8 @@ QFuture<DynamicEntityDataSourceInfo*> MessageFeed::onLoadAsync()
     entity_id_field_name = Message::COT_UID_NAME;
 
     // set the fields
-    field_names.reserve(8);
+    field_names.reserve(7);
     field_names.emplace_back(Message::COT_TYPE_NAME);
-    field_names.emplace_back(Message::COT_UID_NAME);
     field_names.emplace_back(Message::COT_POINT_NAME);
     field_names.emplace_back(Message::COT_POINT_LAT_NAME);
     field_names.emplace_back(Message::COT_POINT_LON_NAME);
@@ -87,14 +86,13 @@ QFuture<DynamicEntityDataSourceInfo*> MessageFeed::onLoadAsync()
     entity_id_field_name = Message::GEOMESSAGE_ID_NAME;
 
     // set the fields
-    field_names.reserve(11);
+    field_names.reserve(10);
     field_names.emplace_back(Message::GEOMESSAGE_TYPE_NAME);
     field_names.emplace_back(Message::GEOMESSAGE_ACTION_NAME);
     field_names.emplace_back(Message::GEOMESSAGE_UNIQUE_DESIGNATION_NAME);
     field_names.emplace_back(Message::GEOMESSAGE_WKID_NAME);
     field_names.emplace_back(Message::GEOMESSAGE_SIC_NAME);
     field_names.emplace_back(Message::GEOMESSAGE_CONTROL_POINTS_NAME);
-    field_names.emplace_back(Message::GEOMESSAGE_UNIQUE_DESIGNATION_NAME);
     field_names.emplace_back(Message::GEOMESSAGE_STATUS_911_NAME);
     field_names.emplace_back(Message::GEOMESSAGE_ENVIRONMENT_NAME);
   }

@@ -30,6 +30,9 @@
 #include <QQmlEngine>
 #include <QQuickView>
 #include <QSettings>
+#ifdef QT_WEBVIEW_WEBENGINE_BACKEND
+#include <QtWebEngineQuick>
+#endif
 
 // Toolkit headers
 #include <Esri/ArcGISRuntime/Toolkit/register.h>
@@ -107,6 +110,11 @@ int main(int argc, char *argv[])
     std::abort();
   }
 #endif
+
+#ifdef QT_WEBVIEW_WEBENGINE_BACKEND
+  QtWebEngineQuick::initialize();
+#endif
+
   QGuiApplication app(argc, argv);
 
   QCoreApplication::setApplicationName(kApplicationName);

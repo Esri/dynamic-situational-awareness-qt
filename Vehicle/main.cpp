@@ -35,7 +35,7 @@
 #endif
 
 // Toolkit headers
-#include <Esri/ArcGISRuntime/Toolkit/register.h>
+#include "Esri/ArcGISRuntime/Toolkit/register.h"
 
 // DSA headers
 #include "AddLocalDataController.h"
@@ -66,7 +66,6 @@
 #include "VehicleStyles.h"
 #include "ViewedAlertsController.h"
 #include "ViewshedController.h"
-
 
 #ifdef Q_OS_WIN
 #include <Windows.h>

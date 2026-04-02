@@ -20,6 +20,11 @@ TEMPLATE = app
 QT += core gui opengl network positioning sensors qml quick xml concurrent
 CONFIG += c++17
 
+qtHaveModule(webenginequick) {
+    QT += webenginequick
+    DEFINES += QT_WEBVIEW_WEBENGINE_BACKEND
+}
+
 include($$PWD/../Shared/build/arcgisruntime.pri)
 include($$PWD/../3rdparty/zlib-ng/zlib_minizip_ng.pri)
 

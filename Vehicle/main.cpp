@@ -30,9 +30,12 @@
 #include <QQmlEngine>
 #include <QQuickView>
 #include <QSettings>
+#ifdef QT_WEBVIEW_WEBENGINE_BACKEND
+#include <QtWebEngineQuick>
+#endif
 
 // Toolkit headers
-#include <Esri/ArcGISRuntime/Toolkit/register.h>
+#include "Esri/ArcGISRuntime/Toolkit/register.h"
 
 // DSA headers
 #include "AddLocalDataController.h"
@@ -63,7 +66,6 @@
 #include "VehicleStyles.h"
 #include "ViewedAlertsController.h"
 #include "ViewshedController.h"
-
 
 #ifdef Q_OS_WIN
 #include <Windows.h>
@@ -107,6 +109,11 @@ int main(int argc, char *argv[])
     std::abort();
   }
 #endif
+
+#ifdef QT_WEBVIEW_WEBENGINE_BACKEND
+  QtWebEngineQuick::initialize();
+#endif
+
   QGuiApplication app(argc, argv);
 
   QCoreApplication::setApplicationName(kApplicationName);

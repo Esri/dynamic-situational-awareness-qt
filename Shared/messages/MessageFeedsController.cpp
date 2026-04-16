@@ -257,10 +257,6 @@ bool MessageFeedsController::shouldSetProperties(const QString& propertyName)
     AppConstants::PROPERTYNAME_USERNAME,
     MESSAGE_FEED_UDP_PORTS_PROPERTYNAME,
     LOCATION_BROADCAST_CONFIG_PROPERTYNAME,
-    MESSAGE_FEEDS_SHOW_PREVIOUS_OBSERVATIONS,
-    MESSAGE_FEEDS_SHOW_TRACK_LINE,
-    MESSAGE_FEEDS_COLOR_OBSERVATIONS,
-    MESSAGE_FEEDS_COLOR_TRACK_LINE,
   };
 
   return setContainsString(propertyNames, propertyName);

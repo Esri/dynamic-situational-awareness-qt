@@ -77,8 +77,8 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
   stringProperties.emplace_back(MESSAGE_FEEDS_RENDERER, &m_renderer, true, QString{});
   stringProperties.emplace_back(MESSAGE_FEEDS_THUMBNAIL, &m_thumbnail, false, QString{});
   stringProperties.emplace_back(MESSAGE_FEEDS_PLACEMENT, &m_surfacePlacement, false, QStringLiteral("draped"));
-  stringProperties.emplace_back(MESSAGE_FEEDS_COLOR_OBSERVATIONS, &m_colorObservations, false, QStringLiteral("#377eb8"));
-  stringProperties.emplace_back(MESSAGE_FEEDS_COLOR_TRACK_LINE, &m_colorTrackLine, false, QStringLiteral("#377eb8"));
+  stringProperties.emplace_back(MESSAGE_FEEDS_OBSERVATIONS_COLOR, &m_colorObservations, false, QStringLiteral("#377eb8"));
+  stringProperties.emplace_back(MESSAGE_FEEDS_TRACK_LINE_COLOR, &m_colorTrackLine, false, QStringLiteral("#377eb8"));
   stringProperties.emplace_back(MESSAGE_FEEDS_MAXIMUM_DURATION_UNITS, &m_maximumDurationUnits, false, QStringLiteral("minutes"));
   std::for_each(std::cbegin(stringProperties), std::cend(stringProperties), [&](const PropString& ps)
   {
@@ -116,8 +116,8 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
   std::vector<PropBool> boolProperties{};
   boolProperties.reserve(2);
   // boolProperties.emplace_back(MESSAGE_FEEDS_VISIBLE, &m_isFeedVisible, true);
-  boolProperties.emplace_back(MESSAGE_FEEDS_SHOW_PREVIOUS_OBSERVATIONS, &m_showPreviousObservations, false);
-  boolProperties.emplace_back(MESSAGE_FEEDS_SHOW_TRACK_LINE, &m_showTrackLine, false);
+  boolProperties.emplace_back(MESSAGE_FEEDS_OBSERVATIONS_SHOW, &m_showPreviousObservations, false);
+  boolProperties.emplace_back(MESSAGE_FEEDS_TRACK_LINE_SHOW, &m_showTrackLine, false);
   std::for_each(std::cbegin(boolProperties), std::cend(boolProperties), [&](const PropBool& pb)
   {
     bool* pMember = std::get<bool*>(pb);
@@ -130,9 +130,9 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
   using PropInt = std::tuple<QString, int*, int>;
   std::vector<PropInt> intProperties{};
   intProperties.reserve(4);
-  intProperties.emplace_back(MESSAGE_FEEDS_MAXIMUM_OBSERVATIONS, &m_maximumObservations, 5);
-  intProperties.emplace_back(MESSAGE_FEEDS_SIZE_OBSERVATIONS, &m_sizeObservations, 10);
-  intProperties.emplace_back(MESSAGE_FEEDS_SIZE_TRACK_LINE, &m_sizeTrackLine, 4);
+  intProperties.emplace_back(MESSAGE_FEEDS_OBSERVATIONS_SIZE, &m_sizeObservations, 10);
+  intProperties.emplace_back(MESSAGE_FEEDS_OBSERVATIONS_MAXIMUM, &m_maximumObservations, 5);
+  intProperties.emplace_back(MESSAGE_FEEDS_TRACK_LINE_SIZE, &m_sizeTrackLine, 4);
   intProperties.emplace_back(MESSAGE_FEEDS_MAXIMUM_DURATION, &m_maximumDuration, 0);
   std::for_each(std::cbegin(intProperties), std::cend(intProperties), [&](const PropInt& pi)
   {

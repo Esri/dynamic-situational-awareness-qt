@@ -409,9 +409,32 @@ void DsaController::writeDefaultConditions()
 void DsaController::writeDefaultMessageFeeds()
 {
   using namespace Dsa::MessageFeedConstants;
-  m_dsaSettings[MESSAGE_FEED_UDP_PORTS_PROPERTYNAME] = QStringList { QString("45678"), QString("45679") };
+  m_dsaSettings[MESSAGE_FEED_UDP_PORTS_PROPERTYNAME] = QVariantList{ 45678, 45679 };
 
   QJsonArray messageFeedsJson;
+
+  // create the default track display properties
+  std::vector<std::tuple<QString, QVariant>> trackDisplayDefaults;
+  trackDisplayDefaults.reserve(9);
+  trackDisplayDefaults.emplace_back(MESSAGE_FEEDS_OBSERVATIONS_SHOW, false);
+  trackDisplayDefaults.emplace_back(MESSAGE_FEEDS_OBSERVATIONS_COLOR, QStringLiteral("#377eb8"));
+  trackDisplayDefaults.emplace_back(MESSAGE_FEEDS_OBSERVATIONS_SIZE, 10);
+  trackDisplayDefaults.emplace_back(MESSAGE_FEEDS_OBSERVATIONS_MAXIMUM, 5);
+  trackDisplayDefaults.emplace_back(MESSAGE_FEEDS_TRACK_LINE_SHOW, false);
+  trackDisplayDefaults.emplace_back(MESSAGE_FEEDS_TRACK_LINE_COLOR, QStringLiteral("#377eb8"));
+  trackDisplayDefaults.emplace_back(MESSAGE_FEEDS_TRACK_LINE_SIZE, 4);
+  trackDisplayDefaults.emplace_back(MESSAGE_FEEDS_MAXIMUM_DURATION, 0);
+  trackDisplayDefaults.emplace_back(MESSAGE_FEEDS_MAXIMUM_DURATION_UNITS, QStringLiteral("minutes"));
+  const auto itBeg = std::cbegin(trackDisplayDefaults);
+  const auto itEnd = std::cend(trackDisplayDefaults);
+  const auto appendAndAddTrackDisplayDefaults = [&](QJsonObject& o)
+  {
+    std::for_each(itBeg, itEnd, [&](const std::tuple<QString, QVariant>& t)
+    {
+      o.insert(std::get<0>(t), QJsonValue::fromVariant(std::get<1>(t)));
+    });
+    messageFeedsJson.append(o);
+  };
 
   QJsonObject cotMessageFeedJson;
   cotMessageFeedJson.insert(MESSAGE_FEEDS_NAME, QStringLiteral("SA Events"));
@@ -419,7 +442,7 @@ void DsaController::writeDefaultMessageFeeds()
   cotMessageFeedJson.insert(MESSAGE_FEEDS_RENDERER, QStringLiteral("mil2525c"));
   cotMessageFeedJson.insert(MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("saevents.png"));
   cotMessageFeedJson.insert(MESSAGE_FEEDS_PLACEMENT, QStringLiteral("draped"));
-  messageFeedsJson.append(cotMessageFeedJson);
+  appendAndAddTrackDisplayDefaults(cotMessageFeedJson);
 
   QJsonObject friendlyTracksLandJson;
   friendlyTracksLandJson.insert(MESSAGE_FEEDS_NAME, QStringLiteral("Friendly Tracks - Land"));
@@ -427,7 +450,7 @@ void DsaController::writeDefaultMessageFeeds()
   friendlyTracksLandJson.insert(MESSAGE_FEEDS_RENDERER, QStringLiteral("mil2525c"));
   friendlyTracksLandJson.insert(MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("friendlytracks.png"));
   friendlyTracksLandJson.insert(MESSAGE_FEEDS_PLACEMENT, QStringLiteral("draped"));
-  messageFeedsJson.append(friendlyTracksLandJson);
+  appendAndAddTrackDisplayDefaults(friendlyTracksLandJson);
 
   QJsonObject friendlyTracksAirJson;
   friendlyTracksAirJson.insert(MESSAGE_FEEDS_NAME, QStringLiteral("Friendly Tracks - Air"));
@@ -435,39 +458,39 @@ void DsaController::writeDefaultMessageFeeds()
   friendlyTracksAirJson.insert(MESSAGE_FEEDS_RENDERER, QStringLiteral("mil2525c"));
   friendlyTracksAirJson.insert(MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("friendlytracks-air.png"));
   friendlyTracksAirJson.insert(MESSAGE_FEEDS_PLACEMENT, QStringLiteral("absolute"));
-  messageFeedsJson.append(friendlyTracksAirJson);
+  appendAndAddTrackDisplayDefaults(friendlyTracksAirJson);
 
   QJsonObject spotRepJson;
   spotRepJson.insert(MESSAGE_FEEDS_NAME, QStringLiteral("Observation Reports"));
   spotRepJson.insert(MESSAGE_FEEDS_TYPE, QStringLiteral("spotrep"));
-  spotRepJson.insert(MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("observation1600.png"));
   spotRepJson.insert(MESSAGE_FEEDS_RENDERER, QStringLiteral("observation1600.png"));
+  spotRepJson.insert(MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("observation1600.png"));
   spotRepJson.insert(MESSAGE_FEEDS_PLACEMENT, QStringLiteral("draped"));
-  messageFeedsJson.append(spotRepJson);
+  appendAndAddTrackDisplayDefaults(spotRepJson);
 
   QJsonObject sitRepJson;
   sitRepJson.insert(MESSAGE_FEEDS_NAME, QStringLiteral("Situation Reports"));
   sitRepJson.insert(MESSAGE_FEEDS_TYPE, QStringLiteral("sitrep"));
-  sitRepJson.insert(MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("sitrep1600.png"));
   sitRepJson.insert(MESSAGE_FEEDS_RENDERER, QStringLiteral("sitrep1600.png"));
+  sitRepJson.insert(MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("sitrep1600.png"));
   sitRepJson.insert(MESSAGE_FEEDS_PLACEMENT, QStringLiteral("draped"));
-  messageFeedsJson.append(sitRepJson);
+  appendAndAddTrackDisplayDefaults(sitRepJson);
 
   QJsonObject eodReportsJson;
   eodReportsJson.insert(MESSAGE_FEEDS_NAME, QStringLiteral("EOD Reports"));
   eodReportsJson.insert(MESSAGE_FEEDS_TYPE, QStringLiteral("eod"));
-  eodReportsJson.insert(MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("eod1600.png"));
   eodReportsJson.insert(MESSAGE_FEEDS_RENDERER, QStringLiteral("eod1600.png"));
+  eodReportsJson.insert(MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("eod1600.png"));
   eodReportsJson.insert(MESSAGE_FEEDS_PLACEMENT, QStringLiteral("draped"));
-  messageFeedsJson.append(eodReportsJson);
+  appendAndAddTrackDisplayDefaults(eodReportsJson);
 
   QJsonObject sensorObsJson;
   sensorObsJson.insert(MESSAGE_FEEDS_NAME, QStringLiteral("Sensor Observations"));
   sensorObsJson.insert(MESSAGE_FEEDS_TYPE, QStringLiteral("sensor_obs"));
-  sensorObsJson.insert(MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("sensorobs1600.png"));
   sensorObsJson.insert(MESSAGE_FEEDS_RENDERER, QStringLiteral("sensorobs1600.png"));
+  sensorObsJson.insert(MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("sensorobs1600.png"));
   sensorObsJson.insert(MESSAGE_FEEDS_PLACEMENT, QStringLiteral("draped"));
-  messageFeedsJson.append(sensorObsJson);
+  appendAndAddTrackDisplayDefaults(sensorObsJson);
   m_dsaSettings[MESSAGE_FEEDS_PROPERTYNAME] = messageFeedsJson;
 
   QJsonObject locationBroadcastJson;

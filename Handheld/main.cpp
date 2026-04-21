@@ -164,7 +164,6 @@ int main(int argc, char *argv[])
   view.engine()->addImageProvider(QStringLiteral("packages"), new Dsa::PackageImageProvider);
 
   Esri::ArcGISRuntime::Toolkit::registerComponents(*view.engine());
-  Esri::ArcGISRuntime::ArcGISRuntimeEnvironment::setUseLegacyAuthentication(false);
 
 #ifndef DEPLOYMENT_BUILD
   // Add the import Path

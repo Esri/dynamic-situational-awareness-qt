@@ -23,7 +23,7 @@
 // C++ API headers
 #include "AnalysisListModel.h"
 #include "AnalysisOverlay.h"
-#include "Viewshed.h"
+#include "ExploratoryViewshed.h"
 
 using namespace Esri::ArcGISRuntime;
 
@@ -49,7 +49,7 @@ namespace Dsa {
     \li \a parent - An optional parent.
   \endlist
  */
-Viewshed360::Viewshed360(Viewshed* viewshed, AnalysisOverlay* analysisOverlay, QObject* parent) :
+Viewshed360::Viewshed360(ExploratoryViewshed* viewshed, AnalysisOverlay* analysisOverlay, QObject* parent) :
   QObject(parent),
   m_viewshed(viewshed),
   m_analysisOverlay(analysisOverlay)
@@ -316,7 +316,7 @@ void Viewshed360::set360Mode(bool is360Mode)
 /*!
   \brief Returns the primary \l Esri::ArcGISRuntime::Viewshed.
  */
-Viewshed* Viewshed360::viewshed() const
+ExploratoryViewshed* Viewshed360::viewshed() const
 {
   return m_viewshed.data();
 }

@@ -16,11 +16,14 @@
 
 CONFIG(deployment): DEFINES += DEPLOYMENT_BUILD
 
-ARCGIS_RUNTIME_VERSION = 200.8.0
+ARCGIS_RUNTIME_VERSION = 300.0.0
 DEFINES += ARCGIS_MAPS_SDK_VERSION=$$ARCGIS_RUNTIME_VERSION
 
-# Run against the compiled toolkit.
-include($$PWD/../../arcgis-maps-sdk-toolkit-qt/uitools/toolkitcpp/toolkitcpp.pri)
+# include toolkit and calcite resources
+ARCGIS_MAPS_SDK_TOOLKIT_PATH = $$PWD/../../arcgis-maps-sdk-toolkit-qt
+include($$ARCGIS_MAPS_SDK_TOOLKIT_PATH/uitools/toolkitcpp/toolkitcpp.pri)
+RESOURCES += $$ARCGIS_MAPS_SDK_TOOLKIT_PATH/calcite/Calcite/calcite.qrc
+QML_IMPORT_PATH += $$ARCGIS_MAPS_SDK_TOOLKIT_PATH/calcite
 
 contains(QMAKE_HOST.os, Windows):{
   iniPath = $$(ALLUSERSPROFILE)\EsriRuntimeQt\ArcGIS Runtime SDK for Qt $${ARCGIS_RUNTIME_VERSION}.ini

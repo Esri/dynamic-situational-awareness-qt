@@ -26,10 +26,10 @@
 // C++ API headers
 #include "AnalysisOverlay.h"
 #include "AttributeListModel.h"
+#include "ExploratoryLocationViewshed.h"
 #include "Graphic.h"
 #include "GraphicListModel.h"
 #include "GraphicsOverlay.h"
-#include "LocationViewshed.h"
 #include "Point.h"
 
 using namespace Esri::ArcGISRuntime;
@@ -61,7 +61,7 @@ constexpr double c_defaultMaxDistance = 500.0;
   \endlist
  */
 LocationViewshed360::LocationViewshed360(const Point& point, GraphicsOverlay* graphicsOverlay, AnalysisOverlay* analysisOverlay, QObject* parent) :
-  Viewshed360(new LocationViewshed(point, c_defaultHeading, c_defaultPitch, c_defaultHorizontalAngle,
+  Viewshed360(new ExploratoryLocationViewshed(point, c_defaultHeading, c_defaultPitch, c_defaultHorizontalAngle,
                                    c_defaultVerticalAngle, c_defaultMinDistance, c_defaultMaxDistance, parent), analysisOverlay, parent),
   m_graphicsOverlay(graphicsOverlay)
 {
@@ -92,7 +92,7 @@ LocationViewshed360::~LocationViewshed360()
  */
 Point LocationViewshed360::point() const
 {
-  return static_cast<LocationViewshed*>(viewshed())->location();
+  return static_cast<ExploratoryLocationViewshed*>(viewshed())->location();
 }
 
 /*!
@@ -100,7 +100,7 @@ Point LocationViewshed360::point() const
  */
 void LocationViewshed360::setPoint(const Point& point)
 {
-  static_cast<LocationViewshed*>(viewshed())->setLocation(point);
+  static_cast<ExploratoryLocationViewshed*>(viewshed())->setLocation(point);
   m_locationViewshedGraphic->setGeometry(point);
 }
 
@@ -118,7 +118,7 @@ void LocationViewshed360::setVisible(bool visible)
  */
 double LocationViewshed360::heading() const
 {
-  return static_cast<LocationViewshed*>(viewshed())->heading();
+  return static_cast<ExploratoryLocationViewshed*>(viewshed())->heading();
 }
 
 /*!
@@ -126,10 +126,10 @@ double LocationViewshed360::heading() const
  */
 void LocationViewshed360::setHeading(double heading)
 {
-  if (static_cast<LocationViewshed*>(viewshed())->heading() == heading)
+  if (static_cast<ExploratoryLocationViewshed*>(viewshed())->heading() == heading)
     return;
 
-  static_cast<LocationViewshed*>(viewshed())->setHeading(heading);
+  static_cast<ExploratoryLocationViewshed*>(viewshed())->setHeading(heading);
 
   constexpr double headingOffset = -180.0;
   m_locationViewshedGraphic->attributes()->replaceAttribute(ViewshedController::VIEWSHED_HEADING_ATTRIBUTE, heading + headingOffset);
@@ -141,7 +141,7 @@ void LocationViewshed360::setHeading(double heading)
  */
 double LocationViewshed360::pitch() const
 {
-  return static_cast<LocationViewshed*>(viewshed())->pitch();
+  return static_cast<ExploratoryLocationViewshed*>(viewshed())->pitch();
 }
 
 /*!
@@ -152,10 +152,10 @@ void LocationViewshed360::setPitch(double pitch)
   if (is360Mode())
     return;
 
-  if (static_cast<LocationViewshed*>(viewshed())->pitch() == pitch)
+  if (static_cast<ExploratoryLocationViewshed*>(viewshed())->pitch() == pitch)
     return;
 
-  static_cast<LocationViewshed*>(viewshed())->setPitch(pitch);
+  static_cast<ExploratoryLocationViewshed*>(viewshed())->setPitch(pitch);
 
   m_locationViewshedGraphic->attributes()->replaceAttribute(ViewshedController::VIEWSHED_PITCH_ATTRIBUTE, pitch);
 

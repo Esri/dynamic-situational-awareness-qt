@@ -165,7 +165,7 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
   // LIMITS
   int maximumObservations = m_maximumObservations == 0 ? INT32_MAX : m_maximumObservations;
   tdp->setMaximumObservations(maximumObservations);
-  tdp->setMaximumDuration(m_maximumDuration);
+  updateDuration();
 }
 
 MessageFeed::~MessageFeed() = default;

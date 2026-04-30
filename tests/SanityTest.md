@@ -255,6 +255,7 @@ Test case 7: Follow context
 - click "Follow"
 - [ ] The app should begin following the graphic
 - interact with the view again to stop following
+- When clicked on Home or pan on the map, the graphic is unfollowed.
 
 Test case 8: Line of sight context
 - turn on location display
@@ -393,6 +394,76 @@ The current location updates will be enabled in the DSA app at startup.
 **Test 5: Remove location broadcast**
 - Close down one of the apps
 - You should notice that the teammate's military symbol is now gone and have been removed from the message feed overlay.
+
+## Dynamic Entities
+
+Go to Feeds from the map tools row.
+
+**Test 1: Track Display**
+
+Test case 1:
+
+- Go to Track Display from the bottom menu.
+- In the Message Feeds dropdown, select `Friendly Tracks - Air`.
+- Enable the Observations checkbox.
+  - [ ] Observations appear.
+- Increase/decrease observation size.
+  - [ ] Observation size changes.
+- Change observation color.
+  - [ ] Observation color updates.
+- Set Track Length Amount to 5 (using +/- or direct input).
+  - [ ] Observation count updates.
+- Set duration to 5 seconds.
+  - [ ] Observations shown are limited to the last 5 seconds for the selected feed.
+- Reduce duration to 2 seconds.
+  - [ ] Fewer observations are shown because of the shorter duration window.
+- Enable Track Line and change its color.
+  - [ ] A track line appears and its color updates.
+- Change Duration units to Minutes and set value to 2.
+  - [ ] Up to 5 observations are shown.
+- Modify the duration to different values and verify the observations/track line being updated.
+- Set observations amount to `All`.
+  - [ ] All observations are shown regardless of duration.
+- In Message Feeds, select `Friendly Tracks - Land`.
+- Enable `Observations` and `Track Line`, then modify colors.
+  - [ ] Observations are shown for both `Friendly Tracks - Air` and `Friendly Tracks - Land`.
+
+Test case 2:
+
+- Close the app.
+- Delete the config file.
+- Reopen the app.
+- Go to Track Display.
+- Select `Friendly Tracks - Air` from the Message Feeds dropdown.
+- Enable `Observations` and `Track Line`.
+  - [ ] All properties are set to defaults.
+
+Test case 3:
+
+- Modify the following `Friendly Tracks - Air` properties under `Message Feeds` in the config JSON file:
+  - `observationsMaximum`: `10`
+  - `maximumDuration`: `2`
+  - `maximumDurationUnits`: `minutes`
+  - `observationsShow`: `true`
+  - `trackLineShow`: `true`
+- Reopen the app.
+  - [ ] Properties are updated.
+  - [ ] Observations and track line are shown.
+
+**Test 2: Find specific track id**
+
+Test case 1:
+
+- Go to `Find` from the bottom menu.
+- Select `Friendly Tracks - Land` from the message feed type dropdown.
+- Search track by entering `war`.
+  - [ ] The results appear and those feeds are highlighted.
+- Select one feed from the results.
+  - [ ] The map zoomed into the feed.
+  - [ ] Context menu appears for the feed.
+- Test the [Context menu](#context-menu) options 
+
+
 
 
 # 5. Observation Reports

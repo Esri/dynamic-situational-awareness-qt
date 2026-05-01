@@ -22,7 +22,6 @@ import QtQuick.Controls.Material
 
 Item {
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
-    anchors.verticalCenter: parent.verticalCenter
     width: DsaStyles.primaryIconSize * scaleFactor
     height: width
     property alias iconSource: image.source

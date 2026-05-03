@@ -56,7 +56,7 @@ DsaPanel {
         highlightMoveVelocity: 10000
 
         delegate: ListItemDelegate {
-            width: parent.width
+            width: alertsView.width
             height: 40 * scaleFactor
             itemChecked: true
             imageUrl: level === 1 ?

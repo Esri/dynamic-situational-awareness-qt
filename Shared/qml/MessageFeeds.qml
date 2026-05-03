@@ -52,7 +52,11 @@ DsaPanel {
             height: 40 * scaleFactor
             mainText: feedName
             itemChecked: feedVisible
-            onItemCheckedChanged: feedVisible = itemChecked
+            onItemCheckedChanged: {
+                if (feedVisible == itemChecked)
+                    return;
+                feedVisible = itemChecked
+            }
             imageUrl: thumbnailUrl
             imageVisible: true
             imageFrameVisible: false

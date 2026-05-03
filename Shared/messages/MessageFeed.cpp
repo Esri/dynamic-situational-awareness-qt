@@ -205,10 +205,11 @@ bool MessageFeed::isFeedVisible() const
  */
 void MessageFeed::setFeedVisible(bool feedVisible)
 {
-  if (m_messagesOverlay == nullptr || m_messagesOverlay->isVisible() == feedVisible)
-  {
+  if (m_messagesOverlay == nullptr)
     return;
-  }
+  if (m_messagesOverlay->isVisible() == feedVisible)
+    return;
+
   m_messagesOverlay->setVisible(feedVisible);
 }
 

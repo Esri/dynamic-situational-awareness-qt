@@ -450,22 +450,6 @@ Test case 3:
   - [ ] Properties are updated.
   - [ ] Observations and track line are shown.
 
-**Test 2: Find specific track id**
-
-Test case 1:
-
-- Go to `Find` from the bottom menu.
-- Select `Friendly Tracks - Land` from the message feed type dropdown.
-- Search track by entering `war`.
-  - [ ] The results appear and those feeds are highlighted.
-- Select one feed from the results.
-  - [ ] The map zoomed into the feed.
-  - [ ] Context menu appears for the feed.
-- Test the [Context menu](#context-menu) options 
-
-
-
-
 # 5. Observation Reports
 Test case 1: Create Observation Report from Tool
 - go to the reports category and select the "Observation" tool icon

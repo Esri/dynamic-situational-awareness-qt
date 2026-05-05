@@ -304,7 +304,7 @@ void ContextMenuController::invokeIdentifyOnGeoView()
           if (!result)
             continue;
 
-          const auto geoElementsAll = result->geoElements();
+          const QList<GeoElement*> geoElementsAll = result->geoElements();
           if (geoElementsAll.isEmpty())
             continue;
 

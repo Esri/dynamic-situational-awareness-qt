@@ -166,7 +166,7 @@ Point CombinedAnalysisListModel::locationAt(int index)
   {
   case AnalysisType::ExploratoryLocationViewshed:
   {
-    ExploratoryLocationViewshed* locationViewshed = qobject_cast<ExploratoryLocationViewshed*>(analysis);
+    auto* locationViewshed = qobject_cast<ExploratoryLocationViewshed*>(analysis);
     if (locationViewshed == nullptr)
       return Point();
 
@@ -174,7 +174,7 @@ Point CombinedAnalysisListModel::locationAt(int index)
   }
   case AnalysisType::ExploratoryLocationLineOfSight:
   {
-    ExploratoryLocationLineOfSight* locationLineOfSight = qobject_cast<ExploratoryLocationLineOfSight*>(analysis);
+    auto* locationLineOfSight = qobject_cast<ExploratoryLocationLineOfSight*>(analysis);
     if (locationLineOfSight == nullptr)
       return Point();
 
@@ -182,7 +182,7 @@ Point CombinedAnalysisListModel::locationAt(int index)
   }
   case AnalysisType::ExploratoryGeoElementViewshed:
   {
-    ExploratoryGeoElementViewshed* geoElementViewshed = qobject_cast<ExploratoryGeoElementViewshed*>(analysis);
+    auto* geoElementViewshed = qobject_cast<ExploratoryGeoElementViewshed*>(analysis);
     if (geoElementViewshed == nullptr)
       return Point();
 
@@ -190,7 +190,7 @@ Point CombinedAnalysisListModel::locationAt(int index)
   }
   case AnalysisType::ExploratoryGeoElementLineOfSight:
   {
-    ExploratoryGeoElementLineOfSight* geoElementLineOfSight = qobject_cast<ExploratoryGeoElementLineOfSight*>(analysis);
+    auto* geoElementLineOfSight = qobject_cast<ExploratoryGeoElementLineOfSight*>(analysis);
     if (geoElementLineOfSight == nullptr)
       return Point();
 

@@ -320,7 +320,7 @@ void LineOfSightController::lineOfSightFromLocationToGeoElement(GeoElement* geoE
   }
 
   // create a Line of sight from the feature to the current location
-  ExploratoryGeoElementLineOfSight* lineOfSight = new ExploratoryGeoElementLineOfSight(m_locationGeoElement, geoElement, m_lineOfSightParent.get());
+  auto* lineOfSight = new ExploratoryGeoElementLineOfSight(m_locationGeoElement, geoElement, m_lineOfSightParent.get());
   lineOfSight->setVisible(true);
   m_lineOfSightOverlay->analyses()->append(lineOfSight);
 }
@@ -356,7 +356,7 @@ void LineOfSightController::setAnalysisVisible(bool analysisVisible)
     if (analysis == nullptr)
       continue;
 
-    ExploratoryGeoElementLineOfSight* lineOfSight = qobject_cast<ExploratoryGeoElementLineOfSight*>(analysis);
+    auto* lineOfSight = qobject_cast<ExploratoryGeoElementLineOfSight*>(analysis);
     if (!lineOfSight)
       continue;
 

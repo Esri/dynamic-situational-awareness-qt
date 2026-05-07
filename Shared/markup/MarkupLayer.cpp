@@ -240,23 +240,6 @@ QStringList MarkupLayer::colors()
         QStringLiteral("#800080"), QStringLiteral("#ff00ff")};
 }
 
-
-/*!
-  \brief Gets the unknown JSON of this object.
-*/
-QJsonObject MarkupLayer::unknownJson() const
-{
-  return QJsonObject();
-}
-
-/*!
-  \brief Gets the unsupported JSON of this object.
-*/
-QJsonObject MarkupLayer::unsupportedJson() const
-{
-  return QJsonObject();
-}
-
 /*!
   \brief Gets the author of the Markup.
 */

@@ -309,7 +309,7 @@ void ContextMenuController::invokeIdentifyOnGeoView()
             continue;
 
           QList<GeoElement*> geoElements{};
-          std::for_each(std::begin(geoElementsAll), std::end(geoElementsAll), [&](GeoElement* ge)
+          std::for_each(std::begin(geoElementsAll), std::end(geoElementsAll), [&geoElements](GeoElement* ge)
           {
             DynamicEntityObservation* deo = dynamic_cast<DynamicEntityObservation*>(ge);
             if (!deo)

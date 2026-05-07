@@ -106,7 +106,7 @@ bool isObjectIdFieldName(QStringView fieldName)
   static constexpr auto cbegin = std::cbegin(oidFieldNames);
   static constexpr auto cend = std::cend(oidFieldNames);
 
-  return std::any_of(cbegin, cend, [&](auto oidFieldName) { return fieldName.compare(oidFieldName, Qt::CaseInsensitive) == 0; });
+  return std::any_of(cbegin, cend, [fieldName](auto oidFieldName) { return fieldName.compare(oidFieldName, Qt::CaseInsensitive) == 0; });
 }
 
 bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QString& popupTitle)

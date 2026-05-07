@@ -61,8 +61,8 @@ constexpr double c_defaultMaxDistance = 500.0;
   \endlist
  */
 LocationViewshed360::LocationViewshed360(const Point& point, GraphicsOverlay* graphicsOverlay, AnalysisOverlay* analysisOverlay, QObject* parent) :
-  Viewshed360(new ExploratoryLocationViewshed(point, c_defaultHeading, c_defaultPitch, c_defaultHorizontalAngle,
-                                   c_defaultVerticalAngle, c_defaultMinDistance, c_defaultMaxDistance, parent), analysisOverlay, parent),
+  Viewshed360(new ExploratoryLocationViewshed(point, c_defaultHeading, c_defaultPitch, c_defaultHorizontalAngle, c_defaultVerticalAngle,
+                                              c_defaultMinDistance, c_defaultMaxDistance, parent), analysisOverlay, parent),
   m_graphicsOverlay(graphicsOverlay)
 {
   m_locationViewshedGraphic = new Graphic(point, parent);

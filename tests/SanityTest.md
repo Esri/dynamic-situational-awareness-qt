@@ -433,6 +433,7 @@ Test case 2:
 
 Test case 3:
 
+- Close the app
 - Modify the following `Friendly Tracks - Air` properties under `Message Feeds` in the config JSON file:
   - `observationsMaximum`: `10`
   - `observationsShow`: `true`

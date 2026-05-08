@@ -438,10 +438,9 @@ Test case 3:
 
 - Modify the following `Friendly Tracks - Air` properties under `Message Feeds` in the config JSON file:
   - `observationsMaximum`: `10`
-  - `maximumDuration`: `2`
-  - `maximumDurationUnits`: `minutes`
   - `observationsShow`: `true`
   - `trackLineShow`: `true`
+  -  `trackLineColor` `#f781bf` (pink)
 - Reopen the app.
   - [ ] Properties are updated.
   - [ ] Observations and track line are shown.

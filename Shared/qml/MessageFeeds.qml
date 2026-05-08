@@ -53,14 +53,6 @@ DsaPanel {
 
         ListView {
             id: messageFeedsList
-
-            anchors {
-                left: parent.left
-                right: parent.right
-                top: parent.top
-                bottom: bar.top
-            }
-
             clip: true
             model: toolController.messageFeeds
             delegate:  ListItemDelegate {
@@ -69,7 +61,12 @@ DsaPanel {
                 height: 40 * scaleFactor
                 mainText: feedName
                 itemChecked: feedVisible
-                onItemCheckedChanged: feedVisible = itemChecked
+                onItemCheckedChanged: {
+                    if (feedVisible === itemChecked)
+                        return;
+
+                    feedVisible = itemChecked
+                }
                 imageUrl: thumbnailUrl
                 imageVisible: true
                 imageFrameVisible: false
@@ -100,13 +97,6 @@ DsaPanel {
         }
 
         ColumnLayout {
-            anchors {
-                left: parent.left
-                right: parent.right
-                top: parent.top
-                bottom: bar.top
-            }
-
             ComboBox {
                 id: comboFeeds
                 Layout.fillWidth: true
@@ -135,14 +125,24 @@ DsaPanel {
                     Layout.preferredHeight: spinBoxHeight
                     Layout.preferredWidth: drawer.width / 2.0
                     value: toolController.selectedFeed.sizeObservations
-                    onValueChanged: toolController.selectedFeed.sizeObservations = value
+                    onValueChanged: {
+                        if (!toolController.selectedFeed)
+                            return;
+
+                        toolController.selectedFeed.sizeObservations = value
+                    }
                 }
                 ColorsComboBox {
                     id: colorsComboObservations
                     Layout.preferredHeight: spinBoxHeight
                     Layout.fillWidth: true
                     currentIndex: model.indexOf(toolController.selectedFeed.colorObservations)
-                    onCurrentIndexChanged: toolController.selectedFeed.colorObservations = model[currentIndex]
+                    onCurrentIndexChanged: {
+                        if (!toolController.selectedFeed)
+                            return;
+
+                        toolController.selectedFeed.colorObservations = model[currentIndex]
+                    }
                 }
                 Label {
                     Layout.alignment: Qt.AlignCenter
@@ -182,14 +182,24 @@ DsaPanel {
                     Layout.preferredHeight: spinBoxHeight
                     Layout.preferredWidth: drawer.width / 2.0
                     value: toolController.selectedFeed.sizeTrackLine
-                    onValueChanged: toolController.selectedFeed.sizeTrackLine = value
+                    onValueChanged: {
+                        if (!toolController.selectedFeed)
+                            return;
+
+                        toolController.selectedFeed.sizeTrackLine = value
+                    }
                 }
                 ColorsComboBox {
                     id: colorsComboTrackLine
                     Layout.preferredHeight: spinBoxHeight
                     Layout.fillWidth: true
                     currentIndex: model.indexOf(toolController.selectedFeed.colorTrackLine)
-                    onCurrentIndexChanged: toolController.selectedFeed.colorTrackLine = model[currentIndex]
+                    onCurrentIndexChanged: {
+                        if (!toolController.selectedFeed)
+                            return;
+
+                        toolController.selectedFeed.colorTrackLine = model[currentIndex]
+                    }
                 }
                 Label {
                     Layout.alignment: Qt.AlignCenter
@@ -279,7 +289,12 @@ DsaPanel {
                     Layout.row: 4
                     Layout.column: 1
                     currentIndex: model.indexOf(toolController.selectedFeed.maximumDurationUnits)
-                    onCurrentIndexChanged: toolController.selectedFeed.maximumDurationUnits = model[currentIndex]
+                    onCurrentIndexChanged: {
+                        if (!toolController.selectedFeed)
+                            return;
+
+                        toolController.selectedFeed.maximumDurationUnits = model[currentIndex]
+                    }
                 }
             }
         }

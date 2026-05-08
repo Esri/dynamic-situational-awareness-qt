@@ -441,7 +441,7 @@ Test case 3:
   -  `trackLineColor` `#f781bf` (pink)
 - Reopen the app.
   - [ ] Properties are updated.
-  - [ ] Observations and track line are shown.
+  - [ ] Observations and track line are shown for `Friendly Tracks - Air` with a Track Length of 10 and Track Line is  pink. 
 
 # 5. Observation Reports
 Test case 1: Create Observation Report from Tool

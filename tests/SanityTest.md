@@ -413,8 +413,8 @@ Test case 1:
   - [ ] Observation symbol color  updates.
 - Set Track Length Amount to a different value (using +/- or direct input).
   - [ ] Observation count updates to match the number shown as the value changes, up to the maximum amount that has been received since starting the app.
-- Enable Track Line and change its color.
-  - [ ] A track line appears and its color updates.
+- Enable Track Line, change its symbol size and color.
+  - [ ] A track line appears initially with symbol color of blue and a symbol size of 4; the symbol size and color updates when a new one is chosen from the palette.
 - Change Duration units to Minutes and set value to 2.
   - [ ] Up to 5 observations are shown.
 - Modify the duration to different values and verify the observations/track line being updated.

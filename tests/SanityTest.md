@@ -422,7 +422,7 @@ Test case 1:
   - [ ] The full history of observations and/or length of the track line is shown (since connecting to the feed)
 - In Message Feeds, select `Friendly Tracks - Land`.
 - Enable `Observations` and `Track Line`, then modify colors.
-  - [ ] Observations are shown for both `Friendly Tracks - Air` and `Friendly Tracks - Land`.
+  - [ ] Observations are shown for both `Friendly Tracks - Air` and `Friendly Tracks - Land`, according to the track display settings for each feed. 
 
 Test case 2:
 

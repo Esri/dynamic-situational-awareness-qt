@@ -407,10 +407,10 @@ Test case 1:
 - In the Message Feeds dropdown, select `Friendly Tracks - Air`.
 - Enable the Observations checkbox.
   - [ ] Observations appear.
-- Increase/decrease observation size.
-  - [ ] Observation size changes.
-- Change observation color.
-  - [ ] Observation color updates.
+- Increase/decrease observation symbol size.
+  - [ ] Observation symbol  size changes.
+- Change observation symbol color.
+  - [ ] Observation symbol color  updates.
 - Set Track Length Amount to 5 (using +/- or direct input).
   - [ ] Observation count updates.
 - Set duration to 5 seconds.

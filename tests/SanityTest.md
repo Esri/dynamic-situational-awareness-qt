@@ -411,8 +411,8 @@ Test case 1:
   - [ ] Observation symbol  size changes.
 - Change observation symbol color.
   - [ ] Observation symbol color  updates.
-- Set Track Length Amount to 5 (using +/- or direct input).
-  - [ ] Observation count updates.
+- Set Track Length Amount to a different value (using +/- or direct input).
+  - [ ] Observation count updates to match the number shown as the value changes, up to the maximum amount that has been received since starting the app.
 - Enable Track Line and change its color.
   - [ ] A track line appears and its color updates.
 - Change Duration units to Minutes and set value to 2.

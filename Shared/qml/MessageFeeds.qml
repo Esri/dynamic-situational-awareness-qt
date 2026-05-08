@@ -258,44 +258,43 @@ DsaPanel {
                     value: toolController.selectedFeed.maximumObservations
                     onValueChanged: toolController.selectedFeed.maximumObservations = value
                 }
-                Label {
-                    text: "Duration"
-                    font.pixelSize: fontPixelSize
-                    Layout.alignment: Qt.AlignLeft
-                    Layout.preferredWidth: drawer.width / 2.0
-                }
-                SpinBox {
-                    id: spinDuration
-                    from: 0
-                    to: 120
-                    editable: true
-                    Layout.preferredHeight: spinBoxHeight
-                    Layout.fillWidth: true
-                    textFromValue: function(value) {
-                        if (value < 1)
-                            return "---"
-                        else
-                            return value
-                    }
+                // Label {
+                //     text: "Duration"
+                //     font.pixelSize: fontPixelSize
+                //     Layout.alignment: Qt.AlignLeft
+                //     Layout.preferredWidth: drawer.width / 2.0
+                // }
+                // SpinBox {
+                //     id: spinDuration
+                //     from: 0
+                //     to: 120
+                //     editable: true
+                //     Layout.preferredHeight: spinBoxHeight
+                //     Layout.fillWidth: true
+                //     textFromValue: function(value) {
+                //         if (value < 1)
+                //             return "---"
+                //         else
+                //             return value
+                //     }
+                //     value: toolController.selectedFeed.maximumDuration
+                //     onValueChanged: toolController.selectedFeed.maximumDuration = value
+                // }
+                // ComboBox {
+                //     id: comboDuration
+                //     model: ["seconds", "minutes", "hours"]
+                //     Layout.preferredHeight: spinBoxHeight
+                //     Layout.fillWidth: true
+                //     Layout.row: 4
+                //     Layout.column: 1
+                //     currentIndex: model.indexOf(toolController.selectedFeed.maximumDurationUnits)
+                //     onCurrentIndexChanged: {
+                //         if (!toolController.selectedFeed)
+                //             return;
 
-                    value: toolController.selectedFeed.maximumDuration
-                    onValueChanged: toolController.selectedFeed.maximumDuration = value
-                }
-                ComboBox {
-                    id: comboDuration
-                    model: ["seconds", "minutes", "hours"]
-                    Layout.preferredHeight: spinBoxHeight
-                    Layout.fillWidth: true
-                    Layout.row: 4
-                    Layout.column: 1
-                    currentIndex: model.indexOf(toolController.selectedFeed.maximumDurationUnits)
-                    onCurrentIndexChanged: {
-                        if (!toolController.selectedFeed)
-                            return;
-
-                        toolController.selectedFeed.maximumDurationUnits = model[currentIndex]
-                    }
-                }
+                //         toolController.selectedFeed.maximumDurationUnits = model[currentIndex]
+                //     }
+                // }
             }
         }
     }

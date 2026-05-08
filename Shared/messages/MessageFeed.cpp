@@ -79,7 +79,7 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
   stringProperties.emplace_back(MESSAGE_FEEDS_PLACEMENT, &m_surfacePlacement, false, QStringLiteral("draped"));
   stringProperties.emplace_back(MESSAGE_FEEDS_OBSERVATIONS_COLOR, &m_colorObservations, false, QStringLiteral("#377eb8"));
   stringProperties.emplace_back(MESSAGE_FEEDS_TRACK_LINE_COLOR, &m_colorTrackLine, false, QStringLiteral("#377eb8"));
-  stringProperties.emplace_back(MESSAGE_FEEDS_MAXIMUM_DURATION_UNITS, &m_maximumDurationUnits, false, QStringLiteral("minutes"));
+  // stringProperties.emplace_back(MESSAGE_FEEDS_MAXIMUM_DURATION_UNITS, &m_maximumDurationUnits, false, QStringLiteral("minutes"));
   std::for_each(std::cbegin(stringProperties), std::cend(stringProperties), [&](const PropString& ps)
   {
     QString* pMember = std::get<QString*>(ps);
@@ -129,11 +129,11 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
   // tuple<JsonName, Member*, Default>
   using PropInt = std::tuple<QString, int*, int>;
   std::vector<PropInt> intProperties{};
-  intProperties.reserve(4);
+  intProperties.reserve(3);
   intProperties.emplace_back(MESSAGE_FEEDS_OBSERVATIONS_SIZE, &m_sizeObservations, 10);
   intProperties.emplace_back(MESSAGE_FEEDS_OBSERVATIONS_MAXIMUM, &m_maximumObservations, 5);
   intProperties.emplace_back(MESSAGE_FEEDS_TRACK_LINE_SIZE, &m_sizeTrackLine, 4);
-  intProperties.emplace_back(MESSAGE_FEEDS_MAXIMUM_DURATION, &m_maximumDuration, 0);
+  // intProperties.emplace_back(MESSAGE_FEEDS_MAXIMUM_DURATION, &m_maximumDuration, 0);
   std::for_each(std::cbegin(intProperties), std::cend(intProperties), [&](const PropInt& pi)
   {
     int* pMember = std::get<int*>(pi);
@@ -165,7 +165,7 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
   // LIMITS
   int maximumObservations = m_maximumObservations == 0 ? INT32_MAX : m_maximumObservations;
   tdp->setMaximumObservations(maximumObservations);
-  updateDuration();
+  // updateDuration();
 }
 
 MessageFeed::~MessageFeed() = default;
@@ -650,50 +650,50 @@ void MessageFeed::updateSymbolTrackLine()
   emit feedChanged();
 }
 
-int MessageFeed::maximumDuration() const
-{
-  return m_maximumDuration;
-}
+// int MessageFeed::maximumDuration() const
+// {
+//   return m_maximumDuration;
+// }
 
-void MessageFeed::setMaximumDuration(int duration)
-{
-  if (m_maximumDuration == duration)
-    return;
+// void MessageFeed::setMaximumDuration(int duration)
+// {
+//   if (m_maximumDuration == duration)
+//     return;
 
-  m_maximumDuration = duration;
-  updateDuration();
-}
+//   m_maximumDuration = duration;
+//   updateDuration();
+// }
 
-QString MessageFeed::maximumDurationUnits() const
-{
-  return m_maximumDurationUnits;
-}
+// QString MessageFeed::maximumDurationUnits() const
+// {
+//   return m_maximumDurationUnits;
+// }
 
-void MessageFeed::setMaximumDurationUnits(const QString& units)
-{
-  if (m_maximumDurationUnits == units)
-    return;
+// void MessageFeed::setMaximumDurationUnits(const QString& units)
+// {
+//   if (m_maximumDurationUnits == units)
+//     return;
 
-  m_maximumDurationUnits = units;
-  updateDuration();
-}
+//   m_maximumDurationUnits = units;
+//   updateDuration();
+// }
 
-void MessageFeed::updateDuration()
-{
-  if (!m_messagesOverlay)
-    return;
+// void MessageFeed::updateDuration()
+// {
+//   if (!m_messagesOverlay)
+//     return;
 
-  // scale seconds by the selected units
-  double seconds = static_cast<double>(m_maximumDuration);
-  if (m_maximumDurationUnits == QStringLiteral("minutes"))
-    seconds *= 60.0;
-  else if (m_maximumDurationUnits == QStringLiteral("hours"))
-    seconds *= 3600.0;
+//   // scale seconds by the selected units
+//   double seconds = static_cast<double>(m_maximumDuration);
+//   if (m_maximumDurationUnits == QStringLiteral("minutes"))
+//     seconds *= 60.0;
+//   else if (m_maximumDurationUnits == QStringLiteral("hours"))
+//     seconds *= 3600.0;
 
-  m_messagesOverlay->trackDisplayProperties()->setMaximumDuration(seconds);
+//   m_messagesOverlay->trackDisplayProperties()->setMaximumDuration(seconds);
 
-  emit feedChanged();
-}
+//   emit feedChanged();
+// }
 
 bool MessageFeed::configurationWasValid() const
 {

@@ -49,8 +49,8 @@ class MessageFeed : public Esri::ArcGISRuntime::DynamicEntityDataSource
   Q_PROPERTY(QString colorTrackLine READ colorTrackLine WRITE setColorTrackLine NOTIFY feedChanged)
   Q_PROPERTY(int sizeTrackLine READ sizeTrackLine WRITE setSizeTrackLine NOTIFY feedChanged)
   Q_PROPERTY(int maximumObservations READ maximumObservations WRITE setMaximumObservations NOTIFY feedChanged)
-  Q_PROPERTY(int maximumDuration READ maximumDuration WRITE setMaximumDuration NOTIFY feedChanged)
-  Q_PROPERTY(QString maximumDurationUnits READ maximumDurationUnits WRITE setMaximumDurationUnits NOTIFY feedChanged)
+  // Q_PROPERTY(int maximumDuration READ maximumDuration WRITE setMaximumDuration NOTIFY feedChanged)
+  // Q_PROPERTY(QString maximumDurationUnits READ maximumDurationUnits WRITE setMaximumDurationUnits NOTIFY feedChanged)
 
 public:
   MessageFeed(const QVariantMap& properties, const QString& resourcePath, QObject* parent = nullptr);
@@ -102,11 +102,11 @@ public:
   int sizeTrackLine() const;
   void setSizeTrackLine(int symbolSize);
   void updateSymbolTrackLine();
-  int maximumDuration() const;
-  void setMaximumDuration(int duration);
-  QString maximumDurationUnits() const;
-  void setMaximumDurationUnits(const QString& units);
-  void updateDuration();
+  // int maximumDuration() const;
+  // void setMaximumDuration(int duration);
+  // QString maximumDurationUnits() const;
+  // void setMaximumDurationUnits(const QString& units);
+  // void updateDuration();
 
   void setupOverlay();
   bool configurationWasValid() const;

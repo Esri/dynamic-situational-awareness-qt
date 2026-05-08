@@ -147,8 +147,8 @@ QJsonArray MessageFeedListModel::toJsonArray() const
       { MESSAGE_FEEDS_TRACK_LINE_SHOW, mf->showTrackLine() },
       { MESSAGE_FEEDS_TRACK_LINE_COLOR, mf->colorTrackLine() },
       { MESSAGE_FEEDS_TRACK_LINE_SIZE, mf->sizeTrackLine() },
-      { MESSAGE_FEEDS_MAXIMUM_DURATION, mf->maximumDuration() },
-      { MESSAGE_FEEDS_MAXIMUM_DURATION_UNITS, mf->maximumDurationUnits() }
+      // { MESSAGE_FEEDS_MAXIMUM_DURATION, mf->maximumDuration() },
+      // { MESSAGE_FEEDS_MAXIMUM_DURATION_UNITS, mf->maximumDurationUnits() }
     });
   });
 

@@ -418,8 +418,8 @@ Test case 1:
 - Change Duration units to Minutes and set value to 2.
   - [ ] Up to 5 observations are shown.
 - Modify the duration to different values and verify the observations/track line being updated.
-- Set observations amount to `All`.
-  - [ ] All observations are shown regardless of duration.
+- Set Track Length amount to `All` (tap and hold the `-` button until you see `All`)
+  - [ ] The full history of observations and/or length of the track line is shown (since connecting to the feed)
 - In Message Feeds, select `Friendly Tracks - Land`.
 - Enable `Observations` and `Track Line`, then modify colors.
   - [ ] Observations are shown for both `Friendly Tracks - Air` and `Friendly Tracks - Land`.

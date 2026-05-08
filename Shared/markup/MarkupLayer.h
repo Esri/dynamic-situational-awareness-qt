@@ -55,8 +55,6 @@ public:
   // JSON Serializable
   static MarkupLayer* fromJson(const QString& json, QObject* parent = nullptr);
   QString toJson() const override;
-  QJsonObject unknownJson() const override;
-  QJsonObject unsupportedJson() const override;
 
 private:
   MarkupLayer(const QString& json, Esri::ArcGISRuntime::FeatureCollection* featureCollection, QObject* parent = nullptr);

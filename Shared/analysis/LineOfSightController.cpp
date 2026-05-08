@@ -25,12 +25,12 @@
 #include "AnalysisOverlayListModel.h"
 #include "DynamicEntity.h"
 #include "Error.h"
+#include "ExploratoryGeoElementLineOfSight.h"
 #include "Feature.h"
 #include "FeatureIterator.h"
 #include "FeatureLayer.h"
 #include "FeatureQueryResult.h"
 #include "FeatureTable.h"
-#include "GeoElementLineOfSight.h"
 #include "GeoView.h"
 #include "Graphic.h"
 #include "LayerListModel.h"
@@ -320,7 +320,7 @@ void LineOfSightController::lineOfSightFromLocationToGeoElement(GeoElement* geoE
   }
 
   // create a Line of sight from the feature to the current location
-  GeoElementLineOfSight* lineOfSight = new GeoElementLineOfSight(m_locationGeoElement, geoElement, m_lineOfSightParent.get());
+  auto* lineOfSight = new ExploratoryGeoElementLineOfSight(m_locationGeoElement, geoElement, m_lineOfSightParent.get());
   lineOfSight->setVisible(true);
   m_lineOfSightOverlay->analyses()->append(lineOfSight);
 }
@@ -356,7 +356,7 @@ void LineOfSightController::setAnalysisVisible(bool analysisVisible)
     if (analysis == nullptr)
       continue;
 
-    GeoElementLineOfSight* lineOfSight = qobject_cast<GeoElementLineOfSight*>(analysis);
+    auto* lineOfSight = qobject_cast<ExploratoryGeoElementLineOfSight*>(analysis);
     if (!lineOfSight)
       continue;
 
@@ -427,7 +427,7 @@ void LineOfSightController::selectOverlayIndex(int selectOverlayIndex)
           continue;
 
         // create a Line of sight from the feature to the current location
-        auto* lineOfSight = new GeoElementLineOfSight(feature, m_locationGeoElement, m_lineOfSightParent.get());
+        auto* lineOfSight = new ExploratoryGeoElementLineOfSight(feature, m_locationGeoElement, m_lineOfSightParent.get());
         setupNewLineOfSight(lineOfSight);
       }
 
@@ -453,7 +453,7 @@ void LineOfSightController::selectOverlayIndex(int selectOverlayIndex)
         continue;
 
       // create a Line of sight from the feature to the current location
-      auto* lineOfSight = new GeoElementLineOfSight(dynamicEntity, m_locationGeoElement, m_lineOfSightParent.get());
+      auto* lineOfSight = new ExploratoryGeoElementLineOfSight(dynamicEntity, m_locationGeoElement, m_lineOfSightParent.get());
       setupNewLineOfSight(lineOfSight);
     }
   }
@@ -492,18 +492,18 @@ bool LineOfSightController::resetAnalysis(qsizetype featureCount)
   return true;
 }
 
-void LineOfSightController::setupNewLineOfSight(GeoElementLineOfSight* lineOfSight)
+void LineOfSightController::setupNewLineOfSight(ExploratoryGeoElementLineOfSight* lineOfSight)
 {
   lineOfSight->setVisible(m_analysisVisible);
   m_lineOfSightOverlay->analyses()->append(lineOfSight);
 
-  m_visibleByConnections.append(connect(lineOfSight, &GeoElementLineOfSight::targetVisibilityChanged, this, [this]()
+  m_visibleByConnections.append(connect(lineOfSight, &ExploratoryGeoElementLineOfSight::targetVisibilityChanged, this, [this]()
   {
     int visibleCount = 0;
     const auto* analyses = m_lineOfSightOverlay->analyses();
     for (const auto* analysis : *analyses)
     {
-      const auto* lineOfSight = qobject_cast<const GeoElementLineOfSight*>(analysis);
+      const auto* lineOfSight = qobject_cast<const ExploratoryGeoElementLineOfSight*>(analysis);
       if (!lineOfSight)
         continue;
 
@@ -511,7 +511,7 @@ void LineOfSightController::setupNewLineOfSight(GeoElementLineOfSight* lineOfSig
       if (lineOfSight->observerGeoElement() == m_locationGeoElement)
         continue;
 
-      if (lineOfSight->targetVisibility() == LineOfSightTargetVisibility::Visible)
+      if (lineOfSight->targetVisibility() == ExploratoryLineOfSightTargetVisibility::Visible)
         visibleCount += 1;
     }
 

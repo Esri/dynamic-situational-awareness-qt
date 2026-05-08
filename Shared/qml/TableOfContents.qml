@@ -63,7 +63,7 @@ DsaPanel {
         highlightMoveVelocity: 10000
         delegate: ListItemDelegate {
             id: tocItemDelegate
-            width: parent.width
+            width: layersList.width
             height: 40 * scaleFactor
             itemChecked: layerVisible
             imageUrl: imageSourceForGeomType(index)
@@ -75,6 +75,8 @@ DsaPanel {
             mainTextColor:  spatialReferenceOk ? Material.foreground : "red"
             mainTextItalic: !spatialReferenceOk
             onItemCheckedChanged: {
+                if (model.layerVisible === itemChecked)
+                    return;
                 model.layerVisible = itemChecked
             }
 

@@ -25,7 +25,7 @@
 // C++ API headers
 #include "AnalysisOverlay.h"
 #include "AttributeListModel.h"
-#include "GeoElementViewshed.h"
+#include "ExploratoryGeoElementViewshed.h"
 
 // STL headers
 #include <cmath>
@@ -61,7 +61,7 @@ constexpr double c_defaultMaxDistance = 500.0;
  */
 GeoElementViewshed360::GeoElementViewshed360(GeoElement* geoElement, AnalysisOverlay* analysisOverlay,
                                              const QString& headingAttribute, const QString& pitchAttribute, QObject* parent) :
-  Viewshed360(new GeoElementViewshed(geoElement, c_defaultHorizontalAngle, c_defaultVerticalAngle, c_defaultMinDistance, c_defaultMaxDistance, 0.0, 0.0, parent), analysisOverlay, parent),
+  Viewshed360(new ExploratoryGeoElementViewshed(geoElement, c_defaultHorizontalAngle, c_defaultVerticalAngle, c_defaultMinDistance, c_defaultMaxDistance, 0.0, 0.0, parent), analysisOverlay, parent),
   m_geoElementSignaler(new GeoElementSignaler(geoElement, GeoElementUtils::toQObject(geoElement))),
   m_headingAttribute(headingAttribute),
   m_pitchAttribute(pitchAttribute)
@@ -91,7 +91,7 @@ GeoElement* GeoElementViewshed360::geoElement() const
 double GeoElementViewshed360::heading() const
 {
   if (m_headingAttribute.isEmpty())
-    return static_cast<GeoElementViewshed*>(viewshed())->headingOffset();
+    return static_cast<ExploratoryGeoElementViewshed*>(viewshed())->headingOffset();
 
   if (m_geoElementSignaler.isNull())
     return NAN;
@@ -108,10 +108,10 @@ void GeoElementViewshed360::setHeading(double heading)
 {
   if (m_headingAttribute.isEmpty())
   {
-    if (static_cast<GeoElementViewshed*>(viewshed())->headingOffset() == heading)
+    if (static_cast<ExploratoryGeoElementViewshed*>(viewshed())->headingOffset() == heading)
       return;
 
-    static_cast<GeoElementViewshed*>(viewshed())->setHeadingOffset(heading);
+    static_cast<ExploratoryGeoElementViewshed*>(viewshed())->setHeadingOffset(heading);
   }
   else
   {
@@ -139,7 +139,7 @@ void GeoElementViewshed360::setHeading(double heading)
 double GeoElementViewshed360::pitch() const
 {
   if (m_pitchAttribute.isEmpty())
-    return static_cast<GeoElementViewshed*>(viewshed())->pitchOffset();
+    return static_cast<ExploratoryGeoElementViewshed*>(viewshed())->pitchOffset();
 
   if (m_geoElementSignaler.isNull())
     return NAN;
@@ -156,10 +156,10 @@ void GeoElementViewshed360::setPitch(double pitch)
 {
   if (m_pitchAttribute.isEmpty())
   {
-    if (static_cast<GeoElementViewshed*>(viewshed())->pitchOffset() == pitch)
+    if (static_cast<ExploratoryGeoElementViewshed*>(viewshed())->pitchOffset() == pitch)
       return;
 
-    static_cast<GeoElementViewshed*>(viewshed())->setPitchOffset(pitch);
+    static_cast<ExploratoryGeoElementViewshed*>(viewshed())->setPitchOffset(pitch);
   }
   else
   {
@@ -184,7 +184,7 @@ void GeoElementViewshed360::setPitch(double pitch)
  */
 double GeoElementViewshed360::offsetZ() const
 {
-  return static_cast<GeoElementViewshed*>(viewshed())->offsetZ();
+  return static_cast<ExploratoryGeoElementViewshed*>(viewshed())->offsetZ();
 }
 
 /*!
@@ -192,10 +192,10 @@ double GeoElementViewshed360::offsetZ() const
  */
 void GeoElementViewshed360::setOffsetZ(double offsetZ)
 {
-  if (static_cast<GeoElementViewshed*>(viewshed())->offsetZ() == offsetZ)
+  if (static_cast<ExploratoryGeoElementViewshed*>(viewshed())->offsetZ() == offsetZ)
     return;
 
-  static_cast<GeoElementViewshed*>(viewshed())->setOffsetZ(offsetZ);
+  static_cast<ExploratoryGeoElementViewshed*>(viewshed())->setOffsetZ(offsetZ);
 
   emit offsetZChanged();
 }

@@ -26,12 +26,12 @@
 // C++ API headers
 #include "AnalysisListModel.h"
 #include "Envelope.h"
-#include "GeoElementLineOfSight.h"
-#include "GeoElementViewshed.h"
-#include "LocationLineOfSight.h"
-#include "LocationViewshed.h"
+#include "ExploratoryGeoElementLineOfSight.h"
+#include "ExploratoryGeoElementViewshed.h"
+#include "ExploratoryLocationLineOfSight.h"
+#include "ExploratoryLocationViewshed.h"
+#include "ExploratoryViewshed.h"
 #include "SceneViewTypes.h"
-#include "Viewshed.h"
 #include "Point.h"
 
 using namespace Esri::ArcGISRuntime;
@@ -164,33 +164,33 @@ Point CombinedAnalysisListModel::locationAt(int index)
 
   switch (analysis->analysisType())
   {
-  case AnalysisType::LocationViewshed:
+  case AnalysisType::ExploratoryLocationViewshed:
   {
-    LocationViewshed* locationViewshed = qobject_cast<LocationViewshed*>(analysis);
+    auto* locationViewshed = qobject_cast<ExploratoryLocationViewshed*>(analysis);
     if (locationViewshed == nullptr)
       return Point();
 
     return locationViewshed->location();
   }
-  case AnalysisType::LocationLineOfSight:
+  case AnalysisType::ExploratoryLocationLineOfSight:
   {
-    LocationLineOfSight* locationLineOfSight = qobject_cast<LocationLineOfSight*>(analysis);
+    auto* locationLineOfSight = qobject_cast<ExploratoryLocationLineOfSight*>(analysis);
     if (locationLineOfSight == nullptr)
       return Point();
 
     return locationLineOfSight->targetLocation();
   }
-  case AnalysisType::GeoElementViewshed:
+  case AnalysisType::ExploratoryGeoElementViewshed:
   {
-    GeoElementViewshed* geoElementViewshed = qobject_cast<GeoElementViewshed*>(analysis);
+    auto* geoElementViewshed = qobject_cast<ExploratoryGeoElementViewshed*>(analysis);
     if (geoElementViewshed == nullptr)
       return Point();
 
     return geoElementViewshed->geoElement()->geometry().extent().center();
   }
-  case AnalysisType::GeoElementLineOfSight:
+  case AnalysisType::ExploratoryGeoElementLineOfSight:
   {
-    GeoElementLineOfSight* geoElementLineOfSight = qobject_cast<GeoElementLineOfSight*>(analysis);
+    auto* geoElementLineOfSight = qobject_cast<ExploratoryGeoElementLineOfSight*>(analysis);
     if (geoElementLineOfSight == nullptr)
       return Point();
 

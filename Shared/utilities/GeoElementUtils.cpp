@@ -54,50 +54,8 @@ GeoElementSignaler::GeoElementSignaler(GeoElement* geoElement, QObject* parent) 
   QObject(parent),
   m_geoElement(geoElement)
 {
-  if (dynamic_cast<Feature*>(m_geoElement))
-  {
-    connect(static_cast<Feature*>(m_geoElement), &Feature::geometryChanged,
-            this, &GeoElementSignaler::geometryChanged);
-  }
-  else if (dynamic_cast<Graphic*>(m_geoElement))
-  {
-    connect(static_cast<Graphic*>(m_geoElement), &Graphic::geometryChanged,
-            this, &GeoElementSignaler::geometryChanged);
-  }
-  else if (dynamic_cast<KmlPlacemark*>(m_geoElement))
-  {
-    connect(static_cast<KmlPlacemark*>(m_geoElement), &KmlPlacemark::geometryChanged,
-            this, &GeoElementSignaler::geometryChanged);
-  }
-  else if (dynamic_cast<EncFeature*>(m_geoElement))
-  {
-    connect(static_cast<EncFeature*>(m_geoElement), &EncFeature::geometryChanged,
-            this, &GeoElementSignaler::geometryChanged);
-  }
-  else if (dynamic_cast<WmsFeature*>(m_geoElement))
-  {
-    connect(static_cast<WmsFeature*>(m_geoElement), &WmsFeature::geometryChanged,
-            this, &GeoElementSignaler::geometryChanged);
-  }
-  else if (dynamic_cast<RasterCell*>(m_geoElement))
-  {
-    connect(static_cast<RasterCell*>(m_geoElement), &RasterCell::geometryChanged,
-            this, &GeoElementSignaler::geometryChanged);
-  }
-  else if (dynamic_cast<DynamicEntity*>(m_geoElement))
-  {
-    connect(static_cast<DynamicEntity*>(m_geoElement), &DynamicEntity::geometryChanged,
-            this, &GeoElementSignaler::geometryChanged);
-  }
-  else if (dynamic_cast<DynamicEntityObservation*>(m_geoElement))
-  {
-    connect(static_cast<DynamicEntityObservation*>(m_geoElement), &DynamicEntityObservation::geometryChanged,
-            this, &GeoElementSignaler::geometryChanged);
-  }
-  else
-  {
-    qWarning() << Q_FUNC_INFO << "Unhandled GeoElement type";
-  }
+  if (Graphic* g = dynamic_cast<Graphic*>(m_geoElement); g)
+    connect(g, &Graphic::geometryChanged, this, &GeoElementSignaler::geometryChanged);
 }
 
 /*!

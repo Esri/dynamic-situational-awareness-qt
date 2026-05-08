@@ -155,7 +155,7 @@ void AddLocalDataController::refreshLocalDataModel(const QString& fileType)
       localDir.setNameFilters(fileFilters);
 
     const auto localFiles = localDir.entryList(QDir::Files, QDir::Name);
-    std::for_each(std::cbegin(localFiles), std::cend(localFiles), [&](const auto& localFile)
+    std::for_each(std::cbegin(localFiles), std::cend(localFiles), [this, localDir](const auto& localFile)
     {
       m_localDataModel->addDataItem(localDir.filePath(localFile));
     });

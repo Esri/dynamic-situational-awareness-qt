@@ -23,7 +23,7 @@
 
 namespace Esri::ArcGISRuntime {
   class AnalysisOverlay;
-  class Viewshed;
+  class ExploratoryViewshed;
 }
 
 namespace Dsa {
@@ -85,7 +85,7 @@ public:
   bool is360Mode() const;
   void set360Mode(bool is360Mode);
 
-  Esri::ArcGISRuntime::Viewshed* viewshed() const;
+  Esri::ArcGISRuntime::ExploratoryViewshed* viewshed() const;
 
   Esri::ArcGISRuntime::AnalysisOverlay* analysisOverlay() const;
 
@@ -105,7 +105,7 @@ signals:
   void is360ModeChanged();
 
 protected:
-  Viewshed360(Esri::ArcGISRuntime::Viewshed* viewshed,
+  Viewshed360(Esri::ArcGISRuntime::ExploratoryViewshed* viewshed,
                    Esri::ArcGISRuntime::AnalysisOverlay* analysisOverlay,
                    QObject* parent = nullptr);
 
@@ -113,7 +113,7 @@ private:
   Q_DISABLE_COPY(Viewshed360)
   Viewshed360() = delete;
 
-  QPointer<Esri::ArcGISRuntime::Viewshed> m_viewshed;
+  QPointer<Esri::ArcGISRuntime::ExploratoryViewshed> m_viewshed;
   QPointer<Esri::ArcGISRuntime::AnalysisOverlay> m_analysisOverlay;
 
   QString m_name;

@@ -26,6 +26,7 @@
 #include "Camera.h"
 #include "DynamicEntity.h"
 #include "DynamicEntityObservation.h"
+#include "ExploratoryViewshed.h"
 #include "GlobeCameraController.h"
 #include "Graphic.h"
 #include "GraphicsOverlay.h"
@@ -38,7 +39,6 @@
 #include "SimpleMarkerSceneSymbol.h"
 #include "SimpleRenderer.h"
 #include "SymbolTypes.h"
-#include "Viewshed.h"
 
 // Qt headers
 #include <QFuture>

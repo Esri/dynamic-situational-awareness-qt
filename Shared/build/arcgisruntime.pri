@@ -16,7 +16,7 @@
 
 CONFIG(deployment): DEFINES += DEPLOYMENT_BUILD
 
-ARCGIS_RUNTIME_VERSION = 200.8.0
+ARCGIS_RUNTIME_VERSION = 300.0.0
 DEFINES += ARCGIS_MAPS_SDK_VERSION=$$ARCGIS_RUNTIME_VERSION
 
 # Run against the compiled toolkit.
@@ -36,5 +36,3 @@ priLocation = $$replace(cleanDirPath, '"', "")
 !include($$priLocation/sdk/ideintegration/arcgis_runtime_qml_cpp.pri) {
   message("Error. Cannot locate ArcGIS Runtime PRI file")
 }
-
-

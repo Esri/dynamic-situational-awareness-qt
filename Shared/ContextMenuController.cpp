@@ -304,9 +304,23 @@ void ContextMenuController::invokeIdentifyOnGeoView()
           if (!result)
             continue;
 
-          const auto geoElements = result->geoElements();
-          if (geoElements.isEmpty())
+          const QList<GeoElement*> geoElementsAll = result->geoElements();
+          if (geoElementsAll.isEmpty())
             continue;
+
+          QList<GeoElement*> geoElements{};
+          std::for_each(std::begin(geoElementsAll), std::end(geoElementsAll), [&geoElements](GeoElement* ge)
+          {
+            DynamicEntityObservation* deo = dynamic_cast<DynamicEntityObservation*>(ge);
+            if (!deo)
+            {
+              geoElements.append(ge);
+              return;
+            }
+
+            geoElements.append(deo->dynamicEntity());
+            deo->deleteLater();
+          });
 
           // set the GeoElements to be managed by the tool
           GeoElementUtils::setParent(geoElements, this);

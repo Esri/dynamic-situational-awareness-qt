@@ -397,7 +397,8 @@ The current location updates will be enabled in the DSA app at startup.
 
 ## Dynamic Entities
 
-Go to Feeds from the map tools row.
+- Start with a clean config file so default behavior can be validated.
+- Go to Feeds from the map tools row.
 
 **Test 1: Track Display**
 
@@ -406,7 +407,8 @@ Test case 1:
 - Go to Track Display from the bottom menu.
 - In the Message Feeds dropdown, select `Friendly Tracks - Air`.
 - Enable the Observations checkbox.
-  - [ ] Observations appear.
+  - [ ] Observations appear (a single track moving in a circle at a relative height above the terrain).
+  - [ ] Default observation settings are applied: count = 5, size = 10, color = blue.
 - Increase/decrease observation symbol size.
   - [ ] Observation symbol  size changes.
 - Change observation symbol color.

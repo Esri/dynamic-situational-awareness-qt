@@ -17,8 +17,8 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Material
-import Esri.ArcGISRuntime.OpenSourceApps.DSA
 import QtQuick.Layouts
+import Esri.ArcGISRuntime.OpenSourceApps.DSA
 
 DsaPanel {
     id: messageFeedsRoot
@@ -213,7 +213,6 @@ DsaPanel {
                 }
             }
 
-
             // TRACK LENGTH
             GridLayout {
                 visible: switchObservations.checked || switchTrackLine.checked
@@ -302,6 +301,53 @@ DsaPanel {
                 // }
             }
         }
+
+        ColumnLayout {
+            anchors {
+                left: parent.left
+                right: parent.right
+                top: parent.top
+                bottom: bar.top
+            }
+
+            ComboBox {
+                id: comboFeedsFind
+                Layout.fillWidth: true
+                textRole: "feedName"
+                model: toolController.messageFeeds
+                currentIndex: toolController.selectedFeedIndex
+                onCurrentIndexChanged: toolController.selectedFeedIndex = currentIndex
+            }
+
+            TextField {
+                id: textFindEntity
+                Layout.fillWidth: true
+                onTextChanged: toolController.findEntities(text);
+            }
+
+            ListView {
+                id: listEntityResults
+                model: toolController.entityIdResults
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                clip: true
+                delegate: ItemDelegate {
+                    text: model.display
+                    width: listEntityResults.width
+                    MouseArea {
+                        anchors {
+                            fill: parent
+                        }
+                        onClicked: {
+                            toolController.selectEntity(index);
+                            if (isMobile) {
+                                mapToolRow.reset();
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     TabBar {
@@ -318,6 +364,11 @@ DsaPanel {
 
         TabButton {
             text: qsTr("Track Display")
+            font.pixelSize: fontPixelSize
+        }
+
+        TabButton {
+            text: qsTr("Find")
             font.pixelSize: fontPixelSize
         }
     }

@@ -107,6 +107,8 @@ public:
   // QString maximumDurationUnits() const;
   // void setMaximumDurationUnits(const QString& units);
   // void updateDuration();
+  QString searchAttributeName() const;
+  QString entityIdAttributeName() const;
 
   void setupOverlay();
   bool configurationWasValid() const;
@@ -133,6 +135,7 @@ private:
   QString m_colorTrackLine;
   int m_sizeTrackLine = 4;
   QString m_entityIdAttributeName;
+  QString m_searchAttributeName;
   MessagesOverlay* m_messagesOverlay = nullptr;
   QUrl m_thumbnailUrl;
   QString m_resourcePath;

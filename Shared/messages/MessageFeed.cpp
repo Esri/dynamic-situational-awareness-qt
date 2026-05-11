@@ -177,13 +177,12 @@ MessageFeed::~MessageFeed() = default;
 
 QFuture<DynamicEntityDataSourceInfo*> MessageFeed::onLoadAsync()
 {
-  QList<QString> field_names;
-  QString entity_id_field_name;
-  m_isCoT = this->feedMessageType().compare(QStringLiteral("cot"), Qt::CaseInsensitive) == 0;
-  if (m_isCoT)
+  std::vector<QString> field_names{};
+  if (m_isCoT = feedMessageType().compare(QStringLiteral("cot"), Qt::CaseInsensitive) == 0; m_isCoT)
   {
     // set the entity id field
-    entity_id_field_name = Message::COT_UID_NAME;
+    m_entityIdAttributeName = Message::COT_UID_NAME;
+    m_searchAttributeName = Message::COT_UID_NAME;
 
     // set the fields
     field_names.reserve(7);
@@ -196,7 +195,8 @@ QFuture<DynamicEntityDataSourceInfo*> MessageFeed::onLoadAsync()
   else
   {
     // set the entity id field
-    entity_id_field_name = Message::GEOMESSAGE_ID_NAME;
+    m_entityIdAttributeName = Message::GEOMESSAGE_ID_NAME;
+    m_searchAttributeName = Message::GEOMESSAGE_UNIQUE_DESIGNATION_NAME;
 
     // set the fields
     field_names.reserve(10);
@@ -209,19 +209,18 @@ QFuture<DynamicEntityDataSourceInfo*> MessageFeed::onLoadAsync()
     field_names.emplace_back(Message::GEOMESSAGE_STATUS_911_NAME);
     field_names.emplace_back(Message::GEOMESSAGE_ENVIRONMENT_NAME);
   }
-  m_entityIdAttributeName = entity_id_field_name;
-  field_names.emplace_back(entity_id_field_name);
+  field_names.emplace_back(m_entityIdAttributeName);
   field_names.emplace_back(Message::SIDC_NAME);
 
   QList<Field> fields;
-  fields.reserve(field_names.count());
-  for (auto& fn : field_names)
+  fields.reserve(field_names.size());
+  std::for_each(std::cbegin(field_names), std::cend(field_names), [&](const QString& fn)
   {
-    fields.emplace_back(FieldType::Text, fn, "", 256, Domain(), false, true);
-  }
+    fields.emplace_back(FieldType::Text, fn, fn, 256, Domain{}, false, true);
+  });
 
   // build the dynamic entity data source info from the fields and the entity id field name
-  auto* dynamicEntityDataSourceInfo = new DynamicEntityDataSourceInfo(entity_id_field_name, fields, this);
+  auto* dynamicEntityDataSourceInfo = new DynamicEntityDataSourceInfo(m_entityIdAttributeName, fields, this);
   dynamicEntityDataSourceInfo->setSpatialReference(SpatialReference::wgs84());
 
   // listen for new entities
@@ -452,7 +451,7 @@ bool MessageFeed::addMessage(const Message& message)
     return false;
   }
 
-  if (message.messageType() != this->feedMessageType())
+  if (message.messageType() != feedMessageType())
   {
     emit errorOccurred(Error("Failed to add message - message type mismatch", additionalErrorMessage, ExtendedErrorType::None));
     return false;
@@ -466,7 +465,7 @@ bool MessageFeed::addMessage(const Message& message)
   {
   case Message::MessageAction::Remove:
     {
-      auto future = this->deleteEntityAsync(messageId);
+      auto future = deleteEntityAsync(messageId);
     }
     return true;
 
@@ -700,9 +699,19 @@ void MessageFeed::updateSymbolTrackLine()
 //   emit feedChanged();
 // }
 
+QString MessageFeed::searchAttributeName() const
+{
+  return m_searchAttributeName;
+}
+
 bool MessageFeed::configurationWasValid() const
 {
   return m_configurationWasValid;
+}
+
+QString MessageFeed::entityIdAttributeName() const
+{
+  return m_entityIdAttributeName;
 }
 
 /*!

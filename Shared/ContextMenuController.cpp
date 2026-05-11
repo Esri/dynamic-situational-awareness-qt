@@ -15,6 +15,11 @@
  ******************************************************************************/
 
 // PCH header
+#include "DynamicEntityIterator.h"
+#include "DynamicEntityQueryParameters.h"
+#include "DynamicEntityQueryResult.h"
+#include "GlobeCameraController.h"
+#include "Viewpoint.h"
 #include "pch.hpp"
 
 #include "ContextMenuController.h"
@@ -40,6 +45,7 @@
 #include "IdentifyController.h"
 #include "LayerResultsManager.h"
 #include "LineOfSightController.h"
+#include "MessageFeedsController.h"
 #include "ObservationReportController.h"
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
@@ -83,13 +89,60 @@ ContextMenuController::ContextMenuController(QObject* parent /* = nullptr */):
   AbstractTool(parent),
   m_options(new QStringListModel(this))
 {
-  ToolResourceProvider* resourceProvider = ToolResourceProvider::instance();
+  ToolResourceProvider* trp = ToolResourceProvider::instance();
+  connect(trp, &ToolResourceProvider::geoViewChanged, this, [this]()
+  {
+    MessageFeedsController* mfc = ToolManager::instance().tool<MessageFeedsController>();
+    connect(mfc, &MessageFeedsController::entitySelected, this, [this](const QString& entityId, MessageFeed* messageFeed)
+    {
+      clearOptions();
+      for (const auto& geoElements : std::as_const(m_contextGeoElements))
+        qDeleteAll(geoElements);
+      m_contextGeoElements.clear();
+
+      GeoView* geoView = ToolResourceProvider::instance()->geoView();
+      if (!geoView)
+        return;
+
+      // stop if following something already by replacing the camera controller
+      SceneView* sceneView = dynamic_cast<SceneView*>(geoView);
+      if (!sceneView)
+        return;
+      if (CameraController* cameraController = sceneView->cameraController(); cameraController)
+      {
+        sceneView->setCameraController(new GlobeCameraController(this));
+        delete cameraController;
+      }
+
+      DynamicEntityQueryParameters* params = new DynamicEntityQueryParameters(this);
+      params->setTrackIds(QStringList{entityId});
+      messageFeed->queryDynamicEntitiesAsync(params, this).then(this, [this, geoView, params, messageFeed](DynamicEntityQueryResult* result)
+      {
+        params->deleteLater();
+        const QList<DynamicEntity*> entities = result->iterator().asList();
+        if (!entities.empty())
+        {
+          QList<GeoElement*> geoElements{};
+          std::for_each(std::cbegin(entities), std::cend(entities), [&](DynamicEntity* entity)
+          {
+            geoElements.push_back(dynamic_cast<GeoElement*>(entity));
+          });
+          geoView->setViewpointAsync(Viewpoint{geoElements.first()->geometry()}, 0.1f);
+          setContextScreenPosition(QPoint{geoView->widthInPixels() / 2, geoView->heightInPixels() / 2});
+          GeoElementUtils::setParent(geoElements, this);
+          m_contextGeoElements.insert(messageFeed->feedName(), geoElements);
+          processGeoElements();
+        }
+
+        result->deleteLater();
+      });
+    });
+  });
+
   // setup connection to handle mouse-clicking in the view (used to trigger the identify tasks)
-  connect(resourceProvider, &ToolResourceProvider::mousePressedAndHeld,
-          this, &ContextMenuController::onMousePressedAndHeld);
+  connect(trp, &ToolResourceProvider::mousePressedAndHeld, this, &ContextMenuController::onMousePressedAndHeld);
 
   m_active = true;
-
   ToolManager::instance().addTool(this);
 }
 

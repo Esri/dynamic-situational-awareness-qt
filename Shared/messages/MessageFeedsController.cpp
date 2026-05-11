@@ -20,6 +20,11 @@
 #include "MessageFeedsController.h"
 
 // C++ API
+#include "AttributeListModel.h"
+#include "DynamicEntity.h"
+#include "DynamicEntityIterator.h"
+#include "DynamicEntityQueryParameters.h"
+#include "DynamicEntityQueryResult.h"
 #include "LayerListModel.h"
 #include "Scene.h"
 #include "SceneQuickView.h"
@@ -59,7 +64,8 @@ const QString MessageFeedsController::RESOURCE_DIRECTORY_PROPERTYNAME = "Resourc
 MessageFeedsController::MessageFeedsController(QObject* parent) :
   AbstractTool(parent),
   m_messageFeeds(new MessageFeedListModel(this)),
-  m_locationBroadcast(new LocationBroadcast(this))
+  m_locationBroadcast(new LocationBroadcast(this)),
+  m_entityIdResults(new QStringListModel(this))
 {
   connect(ToolResourceProvider::instance(), &ToolResourceProvider::geoViewChanged, this, &MessageFeedsController::setSceneFromGeoView);
 
@@ -71,6 +77,44 @@ MessageFeedsController::MessageFeedsController(QObject* parent) :
  */
 MessageFeedsController::~MessageFeedsController()
 {
+}
+
+void MessageFeedsController::findEntities(const QString& entityIdText)
+{
+  MessageFeed* mf = m_messageFeeds->at(m_selectedFeedIndex);
+  if (!mf)
+    return;
+
+  mf->messagesOverlay()->clearSelection();
+  m_entityIdResults->setStringList(QStringList{});
+  m_entityIds.clear();
+
+  if (entityIdText.isEmpty())
+    return;
+
+  DynamicEntityQueryParameters* params = new DynamicEntityQueryParameters(this);
+  QString clause = QString("%1 LIKE '%2%'").arg(mf->searchAttributeName(), entityIdText);
+  params->setWhereClause(clause);
+  mf->queryDynamicEntitiesAsync(params, this).then(this, [this, mf, params](DynamicEntityQueryResult* result)
+  {
+    QStringList resultEntityIds{};
+    QList<DynamicEntity*> entities = result->iterator().asList(this);
+    m_entityIds.reserve(entities.size());
+    std::for_each(std::cbegin(entities), std::cend(entities), [&](const DynamicEntity* entity)
+    {
+      resultEntityIds.append(entity->attributes()->attributeValue(mf->searchAttributeName()).toString());
+      m_entityIds.emplace_back(entity->attributes()->attributeValue(mf->entityIdAttributeName()).toString());
+    });
+    // result->deleteLater();
+    m_entityIdResults->setStringList(resultEntityIds);
+    mf->messagesOverlay()->selectDynamicEntities(entities);
+    params->deleteLater();
+  });
+}
+
+void MessageFeedsController::selectEntity(int index)
+{
+  emit entitySelected(m_entityIds[index], selectedFeed());
 }
 
 /*!
@@ -101,6 +145,11 @@ void MessageFeedsController::setSceneFromGeoView()
 QAbstractListModel* MessageFeedsController::messageFeeds() const
 {
   return m_messageFeeds;
+}
+
+QAbstractListModel* MessageFeedsController::entityIdResults() const
+{
+  return m_entityIdResults;
 }
 
 /*!

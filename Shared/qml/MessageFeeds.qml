@@ -278,11 +278,16 @@ DsaPanel {
                 //             return value
                 //     }
                 //     value: toolController.selectedFeed.maximumDuration
-                //     onValueChanged: toolController.selectedFeed.maximumDuration = value
+                //     onValueChanged: {
+                //         if (!toolController.selectedFeed)
+                //             return;
+
+                //         toolController.selectedFeed.maximumDuration = value
+                //     }
                 // }
                 // ComboBox {
                 //     id: comboDuration
-                //     model: ["seconds", "minutes", "hours"]
+                //     model: DsaResources.TrackDisplayDurationUnits
                 //     Layout.preferredHeight: spinBoxHeight
                 //     Layout.fillWidth: true
                 //     Layout.row: 4

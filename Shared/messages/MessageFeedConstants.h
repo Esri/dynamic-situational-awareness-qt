@@ -42,10 +42,32 @@ namespace MessageFeedConstants {
   inline static const QString MESSAGE_FEEDS_TRACK_LINE_SHOW          = QStringLiteral("trackLineShow");
   inline static const QString MESSAGE_FEEDS_TRACK_LINE_COLOR         = QStringLiteral("trackLineColor");
   inline static const QString MESSAGE_FEEDS_TRACK_LINE_SIZE          = QStringLiteral("trackLineSize");
-  inline static const QString MESSAGE_FEEDS_MAXIMUM_DURATION         = QStringLiteral("maximumDuration");
-  inline static const QString MESSAGE_FEEDS_MAXIMUM_DURATION_UNITS   = QStringLiteral("maximumDurationUnits");
+  // inline static const QString MESSAGE_FEEDS_MAXIMUM_DURATION         = QStringLiteral("maximumDuration");
+  // inline static const QString MESSAGE_FEEDS_MAXIMUM_DURATION_UNITS   = QStringLiteral("maximumDurationUnits");
   inline static const QString MESSAGE_FEED_UDP_PORTS_PROPERTYNAME    = QStringLiteral("MessageFeedUdpPorts");
-}
+
+  inline static const QString MESSAGE_FEEDS_PLACEMENT_DEFAULT = QStringLiteral("draped");
+
+  inline static const QString MESSAGE_FEEDS_TRACK_DISPLAY_COLOR_DEFAULT = QStringLiteral("#377eb8"); // blue
+  inline static const QStringList MESSAGE_FEEDS_TRACK_DISPLAY_COLORS{
+    QStringLiteral("#e41a1c"), // red
+    MESSAGE_FEEDS_TRACK_DISPLAY_COLOR_DEFAULT,
+    QStringLiteral("#4daf4a"), // green
+    QStringLiteral("#984ea3"), // purple
+    QStringLiteral("#ff7f00"), // orange
+    QStringLiteral("#ffff33"), // yellow
+    QStringLiteral("#a65628"), // brown
+    QStringLiteral("#f781bf"), // pink
+    QStringLiteral("#999999"), // gray
+  };
+
+  // inline static const QString MESSAGE_FEEDS_TRACK_DISPLAY_DURATION_UNITS_DEFAULT = QStringLiteral("minutes");
+  // inline static const QStringList MESSAGE_FEEDS_TRACK_DISPLAY_DURATION_UNITS{
+  //   QStringLiteral("hours"),
+  //   MESSAGE_FEEDS_TRACK_DISPLAY_DURATION_UNITS_DEFAULT,
+  //   QStringLiteral("seconds"),
+  // };
+} // MessageFeedConstants
 
 } // Dsa
 

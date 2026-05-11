@@ -68,18 +68,19 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
   qint8 requiredPropertiesValid = 0;
 
   // set all the string properties and keep track of any required that are not found
-  // tuple<JsonName, Member*, Required, Default>
-  using PropString = std::tuple<const QString&, QString*, bool, const QString&>;
-  std::vector<PropString> stringProperties{};
-  stringProperties.reserve(8);
-  stringProperties.emplace_back(MESSAGE_FEEDS_NAME, &m_feedName, true, QString{});
-  stringProperties.emplace_back(MESSAGE_FEEDS_TYPE, &m_feedMessageType, true, QString{});
-  stringProperties.emplace_back(MESSAGE_FEEDS_RENDERER, &m_renderer, true, QString{});
-  stringProperties.emplace_back(MESSAGE_FEEDS_THUMBNAIL, &m_thumbnail, false, QString{});
-  stringProperties.emplace_back(MESSAGE_FEEDS_PLACEMENT, &m_surfacePlacement, false, QStringLiteral("draped"));
-  stringProperties.emplace_back(MESSAGE_FEEDS_OBSERVATIONS_COLOR, &m_colorObservations, false, QStringLiteral("#377eb8"));
-  stringProperties.emplace_back(MESSAGE_FEEDS_TRACK_LINE_COLOR, &m_colorTrackLine, false, QStringLiteral("#377eb8"));
-  // stringProperties.emplace_back(MESSAGE_FEEDS_MAXIMUM_DURATION_UNITS, &m_maximumDurationUnits, false, QStringLiteral("minutes"));
+  // tuple<JsonName, Member*, Required, Default, AllowedValues>
+  using PropString = std::tuple<const QString&, QString*, bool, const QString&, const QStringList&>;
+  const QStringList empty{};
+  std::vector<PropString> stringProperties{
+    { MESSAGE_FEEDS_NAME, &m_feedName, true, QString{}, empty },
+    { MESSAGE_FEEDS_TYPE, &m_feedMessageType, true, QString{}, empty },
+    { MESSAGE_FEEDS_RENDERER, &m_renderer, true, QString{}, empty },
+    { MESSAGE_FEEDS_THUMBNAIL, &m_thumbnail, false, QString{}, empty },
+    { MESSAGE_FEEDS_PLACEMENT, &m_surfacePlacement, false, MESSAGE_FEEDS_PLACEMENT_DEFAULT, empty },
+    { MESSAGE_FEEDS_OBSERVATIONS_COLOR, &m_colorObservations, false, MESSAGE_FEEDS_TRACK_DISPLAY_COLOR_DEFAULT, MESSAGE_FEEDS_TRACK_DISPLAY_COLORS },
+    { MESSAGE_FEEDS_TRACK_LINE_COLOR, &m_colorTrackLine, false, MESSAGE_FEEDS_TRACK_DISPLAY_COLOR_DEFAULT, MESSAGE_FEEDS_TRACK_DISPLAY_COLORS },
+    // { MESSAGE_FEEDS_MAXIMUM_DURATION_UNITS, &m_maximumDurationUnits, false, MESSAGE_FEEDS_TRACK_DISPLAY_DURATION_UNITS_DEFAULT, MESSAGE_FEEDS_TRACK_DISPLAY_DURATION_UNITS },
+  };
   std::for_each(std::cbegin(stringProperties), std::cend(stringProperties), [&](const PropString& ps)
   {
     QString* pMember = std::get<QString*>(ps);
@@ -89,6 +90,10 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
     requiredProperties += propertyRequired ? 1 : 0;
     if (const QString s = properties[propertyName].toString(); !s.isEmpty())
     {
+      const auto v = std::get<const QStringList&>(ps);
+      if (!v.empty() && !v.contains(s))
+        return;
+
       *pMember = s;
       if (propertyRequired)
         ++requiredPropertiesValid;
@@ -113,11 +118,11 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
 
   // tuple<JsonName, Member*, Default>
   using PropBool = std::tuple<QString, bool*, bool>;
-  std::vector<PropBool> boolProperties{};
-  boolProperties.reserve(2);
-  // boolProperties.emplace_back(MESSAGE_FEEDS_VISIBLE, &m_isFeedVisible, true);
-  boolProperties.emplace_back(MESSAGE_FEEDS_OBSERVATIONS_SHOW, &m_showPreviousObservations, false);
-  boolProperties.emplace_back(MESSAGE_FEEDS_TRACK_LINE_SHOW, &m_showTrackLine, false);
+  std::vector<PropBool> boolProperties{
+    // { MESSAGE_FEEDS_VISIBLE, &m_isFeedVisible, true },
+    { MESSAGE_FEEDS_OBSERVATIONS_SHOW, &m_showPreviousObservations, false },
+    { MESSAGE_FEEDS_TRACK_LINE_SHOW, &m_showTrackLine, false },
+  };
   std::for_each(std::cbegin(boolProperties), std::cend(boolProperties), [&](const PropBool& pb)
   {
     bool* pMember = std::get<bool*>(pb);
@@ -128,12 +133,12 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
 
   // tuple<JsonName, Member*, Default>
   using PropInt = std::tuple<QString, int*, int>;
-  std::vector<PropInt> intProperties{};
-  intProperties.reserve(3);
-  intProperties.emplace_back(MESSAGE_FEEDS_OBSERVATIONS_SIZE, &m_sizeObservations, 10);
-  intProperties.emplace_back(MESSAGE_FEEDS_OBSERVATIONS_MAXIMUM, &m_maximumObservations, 5);
-  intProperties.emplace_back(MESSAGE_FEEDS_TRACK_LINE_SIZE, &m_sizeTrackLine, 4);
-  // intProperties.emplace_back(MESSAGE_FEEDS_MAXIMUM_DURATION, &m_maximumDuration, 0);
+  std::vector<PropInt> intProperties{
+    { MESSAGE_FEEDS_OBSERVATIONS_SIZE, &m_sizeObservations, 10 },
+    { MESSAGE_FEEDS_OBSERVATIONS_MAXIMUM, &m_maximumObservations, 5 },
+    { MESSAGE_FEEDS_TRACK_LINE_SIZE, &m_sizeTrackLine, 4 },
+    // { MESSAGE_FEEDS_MAXIMUM_DURATION, &m_maximumDuration, 0 },
+  };
   std::for_each(std::cbegin(intProperties), std::cend(intProperties), [&](const PropInt& pi)
   {
     int* pMember = std::get<int*>(pi);

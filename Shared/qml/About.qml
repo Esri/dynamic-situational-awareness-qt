@@ -105,7 +105,7 @@ Item {
 
             Text {
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: "Built with ArcGIS Maps SDK %1 for Qt".arg(DsaResources.arcGISMapsSDKVersion)
+                text: "Built with ArcGIS Maps SDK %1 for Qt".arg(DsaResources.ArcGISMapsSDKVersion)
                 color: Material.foreground
                 font {
                     pixelSize: 12 * scaleFactor

@@ -255,6 +255,7 @@ Test case 7: Follow context
 - click "Follow"
 - [ ] The app should begin following the graphic
 - interact with the view again to stop following
+- When clicked on Home or pan on the map, the graphic is unfollowed.
 
 Test case 8: Line of sight context
 - turn on location display
@@ -394,6 +395,55 @@ The current location updates will be enabled in the DSA app at startup.
 - Close down one of the apps
 - You should notice that the teammate's military symbol is now gone and have been removed from the message feed overlay.
 
+## Dynamic Entities
+
+- Start with a clean config file so default behavior can be validated.
+- Go to Feeds from the map tools row.
+
+**Test 1: Track Display**
+
+Test case 1:
+
+- Go to Track Display from the bottom menu.
+- In the Message Feeds dropdown, select `Friendly Tracks - Air`.
+- Enable the Observations checkbox.
+  - [ ] Observations appear (a single track moving in a circle at a relative height above the terrain).
+  - [ ] Default observation settings are applied: count = 5, size = 10, color = blue.
+- Increase/decrease observation symbol size.
+  - [ ] Observation symbol  size changes.
+- Change observation symbol color.
+  - [ ] Observation symbol color  updates.
+- Set Track Length Amount to a different value (using +/- or direct input).
+  - [ ] Observation count updates to match the number shown as the value changes, up to the maximum amount that has been received since starting the app.
+- Enable Track Line, change its symbol size and color.
+  - [ ] A track line appears initially with symbol color of blue and a symbol size of 4; the symbol size and color updates when a new one is chosen from the palette.
+- Set Track Length amount to `All` (tap and hold the `-` button until you see `All`)
+  - [ ] The full history of observations and/or length of the track line is shown (since connecting to the feed)
+- In Message Feeds, select `Friendly Tracks - Land`.
+- Enable `Observations` and `Track Line`, then modify colors.
+  - [ ] Observations are shown for both `Friendly Tracks - Air` and `Friendly Tracks - Land`, according to the track display settings for each feed. 
+
+Test case 2:
+
+- Close the app.
+- Delete the config file.
+- Reopen the app.
+- Go to Track Display.
+- Select `Friendly Tracks - Air` from the Message Feeds dropdown.
+- Enable `Observations` and `Track Line`.
+  - [ ] All properties are set to defaults.
+
+Test case 3:
+
+- Close the app
+- Modify the following `Friendly Tracks - Air` properties under `Message Feeds` in the config JSON file:
+  - `observationsMaximum`: `10`
+  - `observationsShow`: `true`
+  - `trackLineShow`: `true`
+  -  `trackLineColor` `#f781bf` (pink)
+- Reopen the app.
+  - [ ] Properties are updated.
+  - [ ] Observations and track line are shown for `Friendly Tracks - Air` with a Track Length of 10 and Track Line is  pink. 
 
 # 5. Observation Reports
 Test case 1: Create Observation Report from Tool

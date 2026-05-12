@@ -414,7 +414,7 @@ void DsaController::writeDefaultMessageFeeds()
   QJsonArray messageFeedsJson;
 
   // create the default track display properties
-  std::vector<std::tuple<QString, QVariant>> trackDisplayDefaults{
+  const std::vector<std::tuple<QString, QVariant>> trackDisplayDefaults{
     { MESSAGE_FEEDS_OBSERVATIONS_SHOW, false },
     { MESSAGE_FEEDS_OBSERVATIONS_COLOR, MESSAGE_FEEDS_TRACK_DISPLAY_COLOR_DEFAULT },
     { MESSAGE_FEEDS_OBSERVATIONS_SIZE, 10 },

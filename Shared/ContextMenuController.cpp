@@ -309,7 +309,7 @@ void ContextMenuController::invokeIdentifyOnGeoView()
             continue;
 
           QList<GeoElement*> geoElements{};
-          std::for_each(std::begin(geoElementsAll), std::end(geoElementsAll), [&geoElements](GeoElement* ge)
+          std::for_each(std::begin(geoElementsAll), std::end(geoElementsAll), [&](GeoElement* ge)
           {
             DynamicEntityObservation* deo = dynamic_cast<DynamicEntityObservation*>(ge);
             if (!deo)
@@ -318,7 +318,16 @@ void ContextMenuController::invokeIdentifyOnGeoView()
               return;
             }
 
-            geoElements.append(deo->dynamicEntity());
+            // add any observations that are not the latest to the list to be preserved
+            DynamicEntity* de = deo->dynamicEntity();
+            if (de->latestObservation()->observationId() != deo->observationId())
+            {
+              geoElements.append(deo);
+              return;
+            }
+
+            // for latest observations, add the entity itself and mark the observation as deleted
+            geoElements.append(de);
             deo->deleteLater();
           });
 

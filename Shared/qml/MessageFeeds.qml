@@ -303,12 +303,6 @@ DsaPanel {
         }
 
         ColumnLayout {
-            anchors {
-                left: parent.left
-                right: parent.right
-                top: parent.top
-                bottom: bar.top
-            }
 
             ComboBox {
                 id: comboFeedsFind
@@ -323,6 +317,34 @@ DsaPanel {
                 id: textFindEntity
                 Layout.fillWidth: true
                 onTextChanged: toolController.findEntities(text);
+
+                Button {
+                    anchors {
+                        right: parent.right
+                        top: parent.top
+                        bottom: parent.bottom
+                        margins: 2 * scaleFactor
+                    }
+                    visible: textFindEntity.text !== ""
+
+                    width: height
+
+                    background: Rectangle {
+                        anchors.fill: parent
+                        color: Material.primary
+                    }
+
+                    Image {
+                        anchors.fill: parent
+                        source: DsaResources.iconClose
+                        fillMode: Image.PreserveAspectFit
+                    }
+
+                    onClicked: {
+                        textFindEntity.text = "";
+                        toolController.clearSearchResults();
+                    }
+                }
             }
 
             ListView {

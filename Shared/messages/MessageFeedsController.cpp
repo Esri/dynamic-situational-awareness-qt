@@ -85,9 +85,7 @@ void MessageFeedsController::findEntities(const QString& entityIdText)
   if (!mf)
     return;
 
-  mf->messagesOverlay()->clearSelection();
-  m_entityIdResults->setStringList(QStringList{});
-  m_entityIds.clear();
+  clearSearchResults();
 
   if (entityIdText.isEmpty())
     return;
@@ -115,6 +113,17 @@ void MessageFeedsController::findEntities(const QString& entityIdText)
 void MessageFeedsController::selectEntity(int index)
 {
   emit entitySelected(m_entityIds[index], selectedFeed());
+}
+
+void MessageFeedsController::clearSearchResults()
+{
+  MessageFeed* mf = m_messageFeeds->at(m_selectedFeedIndex);
+  if (!mf)
+    return;
+
+  mf->messagesOverlay()->clearSelection();
+  m_entityIdResults->setStringList(QStringList{});
+  m_entityIds.clear();
 }
 
 /*!
@@ -428,10 +437,12 @@ void MessageFeedsController::setSelectedFeedIndex(int index)
   if (m_selectedFeedIndex == index)
     return;
 
+  clearSearchResults();
+
   // default to the unselected state and try to get the element at the provided index
   m_selectedFeedIndex = -1;
-  const MessageFeed* feed = m_messageFeeds->at(index);
-  if (feed)
+  const MessageFeed* mf = m_messageFeeds->at(index);
+  if (mf)
     m_selectedFeedIndex = index;
 
   emit selectedFeedChanged(index);

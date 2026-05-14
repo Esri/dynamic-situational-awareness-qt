@@ -57,6 +57,7 @@ public:
 
   Q_INVOKABLE void findEntities(const QString& entityIdText);
   Q_INVOKABLE void selectEntity(int index);
+  Q_INVOKABLE void clearSearchResults();
 
   explicit MessageFeedsController(QObject* parent = nullptr);
   ~MessageFeedsController();

@@ -29,7 +29,6 @@ class DsaResources : public QObject
 
   Q_PROPERTY(QString ArcGISMapsSDKVersion READ arcGISMapsSDKVersion NOTIFY arcGISMapsSDKVersionChanged)
   Q_PROPERTY(QStringList TrackDisplayColors READ trackDisplayColors CONSTANT)
-  // Q_PROPERTY(QStringList TrackDisplayDurationUnits READ trackDisplayDurationUnits CONSTANT)
   Q_PROPERTY(QUrl icon2d READ icon2d CONSTANT)
   Q_PROPERTY(QUrl icon3d READ icon3d CONSTANT)
   Q_PROPERTY(QUrl iconAboutMap READ iconAboutMap CONSTANT)
@@ -102,7 +101,6 @@ private:
   QString m_arcGISMapsSDKVersion;
   QString arcGISMapsSDKVersion() const;
   QStringList trackDisplayColors();
-  // QStringList trackDisplayDurationUnits();
   QUrl icon2d() const;
   QUrl icon3d() const;
   QUrl iconAboutMap() const;

@@ -32,7 +32,6 @@ namespace MessageFeedConstants {
   inline static const QString MESSAGE_FEEDS_NAME                     = QStringLiteral("name");
   inline static const QString MESSAGE_FEEDS_TYPE                     = QStringLiteral("type");
   inline static const QString MESSAGE_FEEDS_RENDERER                 = QStringLiteral("renderer");
-  // inline static const QString MESSAGE_FEEDS_VISIBLE                  = QStringLiteral("visible");
   inline static const QString MESSAGE_FEEDS_THUMBNAIL                = QStringLiteral("thumbnail");
   inline static const QString MESSAGE_FEEDS_PLACEMENT                = QStringLiteral("placement");
   inline static const QString MESSAGE_FEEDS_OBSERVATIONS_SHOW        = QStringLiteral("observationsShow");
@@ -42,8 +41,6 @@ namespace MessageFeedConstants {
   inline static const QString MESSAGE_FEEDS_TRACK_LINE_SHOW          = QStringLiteral("trackLineShow");
   inline static const QString MESSAGE_FEEDS_TRACK_LINE_COLOR         = QStringLiteral("trackLineColor");
   inline static const QString MESSAGE_FEEDS_TRACK_LINE_SIZE          = QStringLiteral("trackLineSize");
-  // inline static const QString MESSAGE_FEEDS_MAXIMUM_DURATION         = QStringLiteral("maximumDuration");
-  // inline static const QString MESSAGE_FEEDS_MAXIMUM_DURATION_UNITS   = QStringLiteral("maximumDurationUnits");
   inline static const QString MESSAGE_FEED_UDP_PORTS_PROPERTYNAME    = QStringLiteral("MessageFeedUdpPorts");
 
   inline static const QString MESSAGE_FEEDS_PLACEMENT_DEFAULT = QStringLiteral("draped");
@@ -60,13 +57,6 @@ namespace MessageFeedConstants {
     QStringLiteral("#f781bf"), // pink
     QStringLiteral("#999999"), // gray
   };
-
-  // inline static const QString MESSAGE_FEEDS_TRACK_DISPLAY_DURATION_UNITS_DEFAULT = QStringLiteral("minutes");
-  // inline static const QStringList MESSAGE_FEEDS_TRACK_DISPLAY_DURATION_UNITS{
-  //   QStringLiteral("hours"),
-  //   MESSAGE_FEEDS_TRACK_DISPLAY_DURATION_UNITS_DEFAULT,
-  //   QStringLiteral("seconds"),
-  // };
 } // MessageFeedConstants
 
 } // Dsa

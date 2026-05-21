@@ -79,7 +79,6 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
     { MESSAGE_FEEDS_PLACEMENT, &m_surfacePlacement, false, MESSAGE_FEEDS_PLACEMENT_DEFAULT, empty },
     { MESSAGE_FEEDS_OBSERVATIONS_COLOR, &m_colorObservations, false, MESSAGE_FEEDS_TRACK_DISPLAY_COLOR_DEFAULT, MESSAGE_FEEDS_TRACK_DISPLAY_COLORS },
     { MESSAGE_FEEDS_TRACK_LINE_COLOR, &m_colorTrackLine, false, MESSAGE_FEEDS_TRACK_DISPLAY_COLOR_DEFAULT, MESSAGE_FEEDS_TRACK_DISPLAY_COLORS },
-    // { MESSAGE_FEEDS_MAXIMUM_DURATION_UNITS, &m_maximumDurationUnits, false, MESSAGE_FEEDS_TRACK_DISPLAY_DURATION_UNITS_DEFAULT, MESSAGE_FEEDS_TRACK_DISPLAY_DURATION_UNITS },
   };
   std::for_each(std::cbegin(stringProperties), std::cend(stringProperties), [&](const PropString& ps)
   {
@@ -119,7 +118,6 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
   // tuple<JsonName, Member*, Default>
   using PropBool = std::tuple<QString, bool*, bool>;
   std::vector<PropBool> boolProperties{
-    // { MESSAGE_FEEDS_VISIBLE, &m_isFeedVisible, true },
     { MESSAGE_FEEDS_OBSERVATIONS_SHOW, &m_showPreviousObservations, false },
     { MESSAGE_FEEDS_TRACK_LINE_SHOW, &m_showTrackLine, false },
   };
@@ -137,7 +135,6 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
     { MESSAGE_FEEDS_OBSERVATIONS_SIZE, &m_sizeObservations, 10 },
     { MESSAGE_FEEDS_OBSERVATIONS_MAXIMUM, &m_maximumObservations, 5 },
     { MESSAGE_FEEDS_TRACK_LINE_SIZE, &m_sizeTrackLine, 4 },
-    // { MESSAGE_FEEDS_MAXIMUM_DURATION, &m_maximumDuration, 0 },
   };
   std::for_each(std::cbegin(intProperties), std::cend(intProperties), [&](const PropInt& pi)
   {
@@ -170,7 +167,6 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
   // LIMITS
   int maximumObservations = m_maximumObservations == 0 ? INT32_MAX : m_maximumObservations;
   tdp->setMaximumObservations(maximumObservations);
-  // updateDuration();
 }
 
 MessageFeed::~MessageFeed() = default;
@@ -653,51 +649,6 @@ void MessageFeed::updateSymbolTrackLine()
   renderer->setSymbol(symbol.get());
   emit feedChanged();
 }
-
-// int MessageFeed::maximumDuration() const
-// {
-//   return m_maximumDuration;
-// }
-
-// void MessageFeed::setMaximumDuration(int duration)
-// {
-//   if (m_maximumDuration == duration)
-//     return;
-
-//   m_maximumDuration = duration;
-//   updateDuration();
-// }
-
-// QString MessageFeed::maximumDurationUnits() const
-// {
-//   return m_maximumDurationUnits;
-// }
-
-// void MessageFeed::setMaximumDurationUnits(const QString& units)
-// {
-//   if (m_maximumDurationUnits == units)
-//     return;
-
-//   m_maximumDurationUnits = units;
-//   updateDuration();
-// }
-
-// void MessageFeed::updateDuration()
-// {
-//   if (!m_messagesOverlay)
-//     return;
-
-//   // scale seconds by the selected units
-//   double seconds = static_cast<double>(m_maximumDuration);
-//   if (m_maximumDurationUnits == QStringLiteral("minutes"))
-//     seconds *= 60.0;
-//   else if (m_maximumDurationUnits == QStringLiteral("hours"))
-//     seconds *= 3600.0;
-
-//   m_messagesOverlay->trackDisplayProperties()->setMaximumDuration(seconds);
-
-//   emit feedChanged();
-// }
 
 QString MessageFeed::searchAttributeName() const
 {

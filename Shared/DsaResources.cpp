@@ -60,11 +60,6 @@ QStringList DsaResources::trackDisplayColors()
   return MessageFeedConstants::MESSAGE_FEEDS_TRACK_DISPLAY_COLORS;
 }
 
-// QStringList DsaResources::trackDisplayDurationUnits()
-// {
-//   return MessageFeedConstants::MESSAGE_FEEDS_TRACK_DISPLAY_DURATION_UNITS;
-// }
-
 /*!
  * \brief Returns the version string of the Maps SDK that is used by the project
  */

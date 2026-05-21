@@ -69,21 +69,21 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
 
   // set all the string properties and keep track of any required that are not found
   // tuple<JsonName, Member*, Required, Default, AllowedValues>
-  using PropString = std::tuple<const QString&, QString*, bool, const QString&, const QStringList&>;
+  using PropString = std::tuple<const QString&, QString&, bool, const QString&, const QStringList&>;
   const QStringList empty{};
-  std::vector<PropString> stringProperties{
-    { MESSAGE_FEEDS_NAME, &m_feedName, true, QString{}, empty },
-    { MESSAGE_FEEDS_TYPE, &m_feedMessageType, true, QString{}, empty },
-    { MESSAGE_FEEDS_RENDERER, &m_renderer, true, QString{}, empty },
-    { MESSAGE_FEEDS_THUMBNAIL, &m_thumbnail, false, QString{}, empty },
-    { MESSAGE_FEEDS_PLACEMENT, &m_surfacePlacement, false, MESSAGE_FEEDS_PLACEMENT_DEFAULT, empty },
-    { MESSAGE_FEEDS_OBSERVATIONS_COLOR, &m_colorObservations, false, MESSAGE_FEEDS_TRACK_DISPLAY_COLOR_DEFAULT, MESSAGE_FEEDS_TRACK_DISPLAY_COLORS },
-    { MESSAGE_FEEDS_TRACK_LINE_COLOR, &m_colorTrackLine, false, MESSAGE_FEEDS_TRACK_DISPLAY_COLOR_DEFAULT, MESSAGE_FEEDS_TRACK_DISPLAY_COLORS },
+  const std::vector<PropString> stringProperties{
+    { MESSAGE_FEEDS_NAME, m_feedName, true, QString{}, empty },
+    { MESSAGE_FEEDS_TYPE, m_feedMessageType, true, QString{}, empty },
+    { MESSAGE_FEEDS_RENDERER, m_renderer, true, QString{}, empty },
+    { MESSAGE_FEEDS_THUMBNAIL, m_thumbnail, false, QString{}, empty },
+    { MESSAGE_FEEDS_PLACEMENT, m_surfacePlacement, false, MESSAGE_FEEDS_PLACEMENT_DEFAULT, empty },
+    { MESSAGE_FEEDS_OBSERVATIONS_COLOR, m_colorObservations, false, MESSAGE_FEEDS_TRACK_DISPLAY_COLOR_DEFAULT, MESSAGE_FEEDS_TRACK_DISPLAY_COLORS },
+    { MESSAGE_FEEDS_TRACK_LINE_COLOR, m_colorTrackLine, false, MESSAGE_FEEDS_TRACK_DISPLAY_COLOR_DEFAULT, MESSAGE_FEEDS_TRACK_DISPLAY_COLORS },
   };
-  std::for_each(std::cbegin(stringProperties), std::cend(stringProperties), [&](const PropString& ps)
+  for (const PropString& ps : stringProperties)
   {
-    QString* pMember = std::get<QString*>(ps);
-    *pMember = std::get<3>(ps);
+    QString& pMember = std::get<QString&>(ps);
+    pMember = std::get<3>(ps);
     const QString& propertyName = std::get<0>(ps);
     const bool propertyRequired = std::get<bool>(ps);
     requiredProperties += propertyRequired ? 1 : 0;
@@ -93,11 +93,11 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
       if (!v.empty() && !v.contains(s))
         return;
 
-      *pMember = s;
+      pMember = s;
       if (propertyRequired)
         ++requiredPropertiesValid;
     }
-  });
+  }
 
   // all message feed configurations are required to have name, type and renderer
   m_configurationWasValid = requiredPropertiesValid == requiredProperties;
@@ -116,33 +116,33 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
   m_messagesOverlay = new MessagesOverlay(this, m_feedMessageType, this);
 
   // tuple<JsonName, Member*, Default>
-  using PropBool = std::tuple<QString, bool*, bool>;
-  std::vector<PropBool> boolProperties{
-    { MESSAGE_FEEDS_OBSERVATIONS_SHOW, &m_showPreviousObservations, false },
-    { MESSAGE_FEEDS_TRACK_LINE_SHOW, &m_showTrackLine, false },
+  using PropBool = std::tuple<QString, bool&, bool>;
+  const std::vector<PropBool> boolProperties{
+    { MESSAGE_FEEDS_OBSERVATIONS_SHOW, m_showPreviousObservations, false },
+    { MESSAGE_FEEDS_TRACK_LINE_SHOW, m_showTrackLine, false },
   };
-  std::for_each(std::cbegin(boolProperties), std::cend(boolProperties), [&](const PropBool& pb)
+  for (const PropBool& pb : boolProperties)
   {
-    bool* pMember = std::get<bool*>(pb);
-    *pMember = std::get<bool>(pb);
+    bool& pMember = std::get<bool&>(pb);
+    pMember = std::get<bool>(pb);
     if (const QVariant v = properties[std::get<QString>(pb)]; v.canConvert<bool>())
-      *pMember = v.toBool();
-  });
+      pMember = v.toBool();
+  }
 
   // tuple<JsonName, Member*, Default>
-  using PropInt = std::tuple<QString, int*, int>;
-  std::vector<PropInt> intProperties{
-    { MESSAGE_FEEDS_OBSERVATIONS_SIZE, &m_sizeObservations, 10 },
-    { MESSAGE_FEEDS_OBSERVATIONS_MAXIMUM, &m_maximumObservations, 5 },
-    { MESSAGE_FEEDS_TRACK_LINE_SIZE, &m_sizeTrackLine, 4 },
+  using PropInt = std::tuple<QString, int&, int>;
+  const std::vector<PropInt> intProperties{
+    { MESSAGE_FEEDS_OBSERVATIONS_SIZE, m_sizeObservations, 10 },
+    { MESSAGE_FEEDS_OBSERVATIONS_MAXIMUM, m_maximumObservations, 5 },
+    { MESSAGE_FEEDS_TRACK_LINE_SIZE, m_sizeTrackLine, 4 },
   };
-  std::for_each(std::cbegin(intProperties), std::cend(intProperties), [&](const PropInt& pi)
+  for (const PropInt& pi : intProperties)
   {
-    int* pMember = std::get<int*>(pi);
-    *pMember = std::get<int>(pi);
+    int& pMember = std::get<int&>(pi);
+    pMember = std::get<int>(pi);
     if (const QVariant v = properties[std::get<QString>(pi)]; v.canConvert<int>())
-      *pMember = v.toInt();
-  });
+      pMember = v.toInt();
+  }
 
   // turn the layer on and create/assign it's renderer
   setFeedVisible(m_isFeedVisible);
@@ -210,10 +210,10 @@ QFuture<DynamicEntityDataSourceInfo*> MessageFeed::onLoadAsync()
 
   QList<Field> fields;
   fields.reserve(field_names.size());
-  std::for_each(std::cbegin(field_names), std::cend(field_names), [&](const QString& fn)
+  for (const QString& fn : field_names)
   {
     fields.emplace_back(FieldType::Text, fn, fn, 256, Domain{}, false, true);
-  });
+  }
 
   // build the dynamic entity data source info from the fields and the entity id field name
   auto* dynamicEntityDataSourceInfo = new DynamicEntityDataSourceInfo(m_entityIdAttributeName, fields, this);
@@ -462,6 +462,7 @@ bool MessageFeed::addMessage(const Message& message)
   case Message::MessageAction::Remove:
     {
       auto future = deleteEntityAsync(messageId);
+      Q_UNUSED(future);
     }
     return true;
 

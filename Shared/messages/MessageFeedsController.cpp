@@ -91,7 +91,7 @@ void MessageFeedsController::findEntities(const QString& entityIdText)
     return;
 
   DynamicEntityQueryParameters* params = new DynamicEntityQueryParameters(this);
-  QString clause = QString("%1 LIKE '%2%'").arg(mf->searchAttributeName(), entityIdText);
+  const QString clause = QString("%1 LIKE '%2%'").arg(mf->searchAttributeName(), entityIdText);
   params->setWhereClause(clause);
   mf->queryDynamicEntitiesAsync(params, this).then(this, [this, mf, params](DynamicEntityQueryResult* result)
   {
@@ -103,7 +103,7 @@ void MessageFeedsController::findEntities(const QString& entityIdText)
       resultEntityIds.append(entity->attributes()->attributeValue(mf->searchAttributeName()).toString());
       m_entityIds.emplace_back(entity->attributes()->attributeValue(mf->entityIdAttributeName()).toString());
     });
-    // result->deleteLater();
+    result->deleteLater();
     m_entityIdResults->setStringList(resultEntityIds);
     mf->messagesOverlay()->selectDynamicEntities(entities);
     params->deleteLater();

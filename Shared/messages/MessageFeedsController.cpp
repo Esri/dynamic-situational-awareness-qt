@@ -245,7 +245,7 @@ void MessageFeedsController::setupFeeds()
     connect(feed, &MessageFeed::feedChanged, this, &MessageFeedsController::notifyPropertyChanged);
   });
 
-  if (m_messageFeeds->count() > 0)
+  if (!m_messageFeeds->isEmpty())
   {
     m_selectedFeedIndex = 0;
     emit selectedFeedChanged(0);
@@ -422,7 +422,7 @@ void MessageFeedsController::setLocationBroadcastInDistress(bool inDistress)
   emit locationBroadcastInDistressChanged();
 }
 
-MessageFeed *MessageFeedsController::selectedFeed()
+MessageFeed* MessageFeedsController::selectedFeed()
 {
   return m_messageFeeds->at(m_selectedFeedIndex);
 }

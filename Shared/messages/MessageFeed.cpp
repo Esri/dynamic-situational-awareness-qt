@@ -165,7 +165,7 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
   tdp->setShowTrackLine(m_showTrackLine);
   updateSymbolTrackLine();
   // LIMITS
-  int maximumObservations = m_maximumObservations == 0 ? INT32_MAX : m_maximumObservations;
+  int maximumObservations = m_maximumObservations == 0 ? std::numeric_limits<int>::max() : m_maximumObservations;
   tdp->setMaximumObservations(maximumObservations);
 }
 
@@ -518,7 +518,7 @@ void MessageFeed::setShowPreviousObservations(bool showPreviousObservations)
 int MessageFeed::maximumObservations() const
 {
   int maximumObservations = m_maximumObservations;
-  if (maximumObservations == INT32_MAX)
+  if (maximumObservations == std::numeric_limits<int>::max())
     maximumObservations = 0;
 
   return maximumObservations;
@@ -530,7 +530,7 @@ void MessageFeed::setMaximumObservations(int maximumObservations)
     return;
 
   if (maximumObservations == 0)
-    maximumObservations = INT32_MAX;
+    maximumObservations = std::numeric_limits<int>::max();
 
   m_maximumObservations = maximumObservations;
 
@@ -598,10 +598,15 @@ void MessageFeed::updateSymbolObservations()
     return;
 
   SimpleRenderer* renderer = dynamic_cast<SimpleRenderer*>(m_messagesOverlay->trackDisplayProperties()->previousObservationRenderer());
-  std::unique_ptr<SimpleMarkerSymbol> symbol = std::make_unique<SimpleMarkerSymbol>();
+  auto* symbol = new SimpleMarkerSymbol(this);
   symbol->setColor(c);
   symbol->setSize(static_cast<float>(m_sizeObservations));
-  renderer->setSymbol(symbol.get());
+  auto* previousSymbol = renderer->symbol();
+  renderer->setSymbol(symbol);
+
+  if (previousSymbol)
+    previousSymbol->deleteLater();
+
   emit feedChanged();
 }
 
@@ -643,10 +648,15 @@ void MessageFeed::updateSymbolTrackLine()
     return;
 
   SimpleRenderer* renderer = dynamic_cast<SimpleRenderer*>(m_messagesOverlay->trackDisplayProperties()->trackLineRenderer());
-  std::unique_ptr<SimpleLineSymbol> symbol = std::make_unique<SimpleLineSymbol>();
+  auto* symbol = new SimpleLineSymbol(this);
   symbol->setColor(c);
   symbol->setWidth(static_cast<float>(m_sizeTrackLine));
-  renderer->setSymbol(symbol.get());
+  auto* previousSymbol = renderer->symbol();
+  renderer->setSymbol(symbol);
+
+  if (previousSymbol)
+    previousSymbol->deleteLater();
+
   emit feedChanged();
 }
 

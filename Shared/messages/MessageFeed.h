@@ -49,8 +49,6 @@ class MessageFeed : public Esri::ArcGISRuntime::DynamicEntityDataSource
   Q_PROPERTY(QString colorTrackLine READ colorTrackLine WRITE setColorTrackLine NOTIFY feedChanged)
   Q_PROPERTY(int sizeTrackLine READ sizeTrackLine WRITE setSizeTrackLine NOTIFY feedChanged)
   Q_PROPERTY(int maximumObservations READ maximumObservations WRITE setMaximumObservations NOTIFY feedChanged)
-  // Q_PROPERTY(int maximumDuration READ maximumDuration WRITE setMaximumDuration NOTIFY feedChanged)
-  // Q_PROPERTY(QString maximumDurationUnits READ maximumDurationUnits WRITE setMaximumDurationUnits NOTIFY feedChanged)
 
 public:
   MessageFeed(const QVariantMap& properties, const QString& resourcePath, QObject* parent = nullptr);
@@ -102,11 +100,6 @@ public:
   int sizeTrackLine() const;
   void setSizeTrackLine(int symbolSize);
   void updateSymbolTrackLine();
-  // int maximumDuration() const;
-  // void setMaximumDuration(int duration);
-  // QString maximumDurationUnits() const;
-  // void setMaximumDurationUnits(const QString& units);
-  // void updateDuration();
   QString searchAttributeName() const;
   QString entityIdAttributeName() const;
 
@@ -139,8 +132,6 @@ private:
   MessagesOverlay* m_messagesOverlay = nullptr;
   QUrl m_thumbnailUrl;
   QString m_resourcePath;
-  int m_maximumDuration = 0;
-  QString m_maximumDurationUnits;
   QHash<quint64, Esri::ArcGISRuntime::DynamicEntity*> m_dynamicEntities;
   void checkEntityForSelectAction(Esri::ArcGISRuntime::DynamicEntity* dynamicEntity);
 };

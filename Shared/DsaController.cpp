@@ -422,8 +422,6 @@ void DsaController::writeDefaultMessageFeeds()
     { MESSAGE_FEEDS_TRACK_LINE_SHOW, false },
     { MESSAGE_FEEDS_TRACK_LINE_COLOR, MESSAGE_FEEDS_TRACK_DISPLAY_COLOR_DEFAULT },
     { MESSAGE_FEEDS_TRACK_LINE_SIZE, 4 },
-    // { MESSAGE_FEEDS_MAXIMUM_DURATION, 0 },
-    // { MESSAGE_FEEDS_MAXIMUM_DURATION_UNITS, MESSAGE_FEEDS_TRACK_DISPLAY_DURATION_UNITS_DEFAULT },
   };
   const auto itBeg = std::cbegin(trackDisplayDefaults);
   const auto itEnd = std::cend(trackDisplayDefaults);

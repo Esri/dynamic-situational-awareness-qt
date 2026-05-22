@@ -530,15 +530,6 @@ Vehicle {
 
     IdentifyController {
         id: identifyController
-        active: mapToolRow.state === "Identify"
-
-        onActiveChanged: {
-            if (!active)
-            {
-                identifyResults.dismiss();
-                mapToolRow.state = "clear";
-            }
-        }
 
         onPopupChanged: {
             if (popup) {

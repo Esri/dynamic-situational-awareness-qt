@@ -541,12 +541,6 @@ Handheld {
 
     IdentifyController {
         id: identifyController
-        active: mapToolRow.state === "Identify"
-
-        onActiveChanged: {
-            if (!active)
-                identifyResults.dismiss();
-        }
 
         onPopupChanged: {
             if (popup) {

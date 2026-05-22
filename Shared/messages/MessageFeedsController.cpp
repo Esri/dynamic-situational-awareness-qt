@@ -281,11 +281,16 @@ void MessageFeedsController::toolInitProperties(const QVariantMap& properties)
   if (m_dataListeners.isEmpty())
   {
     // parse and add data listeners on specified UDP ports
-    const auto messageFeedUdpPorts = properties[MESSAGE_FEED_UDP_PORTS_PROPERTYNAME].toStringList();
-    for (const auto& udpPort : messageFeedUdpPorts)
+    const QVariantList messageFeedUdpPorts = properties[MESSAGE_FEED_UDP_PORTS_PROPERTYNAME].toList();
+    for (const QVariant& udpPortV : messageFeedUdpPorts)
     {
+      bool ok = false;
+      int udpPortI = udpPortV.toInt(&ok);
+      if (!ok)
+        continue;
+
       QUdpSocket* udpSocket = new QUdpSocket(this);
-      udpSocket->bind(udpPort.toInt(), QUdpSocket::DontShareAddress | QUdpSocket::ReuseAddressHint);
+      udpSocket->bind(udpPortI, QUdpSocket::DontShareAddress | QUdpSocket::ReuseAddressHint);
 
       addDataListener(new DataListener(udpSocket, this));
     }

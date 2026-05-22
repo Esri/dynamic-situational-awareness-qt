@@ -98,7 +98,7 @@ signals:
   void locationBroadcastEnabledChanged();
   void locationBroadcastFrequencyChanged();
   void locationBroadcastInDistressChanged();
-  void selectedFeedChanged(int newIndex);
+  void selectedFeedChanged();
   void entitySelected(const QString& entityId, MessageFeed* messageFeed);
 
   void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);

@@ -15,18 +15,17 @@
  ******************************************************************************/
 
 // PCH header
-#include "DynamicEntityIterator.h"
-#include "DynamicEntityQueryParameters.h"
-#include "DynamicEntityQueryResult.h"
-#include "GlobeCameraController.h"
-#include "Viewpoint.h"
 #include "pch.hpp"
 
 #include "ContextMenuController.h"
 
-// C++ API headers
+// C++ API
 #include "DynamicEntity.h"
+#include "DynamicEntityIterator.h"
+#include "DynamicEntityQueryParameters.h"
+#include "DynamicEntityQueryResult.h"
 #include "DynamicEntityObservation.h"
+#include "GlobeCameraController.h"
 #include "Graphic.h"
 #include "GraphicsOverlay.h"
 #include "IdentifyGraphicsOverlayResult.h"
@@ -34,10 +33,11 @@
 #include "LayerContent.h"
 #include "MapView.h"
 #include "SceneView.h"
-
-// DSA headers
-#include "AppConstants.h"
+#include "Viewpoint.h"
+// Toolkit
 #include "CoordinateConversionController.h"
+// DSA
+#include "AppConstants.h"
 #include "CoordinateConversionToolProxy.h"
 #include "FollowPositionController.h"
 #include "GeoElementUtils.h"

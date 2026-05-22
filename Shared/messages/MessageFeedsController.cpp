@@ -248,7 +248,7 @@ void MessageFeedsController::setupFeeds()
   if (!m_messageFeeds->isEmpty())
   {
     m_selectedFeedIndex = 0;
-    emit selectedFeedChanged(0);
+    emit selectedFeedChanged();
   }
 
   // only needs to be cached until the geoView is ready
@@ -445,7 +445,7 @@ void MessageFeedsController::setSelectedFeedIndex(int index)
   if (mf)
     m_selectedFeedIndex = index;
 
-  emit selectedFeedChanged(index);
+  emit selectedFeedChanged();
 }
 
 void MessageFeedsController::notifyPropertyChanged()

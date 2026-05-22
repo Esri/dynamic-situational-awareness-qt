@@ -461,7 +461,7 @@ bool MessageFeed::addMessage(const Message& message)
   {
   case Message::MessageAction::Remove:
     {
-      auto future = deleteEntityAsync(messageId);
+      const auto future = deleteEntityAsync(messageId);
       Q_UNUSED(future);
     }
     return true;

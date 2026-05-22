@@ -92,8 +92,14 @@ ContextMenuController::ContextMenuController(QObject* parent /* = nullptr */):
   ToolResourceProvider* trp = ToolResourceProvider::instance();
   connect(trp, &ToolResourceProvider::geoViewChanged, this, [this]()
   {
+    if (m_messageFeedsControllerConnection)
+      return;
+
     MessageFeedsController* mfc = ToolManager::instance().tool<MessageFeedsController>();
-    connect(mfc, &MessageFeedsController::entitySelected, this, [this](const QString& entityId, MessageFeed* messageFeed)
+    m_messageFeedsControllerConnection = connect(mfc,
+                                                 &MessageFeedsController::entitySelected,
+                                                 this,
+                                                 [this](const QString& entityId, MessageFeed* messageFeed)
     {
       clearOptions();
       for (const auto& geoElements : std::as_const(m_contextGeoElements))

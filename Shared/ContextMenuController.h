@@ -100,6 +100,7 @@ private:
   Esri::ArcGISRuntime::Point m_contextLocation;
   Esri::ArcGISRuntime::Point m_contextBaseSurfaceLocation;
   QHash<QString, QList<Esri::ArcGISRuntime::GeoElement*>> m_contextGeoElements;
+  QMetaObject::Connection m_messageFeedsControllerConnection;
 };
 
 } // Dsa

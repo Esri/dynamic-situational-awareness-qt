@@ -112,6 +112,9 @@ void MessageFeedsController::findEntities(const QString& entityIdText)
 
 void MessageFeedsController::selectEntity(int index)
 {
+  if (index < 0 || index >= m_entityIds.size())
+    return;
+
   emit entitySelected(m_entityIds[index], selectedFeed());
 }
 

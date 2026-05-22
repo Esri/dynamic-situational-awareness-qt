@@ -490,12 +490,12 @@ Vehicle {
 
             onClosed: {
                 // update state for each category
-                // mapToolRow.state = "clear";
-                // alertToolRow.state = "clear";
-                // viewshedTool.state = "clear";
-                // reportToolRow.state = "clear";
-                // markupToolRow.state = "clear";
-                // addConfigurationTool.state = "clear";
+                mapToolRow.reset();
+                alertToolRow.state = "clear";
+                viewshedTool.state = "clear";
+                reportToolRow.state = "clear";
+                markupToolRow.state = "clear";
+                addConfigurationTool.state = "clear";
             }
 
             Rectangle {

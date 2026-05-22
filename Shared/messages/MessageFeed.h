@@ -72,12 +72,9 @@ public:
 
   QString thumbnail() const;
   QUrl thumbnailUrl() const;
-  void setThumbnailUrl(const QUrl& thumbnailUrl);
 
   QString renderer() const;
   QString surfacePlacement() const;
-
-  Esri::ArcGISRuntime::Renderer* createRenderer();
 
   bool addMessage(const Message& message);
   Esri::ArcGISRuntime::DynamicEntity* getDynamicEntityById(quint64 entityId) const;
@@ -85,25 +82,14 @@ public:
   const QHash<quint64, Esri::ArcGISRuntime::DynamicEntity*>& dynamicEntities() const;
 
   bool showPreviousObservations() const;
-  void setShowPreviousObservations(bool showPreviousObservations);
   int maximumObservations() const;
-  void setMaximumObservations(int maximumObservations);
   QString colorObservations() const;
-  void setColorObservations(const QString& color);
   int sizeObservations() const;
-  void setSizeObservations(int symbolSize);
-  void updateSymbolObservations();
   bool showTrackLine() const;
-  void setShowTrackLine(bool showTrackLine);
   QString colorTrackLine() const;
-  void setColorTrackLine(const QString& color);
   int sizeTrackLine() const;
-  void setSizeTrackLine(int symbolSize);
-  void updateSymbolTrackLine();
   QString searchAttributeName() const;
   QString entityIdAttributeName() const;
-
-  void setupOverlay();
   bool configurationWasValid() const;
 
 signals:
@@ -111,6 +97,18 @@ signals:
 
 private:
   Q_DISABLE_COPY(MessageFeed)
+
+  Esri::ArcGISRuntime::Renderer* createRenderer();
+  void setThumbnailUrl(const QUrl& thumbnailUrl);
+  void setShowPreviousObservations(bool showPreviousObservations);
+  void setMaximumObservations(int maximumObservations);
+  void setColorObservations(const QString& color);
+  void setSizeObservations(int symbolSize);
+  void setShowTrackLine(bool showTrackLine);
+  void setColorTrackLine(const QString& color);
+  void setSizeTrackLine(int symbolSize);
+  void updateSymbolObservations();
+  void updateSymbolTrackLine();
 
   QString m_feedName;
   QString m_feedMessageType;

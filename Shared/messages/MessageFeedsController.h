@@ -106,7 +106,6 @@ signals:
 private:
   void setSceneFromGeoView();
   void setupFeeds();
-  Esri::ArcGISRuntime::Renderer* createRenderer(const QString& rendererInfo, QObject* parent = nullptr) const;
 
   Esri::ArcGISRuntime::Scene* m_scene = nullptr;
 

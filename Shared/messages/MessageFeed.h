@@ -27,6 +27,7 @@
 
 namespace Esri::ArcGISRuntime {
 
+class DictionarySymbolStyle;
 class DynamicEntityDataSourceInfo;
 class DynamicEntity;
 class Renderer;
@@ -97,6 +98,9 @@ signals:
 
 private:
   Q_DISABLE_COPY(MessageFeed)
+
+  inline static Esri::ArcGISRuntime::DictionarySymbolStyle* s_dictionarySymbolStyleMil2525c = nullptr;
+  inline static Esri::ArcGISRuntime::DictionarySymbolStyle* s_dictionarySymbolStyleMil2525d = nullptr;
 
   Esri::ArcGISRuntime::Renderer* createRenderer();
   void setThumbnailUrl(const QUrl& thumbnailUrl);

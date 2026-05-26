@@ -377,13 +377,11 @@ QString MessageFeed::surfacePlacement() const
 Renderer* MessageFeed::createRenderer()
 {
   // hold mil2525 symbol styles as statics to be shared by multiple renderers if needed
-  static DictionarySymbolStyle* dictionarySymbolStyleMil2525c = nullptr;
-  static DictionarySymbolStyle* dictionarySymbolStyleMil2525d = nullptr;
   QObject* parent = dynamic_cast<QObject*>(this);
 
   if (m_renderer.compare("mil2525c", Qt::CaseInsensitive) == 0)
   {
-    if (!dictionarySymbolStyleMil2525c)
+    if (!MessageFeed::s_dictionarySymbolStyleMil2525c)
     {
       const QString stylePath = QString{QStringLiteral("%1/styles/arcade/mil2525c.stylx")}.arg(m_resourcePath);
       if (!QFileInfo::exists(stylePath))
@@ -392,14 +390,14 @@ Renderer* MessageFeed::createRenderer()
         return nullptr;
       }
 
-      dictionarySymbolStyleMil2525c = DictionarySymbolStyle::createFromFile(stylePath, parent);
+      s_dictionarySymbolStyleMil2525c = DictionarySymbolStyle::createFromFile(stylePath, parent);
     }
 
-    return new DictionaryRenderer(dictionarySymbolStyleMil2525c, parent);
+    return new DictionaryRenderer(s_dictionarySymbolStyleMil2525c, parent);
   }
   else if (m_renderer.compare("mil2525d", Qt::CaseInsensitive) == 0)
   {
-    if (!dictionarySymbolStyleMil2525d)
+    if (!s_dictionarySymbolStyleMil2525d)
     {
       const QString stylePath = QString{QStringLiteral("%1/styles/arcade/mil2525d.stylx")}.arg(m_resourcePath);
       if (!QFileInfo::exists(stylePath))
@@ -408,10 +406,10 @@ Renderer* MessageFeed::createRenderer()
         return nullptr;
       }
 
-      dictionarySymbolStyleMil2525d = DictionarySymbolStyle::createFromFile(stylePath, parent);
+      s_dictionarySymbolStyleMil2525d = DictionarySymbolStyle::createFromFile(stylePath, parent);
     }
 
-    return new DictionaryRenderer(dictionarySymbolStyleMil2525d, parent);
+    return new DictionaryRenderer(s_dictionarySymbolStyleMil2525d, parent);
   }
 
   // else default to simple renderer with picture marker symbol

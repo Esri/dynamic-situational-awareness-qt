@@ -21,6 +21,7 @@
 
 // C++ API headers
 #include "AttributeListModel.h"
+#include "DynamicEntity.h"
 #include "FieldsPopupElement.h"
 #include "GeoElement.h"
 #include "GeoView.h"
@@ -117,9 +118,13 @@ bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QStrin
   if (!geoElement->attributes() || geoElement->attributes()->isEmpty())
     return false;
 
+  bool isDynamicEntity = false;
+  if (const auto* de = dynamic_cast<DynamicEntity*>(geoElement); de)
+    isDynamicEntity = true;
+
   // create a new Popup from the geoElement
   auto newPopup = std::make_unique<Popup>(geoElement);
-  newPopup->popupDefinition()->setTitle(popupTitle);
+  newPopup->popupDefinition()->setTitle(isDynamicEntity ? QString{"%1<br>(Live Updates)"}.arg(popupTitle) : popupTitle);
   const auto popupElements = newPopup->popupDefinition()->elements();
   for (const auto popupElement : popupElements)
   {

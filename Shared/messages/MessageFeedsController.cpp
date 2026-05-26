@@ -19,24 +19,16 @@
 
 #include "MessageFeedsController.h"
 
-// C++ API headers
-#include "DictionaryRenderer.h"
-#include "DictionarySymbolStyle.h"
+// C++ API
+#include "AttributeListModel.h"
+#include "DynamicEntity.h"
+#include "DynamicEntityIterator.h"
+#include "DynamicEntityQueryParameters.h"
+#include "DynamicEntityQueryResult.h"
 #include "LayerListModel.h"
-#include "LayerSceneProperties.h"
-#include "PictureMarkerSymbol.h"
 #include "Scene.h"
-#include "SceneViewTypes.h"
 #include "SceneQuickView.h"
-#include "SimpleRenderer.h"
-
-// Qt headers
-#include <QFileInfo>
-#include <QJsonArray>
-#include <QJsonObject>
-#include <QUdpSocket>
-
-// DSA headers
+// DSA
 #include "AppConstants.h"
 #include "DataListener.h"
 #include "LocationBroadcast.h"
@@ -47,6 +39,11 @@
 #include "MessagesOverlay.h"
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
+// Qt
+#include <QFileInfo>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QUdpSocket>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -67,7 +64,8 @@ const QString MessageFeedsController::RESOURCE_DIRECTORY_PROPERTYNAME = "Resourc
 MessageFeedsController::MessageFeedsController(QObject* parent) :
   AbstractTool(parent),
   m_messageFeeds(new MessageFeedListModel(this)),
-  m_locationBroadcast(new LocationBroadcast(this))
+  m_locationBroadcast(new LocationBroadcast(this)),
+  m_entityIdResults(new QStringListModel(this))
 {
   connect(ToolResourceProvider::instance(), &ToolResourceProvider::geoViewChanged, this, &MessageFeedsController::setSceneFromGeoView);
 
@@ -79,6 +77,56 @@ MessageFeedsController::MessageFeedsController(QObject* parent) :
  */
 MessageFeedsController::~MessageFeedsController()
 {
+}
+
+void MessageFeedsController::findEntities(const QString& entityIdText)
+{
+  MessageFeed* mf = m_messageFeeds->at(m_selectedFeedIndex);
+  if (!mf)
+    return;
+
+  clearSearchResults();
+
+  if (entityIdText.isEmpty())
+    return;
+
+  DynamicEntityQueryParameters* params = new DynamicEntityQueryParameters(this);
+  const QString clause = QString("%1 LIKE '%2%'").arg(mf->searchAttributeName(), entityIdText);
+  params->setWhereClause(clause);
+  mf->queryDynamicEntitiesAsync(params, this).then(this, [this, mf, params](DynamicEntityQueryResult* result)
+  {
+    QStringList resultEntityIds{};
+    QList<DynamicEntity*> entities = result->iterator().asList(this);
+    m_entityIds.reserve(entities.size());
+    std::for_each(std::cbegin(entities), std::cend(entities), [&](const DynamicEntity* entity)
+    {
+      resultEntityIds.append(entity->attributes()->attributeValue(mf->searchAttributeName()).toString());
+      m_entityIds.emplace_back(entity->attributes()->attributeValue(mf->entityIdAttributeName()).toString());
+    });
+    result->deleteLater();
+    m_entityIdResults->setStringList(resultEntityIds);
+    mf->messagesOverlay()->selectDynamicEntities(entities);
+    params->deleteLater();
+  });
+}
+
+void MessageFeedsController::selectEntity(int index)
+{
+  if (index < 0 || index >= static_cast<int>(m_entityIds.size()))
+    return;
+
+  emit entitySelected(m_entityIds[index], selectedFeed());
+}
+
+void MessageFeedsController::clearSearchResults()
+{
+  MessageFeed* mf = m_messageFeeds->at(m_selectedFeedIndex);
+  if (!mf)
+    return;
+
+  mf->messagesOverlay()->clearSelection();
+  m_entityIdResults->setStringList(QStringList{});
+  m_entityIds.clear();
 }
 
 /*!
@@ -109,6 +157,11 @@ void MessageFeedsController::setSceneFromGeoView()
 QAbstractListModel* MessageFeedsController::messageFeeds() const
 {
   return m_messageFeeds;
+}
+
+QAbstractListModel* MessageFeedsController::entityIdResults() const
+{
+  return m_entityIdResults;
 }
 
 /*!
@@ -182,38 +235,23 @@ QString MessageFeedsController::toolName() const
 void MessageFeedsController::setupFeeds()
 {
   // parse and add message feeds
-  const auto messageFeedsJson = QJsonArray::fromVariantList(m_messageFeedProperties);
-  for (const auto& messageFeed : messageFeedsJson)
+  const QJsonArray propertiesList = QJsonArray::fromVariantList(m_messageFeedProperties);
+  std::for_each(std::cbegin(propertiesList), std::cend(propertiesList), [&](const QJsonValue& propertiesItem)
   {
-    const auto messageFeedJsonObject = messageFeed.toObject();
-    if (messageFeedJsonObject.size() < 4)
-    {
-      emit toolErrorOccurred(QStringLiteral("Invalid Message JSON recieved"), messageFeed.toString());
-      continue;
-    }
+    const QVariantMap properties = propertiesItem.toObject().toVariantMap();
+    MessageFeed* feed = new MessageFeed(properties, m_resourcePath, this);
+    if (!feed->configurationWasValid())
+      return;
 
-    const auto feedName = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_NAME].toString();
-    const auto feedType = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_TYPE].toString();
-    const auto rendererInfo = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_RENDERER].toString();
-    const auto rendererThumbnail = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL].toString();
-    const auto surfacePlacement = messageFeedJsonObject[MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT].toString();
-
-    auto* feed = new MessageFeed(feedName, feedType, this);
+    m_scene->operationalLayers()->append(feed->messagesOverlay());
     m_messageFeeds->append(feed);
-    auto* overlay = new MessagesOverlay(feed, feedType, this);
-    overlay->setSceneProperties(LayerSceneProperties(toSurfacePlacement(surfacePlacement)));
-    overlay->setRenderer(createRenderer(rendererInfo, this));
-    m_scene->operationalLayers()->append(overlay);
+    connect(feed, &MessageFeed::feedChanged, this, &MessageFeedsController::notifyPropertyChanged);
+  });
 
-    if (!rendererThumbnail.isEmpty())
-    {
-      if (QFile::exists(QString(":/Resources/icons/xhdpi/message/%1").arg(rendererThumbnail)))
-        feed->setThumbnailUrl(QString("qrc:/Resources/icons/xhdpi/message/%1").arg(rendererThumbnail));
-      else if (QFile::exists(m_resourcePath + QString("/icons/%1").arg(rendererThumbnail)))
-        feed->setThumbnailUrl(QUrl::fromLocalFile(m_resourcePath + QString("/icons/%1").arg(rendererThumbnail)));
-      else
-        emit toolErrorOccurred(QString("Failed to find icon %1").arg(rendererThumbnail), QString("Could not find icon %1 for feed %2").arg(rendererThumbnail, feedName));
-    }
+  if (!m_messageFeeds->isEmpty())
+  {
+    m_selectedFeedIndex = 0;
+    emit selectedFeedChanged();
   }
 
   // only needs to be cached until the geoView is ready
@@ -234,8 +272,9 @@ void MessageFeedsController::setupFeeds()
  */
 void MessageFeedsController::toolInitProperties(const QVariantMap& properties)
 {
+  using namespace MessageFeedConstants;
   setResourcePath(properties[RESOURCE_DIRECTORY_PROPERTYNAME].toString());
-  m_messageFeedProperties = properties[MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME].toList();
+  m_messageFeedProperties = properties[MESSAGE_FEEDS_PROPERTYNAME].toList();
 
   auto userNameFindIt = properties.find(AppConstants::PROPERTYNAME_USERNAME);
   if (userNameFindIt != properties.end())
@@ -245,11 +284,16 @@ void MessageFeedsController::toolInitProperties(const QVariantMap& properties)
   if (m_dataListeners.isEmpty())
   {
     // parse and add data listeners on specified UDP ports
-    const auto messageFeedUdpPorts = properties[MessageFeedConstants::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME].toStringList();
-    for (const auto& udpPort : messageFeedUdpPorts)
+    const QVariantList messageFeedUdpPorts = properties[MESSAGE_FEED_UDP_PORTS_PROPERTYNAME].toList();
+    for (const QVariant& udpPortV : messageFeedUdpPorts)
     {
+      bool ok = false;
+      int udpPortI = udpPortV.toInt(&ok);
+      if (!ok)
+        continue;
+
       QUdpSocket* udpSocket = new QUdpSocket(this);
-      udpSocket->bind(udpPort.toInt(), QUdpSocket::DontShareAddress | QUdpSocket::ReuseAddressHint);
+      udpSocket->bind(udpPortI, QUdpSocket::DontShareAddress | QUdpSocket::ReuseAddressHint);
 
       addDataListener(new DataListener(udpSocket, this));
     }
@@ -259,25 +303,26 @@ void MessageFeedsController::toolInitProperties(const QVariantMap& properties)
   if (m_scene && m_messageFeeds->rowCount() == 0)
     setupFeeds();
 
-  const auto locationBroadcastConfig = properties[MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME].toMap();
-  if (locationBroadcastConfig.contains(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE) &&
-      locationBroadcastConfig.contains(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PORT))
+  const auto locationBroadcastConfig = properties[LOCATION_BROADCAST_CONFIG_PROPERTYNAME].toMap();
+  if (locationBroadcastConfig.contains(LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE) &&
+      locationBroadcastConfig.contains(LOCATION_BROADCAST_CONFIG_PORT))
   {
-    m_locationBroadcast->setMessageType(locationBroadcastConfig.value(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE).toString());
-    m_locationBroadcast->setUdpPort(locationBroadcastConfig.value(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PORT).toInt());
+    m_locationBroadcast->setMessageType(locationBroadcastConfig.value(LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE).toString());
+    m_locationBroadcast->setUdpPort(locationBroadcastConfig.value(LOCATION_BROADCAST_CONFIG_PORT).toInt());
   }
 }
 
 bool MessageFeedsController::shouldSetProperties(const QString& propertyName)
 {
   // list all property names that should cause the tool to re-initialize
+  using namespace MessageFeedConstants;
   static const std::unordered_set<QString> propertyNames
   {
     RESOURCE_DIRECTORY_PROPERTYNAME,
-    MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME,
+    MESSAGE_FEEDS_PROPERTYNAME,
     AppConstants::PROPERTYNAME_USERNAME,
-    MessageFeedConstants::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME,
-    MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME
+    MESSAGE_FEED_UDP_PORTS_PROPERTYNAME,
+    LOCATION_BROADCAST_CONFIG_PROPERTYNAME,
   };
 
   return setContainsString(propertyNames, propertyName);
@@ -385,91 +430,37 @@ void MessageFeedsController::setLocationBroadcastInDistress(bool inDistress)
   emit locationBroadcastInDistressChanged();
 }
 
-SurfacePlacement MessageFeedsController::toSurfacePlacement(const QString& surfacePlacement)
+MessageFeed* MessageFeedsController::selectedFeed()
 {
-  if (surfacePlacement.compare("relative", Qt::CaseInsensitive) == 0)
-    return SurfacePlacement::Relative;
-
-  if (surfacePlacement.compare("absolute", Qt::CaseInsensitive) == 0)
-    return SurfacePlacement::Absolute;
-
-  return SurfacePlacement::DrapedBillboarded; // default
+  return m_messageFeeds->at(m_selectedFeedIndex);
 }
 
-/*!
-  \internal
-  \brief Creates and returns a renderer from the provided \a rendererInfo with an optional \a parent.
-
-  The \a rendererInfo parameter can be the symbol specification type (i.e. "mil2525c" or "mil2525d") or
-  it can be the name of an image file located in:
-
-  \list
-    \li the ":/Resources/icons/xhdpi/message" path, such
-    as ":/Resources/icons/xhdpi/message/observation1600.png".
-    \li an "icons" sub-directory under the \l resourcePath directory
-  \endlist
- */
-Renderer* MessageFeedsController::createRenderer(const QString& rendererInfo, QObject* parent) const
+int MessageFeedsController::selectedFeedIndex() const
 {
-  // hold mil2525 symbol styles as statics to be shared by multiple renderers if needed
-  static DictionarySymbolStyle* dictionarySymbolStyleMil2525c = nullptr;
-  static DictionarySymbolStyle* dictionarySymbolStyleMil2525d = nullptr;
-
-  if (rendererInfo.compare("mil2525c", Qt::CaseInsensitive) == 0)
-  {
-    if (!dictionarySymbolStyleMil2525c)
-    {
-      const auto stylePath = m_resourcePath + "/styles/arcade/mil2525c.stylx";
-      if (!QFileInfo::exists(stylePath))
-      {
-        emit const_cast<MessageFeedsController*>(this)->toolErrorOccurred(QStringLiteral("mil2525c.stylx not found"), QString("Could not find %1").arg(stylePath));
-        return nullptr;
-      }
-
-      dictionarySymbolStyleMil2525c = DictionarySymbolStyle::createFromFile(stylePath, parent);
-    }
-
-    return new DictionaryRenderer(dictionarySymbolStyleMil2525c, parent);
-  }
-  else if (rendererInfo.compare("mil2525d", Qt::CaseInsensitive) == 0)
-  {
-    if (!dictionarySymbolStyleMil2525d)
-    {
-      const auto stylePath = m_resourcePath + "/styles/arcade/mil2525d.stylx";
-      if (!QFileInfo::exists(stylePath))
-      {
-        emit const_cast<MessageFeedsController*>(this)->toolErrorOccurred(QStringLiteral("mil2525d.stylx not found"), QString("Could not find %1").arg(stylePath));
-        return nullptr;
-      }
-
-      dictionarySymbolStyleMil2525d = DictionarySymbolStyle::createFromFile(stylePath, parent);
-    }
-
-    return new DictionaryRenderer(dictionarySymbolStyleMil2525d, parent);
-  }
-
-  // else default to simple renderer with picture marker symbol
-  PictureMarkerSymbol* symbol = nullptr;
-  const QString qrcFile = QString(":/Resources/icons/xhdpi/message/%1").arg(rendererInfo);
-
-  if (QFile::exists(qrcFile))
-  {
-    symbol = new PictureMarkerSymbol(QImage(qrcFile), parent);
-  }
-  else
-  {
-    const QString dataFile = m_resourcePath + QString("/icons/%1").arg(rendererInfo);
-    if (QFile::exists(dataFile))
-      symbol = new PictureMarkerSymbol(QImage(dataFile), parent);
-  }
-
-  if (symbol == nullptr)
-    return nullptr;
-
-  symbol->setWidth(40.0f);
-  symbol->setHeight(40.0f);
-  return new SimpleRenderer(symbol, parent);
+  return m_selectedFeedIndex;
 }
+
+void MessageFeedsController::setSelectedFeedIndex(int index)
+{
+  if (m_selectedFeedIndex == index)
+    return;
+
+  clearSearchResults();
+
+  // default to the unselected state and try to get the element at the provided index
+  m_selectedFeedIndex = -1;
+  const MessageFeed* mf = m_messageFeeds->at(index);
+  if (mf)
+    m_selectedFeedIndex = index;
+
+  emit selectedFeedChanged();
+}
+
+void MessageFeedsController::notifyPropertyChanged()
+{
+  emit propertyChanged(MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME, m_messageFeeds->toJsonArray());
+}
+
 
 // Properties:
 

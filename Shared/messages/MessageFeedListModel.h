@@ -17,8 +17,9 @@
 #ifndef MESSAGEFEEDLISTMODEL_H
 #define MESSAGEFEEDLISTMODEL_H
 
-// Qt headers
+// Qt
 #include <QAbstractListModel>
+#include <QJsonArray>
 
 namespace Dsa {
 
@@ -47,6 +48,8 @@ public:
   MessageFeed* at(int index) const;
 
   MessageFeed* messageFeedByType(const QString& type) const;
+
+  QJsonArray toJsonArray() const;
 
   void clear();
 

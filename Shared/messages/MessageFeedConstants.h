@@ -22,24 +22,42 @@
 
 namespace Dsa {
 
-class MessageData;
+namespace MessageFeedConstants {
+  inline static const QString OBSERVATION_REPORT_CONFIG_PROPERTYNAME = QStringLiteral("ObservationReportConfig");
+  inline static const QString OBSERVATION_REPORT_CONFIG_PORT         = QStringLiteral("port");
+  inline static const QString LOCATION_BROADCAST_CONFIG_PROPERTYNAME = QStringLiteral("LocationBroadcastConfig");
+  inline static const QString LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE = QStringLiteral("messageType");
+  inline static const QString LOCATION_BROADCAST_CONFIG_PORT         = QStringLiteral("port");
+  inline static const QString MESSAGE_FEEDS_PROPERTYNAME             = QStringLiteral("MessageFeeds");
+  inline static const QString MESSAGE_FEEDS_NAME                     = QStringLiteral("name");
+  inline static const QString MESSAGE_FEEDS_TYPE                     = QStringLiteral("type");
+  inline static const QString MESSAGE_FEEDS_RENDERER                 = QStringLiteral("renderer");
+  inline static const QString MESSAGE_FEEDS_THUMBNAIL                = QStringLiteral("thumbnail");
+  inline static const QString MESSAGE_FEEDS_PLACEMENT                = QStringLiteral("placement");
+  inline static const QString MESSAGE_FEEDS_OBSERVATIONS_SHOW        = QStringLiteral("observationsShow");
+  inline static const QString MESSAGE_FEEDS_OBSERVATIONS_COLOR       = QStringLiteral("observationsColor");
+  inline static const QString MESSAGE_FEEDS_OBSERVATIONS_SIZE        = QStringLiteral("observationsSize");
+  inline static const QString MESSAGE_FEEDS_OBSERVATIONS_MAXIMUM     = QStringLiteral("observationsMaximum");
+  inline static const QString MESSAGE_FEEDS_TRACK_LINE_SHOW          = QStringLiteral("trackLineShow");
+  inline static const QString MESSAGE_FEEDS_TRACK_LINE_COLOR         = QStringLiteral("trackLineColor");
+  inline static const QString MESSAGE_FEEDS_TRACK_LINE_SIZE          = QStringLiteral("trackLineSize");
+  inline static const QString MESSAGE_FEED_UDP_PORTS_PROPERTYNAME    = QStringLiteral("MessageFeedUdpPorts");
 
-class MessageFeedConstants
-{
-public:
-  static const QString OBSERVATION_REPORT_CONFIG_PROPERTYNAME;
-  static const QString OBSERVATION_REPORT_CONFIG_PORT;
-  static const QString LOCATION_BROADCAST_CONFIG_PROPERTYNAME;
-  static const QString LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE;
-  static const QString LOCATION_BROADCAST_CONFIG_PORT;
-  static const QString MESSAGE_FEEDS_PROPERTYNAME;
-  static const QString MESSAGE_FEEDS_NAME;
-  static const QString MESSAGE_FEEDS_TYPE;
-  static const QString MESSAGE_FEEDS_RENDERER;
-  static const QString MESSAGE_FEEDS_THUMBNAIL;
-  static const QString MESSAGE_FEEDS_PLACEMENT;
-  static const QString MESSAGE_FEED_UDP_PORTS_PROPERTYNAME;
-};
+  inline static const QString MESSAGE_FEEDS_PLACEMENT_DEFAULT = QStringLiteral("draped");
+
+  inline static const QString MESSAGE_FEEDS_TRACK_DISPLAY_COLOR_DEFAULT = QStringLiteral("#377eb8"); // blue
+  inline static const QStringList MESSAGE_FEEDS_TRACK_DISPLAY_COLORS{
+    QStringLiteral("#e41a1c"), // red
+    MESSAGE_FEEDS_TRACK_DISPLAY_COLOR_DEFAULT,
+    QStringLiteral("#4daf4a"), // green
+    QStringLiteral("#984ea3"), // purple
+    QStringLiteral("#ff7f00"), // orange
+    QStringLiteral("#ffff33"), // yellow
+    QStringLiteral("#a65628"), // brown
+    QStringLiteral("#f781bf"), // pink
+    QStringLiteral("#999999"), // gray
+  };
+} // MessageFeedConstants
 
 } // Dsa
 

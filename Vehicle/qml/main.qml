@@ -222,16 +222,6 @@ Vehicle {
                 opacity: hudOpacity
                 radius: hudRadius
             }
-
-            onVisibleChanged: {
-                if (!visible)
-                    return;
-
-                if (mapToolRow.state !== "Convert XY") {
-                    mapToolRow.state = "Convert XY";
-                    categoryToolbar.state = "map";
-                }
-            }
         }
 
         MapContextMenu {
@@ -252,6 +242,21 @@ Vehicle {
             onAboutClicked: aboutTool.visible = true;
         }
 
+        MessageFeeds {
+            id: messageFeedsTool
+            anchors {
+                right: parent.right
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+            isMobile: false
+            onClosed: {
+                mapToolRow.reset();
+            }
+        }
+
         TableOfContents {
             id: tableOfContentsTool
             anchors {
@@ -263,9 +268,49 @@ Vehicle {
             visible: false
             isMobile: false
             onClosed: {
-                mapToolRow.tocIconSelected = false;
-                visible = false;
-                mapToolRow.state = "clear";
+                mapToolRow.reset();
+            }
+        }
+
+        AddLocalData {
+            id: addLocalDataTool
+            anchors {
+                right: parent.right
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+            onClosed: {
+                mapToolRow.reset();
+            }
+        }
+
+        BasemapPicker {
+            id: basemapsTool
+            anchors {
+                right: parent.right
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+            onClosed: {
+                mapToolRow.reset();
+            }
+        }
+
+        OpenSceneTool {
+            id: openSceneTool
+            anchors {
+                right: parent.right
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+            onClosed: {
+                mapToolRow.reset();
             }
         }
 
@@ -445,7 +490,7 @@ Vehicle {
 
             onClosed: {
                 // update state for each category
-                mapToolRow.state = "clear";
+                mapToolRow.reset();
                 alertToolRow.state = "clear";
                 viewshedTool.state = "clear";
                 reportToolRow.state = "clear";
@@ -459,34 +504,6 @@ Vehicle {
 
                 states: [
                     State {
-                        name: "basemap"
-                        PropertyChanges {
-                            target: basemapsTool
-                            visible: true
-                        }
-                    },
-                    State {
-                        name: "data"
-                        PropertyChanges {
-                            target: addLocalDataTool
-                            visible: true
-                        }
-                    },
-                    State {
-                        name: "message"
-                        PropertyChanges {
-                            target: messageFeedsTool
-                            visible: true
-                        }
-                    },
-                    State {
-                        name: "open scene"
-                        PropertyChanges {
-                            target: openSceneTool
-                            visible: true
-                        }
-                    },
-                    State {
                         name: "add configuration"
                         PropertyChanges {
                             target: addConfigurationTool
@@ -494,38 +511,6 @@ Vehicle {
                         }
                     }
                 ]
-
-                OpenSceneTool {
-                    id: openSceneTool
-                    anchors.fill: parent
-                    onSceneSelected: closed();
-                    visible: false
-                    onClosed: drawer.close();
-                    onResetToDefaultSelected: resetToDefaultScene();
-                }
-
-                BasemapPicker {
-                    id: basemapsTool
-                    anchors.fill: parent
-                    onBasemapSelected: closed();
-                    visible: false
-                    onClosed: drawer.close();
-                }
-
-                AddLocalData {
-                    id: addLocalDataTool
-                    anchors.fill: parent
-                    showDataConnectionPane: true
-                    visible: false
-                    onClosed: drawer.close();
-                }
-
-                MessageFeeds {
-                    id: messageFeedsTool
-                    anchors.fill: parent
-                    visible: false
-                    onClosed: drawer.close();
-                }
 
                 AddConfigurationTool {
                     id: addConfigurationTool
@@ -545,15 +530,6 @@ Vehicle {
 
     IdentifyController {
         id: identifyController
-        active: mapToolRow.state === "Identify"
-
-        onActiveChanged: {
-            if (!active)
-            {
-                identifyResults.dismiss();
-                mapToolRow.state = "clear";
-            }
-        }
 
         onPopupChanged: {
             if (popup) {

@@ -18,6 +18,7 @@
 #include "pch.hpp"
 
 #include "DsaResources.h"
+#include "MessageFeedConstants.h"
 
 #include <QUrl>
 
@@ -52,6 +53,11 @@ void DsaResources::setArcGISMapsSDKVersion(const char* arcGISMapsSDKVersion)
 {
   m_arcGISMapsSDKVersion = QString(arcGISMapsSDKVersion);
   emit arcGISMapsSDKVersionChanged();
+}
+
+QStringList DsaResources::trackDisplayColors()
+{
+  return MessageFeedConstants::MESSAGE_FEEDS_TRACK_DISPLAY_COLORS;
 }
 
 /*!

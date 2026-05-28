@@ -457,9 +457,9 @@ Test case 3:
 - Select `Friendly Tracks - Land` from the message feed type dropdown.
 - Search track by entering `war`.
   - [ ] The results appear and those feeds are highlighted.
-- Select one feed from the results.
-  - [ ] The map zoomed into the feed.
-  - [ ] Context menu appears for the feed.
+- Select one result from the list
+  - [ ] The map zoomed into the latest observation of the track.
+  - [ ] Context menu appears for the latest observation of the track.
 - Test the [Context menu](#context-menu) options 
 
 # 5. Observation Reports

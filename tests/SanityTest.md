@@ -447,7 +447,7 @@ Test case 3:
 
 **Test 2: Dynamic Popup**
 
-- Open the context menu from a message feed.
+- Open the context menu from the latest observation of a message feed.
 - Click on `Identify`
   - [ ] The timestamp in the popup is updating.
 

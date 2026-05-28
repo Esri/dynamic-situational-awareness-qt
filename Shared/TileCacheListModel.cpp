@@ -24,6 +24,7 @@
 #include "TileCache.h"
 
 // Qt headers
+#include <QDir>
 #include <QFileInfo>
 #include <QTemporaryFile>
 #include <QUrl>
@@ -109,7 +110,7 @@ bool TileCacheListModel::append(const QString& pathToTileCache)
     if (image.isNull())
       return;
 
-    QTemporaryFile* tempImgFile = new QTemporaryFile("TileCacheXXXXXX.png", tileCache);
+    QTemporaryFile* tempImgFile = new QTemporaryFile(QDir::temp().filePath("TileCacheXXXXXX.png"), tileCache);
     if (!tempImgFile->open())
       return;
 

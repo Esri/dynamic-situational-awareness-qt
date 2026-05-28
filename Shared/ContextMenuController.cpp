@@ -102,9 +102,6 @@ ContextMenuController::ContextMenuController(QObject* parent /* = nullptr */):
                                                  [this](const QString& entityId, MessageFeed* messageFeed)
     {
       clearOptions();
-      for (const auto& geoElements : std::as_const(m_contextGeoElements))
-        qDeleteAll(geoElements);
-      m_contextGeoElements.clear();
 
       GeoView* geoView = ToolResourceProvider::instance()->geoView();
       if (!geoView)
@@ -184,9 +181,6 @@ void ContextMenuController::onMousePressedAndHeld(QMouseEvent& event)
     return;
 
   clearOptions();
-  for (const auto& geoElements : std::as_const(m_contextGeoElements))
-    qDeleteAll(geoElements);
-  m_contextGeoElements.clear();
 
   GeoView* geoView = ToolResourceProvider::instance()->geoView();
   if (!geoView)
@@ -279,7 +273,25 @@ void ContextMenuController::addOption(const QString& option)
  */
 void ContextMenuController::clearOptions()
 {
-  m_options->setStringList(QStringList());
+  m_options->setStringList(QStringList{});
+
+  for (const auto& geoElements : std::as_const(m_contextGeoElements))
+  {
+    if (geoElements.empty())
+      continue;
+
+    // DynamicEntity and DynamicEntityObservation objects should not be deleted
+    // They are owned by their MessageFeed
+    const GeoElement* ge = geoElements.first();
+    if (const auto* de = dynamic_cast<const DynamicEntity*>(ge); de)
+      continue;
+
+    if (const auto* deo = dynamic_cast<const DynamicEntityObservation*>(ge); deo)
+      continue;
+
+    qDeleteAll(geoElements);
+  }
+  m_contextGeoElements.clear();
 }
 
 /*!

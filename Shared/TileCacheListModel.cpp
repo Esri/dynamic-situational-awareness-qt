@@ -110,7 +110,7 @@ bool TileCacheListModel::append(const QString& pathToTileCache)
     if (image.isNull())
       return;
 
-    QTemporaryFile* tempImgFile = new QTemporaryFile(QDir::temp().filePath("TileCacheXXXXXX.png"), tileCache);
+    QTemporaryFile* tempImgFile = new QTemporaryFile(QDir::temp().filePath(QStringLiteral("TileCacheXXXXXX.png")), tileCache);
     if (!tempImgFile->open())
       return;
 

@@ -275,21 +275,24 @@ void ContextMenuController::clearOptions()
 {
   m_options->setStringList(QStringList{});
 
-  for (const auto& geoElements : std::as_const(m_contextGeoElements))
+  for (const QList<GeoElement*>& geoElements : std::as_const(m_contextGeoElements))
   {
     if (geoElements.empty())
       continue;
 
-    // DynamicEntity and DynamicEntityObservation objects should not be deleted
-    // They are owned by their MessageFeed
-    const GeoElement* ge = geoElements.first();
-    if (const auto* de = dynamic_cast<const DynamicEntity*>(ge); de)
-      continue;
+    for (GeoElement* ge : geoElements)
+    {
+      if (!ge)
+        continue;
 
-    if (const auto* deo = dynamic_cast<const DynamicEntityObservation*>(ge); deo)
-      continue;
-
-    qDeleteAll(geoElements);
+      // anything that was previously identified from the view
+      // that is owned by the controller should be deleted
+      if (QObject* o = GeoElementUtils::toQObject(ge); o)
+      {
+        if (o->parent() == this)
+          o->deleteLater();
+      }
+    }
   }
   m_contextGeoElements.clear();
 }
@@ -363,14 +366,14 @@ void ContextMenuController::invokeIdentifyOnGeoView()
   auto idenfityLayers = geoView->identifyLayersAsync(m_contextScreenPosition, 5.0, false, -1, this);
   auto identifyGraphicsOverlays = geoView->identifyGraphicsOverlaysAsync(m_contextScreenPosition, 5.0, false, -1, this);
 
-  QtFuture::whenAll(idenfityLayers, identifyGraphicsOverlays).then(this, [this](const QList<IdentifyResultsVariant::FutureType> &identifyResults)
+  QtFuture::whenAll(idenfityLayers, identifyGraphicsOverlays).then(this, [this](const QList<IdentifyResultsVariant::FutureType>& identifyResults)
   {
     for (const IdentifyResultsVariant::FutureType& identifyResult : identifyResults)
     {
       if (identifyResult.index() == IdentifyResultsVariant::Types::LAYERS)
       {
-        LayerResultsManager resultsManager(std::get<IdentifyResultsVariant::Types::LAYERS>(identifyResult).result());
-        for (IdentifyLayerResult* result : std::as_const(resultsManager.m_results))
+        const QList<Esri::ArcGISRuntime::IdentifyLayerResult*> results = std::get<IdentifyResultsVariant::Types::LAYERS>(identifyResult).result();
+        for (IdentifyLayerResult* result : results)
         {
           if (!result)
             continue;
@@ -379,34 +382,42 @@ void ContextMenuController::invokeIdentifyOnGeoView()
           if (geoElementsAll.isEmpty())
             continue;
 
+          QList<GeoElement*> geoElementsToOwn{};
           QList<GeoElement*> geoElements{};
-          std::for_each(std::begin(geoElementsAll), std::end(geoElementsAll), [&](GeoElement* ge)
+          for (GeoElement* ge : geoElementsAll)
           {
+            // any non-observations (Feature, etc) should be owned
             DynamicEntityObservation* deo = dynamic_cast<DynamicEntityObservation*>(ge);
             if (!deo)
             {
+              geoElementsToOwn.append(ge);
               geoElements.append(ge);
-              return;
+              continue;
             }
 
-            // add any observations that are not the latest to the list to be preserved
+            // observations other than the latest at the time of the click
+            // should also be owned
             DynamicEntity* de = deo->dynamicEntity();
             if (de->latestObservation()->observationId() != deo->observationId())
             {
+              geoElementsToOwn.append(deo);
               geoElements.append(deo);
-              return;
+              continue;
             }
 
-            // for latest observations, add the entity itself and mark the observation as deleted
+            // the remaining case is that the observation was itself the latest
+            // so we add the dynamic entity instead of the observation element
+            // and mark the observation as no longer needed
             geoElements.append(de);
             deo->deleteLater();
-          });
+          }
 
-          // set the GeoElements to be managed by the tool
-          GeoElementUtils::setParent(geoElements, this);
+          // set the observations and any other non-DynamicEntity GeoElements to be owned by the tool
+          GeoElementUtils::setParent(geoElementsToOwn, this);
 
           // add the geoElements to the context hash using the layer name as the key
           m_contextGeoElements.insert(result->layerContent()->name(), geoElements);
+          result->deleteLater();
         }
       }
       else if (identifyResult.index() == IdentifyResultsVariant::Types::GRAPHICS)
@@ -492,7 +503,12 @@ void ContextMenuController::selectOption(const QString& option)
     if (!identifyTool)
       return;
 
+    // transfer the geoelements to the identify controller which takes ownership of them
     identifyTool->showPopups(m_contextGeoElements);
+
+    // clear the list so that the elements will not be cleaned up by subsequent
+    // long presses on the geoview
+    m_contextGeoElements.clear();
   }
   else if (option == OPTION_VIEWSHED)
   {

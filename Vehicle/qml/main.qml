@@ -443,6 +443,7 @@ Vehicle {
 
                 closeCallback: () => {
                     identifyResultsContainer.visible = false;
+                    identifyController.clearPopups();
                 }
             }
 

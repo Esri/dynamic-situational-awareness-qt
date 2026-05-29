@@ -380,7 +380,10 @@ void ContextMenuController::invokeIdentifyOnGeoView()
 
           const QList<GeoElement*> geoElementsAll = result->geoElements();
           if (geoElementsAll.isEmpty())
+          {
+            result->deleteLater();
             continue;
+          }
 
           QList<GeoElement*> geoElementsToOwn{};
           QList<GeoElement*> geoElements{};

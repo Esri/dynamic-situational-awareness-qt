@@ -128,11 +128,10 @@ ContextMenuController::ContextMenuController(QObject* parent /* = nullptr */):
           QList<GeoElement*> geoElements{};
           std::for_each(std::cbegin(entities), std::cend(entities), [&](DynamicEntity* entity)
           {
-            geoElements.push_back(dynamic_cast<GeoElement*>(entity));
+            geoElements.push_back(entity);
           });
           geoView->setViewpointAsync(Viewpoint{geoElements.first()->geometry()}, 0.1f);
           setContextScreenPosition(QPoint{geoView->widthInPixels() / 2, geoView->heightInPixels() / 2});
-          GeoElementUtils::setParent(geoElements, this);
           m_contextGeoElements.insert(messageFeed->feedName(), geoElements);
           processGeoElements();
         }

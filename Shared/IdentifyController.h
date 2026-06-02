@@ -60,6 +60,7 @@ public:
   void showPopups(const QHash<QString, QList<Esri::ArcGISRuntime::GeoElement*>>& geoElementsByTitle);
   Q_INVOKABLE void nextPopup();
   Q_INVOKABLE void prevPopup();
+  Q_INVOKABLE void clearPopups();
 
 signals:
   void popupChanged();
@@ -72,7 +73,7 @@ private:
 
   double m_tolerance = 5.0;
   int m_currentPopupIndex = -1;
-  std::vector<std::unique_ptr<Esri::ArcGISRuntime::Popup>> m_popups;
+  std::vector<Esri::ArcGISRuntime::Popup*> m_popups;
 };
 
 // some shortcuts for working with multiple identify operation futures in a single 'QtFuture::whenAll' handler

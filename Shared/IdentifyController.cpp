@@ -34,6 +34,7 @@
 #include "PopupTypes.h"
 
 // DSA headers
+#include "GeoElementUtils.h"
 #include "ToolManager.h"
 
 
@@ -54,11 +55,12 @@ QString IdentifyController::toolName() const
   return QStringLiteral("identify");
 }
 
+/*!
+ * \brief Creates popups for the GeoElements and takes ownership of any non-DynamicEntities.
+ */
 void IdentifyController::showPopups(const QHash<QString, QList<GeoElement*>>& geoElementsByTitle)
 {
-  // reset the popups container properties
-  m_popups.clear();
-  m_currentPopupIndex = -1;
+  clearPopups();
 
   if (geoElementsByTitle.isEmpty())
   {
@@ -97,6 +99,16 @@ void IdentifyController::prevPopup()
   emit popupChanged();
 }
 
+void IdentifyController::clearPopups()
+{
+  for (Popup* popup : m_popups)
+    popup->deleteLater();
+
+  m_popups.clear();
+
+  m_currentPopupIndex = -1;
+}
+
 bool isObjectIdFieldName(QStringView fieldName)
 {
   static constexpr std::array<std::string_view, 3> oidFieldNames{
@@ -118,21 +130,28 @@ bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QStrin
   if (!geoElement->attributes() || geoElement->attributes()->isEmpty())
     return false;
 
-  bool isDynamicEntity = false;
-  if (const auto* de = dynamic_cast<DynamicEntity*>(geoElement); de)
-    isDynamicEntity = true;
+  // default popup title to the layer name
+  auto* newPopup = new Popup(geoElement, this);
+  newPopup->popupDefinition()->setTitle(popupTitle);
+  if (const auto* de = dynamic_cast<DynamicEntity*>(geoElement); !de)
+  {
+    // set any non-dynamic entity geoelements to be owned by their popup which are cleaned up
+    GeoElementUtils::toQObject(geoElement)->setParent(newPopup);
+  }
+  else
+  {
+    // don't change the parent but set unique label indicating the latest observation
+    newPopup->popupDefinition()->setTitle(QString{"%1<br>(Live Updates)"}.arg(popupTitle));
+  }
 
-  // create a new Popup from the geoElement
-  auto newPopup = std::make_unique<Popup>(geoElement);
-  newPopup->popupDefinition()->setTitle(isDynamicEntity ? QString{"%1<br>(Live Updates)"}.arg(popupTitle) : popupTitle);
-  const auto popupElements = newPopup->popupDefinition()->elements();
-  for (const auto popupElement : popupElements)
+  const QList<PopupElement*> popupElements = newPopup->popupDefinition()->elements();
+  for (const PopupElement* popupElement : popupElements)
   {
     if (popupElement->popupElementType() != PopupElementType::FieldsPopupElement)
       continue;
 
-    const auto* fieldsPE = static_cast<FieldsPopupElement*>(popupElement);
-    const auto* fields = fieldsPE->fields();
+    const auto* fieldsPE = static_cast<const FieldsPopupElement*>(popupElement);
+    const PopupFieldListModel* fields = fieldsPE->fields();
     for (PopupField* field : *fields)
     {
       // check any fields that are not editable for common ObjectID field names
@@ -140,13 +159,13 @@ bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QStrin
         continue;
 
       // set parent to Popup
-      auto popupFF = new PopupFieldFormat(dynamic_cast<QObject*>(newPopup.get()));
+      auto popupFF = new PopupFieldFormat(static_cast<QObject*>(newPopup));
       popupFF->setDecimalPlaces(2);
       popupFF->setUseThousandsSeparator(true);
       field->setFormat(popupFF);
     }
   }
-  m_popups.emplace_back(std::move(newPopup));
+  m_popups.push_back(newPopup);
 
   return true;
 }
@@ -166,7 +185,7 @@ Popup* IdentifyController::popup() const
   if (m_currentPopupIndex < 0 || m_currentPopupIndex >= static_cast<int>(m_popups.size()))
     return nullptr;
 
-  return m_popups.at(m_currentPopupIndex).get();
+  return m_popups.at(m_currentPopupIndex);
 }
 
 } // Dsa

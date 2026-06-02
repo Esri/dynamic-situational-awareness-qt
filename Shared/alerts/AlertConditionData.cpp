@@ -133,7 +133,10 @@ Point AlertConditionData::sourceLocation() const
  */
 void AlertConditionData::highlight(bool highlighted)
 {
-  source()->setSelected(highlighted);
+  if (!m_source)
+    return;
+
+  m_source->setSelected(highlighted);
 }
 
 /*!

@@ -310,6 +310,7 @@ Vehicle {
             width: drawer.width
             visible: false
             onResetToDefaultSelected: resetToDefaultScene();
+            onSceneSelected: closed();
             onClosed: {
                 mapToolRow.reset();
             }

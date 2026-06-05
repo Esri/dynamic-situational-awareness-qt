@@ -283,6 +283,7 @@ Handheld {
             }
             width: drawer.width
             visible: false
+            onBasemapSelected: closed();
             onClosed: {
                 mapToolRow.reset();
             }
@@ -297,6 +298,8 @@ Handheld {
             }
             width: drawer.width
             visible: false
+            onResetToDefaultSelected: resetToDefaultScene();
+            onSceneSelected: closed();
             onClosed: {
                 mapToolRow.reset();
             }

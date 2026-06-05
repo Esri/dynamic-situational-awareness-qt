@@ -283,6 +283,7 @@ Handheld {
             }
             width: drawer.width
             visible: false
+            onBasemapSelected: closed();
             onClosed: {
                 mapToolRow.reset();
             }

@@ -24,7 +24,8 @@ Sanity test list to perform on several platforms prior to release.
   - [ ] confirm that you see a list of all the .tpk files in the BasemapData folder (default is `ImageryMonterey` & `Topographic`)
   - [ ] confirm that the `Topographic` basemap is highlighted
 - select one of the tpks
-  - [ ] confirm that the tool closes and the basemap changes
+  - [ ] (HANDHELD) confirm the tool closes and the basemap has changed
+  - [ ] (VEHICLE) confirm the tool remains open and the basemap has changed
 - reopen the tool
   - [ ] The basemap that is highlighted should be the basemap that is displayed in the scene
 - click the close button (`X`)

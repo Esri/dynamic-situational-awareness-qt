@@ -297,6 +297,7 @@ Handheld {
             }
             width: drawer.width
             visible: false
+            onResetToDefaultSelected: resetToDefaultScene();
             onClosed: {
                 mapToolRow.reset();
             }

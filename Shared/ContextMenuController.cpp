@@ -331,7 +331,7 @@ void ContextMenuController::processGeoElements()
   addOption(OPTION_IDENTIFY);
 
   quint8 pointGeoElementCount = 0;
-  GeoElement* lastPointGeoElementFound = nullptr;
+  const GeoElement* lastPointGeoElementFound = nullptr;
   for (const QList<GeoElement*>& geoElements : std::as_const(m_contextGeoElements))
   {
     for (const GeoElement* geoElement : geoElements)
@@ -352,7 +352,7 @@ void ContextMenuController::processGeoElements()
 
   if (pointGeoElementCount == 1) // if we have exactly 1 point GeoElement and it is a DynamicEntity, we can follow it
   {
-    if (const auto* de = dynamic_cast<DynamicEntity*>(lastPointGeoElementFound); de)
+    if (const auto* de = dynamic_cast<const DynamicEntity*>(lastPointGeoElementFound); de)
       addOption(OPTION_FOLLOW);
   }
 

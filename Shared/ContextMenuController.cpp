@@ -331,12 +331,14 @@ void ContextMenuController::processGeoElements()
   addOption(OPTION_IDENTIFY);
 
   quint8 pointGeoElementCount = 0;
-  for (const auto& geoElements : std::as_const(m_contextGeoElements))
+  GeoElement* lastPointGeoElementFound = nullptr;
+  for (const QList<GeoElement*>& geoElements : std::as_const(m_contextGeoElements))
   {
-    for (const auto* geoElement : geoElements)
+    for (const GeoElement* geoElement : geoElements)
     {
       if (geoElement->geometry().geometryType() == GeometryType::Point)
       {
+        lastPointGeoElementFound = geoElement;
         if (++pointGeoElementCount > 1)
           break;
       }
@@ -348,8 +350,11 @@ void ContextMenuController::processGeoElements()
       break;
   }
 
-  if (pointGeoElementCount == 1) // if we have exactly 1 point graphic, we can follow it
-    addOption(OPTION_FOLLOW);
+  if (pointGeoElementCount == 1) // if we have exactly 1 point GeoElement and it is a DynamicEntity, we can follow it
+  {
+    if (const auto* de = dynamic_cast<DynamicEntity*>(lastPointGeoElementFound); de)
+      addOption(OPTION_FOLLOW);
+  }
 
   if (pointGeoElementCount > 0) // if we have at least 1 point geometry, we can perform LOS
     addOption(OPTION_LINE_OF_SIGHT);

@@ -226,6 +226,7 @@ Vehicle {
 
         MapContextMenu {
             id: contextMenu
+            onCoordinatesSelected: mapToolRow.selectCoordinateTool();
         }
 
         CategoryToolbarColumn {

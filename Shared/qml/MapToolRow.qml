@@ -29,6 +29,11 @@ Row {
         reset();
     }
 
+    function selectCoordinateTool() {
+        coordinateConversionIcon.selected = true;
+        coordinateConversion.visible = true;
+    }
+
     function reset() {
         messageFeedsTool.visible    = false;
         tableOfContentsTool.visible = false;

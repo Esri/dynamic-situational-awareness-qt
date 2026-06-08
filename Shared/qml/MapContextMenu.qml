@@ -54,8 +54,7 @@ Menu {
             separatorVisible: index !== contextMenuController.options.rowCount() - 1
             onTriggered: {
                 contextMenuController.selectOption(display);
-                if (display == "Coordinates")
-                {
+                if (display == "Coordinates") {
                     coordinatesSelected();
                 }
             }

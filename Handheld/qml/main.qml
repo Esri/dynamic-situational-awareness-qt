@@ -228,6 +228,7 @@ Handheld {
 
         MapContextMenu {
             id: contextMenu
+            onCoordinatesSelected: mapToolRow.selectCoordinateTool();
         }
 
         MessageFeeds {

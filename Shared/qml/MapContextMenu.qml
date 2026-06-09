@@ -24,6 +24,8 @@ Menu {
     id: contextMenu
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
 
+    signal coordinatesSelected();
+
     visible: contextMenuController.contextActive
     x: contextMenuController.contextScreenPosition.x
     y: contextMenuController.contextScreenPosition.y
@@ -52,6 +54,9 @@ Menu {
             separatorVisible: index !== contextMenuController.options.rowCount() - 1
             onTriggered: {
                 contextMenuController.selectOption(display);
+                if (display == "Coordinates") {
+                    coordinatesSelected();
+                }
             }
         }
     }

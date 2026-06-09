@@ -19,10 +19,28 @@
 
 // Qt headers
 #include <QString>
+#include <QUrl>
 
 namespace Dsa {
 
 namespace MessageFeedConstants {
+
+  inline static const QString MESSAGE_FEED_TYPE_CURSOR_ON_TARGET = QStringLiteral("cot");
+  inline static const QString MESSAGE_FEED_TYPE_EOD              = QStringLiteral("eod");
+  inline static const QString MESSAGE_FEED_TYPE_POSITION_REPORT  = QStringLiteral("position_report");
+  inline static const QString MESSAGE_FEED_TYPE_SENSOR_OBS       = QStringLiteral("sensor_obs");
+  inline static const QString MESSAGE_FEED_TYPE_SITREP           = QStringLiteral("sitrep");
+  inline static const QString MESSAGE_FEED_TYPE_SPOTREP          = QStringLiteral("spotrep");
+  inline static const QString MESSAGE_FEED_TYPE_URL_PATTERN = QStringLiteral(":/Resources/messages/schemas/%1.json");
+  inline static const std::unordered_map<QString, QString> MESSAGE_FEED_TYPE_SCHEMA_URLS{
+    { MESSAGE_FEED_TYPE_CURSOR_ON_TARGET, MESSAGE_FEED_TYPE_URL_PATTERN.arg(MESSAGE_FEED_TYPE_CURSOR_ON_TARGET) },
+    { MESSAGE_FEED_TYPE_EOD, MESSAGE_FEED_TYPE_URL_PATTERN.arg(MESSAGE_FEED_TYPE_EOD) },
+    { MESSAGE_FEED_TYPE_POSITION_REPORT, MESSAGE_FEED_TYPE_URL_PATTERN.arg(MESSAGE_FEED_TYPE_POSITION_REPORT) },
+    { MESSAGE_FEED_TYPE_SENSOR_OBS, MESSAGE_FEED_TYPE_URL_PATTERN.arg(MESSAGE_FEED_TYPE_SENSOR_OBS) },
+    { MESSAGE_FEED_TYPE_SITREP, MESSAGE_FEED_TYPE_URL_PATTERN.arg(MESSAGE_FEED_TYPE_SITREP) },
+    { MESSAGE_FEED_TYPE_SPOTREP, MESSAGE_FEED_TYPE_URL_PATTERN.arg(MESSAGE_FEED_TYPE_SPOTREP) },
+  };
+
   inline static const QString OBSERVATION_REPORT_CONFIG_PROPERTYNAME = QStringLiteral("ObservationReportConfig");
   inline static const QString OBSERVATION_REPORT_CONFIG_PORT         = QStringLiteral("port");
   inline static const QString LOCATION_BROADCAST_CONFIG_PROPERTYNAME = QStringLiteral("LocationBroadcastConfig");

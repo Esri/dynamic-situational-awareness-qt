@@ -69,5 +69,11 @@
         <file>icons/xhdpi/icon_open_scene.png</file>
         <file>icons/xhdpi/scenelayer.png</file>
         <file>icons/xhdpi/icon_browse.png</file>
+        <file>messages/schemas/cot.json</file>
+        <file>messages/schemas/eod.json</file>
+        <file>messages/schemas/position_report.json</file>
+        <file>messages/schemas/sensor_obs.json</file>
+        <file>messages/schemas/sitrep.json</file>
+        <file>messages/schemas/spotrep.json</file>
     </qresource>
 </RCC>

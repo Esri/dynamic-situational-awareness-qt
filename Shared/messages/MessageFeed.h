@@ -19,6 +19,7 @@
 
 // C++ API
 #include "DynamicEntityDataSource.h"
+#include "Field.h"
 // Qt
 #include <QHash>
 #include <QObject>
@@ -102,6 +103,8 @@ private:
   inline static Esri::ArcGISRuntime::DictionarySymbolStyle* s_dictionarySymbolStyleMil2525c = nullptr;
   inline static Esri::ArcGISRuntime::DictionarySymbolStyle* s_dictionarySymbolStyleMil2525d = nullptr;
 
+  void setFields(const QString& schemaUrl);
+
   Esri::ArcGISRuntime::Renderer* createRenderer();
   void setThumbnailUrl(const QUrl& thumbnailUrl);
   void setShowPreviousObservations(bool showPreviousObservations);
@@ -134,6 +137,7 @@ private:
   MessagesOverlay* m_messagesOverlay = nullptr;
   QUrl m_thumbnailUrl;
   QString m_resourcePath;
+  QList<Esri::ArcGISRuntime::Field> m_fields;
   QHash<quint64, Esri::ArcGISRuntime::DynamicEntity*> m_dynamicEntities;
   void checkEntityForSelectAction(Esri::ArcGISRuntime::DynamicEntity* dynamicEntity);
 };

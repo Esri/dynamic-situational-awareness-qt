@@ -1,0 +1,56 @@
+{
+  "name": "sensor_obs",
+  "version": "1.2",
+  "attribute_name_id": "_id",
+  "attribute_name_search": "uniquedesignation",
+  "attributes": [
+    {
+      "type": "string",
+      "name": "_type"
+    },
+    {
+      "type": "string",
+      "name": "_action"
+    },
+    {
+      "type": "string",
+      "name": "_id"
+    },
+    {
+      "type": "integer",
+      "name": "_wkid"
+    },
+    {
+      "type": "string",
+      "name": "_control_points"
+    },
+    {
+      "type": "string",
+      "name": "uniquedesignation"
+    },
+    {
+      "type": "byte",
+      "name": "rel_info"
+    },
+    {
+      "type": "string",
+      "name": "created_at"
+    },
+    {
+      "type": "string",
+      "name": "edited_at"
+    },
+    {
+      "type": "string",
+      "name": "created_by"
+    },
+    {
+      "type": "string",
+      "name": "edited_by"
+    },
+    {
+      "type": "integer",
+      "name": "prod_id"
+    }
+  ]
+}

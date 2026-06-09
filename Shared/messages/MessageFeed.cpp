@@ -49,6 +49,9 @@
 // Qt
 #include <QFile>
 #include <QFileInfo>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 // STD
 #include <algorithm>
 #include <iterator>
@@ -171,52 +174,84 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
 
 MessageFeed::~MessageFeed() = default;
 
+QString getSchemaUrlForMessageType(const QString& messageType)
+{
+  namespace MFC = MessageFeedConstants;
+  QString messageTypeFuzzy{messageType};
+  if (messageType.startsWith(MFC::MESSAGE_FEED_TYPE_POSITION_REPORT))
+  {
+    messageTypeFuzzy = MFC::MESSAGE_FEED_TYPE_POSITION_REPORT;
+  }
+
+  const std::unordered_map<QString, QString>& urls = MFC::MESSAGE_FEED_TYPE_SCHEMA_URLS;
+  if (urls.find(messageTypeFuzzy) != urls.end())
+  {
+    return urls.at(messageTypeFuzzy);
+  }
+
+  return QString{};
+}
+
+void MessageFeed::setFields(const QString& schemaUrl)
+{
+  if (schemaUrl.isEmpty() ||
+      !QFile::exists(schemaUrl))
+    return;
+
+  QFile file{schemaUrl};
+  if (!file.open(QFile::ReadOnly))
+    return;
+
+  QJsonParseError error;
+  const QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
+  file.close();
+  if (doc.isNull() ||
+      error.error != QJsonParseError::NoError)
+    return;
+
+  const QVariantMap properties = doc.object().toVariantMap();
+  m_searchAttributeName = properties["attribute_name_search"].toString();
+  m_entityIdAttributeName = properties["attribute_name_id"].toString();
+
+  const QJsonArray attributes = properties["attributes"].toJsonArray();
+  m_fields.reserve(attributes.size() + 1);
+  for (const auto attribute : attributes)
+  {
+    const QVariantMap attributeProperties = attribute.toObject().toVariantMap();
+    const QString attrType = attributeProperties["type"].toString();
+    const QString attrName = attributeProperties["name"].toString();
+    if (attrType.compare("string") == 0)
+      m_fields.push_back(Field::createText(attrName, attrName, 256));
+    else if (attrType.compare("integer") == 0)
+      m_fields.push_back(Field::createLongInt(attrName, attrName));
+    else if (attrType.compare("byte") == 0)
+      m_fields.push_back(Field::createShortInt(attrName, attrName));
+    else if (attrType.compare("short") == 0)
+      m_fields.push_back(Field::createShortInt(attrName, attrName));
+    else if (attrType.compare("float") == 0)
+      m_fields.push_back(Field::createFloat(attrName, attrName));
+    else
+    {
+      // clear any fields already added to trigger the assertion
+      m_fields.clear();
+      return;
+    }
+  }
+
+  m_fields.push_back(Field::createText(Message::SIDC_NAME, Message::SIDC_NAME, 256));
+
+  // set the flag for CoT for runtime message processing
+  m_isCoT = m_feedMessageType.compare(MessageFeedConstants::MESSAGE_FEED_TYPE_CURSOR_ON_TARGET) == 0;
+}
+
 QFuture<DynamicEntityDataSourceInfo*> MessageFeed::onLoadAsync()
 {
-  std::vector<QString> field_names{};
-  if (m_isCoT = feedMessageType().compare(QStringLiteral("cot"), Qt::CaseInsensitive) == 0; m_isCoT)
-  {
-    // set the entity id field
-    m_entityIdAttributeName = Message::COT_UID_NAME;
-    m_searchAttributeName = Message::COT_UID_NAME;
-
-    // set the fields
-    field_names.reserve(7);
-    field_names.emplace_back(Message::COT_TYPE_NAME);
-    field_names.emplace_back(Message::COT_POINT_NAME);
-    field_names.emplace_back(Message::COT_POINT_LAT_NAME);
-    field_names.emplace_back(Message::COT_POINT_LON_NAME);
-    field_names.emplace_back(Message::COT_POINT_HAE_NAME);
-  }
-  else
-  {
-    // set the entity id field
-    m_entityIdAttributeName = Message::GEOMESSAGE_ID_NAME;
-    m_searchAttributeName = Message::GEOMESSAGE_UNIQUE_DESIGNATION_NAME;
-
-    // set the fields
-    field_names.reserve(10);
-    field_names.emplace_back(Message::GEOMESSAGE_TYPE_NAME);
-    field_names.emplace_back(Message::GEOMESSAGE_ACTION_NAME);
-    field_names.emplace_back(Message::GEOMESSAGE_UNIQUE_DESIGNATION_NAME);
-    field_names.emplace_back(Message::GEOMESSAGE_WKID_NAME);
-    field_names.emplace_back(Message::GEOMESSAGE_SIC_NAME);
-    field_names.emplace_back(Message::GEOMESSAGE_CONTROL_POINTS_NAME);
-    field_names.emplace_back(Message::GEOMESSAGE_STATUS_911_NAME);
-    field_names.emplace_back(Message::GEOMESSAGE_ENVIRONMENT_NAME);
-  }
-  field_names.emplace_back(m_entityIdAttributeName);
-  field_names.emplace_back(Message::SIDC_NAME);
-
-  QList<Field> fields;
-  fields.reserve(field_names.size());
-  for (const QString& fn : field_names)
-  {
-    fields.emplace_back(FieldType::Text, fn, fn, 256, Domain{}, false, true);
-  }
+  QString schemaUrl = getSchemaUrlForMessageType(m_feedMessageType);
+  setFields(schemaUrl);
+  Q_ASSERT(!m_fields.isEmpty());
 
   // build the dynamic entity data source info from the fields and the entity id field name
-  auto* dynamicEntityDataSourceInfo = new DynamicEntityDataSourceInfo(m_entityIdAttributeName, fields, this);
+  auto* dynamicEntityDataSourceInfo = new DynamicEntityDataSourceInfo(m_entityIdAttributeName, m_fields, this);
   dynamicEntityDataSourceInfo->setSpatialReference(SpatialReference::wgs84());
 
   // listen for new entities

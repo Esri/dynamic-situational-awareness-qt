@@ -19,7 +19,7 @@
 
 #include "IdentifyController.h"
 
-// C++ API headers
+// C++ API
 #include "AttributeListModel.h"
 #include "DynamicEntity.h"
 #include "FieldsPopupElement.h"
@@ -28,15 +28,20 @@
 #include "Popup.h"
 #include "PopupDefinition.h"
 #include "PopupElement.h"
+#include "PopupExpression.h"
 #include "PopupField.h"
 #include "PopupFieldFormat.h"
 #include "PopupFieldListModel.h"
 #include "PopupTypes.h"
-
-// DSA headers
+// DSA
 #include "GeoElementUtils.h"
+#include "MessageFeedConstants.h"
 #include "ToolManager.h"
-
+// Qt
+#include <QFile>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 using namespace Esri::ArcGISRuntime;
 
@@ -109,6 +114,17 @@ void IdentifyController::clearPopups()
   m_currentPopupIndex = -1;
 }
 
+QString getPopupDefinitionUrlForMessageType(const QString& messageType)
+{
+  const std::unordered_map<QString, QString>& urls = MessageFeeds::Popups::SCHEMA_URLS;
+  if (urls.find(messageType) != urls.end())
+  {
+    return urls.at(messageType);
+  }
+
+  return QString{};
+}
+
 bool isObjectIdFieldName(QStringView fieldName)
 {
   static constexpr std::array<std::string_view, 3> oidFieldNames{
@@ -130,19 +146,32 @@ bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QStrin
   if (!geoElement->attributes() || geoElement->attributes()->isEmpty())
     return false;
 
+  // check for dynamic entities
+  if (const auto* de = dynamic_cast<DynamicEntity*>(geoElement); de)
+  {
+    Popup* newPopup = nullptr;
+    if (const QVariant geoElementTypeV = geoElement->attributes()->attributeValue(MessageFeeds::Fields::GeoMessage::TYPE); geoElementTypeV.isValid())
+    {
+      if (const QString popupDefinitionUrl = getPopupDefinitionUrlForMessageType(geoElementTypeV.toString()); !popupDefinitionUrl.isEmpty())
+      {
+        if (PopupDefinition* popupDefinition = getPopupDefinitionForUrl(popupDefinitionUrl); popupDefinition)
+          newPopup = new Popup(geoElement, popupDefinition, this);
+      }
+    }
+
+    // default popup to be used for CoT types currently
+    if (!newPopup)
+      newPopup = new Popup(geoElement, this);
+
+    newPopup->popupDefinition()->setTitle(QString{"%1<br>(Live Updates)"}.arg(popupTitle));
+    m_popups.push_back(newPopup);
+    return true;
+  }
+
   // default popup title to the layer name
   auto* newPopup = new Popup(geoElement, this);
   newPopup->popupDefinition()->setTitle(popupTitle);
-  if (const auto* de = dynamic_cast<DynamicEntity*>(geoElement); !de)
-  {
-    // set any non-dynamic entity geoelements to be owned by their popup which are cleaned up
-    GeoElementUtils::toQObject(geoElement)->setParent(newPopup);
-  }
-  else
-  {
-    // don't change the parent but set unique label indicating the latest observation
-    newPopup->popupDefinition()->setTitle(QString{"%1<br>(Live Updates)"}.arg(popupTitle));
-  }
+  GeoElementUtils::toQObject(geoElement)->setParent(newPopup);
 
   const QList<PopupElement*> popupElements = newPopup->popupDefinition()->elements();
   for (const PopupElement* popupElement : popupElements)
@@ -178,6 +207,65 @@ bool IdentifyController::canNext() const
 bool IdentifyController::canPrev() const
 {
   return m_currentPopupIndex > 0;
+}
+
+PopupDefinition* IdentifyController::getPopupDefinitionForUrl(const QString& url)
+{
+  if (m_popupDefinitions.find(url) == m_popupDefinitions.cend())
+  {
+    qDebug() << "creating popup def for" << url;
+    QFile fileGeoMessage{url};
+    fileGeoMessage.open(QFile::ReadOnly);
+
+    const QJsonObject popupInfo = QJsonDocument::fromJson(fileGeoMessage.readAll()).object()["popupInfo"].toObject();
+    fileGeoMessage.close();
+    QList<PopupElement*> popupElements{};
+    for (const QJsonValue& v : popupInfo["popupElements"].toArray())
+    {
+      QJsonObject o{v.toObject()};
+      PopupElement* pe = PopupElement::fromJson(QJsonDocument{o}.toJson(QJsonDocument::Compact));
+      popupElements.append(pe);
+    }
+    QList<PopupExpression*> expressionInfos{};
+    for (const QJsonValue& v : popupInfo["expressionInfos"].toArray())
+    {
+      QJsonObject o{v.toObject()};
+      auto* pe = new PopupExpression(this);
+      pe->setName(o["name"].toString());
+      pe->setTitle(o["title"].toString());
+      pe->setExpression(o["expression"].toString());
+      pe->setReturnType(PopupExpressionReturnType::String);
+      expressionInfos.append(pe);
+    }
+    QList<PopupField*> fieldInfos{};
+    for (const QJsonValue& v : popupInfo["fieldInfos"].toArray())
+    {
+      QJsonObject o{v.toObject()};
+      auto* pf = new PopupField(this);
+      pf->setFieldName(o["fieldName"].toString());
+      pf->setEditable(o["isEditable"].toBool());
+      pf->setLabel(o["label"].toString());
+      pf->setVisible(o["visible"].isBool());
+      if (pf->fieldName().compare(MessageFeeds::Fields::GeoMessage::STATUS_911, Qt::CaseSensitivity::CaseInsensitive))
+      {
+        QJsonObject f{o["format"].toObject()};
+        auto* pff = new PopupFieldFormat(this);
+        pff->setUseThousandsSeparator(f["digitSeparator"].toBool());
+        pff->setDecimalPlaces(f["places"].toInt());
+        pf->setFormat(pff);
+      }
+      fieldInfos.append(pf);
+    }
+    auto* pd = new PopupDefinition(this);
+    pd->setElements(popupElements);
+    pd->setDescription(popupInfo["description"].toString());
+    pd->setExpressions(expressionInfos);
+    pd->setFields(fieldInfos);
+    pd->setTitle(popupInfo["title"].toString());
+    m_popupDefinitions[url] = pd;
+  }
+
+  return m_popupDefinitions[url];
 }
 
 Popup* IdentifyController::popup() const

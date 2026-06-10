@@ -176,14 +176,13 @@ MessageFeed::~MessageFeed() = default;
 
 QString getSchemaUrlForMessageType(const QString& messageType)
 {
-  namespace MFC = MessageFeedConstants;
   QString messageTypeFuzzy{messageType};
-  if (messageType.startsWith(MFC::MESSAGE_FEED_TYPE_POSITION_REPORT))
+  if (messageType.startsWith(MessageFeeds::Types::POSITION_REPORT))
   {
-    messageTypeFuzzy = MFC::MESSAGE_FEED_TYPE_POSITION_REPORT;
+    messageTypeFuzzy = MessageFeeds::Types::POSITION_REPORT;
   }
 
-  const std::unordered_map<QString, QString>& urls = MFC::MESSAGE_FEED_TYPE_SCHEMA_URLS;
+  const std::unordered_map<QString, QString>& urls = MessageFeeds::Types::SCHEMA_URLS;
   if (urls.find(messageTypeFuzzy) != urls.end())
   {
     return urls.at(messageTypeFuzzy);
@@ -238,10 +237,10 @@ void MessageFeed::setFields(const QString& schemaUrl)
     }
   }
 
-  m_fields.push_back(Field::createText(Message::SIDC_NAME, Message::SIDC_NAME, 256));
+  m_fields.push_back(Field::createText(MessageFeeds::Fields::Common::SIDC, MessageFeeds::Fields::Common::SIDC, 256));
 
   // set the flag for CoT for runtime message processing
-  m_isCoT = m_feedMessageType.compare(MessageFeedConstants::MESSAGE_FEED_TYPE_CURSOR_ON_TARGET) == 0;
+  m_isCoT = m_feedMessageType.compare(MessageFeeds::Types::CURSOR_ON_TARGET) == 0;
 }
 
 QFuture<DynamicEntityDataSourceInfo*> MessageFeed::onLoadAsync()
@@ -741,7 +740,7 @@ void MessageFeed::checkEntityForSelectAction(DynamicEntity* dynamicEntity)
   // find the action attribute
   if (dynamicEntity)
   {
-    const auto actionValue = dynamicEntity->attributes()->attributesMap()[Message::GEOMESSAGE_ACTION_NAME].toString();
+    const auto actionValue = dynamicEntity->attributes()->attributesMap()[MessageFeeds::Fields::GeoMessage::ACTION].toString();
     static const QString selectValue = Message::fromMessageAction(Message::MessageAction::Select);
     static const QString unselectValue = Message::fromMessageAction(Message::MessageAction::Unselect);
     if (actionValue.compare(selectValue, Qt::CaseInsensitive) == 0)

@@ -286,18 +286,18 @@ void ObservationReportController::broadcastReport(const QString& size,
 
   Message observationReport = Message(Message::MessageAction::Update, m_controlPoint);
   observationReport.setMessageId(QUuid::createUuid().toString());
-  observationReport.setMessageType(QStringLiteral("spotrep"));
+  observationReport.setMessageType(MessageFeeds::Types::SPOTREP);
 
   QVariantMap attribs;
-  attribs.insert(QStringLiteral("_control_points"), controlPoint());
-  attribs.insert(QStringLiteral("datetimesubmitted"), QDateTime::currentDateTime().toString(Qt::ISODate));
-  attribs.insert(QStringLiteral("uniquedesignation"), m_observedBy);
-  attribs.insert(QStringLiteral("equipment"), equipment);
-  attribs.insert(QStringLiteral("activity"), activity);
-  attribs.insert(QStringLiteral("location"), locationDescription);
-  attribs.insert(QStringLiteral("size"), size);
-  attribs.insert(QStringLiteral("timeobserved"), observedTime.toString(Qt::ISODate));
-  attribs.insert(QStringLiteral("unit"), description);
+  attribs.insert(MessageFeeds::Fields::GeoMessage::CONTROL_POINTS, controlPoint());
+  attribs.insert(MessageFeeds::Fields::GeoMessage::DATETIME_SUBMITTED, QDateTime::currentDateTime().toString(Qt::ISODate));
+  attribs.insert(MessageFeeds::Fields::GeoMessage::UNIQUE_DESIGNATION, m_observedBy);
+  attribs.insert(MessageFeeds::Fields::GeoMessage::EQUIPMENT, equipment);
+  attribs.insert(MessageFeeds::Fields::GeoMessage::ACTIVITY, activity);
+  attribs.insert(MessageFeeds::Fields::GeoMessage::LOCATION, locationDescription);
+  attribs.insert(MessageFeeds::Fields::GeoMessage::SIZE, size);
+  attribs.insert(MessageFeeds::Fields::GeoMessage::TIME_OBSERVED, observedTime.toString(Qt::ISODate));
+  attribs.insert(MessageFeeds::Fields::GeoMessage::UNIT, description);
   observationReport.setAttributes(attribs);
 
   if (!m_dataSender)

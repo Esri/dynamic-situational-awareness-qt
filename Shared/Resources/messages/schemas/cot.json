@@ -14,10 +14,6 @@
     },
     {
       "type": "string",
-      "name": "point"
-    },
-    {
-      "type": "string",
       "name": "lat"
     },
     {

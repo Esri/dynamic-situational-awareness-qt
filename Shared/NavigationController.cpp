@@ -21,6 +21,7 @@
 
 // C++ API headers
 #include "Camera.h"
+#include "ErrorException.h"
 #include "GlobeCameraController.h"
 #include "OrbitGeoElementCameraController.h"
 #include "OrbitLocationCameraController.h"
@@ -287,6 +288,10 @@ void NavigationController::setRotationInternal()
  */
 void NavigationController::set2DInternal()
 {
+  static bool transitioningTo2D = false;
+  if (transitioningTo2D)
+    return;
+
   if (m_is3d)
   {
     // get the current camera
@@ -298,7 +303,17 @@ void NavigationController::set2DInternal()
     // rotate the camera using the delta pitch value
     const Camera newCamera = currentCamera.rotateAround(m_currentCenter, 0., -currentCamera.pitch(), 0.);
     // set the sceneview to the new camera
-    m_sceneView->setViewpointCameraAsync(newCamera, 2.0);
+    transitioningTo2D = true;
+    m_sceneView->setViewpointCameraAsync(newCamera, 2.0).then(this, [](bool)
+    {
+      transitioningTo2D = false;
+    }).onCanceled(this, []()
+    {
+      transitioningTo2D = false;
+    }).onFailed(this, [](const ErrorException&)
+    {
+      transitioningTo2D = false;
+    });
   }
 }
 

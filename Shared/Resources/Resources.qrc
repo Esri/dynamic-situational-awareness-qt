@@ -75,5 +75,10 @@
         <file>messages/schemas/sensor_obs.json</file>
         <file>messages/schemas/sitrep.json</file>
         <file>messages/schemas/spotrep.json</file>
+        <file>messages/popupDefinitions/eod.json</file>
+        <file>messages/popupDefinitions/position_report.json</file>
+        <file>messages/popupDefinitions/sensor_obs.json</file>
+        <file>messages/popupDefinitions/sitrep.json</file>
+        <file>messages/popupDefinitions/spotrep.json</file>
     </qresource>
 </RCC>

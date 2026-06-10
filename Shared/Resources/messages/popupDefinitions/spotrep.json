@@ -1,0 +1,66 @@
+{
+  "popupInfo": {
+    "popupElements": [
+      {
+        "type": "text",
+        "text": "<p><span style=\"font-size:18px;\"><span><strong>{uniquedesignation}</strong></span><strong>&nbsp;</strong></span>&nbsp;<br><span style=\"font-size:12px;\"><i><strong>Updated:</strong> <span>{expression/expr1}</span>&nbsp;</i></span></p><figure class=\"table\"><table style=\"border:1px solid hsl(0, 0%, 90%);\"><tbody><tr><td><strong>Coordinates:</strong></td><td>{_control_points}</td></tr></tbody></table></figure><p>&nbsp;</p><p><span style=\"font-size:12px;\"><i>Time Received: {expression/expr0}&nbsp;</i></span></p><p>&nbsp;</p>"
+      }
+    ],
+    "description": "<p><span style=\"font-size:18px;\"><span><strong>{uniquedesignation}</strong></span><strong>&nbsp;</strong></span>&nbsp;<br><span style=\"font-size:12px;\"><i><strong>Updated:</strong> <span>{expression/expr1}</span>&nbsp;</i></span></p><figure class=\"table\"><table style=\"border:1px solid hsl(0, 0%, 90%);\"><tbody><tr><td><strong>Coordinates:</strong></td><td>{_control_points}</td></tr></tbody></table></figure><p>&nbsp;</p><p><span style=\"font-size:12px;\"><i>Time Received: {expression/expr0}&nbsp;</i></span></p><p>&nbsp;</p>",
+    "expressionInfos": [
+      {
+        "name": "expr0",
+        "title": "Time Received",
+        "expression": "Text(Date(TimeReceived($feature)), 'ddd, MMM D, Y @ H:mm:ss ZZZZ')",
+        "returnType": "string"
+      },
+      {
+        "name": "expr1",
+        "title": "SYS_TIMESTAMP",
+        "expression": "Text(Date($feature.SYS_TIMESTAMP), 'ddd, MMM D, Y @ H:mm:ss ZZZZ')",
+        "returnType": "string"
+      }
+    ],
+    "fieldInfos": [
+      {
+        "fieldName": "sic",
+        "isEditable": true,
+        "label": "sic",
+        "visible": true
+      },
+      {
+        "fieldName": "status911",
+        "format": {
+          "digitSeparator": true,
+          "places": 0
+        },
+        "isEditable": true,
+        "label": "status911",
+        "visible": true
+      },
+      {
+        "fieldName": "uniquedesignation",
+        "isEditable": true,
+        "label": "uniquedesignation",
+        "visible": true
+      },
+      {
+        "fieldName": "_control_points",
+        "isEditable": true,
+        "label": "control points",
+        "visible": true
+      },
+      {
+        "fieldName": "expression/expr0",
+        "isEditable": true,
+        "visible": true
+      },
+      {
+        "fieldName": "expression/expr1",
+        "isEditable": true,
+        "visible": true
+      }
+    ],
+    "title": "GeoMessage Title"
+  }
+}

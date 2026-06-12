@@ -24,6 +24,7 @@ Item {
     id: reportDatePage
 
     property bool valid: controlPointTextField.length > 0
+                         || locationField.length + locationField.preeditText.length > 0
     property string instruction: "Location of observation"
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
 
@@ -38,7 +39,7 @@ Item {
     }
 
     function text() {
-        return "location:" + controlPointTextField.text;
+        return "location:" + (locationField.text + locationField.preeditText);
     }
 
     onVisibleChanged: {
@@ -109,10 +110,10 @@ Item {
         anchors {
             horizontalCenter: parent.horizontalCenter
             top: pickRow.bottom
+            bottom: clearButton.top
             margins: 16 * scaleFactor
         }
         width: parent.width * 0.75
-        height: parent.height * 0.50
         color: Material.foreground
         font {
             pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
@@ -157,8 +158,9 @@ Item {
     }
 
     Button {
+        id: clearButton
         anchors {
-            top : locationField.bottom
+            bottom: parent.bottom
             right: locationField.right
             margins: 4 * scaleFactor
         }

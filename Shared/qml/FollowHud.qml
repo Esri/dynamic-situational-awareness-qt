@@ -69,6 +69,14 @@ Item {
     height: backgroundRecatangle.height
     property alias radius: backgroundRecatangle.radius
 
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onClicked: mouse => mouse.accepted = true
+        onDoubleClicked: mouse => mouse.accepted = true
+        onWheel: wheel => wheel.accepted = true
+    }
+
     Rectangle {
         id: backgroundRecatangle
         anchors {

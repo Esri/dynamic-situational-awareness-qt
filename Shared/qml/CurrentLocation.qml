@@ -28,6 +28,14 @@ Item {
     property alias radius: backgroundRecatangle.radius
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
 
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onClicked: mouse => mouse.accepted = true
+        onDoubleClicked: mouse => mouse.accepted = true
+        onWheel: wheel => wheel.accepted = true
+    }
+
     // Declare Controller Class
     LocationTextController {
         id: locationTextController

@@ -31,6 +31,18 @@ DsaPanel {
     property bool  toolActive: toolController.active
     property bool readyToAdd: reportFrame.currentItem == reviewPage
     readonly property real wizardButtonsFactoredMargin: 4 * scaleFactor
+    readonly property real minimumReportFrameHeight: 220 * scaleFactor
+    readonly property real maxKeyboardOffset: Math.max(0,
+                                                       height
+                                                       - pageIndicator.y
+                                                       - pageIndicator.height
+                                                       - (8 * scaleFactor)
+                                                       - wizardButtonRow.height
+                                                       - (wizardButtonsFactoredMargin * 2)
+                                                       - minimumReportFrameHeight)
+    readonly property real keyboardOffset: isMobile && Qt.inputMethod.visible
+                                           ? Math.min(Qt.inputMethod.keyboardRectangle.height, maxKeyboardOffset)
+                                           : 0
 
     ObservationReportController {
         id: toolController
@@ -189,7 +201,7 @@ DsaPanel {
         anchors {
             bottom: parent.bottom
             horizontalCenter: parent.horizontalCenter
-            margins: wizardButtonsFactoredMargin * 2
+            bottomMargin: wizardButtonsFactoredMargin + keyboardOffset
         }
         Button {
             id: backButton

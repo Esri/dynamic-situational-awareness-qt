@@ -23,7 +23,7 @@ import Esri.ArcGISRuntime.OpenSourceApps.DSA
 Item {
     id: descriptionPage
 
-    property bool valid: descriptionField.length > 0
+    property bool valid: descriptionField.length + descriptionField.preeditText.length > 0
     property string instruction: "Description of who is performing activity"
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
 
@@ -37,7 +37,7 @@ Item {
     }
 
     function text() {
-        return "description:" + descriptionField.text;
+        return "description:" + descriptionField.text + descriptionField.preeditText;
     }
 
     onVisibleChanged: {
@@ -51,10 +51,10 @@ Item {
         anchors {
             horizontalCenter: parent.horizontalCenter
             top: parent.top
+            bottom: clearButton.top
             margins: 16 * scaleFactor
         }
         width: parent.width * 0.75
-        height: parent.height * 0.50
         color: Material.foreground
         font {
             pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
@@ -99,8 +99,9 @@ Item {
     }
 
     Button {
+        id: clearButton
         anchors {
-            top : descriptionField.bottom
+            bottom: parent.bottom
             right: descriptionField.right
             margins: 4 * scaleFactor
         }

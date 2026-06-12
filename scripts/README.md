@@ -6,6 +6,7 @@
 - QT_ROOT : Path to your Qt installation
 - ANDROID_NDK_ROOT : Path to your Android NDK
 - ANDROID_PLATFORM : Android API level (e.g., `android-34`)
+- ARC_GIS_SDK : Path to the sdk folder.
 
 
 2. Clone the Dynamic Situational Awareness (DSA) repository

@@ -39,7 +39,7 @@ Item {
     }
 
     function text() {
-        return "location:" + (locationField.text + locationField.preeditText);
+        return "location:" + controlPointTextField.text;
     }
 
     onVisibleChanged: {

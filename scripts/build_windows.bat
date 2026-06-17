@@ -13,7 +13,7 @@ if "%APP_NAME%"=="" (
 set "VCVARS_BAT=C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
 set "QT_BIN=C:\Qt6.8.2\6.8.2\msvc2022_64\bin"
 set "JOM_EXE=C:\Qt6.8.2\Tools\QtCreator\bin\jom\jom.exe"
-set "ARC_GIS_SDK=C:\Program Files\ArcGIS SDKs\Qt200.7.0"
+set "ARC_GIS_SDK=C:\Program Files\ArcGIS SDKs\Qt300.0.0"
 set "DEPLOY_DIR=C:\applications\DSA"
 
 :: =============================

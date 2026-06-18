@@ -316,6 +316,8 @@ void DsaController::resetToDefaultScene()
   if (!basemapTool)
     return;
 
+  writeInitialLocation(viewpointFromJson(defaultViewpoint()));
+
   // create scene
   Scene* newScene = new Scene(this);
   if (const auto initialViewpoint = readInitialLocation(); !initialViewpoint.isEmpty())

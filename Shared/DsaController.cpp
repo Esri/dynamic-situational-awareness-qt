@@ -492,7 +492,10 @@ void DsaController::writeDefaultMessageFeeds()
   m_dsaSettings[MESSAGE_FEEDS_PROPERTYNAME] = messageFeedsJson;
 
   QJsonObject locationBroadcastJson;
-  locationBroadcastJson.insert(LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE, QStringLiteral("position_report_land"));
+  // broadcast location should use the same message type as received position reports,
+  // but the feed type is `position_report_land`
+  //locationBroadcastJson.insert(LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE, QStringLiteral("position_report_land"));
+  locationBroadcastJson.insert(LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE, QStringLiteral("position_report"));
   locationBroadcastJson.insert(LOCATION_BROADCAST_CONFIG_PORT, 45679);
   m_dsaSettings[LOCATION_BROADCAST_CONFIG_PROPERTYNAME] = locationBroadcastJson;
 

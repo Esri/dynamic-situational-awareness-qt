@@ -1,66 +1,89 @@
-{
-  "popupInfo": {
+{"popupInfo": {
     "popupElements": [
-      {
-        "type": "text",
-        "text": "<p><span style=\"font-size:18px;\"><span><strong>{uniquedesignation}</strong></span><strong>&nbsp;</strong></span>&nbsp;<br><span style=\"font-size:12px;\"><i><strong>Updated:</strong> <span>{expression/expr1}</span>&nbsp;</i></span></p><figure class=\"table\"><table style=\"border:1px solid hsl(0, 0%, 90%);\"><tbody><tr><td><strong>Coordinates:</strong></td><td>{_control_points}</td></tr></tbody></table></figure><p>&nbsp;</p><p><span style=\"font-size:12px;\"><i>Time Received: {expression/expr0}&nbsp;</i></span></p><p>&nbsp;</p>"
-      }
-    ],
-    "description": "<p><span style=\"font-size:18px;\"><span><strong>{uniquedesignation}</strong></span><strong>&nbsp;</strong></span>&nbsp;<br><span style=\"font-size:12px;\"><i><strong>Updated:</strong> <span>{expression/expr1}</span>&nbsp;</i></span></p><figure class=\"table\"><table style=\"border:1px solid hsl(0, 0%, 90%);\"><tbody><tr><td><strong>Coordinates:</strong></td><td>{_control_points}</td></tr></tbody></table></figure><p>&nbsp;</p><p><span style=\"font-size:12px;\"><i>Time Received: {expression/expr0}&nbsp;</i></span></p><p>&nbsp;</p>",
-    "expressionInfos": [
-      {
-        "name": "expr0",
-        "title": "Time Received",
-        "expression": "Text(Date(TimeReceived($feature)), 'ddd, MMM D, Y @ H:mm:ss ZZZZ')",
-        "returnType": "string"
-      },
-      {
-        "name": "expr1",
-        "title": "SYS_TIMESTAMP",
-        "expression": "Text(Date($feature.SYS_TIMESTAMP), 'ddd, MMM D, Y @ H:mm:ss ZZZZ')",
-        "returnType": "string"
-      }
-    ],
-    "fieldInfos": [
-      {
-        "fieldName": "sic",
-        "isEditable": true,
-        "label": "sic",
-        "visible": true
-      },
-      {
-        "fieldName": "status911",
-        "format": {
-          "digitSeparator": true,
-          "places": 0
+        {
+            "type": "expression",
+            "expressionInfo": {
+                "title": "New expression",
+                "expression": "\nvar returnString= '<span style=\"font-size:12px;\"><i>Reporting unit:</i></span><br><span style=\"font-size:18px;color:#68C1F9\"><strong>{uniquedesignation}</strong></span><br><span style=\"font-size:12px;\"><i>Received: </i><b> {expression/expr1}</b></span>'\n\nreturn { type : 'text', text : returnString}",
+                "returnType": "dictionary"
+            }
         },
-        "isEditable": true,
-        "label": "status911",
-        "visible": true
-      },
-      {
-        "fieldName": "uniquedesignation",
-        "isEditable": true,
-        "label": "uniquedesignation",
-        "visible": true
-      },
-      {
-        "fieldName": "_control_points",
-        "isEditable": true,
-        "label": "control points",
-        "visible": true
-      },
-      {
-        "fieldName": "expression/expr0",
-        "isEditable": true,
-        "visible": true
-      },
-      {
-        "fieldName": "expression/expr1",
-        "isEditable": true,
-        "visible": true
-      }
+        {
+            "type": "fields",
+            "description": "",
+            "fieldInfos": [
+                {
+                    "fieldName": "owningunit",
+                    "isEditable": true,
+                    "label": "Owning Unit",
+                    "visible": true
+                },
+                {
+                    "fieldName": "staffcomment",
+                    "isEditable": true,
+                    "label": "Staff Comment",
+                    "visible": true
+                },
+                {
+                    "fieldName": "speed",
+                    "format": {
+                        "digitSeparator": true,
+                        "places": 0
+                    },
+                    "isEditable": true,
+                    "label": "Speed",
+                    "visible": true
+                },
+                {
+                    "fieldName": "status911",
+                    "format": {
+                        "digitSeparator": true,
+                        "places": 0
+                    },
+                    "isEditable": true,
+                    "label": "Alert Status",
+                    "visible": true
+                },
+                {
+                    "fieldName": "sic",
+                    "isEditable": true,
+                    "label": "SIDC (2525c)",
+                    "visible": true
+                },
+                {
+                    "fieldName": "_control_points",
+                    "format": {
+                        "digitSeparator": false,
+                        "places": 2
+                    },
+                    "isEditable": true,
+                    "label": "Coordinates",
+                    "visible": true
+                },
+                {
+                    "fieldName": "_id",
+                    "isEditable": true,
+                    "label": "Track ID",
+                    "visible": true
+                }
+            ],
+            "title": "Details:"
+        }
     ],
-    "title": "GeoMessage Title"
-  }
+    "expressionInfos": [
+        {
+            "name": "expr0",
+            "title": "Time Received",
+            "expression": "Text(Date(TimeReceived($feature)), 'ddd, MMM D, Y @ H:mm:ss ZZZZ')",
+            "returnType": "string"
+        },
+        {
+            "name": "expr1",
+            "title": "SYS_TIMESTAMP",
+            "expression": "Text(Date($feature.SYS_TIMESTAMP), 'ddd, MMM D, Y @ H:mm:ss ZZZZ')",
+            "returnType": "string"
+        }
+    ],
+    "title": ""
+}
 }

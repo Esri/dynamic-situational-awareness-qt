@@ -523,6 +523,8 @@ bool MessageFeed::addMessage(const Message& message)
       return false;
     }
 
+    // TODO: validate attributes? message.attributes() will most likely have more than the DEDS schema
+
     addObservation(geometry, message.attributes());
   }
 

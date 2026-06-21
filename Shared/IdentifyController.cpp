@@ -15,6 +15,7 @@
  ******************************************************************************/
 
 // PCH header
+#include "DynamicEntityObservation.h"
 #include "pch.hpp"
 
 #include "IdentifyController.h"
@@ -146,24 +147,62 @@ bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QStrin
   if (!geoElement->attributes() || geoElement->attributes()->isEmpty())
     return false;
 
-  // check for dynamic entities
-  if (const auto* de = dynamic_cast<DynamicEntity*>(geoElement); de)
+  // check for dynamic entities or observations
+  if (dynamic_cast<const DynamicEntity*>(geoElement) != nullptr ||   // if (const auto* de = dynamic_cast<DynamicEntity*>(geoElement); de)
+      dynamic_cast<const DynamicEntityObservation*>(geoElement) != nullptr)
   {
     Popup* newPopup = nullptr;
-    if (const QVariant geoElementTypeV = geoElement->attributes()->attributeValue(MessageFeeds::Fields::GeoMessage::TYPE); geoElementTypeV.isValid())
+    const QVariant geoElementTypeV = geoElement->attributes()->attributeValue(MessageFeeds::Fields::GeoMessage::TYPE);
+    if (geoElementTypeV.isValid())
     {
       if (const QString popupDefinitionUrl = getPopupDefinitionUrlForMessageType(geoElementTypeV.toString()); !popupDefinitionUrl.isEmpty())
       {
+        // TODO: When the same popupDefinition is used for a DE and a DEO,
+        //      the title is overwritten so they end up being the same for both popups
+        //      We need to be able to create two different popup definitions in m_popupDefinitions
+        //      for position_report (DE) and position_report (DEO)
         if (PopupDefinition* popupDefinition = getPopupDefinitionForUrl(popupDefinitionUrl); popupDefinition)
-          newPopup = new Popup(geoElement, popupDefinition, this);
+        {
+          //Dynamic Entities popup
+          if (const auto* de = dynamic_cast<DynamicEntity*>(geoElement); de)
+          {
+            newPopup = new Popup(geoElement, popupDefinition, this);
+            newPopup->popupDefinition()->setTitle(popupTitle);
+            if (geoElementTypeV == MessageFeeds::Types::POSITION_REPORT)    // subtitle for dynamic DEs, position_reports only
+              newPopup->popupDefinition()->setTitle(QString{"%1<br><i><font size=\"4\" color=\"#68C1F9\">live track info</i>"}.arg(popupTitle));
+          }
+          else  // Observations popup
+          {
+            newPopup = new Popup(geoElement, popupDefinition, this);
+            newPopup->popupDefinition()->setTitle(popupTitle);
+            // subtitle for static DEOs, position_reports only (removing for now, might not want it)
+            //if (geoElementTypeV == MessageFeeds::Types::POSITION_REPORT)
+              //newPopup->popupDefinition()->setTitle(QString{"%1<br><i><font size=\"4\">previous observation)</i></font>"}.arg(popupTitle));
+          }
+        }
       }
     }
 
-    // default popup to be used for CoT types currently
+    // CoT Popup
+    // TODO: can probably clean this up and add to the logic above
     if (!newPopup)
-      newPopup = new Popup(geoElement, this);
+    {
+      if (const QString popupDefinitionUrl = getPopupDefinitionUrlForMessageType(MessageFeeds::Types::CURSOR_ON_TARGET); !popupDefinitionUrl.isEmpty())
+      {
+        if (PopupDefinition* popupDefinition = getPopupDefinitionForUrl(popupDefinitionUrl); popupDefinition)
+        {
+          newPopup = new Popup(geoElement, popupDefinition, this);
+          newPopup->popupDefinition()->setTitle(popupTitle);
+        }
+      }
+    }
 
-    newPopup->popupDefinition()->setTitle(QString{"%1<br>(Live Updates)"}.arg(popupTitle));
+    // default popup just in case
+    if (!newPopup) {
+      newPopup = new Popup(geoElement, this);
+      newPopup->popupDefinition()->setTitle(popupTitle);
+    }
+
     m_popups.push_back(newPopup);
     return true;
   }
@@ -211,8 +250,10 @@ bool IdentifyController::canPrev() const
 
 PopupDefinition* IdentifyController::getPopupDefinitionForUrl(const QString& url)
 {
-  if (m_popupDefinitions.find(url) == m_popupDefinitions.cend())
-  {
+// commented out for now, to test different popup titles for DEs and DEOs
+// TODO: need to create different popup definitions for DE and DEO, based on the same url
+// if (m_popupDefinitions.find(url) == m_popupDefinitions.cend())
+//  {
     qDebug() << "creating popup def for" << url;
     QFile fileGeoMessage{url};
     fileGeoMessage.open(QFile::ReadOnly);
@@ -262,10 +303,11 @@ PopupDefinition* IdentifyController::getPopupDefinitionForUrl(const QString& url
     pd->setExpressions(expressionInfos);
     pd->setFields(fieldInfos);
     pd->setTitle(popupInfo["title"].toString());
-    m_popupDefinitions[url] = pd;
-  }
+ //   m_popupDefinitions[url] = pd;
+ // }
 
-  return m_popupDefinitions[url];
+//  return m_popupDefinitions[url];
+  return pd;
 }
 
 Popup* IdentifyController::popup() const

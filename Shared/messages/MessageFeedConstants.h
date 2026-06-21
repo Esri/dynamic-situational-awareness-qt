@@ -106,6 +106,10 @@ inline static const QString UID   = QStringLiteral("uid");
 inline static const QString LAT   = QStringLiteral("lat");
 inline static const QString LON   = QStringLiteral("lon");
 inline static const QString HAE   = QStringLiteral("hae");
+inline static const QString HOW   = QStringLiteral("how");
+inline static const QString TIME   = QStringLiteral("time");
+inline static const QString START   = QStringLiteral("start");
+inline static const QString STALE   = QStringLiteral("stale");
 }
 namespace Dsa::MessageFeeds::Fields::GeoMessage {
 inline static const QString TYPE               = QStringLiteral("_type");

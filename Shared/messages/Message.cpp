@@ -207,6 +207,16 @@ Message Message::createFromCoTMessage(const QByteArray& message)
         // assign the unique message id
         cotMessage.d->messageId = attrs.value(MessageFeeds::Fields::CoT::UID).toString();
         attributes.insert(MessageFeeds::Fields::CoT::UID, cotMessage.d->messageId);
+
+        // Add other CoT attributes
+        const auto time = attrs.value(MessageFeeds::Fields::CoT::TIME).toString();
+        const auto start = attrs.value(MessageFeeds::Fields::CoT::START).toString();
+        const auto stale = attrs.value(MessageFeeds::Fields::CoT::STALE).toString();
+        const auto how = attrs.value(MessageFeeds::Fields::CoT::HOW).toString();
+        attributes.insert(MessageFeeds::Fields::CoT::HOW, how);
+        attributes.insert(MessageFeeds::Fields::CoT::TIME, time);
+        attributes.insert(MessageFeeds::Fields::CoT::START, start);
+        attributes.insert(MessageFeeds::Fields::CoT::STALE, stale);
       }
 
       // before reading other element tags, make sure we are parsing a CoT element

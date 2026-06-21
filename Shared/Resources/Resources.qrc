@@ -80,5 +80,6 @@
         <file>messages/popupDefinitions/sensor_obs.json</file>
         <file>messages/popupDefinitions/sitrep.json</file>
         <file>messages/popupDefinitions/spotrep.json</file>
+        <file>messages/popupDefinitions/cot.json</file>
     </qresource>
 </RCC>

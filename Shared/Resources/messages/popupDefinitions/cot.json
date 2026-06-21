@@ -1,0 +1,124 @@
+{"popupInfo": {
+    "popupElements": [
+        {
+            "type": "expression",
+            "expressionInfo": {
+                "title": "New expression",
+                "expression": "\nvar returnString= '<span style=\"font-size:12px;\"><i>Received: </i><b> {expression/expr1}</b></span>'\n\nreturn { type : 'text', text : returnString}",
+                "returnType": "dictionary"
+            }
+        },
+        {
+            "type": "fields",
+            "description": "",
+            "fieldInfos": [
+                {
+                    "fieldName": "expression/exprTypeVals",
+                    "isEditable": true,
+                    "visible": true
+                },
+                {
+                    "fieldName": "type",
+                    "isEditable": true,
+                    "label": "Event type code",
+                    "visible": true
+                },
+                {
+                    "fieldName": "time",
+                    "isEditable": true,
+                    "label": "Time created",
+                    "visible": true
+                },
+                {
+                    "fieldName": "start",
+                    "isEditable": true,
+                    "label": "Event start time",
+                    "visible": true
+                },
+                {
+                    "fieldName": "stale",
+                     "isEditable": true,
+                    "label": "Event expiration time",
+                    "visible": true
+                },
+                {
+                    "fieldName": "how",
+                    "isEditable": true,
+                    "label": "How position was determined",
+                    "visible": true
+                },
+                {
+                    "fieldName": "lat",
+					"fieldFormat": {
+						"type": "number",
+						"maximumFractionDigits": 6,
+						"minimumFractionDigits": 2,
+						"useGrouping": "never"
+					},
+                    "format": {
+                        "digitSeparator": false,
+                        "places": 2
+                    },
+                    "isEditable": true,
+                    "label": "Latitude",
+                    "visible": true
+                },
+                {
+                    "fieldName": "lon",
+					"fieldFormat": {
+						"type": "number",
+						"maximumFractionDigits": 6,
+						"minimumFractionDigits": 2,
+						"useGrouping": "never"
+					},
+                    "format": {
+                        "digitSeparator": false,
+                        "places": 2
+                    },
+                    "isEditable": true,
+                    "label": "Longitude",
+                    "visible": true
+                },
+                {
+                    "fieldName": "hae",
+                    "format": {
+                        "digitSeparator": false,
+                        "places": 2
+                    },
+                    "isEditable": true,
+                    "label": "Height/altitude",
+                    "visible": true
+                },
+                {
+                    "fieldName": "uid",
+                    "isEditable": true,
+                    "label": "Track ID",
+                    "visible": true
+                }
+            ],
+            "title": "Details:"
+        }
+    ],
+    "expressionInfos": [
+        {
+            "name": "expr0",
+            "title": "Time Received",
+            "expression": "Text(Date(TimeReceived($feature)), 'ddd, MMM D, Y @ H:mm:ss ZZZZ')",
+            "returnType": "string"
+        },
+        {
+            "name": "expr1",
+            "title": "SYS_TIMESTAMP",
+            "expression": "Text(Date($feature.SYS_TIMESTAMP), 'ddd, MMM D, Y @ H:mm:ss ZZZZ')",
+            "returnType": "string"
+        },
+		{
+			"name": "exprTypeVals",
+			"title": "Event type",
+            "expression": "var affiliation = Decode(Mid($feature.type, 2, 1), 'p', 'Pending','u', 'Unknown', 'a', 'Assumed friend', 'f', 'Friend','n', 'Neutral', 's', 'Suspect','h', 'Hostile','j', 'Joker','k', 'Faker','o', 'None specified','x', 'Other','Other');\r\nvar battleDimension = Decode(Mid($feature.type, 4, 1), 'P', 'Space','A', 'Air','G', 'Ground',  'S', 'Sea surface', 'U', 'Sea subsurface', 'X', 'Other', 'Other');\r\nreturn \"<b><i>Affiliation: </i></b>\" + affiliation + TextFormatting.NewLine + \"<br><b><i>Battle Dimension: </i></b>\" + battleDimension;",
+			"returnType": "string"
+		}
+   ],
+    "title": ""
+}
+}

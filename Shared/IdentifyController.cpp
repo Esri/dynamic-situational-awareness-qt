@@ -234,7 +234,14 @@ PopupDefinition* IdentifyController::getPopupDefinitionForUrl(const QString& url
       pe->setName(o["name"].toString());
       pe->setTitle(o["title"].toString());
       pe->setExpression(o["expression"].toString());
+
+      const QString rt = o["returnType"].toString().toLower();
       pe->setReturnType(PopupExpressionReturnType::String);
+      if (rt.compare(QStringLiteral("number")))
+        pe->setReturnType(PopupExpressionReturnType::Number);
+      else if (rt.compare(QStringLiteral("dictionary")))
+        pe->setReturnType(PopupExpressionReturnType::Dictionary);
+
       expressionInfos.append(pe);
     }
     QList<PopupField*> fieldInfos{};
@@ -246,7 +253,7 @@ PopupDefinition* IdentifyController::getPopupDefinitionForUrl(const QString& url
       pf->setEditable(o["isEditable"].toBool());
       pf->setLabel(o["label"].toString());
       pf->setVisible(o["visible"].isBool());
-      if (pf->fieldName().compare(MessageFeeds::Fields::GeoMessage::STATUS_911, Qt::CaseSensitivity::CaseInsensitive))
+      if (o.contains("format"))
       {
         QJsonObject f{o["format"].toObject()};
         auto* pff = new PopupFieldFormat(this);

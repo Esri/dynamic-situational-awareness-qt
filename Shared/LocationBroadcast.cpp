@@ -357,6 +357,7 @@ void LocationBroadcast::broadcastLocation()
     m_message.setSymbolId(s_locationBroadcastSic);
 
     attribs.insert(MessageFeeds::Fields::GeoMessage::SIC, s_locationBroadcastSic);
+    attribs.insert(MessageFeeds::Fields::GeoMessage::ID, m_userName);
     attribs.insert(MessageFeeds::Fields::GeoMessage::UNIQUE_DESIGNATION, m_userName);
     const int status911 = m_inDistress ? 1 : 0;
     attribs.insert(MessageFeeds::Fields::GeoMessage::STATUS_911, status911);

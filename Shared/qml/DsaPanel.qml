@@ -53,10 +53,20 @@ Rectangle {
 
             Text {
                 id: titleText
-                anchors.centerIn: parent
+                anchors {
+                    left: parent.left
+                    right: closeButton.left
+                    verticalCenter: parent.verticalCenter
+                    leftMargin: 12 * scaleFactor
+                    rightMargin: 8 * scaleFactor
+                }
                 text: qsTr(title)
                 color: Material.foreground
                 font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
+                elide: Text.ElideRight
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                clip: true
             }
 
             Button {
@@ -67,7 +77,7 @@ Rectangle {
                     rightMargin: 8 * scaleFactor
                 }
 
-                width: 44 * scaleFactor
+                width: 36 * scaleFactor
                 height: width
 
                 background: Rectangle {

@@ -28,6 +28,17 @@ Rectangle {
     property bool readyToAdd: conditionFrame.currentItem == reviewPage
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
     readonly property real wizardButtonsFactoredMargin: 4 * scaleFactor
+    readonly property real minimumConditionFrameHeight: 220 * scaleFactor
+    readonly property real conditionFrameTopY: pageIndicator.y + pageIndicator.height + (8 * scaleFactor)
+    readonly property real wizardRowReservedHeight: wizardButtonRow.height + (wizardButtonsFactoredMargin * 2)
+    readonly property real maxKeyboardOffset: Math.max(0,
+                                                       height
+                                                       - conditionFrameTopY
+                                                       - wizardRowReservedHeight
+                                                       - minimumConditionFrameHeight)
+    readonly property real keyboardOffset: Qt.inputMethod.visible
+                                           ? Math.min(Qt.inputMethod.keyboardRectangle.height, maxKeyboardOffset)
+                                           : 0
 
     Text {
         id: titleRow
@@ -211,7 +222,7 @@ Rectangle {
         anchors {
             bottom: parent.bottom
             horizontalCenter: parent.horizontalCenter
-            margins: wizardButtonsFactoredMargin * 2
+            bottomMargin: wizardButtonsFactoredMargin + keyboardOffset
         }
         Button {
             id: backButton

@@ -23,14 +23,15 @@ import Esri.ArcGISRuntime.OpenSourceApps.DSA
 Item {
     id: namePage
 
-    property bool nameAlreadyInUse: toolController.conditionAlreadyAdded(newAlertName.text)
-    property bool valid: newAlertName.length > 0 && !nameAlreadyInUse
+    readonly property string currentAlertName: newAlertName.text + newAlertName.preeditText
+    property bool nameAlreadyInUse: toolController.conditionAlreadyAdded(currentAlertName)
+    property bool valid: currentAlertName.length > 0 && !nameAlreadyInUse
     property string instruction: "Set name"
     property alias conditionName: newAlertName.text
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
 
     function text() {
-        return " called " + newAlertName.text;
+        return " called " + currentAlertName;
     }
 
     function clear() {

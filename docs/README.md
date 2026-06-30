@@ -74,6 +74,7 @@ The navigation toolbar orients your view of the map. The tool appears vertically
 | ![](./images/dsa-icon-2d-32.png "Set 2D perspective") | Set viewpoint to 2D perspective (looking straight down) |
 | ![](./images/dsa-icon-gps-off-32.png "GPS toggle") | Show own location as a moving symbol on the map |
 | ![](./images/dsa-icon-rotate-mode-32.png "Rotate mode toggle") | Toggle map navigation control between panning and map rotation |
+| ![](./images/dsa-icon-grid-32.png "Grid") | Toggling on and off grids  |
 
 ![](./images/dsa-v-nav-demo.gif "Navigation tools reorienting the map")<br>*Navigation tools orienting the map*
 
@@ -98,6 +99,8 @@ The map's context menu appears when you long-press on the map. The menu varies d
 | `Line of sight` | [Show my line of sight to this track](#line-of-sight) |  | X | X |
 | `Observation`   | [Create observation report](#observation-report) | X | X | X |
 | `Viewshed`      | [Show viewshed from track](#viewshed)  | X | X | X |
+
+When you open `Identify` from the context menu on the latest observation in a message feed, the popup stays dynamic and the timestamp updates as new feed messages are received.
 
 ### Tool categories
 
@@ -166,6 +169,10 @@ The Convert X/Y tool accepts a location in any supported coordinate notation or 
 
 Feeds are streams of information broadcast over the network. When information is received over a feed, it is translated into something the app can use, like a map symbol in an overlay or an alert. The Feed tool controls which feeds are represented on your display. See more information in the section [Real-time feeds](#real-time-feeds).
 
+Track Display is available from the `Feeds` option in Map tools. Use it to configure how observations and track lines are shown for each message feed. See [Track display](#track-display) for more details. 
+
+Find is also available from the `Feeds` option in Map tools to locate specific feeds in active message feeds. See [Find](#find) for more details.
+
 ### Add data
 
 ![](./images/dsa-icon-add-data-32.png)
@@ -189,6 +196,7 @@ Specify the folders the app searches for local data using your [App configuratio
   - Digital Terrain Elevation Data (DTED)
   - [Mobile mosaic dataset]
   - MrSID
+  - PDF
 
 - [Shapefile] (SHP)
 - Scene layer package (SLPK)
@@ -246,6 +254,34 @@ DSA apps support several generic message feeds.
 - DSA serializes feeds as strings of XML, which are then converted into bytes. The bytes are broadcast as datagrams over a specific UDP port. DSA apps are configured to listen on the same UDP ports, so when incoming datagrams are received, the messages are deserialized and displayed on the map.
 - This app uses [DynamicEntities] to connect to and display message feeds in the app. [DynamicEntityLayer] is a core type added to the ArcGIS Native SDKs at version 200.1 to visualize real-time data from a [DynamicEntityDataSource].
 - Military symbols are displayed using a [dictionary renderer].
+
+### Dynamic entities
+
+#### Track display
+
+![](./images/dsa-track-display.png "Overlays")<br>*Track Display tool*
+
+The Track Display under `Feeds` in Map tools provides feed-specific control of how dynamic observations and track lines are visualized.
+
+- Select a feed from `Message Feeds` (for example, `Friendly Tracks - Air` or `Friendly Tracks - Land`) and apply display settings independently per feed.
+- Enable `Observations` to show incoming track observations for the selected feed.
+- Observation symbol size and color can be changed, and updates are reflected immediately on the map.
+- `Track Length Amount` controls how much recent track history is shown.
+- Enable `Track Line` to display a line representing track movement over time, with adjustable style options.
+- Set `Track Length Amount` to `All` to show the full available track history for the current session.
+- Observation and track-line display can be shown at the same time for both `Friendly Tracks - Air` and `Friendly Tracks - Land`, while preserving independent settings per feed.
+
+#### Find
+
+![](./images/dsa-find-feeds.png "Overlays")<br>*Find tool*
+
+The Find under `Feeds` in Map tools helps you quickly locate specific tracks from dynamic feeds.
+
+- Select a feed type (for example, `Friendly Tracks - Land`) from the message feed type dropdown.
+- Enter all or part of a message feed to search.
+- Matching results are listed and highlighted on the map.
+- Selecting a result zooms the map to the latest observation for that track and opens the context menu at that location.
+- From there, you can use the available [Map context menu](#map-context-menu) options for follow-up actions.
 
 ## Exploratory visual analysis
 
@@ -392,6 +428,29 @@ All DSA tools have a common interface and are exposed as controller classes (whi
 # Get the DSA apps
 
 For convenience, you can try out the DSA apps compiled for [Windows] and [Android], and the [local data] from ArcGIS Online. Please note that these compiled versions of the app are examples only, and should not be used in a production environment.
+
+## Run on Windows desktop
+
+There are two ways to run the app on a Windows desktop:
+
+### Option 1: Full screen (fixed window size)
+
+In Windows Explorer, double-click `DSA_Vehicle_Qt.exe` to launch the app in full screen.
+
+### Option 2: Window mode (resizable, can minimize, can maximize)
+
+1. Open Command Prompt in Administrator mode.
+2. Navigate to the app folder, for example:
+
+```bat
+cd C:\DSA\DSA_Vehicle\DSA_Vehicle
+```
+
+3. Run:
+
+```bat
+DSA_Vehicle_Qt.exe --normal window
+```
 
 # App configuration settings
 

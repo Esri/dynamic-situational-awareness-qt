@@ -2,7 +2,7 @@
 
 ## 3.0.0
 
-- Minimum ArcGIS Maps SDK for Qt version is 200.8
+- Minimum ArcGIS Maps SDK for Qt version is 300.0
 - Minimum Qt SDK version is 6.8.2
 - `Configurations` have been expanded to allow the use of custom zip files. Documentation has been updated with:
 	- requirements for creating a valid configuration zip file [readme.md](/docs/README.md#add-your-own-local-data)

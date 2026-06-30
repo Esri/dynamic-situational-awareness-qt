@@ -49,8 +49,8 @@ If you just want to grab the latest code and build the project, these are the qu
 
 ## Prerequisites
 
-* ArcGIS Maps SDK for Qt 200.6
-* Qt SDK 6.5.6 or higher
+* ArcGIS Maps SDK for Qt 300.0
+* Qt SDK 6.8.2 or higher
 * Qt Creator
 * [ArcGIS Maps SDK for Qt Toolkit](https://github.com/Esri/arcgis-maps-sdk-toolkit-qt.git)
 * For Windows: Microsoft Visual C++ Compiler 16.1.6
@@ -62,8 +62,11 @@ Set up the [ArcGIS Maps SDK for Qt Toolkit](https://github.com/Esri/arcgis-maps-
 
 ```
 # from the base of the repo
-git clone --branch 200.6.0.final https://github.com/Esri/arcgis-maps-sdk-toolkit-qt.git
+git clone --branch 300.0.0.4935 https://github.com/Esri/arcgis-maps-sdk-toolkit-qt.git
 ```
+
+You can also download Toolkit 300.0.0 directly from the release page:
+https://github.com/Esri/arcgis-maps-sdk-toolkit-qt/releases/tag/300.0.0.4935
 
 ### Data
 

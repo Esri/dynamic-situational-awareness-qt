@@ -6,7 +6,7 @@ The purpose of this readme is to provide instructions on how to manage and use d
 
 # Using custom configurations on mobile platforms
 
-Using your own data within the DSA application can still be done manually for the most part when it comes to desktop platforms. However, working on a mobile device comes with a few challenges that make using your own data on iOS or Android a bit more cumbersome. With the 2.1.0 release, several improvements have been made that make managing data on mobile devices significantly simpler. Configuration zip files that have been created following the steps in the previous section can be downloaded to a device depending on what method works best for you. Here are some steps that can be used for each option that is available in the DSA application's Options panel.
+Using your own data within the DSA application can still be done manually for the most part when it comes to desktop platforms. However, working on a mobile device comes with a few challenges that make using your own data on iOS or Android a bit more cumbersome. With the 3.0.0 release, several improvements have been made that make managing data on mobile devices significantly simpler. Configuration zip files that have been created following the steps in the previous section can be downloaded to a device depending on what method works best for you. Here are some steps that can be used for each option that is available in the DSA application's Options panel.
 
 ## File Resource
 

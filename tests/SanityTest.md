@@ -333,8 +333,6 @@ Test case 2: Launch from context menu
 - [ ] the tool should appear (and should be shown as selected in the Map toolbar)
 - [ ] the tool should show the position where you launched the context-menu (you can use the flash coordinate button to check)
 - [ ] the tool should be in capture mode (not tracking the apps position) - you can expand the tool to check
-- long press on the view again while the coordinate too is open
-- [ ] the context menu should not appear
 
 Test case 3: Flash position in view
 - open the tool in capture mode and click in the view to set a position

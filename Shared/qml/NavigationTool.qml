@@ -32,6 +32,14 @@ Item {
     width: controlsColumn.width + 10 * scaleFactor
     property alias radius: backgroundRectangle.radius
 
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onClicked: mouse => mouse.accepted = true
+        onDoubleClicked: mouse => mouse.accepted = true
+        onWheel: wheel => wheel.accepted = true
+    }
+
     function startFollowing() {
         followingButton.selected = true;
         followHud.enabled = true;

@@ -23,7 +23,7 @@ import Esri.ArcGISRuntime.OpenSourceApps.DSA
 Item {
     id: reportDatePage
 
-    property bool valid: activity.length > 0
+    property bool valid: activityField.length + activityField.preeditText.length > 0
     property string instruction: "Activity observed"
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
 
@@ -37,7 +37,7 @@ Item {
     }
 
     function text() {
-        return "activity:" + activityField.text;
+        return "activity:" + activityField.text + activityField.preeditText;
     }
 
     onVisibleChanged: {
@@ -51,10 +51,10 @@ Item {
         anchors {
             horizontalCenter: parent.horizontalCenter
             top: parent.top
+            bottom: clearButton.top
             margins: 16 * scaleFactor
         }
         width: parent.width * 0.75
-        height: parent.height * 0.50
         color: Material.foreground
         font {
             pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
@@ -99,8 +99,9 @@ Item {
     }
 
     Button {
+        id: clearButton
         anchors {
-            top : activityField.bottom
+            bottom: parent.bottom
             right: activityField.right
             margins: 4 * scaleFactor
         }

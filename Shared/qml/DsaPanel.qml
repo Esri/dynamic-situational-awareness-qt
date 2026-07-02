@@ -29,6 +29,14 @@ Rectangle {
     property string iconSource: DsaResources.iconClose
     color: Material.primary
 
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onClicked: mouse => mouse.accepted = true
+        onDoubleClicked: mouse => mouse.accepted = true
+        onWheel: wheel => wheel.accepted = true
+    }
+
     Column {
         id: titleBar
         anchors{
@@ -40,27 +48,37 @@ Rectangle {
 
         Rectangle {
             color: Material.primary
-            height: 30 * scaleFactor
+            height: 44 * scaleFactor
             width: parent.width
 
             Text {
                 id: titleText
-                anchors.centerIn: parent
+                anchors {
+                    left: parent.left
+                    right: closeButton.left
+                    verticalCenter: parent.verticalCenter
+                    leftMargin: 12 * scaleFactor
+                    rightMargin: 8 * scaleFactor
+                }
                 text: qsTr(title)
                 color: Material.foreground
                 font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
+                elide: Text.ElideRight
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                clip: true
             }
 
             Button {
                 id: closeButton
                 anchors {
                     right: parent.right
-                    top: parent.top
-                    bottom: parent.bottom
-                    margins: 2 * scaleFactor
+                    verticalCenter: parent.verticalCenter
+                    rightMargin: 8 * scaleFactor
                 }
 
-                width: height
+                width: 36 * scaleFactor
+                height: width
 
                 background: Rectangle {
                     anchors.fill: closeButton

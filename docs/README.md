@@ -259,12 +259,12 @@ DSA apps support several generic message feeds.
 
 #### Track display
 
-![](./images/dsa-track-display.png "Overlays")<br>*Track Display tool*
+<img src="./images/dsa-track-display.png" alt="Track Display" width="300" /><br>*Track Display tool*
 
 The Track Display under `Feeds` in Map tools provides feed-specific control of how dynamic observations and track lines are visualized.
 
 - Select a feed from `Message Feeds` (for example, `Friendly Tracks - Air` or `Friendly Tracks - Land`) and apply display settings independently per feed.
-- Enable `Observations` to show incoming track observations for the selected feed.
+- Enable `Observations` to show historical track observations for the selected feed.
 - Observation symbol size and color can be changed, and updates are reflected immediately on the map.
 - `Track Length Amount` controls how much recent track history is shown.
 - Enable `Track Line` to display a line representing track movement over time, with adjustable style options.
@@ -273,7 +273,7 @@ The Track Display under `Feeds` in Map tools provides feed-specific control of h
 
 #### Find
 
-![](./images/dsa-find-feeds.png "Overlays")<br>*Find tool*
+<img src="./images/dsa-find-feeds.png" alt="Find" width="300" /><br>*Find tool*
 
 The Find under `Feeds` in Map tools helps you quickly locate specific tracks from dynamic feeds.
 

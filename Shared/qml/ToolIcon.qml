@@ -29,6 +29,7 @@ Item {
     property bool selected: false
     signal toolSelected()
     property color labelColor: Material.foreground
+    readonly property color selectedLabelColor: Material.accent
 
     Column {
         anchors.fill: parent
@@ -45,17 +46,19 @@ Item {
             id: toolText
             anchors.horizontalCenter: parent.horizontalCenter
             text: toolName
-            color: labelColor
+            color: selected ? selectedLabelColor : labelColor
             font {
                 family: DsaStyles.fontFamily
                 pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+                bold: selected
             }
         }
 
         Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
-            height: 2 * scaleFactor
-            width: parent.width
+            height: 3 * scaleFactor
+            width: Math.min(parent.width, toolText.implicitWidth + 18 * scaleFactor)
+            radius: height / 2
             color: Material.accent
             visible: selected
         }

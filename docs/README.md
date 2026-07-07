@@ -556,7 +556,9 @@ Parameters available only in console mode:
 
 [Windows]: http://links.esri.com/exampleapps/dsaqt/app/windows
 
-[Tile Basemap group on ArcGIS Online]: https://www.arcgis.com/home/group.html?id=3a890be7a4b046c7840dc4a0446c5b31#overview
+[Tiled Basemap group on ArcGIS Online]: https://www.arcgis.com/home/group.html?id=3a890be7a4b046c7840dc4a0446c5b31#overview
+
+[Download Map tool in ArcGIS Pro]: https://doc.esri.com/en/arcgis-pro/latest/help/projects/take-a-map-offline.html
 
 <!-- Runtime landing pages -->
 

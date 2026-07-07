@@ -452,7 +452,7 @@ cd C:\DSA\DSA_Vehicle\DSA_Vehicle
 3. Run:
 
 ```bat
-DSA_Vehicle_Qt.exe --normal window
+DSA_Vehicle_Qt.exe --show normal
 ```
 
 # App configuration settings

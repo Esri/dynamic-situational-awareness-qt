@@ -519,7 +519,7 @@ As of version 3.0.0, the Configuration tab on the [Settings panel](#settings-pan
 ![image](./images/dsa-data-management-create-zips-1.png)
 - Verify that your zip folder contains a valid `DsaAppConfig.json`
 ![image](./images/dsa-data-management-create-zips-2.png)
-- From within the folder, select all the items, right click on the `DsaAppConfig.json` file and select `Compress` on Mac or `Send to > Compressed (zipped) folder` on Windows.
+- From within the folder, select all the items (including `DsaAppConfig.json`) right click and select `Compress` on Mac or `Send to > Compressed (zipped) folder` on Windows.
 ![image](./images/dsa-data-management-create-zips-3.png)
 - The archive/zip that is created is now ready to be used with the DSA application. The name of the zip itself is not critical. It can be renamed to any valid file name.
 ![image](./images/dsa-data-management-create-zips-4.png)

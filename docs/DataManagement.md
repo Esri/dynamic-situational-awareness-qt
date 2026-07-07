@@ -1,6 +1,6 @@
 **Contents**
 
-[Using custom configurations on mobile platforms](#using-custom-configurations-on-mobile-platforms) | [Migrating DSA data used prior to the 2.0.0 release](#migrating-dsa-data-used-prior-to-the-200-release) | [Manually configuring multiple app configurations using the DSA Configurations file](#manually-configuring-multiple-app-configurations-using-the-dsa-configurations-file)
+[Using custom configurations on mobile platforms](#using-custom-configurations-on-mobile-platforms) | [Migrating DSA data used prior to the 2.0.0 release](#migrating-dsa-data-used-prior-to-the-200-release) | [Manually configuring multiple app configurations using the DSA Configurations Management file](#manually-configuring-multiple-app-configurations-using-the-dsa-configurations-management-file)
 
 The purpose of this readme is to provide instructions on how to manage and use data that the DSA application requires or can make use of from within the file system.
 

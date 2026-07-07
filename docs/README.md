@@ -226,7 +226,10 @@ A [basemap] provides a background of geographical context for the symbology on t
 - Decide which basemaps you want to provision from among those that come with this DSA app.
 - Download basemaps for offline use from [Tile Basemap group on ArcGIS Online].
 - Provision your app with basemaps of your own design.
-- Try [Tile Package Kreator] from Esri, available on GitHub.
+- Decide which basemaps you want to provision from among those that come with this DSA app.
+- Download basemaps for offline use from [Tiled Basemap group on ArcGIS Online].
+- Provision your app with basemaps of your own design.
+- Use the [Download Map tool in ArcGIS Pro] to create tile packages from tile layers and imagery layers
 
 # Workflows and best practices
 

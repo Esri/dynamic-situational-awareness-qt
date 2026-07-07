@@ -55,7 +55,7 @@ DSA-Vehicle and DSA-Handheld have the same capability, each built for its intend
 
 DSA-Vehicle and DSA-Handheld can be built to run on all platforms supported by [ArcGIS Maps SDK for Qt]:  Android, Windows, iOS, Linux, and macOS. The message simulator, a testing tool, may be built for Windows, Linux, and macOS.
 
-# Overview
+# Overview of tools and settings
 
 ## Tools
 

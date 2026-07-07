@@ -1,6 +1,6 @@
 **Contents**
 
-[Overview](#dynamic-situational-awareness-dsa) | [Tools and settings](#overview) | [Workflows and best practices](#workflows-and-best-practices) | [App architecture](#app-architecture)     
+[Introduction](#dynamic-situational-awareness-dsa) | [Overview of tools and settings](#overview-of-tools-and-settings) | [Workflows and best practices](#workflows-and-best-practices) | [App architecture](#app-architecture)     
 [Get the DSA apps](#get-the-dsa-apps) | [App configuration settings](#app-configuration-settings) | [Add your own local data](#add-your-own-local-data) | [Message simulator](#message-simulator)
 
 # Dynamic Situational Awareness (DSA)

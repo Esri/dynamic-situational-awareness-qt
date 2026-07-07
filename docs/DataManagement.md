@@ -77,7 +77,7 @@ The following dialog describes the migration process for MacOS. But the same ste
 
 ![image](./images/dsa-data-management-migration-4.png)
 
-> Now that our data folders are in the right place, we need to adjust the `DsaConfigurations.json` file so that the app will be able to find them. Here we'll edit the file in a text editor and make entries for our 3 folders. We start by making 2 copies of the 'Default' configuration object and modifying the names to match. We also set our 'Monterey' configuration to be loaded at startup by setting its 'selected' property to 'true' and the others to false. We don't need the 'url' property for any of our 'configurations' so we can remove those. The 'url' property is currently only for downloading the default dataset from Esri and is reserved for future use. 
+> Now that our data folders are in the right place, we need to update the app configurations management file (`DsaConfigurations.json`) so that the app will be able to find them. Here we'll edit the file in a text editor and make entries for our 3 folders. We start by making 2 copies of the 'Default' configuration object and modifying the names to match. We also set our 'Monterey' configuration to be loaded at startup by setting its 'selected' property to 'true' and the others to false. We don't need the 'url' property for any of our 'configurations,' so we can remove those. The 'url' property is currently only for downloading the default dataset from Esri and is reserved for future use. 
 
 ![image](./images/dsa-data-management-migration-5.gif)
 

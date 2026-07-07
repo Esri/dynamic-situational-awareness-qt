@@ -40,7 +40,7 @@ DSA-Vehicle and DSA-Handheld have the same capability, each built for its intend
 - 3D map with navigation controls
 - Own location tracked on the map with various navigation modes
 - Read and display local file data including support for both foundation GIS data and overlays
-- Uses local data formats supported by the ArcGIS Native Maps SDKs such as Shapefile, GeoTIFF, DTED, NITF, Mobile Mosaic Dataset, GeoPackage, and Mobile Scene Packages
+- Uses local data formats supported by the ArcGIS Native Maps SDKs, such as Geospatial PDF, Shapefile, GeoTIFF, DTED, NITF, Mobile Mosaic Dataset, GeoPackage, and Mobile Scene Packages
 - Support for sharing information over a tactical network which is ad-hoc, peer-to-peer, and low-bandwidth, such as
   - Current location reports and distress signal
   - Friendly team position reports

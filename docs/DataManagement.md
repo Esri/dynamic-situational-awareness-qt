@@ -81,7 +81,7 @@ The following dialog describes the migration process for MacOS. But the same ste
 
 ![image](./images/dsa-data-management-migration-5.gif)
 
-> After updating the configurations file, we move on to updating the `DsaAppConfig.json` file in each data folder. The app configuration file has several file path references that need to be updated. We will take care of this in our Monterey example by doing a find an replace on `/Data/DSA/` with `/Data/DSA/Monterey/`. We include the begin and end slashes here to make sure we don't inadvertently find anything we don't actually want to replace. We repeat this process for the Redlands and SanDiego app configs as well.
+> After updating the configurations management file, we move on to updating the app configuration settings file (`DsaAppConfig.json`) in each data folder. The app configuration file has several file path references that need to be updated. We will take care of this in our Monterey example by doing a find and replace on `/Data/DSA/` with `/Data/DSA/Monterey/`. We include the begin and end slashes here to make sure we don't inadvertently find anything we don't actually want to replace. We repeat this process for the Redlands and SanDiego app configs as well.
 
 ![image](./images/dsa-data-management-migration-6.png)
 

@@ -89,7 +89,7 @@ The following dialog describes the migration process for MacOS. But the same ste
 
 <img src="./images/dsa-data-management-migration-7.png" width=300/>
 
-# Manually configuring multiple app configurations using the DSA Configurations file
+# Manually configuring multiple app configurations using the DSA Configurations Management file
 
 DSA also includes a file to allow you to save more than one configuration of the app. This is useful if you use DSA to demonstrate more than one area of interest, each with different data sources.  The DSA configuration file is located at `~/ArcGIS/Runtime/Data/DSA/DsaConfigurations.json`. This file can also be placed along side your DSA executable if you need to make your deployment more portable (for example if DSA is loaded onto a USB drive). If the file does not already exist when the app starts, it will be created automatically and will refer to the Default DSA data package, referenced in the section above. It is recommended that you use the Configuration tab from the Settings menu to manage your data. But if this approach does not work for your use case, you can use the steps below to setup multiple configurations manually.
 

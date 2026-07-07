@@ -438,7 +438,7 @@ There are two ways to run the app on a Windows desktop:
 
 ### Option 1: Full screen (fixed window size)
 
-In Windows Explorer, double-click `DSA_Vehicle_Qt.exe` to launch the app in full screen.
+In Windows Explorer, double-click `DSA_Vehicle_Qt.exe` to launch the app in full screen. This mode does not allow resizing the window. 
 
 ### Option 2: Window mode (resizable, can minimize, can maximize)
 

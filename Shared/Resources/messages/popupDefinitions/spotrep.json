@@ -2,95 +2,55 @@
   "popupInfo": {
     "popupElements": [
       {
-        "type": "expression",
-        "expressionInfo": {
-          "title": "New expression",
-          "expression": "\nvar returnString= '<span style=\"font-size:12px;\"><i>Reporting unit:</i></span><br><span style=\"font-size:18px;color:#68C1F9\"><strong>{uniquedesignation}</strong></span><br><span style=\"font-size:12px;\"><i>Received: </i><b> {expression/expr1}</b></span>'\n\nreturn { type : 'text', text : returnString}",
-          "returnType": "dictionary"
-        }
+        "type": "text",
+        "text": "<span style=\"font-size:12px;\"><i>Reporting unit:</i></span><br><span style=\"font-size:18px;color:#68C1F9\"><strong>{uniquedesignation}</strong></span><br><span style=\"font-size:12px;\"><i>Received: </i><b>{SYS_TIMESTAMP}</b></span>"
       },
       {
         "type": "fields",
-        "description": "",
         "fieldInfos": [
           {
             "fieldName": "size",
-            "isEditable": true,
-            "label": "Size",
-            "visible": true
+            "label": "Size"
           },
           {
             "fieldName": "activity_cat",
-            "isEditable": true,
-            "label": "Activity (category)",
-            "visible": true
+            "label": "Activity (category)"
           },
           {
             "fieldName": "activity",
-            "isEditable": true,
-            "label": "Activity",
-            "visible": true
+            "label": "Activity"
           },
           {
             "fieldName": "location",
-            "isEditable": true,
-            "label": "Location",
-            "visible": true
+            "label": "Location"
           },
           {
             "fieldName": "unit_cat",
-            "isEditable": true,
-            "label": "Enemy Unit (category)",
-            "visible": true
+            "label": "Enemy Unit (category)"
           },
           {
             "fieldName": "unit",
-            "isEditable": true,
-            "label": "Unit / Uniform",
-            "visible": true
+            "label": "Unit / Uniform"
           },
           {
             "fieldName": "timeobserved",
-            "isEditable": true,
-            "label": "Time and Date",
-            "visible": true
+            "label": "Time and Date"
           },
           {
             "fieldName": "equip_cat",
-            "isEditable": true,
-            "label": "Equipment (category)",
-            "visible": true
+            "label": "Equipment (category)"
           },
           {
             "fieldName": "equipment",
-            "isEditable": true,
-            "label": "Equipment",
-            "visible": true
+            "label": "Equipment"
           },
           {
             "fieldName": "_id",
-            "isEditable": true,
-            "label": "Track ID",
-            "visible": true
+            "label": "Track ID"
           }
         ],
         "title": "SALUTE Report:"
       }
-    ],
-    "expressionInfos": [
-      {
-        "name": "expr0",
-        "title": "Time Received",
-        "expression": "Text(Date(TimeReceived($feature)), 'ddd, MMM D, Y @ H:mm:ss ZZZZ')",
-        "returnType": "string"
-      },
-      {
-        "name": "expr1",
-        "title": "SYS_TIMESTAMP",
-        "expression": "Text(Date($feature.SYS_TIMESTAMP), 'ddd, MMM D, Y @ H:mm:ss ZZZZ')",
-        "returnType": "string"
-      }
-    ],
-    "title": ""
+    ]
   }
 }

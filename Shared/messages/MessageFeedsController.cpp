@@ -199,7 +199,16 @@ void MessageFeedsController::addDataListener(DataListener* dataListener)
         return;
     }
 
-    MessageFeed* messageFeed = m_messageFeeds->messageFeedByType(m.messageType());
+    // if type is position report, try to append the environment as a suffix to match the requirement
+    // in the config file for creating separate layers
+    QString messageTypeResolved{m.messageType()};
+    if (m.messageType().startsWith(Dsa::MessageFeeds::Types::POSITION_REPORT))
+    {
+      const QString environment = m.attributes().value(Dsa::MessageFeeds::Fields::GeoMessage::ENVIRONMENT).toString();
+      messageTypeResolved = QString{"%1_%2"}.arg(m.messageType(), environment);
+    }
+
+    MessageFeed* messageFeed = m_messageFeeds->messageFeedByType(messageTypeResolved);
     if (!messageFeed)
       return;
 

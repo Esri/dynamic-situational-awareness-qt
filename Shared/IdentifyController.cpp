@@ -22,6 +22,7 @@
 // C++ API
 #include "AttributeListModel.h"
 #include "DynamicEntity.h"
+#include "DynamicEntityObservation.h"
 #include "FieldsPopupElement.h"
 #include "GeoElement.h"
 #include "GeoView.h"
@@ -147,23 +148,40 @@ bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QStrin
     return false;
 
   // check for dynamic entities
+  bool isDynamic = false;
+  bool isObservation = false;
   if (const auto* de = dynamic_cast<DynamicEntity*>(geoElement); de)
   {
+    isDynamic = true;
+  }
+  else if (const auto* deo = dynamic_cast<DynamicEntityObservation*>(geoElement); deo)
+  {
+    isDynamic = true;
+    isObservation = true;
+  }
+
+  // This check is a dependency on the known schemas for messages/DEs being only of types:
+  // GeoMessage (has the attribute _type) or Cursor on Target (anything DE without that attribute must be CoT)
+  if (isDynamic)
+  {
     Popup* newPopup = nullptr;
+    QString popupDefinitionUrl = getPopupDefinitionUrlForMessageType(MessageFeeds::Types::CURSOR_ON_TARGET);
     if (const QVariant geoElementTypeV = geoElement->attributes()->attributeValue(MessageFeeds::Fields::GeoMessage::TYPE); geoElementTypeV.isValid())
     {
-      if (const QString popupDefinitionUrl = getPopupDefinitionUrlForMessageType(geoElementTypeV.toString()); !popupDefinitionUrl.isEmpty())
-      {
-        if (PopupDefinition* popupDefinition = getPopupDefinitionForUrl(popupDefinitionUrl); popupDefinition)
-          newPopup = new Popup(geoElement, popupDefinition, this);
-      }
+      if (const QString url = getPopupDefinitionUrlForMessageType(geoElementTypeV.toString()); !url.isEmpty())
+        popupDefinitionUrl = url;
     }
 
-    // default popup to be used for CoT types currently
-    if (!newPopup)
+    if (PopupDefinition* popupDefinition = getPopupDefinitionForUrl(popupDefinitionUrl); popupDefinition)
+      newPopup = new Popup(geoElement, popupDefinition, this);
+    else
       newPopup = new Popup(geoElement, this);
 
-    newPopup->popupDefinition()->setTitle(QString{"%1<br>(Live Updates)"}.arg(popupTitle));
+    if (!isObservation)
+      newPopup->popupDefinition()->setTitle(QString{"%1<br><i><font size=\"4\" color=\"#68C1F9\">live track info</i>"}.arg(popupTitle));
+    else
+      newPopup->popupDefinition()->setTitle(popupTitle);
+
     m_popups.push_back(newPopup);
     return true;
   }
@@ -213,7 +231,6 @@ PopupDefinition* IdentifyController::getPopupDefinitionForUrl(const QString& url
 {
   if (m_popupDefinitions.find(url) == m_popupDefinitions.cend())
   {
-    qDebug() << "creating popup def for" << url;
     QFile fileGeoMessage{url};
     fileGeoMessage.open(QFile::ReadOnly);
 

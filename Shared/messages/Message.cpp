@@ -207,6 +207,16 @@ Message Message::createFromCoTMessage(const QByteArray& message)
         // assign the unique message id
         cotMessage.d->messageId = attrs.value(MessageFeeds::Fields::CoT::UID).toString();
         attributes.insert(MessageFeeds::Fields::CoT::UID, cotMessage.d->messageId);
+
+        // Add other CoT attributes
+        const QString time = attrs.value(MessageFeeds::Fields::CoT::TIME).toString();
+        const QString start = attrs.value(MessageFeeds::Fields::CoT::START).toString();
+        const QString stale = attrs.value(MessageFeeds::Fields::CoT::STALE).toString();
+        const QString how = attrs.value(MessageFeeds::Fields::CoT::HOW).toString();
+        attributes.insert(MessageFeeds::Fields::CoT::HOW, how);
+        attributes.insert(MessageFeeds::Fields::CoT::TIME, time);
+        attributes.insert(MessageFeeds::Fields::CoT::START, start);
+        attributes.insert(MessageFeeds::Fields::CoT::STALE, stale);
       }
 
       // before reading other element tags, make sure we are parsing a CoT element
@@ -341,10 +351,6 @@ Message Message::createFromGeoMessage(const QByteArray& message)
     reader.readNext();
   }
 
-  if (!environmentText.isEmpty())
-  {
-    geoMessage.d->messageType += QString("_%1").arg(environmentText);
-  }
 
   if (!controlPointsText.isEmpty())
   {

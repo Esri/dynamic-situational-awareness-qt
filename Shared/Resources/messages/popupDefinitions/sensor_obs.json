@@ -2,77 +2,43 @@
   "popupInfo": {
     "popupElements": [
       {
-        "type": "expression",
-        "expressionInfo": {
-          "title": "New expression",
-          "expression": "\nvar returnString= '<span style=\"font-size:12px;\"><i>Sensor:</i></span><br><span style=\"font-size:18px;color:#68C1F9\"><strong>{uniquedesignation}</strong></span><br><span style=\"font-size:12px;\"><i>Received: </i><b> {expression/expr1}</b></span>'\n\nreturn { type : 'text', text : returnString}",
-          "returnType": "dictionary"
-        }
+        "type": "text",
+        "text": "<span style=\"font-size:12px;\"><i>Sensor:</i></span><br><span style=\"font-size:18px;color:#68C1F9\"><strong>{uniquedesignation}</strong></span><br><span style=\"font-size:12px;\"><i>Received: </i><b> {SYS_TIMESTAMP}</b></span>"
       },
       {
         "type": "fields",
-        "description": "",
         "fieldInfos": [
           {
             "fieldName": "rel_info",
-            "isEditable": true,
-            "label": "Release info",
-            "visible": true
+            "label": "Release info"
           },
           {
             "fieldName": "created_by",
-            "isEditable": true,
-            "label": "Created by",
-            "visible": true
+            "label": "Created by"
           },
           {
             "fieldName": "created_at",
-            "isEditable": true,
-            "label": "Created at",
-            "visible": true
+            "label": "Created at"
           },
           {
             "fieldName": "edited_by",
-            "isEditable": true,
-            "label": "Edited by",
-            "visible": true
+            "label": "Edited by"
           },
           {
             "fieldName": "edited_at",
-            "isEditable": true,
-            "label": "Edited at",
-            "visible": true
+            "label": "Edited at"
           },
           {
             "fieldName": "prod_id",
-            "isEditable": true,
-            "label": "Prod ID",
-            "visible": true
+            "label": "Prod ID"
           },
           {
             "fieldName": "_id",
-            "isEditable": true,
-            "label": "Track ID",
-            "visible": true
+            "label": "Track ID"
           }
         ],
         "title": "Sensor obs:"
       }
-    ],
-    "expressionInfos": [
-      {
-        "name": "expr0",
-        "title": "Time Received",
-        "expression": "Text(Date(TimeReceived($feature)), 'ddd, MMM D, Y @ H:mm:ss ZZZZ')",
-        "returnType": "string"
-      },
-      {
-        "name": "expr1",
-        "title": "SYS_TIMESTAMP",
-        "expression": "Text(Date($feature.SYS_TIMESTAMP), 'ddd, MMM D, Y @ H:mm:ss ZZZZ')",
-        "returnType": "string"
-      }
-    ],
-    "title": ""
+    ]
   }
 }

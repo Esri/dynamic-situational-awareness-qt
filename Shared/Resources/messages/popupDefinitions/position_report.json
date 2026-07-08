@@ -2,12 +2,8 @@
   "popupInfo": {
     "popupElements": [
       {
-        "type": "expression",
-        "expressionInfo": {
-          "title": "New expression",
-          "expression": "\nvar returnString= '<span style=\"font-size:12px;\"><i>Reporting unit:</i></span><br><span style=\"font-size:18px;color:#68C1F9\"><strong>{uniquedesignation}</strong></span><br><span style=\"font-size:12px;\"><i>Received: </i><b> {expression/expr1}</b></span>'\n\nreturn { type : 'text', text : returnString}",
-          "returnType": "dictionary"
-        }
+        "type": "text",
+        "text": "<span style=\"font-size:12px;\"><i>Reporting unit:</i></span><br><span style=\"font-size:18px;color:#68C1F9\"><strong>{uniquedesignation}</strong></span><br><span style=\"font-size:12px;\"><i>Received: </i><b>{SYS_TIMESTAMP}</b></span>"
       },
       {
         "type": "fields",
@@ -15,15 +11,11 @@
         "fieldInfos": [
           {
             "fieldName": "owningunit",
-            "isEditable": true,
-            "label": "Owning Unit",
-            "visible": true
+            "label": "Owning Unit"
           },
           {
             "fieldName": "staffcomment",
-            "isEditable": true,
-            "label": "Staff Comment",
-            "visible": true
+            "label": "Staff Comment"
           },
           {
             "fieldName": "speed",
@@ -31,9 +23,7 @@
               "digitSeparator": true,
               "places": 0
             },
-            "isEditable": true,
-            "label": "Speed",
-            "visible": true
+            "label": "Speed"
           },
           {
             "fieldName": "status911",
@@ -41,15 +31,11 @@
               "digitSeparator": true,
               "places": 0
             },
-            "isEditable": true,
-            "label": "Alert Status",
-            "visible": true
+            "label": "Alert Status"
           },
           {
             "fieldName": "sic",
-            "isEditable": true,
-            "label": "SIDC (2525c)",
-            "visible": true
+            "label": "SIDC (2525c)"
           },
           {
             "fieldName": "_control_points",
@@ -57,34 +43,15 @@
               "digitSeparator": false,
               "places": 2
             },
-            "isEditable": true,
-            "label": "Coordinates",
-            "visible": true
+            "label": "Coordinates"
           },
           {
             "fieldName": "_id",
-            "isEditable": true,
-            "label": "Track ID",
-            "visible": true
+            "label": "Track ID"
           }
         ],
         "title": "Details:"
       }
-    ],
-    "expressionInfos": [
-      {
-        "name": "expr0",
-        "title": "Time Received",
-        "expression": "Text(Date(TimeReceived($feature)), 'ddd, MMM D, Y @ H:mm:ss ZZZZ')",
-        "returnType": "string"
-      },
-      {
-        "name": "expr1",
-        "title": "SYS_TIMESTAMP",
-        "expression": "Text(Date($feature.SYS_TIMESTAMP), 'ddd, MMM D, Y @ H:mm:ss ZZZZ')",
-        "returnType": "string"
-      }
-    ],
-    "title": ""
+    ]
   }
 }

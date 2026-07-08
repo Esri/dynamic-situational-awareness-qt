@@ -353,7 +353,22 @@ void LocationBroadcast::broadcastLocation()
 
     m_message = Message(Message::MessageAction::Update, m_location);
     m_message.setMessageId(QUuid::createUuid().toString());
-    m_message.setMessageType(m_messageType);
+
+    // set message type for the 'message' object itself based on the composed
+    // messageType configuration value
+    if (const QStringList parts = m_messageType.split(MessageFeeds::Types::POSITION_REPORT); parts.size() == 2)
+    {
+      m_message.setMessageType(MessageFeeds::Types::POSITION_REPORT);
+      attribs.insert(MessageFeeds::Fields::GeoMessage::TYPE, MessageFeeds::Types::POSITION_REPORT);
+      // for the environment, use everything beyond the first character which is the separating underscore
+      // between the geomessage type and the environment value for layering
+      attribs.insert(MessageFeeds::Fields::GeoMessage::ENVIRONMENT, parts.last().right(parts.last().size() - 1));
+    }
+    else
+    {
+      m_message.setMessageType(m_messageType);
+    }
+
     m_message.setSymbolId(s_locationBroadcastSic);
 
     attribs.insert(MessageFeeds::Fields::GeoMessage::SIC, s_locationBroadcastSic);

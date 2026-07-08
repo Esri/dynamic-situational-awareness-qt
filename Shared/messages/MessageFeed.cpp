@@ -21,7 +21,6 @@
 
 // C++ API
 #include "AttributeListModel.h"
-#include "Domain.h"
 #include "DictionaryRenderer.h"
 #include "DictionarySymbolStyle.h"
 #include "DynamicEntity.h"
@@ -213,8 +212,8 @@ void MessageFeed::setFields(const QString& schemaUrl)
   m_entityIdAttributeName = properties["attribute_name_id"].toString();
 
   const QJsonArray attributes = properties["attributes"].toJsonArray();
-  m_fields.reserve(attributes.size() + 1);
-  for (const auto attribute : attributes)
+  m_fields.reserve(attributes.size() + 2);
+  for (const QJsonValueConstRef attribute : attributes)
   {
     const QVariantMap attributeProperties = attribute.toObject().toVariantMap();
     const QString attrType = attributeProperties["type"].toString();
@@ -237,7 +236,8 @@ void MessageFeed::setFields(const QString& schemaUrl)
     }
   }
 
-  m_fields.push_back(Field::createText(MessageFeeds::Fields::Common::SIDC, MessageFeeds::Fields::Common::SIDC, 256));
+  m_fields.push_back(Field::createText(MessageFeeds::Fields::Common::SIDC, MessageFeeds::Fields::Common::SIDC, 255));
+  m_fields.push_back(Field::createText(MessageFeeds::Fields::Common::SYS_TIMESTAMP, MessageFeeds::Fields::Common::SYS_TIMESTAMP, 255));
 
   // set the flag for CoT for runtime message processing
   m_isCoT = m_feedMessageType.compare(MessageFeeds::Types::CURSOR_ON_TARGET) == 0;
@@ -479,12 +479,6 @@ bool MessageFeed::addMessage(const Message& message)
     return false;
   }
 
-  if (message.messageType() != feedMessageType())
-  {
-    emit errorOccurred(Error("Failed to add message - message type mismatch", additionalErrorMessage, ExtendedErrorType::None));
-    return false;
-  }
-
   const auto symbolId = message.symbolId();
   const auto geometry = message.geometry();
   const auto messageAction = message.messageAction();
@@ -523,7 +517,55 @@ bool MessageFeed::addMessage(const Message& message)
       return false;
     }
 
-    addObservation(geometry, message.attributes());
+    // TODO: validate attributes? message.attributes() will most likely have more than the DEDS schema
+
+    // make a copy of the message attributes into a new map so we can add the calculated fields necessary while we
+    // investigate the issues using arcade expressions in the popup definitions
+    QVariantMap attributes{};
+    const QVariantMap attrs = message.attributes();
+    const QList<QString> attrNames = attrs.keys();
+    for (const QString& key : attrNames)
+      attributes[key] = attrs[key];
+
+    // insert the timestamp field for all feature types
+    attributes[MessageFeeds::Fields::Common::SYS_TIMESTAMP] = QDateTime::currentDateTime().toString(QStringLiteral("ddd, MMM d, yyyy @ H:mm:ss t"));
+
+    // insert a lookup value for event type if cursor on target type
+    if (m_isCoT)
+    {
+      static const QHash<QChar, QString> affCodes{
+        {'p', QStringLiteral("Pending")},
+        {'u', QStringLiteral("Unknown")},
+        {'a', QStringLiteral("Assumed friend")},
+        {'f', QStringLiteral("Friend")},
+        {'n', QStringLiteral("Neutral")},
+        {'s', QStringLiteral("Suspect")},
+        {'h', QStringLiteral("Hostile")},
+        {'j', QStringLiteral("Joker")},
+        {'k', QStringLiteral("Faker")},
+        {'o', QStringLiteral("None specified")},
+      };
+      QString affiliation{"Other"};
+      const QChar affCode = attributes[MessageFeeds::Fields::CoT::TYPE].toString().at(2);
+      if (affCodes.contains(affCode))
+        affiliation = affCodes[affCode];
+
+      static const QHash<QChar, QString> bdCodes{
+        {'P', QStringLiteral("Space")},
+        {'A', QStringLiteral("Air")},
+        {'G', QStringLiteral("Ground")},
+        {'S', QStringLiteral("Sea surface")},
+        {'U', QStringLiteral("Sea subsurface")},
+      };
+      QString battleDimension{"Other"};
+      const QChar bdCode = attributes[MessageFeeds::Fields::CoT::TYPE].toString().at(4);
+      if (bdCodes.contains(bdCode))
+        battleDimension = bdCodes[bdCode];
+
+      attributes[MessageFeeds::Fields::CoT::EVENT_TYPE] = QString{"<b><i>Affiliation: </i></b>%1<nbsp/><br><b><i>Battle Dimension: </i></b>%2"}.arg(affiliation, battleDimension);
+    }
+
+    addObservation(geometry, attributes);
   }
 
   return true;

@@ -20,12 +20,15 @@
 #include "NavigationController.h"
 
 // C++ API headers
+#include "Basemap.h"
 #include "Camera.h"
 #include "ErrorException.h"
 #include "GlobeCameraController.h"
+#include "MapTypes.h"
 #include "OrbitGeoElementCameraController.h"
 #include "OrbitLocationCameraController.h"
 #include "Scene.h"
+#include "SceneQuickView.h"
 #include "SceneView.h"
 #include "SceneViewTypes.h"
 #include "Viewpoint.h"
@@ -91,15 +94,42 @@ void NavigationController::updateGeoView()
   if (!m_geoView)
     return;
 
+  m_is3d = false;
   m_sceneView = dynamic_cast<SceneView*>(m_geoView);
   if (m_sceneView)
   {
     m_is3d = true;
-  }
-  else
-  {
-    // set the mapView here
-    m_is3d = false;
+
+    // initialize the center point when the scene is loaded
+    Scene* scene = m_sceneView->arcGISScene();
+    if (!scene)
+    {
+      auto* sceneQV = static_cast<SceneQuickView*>(m_sceneView);
+      connect(sceneQV, &SceneQuickView::sceneChanged, this, [this]()
+      {
+        Scene* scene = m_sceneView->arcGISScene();
+        if (!scene)
+          return;
+
+        Basemap* basemap = scene->basemap();
+        if (!basemap)
+          return;
+
+        if (basemap->loadStatus() == LoadStatus::Loaded)
+        {
+          center();
+          return;
+        }
+
+        connect(basemap, &Basemap::doneLoading, this, [this](const Error& loadError)
+        {
+          if (!loadError.isEmpty())
+            return;
+
+          center();
+        }, Qt::SingleShotConnection);
+      }, Qt::SingleShotConnection);
+    }
   }
 }
 
@@ -333,7 +363,14 @@ void NavigationController::center()
     if (!m_enabled)
       return;
 
-    m_currentCenter = point;
+    // if the center of the screen does not intersect the globe and invalid point can be the result
+    // don't update the class property if this happens, fallback is the previous center point
+    if (!point.isEmpty() && point.isValid())
+      m_currentCenter = point;
+
+    // skip if center has never been initialized to a valid point
+    if (m_currentCenter.isEmpty() || !m_currentCenter.isValid())
+      return;
 
     if (m_currentMode == Mode::Zoom)
     {

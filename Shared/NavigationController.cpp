@@ -20,11 +20,9 @@
 #include "NavigationController.h"
 
 // C++ API headers
-#include "Basemap.h"
 #include "Camera.h"
 #include "ErrorException.h"
 #include "GlobeCameraController.h"
-#include "MapTypes.h"
 #include "OrbitGeoElementCameraController.h"
 #include "OrbitLocationCameraController.h"
 #include "Scene.h"

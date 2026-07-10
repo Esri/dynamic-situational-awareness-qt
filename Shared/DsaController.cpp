@@ -591,28 +591,23 @@ void DsaController::updateInitialLocationOnSceneChange(bool isInitialization)
   if (!m_scene)
     return;
 
-  auto geoView = ToolResourceProvider::instance()->geoView();
+  GeoView* geoView = ToolResourceProvider::instance()->geoView();
   if (!geoView)
     return;
 
   if (!isInitialization)
-  {
     return;
-  }
-  else
-  {
-    // This is an initilization scene change, replace the scene's
-    // initial location with our current initial location.
-    auto v = readInitialLocation();
 
-    if (!v.isEmpty())
-    {
-      // Note use of setViewPoint instead of setInitialLocation. The latter
-      // only works if the scene is not loaded, but all MSPK scenes are loaded with
-      // the MSPK so it can't be used.
-      geoView->setViewpointAsync(readInitialLocation(), 0);
-    }
-  }
+  // This is an initilization scene change, replace the scene's
+  // initial location with our current initial location.
+  const Viewpoint v = readInitialLocation();
+  if (v.isEmpty())
+    return;
+
+  // Note use of setViewPoint instead of setInitialLocation. The latter
+  // only works if the scene is not loaded, but all MSPK scenes are loaded with
+  // the MSPK so it can't be used.
+  geoView->setViewpointAsync(v, 0);
 }
 
 namespace

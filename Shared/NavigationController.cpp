@@ -100,36 +100,18 @@ void NavigationController::updateGeoView()
   {
     m_is3d = true;
 
-    // initialize the center point when the scene is loaded
     Scene* scene = m_sceneView->arcGISScene();
     if (!scene)
     {
       auto* sceneQV = static_cast<SceneQuickView*>(m_sceneView);
-      connect(sceneQV, &SceneQuickView::sceneChanged, this, [this]()
+      connect(sceneQV, &SceneQuickView::viewpointChanged, this, [this]()
       {
-        Scene* scene = m_sceneView->arcGISScene();
-        if (!scene)
-          return;
-
-        Basemap* basemap = scene->basemap();
-        if (!basemap)
-          return;
-
-        if (basemap->loadStatus() == LoadStatus::Loaded)
-        {
-          center();
-          return;
-        }
-
-        connect(basemap, &Basemap::doneLoading, this, [this](const Error& loadError)
-        {
-          if (!loadError.isEmpty())
-            return;
-
-          center();
-        }, Qt::SingleShotConnection);
+        center();
       }, Qt::SingleShotConnection);
+      return;
     }
+
+    center();
   }
 }
 
@@ -355,15 +337,9 @@ void NavigationController::center()
   if (!m_sceneView)
     return;
 
-  m_enabled = true;
-
   m_sceneView->screenToLocationAsync(m_sceneView->widthInPixels() * 0.5, m_sceneView->heightInPixels() * 0.5).then(this, [this](Point point)
   {
-    // check if called from the navigation controls
-    if (!m_enabled)
-      return;
-
-    // if the center of the screen does not intersect the globe and invalid point can be the result
+    // if the center of the screen does not intersect the globe an invalid point can be the result
     // don't update the class property if this happens, fallback is the previous center point
     if (!point.isEmpty() && point.isValid())
       m_currentCenter = point;
@@ -384,11 +360,7 @@ void NavigationController::center()
     {
       set2DInternal();
     }
-
-    // reset
-    m_enabled = false;
   });
-
 }
 
 /*!

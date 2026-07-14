@@ -518,6 +518,9 @@ The default data directory should look like this:
 
 ```
 
+## Deploy app configuration data with the application
+
+You can include the configuration data with the app so that it can be easily shared and deployed to another machine and run without additional configuration. To do this, store the app configurations management file (`DsaConfigurations.json`) in the same folder as the app executable, and use relative paths in the configurations management file and app configuration settings file(s) (`DsaAppConfig.json`). 
 ### Packaging your data into a configuration zip file
 
 As of version 3.0.0, the Configuration tab on the [Settings panel](#settings-panel) will allow you to download and deploy custom app configurations in zip files. The zip files for custom configurations follow the same specific folder structure as the sample data provided by Esri. The 'base' folders, such as 'OperationalData', 'BasemapData', etc, must be directly at the root folder level. The zip must also contain a valid `DsaAppConfig.json` file at the root of the archive. The following steps can be followed to ensure the zip file is packaged so DSA can unpack it properly.

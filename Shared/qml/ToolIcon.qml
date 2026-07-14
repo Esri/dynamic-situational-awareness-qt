@@ -56,8 +56,8 @@ Item {
 
         Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
-            height: 3 * scaleFactor
-            width: Math.min(parent.width, toolText.implicitWidth + 18 * scaleFactor)
+            height: 5 * scaleFactor
+            width: parent.width
             radius: height / 2
             color: Material.accent
             visible: selected

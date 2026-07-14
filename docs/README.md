@@ -281,7 +281,7 @@ The `Track Display` tab under `Feeds` in Map tools provides feed-specific contro
 
 The `Find` tab under `Feeds` in Map tools helps you quickly locate specific tracks from message feeds.
 
-- Select a feed type (for example, `Friendly Tracks - Land`) from the message feed type dropdown.
+- Select a message feed (for example, `Friendly Tracks - Land`) from the dropdown list.
 - Enter all or part of a message feed to search.
 - Matching results are listed and highlighted on the map.
 - Selecting a result zooms the map to the latest observation for that track and opens the context menu at that location.

@@ -410,7 +410,7 @@ Use these tools to create markups.
 | ![](./images/dsa-icon-clear-markup-32.png) | Clear all the lines of the current markup. |
 | ![](./images/dsa-icon-share-markup-32.png) | The share control appears on the display after you start drawing a new markup. Use Share to finish your markup, give it a name and send it to all teammates. |
 
-Markups are serialized as individual JSON files in the folder specified by the `OperationalOverlays` parameter in the [app configuration file](#app-configuration-settings). 
+Markups are serialized as individual JSON (".markup") files in the folder specified by the `OperationalOverlays` parameter in the [app configuration file](#app-configuration-settings). 
 
 ***Developer tips:***
 

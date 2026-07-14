@@ -514,7 +514,7 @@ The default data directory should look like this:
 
 ### Packaging your data into a configuration zip file
 
-As of version 3.0.0, the Configuration tab on the [Settings panel](#settings-panel) will allow you to download your own configurations. Zip files for custom configurations follow the same format as the sample data provided by Esri. The Zip file format itself has no real restrictions on the structure or contents. However, the DSA application expects a specific arrangement of the files contained in the archive. The 'base' folders like 'OperationalData', 'BasemapData', etc, must be directly at the root folder level. The zip must also contain a valid `DsaAppConfig.json` file at the root of the archive. The following steps can be followed to ensure the zip file is packaged so DSA can unpack it properly.
+As of version 3.0.0, the Configuration tab on the [Settings panel](#settings-panel) will allow you to download and deploy custom app configurations in zip files. The zip files for custom configurations follow the same specific folder structure as the sample data provided by Esri. The 'base' folders, such as 'OperationalData', 'BasemapData', etc, must be directly at the root folder level. The zip must also contain a valid `DsaAppConfig.json` file at the root of the archive. The following steps can be followed to ensure the zip file is packaged so DSA can unpack it properly.
 - Navigate to the configuration folder in the file system browser
 ![image](./images/dsa-data-management-create-zips-1.png)
 - Verify that your zip folder contains a valid `DsaAppConfig.json`

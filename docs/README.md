@@ -279,7 +279,7 @@ The `Track Display` tab under `Feeds` in Map tools provides feed-specific contro
 
 <img src="./images/dsa-find-feeds.png" alt="Find" width="300" /><br>*Find tool*
 
-The Find under `Feeds` in Map tools helps you quickly locate specific tracks from dynamic feeds.
+The `Find` tab under `Feeds` in Map tools helps you quickly locate specific tracks from message feeds.
 
 - Select a feed type (for example, `Friendly Tracks - Land`) from the message feed type dropdown.
 - Enter all or part of a message feed to search.

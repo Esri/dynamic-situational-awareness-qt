@@ -122,6 +122,16 @@ void CoordinateConversionToolProxy::toolInitProperties(const QVariantMap& proper
   if (!formats)
     return;
 
+  // manually set the available conversion option formats to be owned by the
+  // proxy so it will not be parented by the QQmlEngine. this may be fixed
+  // in a future release of the Toolkit.
+  for (int i = 0; i < formats->rowCount(); ++i)
+  {
+    QModelIndex index = formats->index(i);
+    if (QObject* o = formats->element<CoordinateConversionOption>(index); o)
+      o->setParent(this);
+  }
+
   auto findFormatIt = properties.find("CoordinateFormat");
   if (findFormatIt != properties.end())
   {

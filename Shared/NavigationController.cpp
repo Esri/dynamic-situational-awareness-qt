@@ -92,24 +92,25 @@ void NavigationController::updateGeoView()
   if (!m_geoView)
     return;
 
+  // There is currently no implementation for MapQuickView. This variable
+  // will remain false if any new features use something other than
+  // the SceneQuickView control.
   m_is3d = false;
+
   m_sceneView = dynamic_cast<SceneView*>(m_geoView);
   if (m_sceneView)
   {
     m_is3d = true;
 
-    Scene* scene = m_sceneView->arcGISScene();
-    if (!scene)
-    {
-      auto* sceneQV = static_cast<SceneQuickView*>(m_sceneView);
-      connect(sceneQV, &SceneQuickView::viewpointChanged, this, [this]()
-      {
-        center();
-      }, Qt::SingleShotConnection);
-      return;
-    }
-
-    center();
+    /*
+     * Note: This connection is only intended to capture a valid geometry
+     * for the center point for the controller once on app launch. This approach
+     * does not depend on operational or basemap data being loaded. It is not
+     * intended to verify that the layers/basemap or the scene itself are
+     * loaded and ready to be used.
+     */
+    auto* sceneQV = static_cast<SceneQuickView*>(m_sceneView);
+    connect(sceneQV, &SceneQuickView::viewpointChanged, this, &NavigationController::center, Qt::SingleShotConnection);
   }
 }
 

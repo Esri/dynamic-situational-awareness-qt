@@ -100,7 +100,8 @@ The map's context menu appears when you long-press on the map. The menu varies d
 | `Observation`   | [Create observation report](#observation-report) | X | X | X |
 | `Viewshed`      | [Show viewshed from track](#viewshed)  | X | X | X |
 
-When you open `Identify` from the context menu on the latest observation in a message feed, the popup stays dynamic and the timestamp updates as new feed messages are received.
+> [!NOTE]
+>When you open `Identify` from the context menu on the latest observation in a message feed, the popup stays dynamic and the timestamp updates as new feed messages are received.
 
 ### Tool categories
 

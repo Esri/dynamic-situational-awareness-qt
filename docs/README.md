@@ -457,6 +457,11 @@ DSA_Vehicle_Qt.exe --show normal
 
 # App configuration settings
 
+All data used by the app must be in a specific, predefined folder structure, referred to as an "app configuration".  At version 2.0, DSA was enhanced to support switching between different app configurations. There are two app settings files used by DSA to persist the location of configurations available to the app, and settings specific to each configuration:
+- The Configurations Management file (`DsaConfigurations.json`) stores the paths to each app configuration that the user can choose to load, as well as a setting to indicate which configuration is currently loaded. 
+- The App Configuration Settings file (`DsaAppConfig.json`) stores settings and paths to data particular to a specific app configuration. 
+
+Supplemental information on how to migrate data used with DSA 1.0 to the current format, as well as how to create and deploy custom configurations, can be found in the [Data Management](DataManagement.md) documentation. 
 ## Configure and persist app settings using the App Configuration file
 ## Configure and persist app settings using the App Configuration Settings file
 An app configuration settings file is used to set paths to data sources and persist the state of the app (settings, layers, and conditions) between sessions. When the DSA app runs, it will create a new app configuration file if one is not found in local storage. If the app configuration file is found, the app will read the values from the file when it starts. Any app settings changed at run time in the app using the [Settings panel](#settings-panel), data layers in the Overlays list, and alert conditions are persisted in the configuration file automatically when the app is closed. 

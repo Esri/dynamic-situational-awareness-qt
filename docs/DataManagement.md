@@ -1,12 +1,12 @@
 **Contents**
 
-[Using custom configurations on mobile platforms](#using-custom-configurations-on-mobile-platforms) | [Migrating DSA data used prior to the 2.0.0 release](#migrating-dsa-data-used-prior-to-the-200-release) | [Manually configuring multiple app configurations using the DSA Configurations file](#manually-configuring-multiple-app-configurations-using-the-dsa-configurations-file)
+[Using custom configurations on mobile platforms](#using-custom-configurations-on-mobile-platforms) | [Migrating DSA data used prior to the 2.0.0 release](#migrating-dsa-data-used-prior-to-the-200-release) | [Manually configuring multiple app configurations using the DSA Configurations Management file](#manually-configuring-multiple-app-configurations-using-the-dsa-configurations-management-file)
 
 The purpose of this readme is to provide instructions on how to manage and use data that the DSA application requires or can make use of from within the file system.
 
 # Using custom configurations on mobile platforms
 
-Using your own data within the DSA application can still be done manually for the most part when it comes to desktop platforms. However, working on a mobile device comes with a few challenges that make using your own data on iOS or Android a bit more cumbersome. With the 2.1.0 release, several improvements have been made that make managing data on mobile devices significantly simpler. Configuration zip files that have been created following the steps in the previous section can be downloaded to a device depending on what method works best for you. Here are some steps that can be used for each option that is available in the DSA application's Options panel.
+Using your own data within the DSA application can still be done manually for the most part when it comes to desktop platforms. However, working on a mobile device comes with a few challenges that make using your own data on iOS or Android a bit more cumbersome. With the 3.0.0 release, several improvements have been made that make managing data on mobile devices significantly simpler. Configuration zip files that have been created following the steps in the previous section can be downloaded to a device depending on what method works best for you. Here are some steps that can be used for each option that is available in the DSA application's Options panel.
 
 ## File Resource
 
@@ -77,11 +77,11 @@ The following dialog describes the migration process for MacOS. But the same ste
 
 ![image](./images/dsa-data-management-migration-4.png)
 
-> Now that our data folders are in the right place, we need to adjust the `DsaConfigurations.json` file so that the app will be able to find them. Here we'll edit the file in a text editor and make entries for our 3 folders. We start by making 2 copies of the 'Default' configuration object and modifying the names to match. We also set our 'Monterey' configuration to be loaded at startup by setting its 'selected' property to 'true' and the others to false. We don't need the 'url' property for any of our 'configurations' so we can remove those. The 'url' property is currently only for downloading the default dataset from Esri and is reserved for future use. 
+> Now that our data folders are in the right place, we need to update the app configurations management file (`DsaConfigurations.json`) so that the app will be able to find them. Here we'll edit the file in a text editor and make entries for our 3 folders. We start by making 2 copies of the 'Default' configuration object and modifying the names to match. We also set our 'Monterey' configuration to be loaded at startup by setting its 'selected' property to 'true' and the others to false. We don't need the 'url' property for any of our 'configurations,' so we can remove those. The 'url' property is currently only for downloading the default dataset from Esri and is reserved for future use. 
 
 ![image](./images/dsa-data-management-migration-5.gif)
 
-> After updating the configurations file, we move on to updating the `DsaAppConfig.json` file in each data folder. The app configuration file has several file path references that need to be updated. We will take care of this in our Monterey example by doing a find an replace on `/Data/DSA/` with `/Data/DSA/Monterey/`. We include the begin and end slashes here to make sure we don't inadvertently find anything we don't actually want to replace. We repeat this process for the Redlands and SanDiego app configs as well.
+> After updating the configurations management file, we move on to updating the app configuration settings file (`DsaAppConfig.json`) in each data folder. The app configuration file has several file path references that need to be updated. We will take care of this in our Monterey example by doing a find and replace on `/Data/DSA/` with `/Data/DSA/Monterey/`. We include the begin and end slashes here to make sure we don't inadvertently find anything we don't actually want to replace. We repeat this process for the Redlands and SanDiego app configs as well.
 
 ![image](./images/dsa-data-management-migration-6.png)
 
@@ -89,9 +89,9 @@ The following dialog describes the migration process for MacOS. But the same ste
 
 <img src="./images/dsa-data-management-migration-7.png" width=300/>
 
-# Manually configuring multiple app configurations using the DSA Configurations file
+# Manually configuring multiple app configurations using the DSA Configurations Management file
 
-DSA also includes a file to allow you to save more than one configuration of the app. This is useful if you use DSA to demonstrate more than one area of interest, each with different data sources.  The DSA configuration file is located at `~/ArcGIS/Runtime/Data/DSA/DsaConfigurations.json`. This file can also be placed along side your DSA executable if you need to make your deployment more portable (for example if DSA is loaded onto a USB drive). If the file does not already exist when the app starts, it will be created automatically and will refer to the Default DSA data package, referenced in the section above. It is recommended that you use the Configuration tab from the Settings menu to manage your data. But if this approach does not work for your use case, you can use the steps below to setup multiple configurations manually.
+DSA also includes a file to allow you to save more than one configuration of the app. This is useful if you use DSA to demonstrate more than one area of interest, each with different data sources.  The DSA configurations management file is located at `~/ArcGIS/Runtime/Data/DSA/DsaConfigurations.json`. This file can also be placed alongside your DSA executable if you need to make your deployment more portable (for example, if DSA is loaded onto a USB drive). If the file does not already exist when the app starts, it will be created automatically and will refer to the Default DSA data package, referenced in the section above. It is recommended that you use the Configuration tab from the Settings menu to manage your data. But if this approach does not work for your use case, you can use the steps below to set up multiple configurations manually.
 
 To set up an additional 'Configuration' for DSA, create a folder with the desired name at the same level as the 'Default' configuration folder (i.e. "MyLocalData"). Place all your data in the new folder using the structure described in the section above. Update the **DsaConfiguration.json** file to include your new folder, as shown in the screenshot below.
 

@@ -1,6 +1,6 @@
 **Contents**
 
-[Overview](#dynamic-situational-awareness-dsa) | [Tools and settings](#overview) | [Workflows and best practices](#workflows-and-best-practices) | [App architecture](#app-architecture)     
+[Introduction](#dynamic-situational-awareness-dsa) | [Overview of tools and settings](#overview-of-tools-and-settings) | [Workflows and best practices](#workflows-and-best-practices) | [App architecture](#app-architecture)     
 [Get the DSA apps](#get-the-dsa-apps) | [App configuration settings](#app-configuration-settings) | [Add your own local data](#add-your-own-local-data) | [Message simulator](#message-simulator)
 
 # Dynamic Situational Awareness (DSA)
@@ -40,7 +40,7 @@ DSA-Vehicle and DSA-Handheld have the same capability, each built for its intend
 - 3D map with navigation controls
 - Own location tracked on the map with various navigation modes
 - Read and display local file data including support for both foundation GIS data and overlays
-- Uses local data formats supported by the ArcGIS Native Maps SDKs such as Shapefile, GeoTIFF, DTED, NITF, Mobile Mosaic Dataset, GeoPackage, and Mobile Scene Packages
+- Uses local data formats supported by the ArcGIS Native Maps SDKs, such as Geospatial PDF, Shapefile, GeoTIFF, DTED, NITF, Mobile Mosaic Dataset, GeoPackage, and Mobile Scene Packages
 - Support for sharing information over a tactical network which is ad-hoc, peer-to-peer, and low-bandwidth, such as
   - Current location reports and distress signal
   - Friendly team position reports
@@ -55,7 +55,7 @@ DSA-Vehicle and DSA-Handheld have the same capability, each built for its intend
 
 DSA-Vehicle and DSA-Handheld can be built to run on all platforms supported by [ArcGIS Maps SDK for Qt]:  Android, Windows, iOS, Linux, and macOS. The message simulator, a testing tool, may be built for Windows, Linux, and macOS.
 
-# Overview
+# Overview of tools and settings
 
 ## Tools
 
@@ -74,6 +74,7 @@ The navigation toolbar orients your view of the map. The tool appears vertically
 | ![](./images/dsa-icon-2d-32.png "Set 2D perspective") | Set viewpoint to 2D perspective (looking straight down) |
 | ![](./images/dsa-icon-gps-off-32.png "GPS toggle") | Show own location as a moving symbol on the map |
 | ![](./images/dsa-icon-rotate-mode-32.png "Rotate mode toggle") | Toggle map navigation control between panning and map rotation |
+| ![](./images/dsa-icon-grid-32.png "Grid") | Toggling on and off grids  |
 
 ![](./images/dsa-v-nav-demo.gif "Navigation tools reorienting the map")<br>*Navigation tools orienting the map*
 
@@ -98,6 +99,9 @@ The map's context menu appears when you long-press on the map. The menu varies d
 | `Line of sight` | [Show my line of sight to this track](#line-of-sight) |  | X | X |
 | `Observation`   | [Create observation report](#observation-report) | X | X | X |
 | `Viewshed`      | [Show viewshed from track](#viewshed)  | X | X | X |
+
+> [!NOTE]
+>When you open `Identify` from the context menu on the latest observation in a message feed, the popup stays dynamic and the timestamp updates as new feed messages are received.
 
 ### Tool categories
 
@@ -128,7 +132,7 @@ The settings panel accesses the app's About information, app settings, and app c
 
 <!-- TODO - Verify the following paragraph: Some settings are persisted, but ALL of them? -->
 
-When you change settings on the `Options` tab, they are persisted in the application's settings file. The `Configurations` tab will allow you to switch the active configuration (data + application settings), download a sample configuration from Esri, or download a custom configuration (see more info [in this section](#packaging-your-data-into-a-configuration-zip-file) or in the [Data Management](DataManagement.md#using-custom-configurations-on-mobile-platforms) doc. 
+When you change settings on the `Options` tab, they are persisted in the application's configuration settings file. The `Configurations` tab will allow you to switch the active configuration (data + application settings), download a sample configuration from Esri, or download a custom configuration (see more info [in this section](#packaging-your-data-into-a-configuration-zip-file) or in the [Data Management](DataManagement.md#using-custom-configurations-on-mobile-platforms) doc). 
 
 ## Map tools
 
@@ -166,6 +170,10 @@ The Convert X/Y tool accepts a location in any supported coordinate notation or 
 
 Feeds are streams of information broadcast over the network. When information is received over a feed, it is translated into something the app can use, like a map symbol in an overlay or an alert. The Feed tool controls which feeds are represented on your display. See more information in the section [Real-time feeds](#real-time-feeds).
 
+Track Display is available from the `Feeds` option in Map tools. Use it to configure how observations and track lines are shown for each message feed. See [Track display](#track-display) for more details. 
+
+Find is also available from the `Feeds` option in Map tools to locate specific feeds in active message feeds. See [Find](#find) for more details.
+
 ### Add data
 
 ![](./images/dsa-icon-add-data-32.png)
@@ -189,6 +197,7 @@ Specify the folders the app searches for local data using your [App configuratio
   - Digital Terrain Elevation Data (DTED)
   - [Mobile mosaic dataset]
   - MrSID
+  - PDF
 
 - [Shapefile] (SHP)
 - Scene layer package (SLPK)
@@ -218,7 +227,10 @@ A [basemap] provides a background of geographical context for the symbology on t
 - Decide which basemaps you want to provision from among those that come with this DSA app.
 - Download basemaps for offline use from [Tile Basemap group on ArcGIS Online].
 - Provision your app with basemaps of your own design.
-- Try [Tile Package Kreator] from Esri, available on GitHub.
+- Decide which basemaps you want to provision from among those that come with this DSA app.
+- Download basemaps for offline use from [Tiled Basemap group on ArcGIS Online].
+- Provision your app with basemaps of your own design.
+- Use the [Download Map tool in ArcGIS Pro] to create tile packages from tile layers and imagery layers
 
 # Workflows and best practices
 
@@ -246,6 +258,34 @@ DSA apps support several generic message feeds.
 - DSA serializes feeds as strings of XML, which are then converted into bytes. The bytes are broadcast as datagrams over a specific UDP port. DSA apps are configured to listen on the same UDP ports, so when incoming datagrams are received, the messages are deserialized and displayed on the map.
 - This app uses [DynamicEntities] to connect to and display message feeds in the app. [DynamicEntityLayer] is a core type added to the ArcGIS Native SDKs at version 200.1 to visualize real-time data from a [DynamicEntityDataSource].
 - Military symbols are displayed using a [dictionary renderer].
+
+### Dynamic entities
+
+#### Track display
+
+<img src="./images/dsa-track-display.png" alt="Track Display" width="300" /><br>*Track Display tool*
+
+The `Track Display` tab under `Feeds` in Map tools provides feed-specific control of how dynamic observations and track lines are visualized.
+
+- Select a feed from `Message Feeds` (for example, `Friendly Tracks - Air` or `Friendly Tracks - Land`) and apply display settings independently per feed.
+- Enable `Observations` to show historical track observations for the selected feed.
+- Observation symbol size and color can be changed, and updates are reflected immediately on the map.
+- `Track Length Amount` controls how much recent track history is shown.
+- Enable `Track Line` to display a line representing track movement over time, with adjustable style options.
+- Set `Track Length Amount` to `All` to show the full available track history for the current session.
+- Observation and track-line display can be shown at the same time for both `Friendly Tracks - Air` and `Friendly Tracks - Land`, while preserving independent settings per feed.
+
+#### Find
+
+<img src="./images/dsa-find-feeds.png" alt="Find" width="300" /><br>*Find tool*
+
+The `Find` tab under `Feeds` in Map tools helps you quickly locate specific tracks from message feeds.
+
+- Select a message feed (for example, `Friendly Tracks - Land`) from the dropdown list.
+- Enter all or part of a message feed to search.
+- Matching results are listed and highlighted on the map.
+- Selecting a result zooms the map to the latest observation for that track and opens the context menu at that location.
+- From there, you can use the available [Map context menu](#map-context-menu) options for follow-up actions.
 
 ## Exploratory visual analysis
 
@@ -370,7 +410,7 @@ Use these tools to create markups.
 | ![](./images/dsa-icon-clear-markup-32.png) | Clear all the lines of the current markup. |
 | ![](./images/dsa-icon-share-markup-32.png) | The share control appears on the display after you start drawing a new markup. Use Share to finish your markup, give it a name and send it to all teammates. |
 
-Markups are serialized as individual JSON files in the folder specified by the `OperationalOverlays` parameter in the [app configuration file](#app-configuration-settings). The JSON schema for markup is the same one that's used for Explorer. Refer to the [Explorer for ArcGIS markup documentation] to see how Explorer similarly shares markup.
+Markups are serialized as individual JSON (".markup") files in the folder specified by the `OperationalOverlays` parameter in the [app configuration file](#app-configuration-settings). 
 
 ***Developer tips:***
 
@@ -393,12 +433,41 @@ All DSA tools have a common interface and are exposed as controller classes (whi
 
 For convenience, you can try out the DSA apps compiled for [Windows] and [Android], and the [local data] from ArcGIS Online. Please note that these compiled versions of the app are examples only, and should not be used in a production environment.
 
+## Run on Windows desktop
+
+There are two ways to run the app on a Windows desktop:
+
+### Option 1: Full screen (fixed window size)
+
+In Windows Explorer, double-click `DSA_Vehicle_Qt.exe` to launch the app in full screen. This mode does not allow resizing the window. 
+
+### Option 2: Window mode (resizable, can minimize, can maximize)
+
+1. Open Command Prompt in Administrator mode.
+2. Navigate to the app folder, for example:
+
+```bat
+cd C:\DSA\DSA_Vehicle\DSA_Vehicle
+```
+
+3. Run:
+
+```bat
+DSA_Vehicle_Qt.exe --show normal
+```
+
 # App configuration settings
 
-## Configure and persist app settings using the App Configuration file
-An app configuration file is used to set paths to data sources and persist the state of the app (settings, layers, and conditions) between sessions. When the DSA app runs, it will create a new app configuration file if one is not found in local storage. If the app configuration file is found, the app will read the values from the file when it starts. Any app settings changed at run time in the app using the [Settings panel](#settings-panel), data layers in the Overlays list, and alert conditions are persisted in the configuration file automatically when the app is closed. 
+All data used by the app must be in a specific, predefined folder structure, referred to as an "app configuration".  At version 2.0, DSA was enhanced to support switching between different app configurations. There are two app settings files used by DSA to persist the location of configurations available to the app, and settings specific to each configuration:
+- The Configurations Management file (`DsaConfigurations.json`) stores the paths to each app configuration that the user can choose to load, as well as a setting to indicate which configuration is currently loaded. 
+- The App Configuration Settings file (`DsaAppConfig.json`) stores settings and paths to data particular to a specific app configuration. 
 
-The app configuration file is located at `~/ArcGIS/Runtime/Data/DSA/Default/DsaAppConfig.json`, where `~` is `%username%`/`C:/Users/<username>` on Windows, `$HOME` on Unix and MacOS, and `<app_folder>/files` on Android where `<app_folder>` is the path to the package name in your AndroidManifest.xml file (e.g. /data/data/com.esri.arcgisruntime.opensourceapps.DSA_Handheld_Qt).
+Supplemental information on how to migrate data used with DSA 1.0 to the current format, as well as how to create and deploy custom configurations, can be found in the [Data Management](DataManagement.md) documentation. 
+## Configure and persist app settings using the App Configuration file
+## Configure and persist app settings using the App Configuration Settings file
+An app configuration settings file is used to set paths to data sources and persist the state of the app (settings, layers, and conditions) between sessions. When the DSA app runs, it will create a new app configuration file if one is not found in local storage. If the app configuration file is found, the app will read the values from the file when it starts. Any app settings changed at run time in the app using the [Settings panel](#settings-panel), data layers in the Overlays list, and alert conditions are persisted in the configuration file automatically when the app is closed. 
+
+By default, the app configuration settings file is located at `~/ArcGIS/Runtime/Data/DSA/Default/DsaAppConfig.json`, where `~` is `%username%`/`C:/Users/<username>` on Windows, `$HOME` on Unix and MacOS, and `<app_folder>/files` on Android where `<app_folder>` is the path to the package name in your AndroidManifest.xml file (e.g. /data/data/com.esri.arcgisruntime.opensourceapps.DSA_Handheld_Qt).
 
 The following lists some of the app configuration settings that you can change.
 
@@ -435,7 +504,7 @@ The following lists some of the app configuration settings that you can change.
 
 ## Add your own local data
 
-The default path to the data used by DSA is `~/ArcGIS/Runtime/Data/DSA/Default`. If you wish to use your own data, copy the data files into the related folders (see below) and reference the above table to update the various paths in the app configuration file (`DsaAppConfig.json`). If you have not copied your own data into the Default directory, the app will prompt you with an option to download the demo DSA data package from ArcGIS Online (~450mb) and place it in the Default directory. 
+The default path to the data used by DSA is `~/ArcGIS/Runtime/Data/DSA/Default`. If you wish to use your own data, copy the data files into the related folders (see below) and reference the above table to update the various paths in the app configuration settings file (`DsaAppConfig.json`). If you have not copied your own data into the Default directory, the app will prompt you with an option to download the demo DSA data package from ArcGIS Online (~450mb) and place it in the Default directory. 
 
 The default data directory should look like this:
 
@@ -450,14 +519,17 @@ The default data directory should look like this:
 
 ```
 
+## Deploy app configuration data with the application
+
+You can include the configuration data with the app so that it can be easily shared and deployed to another machine and run without additional configuration. To do this, store the app configurations management file (`DsaConfigurations.json`) in the same folder as the app executable, and use relative paths in the configurations management file and app configuration settings file(s) (`DsaAppConfig.json`). 
 ### Packaging your data into a configuration zip file
 
-As of version 3.0.0, the Configuration tab on the [Settings panel](#settings-panel) will allow you to download your own configurations. Zip files for custom configurations follow the same format as the sample data provided by Esri. The Zip file format itself has no real restrictions on the structure or contents. However, the DSA application expects a specific arrangement of the files contained in the archive. The 'base' folders like 'OperationalData', 'BasemapData', etc, must be directly at the root folder level. The zip must also contain a valid `DsaAppConfig.json` file at the root of the archive. The following steps can be followed to ensure the zip file is packaged so DSA can unpack it properly.
+As of version 3.0.0, the Configuration tab on the [Settings panel](#settings-panel) will allow you to download and deploy custom app configurations in zip files. The zip files for custom configurations follow the same specific folder structure as the sample data provided by Esri. The 'base' folders, such as 'OperationalData', 'BasemapData', etc, must be directly at the root folder level. The zip must also contain a valid `DsaAppConfig.json` file at the root of the archive. The following steps can be followed to ensure the zip file is packaged so DSA can unpack it properly.
 - Navigate to the configuration folder in the file system browser
 ![image](./images/dsa-data-management-create-zips-1.png)
 - Verify that your zip folder contains a valid `DsaAppConfig.json`
 ![image](./images/dsa-data-management-create-zips-2.png)
-- From within the folder, select all the items, right click on the `DsaAppConfig.json` file and select `Compress` on Mac or `Send to > Compressed (zipped) folder` on Windows.
+- From within the folder, select all the items (including `DsaAppConfig.json`) right click and select `Compress` on Mac or `Send to > Compressed (zipped) folder` on Windows.
 ![image](./images/dsa-data-management-create-zips-3.png)
 - The archive/zip that is created is now ready to be used with the DSA application. The name of the zip itself is not critical. It can be renamed to any valid file name.
 ![image](./images/dsa-data-management-create-zips-4.png)
@@ -497,7 +569,9 @@ Parameters available only in console mode:
 
 [Windows]: http://links.esri.com/exampleapps/dsaqt/app/windows
 
-[Tile Basemap group on ArcGIS Online]: https://www.arcgis.com/home/group.html?id=3a890be7a4b046c7840dc4a0446c5b31#overview
+[Tiled Basemap group on ArcGIS Online]: https://www.arcgis.com/home/group.html?id=3a890be7a4b046c7840dc4a0446c5b31#overview
+
+[Download Map tool in ArcGIS Pro]: https://doc.esri.com/en/arcgis-pro/latest/help/projects/take-a-map-offline.html
 
 <!-- Runtime landing pages -->
 

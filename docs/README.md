@@ -460,7 +460,7 @@ DSA_Vehicle_Qt.exe --show normal
 ## Configure and persist app settings using the App Configuration file
 An app configuration file is used to set paths to data sources and persist the state of the app (settings, layers, and conditions) between sessions. When the DSA app runs, it will create a new app configuration file if one is not found in local storage. If the app configuration file is found, the app will read the values from the file when it starts. Any app settings changed at run time in the app using the [Settings panel](#settings-panel), data layers in the Overlays list, and alert conditions are persisted in the configuration file automatically when the app is closed. 
 
-The app configuration file is located at `~/ArcGIS/Runtime/Data/DSA/Default/DsaAppConfig.json`, where `~` is `%username%`/`C:/Users/<username>` on Windows, `$HOME` on Unix and MacOS, and `<app_folder>/files` on Android where `<app_folder>` is the path to the package name in your AndroidManifest.xml file (e.g. /data/data/com.esri.arcgisruntime.opensourceapps.DSA_Handheld_Qt).
+By default, the app configuration settings file is located at `~/ArcGIS/Runtime/Data/DSA/Default/DsaAppConfig.json`, where `~` is `%username%`/`C:/Users/<username>` on Windows, `$HOME` on Unix and MacOS, and `<app_folder>/files` on Android where `<app_folder>` is the path to the package name in your AndroidManifest.xml file (e.g. /data/data/com.esri.arcgisruntime.opensourceapps.DSA_Handheld_Qt).
 
 The following lists some of the app configuration settings that you can change.
 

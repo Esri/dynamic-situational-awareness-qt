@@ -22,8 +22,11 @@ import QtQuick.Controls.Material
 
 Item {
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
+    readonly property real toolSpacing: 2 * scaleFactor
+    readonly property real indicatorHeight: 5 * scaleFactor
     width: DsaStyles.primaryIconSize * scaleFactor
-    height: width
+    implicitHeight: (width * 0.75) + toolText.implicitHeight + indicatorHeight + (2 * toolSpacing)
+    height: implicitHeight
     property alias iconSource: image.source
     property alias toolName: toolText.text
     property bool selected: false
@@ -33,7 +36,7 @@ Item {
 
     Column {
         anchors.fill: parent
-        spacing: 2 * scaleFactor
+        spacing: toolSpacing
 
         Image {
             id: image
@@ -56,7 +59,7 @@ Item {
 
         Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
-            height: 5 * scaleFactor
+            height: indicatorHeight
             width: parent.width
             radius: height / 2
             color: Material.accent

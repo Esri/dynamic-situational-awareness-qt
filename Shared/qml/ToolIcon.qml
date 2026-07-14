@@ -23,7 +23,7 @@ import QtQuick.Controls.Material
 Item {
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
     readonly property real toolSpacing: 2 * scaleFactor
-    readonly property real indicatorHeight: 5 * scaleFactor
+    readonly property real indicatorHeight: 2 * scaleFactor
     width: DsaStyles.primaryIconSize * scaleFactor
     implicitHeight: (width * 0.75) + toolText.implicitHeight + indicatorHeight + (2 * toolSpacing)
     height: implicitHeight

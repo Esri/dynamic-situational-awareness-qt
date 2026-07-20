@@ -27,6 +27,7 @@ Item {
     property bool imageFrameVisible: true
     property bool highlighted: false
     property bool clickTogglesCheck: true
+    property bool rowTapExcludesCheckBox: false
     property alias checkBoxVisible: visibleCheckBox.visible
     property alias mainText: labelMainText.text
     property alias mainTextColor: labelMainText.color
@@ -98,6 +99,7 @@ Item {
 
     MouseArea {
         anchors.fill: itemRow
+        anchors.leftMargin: rowTapExcludesCheckBox ? visibleCheckBox.width + itemRow.spacing : 0
         onClicked: {
             rowTapped();
 

@@ -67,6 +67,7 @@ DsaPanel {
                 itemChecked: feedVisible
                 highlighted: toolController.selectedFeedIndex === index
                 clickTogglesCheck: false
+                rowTapExcludesCheckBox: true
                 onRowTapped: {
                     toolController.selectedFeedIndex = index;
                 }

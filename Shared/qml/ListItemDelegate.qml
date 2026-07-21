@@ -25,6 +25,9 @@ Item {
     property url imageUrl
     property bool imageVisible
     property bool imageFrameVisible: true
+    property bool highlighted: false
+    property bool clickTogglesCheck: true
+    property bool rowTapExcludesCheckBox: false
     property alias checkBoxVisible: visibleCheckBox.visible
     property alias mainText: labelMainText.text
     property alias mainTextColor: labelMainText.color
@@ -32,6 +35,14 @@ Item {
     property bool menuIconVisible: false
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
     property color imageFrameColor: Material.foreground
+
+    signal rowTapped()
+
+    Rectangle {
+        anchors.fill: parent
+        color: highlighted ? Qt.rgba(Material.accent.r, Material.accent.g, Material.accent.b, 0.25) : "transparent"
+        radius: 4 * scaleFactor
+    }
 
     Row {
         anchors {
@@ -88,6 +99,12 @@ Item {
 
     MouseArea {
         anchors.fill: itemRow
-        onClicked: visibleCheckBox.checked = !visibleCheckBox.checked
+        anchors.leftMargin: rowTapExcludesCheckBox ? visibleCheckBox.width + itemRow.spacing : 0
+        onClicked: {
+            rowTapped();
+
+            if (clickTogglesCheck)
+                visibleCheckBox.checked = !visibleCheckBox.checked
+        }
     }
 }

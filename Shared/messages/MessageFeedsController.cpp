@@ -25,6 +25,7 @@
 #include "DynamicEntityIterator.h"
 #include "DynamicEntityQueryParameters.h"
 #include "DynamicEntityQueryResult.h"
+#include "ErrorException.h"
 #include "LayerListModel.h"
 #include "Scene.h"
 #include "SceneQuickView.h"
@@ -93,7 +94,7 @@ void MessageFeedsController::findEntities(const QString& entityIdText)
   DynamicEntityQueryParameters* params = new DynamicEntityQueryParameters(this);
   const QString clause = QString("%1 LIKE '%2%'").arg(mf->searchAttributeName(), entityIdText);
   params->setWhereClause(clause);
-  mf->queryDynamicEntitiesAsync(params, this).then(this, [this, mf, params](DynamicEntityQueryResult* result)
+  mf->queryDynamicEntitiesAsync(params, this).then(this, [&](DynamicEntityQueryResult* result)
   {
     QStringList resultEntityIds{};
     QList<DynamicEntity*> entities = result->iterator().asList(this);
@@ -107,6 +108,10 @@ void MessageFeedsController::findEntities(const QString& entityIdText)
     m_entityIdResults->setStringList(resultEntityIds);
     mf->messagesOverlay()->selectDynamicEntities(entities);
     params->deleteLater();
+  }).onFailed(this, [&](const ErrorException& error)
+  {
+    params->deleteLater();
+    qWarning() << "Error querying the MessageFeed [" << mf->feedName() << "]:" << error.error().message();
   });
 }
 

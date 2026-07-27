@@ -213,15 +213,15 @@ void MessageFeed::setFields(const QString& schemaUrl)
   m_searchAttributeName = properties["attribute_name_search"].toString();
   m_entityIdAttributeName = properties["attribute_name_id"].toString();
 
-  const QJsonArray attributes = properties["attributes"].toJsonArray();
+  const QVariantList attributes = properties["attributes"].toList();
   m_fields.reserve(attributes.size() + 2);
-  for (const QJsonValueConstRef attribute : attributes)
+  for (const QVariant& attribute : attributes)
   {
-    const QVariantMap attributeProperties = attribute.toObject().toVariantMap();
+    const QVariantMap attributeProperties = attribute.toMap();
     const QString attrType = attributeProperties["type"].toString();
     const QString attrName = attributeProperties["name"].toString();
     if (attrType.compare("string") == 0)
-      m_fields.push_back(Field::createText(attrName, attrName, 256));
+      m_fields.push_back(Field::createText(attrName, attrName, 255));
     else if (attrType.compare("integer") == 0)
       m_fields.push_back(Field::createLongInt(attrName, attrName));
     else if (attrType.compare("byte") == 0)
@@ -575,7 +575,7 @@ bool MessageFeed::addMessage(const Message& message)
   if (bdCodes.contains(bdCode))
     battleDimension = bdCodes[bdCode];
 
-  attributes[MessageFeeds::Fields::CoT::EVENT_TYPE] = QString{"<b><i>Affiliation: </i></b>%1<nbsp/><br><b><i>Battle Dimension: </i></b>%2"}.arg(affiliation, battleDimension);
+  attributes[MessageFeeds::Fields::CoT::EVENT_TYPE] = QString{"<b><i>Affiliation: </i></b>%1&nbsp;<br><b><i>Battle Dimension: </i></b>%2"}.arg(affiliation, battleDimension);
 
   addObservation(geometry, attributes);
   return true;

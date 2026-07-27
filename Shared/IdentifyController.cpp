@@ -235,10 +235,20 @@ PopupDefinition* IdentifyController::getPopupDefinitionForUrl(const QString& url
       m_popupDefinitions[url].find(group) == m_popupDefinitions[url].cend())
   {
     QFile fileGeoMessage{url};
-    fileGeoMessage.open(QFile::ReadOnly);
+    if (!fileGeoMessage.open(QFile::ReadOnly))
+      return nullptr;
 
-    const QJsonObject popupInfo = QJsonDocument::fromJson(fileGeoMessage.readAll()).object()["popupInfo"].toObject();
+    QJsonParseError error;
+    const QJsonDocument doc = QJsonDocument::fromJson(fileGeoMessage.readAll(), &error);
+    if (doc.isNull() ||
+        doc.isEmpty() ||
+        !doc.isObject() ||
+        error.error != QJsonParseError::NoError)
+      return nullptr;
     fileGeoMessage.close();
+
+    const QJsonObject obj = doc.object();
+    const QJsonObject popupInfo = obj["popupInfo"].toObject();
     QList<PopupElement*> popupElements{};
     for (const QJsonValue& v : popupInfo["popupElements"].toArray())
     {

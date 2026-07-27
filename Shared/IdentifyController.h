@@ -31,6 +31,7 @@
 // STL headers
 #include <memory>
 #include <vector>
+#include <unordered_map>
 
 
 namespace Esri::ArcGISRuntime {

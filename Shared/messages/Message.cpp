@@ -317,7 +317,9 @@ Message Message::createFromGeoMessage(const QByteArray& message)
       else if (QString::compare(reader.name(), MessageFeeds::Fields::GeoMessage::WKID, Qt::CaseInsensitive) == 0)
       {
         wkidText = reader.readElementText();
-        attributes.insert(MessageFeeds::Fields::GeoMessage::WKID, wkidText);
+        bool wkidOk = false;
+        if (int wkidInt = wkidText.toInt(&wkidOk); wkidOk)
+          attributes.insert(MessageFeeds::Fields::GeoMessage::WKID, wkidInt);
       }
       else if (QString::compare(reader.name(), MessageFeeds::Fields::GeoMessage::SIC, Qt::CaseInsensitive) == 0)
       {

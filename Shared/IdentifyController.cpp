@@ -180,7 +180,7 @@ bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QStrin
       newPopup = new Popup(geoElement, this);
 
     if (!isObservation)
-      newPopup->popupDefinition()->setTitle(QString{"%1<br><i><font size=\"4\" color=\"#68C1F9\">live track info</i>"}.arg(popupTitle));
+      newPopup->popupDefinition()->setTitle(QString{"%1<br><i><font size=\"4\" color=\"#68C1F9\">live track info</font></i>"}.arg(popupTitle));
     else
       newPopup->popupDefinition()->setTitle(popupTitle);
 
@@ -244,7 +244,8 @@ PopupDefinition* IdentifyController::getPopupDefinitionForUrl(const QString& url
     {
       QJsonObject o{v.toObject()};
       PopupElement* pe = PopupElement::fromJson(QJsonDocument{o}.toJson(QJsonDocument::Compact));
-      popupElements.append(pe);
+      if (pe)
+        popupElements.append(pe);
     }
     QList<PopupExpression*> expressionInfos{};
     for (const QJsonValue& v : popupInfo["expressionInfos"].toArray())

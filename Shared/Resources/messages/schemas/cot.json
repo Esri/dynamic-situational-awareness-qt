@@ -21,7 +21,7 @@
       "name": "lon"
     },
     {
-      "type": "string",
+      "type": "float",
       "name": "hae"
     },
     {

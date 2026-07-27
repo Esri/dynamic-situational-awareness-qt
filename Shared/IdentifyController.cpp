@@ -150,6 +150,7 @@ bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QStrin
   // check for dynamic entities
   bool isDynamic = false;
   bool isObservation = false;
+  QString groupName{};
   if (const auto* de = dynamic_cast<DynamicEntity*>(geoElement); de)
   {
     isDynamic = true;
@@ -158,6 +159,7 @@ bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QStrin
   {
     isDynamic = true;
     isObservation = true;
+    groupName = QString{"observations"};
   }
 
   // This check is a dependency on the known schemas for messages/DEs being only of types:
@@ -172,7 +174,7 @@ bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QStrin
         popupDefinitionUrl = url;
     }
 
-    if (PopupDefinition* popupDefinition = getPopupDefinitionForUrl(popupDefinitionUrl); popupDefinition)
+    if (PopupDefinition* popupDefinition = getPopupDefinitionForUrl(popupDefinitionUrl, groupName); popupDefinition)
       newPopup = new Popup(geoElement, popupDefinition, this);
     else
       newPopup = new Popup(geoElement, this);
@@ -227,9 +229,10 @@ bool IdentifyController::canPrev() const
   return m_currentPopupIndex > 0;
 }
 
-PopupDefinition* IdentifyController::getPopupDefinitionForUrl(const QString& url)
+PopupDefinition* IdentifyController::getPopupDefinitionForUrl(const QString& url, const QString& group)
 {
-  if (m_popupDefinitions.find(url) == m_popupDefinitions.cend())
+  if (m_popupDefinitions.find(url) == m_popupDefinitions.cend() ||
+      m_popupDefinitions[url].find(group) == m_popupDefinitions[url].cend())
   {
     QFile fileGeoMessage{url};
     fileGeoMessage.open(QFile::ReadOnly);
@@ -286,10 +289,10 @@ PopupDefinition* IdentifyController::getPopupDefinitionForUrl(const QString& url
     pd->setExpressions(expressionInfos);
     pd->setFields(fieldInfos);
     pd->setTitle(popupInfo["title"].toString());
-    m_popupDefinitions[url] = pd;
+    m_popupDefinitions[url][group] = pd;
   }
 
-  return m_popupDefinitions[url];
+  return m_popupDefinitions[url][group];
 }
 
 Popup* IdentifyController::popup() const

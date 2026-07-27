@@ -352,7 +352,7 @@ void LocationBroadcast::broadcastLocation()
     QVariantMap attribs;
 
     m_message = Message(Message::MessageAction::Update, m_location);
-    m_message.setMessageId(QUuid::createUuid().toString());
+    m_message.setMessageId(m_userName);
 
     // set message type for the 'message' object itself based on the composed
     // messageType configuration value

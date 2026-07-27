@@ -94,7 +94,7 @@ void MessageFeedsController::findEntities(const QString& entityIdText)
   DynamicEntityQueryParameters* params = new DynamicEntityQueryParameters(this);
   const QString clause = QString("%1 LIKE '%2%'").arg(mf->searchAttributeName(), entityIdText);
   params->setWhereClause(clause);
-  mf->queryDynamicEntitiesAsync(params, this).then(this, [&](DynamicEntityQueryResult* result)
+  mf->queryDynamicEntitiesAsync(params, this).then(this, [params, mf, this](DynamicEntityQueryResult* result)
   {
     QStringList resultEntityIds{};
     QList<DynamicEntity*> entities = result->iterator().asList(this);
@@ -108,7 +108,7 @@ void MessageFeedsController::findEntities(const QString& entityIdText)
     m_entityIdResults->setStringList(resultEntityIds);
     mf->messagesOverlay()->selectDynamicEntities(entities);
     params->deleteLater();
-  }).onFailed(this, [&](const ErrorException& error)
+  }).onFailed(this, [params, mf](const ErrorException& error)
   {
     params->deleteLater();
     qWarning() << "Error querying the MessageFeed [" << mf->feedName() << "]:" << error.error().message();
@@ -209,8 +209,8 @@ void MessageFeedsController::addDataListener(DataListener* dataListener)
     QString messageTypeResolved{m.messageType()};
     if (m.messageType().startsWith(Dsa::MessageFeeds::Types::POSITION_REPORT))
     {
-      const QString environment = m.attributes().value(Dsa::MessageFeeds::Fields::GeoMessage::ENVIRONMENT).toString();
-      messageTypeResolved = QString{"%1_%2"}.arg(m.messageType(), environment);
+      if (const QString environment = m.attributes().value(Dsa::MessageFeeds::Fields::GeoMessage::ENVIRONMENT).toString(); !environment.isEmpty())
+        messageTypeResolved = QString{"%1_%2"}.arg(m.messageType(), environment);
     }
 
     MessageFeed* messageFeed = m_messageFeeds->messageFeedByType(messageTypeResolved);

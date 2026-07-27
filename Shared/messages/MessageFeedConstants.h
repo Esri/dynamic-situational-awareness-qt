@@ -17,9 +17,13 @@
 #ifndef MESSAGEFEEDCONSTANTS_H
 #define MESSAGEFEEDCONSTANTS_H
 
-// Qt headers
+// Qt
 #include <QString>
+#include <QStringList>
 #include <QUrl>
+// STL
+#include <unordered_map>
+
 
 namespace Dsa::MessageFeedConstants {
 

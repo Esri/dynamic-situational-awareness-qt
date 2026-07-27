@@ -257,9 +257,9 @@ PopupDefinition* IdentifyController::getPopupDefinitionForUrl(const QString& url
 
       const QString rt = o["returnType"].toString().toLower();
       pe->setReturnType(PopupExpressionReturnType::String);
-      if (rt.compare(QStringLiteral("number")))
+      if (rt.compare(QStringLiteral("number")) == 0)
         pe->setReturnType(PopupExpressionReturnType::Number);
-      else if (rt.compare(QStringLiteral("dictionary")))
+      else if (rt.compare(QStringLiteral("dictionary")) == 0)
         pe->setReturnType(PopupExpressionReturnType::Dictionary);
 
       expressionInfos.append(pe);
@@ -272,7 +272,7 @@ PopupDefinition* IdentifyController::getPopupDefinitionForUrl(const QString& url
       pf->setFieldName(o["fieldName"].toString());
       pf->setEditable(o["isEditable"].toBool());
       pf->setLabel(o["label"].toString());
-      pf->setVisible(o["visible"].isBool());
+      pf->setVisible(o["visible"].toBool());
       if (o.contains("format"))
       {
         QJsonObject f{o["format"].toObject()};

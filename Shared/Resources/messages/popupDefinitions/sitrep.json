@@ -10,43 +10,43 @@
         "fieldInfos": [
           {
             "fieldName": "activity",
-            "label": "Activity",
+            "label": "Activity"
           },
           {
             "fieldName": "effective",
-            "label": "Combat effectiveness",
+            "label": "Combat effectiveness"
           },
           {
             "fieldName": "own_situation",
-            "label": "Own situation disposition/status",
+            "label": "Own situation disposition/status"
           },
           {
             "fieldName": "situation_overview",
-            "label": "Situation overview",
+            "label": "Situation overview"
           },
           {
             "fieldName": "operations",
-            "label": "Operations",
+            "label": "Operations"
           },
           {
             "fieldName": "isr",
-            "label": "Intelligence/reconnaissance",
+            "label": "Intelligence/reconnaissance"
           },
           {
             "fieldName": "sustainment",
-            "label": "Logistics",
+            "label": "Logistics"
           },
           {
             "fieldName": "comms",
-            "label": "Communications/connectivity",
+            "label": "Communications/connectivity"
           },
           {
             "fieldName": "personnel",
-            "label": "Personnel",
+            "label": "Personnel"
           },
           {
             "fieldName": "_id",
-            "label": "Track ID",
+            "label": "Track ID"
           }
         ],
         "title": "Situation Report:"

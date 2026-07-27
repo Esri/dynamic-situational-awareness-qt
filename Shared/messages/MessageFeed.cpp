@@ -204,6 +204,8 @@ void MessageFeed::setFields(const QString& schemaUrl)
   const QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
   file.close();
   if (doc.isNull() ||
+      doc.isEmpty() ||
+      !doc.isObject() ||
       error.error != QJsonParseError::NoError)
     return;
 

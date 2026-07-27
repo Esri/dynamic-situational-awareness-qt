@@ -473,103 +473,111 @@ Renderer* MessageFeed::createRenderer()
 
 bool MessageFeed::addMessage(const Message& message)
 {
-  static QString additionalErrorMessage = "DSA - MessageFeed";
-  const auto messageId = message.messageId();
+  static const QString additionalErrorMessage = QStringLiteral("DSA - MessageFeed");
+
+  if (!m_messagesOverlay)
+  {
+    emit errorOccurred(Error("MessagesOverlay not set", additionalErrorMessage, ExtendedErrorType::None));
+    return false;
+  }
+
+  const QString messageId = message.messageId();
   if (messageId.isEmpty())
   {
     emit errorOccurred(Error("Failed to add message - message ID is empty", additionalErrorMessage, ExtendedErrorType::None));
     return false;
   }
 
-  const auto symbolId = message.symbolId();
-  const auto geometry = message.geometry();
-  const auto messageAction = message.messageAction();
+  const QString symbolId = message.symbolId();
+  const Geometry geometry = message.geometry();
+  const Message::MessageAction messageAction = message.messageAction();
 
-  switch (messageAction)
+  if (messageAction == Message::MessageAction::Remove)
   {
-  case Message::MessageAction::Remove:
-    {
-      const auto future = deleteEntityAsync(messageId);
-      Q_UNUSED(future);
-    }
+    const QFuture<void> future = deleteEntityAsync(messageId);
+    Q_UNUSED(future);
     return true;
-
-  default:
-    if (m_messagesOverlay == nullptr)
-    {
-      emit errorOccurred(Error("MessagesOverlay not set", additionalErrorMessage, ExtendedErrorType::None));
-      return false;
-    }
-
-    if (m_messagesOverlay->renderer() && m_messagesOverlay->renderer()->rendererType() == RendererType::DictionaryRenderer && symbolId.isEmpty())
-    {
-      emit errorOccurred(Error("Failed to add message - symbol ID is empty", additionalErrorMessage, ExtendedErrorType::None));
-      return false;
-    }
-
-    if (geometry.isEmpty())
-    {
-      emit errorOccurred(Error("Failed to add message - geometry is empty", additionalErrorMessage, ExtendedErrorType::None));
-      return false;
-    }
-
-    if (geometry.geometryType() != GeometryType::Point)
-    {
-      emit errorOccurred(Error("Failed to add message - only point geometry types are supported", additionalErrorMessage, ExtendedErrorType::None));
-      return false;
-    }
-
-    // TODO: validate attributes? message.attributes() will most likely have more than the DEDS schema
-
-    // make a copy of the message attributes into a new map so we can add the calculated fields necessary while we
-    // investigate the issues using arcade expressions in the popup definitions
-    QVariantMap attributes{};
-    const QVariantMap attrs = message.attributes();
-    const QList<QString> attrNames = attrs.keys();
-    for (const QString& key : attrNames)
-      attributes[key] = attrs[key];
-
-    // insert the timestamp field for all feature types
-    attributes[MessageFeeds::Fields::Common::SYS_TIMESTAMP] = QDateTime::currentDateTime().toString(QStringLiteral("ddd, MMM d, yyyy @ H:mm:ss t"));
-
-    // insert a lookup value for event type if cursor on target type
-    if (m_isCoT)
-    {
-      static const QHash<QChar, QString> affCodes{
-        {'p', QStringLiteral("Pending")},
-        {'u', QStringLiteral("Unknown")},
-        {'a', QStringLiteral("Assumed friend")},
-        {'f', QStringLiteral("Friend")},
-        {'n', QStringLiteral("Neutral")},
-        {'s', QStringLiteral("Suspect")},
-        {'h', QStringLiteral("Hostile")},
-        {'j', QStringLiteral("Joker")},
-        {'k', QStringLiteral("Faker")},
-        {'o', QStringLiteral("None specified")},
-      };
-      QString affiliation{"Other"};
-      const QChar affCode = attributes[MessageFeeds::Fields::CoT::TYPE].toString().at(2);
-      if (affCodes.contains(affCode))
-        affiliation = affCodes[affCode];
-
-      static const QHash<QChar, QString> bdCodes{
-        {'P', QStringLiteral("Space")},
-        {'A', QStringLiteral("Air")},
-        {'G', QStringLiteral("Ground")},
-        {'S', QStringLiteral("Sea surface")},
-        {'U', QStringLiteral("Sea subsurface")},
-      };
-      QString battleDimension{"Other"};
-      const QChar bdCode = attributes[MessageFeeds::Fields::CoT::TYPE].toString().at(4);
-      if (bdCodes.contains(bdCode))
-        battleDimension = bdCodes[bdCode];
-
-      attributes[MessageFeeds::Fields::CoT::EVENT_TYPE] = QString{"<b><i>Affiliation: </i></b>%1<nbsp/><br><b><i>Battle Dimension: </i></b>%2"}.arg(affiliation, battleDimension);
-    }
-
-    addObservation(geometry, attributes);
   }
 
+  if (m_messagesOverlay->renderer() && m_messagesOverlay->renderer()->rendererType() == RendererType::DictionaryRenderer && symbolId.isEmpty())
+  {
+    emit errorOccurred(Error("Failed to add message - symbol ID is empty", additionalErrorMessage, ExtendedErrorType::None));
+    return false;
+  }
+
+  if (geometry.isEmpty())
+  {
+    emit errorOccurred(Error("Failed to add message - geometry is empty", additionalErrorMessage, ExtendedErrorType::None));
+    return false;
+  }
+
+  if (geometry.geometryType() != GeometryType::Point)
+  {
+    emit errorOccurred(Error("Failed to add message - only point geometry types are supported", additionalErrorMessage, ExtendedErrorType::None));
+    return false;
+  }
+
+  // TODO: validate attributes? message.attributes() will most likely have more than the DEDS schema
+
+  // make a copy of the message attributes into a new map so we can add the calculated fields necessary while we
+  // investigate the issues using arcade expressions in the popup definitions
+  QVariantMap attributes{};
+  const QVariantMap attrs = message.attributes();
+  const QList<QString> attrNames = attrs.keys();
+  for (const QString& key : attrNames)
+    attributes[key] = attrs[key];
+
+  // insert the timestamp field for all feature types
+  attributes[MessageFeeds::Fields::Common::SYS_TIMESTAMP] = QDateTime::currentDateTime().toString(QStringLiteral("ddd, MMM d, yyyy @ H:mm:ss t"));
+
+  // nothing else needed for non cursor-on-target messages
+  if (!m_isCoT)
+  {
+    addObservation(geometry, attributes);
+    return true;
+  }
+
+  // skip calculated codes if type field is not valid
+  const QString cotType = attributes[MessageFeeds::Fields::CoT::TYPE].toString();
+  if (cotType.size() < 5)
+  {
+    addObservation(geometry, attributes);
+    return true;
+  }
+
+  // calculate the codes from the symbol type code field
+  static const QHash<QChar, QString> affCodes{
+    {'p', QStringLiteral("Pending")},
+    {'u', QStringLiteral("Unknown")},
+    {'a', QStringLiteral("Assumed friend")},
+    {'f', QStringLiteral("Friend")},
+    {'n', QStringLiteral("Neutral")},
+    {'s', QStringLiteral("Suspect")},
+    {'h', QStringLiteral("Hostile")},
+    {'j', QStringLiteral("Joker")},
+    {'k', QStringLiteral("Faker")},
+    {'o', QStringLiteral("None specified")},
+  };
+  QString affiliation{"Other"};
+  const QChar affCode = cotType.at(2);
+  if (affCodes.contains(affCode))
+    affiliation = affCodes[affCode];
+
+  static const QHash<QChar, QString> bdCodes{
+    {'P', QStringLiteral("Space")},
+    {'A', QStringLiteral("Air")},
+    {'G', QStringLiteral("Ground")},
+    {'S', QStringLiteral("Sea surface")},
+    {'U', QStringLiteral("Sea subsurface")},
+  };
+  QString battleDimension{"Other"};
+  const QChar bdCode = cotType.at(4);
+  if (bdCodes.contains(bdCode))
+    battleDimension = bdCodes[bdCode];
+
+  attributes[MessageFeeds::Fields::CoT::EVENT_TYPE] = QString{"<b><i>Affiliation: </i></b>%1<nbsp/><br><b><i>Battle Dimension: </i></b>%2"}.arg(affiliation, battleDimension);
+
+  addObservation(geometry, attributes);
   return true;
 }
 

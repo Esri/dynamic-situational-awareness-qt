@@ -31,6 +31,7 @@
 // STL headers
 #include <memory>
 #include <vector>
+#include <unordered_map>
 
 
 namespace Esri::ArcGISRuntime {
@@ -70,10 +71,12 @@ private:
   Esri::ArcGISRuntime::Popup* popup() const;
   bool canNext() const;
   bool canPrev() const;
+  Esri::ArcGISRuntime::PopupDefinition* getPopupDefinitionForUrl(const QString& url, const QString& group = "");
 
   double m_tolerance = 5.0;
   int m_currentPopupIndex = -1;
   std::vector<Esri::ArcGISRuntime::Popup*> m_popups;
+  std::unordered_map<QString, std::unordered_map<QString, Esri::ArcGISRuntime::PopupDefinition*>> m_popupDefinitions;
 };
 
 // some shortcuts for working with multiple identify operation futures in a single 'QtFuture::whenAll' handler

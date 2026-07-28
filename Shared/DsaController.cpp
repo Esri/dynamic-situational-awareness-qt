@@ -436,7 +436,7 @@ void DsaController::writeDefaultMessageFeeds()
 
   QJsonObject cotMessageFeedJson;
   cotMessageFeedJson.insert(MESSAGE_FEEDS_NAME, QStringLiteral("SA Events"));
-  cotMessageFeedJson.insert(MESSAGE_FEEDS_TYPE, QStringLiteral("cot"));
+  cotMessageFeedJson.insert(MESSAGE_FEEDS_TYPE, MessageFeeds::Types::CURSOR_ON_TARGET);
   cotMessageFeedJson.insert(MESSAGE_FEEDS_RENDERER, QStringLiteral("mil2525c"));
   cotMessageFeedJson.insert(MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("saevents.png"));
   cotMessageFeedJson.insert(MESSAGE_FEEDS_PLACEMENT, MESSAGE_FEEDS_PLACEMENT_DEFAULT);
@@ -444,7 +444,7 @@ void DsaController::writeDefaultMessageFeeds()
 
   QJsonObject friendlyTracksLandJson;
   friendlyTracksLandJson.insert(MESSAGE_FEEDS_NAME, QStringLiteral("Friendly Tracks - Land"));
-  friendlyTracksLandJson.insert(MESSAGE_FEEDS_TYPE, QStringLiteral("position_report_land"));
+  friendlyTracksLandJson.insert(MESSAGE_FEEDS_TYPE, QString{"%1_land"}.arg(MessageFeeds::Types::POSITION_REPORT));
   friendlyTracksLandJson.insert(MESSAGE_FEEDS_RENDERER, QStringLiteral("mil2525c"));
   friendlyTracksLandJson.insert(MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("friendlytracks.png"));
   friendlyTracksLandJson.insert(MESSAGE_FEEDS_PLACEMENT, MESSAGE_FEEDS_PLACEMENT_DEFAULT);
@@ -452,7 +452,7 @@ void DsaController::writeDefaultMessageFeeds()
 
   QJsonObject friendlyTracksAirJson;
   friendlyTracksAirJson.insert(MESSAGE_FEEDS_NAME, QStringLiteral("Friendly Tracks - Air"));
-  friendlyTracksAirJson.insert(MESSAGE_FEEDS_TYPE, QStringLiteral("position_report_air"));
+  friendlyTracksAirJson.insert(MESSAGE_FEEDS_TYPE, QString{"%1_air"}.arg(MessageFeeds::Types::POSITION_REPORT));
   friendlyTracksAirJson.insert(MESSAGE_FEEDS_RENDERER, QStringLiteral("mil2525c"));
   friendlyTracksAirJson.insert(MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("friendlytracks-air.png"));
   friendlyTracksAirJson.insert(MESSAGE_FEEDS_PLACEMENT, QStringLiteral("absolute"));
@@ -460,7 +460,7 @@ void DsaController::writeDefaultMessageFeeds()
 
   QJsonObject spotRepJson;
   spotRepJson.insert(MESSAGE_FEEDS_NAME, QStringLiteral("Observation Reports"));
-  spotRepJson.insert(MESSAGE_FEEDS_TYPE, QStringLiteral("spotrep"));
+  spotRepJson.insert(MESSAGE_FEEDS_TYPE, MessageFeeds::Types::SPOTREP);
   spotRepJson.insert(MESSAGE_FEEDS_RENDERER, QStringLiteral("observation1600.png"));
   spotRepJson.insert(MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("observation1600.png"));
   spotRepJson.insert(MESSAGE_FEEDS_PLACEMENT, MESSAGE_FEEDS_PLACEMENT_DEFAULT);
@@ -468,7 +468,7 @@ void DsaController::writeDefaultMessageFeeds()
 
   QJsonObject sitRepJson;
   sitRepJson.insert(MESSAGE_FEEDS_NAME, QStringLiteral("Situation Reports"));
-  sitRepJson.insert(MESSAGE_FEEDS_TYPE, QStringLiteral("sitrep"));
+  sitRepJson.insert(MESSAGE_FEEDS_TYPE, MessageFeeds::Types::SITREP);
   sitRepJson.insert(MESSAGE_FEEDS_RENDERER, QStringLiteral("sitrep1600.png"));
   sitRepJson.insert(MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("sitrep1600.png"));
   sitRepJson.insert(MESSAGE_FEEDS_PLACEMENT, MESSAGE_FEEDS_PLACEMENT_DEFAULT);
@@ -476,7 +476,7 @@ void DsaController::writeDefaultMessageFeeds()
 
   QJsonObject eodReportsJson;
   eodReportsJson.insert(MESSAGE_FEEDS_NAME, QStringLiteral("EOD Reports"));
-  eodReportsJson.insert(MESSAGE_FEEDS_TYPE, QStringLiteral("eod"));
+  eodReportsJson.insert(MESSAGE_FEEDS_TYPE, MessageFeeds::Types::EOD);
   eodReportsJson.insert(MESSAGE_FEEDS_RENDERER, QStringLiteral("eod1600.png"));
   eodReportsJson.insert(MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("eod1600.png"));
   eodReportsJson.insert(MESSAGE_FEEDS_PLACEMENT, MESSAGE_FEEDS_PLACEMENT_DEFAULT);
@@ -484,7 +484,7 @@ void DsaController::writeDefaultMessageFeeds()
 
   QJsonObject sensorObsJson;
   sensorObsJson.insert(MESSAGE_FEEDS_NAME, QStringLiteral("Sensor Observations"));
-  sensorObsJson.insert(MESSAGE_FEEDS_TYPE, QStringLiteral("sensor_obs"));
+  sensorObsJson.insert(MESSAGE_FEEDS_TYPE, MessageFeeds::Types::SENSOR_OBS);
   sensorObsJson.insert(MESSAGE_FEEDS_RENDERER, QStringLiteral("sensorobs1600.png"));
   sensorObsJson.insert(MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("sensorobs1600.png"));
   sensorObsJson.insert(MESSAGE_FEEDS_PLACEMENT, MESSAGE_FEEDS_PLACEMENT_DEFAULT);
@@ -492,7 +492,7 @@ void DsaController::writeDefaultMessageFeeds()
   m_dsaSettings[MESSAGE_FEEDS_PROPERTYNAME] = messageFeedsJson;
 
   QJsonObject locationBroadcastJson;
-  locationBroadcastJson.insert(LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE, QStringLiteral("position_report_land"));
+  locationBroadcastJson.insert(LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE, QString{"%1_land"}.arg(MessageFeeds::Types::POSITION_REPORT));
   locationBroadcastJson.insert(LOCATION_BROADCAST_CONFIG_PORT, 45679);
   m_dsaSettings[LOCATION_BROADCAST_CONFIG_PROPERTYNAME] = locationBroadcastJson;
 

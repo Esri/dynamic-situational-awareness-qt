@@ -21,7 +21,6 @@
 
 // C++ API
 #include "AttributeListModel.h"
-#include "Domain.h"
 #include "DictionaryRenderer.h"
 #include "DictionarySymbolStyle.h"
 #include "DynamicEntity.h"
@@ -49,6 +48,9 @@
 // Qt
 #include <QFile>
 #include <QFileInfo>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 // STD
 #include <algorithm>
 #include <iterator>
@@ -171,52 +173,86 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
 
 MessageFeed::~MessageFeed() = default;
 
+QString getSchemaUrlForMessageType(const QString& messageType)
+{
+  QString messageTypeFuzzy{messageType};
+  if (messageType.startsWith(MessageFeeds::Types::POSITION_REPORT))
+  {
+    messageTypeFuzzy = MessageFeeds::Types::POSITION_REPORT;
+  }
+
+  const std::unordered_map<QString, QString>& urls = MessageFeeds::Types::SCHEMA_URLS;
+  if (urls.find(messageTypeFuzzy) != urls.end())
+  {
+    return urls.at(messageTypeFuzzy);
+  }
+
+  return QString{};
+}
+
+void MessageFeed::setFields(const QString& schemaUrl)
+{
+  if (schemaUrl.isEmpty() ||
+      !QFile::exists(schemaUrl))
+    return;
+
+  QFile file{schemaUrl};
+  if (!file.open(QFile::ReadOnly))
+    return;
+
+  QJsonParseError error;
+  const QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
+  file.close();
+  if (doc.isNull() ||
+      doc.isEmpty() ||
+      !doc.isObject() ||
+      error.error != QJsonParseError::NoError)
+    return;
+
+  const QVariantMap properties = doc.object().toVariantMap();
+  m_searchAttributeName = properties["attribute_name_search"].toString();
+  m_entityIdAttributeName = properties["attribute_name_id"].toString();
+
+  const QVariantList attributes = properties["attributes"].toList();
+  m_fields.reserve(attributes.size() + 2);
+  for (const QVariant& attribute : attributes)
+  {
+    const QVariantMap attributeProperties = attribute.toMap();
+    const QString attrType = attributeProperties["type"].toString();
+    const QString attrName = attributeProperties["name"].toString();
+    if (attrType.compare("string") == 0)
+      m_fields.push_back(Field::createText(attrName, attrName, 255));
+    else if (attrType.compare("integer") == 0)
+      m_fields.push_back(Field::createLongInt(attrName, attrName));
+    else if (attrType.compare("byte") == 0)
+      m_fields.push_back(Field::createShortInt(attrName, attrName));
+    else if (attrType.compare("short") == 0)
+      m_fields.push_back(Field::createShortInt(attrName, attrName));
+    else if (attrType.compare("float") == 0)
+      m_fields.push_back(Field::createFloat(attrName, attrName));
+    else
+    {
+      // clear any fields already added to trigger the assertion
+      m_fields.clear();
+      return;
+    }
+  }
+
+  m_fields.push_back(Field::createText(MessageFeeds::Fields::Common::SIDC, MessageFeeds::Fields::Common::SIDC, 255));
+  m_fields.push_back(Field::createText(MessageFeeds::Fields::Common::SYS_TIMESTAMP, MessageFeeds::Fields::Common::SYS_TIMESTAMP, 255));
+
+  // set the flag for CoT for runtime message processing
+  m_isCoT = m_feedMessageType.compare(MessageFeeds::Types::CURSOR_ON_TARGET) == 0;
+}
+
 QFuture<DynamicEntityDataSourceInfo*> MessageFeed::onLoadAsync()
 {
-  std::vector<QString> field_names{};
-  if (m_isCoT = feedMessageType().compare(QStringLiteral("cot"), Qt::CaseInsensitive) == 0; m_isCoT)
-  {
-    // set the entity id field
-    m_entityIdAttributeName = Message::COT_UID_NAME;
-    m_searchAttributeName = Message::COT_UID_NAME;
-
-    // set the fields
-    field_names.reserve(7);
-    field_names.emplace_back(Message::COT_TYPE_NAME);
-    field_names.emplace_back(Message::COT_POINT_NAME);
-    field_names.emplace_back(Message::COT_POINT_LAT_NAME);
-    field_names.emplace_back(Message::COT_POINT_LON_NAME);
-    field_names.emplace_back(Message::COT_POINT_HAE_NAME);
-  }
-  else
-  {
-    // set the entity id field
-    m_entityIdAttributeName = Message::GEOMESSAGE_ID_NAME;
-    m_searchAttributeName = Message::GEOMESSAGE_UNIQUE_DESIGNATION_NAME;
-
-    // set the fields
-    field_names.reserve(10);
-    field_names.emplace_back(Message::GEOMESSAGE_TYPE_NAME);
-    field_names.emplace_back(Message::GEOMESSAGE_ACTION_NAME);
-    field_names.emplace_back(Message::GEOMESSAGE_UNIQUE_DESIGNATION_NAME);
-    field_names.emplace_back(Message::GEOMESSAGE_WKID_NAME);
-    field_names.emplace_back(Message::GEOMESSAGE_SIC_NAME);
-    field_names.emplace_back(Message::GEOMESSAGE_CONTROL_POINTS_NAME);
-    field_names.emplace_back(Message::GEOMESSAGE_STATUS_911_NAME);
-    field_names.emplace_back(Message::GEOMESSAGE_ENVIRONMENT_NAME);
-  }
-  field_names.emplace_back(m_entityIdAttributeName);
-  field_names.emplace_back(Message::SIDC_NAME);
-
-  QList<Field> fields;
-  fields.reserve(field_names.size());
-  for (const QString& fn : field_names)
-  {
-    fields.emplace_back(FieldType::Text, fn, fn, 256, Domain{}, false, true);
-  }
+  QString schemaUrl = getSchemaUrlForMessageType(m_feedMessageType);
+  setFields(schemaUrl);
+  Q_ASSERT(!m_fields.isEmpty());
 
   // build the dynamic entity data source info from the fields and the entity id field name
-  auto* dynamicEntityDataSourceInfo = new DynamicEntityDataSourceInfo(m_entityIdAttributeName, fields, this);
+  auto* dynamicEntityDataSourceInfo = new DynamicEntityDataSourceInfo(m_entityIdAttributeName, m_fields, this);
   dynamicEntityDataSourceInfo->setSpatialReference(SpatialReference::wgs84());
 
   // listen for new entities
@@ -437,61 +473,111 @@ Renderer* MessageFeed::createRenderer()
 
 bool MessageFeed::addMessage(const Message& message)
 {
-  static QString additionalErrorMessage = "DSA - MessageFeed";
-  const auto messageId = message.messageId();
+  static const QString additionalErrorMessage = QStringLiteral("DSA - MessageFeed");
+
+  if (!m_messagesOverlay)
+  {
+    emit errorOccurred(Error("MessagesOverlay not set", additionalErrorMessage, ExtendedErrorType::None));
+    return false;
+  }
+
+  const QString messageId = message.messageId();
   if (messageId.isEmpty())
   {
     emit errorOccurred(Error("Failed to add message - message ID is empty", additionalErrorMessage, ExtendedErrorType::None));
     return false;
   }
 
-  if (message.messageType() != feedMessageType())
+  const QString symbolId = message.symbolId();
+  const Geometry geometry = message.geometry();
+  const Message::MessageAction messageAction = message.messageAction();
+
+  if (messageAction == Message::MessageAction::Remove)
   {
-    emit errorOccurred(Error("Failed to add message - message type mismatch", additionalErrorMessage, ExtendedErrorType::None));
+    const QFuture<void> future = deleteEntityAsync(messageId);
+    Q_UNUSED(future);
+    return true;
+  }
+
+  if (m_messagesOverlay->renderer() && m_messagesOverlay->renderer()->rendererType() == RendererType::DictionaryRenderer && symbolId.isEmpty())
+  {
+    emit errorOccurred(Error("Failed to add message - symbol ID is empty", additionalErrorMessage, ExtendedErrorType::None));
     return false;
   }
 
-  const auto symbolId = message.symbolId();
-  const auto geometry = message.geometry();
-  const auto messageAction = message.messageAction();
-
-  switch (messageAction)
+  if (geometry.isEmpty())
   {
-  case Message::MessageAction::Remove:
-    {
-      const auto future = deleteEntityAsync(messageId);
-      Q_UNUSED(future);
-    }
-    return true;
-
-  default:
-    if (m_messagesOverlay == nullptr)
-    {
-      emit errorOccurred(Error("MessagesOverlay not set", additionalErrorMessage, ExtendedErrorType::None));
-      return false;
-    }
-
-    if (m_messagesOverlay->renderer() && m_messagesOverlay->renderer()->rendererType() == RendererType::DictionaryRenderer && symbolId.isEmpty())
-    {
-      emit errorOccurred(Error("Failed to add message - symbol ID is empty", additionalErrorMessage, ExtendedErrorType::None));
-      return false;
-    }
-
-    if (geometry.isEmpty())
-    {
-      emit errorOccurred(Error("Failed to add message - geometry is empty", additionalErrorMessage, ExtendedErrorType::None));
-      return false;
-    }
-
-    if (geometry.geometryType() != GeometryType::Point)
-    {
-      emit errorOccurred(Error("Failed to add message - only point geometry types are supported", additionalErrorMessage, ExtendedErrorType::None));
-      return false;
-    }
-
-    addObservation(geometry, message.attributes());
+    emit errorOccurred(Error("Failed to add message - geometry is empty", additionalErrorMessage, ExtendedErrorType::None));
+    return false;
   }
 
+  if (geometry.geometryType() != GeometryType::Point)
+  {
+    emit errorOccurred(Error("Failed to add message - only point geometry types are supported", additionalErrorMessage, ExtendedErrorType::None));
+    return false;
+  }
+
+  // TODO: validate attributes? message.attributes() will most likely have more than the DEDS schema
+
+  // make a copy of the message attributes into a new map so we can add the calculated fields necessary while we
+  // investigate the issues using arcade expressions in the popup definitions
+  QVariantMap attributes{};
+  const QVariantMap attrs = message.attributes();
+  const QList<QString> attrNames = attrs.keys();
+  for (const QString& key : attrNames)
+    attributes[key] = attrs[key];
+
+  // insert the timestamp field for all feature types
+  attributes[MessageFeeds::Fields::Common::SYS_TIMESTAMP] = QDateTime::currentDateTime().toString(QStringLiteral("ddd, MMM d, yyyy @ H:mm:ss t"));
+
+  // nothing else needed for non cursor-on-target messages
+  if (!m_isCoT)
+  {
+    addObservation(geometry, attributes);
+    return true;
+  }
+
+  // skip calculated codes if type field is not valid
+  const QString cotType = attributes[MessageFeeds::Fields::CoT::TYPE].toString();
+  if (cotType.size() < 5)
+  {
+    addObservation(geometry, attributes);
+    return true;
+  }
+
+  // calculate the codes from the symbol type code field
+  static const QHash<QChar, QString> affCodes{
+    {'p', QStringLiteral("Pending")},
+    {'u', QStringLiteral("Unknown")},
+    {'a', QStringLiteral("Assumed friend")},
+    {'f', QStringLiteral("Friend")},
+    {'n', QStringLiteral("Neutral")},
+    {'s', QStringLiteral("Suspect")},
+    {'h', QStringLiteral("Hostile")},
+    {'j', QStringLiteral("Joker")},
+    {'k', QStringLiteral("Faker")},
+    {'o', QStringLiteral("None specified")},
+  };
+  QString affiliation{"Other"};
+  const QChar affCode = cotType.at(2);
+  if (affCodes.contains(affCode))
+    affiliation = affCodes[affCode];
+
+  static const QHash<QChar, QString> bdCodes{
+    {'P', QStringLiteral("Space")},
+    {'A', QStringLiteral("Air")},
+    {'G', QStringLiteral("Ground")},
+    {'S', QStringLiteral("Sea surface")},
+    {'U', QStringLiteral("Sea subsurface")},
+  };
+  QString battleDimension{"Other"};
+  const QChar bdCode = cotType.at(4);
+  if (bdCodes.contains(bdCode))
+    battleDimension = bdCodes[bdCode];
+
+  attributes[MessageFeeds::Fields::CoT::EVENT_TYPE] = QString{"<b><i>Affiliation: </i></b>%1&nbsp;<br><b><i>Battle Dimension: </i></b>%2"}.arg(affiliation, battleDimension);
+
+  addObservation(geometry, attributes);
   return true;
 }
 
@@ -706,7 +792,7 @@ void MessageFeed::checkEntityForSelectAction(DynamicEntity* dynamicEntity)
   // find the action attribute
   if (dynamicEntity)
   {
-    const auto actionValue = dynamicEntity->attributes()->attributesMap()[Message::GEOMESSAGE_ACTION_NAME].toString();
+    const auto actionValue = dynamicEntity->attributes()->attributesMap()[MessageFeeds::Fields::GeoMessage::ACTION].toString();
     static const QString selectValue = Message::fromMessageAction(Message::MessageAction::Select);
     static const QString unselectValue = Message::fromMessageAction(Message::MessageAction::Unselect);
     if (actionValue.compare(selectValue, Qt::CaseInsensitive) == 0)

@@ -1,0 +1,120 @@
+{
+  "name": "position_report",
+  "version": "1.2",
+  "attribute_name_id": "_id",
+  "attribute_name_search": "uniquedesignation",
+  "attributes": [
+    {
+      "type": "string",
+      "name": "_type"
+    },
+    {
+      "type": "string",
+      "name": "_action"
+    },
+    {
+      "type": "string",
+      "name": "_id"
+    },
+    {
+      "type": "integer",
+      "name": "_wkid"
+    },
+    {
+      "type": "string",
+      "name": "sic"
+    },
+    {
+      "type": "string",
+      "name": "_control_points"
+    },
+    {
+      "type": "string",
+      "name": "uniquedesignation"
+    },
+    {
+      "type": "byte",
+      "name": "quantity"
+    },
+    {
+      "type": "string",
+      "name": "additionalinformation"
+    },
+    {
+      "type": "byte",
+      "name": "iff_sif"
+    },
+    {
+      "type": "short",
+      "name": "direction"
+    },
+    {
+      "type": "string",
+      "name": "type"
+    },
+    {
+      "type": "string",
+      "name": "datetimevalid"
+    },
+    {
+      "type": "short",
+      "name": "speed"
+    },
+    {
+      "type": "string",
+      "name": "owningunit"
+    },
+    {
+      "type": "byte",
+      "name": "operationalcondition"
+    },
+    {
+      "type": "byte",
+      "name": "status911"
+    },
+    {
+      "type": "string",
+      "name": "staffcomment"
+    },
+    {
+      "type": "byte",
+      "name": "fuel_state"
+    },
+    {
+      "type": "string",
+      "name": "sys_msgs"
+    },
+    {
+      "type": "float",
+      "name": "offseta"
+    },
+    {
+      "type": "byte",
+      "name": "vert_traverse"
+    },
+    {
+      "type": "byte",
+      "name": "obs_elev"
+    },
+    {
+      "type": "short",
+      "name": "horiz_traverse"
+    },
+    {
+      "type": "float",
+      "name": "min_range"
+    },
+    {
+      "type": "float",
+      "name": "max_range"
+    },
+    {
+      "type": "byte",
+      "name": "rel_info"
+    },
+    {
+      "type": "string",
+      "name": "environment"
+    }
+  ]
+}

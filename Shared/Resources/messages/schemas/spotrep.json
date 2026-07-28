@@ -1,0 +1,76 @@
+{
+  "name": "spotrep",
+  "version": "1.2",
+  "attribute_name_id": "_id",
+  "attribute_name_search": "uniquedesignation",
+  "attributes": [
+    {
+      "type": "string",
+      "name": "_type"
+    },
+    {
+      "type": "string",
+      "name": "_action"
+    },
+    {
+      "type": "string",
+      "name": "_id"
+    },
+    {
+      "type": "integer",
+      "name": "_wkid"
+    },
+    {
+      "type": "string",
+      "name": "_control_points"
+    },
+    {
+      "type": "string",
+      "name": "datetimesubmitted"
+    },
+    {
+      "type": "string",
+      "name": "uniquedesignation"
+    },
+    {
+      "type": "string",
+      "name": "equipment"
+    },
+    {
+      "type": "string",
+      "name": "activity"
+    },
+    {
+      "type": "string",
+      "name": "location"
+    },
+    {
+      "type": "string",
+      "name": "size"
+    },
+    {
+      "type": "string",
+      "name": "unit"
+    },
+    {
+      "type": "string",
+      "name": "activity_cat"
+    },
+    {
+      "type": "string",
+      "name": "unit_cat"
+    },
+    {
+      "type": "string",
+      "name": "equip_cat"
+    },
+    {
+      "type": "integer",
+      "name": "size_cat"
+    },
+    {
+      "type": "string",
+      "name": "timeobserved"
+    }
+  ]
+}

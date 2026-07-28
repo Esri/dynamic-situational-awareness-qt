@@ -25,6 +25,7 @@
 #include "DynamicEntityIterator.h"
 #include "DynamicEntityQueryParameters.h"
 #include "DynamicEntityQueryResult.h"
+#include "ErrorException.h"
 #include "LayerListModel.h"
 #include "Scene.h"
 #include "SceneQuickView.h"
@@ -93,7 +94,7 @@ void MessageFeedsController::findEntities(const QString& entityIdText)
   DynamicEntityQueryParameters* params = new DynamicEntityQueryParameters(this);
   const QString clause = QString("%1 LIKE '%2%'").arg(mf->searchAttributeName(), entityIdText);
   params->setWhereClause(clause);
-  mf->queryDynamicEntitiesAsync(params, this).then(this, [this, mf, params](DynamicEntityQueryResult* result)
+  mf->queryDynamicEntitiesAsync(params, this).then(this, [params, mf, this](DynamicEntityQueryResult* result)
   {
     QStringList resultEntityIds{};
     QList<DynamicEntity*> entities = result->iterator().asList(this);
@@ -107,6 +108,10 @@ void MessageFeedsController::findEntities(const QString& entityIdText)
     m_entityIdResults->setStringList(resultEntityIds);
     mf->messagesOverlay()->selectDynamicEntities(entities);
     params->deleteLater();
+  }).onFailed(this, [params, mf](const ErrorException& error)
+  {
+    params->deleteLater();
+    qWarning() << "Error querying the MessageFeed [" << mf->feedName() << "]:" << error.error();
   });
 }
 
@@ -199,7 +204,16 @@ void MessageFeedsController::addDataListener(DataListener* dataListener)
         return;
     }
 
-    MessageFeed* messageFeed = m_messageFeeds->messageFeedByType(m.messageType());
+    // if type is position report, try to append the environment as a suffix to match the requirement
+    // in the config file for creating separate layers
+    QString messageTypeResolved{m.messageType()};
+    if (m.messageType().startsWith(Dsa::MessageFeeds::Types::POSITION_REPORT))
+    {
+      if (const QString environment = m.attributes().value(Dsa::MessageFeeds::Fields::GeoMessage::ENVIRONMENT).toString(); !environment.isEmpty())
+        messageTypeResolved = QString{"%1_%2"}.arg(m.messageType(), environment);
+    }
+
+    MessageFeed* messageFeed = m_messageFeeds->messageFeedByType(messageTypeResolved);
     if (!messageFeed)
       return;
 

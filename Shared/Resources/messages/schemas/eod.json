@@ -1,0 +1,84 @@
+{
+  "name": "eod",
+  "version": "1.2",
+  "attribute_name_id": "_id",
+  "attribute_name_search": "uniquedesignation",
+  "attributes": [
+    {
+      "type": "string",
+      "name": "_type"
+    },
+    {
+      "type": "string",
+      "name": "_action"
+    },
+    {
+      "type": "string",
+      "name": "_id"
+    },
+    {
+      "type": "integer",
+      "name": "_wkid"
+    },
+    {
+      "type": "string",
+      "name": "_control_points"
+    },
+    {
+      "type": "string",
+      "name": "datetimesubmitted"
+    },
+    {
+      "type": "string",
+      "name": "uniquedesignation"
+    },
+    {
+      "type": "byte",
+      "name": "status"
+    },
+    {
+      "type": "byte",
+      "name": "nbc"
+    },
+    {
+      "type": "integer",
+      "name": "incident_id"
+    },
+    {
+      "type": "string",
+      "name": "location"
+    },
+    {
+      "type": "string",
+      "name": "location_desc"
+    },
+    {
+      "type": "string",
+      "name": "contact"
+    },
+    {
+      "type": "string",
+      "name": "nbc_type"
+    },
+    {
+      "type": "string",
+      "name": "resources"
+    },
+    {
+      "type": "string",
+      "name": "impact"
+    },
+    {
+      "type": "string",
+      "name": "protective_meas"
+    },
+    {
+      "type": "byte",
+      "name": "munition_type"
+    },
+    {
+      "type": "byte",
+      "name": "priority"
+    }
+  ]
+}

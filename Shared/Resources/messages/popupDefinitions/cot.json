@@ -1,0 +1,68 @@
+{
+  "popupInfo": {
+    "popupElements": [
+      {
+        "type": "text",
+        "text": "<span style=\"font-size:12px;\"><i>Received: </i><b>{SYS_TIMESTAMP}</b></span>"
+      },
+      {
+        "type": "fields",
+        "fieldInfos": [
+          {
+            "fieldName": "event_type",
+            "label": "Event type"
+          },
+          {
+            "fieldName": "type",
+            "label": "Event type code"
+          },
+          {
+            "fieldName": "time",
+            "label": "Time created"
+          },
+          {
+            "fieldName": "start",
+            "label": "Event start time"
+          },
+          {
+            "fieldName": "stale",
+            "label": "Event expiration time"
+          },
+          {
+            "fieldName": "how",
+            "label": "How position was determined"
+          },
+          {
+            "fieldName": "lat",
+            "format": {
+              "digitSeparator": false,
+              "places": 2
+            },
+            "label": "Latitude"
+          },
+          {
+            "fieldName": "lon",
+            "format": {
+              "digitSeparator": false,
+              "places": 2
+            },
+            "label": "Longitude"
+          },
+          {
+            "fieldName": "hae",
+            "format": {
+              "digitSeparator": false,
+              "places": 2
+            },
+            "label": "Height/altitude"
+          },
+          {
+            "fieldName": "uid",
+            "label": "Track ID"
+          }
+        ],
+        "title": "Details:"
+      }
+    ]
+  }
+}

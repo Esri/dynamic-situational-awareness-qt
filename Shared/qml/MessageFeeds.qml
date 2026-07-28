@@ -364,23 +364,26 @@ DsaPanel {
         width: parent.width
 
         TabButton {
-            display: AbstractButton.IconOnly
+            display: AbstractButton.TextUnderIcon
             icon.source: DsaResources.iconListView
             icon.color: Material.foreground
+            text: qsTr("Feeds")
             font.pixelSize: fontPixelSize
         }
 
         TabButton {
-            display: AbstractButton.IconOnly
+            display: AbstractButton.TextUnderIcon
             icon.source: DsaResources.iconColorPalette
             icon.color: Material.foreground
+            text: qsTr("Track Display")
             font.pixelSize: fontPixelSize
         }
 
         TabButton {
-            display: AbstractButton.IconOnly
+            display: AbstractButton.TextUnderIcon
             icon.source: DsaResources.iconZoomTo
             icon.color: Material.foreground
+            text: qsTr("Find")
             font.pixelSize: fontPixelSize
         }
     }

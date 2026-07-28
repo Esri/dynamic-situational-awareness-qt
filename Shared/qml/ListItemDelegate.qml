@@ -37,6 +37,7 @@ Item {
     property color imageFrameColor: Material.foreground
 
     signal rowTapped()
+    signal rowPressAndHold()
 
     Rectangle {
         anchors.fill: parent
@@ -105,6 +106,9 @@ Item {
 
             if (clickTogglesCheck)
                 visibleCheckBox.checked = !visibleCheckBox.checked
+        }
+        onPressAndHold: {
+            rowPressAndHold();
         }
     }
 }

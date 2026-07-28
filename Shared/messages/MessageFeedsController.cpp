@@ -111,7 +111,7 @@ void MessageFeedsController::findEntities(const QString& entityIdText)
   }).onFailed(this, [params, mf](const ErrorException& error)
   {
     params->deleteLater();
-    qWarning() << "Error querying the MessageFeed [" << mf->feedName() << "]:" << error.error().message();
+    qWarning() << "Error querying the MessageFeed [" << mf->feedName() << "]:" << error.error();
   });
 }
 

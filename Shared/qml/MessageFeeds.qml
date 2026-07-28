@@ -71,6 +71,11 @@ DsaPanel {
                 onRowTapped: {
                     toolController.selectedFeedIndex = index;
                 }
+                onRowPressAndHold: {
+                    toolController.selectedFeedIndex = index;
+                    bar.currentIndex = 1;
+                }
+
                 onItemCheckedChanged: {
                     if (feedVisible === itemChecked)
                         return;
@@ -80,29 +85,7 @@ DsaPanel {
                 imageUrl: thumbnailUrl
                 imageVisible: true
                 imageFrameVisible: false
-                menuIconVisible: true
-
-                Image {
-                    anchors {
-                        right: parent.right
-                        verticalCenter: parent.verticalCenter
-                        margins: 5 * scaleFactor
-                    }
-                    rotation: 90
-                    source: DsaResources.iconMenu
-                    height: 32 * scaleFactor
-                    width: height
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            // select the feed that was clicked on in the combo box
-                            // in the 'Tracks' panel
-                            toolController.selectedFeedIndex = index;
-                            bar.currentIndex = 1;
-                        }
-                    }
-                }
+                menuIconVisible: false
             }
         }
 

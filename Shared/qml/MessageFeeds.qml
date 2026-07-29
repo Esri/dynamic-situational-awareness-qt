@@ -29,6 +29,10 @@ DsaPanel {
     property bool isMobile
     property real spinBoxHeight: DsaStyles.titleFontPixelSize * 1.6
     property real fontPixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
+    property real detailLabelFontPixelSize: 10 * scaleFactor
+    property real trackControlSpacing: 4 * scaleFactor
+    property real trackSectionSpacing: 18 * scaleFactor
+    property real trackDividerSpacing: 20 * scaleFactor
 
     // Create the controller
     MessageFeedsController {
@@ -61,6 +65,17 @@ DsaPanel {
                 height: 40 * scaleFactor
                 mainText: feedName
                 itemChecked: feedVisible
+                highlighted: toolController.selectedFeedIndex === index
+                clickTogglesCheck: false
+                rowTapExcludesCheckBox: true
+                onRowTapped: {
+                    toolController.selectedFeedIndex = index;
+                }
+                onRowPressAndHold: {
+                    toolController.selectedFeedIndex = index;
+                    bar.currentIndex = 1;
+                }
+
                 onItemCheckedChanged: {
                     if (feedVisible === itemChecked)
                         return;
@@ -70,33 +85,13 @@ DsaPanel {
                 imageUrl: thumbnailUrl
                 imageVisible: true
                 imageFrameVisible: false
-                menuIconVisible: true
-
-                Image {
-                    anchors {
-                        right: parent.right
-                        verticalCenter: parent.verticalCenter
-                        margins: 5 * scaleFactor
-                    }
-                    rotation: 90
-                    source: DsaResources.iconMenu
-                    height: 32 * scaleFactor
-                    width: height
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            // select the feed that was clicked on in the combo box
-                            // in the 'Tracks' panel
-                            comboFeeds.currentIndex = index;
-                            bar.currentIndex = 1;
-                        }
-                    }
-                }
+                menuIconVisible: false
             }
         }
 
         ColumnLayout {
+            spacing: 0
+
             ComboBox {
                 id: comboFeeds
                 Layout.fillWidth: true
@@ -109,6 +104,7 @@ DsaPanel {
             // OBSERVATIONS
             CheckBox {
                 id: switchObservations
+                Layout.topMargin: trackSectionSpacing
                 checked: toolController.selectedFeed.showPreviousObservations
                 onCheckedChanged: toolController.selectedFeed.showPreviousObservations = checked
                 text: "Observations"
@@ -116,8 +112,12 @@ DsaPanel {
             }
             GridLayout {
                 visible: switchObservations.checked
-                rows: 3
+                Layout.fillWidth: true
+                Layout.topMargin: trackControlSpacing
+                rows: 2
                 columns: 2
+                rowSpacing: trackControlSpacing
+                columnSpacing: 8 * scaleFactor
                 SpinBox {
                     id: spinObservationsSize
                     from: 1
@@ -147,25 +147,21 @@ DsaPanel {
                 Label {
                     Layout.alignment: Qt.AlignCenter
                     text: "Size"
-                    font.pixelSize: fontPixelSize
+                    font.pixelSize: detailLabelFontPixelSize
+                    font.italic: true
                 }
                 Label {
                     Layout.alignment: Qt.AlignCenter
                     text: "Color"
-                    font.pixelSize: fontPixelSize
-                }
-                Rectangle {
-                    Layout.columnSpan: 2
-                    color: "gray"
-                    Layout.fillWidth: true
-                    radius: 5
-                    height: 5
+                    font.pixelSize: detailLabelFontPixelSize
+                    font.italic: true
                 }
             }
 
             // TRACK LINE
             CheckBox {
                 id: switchTrackLine
+                Layout.topMargin: switchObservations.checked ? trackSectionSpacing : 0
                 checked: toolController.selectedFeed.showTrackLine
                 onCheckedChanged: toolController.selectedFeed.showTrackLine = checked
                 text: "Track Line"
@@ -173,8 +169,12 @@ DsaPanel {
             }
             GridLayout {
                 visible: switchTrackLine.checked
-                rows: 3
+                Layout.fillWidth: true
+                Layout.topMargin: trackControlSpacing
+                rows: 2
                 columns: 2
+                rowSpacing: trackControlSpacing
+                columnSpacing: 8 * scaleFactor
                 SpinBox {
                     id: spinTrackLineSize
                     from: 1
@@ -204,23 +204,25 @@ DsaPanel {
                 Label {
                     Layout.alignment: Qt.AlignCenter
                     text: "Size"
-                    font.pixelSize: fontPixelSize
+                    font.pixelSize: detailLabelFontPixelSize
+                    font.italic: true
                 }
                 Label {
                     Layout.alignment: Qt.AlignCenter
                     text: "Color"
-                    font.pixelSize: fontPixelSize
+                    font.pixelSize: detailLabelFontPixelSize
+                    font.italic: true
                 }
             }
 
             // TRACK LENGTH
-            GridLayout {
+            ColumnLayout {
                 visible: switchObservations.checked || switchTrackLine.checked
-                rows: 5
-                columns: 2
+                Layout.fillWidth: true
+                Layout.topMargin: trackDividerSpacing
+                spacing: trackSectionSpacing
 
                 Rectangle {
-                    Layout.columnSpan: 2
                     color: "gray"
                     Layout.fillWidth: true
                     radius: 5
@@ -229,33 +231,40 @@ DsaPanel {
 
                 Label {
                     text: "Track Length"
-                    Layout.columnSpan: 2
                     font.pixelSize: fontPixelSize
-                    Layout.alignment: Qt.AlignLeft
+                    Layout.alignment: Qt.AlignHCenter
                 }
-                Label {
-                    text: "Amount"
-                    font.pixelSize: fontPixelSize
-                    Layout.alignment: Qt.AlignLeft
-                    Layout.preferredWidth: drawer.width / 2.0
-                }
-                SpinBox {
-                    id: spinObservations
-                    Layout.preferredHeight: spinBoxHeight
-                    Layout.fillWidth: true
-                    from: 0
-                    to: 9999
-                    editable: true
-                    live: true
-                    textFromValue: function(value) {
-                        if (value < 1)
-                            return "All"
-                        else
-                            return value
+
+                ColumnLayout {
+                    Layout.alignment: Qt.AlignHCenter
+                    spacing: trackControlSpacing
+
+                    SpinBox {
+                        id: spinObservations
+                        Layout.alignment: Qt.AlignHCenter
+                        Layout.preferredHeight: spinBoxHeight
+                        Layout.preferredWidth: drawer.width / 2.0
+                        from: 0
+                        to: 9999
+                        editable: true
+                        live: true
+                        textFromValue: function(value) {
+                            if (value < 1)
+                                return "All"
+                            else
+                                return value
+                        }
+
+                        value: toolController.selectedFeed.maximumObservations
+                        onValueChanged: toolController.selectedFeed.maximumObservations = value
                     }
 
-                    value: toolController.selectedFeed.maximumObservations
-                    onValueChanged: toolController.selectedFeed.maximumObservations = value
+                    Label {
+                        text: "Amount"
+                        font.pixelSize: detailLabelFontPixelSize
+                        font.italic: true
+                        Layout.alignment: Qt.AlignHCenter
+                    }
                 }
             }
         }
@@ -338,16 +347,25 @@ DsaPanel {
         width: parent.width
 
         TabButton {
+            display: AbstractButton.TextUnderIcon
+            icon.source: DsaResources.iconListView
+            icon.color: Material.foreground
             text: qsTr("Feeds")
             font.pixelSize: fontPixelSize
         }
 
         TabButton {
+            display: AbstractButton.TextUnderIcon
+            icon.source: DsaResources.iconColorPalette
+            icon.color: Material.foreground
             text: qsTr("Track Display")
             font.pixelSize: fontPixelSize
         }
 
         TabButton {
+            display: AbstractButton.TextUnderIcon
+            icon.source: DsaResources.iconZoomTo
+            icon.color: Material.foreground
             text: qsTr("Find")
             font.pixelSize: fontPixelSize
         }

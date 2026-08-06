@@ -170,7 +170,7 @@ The Convert X/Y tool accepts a location in any supported coordinate notation or 
 
 Feeds are streams of information broadcast over the network. When information is received over a feed, it is translated into something the app can use, like a map symbol in an overlay or an alert. The Feed tool controls which feeds are represented on your display. See more information in the section [Real-time feeds](#real-time-feeds).
 
-Track Display is available from the `Feeds` option in Map tools. Use it to configure how observations and track lines are shown for each message feed. See [Track display](#track-display) for more details. 
+Track Display is available from the `Feeds` option in Map tools, and can also be accessed by long-pressing a feed. Use it to configure how observations and track lines are shown for each message feed. See [Track display](#track-display) for more details. 
 
 Find is also available from the `Feeds` option in Map tools to locate specific feeds in active message feeds. See [Find](#find) for more details.
 

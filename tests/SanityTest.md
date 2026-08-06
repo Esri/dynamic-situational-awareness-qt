@@ -391,8 +391,10 @@ The current location updates will be enabled in the DSA app at startup.
 - Press the distress button again and the teammate's military symbol should no longer be flashing red and should no longer be selected in any way.
 
 **Test 5: Remove location broadcast**
-- Close down one of the apps
-- You should notice that the teammate's military symbol is now gone and have been removed from the message feed overlay.
+- Close one of the apps using the app UI (normal app close).
+- You should notice that the teammate's military symbol is removed from the map and message feed overlay (the track is actively deleted).
+- If you force-kill the app task/process instead of closing through the UI, the teammate track is not actively deleted.
+- Restart that app and confirm the teammate track resumes updating correctly.
 
 ## Dynamic Entities
 
@@ -403,7 +405,7 @@ The current location updates will be enabled in the DSA app at startup.
 
 Test case 1:
 
-- Go to Track Display from the bottom menu.
+- Go to Track Display from the bottom menu or by long-pressing on the `Friendly Tracks - Air` feed.
 - In the Message Feeds dropdown, select `Friendly Tracks - Air`.
 - Enable the Observations checkbox.
   - [ ] Observations appear (a single track moving in a circle at a relative height above the terrain).

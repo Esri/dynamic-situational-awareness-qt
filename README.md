@@ -48,12 +48,12 @@ If you just want to grab the latest code and build the project, these are the qu
 
 ## Prerequisites
 
-* ArcGIS Maps SDK for Qt 300.0
+* ArcGIS Maps SDK for Qt 300.1
 * Qt SDK 6.8.2 or higher
 * Qt Creator
 * [ArcGIS Maps SDK for Qt Toolkit](https://github.com/Esri/arcgis-maps-sdk-toolkit-qt.git) as a sub-module
 * For Windows: Microsoft Visual C++ Compiler 16.1.6
-* For more information, please visit the [System Requirements](https://developers.arcgis.com/qt/system-requirements/system-requirements-for-300-0/) page.
+* For more information, please visit the [System Requirements](https://developers.arcgis.com/qt/system-requirements/system-requirements-for-300-1/) page.
 
 ### Data
 

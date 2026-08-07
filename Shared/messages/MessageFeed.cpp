@@ -422,7 +422,7 @@ Renderer* MessageFeed::createRenderer()
       const QString stylePath = QString{QStringLiteral("%1/styles/arcade/mil2525c.stylx")}.arg(m_resourcePath);
       if (!QFileInfo::exists(stylePath))
       {
-        emit errorOccurred(Error(QStringLiteral("mil2525c.stylx not found"), QString{QStringLiteral("Could not find %1")}.arg(stylePath), ExtendedErrorType::None));
+        emit errorOccurred(Error(QStringLiteral("mil2525c.stylx not found"), QString{QStringLiteral("Could not find %1")}.arg(stylePath)));
         return nullptr;
       }
 
@@ -438,7 +438,7 @@ Renderer* MessageFeed::createRenderer()
       const QString stylePath = QString{QStringLiteral("%1/styles/arcade/mil2525d.stylx")}.arg(m_resourcePath);
       if (!QFileInfo::exists(stylePath))
       {
-        emit errorOccurred(Error(QStringLiteral("mil2525d.stylx not found"), QString{QStringLiteral("Could not find %1")}.arg(stylePath), ExtendedErrorType::None));
+        emit errorOccurred(Error(QStringLiteral("mil2525d.stylx not found"), QString{QStringLiteral("Could not find %1")}.arg(stylePath)));
         return nullptr;
       }
 
@@ -477,14 +477,14 @@ bool MessageFeed::addMessage(const Message& message)
 
   if (!m_messagesOverlay)
   {
-    emit errorOccurred(Error("MessagesOverlay not set", additionalErrorMessage, ExtendedErrorType::None));
+    emit errorOccurred(Error("MessagesOverlay not set", additionalErrorMessage));
     return false;
   }
 
   const QString messageId = message.messageId();
   if (messageId.isEmpty())
   {
-    emit errorOccurred(Error("Failed to add message - message ID is empty", additionalErrorMessage, ExtendedErrorType::None));
+    emit errorOccurred(Error("Failed to add message - message ID is empty", additionalErrorMessage));
     return false;
   }
 
@@ -501,19 +501,19 @@ bool MessageFeed::addMessage(const Message& message)
 
   if (m_messagesOverlay->renderer() && m_messagesOverlay->renderer()->rendererType() == RendererType::DictionaryRenderer && symbolId.isEmpty())
   {
-    emit errorOccurred(Error("Failed to add message - symbol ID is empty", additionalErrorMessage, ExtendedErrorType::None));
+    emit errorOccurred(Error("Failed to add message - symbol ID is empty", additionalErrorMessage));
     return false;
   }
 
   if (geometry.isEmpty())
   {
-    emit errorOccurred(Error("Failed to add message - geometry is empty", additionalErrorMessage, ExtendedErrorType::None));
+    emit errorOccurred(Error("Failed to add message - geometry is empty", additionalErrorMessage));
     return false;
   }
 
   if (geometry.geometryType() != GeometryType::Point)
   {
-    emit errorOccurred(Error("Failed to add message - only point geometry types are supported", additionalErrorMessage, ExtendedErrorType::None));
+    emit errorOccurred(Error("Failed to add message - only point geometry types are supported", additionalErrorMessage));
     return false;
   }
 

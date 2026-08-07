@@ -13,7 +13,7 @@ if "%APP_NAME%"=="" (
 set "VCVARS_BAT=C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
 set "QT_BIN=C:\Qt6.8.2\6.8.2\msvc2022_64\bin"
 set "JOM_EXE=C:\Qt6.8.2\Tools\QtCreator\bin\jom\jom.exe"
-set "ARC_GIS_SDK=C:\Program Files\ArcGIS SDKs\Qt300.0.0"
+set "ARC_GIS_SDK=C:\Program Files\ArcGIS SDKs\Qt300.1.0"
 set "DEPLOY_DIR=C:\applications\DSA"
 
 :: =============================
@@ -84,7 +84,7 @@ xcopy /E /I /Y "%ARC_GIS_SDK%\sdk\windows\x64\shaders" "%TARGET_DIR%\shaders" >n
 :: Run windeployqt
 :: =============================
 echo [INFO] Running windeployqt...
-"%QT_BIN%\windeployqt6.exe" "%TARGET_DIR%\%APP_EXEC%" --qmldir "%WORKSPACE%" --websockets
+"%QT_BIN%\windeployqt6.exe" "%TARGET_DIR%\%APP_EXEC%" --qmldir "%WORKSPACE%" --websockets --multimedia
 
 echo [SUCCESS] Windows build and deployment completed.
 exit /b 0

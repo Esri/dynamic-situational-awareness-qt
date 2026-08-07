@@ -84,7 +84,7 @@ xcopy /E /I /Y "%ARC_GIS_SDK%\sdk\windows\x64\shaders" "%TARGET_DIR%\shaders" >n
 :: Run windeployqt
 :: =============================
 echo [INFO] Running windeployqt...
-"%QT_BIN%\windeployqt6.exe" "%TARGET_DIR%\%APP_EXEC%" --qmldir "%WORKSPACE%" --websockets
+"%QT_BIN%\windeployqt6.exe" "%TARGET_DIR%\%APP_EXEC%" --qmldir "%WORKSPACE%" --websockets --multimedia
 
 echo [SUCCESS] Windows build and deployment completed.
 exit /b 0

@@ -439,7 +439,7 @@ All DSA tools have a common interface and are exposed as controller classes (whi
 
 # Get the DSA apps
 
-For convenience, you can try out the DSA apps for yourself by downloading the DSA Vehicle and Handheld apps compiled for [Windows] and [Android], the [Message Simulator] app, and [sample local data] from ArcGIS Online. 
+For convenience, you can try out the DSA Vehicle, Handheld, and Message Simulator yourself. Access the compiled versions for [Windows] and [Android], as well as [sample data] from ArcGIS Online. 
 
 > [!IMPORTANT]
 > _Please note that these compiled versions of the app are examples only, and should not be used in a production environment._
@@ -547,9 +547,11 @@ As of version 3.0.0, the Configuration tab on the [Settings panel](#settings-pan
 
 # Message simulator
 
-The message simulator app broadcasts simulated messages over the peer-to-peer network. It is not meant for end users in the field but rather provides a way to test and demonstrate the capabilities of DSA apps by providing a simulated environment through messages. The message simulator broadcasts messages over a given port. DSA-Vehicle and DSA-Handheld apps can listen to the same port for new messages and update their displays as messages are received.
+The message simulator app broadcasts simulated messages over the peer-to-peer network. It provides a way to test and demonstrate the message feed capabilities of DSA apps by providing a simulated environment for peer-to-peer messages, and is not intended for use in production. The message simulator reads simulated messages in [GeoMessage] XML format from a file and broadcasts them over a UDP port. The DSA Vehicle and Handheld apps can be configured to listen to the same UDP port for new messages and update their displays as messages are received.
 
-The message simulator can only consume one simulation file at a time. You can create a script to run multiple simulation instances at the same time from the command line. For example on Windows, run `DSA_MessageSimulator_Qt.exe -h` to see the usage options:
+The message simulator can only consume one simulation file at a time. You can create a script to run multiple simulation instances simultaneously from the command line. 
+
+On Windows, run `DSA_MessageSimulator_Qt.exe -h` to see the usage options:
 
 ```xml
 Available command line parameters:
@@ -570,15 +572,15 @@ Parameters available only in console mode:
 
 <!-- GitHub repos -->
 
+[GeoMessage]: https://github.com/Esri/geomessage-simulator-qt/blob/master/GeoMessageSpecification/GeoMessageSpecification.md
+
 <!-- Apps and data hosted on AGOL -->
 
 [Android]: http://links.esri.com/exampleapps/dsaqt/app/android
 
-[sample local data]: http://links.esri.com/exampleapps/dsaqt/localdata
+[sample data]: http://links.esri.com/exampleapps/dsaqt/localdata
 
 [Windows]: http://links.esri.com/exampleapps/dsaqt/app/windows
-
-[Message Simulator]: http://links.esri.com/exampleapps/messagesimulatorqt/windows
 
 [Tiled Basemap group on ArcGIS Online]: https://www.arcgis.com/home/group.html?id=3a890be7a4b046c7840dc4a0446c5b31#overview
 

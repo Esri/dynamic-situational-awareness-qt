@@ -44,7 +44,7 @@ If you just want to grab the latest code and build the project, these are the qu
  * `cd dynamic-situational-awareness-qt`
  * Open `DSA.pro` with Qt Creator, configure the projects and build.
 
-**Note:** There is a file path length limit when deploying the DSA apps to Android from Windows. The simplest way to workaround this is to shorten the folder name of the "Shadow Build Directory" in the Qt Creator Project settings.
+**Note:** There is a file path length limit when deploying the DSA apps to Android from Windows. The simplest way to work around this is to shorten the folder name of the "Shadow Build Directory" in the Qt Creator Project settings.
 
 ## Prerequisites
 
@@ -57,18 +57,21 @@ If you just want to grab the latest code and build the project, these are the qu
 
 ### Data
 
-The DSA app works with offline data. You can retrieve [demo data available for Monterey, California](http://www.arcgis.com/home/item.html?id=82ce2d85e21c4326bc072d441b636e5e). Details for where to place the data are provided in the demo data's description. Alternatively, you can define your own data by modifying the app's configuration file.
+The DSA app works with offline data. You can retrieve [sample local data] available for Monterey, California. Details for where to place the data are provided in the demo data's description. Alternatively, you can [add your own local data] to use in the app.
 
 ## Resources
 
-* [ArcGIS Maps SDK for Qt Resource Center](https://developers.arcgis.com/qt/latest/)
+* [ArcGIS Maps SDK for Qt Developers Guide](https://developers.arcgis.com/qt/latest/)
 * [Qt and QML](http://www.qt.io/)
-* [ArcGIS Blog](http://blogs.esri.com/esri/arcgis/)
+* [ArcGIS Blog](https://www.esri.com/arcgis-blog/products/sdk-qt)
 * [twitter@esri](https://x.com/esri)
 
 ## Pre-built apps
 
-The compiled versions of the DSA app are made available for you to conveniently try out the app, and are not officially supported. Please note that these compiled versions of the app should not be used in production environments.
+The compiled versions of the DSA apps for Windows and Android are available for you to try out, along with some [sample local data]. 
+
+> [!CAUTION]
+> Please note that these compiled versions of the app are not supported by and should not be used in production environments.
 
 - [Android](https://www.arcgis.com/home/item.html?id=76fdb565194d4dcc86bdd301131932ea)
 - [Windows](https://www.arcgis.com/home/item.html?id=6b32eec2db784d0da9e9d5b18ccefb76)
@@ -76,18 +79,6 @@ The compiled versions of the DSA app are made available for you to conveniently 
 ## Issues
 
 Find a bug or want to request a new feature?  Please let us know by submitting an issue.
-
-## Troubleshooting
-
-### Military Symbols are not displaying after migrating to version 1.1.1.
-
-DSA now requires additional `*.stylx` files in the `styles/arcade` subdirectory of your DSA resource data. The structure
-should look like this:
-
-* `DSA/ResourceData/styles/arcade/mil2525c.stylx`
-* `DSA/ResourceData/styles/arcade/mil2525d.stylx`
-
-To quickly obtain these additional `*.stylx` files, we provide these in the [demo data](https://www.arcgis.com/home/item.html?id=02daf003b91348f5a761816e80cc39b5).
 
 ## Contributing
 
@@ -111,3 +102,8 @@ limitations under the License.
 
 
 A copy of the license is available in the repository's [LICENSE](LICENSE) file
+
+[sample local data]: http://links.esri.com/exampleapps/dsaqt/localdata
+[add your own local data]: docs/README.md#add-your-own-local-data
+[Android]: http://links.esri.com/exampleapps/dsaqt/app/android
+[Windows]: http://links.esri.com/exampleapps/dsaqt/app/windows

@@ -68,6 +68,11 @@ QString DsaResources::arcGISMapsSDKVersion() const
   return m_arcGISMapsSDKVersion;
 }
 
+QString DsaResources::defaultConfigurationDownloadPrompt() const
+{
+  return QStringLiteral("Download the default configuration data from Esri?");
+}
+
 /*!
   \brief Returns the URL to the "2D" icon.
  */

@@ -631,7 +631,7 @@ Vehicle {
 
     DsaYesNoDialog {
         id: configurationDownloadDialog
-        informativeText: "Download the default configuration data from Esri (~450mb)?"
+        informativeText: DsaResources.DefaultConfigurationDownloadPrompt
         onAccepted: showConfigurations(true);
         onRejected: showConfigurations(false);
     }

@@ -71,31 +71,31 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
 
   // set all the string properties and keep track of any required that are not found
   // tuple<JsonName, Member*, Required, Default, AllowedValues>
-  using PropString = std::tuple<const QString&, QString&, bool, const QString&, const QStringList&>;
+  using PropString = std::tuple<QString, QString*, bool, QString, QStringList>;
   const QStringList empty{};
   const std::vector<PropString> stringProperties{
-    { MESSAGE_FEEDS_NAME, m_feedName, true, QString{}, empty },
-    { MESSAGE_FEEDS_TYPE, m_feedMessageType, true, QString{}, empty },
-    { MESSAGE_FEEDS_RENDERER, m_renderer, true, QString{}, empty },
-    { MESSAGE_FEEDS_THUMBNAIL, m_thumbnail, false, QString{}, empty },
-    { MESSAGE_FEEDS_PLACEMENT, m_surfacePlacement, false, MESSAGE_FEEDS_PLACEMENT_DEFAULT, empty },
-    { MESSAGE_FEEDS_OBSERVATIONS_COLOR, m_colorObservations, false, MESSAGE_FEEDS_TRACK_DISPLAY_COLOR_DEFAULT, MESSAGE_FEEDS_TRACK_DISPLAY_COLORS },
-    { MESSAGE_FEEDS_TRACK_LINE_COLOR, m_colorTrackLine, false, MESSAGE_FEEDS_TRACK_DISPLAY_COLOR_DEFAULT, MESSAGE_FEEDS_TRACK_DISPLAY_COLORS },
+    { MESSAGE_FEEDS_NAME, &m_feedName, true, QString{}, empty },
+    { MESSAGE_FEEDS_TYPE, &m_feedMessageType, true, QString{}, empty },
+    { MESSAGE_FEEDS_RENDERER, &m_renderer, true, QString{}, empty },
+    { MESSAGE_FEEDS_THUMBNAIL, &m_thumbnail, false, QString{}, empty },
+    { MESSAGE_FEEDS_PLACEMENT, &m_surfacePlacement, false, MESSAGE_FEEDS_PLACEMENT_DEFAULT, empty },
+    { MESSAGE_FEEDS_OBSERVATIONS_COLOR, &m_colorObservations, false, MESSAGE_FEEDS_TRACK_DISPLAY_COLOR_DEFAULT, MESSAGE_FEEDS_TRACK_DISPLAY_COLORS },
+    { MESSAGE_FEEDS_TRACK_LINE_COLOR, &m_colorTrackLine, false, MESSAGE_FEEDS_TRACK_DISPLAY_COLOR_DEFAULT, MESSAGE_FEEDS_TRACK_DISPLAY_COLORS },
   };
   for (const PropString& ps : stringProperties)
   {
-    QString& pMember = std::get<QString&>(ps);
-    pMember = std::get<3>(ps);
+    QString* pMember = std::get<QString*>(ps);
+    *pMember = std::get<3>(ps);
     const QString& propertyName = std::get<0>(ps);
     const bool propertyRequired = std::get<bool>(ps);
     requiredProperties += propertyRequired ? 1 : 0;
     if (const QString s = properties[propertyName].toString(); !s.isEmpty())
     {
-      const auto v = std::get<const QStringList&>(ps);
+      const auto& v = std::get<QStringList>(ps);
       if (!v.empty() && !v.contains(s))
         return;
 
-      pMember = s;
+      *pMember = s;
       if (propertyRequired)
         ++requiredPropertiesValid;
     }

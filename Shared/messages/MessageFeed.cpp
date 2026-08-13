@@ -92,7 +92,7 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
     requiredProperties += propertyRequired ? 1 : 0;
     if (const QString s = properties[propertyName].toString(); !s.isEmpty())
     {
-      const auto& v = std::get<const QStringList &>(ps);
+      const auto& v = std::get<const QStringList&>(ps);
       if (!v.empty() && !v.contains(s))
         return;
 

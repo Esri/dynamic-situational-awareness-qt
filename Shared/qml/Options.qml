@@ -25,6 +25,11 @@ import Esri.ArcGISRuntime.Toolkit
 Rectangle {
     id: optionsRoot
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
+    property real settingsFontSize: 14 * scaleFactor
+    property real settingsFieldHeight: 36 * scaleFactor
+    property real settingsRowSpacing: 10 * scaleFactor
+    property real settingsLabelMinWidth: 220 * scaleFactor
+    property real settingsControlWidth: 150 * scaleFactor
 
     Connections {
         target: configurationController
@@ -100,6 +105,10 @@ Rectangle {
                     // Toggle navigation controls
                     CheckBox {
                         text: "Show navigation controls"
+                        font {
+                            pixelSize: settingsFontSize
+                            family: DsaStyles.fontFamily
+                        }
                         checked: true
                         onCheckedChanged: {
                             // update visibility of UI components
@@ -111,6 +120,10 @@ Rectangle {
                     // Toggle location/elevation overlay
                     CheckBox {
                         text: "Show location and elevation"
+                        font {
+                            pixelSize: settingsFontSize
+                            family: DsaStyles.fontFamily
+                        }
                         checked: true
                         onCheckedChanged: {
                             // update visibility of UI component
@@ -121,6 +134,10 @@ Rectangle {
                     // Toggle friendly tracks labels
                     CheckBox {
                         text: "Show friendly tracks labels"
+                        font {
+                            pixelSize: settingsFontSize
+                            family: DsaStyles.fontFamily
+                        }
                         checked: true
                         onCheckedChanged: {
                             optionsController.showFriendlyTracksLabels = checked;
@@ -142,6 +159,10 @@ Rectangle {
                     CheckBox {
                         id: useGPS
                         text: "Use GPS for current elevation display"
+                        font {
+                            pixelSize: settingsFontSize
+                            family: DsaStyles.fontFamily
+                        }
                         checked: optionsController.useGpsForElevation
                         onCheckedChanged: optionsController.useGpsForElevation = checked
                     }
@@ -149,35 +170,47 @@ Rectangle {
 
                     CheckBox {
                         text: "Location Broadcast"
+                        font {
+                            pixelSize: settingsFontSize
+                            family: DsaStyles.fontFamily
+                        }
                         checked: messageFeeds.controller.locationBroadcastEnabled
                         onCheckedChanged: messageFeeds.controller.locationBroadcastEnabled = checked
                     }
 
-                    Row {
-                        height: 40 * scaleFactor
-                        spacing: 5 * scaleFactor
+                    RowLayout {
+                        width: parent.width
+                        spacing: settingsRowSpacing
 
-                        Text {
+                        Label {
+                            Layout.preferredWidth: settingsLabelMinWidth
+                            Layout.alignment: Qt.AlignVCenter
                             text: "Location Broadcast frequency (ms)"
                             color: Material.foreground
                             font {
-                                pixelSize: 10 * scaleFactor
+                                pixelSize: settingsFontSize
                                 family: DsaStyles.fontFamily
                             }
                         }
 
                         TextField {
-                            width: 50 * scaleFactor
+                            Layout.preferredWidth: settingsControlWidth/2
+                            Layout.alignment: Qt.AlignVCenter
+                            implicitHeight: settingsFieldHeight
                             text: messageFeeds.controller.locationBroadcastFrequency
                             color: Material.foreground
                             font {
-                                pixelSize: 10 * scaleFactor
+                                pixelSize: settingsFontSize
                                 family: DsaStyles.fontFamily
                             }
 
                             validator: IntValidator { bottom:0 }
 
                             onTextChanged: messageFeeds.controller.locationBroadcastFrequency = Number(text)
+                        }
+
+                        Item {
+                            Layout.fillWidth: true
                         }
                     }
 
@@ -192,22 +225,29 @@ Rectangle {
                     }
 
                     // Change the default coordinate formats between DMS, USNG, MGRS, etc.
-                    Row {
+                    RowLayout {
                         width: parent.width
-                        spacing: 10 * scaleFactor
+                        spacing: settingsRowSpacing
 
                         Label {
-                            anchors.verticalCenter: parent.verticalCenter
+                            Layout.preferredWidth: settingsLabelMinWidth
+                            Layout.alignment: Qt.AlignVCenter
                             text: "Default Coordinate Format"
                             font {
-                                pixelSize: 12 * scaleFactor
+                                pixelSize: settingsFontSize
                                 family: DsaStyles.fontFamily
                             }
                             color: Material.foreground
                         }
 
                         ComboBox {
-                            anchors.verticalCenter: parent.verticalCenter
+                            Layout.preferredWidth: settingsControlWidth
+                            Layout.alignment: Qt.AlignVCenter
+                            implicitHeight: settingsFieldHeight
+                            font {
+                                pixelSize: settingsFontSize
+                                family: DsaStyles.fontFamily
+                            }
                             model: optionsController.coordinateFormats
                             Component.onCompleted: currentIndex = optionsController.initialFormatIndex
                             onCurrentTextChanged: {
@@ -215,74 +255,104 @@ Rectangle {
                                 gridController.coordinateFormat = currentText;
                             }
                         }
+
+                        Item {
+                            Layout.fillWidth: true
+                        }
                     }
 
-                    Row {
+                    RowLayout {
                         width: parent.width
-                        spacing: 10 * scaleFactor
+                        spacing: settingsRowSpacing
 
                         Label {
-                            anchors.verticalCenter: parent.verticalCenter
+                            Layout.preferredWidth: settingsLabelMinWidth
+                            Layout.alignment: Qt.AlignVCenter
                             text: "Grid Color Scheme"
                             font {
-                                pixelSize: 12 * scaleFactor
+                                pixelSize: settingsFontSize
                                 family: DsaStyles.fontFamily
                             }
                             color: Material.foreground
                         }
 
                         ComboBox {
-                            anchors.verticalCenter: parent.verticalCenter
+                            Layout.preferredWidth: settingsControlWidth
+                            Layout.alignment: Qt.AlignVCenter
+                            implicitHeight: settingsFieldHeight
+                            font {
+                                pixelSize: settingsFontSize
+                                family: DsaStyles.fontFamily
+                            }
                             model: gridController.gridColorSchemes
                             Component.onCompleted: currentIndex = gridController.gridColorSchemeIndex
                             onCurrentTextChanged: {
                                 gridController.gridColorScheme = currentText;
                             }
                         }
+
+                        Item {
+                            Layout.fillWidth: true
+                        }
                     }
 
                     // Change the default units between feet and meters
-                    Row {
+                    RowLayout {
                         width: parent.width
-                        spacing: 10 * scaleFactor
+                        spacing: settingsRowSpacing
 
                         Label {
-                            anchors.verticalCenter: parent.verticalCenter
+                            Layout.preferredWidth: settingsLabelMinWidth
+                            Layout.alignment: Qt.AlignVCenter
                             text: "Default Unit of Measurement"
                             font {
-                                pixelSize: 12 * scaleFactor
+                                pixelSize: settingsFontSize
                                 family: DsaStyles.fontFamily
                             }
                             color: Material.foreground
                         }
 
                         ComboBox {
-                            anchors.verticalCenter: parent.verticalCenter
+                            Layout.preferredWidth: settingsControlWidth
+                            Layout.alignment: Qt.AlignVCenter
+                            implicitHeight: settingsFieldHeight
+                            font {
+                                pixelSize: settingsFontSize
+                                family: DsaStyles.fontFamily
+                            }
                             model: optionsController.units
                             Component.onCompleted: currentIndex = optionsController.initialUnitIndex
                             onCurrentTextChanged: optionsController.setUnitOfMeasurement(currentText)
                         }
+
+                        Item {
+                            Layout.fillWidth: true
+                        }
                     }
 
-                    Row {
-                        height: 40 * scaleFactor
-                        spacing: 5 * scaleFactor
+                    RowLayout {
+                        width: parent.width
+                        spacing: settingsRowSpacing
 
-                        Text {
+                        Label {
+                            Layout.preferredWidth: settingsLabelMinWidth
+                            Layout.alignment: Qt.AlignVCenter
                             text: "User name"
                             color: Material.foreground
                             font {
-                                pixelSize: 10 * scaleFactor
+                                pixelSize: settingsFontSize
                                 family: DsaStyles.fontFamily
                             }
                         }
 
                         TextField {
-                            width: 128 * scaleFactor
+                            Layout.preferredWidth: settingsControlWidth
+                            Layout.alignment: Qt.AlignVCenter
+                            implicitHeight: settingsFieldHeight
                             text: optionsController.userName
                             color: Material.foreground
                             font {
-                                pixelSize: 10 * scaleFactor
+                                pixelSize: settingsFontSize
                                 family: DsaStyles.fontFamily
                             }
 
@@ -290,6 +360,10 @@ Rectangle {
                                 if (optionsController.userName !== text)
                                     optionsController.userName = text;
                             }
+                        }
+
+                        Item {
+                            Layout.fillWidth: true
                         }
                     }
                 }

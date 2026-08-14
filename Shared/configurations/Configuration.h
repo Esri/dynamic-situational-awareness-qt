@@ -72,6 +72,7 @@ private:
   bool m_selected = false;
   bool m_loaded = false;
   bool m_isCancellable = true;
+  bool m_downloading = false;
   int m_percentDownloaded = 0;
   bool m_downloadCancelled = false;
   int m_percentExtracted = 0;

@@ -315,6 +315,10 @@ void ConfigurationController::download(int index)
   const auto configurationUrlStr = configuration.urlStr();
   const auto configurationName = configuration.name();
 
+  // prevent double taps of the download icon from any potential UI lag
+  if (configuration.downloading())
+    return;
+
 #ifdef Q_OS_ANDROID
   if (configurationUrl.scheme() == QStringLiteral("content"))
   {

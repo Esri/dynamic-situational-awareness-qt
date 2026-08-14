@@ -488,10 +488,19 @@ Rectangle {
                                 anchors.fill: parent
                                 onClicked: {
                                     configurationController.cancel(index);
+                                    if (timerDebounce.running)
+                                        imageDownload.visible = true;
                                 }
                             }
                         }
 
+                        Timer {
+                            id: timerDebounce
+                            interval: 1000
+                            running: false
+                            repeat: false
+                            onTriggered: imageDownload.visible = true;
+                        }
                         Image {
                             id: imageDownload
                             source: "qrc:/Resources/icons/xhdpi/ic_menu_sendmap_dark_d.png"
@@ -505,7 +514,9 @@ Rectangle {
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: {
+                                    imageDownload.visible = false;
                                     configurationController.download(index);
+                                    timerDebounce.start();
                                 }
                             }
                             rotation: 180

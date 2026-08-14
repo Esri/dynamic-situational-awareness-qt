@@ -123,11 +123,6 @@ void ConfigurationController::extractConfigurationDownload(const QString& downlo
     if (updateExtractedConfigurationFile(configurationDirectory))
       return;
 
-    // still exit early if the configuration is the default download from Esri
-    const auto configuration = m_configurationListModel->byName(configurationName);
-    if (configuration.urlStr() == ConfigurationController::DEFAULT_DOWNLOAD_URL)
-      return;
-
     // cleanup unusable files and reset the model item for the UI
     resetConfigurationDeviceStatus(configurationName);
 
@@ -161,9 +156,7 @@ void ConfigurationController::extractConfigurationDownload(const QString& downlo
 
 bool ConfigurationController::updateExtractedConfigurationFile(const QDir& configurationDirectory)
 {
-  // any download other than the default from Esri should have it's own DsaAppConfig.json
-  // file present. if it is not present, the default will be created when the app is
-  // relaunched with this configuration selected.
+  // all downloads are required to contain the DsaAppConfig.json in the expected location
   const auto dsaAppConfigFilePath = configurationDirectory.absoluteFilePath(DsaUtility::FILE_NAME_APP_CONFIG);
   QFile dsaAppConfigFile{dsaAppConfigFilePath};
   if (!dsaAppConfigFile.exists() || !dsaAppConfigFile.open(QIODevice::ReadOnly))

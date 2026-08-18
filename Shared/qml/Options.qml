@@ -93,6 +93,18 @@ Rectangle {
                     spacing: 10 * scaleFactor
 
                     Label {
+                        width: parent.width
+                        horizontalAlignment: Text.AlignHCenter
+                        text: "Settings are saved automatically"
+                        color: Material.foreground
+                        font {
+                            family: DsaStyles.fontFamily
+                            italic: true
+                            pixelSize: settingsFontSize * 0.85
+                        }
+                    }
+
+                    Label {
                         text: "Map"
                         font {
                             family: DsaStyles.fontFamily
@@ -371,11 +383,14 @@ Rectangle {
         }
         // Create a flickable column so that n number of options can be added
         Item {
+            clip: true
+
             Flickable {
                 id: configurationsFlickable
                 anchors {
                     fill: parent
                     margins: 10 * scaleFactor
+                    bottomMargin: 10 * scaleFactor + buttonCloseApp.height
                 }
                 clip: true
 

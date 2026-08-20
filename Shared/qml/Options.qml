@@ -242,7 +242,7 @@ Rectangle {
                         spacing: settingsRowSpacing
 
                         Label {
-                            Layout.preferredWidth: settingsLabelMinWidth
+                            Layout.preferredWidth: Math.min(settingsLabelMinWidth, parent.width * 0.5)
                             Layout.alignment: Qt.AlignVCenter
                             text: "Default Coordinate Format"
                             font {
@@ -252,19 +252,26 @@ Rectangle {
                             color: Material.foreground
                         }
 
-                        ComboBox {
-                            Layout.preferredWidth: settingsControlWidth
+                        Item {
+                            Layout.preferredWidth: Math.min(settingsControlWidth, parent.width * 0.5)
                             Layout.alignment: Qt.AlignVCenter
                             implicitHeight: settingsFieldHeight
-                            font {
-                                pixelSize: settingsFontSize
-                                family: DsaStyles.fontFamily
-                            }
-                            model: optionsController.coordinateFormats
-                            Component.onCompleted: currentIndex = optionsController.initialFormatIndex
-                            onCurrentTextChanged: {
-                                optionsController.setCoordinateFormat(currentText);
-                                gridController.coordinateFormat = currentText;
+
+                            ComboBox {
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: Math.min(parent.width, settingsControlWidth * 0.75)
+                                implicitHeight: settingsFieldHeight
+                                font {
+                                    pixelSize: settingsFontSize
+                                    family: DsaStyles.fontFamily
+                                }
+                                model: optionsController.coordinateFormats
+                                Component.onCompleted: currentIndex = optionsController.initialFormatIndex
+                                onCurrentTextChanged: {
+                                    optionsController.setCoordinateFormat(currentText);
+                                    gridController.coordinateFormat = currentText;
+                                }
                             }
                         }
 
@@ -278,7 +285,7 @@ Rectangle {
                         spacing: settingsRowSpacing
 
                         Label {
-                            Layout.preferredWidth: settingsLabelMinWidth
+                            Layout.preferredWidth: Math.min(settingsLabelMinWidth, parent.width * 0.5)
                             Layout.alignment: Qt.AlignVCenter
                             text: "Grid Color Scheme"
                             font {
@@ -288,18 +295,25 @@ Rectangle {
                             color: Material.foreground
                         }
 
-                        ComboBox {
-                            Layout.preferredWidth: settingsControlWidth
+                        Item {
+                            Layout.preferredWidth: Math.min(settingsControlWidth, parent.width * 0.5)
                             Layout.alignment: Qt.AlignVCenter
                             implicitHeight: settingsFieldHeight
-                            font {
-                                pixelSize: settingsFontSize
-                                family: DsaStyles.fontFamily
-                            }
-                            model: gridController.gridColorSchemes
-                            Component.onCompleted: currentIndex = gridController.gridColorSchemeIndex
-                            onCurrentTextChanged: {
-                                gridController.gridColorScheme = currentText;
+
+                            ComboBox {
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: Math.min(parent.width, settingsControlWidth * 0.75)
+                                implicitHeight: settingsFieldHeight
+                                font {
+                                    pixelSize: settingsFontSize
+                                    family: DsaStyles.fontFamily
+                                }
+                                model: gridController.gridColorSchemes
+                                Component.onCompleted: currentIndex = gridController.gridColorSchemeIndex
+                                onCurrentTextChanged: {
+                                    gridController.gridColorScheme = currentText;
+                                }
                             }
                         }
 
@@ -314,7 +328,7 @@ Rectangle {
                         spacing: settingsRowSpacing
 
                         Label {
-                            Layout.preferredWidth: settingsLabelMinWidth
+                            Layout.preferredWidth: Math.min(settingsLabelMinWidth, parent.width * 0.5)
                             Layout.alignment: Qt.AlignVCenter
                             text: "Default Unit of Measurement"
                             font {
@@ -324,17 +338,24 @@ Rectangle {
                             color: Material.foreground
                         }
 
-                        ComboBox {
-                            Layout.preferredWidth: settingsControlWidth
+                        Item {
+                            Layout.preferredWidth: Math.min(settingsControlWidth, parent.width * 0.5)
                             Layout.alignment: Qt.AlignVCenter
                             implicitHeight: settingsFieldHeight
-                            font {
-                                pixelSize: settingsFontSize
-                                family: DsaStyles.fontFamily
+
+                            ComboBox {
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: Math.min(parent.width, settingsControlWidth * 0.75)
+                                implicitHeight: settingsFieldHeight
+                                font {
+                                    pixelSize: settingsFontSize
+                                    family: DsaStyles.fontFamily
+                                }
+                                model: optionsController.units
+                                Component.onCompleted: currentIndex = optionsController.initialUnitIndex
+                                onCurrentTextChanged: optionsController.setUnitOfMeasurement(currentText)
                             }
-                            model: optionsController.units
-                            Component.onCompleted: currentIndex = optionsController.initialUnitIndex
-                            onCurrentTextChanged: optionsController.setUnitOfMeasurement(currentText)
                         }
 
                         Item {
@@ -347,7 +368,7 @@ Rectangle {
                         spacing: settingsRowSpacing
 
                         Label {
-                            Layout.preferredWidth: settingsLabelMinWidth
+                            Layout.preferredWidth: Math.min(settingsLabelMinWidth, parent.width * 0.5)
                             Layout.alignment: Qt.AlignVCenter
                             text: "User name"
                             color: Material.foreground
@@ -358,7 +379,7 @@ Rectangle {
                         }
 
                         TextField {
-                            Layout.preferredWidth: settingsControlWidth
+                            Layout.preferredWidth: Math.min(settingsControlWidth, parent.width * 0.5)
                             Layout.alignment: Qt.AlignVCenter
                             implicitHeight: settingsFieldHeight
                             text: optionsController.userName

@@ -368,7 +368,7 @@ DsaPanel {
             display: AbstractButton.TextUnderIcon
             icon.source: DsaResources.iconColorPalette
             icon.color: Material.foreground
-            text: qsTr("Display")
+            text: qsTr("Track Display")
             font.pixelSize: fontPixelSize
         }
 

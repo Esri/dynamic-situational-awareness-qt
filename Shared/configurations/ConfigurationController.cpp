@@ -319,6 +319,8 @@ void ConfigurationController::download(int index)
   if (configuration.downloading())
     return;
 
+  m_configurationListModel->download(configuration.name());
+
 #ifdef Q_OS_ANDROID
   if (configurationUrl.scheme() == QStringLiteral("content"))
   {

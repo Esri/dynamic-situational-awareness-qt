@@ -653,7 +653,15 @@ Handheld {
         onAccepted: showConfigurations(true);
         onRejected: showConfigurations(false);
     }
+
+    property bool promptedForDefaultDownload: false
     function showConfigurations(downloadDefaultData) {
+        // prevents multiple 'Yes' taps.
+        // this dialog should only be shown on the initial startup.
+        if (promptedForDefaultDownload)
+            return;
+
+        promptedForDefaultDownload = true;
         if (downloadDefaultData)
             configurationController.downloadDefaultData();
 

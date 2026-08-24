@@ -494,12 +494,16 @@ Rectangle {
                             }
                         }
 
+                        property bool downloadOnCooldown: false
                         Timer {
                             id: timerDebounce
-                            interval: 1000
+                            interval: 500
                             running: false
                             repeat: false
-                            onTriggered: imageDownload.visible = true;
+                            onTriggered: {
+                                downloadOnCooldown = false;
+                                imageDownload.visible = true;
+                            }
                         }
                         Image {
                             id: imageDownload
@@ -514,6 +518,10 @@ Rectangle {
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: {
+                                    if (downloadOnCooldown)
+                                        return;
+
+                                    downloadOnCooldown = true;
                                     imageDownload.visible = false;
                                     configurationController.download(index);
                                     timerDebounce.start();

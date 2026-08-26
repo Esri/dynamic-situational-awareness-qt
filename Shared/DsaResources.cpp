@@ -70,7 +70,7 @@ QString DsaResources::arcGISMapsSDKVersion() const
 
 QString DsaResources::defaultConfigurationDownloadPrompt() const
 {
-  return QStringLiteral("Download the default configuration data from Esri?");
+  return QStringLiteral("App configuration data not found.\n\nDownload the default configuration data from Esri?");
 }
 
 /*!

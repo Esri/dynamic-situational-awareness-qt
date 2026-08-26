@@ -295,6 +295,22 @@ DsaPanel {
                 rightPadding: searchClearButtonSize + 8 * scaleFactor
                 onTextChanged: toolController.findEntities(text);
 
+                Label {
+                    anchors {
+                        left: parent.left
+                        verticalCenter: parent.verticalCenter
+                        leftMargin: 15 * scaleFactor
+                    }
+                    text: qsTr("Search by track ID...")
+                    visible: textFindEntity.text === ""
+                    color: Material.hintTextColor
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: textFindEntity.forceActiveFocus()
+                    }
+                }
+
                 Button {
                     anchors {
                         right: parent.right

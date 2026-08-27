@@ -357,20 +357,23 @@ const DsaController* DsaController::instance()
  */
 void DsaController::setupConfig()
 {
-  // get the app config
-  m_configFilePath = QString("./%1").arg(DsaUtility::FILE_NAME_APP_CONFIG);
-
   // if the config file does not exist, exit early to raise the prompt to download the default data folder
-  if (!QFileInfo::exists(m_configFilePath))
+  const auto configFilePath = QString{"./%1"}.arg(DsaUtility::FILE_NAME_APP_CONFIG);
+  if (!QFileInfo::exists(configFilePath))
+  {
     return;
+  }
 
   // Open the config file, get settings, set them to the application controller
-  QSettings settings(m_configFilePath, m_jsonFormat);
+  m_configFilePath = configFilePath;
+  const QSettings settings{m_configFilePath, m_jsonFormat};
   const QStringList allKeys = settings.allKeys();
 
   // get the values from the config, and write to the settings map
   for (const QString& key : allKeys)
+  {
     m_dsaSettings[key] = settings.value(key);
+  }
 }
 
 /*! \brief internal
@@ -389,12 +392,16 @@ bool DsaController::isConflictingTool(const QString& toolName) const
  */
 void DsaController::saveSettings()
 {
-  QSettings settings(m_configFilePath, m_jsonFormat);
+  if (m_configFilePath.isNull() || m_configFilePath.isEmpty())
+  {
+    return;
+  }
 
-  auto it = m_dsaSettings.cbegin();
-  auto itEnd = m_dsaSettings.cend();
-  for (; it != itEnd; ++it)
-    settings.setValue(it.key(), it.value());
+  QSettings settings(m_configFilePath, m_jsonFormat);
+  std::for_each(m_dsaSettings.constKeyValueBegin(), m_dsaSettings.constKeyValueEnd(), [&](const std::pair<QString, QVariant>& kv)
+  {
+    settings.setValue(kv.first, kv.second);
+  });
 }
 
 void DsaController::writeInitialLocation(const Viewpoint& viewpoint)

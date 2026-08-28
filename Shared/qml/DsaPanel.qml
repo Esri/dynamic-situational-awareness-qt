@@ -26,7 +26,12 @@ Rectangle {
     property string title: ""
     property alias titleBar: titleBar
     signal closed()
+    signal titleActionTriggered()
     property string iconSource: DsaResources.iconClose
+    property string actionText: ""
+    property bool titleActionClosesPanel: true
+    readonly property bool showLeftTitleAction: !titleActionClosesPanel
+    readonly property bool showRightCloseAction: titleActionClosesPanel
     color: Material.primary
 
     MouseArea {
@@ -54,10 +59,10 @@ Rectangle {
             Text {
                 id: titleText
                 anchors {
-                    left: parent.left
-                    right: closeButton.left
+                    left: showLeftTitleAction ? leftActionButton.right : parent.left
+                    right: showRightCloseAction ? closeButton.left : parent.right
                     verticalCenter: parent.verticalCenter
-                    leftMargin: 12 * scaleFactor
+                    leftMargin: showLeftTitleAction ? 8 * scaleFactor : 12 * scaleFactor
                     rightMargin: 8 * scaleFactor
                 }
                 text: qsTr(title)
@@ -70,7 +75,35 @@ Rectangle {
             }
 
             Button {
+                id: leftActionButton
+                visible: showLeftTitleAction
+                anchors {
+                    left: parent.left
+                    verticalCenter: parent.verticalCenter
+                    leftMargin: 8 * scaleFactor
+                }
+
+                width: 36 * scaleFactor
+                height: width
+
+                background: Rectangle {
+                    anchors.fill: leftActionButton
+                    color: Material.primary
+                }
+
+                Text {
+                    anchors.centerIn: parent
+                    text: actionText
+                    color: Material.foreground
+                    font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
+                }
+
+                onClicked: titleActionTriggered()
+            }
+
+            Button {
                 id: closeButton
+                visible: showRightCloseAction
                 anchors {
                     right: parent.right
                     verticalCenter: parent.verticalCenter
@@ -91,7 +124,7 @@ Rectangle {
                     fillMode: Image.PreserveAspectFit
                 }
 
-                onClicked: closed();
+                onClicked: closed()
             }
         }
     }

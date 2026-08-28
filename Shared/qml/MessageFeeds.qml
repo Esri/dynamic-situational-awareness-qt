@@ -23,7 +23,11 @@ import Esri.ArcGISRuntime.OpenSourceApps.DSA
 DsaPanel {
     id: messageFeedsRoot
     width: 272 * scaleFactor
-    title: qsTr("Message Feeds")
+    title: panelState === panelStateFeeds ? qsTr("Message Feeds")
+                                           : (panelState === panelStateTrackDisplay ? qsTr("Track Display") : qsTr("Find"))
+    iconSource: panelState === panelStateFeeds ? DsaResources.iconClose : ""
+    actionText: panelState === panelStateFeeds ? "" : "<-"
+    titleActionClosesPanel: panelState === panelStateFeeds
 
     property alias controller: toolController
     property bool isMobile
@@ -33,6 +37,10 @@ DsaPanel {
     property real trackControlSpacing: 4 * scaleFactor
     property real trackSectionSpacing: 18 * scaleFactor
     property real trackDividerSpacing: 20 * scaleFactor
+    readonly property int panelStateFeeds: 0
+    readonly property int panelStateTrackDisplay: 1
+    readonly property int panelStateFind: 2
+    property int panelState: panelStateFeeds
 
     // Create the controller
     MessageFeedsController {
@@ -40,18 +48,21 @@ DsaPanel {
     }
 
     onVisibleChanged: {
-        // always switch back to the 'Feeds' tab if the panel is hidden
-        bar.currentIndex = 0;
+        // always switch back to the feeds page if the panel is hidden
+        if (!visible)
+            panelState = panelStateFeeds;
     }
 
+    onTitleActionTriggered: panelState = panelStateFeeds
+
     StackLayout {
-        currentIndex: bar.currentIndex
+        currentIndex: panelState
 
         anchors {
             top: titleBar.bottom
             left: parent.left
             right: parent.right
-            bottom: bar.top
+            bottom: parent.bottom
             margins: 8 * scaleFactor
         }
 
@@ -59,6 +70,12 @@ DsaPanel {
             id: messageFeedsList
             clip: true
             model: toolController.messageFeeds
+            highlightFollowsCurrentItem: isMobile
+            highlight: Rectangle {
+                radius: 5 * scaleFactor
+                color: Material.accent
+                opacity: 0.5
+            }
             delegate:  ListItemDelegate {
                 id: control
                 width: parent.width
@@ -73,7 +90,6 @@ DsaPanel {
                 }
                 onRowPressAndHold: {
                     toolController.selectedFeedIndex = index;
-                    bar.currentIndex = 1;
                 }
 
                 onItemCheckedChanged: {
@@ -85,7 +101,65 @@ DsaPanel {
                 imageUrl: thumbnailUrl
                 imageVisible: true
                 imageFrameVisible: false
-                menuIconVisible: false
+                menuIconVisible: true
+
+                Image {
+                    anchors {
+                        right: parent.right
+                        verticalCenter: parent.verticalCenter
+                        margins: 5 * scaleFactor
+                    }
+                    rotation: 90
+                    source: DsaResources.iconMenu
+                    height: 32 * scaleFactor
+                    width: height
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            toolController.selectedFeedIndex = index;
+                            messageFeedsList.currentIndex = index;
+                            if (!isMobile) {
+                                feedMenu.open();
+                            } else {
+                                if (mobileMenu.isOpen) {
+                                    mobileMenu.close();
+                                } else {
+                                    mobileMenu.open();
+                                }
+                            }
+                        }
+                    }
+
+                    // Menu for Vehicle
+                    Menu {
+                        id: feedMenu
+                        width: 150 * scaleFactor
+
+                        Column {
+                            anchors.margins: 10 * scaleFactor
+                            width: parent.width
+                            spacing: 10 * scaleFactor
+
+                            ListLabel {
+                                text: qsTr("Track Display")
+                                onTriggered: {
+                                    feedMenu.close();
+                                    panelState = panelStateTrackDisplay;
+                                }
+                            }
+
+                            ListLabel {
+                                text: qsTr("Find Track")
+                                separatorVisible: false
+                                onTriggered: {
+                                    feedMenu.close();
+                                    panelState = panelStateFind;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -339,35 +413,114 @@ DsaPanel {
         }
     }
 
-    TabBar {
-        id: bar
+    Rectangle {
+        id: mobileMenu
+        visible: panelState === panelStateFeeds
+        property bool isOpen: y === messageFeedsRoot.y + messageFeedsRoot.height - height
+        property int closedY: messageFeedsRoot.y + messageFeedsRoot.height
+        property int openY: messageFeedsRoot.y + messageFeedsRoot.height - height - anchors.margins
         anchors {
-            bottom: parent.bottom
+            left: parent.left
+            right: parent.right
+            margins: 5 * scaleFactor
         }
-        width: parent.width
+        color: "transparent"
+        height: messageFeedsRoot.height
+        y: closedY
 
-        TabButton {
-            display: AbstractButton.TextUnderIcon
-            icon.source: DsaResources.iconListView
-            icon.color: Material.foreground
-            text: qsTr("Feeds")
-            font.pixelSize: fontPixelSize
-        }
-
-        TabButton {
-            display: AbstractButton.TextUnderIcon
-            icon.source: DsaResources.iconColorPalette
-            icon.color: Material.foreground
-            text: qsTr("Track Display")
-            font.pixelSize: fontPixelSize
+        MouseArea {
+            anchors.fill: parent
+            onClicked: mobileMenu.close()
         }
 
-        TabButton {
-            display: AbstractButton.TextUnderIcon
-            icon.source: DsaResources.iconZoomTo
-            icon.color: Material.foreground
-            text: qsTr("Find")
-            font.pixelSize: fontPixelSize
+        Rectangle {
+            anchors {
+                fill: mobileActionColumn
+                margins: -10 * scaleFactor
+            }
+            color: Material.background
+            radius: 10 * scaleFactor
+            border {
+                color: Material.primary
+                width: 1 * scaleFactor
+            }
         }
+
+        function open() {
+            if (y === openY)
+                return;
+
+            messageFeedsList.highlightFollowsCurrentItem = true;
+            animateVertical.from = closedY;
+            animateVertical.to = openY;
+            animateVertical.start();
+        }
+
+        function close() {
+            if (y === closedY)
+                return;
+
+            messageFeedsList.highlightFollowsCurrentItem = false;
+            animateVertical.from = openY;
+            animateVertical.to = closedY;
+            animateVertical.start();
+            messageFeedsList.currentIndex = -1;
+        }
+
+        NumberAnimation {
+            id: animateVertical
+            target: mobileMenu
+            properties: "y"
+            duration: 250
+            easing.type: Easing.OutQuad
+        }
+
+        Column {
+            id: mobileActionColumn
+            anchors {
+                left: parent.left
+                right: parent.right
+                bottom: parent.bottom
+                margins: 10 * scaleFactor
+            }
+
+            spacing: 5 * scaleFactor
+
+            ListLabel {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: qsTr("Track Display")
+                onTriggered: {
+                    if (messageFeedsList.currentIndex > -1)
+                        toolController.selectedFeedIndex = messageFeedsList.currentIndex;
+                    mobileMenu.close();
+                    panelState = panelStateTrackDisplay;
+                }
+            }
+
+            ListLabel {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: qsTr("Find Track")
+                onTriggered: {
+                    if (messageFeedsList.currentIndex > -1)
+                        toolController.selectedFeedIndex = messageFeedsList.currentIndex;
+                    mobileMenu.close();
+                    panelState = panelStateFind;
+                }
+            }
+
+            ListLabel {
+                anchors.horizontalCenter: parent.horizontalCenter
+                separatorVisible: false
+                text: qsTr("Cancel")
+                onTriggered: {
+                    mobileMenu.close();
+                }
+            }
+        }
+    }
+
+    onPanelStateChanged: {
+        if (panelState !== panelStateFeeds && mobileMenu.isOpen)
+            mobileMenu.close();
     }
 }

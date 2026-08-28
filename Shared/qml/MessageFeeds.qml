@@ -234,10 +234,14 @@ DsaPanel {
                         id: observationsColorMenu
                         readonly property real swatchSpacing: 4 * scaleFactor
                         readonly property real swatchSize: colorCircleSize
+                        readonly property int swatchCount: DsaResources.TrackDisplayColors.length
+                        readonly property real swatchListWidth: (swatchCount * swatchSize) + (Math.max(0, swatchCount - 1) * swatchSpacing)
+                        readonly property real lastSwatchCenterX: padding + ((swatchCount - 1) * (swatchSize + swatchSpacing)) + (swatchSize / 2)
                         y: observationsColorPicker.height + (4 * scaleFactor)
-                        x: -observationsColorPicker.x
+                        x: isMobile ? observationColorPreview.x + (observationColorPreview.width / 2) - lastSwatchCenterX
+                                    : -observationsColorPicker.x
                         padding: 8 * scaleFactor
-                        width: messageFeedsRoot.width
+                        width: isMobile ? swatchListWidth + (padding * 2) : messageFeedsRoot.width
                         height: swatchSize + (padding * 2)
 
                         background: Rectangle {
@@ -360,12 +364,16 @@ DsaPanel {
 
                     Popup {
                         id: trackLineColorMenu
-                        readonly property real swatchSpacing: 8 * scaleFactor
+                        readonly property real swatchSpacing: 4 * scaleFactor
                         readonly property real swatchSize: colorCircleSize
+                        readonly property int swatchCount: DsaResources.TrackDisplayColors.length
+                        readonly property real swatchListWidth: (swatchCount * swatchSize) + (Math.max(0, swatchCount - 1) * swatchSpacing)
+                        readonly property real lastSwatchCenterX: padding + ((swatchCount - 1) * (swatchSize + swatchSpacing)) + (swatchSize / 2)
                         y: trackLineColorPicker.height + (4 * scaleFactor)
-                        x: -trackLineColorPicker.x
+                        x: isMobile ? trackLineColorPreview.x + (trackLineColorPreview.width / 2) - lastSwatchCenterX
+                                    : -trackLineColorPicker.x
                         padding: 8 * scaleFactor
-                        width: messageFeedsRoot.width
+                        width: isMobile ? swatchListWidth + (padding * 2) : messageFeedsRoot.width
                         height: swatchSize + (padding * 2)
 
                         background: Rectangle {

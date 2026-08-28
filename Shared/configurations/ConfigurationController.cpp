@@ -286,6 +286,7 @@ void ConfigurationController::zipHeadReply_finished(QNetworkRequest zipRequest, 
     {
       removeDownloadedFile(downloadFilePath);
       resetConfigurationDeviceStatus(configurationName);
+      m_configurationListModel->cancel(configurationName);
       return;
     }
 
@@ -294,7 +295,10 @@ void ConfigurationController::zipHeadReply_finished(QNetworkRequest zipRequest, 
   connect(contentReply, &QNetworkReply::errorOccurred, this, [this, configurationName](QNetworkReply::NetworkError error)
   {
     if (error != QNetworkReply::NetworkError::OperationCanceledError)
+    {
+      m_configurationListModel->cancel(configurationName);
       sendRemoveConfigurationSignal(configurationName, QStringLiteral("The configuration zip failed to download."));
+    }
   });
 }
 

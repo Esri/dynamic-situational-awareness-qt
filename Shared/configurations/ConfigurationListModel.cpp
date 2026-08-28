@@ -51,6 +51,18 @@ void ConfigurationListModel::cancel(int index)
   emit dataChanged(idx, idx);
 }
 
+void ConfigurationListModel::cancel(const QString& configurationName)
+{
+  for (Configuration& c : m_configurations)
+  {
+    if (c.name() != configurationName)
+      continue;
+
+    c.cancelDownload();
+    return;
+  }
+}
+
 Configuration ConfigurationListModel::at(int index) const
 {
   if (index < 0 || index >= m_configurations.size())

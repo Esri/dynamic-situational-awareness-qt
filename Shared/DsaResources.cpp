@@ -182,6 +182,14 @@ QUrl DsaResources::iconBrowse() const
 }
 
 /*!
+  \brief Returns the URL to the "Back" icon.
+ */
+QUrl DsaResources::iconBack() const
+{
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_back_left.png"));
+}
+
+/*!
   \brief Returns the URL to the "Choose Basemap" icon.
  */
 QUrl DsaResources::iconChooseBasemap() const

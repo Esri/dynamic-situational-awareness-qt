@@ -26,7 +26,7 @@ DsaPanel {
     title: panelState === panelStateFeeds ? qsTr("Message Feeds")
                                            : (panelState === panelStateTrackDisplay ? qsTr("Track Display") : qsTr("Find"))
     iconSource: panelState === panelStateFeeds ? DsaResources.iconClose : ""
-    actionText: panelState === panelStateFeeds ? "" : "<-"
+    leftActionIconSource: panelState === panelStateFeeds ? "" : DsaResources.iconBack
     titleActionClosesPanel: panelState === panelStateFeeds
 
     property alias controller: toolController

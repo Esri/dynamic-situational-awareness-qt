@@ -28,7 +28,7 @@ Rectangle {
     signal closed()
     signal titleActionTriggered()
     property string iconSource: DsaResources.iconClose
-    property string actionText: ""
+    property string leftActionIconSource: ""
     property bool titleActionClosesPanel: true
     readonly property bool showLeftTitleAction: !titleActionClosesPanel
     readonly property bool showRightCloseAction: titleActionClosesPanel
@@ -91,11 +91,10 @@ Rectangle {
                     color: Material.primary
                 }
 
-                Text {
-                    anchors.centerIn: parent
-                    text: actionText
-                    color: Material.foreground
-                    font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
+                Image {
+                    anchors.fill: parent
+                    source: leftActionIconSource
+                    fillMode: Image.PreserveAspectFit
                 }
 
                 onClicked: titleActionTriggered()

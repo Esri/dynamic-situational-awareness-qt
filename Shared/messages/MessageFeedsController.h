@@ -50,6 +50,7 @@ class MessageFeedsController : public AbstractTool
   Q_PROPERTY(int locationBroadcastFrequency READ locationBroadcastFrequency WRITE setLocationBroadcastFrequency NOTIFY locationBroadcastFrequencyChanged)
   Q_PROPERTY(bool locationBroadcastInDistress READ isLocationBroadcastInDistress WRITE setLocationBroadcastInDistress NOTIFY locationBroadcastInDistressChanged)
   Q_PROPERTY(int selectedFeedIndex READ selectedFeedIndex WRITE setSelectedFeedIndex NOTIFY selectedFeedChanged)
+  Q_PROPERTY(QString selectedFeedName READ selectedFeedName NOTIFY selectedFeedChanged)
   Q_PROPERTY(MessageFeed* selectedFeed READ selectedFeed NOTIFY selectedFeedChanged);
 
 public:
@@ -88,6 +89,7 @@ public:
   void setLocationBroadcastInDistress(bool inDistress);
 
   MessageFeed* selectedFeed();
+  QString selectedFeedName() const;
 
   int selectedFeedIndex() const;
   void setSelectedFeedIndex(int index);

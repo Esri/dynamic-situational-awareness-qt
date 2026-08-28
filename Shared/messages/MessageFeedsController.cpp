@@ -449,6 +449,12 @@ MessageFeed* MessageFeedsController::selectedFeed()
   return m_messageFeeds->at(m_selectedFeedIndex);
 }
 
+QString MessageFeedsController::selectedFeedName() const
+{
+  const MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
+  return feed ? feed->feedName() : QString{};
+}
+
 int MessageFeedsController::selectedFeedIndex() const
 {
   return m_selectedFeedIndex;

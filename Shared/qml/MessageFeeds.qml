@@ -22,7 +22,7 @@ import Esri.ArcGISRuntime.OpenSourceApps.DSA
 
 DsaPanel {
     id: messageFeedsRoot
-    width: 272 * scaleFactor
+    width: 350 * scaleFactor
     title: panelState === panelStateFeeds ? qsTr("Message Feeds")
                                            : (panelState === panelStateTrackDisplay ? qsTr("Track Display") : qsTr("Find"))
     iconSource: panelState === panelStateFeeds ? DsaResources.iconClose : ""
@@ -37,6 +37,7 @@ DsaPanel {
     property real trackControlSpacing: 4 * scaleFactor
     property real trackSectionSpacing: 18 * scaleFactor
     property real trackDividerSpacing: 20 * scaleFactor
+    property real colorCircleSize: spinBoxHeight * 0.65
     readonly property int panelStateFeeds: 0
     readonly property int panelStateTrackDisplay: 1
     readonly property int panelStateFind: 2
@@ -80,6 +81,7 @@ DsaPanel {
                 id: control
                 width: parent.width
                 height: 40 * scaleFactor
+                itemSpacing: 1 * scaleFactor
                 mainText: feedName
                 itemChecked: feedVisible
                 highlighted: toolController.selectedFeedIndex === index
@@ -101,7 +103,6 @@ DsaPanel {
                 imageUrl: thumbnailUrl
                 imageVisible: true
                 imageFrameVisible: false
-                menuIconVisible: true
 
                 Image {
                     anchors {
@@ -166,13 +167,13 @@ DsaPanel {
         ColumnLayout {
             spacing: 0
 
-            ComboBox {
-                id: comboFeeds
+            Label {
                 Layout.fillWidth: true
-                textRole: "feedName"
-                model: toolController.messageFeeds
-                currentIndex: toolController.selectedFeedIndex
-                onCurrentIndexChanged: toolController.selectedFeedIndex = currentIndex
+                text: toolController.selectedFeedName
+                horizontalAlignment: Text.AlignHCenter
+                elide: Text.ElideRight
+                font.pixelSize: fontPixelSize
+                font.italic: true
             }
 
             // OBSERVATIONS
@@ -181,7 +182,7 @@ DsaPanel {
                 Layout.topMargin: trackSectionSpacing
                 checked: toolController.selectedFeed.showPreviousObservations
                 onCheckedChanged: toolController.selectedFeed.showPreviousObservations = checked
-                text: "Observations"
+                text: "Show observations"
                 font.pixelSize: fontPixelSize
             }
             GridLayout {
@@ -206,21 +207,92 @@ DsaPanel {
                         toolController.selectedFeed.sizeObservations = value
                     }
                 }
-                ColorsComboBox {
-                    id: colorsComboObservations
+                Item {
+                    id: observationsColorPicker
                     Layout.preferredHeight: spinBoxHeight
                     Layout.fillWidth: true
-                    currentIndex: model.indexOf(toolController.selectedFeed.colorObservations)
-                    onCurrentIndexChanged: {
-                        if (!toolController.selectedFeed)
-                            return;
 
-                        toolController.selectedFeed.colorObservations = model[currentIndex]
+                    Rectangle {
+                        id: observationColorPreview
+                        anchors.centerIn: parent
+                        width: colorCircleSize
+                        height: width
+                        radius: width / 2
+                        color: toolController.selectedFeed ? toolController.selectedFeed.colorObservations : "transparent"
+                        border {
+                            color: Material.foreground
+                            width: 1 * scaleFactor
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: observationsColorMenu.open()
+                        }
+                    }
+
+                    Popup {
+                        id: observationsColorMenu
+                        readonly property real swatchSpacing: 4 * scaleFactor
+                        readonly property real swatchSize: colorCircleSize
+                        y: observationsColorPicker.height + (4 * scaleFactor)
+                        x: -observationsColorPicker.x
+                        padding: 8 * scaleFactor
+                        width: messageFeedsRoot.width
+                        height: swatchSize + (padding * 2)
+
+                        background: Rectangle {
+                            color: Material.background
+                            radius: 8 * scaleFactor
+                            border {
+                                color: Material.primary
+                                width: 1 * scaleFactor
+                            }
+                        }
+
+                        contentItem: Row {
+                            id: observationsColorRow
+                            spacing: observationsColorMenu.swatchSpacing
+
+                            Repeater {
+                                id: observationsColorRepeater
+                                model: DsaResources.TrackDisplayColors
+
+                                Rectangle {
+                                    width: observationsColorMenu.swatchSize
+                                    height: width
+                                    radius: width / 2
+                                    color: modelData
+                                    border {
+                                        color: Material.foreground
+                                        width: 1 * scaleFactor
+                                    }
+
+                                    Image {
+                                        anchors.centerIn: parent
+                                        height: parent.height
+                                        width: height
+                                        source: DsaResources.iconComplete
+                                        visible: toolController.selectedFeed && toolController.selectedFeed.colorObservations === modelData
+                                    }
+
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        onClicked: {
+                                            if (!toolController.selectedFeed)
+                                                return;
+
+                                            toolController.selectedFeed.colorObservations = modelData;
+                                            observationsColorMenu.close();
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 Label {
                     Layout.alignment: Qt.AlignCenter
-                    text: "Size"
+                    text: "Marker size"
                     font.pixelSize: detailLabelFontPixelSize
                     font.italic: true
                 }
@@ -238,7 +310,7 @@ DsaPanel {
                 Layout.topMargin: switchObservations.checked ? trackSectionSpacing : 0
                 checked: toolController.selectedFeed.showTrackLine
                 onCheckedChanged: toolController.selectedFeed.showTrackLine = checked
-                text: "Track Line"
+                text: "Show track lines"
                 font.pixelSize: fontPixelSize
             }
             GridLayout {
@@ -263,21 +335,92 @@ DsaPanel {
                         toolController.selectedFeed.sizeTrackLine = value
                     }
                 }
-                ColorsComboBox {
-                    id: colorsComboTrackLine
+                Item {
+                    id: trackLineColorPicker
                     Layout.preferredHeight: spinBoxHeight
                     Layout.fillWidth: true
-                    currentIndex: model.indexOf(toolController.selectedFeed.colorTrackLine)
-                    onCurrentIndexChanged: {
-                        if (!toolController.selectedFeed)
-                            return;
 
-                        toolController.selectedFeed.colorTrackLine = model[currentIndex]
+                    Rectangle {
+                        id: trackLineColorPreview
+                        anchors.centerIn: parent
+                        width: colorCircleSize
+                        height: width
+                        radius: width / 2
+                        color: toolController.selectedFeed ? toolController.selectedFeed.colorTrackLine : "transparent"
+                        border {
+                            color: Material.foreground
+                            width: 1 * scaleFactor
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: trackLineColorMenu.open()
+                        }
+                    }
+
+                    Popup {
+                        id: trackLineColorMenu
+                        readonly property real swatchSpacing: 8 * scaleFactor
+                        readonly property real swatchSize: colorCircleSize
+                        y: trackLineColorPicker.height + (4 * scaleFactor)
+                        x: -trackLineColorPicker.x
+                        padding: 8 * scaleFactor
+                        width: messageFeedsRoot.width
+                        height: swatchSize + (padding * 2)
+
+                        background: Rectangle {
+                            color: Material.background
+                            radius: 8 * scaleFactor
+                            border {
+                                color: Material.primary
+                                width: 1 * scaleFactor
+                            }
+                        }
+
+                        contentItem: Row {
+                            id: trackLineColorRow
+                            spacing: trackLineColorMenu.swatchSpacing
+
+                            Repeater {
+                                id: trackLineColorRepeater
+                                model: DsaResources.TrackDisplayColors
+
+                                Rectangle {
+                                    width: trackLineColorMenu.swatchSize
+                                    height: width
+                                    radius: width / 2
+                                    color: modelData
+                                    border {
+                                        color: Material.foreground
+                                        width: 1 * scaleFactor
+                                    }
+
+                                    Image {
+                                        anchors.centerIn: parent
+                                        height: parent.height
+                                        width: height
+                                        source: DsaResources.iconComplete
+                                        visible: toolController.selectedFeed && toolController.selectedFeed.colorTrackLine === modelData
+                                    }
+
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        onClicked: {
+                                            if (!toolController.selectedFeed)
+                                                return;
+
+                                            toolController.selectedFeed.colorTrackLine = modelData;
+                                            trackLineColorMenu.close();
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 Label {
                     Layout.alignment: Qt.AlignCenter
-                    text: "Size"
+                    text: "Line width"
                     font.pixelSize: detailLabelFontPixelSize
                     font.italic: true
                 }
@@ -334,7 +477,7 @@ DsaPanel {
                     }
 
                     Label {
-                        text: "Amount"
+                        text: "Number of observations"
                         font.pixelSize: detailLabelFontPixelSize
                         font.italic: true
                         Layout.alignment: Qt.AlignHCenter
@@ -522,5 +665,10 @@ DsaPanel {
     onPanelStateChanged: {
         if (panelState !== panelStateFeeds && mobileMenu.isOpen)
             mobileMenu.close();
+
+        if (panelState !== panelStateTrackDisplay) {
+            observationsColorMenu.close();
+            trackLineColorMenu.close();
+        }
     }
 }

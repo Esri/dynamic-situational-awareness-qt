@@ -37,7 +37,11 @@ DsaPanel {
     property real trackControlSpacing: 4 * scaleFactor
     property real trackSectionSpacing: 18 * scaleFactor
     property real trackDividerSpacing: 20 * scaleFactor
-    property real colorCircleSize: spinBoxHeight * 0.65
+    property real vehicleColorPopupMargin: 10 * scaleFactor
+    property real colorPopupPadding: 8 * scaleFactor
+    property real colorSwatchSpacing: 4 * scaleFactor
+    property real mobileColorSwatchSize: spinBoxHeight
+    property real vehicleColorSwatchSize: (messageFeedsRoot.width - (vehicleColorPopupMargin * 2) - (colorPopupPadding * 2) - (Math.max(0, DsaResources.TrackDisplayColors.length - 1) * colorSwatchSpacing)) / DsaResources.TrackDisplayColors.length
     readonly property int panelStateFeeds: 0
     readonly property int panelStateTrackDisplay: 1
     readonly property int panelStateFind: 2
@@ -167,13 +171,29 @@ DsaPanel {
         ColumnLayout {
             spacing: 0
 
-            Label {
+            Item {
                 Layout.fillWidth: true
-                text: toolController.selectedFeedName
-                horizontalAlignment: Text.AlignHCenter
-                elide: Text.ElideRight
-                font.pixelSize: fontPixelSize
-                font.italic: true
+                Layout.preferredHeight: 32 * scaleFactor
+
+                Rectangle {
+                    anchors.fill: parent
+                    radius: 5 * scaleFactor
+                    color: Material.accent
+                    opacity: 0.5
+                }
+
+                Label {
+                    anchors {
+                        fill: parent
+                        margins: 6 * scaleFactor
+                    }
+                    text: toolController.selectedFeedName
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    elide: Text.ElideRight
+                    font.pixelSize: fontPixelSize
+                    font.italic: true
+                }
             }
 
             // OBSERVATIONS
@@ -186,13 +206,14 @@ DsaPanel {
                 font.pixelSize: fontPixelSize
             }
             GridLayout {
+                id: observationsControlsGrid
                 visible: switchObservations.checked
-                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: trackControlSpacing
                 rows: 2
                 columns: 2
                 rowSpacing: trackControlSpacing
-                columnSpacing: 8 * scaleFactor
+                columnSpacing: 6 * scaleFactor
                 SpinBox {
                     id: spinObservationsSize
                     from: 1
@@ -210,14 +231,12 @@ DsaPanel {
                 Item {
                     id: observationsColorPicker
                     Layout.preferredHeight: spinBoxHeight
-                    Layout.fillWidth: true
+                    Layout.preferredWidth: spinBoxHeight
 
                     Rectangle {
                         id: observationColorPreview
-                        anchors.centerIn: parent
-                        width: colorCircleSize
-                        height: width
-                        radius: width / 2
+                        anchors.fill: parent
+                        radius: 2 * scaleFactor
                         color: toolController.selectedFeed ? toolController.selectedFeed.colorObservations : "transparent"
                         border {
                             color: Material.foreground
@@ -232,16 +251,15 @@ DsaPanel {
 
                     Popup {
                         id: observationsColorMenu
-                        readonly property real swatchSpacing: 4 * scaleFactor
-                        readonly property real swatchSize: colorCircleSize
-                        readonly property int swatchCount: DsaResources.TrackDisplayColors.length
-                        readonly property real swatchListWidth: (swatchCount * swatchSize) + (Math.max(0, swatchCount - 1) * swatchSpacing)
-                        readonly property real lastSwatchCenterX: padding + ((swatchCount - 1) * (swatchSize + swatchSpacing)) + (swatchSize / 2)
+                        readonly property real swatchSize: isMobile ? mobileColorSwatchSize : vehicleColorSwatchSize
+                        readonly property real swatchListWidth: (DsaResources.TrackDisplayColors.length * swatchSize) + (Math.max(0, DsaResources.TrackDisplayColors.length - 1) * colorSwatchSpacing)
+                        readonly property real lastSwatchCenterX: padding + ((DsaResources.TrackDisplayColors.length - 1) * (swatchSize + colorSwatchSpacing)) + (swatchSize / 2)
+                        readonly property real vehicleX: vehicleColorPopupMargin - observationsControlsGrid.x - observationsColorPicker.x
+                        readonly property real centeredUnderPickerX: observationColorPreview.x + (observationColorPreview.width / 2) - lastSwatchCenterX
                         y: observationsColorPicker.height + (4 * scaleFactor)
-                        x: isMobile ? observationColorPreview.x + (observationColorPreview.width / 2) - lastSwatchCenterX
-                                    : -observationsColorPicker.x
-                        padding: 8 * scaleFactor
-                        width: isMobile ? swatchListWidth + (padding * 2) : messageFeedsRoot.width
+                        x: isMobile ? centeredUnderPickerX : vehicleX
+                        padding: colorPopupPadding
+                        width: isMobile ? swatchListWidth + (padding * 2) : messageFeedsRoot.width - (vehicleColorPopupMargin * 2)
                         height: swatchSize + (padding * 2)
 
                         background: Rectangle {
@@ -254,11 +272,9 @@ DsaPanel {
                         }
 
                         contentItem: Row {
-                            id: observationsColorRow
-                            spacing: observationsColorMenu.swatchSpacing
+                            spacing: colorSwatchSpacing
 
                             Repeater {
-                                id: observationsColorRepeater
                                 model: DsaResources.TrackDisplayColors
 
                                 Rectangle {
@@ -318,13 +334,14 @@ DsaPanel {
                 font.pixelSize: fontPixelSize
             }
             GridLayout {
+                id: trackLineControlsGrid
                 visible: switchTrackLine.checked
-                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: trackControlSpacing
                 rows: 2
                 columns: 2
                 rowSpacing: trackControlSpacing
-                columnSpacing: 8 * scaleFactor
+                columnSpacing: 6 * scaleFactor
                 SpinBox {
                     id: spinTrackLineSize
                     from: 1
@@ -342,14 +359,12 @@ DsaPanel {
                 Item {
                     id: trackLineColorPicker
                     Layout.preferredHeight: spinBoxHeight
-                    Layout.fillWidth: true
+                    Layout.preferredWidth: spinBoxHeight
 
                     Rectangle {
                         id: trackLineColorPreview
-                        anchors.centerIn: parent
-                        width: colorCircleSize
-                        height: width
-                        radius: width / 2
+                        anchors.fill: parent
+                        radius: 2 * scaleFactor
                         color: toolController.selectedFeed ? toolController.selectedFeed.colorTrackLine : "transparent"
                         border {
                             color: Material.foreground
@@ -364,16 +379,15 @@ DsaPanel {
 
                     Popup {
                         id: trackLineColorMenu
-                        readonly property real swatchSpacing: 4 * scaleFactor
-                        readonly property real swatchSize: colorCircleSize
-                        readonly property int swatchCount: DsaResources.TrackDisplayColors.length
-                        readonly property real swatchListWidth: (swatchCount * swatchSize) + (Math.max(0, swatchCount - 1) * swatchSpacing)
-                        readonly property real lastSwatchCenterX: padding + ((swatchCount - 1) * (swatchSize + swatchSpacing)) + (swatchSize / 2)
+                        readonly property real swatchSize: isMobile ? mobileColorSwatchSize : vehicleColorSwatchSize
+                        readonly property real swatchListWidth: (DsaResources.TrackDisplayColors.length * swatchSize) + (Math.max(0, DsaResources.TrackDisplayColors.length - 1) * colorSwatchSpacing)
+                        readonly property real lastSwatchCenterX: padding + ((DsaResources.TrackDisplayColors.length - 1) * (swatchSize + colorSwatchSpacing)) + (swatchSize / 2)
+                        readonly property real vehicleX: vehicleColorPopupMargin - trackLineControlsGrid.x - trackLineColorPicker.x
+                        readonly property real centeredUnderPickerX: trackLineColorPreview.x + (trackLineColorPreview.width / 2) - lastSwatchCenterX
                         y: trackLineColorPicker.height + (4 * scaleFactor)
-                        x: isMobile ? trackLineColorPreview.x + (trackLineColorPreview.width / 2) - lastSwatchCenterX
-                                    : -trackLineColorPicker.x
-                        padding: 8 * scaleFactor
-                        width: isMobile ? swatchListWidth + (padding * 2) : messageFeedsRoot.width
+                        x: isMobile ? centeredUnderPickerX : vehicleX
+                        padding: colorPopupPadding
+                        width: isMobile ? swatchListWidth + (padding * 2) : messageFeedsRoot.width - (vehicleColorPopupMargin * 2)
                         height: swatchSize + (padding * 2)
 
                         background: Rectangle {
@@ -386,11 +400,9 @@ DsaPanel {
                         }
 
                         contentItem: Row {
-                            id: trackLineColorRow
-                            spacing: trackLineColorMenu.swatchSpacing
+                            spacing: colorSwatchSpacing
 
                             Repeater {
-                                id: trackLineColorRepeater
                                 model: DsaResources.TrackDisplayColors
 
                                 Rectangle {

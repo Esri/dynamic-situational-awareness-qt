@@ -59,11 +59,11 @@ Rectangle {
             Text {
                 id: titleText
                 anchors {
-                    left: showLeftTitleAction ? leftActionButton.right : parent.left
-                    right: showRightCloseAction ? closeButton.left : parent.right
+                    left: parent.left
+                    right: parent.right
                     verticalCenter: parent.verticalCenter
-                    leftMargin: showLeftTitleAction ? 8 * scaleFactor : 12 * scaleFactor
-                    rightMargin: 8 * scaleFactor
+                    leftMargin: (showLeftTitleAction || showRightCloseAction) ? 52 * scaleFactor : 12 * scaleFactor
+                    rightMargin: (showLeftTitleAction || showRightCloseAction) ? 52 * scaleFactor : 12 * scaleFactor
                 }
                 text: qsTr(title)
                 color: Material.foreground

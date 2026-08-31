@@ -637,7 +637,6 @@ Vehicle {
         onRejected: showConfigurations(false);
     }
 
-    property bool promptedForDefaultDownload: false
     function showConfigurations(downloadDefaultData) {
         // prevents multiple 'Yes' taps.
         // this dialog should only be shown on the initial startup.

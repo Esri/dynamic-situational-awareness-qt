@@ -422,6 +422,7 @@ Rectangle {
                         color: Material.backgroundColor
                         height: 40 * scaleFactor
                         width: parent.width
+                        property bool downloadOnCooldown: false
 
                         ProgressBar {
                             id: progressBarPercentComplete
@@ -492,7 +493,6 @@ Rectangle {
                             }
                         }
 
-                        property bool downloadOnCooldown: false
                         Timer {
                             id: timerDebounce
                             interval: 500
@@ -503,6 +503,7 @@ Rectangle {
                                 imageDownload.visible = true;
                             }
                         }
+
                         Image {
                             id: imageDownload
                             source: "qrc:/Resources/icons/xhdpi/ic_menu_sendmap_dark_d.png"
@@ -611,6 +612,7 @@ Rectangle {
                     id: labelPrompt
                     anchors {
                         top: restartPromptArea.top
+                        horizontalCenter: parent.horizontalCenter
                     }
                     wrapMode: "WordWrap"
                     font {

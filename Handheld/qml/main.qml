@@ -34,6 +34,7 @@ Handheld {
     property real hudRadius: 3 * scaleFactor
     property real hudMargins: 5 * scaleFactor
     property bool configurationsChanged: false
+    property bool promptedForDefaultDownload: false
 
     signal clearDialogAccepted();
     signal closeDialogAccepted();
@@ -654,7 +655,6 @@ Handheld {
         onRejected: showConfigurations(false);
     }
 
-    property bool promptedForDefaultDownload: false
     function showConfigurations(downloadDefaultData) {
         // prevents multiple 'Yes' taps.
         // this dialog should only be shown on the initial startup.

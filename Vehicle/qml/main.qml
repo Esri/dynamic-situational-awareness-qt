@@ -33,12 +33,13 @@ Vehicle {
     property real hudOpacity: 0.9
     property real hudRadius: 3 * scaleFactor
     property real hudMargins: 5 * scaleFactor
+    property bool configurationsChanged: false
+    property bool promptedForDefaultDownload: false
 
     signal clearDialogAccepted();
     signal closeDialogAccepted();
     signal inputDialogAccepted(var input, var index);
     signal markupLayerReceived(var path, var overlayVisible);
-    property bool configurationsChanged: false
 
     LocationController {
         id: locationController

@@ -34,7 +34,7 @@ Item {
     Rectangle {
         anchors.centerIn: parent
         width: 300 * scaleFactor
-        height: 335 * scaleFactor
+        height: 350 * scaleFactor
         color: Material.primary
         radius: 5 * scaleFactor
         clip: true

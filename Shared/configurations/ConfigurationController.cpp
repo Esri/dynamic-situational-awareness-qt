@@ -123,11 +123,6 @@ void ConfigurationController::extractConfigurationDownload(const QString& downlo
     if (updateExtractedConfigurationFile(configurationDirectory))
       return;
 
-    // still exit early if the configuration is the default download from Esri
-    const auto configuration = m_configurationListModel->byName(configurationName);
-    if (configuration.urlStr() == ConfigurationController::DEFAULT_DOWNLOAD_URL)
-      return;
-
     // cleanup unusable files and reset the model item for the UI
     resetConfigurationDeviceStatus(configurationName);
 
@@ -161,9 +156,7 @@ void ConfigurationController::extractConfigurationDownload(const QString& downlo
 
 bool ConfigurationController::updateExtractedConfigurationFile(const QDir& configurationDirectory)
 {
-  // any download other than the default from Esri should have it's own DsaAppConfig.json
-  // file present. if it is not present, the default will be created when the app is
-  // relaunched with this configuration selected.
+  // all downloads are required to contain the DsaAppConfig.json in the expected location
   const auto dsaAppConfigFilePath = configurationDirectory.absoluteFilePath(DsaUtility::FILE_NAME_APP_CONFIG);
   QFile dsaAppConfigFile{dsaAppConfigFilePath};
   if (!dsaAppConfigFile.exists() || !dsaAppConfigFile.open(QIODevice::ReadOnly))
@@ -293,6 +286,7 @@ void ConfigurationController::zipHeadReply_finished(QNetworkRequest zipRequest, 
     {
       removeDownloadedFile(downloadFilePath);
       resetConfigurationDeviceStatus(configurationName);
+      m_configurationListModel->cancel(configurationName);
       return;
     }
 
@@ -301,7 +295,10 @@ void ConfigurationController::zipHeadReply_finished(QNetworkRequest zipRequest, 
   connect(contentReply, &QNetworkReply::errorOccurred, this, [this, configurationName](QNetworkReply::NetworkError error)
   {
     if (error != QNetworkReply::NetworkError::OperationCanceledError)
+    {
+      m_configurationListModel->cancel(configurationName);
       sendRemoveConfigurationSignal(configurationName, QStringLiteral("The configuration zip failed to download."));
+    }
   });
 }
 
@@ -321,6 +318,12 @@ void ConfigurationController::download(int index)
   const auto configurationUrl = configuration.url();
   const auto configurationUrlStr = configuration.urlStr();
   const auto configurationName = configuration.name();
+
+  // prevent double taps of the download icon from any potential UI lag
+  if (configuration.downloading())
+    return;
+
+  m_configurationListModel->download(configuration.name());
 
 #ifdef Q_OS_ANDROID
   if (configurationUrl.scheme() == QStringLiteral("content"))

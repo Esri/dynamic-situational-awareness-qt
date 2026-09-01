@@ -66,6 +66,7 @@ public:
   bool add(const QString& name, const QString& url, bool selected, bool loaded, int percentDownloaded);
   void select(int index);
   void cancel(int index);
+  void cancel(const QString& configurationName);
   bool remove(const QString& configurationName);
   void download(const QString& configurationName);
   bool clear();

@@ -117,10 +117,15 @@ void MessageFeedsController::findEntities(const QString& entityIdText)
 
 void MessageFeedsController::selectEntity(int index)
 {
+  selectEntityAction(index, QString{});
+}
+
+void MessageFeedsController::selectEntityAction(int index, const QString& action)
+{
   if (index < 0 || index >= static_cast<int>(m_entityIds.size()))
     return;
 
-  emit entitySelected(m_entityIds[index], selectedFeed());
+  emit entitySelected(m_entityIds[index], selectedFeed(), action);
 }
 
 void MessageFeedsController::clearSearchResults()

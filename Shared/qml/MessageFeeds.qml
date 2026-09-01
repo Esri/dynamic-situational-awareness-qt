@@ -24,7 +24,7 @@ DsaPanel {
     id: messageFeedsRoot
     width: 350 * scaleFactor
     title: panelState === panelStateFeeds ? qsTr("Message Feeds")
-                                           : (panelState === panelStateTrackDisplay ? qsTr("Track Display") : qsTr("Find"))
+                                           : (panelState === panelStateTrackDisplay ? qsTr("Track Display") : qsTr("Find Track"))
     iconSource: panelState === panelStateFeeds ? DsaResources.iconClose : ""
     leftActionIconSource: panelState === panelStateFeeds ? "" : DsaResources.iconBack
     titleActionClosesPanel: panelState === panelStateFeeds
@@ -174,6 +174,7 @@ DsaPanel {
             Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 32 * scaleFactor
+                Layout.bottomMargin: trackControlSpacing
 
                 Rectangle {
                     anchors.fill: parent
@@ -508,18 +509,36 @@ DsaPanel {
 
         ColumnLayout {
 
-            ComboBox {
-                id: comboFeedsFind
+            Item {
                 Layout.fillWidth: true
-                textRole: "feedName"
-                model: toolController.messageFeeds
-                currentIndex: toolController.selectedFeedIndex
-                onCurrentIndexChanged: toolController.selectedFeedIndex = currentIndex
+                Layout.preferredHeight: 32 * scaleFactor
+
+                Rectangle {
+                    anchors.fill: parent
+                    radius: 5 * scaleFactor
+                    color: Material.accent
+                    opacity: 0.5
+                }
+
+                Label {
+                    anchors {
+                        fill: parent
+                        margins: 6 * scaleFactor
+                    }
+                    text: toolController.selectedFeedName
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    elide: Text.ElideRight
+                    font.pixelSize: fontPixelSize
+                    font.italic: true
+                }
             }
 
             TextField {
                 id: textFindEntity
                 Layout.fillWidth: true
+                Layout.topMargin: trackControlSpacing
+                placeholderText: qsTr("Search by track ID...")
                 onTextChanged: toolController.findEntities(text);
 
                 Button {
@@ -560,18 +579,187 @@ DsaPanel {
                 delegate: ItemDelegate {
                     text: model.display
                     width: listEntityResults.width
-                    MouseArea {
+                    rightPadding: resultActionsButton.width + 8 * scaleFactor
+
+                    onClicked: {
+                        toolController.selectEntity(index);
+                        if (isMobile)
+                            mapToolRow.reset();
+                    }
+
+                    Image {
+                        id: resultActionsButton
                         anchors {
-                            fill: parent
+                            right: parent.right
+                            verticalCenter: parent.verticalCenter
+                            rightMargin: 4 * scaleFactor
                         }
-                        onClicked: {
-                            toolController.selectEntity(index);
-                            if (isMobile) {
-                                mapToolRow.reset();
+                        width: 32 * scaleFactor
+                        height: width
+                        rotation: 90
+                        source: DsaResources.iconMenu
+                        fillMode: Image.PreserveAspectFit
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if (!isMobile) {
+                                    resultActionsMenu.open();
+                                } else if (mobileResultActionsMenu.isOpen) {
+                                    mobileResultActionsMenu.close();
+                                } else {
+                                    listEntityResults.currentIndex = index;
+                                    mobileResultActionsMenu.open();
+                                }
+                            }
+                        }
+
+                        Menu {
+                            id: resultActionsMenu
+                            width: 150 * scaleFactor
+
+                            function selectAction(action) {
+                                close();
+                                toolController.selectEntityAction(index, action);
+                            }
+
+                            Column {
+                                anchors.margins: 10 * scaleFactor
+                                width: parent.width
+                                spacing: 10 * scaleFactor
+
+                                ListLabel {
+                                    text: qsTr("Zoom to")
+                                    onTriggered: resultActionsMenu.selectAction("Zoom to")
+                                }
+
+                                ListLabel {
+                                    text: qsTr("Follow")
+                                    onTriggered: resultActionsMenu.selectAction("Follow")
+                                }
+
+                                ListLabel {
+                                    text: qsTr("Identify")
+                                    onTriggered: resultActionsMenu.selectAction("Identify")
+                                }
+
+                                ListLabel {
+                                    text: qsTr("Line of sight")
+                                    separatorVisible: false
+                                    onTriggered: resultActionsMenu.selectAction("Line of sight")
+                                }
                             }
                         }
                     }
                 }
+            }
+        }
+    }
+
+    Rectangle {
+        id: mobileResultActionsMenu
+        visible: panelState === panelStateFind
+        property bool isOpen: y === messageFeedsRoot.y + messageFeedsRoot.height - height
+        property int closedY: messageFeedsRoot.y + messageFeedsRoot.height
+        property int openY: messageFeedsRoot.y + messageFeedsRoot.height - height - anchors.margins
+        anchors {
+            left: parent.left
+            right: parent.right
+            margins: 5 * scaleFactor
+        }
+        color: "transparent"
+        height: messageFeedsRoot.height
+        y: closedY
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: mobileResultActionsMenu.close()
+        }
+
+        Rectangle {
+            anchors {
+                fill: mobileResultActionsColumn
+                margins: -10 * scaleFactor
+            }
+            color: Material.background
+            radius: 10 * scaleFactor
+            border {
+                color: Material.primary
+                width: 1 * scaleFactor
+            }
+        }
+
+        function open() {
+            if (y === openY)
+                return;
+
+            mobileResultActionsAnimation.from = closedY;
+            mobileResultActionsAnimation.to = openY;
+            mobileResultActionsAnimation.start();
+        }
+
+        function close() {
+            if (y === closedY)
+                return;
+
+            mobileResultActionsAnimation.from = openY;
+            mobileResultActionsAnimation.to = closedY;
+            mobileResultActionsAnimation.start();
+        }
+
+        function selectAction(action) {
+            close();
+            toolController.selectEntityAction(listEntityResults.currentIndex, action);
+            mapToolRow.reset();
+        }
+
+        NumberAnimation {
+            id: mobileResultActionsAnimation
+            target: mobileResultActionsMenu
+            properties: "y"
+            duration: 250
+            easing.type: Easing.OutQuad
+        }
+
+        Column {
+            id: mobileResultActionsColumn
+            anchors {
+                left: parent.left
+                right: parent.right
+                bottom: parent.bottom
+                margins: 10 * scaleFactor
+            }
+            spacing: 5 * scaleFactor
+
+            ListLabel {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: qsTr("Zoom to")
+                onTriggered: mobileResultActionsMenu.selectAction("Zoom to")
+            }
+
+            ListLabel {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: qsTr("Follow")
+                onTriggered: mobileResultActionsMenu.selectAction("Follow")
+            }
+
+            ListLabel {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: qsTr("Identify")
+                onTriggered: mobileResultActionsMenu.selectAction("Identify")
+            }
+
+            ListLabel {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: qsTr("Line of sight")
+                onTriggered: mobileResultActionsMenu.selectAction("Line of sight")
+            }
+
+            ListLabel {
+                anchors.horizontalCenter: parent.horizontalCenter
+                separatorVisible: false
+                text: qsTr("Cancel")
+                onTriggered: mobileResultActionsMenu.close()
             }
         }
     }

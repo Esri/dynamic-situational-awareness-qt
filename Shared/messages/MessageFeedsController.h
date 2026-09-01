@@ -58,6 +58,7 @@ public:
 
   Q_INVOKABLE void findEntities(const QString& entityIdText);
   Q_INVOKABLE void selectEntity(int index);
+  Q_INVOKABLE void selectEntityAction(int index, const QString& action);
   Q_INVOKABLE void clearSearchResults();
 
   explicit MessageFeedsController(QObject* parent = nullptr);
@@ -101,7 +102,7 @@ signals:
   void locationBroadcastFrequencyChanged();
   void locationBroadcastInDistressChanged();
   void selectedFeedChanged();
-  void entitySelected(const QString& entityId, MessageFeed* messageFeed);
+  void entitySelected(const QString& entityId, MessageFeed* messageFeed, const QString& action);
 
   void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
 

@@ -37,11 +37,8 @@ DsaPanel {
     property real trackControlSpacing: 4 * scaleFactor
     property real trackSectionSpacing: 18 * scaleFactor
     property real trackDividerSpacing: 20 * scaleFactor
-    property real vehicleColorPopupMargin: 10 * scaleFactor
-    property real colorPopupPadding: 8 * scaleFactor
     property real colorSwatchSpacing: 4 * scaleFactor
-    property real mobileColorSwatchSize: spinBoxHeight
-    property real vehicleColorSwatchSize: (messageFeedsRoot.width - (vehicleColorPopupMargin * 2) - (colorPopupPadding * 2) - (Math.max(0, DsaResources.TrackDisplayColors.length - 1) * colorSwatchSpacing)) / DsaResources.TrackDisplayColors.length
+    property real colorSwatchSize: Math.min(32 * scaleFactor, (messageFeedsRoot.width - (16 * scaleFactor) - ((DsaResources.TrackDisplayColors.length - 1) * colorSwatchSpacing)) / DsaResources.TrackDisplayColors.length)
     readonly property int panelStateFeeds: 0
     readonly property int panelStateTrackDisplay: 1
     readonly property int panelStateFind: 2
@@ -207,16 +204,15 @@ DsaPanel {
                 font.pixelSize: fontPixelSize
             }
             GridLayout {
-                id: observationsControlsGrid
                 visible: switchObservations.checked
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: trackControlSpacing
-                rows: 2
-                columns: 2
+                rows: 4
                 rowSpacing: trackControlSpacing
-                columnSpacing: 6 * scaleFactor
                 SpinBox {
                     id: spinObservationsSize
+                    Layout.row: 0
+                    Layout.alignment: Qt.AlignHCenter
                     from: 1
                     to: 25
                     Layout.preferredHeight: spinBoxHeight
@@ -229,95 +225,52 @@ DsaPanel {
                         toolController.selectedFeed.sizeObservations = value
                     }
                 }
-                Item {
-                    id: observationsColorPicker
-                    Layout.preferredHeight: spinBoxHeight
-                    Layout.preferredWidth: spinBoxHeight
+                Label {
+                    Layout.row: 1
+                    Layout.alignment: Qt.AlignCenter
+                    text: "Marker size"
+                    font.pixelSize: detailLabelFontPixelSize
+                    font.italic: true
+                }
+                Row {
+                    Layout.row: 2
+                    Layout.alignment: Qt.AlignHCenter
+                    Layout.topMargin: trackControlSpacing * 2
+                    spacing: colorSwatchSpacing
 
-                    Rectangle {
-                        id: observationColorPreview
-                        anchors.fill: parent
-                        radius: 2 * scaleFactor
-                        color: toolController.selectedFeed ? toolController.selectedFeed.colorObservations : "transparent"
-                        border {
-                            color: Material.foreground
-                            width: 1 * scaleFactor
-                        }
+                    Repeater {
+                        model: DsaResources.TrackDisplayColors
 
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: observationsColorMenu.open()
-                        }
-                    }
-
-                    Popup {
-                        id: observationsColorMenu
-                        readonly property real swatchSize: isMobile ? mobileColorSwatchSize : vehicleColorSwatchSize
-                        readonly property real swatchListWidth: (DsaResources.TrackDisplayColors.length * swatchSize) + (Math.max(0, DsaResources.TrackDisplayColors.length - 1) * colorSwatchSpacing)
-                        readonly property real lastSwatchCenterX: padding + ((DsaResources.TrackDisplayColors.length - 1) * (swatchSize + colorSwatchSpacing)) + (swatchSize / 2)
-                        readonly property real vehicleX: vehicleColorPopupMargin - observationsControlsGrid.x - observationsColorPicker.x
-                        readonly property real centeredUnderPickerX: observationColorPreview.x + (observationColorPreview.width / 2) - lastSwatchCenterX
-                        y: observationsColorPicker.height + (4 * scaleFactor)
-                        x: isMobile ? centeredUnderPickerX : vehicleX
-                        padding: colorPopupPadding
-                        width: isMobile ? swatchListWidth + (padding * 2) : messageFeedsRoot.width - (vehicleColorPopupMargin * 2)
-                        height: swatchSize + (padding * 2)
-
-                        background: Rectangle {
-                            color: Material.background
-                            radius: 8 * scaleFactor
+                        Rectangle {
+                            width: colorSwatchSize
+                            height: width
+                            radius: width / 2
+                            color: modelData
                             border {
-                                color: Material.primary
+                                color: Material.foreground
                                 width: 1 * scaleFactor
                             }
-                        }
 
-                        contentItem: Row {
-                            spacing: colorSwatchSpacing
+                            Image {
+                                anchors.centerIn: parent
+                                height: parent.height
+                                width: height
+                                source: DsaResources.iconComplete
+                                visible: toolController.selectedFeed && toolController.selectedFeed.colorObservations === modelData
+                            }
 
-                            Repeater {
-                                model: DsaResources.TrackDisplayColors
-
-                                Rectangle {
-                                    width: observationsColorMenu.swatchSize
-                                    height: width
-                                    radius: width / 2
-                                    color: modelData
-                                    border {
-                                        color: Material.foreground
-                                        width: 1 * scaleFactor
-                                    }
-
-                                    Image {
-                                        anchors.centerIn: parent
-                                        height: parent.height
-                                        width: height
-                                        source: DsaResources.iconComplete
-                                        visible: toolController.selectedFeed && toolController.selectedFeed.colorObservations === modelData
-                                    }
-
-                                    MouseArea {
-                                        anchors.fill: parent
-                                        onClicked: {
-                                            if (!toolController.selectedFeed)
-                                                return;
-
-                                            toolController.selectedFeed.colorObservations = modelData;
-                                            observationsColorMenu.close();
-                                        }
-                                    }
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    if (toolController.selectedFeed)
+                                        toolController.selectedFeed.colorObservations = modelData;
                                 }
                             }
                         }
                     }
                 }
                 Label {
-                    Layout.alignment: Qt.AlignCenter
-                    text: "Marker size"
-                    font.pixelSize: detailLabelFontPixelSize
-                    font.italic: true
-                }
-                Label {
+                    Layout.row: 3
                     Layout.alignment: Qt.AlignCenter
                     text: "Color"
                     font.pixelSize: detailLabelFontPixelSize
@@ -335,16 +288,15 @@ DsaPanel {
                 font.pixelSize: fontPixelSize
             }
             GridLayout {
-                id: trackLineControlsGrid
                 visible: switchTrackLine.checked
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: trackControlSpacing
-                rows: 2
-                columns: 2
+                rows: 4
                 rowSpacing: trackControlSpacing
-                columnSpacing: 6 * scaleFactor
                 SpinBox {
                     id: spinTrackLineSize
+                    Layout.row: 0
+                    Layout.alignment: Qt.AlignHCenter
                     from: 1
                     to: 25
                     Layout.preferredHeight: spinBoxHeight
@@ -357,95 +309,52 @@ DsaPanel {
                         toolController.selectedFeed.sizeTrackLine = value
                     }
                 }
-                Item {
-                    id: trackLineColorPicker
-                    Layout.preferredHeight: spinBoxHeight
-                    Layout.preferredWidth: spinBoxHeight
+                Label {
+                    Layout.row: 1
+                    Layout.alignment: Qt.AlignCenter
+                    text: "Line width"
+                    font.pixelSize: detailLabelFontPixelSize
+                    font.italic: true
+                }
+                Row {
+                    Layout.row: 2
+                    Layout.alignment: Qt.AlignHCenter
+                    Layout.topMargin: trackControlSpacing * 2
+                    spacing: colorSwatchSpacing
 
-                    Rectangle {
-                        id: trackLineColorPreview
-                        anchors.fill: parent
-                        radius: 2 * scaleFactor
-                        color: toolController.selectedFeed ? toolController.selectedFeed.colorTrackLine : "transparent"
-                        border {
-                            color: Material.foreground
-                            width: 1 * scaleFactor
-                        }
+                    Repeater {
+                        model: DsaResources.TrackDisplayColors
 
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: trackLineColorMenu.open()
-                        }
-                    }
-
-                    Popup {
-                        id: trackLineColorMenu
-                        readonly property real swatchSize: isMobile ? mobileColorSwatchSize : vehicleColorSwatchSize
-                        readonly property real swatchListWidth: (DsaResources.TrackDisplayColors.length * swatchSize) + (Math.max(0, DsaResources.TrackDisplayColors.length - 1) * colorSwatchSpacing)
-                        readonly property real lastSwatchCenterX: padding + ((DsaResources.TrackDisplayColors.length - 1) * (swatchSize + colorSwatchSpacing)) + (swatchSize / 2)
-                        readonly property real vehicleX: vehicleColorPopupMargin - trackLineControlsGrid.x - trackLineColorPicker.x
-                        readonly property real centeredUnderPickerX: trackLineColorPreview.x + (trackLineColorPreview.width / 2) - lastSwatchCenterX
-                        y: trackLineColorPicker.height + (4 * scaleFactor)
-                        x: isMobile ? centeredUnderPickerX : vehicleX
-                        padding: colorPopupPadding
-                        width: isMobile ? swatchListWidth + (padding * 2) : messageFeedsRoot.width - (vehicleColorPopupMargin * 2)
-                        height: swatchSize + (padding * 2)
-
-                        background: Rectangle {
-                            color: Material.background
-                            radius: 8 * scaleFactor
+                        Rectangle {
+                            width: colorSwatchSize
+                            height: width
+                            radius: width / 2
+                            color: modelData
                             border {
-                                color: Material.primary
+                                color: Material.foreground
                                 width: 1 * scaleFactor
                             }
-                        }
 
-                        contentItem: Row {
-                            spacing: colorSwatchSpacing
+                            Image {
+                                anchors.centerIn: parent
+                                height: parent.height
+                                width: height
+                                source: DsaResources.iconComplete
+                                visible: toolController.selectedFeed && toolController.selectedFeed.colorTrackLine === modelData
+                            }
 
-                            Repeater {
-                                model: DsaResources.TrackDisplayColors
-
-                                Rectangle {
-                                    width: trackLineColorMenu.swatchSize
-                                    height: width
-                                    radius: width / 2
-                                    color: modelData
-                                    border {
-                                        color: Material.foreground
-                                        width: 1 * scaleFactor
-                                    }
-
-                                    Image {
-                                        anchors.centerIn: parent
-                                        height: parent.height
-                                        width: height
-                                        source: DsaResources.iconComplete
-                                        visible: toolController.selectedFeed && toolController.selectedFeed.colorTrackLine === modelData
-                                    }
-
-                                    MouseArea {
-                                        anchors.fill: parent
-                                        onClicked: {
-                                            if (!toolController.selectedFeed)
-                                                return;
-
-                                            toolController.selectedFeed.colorTrackLine = modelData;
-                                            trackLineColorMenu.close();
-                                        }
-                                    }
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    if (toolController.selectedFeed)
+                                        toolController.selectedFeed.colorTrackLine = modelData;
                                 }
                             }
                         }
                     }
                 }
                 Label {
-                    Layout.alignment: Qt.AlignCenter
-                    text: "Line width"
-                    font.pixelSize: detailLabelFontPixelSize
-                    font.italic: true
-                }
-                Label {
+                    Layout.row: 3
                     Layout.alignment: Qt.AlignCenter
                     text: "Color"
                     font.pixelSize: detailLabelFontPixelSize
@@ -873,10 +782,5 @@ DsaPanel {
     onPanelStateChanged: {
         if (panelState !== panelStateFeeds && mobileMenu.isOpen)
             mobileMenu.close();
-
-        if (panelState !== panelStateTrackDisplay) {
-            observationsColorMenu.close();
-            trackLineColorMenu.close();
-        }
     }
 }

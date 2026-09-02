@@ -69,7 +69,7 @@ Rectangle {
         width: parent.width
         anchors {
             top: bar.bottom
-            bottom: buttonDismiss.top
+            bottom: layoutButtonRow.top
         }
 
         currentIndex: bar.currentIndex
@@ -411,7 +411,7 @@ Rectangle {
                 anchors {
                     fill: parent
                     margins: 10 * scaleFactor
-                    bottomMargin: 10 * scaleFactor + buttonCloseApp.height
+                    bottomMargin: 10 * scaleFactor + restartPromptArea.height
                 }
                 clip: true
 
@@ -422,6 +422,7 @@ Rectangle {
                         color: Material.backgroundColor
                         height: 40 * scaleFactor
                         width: parent.width
+                        property bool downloadOnCooldown: false
 
                         ProgressBar {
                             id: progressBarPercentComplete
@@ -463,14 +464,12 @@ Rectangle {
                         }
 
                         Label {
-                            id: labelRequiresRestart
                             anchors {
                                 left: labelName.right
                                 verticalCenter: parent.verticalCenter
                                 margins: 2
                             }
                             text: "*"
-                            color: "yellow"
                             font.italic: true
                             visible: model.RequiresRestart
                         }
@@ -488,7 +487,20 @@ Rectangle {
                                 anchors.fill: parent
                                 onClicked: {
                                     configurationController.cancel(index);
+                                    if (timerDebounce.running)
+                                        imageDownload.visible = true;
                                 }
+                            }
+                        }
+
+                        Timer {
+                            id: timerDebounce
+                            interval: 500
+                            running: false
+                            repeat: false
+                            onTriggered: {
+                                downloadOnCooldown = false;
+                                imageDownload.visible = true;
                             }
                         }
 
@@ -505,7 +517,13 @@ Rectangle {
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: {
+                                    if (downloadOnCooldown)
+                                        return;
+
+                                    downloadOnCooldown = true;
+                                    imageDownload.visible = false;
                                     configurationController.download(index);
+                                    timerDebounce.start();
                                 }
                             }
                             rotation: 180
@@ -533,22 +551,11 @@ Rectangle {
                         }
                     }
                 }
-                Label {
-                    text: "Changing a configuration will require restarting the application"
-                    id: labelRequiresRestart
-                    width: parent.width
-                    wrapMode: "WordWrap"
-                    font {
-                        family: DsaStyles.fontFamily
-                        pixelSize: DsaStyles.titleFontPixelSize * 0.75
-                        italic: true
-                    }
-                }
 
                 ListView {
                     id: configurationList
                     anchors {
-                        top: labelRequiresRestart.bottom
+                        top: parent.top
                         right: parent.right
                         left: parent.left
                         bottom: parent.bottom
@@ -590,32 +597,55 @@ Rectangle {
                 }
             }
 
-            Button {
-                id: buttonCloseApp
+            Rectangle {
+                id: restartPromptArea
                 anchors {
-                    bottom: parent.bottom
-                    horizontalCenter: parent.horizontalCenter
-                    margins: 5
+                    top: configurationsFlickable.bottom
+                    margins: configurationController.requiresRestart ? 5 : 0
                 }
-                onClicked: {
-                    showCloseDialog("Are you sure you want to close?");
-                }
-
-                text: "Close App"
+                color: "transparent"
+                width: parent.width
+                height: configurationController.requiresRestart ? labelPrompt.height : 0
                 visible: configurationController.requiresRestart
+
+                Label {
+                    id: labelPrompt
+                    anchors {
+                        top: restartPromptArea.top
+                        horizontalCenter: parent.horizontalCenter
+                    }
+                    wrapMode: "WordWrap"
+                    font {
+                        family: DsaStyles.fontFamily
+                        pixelSize: DsaStyles.titleFontPixelSize * 0.75 * scaleFactor
+                        italic: true
+                    }
+
+                    text: "*Close and restart the app\nto load new configuration"
+                }
             }
         }
     }
-    Button {
-        id: buttonDismiss
+    RowLayout {
+        id: layoutButtonRow
         anchors {
             horizontalCenter: parent.horizontalCenter
             bottom: parent.bottom
             margins: 10 * scaleFactor
         }
-        text: "Dismiss"
-        onClicked: {
-            optionsRoot.visible = false;
+
+        Button {
+            text: "Close App"
+            visible: configurationController.requiresRestart
+            onClicked: {
+                showCloseDialog("Are you sure you want to close?");
+            }
+        }
+        Button {
+            text: "Dismiss"
+            onClicked: {
+                optionsRoot.visible = false;
+            }
         }
     }
 

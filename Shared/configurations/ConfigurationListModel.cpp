@@ -51,6 +51,18 @@ void ConfigurationListModel::cancel(int index)
   emit dataChanged(idx, idx);
 }
 
+void ConfigurationListModel::cancel(const QString& configurationName)
+{
+  for (Configuration& c : m_configurations)
+  {
+    if (c.name() != configurationName)
+      continue;
+
+    c.cancelDownload();
+    return;
+  }
+}
+
 Configuration ConfigurationListModel::at(int index) const
 {
   if (index < 0 || index >= m_configurations.size())
@@ -206,8 +218,12 @@ void ConfigurationListModel::download(const QString& configurationName)
 {
   for (qsizetype i = 0; i < m_configurations.count(); i++)
   {
-    if (m_configurations[i].name() == configurationName)
+    const Configuration& cfg = m_configurations.at(i);
+    if (cfg.name() == configurationName)
     {
+      if (cfg.downloading())
+        return;
+
       m_configurations[i].download();
       const auto idx = createIndex(i, 0);
       emit dataChanged(idx, idx);

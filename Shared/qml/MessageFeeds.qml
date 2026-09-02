@@ -33,6 +33,7 @@ DsaPanel {
     property real trackControlSpacing: 4 * scaleFactor
     property real trackSectionSpacing: 18 * scaleFactor
     property real trackDividerSpacing: 20 * scaleFactor
+    property real searchClearButtonSize: fontPixelSize
 
     // Create the controller
     MessageFeedsController {
@@ -89,181 +90,189 @@ DsaPanel {
             }
         }
 
-        ColumnLayout {
-            spacing: 0
+        Flickable {
+            id: trackDisplayFlickable
+            clip: true
+            contentHeight: trackDisplayColumn.implicitHeight
 
-            ComboBox {
-                id: comboFeeds
-                Layout.fillWidth: true
-                textRole: "feedName"
-                model: toolController.messageFeeds
-                currentIndex: toolController.selectedFeedIndex
-                onCurrentIndexChanged: toolController.selectedFeedIndex = currentIndex
-            }
-
-            // OBSERVATIONS
-            CheckBox {
-                id: switchObservations
-                Layout.topMargin: trackSectionSpacing
-                checked: toolController.selectedFeed.showPreviousObservations
-                onCheckedChanged: toolController.selectedFeed.showPreviousObservations = checked
-                text: "Observations"
-                font.pixelSize: fontPixelSize
-            }
-            GridLayout {
-                visible: switchObservations.checked
-                Layout.fillWidth: true
-                Layout.topMargin: trackControlSpacing
-                rows: 2
-                columns: 2
-                rowSpacing: trackControlSpacing
-                columnSpacing: 8 * scaleFactor
-                SpinBox {
-                    id: spinObservationsSize
-                    from: 1
-                    to: 25
-                    Layout.preferredHeight: spinBoxHeight
-                    Layout.preferredWidth: drawer.width / 2.0
-                    value: toolController.selectedFeed.sizeObservations
-                    onValueChanged: {
-                        if (!toolController.selectedFeed)
-                            return;
-
-                        toolController.selectedFeed.sizeObservations = value
-                    }
-                }
-                ColorsComboBox {
-                    id: colorsComboObservations
-                    Layout.preferredHeight: spinBoxHeight
-                    Layout.fillWidth: true
-                    currentIndex: model.indexOf(toolController.selectedFeed.colorObservations)
-                    onCurrentIndexChanged: {
-                        if (!toolController.selectedFeed)
-                            return;
-
-                        toolController.selectedFeed.colorObservations = model[currentIndex]
-                    }
-                }
-                Label {
-                    Layout.alignment: Qt.AlignCenter
-                    text: "Size"
-                    font.pixelSize: detailLabelFontPixelSize
-                    font.italic: true
-                }
-                Label {
-                    Layout.alignment: Qt.AlignCenter
-                    text: "Color"
-                    font.pixelSize: detailLabelFontPixelSize
-                    font.italic: true
-                }
-            }
-
-            // TRACK LINE
-            CheckBox {
-                id: switchTrackLine
-                Layout.topMargin: switchObservations.checked ? trackSectionSpacing : 0
-                checked: toolController.selectedFeed.showTrackLine
-                onCheckedChanged: toolController.selectedFeed.showTrackLine = checked
-                text: "Track Line"
-                font.pixelSize: fontPixelSize
-            }
-            GridLayout {
-                visible: switchTrackLine.checked
-                Layout.fillWidth: true
-                Layout.topMargin: trackControlSpacing
-                rows: 2
-                columns: 2
-                rowSpacing: trackControlSpacing
-                columnSpacing: 8 * scaleFactor
-                SpinBox {
-                    id: spinTrackLineSize
-                    from: 1
-                    to: 25
-                    Layout.preferredHeight: spinBoxHeight
-                    Layout.preferredWidth: drawer.width / 2.0
-                    value: toolController.selectedFeed.sizeTrackLine
-                    onValueChanged: {
-                        if (!toolController.selectedFeed)
-                            return;
-
-                        toolController.selectedFeed.sizeTrackLine = value
-                    }
-                }
-                ColorsComboBox {
-                    id: colorsComboTrackLine
-                    Layout.preferredHeight: spinBoxHeight
-                    Layout.fillWidth: true
-                    currentIndex: model.indexOf(toolController.selectedFeed.colorTrackLine)
-                    onCurrentIndexChanged: {
-                        if (!toolController.selectedFeed)
-                            return;
-
-                        toolController.selectedFeed.colorTrackLine = model[currentIndex]
-                    }
-                }
-                Label {
-                    Layout.alignment: Qt.AlignCenter
-                    text: "Size"
-                    font.pixelSize: detailLabelFontPixelSize
-                    font.italic: true
-                }
-                Label {
-                    Layout.alignment: Qt.AlignCenter
-                    text: "Color"
-                    font.pixelSize: detailLabelFontPixelSize
-                    font.italic: true
-                }
-            }
-
-            // TRACK LENGTH
             ColumnLayout {
-                visible: switchObservations.checked || switchTrackLine.checked
-                Layout.fillWidth: true
-                Layout.topMargin: trackDividerSpacing
-                spacing: trackSectionSpacing
+                id: trackDisplayColumn
+                width: trackDisplayFlickable.width
+                spacing: 0
 
-                Rectangle {
-                    color: "gray"
+                ComboBox {
+                    id: comboFeeds
                     Layout.fillWidth: true
-                    radius: 5
-                    height: 5
+                    textRole: "feedName"
+                    model: toolController.messageFeeds
+                    currentIndex: toolController.selectedFeedIndex
+                    onCurrentIndexChanged: toolController.selectedFeedIndex = currentIndex
                 }
 
-                Label {
-                    text: "Track Length"
+                // OBSERVATIONS
+                CheckBox {
+                    id: switchObservations
+                    Layout.topMargin: trackSectionSpacing
+                    checked: toolController.selectedFeed.showPreviousObservations
+                    onCheckedChanged: toolController.selectedFeed.showPreviousObservations = checked
+                    text: "Observations"
                     font.pixelSize: fontPixelSize
-                    Layout.alignment: Qt.AlignHCenter
                 }
-
-                ColumnLayout {
-                    Layout.alignment: Qt.AlignHCenter
-                    spacing: trackControlSpacing
-
+                GridLayout {
+                    visible: switchObservations.checked
+                    Layout.fillWidth: true
+                    Layout.topMargin: trackControlSpacing
+                    rows: 2
+                    columns: 2
+                    rowSpacing: trackControlSpacing
+                    columnSpacing: 8 * scaleFactor
                     SpinBox {
-                        id: spinObservations
-                        Layout.alignment: Qt.AlignHCenter
+                        id: spinObservationsSize
+                        from: 1
+                        to: 25
                         Layout.preferredHeight: spinBoxHeight
                         Layout.preferredWidth: drawer.width / 2.0
-                        from: 0
-                        to: 9999
-                        editable: true
-                        live: true
-                        textFromValue: function(value) {
-                            if (value < 1)
-                                return "All"
-                            else
-                                return value
-                        }
+                        value: toolController.selectedFeed.sizeObservations
+                        onValueChanged: {
+                            if (!toolController.selectedFeed)
+                                return;
 
-                        value: toolController.selectedFeed.maximumObservations
-                        onValueChanged: toolController.selectedFeed.maximumObservations = value
+                            toolController.selectedFeed.sizeObservations = value
+                        }
+                    }
+                    ColorsComboBox {
+                        id: colorsComboObservations
+                        Layout.preferredHeight: spinBoxHeight
+                        Layout.fillWidth: true
+                        currentIndex: model.indexOf(toolController.selectedFeed.colorObservations)
+                        onCurrentIndexChanged: {
+                            if (!toolController.selectedFeed)
+                                return;
+
+                            toolController.selectedFeed.colorObservations = model[currentIndex]
+                        }
+                    }
+                    Label {
+                        Layout.alignment: Qt.AlignCenter
+                        text: "Size"
+                        font.pixelSize: detailLabelFontPixelSize
+                        font.italic: true
+                    }
+                    Label {
+                        Layout.alignment: Qt.AlignCenter
+                        text: "Color"
+                        font.pixelSize: detailLabelFontPixelSize
+                        font.italic: true
+                    }
+                }
+
+                // TRACK LINE
+                CheckBox {
+                    id: switchTrackLine
+                    Layout.topMargin: switchObservations.checked ? trackSectionSpacing : 0
+                    checked: toolController.selectedFeed.showTrackLine
+                    onCheckedChanged: toolController.selectedFeed.showTrackLine = checked
+                    text: "Track Line"
+                    font.pixelSize: fontPixelSize
+                }
+                GridLayout {
+                    visible: switchTrackLine.checked
+                    Layout.fillWidth: true
+                    Layout.topMargin: trackControlSpacing
+                    rows: 2
+                    columns: 2
+                    rowSpacing: trackControlSpacing
+                    columnSpacing: 8 * scaleFactor
+                    SpinBox {
+                        id: spinTrackLineSize
+                        from: 1
+                        to: 25
+                        Layout.preferredHeight: spinBoxHeight
+                        Layout.preferredWidth: drawer.width / 2.0
+                        value: toolController.selectedFeed.sizeTrackLine
+                        onValueChanged: {
+                            if (!toolController.selectedFeed)
+                                return;
+
+                            toolController.selectedFeed.sizeTrackLine = value
+                        }
+                    }
+                    ColorsComboBox {
+                        id: colorsComboTrackLine
+                        Layout.preferredHeight: spinBoxHeight
+                        Layout.fillWidth: true
+                        currentIndex: model.indexOf(toolController.selectedFeed.colorTrackLine)
+                        onCurrentIndexChanged: {
+                            if (!toolController.selectedFeed)
+                                return;
+
+                            toolController.selectedFeed.colorTrackLine = model[currentIndex]
+                        }
+                    }
+                    Label {
+                        Layout.alignment: Qt.AlignCenter
+                        text: "Size"
+                        font.pixelSize: detailLabelFontPixelSize
+                        font.italic: true
+                    }
+                    Label {
+                        Layout.alignment: Qt.AlignCenter
+                        text: "Color"
+                        font.pixelSize: detailLabelFontPixelSize
+                        font.italic: true
+                    }
+                }
+
+                // TRACK LENGTH
+                ColumnLayout {
+                    visible: switchObservations.checked || switchTrackLine.checked
+                    Layout.fillWidth: true
+                    Layout.topMargin: trackDividerSpacing
+                    spacing: trackSectionSpacing
+
+                    Rectangle {
+                        color: "gray"
+                        Layout.fillWidth: true
+                        radius: 5
+                        height: 5
                     }
 
                     Label {
-                        text: "Amount"
-                        font.pixelSize: detailLabelFontPixelSize
-                        font.italic: true
+                        text: "Track Length"
+                        font.pixelSize: fontPixelSize
                         Layout.alignment: Qt.AlignHCenter
+                    }
+
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignHCenter
+                        spacing: trackControlSpacing
+
+                        SpinBox {
+                            id: spinObservations
+                            Layout.alignment: Qt.AlignHCenter
+                            Layout.preferredHeight: spinBoxHeight
+                            Layout.preferredWidth: drawer.width / 2.0
+                            from: 0
+                            to: 9999
+                            editable: true
+                            live: true
+                            textFromValue: function(value) {
+                                if (value < 1)
+                                    return "All"
+                                else
+                                    return value
+                            }
+
+                            value: toolController.selectedFeed.maximumObservations
+                            onValueChanged: toolController.selectedFeed.maximumObservations = value
+                        }
+
+                        Label {
+                            text: "Amount"
+                            font.pixelSize: detailLabelFontPixelSize
+                            font.italic: true
+                            Layout.alignment: Qt.AlignHCenter
+                        }
                     }
                 }
             }
@@ -283,18 +292,20 @@ DsaPanel {
             TextField {
                 id: textFindEntity
                 Layout.fillWidth: true
+                rightPadding: searchClearButtonSize + 8 * scaleFactor
+                placeholderText: qsTr("Search by track ID...")
                 onTextChanged: toolController.findEntities(text);
 
                 Button {
                     anchors {
                         right: parent.right
-                        top: parent.top
-                        bottom: parent.bottom
-                        margins: 2 * scaleFactor
+                        verticalCenter: parent.verticalCenter
+                        margins: 8 * scaleFactor
                     }
                     visible: textFindEntity.text !== ""
 
-                    width: height
+                    width: searchClearButtonSize
+                    height: searchClearButtonSize
 
                     background: Rectangle {
                         anchors.fill: parent

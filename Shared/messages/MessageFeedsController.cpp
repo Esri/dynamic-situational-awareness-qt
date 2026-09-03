@@ -106,6 +106,7 @@ void MessageFeedsController::findEntities(const QString& entityIdText)
     });
     result->deleteLater();
     m_entityIdResults->setStringList(resultEntityIds);
+    mf->messagesOverlay()->selectDynamicEntities(entities);
     params->deleteLater();
   }).onFailed(this, [params, mf](const ErrorException& error)
   {

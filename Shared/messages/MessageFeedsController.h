@@ -23,6 +23,7 @@
 // Qt
 #include <QStringListModel>
 #include <QList>
+#include <QUrl>
 #include <QVariantList>
 
 Q_MOC_INCLUDE("qabstractitemmodel.h")
@@ -51,6 +52,7 @@ class MessageFeedsController : public AbstractTool
   Q_PROPERTY(bool locationBroadcastInDistress READ isLocationBroadcastInDistress WRITE setLocationBroadcastInDistress NOTIFY locationBroadcastInDistressChanged)
   Q_PROPERTY(int selectedFeedIndex READ selectedFeedIndex WRITE setSelectedFeedIndex NOTIFY selectedFeedChanged)
   Q_PROPERTY(QString selectedFeedName READ selectedFeedName NOTIFY selectedFeedChanged)
+  Q_PROPERTY(QUrl selectedFeedThumbnailUrl READ selectedFeedThumbnailUrl NOTIFY selectedFeedChanged)
   Q_PROPERTY(MessageFeed* selectedFeed READ selectedFeed NOTIFY selectedFeedChanged);
 
 public:
@@ -91,6 +93,7 @@ public:
 
   MessageFeed* selectedFeed();
   QString selectedFeedName() const;
+  QUrl selectedFeedThumbnailUrl() const;
 
   int selectedFeedIndex() const;
   void setSelectedFeedIndex(int index);

@@ -460,6 +460,12 @@ QString MessageFeedsController::selectedFeedName() const
   return feed ? feed->feedName() : QString{};
 }
 
+QUrl MessageFeedsController::selectedFeedThumbnailUrl() const
+{
+  const MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
+  return feed ? feed->thumbnailUrl() : QUrl{};
+}
+
 int MessageFeedsController::selectedFeedIndex() const
 {
   return m_selectedFeedIndex;

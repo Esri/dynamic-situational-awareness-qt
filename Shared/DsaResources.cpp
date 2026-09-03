@@ -191,7 +191,7 @@ QUrl DsaResources::iconBrowse() const
  */
 QUrl DsaResources::iconBack() const
 {
-  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/ic_menu_back_left.png"));
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/chevron-left.png"));
 }
 
 /*!

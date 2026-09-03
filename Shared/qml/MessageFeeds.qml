@@ -74,6 +74,7 @@ DsaPanel {
             clip: true
             model: toolController.messageFeeds
             highlightFollowsCurrentItem: isMobile
+            highlightMoveVelocity: 10000
             highlight: Rectangle {
                 radius: 5 * scaleFactor
                 color: Material.accent
@@ -86,15 +87,6 @@ DsaPanel {
                 itemSpacing: 1 * scaleFactor
                 mainText: feedName
                 itemChecked: feedVisible
-                highlighted: toolController.selectedFeedIndex === index
-                clickTogglesCheck: false
-                rowTapExcludesCheckBox: true
-                onRowTapped: {
-                    toolController.selectedFeedIndex = index;
-                }
-                onRowPressAndHold: {
-                    toolController.selectedFeedIndex = index;
-                }
 
                 onItemCheckedChanged: {
                     if (feedVisible === itemChecked)
@@ -188,17 +180,26 @@ DsaPanel {
                     opacity: 0.5
                 }
 
-                Label {
+                RowLayout {
                     anchors {
-                        fill: parent
-                        margins: 6 * scaleFactor
+                        horizontalCenter: parent.horizontalCenter
+                        verticalCenter: parent.verticalCenter
                     }
-                    text: toolController.selectedFeedName
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                    elide: Text.ElideRight
-                    font.pixelSize: fontPixelSize
-                    font.italic: true
+
+                    Image {
+                        Layout.preferredWidth: 24 * scaleFactor
+                        Layout.preferredHeight: 24 * scaleFactor
+                        source: toolController.selectedFeedThumbnailUrl
+                        fillMode: Image.PreserveAspectFit
+                    }
+
+                    Label {
+                        text: toolController.selectedFeedName
+                        verticalAlignment: Text.AlignVCenter
+                        elide: Text.ElideRight
+                        font.pixelSize: fontPixelSize
+                        font.bold: true
+                    }
                 }
             }
 
@@ -206,8 +207,11 @@ DsaPanel {
             CheckBox {
                 id: switchObservations
                 Layout.topMargin: trackSectionSpacing
-                checked: toolController.selectedFeed.showPreviousObservations
-                onCheckedChanged: toolController.selectedFeed.showPreviousObservations = checked
+                checked: toolController.selectedFeed ? toolController.selectedFeed.showPreviousObservations : false
+                onCheckedChanged: {
+                    if (toolController.selectedFeed)
+                        toolController.selectedFeed.showPreviousObservations = checked
+                }
                 text: "Show observations"
                 font.pixelSize: fontPixelSize
             }
@@ -225,7 +229,7 @@ DsaPanel {
                     to: 25
                     Layout.preferredHeight: spinBoxHeight
                     Layout.preferredWidth: drawer.width / 2.0
-                    value: toolController.selectedFeed.sizeObservations
+                    value: toolController.selectedFeed ? toolController.selectedFeed.sizeObservations : 1
                     onValueChanged: {
                         if (!toolController.selectedFeed)
                             return;
@@ -290,8 +294,11 @@ DsaPanel {
             CheckBox {
                 id: switchTrackLine
                 Layout.topMargin: switchObservations.checked ? trackSectionSpacing : 0
-                checked: toolController.selectedFeed.showTrackLine
-                onCheckedChanged: toolController.selectedFeed.showTrackLine = checked
+                checked: toolController.selectedFeed ? toolController.selectedFeed.showTrackLine : false
+                onCheckedChanged: {
+                    if (toolController.selectedFeed)
+                        toolController.selectedFeed.showTrackLine = checked
+                }
                 text: "Show track lines"
                 font.pixelSize: fontPixelSize
             }
@@ -309,7 +316,7 @@ DsaPanel {
                     to: 25
                     Layout.preferredHeight: spinBoxHeight
                     Layout.preferredWidth: drawer.width / 2.0
-                    value: toolController.selectedFeed.sizeTrackLine
+                    value: toolController.selectedFeed ? toolController.selectedFeed.sizeTrackLine : 1
                     onValueChanged: {
                         if (!toolController.selectedFeed)
                             return;
@@ -410,8 +417,11 @@ DsaPanel {
                                     return value
                             }
 
-                            value: toolController.selectedFeed.maximumObservations
-                            onValueChanged: toolController.selectedFeed.maximumObservations = value
+                            value: toolController.selectedFeed ? toolController.selectedFeed.maximumObservations : 0
+                            onValueChanged: {
+                                if (toolController.selectedFeed)
+                                    toolController.selectedFeed.maximumObservations = value
+                            }
                         }
 
                         Label {
@@ -438,17 +448,25 @@ DsaPanel {
                     opacity: 0.5
                 }
 
-                Label {
+                RowLayout {
                     anchors {
-                        fill: parent
-                        margins: 6 * scaleFactor
+                        horizontalCenter: parent.horizontalCenter
+                        verticalCenter: parent.verticalCenter
                     }
-                    text: toolController.selectedFeedName
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                    elide: Text.ElideRight
-                    font.pixelSize: fontPixelSize
-                    font.italic: true
+
+                    Image {
+                        Layout.preferredWidth: 24 * scaleFactor
+                        Layout.preferredHeight: 24 * scaleFactor
+                        source: toolController.selectedFeedThumbnailUrl
+                        fillMode: Image.PreserveAspectFit
+                    }
+
+                    Label {
+                        text: toolController.selectedFeedName
+                        elide: Text.ElideRight
+                        font.pixelSize: fontPixelSize
+                        font.bold: true
+                    }
                 }
             }
 

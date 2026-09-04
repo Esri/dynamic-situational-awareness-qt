@@ -73,7 +73,7 @@ DsaPanel {
             id: messageFeedsList
             clip: true
             model: toolController.messageFeeds
-            highlightFollowsCurrentItem: isMobile
+            highlightFollowsCurrentItem: false
             highlightMoveVelocity: 10000
             highlight: Rectangle {
                 radius: 5 * scaleFactor

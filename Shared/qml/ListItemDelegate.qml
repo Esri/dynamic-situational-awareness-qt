@@ -33,6 +33,7 @@ Item {
     property alias mainTextColor: labelMainText.color
     property alias mainTextItalic: labelMainText.font.italic
     property bool menuIconVisible: false
+    property real itemSpacing: 3 * scaleFactor
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
     property color imageFrameColor: Material.foreground
 
@@ -55,7 +56,7 @@ Item {
 
         id: itemRow
         width: parent.width
-        spacing: 3 * scaleFactor
+        spacing: itemSpacing
 
         CheckBox {
             id: visibleCheckBox

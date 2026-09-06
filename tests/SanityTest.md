@@ -405,7 +405,8 @@ The current location updates will be enabled in the DSA app at startup.
 
 Test case 1:
 
-- Go to Track Display from the bottom menu or by long-pressing on the `Friendly Tracks - Air` feed.
+- Select the ellipsis menu for `Friendly Tracks - Air` in `Message Feeds`, then select `Track Display`.
+- Confirm the selected feed is shown in the header and use the back action to return to `Message Feeds`.
 - In the Message Feeds dropdown, select `Friendly Tracks - Air`.
 - Enable the Observations checkbox.
   - [ ] Observations appear (a single track moving in a circle at a relative height above the terrain).
@@ -452,16 +453,21 @@ Test case 3:
 - Click on `Identify`
   - [ ] The timestamp in the popup is updating.
 
-**Test 3: Find specific track id**
+**Test 3: Find specific track ID**
 
-- Go to `Find` from the bottom menu.
+- Select the ellipsis menu for `Friendly Tracks - Land` in `Message Feeds`, then select `Find Track`.
 - Select `Friendly Tracks - Land` from the message feed type dropdown.
-- Search track by entering `war`.
-  - [ ] The results appear and those feeds are highlighted.
+- Search by track ID by entering `war`.
+  - [ ] The results appear and the matching tracks are highlighted on the map.
 - Select one result from the list
   - [ ] The map zoomed into the latest observation of the track.
   - [ ] Context menu appears for the latest observation of the track.
-- Test the [Context menu](#context-menu) options 
+- Open the result action menu and test each action:
+  - [ ] `Zoom to` zooms to the latest observation of the track.
+  - [ ] `Follow` starts following the selected track.
+  - [ ] `Identify` opens the dynamic entity popup.
+  - [ ] `Line of sight` creates a line-of-sight analysis from the current location to the selected track.
+- Use the back action to return to `Message Feeds`.
 
 # 5. Observation Reports
 Test case 1: Create Observation Report from Tool

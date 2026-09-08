@@ -91,8 +91,10 @@ void MessageFeedsController::findEntities(const QString& entityIdText)
   if (entityIdText.isEmpty())
     return;
 
-  DynamicEntityQueryParameters* params = new DynamicEntityQueryParameters(this);
-  const QString clause = QString("%1 LIKE '%2%'").arg(mf->searchAttributeName(), entityIdText);
+  QString escapedEntityIdText{entityIdText};
+  escapedEntityIdText.replace('\'', "''");
+  const auto clause = QString{"%1 LIKE '%2%'"}.arg(mf->searchAttributeName(), escapedEntityIdText);
+  auto* params = new DynamicEntityQueryParameters(this);
   params->setWhereClause(clause);
   mf->queryDynamicEntitiesAsync(params, this).then(this, [params, mf, this](DynamicEntityQueryResult* result)
   {
@@ -117,10 +119,15 @@ void MessageFeedsController::findEntities(const QString& entityIdText)
 
 void MessageFeedsController::selectEntity(int index)
 {
+  selectEntityAction(index, QString{});
+}
+
+void MessageFeedsController::selectEntityAction(int index, const QString& action)
+{
   if (index < 0 || index >= static_cast<int>(m_entityIds.size()))
     return;
 
-  emit entitySelected(m_entityIds[index], selectedFeed());
+  emit entitySelected(m_entityIds[index], selectedFeed(), action);
 }
 
 void MessageFeedsController::clearSearchResults()
@@ -447,6 +454,18 @@ void MessageFeedsController::setLocationBroadcastInDistress(bool inDistress)
 MessageFeed* MessageFeedsController::selectedFeed()
 {
   return m_messageFeeds->at(m_selectedFeedIndex);
+}
+
+QString MessageFeedsController::selectedFeedName() const
+{
+  const MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
+  return feed ? feed->feedName() : QString{};
+}
+
+QUrl MessageFeedsController::selectedFeedThumbnailUrl() const
+{
+  const MessageFeed* feed = m_messageFeeds->at(m_selectedFeedIndex);
+  return feed ? feed->thumbnailUrl() : QUrl{};
 }
 
 int MessageFeedsController::selectedFeedIndex() const

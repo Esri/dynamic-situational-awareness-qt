@@ -23,6 +23,7 @@
 // Qt
 #include <QStringListModel>
 #include <QList>
+#include <QUrl>
 #include <QVariantList>
 
 Q_MOC_INCLUDE("qabstractitemmodel.h")
@@ -50,6 +51,8 @@ class MessageFeedsController : public AbstractTool
   Q_PROPERTY(int locationBroadcastFrequency READ locationBroadcastFrequency WRITE setLocationBroadcastFrequency NOTIFY locationBroadcastFrequencyChanged)
   Q_PROPERTY(bool locationBroadcastInDistress READ isLocationBroadcastInDistress WRITE setLocationBroadcastInDistress NOTIFY locationBroadcastInDistressChanged)
   Q_PROPERTY(int selectedFeedIndex READ selectedFeedIndex WRITE setSelectedFeedIndex NOTIFY selectedFeedChanged)
+  Q_PROPERTY(QString selectedFeedName READ selectedFeedName NOTIFY selectedFeedChanged)
+  Q_PROPERTY(QUrl selectedFeedThumbnailUrl READ selectedFeedThumbnailUrl NOTIFY selectedFeedChanged)
   Q_PROPERTY(MessageFeed* selectedFeed READ selectedFeed NOTIFY selectedFeedChanged);
 
 public:
@@ -57,6 +60,7 @@ public:
 
   Q_INVOKABLE void findEntities(const QString& entityIdText);
   Q_INVOKABLE void selectEntity(int index);
+  Q_INVOKABLE void selectEntityAction(int index, const QString& action);
   Q_INVOKABLE void clearSearchResults();
 
   explicit MessageFeedsController(QObject* parent = nullptr);
@@ -88,6 +92,8 @@ public:
   void setLocationBroadcastInDistress(bool inDistress);
 
   MessageFeed* selectedFeed();
+  QString selectedFeedName() const;
+  QUrl selectedFeedThumbnailUrl() const;
 
   int selectedFeedIndex() const;
   void setSelectedFeedIndex(int index);
@@ -99,7 +105,7 @@ signals:
   void locationBroadcastFrequencyChanged();
   void locationBroadcastInDistressChanged();
   void selectedFeedChanged();
-  void entitySelected(const QString& entityId, MessageFeed* messageFeed);
+  void entitySelected(const QString& entityId, MessageFeed* messageFeed, const QString& action);
 
   void toolErrorOccurred(const QString& errorMessage, const QString& additionalMessage);
 

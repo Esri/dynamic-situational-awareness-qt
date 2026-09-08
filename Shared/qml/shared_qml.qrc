@@ -58,6 +58,5 @@
         <file>DsaYesNoDialog.qml</file>
         <file>OpenSceneTool.qml</file>
         <file>AddConfigurationTool.qml</file>
-        <file>ColorsComboBox.qml</file>
     </qresource>
 </RCC>

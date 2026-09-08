@@ -50,6 +50,7 @@ public:
   inline static const QString OPTION_FOLLOW = QStringLiteral("Follow");
   inline static const QString OPTION_IDENTIFY = QStringLiteral("Identify");
   inline static const QString OPTION_LINE_OF_SIGHT = QStringLiteral("Line of sight");
+  inline static const QString OPTION_ZOOM_TO = QStringLiteral("Zoom to");
   inline static const QString OPTION_VIEWSHED = QStringLiteral("Viewshed");
   inline static const QString OPTION_OBSERVATION_REPORT = QStringLiteral("Observation");
 

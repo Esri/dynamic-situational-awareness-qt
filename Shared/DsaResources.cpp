@@ -187,6 +187,14 @@ QUrl DsaResources::iconBrowse() const
 }
 
 /*!
+  \brief Returns the URL to the "Back" icon.
+ */
+QUrl DsaResources::iconBack() const
+{
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/chevron-left.svg"));
+}
+
+/*!
   \brief Returns the URL to the "Choose Basemap" icon.
  */
 QUrl DsaResources::iconChooseBasemap() const

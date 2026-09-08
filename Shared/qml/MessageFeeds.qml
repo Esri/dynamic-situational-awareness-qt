@@ -567,11 +567,6 @@ DsaPanel {
 
                                 ListLabel {
                                     text: qsTr("Zoom to")
-                                    onTriggered: resultActionsMenu.selectAction("Zoom to")
-                                }
-
-                                ListLabel {
-                                    text: qsTr("Follow")
                                     onTriggered: resultActionsMenu.selectAction("Follow")
                                 }
 

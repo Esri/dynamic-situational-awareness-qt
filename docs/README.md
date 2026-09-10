@@ -286,7 +286,7 @@ Open a feed's ellipsis menu in `Message Feeds` and select `Find Track` to quickl
 
 - Enter all or part of a track ID to search.
 - Matching results are listed and highlighted on the map.
-- Selecting a result zooms the map to the latest observation for that track and opens the context menu at that location.
+- Tapping a result zooms the map to the latest observation and pans the map to follow the track as it updates.
 - Each result provides actions for `Zoom to`, `Follow`, `Identify`, and `Line of sight`.
 
 ## Exploratory visual analysis

@@ -284,7 +284,6 @@ Open a feed's ellipsis menu in `Message Feeds` and select `Track Display` to con
 
 Open a feed's ellipsis menu in `Message Feeds` and select `Find Track` to quickly locate tracks by track ID in that feed.
 
-- Select a message feed (for example, `Friendly Tracks - Land`) from the dropdown list.
 - Enter all or part of a track ID to search.
 - Matching results are listed and highlighted on the map.
 - Selecting a result zooms the map to the latest observation for that track and opens the context menu at that location.

@@ -272,10 +272,10 @@ Open a feed's ellipsis menu in `Message Feeds` and select `Track Display` to con
 
 - Select a feed from `Message Feeds` (for example, `Friendly Tracks - Air` or `Friendly Tracks - Land`) and apply display settings independently per feed.
 - Enable `Observations` to show historical track observations for the selected feed.
-- Observation symbol size and color can be changed, and updates are reflected immediately on the map.
-- `Track Length Amount` controls how much recent track history is shown.
-- Enable `Track Line` to display a line representing track movement over time, with adjustable style options.
-- Set `Track Length Amount` to `All` to show the full available track history for the current session.
+- Select a feed from `Message Feeds` (for example, `Friendly Tracks - Air` or `Friendly Tracks - Land`) and apply display settings independently per feed.
+- Check `Show observations` to show historical track observations for the selected feed. Change the observation symbol size and color, and see updates reflected immediately on the map.
+- Check `Show track lines` to display a line representing track movement over time, and change the track line width and color. 
+- `Track Length` controls how much recent track history is shown. Tap `-` until it says `All` to show the full available track history for the current session.
 - Observation and track-line display can be shown at the same time for both `Friendly Tracks - Air` and `Friendly Tracks - Land`, while preserving independent settings per feed.
 
 #### Find Track

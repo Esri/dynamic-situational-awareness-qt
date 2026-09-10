@@ -167,7 +167,7 @@ The Convert X/Y tool accepts a location in any supported coordinate notation or 
 
 ![](./images/dsa-icon-feeds-32.png)
 
-![](./images/dsa-tool-feeds.png "Feeds")<br>*Message feeds tool (DSA Vehicle)*
+<img src="./images/dsa-tool-feeds.png" alt="Feeds" width="300" /><br>*Message feeds tool (DSA Vehicle)*
 
 Feeds are streams of information broadcast over the network. When information is received over a feed, it is translated into something the app can use, like a map symbol in an overlay or an alert. The Feed tool controls which feeds are represented on your display. See more information in the section [Real-time feeds](#real-time-feeds).
 

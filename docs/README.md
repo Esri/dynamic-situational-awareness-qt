@@ -123,7 +123,7 @@ The tool categories include:
 
 ## Settings panel
 
-!<img src="./images/dsa-tool-settings.png" alt="App Options" width="300" />!<img src="./images/dsa-tool-configurations.png" alt="App Settings" width="300" /><br>*Settings panel (DSA Handheld)*
+![](./images/dsa-tool-settings.png "Setting panel") ![](./images/dsa-tool-configurations.png)<br>*Settings panel (DSA Handheld)*
 
 The settings panel accesses the app's About information, app settings, and app close (for desktop platforms).
 

@@ -9,7 +9,6 @@ Sanity test list to perform on several platforms prior to release.
   - On Android, do this by opening the App Info (long press on the app icon and choose 'info'), scroll down and tap on Storage, tap Clear data.
 - Open the DSA app
   - [ ] You should be prompted to download the default configuration from Esri.  Click Yes
-- Click OK on the Error dialog that the GPX file is missing
   - [ ] You should be brought to the Configurations page and see the data downloading
 - Wait for the data to download. Once it's done downloading, tap "Close App" (the app needs to reload to read the data)
 - tap "OK" to confirm closing the app

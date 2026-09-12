@@ -28,6 +28,7 @@ class DsaResources : public QObject
   Q_OBJECT
 
   Q_PROPERTY(QString ArcGISMapsSDKVersion READ arcGISMapsSDKVersion NOTIFY arcGISMapsSDKVersionChanged)
+  Q_PROPERTY(QString DefaultConfigurationDownloadPrompt READ defaultConfigurationDownloadPrompt CONSTANT)
   Q_PROPERTY(QStringList TrackDisplayColors READ trackDisplayColors CONSTANT)
   Q_PROPERTY(QUrl icon2d READ icon2d CONSTANT)
   Q_PROPERTY(QUrl icon3d READ icon3d CONSTANT)
@@ -39,6 +40,7 @@ class DsaResources : public QObject
   Q_PROPERTY(QUrl iconAlertList READ iconAlertList CONSTANT)
   Q_PROPERTY(QUrl iconAppLogo READ iconAppLogo CONSTANT)
   Q_PROPERTY(QUrl iconBrowse READ iconBrowse CONSTANT)
+  Q_PROPERTY(QUrl iconBack READ iconBack CONSTANT)
   Q_PROPERTY(QUrl iconChooseBasemap READ iconChooseBasemap CONSTANT)
   Q_PROPERTY(QUrl iconClose READ iconClose CONSTANT)
   Q_PROPERTY(QUrl iconColorPalette READ iconColorPalette CONSTANT)
@@ -100,6 +102,7 @@ signals:
 private:
   QString m_arcGISMapsSDKVersion;
   QString arcGISMapsSDKVersion() const;
+  QString defaultConfigurationDownloadPrompt() const;
   QStringList trackDisplayColors();
   QUrl icon2d() const;
   QUrl icon3d() const;
@@ -115,6 +118,7 @@ private:
   QUrl iconAlertList() const;
   QUrl iconAppLogo() const;
   QUrl iconBrowse() const;
+  QUrl iconBack() const;
   QUrl iconChooseBasemap() const;
   QUrl iconClose() const;
   QUrl iconColorPalette() const;

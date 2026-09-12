@@ -34,6 +34,7 @@ Handheld {
     property real hudRadius: 3 * scaleFactor
     property real hudMargins: 5 * scaleFactor
     property bool configurationsChanged: false
+    property bool promptedForDefaultDownload: false
 
     signal clearDialogAccepted();
     signal closeDialogAccepted();
@@ -649,11 +650,18 @@ Handheld {
 
     DsaYesNoDialog {
         id: configurationDownloadDialog
-        informativeText: "Download the default configuration data from Esri (~450mb)?"
+        informativeText: DsaResources.DefaultConfigurationDownloadPrompt
         onAccepted: showConfigurations(true);
         onRejected: showConfigurations(false);
     }
+
     function showConfigurations(downloadDefaultData) {
+        // prevents multiple 'Yes' taps.
+        // this dialog should only be shown on the initial startup.
+        if (promptedForDefaultDownload)
+            return;
+
+        promptedForDefaultDownload = true;
         if (downloadDefaultData)
             configurationController.downloadDefaultData();
 

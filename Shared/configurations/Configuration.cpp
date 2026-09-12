@@ -70,6 +70,7 @@ QUrl Configuration::url() const
 void Configuration::download()
 {
   m_downloadCancelled = false;
+  m_downloading = true;
   m_percentDownloaded = 0;
   m_percentExtracted = 0;
 }
@@ -81,7 +82,7 @@ bool Configuration::downloaded() const
 
 bool Configuration::downloading() const
 {
-  return m_percentDownloaded > 0 && m_percentDownloaded < 100;
+  return m_downloading;
 }
 
 bool Configuration::extracted() const
@@ -141,7 +142,11 @@ int Configuration::percentDownloaded() const
 
 void Configuration::setPercentDownloaded(int percentDownloaded)
 {
+  if (m_percentDownloaded == percentDownloaded)
+    return;
+
   m_percentDownloaded = percentDownloaded;
+  m_downloading = m_percentDownloaded > 0 && m_percentDownloaded < 100;
 }
 
 int Configuration::percentExtracted() const
@@ -169,6 +174,7 @@ void Configuration::cancelDownload()
 {
   setPercentDownloaded(0);
   setPercentExtracted(0);
+  m_downloading = false;
   m_downloadCancelled = true;
 }
 

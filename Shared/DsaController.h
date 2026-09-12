@@ -66,10 +66,7 @@ signals:
 private:
   static inline const DsaController* s_instance = nullptr;
   void setupConfig();
-  void createDefaultSettings();
   void saveSettings();
-  void writeDefaultConditions();
-  void writeDefaultMessageFeeds();
   bool isConflictingTool(const QString& toolName) const;
   void updateInitialLocationOnSceneChange(bool isInitialization);
 

@@ -22,8 +22,12 @@ import Esri.ArcGISRuntime.OpenSourceApps.DSA
 
 DsaPanel {
     id: messageFeedsRoot
-    width: 272 * scaleFactor
-    title: qsTr("Message Feeds")
+    width: 350 * scaleFactor
+    title: panelState === panelStateFeeds ? qsTr("Message Feeds")
+                                           : (panelState === panelStateTrackDisplay ? qsTr("Track Display") : qsTr("Find Track"))
+    iconSource: panelState === panelStateFeeds ? DsaResources.iconClose : ""
+    leftActionIconSource: panelState === panelStateFeeds ? "" : DsaResources.iconBack
+    titleActionClosesPanel: panelState === panelStateFeeds
 
     property alias controller: toolController
     property bool isMobile
@@ -33,6 +37,13 @@ DsaPanel {
     property real trackControlSpacing: 4 * scaleFactor
     property real trackSectionSpacing: 18 * scaleFactor
     property real trackDividerSpacing: 20 * scaleFactor
+    property real colorSwatchSpacing: 4 * scaleFactor
+    property real colorSwatchSize: Math.min(32 * scaleFactor, (messageFeedsRoot.width - (16 * scaleFactor) - ((DsaResources.TrackDisplayColors.length - 1) * colorSwatchSpacing)) / DsaResources.TrackDisplayColors.length)
+    readonly property int panelStateFeeds: 0
+    readonly property int panelStateTrackDisplay: 1
+    readonly property int panelStateFind: 2
+    property int panelState: panelStateFeeds
+    property real searchClearButtonSize: fontPixelSize
 
     // Create the controller
     MessageFeedsController {
@@ -40,18 +51,21 @@ DsaPanel {
     }
 
     onVisibleChanged: {
-        // always switch back to the 'Feeds' tab if the panel is hidden
-        bar.currentIndex = 0;
+        // always switch back to the feeds page if the panel is hidden
+        if (!visible)
+            panelState = panelStateFeeds;
     }
 
+    onTitleActionTriggered: panelState = panelStateFeeds
+
     StackLayout {
-        currentIndex: bar.currentIndex
+        currentIndex: panelState
 
         anchors {
             top: titleBar.bottom
             left: parent.left
             right: parent.right
-            bottom: bar.top
+            bottom: parent.bottom
             margins: 8 * scaleFactor
         }
 
@@ -59,22 +73,20 @@ DsaPanel {
             id: messageFeedsList
             clip: true
             model: toolController.messageFeeds
+            highlightFollowsCurrentItem: false
+            highlightMoveVelocity: 10000
+            highlight: Rectangle {
+                radius: 5 * scaleFactor
+                color: Material.accent
+                opacity: 0.5
+            }
             delegate:  ListItemDelegate {
                 id: control
                 width: parent.width
                 height: 40 * scaleFactor
+                itemSpacing: 1 * scaleFactor
                 mainText: feedName
                 itemChecked: feedVisible
-                highlighted: toolController.selectedFeedIndex === index
-                clickTogglesCheck: false
-                rowTapExcludesCheckBox: true
-                onRowTapped: {
-                    toolController.selectedFeedIndex = index;
-                }
-                onRowPressAndHold: {
-                    toolController.selectedFeedIndex = index;
-                    bar.currentIndex = 1;
-                }
 
                 onItemCheckedChanged: {
                     if (feedVisible === itemChecked)
@@ -85,46 +97,139 @@ DsaPanel {
                 imageUrl: thumbnailUrl
                 imageVisible: true
                 imageFrameVisible: false
-                menuIconVisible: false
+
+                Image {
+                    anchors {
+                        right: parent.right
+                        verticalCenter: parent.verticalCenter
+                        margins: 5 * scaleFactor
+                    }
+                    rotation: 90
+                    source: DsaResources.iconMenu
+                    height: 32 * scaleFactor
+                    width: height
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            toolController.selectedFeedIndex = index;
+                            messageFeedsList.currentIndex = index;
+                            if (!isMobile) {
+                                feedMenu.open();
+                            } else {
+                                if (mobileMenu.isOpen) {
+                                    mobileMenu.close();
+                                } else {
+                                    mobileMenu.open();
+                                }
+                            }
+                        }
+                    }
+
+                    // Menu for Vehicle
+                    Menu {
+                        id: feedMenu
+                        width: 150 * scaleFactor
+
+                        Column {
+                            anchors.margins: 10 * scaleFactor
+                            width: parent.width
+                            spacing: 10 * scaleFactor
+
+                            ListLabel {
+                                text: qsTr("Track Display")
+                                onTriggered: {
+                                    feedMenu.close();
+                                    panelState = panelStateTrackDisplay;
+                                }
+                            }
+
+                            ListLabel {
+                                text: qsTr("Find Track")
+                                separatorVisible: false
+                                onTriggered: {
+                                    feedMenu.close();
+                                    panelState = panelStateFind;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
-        ColumnLayout {
-            spacing: 0
+        Flickable {
+            id: trackDisplayFlickable
+            clip: true
+            contentHeight: trackDisplayColumn.implicitHeight
 
-            ComboBox {
-                id: comboFeeds
+            ColumnLayout {
+                id: trackDisplayColumn
+                width: trackDisplayFlickable.width
+                spacing: 0
+
+            Item {
                 Layout.fillWidth: true
-                textRole: "feedName"
-                model: toolController.messageFeeds
-                currentIndex: toolController.selectedFeedIndex
-                onCurrentIndexChanged: toolController.selectedFeedIndex = currentIndex
+                Layout.preferredHeight: 32 * scaleFactor
+                Layout.bottomMargin: trackControlSpacing
+
+                Rectangle {
+                    anchors.fill: parent
+                    radius: 5 * scaleFactor
+                    color: Material.accent
+                    opacity: 0.5
+                }
+
+                RowLayout {
+                    anchors {
+                        horizontalCenter: parent.horizontalCenter
+                        verticalCenter: parent.verticalCenter
+                    }
+
+                    Image {
+                        Layout.preferredWidth: 24 * scaleFactor
+                        Layout.preferredHeight: 24 * scaleFactor
+                        source: toolController.selectedFeedThumbnailUrl
+                        fillMode: Image.PreserveAspectFit
+                    }
+
+                    Label {
+                        text: toolController.selectedFeedName
+                        verticalAlignment: Text.AlignVCenter
+                        elide: Text.ElideRight
+                        font.pixelSize: fontPixelSize
+                        font.bold: true
+                    }
+                }
             }
 
             // OBSERVATIONS
             CheckBox {
                 id: switchObservations
                 Layout.topMargin: trackSectionSpacing
-                checked: toolController.selectedFeed.showPreviousObservations
-                onCheckedChanged: toolController.selectedFeed.showPreviousObservations = checked
-                text: "Observations"
+                checked: toolController.selectedFeed ? toolController.selectedFeed.showPreviousObservations : false
+                onCheckedChanged: {
+                    if (toolController.selectedFeed)
+                        toolController.selectedFeed.showPreviousObservations = checked
+                }
+                text: "Show observations"
                 font.pixelSize: fontPixelSize
             }
             GridLayout {
                 visible: switchObservations.checked
-                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: trackControlSpacing
-                rows: 2
-                columns: 2
+                rows: 4
                 rowSpacing: trackControlSpacing
-                columnSpacing: 8 * scaleFactor
                 SpinBox {
                     id: spinObservationsSize
+                    Layout.row: 0
+                    Layout.alignment: Qt.AlignHCenter
                     from: 1
                     to: 25
                     Layout.preferredHeight: spinBoxHeight
                     Layout.preferredWidth: drawer.width / 2.0
-                    value: toolController.selectedFeed.sizeObservations
+                    value: toolController.selectedFeed ? toolController.selectedFeed.sizeObservations : 1
                     onValueChanged: {
                         if (!toolController.selectedFeed)
                             return;
@@ -132,25 +237,52 @@ DsaPanel {
                         toolController.selectedFeed.sizeObservations = value
                     }
                 }
-                ColorsComboBox {
-                    id: colorsComboObservations
-                    Layout.preferredHeight: spinBoxHeight
-                    Layout.fillWidth: true
-                    currentIndex: model.indexOf(toolController.selectedFeed.colorObservations)
-                    onCurrentIndexChanged: {
-                        if (!toolController.selectedFeed)
-                            return;
-
-                        toolController.selectedFeed.colorObservations = model[currentIndex]
-                    }
-                }
                 Label {
+                    Layout.row: 1
                     Layout.alignment: Qt.AlignCenter
-                    text: "Size"
+                    text: "Marker size"
                     font.pixelSize: detailLabelFontPixelSize
                     font.italic: true
                 }
+                Row {
+                    Layout.row: 2
+                    Layout.alignment: Qt.AlignHCenter
+                    Layout.topMargin: trackControlSpacing * 2
+                    spacing: colorSwatchSpacing
+
+                    Repeater {
+                        model: DsaResources.TrackDisplayColors
+
+                        Rectangle {
+                            width: colorSwatchSize
+                            height: width
+                            radius: width / 2
+                            color: modelData
+                            border {
+                                color: Material.foreground
+                                width: 1 * scaleFactor
+                            }
+
+                            Image {
+                                anchors.centerIn: parent
+                                height: parent.height
+                                width: height
+                                source: DsaResources.iconComplete
+                                visible: toolController.selectedFeed && toolController.selectedFeed.colorObservations === modelData
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    if (toolController.selectedFeed)
+                                        toolController.selectedFeed.colorObservations = modelData;
+                                }
+                            }
+                        }
+                    }
+                }
                 Label {
+                    Layout.row: 3
                     Layout.alignment: Qt.AlignCenter
                     text: "Color"
                     font.pixelSize: detailLabelFontPixelSize
@@ -162,26 +294,29 @@ DsaPanel {
             CheckBox {
                 id: switchTrackLine
                 Layout.topMargin: switchObservations.checked ? trackSectionSpacing : 0
-                checked: toolController.selectedFeed.showTrackLine
-                onCheckedChanged: toolController.selectedFeed.showTrackLine = checked
-                text: "Track Line"
+                checked: toolController.selectedFeed ? toolController.selectedFeed.showTrackLine : false
+                onCheckedChanged: {
+                    if (toolController.selectedFeed)
+                        toolController.selectedFeed.showTrackLine = checked
+                }
+                text: "Show track lines"
                 font.pixelSize: fontPixelSize
             }
             GridLayout {
                 visible: switchTrackLine.checked
-                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: trackControlSpacing
-                rows: 2
-                columns: 2
+                rows: 4
                 rowSpacing: trackControlSpacing
-                columnSpacing: 8 * scaleFactor
                 SpinBox {
                     id: spinTrackLineSize
+                    Layout.row: 0
+                    Layout.alignment: Qt.AlignHCenter
                     from: 1
                     to: 25
                     Layout.preferredHeight: spinBoxHeight
                     Layout.preferredWidth: drawer.width / 2.0
-                    value: toolController.selectedFeed.sizeTrackLine
+                    value: toolController.selectedFeed ? toolController.selectedFeed.sizeTrackLine : 1
                     onValueChanged: {
                         if (!toolController.selectedFeed)
                             return;
@@ -189,25 +324,52 @@ DsaPanel {
                         toolController.selectedFeed.sizeTrackLine = value
                     }
                 }
-                ColorsComboBox {
-                    id: colorsComboTrackLine
-                    Layout.preferredHeight: spinBoxHeight
-                    Layout.fillWidth: true
-                    currentIndex: model.indexOf(toolController.selectedFeed.colorTrackLine)
-                    onCurrentIndexChanged: {
-                        if (!toolController.selectedFeed)
-                            return;
-
-                        toolController.selectedFeed.colorTrackLine = model[currentIndex]
-                    }
-                }
                 Label {
+                    Layout.row: 1
                     Layout.alignment: Qt.AlignCenter
-                    text: "Size"
+                    text: "Line width"
                     font.pixelSize: detailLabelFontPixelSize
                     font.italic: true
                 }
+                Row {
+                    Layout.row: 2
+                    Layout.alignment: Qt.AlignHCenter
+                    Layout.topMargin: trackControlSpacing * 2
+                    spacing: colorSwatchSpacing
+
+                    Repeater {
+                        model: DsaResources.TrackDisplayColors
+
+                        Rectangle {
+                            width: colorSwatchSize
+                            height: width
+                            radius: width / 2
+                            color: modelData
+                            border {
+                                color: Material.foreground
+                                width: 1 * scaleFactor
+                            }
+
+                            Image {
+                                anchors.centerIn: parent
+                                height: parent.height
+                                width: height
+                                source: DsaResources.iconComplete
+                                visible: toolController.selectedFeed && toolController.selectedFeed.colorTrackLine === modelData
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    if (toolController.selectedFeed)
+                                        toolController.selectedFeed.colorTrackLine = modelData;
+                                }
+                            }
+                        }
+                    }
+                }
                 Label {
+                    Layout.row: 3
                     Layout.alignment: Qt.AlignCenter
                     text: "Color"
                     font.pixelSize: detailLabelFontPixelSize
@@ -215,55 +377,59 @@ DsaPanel {
                 }
             }
 
-            // TRACK LENGTH
-            ColumnLayout {
-                visible: switchObservations.checked || switchTrackLine.checked
-                Layout.fillWidth: true
-                Layout.topMargin: trackDividerSpacing
-                spacing: trackSectionSpacing
-
-                Rectangle {
-                    color: "gray"
-                    Layout.fillWidth: true
-                    radius: 5
-                    height: 5
-                }
-
-                Label {
-                    text: "Track Length"
-                    font.pixelSize: fontPixelSize
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
+                // TRACK LENGTH
                 ColumnLayout {
-                    Layout.alignment: Qt.AlignHCenter
-                    spacing: trackControlSpacing
+                    visible: switchObservations.checked || switchTrackLine.checked
+                    Layout.fillWidth: true
+                    Layout.topMargin: trackDividerSpacing
+                    spacing: trackSectionSpacing
 
-                    SpinBox {
-                        id: spinObservations
-                        Layout.alignment: Qt.AlignHCenter
-                        Layout.preferredHeight: spinBoxHeight
-                        Layout.preferredWidth: drawer.width / 2.0
-                        from: 0
-                        to: 9999
-                        editable: true
-                        live: true
-                        textFromValue: function(value) {
-                            if (value < 1)
-                                return "All"
-                            else
-                                return value
-                        }
-
-                        value: toolController.selectedFeed.maximumObservations
-                        onValueChanged: toolController.selectedFeed.maximumObservations = value
+                    Rectangle {
+                        color: "gray"
+                        Layout.fillWidth: true
+                        radius: 5
+                        height: 5
                     }
 
                     Label {
-                        text: "Amount"
-                        font.pixelSize: detailLabelFontPixelSize
-                        font.italic: true
+                        text: "Track Length"
+                        font.pixelSize: fontPixelSize
                         Layout.alignment: Qt.AlignHCenter
+                    }
+
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignHCenter
+                        spacing: trackControlSpacing
+
+                        SpinBox {
+                            id: spinObservations
+                            Layout.alignment: Qt.AlignHCenter
+                            Layout.preferredHeight: spinBoxHeight
+                            Layout.preferredWidth: drawer.width / 2.0
+                            from: 0
+                            to: 9999
+                            editable: true
+                            live: true
+                            textFromValue: function(value) {
+                                if (value < 1)
+                                    return "All"
+                                else
+                                    return value
+                            }
+
+                            value: toolController.selectedFeed ? toolController.selectedFeed.maximumObservations : 0
+                            onValueChanged: {
+                                if (toolController.selectedFeed)
+                                    toolController.selectedFeed.maximumObservations = value
+                            }
+                        }
+
+                        Label {
+                            text: "Number of observations"
+                            font.pixelSize: detailLabelFontPixelSize
+                            font.italic: true
+                            Layout.alignment: Qt.AlignHCenter
+                        }
                     }
                 }
             }
@@ -271,30 +437,57 @@ DsaPanel {
 
         ColumnLayout {
 
-            ComboBox {
-                id: comboFeedsFind
+            Item {
                 Layout.fillWidth: true
-                textRole: "feedName"
-                model: toolController.messageFeeds
-                currentIndex: toolController.selectedFeedIndex
-                onCurrentIndexChanged: toolController.selectedFeedIndex = currentIndex
+                Layout.preferredHeight: 32 * scaleFactor
+
+                Rectangle {
+                    anchors.fill: parent
+                    radius: 5 * scaleFactor
+                    color: Material.accent
+                    opacity: 0.5
+                }
+
+                RowLayout {
+                    anchors {
+                        horizontalCenter: parent.horizontalCenter
+                        verticalCenter: parent.verticalCenter
+                    }
+
+                    Image {
+                        Layout.preferredWidth: 24 * scaleFactor
+                        Layout.preferredHeight: 24 * scaleFactor
+                        source: toolController.selectedFeedThumbnailUrl
+                        fillMode: Image.PreserveAspectFit
+                    }
+
+                    Label {
+                        text: toolController.selectedFeedName
+                        elide: Text.ElideRight
+                        font.pixelSize: fontPixelSize
+                        font.bold: true
+                    }
+                }
             }
 
             TextField {
                 id: textFindEntity
                 Layout.fillWidth: true
+                Layout.topMargin: trackControlSpacing
+                rightPadding: searchClearButtonSize + 8 * scaleFactor
+                placeholderText: qsTr("Search by track ID...")
                 onTextChanged: toolController.findEntities(text);
 
                 Button {
                     anchors {
                         right: parent.right
-                        top: parent.top
-                        bottom: parent.bottom
-                        margins: 2 * scaleFactor
+                        verticalCenter: parent.verticalCenter
+                        margins: 8 * scaleFactor
                     }
                     visible: textFindEntity.text !== ""
 
-                    width: height
+                    width: searchClearButtonSize
+                    height: searchClearButtonSize
 
                     background: Rectangle {
                         anchors.fill: parent
@@ -323,14 +516,70 @@ DsaPanel {
                 delegate: ItemDelegate {
                     text: model.display
                     width: listEntityResults.width
-                    MouseArea {
+                    rightPadding: resultActionsButton.width + 8 * scaleFactor
+
+                    onClicked: {
+                        toolController.selectEntity(index);
+                        if (isMobile)
+                            mapToolRow.reset();
+                    }
+
+                    Image {
+                        id: resultActionsButton
                         anchors {
-                            fill: parent
+                            right: parent.right
+                            verticalCenter: parent.verticalCenter
+                            rightMargin: 4 * scaleFactor
                         }
-                        onClicked: {
-                            toolController.selectEntity(index);
-                            if (isMobile) {
-                                mapToolRow.reset();
+                        width: 32 * scaleFactor
+                        height: width
+                        rotation: 90
+                        source: DsaResources.iconMenu
+                        fillMode: Image.PreserveAspectFit
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if (!isMobile) {
+                                    resultActionsMenu.open();
+                                } else if (mobileResultActionsMenu.isOpen) {
+                                    mobileResultActionsMenu.close();
+                                } else {
+                                    listEntityResults.currentIndex = index;
+                                    mobileResultActionsMenu.open();
+                                }
+                            }
+                        }
+
+                        Menu {
+                            id: resultActionsMenu
+                            width: 150 * scaleFactor
+
+                            function selectAction(action) {
+                                close();
+                                toolController.selectEntityAction(index, action);
+                            }
+
+                            Column {
+                                anchors.margins: 10 * scaleFactor
+                                width: parent.width
+                                spacing: 10 * scaleFactor
+
+                                ListLabel {
+                                    text: qsTr("Zoom to")
+                                    onTriggered: resultActionsMenu.selectAction("Follow")
+                                }
+
+                                ListLabel {
+                                    text: qsTr("Identify")
+                                    onTriggered: resultActionsMenu.selectAction("Identify")
+                                }
+
+                                ListLabel {
+                                    text: qsTr("Line of sight")
+                                    separatorVisible: false
+                                    onTriggered: resultActionsMenu.selectAction("Line of sight")
+                                }
                             }
                         }
                     }
@@ -339,35 +588,222 @@ DsaPanel {
         }
     }
 
-    TabBar {
-        id: bar
+    Rectangle {
+        id: mobileResultActionsMenu
+        visible: panelState === panelStateFind
+        property bool isOpen: y === messageFeedsRoot.y + messageFeedsRoot.height - height
+        property int closedY: messageFeedsRoot.y + messageFeedsRoot.height
+        property int openY: messageFeedsRoot.y + messageFeedsRoot.height - height - anchors.margins
         anchors {
-            bottom: parent.bottom
+            left: parent.left
+            right: parent.right
+            margins: 5 * scaleFactor
         }
-        width: parent.width
+        color: "transparent"
+        height: messageFeedsRoot.height
+        y: closedY
 
-        TabButton {
-            display: AbstractButton.TextUnderIcon
-            icon.source: DsaResources.iconListView
-            icon.color: Material.foreground
-            text: qsTr("Feeds")
-            font.pixelSize: fontPixelSize
-        }
-
-        TabButton {
-            display: AbstractButton.TextUnderIcon
-            icon.source: DsaResources.iconColorPalette
-            icon.color: Material.foreground
-            text: qsTr("Track Display")
-            font.pixelSize: fontPixelSize
+        MouseArea {
+            anchors.fill: parent
+            onClicked: mobileResultActionsMenu.close()
         }
 
-        TabButton {
-            display: AbstractButton.TextUnderIcon
-            icon.source: DsaResources.iconZoomTo
-            icon.color: Material.foreground
-            text: qsTr("Find")
-            font.pixelSize: fontPixelSize
+        Rectangle {
+            anchors {
+                fill: mobileResultActionsColumn
+                margins: -10 * scaleFactor
+            }
+            color: Material.background
+            radius: 10 * scaleFactor
+            border {
+                color: Material.primary
+                width: 1 * scaleFactor
+            }
         }
+
+        function open() {
+            if (y === openY)
+                return;
+
+            mobileResultActionsAnimation.from = closedY;
+            mobileResultActionsAnimation.to = openY;
+            mobileResultActionsAnimation.start();
+        }
+
+        function close() {
+            if (y === closedY)
+                return;
+
+            mobileResultActionsAnimation.from = openY;
+            mobileResultActionsAnimation.to = closedY;
+            mobileResultActionsAnimation.start();
+        }
+
+        function selectAction(action) {
+            close();
+            toolController.selectEntityAction(listEntityResults.currentIndex, action);
+            mapToolRow.reset();
+        }
+
+        NumberAnimation {
+            id: mobileResultActionsAnimation
+            target: mobileResultActionsMenu
+            properties: "y"
+            duration: 250
+            easing.type: Easing.OutQuad
+        }
+
+        Column {
+            id: mobileResultActionsColumn
+            anchors {
+                left: parent.left
+                right: parent.right
+                bottom: parent.bottom
+                margins: 10 * scaleFactor
+            }
+            spacing: 5 * scaleFactor
+
+            ListLabel {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: qsTr("Zoom to")
+                onTriggered: mobileResultActionsMenu.selectAction("Zoom to")
+            }
+
+            ListLabel {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: qsTr("Follow")
+                onTriggered: mobileResultActionsMenu.selectAction("Follow")
+            }
+
+            ListLabel {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: qsTr("Identify")
+                onTriggered: mobileResultActionsMenu.selectAction("Identify")
+            }
+
+            ListLabel {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: qsTr("Line of sight")
+                onTriggered: mobileResultActionsMenu.selectAction("Line of sight")
+            }
+
+            ListLabel {
+                anchors.horizontalCenter: parent.horizontalCenter
+                separatorVisible: false
+                text: qsTr("Cancel")
+                onTriggered: mobileResultActionsMenu.close()
+            }
+        }
+    }
+
+    Rectangle {
+        id: mobileMenu
+        visible: panelState === panelStateFeeds
+        property bool isOpen: y === messageFeedsRoot.y + messageFeedsRoot.height - height
+        property int closedY: messageFeedsRoot.y + messageFeedsRoot.height
+        property int openY: messageFeedsRoot.y + messageFeedsRoot.height - height - anchors.margins
+        anchors {
+            left: parent.left
+            right: parent.right
+            margins: 5 * scaleFactor
+        }
+        color: "transparent"
+        height: messageFeedsRoot.height
+        y: closedY
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: mobileMenu.close()
+        }
+
+        Rectangle {
+            anchors {
+                fill: mobileActionColumn
+                margins: -10 * scaleFactor
+            }
+            color: Material.background
+            radius: 10 * scaleFactor
+            border {
+                color: Material.primary
+                width: 1 * scaleFactor
+            }
+        }
+
+        function open() {
+            if (y === openY)
+                return;
+
+            messageFeedsList.highlightFollowsCurrentItem = true;
+            animateVertical.from = closedY;
+            animateVertical.to = openY;
+            animateVertical.start();
+        }
+
+        function close() {
+            if (y === closedY)
+                return;
+
+            messageFeedsList.highlightFollowsCurrentItem = false;
+            animateVertical.from = openY;
+            animateVertical.to = closedY;
+            animateVertical.start();
+            messageFeedsList.currentIndex = -1;
+        }
+
+        NumberAnimation {
+            id: animateVertical
+            target: mobileMenu
+            properties: "y"
+            duration: 250
+            easing.type: Easing.OutQuad
+        }
+
+        Column {
+            id: mobileActionColumn
+            anchors {
+                left: parent.left
+                right: parent.right
+                bottom: parent.bottom
+                margins: 10 * scaleFactor
+            }
+
+            spacing: 5 * scaleFactor
+
+            ListLabel {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: qsTr("Track Display")
+                onTriggered: {
+                    if (messageFeedsList.currentIndex > -1)
+                        toolController.selectedFeedIndex = messageFeedsList.currentIndex;
+                    mobileMenu.close();
+                    panelState = panelStateTrackDisplay;
+                }
+            }
+
+            ListLabel {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: qsTr("Find Track")
+                onTriggered: {
+                    if (messageFeedsList.currentIndex > -1)
+                        toolController.selectedFeedIndex = messageFeedsList.currentIndex;
+                    mobileMenu.close();
+                    panelState = panelStateFind;
+                }
+            }
+
+            ListLabel {
+                anchors.horizontalCenter: parent.horizontalCenter
+                separatorVisible: false
+                text: qsTr("Cancel")
+                onTriggered: {
+                    mobileMenu.close();
+                }
+            }
+        }
+    }
+
+    onPanelStateChanged: {
+        if (panelState !== panelStateFeeds && mobileMenu.isOpen)
+            mobileMenu.close();
     }
 }

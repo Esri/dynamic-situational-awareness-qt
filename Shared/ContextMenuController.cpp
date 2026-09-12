@@ -99,12 +99,13 @@ ContextMenuController::ContextMenuController(QObject* parent /* = nullptr */):
     m_messageFeedsControllerConnection = connect(mfc,
                                                  &MessageFeedsController::entitySelected,
                                                  this,
-                                                 [this](const QString& entityId, MessageFeed* messageFeed)
+                                                 [this](const QString& entityId, MessageFeed* messageFeed, const QString& action)
     {
+      setContextActive(false);
       clearOptions();
 
       GeoView* geoView = ToolResourceProvider::instance()->geoView();
-      if (!geoView)
+      if (!geoView || !messageFeed)
         return;
 
       // stop if following something already by replacing the camera controller
@@ -119,7 +120,7 @@ ContextMenuController::ContextMenuController(QObject* parent /* = nullptr */):
 
       DynamicEntityQueryParameters* params = new DynamicEntityQueryParameters(this);
       params->setTrackIds(QStringList{entityId});
-      messageFeed->queryDynamicEntitiesAsync(params, this).then(this, [this, geoView, params, messageFeed](DynamicEntityQueryResult* result)
+      messageFeed->queryDynamicEntitiesAsync(params, this).then(this, [this, action, geoView, params, messageFeed](DynamicEntityQueryResult* result)
       {
         params->deleteLater();
         const QList<DynamicEntity*> entities = result->iterator().asList();
@@ -130,10 +131,24 @@ ContextMenuController::ContextMenuController(QObject* parent /* = nullptr */):
           {
             geoElements.push_back(entity);
           });
-          geoView->setViewpointAsync(Viewpoint{geoElements.first()->geometry()}, 0.1f);
           setContextScreenPosition(QPoint{geoView->widthInPixels() / 2, geoView->heightInPixels() / 2});
           m_contextGeoElements.insert(messageFeed->feedName(), geoElements);
-          processGeoElements();
+
+          if (action.isEmpty())
+          {
+            geoView->setViewpointAsync(Viewpoint{geoElements.first()->geometry()}, 0.1f).then(this, [this](bool)
+            {
+              selectOption(OPTION_FOLLOW);
+            });
+          }
+          else if (action == OPTION_ZOOM_TO)
+          {
+            geoView->setViewpointAsync(Viewpoint{geoElements.first()->geometry()}, 0.1f);
+          }
+          else
+          {
+            selectOption(action);
+          }
         }
 
         result->deleteLater();

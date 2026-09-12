@@ -167,13 +167,13 @@ The Convert X/Y tool accepts a location in any supported coordinate notation or 
 
 ![](./images/dsa-icon-feeds-32.png)
 
-![](./images/dsa-tool-feeds.png "Feeds")<br>*Message feeds tool (DSA Vehicle)*
+<img src="./images/dsa-tool-feeds.png" alt="Feeds" width="300" /><br>*Message feeds tool (DSA Vehicle)*
 
 Feeds are streams of information broadcast over the network. When information is received over a feed, it is translated into something the app can use, like a map symbol in an overlay or an alert. The Feed tool controls which feeds are represented on your display. See more information in the section [Real-time feeds](#real-time-feeds).
 
-Track Display is available from the `Feeds` option in Map tools, and can also be accessed by long-pressing a feed. Use it to configure how observations and track lines are shown for each message feed. See [Track display](#track-display) for more details. 
+In `Message Feeds`, select a feed's ellipsis menu and choose `Track Display` to configure how observations and track lines are shown for that feed. See [Track display](#track-display) for more details.
 
-Find is also available from the `Feeds` option in Map tools to locate specific feeds in active message feeds. See [Find](#find) for more details.
+In `Message Feeds`, select a feed's ellipsis menu and choose `Find Track` to search that feed for tracks by track ID. See [Find Track](#find-track) for more details.
 
 ### Add data
 
@@ -268,27 +268,26 @@ DSA apps support several generic message feeds.
 
 <img src="./images/dsa-track-display.png" alt="Track Display" width="300" /><br>*Track Display tool*
 
-The `Track Display` tab under `Feeds` in Map tools provides feed-specific control of how dynamic observations and track lines are visualized.
+Open a feed's ellipsis menu in `Message Feeds` and select `Track Display` to control how dynamic observations and track lines are visualized for that feed.
 
 - Select a feed from `Message Feeds` (for example, `Friendly Tracks - Air` or `Friendly Tracks - Land`) and apply display settings independently per feed.
 - Enable `Observations` to show historical track observations for the selected feed.
-- Observation symbol size and color can be changed, and updates are reflected immediately on the map.
-- `Track Length Amount` controls how much recent track history is shown.
-- Enable `Track Line` to display a line representing track movement over time, with adjustable style options.
-- Set `Track Length Amount` to `All` to show the full available track history for the current session.
+- Select a feed from `Message Feeds` (for example, `Friendly Tracks - Air` or `Friendly Tracks - Land`) and apply display settings independently per feed.
+- Check `Show observations` to show historical track observations for the selected feed. Change the observation symbol size and color, and see updates reflected immediately on the map.
+- Check `Show track lines` to display a line representing track movement over time, and change the track line width and color. 
+- `Track Length` controls how much recent track history is shown. Tap `-` until it says `All` to show the full available track history for the current session.
 - Observation and track-line display can be shown at the same time for both `Friendly Tracks - Air` and `Friendly Tracks - Land`, while preserving independent settings per feed.
 
-#### Find
+#### Find Track
 
-<img src="./images/dsa-find-feeds.png" alt="Find" width="300" /><br>*Find tool*
+<img src="./images/dsa-find-feeds.png" alt="Find Track" width="300" /><br>*Find Track tool*
 
-The `Find` tab under `Feeds` in Map tools helps you quickly locate specific tracks from message feeds.
+Open a feed's ellipsis menu in `Message Feeds` and select `Find Track` to quickly locate tracks by track ID in that feed.
 
-- Select a message feed (for example, `Friendly Tracks - Land`) from the dropdown list.
-- Enter all or part of a message feed to search.
+- Enter all or part of a track ID to search.
 - Matching results are listed and highlighted on the map.
-- Selecting a result zooms the map to the latest observation for that track and opens the context menu at that location.
-- From there, you can use the available [Map context menu](#map-context-menu) options for follow-up actions.
+- Tapping a result zooms the map to the latest observation and pans the map to follow the track as it updates.
+- Each result provides actions for `Zoom to`, `Identify`, and `Line of sight`.
 
 ## Exploratory visual analysis
 

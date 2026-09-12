@@ -357,148 +357,23 @@ const DsaController* DsaController::instance()
  */
 void DsaController::setupConfig()
 {
-  // create the default settings map
-  createDefaultSettings();
-
-  // get the app config
-  m_configFilePath = QString("%1/%2").arg(m_dsaSettings[AppConstants::PROPERTYNAME_ROOT_DATA_DIRECTORY].toString(), DsaUtility::FILE_NAME_APP_CONFIG);
-
-  // If the config file does not exist, create it, and set all of the defaults
-  if (!QFileInfo::exists(m_configFilePath))
+  // if the config file does not exist, exit early to raise the prompt to download the default data folder
+  const auto configFilePath = QString{"./%1"}.arg(DsaUtility::FILE_NAME_APP_CONFIG);
+  if (!QFileInfo::exists(configFilePath))
   {
-    saveSettings();
+    return;
   }
-  else
-  {
-    // Open the config file, get settings, set them to the application controller
-    QSettings settings(m_configFilePath, m_jsonFormat);
-    const QStringList allKeys = settings.allKeys();
 
-    // get the values from the config, and write to the settings map
-    for (const QString& key : allKeys)
-      m_dsaSettings[key] = settings.value(key);
+  // Open the config file, get settings, set them to the application controller
+  m_configFilePath = configFilePath;
+  const QSettings settings{m_configFilePath, m_jsonFormat};
+  const QStringList allKeys = settings.allKeys();
+
+  // get the values from the config, and write to the settings map
+  for (const QString& key : allKeys)
+  {
+    m_dsaSettings[key] = settings.value(key);
   }
-}
-
-/*! \brief internal
- *
- * Writes the default Alert Conditions as JSON to the settings map.
- */
-void DsaController::writeDefaultConditions()
-{
-  QJsonArray allConditionsJson;
-
-  // Add a condition "Distress" when an object from the Friendly Tracks Land feed has attribute status911 = 1
-  QJsonObject conditionJson;
-  conditionJson.insert(AlertConstants::CONDITION_NAME, QStringLiteral("Distress"));
-  conditionJson.insert(AlertConstants::CONDITION_LEVEL, static_cast<int>(AlertLevel::Critical));
-  conditionJson.insert(AlertConstants::CONDITION_TYPE, AlertConstants::attributeEqualsAlertConditionType());
-  conditionJson.insert(AlertConstants::CONDITION_SOURCE, QStringLiteral("Friendly Tracks - Land"));
-  QJsonObject queryObject;
-  queryObject.insert(AlertConstants::ATTRIBUTE_NAME, QStringLiteral("status911"));
-  conditionJson.insert(AlertConstants::CONDITION_QUERY, queryObject);
-  conditionJson.insert(AlertConstants::CONDITION_TARGET, "1");
-  allConditionsJson.append(conditionJson);
-  m_dsaSettings.insert(AlertConstants::ALERT_CONDITIONS_PROPERTYNAME, allConditionsJson.toVariantList());
-}
-
-/*! \brief internal
- *
- * Writes the default message feeds to the settings map.
- */
-void DsaController::writeDefaultMessageFeeds()
-{
-  using namespace Dsa::MessageFeedConstants;
-  m_dsaSettings[MESSAGE_FEED_UDP_PORTS_PROPERTYNAME] = QVariantList{ 45678, 45679 };
-
-  QJsonArray messageFeedsJson;
-
-  // create the default track display properties
-  const std::vector<std::tuple<QString, QVariant>> trackDisplayDefaults{
-    { MESSAGE_FEEDS_OBSERVATIONS_SHOW, false },
-    { MESSAGE_FEEDS_OBSERVATIONS_COLOR, MESSAGE_FEEDS_TRACK_DISPLAY_COLOR_DEFAULT },
-    { MESSAGE_FEEDS_OBSERVATIONS_SIZE, 10 },
-    { MESSAGE_FEEDS_OBSERVATIONS_MAXIMUM, 5 },
-    { MESSAGE_FEEDS_TRACK_LINE_SHOW, false },
-    { MESSAGE_FEEDS_TRACK_LINE_COLOR, MESSAGE_FEEDS_TRACK_DISPLAY_COLOR_DEFAULT },
-    { MESSAGE_FEEDS_TRACK_LINE_SIZE, 4 },
-  };
-  const auto itBeg = std::cbegin(trackDisplayDefaults);
-  const auto itEnd = std::cend(trackDisplayDefaults);
-  const auto appendAndAddTrackDisplayDefaults = [&](QJsonObject& o)
-  {
-    std::for_each(itBeg, itEnd, [&](const std::tuple<QString, QVariant>& t)
-    {
-      o.insert(std::get<0>(t), QJsonValue::fromVariant(std::get<1>(t)));
-    });
-    messageFeedsJson.append(o);
-  };
-
-  QJsonObject cotMessageFeedJson;
-  cotMessageFeedJson.insert(MESSAGE_FEEDS_NAME, QStringLiteral("SA Events"));
-  cotMessageFeedJson.insert(MESSAGE_FEEDS_TYPE, MessageFeeds::Types::CURSOR_ON_TARGET);
-  cotMessageFeedJson.insert(MESSAGE_FEEDS_RENDERER, QStringLiteral("mil2525c"));
-  cotMessageFeedJson.insert(MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("saevents.png"));
-  cotMessageFeedJson.insert(MESSAGE_FEEDS_PLACEMENT, MESSAGE_FEEDS_PLACEMENT_DEFAULT);
-  appendAndAddTrackDisplayDefaults(cotMessageFeedJson);
-
-  QJsonObject friendlyTracksLandJson;
-  friendlyTracksLandJson.insert(MESSAGE_FEEDS_NAME, QStringLiteral("Friendly Tracks - Land"));
-  friendlyTracksLandJson.insert(MESSAGE_FEEDS_TYPE, QString{"%1_land"}.arg(MessageFeeds::Types::POSITION_REPORT));
-  friendlyTracksLandJson.insert(MESSAGE_FEEDS_RENDERER, QStringLiteral("mil2525c"));
-  friendlyTracksLandJson.insert(MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("friendlytracks.png"));
-  friendlyTracksLandJson.insert(MESSAGE_FEEDS_PLACEMENT, MESSAGE_FEEDS_PLACEMENT_DEFAULT);
-  appendAndAddTrackDisplayDefaults(friendlyTracksLandJson);
-
-  QJsonObject friendlyTracksAirJson;
-  friendlyTracksAirJson.insert(MESSAGE_FEEDS_NAME, QStringLiteral("Friendly Tracks - Air"));
-  friendlyTracksAirJson.insert(MESSAGE_FEEDS_TYPE, QString{"%1_air"}.arg(MessageFeeds::Types::POSITION_REPORT));
-  friendlyTracksAirJson.insert(MESSAGE_FEEDS_RENDERER, QStringLiteral("mil2525c"));
-  friendlyTracksAirJson.insert(MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("friendlytracks-air.png"));
-  friendlyTracksAirJson.insert(MESSAGE_FEEDS_PLACEMENT, QStringLiteral("absolute"));
-  appendAndAddTrackDisplayDefaults(friendlyTracksAirJson);
-
-  QJsonObject spotRepJson;
-  spotRepJson.insert(MESSAGE_FEEDS_NAME, QStringLiteral("Observation Reports"));
-  spotRepJson.insert(MESSAGE_FEEDS_TYPE, MessageFeeds::Types::SPOTREP);
-  spotRepJson.insert(MESSAGE_FEEDS_RENDERER, QStringLiteral("observation1600.png"));
-  spotRepJson.insert(MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("observation1600.png"));
-  spotRepJson.insert(MESSAGE_FEEDS_PLACEMENT, MESSAGE_FEEDS_PLACEMENT_DEFAULT);
-  appendAndAddTrackDisplayDefaults(spotRepJson);
-
-  QJsonObject sitRepJson;
-  sitRepJson.insert(MESSAGE_FEEDS_NAME, QStringLiteral("Situation Reports"));
-  sitRepJson.insert(MESSAGE_FEEDS_TYPE, MessageFeeds::Types::SITREP);
-  sitRepJson.insert(MESSAGE_FEEDS_RENDERER, QStringLiteral("sitrep1600.png"));
-  sitRepJson.insert(MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("sitrep1600.png"));
-  sitRepJson.insert(MESSAGE_FEEDS_PLACEMENT, MESSAGE_FEEDS_PLACEMENT_DEFAULT);
-  appendAndAddTrackDisplayDefaults(sitRepJson);
-
-  QJsonObject eodReportsJson;
-  eodReportsJson.insert(MESSAGE_FEEDS_NAME, QStringLiteral("EOD Reports"));
-  eodReportsJson.insert(MESSAGE_FEEDS_TYPE, MessageFeeds::Types::EOD);
-  eodReportsJson.insert(MESSAGE_FEEDS_RENDERER, QStringLiteral("eod1600.png"));
-  eodReportsJson.insert(MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("eod1600.png"));
-  eodReportsJson.insert(MESSAGE_FEEDS_PLACEMENT, MESSAGE_FEEDS_PLACEMENT_DEFAULT);
-  appendAndAddTrackDisplayDefaults(eodReportsJson);
-
-  QJsonObject sensorObsJson;
-  sensorObsJson.insert(MESSAGE_FEEDS_NAME, QStringLiteral("Sensor Observations"));
-  sensorObsJson.insert(MESSAGE_FEEDS_TYPE, MessageFeeds::Types::SENSOR_OBS);
-  sensorObsJson.insert(MESSAGE_FEEDS_RENDERER, QStringLiteral("sensorobs1600.png"));
-  sensorObsJson.insert(MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("sensorobs1600.png"));
-  sensorObsJson.insert(MESSAGE_FEEDS_PLACEMENT, MESSAGE_FEEDS_PLACEMENT_DEFAULT);
-  appendAndAddTrackDisplayDefaults(sensorObsJson);
-  m_dsaSettings[MESSAGE_FEEDS_PROPERTYNAME] = messageFeedsJson;
-
-  QJsonObject locationBroadcastJson;
-  locationBroadcastJson.insert(LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE, QString{"%1_land"}.arg(MessageFeeds::Types::POSITION_REPORT));
-  locationBroadcastJson.insert(LOCATION_BROADCAST_CONFIG_PORT, 45679);
-  m_dsaSettings[LOCATION_BROADCAST_CONFIG_PROPERTYNAME] = locationBroadcastJson;
-
-  QJsonObject observationReportJson;
-  observationReportJson.insert(OBSERVATION_REPORT_CONFIG_PORT, 45679);
-  m_dsaSettings[OBSERVATION_REPORT_CONFIG_PROPERTYNAME] = observationReportJson;
 }
 
 /*! \brief internal
@@ -512,52 +387,21 @@ bool DsaController::isConflictingTool(const QString& toolName) const
   return m_conflictingToolNames.contains(toolName);
 }
 
-/*! \brief internal
- *
- * This creates the default values for the config file. If the app
- * starts and there is no config file, it will create one, and write
- * the following values to the file.
- */
-void DsaController::createDefaultSettings()
-{
-  // setup the defaults
-  m_dsaSettings[AppConstants::PROPERTYNAME_ROOT_DATA_DIRECTORY] = DsaUtility::FILE_PATH_CURRENT_DIRECTORY;
-  m_dsaSettings[AppConstants::PROPERTYNAME_USERNAME] = QHostInfo::localHostName();
-  m_dsaSettings[AppConstants::PROPERTYNAME_BASEMAP_DIRECTORY] = QStringLiteral("./BasemapData");
-  m_dsaSettings[AppConstants::PROPERTYNAME_ELEVATION_DIRECTORY] = QStringLiteral("./ElevationData");
-  m_dsaSettings[AppConstants::PROPERTYNAME_SIMULATION_DIRECTORY] = QStringLiteral("./SimulationData");
-  m_dsaSettings[LocationController::PROPERTY_NAME_RESOURCE_DIRECTORY] = QStringLiteral("./ResourceData");
-  m_dsaSettings[AppConstants::PROPERTYNAME_LOCAL_DATA_PATHS] = QStringList{ QStringLiteral("./OperationalData") };
-  m_dsaSettings[AppConstants::PROPERTYNAME_DEFAULT_BASEMAP] = AppConstants::BASEMAP_NAME_TOPOGRAPHIC;
-  m_dsaSettings[AppConstants::PROPERTYNAME_DEFAULT_ELEVATION_SOURCE] = QString("%1/CaDEM.tpk").arg(m_dsaSettings[AppConstants::PROPERTYNAME_ELEVATION_DIRECTORY].toString());
-  m_dsaSettings[LocationController::PROPERTY_NAME_GPX_FILE] = QString("%1/MontereyMounted.gpx").arg(m_dsaSettings[AppConstants::PROPERTYNAME_SIMULATION_DIRECTORY].toString());
-  m_dsaSettings[LocationController::PROPERTY_NAME_SIMULATE_LOCATION] = AppConstants::BOOL_TRUE;
-  m_dsaSettings[LocationController::PROPERTY_NAME_CURRENT_LOCATION_Z_OFFSET] = QStringLiteral("10");
-  m_dsaSettings[LocationController::PROPERTY_NAME_CURRENT_LOCATION_SURFACE_PLACEMENT] = QStringLiteral("Relative");
-  writeDefaultMessageFeeds();
-  m_dsaSettings[AppConstants::PROPERTYNAME_COORDINATE_FORMAT] = Esri::ArcGISRuntime::Toolkit::CoordinateConversionConstants::MGRS_FORMAT;
-  m_dsaSettings[AppConstants::PROPERTYNAME_UNIT_OF_MEASUREMENT] = AppConstants::UNIT_METERS;
-  m_dsaSettings[AppConstants::PROPERTYNAME_USE_GPS_FOR_ELEVATION] = AppConstants::BOOL_TRUE;
-  QJsonObject markupJson;
-  markupJson.insert(QStringLiteral("port"), 45680);
-  m_dsaSettings[AppConstants::PROPERTYNAME_MARKUP_CONFIG] = markupJson;
-  m_dsaSettings[GridController::PROPERTY_NAME_GRID_VISIBLE] = GridController::GRID_VISIBLE_VALUE_DEFAULT;
-  m_dsaSettings[GridController::PROPERTY_NAME_GRID_COLOR_SCHEME] = GridController::GRID_COLOR_SCHEME_VALUE_DEFAULT;
-  writeDefaultConditions();
-  m_dsaSettings[OpenMobileScenePackageController::PACKAGE_DIRECTORY_PROPERTYNAME] = QStringLiteral("./Packages");
-}
-
 /*!
  * \brief Save the app properties to a custom JSON QSettings file.
  */
 void DsaController::saveSettings()
 {
-  QSettings settings(m_configFilePath, m_jsonFormat);
+  if (m_configFilePath.isNull() || m_configFilePath.isEmpty())
+  {
+    return;
+  }
 
-  auto it = m_dsaSettings.cbegin();
-  auto itEnd = m_dsaSettings.cend();
-  for (; it != itEnd; ++it)
-    settings.setValue(it.key(), it.value());
+  QSettings settings(m_configFilePath, m_jsonFormat);
+  std::for_each(m_dsaSettings.constKeyValueBegin(), m_dsaSettings.constKeyValueEnd(), [&](const std::pair<QString, QVariant>& kv)
+  {
+    settings.setValue(kv.first, kv.second);
+  });
 }
 
 void DsaController::writeInitialLocation(const Viewpoint& viewpoint)

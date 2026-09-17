@@ -30,10 +30,12 @@
 #include "Graphic.h"
 #include "GraphicListModel.h"
 #include "GraphicsOverlay.h"
+#include "SceneView.h"
 #include "SimpleLineSymbol.h"
 #include "SimpleRenderer.h"
 #include "SpatialReference.h"
 #include "SymbolTypes.h"
+#include "ToolResourceProvider.h"
 
 // Qt headers
 #include <QFile>
@@ -236,23 +238,6 @@ QStringList MarkupLayer::colors()
   return QStringList{QStringLiteral("#ff0000"), QStringLiteral("#ffd700"),
         QStringLiteral("#32cd32"), QStringLiteral("#00ffff"),
         QStringLiteral("#800080"), QStringLiteral("#ff00ff")};
-}
-
-
-/*!
-  \brief Gets the unknown JSON of this object.
-*/
-QJsonObject MarkupLayer::unknownJson() const
-{
-  return QJsonObject();
-}
-
-/*!
-  \brief Gets the unsupported JSON of this object.
-*/
-QJsonObject MarkupLayer::unsupportedJson() const
-{
-  return QJsonObject();
 }
 
 /*!

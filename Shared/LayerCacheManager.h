@@ -42,7 +42,8 @@ public:
   ~LayerCacheManager();
 
   QString toolName() const override;
-  void setProperties(const QVariantMap& properties) override;
+  void toolInitProperties(const QVariantMap& properties) override;
+  bool shouldSetProperties(const QString& propertyName) override;
 
   void layerToJson(Esri::ArcGISRuntime::Layer* layer);
   void jsonToLayer(const QJsonObject& jsonObject, const int layerIndex = -1);
@@ -77,7 +78,7 @@ private:
   bool m_initialLoadCompleted = false;
   AddLocalDataController* m_localDataController = nullptr;
   Esri::ArcGISRuntime::Scene* m_scene = nullptr;
-  QHash<int, Esri::ArcGISRuntime::Layer*> m_initialLayerCache;
+  QHash<qsizetype, Esri::ArcGISRuntime::Layer*> m_initialLayerCache;
   QStringList m_excludedPaths;
   QVariantMap m_initialSettings;
   QMetaObject::Connection m_layerAddedConnection;

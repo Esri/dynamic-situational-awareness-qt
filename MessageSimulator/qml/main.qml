@@ -44,7 +44,7 @@ ApplicationWindow {
             }
         }
 
-        onErrorOccurred: {
+        onErrorOccurred: (error) => {
             loggingPage.loggingText += "\n" + error;
         }
     }

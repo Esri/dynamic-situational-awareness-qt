@@ -26,6 +26,7 @@
 #include "Camera.h"
 #include "DynamicEntity.h"
 #include "DynamicEntityObservation.h"
+#include "ExploratoryViewshed.h"
 #include "GlobeCameraController.h"
 #include "Graphic.h"
 #include "GraphicsOverlay.h"
@@ -34,10 +35,10 @@
 #include "IdentifyLayerResult.h"
 #include "OrbitLocationCameraController.h"
 #include "RendererSceneProperties.h"
+#include "SceneView.h"
 #include "SimpleMarkerSceneSymbol.h"
 #include "SimpleRenderer.h"
 #include "SymbolTypes.h"
-#include "Viewshed.h"
 
 // Qt headers
 #include <QFuture>
@@ -836,7 +837,7 @@ void ViewshedController::disconnectActiveViewshedSignals()
 {
   if (!m_activeViewshedConns.isEmpty())
   {
-    for (const auto& conn : qAsConst(m_activeViewshedConns))
+    for (const auto& conn : std::as_const(m_activeViewshedConns))
     {
       disconnect(conn);
     }

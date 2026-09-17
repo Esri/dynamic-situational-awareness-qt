@@ -16,8 +16,11 @@
 
 CONFIG(deployment): DEFINES += DEPLOYMENT_BUILD
 
+ARCGIS_RUNTIME_VERSION = 300.1.0
+DEFINES += ARCGIS_MAPS_SDK_VERSION=$$ARCGIS_RUNTIME_VERSION
+
 # Run against the compiled toolkit.
-include($$PWD/../../arcgis-maps-sdk-toolkit-qt/uitools/toolkitcpp.pri)
+include($$PWD/../../arcgis-maps-sdk-toolkit-qt/uitools/toolkitcpp/toolkitcpp.pri)
 
 contains(QMAKE_HOST.os, Windows):{
   iniPath = $$(ALLUSERSPROFILE)\EsriRuntimeQt\ArcGIS Runtime SDK for Qt $${ARCGIS_RUNTIME_VERSION}.ini
@@ -33,5 +36,3 @@ priLocation = $$replace(cleanDirPath, '"', "")
 !include($$priLocation/sdk/ideintegration/arcgis_runtime_qml_cpp.pri) {
   message("Error. Cannot locate ArcGIS Runtime PRI file")
 }
-
-

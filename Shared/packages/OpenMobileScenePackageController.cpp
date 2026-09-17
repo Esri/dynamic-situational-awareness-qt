@@ -25,6 +25,7 @@
 #include "Item.h"
 #include "MapTypes.h"
 #include "MobileScenePackage.h"
+#include "MobileScenePackagesListModel.h"
 #include "Scene.h"
 
 // Qt headers
@@ -36,7 +37,7 @@
 #include <QQmlEngine>
 
 // DSA headers
-#include "MobileScenePackagesListModel.h"
+#include "ToolResourceProvider.h"
 #include "ToolManager.h"
 
 using namespace Esri::ArcGISRuntime;
@@ -94,7 +95,7 @@ QString OpenMobileScenePackageController::toolName() const
  *  \li SceneIndex. The index of the scene in the current package.
  * \endlist
  */
-void OpenMobileScenePackageController::setProperties(const QVariantMap& properties)
+void OpenMobileScenePackageController::toolInitProperties(const QVariantMap& properties)
 {
   const QString newPackageDirectoryPath = properties.value(PACKAGE_DIRECTORY_PROPERTYNAME).toString();
   const bool dataPathChanged = setPackageDataPath(newPackageDirectoryPath);
@@ -116,6 +117,19 @@ void OpenMobileScenePackageController::setProperties(const QVariantMap& properti
   {
     loadScene();
   }
+}
+
+bool OpenMobileScenePackageController::shouldSetProperties(const QString& propertyName)
+{
+  // list all property names that should cause the tool to re-initialize
+  static const std::unordered_set<QString> propertyNames
+  {
+    PACKAGE_DIRECTORY_PROPERTYNAME,
+    CURRENT_PACKAGE_PROPERTYNAME,
+    SCENE_INDEX_PROPERTYNAME
+  };
+
+  return setContainsString(propertyNames, propertyName);
 }
 
 /*!
@@ -314,10 +328,10 @@ void OpenMobileScenePackageController::loadMobileScenePackage(const QString& pac
     const auto& packageTitle = packageItem->title();
     m_packagesModel->setTitleAndDescription(packageName, packageTitle, packageItem->description());
 
-    auto scenes = package->scenes();
+    const auto scenes = package->scenes();
     QStringList sceneNames;
     sceneNames.reserve(scenes.length());
-    for (auto* scene : scenes)
+    for (const auto* scene : scenes)
     {
       if (!scene)
         continue;

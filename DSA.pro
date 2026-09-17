@@ -24,6 +24,7 @@ CONFIG += ordered
 
 SUBDIRS += \
   Handheld \
+  UnitTests \
   Vehicle
 
 !android:!ios {

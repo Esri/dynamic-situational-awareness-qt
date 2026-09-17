@@ -116,11 +116,21 @@ void CoordinateConversionToolProxy::setInInputMode(bool mode)
  * configuration data read from JSON. Here we do a lookup of all formats and
  * apply the one with the matching name to our inputFormat result object.
  */
-void CoordinateConversionToolProxy::setProperties(const QVariantMap& properties)
+void CoordinateConversionToolProxy::toolInitProperties(const QVariantMap& properties)
 {
   const auto formats = m_controller->coordinateFormats();
   if (!formats)
     return;
+
+  // manually set the available conversion option formats to be owned by the
+  // proxy so it will not be parented by the QQmlEngine. this may be fixed
+  // in a future release of the Toolkit.
+  for (int i = 0; i < formats->rowCount(); ++i)
+  {
+    QModelIndex index = formats->index(i);
+    if (QObject* o = formats->element<CoordinateConversionOption>(index); o)
+      o->setParent(this);
+  }
 
   auto findFormatIt = properties.find("CoordinateFormat");
   if (findFormatIt != properties.end())
@@ -137,6 +147,11 @@ void CoordinateConversionToolProxy::setProperties(const QVariantMap& properties)
       }
     }
   }
+}
+
+bool CoordinateConversionToolProxy::shouldSetProperties(const QString& propertyName)
+{
+  return (propertyName == QStringLiteral("CoordinateFormat"));
 }
 
 /*!

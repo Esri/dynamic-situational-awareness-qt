@@ -22,14 +22,23 @@
 #include <QMouseEvent>
 #include <QObject>
 
+// C++ API headers
+#include "Popup.h"
+
 // DSA headers
 #include "AbstractTool.h"
+
+// STL headers
+#include <memory>
+#include <vector>
+#include <unordered_map>
+
 
 namespace Esri::ArcGISRuntime {
   class GeoElement;
   class IdentifyGraphicsOverlayResult;
   class IdentifyLayerResult;
-  class PopupManager;
+  class Popup;
 }
 
 namespace Dsa {
@@ -38,8 +47,9 @@ class IdentifyController : public AbstractTool
 {
   Q_OBJECT
 
-  Q_PROPERTY(bool busy READ busy NOTIFY busyChanged)
-  Q_PROPERTY(QVariantList popupManagers READ popupManagers NOTIFY popupManagersChanged)
+  Q_PROPERTY(Esri::ArcGISRuntime::Popup* popup READ popup NOTIFY popupChanged)
+  Q_PROPERTY(bool canNext READ canNext NOTIFY popupChanged)
+  Q_PROPERTY(bool canPrev READ canPrev NOTIFY popupChanged)
 
 public:
 
@@ -48,27 +58,25 @@ public:
 
   QString toolName() const override;
 
-  void setActive(bool active) override;
-
-  bool busy() const;
-  QVariantList popupManagers() const;
-
-  void showPopup(Esri::ArcGISRuntime::GeoElement* geoElement, const QString& popupTitle);
   void showPopups(const QHash<QString, QList<Esri::ArcGISRuntime::GeoElement*>>& geoElementsByTitle);
-
-private slots:
-  void onMouseClicked(QMouseEvent& event);
+  Q_INVOKABLE void nextPopup();
+  Q_INVOKABLE void prevPopup();
+  Q_INVOKABLE void clearPopups();
 
 signals:
-  void busyChanged();
-  void popupManagersChanged();
+  void popupChanged();
 
 private:
   bool addGeoElementPopup(Esri::ArcGISRuntime::GeoElement* geoElement, const QString& popupTitle);
+  Esri::ArcGISRuntime::Popup* popup() const;
+  bool canNext() const;
+  bool canPrev() const;
+  Esri::ArcGISRuntime::PopupDefinition* getPopupDefinitionForUrl(const QString& url, const QString& group = "");
 
-  bool m_isBusy = false;
   double m_tolerance = 5.0;
-  QList<Esri::ArcGISRuntime::PopupManager*> m_popupManagers;
+  int m_currentPopupIndex = -1;
+  std::vector<Esri::ArcGISRuntime::Popup*> m_popups;
+  std::unordered_map<QString, std::unordered_map<QString, Esri::ArcGISRuntime::PopupDefinition*>> m_popupDefinitions;
 };
 
 // some shortcuts for working with multiple identify operation futures in a single 'QtFuture::whenAll' handler

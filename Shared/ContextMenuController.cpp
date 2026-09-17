@@ -19,9 +19,13 @@
 
 #include "ContextMenuController.h"
 
-// C++ API headers
+// C++ API
 #include "DynamicEntity.h"
+#include "DynamicEntityIterator.h"
+#include "DynamicEntityQueryParameters.h"
+#include "DynamicEntityQueryResult.h"
 #include "DynamicEntityObservation.h"
+#include "GlobeCameraController.h"
 #include "Graphic.h"
 #include "GraphicsOverlay.h"
 #include "IdentifyGraphicsOverlayResult.h"
@@ -29,10 +33,11 @@
 #include "LayerContent.h"
 #include "MapView.h"
 #include "SceneView.h"
-
-// DSA headers
-#include "AppConstants.h"
+#include "Viewpoint.h"
+// Toolkit
 #include "CoordinateConversionController.h"
+// DSA
+#include "AppConstants.h"
 #include "CoordinateConversionToolProxy.h"
 #include "FollowPositionController.h"
 #include "GeoElementUtils.h"
@@ -40,6 +45,7 @@
 #include "IdentifyController.h"
 #include "LayerResultsManager.h"
 #include "LineOfSightController.h"
+#include "MessageFeedsController.h"
 #include "ObservationReportController.h"
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
@@ -48,14 +54,6 @@
 using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
-
-const QString ContextMenuController::COORDINATES_OPTION = "Coordinates";
-const QString ContextMenuController::ELEVATION_OPTION = "Elevation";
-const QString ContextMenuController::FOLLOW_OPTION = "Follow";
-const QString ContextMenuController::IDENTIFY_OPTION = "Identify";
-const QString ContextMenuController::LINE_OF_SIGHT_OPTION = "Line of sight";
-const QString ContextMenuController::VIEWSHED_OPTION = "Viewshed";
-const QString ContextMenuController::OBSERVATION_REPORT_OPTION = "Observation";
 
 /*!
   \class Dsa::ContextMenuController
@@ -91,13 +89,77 @@ ContextMenuController::ContextMenuController(QObject* parent /* = nullptr */):
   AbstractTool(parent),
   m_options(new QStringListModel(this))
 {
-  ToolResourceProvider* resourceProvider = ToolResourceProvider::instance();
+  ToolResourceProvider* trp = ToolResourceProvider::instance();
+  connect(trp, &ToolResourceProvider::geoViewChanged, this, [this]()
+  {
+    if (m_messageFeedsControllerConnection)
+      return;
+
+    MessageFeedsController* mfc = ToolManager::instance().tool<MessageFeedsController>();
+    m_messageFeedsControllerConnection = connect(mfc,
+                                                 &MessageFeedsController::entitySelected,
+                                                 this,
+                                                 [this](const QString& entityId, MessageFeed* messageFeed, const QString& action)
+    {
+      setContextActive(false);
+      clearOptions();
+
+      GeoView* geoView = ToolResourceProvider::instance()->geoView();
+      if (!geoView || !messageFeed)
+        return;
+
+      // stop if following something already by replacing the camera controller
+      SceneView* sceneView = dynamic_cast<SceneView*>(geoView);
+      if (!sceneView)
+        return;
+      if (CameraController* cameraController = sceneView->cameraController(); cameraController)
+      {
+        sceneView->setCameraController(new GlobeCameraController(this));
+        delete cameraController;
+      }
+
+      DynamicEntityQueryParameters* params = new DynamicEntityQueryParameters(this);
+      params->setTrackIds(QStringList{entityId});
+      messageFeed->queryDynamicEntitiesAsync(params, this).then(this, [this, action, geoView, params, messageFeed](DynamicEntityQueryResult* result)
+      {
+        params->deleteLater();
+        const QList<DynamicEntity*> entities = result->iterator().asList();
+        if (!entities.empty())
+        {
+          QList<GeoElement*> geoElements{};
+          std::for_each(std::cbegin(entities), std::cend(entities), [&](DynamicEntity* entity)
+          {
+            geoElements.push_back(entity);
+          });
+          setContextScreenPosition(QPoint{geoView->widthInPixels() / 2, geoView->heightInPixels() / 2});
+          m_contextGeoElements.insert(messageFeed->feedName(), geoElements);
+
+          if (action.isEmpty())
+          {
+            geoView->setViewpointAsync(Viewpoint{geoElements.first()->geometry()}, 0.1f).then(this, [this](bool)
+            {
+              selectOption(OPTION_FOLLOW);
+            });
+          }
+          else if (action == OPTION_ZOOM_TO)
+          {
+            geoView->setViewpointAsync(Viewpoint{geoElements.first()->geometry()}, 0.1f);
+          }
+          else
+          {
+            selectOption(action);
+          }
+        }
+
+        result->deleteLater();
+      });
+    });
+  });
+
   // setup connection to handle mouse-clicking in the view (used to trigger the identify tasks)
-  connect(resourceProvider, &ToolResourceProvider::mousePressedAndHeld,
-          this, &ContextMenuController::onMousePressedAndHeld);
+  connect(trp, &ToolResourceProvider::mousePressedAndHeld, this, &ContextMenuController::onMousePressedAndHeld);
 
   m_active = true;
-
   ToolManager::instance().addTool(this);
 }
 
@@ -133,13 +195,6 @@ void ContextMenuController::onMousePressedAndHeld(QMouseEvent& event)
     return;
 
   clearOptions();
-  for (const auto& feats : std::as_const(m_contextFeatures))
-    qDeleteAll(feats);
-  m_contextFeatures.clear();
-
-  for (const auto& graphics : std::as_const(m_contextGraphics))
-    qDeleteAll(graphics);
-  m_contextGraphics.clear();
 
   GeoView* geoView = ToolResourceProvider::instance()->geoView();
   if (!geoView)
@@ -197,14 +252,14 @@ void ContextMenuController::setContextLocation(const Point& location)
 
   m_contextLocation = location;
 
-  addOption(COORDINATES_OPTION);
+  addOption(OPTION_COORDINATES);
 
   if (std::isnan(m_contextLocation.z()))
     return;
 
-  addOption(ELEVATION_OPTION);
-  addOption(VIEWSHED_OPTION);
-  addOption(OBSERVATION_REPORT_OPTION);
+  addOption(OPTION_ELEVATION);
+  addOption(OPTION_VIEWSHED);
+  addOption(OPTION_OBSERVATION_REPORT);
 }
 
 /*!
@@ -232,7 +287,28 @@ void ContextMenuController::addOption(const QString& option)
  */
 void ContextMenuController::clearOptions()
 {
-  m_options->setStringList(QStringList());
+  m_options->setStringList(QStringList{});
+
+  for (const QList<GeoElement*>& geoElements : std::as_const(m_contextGeoElements))
+  {
+    if (geoElements.empty())
+      continue;
+
+    for (GeoElement* ge : geoElements)
+    {
+      if (!ge)
+        continue;
+
+      // anything that was previously identified from the view
+      // that is owned by the controller should be deleted
+      if (QObject* o = GeoElementUtils::toQObject(ge); o)
+      {
+        if (o->parent() == this)
+          o->deleteLater();
+      }
+    }
+  }
+  m_contextGeoElements.clear();
 }
 
 /*!
@@ -263,43 +339,40 @@ void ContextMenuController::setResultTitle(const QString& resultTitle)
  */
 void ContextMenuController::processGeoElements()
 {
-  if (m_contextFeatures.isEmpty() && m_contextGraphics.isEmpty())
+  if (m_contextGeoElements.isEmpty())
     return;
 
   // if we have at least 1 GeoElement, we can identify
-  addOption(IDENTIFY_OPTION);
+  addOption(OPTION_IDENTIFY);
 
-  int pointGraphicsCount = 0;
-  for (const auto& geoElements : std::as_const(m_contextGraphics))
+  quint8 pointGeoElementCount = 0;
+  const GeoElement* lastPointGeoElementFound = nullptr;
+  for (const QList<GeoElement*>& geoElements : std::as_const(m_contextGeoElements))
   {
-    for (const auto* geoElement : geoElements)
+    for (const GeoElement* geoElement : geoElements)
     {
       if (geoElement->geometry().geometryType() == GeometryType::Point)
-        pointGraphicsCount++;
-    }
-  }
-
-  if (pointGraphicsCount == 1) // if we have exactly 1 point graphic, we can follow it
-    addOption(FOLLOW_OPTION);
-
-  if (pointGraphicsCount > 0) // if we have at least 1 point geometry, we can perform LOS
-  {
-    addOption(LINE_OF_SIGHT_OPTION);
-    return;
-  }
-
-  // if were have 0 point graphics, check whether we have any point features
-  for (const auto& geoElements : std::as_const(m_contextFeatures))
-  {
-    for (const auto* geoElement : geoElements)
-    {
-      if (geoElement && geoElement->geometry().geometryType() == GeometryType::Point)
       {
-        addOption(LINE_OF_SIGHT_OPTION);
-        return;
+        lastPointGeoElementFound = geoElement;
+        if (++pointGeoElementCount > 1)
+          break;
       }
     }
+
+    // no need to continue searching the results if more than
+    // one GeoElement of type point has already been found
+    if (pointGeoElementCount > 1)
+      break;
   }
+
+  if (pointGeoElementCount == 1) // if we have exactly 1 point GeoElement and it is a DynamicEntity, we can follow it
+  {
+    if (const auto* de = dynamic_cast<const DynamicEntity*>(lastPointGeoElementFound); de)
+      addOption(OPTION_FOLLOW);
+  }
+
+  if (pointGeoElementCount > 0) // if we have at least 1 point geometry, we can perform LOS
+    addOption(OPTION_LINE_OF_SIGHT);
 }
 
 void ContextMenuController::invokeIdentifyOnGeoView()
@@ -309,54 +382,87 @@ void ContextMenuController::invokeIdentifyOnGeoView()
     return;
 
   // invoke the identify operations on the geoview for layers and graphics overlays
-  auto layers_identify = geoView->identifyLayersAsync(m_contextScreenPosition, 5.0, false, -1, this);
-  auto graphics_overlay_identify = geoView->identifyGraphicsOverlaysAsync(m_contextScreenPosition, 5.0, false, -1, this);
+  auto idenfityLayers = geoView->identifyLayersAsync(m_contextScreenPosition, 5.0, false, -1, this);
+  auto identifyGraphicsOverlays = geoView->identifyGraphicsOverlaysAsync(m_contextScreenPosition, 5.0, false, -1, this);
 
-  QtFuture::whenAll(layers_identify, graphics_overlay_identify).then(this, [this](const QList<IdentifyResultsVariant::FutureType> &identify_results)
+  QtFuture::whenAll(idenfityLayers, identifyGraphicsOverlays).then(this, [this](const QList<IdentifyResultsVariant::FutureType>& identifyResults)
   {
-    for (const IdentifyResultsVariant::FutureType& identify_result : identify_results)
+    for (const IdentifyResultsVariant::FutureType& identifyResult : identifyResults)
     {
-      if (identify_result.index() == IdentifyResultsVariant::Types::LAYERS)
+      if (identifyResult.index() == IdentifyResultsVariant::Types::LAYERS)
       {
-        LayerResultsManager resultsManager(std::get<IdentifyResultsVariant::Types::LAYERS>(identify_result).result());
-        for (auto* result : resultsManager.m_results)
+        const QList<Esri::ArcGISRuntime::IdentifyLayerResult*> results = std::get<IdentifyResultsVariant::Types::LAYERS>(identifyResult).result();
+        for (IdentifyLayerResult* result : results)
         {
           if (!result)
             continue;
 
-          auto geoElements = result->geoElements();
-          // set the GeoElements to be managed by the tool
-          GeoElementUtils::setParent(geoElements, this);
+          const QList<GeoElement*> geoElementsAll = result->geoElements();
+          if (geoElementsAll.isEmpty())
+          {
+            result->deleteLater();
+            continue;
+          }
+
+          QList<GeoElement*> geoElementsToOwn{};
+          QList<GeoElement*> geoElements{};
+          for (GeoElement* ge : geoElementsAll)
+          {
+            // any non-observations (Feature, etc) should be owned
+            DynamicEntityObservation* deo = dynamic_cast<DynamicEntityObservation*>(ge);
+            if (!deo)
+            {
+              geoElementsToOwn.append(ge);
+              geoElements.append(ge);
+              continue;
+            }
+
+            // observations other than the latest at the time of the click
+            // should also be owned
+            DynamicEntity* de = deo->dynamicEntity();
+            if (de->latestObservation()->observationId() != deo->observationId())
+            {
+              geoElementsToOwn.append(deo);
+              geoElements.append(deo);
+              continue;
+            }
+
+            // the remaining case is that the observation was itself the latest
+            // so we add the dynamic entity instead of the observation element
+            // and mark the observation as no longer needed
+            geoElements.append(de);
+            deo->deleteLater();
+          }
+
+          // set the observations and any other non-DynamicEntity GeoElements to be owned by the tool
+          GeoElementUtils::setParent(geoElementsToOwn, this);
 
           // add the geoElements to the context hash using the layer name as the key
-          m_contextFeatures.insert(result->layerContent()->name(), geoElements);
+          m_contextGeoElements.insert(result->layerContent()->name(), geoElements);
+          result->deleteLater();
         }
       }
-      else if (identify_result.index() == IdentifyResultsVariant::Types::GRAPHICS)
+      else if (identifyResult.index() == IdentifyResultsVariant::Types::GRAPHICS)
       {
-        GraphicsOverlaysResultsManager resultsManager(std::get<IdentifyResultsVariant::Types::GRAPHICS>(identify_result).result());
-        for (auto* result : resultsManager.m_results)
+        GraphicsOverlaysResultsManager resultsManager(std::get<IdentifyResultsVariant::Types::GRAPHICS>(identifyResult).result());
+        for (IdentifyGraphicsOverlayResult* result : std::as_const(resultsManager.m_results))
         {
           if (!result)
-            continue;
-
-          const auto graphics = result->graphics();
-          if (graphics.isEmpty())
             continue;
 
           // don't process the location on the context menu
-          if (result->graphicsOverlay()->overlayId() == AppConstants::LAYER_NAME_SCENEVIEW_LOCATION)
+          if (result->graphicsOverlay()->overlayId() == AppConstants::PROPERTYNAME_LAYER_NAME_SCENEVIEW_LOCATION)
             continue;
 
-          QList<GeoElement*> geoElements;
-          for(auto* geoElement : graphics)
-          {
-            GeoElementUtils::setParent(geoElement, this); // set the GeoElements to be managed by the tool
-            geoElements.append(geoElement);
-          }
+          const auto geoElements = result->geoElements();
+          if (geoElements.isEmpty())
+            continue;
+
+          // set the GeoElements to be managed by the tool
+          GeoElementUtils::setParent(geoElements, this);
 
           // add the geoElements to the context hash using the overlay id as the key
-          m_contextGraphics.insert(result->graphicsOverlay()->overlayId(), geoElements);
+          m_contextGeoElements.insert(result->graphicsOverlay()->overlayId(), geoElements);
         }
       }
     }
@@ -408,22 +514,25 @@ void ContextMenuController::selectOption(const QString& option)
 {
   setContextActive(false);
 
-  if (option == ELEVATION_OPTION)
+  if (option == OPTION_ELEVATION)
   {
     setResultTitle(QStringLiteral("Elevation"));
     setResult(QString::number(m_contextLocation.z()));
   }
-  else if (option == IDENTIFY_OPTION)
+  else if (option == OPTION_IDENTIFY)
   {
     IdentifyController* identifyTool = ToolManager::instance().tool<IdentifyController>();
     if (!identifyTool)
       return;
 
-    auto combinedGeoElementsByTitle = m_contextGraphics;
-    combinedGeoElementsByTitle.insert(m_contextFeatures);
-    identifyTool->showPopups(combinedGeoElementsByTitle);
+    // transfer the geoelements to the identify controller which takes ownership of them
+    identifyTool->showPopups(m_contextGeoElements);
+
+    // clear the list so that the elements will not be cleaned up by subsequent
+    // long presses on the geoview
+    m_contextGeoElements.clear();
   }
-  else if (option == VIEWSHED_OPTION)
+  else if (option == OPTION_VIEWSHED)
   {
     ViewshedController* viewshedTool = ToolManager::instance().tool<ViewshedController>();
     if (!viewshedTool)
@@ -434,26 +543,31 @@ void ContextMenuController::selectOption(const QString& option)
     viewshedTool->finishActiveViewshed();
     viewshedTool->setActiveMode(ViewshedController::ViewshedActiveMode::NoActiveMode);
   }
-  else if (option == FOLLOW_OPTION)
+  else if (option == OPTION_FOLLOW)
   {
     FollowPositionController* followTool = ToolManager::instance().tool<FollowPositionController>();
     if (!followTool)
       return;
 
     // follow the 1st point graphic (should be only 1)
-    for(const auto& geoElements : std::as_const(m_contextGraphics))
+    for(const auto& geoElements : std::as_const(m_contextGeoElements))
     {
       for (auto* geoElement : geoElements)
       {
         if (!geoElement || geoElement->geometry().geometryType() != GeometryType::Point)
           continue;
 
-        followTool->followGeoElement(geoElement);
+        // follow the 'parent' DynamicEntity if the type was a DynamicEntityObservation
+        auto* geoElementToFollow = geoElement;
+        if (const auto* observation = dynamic_cast<DynamicEntityObservation*>(geoElement); observation)
+          geoElementToFollow = static_cast<DynamicEntity*>(observation->dynamicEntity());
+
+        followTool->followGeoElement(geoElementToFollow);
         return;
       }
     }
   }
-  else if (option == COORDINATES_OPTION)
+  else if (option == OPTION_COORDINATES)
   {
     auto coordinateTool = ToolManager::instance().tool<CoordinateConversionToolProxy>();
     if (!coordinateTool)
@@ -463,7 +577,7 @@ void ContextMenuController::selectOption(const QString& option)
     coordinateTool->controller()->setInPickingMode(true);
     coordinateTool->setActive(true);
   }
-  else if (option == LINE_OF_SIGHT_OPTION)
+  else if (option == OPTION_LINE_OF_SIGHT)
   {
     LineOfSightController* lineOfSightTool = ToolManager::instance().tool<LineOfSightController>();
     if (!lineOfSightTool)
@@ -495,10 +609,9 @@ void ContextMenuController::selectOption(const QString& option)
       }
     };
 
-    losFunc(m_contextGraphics);
-    losFunc(m_contextFeatures);
+    losFunc(m_contextGeoElements);
   }
-  else if (option == OBSERVATION_REPORT_OPTION)
+  else if (option == OPTION_OBSERVATION_REPORT)
   {
     Dsa::ObservationReportController* observationReportTool = ToolManager::instance().tool<Dsa::ObservationReportController>();
     if (!observationReportTool)

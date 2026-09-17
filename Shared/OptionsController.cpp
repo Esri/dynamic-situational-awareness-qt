@@ -146,14 +146,14 @@ QString OptionsController::toolName() const
 /*!
  \brief Sets \a properties from the configuration file.
  */
-void OptionsController::setProperties(const QVariantMap& properties)
+void OptionsController::toolInitProperties(const QVariantMap& properties)
 {
   // access tool properties from the config
   m_coordinateFormat = properties["CoordinateFormat"].toString();
   if (m_coordinateFormat.isEmpty())
     m_coordinateFormat = Esri::ArcGISRuntime::Toolkit::CoordinateConversionConstants::DEGREES_MINUTES_SECONDS_FORMAT;
 
-  m_unitOfMeasurement = properties[AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME].toString();
+  m_unitOfMeasurement = properties[AppConstants::PROPERTYNAME_UNIT_OF_MEASUREMENT].toString();
   if (m_unitOfMeasurement.isEmpty())
     m_unitOfMeasurement = AppConstants::UNIT_METERS;
 
@@ -163,12 +163,25 @@ void OptionsController::setProperties(const QVariantMap& properties)
   m_initialFormatIndex = m_coordinateFormatOptions.indexOf(m_coordinateFormat);
   emit initialFormatIndex();
 
-  auto userNameFindIt = properties.find(AppConstants::USERNAME_PROPERTYNAME);
+  auto userNameFindIt = properties.find(AppConstants::PROPERTYNAME_USERNAME);
   if (userNameFindIt != properties.end())
     setUserName(userNameFindIt.value().toString());
 
   // get access to the various tool controllers
   getUpdatedTools();
+}
+
+bool OptionsController::shouldSetProperties(const QString& propertyName)
+{
+  // list all property names that should cause the tool to re-initialize
+  static const std::unordered_set<QString> propertyNames
+  {
+    QStringLiteral("CoordinateFormat"),
+    AppConstants::PROPERTYNAME_UNIT_OF_MEASUREMENT,
+    AppConstants::PROPERTYNAME_USERNAME
+  };
+
+  return setContainsString(propertyNames, propertyName);
 }
 
 /*!
@@ -253,7 +266,7 @@ void OptionsController::setUserName(const QString& userName)
 
   m_userName = userName;
   emit userNameChanged();
-  emit propertyChanged(AppConstants::USERNAME_PROPERTYNAME, m_userName);
+  emit propertyChanged(AppConstants::PROPERTYNAME_USERNAME, m_userName);
 }
 
 /*!

@@ -1,0 +1,72 @@
+{
+  "name": "sitrep",
+  "version": "1.2",
+  "attribute_name_id": "_id",
+  "attribute_name_search": "uniquedesignation",
+  "attributes": [
+    {
+      "type": "string",
+      "name": "_type"
+    },
+    {
+      "type": "string",
+      "name": "_action"
+    },
+    {
+      "type": "string",
+      "name": "_id"
+    },
+    {
+      "type": "integer",
+      "name": "_wkid"
+    },
+    {
+      "type": "string",
+      "name": "_control_points"
+    },
+    {
+      "type": "string",
+      "name": "datetimesubmitted"
+    },
+    {
+      "type": "string",
+      "name": "uniquedesignation"
+    },
+    {
+      "type": "string",
+      "name": "personnel"
+    },
+    {
+      "type": "string",
+      "name": "activity"
+    },
+    {
+      "type": "string",
+      "name": "effective"
+    },
+    {
+      "type": "string",
+      "name": "own_situation"
+    },
+    {
+      "type": "string",
+      "name": "situation_overview"
+    },
+    {
+      "type": "string",
+      "name": "operations"
+    },
+    {
+      "type": "string",
+      "name": "isr"
+    },
+    {
+      "type": "string",
+      "name": "sustainment"
+    },
+    {
+      "type": "string",
+      "name": "comms"
+    }
+  ]
+}

@@ -19,243 +19,126 @@
 
 #include "IdentifyController.h"
 
-// C++ API headers
+// C++ API
 #include "AttributeListModel.h"
+#include "DynamicEntity.h"
+#include "DynamicEntityObservation.h"
+#include "FieldsPopupElement.h"
 #include "GeoElement.h"
 #include "GeoView.h"
-#include "Graphic.h"
-#include "GraphicsOverlay.h"
-#include "IdentifyGraphicsOverlayResult.h"
-#include "IdentifyLayerResult.h"
-#include "LayerContent.h"
 #include "Popup.h"
-#include "PopupAttributeListModel.h"
 #include "PopupDefinition.h"
+#include "PopupElement.h"
+#include "PopupExpression.h"
 #include "PopupField.h"
 #include "PopupFieldFormat.h"
-#include "PopupManager.h"
-
-// DSA headers
-#include "GraphicsOverlaysResultsManager.h"
-#include "LayerResultsManager.h"
+#include "PopupFieldListModel.h"
+#include "PopupTypes.h"
+// DSA
+#include "GeoElementUtils.h"
+#include "MessageFeedConstants.h"
 #include "ToolManager.h"
-#include "ToolResourceProvider.h"
+// Qt
+#include <QFile>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
 
-/*!
-  \class Dsa::IdentifyController
-  \inmodule Dsa
-  \inherits AbstractTool
-  \brief Tool controller for identifying GeoElements.
- */
-
-/*!
-  \brief Constructor accepting an optional \a parent.
- */
 IdentifyController::IdentifyController(QObject* parent /* = nullptr */):
   AbstractTool(parent)
 {
-  // setup connection to handle mouse-clicking in the view (used to trigger the identify tasks)
-  connect(ToolResourceProvider::instance(), &ToolResourceProvider::mouseClicked,
-          this, &IdentifyController::onMouseClicked);
-
   ToolManager::instance().addTool(this);
 }
 
-/*!
-  \brief Destructor.
- */
-IdentifyController::~IdentifyController()
-{
-}
+IdentifyController::~IdentifyController() = default;
 
-/*!
-  \brief The name of this tool.
- */
 QString IdentifyController::toolName() const
 {
   return QStringLiteral("identify");
 }
 
 /*!
-  \brief Sets whether this tool should be \a active or not.
-
-  When active, the tool will kick off identify tasks for graphics and feataures when
-  it recieves a mouse-clcik in the view.
- */
-void IdentifyController::setActive(bool active)
-{
-  if (active == m_active)
-    return;
-
-  m_active = active;
-  emit activeChanged();
-}
-
-/*!
-  \property IdentifyController::busy
-  \brief Returns whether the tool is busy or not (e.g. whether identify tasks are running).
- */
-bool IdentifyController::busy() const
-{
-  return m_isBusy;
-}
-
-/*!
-  \property IdentifyController::popupManagers
-  \brief Returns a QVariantList of \l Esri::ArcGISRuntime::PopupManager which can be displayed in the view.
-
-  For example, this can be passed to a \l PopupView or \l PopupStackView for display.
- */
-QVariantList IdentifyController::popupManagers() const
-{
-  QVariantList res;
-
-  for (PopupManager* mgr : m_popupManagers)
-  {
-    QVariant v = QVariant::fromValue(mgr);
-    res.push_back(v);
-  }
-
-  return res;
-}
-
-/*!
-  \brief Show the popup for \a geoElement with the title \a popupTitle.
- */
-void IdentifyController::showPopup(GeoElement* geoElement, const QString& popupTitle)
-{
-  if (!geoElement)
-    return;
-
-  m_popupManagers.clear();
-  emit popupManagersChanged();
-  addGeoElementPopup(geoElement, popupTitle);
-  emit popupManagersChanged();
-}
-
-/*!
-  \brief Show popups for all of the \a geoElementsByTitle.
-
-  A popup will be created for each \l Esri::ArcGISRuntime::GeoElement in the QHash,
-  with the string key as the title.
+ * \brief Creates popups for the GeoElements and takes ownership of any non-DynamicEntities.
  */
 void IdentifyController::showPopups(const QHash<QString, QList<GeoElement*>>& geoElementsByTitle)
 {
+  clearPopups();
+
   if (geoElementsByTitle.isEmpty())
-    return;
-
-  m_popupManagers.clear();
-  emit popupManagersChanged();
-
-  for (auto it = geoElementsByTitle.cbegin(); it != geoElementsByTitle.cend(); ++it)
   {
-    const QString& popupTitle = it.key();
-    for (GeoElement* geoElement : qAsConst(it.value()))
-      addGeoElementPopup(geoElement, popupTitle);
+    emit popupChanged();
+    return;
   }
 
-  emit popupManagersChanged();
-}
-
-/*!
-  \brief Handles a mouse-click event in the view - used to trigger identify graphics and features tasks.
- */
-void IdentifyController::onMouseClicked(QMouseEvent& event)
-{
-  // ignore the event if the tool is not active.
-  if (!isActive())
-    return;
-
-  // only consider left clicks (or taps) onn the view.
-  if (event.button() != Qt::MouseButton::LeftButton)
-    return;
-
-  // Ignore the event if the tool is currently running tasks.
-  if (busy())
-    return;
-
-  auto* geoView = ToolResourceProvider::instance()->geoView();
-  if (!geoView)
-    return;
-
-  // start new identifyLayers and identifyGraphicsOverlays tasks at the x and y position of the event and using the
-  // specifed tolerance (m_tolerance) to determine how accurate a hit-test to perform.
-  // invoke the identify operations on the geoview for layers and graphics overlays
-  auto identify_layers = geoView->identifyLayersAsync(event.position(), m_tolerance, false, -1, this);
-  auto identify_graphics = geoView->identifyGraphicsOverlaysAsync(event.position(), m_tolerance, false, -1, this);
-
-  // respond once all QFutures are complete (includes any cancel or failure as well)
-  QtFuture::whenAll(identify_layers, identify_graphics).then(this, [this](const QList<IdentifyResultsVariant::FutureType> &identify_results)
+  for (const auto& [title, geoElements] : geoElementsByTitle.asKeyValueRange())
   {
-    m_isBusy = true;
-    emit busyChanged();
-    // abort if tool is no longer the active tool
-    if (!isActive())
-      return;
+    for (auto* geoElement : geoElements)
+      addGeoElementPopup(geoElement, title);
+  }
 
-    // iterate over each type in the results variant
-    bool anyAdded = false;
-    for (const IdentifyResultsVariant::FutureType& identify_result : identify_results)
-    {
-      if (identify_result.index() == IdentifyResultsVariant::Types::LAYERS)
-      {
-        LayerResultsManager resultsManager(std::get<IdentifyResultsVariant::Types::LAYERS>(identify_result).result());
-        for (auto* result : resultsManager.m_results)
-        {
-          if (!result)
-            continue;
+  // verify at least one popup was added and set the pointer to the start
+  if (!m_popups.empty())
+    m_currentPopupIndex = 0;
 
-          const auto& layerName = result->layerContent()->name();
-          for (auto* geoElement : result->geoElements())
-          {
-            if (addGeoElementPopup(geoElement, layerName))
-              anyAdded = true;
-          }
-        }
-      }
-      else if (identify_result.index() == IdentifyResultsVariant::Types::GRAPHICS)
-      {
-        GraphicsOverlaysResultsManager resultsManager(std::get<IdentifyResultsVariant::Types::GRAPHICS>(identify_result).result());
-        for (auto* result : resultsManager.m_results)
-        {
-          if (!result)
-            continue;
-
-          const auto& layerName = result->graphicsOverlay()->overlayId();
-          for (auto* graphic : result->graphics())
-          {
-            if (!addGeoElementPopup(graphic, layerName))
-              anyAdded = true;
-          }
-        }
-      }
-    }
-
-    m_isBusy = false;
-    emit busyChanged();
-
-    // emit popup manager changed signal when anyresults are found
-    if (anyAdded)
-      emit popupManagersChanged();
-  });
-
-  emit busyChanged();
-
-  m_popupManagers.clear();
-  emit popupManagersChanged();
-
-  // accept the event to prevent it being used by other tools etc.
-  event.accept();
+  emit popupChanged();
 }
 
-/*!
-  \brief Helper method to create a new PopupManager with the title \a popupTitle,
-  if \a geoElement is valid and has attributes.
- */
+void IdentifyController::nextPopup()
+{
+  if (!canNext())
+    return;
+
+  ++m_currentPopupIndex;
+  emit popupChanged();
+}
+
+void IdentifyController::prevPopup()
+{
+  if (!canPrev())
+    return;
+
+  --m_currentPopupIndex;
+  emit popupChanged();
+}
+
+void IdentifyController::clearPopups()
+{
+  for (Popup* popup : m_popups)
+    popup->deleteLater();
+
+  m_popups.clear();
+
+  m_currentPopupIndex = -1;
+}
+
+QString getPopupDefinitionUrlForMessageType(const QString& messageType)
+{
+  const std::unordered_map<QString, QString>& urls = MessageFeeds::Popups::SCHEMA_URLS;
+  if (urls.find(messageType) != urls.end())
+  {
+    return urls.at(messageType);
+  }
+
+  return QString{};
+}
+
+bool isObjectIdFieldName(QStringView fieldName)
+{
+  static constexpr std::array<std::string_view, 3> oidFieldNames{
+    "OBJECTID",
+    "FID",
+    "OID",
+  };
+  static constexpr auto cbegin = std::cbegin(oidFieldNames);
+  static constexpr auto cend = std::cend(oidFieldNames);
+
+  return std::any_of(cbegin, cend, [fieldName](auto oidFieldName) { return fieldName.compare(oidFieldName, Qt::CaseInsensitive) == 0; });
+}
+
 bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QString& popupTitle)
 {
   if (!geoElement)
@@ -264,37 +147,171 @@ bool IdentifyController::addGeoElementPopup(GeoElement* geoElement, const QStrin
   if (!geoElement->attributes() || geoElement->attributes()->isEmpty())
     return false;
 
-  // create a new Popup from the geoElement
-  Popup* newPopup = new Popup(geoElement, this);
-  newPopup->popupDefinition()->setTitle(popupTitle);
-  PopupManager* newManager = new PopupManager(newPopup, this);
-
-  for (auto popupfield : newManager->displayedFields()->popupFields())
+  // check for dynamic entities
+  bool isDynamic = false;
+  bool isObservation = false;
+  QString groupName{};
+  if (const auto* de = dynamic_cast<DynamicEntity*>(geoElement); de)
   {
-    if (!popupfield->format())
-    {
-      auto format = new PopupFieldFormat(newManager);
-      format->setDecimalPlaces(2);
-      format->setUseThousandsSeparator(true);
-      popupfield->setFormat(format);
-    }
+    isDynamic = true;
+  }
+  else if (const auto* deo = dynamic_cast<DynamicEntityObservation*>(geoElement); deo)
+  {
+    isDynamic = true;
+    isObservation = true;
+    groupName = QString{"observations"};
   }
 
-  m_popupManagers.push_back(newManager);
+  // This check is a dependency on the known schemas for messages/DEs being only of types:
+  // GeoMessage (has the attribute _type) or Cursor on Target (anything DE without that attribute must be CoT)
+  if (isDynamic)
+  {
+    Popup* newPopup = nullptr;
+    QString popupDefinitionUrl = getPopupDefinitionUrlForMessageType(MessageFeeds::Types::CURSOR_ON_TARGET);
+    if (const QVariant geoElementTypeV = geoElement->attributes()->attributeValue(MessageFeeds::Fields::GeoMessage::TYPE); geoElementTypeV.isValid())
+    {
+      if (const QString url = getPopupDefinitionUrlForMessageType(geoElementTypeV.toString()); !url.isEmpty())
+        popupDefinitionUrl = url;
+    }
+
+    if (PopupDefinition* popupDefinition = getPopupDefinitionForUrl(popupDefinitionUrl, groupName); popupDefinition)
+      newPopup = new Popup(geoElement, popupDefinition, this);
+    else
+      newPopup = new Popup(geoElement, this);
+
+    if (!isObservation)
+      newPopup->popupDefinition()->setTitle(QString{"%1<br><i><font size=\"4\" color=\"#68C1F9\">live track info</font></i>"}.arg(popupTitle));
+    else
+      newPopup->popupDefinition()->setTitle(popupTitle);
+
+    m_popups.push_back(newPopup);
+    return true;
+  }
+
+  // default popup title to the layer name
+  auto* newPopup = new Popup(geoElement, this);
+  newPopup->popupDefinition()->setTitle(popupTitle);
+  GeoElementUtils::toQObject(geoElement)->setParent(newPopup);
+
+  const QList<PopupElement*> popupElements = newPopup->popupDefinition()->elements();
+  for (const PopupElement* popupElement : popupElements)
+  {
+    if (popupElement->popupElementType() != PopupElementType::FieldsPopupElement)
+      continue;
+
+    const auto* fieldsPE = static_cast<const FieldsPopupElement*>(popupElement);
+    const PopupFieldListModel* fields = fieldsPE->fields();
+    for (PopupField* field : *fields)
+    {
+      // check any fields that are not editable for common ObjectID field names
+      if (!field->isEditable() && isObjectIdFieldName(field->fieldName()))
+        continue;
+
+      // set parent to Popup
+      auto popupFF = new PopupFieldFormat(static_cast<QObject*>(newPopup));
+      popupFF->setDecimalPlaces(2);
+      popupFF->setUseThousandsSeparator(true);
+      field->setFormat(popupFF);
+    }
+  }
+  m_popups.push_back(newPopup);
 
   return true;
 }
 
+bool IdentifyController::canNext() const
+{
+  return m_currentPopupIndex < static_cast<int>(m_popups.size() - 1);
+}
+
+bool IdentifyController::canPrev() const
+{
+  return m_currentPopupIndex > 0;
+}
+
+PopupDefinition* IdentifyController::getPopupDefinitionForUrl(const QString& url, const QString& group)
+{
+  if (m_popupDefinitions.find(url) == m_popupDefinitions.cend() ||
+      m_popupDefinitions[url].find(group) == m_popupDefinitions[url].cend())
+  {
+    QFile fileGeoMessage{url};
+    if (!fileGeoMessage.open(QFile::ReadOnly))
+      return nullptr;
+
+    QJsonParseError error;
+    const QJsonDocument doc = QJsonDocument::fromJson(fileGeoMessage.readAll(), &error);
+    if (doc.isNull() ||
+        doc.isEmpty() ||
+        !doc.isObject() ||
+        error.error != QJsonParseError::NoError)
+      return nullptr;
+    fileGeoMessage.close();
+
+    const QJsonObject obj = doc.object();
+    const QJsonObject popupInfo = obj["popupInfo"].toObject();
+    QList<PopupElement*> popupElements{};
+    for (const QJsonValue& v : popupInfo["popupElements"].toArray())
+    {
+      QJsonObject o{v.toObject()};
+      PopupElement* pe = PopupElement::fromJson(QJsonDocument{o}.toJson(QJsonDocument::Compact));
+      if (pe)
+        popupElements.append(pe);
+    }
+    QList<PopupExpression*> expressionInfos{};
+    for (const QJsonValue& v : popupInfo["expressionInfos"].toArray())
+    {
+      QJsonObject o{v.toObject()};
+      auto* pe = new PopupExpression(this);
+      pe->setName(o["name"].toString());
+      pe->setTitle(o["title"].toString());
+      pe->setExpression(o["expression"].toString());
+
+      const QString rt = o["returnType"].toString().toLower();
+      pe->setReturnType(PopupExpressionReturnType::String);
+      if (rt.compare(QStringLiteral("number")) == 0)
+        pe->setReturnType(PopupExpressionReturnType::Number);
+      else if (rt.compare(QStringLiteral("dictionary")) == 0)
+        pe->setReturnType(PopupExpressionReturnType::Dictionary);
+
+      expressionInfos.append(pe);
+    }
+    QList<PopupField*> fieldInfos{};
+    for (const QJsonValue& v : popupInfo["fieldInfos"].toArray())
+    {
+      QJsonObject o{v.toObject()};
+      auto* pf = new PopupField(this);
+      pf->setFieldName(o["fieldName"].toString());
+      pf->setEditable(o["isEditable"].toBool());
+      pf->setLabel(o["label"].toString());
+      pf->setVisible(o["visible"].toBool());
+      if (o.contains("format"))
+      {
+        QJsonObject f{o["format"].toObject()};
+        auto* pff = new PopupFieldFormat(this);
+        pff->setUseThousandsSeparator(f["digitSeparator"].toBool());
+        pff->setDecimalPlaces(f["places"].toInt());
+        pf->setFormat(pff);
+      }
+      fieldInfos.append(pf);
+    }
+    auto* pd = new PopupDefinition(this);
+    pd->setElements(popupElements);
+    pd->setDescription(popupInfo["description"].toString());
+    pd->setExpressions(expressionInfos);
+    pd->setFields(fieldInfos);
+    pd->setTitle(popupInfo["title"].toString());
+    m_popupDefinitions[url][group] = pd;
+  }
+
+  return m_popupDefinitions[url][group];
+}
+
+Popup* IdentifyController::popup() const
+{
+  if (m_currentPopupIndex < 0 || m_currentPopupIndex >= static_cast<int>(m_popups.size()))
+    return nullptr;
+
+  return m_popups.at(m_currentPopupIndex);
+}
+
 } // Dsa
-
-// Signal Documentation
-/*!
-  \fn void IdentifyController::busyChanged();
-  \brief Signal emitted when the busy property changes.
- */
-
-/*!
-  \fn void IdentifyController::popupManagersChanged();
-  \brief Signal emitted when the popup managers change.
- */
-

@@ -5,6 +5,7 @@
         <file>icons/xhdpi/navigation.png</file>
         <file>icons/xhdpi/navigation_disabled.png</file>
         <file>icons/xhdpi/ic_menu_closeclear_dark.png</file>
+        <file>icons/xhdpi/chevron-left.svg</file>
         <file>icons/xhdpi/ic_menu_choosebasemap_dark.png</file>
         <file>icons/xhdpi/drawer_large.png</file>
         <file>icons/xhdpi/ic_menu_layervisibilitypopover_dark_d.png</file>
@@ -68,5 +69,18 @@
         <file>icons/xhdpi/kml.png</file>
         <file>icons/xhdpi/icon_open_scene.png</file>
         <file>icons/xhdpi/scenelayer.png</file>
+        <file>icons/xhdpi/icon_browse.png</file>
+        <file>messages/schemas/cot.json</file>
+        <file>messages/schemas/eod.json</file>
+        <file>messages/schemas/position_report.json</file>
+        <file>messages/schemas/sensor_obs.json</file>
+        <file>messages/schemas/sitrep.json</file>
+        <file>messages/schemas/spotrep.json</file>
+        <file>messages/popupDefinitions/cot.json</file>
+        <file>messages/popupDefinitions/eod.json</file>
+        <file>messages/popupDefinitions/position_report.json</file>
+        <file>messages/popupDefinitions/sensor_obs.json</file>
+        <file>messages/popupDefinitions/sitrep.json</file>
+        <file>messages/popupDefinitions/spotrep.json</file>
     </qresource>
 </RCC>

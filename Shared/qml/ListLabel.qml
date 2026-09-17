@@ -23,11 +23,13 @@ import Esri.ArcGISRuntime.OpenSourceApps.DSA
 Item {
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
     property alias text: label.text
+    property bool available: true
     property alias separatorVisible: separator.visible
     signal triggered()
 
     width: parent.width
-    height: 32 * scaleFactor
+    height: available ? 32 * scaleFactor : 0
+    visible: available
 
     Label {
         id: label

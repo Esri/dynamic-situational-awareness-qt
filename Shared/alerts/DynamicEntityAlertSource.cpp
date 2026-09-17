@@ -18,6 +18,7 @@
 #include "pch.hpp"
 
 #include "DynamicEntityAlertSource.h"
+#include "Point.h"
 
 // C++ API headers
 #include "AttributeListModel.h"

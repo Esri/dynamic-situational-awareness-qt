@@ -18,8 +18,10 @@
 #include "pch.hpp"
 
 #include "DrawOrderLayerListModel.h"
-#include "MapTypes.h"
+
+// C++ API headers
 #include "LayerListModel.h"
+#include "MapTypes.h"
 
 using namespace Esri::ArcGISRuntime;
 

@@ -48,7 +48,9 @@
 #include "BasemapPickerController.h"
 #include "ContextMenuController.h"
 #include "DsaUtility.h"
+#include "GridController.h"
 #include "LayerCacheManager.h"
+#include "LocationController.h"
 #include "MessageFeedConstants.h"
 #include "OpenMobileScenePackageController.h"
 #include "ToolManager.h"
@@ -96,10 +98,14 @@ DsaController::DsaController(QObject* parent):
                          QStringLiteral("viewshed"),
                          QStringLiteral("Observation Report")}
 {
+  // set the current path for the application to the active configuration directory
+  // so we can use relative paths for data in the configuration file
+  QDir::setCurrent(DsaUtility::activeConfigurationPath());
+
   // setup config settings
   setupConfig();
   m_scene->setInitialViewpoint(viewpointFromJson(defaultViewpoint()));
-  m_dataPath = m_dsaSettings["RootDataDirectory"].toString();
+  m_dataPath = m_dsaSettings[AppConstants::PROPERTYNAME_ROOT_DATA_DIRECTORY].toString();
 
   connect(m_scene, &Scene::errorOccurred, this, &DsaController::onError);
 
@@ -117,6 +123,9 @@ DsaController::DsaController(QObject* parent):
     updateInitialLocationOnSceneChange(firstLoad);
     firstLoad = false;
   });
+
+  Q_ASSERT(s_instance == nullptr); // there should never be more than one DsaController created
+  s_instance = this;
 }
 
 /*!
@@ -149,7 +158,7 @@ void DsaController::init(GeoView* geoView)
   auto openScenePackageTool = ToolManager::instance().tool<OpenMobileScenePackageController>();
   if (openScenePackageTool)
   {
-    openScenePackageTool->setProperties(m_dsaSettings);
+    openScenePackageTool->toolInitProperties(m_dsaSettings);
     hasActiveScene = openScenePackageTool->hasActiveScene();
   }
 
@@ -160,7 +169,7 @@ void DsaController::init(GeoView* geoView)
   // Only set the default scene if the scene package tool hasn't set a scene.
   if (!hasActiveScene)
   {
-    if (!m_dsaSettings.contains(AppConstants::INITIALLOCATION_PROPERTYNAME))
+    if (!m_dsaSettings.contains(AppConstants::PROPERTYNAME_INITIAL_LOCATION))
     {
       // While a scene change would normally write out the viewpoint
       // to config if/when it is missing, this here is a special case. We
@@ -168,7 +177,7 @@ void DsaController::init(GeoView* geoView)
       // using a distance measure. Extracting the viewpoint from the scene
       // will give us a calculated viewpoint with no distance measure, so we have
       // to set this manually.
-      m_dsaSettings[AppConstants::INITIALLOCATION_PROPERTYNAME] = defaultViewpoint();
+      m_dsaSettings[AppConstants::PROPERTYNAME_INITIAL_LOCATION] = defaultViewpoint();
     }
 
     ToolResourceProvider::instance()->setScene(m_scene);
@@ -182,7 +191,7 @@ void DsaController::init(GeoView* geoView)
     if (!abstractTool)
       continue;
 
-    abstractTool->setProperties(m_dsaSettings);
+    abstractTool->toolInitProperties(m_dsaSettings);
 
     connect(abstractTool, &AbstractTool::errorOccurred, this, &DsaController::onError);
     connect(abstractTool, &AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
@@ -283,17 +292,17 @@ void DsaController::onPropertyChanged(const QString& propertyName, const QVarian
   saveSettings();
 
   // inform tools of the change
-  auto it = ToolManager::instance().begin();
-  auto itEnd = ToolManager::instance().end();
-  for (;it != itEnd; ++it)
+  for (auto* tool : ToolManager::instance())
   {
-    AbstractTool* tool = *it;
     if (!tool)
       continue;
 
-    disconnect(tool, &AbstractTool::propertyChanged,this, &DsaController::onPropertyChanged);
-    tool->setProperties(m_dsaSettings);
-    connect(tool, &AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
+    if (tool->shouldSetProperties(propertyName))
+    {
+      disconnect(tool, &AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
+      tool->toolInitProperties(m_dsaSettings);
+      connect(tool, &AbstractTool::propertyChanged, this, &DsaController::onPropertyChanged);
+    }
   }
 }
 
@@ -309,7 +318,8 @@ void DsaController::resetToDefaultScene()
 
   // create scene
   Scene* newScene = new Scene(this);
-  newScene->setInitialViewpoint(viewpointFromJson(defaultViewpoint()));
+  if (const auto initialViewpoint = readInitialLocation(); !initialViewpoint.isEmpty())
+    newScene->setInitialViewpoint(initialViewpoint);
 
   // set on sceneview
   ToolResourceProvider::instance()->setScene(newScene);
@@ -331,10 +341,15 @@ void DsaController::resetToDefaultScene()
   }
 
   // clear current scene and index in properties
-  onPropertyChanged(AppConstants::SCENEINDEX_PROPERTYNAME, -1);
-  onPropertyChanged(AppConstants::CURRENTSCENE_PROPERTYNAME, "");
-  onPropertyChanged(AppConstants::LAYERS_PROPERTYNAME, QJsonArray().toVariantList());
-  m_cacheManager->setProperties(m_dsaSettings);
+  onPropertyChanged(AppConstants::PROPERTYNAME_SCENE_INDEX, -1);
+  onPropertyChanged(AppConstants::PROPERTYNAME_CURRENT_SCENE, "");
+  onPropertyChanged(AppConstants::PROPERTYNAME_LAYERS, QJsonArray().toVariantList());
+  m_cacheManager->toolInitProperties(m_dsaSettings);
+}
+
+const DsaController* DsaController::instance()
+{
+  return s_instance;
 }
 
 /*!
@@ -342,138 +357,23 @@ void DsaController::resetToDefaultScene()
  */
 void DsaController::setupConfig()
 {
-  // create the default settings map
-  createDefaultSettings();
-
-  // get the app config
-  m_configFilePath = QString("%1/%2").arg(m_dsaSettings["RootDataDirectory"].toString(), DsaUtility::FILE_NAME_APP_CONFIG);
-
-  // If the config file does not exist, create it, and set all of the defaults
-  if (!QFileInfo::exists(m_configFilePath))
+  // if the config file does not exist, exit early to raise the prompt to download the default data folder
+  const auto configFilePath = QString{"./%1"}.arg(DsaUtility::FILE_NAME_APP_CONFIG);
+  if (!QFileInfo::exists(configFilePath))
   {
-    saveSettings();
+    return;
   }
-  else
+
+  // Open the config file, get settings, set them to the application controller
+  m_configFilePath = configFilePath;
+  const QSettings settings{m_configFilePath, m_jsonFormat};
+  const QStringList allKeys = settings.allKeys();
+
+  // get the values from the config, and write to the settings map
+  for (const QString& key : allKeys)
   {
-    // Open the config file, get settings, set them to the application controller
-    QSettings settings(m_configFilePath, m_jsonFormat);
-    const QStringList allKeys = settings.allKeys();
-
-    // get the values from the config, and write to the settings map
-    for (const QString& key : allKeys)
-      m_dsaSettings[key] = settings.value(key);
+    m_dsaSettings[key] = settings.value(key);
   }
-}
-
-/*! \brief internal
- *
- * Writes the default local data paths as JSON to the settings map.
- */
-void DsaController::writeDefaultLocalDataPaths()
-{
-  const QString rootDir = m_dsaSettings["RootDataDirectory"].toString();
-  QStringList pathsList{QString("%1/").arg(rootDir),
-        QString("%1/OperationalData").arg(rootDir)};
-  m_dsaSettings[QStringLiteral("LocalDataPaths")] = pathsList;
-}
-
-/*! \brief internal
- *
- * Writes the default Alert Conditions as JSON to the settings map.
- */
-void DsaController::writeDefaultConditions()
-{
-  QJsonArray allConditionsJson;
-
-  // Add a condition "Distress" when an object from the Friendly Tracks Land feed has attribute status911 = 1
-  QJsonObject conditionJson;
-  conditionJson.insert(AlertConstants::CONDITION_NAME, QStringLiteral("Distress"));
-  conditionJson.insert(AlertConstants::CONDITION_LEVEL, static_cast<int>(AlertLevel::Critical));
-  conditionJson.insert(AlertConstants::CONDITION_TYPE, AlertConstants::attributeEqualsAlertConditionType());
-  conditionJson.insert(AlertConstants::CONDITION_SOURCE, QStringLiteral("Friendly Tracks - Land"));
-  QJsonObject queryObject;
-  queryObject.insert(AlertConstants::ATTRIBUTE_NAME, QStringLiteral("status911"));
-  conditionJson.insert(AlertConstants::CONDITION_QUERY, queryObject);
-  conditionJson.insert(AlertConstants::CONDITION_TARGET, "1");
-  allConditionsJson.append(conditionJson);
-  m_dsaSettings.insert(AlertConstants::ALERT_CONDITIONS_PROPERTYNAME, allConditionsJson.toVariantList());
-}
-
-/*! \brief internal
- *
- * Writes the default message feeds to the settings map.
- */
-void DsaController::writeDefaultMessageFeeds()
-{
-  m_dsaSettings[MessageFeedConstants::MESSAGE_FEED_UDP_PORTS_PROPERTYNAME] = QStringList { QString("45678"), QString("45679") };
-
-  QJsonArray messageFeedsJson;
-
-  QJsonObject cotMessageFeedJson;
-  cotMessageFeedJson.insert(MessageFeedConstants::MESSAGE_FEEDS_NAME, QStringLiteral("SA Events"));
-  cotMessageFeedJson.insert(MessageFeedConstants::MESSAGE_FEEDS_TYPE, QStringLiteral("cot"));
-  cotMessageFeedJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER, QStringLiteral("mil2525c"));
-  cotMessageFeedJson.insert(MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("saevents.png"));
-  cotMessageFeedJson.insert(MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT, QStringLiteral("draped"));
-  messageFeedsJson.append(cotMessageFeedJson);
-
-  QJsonObject friendlyTracksLandJson;
-  friendlyTracksLandJson.insert(MessageFeedConstants::MESSAGE_FEEDS_NAME, QStringLiteral("Friendly Tracks - Land"));
-  friendlyTracksLandJson.insert(MessageFeedConstants::MESSAGE_FEEDS_TYPE, QStringLiteral("position_report_land"));
-  friendlyTracksLandJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER, QStringLiteral("mil2525c"));
-  friendlyTracksLandJson.insert(MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("friendlytracks.png"));
-  friendlyTracksLandJson.insert(MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT, QStringLiteral("draped"));
-  messageFeedsJson.append(friendlyTracksLandJson);
-
-  QJsonObject friendlyTracksAirJson;
-  friendlyTracksAirJson.insert(MessageFeedConstants::MESSAGE_FEEDS_NAME, QStringLiteral("Friendly Tracks - Air"));
-  friendlyTracksAirJson.insert(MessageFeedConstants::MESSAGE_FEEDS_TYPE, QStringLiteral("position_report_air"));
-  friendlyTracksAirJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER, QStringLiteral("mil2525c"));
-  friendlyTracksAirJson.insert(MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("friendlytracks-air.png"));
-  friendlyTracksAirJson.insert(MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT, QStringLiteral("absolute"));
-  messageFeedsJson.append(friendlyTracksAirJson);
-
-  QJsonObject spotRepJson;
-  spotRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_NAME, QStringLiteral("Observation Reports"));
-  spotRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_TYPE, QStringLiteral("spotrep"));
-  spotRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("observation1600.png"));
-  spotRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER, QStringLiteral("observation1600.png"));
-  spotRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT, QStringLiteral("draped"));
-  messageFeedsJson.append(spotRepJson);
-
-  QJsonObject sitRepJson;
-  sitRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_NAME, QStringLiteral("Situation Reports"));
-  sitRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_TYPE, QStringLiteral("sitrep"));
-  sitRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("sitrep1600.png"));
-  sitRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER, QStringLiteral("sitrep1600.png"));
-  sitRepJson.insert(MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT, QStringLiteral("draped"));
-  messageFeedsJson.append(sitRepJson);
-
-  QJsonObject eodReportsJson;
-  eodReportsJson.insert(MessageFeedConstants::MESSAGE_FEEDS_NAME, QStringLiteral("EOD Reports"));
-  eodReportsJson.insert(MessageFeedConstants::MESSAGE_FEEDS_TYPE, QStringLiteral("eod"));
-  eodReportsJson.insert(MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("eod1600.png"));
-  eodReportsJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER, QStringLiteral("eod1600.png"));
-  eodReportsJson.insert(MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT, QStringLiteral("draped"));
-  messageFeedsJson.append(eodReportsJson);
-
-  QJsonObject sensorObsJson;
-  sensorObsJson.insert(MessageFeedConstants::MESSAGE_FEEDS_NAME, QStringLiteral("Sensor Observations"));
-  sensorObsJson.insert(MessageFeedConstants::MESSAGE_FEEDS_TYPE, QStringLiteral("sensor_obs"));
-  sensorObsJson.insert(MessageFeedConstants::MESSAGE_FEEDS_THUMBNAIL, QStringLiteral("sensorobs1600.png"));
-  sensorObsJson.insert(MessageFeedConstants::MESSAGE_FEEDS_RENDERER, QStringLiteral("sensorobs1600.png"));
-  sensorObsJson.insert(MessageFeedConstants::MESSAGE_FEEDS_PLACEMENT, QStringLiteral("draped"));
-  messageFeedsJson.append(sensorObsJson);
-  m_dsaSettings[MessageFeedConstants::MESSAGE_FEEDS_PROPERTYNAME] = messageFeedsJson;
-
-  QJsonObject locationBroadcastJson;
-  locationBroadcastJson.insert(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_MESSAGE_TYPE, QStringLiteral("position_report_land"));
-  locationBroadcastJson.insert(MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PORT, 45679);
-  m_dsaSettings[MessageFeedConstants::LOCATION_BROADCAST_CONFIG_PROPERTYNAME] = locationBroadcastJson;
-
-  QJsonObject observationReportJson;
-  observationReportJson.insert(MessageFeedConstants::OBSERVATION_REPORT_CONFIG_PORT, 45679);
-  m_dsaSettings[MessageFeedConstants::OBSERVATION_REPORT_CONFIG_PROPERTYNAME] = observationReportJson;
 }
 
 /*! \brief internal
@@ -487,48 +387,21 @@ bool DsaController::isConflictingTool(const QString& toolName) const
   return m_conflictingToolNames.contains(toolName);
 }
 
-/*! \brief internal
- *
- * This creates the default values for the config file. If the app
- * starts and there is no config file, it will create one, and write
- * the following values to the file.
- */
-void DsaController::createDefaultSettings()
-{
-  // setup the defaults
-  m_dsaSettings["RootDataDirectory"] = DsaUtility::activeConfigurationPath();
-  m_dsaSettings[AppConstants::USERNAME_PROPERTYNAME] = QHostInfo::localHostName();
-  m_dsaSettings["BasemapDirectory"] = QString("%1/BasemapData").arg(m_dsaSettings["RootDataDirectory"].toString());
-  m_dsaSettings["ElevationDirectory"] = QString("%1/ElevationData").arg(m_dsaSettings["RootDataDirectory"].toString());
-  m_dsaSettings["SimulationDirectory"] = QString("%1/SimulationData").arg(m_dsaSettings["RootDataDirectory"].toString());
-  m_dsaSettings["ResourceDirectory"] = QString("%1/ResourceData").arg(m_dsaSettings["RootDataDirectory"].toString());
-  writeDefaultLocalDataPaths();
-  m_dsaSettings["DefaultBasemap"] = QStringLiteral("topographic");
-  m_dsaSettings["DefaultElevationSource"] = QString("%1/CaDEM.tpk").arg(m_dsaSettings["ElevationDirectory"].toString());
-  m_dsaSettings["GpxFile"] = QString("%1/MontereyMounted.gpx").arg(m_dsaSettings["SimulationDirectory"].toString());
-  m_dsaSettings["SimulateLocation"] = QStringLiteral("true");
-  writeDefaultMessageFeeds();
-  m_dsaSettings["CoordinateFormat"] = Esri::ArcGISRuntime::Toolkit::CoordinateConversionConstants::MGRS_FORMAT;
-  m_dsaSettings[AppConstants::UNIT_OF_MEASUREMENT_PROPERTYNAME] = AppConstants::UNIT_METERS;
-  m_dsaSettings["UseGpsForElevation"] = QStringLiteral("true");
-  QJsonObject markupJson;
-  markupJson.insert(QStringLiteral("port"), 45680);
-  m_dsaSettings[QStringLiteral("MarkupConfig")] = markupJson;
-  writeDefaultConditions();
-  m_dsaSettings[OpenMobileScenePackageController::PACKAGE_DIRECTORY_PROPERTYNAME] = QString("%1/Packages").arg(m_dsaSettings["RootDataDirectory"].toString());
-}
-
 /*!
  * \brief Save the app properties to a custom JSON QSettings file.
  */
 void DsaController::saveSettings()
 {
-  QSettings settings(m_configFilePath, m_jsonFormat);
+  if (m_configFilePath.isNull() || m_configFilePath.isEmpty())
+  {
+    return;
+  }
 
-  auto it = m_dsaSettings.cbegin();
-  auto itEnd = m_dsaSettings.cend();
-  for (; it != itEnd; ++it)
-    settings.setValue(it.key(), it.value());
+  QSettings settings(m_configFilePath, m_jsonFormat);
+  std::for_each(m_dsaSettings.constKeyValueBegin(), m_dsaSettings.constKeyValueEnd(), [&](const std::pair<QString, QVariant>& kv)
+  {
+    settings.setValue(kv.first, kv.second);
+  });
 }
 
 void DsaController::writeInitialLocation(const Viewpoint& viewpoint)
@@ -549,12 +422,12 @@ void DsaController::writeInitialLocation(const Viewpoint& viewpoint)
   initialLocationJson.insert( QStringLiteral("pitch"), initialCamera.pitch());
   initialLocationJson.insert( QStringLiteral("roll"), initialCamera.roll());
 
-  m_dsaSettings[AppConstants::INITIALLOCATION_PROPERTYNAME] = initialLocationJson.toVariantMap();
+  m_dsaSettings[AppConstants::PROPERTYNAME_INITIAL_LOCATION] = initialLocationJson.toVariantMap();
 }
 
-Viewpoint DsaController::readInitialLocation()
+Viewpoint DsaController::readInitialLocation() const
 {
-  return viewpointFromJson(m_dsaSettings[AppConstants::INITIALLOCATION_PROPERTYNAME].toJsonObject());
+  return viewpointFromJson(m_dsaSettings[AppConstants::PROPERTYNAME_INITIAL_LOCATION].toJsonObject());
 }
 
 void DsaController::updateInitialLocationOnSceneChange(bool isInitialization)
@@ -562,42 +435,23 @@ void DsaController::updateInitialLocationOnSceneChange(bool isInitialization)
   if (!m_scene)
     return;
 
-  auto geoView = ToolResourceProvider::instance()->geoView();
+  GeoView* geoView = ToolResourceProvider::instance()->geoView();
   if (!geoView)
     return;
 
   if (!isInitialization)
-  {
-    // This is a user-defined scene change, so we take the scene's
-    // position as our new source of truth.
-    auto v = m_scene->initialViewpoint();
-    if (!v.isEmpty())
-    {
-      writeInitialLocation(m_scene->initialViewpoint());
-    }
-  }
-  else
-  {
-    // This is an initilization scene change, replace the scene's
-    // initial location with our current initial location.
-    auto v = readInitialLocation();
+    return;
 
-    if (!v.isEmpty())
-    {
-      // Note use of setViewPoint instead of setInitialLocation. The latter
-      // only works if the scene is not loaded, but all MSPK scenes are loaded with
-      // the MSPK so it can't be used.
-      geoView->setViewpointAsync(readInitialLocation(), 0);
-    }
-    else
-    {
-      // If there is no defined config location we will take the opportunity to
-      // write it out using the current scene if applicable.
-      auto v = m_scene->initialViewpoint();
-      if (!v.isEmpty())
-        writeInitialLocation(m_scene->initialViewpoint());
-    }
-  }
+  // This is an initilization scene change, replace the scene's
+  // initial location with our current initial location.
+  const Viewpoint v = readInitialLocation();
+  if (v.isEmpty())
+    return;
+
+  // Note use of setViewPoint instead of setInitialLocation. The latter
+  // only works if the scene is not loaded, but all MSPK scenes are loaded with
+  // the MSPK so it can't be used.
+  geoView->setViewpointAsync(v, 0);
 }
 
 namespace

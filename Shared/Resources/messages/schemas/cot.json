@@ -1,0 +1,48 @@
+{
+  "name": "cot",
+  "version": "2.0",
+  "attribute_name_id": "uid",
+  "attribute_name_search": "type",
+  "attributes": [
+    {
+      "type": "string",
+      "name": "type"
+    },
+    {
+      "type": "string",
+      "name": "uid"
+    },
+    {
+      "type": "float",
+      "name": "lat"
+    },
+    {
+      "type": "float",
+      "name": "lon"
+    },
+    {
+      "type": "float",
+      "name": "hae"
+    },
+    {
+      "type": "string",
+      "name": "how"
+    },
+    {
+      "type": "string",
+      "name": "time"
+    },
+    {
+      "type": "string",
+      "name": "start"
+    },
+    {
+      "type": "string",
+      "name": "stale"
+    },
+    {
+      "type": "string",
+      "name": "event_type"
+    }
+  ]
+}

@@ -78,19 +78,6 @@ FeatureLayerAlertTarget::FeatureLayerAlertTarget(FeatureLayer* featureLayer):
     // cache all of the features
     m_geomCache.clear();
     m_features = results.m_results->iterator().features(this);
-    for (auto* feature : m_features)
-    {
-      if (!feature)
-        continue;
-
-      // for each feature, connect to the geometryChanged signal
-      connect(feature, &Feature::geometryChanged, this, [this]()
-      {
-        m_geomCache.clear();
-        rebuildQuadtree();
-        emit dataChanged();
-      });
-    }
 
     rebuildQuadtree();
     emit dataChanged();

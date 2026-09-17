@@ -34,6 +34,7 @@ Handheld {
     property real hudRadius: 3 * scaleFactor
     property real hudMargins: 5 * scaleFactor
     property bool configurationsChanged: false
+    property bool promptedForDefaultDownload: false
 
     signal clearDialogAccepted();
     signal closeDialogAccepted();
@@ -47,6 +48,10 @@ Handheld {
 
     ConfigurationController {
         id: configurationController
+    }
+
+    GridController {
+        id: gridController
     }
 
     PrimaryToolbar {
@@ -220,20 +225,26 @@ Handheld {
                 opacity: hudOpacity
                 radius: hudRadius
             }
-
-            onVisibleChanged: {
-                if (!visible)
-                    return;
-
-                if (mapToolRow.state !== "Convert XY") {
-                    mapToolRow.state = "Convert XY";
-                    categoryToolbar.state = "map";
-                }
-            }
         }
 
-        ContextMenu {
+        MapContextMenu {
             id: contextMenu
+            onCoordinatesSelected: mapToolRow.selectCoordinateTool();
+        }
+
+        MessageFeeds {
+            id: messageFeedsTool
+            anchors {
+                left: parent.left
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+            isMobile: true
+            onClosed: {
+                mapToolRow.reset();
+            }
         }
 
         TableOfContents {
@@ -246,11 +257,53 @@ Handheld {
             width: drawer.width
             visible: false
             isMobile: true
-
             onClosed: {
-                mapToolRow.tocIconSelected = false;
-                visible = false;
-                mapToolRow.state = "clear";
+                mapToolRow.reset();
+            }
+        }
+
+        AddLocalData {
+            id: addLocalDataTool
+            anchors {
+                left: parent.left
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+            onClosed: {
+                mapToolRow.reset();
+            }
+        }
+
+        BasemapPicker {
+            id: basemapsTool
+            anchors {
+                left: parent.left
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+            onBasemapSelected: closed();
+            onClosed: {
+                mapToolRow.reset();
+            }
+        }
+
+        OpenSceneTool {
+            id: openSceneTool
+            anchors {
+                left: parent.left
+                top: parent.top
+                bottom: sceneView.attributionTop
+            }
+            width: drawer.width
+            visible: false
+            onResetToDefaultSelected: resetToDefaultScene();
+            onSceneSelected: closed();
+            onClosed: {
+                mapToolRow.reset();
             }
         }
 
@@ -386,21 +439,58 @@ Handheld {
             }
         }
 
-        Toolkit.PopupStackView {
-            id: identifyResults
+        Rectangle {
+            id: identifyResultsContainer
             anchors {
                 left: sceneView.left
                 top: sceneView.top
                 right: sceneView.right
                 bottom: sceneView.attributionTop
             }
-            palette {
-                text: Material.foreground
-            }
-            background: Rectangle {
-                color: Material.primary
-            }
             visible: false
+
+            Toolkit.PopupView {
+                id: identifyResults
+                anchors.fill: parent
+
+                closeCallback: () => {
+                    identifyResultsContainer.visible = false;
+                    identifyController.clearPopups();
+                }
+            }
+
+            Rectangle {
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                    bottom: parent.bottom
+                    margins: 5
+                }
+
+                Button {
+                    text: "Back"
+                    visible: identifyController.canPrev
+                    anchors {
+                        left: parent.left
+                        bottom: parent.bottom
+                    }
+                    onClicked: {
+                        identifyController.prevPopup();
+                    }
+                }
+
+                Button {
+                    text: "Next"
+                    visible: identifyController.canNext
+                    anchors {
+                        right: parent.right
+                        bottom: parent.bottom
+                    }
+                    onClicked: {
+                        identifyController.nextPopup();
+                    }
+                }
+            }
         }
 
         Drawer {
@@ -412,11 +502,12 @@ Handheld {
 
             onClosed: {
                 // update state for each category
-                mapToolRow.state = "clear";
+                mapToolRow.reset();
                 alertToolRow.state = "clear";
                 viewshedTool.state = "clear";
                 reportToolRow.state = "clear";
                 markupToolRow.state = "clear";
+                addConfigurationTool.state = "clear";
             }
 
             Rectangle {
@@ -425,62 +516,16 @@ Handheld {
 
                 states: [
                     State {
-                        name: "basemap"
+                        name: "add configuration"
                         PropertyChanges {
-                            target: basemapsTool
-                            visible: true
-                        }
-                    },
-                    State {
-                        name: "data"
-                        PropertyChanges {
-                            target: addLocalDataTool
-                            visible: true
-                        }
-                    },
-                    State {
-                        name: "message"
-                        PropertyChanges {
-                            target: messageFeedsTool
-                            visible: true
-                        }
-                    },
-                    State {
-                        name: "open scene"
-                        PropertyChanges {
-                            target: openSceneTool
+                            target: addConfigurationTool
                             visible: true
                         }
                     }
                 ]
 
-                OpenSceneTool {
-                    id: openSceneTool
-                    anchors.fill: parent
-                    onSceneSelected: closed();
-                    visible: false
-                    onClosed: drawer.close();
-                    onResetToDefaultSelected: resetToDefaultScene();
-                }
-
-                BasemapPicker {
-                    id: basemapsTool
-                    anchors.fill: parent
-                    onBasemapSelected: closed();
-                    visible: false
-                    onClosed: drawer.close();
-                }
-
-                AddLocalData {
-                    id: addLocalDataTool
-                    anchors.fill: parent
-                    showDataConnectionPane: true
-                    visible: false
-                    onClosed: drawer.close();
-                }
-
-                MessageFeeds {
-                    id: messageFeedsTool
+                AddConfigurationTool {
+                    id: addConfigurationTool
                     anchors.fill: parent
                     visible: false
                     onClosed: drawer.close();
@@ -502,17 +547,11 @@ Handheld {
 
     IdentifyController {
         id: identifyController
-        active: mapToolRow.state === "Identify"
 
-        onActiveChanged: {
-            if (!active)
-                identifyResults.dismiss();
-        }
-
-        onPopupManagersChanged: {
-            if (popupManagers.length > 0) {
-                identifyResults.popupManagers = popupManagers;
-                identifyResults.visible = true;
+        onPopupChanged: {
+            if (popup) {
+                identifyResults.popup = popup;
+                identifyResultsContainer.visible = true;
             }
         }
     }
@@ -558,11 +597,6 @@ Handheld {
     DsaMessageDialog {
         id: msgDialog
         title: "Error"
-    }
-
-    BusyIndicator {
-        anchors.centerIn: parent
-        visible: identifyController.busy
     }
 
     Shortcut {
@@ -616,11 +650,18 @@ Handheld {
 
     DsaYesNoDialog {
         id: configurationDownloadDialog
-        informativeText: "Download the default configuration data from Esri (~450mb)?"
+        informativeText: DsaResources.DefaultConfigurationDownloadPrompt
         onAccepted: showConfigurations(true);
         onRejected: showConfigurations(false);
     }
+
     function showConfigurations(downloadDefaultData) {
+        // prevents multiple 'Yes' taps.
+        // this dialog should only be shown on the initial startup.
+        if (promptedForDefaultDownload)
+            return;
+
+        promptedForDefaultDownload = true;
         if (downloadDefaultData)
             configurationController.downloadDefaultData();
 

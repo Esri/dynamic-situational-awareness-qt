@@ -19,8 +19,11 @@
 
 #include "MessageFeedListModel.h"
 
-// dsa app headers
+// DSA
 #include "MessageFeed.h"
+#include "MessageFeedConstants.h"
+// Qt
+#include <QJsonObject>
 
 namespace Dsa {
 
@@ -123,6 +126,32 @@ MessageFeed* MessageFeedListModel::messageFeedByType(const QString& type) const
   return m_messageFeeds[index];
 }
 
+QJsonArray MessageFeedListModel::toJsonArray() const
+{
+  using namespace MessageFeedConstants;
+  QJsonArray jsonArray{};
+
+  std::for_each(std::cbegin(m_messageFeeds), std::cend(m_messageFeeds), [&](const MessageFeed* mf)
+  {
+    jsonArray.append(QJsonObject{
+      { MESSAGE_FEEDS_NAME, mf->feedName() },
+      { MESSAGE_FEEDS_TYPE, mf->feedMessageType() },
+      { MESSAGE_FEEDS_RENDERER, mf->renderer() },
+      { MESSAGE_FEEDS_THUMBNAIL, mf->thumbnail() },
+      { MESSAGE_FEEDS_PLACEMENT, mf->surfacePlacement() },
+      { MESSAGE_FEEDS_OBSERVATIONS_SHOW, mf->showPreviousObservations() },
+      { MESSAGE_FEEDS_OBSERVATIONS_COLOR, mf->colorObservations() },
+      { MESSAGE_FEEDS_OBSERVATIONS_SIZE, mf->sizeObservations() },
+      { MESSAGE_FEEDS_OBSERVATIONS_MAXIMUM, mf->maximumObservations() },
+      { MESSAGE_FEEDS_TRACK_LINE_SHOW, mf->showTrackLine() },
+      { MESSAGE_FEEDS_TRACK_LINE_COLOR, mf->colorTrackLine() },
+      { MESSAGE_FEEDS_TRACK_LINE_SIZE, mf->sizeTrackLine() },
+    });
+  });
+
+  return jsonArray;
+}
+
 /*!
   \brief Clears the model.
  */
@@ -150,7 +179,7 @@ int MessageFeedListModel::rowCount(const QModelIndex&) const
 QVariant MessageFeedListModel::data(const QModelIndex& index, int role) const
 {
   if (index.row() < 0 || index.row() >= m_messageFeeds.count())
-    return QVariant();
+    return QVariant{};
 
   QVariant retVal;
 

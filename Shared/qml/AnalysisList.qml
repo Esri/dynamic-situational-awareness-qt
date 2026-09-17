@@ -53,7 +53,7 @@ DsaPanel {
             opacity: 0.5
         }
         delegate: ListItemDelegate {
-            width: parent.width
+            width: analysisList.width
             height: 40 * scaleFactor
             itemChecked: analysisVisible
             imageUrl: imageSourceForAnalysisType(analysisType)

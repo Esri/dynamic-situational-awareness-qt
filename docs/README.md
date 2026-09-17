@@ -1,48 +1,7 @@
 **Contents**
 
-<!-- MDTOC maxdepth:6 firsth1:1 numbering:0 flatten:0 bullets:1 updateOnSave:1 -->
-
-[Overview](#dynamic-situational-awareness-dsa) | [Tools and settings](#overview) | [Workflows and best practices](#workflows-and-best-practices) | [App architecture](#app-architecture)     
-[Get the DSA apps](#get-the-dsa-apps) | [App configuration settings](#app-configuration-settings) | [Add your own local data](#add-your-own-local-data) | [Message simulator](#message-simulator)    
-
-<!---- [Overview](#dynamic-situational-awareness-dsa)   
-   - [What is DSA?](#what-is-dsa)   
-   - [Capabilities](#capabilities)   
-   - [Supported platforms](#supported-platforms)   
-- [Tools and settings](#overview)   
-<!---    - [Tools](#tools)   
-     - [Navigation toolbar](#navigation-toolbar)   
-      - [Compass](#compass)   
-      - [Map context menu](#map-context-menu)   
-      - [Tool categories](#tool-categories)   
-   - [Settings panel](#settings-panel)   
-   - [Map tools](#map-tools)   
-      - [Convert X/Y](#convert-xy)   
-      - [Feeds](#feeds)   
-      - [Add data](#add-data)   
-      - [Overlays](#overlays)   
-      - [Basemaps](#basemaps)    
-- [Workflows and best practices](#workflows-and-best-practices)   
-<!---   - [Real-time feeds](#real-time-feeds)   
-   - [Exploratory visual analysis](#exploratory-visual-analysis)   
-      - [Viewshed](#viewshed)   
-      - [Line of sight](#line-of-sight)   
-   - [Alerts and conditions](#alerts-and-conditions)   
-      - [New alert notification](#new-alert-notification)   
-      - [Alerts view](#alerts-view)   
-      - [Conditions](#conditions)   
-   - [Collaboration](#collaboration)   
-      - [Create report tools](#create-report-tools)   
-      - [Observation report](#observation-report)   
-      - [Markup tools](#markup-tools)    
-- [App architecture](#app-architecture)   
-- [Get the DSA apps](#get-the-dsa-apps)   
-- [App configuration settings](#app-configuration-settings)   
-- [Add your own local data](#add-your-own-local-data)   
-- [Message simulator](#message-simulator)   --->
-
-<!-- /MDTOC -->
----
+[Introduction](#dynamic-situational-awareness-dsa) | [Overview of tools and settings](#overview-of-tools-and-settings) | [Workflows and best practices](#workflows-and-best-practices) | [App architecture](#app-architecture)     
+[Get the DSA apps](#get-the-dsa-apps) | [App configuration settings](#app-configuration-settings) | [Add your own local data](#add-your-own-local-data) | [Message simulator](#message-simulator)
 
 # Dynamic Situational Awareness (DSA)
 
@@ -64,7 +23,7 @@ DSA is an open-source app designed to help you build your own custom field opera
 
 The DSA apps do not require access to a server. All the data and processing are on the device itself. Display of each local data source may be toggled on or off. Teammates share information such as their own location, observation reports, and markup across the peer-to-peer network. The emphasis is on collaboration with other teammates.
 
-These networks are typically not connected to the Internet, are not high-bandwidth, and are not constantly connected - a situation commonly encountered in field operations. This communication network topology is unlike more traditional native apps that leverage the Internet and web servers for communication or web services for some functionality. DSA is designed for use on tactical networks that are secure. Communication between teammates minimizes bandwidth by using compact messages.
+These networks are typically not connected to the Internet, are not high-bandwidth, and are not constantly connected - a situation commonly encountered in field operations. This communication network topology is unlike more traditional native apps that leverage the Internet and web servers for communication or web services for some functionality. DSA is designed for use on secure tactical networks. Communication between teammates minimizes bandwidth by using compact messages.
 
 <img src="./images/dsa-video-own-location.gif" alt="DSA display images" /><br>
 
@@ -81,7 +40,7 @@ DSA-Vehicle and DSA-Handheld have the same capability, each built for its intend
 - 3D map with navigation controls
 - Own location tracked on the map with various navigation modes
 - Read and display local file data including support for both foundation GIS data and overlays
-- Uses local data formats supported by the ArcGIS Native Maps SDKs such as Shapefile, GeoTIFF, DTED, NITF, Mobile Mosaic Dataset, GeoPackage, and Mobile Scene Packages
+- Uses local data formats supported by the ArcGIS Native Maps SDKs, such as Geospatial PDF, Shapefile, GeoTIFF, DTED, NITF, Mobile Mosaic Dataset, GeoPackage, and Mobile Scene Packages
 - Support for sharing information over a tactical network which is ad-hoc, peer-to-peer, and low-bandwidth, such as
   - Current location reports and distress signal
   - Friendly team position reports
@@ -96,7 +55,7 @@ DSA-Vehicle and DSA-Handheld have the same capability, each built for its intend
 
 DSA-Vehicle and DSA-Handheld can be built to run on all platforms supported by [ArcGIS Maps SDK for Qt]:  Android, Windows, iOS, Linux, and macOS. The message simulator, a testing tool, may be built for Windows, Linux, and macOS.
 
-# Overview
+# Overview of tools and settings
 
 ## Tools
 
@@ -115,6 +74,7 @@ The navigation toolbar orients your view of the map. The tool appears vertically
 | ![](./images/dsa-icon-2d-32.png "Set 2D perspective") | Set viewpoint to 2D perspective (looking straight down) |
 | ![](./images/dsa-icon-gps-off-32.png "GPS toggle") | Show own location as a moving symbol on the map |
 | ![](./images/dsa-icon-rotate-mode-32.png "Rotate mode toggle") | Toggle map navigation control between panning and map rotation |
+| ![](./images/dsa-icon-grid-32.png "Grid") | Toggling on and off grids  |
 
 ![](./images/dsa-v-nav-demo.gif "Navigation tools reorienting the map")<br>*Navigation tools orienting the map*
 
@@ -140,12 +100,15 @@ The map's context menu appears when you long-press on the map. The menu varies d
 | `Observation`   | [Create observation report](#observation-report) | X | X | X |
 | `Viewshed`      | [Show viewshed from track](#viewshed)  | X | X | X |
 
+> [!NOTE]
+>When you open `Identify` from the context menu on the latest observation in a message feed, the popup stays dynamic and the timestamp updates as new feed messages are received.
+
 ### Tool categories
 
 Tools are categorized by workflows, shown on the toolbar. Select one of the workflows on the toolbar to select tools to be displayed on the command bar.
 
 - Vehicle app: Toolbar appears vertically down the display's left side.
-- Handheld app: Toolbar horizontally across the bottom of the display.
+- Handheld app: Toolbar appears horizontally across the bottom of the display.
 
 The tool categories include:
 
@@ -169,7 +132,7 @@ The settings panel accesses the app's About information, app settings, and app c
 
 <!-- TODO - Verify the following paragraph: Some settings are persisted, but ALL of them? -->
 
-When you change settings on the Options tab, they are persisted in the application's settings file. The Configurations tab will allow you to switch the active configuration (data + application settings) or download a sample configuration from Esri.
+When you change settings on the `Options` tab, they are persisted in the application's configuration settings file. The `Configurations` tab will allow you to switch the active configuration (data + application settings), download a sample configuration from Esri, or download a custom configuration (see more info [in this section](#packaging-your-data-into-a-configuration-zip-file) or in the [Data Management](DataManagement.md#using-custom-configurations-on-mobile-platforms) doc). 
 
 ## Map tools
 
@@ -197,15 +160,20 @@ The Convert X/Y tool accepts a location in any supported coordinate notation or 
   <li>Minimize this tool.</li>
 </ol>
 
-***Developer tip:*** This tool relies heavily on the Maps Qt SDK API class [`CoordinateFormatter`]. You can include in your app only the supported coordinate systems that you are interested in.
+> [!TIP] 
+> ***Developer tip:*** This tool relies heavily on the Maps Qt SDK API class [CoordinateFormatter]. You can include in your app only the supported coordinate systems that you are interested in.
 
 ### Feeds
 
 ![](./images/dsa-icon-feeds-32.png)
 
-![](./images/dsa-tool-feeds.png "Feeds")<br>*Message feeds tool (DSA Vehicle)*
+<img src="./images/dsa-tool-feeds.png" alt="Feeds" width="300" /><br>*Message feeds tool (DSA Vehicle)*
 
 Feeds are streams of information broadcast over the network. When information is received over a feed, it is translated into something the app can use, like a map symbol in an overlay or an alert. The Feed tool controls which feeds are represented on your display. See more information in the section [Real-time feeds](#real-time-feeds).
+
+In `Message Feeds`, select a feed's ellipsis menu and choose `Track Display` to configure how observations and track lines are shown for that feed. See [Track display](#track-display) for more details.
+
+In `Message Feeds`, select a feed's ellipsis menu and choose `Find Track` to search that feed for tracks by track ID. See [Find Track](#find-track) for more details.
 
 ### Add data
 
@@ -230,6 +198,7 @@ Specify the folders the app searches for local data using your [App configuratio
   - Digital Terrain Elevation Data (DTED)
   - [Mobile mosaic dataset]
   - MrSID
+  - PDF
 
 - [Shapefile] (SHP)
 - Scene layer package (SLPK)
@@ -254,12 +223,16 @@ A set of overlays manages what is drawn on the map. Overlays may be reordered, z
 
 A [basemap] provides a background of geographical context for the symbology on the map. Use this tool to choose the basemap you want to see. Another basemap may be selected at any time. Specify the folder locations the app searches for basemaps loaded on your device using your [App configuration settings](#app-configuration-settings).
 
-***Developer tip:*** You have options when it comes to the basemaps you want to use, including:
-
-- Decide which basemaps you want to provision from among those that come with this DSA app.
-- Download basemaps for offline use from [Tile Basemap group on ArcGIS Online].
-- Provision your app with basemaps of your own design.
-- Try [Tile Package Kreator] from Esri, available on GitHub.
+> [!TIP] 
+> ***Developer tip:*** You have options when it comes to the basemaps you want to use, including:
+> 
+> - Decide which basemaps you want to provision from among those that come with this DSA app.
+> - Download basemaps for offline use from [Tile Basemap group on ArcGIS Online].
+> - Provision your app with basemaps of your own design.
+> - Decide which basemaps you want to provision from among those that come with this DSA app.
+> - Download basemaps for offline use from [Tiled Basemap group on ArcGIS Online].
+> - Provision your app with basemaps of your own design.
+> - Use the [Download Map tool in ArcGIS Pro] to create tile packages from tile layers and imagery layers
 
 # Workflows and best practices
 
@@ -282,11 +255,39 @@ DSA apps support several generic message feeds.
 | EOD Reports | Explosive Ordinance Disposal (EOD) mission reports. |
 | Sensor Observations | Observations made by sensors in the field. |
 
-***Developer tips:***
+> [!TIP] 
+> ***Developer tips:***
+> 
+> - DSA serializes feeds as strings of XML, which are then converted into bytes. The bytes are broadcast as datagrams over a specific UDP port. DSA apps are configured to listen on the same UDP ports, so when incoming datagrams are received, the messages are deserialized and displayed on the map.
+> - This app uses [DynamicEntities] to connect to and display message feeds in the app. [DynamicEntityLayer] is a core type added to the ArcGIS Native SDKs at version 200.1 to visualize real-time data from a [DynamicEntityDataSource].
+> - Military symbols are displayed using a [dictionary renderer].
 
-- DSA serializes feeds as strings of XML, which are then converted into bytes. The bytes are broadcast as datagrams over a specific UDP port. DSA apps are configured to listen on the same UDP ports, so when incoming datagrams are received, the messages are deserialized and displayed on the map.
-- This app uses [DynamicEntities] to connect to and display message feeds in the app. [DynamicEntityLayer] is a core type added to the ArcGIS Native SDKs at version 200.1 to visualize real-time data from a [DynamicEntityDataSource].
-- Military symbols are displayed using a [dictionary renderer].
+### Dynamic entities
+
+#### Track display
+
+<img src="./images/dsa-track-display.png" alt="Track Display" width="300" /><br>*Track Display tool*
+
+Open a feed's ellipsis menu in `Message Feeds` and select `Track Display` to control how dynamic observations and track lines are visualized for that feed.
+
+- Select a feed from `Message Feeds` (for example, `Friendly Tracks - Air` or `Friendly Tracks - Land`) and apply display settings independently per feed.
+- Enable `Observations` to show historical track observations for the selected feed.
+- Select a feed from `Message Feeds` (for example, `Friendly Tracks - Air` or `Friendly Tracks - Land`) and apply display settings independently per feed.
+- Check `Show observations` to show historical track observations for the selected feed. Change the observation symbol size and color, and see updates reflected immediately on the map.
+- Check `Show track lines` to display a line representing track movement over time, and change the track line width and color. 
+- `Track Length` controls how much recent track history is shown. Tap `-` until it says `All` to show the full available track history for the current session.
+- Observation and track-line display can be shown at the same time for both `Friendly Tracks - Air` and `Friendly Tracks - Land`, while preserving independent settings per feed.
+
+#### Find Track
+
+<img src="./images/dsa-find-feeds.png" alt="Find Track" width="300" /><br>*Find Track tool*
+
+Open a feed's ellipsis menu in `Message Feeds` and select `Find Track` to quickly locate tracks by track ID in that feed.
+
+- Enter all or part of a track ID to search.
+- Matching results are listed and highlighted on the map.
+- Tapping a result zooms the map to the latest observation and pans the map to follow the track as it updates.
+- Each result provides actions for `Zoom to`, `Identify`, and `Line of sight`.
 
 ## Exploratory visual analysis
 
@@ -308,10 +309,11 @@ Exploratory analysis tools combine information such as feature location, your lo
 
 [Line of sight analysis] shows visibility along a line drawn between an observer and a target location. The result shows which segments of the line can be seen by the observer and which segments are blocked by an obstruction. The line from the observer is green until it encounters a barrier, and beyond that the line is red. As the observer and the target move, the line of sight analysis is recalculated.
 
-***Developer tips:***
-
-- Both viewshed and line of sight analysis are calculated using the GPU and operate only on the data displayed on the map. This means that the accuracy of these analyses are limited by the current resolution of the displayed data and the elevation surface.
-- Because [Dynamic Entities] are a kind of GeoElement, they can be used within MessageFeed layers as the target of the analysis tools.
+> [!TIP] 
+> ***Developer tips:***
+> 
+> - Both viewshed and line of sight analysis are calculated using the GPU and operate only on the data displayed on the map. This means that the accuracy of these analyses are limited by the current resolution of the displayed data and the elevation surface.
+> - Because [Dynamic Entities] are a kind of GeoElement, they can be used within MessageFeed layers as the target of the analysis tools.
 
 ## Alerts and conditions
 
@@ -359,13 +361,14 @@ For an attribute condition:
 - The name of the attribute to monitor
 - The value of the attribute that will trigger an alert
 
-For testing spatial conditions, DSA uses the [GeometryEngine] class from the ArcGIS Native Maps SDK, which allows for fast calculations of spatial relationships, distances, and so forth. To manage the relationship between the conditions which are being evaluated against the real-time feeds, DSA implements a quadtree.
+For testing spatial conditions, DSA uses the [GeometryEngine] class from the ArcGIS Native Maps SDK, which allows for fast calculations of spatial relationships, distances, and so forth. To manage the relationship between the conditions that are being evaluated against the real-time feeds, DSA implements a quadtree.
 
 Due to the real-time, dynamic nature of the DSA app, the information used can constantly change. The location of other units or reports is updated as the mission progresses, while attributes can change to reflect new information as it is received. This constantly changing picture poses a challenge when performing traditional GIS analysis since queries must be re-run when the underlying data has been updated.
 
-In particular, performing spatial analysis (for example, a geofence) against many moving entities can be computationally expensive. To help alleviate this cost, the `GeometryQuadtree` can be used to create a spatial look-up structure for working with multiple [Geometry] objects. The quadtree is built to cover the full extent (an [Envelope] object) of the geometry and each object is recursively assigned to a leaf or node of the tree up to a maximum depth. The maximum depth of the tree can be assigned at creation time - generally, 8 offers a good trade-off between granularity and the time taken to build the tree. The tree is a sparse structure, that is, any nodes which contain no geometry are removed. Once built, this structure offers very fast lookup of the candidate geometries which may intersect with a given query geometry. For performance reasons, the tree uses bounding box intersection tests only. The results are returned as a list of geometry objects that can be used for exact intersection tests using the [GeometryEngine]. The quadtree will connect to changes to the underlying geometry objects and can also be updated to include new features.
+In particular, performing spatial analysis (for example, a geofence) against many moving entities can be computationally expensive. To help alleviate this cost, the `GeometryQuadtree` can be used to create a spatial look-up structure for working with multiple [Geometry] objects. The quadtree is built to cover the full extent (an [Envelope] object) of the geometry and each object is recursively assigned to a leaf or node of the tree up to a maximum depth. The maximum depth of the tree can be assigned at creation time - generally, 8 offers a good trade-off between granularity and the time taken to build the tree. The tree is a sparse structure; that is, any nodes which contain no geometry are removed. Once built, this structure offers very fast lookup of the candidate geometries which may intersect with a given query geometry. For performance reasons, the tree uses bounding box intersection tests only. The results are returned as a list of geometry objects that can be used for exact intersection tests using the [GeometryEngine]. The quadtree will connect to changes to the underlying geometry objects and can also be updated to include new features.
 
-***Developer tip*** Building the quadtree is the most expensive part of the operation so care should be taken to do this only when required. For example, the quadtree is a useful tool where there are many features that change infrequently (for example, a static feature layer) but would be less appropriate for a small number of constantly changing features (for example, your current location). For very large datasets, the cost to build the tree may be very high, so it may be worth moving its construction to a background thread to avoid blocking the GUI thread.
+> [!TIP]
+> ***Developer tip:*** Building the quadtree is the most expensive part of the operation, so care should be taken to do this only when required. For example, the quadtree is a useful tool where there are many features that change infrequently (for example, a static feature layer) but would be less appropriate for a small number of constantly changing features (for example, your current location). For very large datasets, the cost to build the tree may be very high, so it may be worth moving its construction to a background thread to avoid blocking the GUI thread.
 
 ## Collaboration
 
@@ -390,7 +393,9 @@ When you select the observation report tool, a wizard asks for details to includ
 - Description of the observation
 - The date and time of the observation (default is current time)
 
-***Developer tip:*** You can follow the create report patterns used by this app to create your own reports with their own purpose and attributes and share those reports with your teammates.
+> [!TIP] 
+> ***Developer tip:***
+> You can follow the create report patterns used by this app to create your own reports with their own purpose and attributes and share those reports with your teammates.
 
 ### Markup tools
 
@@ -411,16 +416,17 @@ Use these tools to create markups.
 | ![](./images/dsa-icon-clear-markup-32.png) | Clear all the lines of the current markup. |
 | ![](./images/dsa-icon-share-markup-32.png) | The share control appears on the display after you start drawing a new markup. Use Share to finish your markup, give it a name and send it to all teammates. |
 
-Markups are serialized as individual JSON files in the folder specified by the `OperationalOverlays` parameter in the [app configuration file](#app-configuration-settings). The JSON schema for markup is the same one that's used for Explorer. Refer to the [Explorer for ArcGIS markup documentation] to see how Explorer similarly shares markup.
+Markups are serialized as individual JSON (".markup") files in the folder specified by the `OperationalOverlays` parameter in the [app configuration file](#app-configuration-settings). 
 
-***Developer tips:***
-
-- DSA uses a [Graphic] object to create markup. Graphics are for temporary and transient things like sketches and tracks. After you share the markup, it is added to an overlay as a [FeatureCollection] object which is persisted like any other overlay. This is a common ArcGIS Native Maps SDK pattern to use graphics for transient objects and a FeatureCollection for persisted objects.
-- DSA serializes a markup as JSON, which is then converted into bytes. Next, the bytes are broadcast as datagrams over a specific UDP port. All apps are configured to listen on the same UDP ports, so when incoming datagrams are received, they are deserialized and added to the map as a markup overlay.
+> [!TIP]
+> ***Developer tips:***
+> 
+> - DSA uses a [Graphic] object to create markup. Graphics are for temporary and transient things like sketches and tracks. After you share the markup, it is added to an overlay as a [FeatureCollection] object, which is persisted like any other overlay. This is a common ArcGIS Native Maps SDK pattern to use graphics for transient objects and a FeatureCollection for persisted objects.
+> - DSA serializes a markup as JSON, which is then converted into bytes. Next, the bytes are broadcast as datagrams over a specific UDP port. All apps are configured to listen on the same UDP ports, so when incoming datagrams are received, they are deserialized and added to the map as a markup overlay.
 
 # App architecture
 
-The apps follow a commonly used design pattern of using C++ for most program logic and using Qt Quick (QML) for UI development. DSA apps are written with the ArcGIS Maps SDK for Qt C++ API and the SDK Toolkit. C++ generally performs procedural code faster than Qt Quick which uses a JavaScript engine for procedural code.
+The apps follow a commonly used design pattern of using C++ for most program logic and using Qt Quick (QML) for UI development. DSA apps are written with the ArcGIS Maps SDK for Qt C++ API and the SDK Toolkit. C++ generally performs procedural code faster than Qt Quick, which uses a JavaScript engine for procedural code.
 
 [Qt Quick from the Qt Company] is excellent for UI development, simplifying the design and execution of a professional-looking, dynamic UI. Qt Quick has many out-of-the-box visualization options such as animation and control arrangement.
 
@@ -428,18 +434,49 @@ The ArcGIS Native SDK for Qt C++ API provides capabilities to manage, display, a
 
 The SDK Toolkit includes tools to fulfill specific mission requirements, such as displaying a north arrow, measuring distance, or converting coordinate notations.
 
-All DSA tools have a common interface and are exposed as controller classes (which may have associated model classes). The UIs are implemented using QML to cleanly separate the UI and business logic, as well as effectively manage cross-API dependency. The app makes heavy use of the Toolkit's Resource Provider so that information can be shared between classes without creating cross-dependencies between tools.
+All DSA tools have a common interface and are exposed as controller classes (which may have associated model classes). The UIs are implemented using QML to cleanly separate the UI and business logic, as well as effectively manage cross-API dependencies. The app makes heavy use of the Toolkit's Resource Provider so that information can be shared between classes without creating cross-dependencies between tools.
 
 # Get the DSA apps
 
-For convenience, you can try out the DSA apps compiled for [Windows] and [Android], and the [local data] from ArcGIS Online. Please note that these compiled versions of the app are examples only, and should not be used in a production environment.
+For convenience, you can try out the DSA Vehicle, Handheld, and Message Simulator yourself. Access the compiled versions for [Windows] and [Android], as well as [sample data] from ArcGIS Online. 
+
+> [!IMPORTANT]
+> _Please note that these compiled versions of the app are examples only, and should not be used in a production environment._
+
+## Run on Windows desktop
+
+There are two ways to run the app on a Windows desktop:
+
+### Option 1: Full screen (fixed window size)
+
+In Windows Explorer, double-click `DSA_Vehicle_Qt.exe` to launch the app in full screen. This mode does not allow resizing the window. 
+
+### Option 2: Window mode (resizable, can minimize, can maximize)
+
+1. Open Command Prompt in Administrator mode.
+2. Navigate to the app folder, for example:
+
+```bat
+cd C:\DSA\DSA_Vehicle\DSA_Vehicle
+```
+
+3. Run:
+
+```bat
+DSA_Vehicle_Qt.exe --show normal
+```
 
 # App configuration settings
 
-## Configure and persist app settings using the App Configuration file
-An app configuration file is used to set paths to data sources and persist the state of the app (settings, layers, and conditions) between sessions. When the DSA app runs, it will create a new app configuration file if one is not found in local storage. If the app configuration file is found, the app will read the values from the file when it starts. Any app settings changed at run time in the app using the [Settings panel](#settings-panel), data layers in the Overlays list, and alert conditions are persisted in the configuration file automatically when the app is closed. 
+All data used by the app must be in a specific, predefined folder structure, referred to as an "app configuration".  At version 2.0, DSA was enhanced to support switching between different app configurations. There are two app settings files used by DSA to persist the location of configurations available to the app, and settings specific to each configuration:
+- The Configurations Management file (`DsaConfigurations.json`) stores the paths to each app configuration that the user can choose to load, as well as a setting to indicate which configuration is currently loaded. 
+- The App Configuration Settings file (`DsaAppConfig.json`) stores settings and paths to data particular to a specific app configuration. 
 
-The app configuration file is located at `~/ArcGIS/Runtime/Data/DSA/Default/DsaAppConfig.json`, where `~` is `%username%`/`C:/Users/<username>` on Windows, `$HOME` on Unix and MacOS, and `<app_folder>/files` on Android where `<app_folder>` is the path to the package name in your AndroidManifest.xml file (e.g. /data/data/com.esri.arcgisruntime.opensourceapps.DSA_Handheld_Qt).
+Supplemental information on how to migrate data used with DSA 1.0 to the current format, as well as how to create and deploy custom configurations, can be found in the [Data Management](DataManagement.md) documentation. 
+## Configure and persist app settings using the App Configuration Settings file
+An app configuration settings file is used to set paths to data sources and persist the state of the app (settings, layers, and conditions) between sessions. When the DSA app runs, it will create a new app configuration file if one is not found in local storage. If the app configuration file is found, the app will read the values from the file when it starts. Any app settings changed at runtime in the app using the [Settings panel](#settings-panel), data layers in the Overlays list, and alert conditions are persisted in the configuration file automatically when the app is closed. 
+
+By default, the app configuration settings file is located at `~/ArcGIS/Runtime/Data/DSA/Default/DsaAppConfig.json`, where `~` is `%username%`/`C:/Users/<username>` on Windows, `$HOME` on Unix and MacOS, and `<app_folder>/files` on Android where `<app_folder>` is the path to the package name in your AndroidManifest.xml file (e.g. /data/data/com.esri.arcgisruntime.opensourceapps.DSA_Handheld_Qt).
 
 The following lists some of the app configuration settings that you can change.
 
@@ -450,8 +487,12 @@ The following lists some of the app configuration settings that you can change.
 | ElevationDirectory | `**/ElevationData` | Location to search for DEMs and LERC encoded TPK |
 | ResourceDirectory | `**/ResourceData` | Location to search for images, style files, and other similar files used by the app |
 | SimulationDirectory | `**/SimulationData` | Location to search for GPX and Message Simulation files |
-| LocalDataPaths | `**`, `**/OperationalData` | Locations that the Add Local Data tool searches for GIS Data. This should be a comma-separated list. Folders are NOT recursively searched |
+| LocalDataPaths | `**/OperationalData` | Locations that the Add Local Data tool searches for GIS Data. This should be a comma-separated list. Folders are NOT recursively searched |
 | GpxFile | `**/SimulationData/MontereyMounted.gpx` | GPX file to use for simulating location |
+| GridColorScheme | `Light` | String, option for appearance of the grid lines `Light, Dark, Colors` |
+| GridVisible | `false` | Grid should be displayed on the secene |
+| CurrentLocationSurfacePlacement | `Relative` | String. Option for the current location symbol placement on the surface used in the scene `DrapedFlat, Relative`. If `DrapedFlat,` the CurrentLocationZOffset setting is ignored
+| CurrentLocationZOffset | `10` | Number. An optional distance in meters to offset the current location symbol
 | DefaultBasemap | `Topographic` | Name of the TPK file to use as the basemap, without the .tpk file extension (not case sensitive) |
 | DefaultElevationSource | `**/ElevationData/CaDEM.tpk` | Default elevation source |
 | CurrentPackage | "" | String representing the path to a Mobile Scene Package (.mspk) file |
@@ -472,7 +513,7 @@ The following lists some of the app configuration settings that you can change.
 
 ## Add your own local data
 
-The default path to the data used by DSA is `~/ArcGIS/Runtime/Data/DSA/Default`. If you wish to use your own data, copy the data files into the related folders (see below) and reference the above table to update the various paths in the app configuration file (`DsaAppConfig.json`). If you have not copied your own data into the Default directory, the app will prompt you with an option to download the demo DSA data package from ArcGIS Online (~450mb) and place it in the Default directory. 
+The default path to the data used by DSA is `~/ArcGIS/Runtime/Data/DSA/Default`. If you wish to use your own data, copy the data files into the related folders (see below) and reference the above table to update the various paths in the app configuration settings file (`DsaAppConfig.json`). If you have not copied your own data into the Default directory, the app will prompt you with an option to download the demo DSA data package from ArcGIS Online (~450mb) and place it in the Default directory. 
 
 The default data directory should look like this:
 
@@ -487,30 +528,28 @@ The default data directory should look like this:
 
 ```
 
-## Configure multiple app configurations using the DSA Configurations file
+## Deploy app configuration data with the application
 
-DSA also includes a file to allow you to save more than one configuration of the app. This is useful if you use DSA to demonstrate more than one area of interest, each with different data sources.  The DSA configuration file is located at `~/ArcGIS/Runtime/Data/DSA/DsaConfigurations.json`. If the file does not already exist when the app starts, it will be created automatically and will refer to the Default DSA data package, referenced in the section above.  
+You can include the configuration data with the app so that it can be easily shared and deployed to another machine and run without additional configuration. To do this, store the app configurations management file (`DsaConfigurations.json`) in the same folder as the app executable, and use relative paths in the configurations management file and app configuration settings file(s) (`DsaAppConfig.json`). 
+### Packaging your data into a configuration zip file
 
-To set up an additional 'Configuration' for DSA, create a folder with the desired name at the same level as the 'Default' configuration folder (i.e. "MyLocalData"). Place all your data in the new folder using the structure described in the section above. Update the **DsaConfiguration.json** file to include your new folder, as shown in the screenshot below. 
-
-Note: 
-- You do not need to provide a `url` value for this configuration
-- Be sure to add a comma to separate this from the Default configuration entity
-- If you want your configuration to be loaded on startup, set the `selected` value to `true` for your new item and set the Default entity's `selected` property to `false` (as shown in the highlighted section in the image below)
-
-![](./images/dsa-tool-configurations-setup.png)
-
-Once the DSA configuration file is updated and saved, the next time you open the app you will see the new configuration listed on the Configurations tab, which is part of the Settings page. Here, you can select which configuration you want activated by selecting it in the list. Changes are made to the DSA configuration file immediately, however, an app restart will be necessary to see the new app configuration reflected in the app. 
-
-
-
-
+As of version 3.0.0, the Configuration tab on the [Settings panel](#settings-panel) will allow you to download and deploy custom app configurations in zip files. The zip files for custom configurations follow the same specific folder structure as the sample data provided by Esri. The 'base' folders, such as 'OperationalData', 'BasemapData', etc, must be directly at the root folder level. The zip must also contain a valid `DsaAppConfig.json` file at the root of the archive. The following steps can be followed to ensure the zip file is packaged so DSA can unpack it properly.
+- Navigate to the configuration folder in the file system browser
+![image](./images/dsa-data-management-create-zips-1.png)
+- Verify that your zip folder contains a valid `DsaAppConfig.json`
+![image](./images/dsa-data-management-create-zips-2.png)
+- From within the folder, select all the items (including `DsaAppConfig.json`), right-click, and select `Compress` on Mac or `Send to > Compressed (zipped) folder` on Windows.
+![image](./images/dsa-data-management-create-zips-3.png)
+- The archive/zip that is created is now ready to be used with the DSA application. The name of the zip itself is not critical. It can be renamed to any valid file name.
+![image](./images/dsa-data-management-create-zips-4.png)
 
 # Message simulator
 
-The message simulator app broadcasts simulated messages over the peer-to-peer network. It is not meant for end users in the field but rather provides a way to test and demonstrate the capabilities of DSA apps by providing a simulated environment through messages. The message simulator broadcasts messages over a given port. DSA-Vehicle and DSA-Handheld apps can listen to the same port for new messages and update their displays as messages are received.
+The message simulator app broadcasts simulated messages over the peer-to-peer network. It provides a way to test and demonstrate the message feed capabilities of DSA apps by providing a simulated environment for peer-to-peer messages, and is not intended for use in production. The message simulator reads simulated messages in [GeoMessage] XML format from a file and broadcasts them over a UDP port. The DSA Vehicle and Handheld apps can be configured to listen to the same UDP port for new messages and update their displays as messages are received.
 
-The message simulator can only consume one simulation file at a time. You can create a script to run multiple simulation instances at the same time from the command line. For example on Windows, run `DSA_MessageSimulator_Qt.exe -h` to see the usage options:
+The message simulator can only consume one simulation file at a time. You can create a script to run multiple simulation instances simultaneously from the command line. 
+
+On Windows, run `DSA_MessageSimulator_Qt.exe -h` to see the usage options:
 
 ```xml
 Available command line parameters:
@@ -531,17 +570,19 @@ Parameters available only in console mode:
 
 <!-- GitHub repos -->
 
-[Tile Package Kreator]: https://github.com/Esri/TilePackageKreator
+[GeoMessage]: https://github.com/Esri/geomessage-simulator-qt/blob/master/GeoMessageSpecification/GeoMessageSpecification.md
 
 <!-- Apps and data hosted on AGOL -->
 
 [Android]: http://links.esri.com/exampleapps/dsaqt/app/android
 
-[local data]: http://links.esri.com/exampleapps/dsaqt/localdata
+[sample data]: http://links.esri.com/exampleapps/dsaqt/localdata
 
 [Windows]: http://links.esri.com/exampleapps/dsaqt/app/windows
 
-[Tile Basemap group on ArcGIS Online]: https://www.arcgis.com/home/group.html?id=3a890be7a4b046c7840dc4a0446c5b31#overview
+[Tiled Basemap group on ArcGIS Online]: https://www.arcgis.com/home/group.html?id=3a890be7a4b046c7840dc4a0446c5b31#overview
+
+[Download Map tool in ArcGIS Pro]: https://doc.esri.com/en/arcgis-pro/latest/help/projects/take-a-map-offline.html
 
 <!-- Runtime landing pages -->
 
@@ -555,8 +596,6 @@ Parameters available only in console mode:
 [DynamicEntityLayer]: https://developers.arcgis.com/qt/cpp/api-reference/esri-arcgisruntime-dynamicentitylayer.html
 [DynamicEntityDataSource]: https://developers.arcgis.com/qt/cpp/api-reference/esri-arcgisruntime-dynamicentitydatasource.html
 [DynamicEntities]: https://developers.arcgis.com/qt/cpp/api-reference/esri-arcgisruntime-dynamicentity.html
-
-[Explorer for ArcGIS markup documentation]: https://doc.arcgis.com/en/explorer/ipad/help/markup.htm
 
 <!-- Glossary terms -->
 
@@ -578,9 +617,9 @@ Parameters available only in console mode:
 
 <!-- Samples -->
 
-[Line of sight analysis]: https://developers.arcgis.com/qt/cpp/sample-code/line-of-sight-geoelement/
+[Line of sight analysis]: https://developers.arcgis.com/qt/cpp/sample-code/show-exploratory-line-of-sight-geoelement/
 
-[Viewshed analysis]: https://developers.arcgis.com/qt/cpp/sample-code/viewshed-geoelement/
+[Viewshed analysis]: https://developers.arcgis.com/qt/cpp/sample-code/show-exploratory-viewshed-geoelement/
 
 <!-- Toolkit reference -->
 
@@ -601,6 +640,8 @@ Parameters available only in console mode:
 [GeometryEngine]: https://developers.arcgis.com/qt/cpp/api-reference/esri-arcgisruntime-geometryengine.html
 
 [Graphic]: https://developers.arcgis.com/qt/cpp/api-reference/esri-arcgisruntime-graphic.html
+
+[CoordinateFormatter]: https://developers.arcgis.com/qt/cpp/api-reference/esri-arcgisruntime-coordinateformatter.html
 
 <!-- External website references  -->
 

@@ -21,6 +21,7 @@
 #include "BasemapPickerController.h"
 
 // dsa app headers
+#include "TileCache.h"
 #include "TileCacheListModel.h"
 
 // toolkit headers
@@ -161,6 +162,10 @@ void BasemapPickerController::basemapSelected(int row)
   if (!tileCache)
     return;
 
+  m_selectedBasemapIndex = row;
+  m_selectedBasemapPath = tileCache->path();
+  emit selectedBasemapIndexChanged();
+
   Basemap* selectedBasemap = new Basemap(new ArcGISTiledLayer(tileCache, this), this);
   connect(selectedBasemap, &Basemap::errorOccurred, this, &BasemapPickerController::errorOccurred);
 
@@ -197,7 +202,7 @@ QString BasemapPickerController::toolName() const
  *  \li BasemapDirectory. The directory containing basemap data.
  * \endlist
  */
-void BasemapPickerController::setProperties(const QVariantMap& properties)
+void BasemapPickerController::toolInitProperties(const QVariantMap& properties)
 {
   const QString newDefaultBasemap = properties.value(DEFAULT_BASEMAP_PROPERTYNAME).toString();
   const bool basemapChanged = !newDefaultBasemap.isEmpty() && newDefaultBasemap != m_defaultBasemap;
@@ -214,6 +219,12 @@ void BasemapPickerController::setProperties(const QVariantMap& properties)
     onBasemapDataPathChanged();
     selectInitialBasemap();
   }
+}
+
+bool BasemapPickerController::shouldSetProperties(const QString& propertyName)
+{
+  return (propertyName == DEFAULT_BASEMAP_PROPERTYNAME ||
+          propertyName == BASEMAP_DIRECTORY_PROPERTYNAME);
 }
 
 } // Dsa

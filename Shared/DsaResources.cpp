@@ -18,6 +18,7 @@
 #include "pch.hpp"
 
 #include "DsaResources.h"
+#include "MessageFeedConstants.h"
 
 #include <QUrl>
 
@@ -54,12 +55,22 @@ void DsaResources::setArcGISMapsSDKVersion(const char* arcGISMapsSDKVersion)
   emit arcGISMapsSDKVersionChanged();
 }
 
+QStringList DsaResources::trackDisplayColors()
+{
+  return MessageFeedConstants::MESSAGE_FEEDS_TRACK_DISPLAY_COLORS;
+}
+
 /*!
  * \brief Returns the version string of the Maps SDK that is used by the project
  */
 QString DsaResources::arcGISMapsSDKVersion() const
 {
   return m_arcGISMapsSDKVersion;
+}
+
+QString DsaResources::defaultConfigurationDownloadPrompt() const
+{
+  return QStringLiteral("App configuration data not found.\n\nDownload the default configuration data from Esri?");
 }
 
 /*!
@@ -165,6 +176,22 @@ QUrl DsaResources::iconAlertList() const
 QUrl DsaResources::iconAppLogo() const
 {
   return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/applogo.png"));
+}
+
+/*!
+  \brief Returns the URL to the "Browse" icon.
+ */
+QUrl DsaResources::iconBrowse() const
+{
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/icon_browse.png"));
+}
+
+/*!
+  \brief Returns the URL to the "Back" icon.
+ */
+QUrl DsaResources::iconBack() const
+{
+  return QUrl(QStringLiteral("qrc:/Resources/icons/xhdpi/chevron-left.svg"));
 }
 
 /*!

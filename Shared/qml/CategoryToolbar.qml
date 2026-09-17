@@ -30,6 +30,14 @@ Item {
     signal settingsClicked()
     signal aboutClicked()
 
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onClicked: mouse => mouse.accepted = true
+        onDoubleClicked: mouse => mouse.accepted = true
+        onWheel: wheel => wheel.accepted = true
+    }
+
     Rectangle {
         anchors.fill: parent
         color: Material.background

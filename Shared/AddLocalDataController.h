@@ -54,7 +54,8 @@ public:
   QAbstractListModel* localDataModel() const;
 
   QString toolName() const override;
-  void setProperties(const QVariantMap& properties) override;
+  void toolInitProperties(const QVariantMap& properties) override;
+  bool shouldSetProperties(const QString& propertyName) override;
 
   // helpers for creating the layers for a given string
   void createFeatureLayerGeodatabase(const QString& path);

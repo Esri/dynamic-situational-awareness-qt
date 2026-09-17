@@ -1,0 +1,57 @@
+{
+  "popupInfo": {
+    "popupElements": [
+      {
+        "type": "text",
+        "text": "<span style=\"font-size:12px;\"><i>Reporting unit:</i></span><br><span style=\"font-size:18px;color:#68C1F9\"><strong>{uniquedesignation}</strong></span><br><span style=\"font-size:12px;\"><i>Received: </i><b>{SYS_TIMESTAMP}</b></span>"
+      },
+      {
+        "type": "fields",
+        "description": "",
+        "fieldInfos": [
+          {
+            "fieldName": "owningunit",
+            "label": "Owning Unit"
+          },
+          {
+            "fieldName": "staffcomment",
+            "label": "Staff Comment"
+          },
+          {
+            "fieldName": "speed",
+            "format": {
+              "digitSeparator": true,
+              "places": 0
+            },
+            "label": "Speed"
+          },
+          {
+            "fieldName": "status911",
+            "format": {
+              "digitSeparator": true,
+              "places": 0
+            },
+            "label": "Alert Status"
+          },
+          {
+            "fieldName": "sic",
+            "label": "SIDC (2525c)"
+          },
+          {
+            "fieldName": "_control_points",
+            "format": {
+              "digitSeparator": false,
+              "places": 2
+            },
+            "label": "Coordinates"
+          },
+          {
+            "fieldName": "_id",
+            "label": "Track ID"
+          }
+        ],
+        "title": "Details:"
+      }
+    ]
+  }
+}

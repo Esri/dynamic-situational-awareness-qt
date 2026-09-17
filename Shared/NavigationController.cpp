@@ -21,10 +21,12 @@
 
 // C++ API headers
 #include "Camera.h"
+#include "ErrorException.h"
 #include "GlobeCameraController.h"
 #include "OrbitGeoElementCameraController.h"
 #include "OrbitLocationCameraController.h"
 #include "Scene.h"
+#include "SceneQuickView.h"
 #include "SceneView.h"
 #include "SceneViewTypes.h"
 #include "Viewpoint.h"
@@ -37,6 +39,7 @@
 #include <QScreen>
 
 // DSA headers
+#include "DsaController.h"
 #include "DsaUtility.h"
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
@@ -81,13 +84,6 @@ QString NavigationController::toolName() const
 }
 
 /*!
- * \brief Sets any values in \a properties which are relevant for the navigation controller.
- */
-void NavigationController::setProperties(const QVariantMap&)
-{
-}
-
-/*!
   \internal
  */
 void NavigationController::updateGeoView()
@@ -96,15 +92,25 @@ void NavigationController::updateGeoView()
   if (!m_geoView)
     return;
 
+  // There is currently no implementation for MapQuickView. This variable
+  // will remain false if any new features use something other than
+  // the SceneQuickView control.
+  m_is3d = false;
+
   m_sceneView = dynamic_cast<SceneView*>(m_geoView);
   if (m_sceneView)
   {
     m_is3d = true;
-  }
-  else
-  {
-    // set the mapView here
-    m_is3d = false;
+
+    /*
+     * Note: This connection is only intended to capture a valid geometry
+     * for the center point for the controller once on app launch. This approach
+     * does not depend on operational or basemap data being loaded. It is not
+     * intended to verify that the layers/basemap or the scene itself are
+     * loaded and ready to be used.
+     */
+    auto* sceneQV = static_cast<SceneQuickView*>(m_sceneView);
+    connect(sceneQV, &SceneQuickView::viewpointChanged, this, &NavigationController::center, Qt::SingleShotConnection);
   }
 }
 
@@ -113,11 +119,19 @@ void NavigationController::updateGeoView()
  */
 void NavigationController::zoomToInitialLocation()
 {
-  Viewpoint initViewpoint;
-  if (m_is3d)
+  if (!m_is3d)
+    return;
+
+  if (const auto* dsaController = DsaController::instance(); dsaController)
   {
-    m_sceneView->setViewpointAsync(m_sceneView->arcGISScene()->initialViewpoint(), 1.0f);
+    if (const auto initialViewpoint = dsaController->readInitialLocation(); !initialViewpoint.isEmpty())
+    {
+      m_sceneView->setViewpointAsync(initialViewpoint, 1.0f);
+      return;
+    }
   }
+
+  m_sceneView->setViewpointAsync(m_sceneView->arcGISScene()->initialViewpoint(), 1.0f);
 }
 
 /*!
@@ -285,6 +299,10 @@ void NavigationController::setRotationInternal()
  */
 void NavigationController::set2DInternal()
 {
+  static bool transitioningTo2D = false;
+  if (transitioningTo2D)
+    return;
+
   if (m_is3d)
   {
     // get the current camera
@@ -296,7 +314,17 @@ void NavigationController::set2DInternal()
     // rotate the camera using the delta pitch value
     const Camera newCamera = currentCamera.rotateAround(m_currentCenter, 0., -currentCamera.pitch(), 0.);
     // set the sceneview to the new camera
-    m_sceneView->setViewpointCameraAsync(newCamera, 2.0);
+    transitioningTo2D = true;
+    m_sceneView->setViewpointCameraAsync(newCamera, 2.0).then(this, [](bool)
+    {
+      transitioningTo2D = false;
+    }).onCanceled(this, []()
+    {
+      transitioningTo2D = false;
+    }).onFailed(this, [](const ErrorException&)
+    {
+      transitioningTo2D = false;
+    });
   }
 }
 
@@ -308,15 +336,16 @@ void NavigationController::center()
   if (!m_sceneView)
     return;
 
-  m_enabled = true;
-
   m_sceneView->screenToLocationAsync(m_sceneView->widthInPixels() * 0.5, m_sceneView->heightInPixels() * 0.5).then(this, [this](Point point)
   {
-    // check if called from the navigation controls
-    if (!m_enabled)
-      return;
+    // if the center of the screen does not intersect the globe an invalid point can be the result
+    // don't update the class property if this happens, fallback is the previous center point
+    if (!point.isEmpty() && point.isValid())
+      m_currentCenter = point;
 
-    m_currentCenter = point;
+    // skip if center has never been initialized to a valid point
+    if (m_currentCenter.isEmpty() || !m_currentCenter.isValid())
+      return;
 
     if (m_currentMode == Mode::Zoom)
     {
@@ -330,11 +359,7 @@ void NavigationController::center()
     {
       set2DInternal();
     }
-
-    // reset
-    m_enabled = false;
   });
-
 }
 
 /*!

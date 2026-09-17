@@ -67,6 +67,7 @@ public:
 
   Q_INVOKABLE QString alternateName(int layerIndex);
   Q_INVOKABLE LayerGeometryType layerGeometryType(int layerIndex);
+  Q_INVOKABLE bool spatialReferenceOk(int layerIndex) const;
 
   QString toolName() const override;
 

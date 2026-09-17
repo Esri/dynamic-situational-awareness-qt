@@ -1,0 +1,56 @@
+{
+  "popupInfo": {
+    "popupElements": [
+      {
+        "type": "text",
+        "text": "<span style=\"font-size:12px;\"><i>Reporting unit:</i></span><br><span style=\"font-size:18px;color:#68C1F9\"><strong>{uniquedesignation}</strong></span><br><span style=\"font-size:12px;\"><i>Received: </i><b>{SYS_TIMESTAMP}</b></span>"
+      },
+      {
+        "type": "fields",
+        "fieldInfos": [
+          {
+            "fieldName": "size",
+            "label": "Size"
+          },
+          {
+            "fieldName": "activity_cat",
+            "label": "Activity (category)"
+          },
+          {
+            "fieldName": "activity",
+            "label": "Activity"
+          },
+          {
+            "fieldName": "location",
+            "label": "Location"
+          },
+          {
+            "fieldName": "unit_cat",
+            "label": "Enemy Unit (category)"
+          },
+          {
+            "fieldName": "unit",
+            "label": "Unit / Uniform"
+          },
+          {
+            "fieldName": "timeobserved",
+            "label": "Time and Date"
+          },
+          {
+            "fieldName": "equip_cat",
+            "label": "Equipment (category)"
+          },
+          {
+            "fieldName": "equipment",
+            "label": "Equipment"
+          },
+          {
+            "fieldName": "_id",
+            "label": "Track ID"
+          }
+        ],
+        "title": "SALUTE Report:"
+      }
+    ]
+  }
+}

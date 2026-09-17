@@ -39,7 +39,8 @@ public:
   ~LocationTextController();
 
   QString toolName() const override;
-  void setProperties(const QVariantMap& properties) override;
+  void toolInitProperties(const QVariantMap& properties) override;
+  bool shouldSetProperties(const QString& propertyName) override;
   void setCoordinateFormat(const QString& format);
   QString coordinateFormat() const;
   void setUnitOfMeasurement(const QString& unit);
@@ -57,9 +58,11 @@ signals:
 private slots:
   void onGeoViewChanged();
   void onLocationChanged(const Esri::ArcGISRuntime::Point& pt);
+  void onToolAdded(AbstractTool* newTool);
 
 private:
   std::function<QString(const Esri::ArcGISRuntime::Point&)> formatCoordinate;
+  QMetaObject::Connection m_conToolAdded;
 
   QString currentLocationText() const;
   QString currentElevationText() const;

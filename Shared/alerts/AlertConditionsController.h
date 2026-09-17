@@ -37,6 +37,7 @@ namespace Esri::ArcGISRuntime {
   class IdentifyGraphicsOverlayResult;
   class FeatureLayer;
   class FeatureTable;
+  class GeoElement;
   class GraphicsOverlay;
 }
 
@@ -69,7 +70,8 @@ public:
 
   // AbstractTool interface
   QString toolName() const override;
-  void setProperties(const QVariantMap& properties) override;
+  void toolInitProperties(const QVariantMap& properties) override;
+  bool shouldSetProperties(const QString& propertyName) override;
 
   void setActive(bool active) override;
 
@@ -81,6 +83,7 @@ public:
   Q_INVOKABLE void updateConditionName(int rowIndex, const QString& conditionName);
   Q_INVOKABLE void updateConditionLevel(int rowIndex, int level);
   Q_INVOKABLE bool conditionAlreadyAdded(const QString& conditionName);
+  Q_INVOKABLE void setSelectedTargetNameIndex(int currentIndex);
 
   QAbstractItemModel* sourceNames() const;
   QAbstractItemModel* targetNames() const;
@@ -109,6 +112,7 @@ private:
   QJsonObject conditionToJson(AlertCondition* condition) const;
   QFuture<bool> addConditionFromJson(const QJsonObject& json);
   void addStoredConditions();
+  const std::optional<qint64> getPickedElementId(const QList<Esri::ArcGISRuntime::GeoElement*>& geoElements) const;
 
   QFuture<AlertTarget*> targetFromItemIdAndOverlayName(int itemId, const QString& targetOverlayName, QString& targetDescription) const;
   QFuture<AlertTarget*> targetFromFeatureLayer(Esri::ArcGISRuntime::FeatureLayer* featureLayer, int itemId) const;
@@ -144,6 +148,7 @@ private:
   QHash<QString,QString> m_messageFeedTypesToNames;
 
   QMetaObject::Connection m_mouseClickConnection;
+  int m_selectedTargetNameIndex = -1;
 };
 
 } // Dsa

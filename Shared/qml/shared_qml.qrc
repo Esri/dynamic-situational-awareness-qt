@@ -46,7 +46,7 @@
         <file>AlertConditionsSpatialTarget.qml</file>
         <file>AlertConditionsAttributeTarget.qml</file>
         <file>LineOfSightTool.qml</file>
-        <file>ContextMenu.qml</file>
+        <file>MapContextMenu.qml</file>
         <file>AnalysisList.qml</file>
         <file>ObservationReportTool.qml</file>
         <file>ObservationReportObservedByPage.qml</file>
@@ -57,5 +57,6 @@
         <file>ObservationReportObservedTimePage.qml</file>
         <file>DsaYesNoDialog.qml</file>
         <file>OpenSceneTool.qml</file>
+        <file>AddConfigurationTool.qml</file>
     </qresource>
 </RCC>

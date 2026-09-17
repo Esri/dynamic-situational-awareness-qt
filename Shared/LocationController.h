@@ -49,15 +49,18 @@ class LocationController : public AbstractTool
   Q_PROPERTY(QString gpxFilePath READ gpxFilePath WRITE setGpxFilePath NOTIFY gpxFilePathChanged)
 
 public:
-  static const QString SIMULATE_LOCATION_PROPERTYNAME;
-  static const QString GPX_FILE_PROPERTYNAME;
-  static const QString RESOURCE_DIRECTORY_PROPERTYNAME;
+  inline static const QString PROPERTY_NAME_SIMULATE_LOCATION = QStringLiteral("SimulateLocation");
+  inline static const QString PROPERTY_NAME_GPX_FILE = QStringLiteral("GpxFile");
+  inline static const QString PROPERTY_NAME_RESOURCE_DIRECTORY = QStringLiteral("ResourceDirectory");
+  inline static const QString PROPERTY_NAME_CURRENT_LOCATION_Z_OFFSET = QStringLiteral("CurrentLocationZOffset");
+  inline static const QString PROPERTY_NAME_CURRENT_LOCATION_SURFACE_PLACEMENT = QStringLiteral("CurrentLocationSurfacePlacement");
 
   explicit LocationController(QObject* parent = nullptr);
   ~LocationController();
 
   QString toolName() const override;
-  void setProperties(const QVariantMap& properties) override;
+  void toolInitProperties(const QVariantMap& properties) override;
+  bool shouldSetProperties(const QString& propertyName) override;
 
   bool isEnabled() const;
   void setEnabled(bool isEnabled);

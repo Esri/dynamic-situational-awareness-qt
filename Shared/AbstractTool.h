@@ -17,9 +17,13 @@
 #ifndef ABSTRACT_TOOL_H
 #define ABSTRACT_TOOL_H
 
+// Qt headers
 #include <QObject>
 #include <QString>
 #include <QVariantMap>
+
+// STL headers
+#include <unordered_set>
 
 namespace Esri::ArcGISRuntime {
   class Error;
@@ -43,7 +47,8 @@ public:
   virtual QString toolName() const = 0;
   virtual bool handleClick(const Esri::ArcGISRuntime::Point& pos);
 
-  virtual void setProperties(const QVariantMap& properties);
+  virtual void toolInitProperties(const QVariantMap& properties);
+  virtual bool shouldSetProperties(const QString& propertyName);
 
   virtual void setActive(bool active);
   bool isActive() const;
@@ -55,6 +60,7 @@ signals:
 
 protected:
   bool m_active = false;
+  static bool setContainsString(const std::unordered_set<QString>& strSet, const QString& str);
 };
 
 } // Toolkit

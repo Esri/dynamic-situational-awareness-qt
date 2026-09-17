@@ -51,10 +51,10 @@ Item {
         anchors {
             horizontalCenter: parent.horizontalCenter
             top: parent.top
+            bottom: clearButton.top
             margins: 16 * scaleFactor
         }
         width: parent.width * 0.75
-        height: parent.height * 0.50
         color: Material.foreground
         font {
             pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
@@ -99,8 +99,9 @@ Item {
     }
 
     Button {
+        id: clearButton
         anchors {
-            top : sizeField.bottom
+            bottom: parent.bottom
             right: sizeField.right
             margins: 4 * scaleFactor
         }

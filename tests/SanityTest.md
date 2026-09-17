@@ -9,7 +9,6 @@ Sanity test list to perform on several platforms prior to release.
   - On Android, do this by opening the App Info (long press on the app icon and choose 'info'), scroll down and tap on Storage, tap Clear data.
 - Open the DSA app
   - [ ] You should be prompted to download the default configuration from Esri.  Click Yes
-- Click OK on the Error dialog that the GPX file is missing
   - [ ] You should be brought to the Configurations page and see the data downloading
 - Wait for the data to download. Once it's done downloading, tap "Close App" (the app needs to reload to read the data)
 - tap "OK" to confirm closing the app
@@ -22,9 +21,12 @@ Sanity test list to perform on several platforms prior to release.
   - [ ] confirm that the app starts with the topographic basemap
 - Select the basemap tool
   - [ ] confirm that you see a list of all the .tpk files in the BasemapData folder (default is `ImageryMonterey` & `Topographic`)
+  - [ ] confirm that the `Topographic` basemap is highlighted
 - select one of the tpks
-  - [ ] confirm that the tool closes and the basemap changes
+  - [ ] (HANDHELD) confirm the tool closes and the basemap has changed
+  - [ ] (VEHICLE) confirm the tool remains open and the basemap has changed
 - reopen the tool
+  - [ ] The basemap that is highlighted should be the basemap that is displayed in the scene
 - click the close button (`X`)
   - [ ] confirm that the tool closes without changing the basemap   
 DONE
@@ -46,6 +48,7 @@ DONE
 - Select the 'Add as elevation source' checkbox and click ADD SELECTED
   - [ ] Confirm the DTED file is added as an elevation source to the scene (you should see the terrain surface reload)
 DONE  
+  - [ ] Select the Add Data tool again, confirm the 'Add as elevation source' checkbox is unchecked
 
 > _In preparation for the next test, do NOT remove the layers from the Overlays list_
 
@@ -252,6 +255,7 @@ Test case 7: Follow context
 - click "Follow"
 - [ ] The app should begin following the graphic
 - interact with the view again to stop following
+- When clicked on Home or pan on the map, the graphic is unfollowed.
 
 Test case 8: Line of sight context
 - turn on location display
@@ -333,8 +337,6 @@ Test case 2: Launch from context menu
 - [ ] the tool should appear (and should be shown as selected in the Map toolbar)
 - [ ] the tool should show the position where you launched the context-menu (you can use the flash coordinate button to check)
 - [ ] the tool should be in capture mode (not tracking the apps position) - you can expand the tool to check
-- [ ] long press on the view again while the coordinate too is open
-- [ ] the context menu should not appear
 
 Test case 3: Flash position in view
 - open the tool in capture mode and click in the view to set a position
@@ -346,9 +348,21 @@ Test case 4: Go to position
 - click the Go to coordinate button
 - [ ] the view should zoom to the current position of the app (you can confirm by turning on the location display)
 
+## Add Grid tool
 
-
-
+- Open the app
+- Switch to 2D view by clicking the 2D view icon on the toolbar
+- Add a grid by clicking the Add Grid icon located at the bottom of the toolbar
+  - [ ] The grid should now be visible
+- Open the settings panel
+- Change the coordinate format to any alternative format, then close the panel
+  - [ ] The grid should reflect the new coordinate format
+- Reopen the settings panel
+- Set the Grid Color Scheme to "Light", then close the panel
+  - [ ] The grid color should change to light
+- Reopen the settings panel again
+- Set the Grid Color Scheme to "Colors", then close the panel
+  - [ ] The grid color should change to blue
 
 # 4. Message Feeds
 ## Broadcast Current Location
@@ -376,9 +390,83 @@ The current location updates will be enabled in the DSA app at startup.
 - Press the distress button again and the teammate's military symbol should no longer be flashing red and should no longer be selected in any way.
 
 **Test 5: Remove location broadcast**
-- Close down one of the apps
-- You should notice that the teammate's military symbol is now gone and have been removed from the message feed overlay.
+- Close one of the apps using the app UI (normal app close).
+- You should notice that the teammate's military symbol is removed from the map and message feed overlay (the track is actively deleted).
+- If you force-kill the app task/process instead of closing through the UI, the teammate track is not actively deleted.
+- Restart that app and confirm the teammate track resumes updating correctly.
 
+## Dynamic Entities
+
+- Start with a clean config file so default behavior can be validated.
+- Go to Feeds from the map tools row.
+
+**Test 1: Track Display**
+
+Test case 1:
+
+- Select the ellipsis menu for `Friendly Tracks - Air` in `Message Feeds`, then select `Track Display`.
+- Confirm the selected feed is shown in the header and use the back action to return to `Message Feeds`.
+- In the Message Feeds dropdown, select `Friendly Tracks - Air`.
+- Enable the Observations checkbox.
+  - [ ] Observations appear (a single track moving in a circle at a relative height above the terrain).
+  - [ ] Default observation settings are applied: count = 5, size = 10, color = blue.
+- Increase/decrease observation symbol size.
+  - [ ] Observation symbol  size changes.
+- Change observation symbol color.
+  - [ ] Observation symbol color  updates.
+- Set Track Length Amount to a different value (using +/- or direct input).
+  - [ ] Observation count updates to match the number shown as the value changes, up to the maximum amount that has been received since starting the app.
+- Enable Track Line, change its symbol size and color.
+  - [ ] A track line appears initially with symbol color of blue and a symbol size of 4; the symbol size and color updates when a new one is chosen from the palette.
+- Set Track Length amount to `All` (tap and hold the `-` button until you see `All`)
+  - [ ] The full history of observations and/or length of the track line is shown (since connecting to the feed)
+- In Message Feeds, select `Friendly Tracks - Land`.
+- Enable `Observations` and `Track Line`, then modify colors.
+  - [ ] Observations are shown for both `Friendly Tracks - Air` and `Friendly Tracks - Land`, according to the track display settings for each feed. 
+
+Test case 2:
+
+- Close the app.
+- Delete the config file.
+- Reopen the app.
+- Go to Track Display.
+- Select `Friendly Tracks - Air` from the Message Feeds dropdown.
+- Enable `Observations` and `Track Line`.
+  - [ ] All properties are set to defaults.
+
+Test case 3:
+
+- Close the app
+- Modify the following `Friendly Tracks - Air` properties under `Message Feeds` in the config JSON file:
+  - `observationsMaximum`: `10`
+  - `observationsShow`: `true`
+  - `trackLineShow`: `true`
+  -  `trackLineColor` `#f781bf` (pink)
+- Reopen the app.
+  - [ ] Properties are updated.
+  - [ ] Observations and track line are shown for `Friendly Tracks - Air` with a Track Length of 10 and Track Line is  pink. 
+
+**Test 2: Dynamic Popup**
+
+- Open the context menu from the latest observation of a message feed.
+- Click on `Identify`
+  - [ ] The timestamp in the popup is updating.
+
+**Test 3: Find specific track ID**
+
+- Select the ellipsis menu for `Friendly Tracks - Land` in `Message Feeds`, then select `Find Track`.
+- Select `Friendly Tracks - Land` from the message feed type dropdown.
+- Search by track ID by entering `war`.
+  - [ ] The results appear and the matching tracks are highlighted on the map.
+- Select one result from the list
+  - [ ] The map zoomed into the latest observation of the track.
+  - [ ] Context menu appears for the latest observation of the track.
+- Open the result action menu and test each action:
+  - [ ] `Zoom to` zooms to the latest observation of the track.
+  - [ ] `Follow` starts following the selected track.
+  - [ ] `Identify` opens the dynamic entity popup.
+  - [ ] `Line of sight` creates a line-of-sight analysis from the current location to the selected track.
+- Use the back action to return to `Message Feeds`.
 
 # 5. Observation Reports
 Test case 1: Create Observation Report from Tool
@@ -577,7 +665,65 @@ Test 5: Manually add layer
 - It should add the markup as a layer
 - Close and reopen the app, and the markup should persist
 
+# 8. Ability to download and manage custom DSA packages
+- Navigate to Settings > Configurations.
+- Click the ➕ icon to add a custom configuration.
+- Under Resource Type, choose one of the following options to add a custom data package:
+  1. File Resource – Provide a local file path to the ZIP file.
+  2. Web Resource – Provide a URL pointing to the ZIP file.
+  3. Portal Item – Use an Enterprise or Online item endpoint URL that contains a ZIP file.
 
+Test 1: Valid ZIP File with Config File
+- Select any Resource Type.
+- Enter a name under Name for the configuration.
+- Provide a valid URL or file path to a ZIP file containing a valid DsaAppConfig.json file.
+- Click the Download icon.
+  - [ ] The data downloads to the default data path.
+  - [ ] You can switch between packages.
+- Click the Delete icon on the package.
+  - [ ] The data is deleted from the default location.
+  - [ ] The download icon appears again.
+- Click the Delete icon once more.
+  - [ ] The package is removed from the configuration list.
+
+Test 2: Valid ZIP File Without Config File
+- Select any Resource Type.
+- Enter a name under Name for the configuration.
+- Provide a URL or file path to a ZIP file that does not contain DsaAppConfig.json.
+- Click the Download icon.
+  - [ ] A popup appears: DsaAppConfig.json not found in the ZIP file.
+  - [ ] Click No on the popup.
+  - [ ] The package remains in the list.
+- Click the Download icon again.
+  - [ ] Click Yes on the popup.
+  - [ ] The package is removed from the list.
+
+Test 3: Invalid ZIP File
+- Select any Resource Type.
+- Rename a non-ZIP file (e.g. .txt) to .zip.
+- Enter a name under Name for the configuration.
+- Provide the path or URL to the renamed file.
+- Click the Download icon.
+  - [ ] A popup appears: Failed to extract the configuration ZIP.
+  - [ ] Click Yes on the popup.
+  - [ ] The package is removed from the list.
+
+Test 4: Valid ZIP File with Different Extension
+- Select any Resource Type.
+- Rename a valid ZIP file to use a different extension (e.g. .nope).
+- Enter a name under Name for the configuration.
+- Provide the URL or file path.
+- Click the Download icon.
+  - [ ] The data should still download to the default data path.
+
+Test 5: Invalid URL
+- Select any Resource Type.
+- Enter a name under Name for the configuration.
+- Provide an invalid URL.
+- Click the Download icon.
+  - [ ] A popup appears: Failed to download the ZIP file.
+  - [ ] Click Yes on the popup.
+  - [ ] The package is removed from the list.
 
 
 # 9. App Config and Settings
@@ -617,6 +763,54 @@ Test 3: json values are written by the app
 - Turn the visibility of one of the layers off, and reorder the layers (move one of them up or down)
 - Close/Reopen the app, go to the Overlays/TOC tool, and the visibility and layer order should be retained
 
+## Current Location Placement and Z Offset Behavior
+Test 1: Verify default settings
+- Confirm `CurrentLocationSurfacePlacement` is set to `Relative`.
+- Confirm `CurrentLocationZOffset` is set to 10.
+
+Test 2: Offset behavior with valid numerical input
+- Change `CurrentLocationZOffset` to a different valid numerical value (e.g., 20). 
+- Close/Reopen the app. The current location symbol appears above the terrain by the specified offset (e.g., 20 meters above the surface).
+
+Test 3: 0ffset behavior with invalid (non-numerical) input
+- Set `CurrentLocationZOffset` to an invalid value (e.g., "abc").
+- Close/Reopen the app. The `CurrentLocationZOffset` defaults to 0. The current location symbol is rendered directly on the terrain surface.
+
+Test 4: DrapedFlat surface placement behavior
+- Change `CurrentLocationSurfacePlacement` to `DrapedFlat`.
+- Close/Reopen the app. The current location symbol is displayed directly on the surface, ignoring any Z offset.
+
+Test 5: non-DrapedFlat surface placement behavior
+- Change CurrentLocationSurfacePlacement to any value other than DrapedFlat.
+- Close/Reopen the app. The current location symbol behaves as if `CurrentLocationSurfacePlacement` is Relative and is positioned using the `CurrentLocationZOffset` value.
+
+## Default Elevation Source Behavior
+- Start the DSA app with `DefaultElevationSource` pointing to a non-existent or invalid source. The app does not crash.
+- After adding a valid elevation source, and  unchecking 'Use GPS for current elevation display' in Settings, the app displays the elevation in the location text area.
+- The `DefaultElevationSource` in DsaAppConfig.json will be updated to use the selection made.
+- Update the `DefaultElevationSource` to an invalid path, location text area will either have 'Elevation Unavailable' or the last value that was set by the GPS feed.
+
+## Initial location Behaviour
+- Modify the `InitialLocation` property in the config file
+- Start the DSA app.
+- Confirm that the map loads with the location specified in the updated `InitialLocation` property.
+- Zoom/pan the map.
+- Click the home button and the map should go back to the `InitialLocation` property set in the config file.
+- Confirm that the map resets to the location defined by the `InitialLocation` property in the config file.
+
+## Relative and absolute paths in the DsaAppConfig file
+- Move the `OperationalData` folder from `~\ArcGIS\Runtime\Data\DSA\Default\` to a new location like `~\Documents\`.
+- Update the `LocalDataPaths` property to use the absolute path `~\Documents\OperationalData`.
+- Restart the DSA app. Open the Add Data tool.
+  - [ ] Confirm the data is listed.
+- Move the contents of `~\ArcGIS\Runtime\Data\DSA` to the same location where the DSA executable file is located.
+- Start the DSA app. 
+  - [ ] Verify that the app runs as expected and the data loads correctly.
+- Change the `LocalDataPaths` property back to relative path `./OperationalData`.
+- Restart the DSA app. Open the Add Data tool.
+  - [ ] Confirm the data is listed.
+
+
 ## Settings
 ## App Configuration
 
@@ -635,7 +829,7 @@ Test Case 2: No Data
 - [ ] you should not see an error
 
 Test Case 3: Error on startup
-- rename `~\ArcGIS\Runtime\Data\DSA\Default\BasemapData\Topographic.tpk` to `Topographic2.tpk`
+- rename `./BasemapData/Topographic.tpk` to `Topographic2.tpk`
 - open the app
 - [ ] you should see an error on startup informing you that the default basemap could not be found
 _NOTE - the error may be duplicated (I think that's ok)_
@@ -649,6 +843,6 @@ _this test is for errors we create at the app level_
 
 Test Case 5: Error from the API
 _this test is for errors we receive from the API_
-- rename `~\ArcGIS\Runtime\Data\DSA\Default\OperationalData\AOI.dbf` to `AOI2.dbf` (this will make the AOI shapefile invalid when we try to add it)
+- rename `./OperationalData/AOI.dbf` to `AOI2.dbf` (this will make the AOI shapefile invalid when we try to add it)
 - go to the add data tool and select the `AOI.shp` to add
 - [ ] you should see an error

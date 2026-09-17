@@ -52,7 +52,6 @@ public:
   Q_INVOKABLE void set2D();
 
   QString toolName() const override;
-  void setProperties(const QVariantMap& properties) override;
 
   bool isVertical() const;
   double zoomFactor() const;
@@ -90,7 +89,6 @@ private:
   double m_zoomFactor = 1.0;
   Esri::ArcGISRuntime::Point m_currentCenter;
   Mode m_currentMode;
-  bool m_enabled = false;
   bool m_isZoomIn = false;
   double m_cameraMoveDistance = 1000.0;
 };

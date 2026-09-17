@@ -131,7 +131,7 @@ QString LayerCacheManager::toolName() const
 /*!
  \brief Sets \a properties from the configuration file
  */
-void LayerCacheManager::setProperties(const QVariantMap& properties)
+void LayerCacheManager::toolInitProperties(const QVariantMap& properties)
 {
   if (m_initialLoadCompleted || !m_localDataController)
     return;
@@ -146,6 +146,12 @@ void LayerCacheManager::setProperties(const QVariantMap& properties)
   addElevation(properties);
 
   m_initialLoadCompleted = true;
+}
+
+bool LayerCacheManager::shouldSetProperties(const QString& propertyName)
+{
+  return (propertyName == LAYERS_PROPERTYNAME ||
+          propertyName == ELEVATION_PROPERTYNAME);
 }
 
 /*!
@@ -358,14 +364,12 @@ void LayerCacheManager::addElevation(const QVariantMap& properties)
 
 void LayerCacheManager::addLayers(const QVariantMap& properties)
 {
-  const QVariant layersData = properties.value(LAYERS_PROPERTYNAME);
+  const auto layersData = properties.value(LAYERS_PROPERTYNAME);
   const auto layersList = layersData.toList();
   m_inputLayerJsonArray = QJsonArray::fromVariantList(layersList);
 
-  auto it = m_inputLayerJsonArray.constBegin();
-  auto itEnd = m_inputLayerJsonArray.constEnd();
-  int layerIndex = 0;
-  for (; it != itEnd; ++it)
+  qsizetype layerIndex = 0;
+  for (auto it = std::cbegin(m_inputLayerJsonArray); it != std::cend(m_inputLayerJsonArray); ++it)
   {
     const QJsonValue jsonVal = *it;
     if (jsonVal.isNull())
@@ -421,24 +425,22 @@ void LayerCacheManager::connectSignals()
   m_initialLayerCache.clear();
 
   // cache the created layers
-  m_layerCreatedConnection = connect(m_localDataController, &AddLocalDataController::layerCreated, this, [this](int layerIndex, Layer* layer)
+  m_layerCreatedConnection = connect(m_localDataController, &AddLocalDataController::layerCreated, this, [this](qsizetype layerIndex, Layer* layer)
   {
     m_scene = ToolResourceProvider::instance()->scene();
     m_initialLayerCache.insert(layerIndex, layer);
-    const int layerCount = m_inputLayerJsonArray.size();
+    const auto layerCount = m_inputLayerJsonArray.size();
     emit jsonToLayerCompleted(layer);
 
     // once all the layers are created, add them in the proper order
-    if (m_initialLayerCache.size() == layerCount)
-    {
-      if (!m_scene)
-        return;
+    if (m_initialLayerCache.size() != layerCount)
+      return;
 
-      for (int i = 0; i < layerCount; i++)
-      {
-        m_scene->operationalLayers()->append(m_initialLayerCache.value(i));
-      }
-    }
+    if (!m_scene)
+      return;
+
+    for (auto i = 0; i < layerCount; i++)
+      m_scene->operationalLayers()->append(m_initialLayerCache.value(i));
   });
 }
 

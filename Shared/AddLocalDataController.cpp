@@ -45,6 +45,7 @@
 #include "SceneViewTypes.h"
 #include "ServiceTypes.h"
 #include "ShapefileFeatureTable.h"
+#include "SpatialReference.h"
 #include "Surface.h"
 #include "TileCache.h"
 #include "TileInfo.h"
@@ -73,8 +74,8 @@ namespace Dsa
 const QString AddLocalDataController::LOCAL_DATAPATHS_PROPERTYNAME = "LocalDataPaths";
 const QString AddLocalDataController::DEFAULT_ELEVATION_PROPERTYNAME = "DefaultElevationSource";
 
-const QString AddLocalDataController::s_allData = QStringLiteral("All Data (*.geodatabase *.tpk *.shp *.gpkg *.slpk *.img *.tif *.tiff *.i1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr *.markup *.sid *.kml *.kmz)");
-const QString AddLocalDataController::s_rasterData = QStringLiteral("Raster Files (*.img *.tif *.tiff *.I1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr *.sid)");
+const QString AddLocalDataController::s_allData = QStringLiteral("All Data (*.geodatabase *.tpk *.shp *.gpkg *.slpk *.img *.tif *.tiff *.i1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr *.markup *.sid *.kml *.kmz *.pdf)");
+const QString AddLocalDataController::s_rasterData = QStringLiteral("Raster Files (*.img *.tif *.tiff *.I1, *.dt0 *.dt1 *.dt2 *.tc2 *.geotiff *.hr1 *.jpg *.jpeg *.jp2 *.ntf *.png *.i21 *.ovr *.sid *.pdf)");
 const QString AddLocalDataController::s_geodatabaseData = QStringLiteral("Geodatabase (*.geodatabase)");
 const QString AddLocalDataController::s_shapefileData = QStringLiteral("Shapefile (*.shp)");
 const QString AddLocalDataController::s_geopackageData = QStringLiteral("GeoPackage (*.gpkg)");
@@ -98,9 +99,6 @@ AddLocalDataController::AddLocalDataController(QObject* parent /* = nullptr */):
   AbstractTool(parent),
   m_localDataModel(new DataItemListModel(this))
 {
-  // add the base path to the string list
-  addPathToDirectoryList(DsaUtility::activeConfigurationPath());
-
   // create file filter list
   m_fileFilterList = QStringList{allData(), rasterData(), geodatabaseData(),
       sceneLayerData(), tilePackageData(), shapefileData(), geopackageData(),
@@ -146,21 +144,21 @@ void AddLocalDataController::addPathToDirectoryList(const QString& path)
  */
 void AddLocalDataController::refreshLocalDataModel(const QString& fileType)
 {
-  QStringList fileFilters = determineFileFilters(fileType);
+  const auto fileFilters = determineFileFilters(fileType);
   m_localDataModel->clear();
 
-  for (const QString& path : m_dataPaths)
+  for (const auto& path : std::as_const(m_dataPaths))
   {
-    QDir localDir(path);
+    QDir localDir{path};
 
     if (fileFilters.length() > 0)
       localDir.setNameFilters(fileFilters);
 
-    for (const QString& file : localDir.entryList(QDir::Files, QDir::Name))
+    const auto localFiles = localDir.entryList(QDir::Files, QDir::Name);
+    std::for_each(std::cbegin(localFiles), std::cend(localFiles), [this, localDir](const auto& localFile)
     {
-      QFileInfo fileInfo(localDir, file);
-      m_localDataModel->addDataItem(fileInfo.absoluteFilePath());
-    }
+      m_localDataModel->addDataItem(localDir.filePath(localFile));
+    });
   }
 }
 
@@ -171,7 +169,7 @@ void AddLocalDataController::refreshLocalDataModel(const QString& fileType)
 QStringList AddLocalDataController::determineFileFilters(const QString& fileType)
 {
   QStringList fileFilter;
-  QStringList rasterExtensions{"*.img", "*.tif", "*.tiff", "*.i1", "*.dt0", "*.dt1", "*.dt2", "*.tc2", "*.geotiff", "*.hr1", "*.jpg", "*.jpeg", "*.jp2", "*.ntf", "*.png", "*.i21", "*.sid"};
+  QStringList rasterExtensions{"*.img", "*.tif", "*.tiff", "*.i1", "*.dt0", "*.dt1", "*.dt2", "*.tc2", "*.geotiff", "*.hr1", "*.jpg", "*.jpeg", "*.jp2", "*.ntf", "*.png", "*.i21", "*.sid", "*.pdf"};
 
   if (fileType == geodatabaseData())
     fileFilter << "*.geodatabase";
@@ -238,31 +236,38 @@ void AddLocalDataController::addItemAsElevationSource(const QList<int>& indices)
 */
 void AddLocalDataController::createElevationSourceFromTpk(const QString& path)
 {
-  TileCache* tileCache = new TileCache(path, this);
+  const auto* scene = ToolResourceProvider::instance()->scene();
+  if (!scene)
+    return;
 
-  connect(tileCache, &TileCache::doneLoading, this, [this, tileCache](Error error)
+  auto* cache = new TileCache(path, this);
+  connect(cache, &TileCache::errorOccurred, this, &AddLocalDataController::errorOccurred);
+  connect(cache, &TileCache::doneLoading, this, [this, scene, cache](const Error& errorCache)
   {
-    if (!error.isEmpty())
+    if (!errorCache.isEmpty())
       return;
 
-    // Check if the tiles are LERC encoded
-    if (tileCache->tileInfo().format() == TileImageFormat::LERC)
+    // tiles must be LERC encoded
+    if (cache->tileInfo().format() != TileImageFormat::LERC)
+      return;
+
+    // create new elevation source from the tile cache
+    auto* source = new ArcGISTiledElevationSource(cache, this);
+    connect(source, &ArcGISTiledElevationSource::errorOccurred, this, &AddLocalDataController::errorOccurred);
+    connect(source, &ArcGISTiledElevationSource::doneLoading, this, [this, cache, scene, source](const Error& errorSource)
     {
-      // create the source from the tiled source
-      ArcGISTiledElevationSource* source = new ArcGISTiledElevationSource(tileCache, this);
+      if (!errorSource.isEmpty())
+        return;
 
-      connect(source, &ArcGISTiledElevationSource::errorOccurred, this, &AddLocalDataController::errorOccurred);
-
-      auto scene = ToolResourceProvider::instance()->scene();
-      if (scene)
-        scene->baseSurface()->elevationSources()->append(source);
-
+      scene->baseSurface()->elevationSources()->append(source);
       emit elevationSourceSelected(source);
-      emit propertyChanged(DEFAULT_ELEVATION_PROPERTYNAME, tileCache->path());
-    }
+      emit propertyChanged(DEFAULT_ELEVATION_PROPERTYNAME, cache->path());
+    });
+
+    source->load();
   });
 
-  tileCache->load();
+  cache->load();
 }
 
 /*!
@@ -270,15 +275,23 @@ void AddLocalDataController::createElevationSourceFromTpk(const QString& path)
 */
 void AddLocalDataController::createElevationSourceFromRasters(const QStringList& paths)
 {
-  RasterElevationSource* source = new RasterElevationSource(paths, this);
+  const auto* scene = ToolResourceProvider::instance()->scene();
+  if (!scene)
+    return;
 
+  // create new elevation source from the raster paths
+  auto* source = new RasterElevationSource(paths, this);
   connect(source, &RasterElevationSource::errorOccurred, this, &AddLocalDataController::errorOccurred);
+  connect(source, &RasterElevationSource::doneLoading, this, [this, scene, source](const Error& error)
+  {
+    if (!error.isEmpty())
+      return;
 
-  auto scene = ToolResourceProvider::instance()->scene();
-  if (scene)
     scene->baseSurface()->elevationSources()->append(source);
+    emit elevationSourceSelected(source);
+  });
 
-  emit elevationSourceSelected(source);
+  source->load();
 }
 
 /*!
@@ -376,7 +389,7 @@ void AddLocalDataController::addLayerFromPath(const QString& path, int layerInde
     return;
   }
 
-  QStringList rasterExtensions{"img", "tif", "tiff", "i1", "dt0", "dt1", "dt2", "tc2", "geotiff", "hr1", "jpg", "jpeg", "jp2", "ntf", "png", "i21", "sid"};
+  QStringList rasterExtensions{"img", "tif", "tiff", "i1", "dt0", "dt1", "dt2", "tc2", "geotiff", "hr1", "jpg", "jpeg", "jp2", "ntf", "png", "i21", "sid", "pdf"};
 
   // determine the layer type
   QString fileExtension = fileInfo.completeSuffix();
@@ -703,23 +716,46 @@ void AddLocalDataController::createFeatureLayerShapefile(const QString& path, in
 */
 void AddLocalDataController::createRasterLayer(const QString& path, int layerIndex, bool visible, bool autoAdd)
 {
-  Raster* raster = new Raster(path, this);
-  RasterLayer* rasterLayer = new RasterLayer(raster, this);
+  static const QString failedAdditionalMsg = QStringLiteral("Unable to add raster layer");
+
+  // set the raster layer to be the parent of the raster object
+  // so it will be cleaned up if the layer is removed in the ToC
+  auto* raster = new Raster(path);
+  auto* rasterLayer = new RasterLayer(raster, this);
+  raster->setParent(dynamic_cast<QObject*>(rasterLayer));
   rasterLayer->setVisible(visible);
   connect(rasterLayer, &RasterLayer::errorOccurred, this, &AddLocalDataController::errorOccurred);
 
   if (autoAdd)
   {
-    auto operationalLayers = ToolResourceProvider::instance()->operationalLayers();
-    if (operationalLayers)
-      operationalLayers->append(rasterLayer);
+    connect(rasterLayer, &RasterLayer::doneLoading, this, [this, path, rasterLayer](const Error& loadError)
+    {
+      if (!loadError.isEmpty())
+      {
+        rasterLayer->deleteLater();
+        emit toolErrorOccurred(QString("The raster (%1), failed to load. [%2][%3]").arg(path, loadError.message(), loadError.additionalMessage()), failedAdditionalMsg);
+        return;
+      }
+
+      // check the spatial reference for the new layer for:
+      // - non-georeferenced PDFs may have been added
+      if (rasterLayer->spatialReference().isEmpty())
+      {
+        rasterLayer->deleteLater();
+        emit toolErrorOccurred(QString("The raster (%1), did not contain spatial reference information.").arg(path), failedAdditionalMsg);
+        return;
+      }
+
+      if (auto* operationalLayers = ToolResourceProvider::instance()->operationalLayers(); operationalLayers)
+        operationalLayers->append(rasterLayer);
+
+    }, Qt::SingleShotConnection);
+    rasterLayer->load();
 
     emit layerSelected(rasterLayer);
   }
   else
-  {
     emit layerCreated(layerIndex, rasterLayer);
-  }
 }
 
 /*!
@@ -864,7 +900,7 @@ QString AddLocalDataController::toolName() const
 /*
  \brief Sets \a properties, such as the directories to search for local data.
 */
-void AddLocalDataController::setProperties(const QVariantMap& properties)
+void AddLocalDataController::toolInitProperties(const QVariantMap& properties)
 {
   const QStringList filePaths = properties[LOCAL_DATAPATHS_PROPERTYNAME].toStringList();
   if (filePaths.empty())
@@ -887,6 +923,11 @@ void AddLocalDataController::setProperties(const QVariantMap& properties)
     addPathToDirectoryList(filePath);
 
   refreshLocalDataModel();
+}
+
+bool AddLocalDataController::shouldSetProperties(const QString& propertyName)
+{
+  return (propertyName == LOCAL_DATAPATHS_PROPERTYNAME);
 }
 
 } // Dsa

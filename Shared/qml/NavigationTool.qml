@@ -30,7 +30,15 @@ Item {
     }
     height: controlsColumn.height + 10 * scaleFactor
     width: controlsColumn.width + 10 * scaleFactor
-    property alias radius: backgroundRecatangle.radius
+    property alias radius: backgroundRectangle.radius
+
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onClicked: mouse => mouse.accepted = true
+        onDoubleClicked: mouse => mouse.accepted = true
+        onWheel: wheel => wheel.accepted = true
+    }
 
     function startFollowing() {
         followingButton.selected = true;
@@ -39,7 +47,7 @@ Item {
     }
 
     Rectangle {
-        id: backgroundRecatangle
+        id: backgroundRectangle
         anchors.fill: parent
         color: Material.background
         opacity: parent.opacity
@@ -53,6 +61,7 @@ Item {
         OverlayButton {
             iconUrl: DsaResources.iconHome
             onClicked: {
+                followHud.stopFollowing();
                 navController.zoomToInitialLocation();
             }
         }
@@ -98,6 +107,16 @@ Item {
                     navController.setRotation();
                 else
                     navController.pan();
+            }
+        }
+
+        OverlayButton {
+            id: overlayButtonGrid
+            iconUrl: DsaResources.iconRaster
+            Component.onCompleted: selected = gridController.gridVisible
+            onClicked: {
+                selected = !selected;
+                gridController.gridVisible = selected;
             }
         }
     }

@@ -1,0 +1,44 @@
+{
+  "popupInfo": {
+    "popupElements": [
+      {
+        "type": "text",
+        "text": "<span style=\"font-size:12px;\"><i>Sensor:</i></span><br><span style=\"font-size:18px;color:#68C1F9\"><strong>{uniquedesignation}</strong></span><br><span style=\"font-size:12px;\"><i>Received: </i><b> {SYS_TIMESTAMP}</b></span>"
+      },
+      {
+        "type": "fields",
+        "fieldInfos": [
+          {
+            "fieldName": "rel_info",
+            "label": "Release info"
+          },
+          {
+            "fieldName": "created_by",
+            "label": "Created by"
+          },
+          {
+            "fieldName": "created_at",
+            "label": "Created at"
+          },
+          {
+            "fieldName": "edited_by",
+            "label": "Edited by"
+          },
+          {
+            "fieldName": "edited_at",
+            "label": "Edited at"
+          },
+          {
+            "fieldName": "prod_id",
+            "label": "Prod ID"
+          },
+          {
+            "fieldName": "_id",
+            "label": "Track ID"
+          }
+        ],
+        "title": "Sensor obs:"
+      }
+    ]
+  }
+}

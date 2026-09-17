@@ -28,6 +28,7 @@
 #include <QFuture>
 
 // DSA headers
+#include "AddLocalDataController.h"
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
@@ -72,6 +73,8 @@ LocationTextController::LocationTextController(QObject* parent) :
 
   connect(ToolResourceProvider::instance(), &ToolResourceProvider::locationChanged,
           this, &LocationTextController::onLocationChanged);
+
+  m_conToolAdded = connect(&ToolManager::instance(), &ToolManager::toolAdded, this, &LocationTextController::onToolAdded);
 
   ToolManager::instance().addTool(this);
 }
@@ -128,26 +131,42 @@ void LocationTextController::onLocationChanged(const Point& pt)
 
   // update the elevation text
   if (m_useGpsForElevation)
-    formatElevationText(pt.z());
-  else
   {
-    // TODO:
-    // fixed a missing reference to the baseSurface possibly because the geoView changed signal
-    // was not emitted just by adding the .dted layer as an elevation source
-    // this should probably be updated to connect to the layers changed event
-    auto* scene = ToolResourceProvider::instance()->scene();
-    if (!scene)
-      return;
-    auto* surface = scene->baseSurface();
-    if (!surface)
-      return;
-
-    // set the elevation text in the continuation block
-    surface->elevationAsync(pt).then(this, [this](double elevation)
-    {
-      formatElevationText(elevation);
-    });
+    formatElevationText(pt.z());
+    return;
   }
+
+  if (!m_surface)
+    return;
+
+  // call the elevation function and pass the result to the format method
+  m_surface->elevationAsync(pt).then(this, [this](double elevation)
+  {
+    formatElevationText(elevation);
+  });
+}
+
+void LocationTextController::onToolAdded(AbstractTool* newTool)
+{
+  if (!newTool)
+    return;
+
+  // catch only the addition of the AddLocalDataController tool
+  const auto* addlocalDataController = qobject_cast<AddLocalDataController*>(newTool);
+  if (!addlocalDataController)
+    return;
+
+  // create a connection to the signal for when an elevation source is selected/changed
+  connect(addlocalDataController, &AddLocalDataController::elevationSourceSelected, this, [this](ElevationSource* source)
+  {
+    Q_UNUSED(source);
+    const auto* scene = ToolResourceProvider::instance()->scene();
+    if (scene)
+      m_surface = scene->baseSurface();
+  });
+
+  // stop listening for new tools being added
+  disconnect(m_conToolAdded);
 }
 
 /*!
@@ -155,21 +174,32 @@ void LocationTextController::onLocationChanged(const Point& pt)
  */
 void LocationTextController::onGeoViewChanged()
 {
-  Scene* scene = ToolResourceProvider::instance()->scene();
+  const auto* scene = ToolResourceProvider::instance()->scene();
   if (scene)
-  {
     m_surface = scene->baseSurface();
-  }
 }
 
 /*!
  \brief Set \a properties from the configuration file.
  */
-void LocationTextController::setProperties(const QVariantMap& properties)
+void LocationTextController::toolInitProperties(const QVariantMap& properties)
 {
   setCoordinateFormat(properties[COORDINATE_FORMAT_PROPERTYNAME].toString());
   setUseGpsForElevation(properties[USE_GPS_PROPERTYNAME].toBool());
   setUnitOfMeasurement(properties[UNIT_OF_MEASUREMENT_PROPERTYNAME].toString());
+}
+
+bool LocationTextController::shouldSetProperties(const QString& propertyName)
+{
+  // list all property names that should cause the tool to re-initialize
+  static const std::unordered_set<QString> propertyNames
+  {
+    COORDINATE_FORMAT_PROPERTYNAME,
+    USE_GPS_PROPERTYNAME,
+    UNIT_OF_MEASUREMENT_PROPERTYNAME
+  };
+
+  return setContainsString(propertyNames, propertyName);
 }
 
 /*!

@@ -20,10 +20,26 @@ import QtQuick.Controls.Material
 import QtQuick.Window
 import Esri.ArcGISRuntime.OpenSourceApps.DSA
 import QtQuick.Layouts
+import Esri.ArcGISRuntime.Toolkit
 
 Rectangle {
     id: optionsRoot
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
+    property real settingsFontSize: 14 * scaleFactor
+    property real settingsFieldHeight: 36 * scaleFactor
+    property real settingsRowSpacing: 10 * scaleFactor
+    property real settingsLabelMinWidth: 220 * scaleFactor
+    property real settingsControlWidth: 150 * scaleFactor
+
+    Connections {
+        target: configurationController
+        function onConfigurationDownloadFailed(configurationName, message) {
+            configurationDialogConfirmRemove.configurationName = configurationName;
+            configurationDialogConfirmRemove.alsoRemoveEntry = true;
+            configurationDialogConfirmRemove.confirmationMessage = "'" + configurationName + "' " + message + "\nRemove it from the list?";
+            configurationDialogConfirmRemove.open();
+        }
+    }
 
     color: Material.primary
 
@@ -53,7 +69,7 @@ Rectangle {
         width: parent.width
         anchors {
             top: bar.bottom
-            bottom: buttonDismiss.top
+            bottom: layoutButtonRow.top
         }
 
         currentIndex: bar.currentIndex
@@ -77,6 +93,18 @@ Rectangle {
                     spacing: 10 * scaleFactor
 
                     Label {
+                        width: parent.width
+                        horizontalAlignment: Text.AlignHCenter
+                        text: "Settings are saved automatically"
+                        color: Material.foreground
+                        font {
+                            family: DsaStyles.fontFamily
+                            italic: true
+                            pixelSize: settingsFontSize * 0.85
+                        }
+                    }
+
+                    Label {
                         text: "Map"
                         font {
                             family: DsaStyles.fontFamily
@@ -89,6 +117,10 @@ Rectangle {
                     // Toggle navigation controls
                     CheckBox {
                         text: "Show navigation controls"
+                        font {
+                            pixelSize: settingsFontSize
+                            family: DsaStyles.fontFamily
+                        }
                         checked: true
                         onCheckedChanged: {
                             // update visibility of UI components
@@ -100,6 +132,10 @@ Rectangle {
                     // Toggle location/elevation overlay
                     CheckBox {
                         text: "Show location and elevation"
+                        font {
+                            pixelSize: settingsFontSize
+                            family: DsaStyles.fontFamily
+                        }
                         checked: true
                         onCheckedChanged: {
                             // update visibility of UI component
@@ -110,6 +146,10 @@ Rectangle {
                     // Toggle friendly tracks labels
                     CheckBox {
                         text: "Show friendly tracks labels"
+                        font {
+                            pixelSize: settingsFontSize
+                            family: DsaStyles.fontFamily
+                        }
                         checked: true
                         onCheckedChanged: {
                             optionsController.showFriendlyTracksLabels = checked;
@@ -131,6 +171,10 @@ Rectangle {
                     CheckBox {
                         id: useGPS
                         text: "Use GPS for current elevation display"
+                        font {
+                            pixelSize: settingsFontSize
+                            family: DsaStyles.fontFamily
+                        }
                         checked: optionsController.useGpsForElevation
                         onCheckedChanged: optionsController.useGpsForElevation = checked
                     }
@@ -138,35 +182,47 @@ Rectangle {
 
                     CheckBox {
                         text: "Location Broadcast"
+                        font {
+                            pixelSize: settingsFontSize
+                            family: DsaStyles.fontFamily
+                        }
                         checked: messageFeeds.controller.locationBroadcastEnabled
                         onCheckedChanged: messageFeeds.controller.locationBroadcastEnabled = checked
                     }
 
-                    Row {
-                        height: 40 * scaleFactor
-                        spacing: 5 * scaleFactor
+                    RowLayout {
+                        width: parent.width
+                        spacing: settingsRowSpacing
 
-                        Text {
+                        Label {
+                            Layout.preferredWidth: settingsLabelMinWidth
+                            Layout.alignment: Qt.AlignVCenter
                             text: "Location Broadcast frequency (ms)"
                             color: Material.foreground
                             font {
-                                pixelSize: 10 * scaleFactor
+                                pixelSize: settingsFontSize
                                 family: DsaStyles.fontFamily
                             }
                         }
 
                         TextField {
-                            width: 50 * scaleFactor
+                            Layout.preferredWidth: settingsControlWidth/2
+                            Layout.alignment: Qt.AlignVCenter
+                            implicitHeight: settingsFieldHeight
                             text: messageFeeds.controller.locationBroadcastFrequency
                             color: Material.foreground
                             font {
-                                pixelSize: 10 * scaleFactor
+                                pixelSize: settingsFontSize
                                 family: DsaStyles.fontFamily
                             }
 
                             validator: IntValidator { bottom:0 }
 
                             onTextChanged: messageFeeds.controller.locationBroadcastFrequency = Number(text)
+                        }
+
+                        Item {
+                            Layout.fillWidth: true
                         }
                     }
 
@@ -181,70 +237,155 @@ Rectangle {
                     }
 
                     // Change the default coordinate formats between DMS, USNG, MGRS, etc.
-                    Row {
+                    RowLayout {
                         width: parent.width
-                        spacing: 10 * scaleFactor
+                        spacing: settingsRowSpacing
 
                         Label {
-                            anchors.verticalCenter: parent.verticalCenter
+                            Layout.preferredWidth: Math.min(settingsLabelMinWidth, parent.width * 0.5)
+                            Layout.alignment: Qt.AlignVCenter
                             text: "Default Coordinate Format"
                             font {
-                                pixelSize: 12 * scaleFactor
+                                pixelSize: settingsFontSize
                                 family: DsaStyles.fontFamily
                             }
                             color: Material.foreground
                         }
 
-                        ComboBox {
-                            anchors.verticalCenter: parent.verticalCenter
-                            model: optionsController.coordinateFormats
-                            Component.onCompleted: currentIndex = optionsController.initialFormatIndex
-                            onCurrentTextChanged: optionsController.setCoordinateFormat(currentText);
+                        Item {
+                            Layout.preferredWidth: Math.min(settingsControlWidth, parent.width * 0.5)
+                            Layout.alignment: Qt.AlignVCenter
+                            implicitHeight: settingsFieldHeight
+
+                            ComboBox {
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: Math.min(parent.width, settingsControlWidth * 0.75)
+                                implicitHeight: settingsFieldHeight
+                                font {
+                                    pixelSize: settingsFontSize
+                                    family: DsaStyles.fontFamily
+                                }
+                                model: optionsController.coordinateFormats
+                                Component.onCompleted: currentIndex = optionsController.initialFormatIndex
+                                onCurrentTextChanged: {
+                                    optionsController.setCoordinateFormat(currentText);
+                                    gridController.coordinateFormat = currentText;
+                                }
+                            }
+                        }
+
+                        Item {
+                            Layout.fillWidth: true
+                        }
+                    }
+
+                    RowLayout {
+                        width: parent.width
+                        spacing: settingsRowSpacing
+
+                        Label {
+                            Layout.preferredWidth: Math.min(settingsLabelMinWidth, parent.width * 0.5)
+                            Layout.alignment: Qt.AlignVCenter
+                            text: "Grid Color Scheme"
+                            font {
+                                pixelSize: settingsFontSize
+                                family: DsaStyles.fontFamily
+                            }
+                            color: Material.foreground
+                        }
+
+                        Item {
+                            Layout.preferredWidth: Math.min(settingsControlWidth, parent.width * 0.5)
+                            Layout.alignment: Qt.AlignVCenter
+                            implicitHeight: settingsFieldHeight
+
+                            ComboBox {
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: Math.min(parent.width, settingsControlWidth * 0.75)
+                                implicitHeight: settingsFieldHeight
+                                font {
+                                    pixelSize: settingsFontSize
+                                    family: DsaStyles.fontFamily
+                                }
+                                model: gridController.gridColorSchemes
+                                Component.onCompleted: currentIndex = gridController.gridColorSchemeIndex
+                                onCurrentTextChanged: {
+                                    gridController.gridColorScheme = currentText;
+                                }
+                            }
+                        }
+
+                        Item {
+                            Layout.fillWidth: true
                         }
                     }
 
                     // Change the default units between feet and meters
-                    Row {
+                    RowLayout {
                         width: parent.width
-                        spacing: 10 * scaleFactor
+                        spacing: settingsRowSpacing
 
                         Label {
-                            anchors.verticalCenter: parent.verticalCenter
+                            Layout.preferredWidth: Math.min(settingsLabelMinWidth, parent.width * 0.5)
+                            Layout.alignment: Qt.AlignVCenter
                             text: "Default Unit of Measurement"
                             font {
-                                pixelSize: 12 * scaleFactor
+                                pixelSize: settingsFontSize
                                 family: DsaStyles.fontFamily
                             }
                             color: Material.foreground
                         }
 
-                        ComboBox {
-                            anchors.verticalCenter: parent.verticalCenter
-                            model: optionsController.units
-                            Component.onCompleted: currentIndex = optionsController.initialUnitIndex
-                            onCurrentTextChanged: optionsController.setUnitOfMeasurement(currentText)
+                        Item {
+                            Layout.preferredWidth: Math.min(settingsControlWidth, parent.width * 0.5)
+                            Layout.alignment: Qt.AlignVCenter
+                            implicitHeight: settingsFieldHeight
+
+                            ComboBox {
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: Math.min(parent.width, settingsControlWidth * 0.75)
+                                implicitHeight: settingsFieldHeight
+                                font {
+                                    pixelSize: settingsFontSize
+                                    family: DsaStyles.fontFamily
+                                }
+                                model: optionsController.units
+                                Component.onCompleted: currentIndex = optionsController.initialUnitIndex
+                                onCurrentTextChanged: optionsController.setUnitOfMeasurement(currentText)
+                            }
+                        }
+
+                        Item {
+                            Layout.fillWidth: true
                         }
                     }
 
-                    Row {
-                        height: 40 * scaleFactor
-                        spacing: 5 * scaleFactor
+                    RowLayout {
+                        width: parent.width
+                        spacing: settingsRowSpacing
 
-                        Text {
+                        Label {
+                            Layout.preferredWidth: Math.min(settingsLabelMinWidth, parent.width * 0.5)
+                            Layout.alignment: Qt.AlignVCenter
                             text: "User name"
                             color: Material.foreground
                             font {
-                                pixelSize: 10 * scaleFactor
+                                pixelSize: settingsFontSize
                                 family: DsaStyles.fontFamily
                             }
                         }
 
                         TextField {
-                            width: 128 * scaleFactor
+                            Layout.preferredWidth: Math.min(settingsControlWidth, parent.width * 0.5)
+                            Layout.alignment: Qt.AlignVCenter
+                            implicitHeight: settingsFieldHeight
                             text: optionsController.userName
                             color: Material.foreground
                             font {
-                                pixelSize: 10 * scaleFactor
+                                pixelSize: settingsFontSize
                                 family: DsaStyles.fontFamily
                             }
 
@@ -253,17 +394,24 @@ Rectangle {
                                     optionsController.userName = text;
                             }
                         }
+
+                        Item {
+                            Layout.fillWidth: true
+                        }
                     }
                 }
             }
         }
         // Create a flickable column so that n number of options can be added
         Item {
+            clip: true
+
             Flickable {
                 id: configurationsFlickable
                 anchors {
                     fill: parent
                     margins: 10 * scaleFactor
+                    bottomMargin: 10 * scaleFactor + restartPromptArea.height
                 }
                 clip: true
 
@@ -274,17 +422,18 @@ Rectangle {
                         color: Material.backgroundColor
                         height: 40 * scaleFactor
                         width: parent.width
+                        property bool downloadOnCooldown: false
 
                         ProgressBar {
-                            id: progressBarPercentDownloaded
+                            id: progressBarPercentComplete
                             anchors {
                                 bottom: parent.bottom
                                 right: parent.right
                                 left: parent.left
                             }
-                            visible: model.Downloading
+                            visible: model.InProgress
                             to: 100
-                            value: model.PercentDownloaded
+                            value: model.PercentComplete
                         }
 
                         RadioButton {
@@ -294,7 +443,7 @@ Rectangle {
                                 verticalCenter: parent.verticalCenter
                             }
                             checked: model.Selected
-                            enabled: model.Downloaded
+                            enabled: model.Downloaded && model.Extracted
                             onClicked: {
                                 configurationController.select(index);
                                 checked = Qt.binding(function () { // restore the binding
@@ -315,14 +464,12 @@ Rectangle {
                         }
 
                         Label {
-                            id: labelRequiresRestart
                             anchors {
                                 left: labelName.right
                                 verticalCenter: parent.verticalCenter
                                 margins: 2
                             }
                             text: "*"
-                            color: "yellow"
                             font.italic: true
                             visible: model.RequiresRestart
                         }
@@ -331,7 +478,7 @@ Rectangle {
                             id: imageCancel
                             source: "qrc:/Resources/icons/xhdpi/ic_menu_closeclear_dark.png"
                             height: parent.height
-                            width: model.Downloading ? parent.height : 0
+                            width: model.Downloading && model.IsCancellable ? parent.height : 0
                             anchors {
                                 right: imageDownload.left
                                 verticalCenter: parent.verticalCenter
@@ -340,7 +487,20 @@ Rectangle {
                                 anchors.fill: parent
                                 onClicked: {
                                     configurationController.cancel(index);
+                                    if (timerDebounce.running)
+                                        imageDownload.visible = true;
                                 }
+                            }
+                        }
+
+                        Timer {
+                            id: timerDebounce
+                            interval: 500
+                            running: false
+                            repeat: false
+                            onTriggered: {
+                                downloadOnCooldown = false;
+                                imageDownload.visible = true;
                             }
                         }
 
@@ -348,8 +508,32 @@ Rectangle {
                             id: imageDownload
                             source: "qrc:/Resources/icons/xhdpi/ic_menu_sendmap_dark_d.png"
                             height: parent.height
-                            width: model.CanDownload && !configurationController.downloadInProgress ? parent.height : 0
-                            enabled: !configurationController.downloadInProgress
+                            width: model.CanDownload ? parent.height : 0
+                            enabled: model.CanDownload
+                            anchors {
+                                right: imageRemove.left
+                                verticalCenter: parent.verticalCenter
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    if (downloadOnCooldown)
+                                        return;
+
+                                    downloadOnCooldown = true;
+                                    imageDownload.visible = false;
+                                    configurationController.download(index);
+                                    timerDebounce.start();
+                                }
+                            }
+                            rotation: 180
+                        }
+
+                        Image {
+                            id: imageRemove
+                            source: DsaResources.iconTrash
+                            height: parent.height
+                            width: model.CanDelete ? parent.height : 0
                             anchors {
                                 right: parent.right
                                 verticalCenter: parent.verticalCenter
@@ -357,47 +541,21 @@ Rectangle {
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: {
-                                    configurationController.download(index);
+                                    configurationDialogConfirmRemove.configurationName = model.Name
+                                    configurationDialogConfirmRemove.alsoRemoveEntry = !model.Downloaded
+                                    var msg = "Remove '" + model.Name + "' " + (model.Downloaded ? "files from the device?" : "from the list?");
+                                    configurationDialogConfirmRemove.confirmationMessage = msg;
+                                    configurationDialogConfirmRemove.open();
                                 }
                             }
-                            rotation: 180
                         }
-
-                        //
-                        // TODO: re-enable the delete function once users are able to add their own sources for download
-                        //
-                        // Image {
-                        //     id: imageRemove
-                        //     source: DsaResources.iconTrash
-                        //     height: parent.height
-                        //     width: model.Downloaded && !model.Selected && !model.Loaded ? parent.height / 2 : 0
-                        //     anchors {
-                        //         right: parent.right
-                        //         verticalCenter: parent.verticalCenter
-                        //     }
-                        //     MouseArea {
-                        //         anchors.fill: parent
-                        //         onClicked: configurationController.remove(index)
-                        //     }
-                        // }
-                    }
-                }
-                Label {
-                    text: "Changing a configuration will require restarting the application"
-                    id: labelRequiresRestart
-                    width: parent.width
-                    wrapMode: "WordWrap"
-                    font {
-                        family: DsaStyles.fontFamily
-                        pixelSize: DsaStyles.titleFontPixelSize * 0.75
-                        italic: true
                     }
                 }
 
                 ListView {
                     id: configurationList
                     anchors {
-                        top: labelRequiresRestart.bottom
+                        top: parent.top
                         right: parent.right
                         left: parent.left
                         bottom: parent.bottom
@@ -408,34 +566,111 @@ Rectangle {
                     model: configurationController.configurations
                     delegate: configurationListItemDelegate
                 }
+
+                Rectangle {
+                    color: Material.accent
+                    radius: 5 * scaleFactor
+                    height: 40 * scaleFactor
+                    width: height
+                    anchors {
+                        right: parent.right
+                        bottom: parent.bottom
+                    }
+                    Image {
+                        id: imageAddConfiguration
+                        source: "qrc:/Resources/icons/xhdpi/ic_menu_add_dark_d.png"
+                        height: parent.height - 5 * scaleFactor
+                        width: parent.width - 5 * scaleFactor
+                        anchors {
+                            verticalCenter: parent.verticalCenter
+                            horizontalCenter: parent.horizontalCenter
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                toolRect.state = "add configuration";
+                                drawer.open();
+                            }
+                        }
+                    }
+                }
             }
 
-            Button {
-                id: buttonCloseApp
+            Rectangle {
+                id: restartPromptArea
                 anchors {
-                    bottom: parent.bottom
-                    horizontalCenter: parent.horizontalCenter
-                    margins: 5
+                    top: configurationsFlickable.bottom
+                    margins: configurationController.requiresRestart ? 5 : 0
                 }
-                onClicked: {
-                    showCloseDialog("Are you sure you want to close?");
-                }
-
-                text: "Close App"
+                color: "transparent"
+                width: parent.width
+                height: configurationController.requiresRestart ? labelPrompt.height : 0
                 visible: configurationController.requiresRestart
+
+                Label {
+                    id: labelPrompt
+                    anchors {
+                        top: restartPromptArea.top
+                        horizontalCenter: parent.horizontalCenter
+                    }
+                    wrapMode: "WordWrap"
+                    font {
+                        family: DsaStyles.fontFamily
+                        pixelSize: DsaStyles.titleFontPixelSize * 0.75 * scaleFactor
+                        italic: true
+                    }
+
+                    text: "*Close and restart the app\nto load new configuration"
+                }
             }
         }
     }
-    Button {
-        id: buttonDismiss
+    RowLayout {
+        id: layoutButtonRow
         anchors {
             horizontalCenter: parent.horizontalCenter
             bottom: parent.bottom
             margins: 10 * scaleFactor
         }
-        text: "Dismiss"
-        onClicked: {
-            optionsRoot.visible = false;
+
+        Button {
+            text: "Close App"
+            visible: configurationController.requiresRestart
+            onClicked: {
+                showCloseDialog("Are you sure you want to close?");
+            }
         }
+        Button {
+            text: "Dismiss"
+            onClicked: {
+                optionsRoot.visible = false;
+            }
+        }
+    }
+
+    Dialog {
+        id: configurationDialogConfirmRemove
+        anchors.centerIn: parent
+        title: "Confirm Remove"
+        standardButtons: Dialog.Yes | Dialog.No
+        property alias confirmationMessage: configurationDialogLabel.text
+        property string configurationName: ""
+        property bool alsoRemoveEntry: false
+        Label {
+            id: configurationDialogLabel
+            font {
+                pixelSize: 12 * scaleFactor
+                family: DsaStyles.fontFamily
+            }
+            wrapMode: Text.Wrap
+            width: parent.width
+        }
+
+        onAccepted: configurationController.remove(configurationName, alsoRemoveEntry);
+    }
+
+    Authenticator {
+        anchors.centerIn: parent
     }
 }

@@ -44,6 +44,7 @@ Item {
         toolController.activeMode = ViewshedController.NoActiveMode;
     }
 
+
     Rectangle {
         id: fill
         anchors {

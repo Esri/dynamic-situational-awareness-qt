@@ -27,8 +27,8 @@ class QStringListModel;
 
 namespace Esri::ArcGISRuntime {
   class AnalysisOverlay;
+  class ExploratoryGeoElementLineOfSight;
   class GeoElement;
-  class GeoElementLineOfSight;
   class GeoView;
   class Layer;
   class LayerListModel;
@@ -85,7 +85,7 @@ private:
   void setVisibleByCount(int visibleByCount);
   void updateLayerNames();
   bool resetAnalysis(qsizetype featureCount);
-  void setupNewLineOfSight(Esri::ArcGISRuntime::GeoElementLineOfSight* lineOfSight);
+  void setupNewLineOfSight(Esri::ArcGISRuntime::ExploratoryGeoElementLineOfSight* lineOfSight);
 
   QStringListModel* m_overlayNames;
   Esri::ArcGISRuntime::GeoView* m_geoView = nullptr;

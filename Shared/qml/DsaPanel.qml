@@ -26,8 +26,21 @@ Rectangle {
     property string title: ""
     property alias titleBar: titleBar
     signal closed()
+    signal titleActionTriggered()
     property string iconSource: DsaResources.iconClose
+    property string leftActionIconSource: ""
+    property bool titleActionClosesPanel: true
+    readonly property bool showLeftTitleAction: !titleActionClosesPanel
+    readonly property bool showRightCloseAction: titleActionClosesPanel
     color: Material.primary
+
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onClicked: mouse => mouse.accepted = true
+        onDoubleClicked: mouse => mouse.accepted = true
+        onWheel: wheel => wheel.accepted = true
+    }
 
     Column {
         id: titleBar
@@ -40,27 +53,64 @@ Rectangle {
 
         Rectangle {
             color: Material.primary
-            height: 30 * scaleFactor
+            height: 44 * scaleFactor
             width: parent.width
 
             Text {
                 id: titleText
-                anchors.centerIn: parent
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                    verticalCenter: parent.verticalCenter
+                    leftMargin: (showLeftTitleAction || showRightCloseAction) ? 52 * scaleFactor : 12 * scaleFactor
+                    rightMargin: (showLeftTitleAction || showRightCloseAction) ? 52 * scaleFactor : 12 * scaleFactor
+                }
                 text: qsTr(title)
                 color: Material.foreground
                 font.pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
+                elide: Text.ElideRight
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                clip: true
+            }
+
+            Button {
+                id: leftActionButton
+                visible: showLeftTitleAction
+                anchors {
+                    left: parent.left
+                    verticalCenter: parent.verticalCenter
+                    leftMargin: 8 * scaleFactor
+                }
+
+                width: 36 * scaleFactor
+                height: width
+
+                background: Rectangle {
+                    anchors.fill: leftActionButton
+                    color: Material.primary
+                }
+
+                Image {
+                    anchors.fill: parent
+                    source: leftActionIconSource
+                    fillMode: Image.PreserveAspectFit
+                }
+
+                onClicked: titleActionTriggered()
             }
 
             Button {
                 id: closeButton
+                visible: showRightCloseAction
                 anchors {
                     right: parent.right
-                    top: parent.top
-                    bottom: parent.bottom
-                    margins: 2 * scaleFactor
+                    verticalCenter: parent.verticalCenter
+                    rightMargin: 8 * scaleFactor
                 }
 
-                width: height
+                width: 36 * scaleFactor
+                height: width
 
                 background: Rectangle {
                     anchors.fill: closeButton
@@ -73,7 +123,7 @@ Rectangle {
                     fillMode: Image.PreserveAspectFit
                 }
 
-                onClicked: closed();
+                onClicked: closed()
             }
         }
     }

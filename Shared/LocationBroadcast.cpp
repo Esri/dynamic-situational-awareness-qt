@@ -21,6 +21,7 @@
 
 // dsa app headers
 #include "DataSender.h"
+#include "MessageFeedConstants.h"
 
 // toolkit headers
 #include "ToolResourceProvider.h"
@@ -351,14 +352,30 @@ void LocationBroadcast::broadcastLocation()
     QVariantMap attribs;
 
     m_message = Message(Message::MessageAction::Update, m_location);
-    m_message.setMessageId(QUuid::createUuid().toString());
-    m_message.setMessageType(m_messageType);
+    m_message.setMessageId(m_userName);
+
+    // set message type for the 'message' object itself based on the composed
+    // messageType configuration value
+    if (const QStringList parts = m_messageType.split(MessageFeeds::Types::POSITION_REPORT); parts.size() == 2)
+    {
+      m_message.setMessageType(MessageFeeds::Types::POSITION_REPORT);
+      attribs.insert(MessageFeeds::Fields::GeoMessage::TYPE, MessageFeeds::Types::POSITION_REPORT);
+      // for the environment, use everything beyond the first character which is the separating underscore
+      // between the geomessage type and the environment value for layering
+      attribs.insert(MessageFeeds::Fields::GeoMessage::ENVIRONMENT, parts.last().right(parts.last().size() - 1));
+    }
+    else
+    {
+      m_message.setMessageType(m_messageType);
+    }
+
     m_message.setSymbolId(s_locationBroadcastSic);
 
-    attribs.insert(Message::GEOMESSAGE_SIC_NAME, s_locationBroadcastSic);
-    attribs.insert(Message::GEOMESSAGE_UNIQUE_DESIGNATION_NAME, m_userName);
+    attribs.insert(MessageFeeds::Fields::GeoMessage::SIC, s_locationBroadcastSic);
+    attribs.insert(MessageFeeds::Fields::GeoMessage::ID, m_userName);
+    attribs.insert(MessageFeeds::Fields::GeoMessage::UNIQUE_DESIGNATION, m_userName);
     const int status911 = m_inDistress ? 1 : 0;
-    attribs.insert(Message::GEOMESSAGE_STATUS_911_NAME, status911);
+    attribs.insert(MessageFeeds::Fields::GeoMessage::STATUS_911, status911);
     m_message.setAttributes(attribs);
   }
   else
@@ -368,7 +385,7 @@ void LocationBroadcast::broadcastLocation()
     QVariantMap attribs = m_message.attributes();
 
     const int status911 = m_inDistress ? 1 : 0;
-    attribs.insert(Message::GEOMESSAGE_STATUS_911_NAME, status911);
+    attribs.insert(MessageFeeds::Fields::GeoMessage::STATUS_911, status911);
     m_message.setAttributes(attribs);
   }
 
@@ -418,7 +435,7 @@ void LocationBroadcast::setUserName(const QString& userName)
   if (!m_message.isEmpty())
   {
     QVariantMap attribs = m_message.attributes();
-    attribs.insert(Message::GEOMESSAGE_UNIQUE_DESIGNATION_NAME, m_userName);
+    attribs.insert(MessageFeeds::Fields::GeoMessage::UNIQUE_DESIGNATION, m_userName);
     m_message.setAttributes(attribs);
   }
 }

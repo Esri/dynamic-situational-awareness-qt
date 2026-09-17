@@ -49,6 +49,9 @@ public:
   void init(Esri::ArcGISRuntime::GeoView* geoView);
 
   void resetToDefaultScene();
+  Esri::ArcGISRuntime::Viewpoint readInitialLocation() const;
+
+  static const DsaController* instance();
 
 public slots:
   void onError(const Esri::ArcGISRuntime::Error& error);
@@ -61,17 +64,13 @@ signals:
   void errorOccurred(const QString& message, const QString& additionalMessage);
 
 private:
+  static inline const DsaController* s_instance = nullptr;
   void setupConfig();
-  void createDefaultSettings();
   void saveSettings();
-  void writeDefaultLocalDataPaths();
-  void writeDefaultConditions();
-  void writeDefaultMessageFeeds();
   bool isConflictingTool(const QString& toolName) const;
   void updateInitialLocationOnSceneChange(bool isInitialization);
 
   void writeInitialLocation(const Esri::ArcGISRuntime::Viewpoint& viewpoint);
-  Esri::ArcGISRuntime::Viewpoint readInitialLocation();
 
   Esri::ArcGISRuntime::Scene* m_scene = nullptr;
   LayerCacheManager* m_cacheManager = nullptr;

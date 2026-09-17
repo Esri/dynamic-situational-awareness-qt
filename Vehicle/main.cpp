@@ -19,7 +19,7 @@
 #include "pch.hpp"
 
 // C++ API headers
-#include "PopupManager.h"
+#include "ArcGISRuntimeEnvironment.h"
 #include "SceneQuickView.h"
 
 // Qt headers
@@ -30,9 +30,12 @@
 #include <QQmlEngine>
 #include <QQuickView>
 #include <QSettings>
+#ifdef QT_WEBVIEW_WEBENGINE_BACKEND
+#include <QtWebEngineQuick>
+#endif
 
 // Toolkit headers
-#include <Esri/ArcGISRuntime/Toolkit/register.h>
+#include "Esri/ArcGISRuntime/Toolkit/register.h"
 
 // DSA headers
 #include "AddLocalDataController.h"
@@ -46,6 +49,7 @@
 #include "CoordinateConversionToolProxy.h"
 #include "DsaResources.h"
 #include "FollowPositionController.h"
+#include "GridController.h"
 #include "IdentifyController.h"
 #include "LineOfSightController.h"
 #include "LocationController.h"
@@ -63,9 +67,12 @@
 #include "ViewedAlertsController.h"
 #include "ViewshedController.h"
 
-
 #ifdef Q_OS_WIN
 #include <Windows.h>
+#endif
+
+#ifdef Q_OS_ANDROID
+#include <cstdlib>
 #endif
 
 //------------------------------------------------------------------------------
@@ -95,6 +102,18 @@ QObject* dsaResourcesProvider(QQmlEngine* engine, QJSEngine* scriptEngine);
 
 int main(int argc, char *argv[])
 {
+#if defined(Q_OS_ANDROID)
+  if (!QSslSocket::supportsSsl())
+  {
+    qCritical() << "OpenSSL libraries not found";
+    std::abort();
+  }
+#endif
+
+#ifdef QT_WEBVIEW_WEBENGINE_BACKEND
+  QtWebEngineQuick::initialize();
+#endif
+
   QGuiApplication app(argc, argv);
 
   QCoreApplication::setApplicationName(kApplicationName);
@@ -109,7 +128,6 @@ int main(int argc, char *argv[])
 
   // Register the map view for QML
   qmlRegisterType<SceneQuickView>("Esri.ArcGISRuntime.OpenSourceApps.Vehicle", 1, 1, "SceneView");
-  qRegisterMetaType<PopupManager*>("PopupManager*");
 
   // Register the Vehicle (QQuickItem) for QML
   qmlRegisterType<Dsa::Vehicle::Vehicle>("Esri.ArcGISRuntime.OpenSourceApps.Vehicle", 1, 1, "Vehicle");
@@ -137,6 +155,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<Dsa::OpenMobileScenePackageController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "OpenMobileScenePackageController");
   qmlRegisterType<Dsa::CoordinateConversionToolProxy>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "CoordinateConversionToolProxy");
   qmlRegisterType<Dsa::ConfigurationController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "ConfigurationController");
+  qmlRegisterType<Dsa::GridController>("Esri.ArcGISRuntime.OpenSourceApps.DSA", 1, 1, "GridController");
 
   // Initialize application view
   QQuickView view;

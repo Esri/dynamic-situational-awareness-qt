@@ -25,11 +25,26 @@ Item {
     property url imageUrl
     property bool imageVisible
     property bool imageFrameVisible: true
+    property bool highlighted: false
+    property bool clickTogglesCheck: true
+    property bool rowTapExcludesCheckBox: false
     property alias checkBoxVisible: visibleCheckBox.visible
-    property string mainText
+    property alias mainText: labelMainText.text
+    property alias mainTextColor: labelMainText.color
+    property alias mainTextItalic: labelMainText.font.italic
     property bool menuIconVisible: false
+    property real itemSpacing: 3 * scaleFactor
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
     property color imageFrameColor: Material.foreground
+
+    signal rowTapped()
+    signal rowPressAndHold()
+
+    Rectangle {
+        anchors.fill: parent
+        color: highlighted ? Qt.rgba(Material.accent.r, Material.accent.g, Material.accent.b, 0.25) : "transparent"
+        radius: 4 * scaleFactor
+    }
 
     Row {
         anchors {
@@ -41,13 +56,15 @@ Item {
 
         id: itemRow
         width: parent.width
-        spacing: 3 * scaleFactor
+        spacing: itemSpacing
 
         CheckBox {
             id: visibleCheckBox
             anchors.verticalCenter: parent.verticalCenter
             checked: itemChecked
-            onClicked: itemChecked = checked;
+            onClicked: {
+                itemChecked = visibleCheckBox.checked;
+            }
         }
 
         Rectangle {
@@ -69,12 +86,11 @@ Item {
         }
 
         Label {
+            id: labelMainText
             anchors.verticalCenter: parent.verticalCenter
             elide: Text.ElideMiddle
-            text: mainText
             verticalAlignment: Text.AlignVCenter
             width: menuIconVisible ? parent.width * 0.6 : parent.width
-            color: Material.foreground
             font {
                 pixelSize: 14 * scaleFactor
                 bold: true
@@ -85,6 +101,15 @@ Item {
 
     MouseArea {
         anchors.fill: itemRow
-        onClicked: visibleCheckBox.checked = !visibleCheckBox.checked
+        anchors.leftMargin: rowTapExcludesCheckBox ? visibleCheckBox.width + itemRow.spacing : 0
+        onClicked: {
+            rowTapped();
+
+            if (clickTogglesCheck)
+                visibleCheckBox.checked = !visibleCheckBox.checked
+        }
+        onPressAndHold: {
+            rowPressAndHold();
+        }
     }
 }

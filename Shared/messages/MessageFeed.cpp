@@ -19,9 +19,10 @@
 
 #include "MessageFeed.h"
 
-// C++ API headers
+// C++ API
 #include "AttributeListModel.h"
-#include "Domain.h"
+#include "DictionaryRenderer.h"
+#include "DictionarySymbolStyle.h"
 #include "DynamicEntity.h"
 #include "DynamicEntityDataSourceInfo.h"
 #include "DynamicEntityInfo.h"
@@ -29,88 +30,230 @@
 #include "DynamicEntityObservationInfo.h"
 #include "Error.h"
 #include "Field.h"
+#include "LayerSceneProperties.h"
+#include "PictureMarkerSymbol.h"
 #include "Renderer.h"
+#include "SceneViewTypes.h"
 #include "ServiceTypes.h"
+#include "SimpleLineSymbol.h"
+#include "SimpleMarkerSymbol.h"
+#include "SimpleRenderer.h"
 #include "SpatialReference.h"
 #include "SymbolTypes.h"
-
-// DSA headers
+#include "TrackDisplayProperties.h"
+// DSA
 #include "Message.h"
+#include "MessageFeedConstants.h"
 #include "MessagesOverlay.h"
+// Qt
+#include <QFile>
+#include <QFileInfo>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+// STD
+#include <algorithm>
+#include <iterator>
+#include <memory>
+#include <tuple>
+#include <vector>
 
 using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
 
-/*!
-  \class Dsa::MessageFeed
-  \inmodule Dsa
-  \inherits DynamicEntityDataSource
-  \brief Represents a feed for a given message type which will be displayed on a
-  \l MessageOverlay.
- */
-
-/*!
-  \brief Constructor accepting a feed \a name, a message \a type, and \a overlay and an optional \a parent.
- */
-MessageFeed::MessageFeed(const QString& name, const QString& type, QObject* parent) :
-  DynamicEntityDataSource(parent),
-  m_feedName(name),
-  m_feedMessageType(type)
+MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourcePath, QObject* parent):
+  DynamicEntityDataSource(parent), m_resourcePath(resourcePath)
 {
+  using namespace MessageFeedConstants;
+  qint8 requiredProperties = 0;
+  qint8 requiredPropertiesValid = 0;
+
+  // set all the string properties and keep track of any required that are not found
+  // tuple<JsonName, Member*, Required, Default, AllowedValues>
+  using PropString = std::tuple<const QString&, QString&, bool, const QString&, const QStringList&>;
+  const QStringList emptyList{};
+  const QString emptyStr{};
+  const std::vector<PropString> stringProperties{
+    { MESSAGE_FEEDS_NAME, m_feedName, true, emptyStr, emptyList },
+    { MESSAGE_FEEDS_TYPE, m_feedMessageType, true, emptyStr, emptyList },
+    { MESSAGE_FEEDS_RENDERER, m_renderer, true, emptyStr, emptyList },
+    { MESSAGE_FEEDS_THUMBNAIL, m_thumbnail, false, emptyStr, emptyList },
+    { MESSAGE_FEEDS_PLACEMENT, m_surfacePlacement, false, MESSAGE_FEEDS_PLACEMENT_DEFAULT, emptyList },
+    { MESSAGE_FEEDS_OBSERVATIONS_COLOR, m_colorObservations, false, MESSAGE_FEEDS_TRACK_DISPLAY_COLOR_DEFAULT, MESSAGE_FEEDS_TRACK_DISPLAY_COLORS },
+    { MESSAGE_FEEDS_TRACK_LINE_COLOR, m_colorTrackLine, false, MESSAGE_FEEDS_TRACK_DISPLAY_COLOR_DEFAULT, MESSAGE_FEEDS_TRACK_DISPLAY_COLORS },
+  };
+  for (const PropString& ps : stringProperties)
+  {
+    QString& pMember = std::get<QString&>(ps);
+    pMember = std::get<3>(ps);
+    const QString& propertyName = std::get<0>(ps);
+    const bool propertyRequired = std::get<bool>(ps);
+    requiredProperties += propertyRequired ? 1 : 0;
+    if (const QString s = properties[propertyName].toString(); !s.isEmpty())
+    {
+      const auto& v = std::get<const QStringList&>(ps);
+      if (!v.empty() && !v.contains(s))
+        return;
+
+      pMember = s;
+      if (propertyRequired)
+        ++requiredPropertiesValid;
+    }
+  }
+
+  // all message feed configurations are required to have name, type and renderer
+  m_configurationWasValid = requiredPropertiesValid == requiredProperties;
+  if (!m_configurationWasValid)
+    return;
+
+  // build the thumbnail url if it was not empty
+  if (!m_thumbnail.isEmpty())
+  {
+    if (QFile::exists(QString{QStringLiteral(":/Resources/icons/xhdpi/message/%1")}.arg(m_thumbnail)))
+      setThumbnailUrl(QString{QStringLiteral("qrc:/Resources/icons/xhdpi/message/%1")}.arg(m_thumbnail));
+    else if (QFile::exists(QString{QStringLiteral("%1/icons/%2")}.arg(m_resourcePath, m_thumbnail)))
+      setThumbnailUrl(QUrl::fromLocalFile(QString{QStringLiteral("%1/icons/%2")}.arg(m_resourcePath, m_thumbnail)));
+  }
+
+  m_messagesOverlay = new MessagesOverlay(this, m_feedMessageType, this);
+
+  // tuple<JsonName, Member*, Default>
+  using PropBool = std::tuple<QString, bool&, bool>;
+  const std::vector<PropBool> boolProperties{
+    { MESSAGE_FEEDS_OBSERVATIONS_SHOW, m_showPreviousObservations, false },
+    { MESSAGE_FEEDS_TRACK_LINE_SHOW, m_showTrackLine, false },
+  };
+  for (const PropBool& pb : boolProperties)
+  {
+    bool& pMember = std::get<bool&>(pb);
+    pMember = std::get<bool>(pb);
+    if (const QVariant v = properties[std::get<QString>(pb)]; v.canConvert<bool>())
+      pMember = v.toBool();
+  }
+
+  // tuple<JsonName, Member*, Default>
+  using PropInt = std::tuple<QString, int&, int>;
+  const std::vector<PropInt> intProperties{
+    { MESSAGE_FEEDS_OBSERVATIONS_SIZE, m_sizeObservations, 10 },
+    { MESSAGE_FEEDS_OBSERVATIONS_MAXIMUM, m_maximumObservations, 5 },
+    { MESSAGE_FEEDS_TRACK_LINE_SIZE, m_sizeTrackLine, 4 },
+  };
+  for (const PropInt& pi : intProperties)
+  {
+    int& pMember = std::get<int&>(pi);
+    pMember = std::get<int>(pi);
+    if (const QVariant v = properties[std::get<QString>(pi)]; v.canConvert<int>())
+      pMember = v.toInt();
+  }
+
+  // turn the layer on and create/assign it's renderer
+  setFeedVisible(m_isFeedVisible);
+  m_messagesOverlay->setRenderer(createRenderer());
+
+  // update the surface placement and set the overlay scene properties
+  SurfacePlacement surfacePlacement = SurfacePlacement::DrapedBillboarded;
+  if (m_surfacePlacement.compare("relative", Qt::CaseInsensitive) == 0)
+    surfacePlacement = SurfacePlacement::Relative;
+  else if (m_surfacePlacement.compare("absolute", Qt::CaseInsensitive) == 0)
+    surfacePlacement = SurfacePlacement::Absolute;
+  m_messagesOverlay->setSceneProperties(LayerSceneProperties(surfacePlacement));
+
+  // initialize the track display renderer properties
+  // OBSERVATIONS
+  TrackDisplayProperties* tdp = m_messagesOverlay->trackDisplayProperties();
+  tdp->setShowPreviousObservations(m_showPreviousObservations);
+  updateSymbolObservations();
+  // TRACKLINE
+  tdp->setShowTrackLine(m_showTrackLine);
+  updateSymbolTrackLine();
+  // LIMITS
+  int maximumObservations = m_maximumObservations == 0 ? std::numeric_limits<int>::max() : m_maximumObservations;
+  tdp->setMaximumObservations(maximumObservations);
 }
 
 MessageFeed::~MessageFeed() = default;
 
+QString getSchemaUrlForMessageType(const QString& messageType)
+{
+  QString messageTypeFuzzy{messageType};
+  if (messageType.startsWith(MessageFeeds::Types::POSITION_REPORT))
+  {
+    messageTypeFuzzy = MessageFeeds::Types::POSITION_REPORT;
+  }
+
+  const std::unordered_map<QString, QString>& urls = MessageFeeds::Types::SCHEMA_URLS;
+  if (urls.find(messageTypeFuzzy) != urls.end())
+  {
+    return urls.at(messageTypeFuzzy);
+  }
+
+  return QString{};
+}
+
+void MessageFeed::setFields(const QString& schemaUrl)
+{
+  if (schemaUrl.isEmpty() ||
+      !QFile::exists(schemaUrl))
+    return;
+
+  QFile file{schemaUrl};
+  if (!file.open(QFile::ReadOnly))
+    return;
+
+  QJsonParseError error;
+  const QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
+  file.close();
+  if (doc.isNull() ||
+      doc.isEmpty() ||
+      !doc.isObject() ||
+      error.error != QJsonParseError::NoError)
+    return;
+
+  const QVariantMap properties = doc.object().toVariantMap();
+  m_searchAttributeName = properties["attribute_name_search"].toString();
+  m_entityIdAttributeName = properties["attribute_name_id"].toString();
+
+  const QVariantList attributes = properties["attributes"].toList();
+  m_fields.reserve(attributes.size() + 2);
+  for (const QVariant& attribute : attributes)
+  {
+    const QVariantMap attributeProperties = attribute.toMap();
+    const QString attrType = attributeProperties["type"].toString();
+    const QString attrName = attributeProperties["name"].toString();
+    if (attrType.compare("string") == 0)
+      m_fields.push_back(Field::createText(attrName, attrName, 255));
+    else if (attrType.compare("integer") == 0)
+      m_fields.push_back(Field::createLongInt(attrName, attrName));
+    else if (attrType.compare("byte") == 0)
+      m_fields.push_back(Field::createShortInt(attrName, attrName));
+    else if (attrType.compare("short") == 0)
+      m_fields.push_back(Field::createShortInt(attrName, attrName));
+    else if (attrType.compare("float") == 0)
+      m_fields.push_back(Field::createFloat(attrName, attrName));
+    else
+    {
+      // clear any fields already added to trigger the assertion
+      m_fields.clear();
+      return;
+    }
+  }
+
+  m_fields.push_back(Field::createText(MessageFeeds::Fields::Common::SIDC, MessageFeeds::Fields::Common::SIDC, 255));
+  m_fields.push_back(Field::createText(MessageFeeds::Fields::Common::SYS_TIMESTAMP, MessageFeeds::Fields::Common::SYS_TIMESTAMP, 255));
+
+  // set the flag for CoT for runtime message processing
+  m_isCoT = m_feedMessageType.compare(MessageFeeds::Types::CURSOR_ON_TARGET) == 0;
+}
+
 QFuture<DynamicEntityDataSourceInfo*> MessageFeed::onLoadAsync()
 {
-  QList<QString> field_names;
-  QString entity_id_field_name;
-  m_isCoT = this->feedMessageType().compare(QStringLiteral("cot"), Qt::CaseInsensitive) == 0;
-  if (m_isCoT)
-  {
-    // set the entity id field
-    entity_id_field_name = Message::COT_UID_NAME;
-
-    // set the fields
-    field_names.reserve(8);
-    field_names.emplace_back(Message::COT_TYPE_NAME);
-    field_names.emplace_back(Message::COT_UID_NAME);
-    field_names.emplace_back(Message::COT_POINT_NAME);
-    field_names.emplace_back(Message::COT_POINT_LAT_NAME);
-    field_names.emplace_back(Message::COT_POINT_LON_NAME);
-    field_names.emplace_back(Message::COT_POINT_HAE_NAME);
-  }
-  else
-  {
-    // set the entity id field
-    entity_id_field_name = Message::GEOMESSAGE_ID_NAME;
-
-    // set the fields
-    field_names.reserve(11);
-    field_names.emplace_back(Message::GEOMESSAGE_TYPE_NAME);
-    field_names.emplace_back(Message::GEOMESSAGE_ACTION_NAME);
-    field_names.emplace_back(Message::GEOMESSAGE_UNIQUE_DESIGNATION_NAME);
-    field_names.emplace_back(Message::GEOMESSAGE_WKID_NAME);
-    field_names.emplace_back(Message::GEOMESSAGE_SIC_NAME);
-    field_names.emplace_back(Message::GEOMESSAGE_CONTROL_POINTS_NAME);
-    field_names.emplace_back(Message::GEOMESSAGE_UNIQUE_DESIGNATION_NAME);
-    field_names.emplace_back(Message::GEOMESSAGE_STATUS_911_NAME);
-    field_names.emplace_back(Message::GEOMESSAGE_ENVIRONMENT_NAME);
-  }
-  m_entityIdAttributeName = entity_id_field_name;
-  field_names.emplace_back(entity_id_field_name);
-  field_names.emplace_back(Message::SIDC_NAME);
-
-  QList<Field> fields;
-  fields.reserve(field_names.count());
-  for (auto& fn : field_names)
-  {
-    fields.emplace_back(FieldType::Text, fn, "", 256, Domain(), false, true);
-  }
+  QString schemaUrl = getSchemaUrlForMessageType(m_feedMessageType);
+  setFields(schemaUrl);
+  Q_ASSERT(!m_fields.isEmpty());
 
   // build the dynamic entity data source info from the fields and the entity id field name
-  auto* dynamicEntityDataSourceInfo = new DynamicEntityDataSourceInfo(entity_id_field_name, fields, this);
+  auto* dynamicEntityDataSourceInfo = new DynamicEntityDataSourceInfo(m_entityIdAttributeName, m_fields, this);
   dynamicEntityDataSourceInfo->setSpatialReference(SpatialReference::wgs84());
 
   // listen for new entities
@@ -152,17 +295,17 @@ QFuture<DynamicEntityDataSourceInfo*> MessageFeed::onLoadAsync()
   });
 
   // return the new source future
-  return QtFuture::makeReadyFuture(dynamicEntityDataSourceInfo);
+  return QtFuture::makeReadyValueFuture(dynamicEntityDataSourceInfo);
 }
 
 QFuture<void> MessageFeed::onConnectAsync()
 {
-  return QtFuture::makeReadyFuture();
+  return QtFuture::makeReadyVoidFuture();
 }
 
 QFuture<void> MessageFeed::onDisconnectAsync()
 {
-  return QtFuture::makeReadyFuture();
+  return QtFuture::makeReadyVoidFuture();
 }
 
 QString MessageFeed::feedName() const
@@ -199,7 +342,7 @@ void MessageFeed::setFeedMessageType(const QString& feedMessageType)
  */
 bool MessageFeed::isFeedVisible() const
 {
-  return m_messagesOverlay == nullptr ? false : m_messagesOverlay->isVisible();
+  return m_isFeedVisible;
 }
 
 /*!
@@ -207,10 +350,17 @@ bool MessageFeed::isFeedVisible() const
  */
 void MessageFeed::setFeedVisible(bool feedVisible)
 {
-  if (m_messagesOverlay == nullptr || m_messagesOverlay->isVisible() == feedVisible)
-  {
+  if (m_isFeedVisible == feedVisible)
     return;
-  }
+
+  m_isFeedVisible = feedVisible;
+  emit feedChanged();
+
+  if (m_messagesOverlay == nullptr)
+    return;
+  if (m_messagesOverlay->isVisible() == feedVisible)
+    return;
+
   m_messagesOverlay->setVisible(feedVisible);
 }
 
@@ -230,6 +380,11 @@ void MessageFeed::setMessagesOverlay(MessagesOverlay* messagesOverlay)
   m_messagesOverlay = messagesOverlay;
 }
 
+QString MessageFeed::thumbnail() const
+{
+  return m_thumbnail;
+}
+
 /*!
   \brief Returns the (local file) URL of the thumbnail to use for this feed.
  */
@@ -246,66 +401,364 @@ void MessageFeed::setThumbnailUrl(const QUrl& thumbnailUrl)
   m_thumbnailUrl = thumbnailUrl;
 }
 
-/*!
-  \brief Adds the \l Message \a message to the overlay. Returns whether adding was successful.
- */
+QString MessageFeed::renderer() const
+{
+  return m_renderer;
+}
+
+QString MessageFeed::surfacePlacement() const
+{
+  return m_surfacePlacement;
+}
+
+Renderer* MessageFeed::createRenderer()
+{
+  // hold mil2525 symbol styles as statics to be shared by multiple renderers if needed
+  QObject* parent = dynamic_cast<QObject*>(this);
+
+  if (m_renderer.compare("mil2525c", Qt::CaseInsensitive) == 0)
+  {
+    if (!MessageFeed::s_dictionarySymbolStyleMil2525c)
+    {
+      const QString stylePath = QString{QStringLiteral("%1/styles/arcade/mil2525c.stylx")}.arg(m_resourcePath);
+      if (!QFileInfo::exists(stylePath))
+      {
+        emit errorOccurred(Error(QStringLiteral("mil2525c.stylx not found"), QString{QStringLiteral("Could not find %1")}.arg(stylePath)));
+        return nullptr;
+      }
+
+      s_dictionarySymbolStyleMil2525c = DictionarySymbolStyle::createFromFile(stylePath, parent);
+    }
+
+    return new DictionaryRenderer(s_dictionarySymbolStyleMil2525c, parent);
+  }
+  else if (m_renderer.compare("mil2525d", Qt::CaseInsensitive) == 0)
+  {
+    if (!s_dictionarySymbolStyleMil2525d)
+    {
+      const QString stylePath = QString{QStringLiteral("%1/styles/arcade/mil2525d.stylx")}.arg(m_resourcePath);
+      if (!QFileInfo::exists(stylePath))
+      {
+        emit errorOccurred(Error(QStringLiteral("mil2525d.stylx not found"), QString{QStringLiteral("Could not find %1")}.arg(stylePath)));
+        return nullptr;
+      }
+
+      s_dictionarySymbolStyleMil2525d = DictionarySymbolStyle::createFromFile(stylePath, parent);
+    }
+
+    return new DictionaryRenderer(s_dictionarySymbolStyleMil2525d, parent);
+  }
+
+  // else default to simple renderer with picture marker symbol
+  PictureMarkerSymbol* symbol = nullptr;
+  const QString qrcFile = QString{QStringLiteral(":/Resources/icons/xhdpi/message/%1")}.arg(m_renderer);
+
+  if (QFile::exists(qrcFile))
+  {
+    symbol = new PictureMarkerSymbol(QImage(qrcFile), parent);
+  }
+  else
+  {
+    const QString dataFile = m_resourcePath + QString{QStringLiteral("/icons/%1")}.arg(m_renderer);
+    if (QFile::exists(dataFile))
+      symbol = new PictureMarkerSymbol(QImage(dataFile), parent);
+  }
+
+  if (symbol == nullptr)
+    return nullptr;
+
+  symbol->setWidth(40.0f);
+  symbol->setHeight(40.0f);
+  return new SimpleRenderer(symbol, parent);
+}
+
 bool MessageFeed::addMessage(const Message& message)
 {
-  static QString additionalErrorMessage = "DSA - MessageFeed";
-  const auto messageId = message.messageId();
+  static const QString additionalErrorMessage = QStringLiteral("DSA - MessageFeed");
+
+  if (!m_messagesOverlay)
+  {
+    emit errorOccurred(Error("MessagesOverlay not set", additionalErrorMessage));
+    return false;
+  }
+
+  const QString messageId = message.messageId();
   if (messageId.isEmpty())
   {
-    emit errorOccurred(Error("Failed to add message - message ID is empty", additionalErrorMessage, ExtendedErrorType::None));
+    emit errorOccurred(Error("Failed to add message - message ID is empty", additionalErrorMessage));
     return false;
   }
 
-  if (message.messageType() != this->feedMessageType())
-  {
-    emit errorOccurred(Error("Failed to add message - message type mismatch", additionalErrorMessage, ExtendedErrorType::None));
-    return false;
-  }
+  const QString symbolId = message.symbolId();
+  const Geometry geometry = message.geometry();
+  const Message::MessageAction messageAction = message.messageAction();
 
-  const auto symbolId = message.symbolId();
-  const auto geometry = message.geometry();
-  const auto messageAction = message.messageAction();
-
-  switch (messageAction)
+  if (messageAction == Message::MessageAction::Remove)
   {
-  case Message::MessageAction::Remove:
-    {
-      auto future = this->deleteEntityAsync(messageId);
-    }
+    const QFuture<void> future = deleteEntityAsync(messageId);
+    Q_UNUSED(future);
     return true;
-
-  default:
-    if (m_messagesOverlay == nullptr)
-    {
-      emit errorOccurred(Error("MessagesOverlay not set", additionalErrorMessage, ExtendedErrorType::None));
-      return false;
-    }
-
-    if (m_messagesOverlay->renderer() && m_messagesOverlay->renderer()->rendererType() == RendererType::DictionaryRenderer && symbolId.isEmpty())
-    {
-      emit errorOccurred(Error("Failed to add message - symbol ID is empty", additionalErrorMessage, ExtendedErrorType::None));
-      return false;
-    }
-
-    if (geometry.isEmpty())
-    {
-      emit errorOccurred(Error("Failed to add message - geometry is empty", additionalErrorMessage, ExtendedErrorType::None));
-      return false;
-    }
-
-    if (geometry.geometryType() != GeometryType::Point)
-    {
-      emit errorOccurred(Error("Failed to add message - only point geometry types are supported", additionalErrorMessage, ExtendedErrorType::None));
-      return false;
-    }
-
-    addObservation(geometry, message.attributes());
   }
 
+  if (m_messagesOverlay->renderer() && m_messagesOverlay->renderer()->rendererType() == RendererType::DictionaryRenderer && symbolId.isEmpty())
+  {
+    emit errorOccurred(Error("Failed to add message - symbol ID is empty", additionalErrorMessage));
+    return false;
+  }
+
+  if (geometry.isEmpty())
+  {
+    emit errorOccurred(Error("Failed to add message - geometry is empty", additionalErrorMessage));
+    return false;
+  }
+
+  if (geometry.geometryType() != GeometryType::Point)
+  {
+    emit errorOccurred(Error("Failed to add message - only point geometry types are supported", additionalErrorMessage));
+    return false;
+  }
+
+  // TODO: validate attributes? message.attributes() will most likely have more than the DEDS schema
+
+  // make a copy of the message attributes into a new map so we can add the calculated fields necessary while we
+  // investigate the issues using arcade expressions in the popup definitions
+  QVariantMap attributes{};
+  const QVariantMap attrs = message.attributes();
+  const QList<QString> attrNames = attrs.keys();
+  for (const QString& key : attrNames)
+    attributes[key] = attrs[key];
+
+  // insert the timestamp field for all feature types
+  attributes[MessageFeeds::Fields::Common::SYS_TIMESTAMP] = QDateTime::currentDateTime().toString(QStringLiteral("ddd, MMM d, yyyy @ H:mm:ss t"));
+
+  // nothing else needed for non cursor-on-target messages
+  if (!m_isCoT)
+  {
+    addObservation(geometry, attributes);
+    return true;
+  }
+
+  // skip calculated codes if type field is not valid
+  const QString cotType = attributes[MessageFeeds::Fields::CoT::TYPE].toString();
+  if (cotType.size() < 5)
+  {
+    addObservation(geometry, attributes);
+    return true;
+  }
+
+  // calculate the codes from the symbol type code field
+  static const QHash<QChar, QString> affCodes{
+    {'p', QStringLiteral("Pending")},
+    {'u', QStringLiteral("Unknown")},
+    {'a', QStringLiteral("Assumed friend")},
+    {'f', QStringLiteral("Friend")},
+    {'n', QStringLiteral("Neutral")},
+    {'s', QStringLiteral("Suspect")},
+    {'h', QStringLiteral("Hostile")},
+    {'j', QStringLiteral("Joker")},
+    {'k', QStringLiteral("Faker")},
+    {'o', QStringLiteral("None specified")},
+  };
+  QString affiliation{"Other"};
+  const QChar affCode = cotType.at(2);
+  if (affCodes.contains(affCode))
+    affiliation = affCodes[affCode];
+
+  static const QHash<QChar, QString> bdCodes{
+    {'P', QStringLiteral("Space")},
+    {'A', QStringLiteral("Air")},
+    {'G', QStringLiteral("Ground")},
+    {'S', QStringLiteral("Sea surface")},
+    {'U', QStringLiteral("Sea subsurface")},
+  };
+  QString battleDimension{"Other"};
+  const QChar bdCode = cotType.at(4);
+  if (bdCodes.contains(bdCode))
+    battleDimension = bdCodes[bdCode];
+
+  attributes[MessageFeeds::Fields::CoT::EVENT_TYPE] = QString{"<b><i>Affiliation: </i></b>%1&nbsp;<br><b><i>Battle Dimension: </i></b>%2"}.arg(affiliation, battleDimension);
+
+  addObservation(geometry, attributes);
   return true;
+}
+
+bool MessageFeed::showPreviousObservations() const
+{
+  return m_showPreviousObservations;
+}
+
+void MessageFeed::setShowPreviousObservations(bool showPreviousObservations)
+{
+  if (m_showPreviousObservations == showPreviousObservations)
+    return;
+
+  m_showPreviousObservations = showPreviousObservations;
+
+  if (!m_messagesOverlay)
+    return;
+
+  m_messagesOverlay->trackDisplayProperties()->setShowPreviousObservations(showPreviousObservations);
+  emit feedChanged();
+}
+
+int MessageFeed::maximumObservations() const
+{
+  int maximumObservations = m_maximumObservations;
+  if (maximumObservations == std::numeric_limits<int>::max())
+    maximumObservations = 0;
+
+  return maximumObservations;
+}
+
+void MessageFeed::setMaximumObservations(int maximumObservations)
+{
+  if (m_maximumObservations == maximumObservations)
+    return;
+
+  if (maximumObservations == 0)
+    maximumObservations = std::numeric_limits<int>::max();
+
+  m_maximumObservations = maximumObservations;
+
+  if (!m_messagesOverlay)
+    return;
+
+  m_messagesOverlay->trackDisplayProperties()->setMaximumObservations(maximumObservations);
+  emit feedChanged();
+}
+
+bool MessageFeed::showTrackLine() const
+{
+  return m_showTrackLine;
+}
+
+void MessageFeed::setShowTrackLine(bool showTrackLine)
+{
+  if (m_showTrackLine == showTrackLine)
+    return;
+
+  m_showTrackLine = showTrackLine;
+
+  if (!m_messagesOverlay)
+    return;
+
+  m_messagesOverlay->trackDisplayProperties()->setShowTrackLine(showTrackLine);
+  emit feedChanged();
+}
+
+QString MessageFeed::colorObservations() const
+{
+  return m_colorObservations;
+}
+
+void MessageFeed::setColorObservations(const QString& color)
+{
+  if (m_colorObservations == color)
+    return;
+
+  m_colorObservations = color;
+  updateSymbolObservations();
+}
+
+int MessageFeed::sizeObservations() const
+{
+  return m_sizeObservations;
+}
+
+void MessageFeed::setSizeObservations(int symbolSize)
+{
+  if (m_sizeObservations == symbolSize)
+    return;
+
+  m_sizeObservations = symbolSize;
+  updateSymbolObservations();
+}
+
+void MessageFeed::updateSymbolObservations()
+{
+  if (!m_messagesOverlay)
+    return;
+
+  QColor c{m_colorObservations};
+  if (!c.isValid())
+    return;
+
+  SimpleRenderer* renderer = dynamic_cast<SimpleRenderer*>(m_messagesOverlay->trackDisplayProperties()->previousObservationRenderer());
+  auto* symbol = new SimpleMarkerSymbol(this);
+  symbol->setColor(c);
+  symbol->setSize(static_cast<float>(m_sizeObservations));
+  auto* previousSymbol = renderer->symbol();
+  renderer->setSymbol(symbol);
+
+  if (previousSymbol)
+    previousSymbol->deleteLater();
+
+  emit feedChanged();
+}
+
+QString MessageFeed::colorTrackLine() const
+{
+  return m_colorTrackLine;
+}
+
+void MessageFeed::setColorTrackLine(const QString& color)
+{
+  if (m_colorTrackLine == color)
+    return;
+
+  m_colorTrackLine = color;
+  updateSymbolTrackLine();
+}
+
+int MessageFeed::sizeTrackLine() const
+{
+  return m_sizeTrackLine;
+}
+
+void MessageFeed::setSizeTrackLine(int symbolSize)
+{
+  if (m_sizeTrackLine == symbolSize)
+    return;
+
+  m_sizeTrackLine = symbolSize;
+  updateSymbolTrackLine();
+}
+
+void MessageFeed::updateSymbolTrackLine()
+{
+  if (!m_messagesOverlay)
+    return;
+
+  QColor c{m_colorTrackLine};
+  if (!c.isValid())
+    return;
+
+  SimpleRenderer* renderer = dynamic_cast<SimpleRenderer*>(m_messagesOverlay->trackDisplayProperties()->trackLineRenderer());
+  auto* symbol = new SimpleLineSymbol(this);
+  symbol->setColor(c);
+  symbol->setWidth(static_cast<float>(m_sizeTrackLine));
+  auto* previousSymbol = renderer->symbol();
+  renderer->setSymbol(symbol);
+
+  if (previousSymbol)
+    previousSymbol->deleteLater();
+
+  emit feedChanged();
+}
+
+QString MessageFeed::searchAttributeName() const
+{
+  return m_searchAttributeName;
+}
+
+bool MessageFeed::configurationWasValid() const
+{
+  return m_configurationWasValid;
+}
+
+QString MessageFeed::entityIdAttributeName() const
+{
+  return m_entityIdAttributeName;
 }
 
 /*!
@@ -340,7 +793,7 @@ void MessageFeed::checkEntityForSelectAction(DynamicEntity* dynamicEntity)
   // find the action attribute
   if (dynamicEntity)
   {
-    const auto actionValue = dynamicEntity->attributes()->attributesMap()[Message::GEOMESSAGE_ACTION_NAME].toString();
+    const auto actionValue = dynamicEntity->attributes()->attributesMap()[MessageFeeds::Fields::GeoMessage::ACTION].toString();
     static const QString selectValue = Message::fromMessageAction(Message::MessageAction::Select);
     static const QString unselectValue = Message::fromMessageAction(Message::MessageAction::Unselect);
     if (actionValue.compare(selectValue, Qt::CaseInsensitive) == 0)

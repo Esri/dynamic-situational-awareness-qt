@@ -192,7 +192,7 @@ QStringList AddLocalDataController::determineFileFilters(const QString& fileType
   else
   {
     fileFilter = rasterExtensions;
-    fileFilter << "*.geodatabase" << "*.tpk" << "*.shp" << "*.gpkg" << "*.slpk" << "*.markup" << "*.kml" << "*.kmz"/* << "*.vtpk"*/; // VTPK is not supported in 3D
+    fileFilter << "*.geodatabase" << "*.tpk" << "*.shp" << "*.gpkg" << "*.slpk" << "*.markup" << "*.kml" << "*.kmz" << "*.vtpk";
   }
 
   return fileFilter;

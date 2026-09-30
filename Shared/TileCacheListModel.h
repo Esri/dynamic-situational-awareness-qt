@@ -17,10 +17,12 @@
 #ifndef TILECACHE_LISTMODEL_H
 #define TILECACHE_LISTMODEL_H
 
-// Qt headers
+// Qt
 #include <QAbstractListModel>
 #include <QList>
 #include <QMap>
+// Std
+#include <variant>
 
 namespace Esri::ArcGISRuntime {
   class TileCache;

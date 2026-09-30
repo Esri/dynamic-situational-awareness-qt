@@ -331,14 +331,7 @@ QVariant TileCacheListModel::getData(TileCacheV tileCacheV, int role) const
 template<typename T>
 QString TileCacheListModel::getTileCacheNameAt(TileCacheV tileCacheV) const
 {
-  auto* tileCache = std::get<T>(tileCacheV);
-  if (!tileCache)
-  {
-    return {};
-  }
-
-  QFileInfo fi{tileCache->path()};
-  return fi.completeBaseName();
+  return getData<T>(tileCacheV, TileCacheListModel::TileCacheTitleRole).toString();
 }
 
 } // Dsa

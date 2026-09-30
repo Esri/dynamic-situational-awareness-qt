@@ -15,24 +15,22 @@
  *  limitations under the License.
  ******************************************************************************/
 
-// PCH header
+// PCH
 #include "pch.hpp"
 
 #include "BasemapPickerController.h"
 
-// dsa app headers
-#include "TileCache.h"
+// DSA
 #include "TileCacheListModel.h"
-
-// toolkit headers
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
-
-// C++ API headers
+// C++ API
 #include "ArcGISTiledLayer.h"
+#include "ArcGISVectorTiledLayer.h"
 #include "Basemap.h"
-
-// Qt headers
+#include "TileCache.h"
+#include "VectorTileCache.h"
+// Qt
 #include <QDir>
 
 using namespace Esri::ArcGISRuntime;
@@ -41,6 +39,32 @@ namespace Dsa {
 
 const QString BasemapPickerController::DEFAULT_BASEMAP_PROPERTYNAME = "DefaultBasemap";
 const QString BasemapPickerController::BASEMAP_DIRECTORY_PROPERTYNAME = "BasemapDirectory";
+
+struct VisitorSelectBasemap
+{
+  VisitorSelectBasemap(BasemapPickerController* owner, int row) :
+    _this(owner),
+    _row(row)
+  {
+  }
+
+  BasemapPickerController* _this;
+  int _row;
+
+  void operator()(TileCache* arg)
+  {
+    _this->selectBasemap<TileCache, ArcGISTiledLayer>(arg, _row);
+  }
+
+  void operator()(VectorTileCache* arg)
+  {
+    _this->selectBasemap<VectorTileCache, ArcGISVectorTiledLayer>(arg, _row);
+  }
+
+  void operator()(std::monostate)
+  {
+  }
+};
 
 /*!
   \class Dsa::BasemapPickerController
@@ -83,6 +107,11 @@ void BasemapPickerController::setBasemapDataPath(const QString& dataPath)
   emit propertyChanged(BASEMAP_DIRECTORY_PROPERTYNAME, m_basemapDataPath);
 }
 
+QString BasemapPickerController::defaultBasemap() const
+{
+  return m_defaultBasemap;
+}
+
 /*!
   \brief Sets the name of the default basemap to \a defaultBasemap.
  */
@@ -93,6 +122,16 @@ void BasemapPickerController::setDefaultBasemap(const QString& defaultBasemap)
 
   m_defaultBasemap = defaultBasemap;
   emit propertyChanged(DEFAULT_BASEMAP_PROPERTYNAME, m_defaultBasemap);
+}
+
+int BasemapPickerController::selectedBasemapIndex() const
+{
+  return m_selectedBasemapIndex;
+}
+
+QString BasemapPickerController::selectedBasemapPath() const
+{
+  return m_selectedBasemapPath;
 }
 
 /*!
@@ -113,12 +152,12 @@ void BasemapPickerController::onBasemapDataPathChanged()
   }
 
   basemapsDir.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
-  basemapsDir.setNameFilters(QStringList{"*.tpk"});
+  basemapsDir.setNameFilters(QStringList{"*.tpk", "*.vtpk"});
 
   QFileInfoList list = basemapsDir.entryInfoList();
   if (list.isEmpty())
   {
-    emit toolErrorOccurred(QString("Empty Basemaps dir %1").arg(basemapsDir.dirName()), QString("No .tpk files in %1").arg(m_basemapDataPath));
+    emit toolErrorOccurred(QString("Empty Basemaps dir %1").arg(basemapsDir.dirName()), QString("No .tpk | .vtpk files in %1").arg(m_basemapDataPath));
     return;
   }
 
@@ -158,23 +197,7 @@ QAbstractListModel* BasemapPickerController::tileCacheModel() const
  */
 void BasemapPickerController::basemapSelected(int row)
 {
-  TileCache* tileCache = m_tileCacheModel->tileCacheAt(row);
-  if (!tileCache)
-    return;
-
-  m_selectedBasemapIndex = row;
-  m_selectedBasemapPath = tileCache->path();
-  emit selectedBasemapIndexChanged();
-
-  Basemap* selectedBasemap = new Basemap(new ArcGISTiledLayer(tileCache, this), this);
-  connect(selectedBasemap, &Basemap::errorOccurred, this, &BasemapPickerController::errorOccurred);
-
-  ToolResourceProvider::instance()->setBasemap(selectedBasemap);
-
-  const QString basemapName = m_tileCacheModel->tileCacheNameAt(row);
-
-  setDefaultBasemap(basemapName);
-  emit basemapChanged(selectedBasemap, basemapName);
+  std::visit(VisitorSelectBasemap{this, row}, m_tileCacheModel->tileCacheAt(row));
 }
 
 /*!
@@ -227,6 +250,35 @@ bool BasemapPickerController::shouldSetProperties(const QString& propertyName)
           propertyName == BASEMAP_DIRECTORY_PROPERTYNAME);
 }
 
+QString BasemapPickerController::basemapDataPath() const
+{
+  return m_basemapDataPath;
+}
+
+template<typename T, typename L>
+void BasemapPickerController::selectBasemap(TileCacheV tileCacheV, int row)
+{
+  auto* tileCache = std::get<T*>(tileCacheV);
+  if (!tileCache)
+  {
+    return;
+  }
+
+  m_selectedBasemapIndex = row;
+  m_selectedBasemapPath = tileCache->path();
+  emit selectedBasemapIndexChanged();
+
+  auto* selectedBasemap = new Basemap(new L(tileCache, this), this);
+  connect(selectedBasemap, &Basemap::errorOccurred, this, &BasemapPickerController::errorOccurred);
+
+  ToolResourceProvider::instance()->setBasemap(selectedBasemap);
+
+  const QString basemapName = m_tileCacheModel->tileCacheNameAt(row);
+
+  setDefaultBasemap(basemapName);
+  emit basemapChanged(selectedBasemap, basemapName);
+}
+
 } // Dsa
 
 // Signal Documentation
@@ -259,4 +311,3 @@ bool BasemapPickerController::shouldSetProperties(const QString& propertyName)
   An \a errorMessage and \a additionalMessage are passed through as parameters, describing
   the error that occurred.
  */
-

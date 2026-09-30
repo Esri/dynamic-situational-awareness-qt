@@ -17,21 +17,27 @@
 #ifndef BASEMAPPICKERCONTROLLER_H
 #define BASEMAPPICKERCONTROLLER_H
 
-// Qt headers
-#include <QObject>
-
-// dsa headers
+// DSA
 #include "AbstractTool.h"
+// Qt
+#include <QObject>
+// Std
+#include <variant>
 
 class QAbstractListModel;
 
 namespace Esri::ArcGISRuntime {
   class Basemap;
+  class TileCache;
+  class VectorTileCache;
 }
 
 class QStringListModel;
 
 namespace Dsa {
+
+  using TileCacheV = std::variant<std::monostate, Esri::ArcGISRuntime::TileCache*, Esri::ArcGISRuntime::VectorTileCache*>;
+  struct VisitorSelectBasemap;
 
 class TileCacheListModel;
 Q_MOC_INCLUDE("TileCacheListModel.h")
@@ -43,6 +49,8 @@ class BasemapPickerController : public AbstractTool
   Q_PROPERTY(QAbstractListModel* tileCacheModel READ tileCacheModel NOTIFY tileCacheModelChanged)
   Q_PROPERTY(int selectedBasemapIndex READ selectedBasemapIndex NOTIFY selectedBasemapIndexChanged)
   Q_PROPERTY(QString selectedBasemapPath READ selectedBasemapPath NOTIFY selectedBasemapIndexChanged)
+
+  friend struct VisitorSelectBasemap;
 
 public:
   static const QString DEFAULT_BASEMAP_PROPERTYNAME;
@@ -60,12 +68,12 @@ public:
   void toolInitProperties(const QVariantMap& properties) override;
   bool shouldSetProperties(const QString& propertyName) override;
 
-  QString basemapDataPath() const { return m_basemapDataPath; }
+  QString basemapDataPath() const;
   void setBasemapDataPath(const QString& dataPath);
-  QString defaultBasemap() const { return m_defaultBasemap; }
+  QString defaultBasemap() const;
   void setDefaultBasemap(const QString& defaultBasemap);
-  int selectedBasemapIndex() const { return m_selectedBasemapIndex; }
-  QString selectedBasemapPath() const { return m_selectedBasemapPath; }
+  int selectedBasemapIndex() const;
+  QString selectedBasemapPath() const;
 
 public slots:
   void onBasemapDataPathChanged();
@@ -78,6 +86,10 @@ signals:
   void selectedBasemapIndexChanged();
 
 private:
+
+  template<typename T, typename L>
+  void selectBasemap(TileCacheV tileCacheV, int row);
+
   TileCacheListModel* m_tileCacheModel;
   int                 m_defaultBasemapIndex = 0;
   QString             m_basemapDataPath;

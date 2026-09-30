@@ -14,24 +14,69 @@
  *  limitations under the License.
  ******************************************************************************/
 
-// PCH header
+// PCH
 #include "pch.hpp"
 
 #include "TileCacheListModel.h"
 
-// C++ API headers
+// C++ API
 #include "MapTypes.h"
 #include "TileCache.h"
-
-// Qt headers
+#include "VectorTileCache.h"
+// Qt
 #include <QDir>
 #include <QFileInfo>
 #include <QTemporaryFile>
 #include <QUrl>
+#include <QVariant>
 
 using namespace Esri::ArcGISRuntime;
 
 namespace Dsa {
+
+  struct VisitorData
+  {
+    VisitorData(const TileCacheListModel* owner, int role) :
+      _this(owner),
+      _role(role)
+    {
+    }
+
+    const TileCacheListModel* _this;
+    int _role;
+
+    template<typename T>
+    QVariant operator()(T arg)
+    {
+      return _this->getData<T>(arg, _role);
+    }
+
+    QVariant operator()(std::monostate)
+    {
+      return {};
+    }
+  };
+
+  struct VisitorTileCacheNameAt
+  {
+    VisitorTileCacheNameAt(const TileCacheListModel* owner) :
+      _this(owner)
+    {
+    }
+
+    const TileCacheListModel* _this;
+
+    template<typename T>
+    QString operator()(T arg)
+    {
+      return _this->getTileCacheNameAt<T>(arg);
+    }
+
+    QString operator()(std::monostate)
+    {
+      return {};
+    }
+  };
 
 /*!
   \class Dsa::TileCacheListModel
@@ -70,7 +115,7 @@ TileCacheListModel::TileCacheListModel(QObject* parent):
 {
   m_roles[TileCacheTitleRole] = "title";
   m_roles[TileCachePathRole] = "path";
-  m_roles[TileCacheThumbnaulUrlRole] = "thumbnailUrl";
+  m_roles[TileCacheThumbnailUrlRole] = "thumbnailUrl";
 }
 
 /*!
@@ -92,49 +137,24 @@ bool TileCacheListModel::append(const QString& pathToTileCache)
   if (!fileInfo.exists())
     return false;
 
-  TileCache* tileCache = new TileCache(pathToTileCache, this);
-  if (tileCache->path() != pathToTileCache)
+  TileCacheV tileCacheV{};
+  const int size = m_tileCacheData.size();
+  if (pathToTileCache.endsWith(".tpk", Qt::CaseInsensitive))
   {
-    delete tileCache;
+    tileCacheV = getTileCacheFromPath<TileCache>(pathToTileCache);
+  }
+  else if (pathToTileCache.endsWith(".vtpk", Qt::CaseInsensitive))
+  {
+    tileCacheV = getTileCacheFromPath<VectorTileCache>(pathToTileCache);
+  }
+
+  if (std::holds_alternative<std::monostate>(tileCacheV))
+  {
     return false;
   }
 
-  const int size = m_tileCacheData.size();
-
-  connect(tileCache, &TileCache::loadStatusChanged, this, [this, tileCache](LoadStatus loadStatus)
-  {
-    if (loadStatus != LoadStatus::Loaded)
-      return;
-
-    QImage image = tileCache->thumbnail();
-    if (image.isNull())
-      return;
-
-    QTemporaryFile* tempImgFile = new QTemporaryFile(QDir::temp().filePath(QStringLiteral("TileCacheXXXXXX.png")), tileCache);
-    if (!tempImgFile->open())
-      return;
-
-    if (!image.save(tempImgFile->fileName()))
-      return;
-
-    m_thumbnailUrls.insert(tileCache->path(), QUrl::fromLocalFile(tempImgFile->fileName()));
-
-    for (int i = 0; i < m_tileCacheData.size(); ++i)
-    {
-      const TileCache* testCache = m_tileCacheData.at(i);
-      if (!testCache || testCache->path() != tileCache->path())
-        continue;
-
-      QModelIndex index = createIndex(i, 0);
-      emit dataChanged(index, index);
-
-      break;
-    }
-  });
-
-
   beginInsertRows(QModelIndex(), size, size);
-  m_tileCacheData.append(tileCache);
+  m_tileCacheData.append(tileCacheV);
   endInsertRows();
 
   return true;
@@ -143,10 +163,12 @@ bool TileCacheListModel::append(const QString& pathToTileCache)
 /*!
   \brief Returns the tile cache at \a row in the list.
  */
-TileCache* TileCacheListModel::tileCacheAt(int row) const
+TileCacheV TileCacheListModel::tileCacheAt(int row) const
 {
-  if (m_tileCacheData.size() <= row)
-    return nullptr;
+  if (row < 0 || m_tileCacheData.size() <= static_cast<qsizetype>(row))
+  {
+    return {};
+  }
 
   return m_tileCacheData.at(row);
 }
@@ -172,32 +194,11 @@ int TileCacheListModel::rowCount(const QModelIndex&) const
 QVariant TileCacheListModel::data(const QModelIndex& index, int role) const
 {
   if (index.row() < 0 || index.row() >= rowCount(index))
-    return QVariant();
-
-  TileCache* tileCache = m_tileCacheData.at(index.row());
-  if (!tileCache)
-    return QVariant();
-
-  switch (role)
   {
-  case TileCacheTitleRole:
-    return QFileInfo(tileCache->path()).completeBaseName();
-    break;
-  case TileCachePathRole:
-    return tileCache->path();
-    break;
-  case TileCacheThumbnaulUrlRole:
-  {
-    if (tileCache->loadStatus() == LoadStatus::NotLoaded)
-      tileCache->load();
-
-    return m_thumbnailUrls.value(tileCache->path(), QUrl());
-  }
-  default:
-    break;
+    return {};
   }
 
-  return QVariant();
+  return std::visit(VisitorData{this, role}, m_tileCacheData.at(index.row()));
 }
 
 /*!
@@ -215,10 +216,12 @@ QHash<int, QByteArray> TileCacheListModel::roleNames() const
  */
 QString TileCacheListModel::tileCacheNameAt(int row) const
 {
-  if (m_tileCacheData.size() <= row)
-    return "";
+  if (m_tileCacheData.size() <= static_cast<qsizetype>(row))
+  {
+    return {};
+  }
 
-  return QFileInfo(m_tileCacheData.at(row)->path()).completeBaseName();
+  return std::visit(VisitorTileCacheNameAt{this}, m_tileCacheData.at(row));
 }
 
 /*!
@@ -230,6 +233,105 @@ void TileCacheListModel::clear()
   m_thumbnailUrls.clear();
   m_tileCacheData.clear();
   endResetModel();
+}
+
+template<typename T>
+TileCacheV TileCacheListModel::getTileCacheFromPath(const QString& pathToTileCache)
+{
+  auto* tileCache = new T(pathToTileCache, this);
+  if (tileCache->path() != pathToTileCache)
+  {
+    delete tileCache;
+    return {};
+  }
+
+  connect(tileCache, &T::loadStatusChanged, this, [this, tileCache](LoadStatus loadStatus)
+  {
+    if (loadStatus != LoadStatus::Loaded)
+    {
+      return;
+    }
+
+    QImage image = tileCache->thumbnail();
+    if (image.isNull())
+    {
+      return;
+    }
+
+    QTemporaryFile* tempImgFile = new QTemporaryFile(QDir::temp().filePath(QStringLiteral("TileCacheXXXXXX.png")), tileCache);
+    if (!tempImgFile->open())
+    {
+      return;
+    }
+
+    if (!image.save(tempImgFile->fileName()))
+    {
+      return;
+    }
+
+    m_thumbnailUrls.insert(tileCache->path(), QUrl::fromLocalFile(tempImgFile->fileName()));
+
+    for (qsizetype i = 0; i < m_tileCacheData.size(); ++i)
+    {
+      const TileCacheV testCacheV = m_tileCacheData.at(i);
+      if (!std::holds_alternative<T*>(testCacheV))
+      {
+        continue;
+      }
+
+      const auto* testCache = std::get<T*>(testCacheV);
+      if (!testCache || testCache->path() != tileCache->path())
+      {
+        continue;
+      }
+
+      QModelIndex index = createIndex(i, 0);
+      emit dataChanged(index, index);
+
+      break;
+    }
+  });
+
+  return tileCache;
+}
+
+template<typename T>
+QVariant TileCacheListModel::getData(TileCacheV tileCacheV, int role) const
+{
+  auto* tileCache = std::get<T>(tileCacheV);
+  if (!tileCache)
+  {
+    return {};
+  }
+
+  switch (role)
+  {
+    case TileCacheListModel::TileCacheTitleRole:
+      return QFileInfo(tileCache->path()).completeBaseName();
+
+    case TileCacheListModel::TileCachePathRole:
+      return tileCache->path();
+
+    case TileCacheListModel::TileCacheThumbnailUrlRole:
+    {
+      if (tileCache->loadStatus() == LoadStatus::NotLoaded)
+      {
+        tileCache->load();
+      }
+
+      return m_thumbnailUrls.value(tileCache->path(), QUrl());
+    }
+    default:
+      break;
+  }
+
+  return {};
+}
+
+template<typename T>
+QString TileCacheListModel::getTileCacheNameAt(TileCacheV tileCacheV) const
+{
+  return getData<T>(tileCacheV, TileCacheListModel::TileCacheTitleRole).toString();
 }
 
 } // Dsa

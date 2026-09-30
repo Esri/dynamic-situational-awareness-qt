@@ -17,16 +17,23 @@
 #ifndef TILECACHE_LISTMODEL_H
 #define TILECACHE_LISTMODEL_H
 
-// Qt headers
+// Qt
 #include <QAbstractListModel>
 #include <QList>
 #include <QMap>
+// Std
+#include <variant>
 
 namespace Esri::ArcGISRuntime {
   class TileCache;
+  class VectorTileCache;
 }
 
 namespace Dsa {
+
+  using TileCacheV = std::variant<std::monostate, Esri::ArcGISRuntime::TileCache*, Esri::ArcGISRuntime::VectorTileCache*>;
+  struct VisitorData;
+  struct VisitorTileCacheNameAt;
 
 class TileCacheListModel : public QAbstractListModel
 {
@@ -38,14 +45,17 @@ public:
   {
     TileCacheTitleRole = Qt::UserRole + 1,
     TileCachePathRole = Qt::UserRole + 2,
-    TileCacheThumbnaulUrlRole = Qt::UserRole + 3
+    TileCacheThumbnailUrlRole = Qt::UserRole + 3
   };
+
+  friend struct VisitorData;
+  friend struct VisitorTileCacheNameAt;
 
   TileCacheListModel(QObject* parent = nullptr);
   ~TileCacheListModel();
 
   bool append(const QString& pathToTileCache);
-  Esri::ArcGISRuntime::TileCache* tileCacheAt(int row) const;
+  TileCacheV tileCacheAt(int row) const;
   QString tileCacheNameAt(int row) const;
   void clear();
 
@@ -57,9 +67,18 @@ protected:
   QHash<int, QByteArray> roleNames() const override;
 
 private:
-  QHash<int, QByteArray>                  m_roles;
-  QList<Esri::ArcGISRuntime::TileCache*>  m_tileCacheData;
-  QMap<QString, QUrl>                     m_thumbnailUrls;
+  template<typename T>
+  TileCacheV getTileCacheFromPath(const QString& pathToTileCache);
+
+  template<typename T>
+  QVariant getData(TileCacheV tileCacheV, int role) const;
+
+  template<typename T>
+  QString getTileCacheNameAt(TileCacheV tileCacheV) const;
+
+  QHash<int, QByteArray> m_roles;
+  QList<TileCacheV> m_tileCacheData;
+  QMap<QString, QUrl> m_thumbnailUrls;
 };
 
 } // Dsa

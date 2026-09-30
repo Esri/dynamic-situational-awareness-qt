@@ -180,6 +180,8 @@ DsaPanel {
                     return DsaResources.iconKml;
                 case TableOfContentsController.SceneLayer:
                     return DsaResources.iconSceneLayer;
+                case TableOfContentsController.VectorTiles:
+                    return DsaResources.iconChooseBasemap;
                 }
             }
         }

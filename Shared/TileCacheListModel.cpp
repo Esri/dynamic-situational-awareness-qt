@@ -21,7 +21,9 @@
 
 // C++ API headers
 #include "MapTypes.h"
+#include "Object.h"
 #include "TileCache.h"
+#include "VectorTileCache.h"
 
 // Qt headers
 #include <QDir>
@@ -92,58 +94,18 @@ bool TileCacheListModel::append(const QString& pathToTileCache)
   if (!fileInfo.exists())
     return false;
 
-  TileCache* tileCache = new TileCache(pathToTileCache, this);
-  if (tileCache->path() != pathToTileCache)
-  {
-    delete tileCache;
-    return false;
-  }
+  if (pathToTileCache.endsWith(".tpk", Qt::CaseInsensitive))
+    return appendT<TileCache>(pathToTileCache);
+  else if (pathToTileCache.endsWith(".vtpk", Qt::CaseInsensitive))
+    return appendT<VectorTileCache>(pathToTileCache);
 
-  const int size = m_tileCacheData.size();
-
-  connect(tileCache, &TileCache::loadStatusChanged, this, [this, tileCache](LoadStatus loadStatus)
-  {
-    if (loadStatus != LoadStatus::Loaded)
-      return;
-
-    QImage image = tileCache->thumbnail();
-    if (image.isNull())
-      return;
-
-    QTemporaryFile* tempImgFile = new QTemporaryFile(QDir::temp().filePath(QStringLiteral("TileCacheXXXXXX.png")), tileCache);
-    if (!tempImgFile->open())
-      return;
-
-    if (!image.save(tempImgFile->fileName()))
-      return;
-
-    m_thumbnailUrls.insert(tileCache->path(), QUrl::fromLocalFile(tempImgFile->fileName()));
-
-    for (int i = 0; i < m_tileCacheData.size(); ++i)
-    {
-      const TileCache* testCache = m_tileCacheData.at(i);
-      if (!testCache || testCache->path() != tileCache->path())
-        continue;
-
-      QModelIndex index = createIndex(i, 0);
-      emit dataChanged(index, index);
-
-      break;
-    }
-  });
-
-
-  beginInsertRows(QModelIndex(), size, size);
-  m_tileCacheData.append(tileCache);
-  endInsertRows();
-
-  return true;
+  return false;
 }
 
 /*!
   \brief Returns the tile cache at \a row in the list.
  */
-TileCache* TileCacheListModel::tileCacheAt(int row) const
+Object* TileCacheListModel::tileCacheAt(int row) const
 {
   if (m_tileCacheData.size() <= row)
     return nullptr;
@@ -172,11 +134,124 @@ int TileCacheListModel::rowCount(const QModelIndex&) const
 QVariant TileCacheListModel::data(const QModelIndex& index, int role) const
 {
   if (index.row() < 0 || index.row() >= rowCount(index))
-    return QVariant();
+    return {};
 
-  TileCache* tileCache = m_tileCacheData.at(index.row());
+  if (auto* t = dynamic_cast<TileCache*>(m_tileCacheData.at(index.row())); t)
+    return dataT<TileCache>(t, role);
+  else if (auto* t = dynamic_cast<VectorTileCache*>(m_tileCacheData.at(index.row())); t)
+    return dataT<VectorTileCache>(t, role);
+
+  return {};
+}
+
+/*!
+  \brief Returns the hash of role names used by the model.
+
+  The roles are based on the \l DataItemRoles enum.
+ */
+QHash<int, QByteArray> TileCacheListModel::roleNames() const
+{
+  return m_roles;
+}
+
+/*!
+  \brief Returns the name of the tile cache at \a row in the list.
+ */
+QString TileCacheListModel::tileCacheNameAt(int row) const
+{
+  if (m_tileCacheData.size() <= row)
+    return {};
+
+  Object* o = m_tileCacheData.at(row);
+  if (auto* t = dynamic_cast<TileCache*>(o); t)
+    return QFileInfo(t->path()).completeBaseName();
+  else if (auto* t = dynamic_cast<VectorTileCache*>(o); t)
+    return QFileInfo(t->path()).completeBaseName();
+  return {};
+}
+
+/*!
+  \brief Clears the model.
+ */
+void TileCacheListModel::clear()
+{
+  beginResetModel();
+  m_thumbnailUrls.clear();
+  m_tileCacheData.clear();
+  endResetModel();
+}
+
+template<typename T>
+bool TileCacheListModel::appendT(const QString &pathToTileCache)
+{
+
+  auto* tileCache = new T(pathToTileCache, this);
+  if (tileCache->path() != pathToTileCache)
+  {
+    delete tileCache;
+    return false;
+  }
+
+  const int size = m_tileCacheData.size();
+
+  connect(tileCache, &T::loadStatusChanged, this, [this, tileCache](LoadStatus loadStatus)
+  {
+    if (loadStatus != LoadStatus::Loaded)
+      return;
+
+    QImage image = tileCache->thumbnail();
+    if (image.isNull())
+      return;
+
+    QTemporaryFile* tempImgFile = new QTemporaryFile(QDir::temp().filePath(QStringLiteral("TileCacheXXXXXX.png")), tileCache);
+    if (!tempImgFile->open())
+      return;
+
+    if (!image.save(tempImgFile->fileName()))
+      return;
+
+    m_thumbnailUrls.insert(tileCache->path(), QUrl::fromLocalFile(tempImgFile->fileName()));
+
+    for (int i = 0; i < m_tileCacheData.size(); ++i)
+    {
+      Object* testCache = m_tileCacheData.at(i);
+
+      if (auto* t = dynamic_cast<TileCache*>(testCache); t)
+      {
+        if (!t || t->path() != tileCache->path())
+          continue;
+      }
+      else if (auto* t = dynamic_cast<VectorTileCache*>(testCache); t)
+      {
+        if (!t || t->path() != tileCache->path())
+          continue;
+      }
+      else
+      {
+        qWarning() << "Type is not supported";
+        std::exit(-1);
+      }
+
+      QModelIndex index = createIndex(i, 0);
+      emit dataChanged(index, index);
+
+      break;
+    }
+  });
+
+
+  beginInsertRows(QModelIndex(), size, size);
+  m_tileCacheData.append(tileCache);
+  endInsertRows();
+
+  return true;
+}
+
+template<typename T>
+QVariant TileCacheListModel::dataT(T* tileCache, int role) const
+{
   if (!tileCache)
-    return QVariant();
+    return {};
 
   switch (role)
   {
@@ -197,39 +272,8 @@ QVariant TileCacheListModel::data(const QModelIndex& index, int role) const
     break;
   }
 
-  return QVariant();
-}
+  return {};
 
-/*!
-  \brief Returns the hash of role names used by the model.
-
-  The roles are based on the \l DataItemRoles enum.
- */
-QHash<int, QByteArray> TileCacheListModel::roleNames() const
-{
-  return m_roles;
-}
-
-/*!
-  \brief Returns the name of the tile cache at \a row in the list.
- */
-QString TileCacheListModel::tileCacheNameAt(int row) const
-{
-  if (m_tileCacheData.size() <= row)
-    return "";
-
-  return QFileInfo(m_tileCacheData.at(row)->path()).completeBaseName();
-}
-
-/*!
-  \brief Clears the model.
- */
-void TileCacheListModel::clear()
-{
-  beginResetModel();
-  m_thumbnailUrls.clear();
-  m_tileCacheData.clear();
-  endResetModel();
 }
 
 } // Dsa

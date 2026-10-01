@@ -23,7 +23,7 @@
 #include <QMap>
 
 namespace Esri::ArcGISRuntime {
-  class TileCache;
+  class Object;
 }
 
 namespace Dsa {
@@ -45,7 +45,8 @@ public:
   ~TileCacheListModel();
 
   bool append(const QString& pathToTileCache);
-  Esri::ArcGISRuntime::TileCache* tileCacheAt(int row) const;
+
+  Esri::ArcGISRuntime::Object* tileCacheAt(int row) const;
   QString tileCacheNameAt(int row) const;
   void clear();
 
@@ -58,8 +59,14 @@ protected:
 
 private:
   QHash<int, QByteArray>                  m_roles;
-  QList<Esri::ArcGISRuntime::TileCache*>  m_tileCacheData;
+  QList<Esri::ArcGISRuntime::Object*>     m_tileCacheData;
   QMap<QString, QUrl>                     m_thumbnailUrls;
+
+  template<typename T>
+  bool appendT(const QString& pathToTileCache);
+
+  template<typename T>
+  QVariant dataT(T* tileCache, int role) const;
 };
 
 } // Dsa

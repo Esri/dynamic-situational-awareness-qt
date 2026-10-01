@@ -21,16 +21,16 @@
 #include "BasemapPickerController.h"
 
 // dsa app headers
-#include "TileCache.h"
 #include "TileCacheListModel.h"
-
-// toolkit headers
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
 
 // C++ API headers
 #include "ArcGISTiledLayer.h"
+#include "ArcGISVectorTiledLayer.h"
 #include "Basemap.h"
+#include "TileCache.h"
+#include "VectorTileCache.h"
 
 // Qt headers
 #include <QDir>
@@ -113,12 +113,12 @@ void BasemapPickerController::onBasemapDataPathChanged()
   }
 
   basemapsDir.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
-  basemapsDir.setNameFilters(QStringList{"*.tpk"});
+  basemapsDir.setNameFilters(QStringList{"*.tpk", "*.vtpk"});
 
   QFileInfoList list = basemapsDir.entryInfoList();
   if (list.isEmpty())
   {
-    emit toolErrorOccurred(QString("Empty Basemaps dir %1").arg(basemapsDir.dirName()), QString("No .tpk files in %1").arg(m_basemapDataPath));
+    emit toolErrorOccurred(QString("Empty Basemaps dir %1").arg(basemapsDir.dirName()), QString("No .tpk|.vtpk files in %1").arg(m_basemapDataPath));
     return;
   }
 
@@ -158,15 +158,31 @@ QAbstractListModel* BasemapPickerController::tileCacheModel() const
  */
 void BasemapPickerController::basemapSelected(int row)
 {
-  TileCache* tileCache = m_tileCacheModel->tileCacheAt(row);
+  Object* tileCache = m_tileCacheModel->tileCacheAt(row);
   if (!tileCache)
     return;
 
   m_selectedBasemapIndex = row;
-  m_selectedBasemapPath = tileCache->path();
+  TileCache* tc = nullptr;
+  VectorTileCache* vtc = nullptr;
+  if (tc = dynamic_cast<TileCache*>(tileCache); tc)
+    m_selectedBasemapPath = tc->path();
+  else if (vtc = dynamic_cast<VectorTileCache*>(tileCache); vtc)
+    m_selectedBasemapPath = vtc->path();
+  else
+    return;
+
   emit selectedBasemapIndexChanged();
 
-  Basemap* selectedBasemap = new Basemap(new ArcGISTiledLayer(tileCache, this), this);
+
+  Basemap* selectedBasemap = nullptr;
+  if (tc)
+    selectedBasemap = new Basemap(new ArcGISTiledLayer(tc, this), this);
+  else if (vtc)
+    selectedBasemap = new Basemap(new ArcGISVectorTiledLayer(vtc, this), this);
+  else
+    return;
+
   connect(selectedBasemap, &Basemap::errorOccurred, this, &BasemapPickerController::errorOccurred);
 
   ToolResourceProvider::instance()->setBasemap(selectedBasemap);

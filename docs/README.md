@@ -511,6 +511,24 @@ The following lists some of the app configuration settings that you can change.
 
  `**` - Default data path: `~/ArcGIS/Runtime/Data/DSA/Default`.
 
+### Configure message feed surface placement
+
+Each object in the `MessageFeeds` array can include a `placement` property that controls how that feed is positioned against the scene surface. Supported values are `absolute`, `relative`, `draped`, and `drapedFlat`.
+
+```json
+{
+  "MessageFeeds": [
+    {
+      "name": "Friendly Tracks - Land",
+      "type": "position_report_land",
+      "renderer": "mil2525c",
+      "thumbnail": "friendly-tracks-land.png",
+      "placement": "drapedFlat"
+    }
+  ]
+}
+```
+
 ## Add your own local data
 
 The default path to the data used by DSA is `~/ArcGIS/Runtime/Data/DSA/Default`. If you wish to use your own data, copy the data files into the related folders (see below) and reference the above table to update the various paths in the app configuration settings file (`DsaAppConfig.json`). If you have not copied your own data into the Default directory, the app will prompt you with an option to download the demo DSA data package from ArcGIS Online (~450mb) and place it in the Default directory. 

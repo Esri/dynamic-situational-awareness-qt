@@ -25,7 +25,7 @@ import Esri.ArcGISRuntime.Toolkit
 Rectangle {
     id: optionsRoot
     property real scaleFactor: (Screen.logicalPixelDensity * 25.4) / (Qt.platform.os === "windows" || Qt.platform.os === "linux" ? 96 : 72)
-    property real settingsFontSize: 14 * scaleFactor
+    property real settingsFontSize: DsaStyles.bodyFontPixelSize * scaleFactor
     property real settingsFieldHeight: 36 * scaleFactor
     property real settingsRowSpacing: 10 * scaleFactor
     property real settingsLabelMinWidth: 220 * scaleFactor
@@ -100,7 +100,7 @@ Rectangle {
                         font {
                             family: DsaStyles.fontFamily
                             italic: true
-                            pixelSize: settingsFontSize * 0.85
+                            pixelSize: settingsFontSize
                         }
                     }
 
@@ -109,7 +109,7 @@ Rectangle {
                         font {
                             family: DsaStyles.fontFamily
                             underline: true
-                            pixelSize: DsaStyles.titleFontPixelSize * 0.75
+                            pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
                         }
                         color: Material.foreground
                     }
@@ -161,7 +161,7 @@ Rectangle {
                         font {
                             family: DsaStyles.fontFamily
                             underline: true
-                            pixelSize: DsaStyles.titleFontPixelSize * 0.75
+                            pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
                         }
                         color: Material.foreground
                     }
@@ -231,7 +231,7 @@ Rectangle {
                         font {
                             family: DsaStyles.fontFamily
                             underline: true
-                            pixelSize: DsaStyles.titleFontPixelSize * 0.75
+                            pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
                         }
                         color: Material.foreground
                     }
@@ -617,7 +617,7 @@ Rectangle {
                     wrapMode: "WordWrap"
                     font {
                         family: DsaStyles.fontFamily
-                        pixelSize: DsaStyles.titleFontPixelSize * 0.75 * scaleFactor
+                        pixelSize: DsaStyles.bodyFontPixelSize * scaleFactor
                         italic: true
                     }
 
@@ -660,7 +660,7 @@ Rectangle {
         Label {
             id: configurationDialogLabel
             font {
-                pixelSize: 12 * scaleFactor
+                pixelSize: DsaStyles.bodyFontPixelSize * scaleFactor
                 family: DsaStyles.fontFamily
             }
             wrapMode: Text.Wrap

@@ -266,7 +266,7 @@ DsaPanel {
                 text: "Current Package: " + (packageTitleString.length > 0 ? packageTitleString : toolController.currentPackageName)
                 wrapMode: Text.WrapAnywhere
                 elide: Text.ElideRight
-                font.pixelSize: 12 * scaleFactor
+                font.pixelSize: DsaStyles.bodyFontPixelSize * scaleFactor
             }
 
             Label {
@@ -274,7 +274,7 @@ DsaPanel {
                 text: "Description: " + packageDescriptionString
                 wrapMode: Text.WrapAnywhere
                 elide: Text.ElideRight
-                font.pixelSize: 12 * scaleFactor
+                font.pixelSize: DsaStyles.bodyFontPixelSize * scaleFactor
             }
         }
     }

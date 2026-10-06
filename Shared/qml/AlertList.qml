@@ -170,7 +170,7 @@ DsaPanel {
             verticalAlignment: Text.AlignVCenter
             color: Material.foreground
             font {
-                pixelSize: 14 * scaleFactor
+                pixelSize: DsaStyles.bodyFontPixelSize * scaleFactor
                 family: DsaStyles.fontFamily
             }
         }
@@ -182,7 +182,7 @@ DsaPanel {
             anchors.verticalCenter: parent.verticalCenter
             text: "Clear filters"
             font {
-                pixelSize: 12 * scaleFactor
+                pixelSize: DsaStyles.bodyFontPixelSize * scaleFactor
                 family: DsaStyles.fontFamily
             }
 
@@ -234,7 +234,7 @@ DsaPanel {
         color: Material.foreground
         horizontalAlignment: Text.AlignHCenter
         font {
-            pixelSize: 12 * scaleFactor
+            pixelSize: DsaStyles.bodyFontPixelSize * scaleFactor
             family: DsaStyles.fontFamily
         }
     }

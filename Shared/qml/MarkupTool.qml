@@ -258,7 +258,7 @@ Item {
             Label {
                 anchors.verticalCenter: parent.verticalCenter
                 font {
-                    pixelSize: 12 * scaleFactor
+                    pixelSize: DsaStyles.bodyFontPixelSize * scaleFactor
                     family: DsaStyles.fontFamily
                 }
                 text: Math.round(widthSlider.value)
@@ -277,7 +277,7 @@ Item {
                 margins: 5 * scaleFactor
             }
             font {
-                pixelSize: 10 * scaleFactor
+                pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 family: DsaStyles.fontFamily
             }
             text: qsTr("Draw Color")

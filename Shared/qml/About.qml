@@ -85,7 +85,7 @@ Item {
                 text: "Version: %1".arg(Qt.application.version)
                 color: Material.foreground
                 font {
-                    pixelSize: 12 * scaleFactor
+                    pixelSize: DsaStyles.bodyFontPixelSize * scaleFactor
                     family: DsaStyles.fontFamily
                 }
             }
@@ -98,7 +98,7 @@ Item {
                 text: "This open source application is built to demonstrate how situational awareness applications can be built with ArcGIS Maps SDK for Native Apps. It incorporates common workflows such as adding local data sources, sending messages over a secured network, visualizing military symbols, and creating and viewing alerts from those that are in the field."
                 color: Material.foreground
                 font {
-                    pixelSize: 12 * scaleFactor
+                    pixelSize: DsaStyles.bodyFontPixelSize * scaleFactor
                     family: DsaStyles.fontFamily
                 }
             }
@@ -108,7 +108,7 @@ Item {
                 text: "Built with ArcGIS Maps SDK %1 for Qt".arg(DsaResources.ArcGISMapsSDKVersion)
                 color: Material.foreground
                 font {
-                    pixelSize: 12 * scaleFactor
+                    pixelSize: DsaStyles.bodyFontPixelSize * scaleFactor
                     family: DsaStyles.fontFamily
                 }
             }
@@ -122,7 +122,7 @@ Item {
             }
             text: "Close"
             font {
-                pixelSize: 12 * scaleFactor
+                pixelSize: DsaStyles.bodyFontPixelSize * scaleFactor
                 family: DsaStyles.fontFamily
             }
             onClicked: aboutRoot.visible = false;

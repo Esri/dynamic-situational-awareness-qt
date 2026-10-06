@@ -35,7 +35,7 @@ Dialog {
     Label {
         id: label
         font {
-            pixelSize: 12 * scaleFactor
+            pixelSize: DsaStyles.bodyFontPixelSize * scaleFactor
             family: DsaStyles.fontFamily
         }
         wrapMode: Text.Wrap

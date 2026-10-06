@@ -98,7 +98,7 @@ DsaPanel {
 
         Label {
             text: "Filter:"
-            font.pixelSize: 12 * scaleFactor
+            font.pixelSize: DsaStyles.bodyFontPixelSize * scaleFactor
             color: Material.foreground
         }
 
@@ -128,19 +128,10 @@ DsaPanel {
         }
 
         // When this button is clicked, all checked items will be added as layers/elevation sources
-        Button {
+        PrimaryActionButton {
             id: addButton
-            opacity: 0.95
             text: "Add Selected"
             width: parent.width
-
-            background: Rectangle {
-                implicitWidth: filterColumn.width
-                implicitHeight: 40 * scaleFactor
-                opacity: enabled ? 1 : 0.3
-                color: Material.accent
-                radius: 2 * scaleFactor
-            }
 
             onClicked: {
                 if (elevationCheckbox.checked && elevationCheckbox.visible)

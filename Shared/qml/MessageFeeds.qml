@@ -25,15 +25,15 @@ DsaPanel {
     width: 350 * scaleFactor
     title: panelState === panelStateFeeds ? qsTr("Message Feeds")
                                            : (panelState === panelStateTrackDisplay ? qsTr("Track Display") : qsTr("Find Track"))
-    iconSource: panelState === panelStateFeeds ? DsaResources.iconClose : ""
-    leftActionIconSource: panelState === panelStateFeeds ? "" : DsaResources.iconBack
+    leftActionText: panelState === panelStateFeeds ? "" : qsTr("< Feeds")
     titleActionClosesPanel: panelState === panelStateFeeds
+    showBothTitleActions: panelState !== panelStateFeeds
 
     property alias controller: toolController
     property bool isMobile
-    property real spinBoxHeight: DsaStyles.titleFontPixelSize * 1.6
+    property real spinBoxHeight: DsaStyles.titleFontPixelSize * 1.6 * scaleFactor
     property real fontPixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
-    property real detailLabelFontPixelSize: 10 * scaleFactor
+    property real detailLabelFontPixelSize: DsaStyles.toolFontPixelSize * scaleFactor
     property real trackControlSpacing: 4 * scaleFactor
     property real trackSectionSpacing: 18 * scaleFactor
     property real trackDividerSpacing: 20 * scaleFactor
@@ -213,7 +213,7 @@ DsaPanel {
                         toolController.selectedFeed.showPreviousObservations = checked
                 }
                 text: "Show observations"
-                font.pixelSize: fontPixelSize
+                font.pixelSize: DsaStyles.bodyFontPixelSize * scaleFactor
             }
             GridLayout {
                 visible: switchObservations.checked
@@ -300,7 +300,7 @@ DsaPanel {
                         toolController.selectedFeed.showTrackLine = checked
                 }
                 text: "Show track lines"
-                font.pixelSize: fontPixelSize
+                font.pixelSize: DsaStyles.bodyFontPixelSize * scaleFactor
             }
             GridLayout {
                 visible: switchTrackLine.checked
@@ -387,13 +387,13 @@ DsaPanel {
                     Rectangle {
                         color: "gray"
                         Layout.fillWidth: true
-                        radius: 5
-                        height: 5
+                        radius: 5 * scaleFactor
+                        height: 5 * scaleFactor
                     }
 
                     Label {
                         text: "Track Length"
-                        font.pixelSize: fontPixelSize
+                        font.pixelSize: DsaStyles.bodyFontPixelSize * scaleFactor
                         Layout.alignment: Qt.AlignHCenter
                     }
 

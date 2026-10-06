@@ -166,7 +166,7 @@ DsaPanel {
                     verticalAlignment: Text.AlignVCenter
                     color: Material.foreground
                     font {
-                        pixelSize: 10 * scaleFactor
+                        pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                         family: DsaStyles.fontFamily
                     }
                 }
@@ -197,7 +197,7 @@ DsaPanel {
                     TextField {
                         id: editConditionName
                         color: parent.nameAlreadyInUse ? "red" : Material.accent
-                        font.pixelSize: 14 * scaleFactor
+                        font.pixelSize: DsaStyles.bodyFontPixelSize * scaleFactor
                         width: parent.width * 0.9
                         horizontalAlignment: Text.AlignLeft
                         verticalAlignment: Text.AlignVCenter
@@ -264,7 +264,7 @@ DsaPanel {
             TextField {
                 id: editConditionMobileName
                 color: parent.nameAlreadyInUseMobile ? "red" : Material.accent
-                font.pixelSize: 14 * scaleFactor
+                font.pixelSize: DsaStyles.bodyFontPixelSize * scaleFactor
                 width: parent.width * 0.9
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignVCenter
@@ -303,7 +303,7 @@ DsaPanel {
         }
     }
 
-    Button {
+    PrimaryActionButton {
         id: createNewConditionButton
         anchors {
             bottom: parent.bottom
@@ -311,14 +311,6 @@ DsaPanel {
             margins: 8 * scaleFactor
         }
         text: "Create new"
-        font {
-            pixelSize: DsaStyles.toolFontPixelSize * scaleFactor * 1.5
-            bold: checked
-        }
-        background: Rectangle {
-            color: Material.accent
-            border.color: Material.foreground
-        }
 
         onClicked: {
             createNewWizard.visible = true;
@@ -431,7 +423,7 @@ DsaPanel {
         color: Material.foreground
         horizontalAlignment: Text.AlignHCenter
         font {
-            pixelSize: 12 * scaleFactor
+            pixelSize: DsaStyles.bodyFontPixelSize * scaleFactor
             family: DsaStyles.fontFamily
         }
     }

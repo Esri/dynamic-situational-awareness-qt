@@ -61,7 +61,7 @@ Item {
         Text {
             id: locationText
             font {
-                pixelSize: 11 * scaleFactor
+                pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 family: DsaStyles.fontFamily
             }
             text: locationTextController.currentLocationText
@@ -72,7 +72,7 @@ Item {
             id: elevationText
             text: locationTextController.currentElevationText
             font {
-                pixelSize: 11 * scaleFactor
+                pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 family: DsaStyles.fontFamily
             }
             color: Material.foreground

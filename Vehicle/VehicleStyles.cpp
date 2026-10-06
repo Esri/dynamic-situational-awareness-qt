@@ -46,6 +46,11 @@ int VehicleStyles::secondaryTitleFontPixelSize() const
   return 16;
 }
 
+int VehicleStyles::bodyFontPixelSize() const
+{
+  return 14;
+}
+
 int VehicleStyles::primaryIconSize() const
 {
   return 42;
@@ -58,7 +63,7 @@ int VehicleStyles::secondaryIconSize() const
 
 int VehicleStyles::toolFontPixelSize() const
 {
-  return 11;
+  return 12;
 }
 
 int VehicleStyles::mainToolbarHeight() const

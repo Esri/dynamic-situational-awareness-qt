@@ -107,7 +107,7 @@ CategoryToolbar {
             MenuItem {
                 text: "About"
                 font {
-                    pixelSize: 12 * scaleFactor
+                    pixelSize: DsaStyles.bodyFontPixelSize * scaleFactor
                     family: DsaStyles.fontFamily
                 }
                 onTriggered: aboutClicked()
@@ -115,7 +115,7 @@ CategoryToolbar {
             MenuItem {
                 text: "Settings"
                 font {
-                    pixelSize: 12 * scaleFactor
+                    pixelSize: DsaStyles.bodyFontPixelSize * scaleFactor
                     family: DsaStyles.fontFamily
                 }
                 onTriggered: settingsClicked()
@@ -123,7 +123,7 @@ CategoryToolbar {
             MenuItem {
                 text: "Close"
                 font {
-                    pixelSize: 12 * scaleFactor
+                    pixelSize: DsaStyles.bodyFontPixelSize * scaleFactor
                     family: DsaStyles.fontFamily
                 }
                 onTriggered: appRoot.showCloseDialog("Are you sure you want to close?");

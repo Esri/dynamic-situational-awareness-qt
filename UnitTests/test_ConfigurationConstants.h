@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright 2012-2025 Esri
+ *  Copyright 2012-2026 Esri
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,30 +14,18 @@
  *  limitations under the License.
  ******************************************************************************/
 
-// DSA headers
-#include "test_Configuration.h"
-#include "test_ConfigurationConstants.h"
-#include "test_Message.h"
+#ifndef TEST_CONFIGURATIONCONSTANTS_H
+#define TEST_CONFIGURATIONCONSTANTS_H
 
 // Qt headers
-#include <QCoreApplication>
-#include <QTest>
+#include <QObject>
 
-template<typename T>
-static constexpr int runTest()
+class test_ConfigurationConstants : public QObject
 {
-  T t{};
-  return QTest::qExec(&t);
-}
+  Q_OBJECT
 
-int main(int argc, char* argv[])
-{
-  QCoreApplication app{argc, argv};
+private slots:
+  void test_toSurfacePlacement() const;
+};
 
-  int failureCount = 0;
-  failureCount += runTest<test_Configuration>();
-  failureCount += runTest<test_ConfigurationConstants>();
-  failureCount += runTest<test_Message>();
-
-  return failureCount;
-}
+#endif // TEST_CONFIGURATIONCONSTANTS_H

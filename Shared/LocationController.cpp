@@ -217,10 +217,9 @@ void LocationController::toolInitProperties(const QVariantMap& properties)
   }
 
   // allow for the option to use draped-flat style surface placement, otherwise default to relative
-  if (const QString surfacePlacement = properties.value(PROPERTY_NAME_CURRENT_LOCATION_SURFACE_PLACEMENT).toString(); !surfacePlacement.isEmpty())
-  {
-    m_locationDisplay3d->setSurfacePlacement(Dsa::ConfigurationConstants::toSurfacePlacement(surfacePlacement));
-  }
+  const QString surfacePlacementStr = properties.value(PROPERTY_NAME_CURRENT_LOCATION_SURFACE_PLACEMENT).toString();
+  const SurfacePlacement surfacePlacement = Dsa::ConfigurationConstants::toSurfacePlacement(surfacePlacementStr, SurfacePlacement::Relative);
+  m_locationDisplay3d->setSurfacePlacement(surfacePlacement);
 }
 
 bool LocationController::shouldSetProperties(const QString& propertyName)

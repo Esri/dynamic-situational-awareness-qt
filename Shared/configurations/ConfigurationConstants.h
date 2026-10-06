@@ -32,7 +32,8 @@ namespace Dsa::ConfigurationConstants
   inline static const QString SURFACE_PLACEMENT_DRAPED_FLAT = QStringLiteral("drapedFlat");
   inline static const QString SURFACE_PLACEMENT_RELATIVE = QStringLiteral("relative");
 
-  inline static SurfacePlacement toSurfacePlacement(const QString& surfacePlacement)
+  // conversion from string with optional default to be used
+  inline static SurfacePlacement toSurfacePlacement(const QString& surfacePlacement, SurfacePlacement defaultPlacement = SurfacePlacement::DrapedBillboarded)
   {
     if (surfacePlacement.compare(SURFACE_PLACEMENT_DRAPED_BILLBOARDED, Qt::CaseInsensitive) == 0)
     {
@@ -54,7 +55,7 @@ namespace Dsa::ConfigurationConstants
       return SurfacePlacement::Relative;
     }
 
-    return SurfacePlacement::DrapedBillboarded;
+    return defaultPlacement;
   }
 
 } // namespace Dsa::ConfigurationConstants

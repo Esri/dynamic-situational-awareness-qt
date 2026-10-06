@@ -256,7 +256,7 @@ QString BasemapPickerController::basemapDataPath() const
 }
 
 template<typename T, typename L>
-void BasemapPickerController::selectBasemap(TileCacheV tileCacheV, int row)
+void BasemapPickerController::selectBasemap(TileCacheVariant tileCacheV, int row)
 {
   auto* tileCache = std::get<T*>(tileCacheV);
   if (!tileCache)

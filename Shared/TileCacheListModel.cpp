@@ -137,7 +137,7 @@ bool TileCacheListModel::append(const QString& pathToTileCache)
   if (!fileInfo.exists())
     return false;
 
-  TileCacheV tileCacheV{};
+  TileCacheVariant tileCacheV{};
   const int size = m_tileCacheData.size();
   if (pathToTileCache.endsWith(".tpk", Qt::CaseInsensitive))
   {
@@ -163,7 +163,7 @@ bool TileCacheListModel::append(const QString& pathToTileCache)
 /*!
   \brief Returns the tile cache at \a row in the list.
  */
-TileCacheV TileCacheListModel::tileCacheAt(int row) const
+TileCacheVariant TileCacheListModel::tileCacheAt(int row) const
 {
   if (row < 0 || m_tileCacheData.size() <= static_cast<qsizetype>(row))
   {
@@ -236,7 +236,7 @@ void TileCacheListModel::clear()
 }
 
 template<typename T>
-TileCacheV TileCacheListModel::getTileCacheFromPath(const QString& pathToTileCache)
+TileCacheVariant TileCacheListModel::getTileCacheFromPath(const QString& pathToTileCache)
 {
   auto* tileCache = new T(pathToTileCache, this);
   if (tileCache->path() != pathToTileCache)
@@ -273,7 +273,7 @@ TileCacheV TileCacheListModel::getTileCacheFromPath(const QString& pathToTileCac
 
     for (qsizetype i = 0; i < m_tileCacheData.size(); ++i)
     {
-      const TileCacheV testCacheV = m_tileCacheData.at(i);
+      const TileCacheVariant testCacheV = m_tileCacheData.at(i);
       if (!std::holds_alternative<T*>(testCacheV))
       {
         continue;
@@ -296,7 +296,7 @@ TileCacheV TileCacheListModel::getTileCacheFromPath(const QString& pathToTileCac
 }
 
 template<typename T>
-QVariant TileCacheListModel::getData(TileCacheV tileCacheV, int role) const
+QVariant TileCacheListModel::getData(TileCacheVariant tileCacheV, int role) const
 {
   auto* tileCache = std::get<T>(tileCacheV);
   if (!tileCache)
@@ -329,7 +329,7 @@ QVariant TileCacheListModel::getData(TileCacheV tileCacheV, int role) const
 }
 
 template<typename T>
-QString TileCacheListModel::getTileCacheNameAt(TileCacheV tileCacheV) const
+QString TileCacheListModel::getTileCacheNameAt(TileCacheVariant tileCacheV) const
 {
   return getData<T>(tileCacheV, TileCacheListModel::TileCacheTitleRole).toString();
 }

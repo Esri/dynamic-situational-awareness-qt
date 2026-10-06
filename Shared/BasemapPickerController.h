@@ -36,7 +36,7 @@ class QStringListModel;
 
 namespace Dsa {
 
-  using TileCacheV = std::variant<std::monostate, Esri::ArcGISRuntime::TileCache*, Esri::ArcGISRuntime::VectorTileCache*>;
+  using TileCacheVariant = std::variant<std::monostate, Esri::ArcGISRuntime::TileCache*, Esri::ArcGISRuntime::VectorTileCache*>;
   struct VisitorSelectBasemap;
 
 class TileCacheListModel;
@@ -88,7 +88,7 @@ signals:
 private:
 
   template<typename T, typename L>
-  void selectBasemap(TileCacheV tileCacheV, int row);
+  void selectBasemap(TileCacheVariant tileCacheV, int row);
 
   TileCacheListModel* m_tileCacheModel;
   int                 m_defaultBasemapIndex = 0;

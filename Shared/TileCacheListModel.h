@@ -31,7 +31,7 @@ namespace Esri::ArcGISRuntime {
 
 namespace Dsa {
 
-  using TileCacheV = std::variant<std::monostate, Esri::ArcGISRuntime::TileCache*, Esri::ArcGISRuntime::VectorTileCache*>;
+  using TileCacheVariant = std::variant<std::monostate, Esri::ArcGISRuntime::TileCache*, Esri::ArcGISRuntime::VectorTileCache*>;
   struct VisitorData;
   struct VisitorTileCacheNameAt;
 
@@ -55,7 +55,7 @@ public:
   ~TileCacheListModel();
 
   bool append(const QString& pathToTileCache);
-  TileCacheV tileCacheAt(int row) const;
+  TileCacheVariant tileCacheAt(int row) const;
   QString tileCacheNameAt(int row) const;
   void clear();
 
@@ -68,16 +68,16 @@ protected:
 
 private:
   template<typename T>
-  TileCacheV getTileCacheFromPath(const QString& pathToTileCache);
+  TileCacheVariant getTileCacheFromPath(const QString& pathToTileCache);
 
   template<typename T>
-  QVariant getData(TileCacheV tileCacheV, int role) const;
+  QVariant getData(TileCacheVariant tileCacheV, int role) const;
 
   template<typename T>
-  QString getTileCacheNameAt(TileCacheV tileCacheV) const;
+  QString getTileCacheNameAt(TileCacheVariant tileCacheV) const;
 
   QHash<int, QByteArray> m_roles;
-  QList<TileCacheV> m_tileCacheData;
+  QList<TileCacheVariant> m_tileCacheData;
   QMap<QString, QUrl> m_thumbnailUrls;
 };
 

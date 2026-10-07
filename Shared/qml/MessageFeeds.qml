@@ -26,8 +26,8 @@ DsaPanel {
     title: panelState === panelStateFeeds ? qsTr("Message Feeds")
                                            : (panelState === panelStateTrackDisplay ? qsTr("Track Display") : qsTr("Find Track"))
     leftActionText: panelState === panelStateFeeds ? "" : qsTr("< Feeds")
-    titleActionClosesPanel: panelState === panelStateFeeds
-    showBothTitleActions: panelState !== panelStateFeeds
+    showLeftTitleAction: panelState !== panelStateFeeds
+    showRightCloseAction: true
 
     property alias controller: toolController
     property bool isMobile

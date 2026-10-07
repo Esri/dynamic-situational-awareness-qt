@@ -30,10 +30,8 @@ Rectangle {
     property string iconSource: DsaResources.iconClose
     property string leftActionIconSource: ""
     property string leftActionText: ""
-    property bool titleActionClosesPanel: true
-    property bool showBothTitleActions: false
-    readonly property bool showLeftTitleAction: showBothTitleActions || !titleActionClosesPanel
-    readonly property bool showRightCloseAction: showBothTitleActions || titleActionClosesPanel
+    property bool showLeftTitleAction: false
+    property bool showRightCloseAction: true
     color: Material.primary
 
     MouseArea {
@@ -55,7 +53,7 @@ Rectangle {
 
         Rectangle {
             color: Material.primary
-            height: showBothTitleActions ? 88 * scaleFactor : 44 * scaleFactor
+            height: showLeftTitleAction && showRightCloseAction ? 88 * scaleFactor : 44 * scaleFactor
             width: parent.width
 
             Text {
@@ -63,12 +61,12 @@ Rectangle {
                 anchors {
                     left: parent.left
                     right: parent.right
-                    top: showBothTitleActions ? actionButtonsRow.bottom : undefined
-                    verticalCenter: showBothTitleActions ? undefined : parent.verticalCenter
-                    bottom: showBothTitleActions ? parent.bottom : undefined
-                    leftMargin: showBothTitleActions ? 12 * scaleFactor :
+                    top: showLeftTitleAction && showRightCloseAction ? actionButtonsRow.bottom : undefined
+                    verticalCenter: showLeftTitleAction && showRightCloseAction ? undefined : parent.verticalCenter
+                    bottom: showLeftTitleAction && showRightCloseAction ? parent.bottom : undefined
+                    leftMargin: showLeftTitleAction && showRightCloseAction ? 12 * scaleFactor :
                                 (showLeftTitleAction || showRightCloseAction) ? 52 * scaleFactor : 12 * scaleFactor
-                    rightMargin: showBothTitleActions ? 12 * scaleFactor :
+                    rightMargin: showLeftTitleAction && showRightCloseAction ? 12 * scaleFactor :
                                  (showLeftTitleAction || showRightCloseAction) ? 52 * scaleFactor : 12 * scaleFactor
                 }
                 text: qsTr(title)
@@ -82,7 +80,7 @@ Rectangle {
 
             Item {
                 id: actionButtonsRow
-                visible: showBothTitleActions
+                visible: showLeftTitleAction && showRightCloseAction
                 anchors {
                     top: parent.top
                     left: parent.left
@@ -96,7 +94,7 @@ Rectangle {
                 visible: showLeftTitleAction
                 anchors {
                     left: parent.left
-                    verticalCenter: showBothTitleActions ? actionButtonsRow.verticalCenter : parent.verticalCenter
+                    verticalCenter: showLeftTitleAction && showRightCloseAction ? actionButtonsRow.verticalCenter : parent.verticalCenter
                     leftMargin: 8 * scaleFactor
                 }
 
@@ -125,7 +123,7 @@ Rectangle {
                 visible: showRightCloseAction
                 anchors {
                     right: parent.right
-                    verticalCenter: showBothTitleActions ? actionButtonsRow.verticalCenter : parent.verticalCenter
+                    verticalCenter: showLeftTitleAction && showRightCloseAction ? actionButtonsRow.verticalCenter : parent.verticalCenter
                     rightMargin: 8 * scaleFactor
                 }
 

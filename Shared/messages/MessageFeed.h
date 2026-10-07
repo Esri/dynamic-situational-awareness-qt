@@ -121,7 +121,7 @@ private:
   QString m_feedMessageType;
   QString m_renderer;
   QString m_thumbnail;
-  QString m_surfacePlacement;
+  QString m_surfacePlacementStr;
   bool m_isFeedVisible = true;
   bool m_isCoT = false;
   bool m_configurationWasValid = false;

@@ -80,7 +80,7 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
     { MESSAGE_FEEDS_TYPE, m_feedMessageType, true, emptyStr, emptyList },
     { MESSAGE_FEEDS_RENDERER, m_renderer, true, emptyStr, emptyList },
     { MESSAGE_FEEDS_THUMBNAIL, m_thumbnail, false, emptyStr, emptyList },
-    { MESSAGE_FEEDS_PLACEMENT, m_surfacePlacement, false, Dsa::ConfigurationConstants::SURFACE_PLACEMENT_DRAPED_BILLBOARDED, emptyList },
+    { MESSAGE_FEEDS_PLACEMENT, m_surfacePlacementStr, false, Dsa::ConfigurationConstants::SURFACE_PLACEMENT_DRAPED_BILLBOARDED, emptyList },
     { MESSAGE_FEEDS_OBSERVATIONS_COLOR, m_colorObservations, false, MESSAGE_FEEDS_TRACK_DISPLAY_COLOR_DEFAULT, MESSAGE_FEEDS_TRACK_DISPLAY_COLORS },
     { MESSAGE_FEEDS_TRACK_LINE_COLOR, m_colorTrackLine, false, MESSAGE_FEEDS_TRACK_DISPLAY_COLOR_DEFAULT, MESSAGE_FEEDS_TRACK_DISPLAY_COLORS },
   };
@@ -153,7 +153,7 @@ MessageFeed::MessageFeed(const QVariantMap& properties, const QString& resourceP
   m_messagesOverlay->setRenderer(createRenderer());
 
   // update the surface placement and set the overlay scene properties
-  SurfacePlacement surfacePlacement = Dsa::ConfigurationConstants::toSurfacePlacement(m_surfacePlacement);
+  SurfacePlacement surfacePlacement = Dsa::ConfigurationConstants::toSurfacePlacement(m_surfacePlacementStr);
   m_messagesOverlay->setSceneProperties(LayerSceneProperties(surfacePlacement));
 
   // initialize the track display renderer properties
@@ -405,7 +405,7 @@ QString MessageFeed::renderer() const
 
 QString MessageFeed::surfacePlacement() const
 {
-  return m_surfacePlacement;
+  return m_surfacePlacementStr;
 }
 
 Renderer* MessageFeed::createRenderer()

@@ -446,6 +446,19 @@ Test case 3:
   - [ ] Properties are updated.
   - [ ] Observations and track line are shown for `Friendly Tracks - Air` with a Track Length of 10 and Track Line is  pink. 
 
+Test case 4:
+
+- Close the app.
+- Modify the `Friendly Tracks - Land` feed under `MessageFeeds` in the config JSON file:
+  - `placement`: `drapedFlat`
+- Reopen the app with a scene that has an elevation surface.
+- Start the friendly tracks land message simulation if it is not already running.
+  - [ ] `Friendly Tracks - Land` symbols are displayed directly on the terrain surface instead of billboarded above the surface.
+- Change the same feed's `placement` value to an invalid value, such as `invalidPlacement`, and reopen the app.
+  - [ ] `Friendly Tracks - Land` symbols use the default draped billboarded placement.
+- Change the same feed's `placement` value to `draped` and reopen the app.
+  - [ ] `Friendly Tracks - Land` symbols use draped billboarded placement.
+
 **Test 2: Dynamic Popup**
 
 - Open the context menu from the latest observation of a message feed.

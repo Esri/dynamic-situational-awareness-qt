@@ -503,7 +503,7 @@ The following lists some of the app configuration settings that you can change.
 | UnitOfMeasurement | `meters` | Default unit of measurement for distance |
 | UserName | your device name | Name that identifies your device on the network |
 | LocationBroadcastConfig |`*`| JSON for message type and port to use |
-| MessageFeeds |`*`| Details of message feeds used in DSA |
+| MessageFeeds |`*`| Details of message feeds used in DSA. Valid `placement` values are `absolute`, `relative`, `draped`, and `drapedFlat` |
 | Layers | `*` | JSON array of layers added to the Overlay list |  
 | Conditions |`*`| JSON array of custom JSON representing a condition |
 

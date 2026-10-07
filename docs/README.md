@@ -503,31 +503,13 @@ The following lists some of the app configuration settings that you can change.
 | UnitOfMeasurement | `meters` | Default unit of measurement for distance |
 | UserName | your device name | Name that identifies your device on the network |
 | LocationBroadcastConfig |`*`| JSON for message type and port to use |
-| MessageFeeds |`*`| Details of message feeds used in DSA |
+| MessageFeeds |`*`| Details of message feeds used in DSA. Valid `placement` values are `absolute`, `relative`, `draped`, and `drapedFlat` |
 | Layers | `*` | JSON array of layers added to the Overlay list |  
 | Conditions |`*`| JSON array of custom JSON representing a condition |
 
  `*` - See the config file for details.
 
  `**` - Default data path: `~/ArcGIS/Runtime/Data/DSA/Default`.
-
-### Configure message feed surface placement
-
-Each object in the `MessageFeeds` array can include a `placement` property that controls how that feed is positioned against the scene surface. Supported values are `absolute`, `relative`, `draped`, and `drapedFlat`.
-
-```json
-{
-  "MessageFeeds": [
-    {
-      "name": "Friendly Tracks - Land",
-      "type": "position_report_land",
-      "renderer": "mil2525c",
-      "thumbnail": "friendly-tracks-land.png",
-      "placement": "drapedFlat"
-    }
-  ]
-}
-```
 
 ## Add your own local data
 

@@ -31,7 +31,7 @@ Rectangle {
     property string leftActionIconSource: ""
     property string leftActionText: ""
     property bool showLeftTitleAction: false
-    property bool showRightCloseAction: true
+    property bool showRightCloseAction: false
     color: Material.primary
 
     MouseArea {
@@ -61,7 +61,7 @@ Rectangle {
                 anchors {
                     left: parent.left
                     right: parent.right
-                    top: showLeftTitleAction && showRightCloseAction ? actionButtonsRow.bottom : undefined
+                    top: actionButtonsRow.bottom
                     verticalCenter: showLeftTitleAction && showRightCloseAction ? undefined : parent.verticalCenter
                     bottom: showLeftTitleAction && showRightCloseAction ? parent.bottom : undefined
                     leftMargin: showLeftTitleAction && showRightCloseAction ? 12 * scaleFactor :
@@ -80,7 +80,7 @@ Rectangle {
 
             Item {
                 id: actionButtonsRow
-                visible: showLeftTitleAction && showRightCloseAction
+                visible: showLeftTitleAction || showRightCloseAction
                 anchors {
                     top: parent.top
                     left: parent.left

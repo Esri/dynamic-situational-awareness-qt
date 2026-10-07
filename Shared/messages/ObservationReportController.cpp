@@ -272,6 +272,8 @@ void ObservationReportController::broadcastReport(const QString& size,
   if (pickMode())
     togglePickMode();
 
+  emit controlPointChanged();
+
   if (m_udpPort == -1)
     return;
 
@@ -321,6 +323,8 @@ void ObservationReportController::cancelReport()
   onUpdateControlPointHightlight();
   if (pickMode())
     togglePickMode();
+
+  emit controlPointChanged();
 }
 
 /*!

@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  *  Copyright 2012-2018 Esri
  *
@@ -15,20 +14,18 @@
  *  limitations under the License.
  ******************************************************************************/
 
-// PCH header
+// PCH
 #include "pch.hpp"
 
 #include "LocationController.h"
 
-// dsa app headers
+// DSA
+#include "ConfigurationConstants.h"
 #include "GPXLocationSimulator.h"
 #include "LocationDisplay3d.h"
-
-// toolkit headers
 #include "ToolManager.h"
 #include "ToolResourceProvider.h"
-
-// C++ API headers
+// C++ API
 #include "Camera.h"
 #include "GraphicsOverlay.h"
 #include "GraphicsOverlayListModel.h"
@@ -38,13 +35,11 @@
 #include "SceneViewTypes.h"
 #include "SpatialReference.h"
 #include "SymbolTypes.h"
-
-// Qt headers
+// Qt
 #include <QCompass>
 #include <QDir>
 #include <QFile>
-
-// STL headers
+// Std
 #include <cmath>
 
 using namespace Esri::ArcGISRuntime;
@@ -210,18 +205,21 @@ void LocationController::toolInitProperties(const QVariantMap& properties)
 
   // skip if the location display was not ready
   if (!m_locationDisplay3d)
+  {
     return;
+  }
 
   // make sure the value from the configuration file for
   // the z offset is able to be converted to a double
-  if (const auto zOffsetValue = properties[PROPERTY_NAME_CURRENT_LOCATION_Z_OFFSET]; zOffsetValue.canConvert<double>())
+  if (const QVariant zOffsetValue = properties.value(PROPERTY_NAME_CURRENT_LOCATION_Z_OFFSET); zOffsetValue.canConvert<double>())
+  {
     m_locationDisplay3d->setZOffset(zOffsetValue.toDouble());
+  }
 
   // allow for the option to use draped-flat style surface placement, otherwise default to relative
-  if (const auto surfacePlacementValue = properties[PROPERTY_NAME_CURRENT_LOCATION_SURFACE_PLACEMENT].toString(); surfacePlacementValue == QStringLiteral("DrapedFlat"))
-    m_locationDisplay3d->setSurfacePlacement(SurfacePlacement::DrapedFlat);
-  else
-    m_locationDisplay3d->setSurfacePlacement(SurfacePlacement::Relative);
+  const QString surfacePlacementStr = properties.value(PROPERTY_NAME_CURRENT_LOCATION_SURFACE_PLACEMENT).toString();
+  const SurfacePlacement surfacePlacement = Dsa::ConfigurationConstants::toSurfacePlacement(surfacePlacementStr, SurfacePlacement::Relative);
+  m_locationDisplay3d->setSurfacePlacement(surfacePlacement);
 }
 
 bool LocationController::shouldSetProperties(const QString& propertyName)

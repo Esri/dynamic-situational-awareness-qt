@@ -217,7 +217,7 @@ DsaPanel {
             reportFrame.setCurrentIndex(0);
 
             if (isMobile)
-                observationReportRoot.visible = false;
+                closed();
         }
 
         onCancelRequested: {
@@ -226,8 +226,7 @@ DsaPanel {
             reportFrame.setCurrentIndex(0);
             toolController.cancelReport();
 
-            if (isMobile)
-                observationReportRoot.visible = false;
+            closed();
         }
     }
 }

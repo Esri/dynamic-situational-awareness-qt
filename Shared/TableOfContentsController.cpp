@@ -306,19 +306,18 @@ TableOfContentsController::LayerGeometryType TableOfContentsController::layerGeo
     }
   }
   case LayerType::RasterLayer:
+  case LayerType::ArcGISTiledLayer:
     return LayerGeometryType::Raster;
   case LayerType::FeatureCollectionLayer:
     return LayerGeometryType::FreehandMarkup;
   case LayerType::KMLLayer:
     return LayerGeometryType::Kml;
   case LayerType::ArcGISSceneLayer:
-    return LayerGeometryType::SceneLayer;
   case LayerType::PointCloudLayer:
-    return LayerGeometryType::SceneLayer;
   case LayerType::IntegratedMeshLayer:
     return LayerGeometryType::SceneLayer;
-  case LayerType::ArcGISTiledLayer:
-    return LayerGeometryType::Raster;
+  case LayerType::ArcGISVectorTiledLayer:
+    return LayerGeometryType::VectorTiles;
   default:
     return LayerGeometryType::Unknown;
   }

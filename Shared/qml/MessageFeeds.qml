@@ -163,6 +163,14 @@ DsaPanel {
             clip: true
             contentHeight: trackDisplayColumn.implicitHeight
 
+            TapHandler {
+                onTapped: {
+                    const position = spinObservations.mapFromItem(trackDisplayFlickable, point.position)
+                    if (!spinObservations.contains(position))
+                        spinObservations.focus = false
+                }
+            }
+            
             ColumnLayout {
                 id: trackDisplayColumn
                 width: trackDisplayFlickable.width

@@ -116,6 +116,7 @@ TileCacheListModel::TileCacheListModel(QObject* parent):
   m_roles[TileCacheTitleRole] = "title";
   m_roles[TileCachePathRole] = "path";
   m_roles[TileCacheThumbnailUrlRole] = "thumbnailUrl";
+  m_roles[TileCacheDisplayTitleRole] = "displayTitle";
 }
 
 /*!
@@ -307,7 +308,7 @@ QVariant TileCacheListModel::getData(TileCacheVariant tileCacheV, int role) cons
   switch (role)
   {
     case TileCacheListModel::TileCacheTitleRole:
-      return QFileInfo(tileCache->path()).completeBaseName();
+      return QFileInfo(tileCache->path()).fileName();
 
     case TileCacheListModel::TileCachePathRole:
       return tileCache->path();
@@ -321,6 +322,10 @@ QVariant TileCacheListModel::getData(TileCacheVariant tileCacheV, int role) cons
 
       return m_thumbnailUrls.value(tileCache->path(), QUrl());
     }
+
+    case TileCacheListModel::TileCacheDisplayTitleRole:
+      return QFileInfo{tileCache->path()}.completeBaseName();
+
     default:
       break;
   }

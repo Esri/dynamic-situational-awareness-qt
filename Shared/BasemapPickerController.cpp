@@ -168,7 +168,7 @@ void BasemapPickerController::onBasemapDataPathChanged()
     if (m_tileCacheModel->append(fInfo.filePath()))
       index++;
 
-    if(!foundDefault && fInfo.completeBaseName().compare(m_defaultBasemap, Qt::CaseInsensitive) == 0)
+    if(!foundDefault && fInfo.fileName().compare(m_defaultBasemap, Qt::CaseInsensitive) == 0)
     {
       m_defaultBasemapIndex = index;
       foundDefault = true;

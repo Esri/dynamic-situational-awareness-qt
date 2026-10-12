@@ -93,7 +93,7 @@ private:
   TileCacheListModel* m_tileCacheModel;
   int                 m_defaultBasemapIndex = 0;
   QString             m_basemapDataPath;
-  QString             m_defaultBasemap = "topographic";
+  QString             m_defaultBasemap = "topographic.tpk";
   int                 m_selectedBasemapIndex = -1;
   QString             m_selectedBasemapPath;
 

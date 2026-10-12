@@ -45,7 +45,8 @@ public:
   {
     TileCacheTitleRole = Qt::UserRole + 1,
     TileCachePathRole = Qt::UserRole + 2,
-    TileCacheThumbnailUrlRole = Qt::UserRole + 3
+    TileCacheThumbnailUrlRole = Qt::UserRole + 3,
+    TileCacheDisplayTitleRole = Qt::UserRole + 4,
   };
 
   friend struct VisitorData;

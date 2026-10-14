@@ -50,7 +50,8 @@ public:
     Raster = 3,
     FreehandMarkup = 4,
     Kml = 5,
-    SceneLayer = 6
+    SceneLayer = 6,
+    VectorTiles = 7,
   };
   Q_ENUM(LayerGeometryType)
 

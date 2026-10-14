@@ -63,7 +63,7 @@ DsaPanel {
 
             Label {
                 id: tileCacheTitle
-                text: title;
+                text: displayTitle;
                 anchors.centerIn: parent
                 width: parent.width - (16 * scaleFactor)
                 horizontalAlignment: Text.AlignHCenter

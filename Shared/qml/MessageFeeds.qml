@@ -163,11 +163,15 @@ DsaPanel {
             clip: true
             contentHeight: trackDisplayColumn.implicitHeight
 
-            TapHandler {
-                onTapped: {
-                    const position = spinObservations.mapFromItem(trackDisplayFlickable, point.position)
+            MouseArea {
+                parent: trackDisplayFlickable
+                anchors.fill: parent
+                z: 1
+                onPressed: mouse => {
+                    const position = spinObservations.mapFromItem(parent, mouse.x, mouse.y)
                     if (!spinObservations.contains(position))
                         spinObservations.focus = false
+                    mouse.accepted = false
                 }
             }
             

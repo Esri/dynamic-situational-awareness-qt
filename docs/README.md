@@ -40,7 +40,7 @@ DSA-Vehicle and DSA-Handheld have the same capability, each built for its intend
 - 3D map with navigation controls
 - Own location tracked on the map with various navigation modes
 - Read and display local file data including support for both foundation GIS data and overlays
-- Uses local data formats supported by the ArcGIS Native Maps SDKs, such as Geospatial PDF, Shapefile, GeoTIFF, DTED, NITF, Mobile Mosaic Dataset, GeoPackage, and Mobile Scene Packages
+- Uses local data formats supported by the ArcGIS Native Maps SDKs, such as Vector Tile Package, Geospatial PDF, Shapefile, GeoTIFF, DTED, NITF, Mobile Mosaic Dataset, GeoPackage, and Mobile Scene Packages
 - Support for sharing information over a tactical network which is ad-hoc, peer-to-peer, and low-bandwidth, such as
   - Current location reports and distress signal
   - Friendly team position reports
@@ -227,10 +227,7 @@ A [basemap] provides a background of geographical context for the symbology on t
 > ***Developer tip:*** You have options when it comes to the basemaps you want to use, including:
 > 
 > - Decide which basemaps you want to provision from among those that come with this DSA app.
-> - Download basemaps for offline use from [Tile Basemap group on ArcGIS Online].
-> - Provision your app with basemaps of your own design.
-> - Decide which basemaps you want to provision from among those that come with this DSA app.
-> - Download basemaps for offline use from [Tiled Basemap group on ArcGIS Online].
+> - Download basemaps for offline use from [Tiled Basemap group on ArcGIS Online] and [Vector Tiled Basemap group on ArcGIS Online].
 > - Provision your app with basemaps of your own design.
 > - Use the [Download Map tool in ArcGIS Pro] to create tile packages from tile layers and imagery layers
 
@@ -491,9 +488,9 @@ The following lists some of the app configuration settings that you can change.
 | GpxFile | `**/SimulationData/MontereyMounted.gpx` | GPX file to use for simulating location |
 | GridColorScheme | `Light` | String, option for appearance of the grid lines `Light, Dark, Colors` |
 | GridVisible | `false` | Grid should be displayed on the secene |
-| CurrentLocationSurfacePlacement | `Relative` | String. Option for the current location symbol placement on the surface used in the scene `DrapedFlat, Relative`. If `DrapedFlat,` the CurrentLocationZOffset setting is ignored
+| CurrentLocationSurfacePlacement | `relative` | String. Option for the current location symbol placement on the surface used in the scene `draped`, `drapedFlat`, `relative`, or `absolute`. If `drapedFlat,` the CurrentLocationZOffset setting is ignored
 | CurrentLocationZOffset | `10` | Number. An optional distance in meters to offset the current location symbol
-| DefaultBasemap | `Topographic` | Name of the TPK file to use as the basemap, without the .tpk file extension (not case sensitive) |
+| DefaultBasemap | `Topographic.tpk` | Name of the file to use as the basemap, including the .tpk or .vtpk file extension (not case sensitive) |
 | DefaultElevationSource | `**/ElevationData/CaDEM.tpk` | Default elevation source |
 | CurrentPackage | "" | String representing the path to a Mobile Scene Package (.mspk) file |
 | SceneIndex | `-1` | Integer representing the index of the Scene to load from the CurrentPackage |
@@ -503,7 +500,7 @@ The following lists some of the app configuration settings that you can change.
 | UnitOfMeasurement | `meters` | Default unit of measurement for distance |
 | UserName | your device name | Name that identifies your device on the network |
 | LocationBroadcastConfig |`*`| JSON for message type and port to use |
-| MessageFeeds |`*`| Details of message feeds used in DSA. Valid `placement` values are `absolute`, `relative`, `draped`, and `drapedFlat` |
+| MessageFeeds |`*`| Details of message feeds used in DSA. Valid `placement` values are `draped`, `drapedFlat`, `relative`, and `absolute` |
 | Layers | `*` | JSON array of layers added to the Overlay list |  
 | Conditions |`*`| JSON array of custom JSON representing a condition |
 
@@ -513,7 +510,7 @@ The following lists some of the app configuration settings that you can change.
 
 ## Add your own local data
 
-The default path to the data used by DSA is `~/ArcGIS/Runtime/Data/DSA/Default`. If you wish to use your own data, copy the data files into the related folders (see below) and reference the above table to update the various paths in the app configuration settings file (`DsaAppConfig.json`). If you have not copied your own data into the Default directory, the app will prompt you with an option to download the demo DSA data package from ArcGIS Online (~450mb) and place it in the Default directory. 
+The default path to the data used by DSA is `~/ArcGIS/Runtime/Data/DSA/Default`. If you wish to use your own data, copy the data files into the related folders (see below) and reference the above table to update the various paths in the app configuration settings file (`DsaAppConfig.json`). If you have not copied your own data into the Default directory, the app will prompt you with an option to download the demo DSA data package from ArcGIS Online and place it in the Default directory. 
 
 The default data directory should look like this:
 
@@ -581,6 +578,8 @@ Parameters available only in console mode:
 [Windows]: http://links.esri.com/exampleapps/dsaqt/app/windows
 
 [Tiled Basemap group on ArcGIS Online]: https://www.arcgis.com/home/group.html?id=3a890be7a4b046c7840dc4a0446c5b31#overview
+
+[Vector Tiled Basemap group on ArcGIS Online]: https://www.arcgis.com/home/group.html?id=c61ab1493fff4b84b53705184876c9b0#overview
 
 [Download Map tool in ArcGIS Pro]: https://doc.esri.com/en/arcgis-pro/latest/help/projects/take-a-map-offline.html
 

@@ -163,6 +163,18 @@ DsaPanel {
             clip: true
             contentHeight: trackDisplayColumn.implicitHeight
 
+            MouseArea {
+                parent: trackDisplayFlickable
+                anchors.fill: parent
+                z: 1
+                onPressed: mouse => {
+                    const position = spinObservations.mapFromItem(parent, mouse.x, mouse.y)
+                    if (!spinObservations.contains(position))
+                        spinObservations.focus = false
+                    mouse.accepted = false
+                }
+            }
+            
             ColumnLayout {
                 id: trackDisplayColumn
                 width: trackDisplayFlickable.width

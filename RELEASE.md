@@ -1,5 +1,9 @@
 # Release notes
 
+## 3.1.0
+- Added support for Vector Tile Packages (.vtpk) as Basemaps and Operational layers
+- Extended `CurrentLocationSurfacePlacement` and `MessageFeed::placement` options to include `draped|drapedFlat|relative|absolute`
+
 ## 3.0.0
 
 - Minimum ArcGIS Maps SDK for Qt version is 300.1

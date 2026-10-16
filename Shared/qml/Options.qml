@@ -109,7 +109,7 @@ Rectangle {
                         font {
                             family: DsaStyles.fontFamily
                             underline: true
-                            pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
+                            pixelSize: DsaStyles.heading1FontPixelSize * scaleFactor
                         }
                         color: Material.foreground
                     }
@@ -161,7 +161,7 @@ Rectangle {
                         font {
                             family: DsaStyles.fontFamily
                             underline: true
-                            pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
+                            pixelSize: DsaStyles.heading1FontPixelSize * scaleFactor
                         }
                         color: Material.foreground
                     }
@@ -231,7 +231,7 @@ Rectangle {
                         font {
                             family: DsaStyles.fontFamily
                             underline: true
-                            pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
+                            pixelSize: DsaStyles.heading1FontPixelSize * scaleFactor
                         }
                         color: Material.foreground
                     }

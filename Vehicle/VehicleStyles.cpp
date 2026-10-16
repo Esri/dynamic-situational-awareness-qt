@@ -46,6 +46,11 @@ int VehicleStyles::secondaryTitleFontPixelSize() const
   return 16;
 }
 
+int VehicleStyles::heading1FontPixelSize() const
+{
+  return 20;
+}
+
 int VehicleStyles::bodyFontPixelSize() const
 {
   return 14;

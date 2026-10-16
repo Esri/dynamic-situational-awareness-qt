@@ -46,6 +46,11 @@ int HandheldStyles::secondaryTitleFontPixelSize() const
   return 16;
 }
 
+int HandheldStyles::heading1FontPixelSize() const
+{
+  return 16;
+}
+
 int HandheldStyles::bodyFontPixelSize() const
 {
   return 12;

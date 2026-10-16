@@ -30,6 +30,7 @@ class HandheldStyles : public QObject
   Q_PROPERTY(QString fontFamily READ fontFamily CONSTANT)
   Q_PROPERTY(int titleFontPixelSize READ titleFontPixelSize CONSTANT)
   Q_PROPERTY(int secondaryTitleFontPixelSize READ secondaryTitleFontPixelSize CONSTANT)
+  Q_PROPERTY(int heading1FontPixelSize READ heading1FontPixelSize CONSTANT)
   Q_PROPERTY(int bodyFontPixelSize READ bodyFontPixelSize CONSTANT)
   Q_PROPERTY(int primaryIconSize READ primaryIconSize CONSTANT)
   Q_PROPERTY(int secondaryIconSize READ secondaryIconSize CONSTANT)
@@ -45,6 +46,7 @@ private:
   QString fontFamily() const;
   int titleFontPixelSize() const;
   int secondaryTitleFontPixelSize() const;
+  int heading1FontPixelSize() const;
   int bodyFontPixelSize() const;
   int primaryIconSize() const;
   int secondaryIconSize() const;

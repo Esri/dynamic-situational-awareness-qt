@@ -48,7 +48,7 @@ Item {
         width: parent.width * 0.75
         color: Material.accent
         font {
-            pixelSize: DsaStyles.titleFontPixelSize * scaleFactor
+            pixelSize: DsaStyles.bodyFontPixelSize * scaleFactor
             bold: true
         }
         horizontalAlignment: Text.AlignHCenter
@@ -62,7 +62,7 @@ Item {
             margins: 16 * scaleFactor
         }
         font {
-            pixelSize: DsaStyles.titleFontPixelSize * scaleFactor * 0.5
+            pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
             italic: true
         }
 

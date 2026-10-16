@@ -37,7 +37,7 @@ Item {
 
         font {
             family: DsaStyles.fontFamily
-            pixelSize: DsaStyles.secondaryTitleFontPixelSize * scaleFactor
+            pixelSize: DsaStyles.bodyFontPixelSize * scaleFactor
         }
         color: Material.foreground
     }

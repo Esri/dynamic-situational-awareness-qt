@@ -48,7 +48,10 @@ Item {
         Label {
             id: toolText
             anchors.horizontalCenter: parent.horizontalCenter
+            width: parent.width
             text: toolName
+            wrapMode: Text.WordWrap
+            horizontalAlignment: Text.AlignHCenter
             color: selected ? selectedLabelColor : labelColor
             font {
                 family: DsaStyles.fontFamily

@@ -57,7 +57,7 @@ Dialog {
                 width: parent.width * 0.4
                 font {
                     family: DsaStyles.fontFamily
-                    pixelSize: 12 * scaleFactor
+                    pixelSize: DsaStyles.bodyFontPixelSize * scaleFactor
                 }
             }
 

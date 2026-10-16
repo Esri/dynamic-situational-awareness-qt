@@ -46,6 +46,16 @@ int HandheldStyles::secondaryTitleFontPixelSize() const
   return 16;
 }
 
+int HandheldStyles::heading1FontPixelSize() const
+{
+  return 16;
+}
+
+int HandheldStyles::bodyFontPixelSize() const
+{
+  return 12;
+}
+
 int HandheldStyles::primaryIconSize() const
 {
   return 30;
@@ -58,7 +68,7 @@ int HandheldStyles::secondaryIconSize() const
 
 int HandheldStyles::toolFontPixelSize() const
 {
-  return 9;
+  return 10;
 }
 
 int HandheldStyles::mainToolbarHeight() const

@@ -215,7 +215,7 @@ Vehicle {
 
             font {
                 family: DsaStyles.fontFamily
-                pixelSize: DsaStyles.toolFontPixelSize
+                pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
             }
 
             background: Rectangle {

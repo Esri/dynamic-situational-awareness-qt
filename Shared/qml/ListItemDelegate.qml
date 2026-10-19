@@ -92,7 +92,7 @@ Item {
             verticalAlignment: Text.AlignVCenter
             width: menuIconVisible ? parent.width * 0.6 : parent.width
             font {
-                pixelSize: 14 * scaleFactor
+                pixelSize: DsaStyles.bodyFontPixelSize * scaleFactor
                 bold: true
                 family: DsaStyles.fontFamily
             }

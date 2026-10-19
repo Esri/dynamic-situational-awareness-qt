@@ -17,7 +17,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Material
-import QtQuick.Layouts
 import QtQuick.Window
 import Esri.ArcGISRuntime.OpenSourceApps.DSA
 
@@ -66,7 +65,7 @@ Rectangle {
         width: parent.width * 0.9
         height: 48 * scaleFactor
         font {
-            pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
+            pixelSize: DsaStyles.bodyFontPixelSize * scaleFactor
             italic: true
         }
         wrapMode: Text.Wrap
@@ -217,115 +216,51 @@ Rectangle {
         }
     }
 
-    RowLayout {
+    WizardNavigationFooter {
         id: wizardButtonRow
-        anchors {
-            bottom: parent.bottom
-            horizontalCenter: parent.horizontalCenter
-            bottomMargin: wizardButtonsFactoredMargin + keyboardOffset
-        }
-        Button {
-            id: backButton
-            enabled: conditionFrame.currentIndex > 0
-            opacity: enabled ? 1.0 : 0.0
-            Layout.margins: wizardButtonsFactoredMargin
-            Material.roundedScale: Material.NotRounded
-            height: nextButton.height
-            width: nextButton.width
-            text: "Back"
-            leftPadding: 0
-            rightPadding: 0
-            topPadding: 0
-            bottomPadding: 0
-            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor * 1.5
+        scaleFactor: conditionsWizardRoot.scaleFactor
+        bottomMargin: wizardButtonsFactoredMargin + keyboardOffset
+        backEnabled: conditionFrame.currentIndex > 0
+        nextEnabled: conditionFrame.currentIndex < (conditionFrame.count - 1) && conditionFrame.currentItem.valid
+        createEnabled: readyToAdd
 
-            onClicked: conditionFrame.decrementCurrentIndex();
-        }
-
-        ToolIcon {
-            id: createButton
-            Layout.margins: {
-                left: 0
-                top: wizardButtonsFactoredMargin
-                right: wizardButtonsFactoredMargin
-                bottom: wizardButtonsFactoredMargin
-            }
-            enabled: readyToAdd
-            opacity: enabled ? 1.0 : 0.5
-            iconSource: DsaResources.iconComplete
-            toolName: "Create"
-            labelColor: Material.accent
-            onToolSelected: {
-                conditionsWizardRoot.visible = false;
-                if (conditionPage.isSpatial) {
-                    if (queryLoader.item.isWithinDistance) {
-                        toolController.addWithinDistanceAlert(namePage.conditionName,
-                                                              levelPage.getLevel(),
-                                                              sourcePage.sourceName,
-                                                              queryLoader.item.distance,
-                                                              targetLoader.item.targetFeatureId,
-                                                              targetLoader.item.targetName);
-                    } else if (queryLoader.item.isWithinArea) {
-                        toolController.addWithinAreaAlert(namePage.conditionName,
+        onBackRequested: conditionFrame.decrementCurrentIndex()
+        onNextRequested: conditionFrame.incrementCurrentIndex()
+        onCreateRequested: {
+            conditionsWizardRoot.visible = false;
+            if (conditionPage.isSpatial) {
+                if (queryLoader.item.isWithinDistance) {
+                    toolController.addWithinDistanceAlert(namePage.conditionName,
                                                           levelPage.getLevel(),
                                                           sourcePage.sourceName,
+                                                          queryLoader.item.distance,
                                                           targetLoader.item.targetFeatureId,
                                                           targetLoader.item.targetName);
-                    }
-                } else if (conditionPage.isAttribute) {
-                    toolController.addAttributeEqualsAlert(namePage.conditionName,
-                                                           levelPage.getLevel(),
-                                                           sourcePage.sourceName,
-                                                           queryLoader.item.attributeField,
-                                                           targetLoader.item.attributeValue);
+                } else if (queryLoader.item.isWithinArea) {
+                    toolController.addWithinAreaAlert(namePage.conditionName,
+                                                      levelPage.getLevel(),
+                                                      sourcePage.sourceName,
+                                                      targetLoader.item.targetFeatureId,
+                                                      targetLoader.item.targetName);
                 }
-
-                for (var i = 0; i < conditionFrame.count; ++i)
-                    conditionFrame.itemAt(i).clear();
-                conditionFrame.setCurrentIndex(0);
+            } else if (conditionPage.isAttribute) {
+                toolController.addAttributeEqualsAlert(namePage.conditionName,
+                                                       levelPage.getLevel(),
+                                                       sourcePage.sourceName,
+                                                       queryLoader.item.attributeField,
+                                                       targetLoader.item.attributeValue);
             }
+
+            for (var i = 0; i < conditionFrame.count; ++i)
+                conditionFrame.itemAt(i).clear();
+            conditionFrame.setCurrentIndex(0);
         }
 
-        ToolIcon {
-            id: cancelButton
-            Layout.margins: {
-                left: 0
-                top: wizardButtonsFactoredMargin
-                right: wizardButtonsFactoredMargin
-                bottom: wizardButtonsFactoredMargin
-            }
-            toolName: "Cancel"
-            iconSource: DsaResources.iconClose
-
-            onToolSelected: {
-                conditionsWizardRoot.visible = false;
-                for (var i = 0; i < conditionFrame.count; ++i)
-                    conditionFrame.itemAt(i).clear();
-                conditionFrame.setCurrentIndex(0);
-            }
-        }
-
-        Button {
-            id: nextButton
-            enabled: conditionFrame.currentIndex < (conditionFrame.count -1) && conditionFrame.currentItem.valid
-            opacity: enabled ? 1.0 : 0.0
-            Layout.margins: {
-                left: 0
-                top: wizardButtonsFactoredMargin
-                right: wizardButtonsFactoredMargin
-                bottom: wizardButtonsFactoredMargin
-            }
-            Material.roundedScale: Material.NotRounded
-            height: 32 * scaleFactor
-            width: 64 * scaleFactor
-            text: "Next"
-            leftPadding: 0
-            rightPadding: 0
-            topPadding: 0
-            bottomPadding: 0
-            font.pixelSize: DsaStyles.toolFontPixelSize * scaleFactor * 1.5
-
-            onClicked: conditionFrame.incrementCurrentIndex();
+        onCancelRequested: {
+            conditionsWizardRoot.visible = false;
+            for (var i = 0; i < conditionFrame.count; ++i)
+                conditionFrame.itemAt(i).clear();
+            conditionFrame.setCurrentIndex(0);
         }
     }
 }

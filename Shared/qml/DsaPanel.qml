@@ -29,9 +29,9 @@ Rectangle {
     signal titleActionTriggered()
     property string iconSource: DsaResources.iconClose
     property string leftActionIconSource: ""
-    property bool titleActionClosesPanel: true
-    readonly property bool showLeftTitleAction: !titleActionClosesPanel
-    readonly property bool showRightCloseAction: titleActionClosesPanel
+    property string leftActionText: ""
+    property bool showLeftTitleAction: false
+    property bool showRightCloseAction: false
     color: Material.primary
 
     MouseArea {
@@ -53,7 +53,7 @@ Rectangle {
 
         Rectangle {
             color: Material.primary
-            height: 44 * scaleFactor
+            height: showLeftTitleAction && showRightCloseAction ? 88 * scaleFactor : 44 * scaleFactor
             width: parent.width
 
             Text {
@@ -61,9 +61,13 @@ Rectangle {
                 anchors {
                     left: parent.left
                     right: parent.right
-                    verticalCenter: parent.verticalCenter
-                    leftMargin: (showLeftTitleAction || showRightCloseAction) ? 52 * scaleFactor : 12 * scaleFactor
-                    rightMargin: (showLeftTitleAction || showRightCloseAction) ? 52 * scaleFactor : 12 * scaleFactor
+                    top: actionButtonsRow.bottom
+                    verticalCenter: showLeftTitleAction && showRightCloseAction ? undefined : parent.verticalCenter
+                    bottom: showLeftTitleAction && showRightCloseAction ? parent.bottom : undefined
+                    leftMargin: showLeftTitleAction && showRightCloseAction ? 12 * scaleFactor :
+                                (showLeftTitleAction || showRightCloseAction) ? 52 * scaleFactor : 12 * scaleFactor
+                    rightMargin: showLeftTitleAction && showRightCloseAction ? 12 * scaleFactor :
+                                 (showLeftTitleAction || showRightCloseAction) ? 52 * scaleFactor : 12 * scaleFactor
                 }
                 text: qsTr(title)
                 color: Material.foreground
@@ -74,25 +78,39 @@ Rectangle {
                 clip: true
             }
 
+            Item {
+                id: actionButtonsRow
+                visible: showLeftTitleAction || showRightCloseAction
+                anchors {
+                    top: parent.top
+                    left: parent.left
+                    right: parent.right
+                }
+                height: visible ? 44 * scaleFactor : 0
+            }
+
             Button {
                 id: leftActionButton
                 visible: showLeftTitleAction
                 anchors {
                     left: parent.left
-                    verticalCenter: parent.verticalCenter
+                    verticalCenter: showLeftTitleAction && showRightCloseAction ? actionButtonsRow.verticalCenter : parent.verticalCenter
                     leftMargin: 8 * scaleFactor
                 }
 
-                width: 36 * scaleFactor
-                height: width
-
-                background: Rectangle {
-                    anchors.fill: leftActionButton
-                    color: Material.primary
+                width: leftActionText.length > 0 ? implicitWidth : 36 * scaleFactor
+                height: leftActionText.length > 0 ? implicitHeight : 36 * scaleFactor
+                text: leftActionText
+                font {
+                    family: DsaStyles.fontFamily
+                    pixelSize: DsaStyles.toolFontPixelSize * scaleFactor
                 }
 
                 Image {
-                    anchors.fill: parent
+                    visible: leftActionText.length === 0
+                    anchors {
+                        fill: parent
+                    }
                     source: leftActionIconSource
                     fillMode: Image.PreserveAspectFit
                 }
@@ -105,7 +123,7 @@ Rectangle {
                 visible: showRightCloseAction
                 anchors {
                     right: parent.right
-                    verticalCenter: parent.verticalCenter
+                    verticalCenter: showLeftTitleAction && showRightCloseAction ? actionButtonsRow.verticalCenter : parent.verticalCenter
                     rightMargin: 8 * scaleFactor
                 }
 

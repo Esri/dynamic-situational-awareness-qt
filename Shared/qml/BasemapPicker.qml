@@ -125,7 +125,7 @@ DsaPanel {
             text: toolController.selectedBasemapPath
             wrapMode: Text.WrapAnywhere
             elide: Text.ElideRight
-            font.pixelSize: 12 * scaleFactor
+            font.pixelSize: DsaStyles.bodyFontPixelSize * scaleFactor
 
         }
     }

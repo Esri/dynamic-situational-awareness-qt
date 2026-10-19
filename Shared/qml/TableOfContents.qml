@@ -323,7 +323,7 @@ DsaPanel {
         color: Material.foreground
         horizontalAlignment: Text.AlignHCenter
         font {
-            pixelSize: 12 * scaleFactor
+            pixelSize: DsaStyles.bodyFontPixelSize * scaleFactor
             family: DsaStyles.fontFamily
         }
     }

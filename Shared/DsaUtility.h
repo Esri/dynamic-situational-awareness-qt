@@ -43,6 +43,7 @@ public:
   static Esri::ArcGISRuntime::Point montereyCA();
   static double distance3D(const Esri::ArcGISRuntime::Point& from, const Esri::ArcGISRuntime::Point& to);
   static QVector3D toCartesianPoint(const Esri::ArcGISRuntime::Point& point);
+  static void initializeLicense();
 };
 
 } // Dsa

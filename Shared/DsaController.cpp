@@ -98,7 +98,9 @@ DsaController::DsaController(QObject* parent):
                          QStringLiteral("viewshed"),
                          QStringLiteral("Observation Report")}
 {
+#if !defined(Q_OS_IOS) && !defined(Q_OS_ANDROID)
   DsaUtility::initializeLicense();
+#endif
 
   // set the current path for the application to the active configuration directory
   // so we can use relative paths for data in the configuration file

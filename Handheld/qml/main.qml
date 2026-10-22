@@ -339,13 +339,12 @@ Handheld {
             }
 
             onPickModeChanged: {
-                if (!toolActive)
-                    return;
-
-                if (pickMode)
+                if (pickMode) {
+                    alertsTool.visible = false;
                     visible = false;
-                else
+                } else {
                     visible = true;
+                }
             }
         }
 

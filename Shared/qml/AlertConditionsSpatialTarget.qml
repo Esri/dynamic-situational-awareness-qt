@@ -44,6 +44,8 @@ Item {
     }
 
     function clear() {
+        if (toolController.pickMode)
+            toolController.togglePickMode();
         featureIdEdit.text = "";
         targetCB.currentIndex = -1;
         toolController.setSelectedTargetNameIndex(-1);

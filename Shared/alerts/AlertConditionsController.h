@@ -39,6 +39,7 @@ namespace Esri::ArcGISRuntime {
   class FeatureTable;
   class GeoElement;
   class GraphicsOverlay;
+  class Layer;
 }
 
 Q_MOC_INCLUDE("IdentifyGraphicsOverlayResult.h")
@@ -112,7 +113,7 @@ private:
   QJsonObject conditionToJson(AlertCondition* condition) const;
   QFuture<bool> addConditionFromJson(const QJsonObject& json);
   void addStoredConditions();
-  const std::optional<qint64> getPickedElementId(const QList<Esri::ArcGISRuntime::GeoElement*>& geoElements) const;
+  std::optional<qint64> getPickedElementId(const QList<Esri::ArcGISRuntime::GeoElement*>& geoElements) const;
 
   QFuture<AlertTarget*> targetFromItemIdAndOverlayName(int itemId, const QString& targetOverlayName, QString& targetDescription) const;
   QFuture<AlertTarget*> targetFromFeatureLayer(Esri::ArcGISRuntime::FeatureLayer* featureLayer, int itemId) const;
@@ -131,8 +132,8 @@ private:
   template<typename T>
   QFuture<bool> addAttributeEqualsAlertBySourceLayerType(const QString& conditionName, AlertLevel level, const QString& sourceFeedName, const QString& attributeName, const QVariant& targetValue, T* alertTarget);
 
-  QStringList realtimeFeedTypes() const;
-  QStringList realtimeFeedNames() const;
+  template<typename T, int NumLists>
+  bool connectLayer(Esri::ArcGISRuntime::Layer* layer, std::array<QStringList*, NumLists> listsToUpdate);
 
   AlertConditionListModel* m_conditions;
   QStringListModel* m_sourceNames;

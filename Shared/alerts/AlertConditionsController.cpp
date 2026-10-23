@@ -67,6 +67,7 @@
 #include "LayerResultsManager.h"
 #include "LocationAlertSource.h"
 #include "LocationAlertTarget.h"
+#include "MarkupLayer.h"
 #include "MessageFeedConstants.h"
 #include "MessagesOverlay.h"
 #include "MessagesOverlayAlertTarget.h"
@@ -620,51 +621,26 @@ void AlertConditionsController::onLayersChanged()
   GeoView* geoView = ToolResourceProvider::instance()->geoView();
   if (!geoView)
   {
-    setTargetNames(QStringList());
-    setSourceNames(QStringList(AlertConstants::MY_LOCATION));
+    setTargetNames({});
+    setSourceNames({AlertConstants::MY_LOCATION});
     return;
   }
 
-  QStringList newTargetList;
+  QStringList newTargetList{};
   QStringList newSourceList{AlertConstants::MY_LOCATION};
-  QStringList existingLayerIds;
-  LayerListModel* operationalLayers = ToolResourceProvider::instance()->operationalLayers();
-  if (operationalLayers)
+  QStringList existingLayerIds{};
+  if (LayerListModel* layers = ToolResourceProvider::instance()->operationalLayers(); layers)
   {
-    const int opLayersCount = operationalLayers->rowCount();
-    for (int i = 0; i < opLayersCount; ++i)
+    for (Layer* layer : *layers)
     {
-      Layer* lyr = operationalLayers->at(i);
-      if (!lyr)
+      if (connectLayer<MessagesOverlay, 3>(layer, {&newTargetList, &existingLayerIds, &newSourceList}))
         continue;
 
-      if (FeatureLayer* featureLayer = qobject_cast<FeatureLayer*>(lyr); featureLayer)
-      {
-        if (featureLayer->loadStatus() != LoadStatus::Loaded)
-        {
-          connect(featureLayer, &FeatureLayer::doneLoading, this, &AlertConditionsController::onLayersChanged);
-        }
-        else
-        {
-          const auto featureLayerName = featureLayer->name();
-          newTargetList.append(featureLayerName);
-          existingLayerIds.append(featureLayerName);
-        }
-      }
-      else if (MessagesOverlay* messagesOverlay = qobject_cast<MessagesOverlay*>(lyr); messagesOverlay)
-      {
-        if (messagesOverlay->loadStatus() != LoadStatus::Loaded)
-        {
-          connect(messagesOverlay, &DynamicEntityLayer::doneLoading, this, &AlertConditionsController::onLayersChanged);
-        }
-        else
-        {
-          const auto messagesOverlayLayerName = messagesOverlay->name();
-          newTargetList.append(messagesOverlayLayerName);
-          newSourceList.append(messagesOverlayLayerName);
-          existingLayerIds.append(messagesOverlayLayerName);
-        }
-      }
+      if (connectLayer<FeatureCollectionLayer, 3>(layer, {&newTargetList, &existingLayerIds, &newSourceList}))
+        continue;
+
+      if (connectLayer<FeatureLayer, 2>(layer, {&newTargetList, &existingLayerIds}))
+        continue;
     }
   }
 
@@ -675,34 +651,21 @@ void AlertConditionsController::onLayersChanged()
       m_layerTargets.remove(key);
   }
 
-  GraphicsOverlayListModel* graphicsOverlays = geoView->graphicsOverlays();
-  if (graphicsOverlays)
+  if (GraphicsOverlayListModel* overlays = geoView->graphicsOverlays(); overlays)
   {
-    const int overlaysCount = graphicsOverlays->rowCount();
-    for (int i = 0; i < overlaysCount; ++i)
+    for (GraphicsOverlay* overlay : *overlays)
     {
-      GraphicsOverlay* overlay = graphicsOverlays->at(i);
-      if (!overlay)
+      if (!overlay || overlay->overlayId().isEmpty())
         continue;
 
-      if (overlay->overlayId().isEmpty())
-        continue;
-
-      // check whether we have a user facing name defined for the overlay
-      const auto overlayIt = m_messageFeedTypesToNames.constFind(overlay->overlayId());
-      if (overlayIt != m_messageFeedTypesToNames.constEnd())
-      {
-        newSourceList.append(overlayIt.value());
-        newTargetList.append(overlayIt.value());
-      }
-      else if (overlay->overlayId() == AppConstants::PROPERTYNAME_LAYER_NAME_SCENEVIEW_LOCATION)
+      if (overlay->overlayId() == AppConstants::PROPERTYNAME_LAYER_NAME_SCENEVIEW_LOCATION)
       {
         newTargetList.append(AlertConstants::MY_LOCATION);
+        continue;
       }
-      else
-      {
-        newTargetList.append(overlay->overlayId());
-      }
+
+      // add target by name
+      newTargetList.append(overlay->overlayId());
     }
   }
 
@@ -718,7 +681,7 @@ void AlertConditionsController::onLayersChanged()
   addStoredConditions();
 }
 
-const std::optional<qint64> AlertConditionsController::getPickedElementId(const QList<GeoElement*>& geoElements) const
+std::optional<qint64> AlertConditionsController::getPickedElementId(const QList<GeoElement*>& geoElements) const
 {
   // check again after the completion of the identify and abort if tool
   // is no longer the active tool or there were no geoelements returned
@@ -1222,6 +1185,25 @@ QFuture<AlertTarget*> AlertConditionsController::targetFromItemIdAndOverlayName(
             return QtFuture::makeReadyValueFuture(targetFromMessagesOverlay(messagesOverlay, itemId));
           }
         }
+        else if (auto* markupLayer = qobject_cast<MarkupLayer*>(layer); markupLayer)
+        {
+          QList<FeatureLayer*> featureLayers = markupLayer->featureLayers();
+          const QString layerName = markupLayer->name();
+          FeatureLayer* featureLayer = featureLayers.first();
+          if (itemId == -1)
+          {
+            if (!m_layerTargets.contains(layerName))
+              m_layerTargets.insert(layerName, new FeatureLayerAlertTarget(featureLayer));
+
+            targetDescription = layerName;
+            return QtFuture::makeReadyValueFuture(m_layerTargets.value(layerName, nullptr));
+          }
+          else
+          {
+            targetDescription = QString("%1 [%2]").arg(layerName, QString::number(itemId));
+            return targetFromFeatureLayer(featureLayer, itemId);
+          }
+        }
       }
     }
   }
@@ -1339,8 +1321,6 @@ GraphicsOverlay* AlertConditionsController::graphicsOverlayFromName(const QStrin
   if (!geoView)
     return nullptr;
 
-  const QString& overlayId = m_messageFeedTypesToNames.key(overlayName, overlayName);
-
   GraphicsOverlayListModel* graphicsOverlays = geoView->graphicsOverlays();
   if (graphicsOverlays)
   {
@@ -1354,7 +1334,7 @@ GraphicsOverlay* AlertConditionsController::graphicsOverlayFromName(const QStrin
       if (overlay->overlayId().isEmpty())
         continue;
 
-      if (overlayId == overlay->overlayId())
+      if (overlayName == overlay->overlayId())
         return overlay;
     }
   }
@@ -1410,17 +1390,34 @@ QString AlertConditionsController::primaryKeyFieldName(FeatureTable* featureTabl
   return QString();
 }
 
-/*!
-  \brief internal
- */
-QStringList AlertConditionsController::realtimeFeedTypes() const
+template<typename T, int NumLists>
+bool AlertConditionsController::connectLayer(Layer* layer,
+                                            std::array<QStringList*, NumLists> listsToUpdate)
 {
-  return m_messageFeedTypesToNames.keys();
-}
+  if (!layer)
+  {
+    return false;
+  }
 
-QStringList AlertConditionsController::realtimeFeedNames() const
-{
-  return m_messageFeedTypesToNames.values();
+  auto* typedLayer = qobject_cast<T*>(layer);
+  if (!typedLayer)
+  {
+    return false;
+  }
+
+  if (typedLayer->loadStatus() != LoadStatus::Loaded)
+  {
+    connect(typedLayer, &T::doneLoading, this, &AlertConditionsController::onLayersChanged);
+    return true;
+  }
+
+  const QString layerName = layer->name();
+  std::for_each(std::cbegin(listsToUpdate), std::cend(listsToUpdate), [&](QStringList* listToUpdate)
+  {
+    listToUpdate->append(layerName);
+  });
+
+  return true;
 }
 
 } // Dsa

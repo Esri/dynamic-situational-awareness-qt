@@ -200,19 +200,22 @@ QVector3D DsaUtility::toCartesianPoint(const Point& point)
 
 void DsaUtility::initializeLicense()
 {
-  // check in the application executable path for 'license.txt'
-  const QDir appDir{QCoreApplication::applicationDirPath()};
-  const QString pathToLicense = appDir.absoluteFilePath("license.txt");
-  if (!QFile::exists(pathToLicense))
-  {
-    return;
-  }
+  const std::array<QString, 3> checkedPaths {
+    QCoreApplication::applicationDirPath(),
+    configurationsDirectoryPath(),
+    activeConfigurationPath(),
+  };
 
-  // read the entire contents of the file and use it as the license string
-  if (QFile fLicense{pathToLicense}; fLicense.open(QIODevice::ReadOnly))
+  const QString licenseFileName = QStringLiteral("license.txt");
+  for (const QString& path : checkedPaths)
   {
-    const QString licenseString{fLicense.readAll()};
-    Q_UNUSED(ArcGISRuntimeEnvironment::setLicense(licenseString));
+    const QDir dir{path};
+    if (QFile file{dir.absoluteFilePath(licenseFileName)}; file.open(QIODevice::ReadOnly))
+    {
+      const QString licenseString{file.readAll()};
+      Q_UNUSED(ArcGISRuntimeEnvironment::setLicense(licenseString));
+      return;
+    }
   }
 }
 

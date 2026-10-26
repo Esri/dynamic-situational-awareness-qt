@@ -626,32 +626,28 @@ void AlertConditionsController::onLayersChanged()
     return;
   }
 
+  // reset the containers for the source and target layers/overlays
+  m_overlayTargets.clear();
+  m_layerTargets.clear();
   QStringList newTargetList{};
   QStringList newSourceList{AlertConstants::MY_LOCATION};
-  QStringList existingLayerIds{};
-  if (LayerListModel* layers = ToolResourceProvider::instance()->operationalLayers(); layers)
+
+  if (const LayerListModel* layers = ToolResourceProvider::instance()->operationalLayers(); layers)
   {
     for (Layer* layer : *layers)
     {
-      if (connectLayerToInputs<MessagesOverlay, 3>(layer, {&newTargetList, &existingLayerIds, &newSourceList}))
+      if (connectLayerToInputs<MessagesOverlay, 2>(layer, {&newTargetList, &newSourceList}))
         continue;
 
-      if (connectLayerToInputs<FeatureCollectionLayer, 3>(layer, {&newTargetList, &existingLayerIds, &newSourceList}))
+      if (connectLayerToInputs<FeatureCollectionLayer, 1>(layer, {&newTargetList}))
         continue;
 
-      if (connectLayerToInputs<FeatureLayer, 2>(layer, {&newTargetList, &existingLayerIds}))
+      if (connectLayerToInputs<FeatureLayer, 1>(layer, {&newTargetList}))
         continue;
     }
   }
 
-  const auto cachedLayerTargetKeys = m_layerTargets.keys();
-  for (const QString& key : cachedLayerTargetKeys)
-  {
-    if (!existingLayerIds.contains(key))
-      m_layerTargets.remove(key);
-  }
-
-  if (GraphicsOverlayListModel* overlays = geoView->graphicsOverlays(); overlays)
+  if (const GraphicsOverlayListModel* overlays = geoView->graphicsOverlays(); overlays)
   {
     for (GraphicsOverlay* overlay : *overlays)
     {
@@ -667,13 +663,6 @@ void AlertConditionsController::onLayersChanged()
       // add target by name
       newTargetList.append(overlay->overlayId());
     }
-  }
-
-  const auto cachedOverlayTargetKeys = m_overlayTargets.keys();
-  for (const QString& key : cachedOverlayTargetKeys)
-  {
-    if (!newSourceList.contains(key))
-      m_overlayTargets.remove(key);
   }
 
   setSourceNames(newSourceList);

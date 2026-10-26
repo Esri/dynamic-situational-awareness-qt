@@ -133,7 +133,7 @@ private:
   QFuture<bool> addAttributeEqualsAlertBySourceLayerType(const QString& conditionName, AlertLevel level, const QString& sourceFeedName, const QString& attributeName, const QVariant& targetValue, T* alertTarget);
 
   template<typename T, int NumLists>
-  bool connectLayer(Esri::ArcGISRuntime::Layer* layer, std::array<QStringList*, NumLists> listsToUpdate);
+  bool connectLayerToInputs(Esri::ArcGISRuntime::Layer* layer, std::array<QStringList*, NumLists> listsToUpdate);
 
   AlertConditionListModel* m_conditions;
   QStringListModel* m_sourceNames;

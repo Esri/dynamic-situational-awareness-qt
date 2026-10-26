@@ -633,13 +633,13 @@ void AlertConditionsController::onLayersChanged()
   {
     for (Layer* layer : *layers)
     {
-      if (connectLayer<MessagesOverlay, 3>(layer, {&newTargetList, &existingLayerIds, &newSourceList}))
+      if (connectLayerToInputs<MessagesOverlay, 3>(layer, {&newTargetList, &existingLayerIds, &newSourceList}))
         continue;
 
-      if (connectLayer<FeatureCollectionLayer, 3>(layer, {&newTargetList, &existingLayerIds, &newSourceList}))
+      if (connectLayerToInputs<FeatureCollectionLayer, 3>(layer, {&newTargetList, &existingLayerIds, &newSourceList}))
         continue;
 
-      if (connectLayer<FeatureLayer, 2>(layer, {&newTargetList, &existingLayerIds}))
+      if (connectLayerToInputs<FeatureLayer, 2>(layer, {&newTargetList, &existingLayerIds}))
         continue;
     }
   }
@@ -1391,8 +1391,7 @@ QString AlertConditionsController::primaryKeyFieldName(FeatureTable* featureTabl
 }
 
 template<typename T, int NumLists>
-bool AlertConditionsController::connectLayer(Layer* layer,
-                                            std::array<QStringList*, NumLists> listsToUpdate)
+bool AlertConditionsController::connectLayerToInputs(Layer* layer, std::array<QStringList*, NumLists> listsToUpdate)
 {
   if (!layer)
   {

@@ -785,9 +785,10 @@ void AlertConditionsController::onMouseClicked(QMouseEvent &event)
   if (!isActive())
     return;
 
-  // only respond to left click
+#if !defined(Q_OS_IOS) && !defined(Q_OS_ANDROID)
   if (event.button() != Qt::MouseButton::LeftButton)
     return;
+#endif
 
   // abort if the tool is somehow not in pick mode
   if (!m_pickMode)

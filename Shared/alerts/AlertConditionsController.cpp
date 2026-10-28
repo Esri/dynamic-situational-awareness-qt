@@ -24,7 +24,6 @@
 #include "AttributeListModel.h"
 #include "DynamicEntity.h"
 #include "DynamicEntityObservation.h"
-#include "Error.h"
 #include "Feature.h"
 #include "FeatureIterator.h"
 #include "FeatureLayer.h"

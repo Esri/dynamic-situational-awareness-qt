@@ -271,6 +271,7 @@ void AlertListController::dismiss(int rowIndex)
   if (!alert)
     return;
 
+  alert->setConditionEnabled(false);
   m_idsAlertFilter->addId(alert->id());
   m_alertsProxyModel->applyFilter(m_filters);
 }

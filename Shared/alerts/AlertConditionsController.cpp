@@ -632,17 +632,25 @@ void AlertConditionsController::onLayersChanged()
   {
     for (Layer* layer : *operationalLayers)
     {
-      if (!layer || layer->name().isEmpty())
+      if (!layer)
+      {
         continue;
+      }
 
       if (connectLayerToInputs<FeatureLayer, 2>(layer, {&newTargetList, &existingLayerIds}))
+      {
         continue;
+      }
 
       if (connectLayerToInputs<MarkupLayer, 2>(layer, {&newTargetList, &existingLayerIds}))
+      {
         continue;
+      }
 
       if (connectLayerToInputs<MessagesOverlay, 3>(layer, {&newTargetList, &existingLayerIds, &newSourceList}))
+      {
         continue;
+      }
     }
   }
 
@@ -650,7 +658,9 @@ void AlertConditionsController::onLayersChanged()
   for (const QString& key : cachedLayerTargetKeys)
   {
     if (!existingLayerIds.contains(key))
+    {
       m_layerTargets.remove(key);
+    }
   }
 
   setSourceNames(newSourceList);
@@ -1122,7 +1132,7 @@ QFuture<AlertTarget*> AlertConditionsController::targetFromItemIdAndOverlayName(
     return future_null_target;
   }
 
-  if (targetOverlayName == AppConstants::PROPERTYNAME_LAYER_NAME_SCENEVIEW_LOCATION)
+  if (targetOverlayName == AppConstants::PROPERTYNAME_LAYER_NAME_SCENEVIEW_LOCATION || targetOverlayName == AlertConstants::MY_LOCATION)
   {
     targetDescription = AlertConstants::MY_LOCATION;
     auto* target = static_cast<AlertTarget*>(m_locationTarget);
@@ -1358,6 +1368,11 @@ bool AlertConditionsController::connectLayerToInputs(Layer* layer, std::array<QS
   {
     connect(typedLayer, &T::doneLoading, this, &AlertConditionsController::onLayersChanged);
     return true;
+  }
+
+  if (layer->name().isEmpty())
+  {
+    return false;
   }
 
   const QString layerName = layer->name();

@@ -98,6 +98,8 @@ DsaController::DsaController(QObject* parent):
                          QStringLiteral("viewshed"),
                          QStringLiteral("Observation Report")}
 {
+  DsaUtility::initializeLicense();
+
   // set the current path for the application to the active configuration directory
   // so we can use relative paths for data in the configuration file
   QDir::setCurrent(DsaUtility::activeConfigurationPath());

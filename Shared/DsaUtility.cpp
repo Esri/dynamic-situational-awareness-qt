@@ -20,6 +20,8 @@
 #include "DsaUtility.h"
 
 // C++ API headers
+#include "ArcGISRuntimeEnvironment.h"
+#include "LicenseResult.h"
 #include "Point.h"
 #include "SpatialReference.h"
 
@@ -194,6 +196,27 @@ QVector3D DsaUtility::toCartesianPoint(const Point& point)
   const double radCosLat = radius * std::cos(yRadians);
 
   return QVector3D(radCosLat * std::sin(xRadians), radius * std::sin(yRadians), radCosLat * std::cos(xRadians));
+}
+
+void DsaUtility::initializeLicense()
+{
+  const std::array<QString, 3> checkedPaths {
+    QCoreApplication::applicationDirPath(),
+    configurationsDirectoryPath(),
+    activeConfigurationPath(),
+  };
+
+  const QString licenseFileName = QStringLiteral("license.txt");
+  for (const QString& path : checkedPaths)
+  {
+    const QDir dir{path};
+    if (QFile file{dir.absoluteFilePath(licenseFileName)}; file.open(QIODevice::ReadOnly))
+    {
+      const QString licenseString{file.readAll()};
+      Q_UNUSED(ArcGISRuntimeEnvironment::setLicense(licenseString));
+      return;
+    }
+  }
 }
 
 } // Dsa

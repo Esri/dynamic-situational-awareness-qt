@@ -17,6 +17,7 @@
     "CurrentLocationZOffset": "10",
     "DefaultBasemap": "Topographic.tpk",
     "DefaultElevationSource": "./ElevationData/CaDEM.tpk",
+    "DsaVersion": "<|||DsaVersion|||>",
     "ElevationDirectory": "./ElevationData",
     "GpxFile": "./SimulationData/MontereyMounted.gpx",
     "GridColorScheme": "Dark",

@@ -12,8 +12,8 @@ path_repo: pathlib.Path = path_home / "dynamic-situational-awareness-qt"
 
 
 def zip_apks() -> None:
-	path_build: pathlib.Path = path_repo.joinpath("build")
-	path_zip: pathlib.Path = path_build.joinpath("apks.zip")
+	path_build: pathlib.Path = path_repo / "build"
+	path_zip: pathlib.Path = path_build / "apks.zip"
 	if path_zip.exists():
 		os.remove(path_zip)
 	with zipfile.ZipFile(path_zip.as_posix(), "w", zipfile.ZIP_DEFLATED) as zip_apks:

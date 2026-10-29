@@ -1,0 +1,165 @@
+{
+    "BasemapDirectory": "./BasemapData",
+    "Conditions": [
+        {
+            "condition_type": "Dsa::AttributeEqualsAlertCondition",
+            "level": 4,
+            "name": "Distress",
+            "query": {
+                "attribute_name": "status911"
+            },
+            "source": "Friendly Tracks - Land",
+            "target": "1"
+        }
+    ],
+    "CoordinateFormat": "MGRS",
+    "CurrentLocationSurfacePlacement": "relative",
+    "CurrentLocationZOffset": "10",
+    "DefaultBasemap": "Topographic.tpk",
+    "DefaultElevationSource": "./ElevationData/CaDEM.tpk",
+    "DsaVersion": "<|||DsaVersion|||>",
+    "ElevationDirectory": "./ElevationData",
+    "GpxFile": "./SimulationData/MontereyMounted.gpx",
+    "GridColorScheme": "Dark",
+    "GridVisible": "false",
+    "InitialLocation": {
+        "center": {
+            "spatialReference": {
+                "wkid": 4326
+            },
+            "x": -121.9,
+            "y": 36.6
+        },
+        "distance": 5000,
+        "heading": 0,
+        "pitch": 75,
+        "roll": 0
+    },
+    "Layers": [
+    ],
+    "LocalDataPaths": [
+        "./OperationalData"
+    ],
+    "LocationBroadcastConfig": {
+        "messageType": "position_report_land",
+        "port": 45679
+    },
+    "MarkupConfig": {
+        "port": 45680
+    },
+    "MessageFeedUdpPorts": [
+        45678,
+        45679
+    ],
+    "MessageFeeds": [
+        {
+            "name": "SA Events",
+            "observationsColor": "#377eb8",
+            "observationsMaximum": 5,
+            "observationsShow": false,
+            "observationsSize": 10,
+            "placement": "drapedFlat",
+            "renderer": "mil2525c",
+            "thumbnail": "saevents.png",
+            "trackLineColor": "#377eb8",
+            "trackLineShow": false,
+            "trackLineSize": 4,
+            "type": "cot"
+        },
+        {
+            "name": "Friendly Tracks - Land",
+            "observationsColor": "#377eb8",
+            "observationsMaximum": 5,
+            "observationsShow": false,
+            "observationsSize": 10,
+            "placement": "draped",
+            "renderer": "mil2525c",
+            "thumbnail": "friendlytracks.png",
+            "trackLineColor": "#377eb8",
+            "trackLineShow": false,
+            "trackLineSize": 4,
+            "type": "position_report_land"
+        },
+        {
+            "name": "Friendly Tracks - Air",
+            "observationsColor": "#377eb8",
+            "observationsMaximum": 5,
+            "observationsShow": false,
+            "observationsSize": 10,
+            "placement": "absolute",
+            "renderer": "mil2525c",
+            "thumbnail": "friendlytracks-air.png",
+            "trackLineColor": "#377eb8",
+            "trackLineShow": false,
+            "trackLineSize": 4,
+            "type": "position_report_air"
+        },
+        {
+            "name": "Observation Reports",
+            "observationsColor": "#377eb8",
+            "observationsMaximum": 5,
+            "observationsShow": false,
+            "observationsSize": 10,
+            "placement": "draped",
+            "renderer": "observation1600.png",
+            "thumbnail": "observation1600.png",
+            "trackLineColor": "#377eb8",
+            "trackLineShow": false,
+            "trackLineSize": 4,
+            "type": "spotrep"
+        },
+        {
+            "name": "Situation Reports",
+            "observationsColor": "#377eb8",
+            "observationsMaximum": 5,
+            "observationsShow": false,
+            "observationsSize": 10,
+            "placement": "draped",
+            "renderer": "sitrep1600.png",
+            "thumbnail": "sitrep1600.png",
+            "trackLineColor": "#377eb8",
+            "trackLineShow": false,
+            "trackLineSize": 4,
+            "type": "sitrep"
+        },
+        {
+            "name": "EOD Reports",
+            "observationsColor": "#377eb8",
+            "observationsMaximum": 5,
+            "observationsShow": false,
+            "observationsSize": 10,
+            "placement": "draped",
+            "renderer": "eod1600.png",
+            "thumbnail": "eod1600.png",
+            "trackLineColor": "#377eb8",
+            "trackLineShow": false,
+            "trackLineSize": 4,
+            "type": "eod"
+        },
+        {
+            "name": "Sensor Observations",
+            "observationsColor": "#377eb8",
+            "observationsMaximum": 5,
+            "observationsShow": false,
+            "observationsSize": 10,
+            "placement": "draped",
+            "renderer": "sensorobs1600.png",
+            "thumbnail": "sensorobs1600.png",
+            "trackLineColor": "#377eb8",
+            "trackLineShow": false,
+            "trackLineSize": 4,
+            "type": "sensor_obs"
+        }
+    ],
+    "ObservationReportConfig": {
+        "port": 45679
+    },
+    "PackageDirectory": "./Packages",
+    "ResourceDirectory": "./ResourceData",
+    "RootDataDirectory": ".",
+    "SimulateLocation": "true",
+    "SimulationDirectory": "./SimulationData",
+    "UnitOfMeasurement": "meters",
+    "UseGpsForElevation": "true",
+    "UserName": "DSAUser1"
+}

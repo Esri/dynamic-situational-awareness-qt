@@ -79,7 +79,7 @@ Vehicle {
             anchors {
                 verticalCenter: parent.verticalCenter
                 right: parent.right
-                rightMargin: 10 * scaleFactor
+                rightMargin: 16 * scaleFactor
             }
         }
 
@@ -88,7 +88,7 @@ Vehicle {
             anchors {
                 verticalCenter: parent.verticalCenter
                 right: parent.right
-                rightMargin: 10 * scaleFactor
+                rightMargin: 16 * scaleFactor
             }
         }
 
@@ -97,7 +97,7 @@ Vehicle {
             anchors {
                 verticalCenter: parent.verticalCenter
                 right: parent.right
-                rightMargin: 10 * scaleFactor
+                rightMargin: 16 * scaleFactor
             }
         }
 
@@ -106,7 +106,7 @@ Vehicle {
             anchors {
                 verticalCenter: parent.verticalCenter
                 right: parent.right
-                rightMargin: 10 * scaleFactor
+                rightMargin: 16 * scaleFactor
             }
         }
 
@@ -115,7 +115,7 @@ Vehicle {
             anchors {
                 verticalCenter: parent.verticalCenter
                 right: parent.right
-                rightMargin: 10 * scaleFactor
+                rightMargin: 16 * scaleFactor
             }
         }
     }

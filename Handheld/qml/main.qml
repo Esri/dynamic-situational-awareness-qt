@@ -71,7 +71,7 @@ Handheld {
             anchors {
                 verticalCenter: parent.verticalCenter
                 right: parent.right
-                rightMargin: 10 * scaleFactor
+                rightMargin: 14 * scaleFactor
             }
         }
 
@@ -80,7 +80,7 @@ Handheld {
             anchors {
                 verticalCenter: parent.verticalCenter
                 right: parent.right
-                rightMargin: 10 * scaleFactor
+                rightMargin: 14 * scaleFactor
             }
         }
 
@@ -89,7 +89,7 @@ Handheld {
             anchors {
                 verticalCenter: parent.verticalCenter
                 right: parent.right
-                rightMargin: 10 * scaleFactor
+                rightMargin: 14 * scaleFactor
             }
         }
 
@@ -98,7 +98,7 @@ Handheld {
             anchors {
                 verticalCenter: parent.verticalCenter
                 right: parent.right
-                rightMargin: 10 * scaleFactor
+                rightMargin: 14 * scaleFactor
             }
         }
 
@@ -107,7 +107,7 @@ Handheld {
             anchors {
                 verticalCenter: parent.verticalCenter
                 right: parent.right
-                rightMargin: 10 * scaleFactor
+                rightMargin: 14 * scaleFactor
             }
         }
 
@@ -116,7 +116,7 @@ Handheld {
             anchors {
                 verticalCenter: parent.verticalCenter
                 right: parent.right
-                rightMargin: 10 * scaleFactor
+                rightMargin: 14 * scaleFactor
 
             }
         }

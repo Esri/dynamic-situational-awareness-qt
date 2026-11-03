@@ -1068,7 +1068,13 @@ QFuture<bool> AlertConditionsController::addConditionFromJson(const QJsonObject&
 void AlertConditionsController::addStoredConditions()
 {
   // block signals while we are adding each stored condition
-  this->blockSignals(true);
+  static bool alreadyAddingStoredConditions = false;
+  if (alreadyAddingStoredConditions)
+  {
+    return;
+  }
+
+  alreadyAddingStoredConditions = true;
   QList<QFuture<bool>> addStoredConditionFutures;
   for (auto it = m_storedConditions.rbegin(); it != m_storedConditions.rend(); it++)
   {
@@ -1079,7 +1085,7 @@ void AlertConditionsController::addStoredConditions()
   // skip the when all if nothing was added
   if (addStoredConditionFutures.count() == 0)
   {
-    this->blockSignals(false);
+    alreadyAddingStoredConditions = false;
     return;
   }
 
@@ -1096,7 +1102,7 @@ void AlertConditionsController::addStoredConditions()
     }
 
     // emit once for all conditions (including stored)
-    this->blockSignals(false);
+    alreadyAddingStoredConditions = false;
     onConditionsChanged();
   });
 }

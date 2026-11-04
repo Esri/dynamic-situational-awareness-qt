@@ -385,6 +385,11 @@ void LayerCacheManager::addLayers(const QVariantMap& properties)
   };
 }
 
+bool LayerCacheManager::initialLayerLoadComplete() const
+{
+  return m_initialLayerLoadComplete;
+}
+
 void LayerCacheManager::connectSignals()
 {
   // obtain Scene and connect slot
@@ -441,6 +446,9 @@ void LayerCacheManager::connectSignals()
 
     for (auto i = 0; i < layerCount; i++)
       m_scene->operationalLayers()->append(m_initialLayerCache.value(i));
+
+    m_initialLayerLoadComplete = true;
+    emit initialLayerLoadCompleted();
   });
 }
 

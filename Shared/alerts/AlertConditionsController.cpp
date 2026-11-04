@@ -63,6 +63,7 @@
 #include "GraphicsOverlayAlertTarget.h"
 #include "GraphicsOverlaysResultsManager.h"
 #include "IdentifyController.h"
+#include "LayerCacheManager.h"
 #include "LayerResultsManager.h"
 #include "LocationAlertSource.h"
 #include "LocationAlertTarget.h"
@@ -122,6 +123,14 @@ AlertConditionsController::AlertConditionsController(QObject* parent /* = nullpt
   onGeoviewChanged();
 
   ToolManager::instance().addTool(this);
+
+  if (auto* layerCacheManager = ToolManager::instance().tool<LayerCacheManager>(); layerCacheManager)
+  {
+    onToolManager_toolAdded(layerCacheManager);
+    return;
+  }
+
+  m_conToolManager_toolAdded = connect(&ToolManager::instance(), &ToolManager::toolAdded, this, &AlertConditionsController::onToolManager_toolAdded);
 }
 
 /*!
@@ -904,6 +913,30 @@ void AlertConditionsController::onConditionsChanged()
     allConditionsJson.append(unadded);
 
   emit propertyChanged(AlertConstants::ALERT_CONDITIONS_PROPERTYNAME, allConditionsJson.toVariantList());
+}
+
+void AlertConditionsController::onLayerCacheManager_initialLayerLoadCompleted()
+{
+  m_layerCacheManagerInitialLayerLoadCompleted = true;
+
+  onLayersChanged();
+}
+
+void AlertConditionsController::onToolManager_toolAdded(AbstractTool* tool)
+{
+  if (auto* layerCacheManager = dynamic_cast<LayerCacheManager*>(tool); layerCacheManager)
+  {
+    disconnect(m_conToolManager_toolAdded);
+
+    if (layerCacheManager->initialLayerLoadComplete())
+    {
+      onLayerCacheManager_initialLayerLoadCompleted();
+      return;
+    }
+
+    connect(layerCacheManager, &LayerCacheManager::initialLayerLoadCompleted, this,
+            &AlertConditionsController::onLayerCacheManager_initialLayerLoadCompleted);
+  }
 }
 
 /*!

@@ -1124,9 +1124,14 @@ void AlertConditionsController::addStoredConditions()
 
   // block signals while we are adding each stored condition
   this->blockSignals(true);
+  static bool needToRetry = false;
   static bool alreadyAddingStoredConditions = false;
   if (alreadyAddingStoredConditions)
   {
+    // if/when a layer completes loading and a query for a condition was in progress
+    // the whenAll handler needs to retry the stored conditions again since some
+    // targets may not have been available
+    needToRetry = true;
     return;
   }
 
@@ -1162,6 +1167,13 @@ void AlertConditionsController::addStoredConditions()
     this->blockSignals(false);
     alreadyAddingStoredConditions = false;
     onConditionsChanged();
+
+    if (needToRetry)
+    {
+      needToRetry = false;
+      this->addStoredConditions();
+    }
+
   });
 }
 

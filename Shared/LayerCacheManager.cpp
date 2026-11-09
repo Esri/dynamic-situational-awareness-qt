@@ -368,6 +368,13 @@ void LayerCacheManager::addLayers(const QVariantMap& properties)
   const auto layersList = layersData.toList();
   m_inputLayerJsonArray = QJsonArray::fromVariantList(layersList);
 
+  if (m_inputLayerJsonArray.size() == 0)
+  {
+    m_initialLayerLoadComplete = true;
+    emit initialLayerLoadCompleted();
+  }
+  m_initialLayerLoadComplete = false;
+
   qsizetype layerIndex = 0;
   for (auto it = std::cbegin(m_inputLayerJsonArray); it != std::cend(m_inputLayerJsonArray); ++it)
   {

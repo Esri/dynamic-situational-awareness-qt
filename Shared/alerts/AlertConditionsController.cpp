@@ -124,13 +124,13 @@ AlertConditionsController::AlertConditionsController(QObject* parent /* = nullpt
 
   ToolManager::instance().addTool(this);
 
-  if (auto* layerCacheManager = ToolManager::instance().tool<LayerCacheManager>(); layerCacheManager)
+  m_layerCacheManager = ToolManager::instance().tool<LayerCacheManager>();
+  if (!m_layerCacheManager)
   {
-    onToolManager_toolAdded(layerCacheManager);
+    m_conToolManager_toolAdded = connect(&ToolManager::instance(), &ToolManager::toolAdded, this, &AlertConditionsController::onToolManager_toolAdded);
     return;
   }
-
-  m_conToolManager_toolAdded = connect(&ToolManager::instance(), &ToolManager::toolAdded, this, &AlertConditionsController::onToolManager_toolAdded);
+  onToolManager_toolAdded();
 }
 
 /*!
@@ -626,6 +626,9 @@ void AlertConditionsController::onGeoviewChanged()
  */
 void AlertConditionsController::onLayersChanged()
 {
+  if (!m_layerCacheManagerInitialLayerLoadCompleted)
+    return;
+
   if (GeoView* geoView = ToolResourceProvider::instance()->geoView(); !geoView)
   {
     setTargetNames({});
@@ -922,19 +925,20 @@ void AlertConditionsController::onLayerCacheManager_initialLayerLoadCompleted()
   onLayersChanged();
 }
 
-void AlertConditionsController::onToolManager_toolAdded(AbstractTool* tool)
+void AlertConditionsController::onToolManager_toolAdded()
 {
-  if (auto* layerCacheManager = dynamic_cast<LayerCacheManager*>(tool); layerCacheManager)
+  m_layerCacheManager = ToolManager::instance().tool<LayerCacheManager>();
+  if (m_layerCacheManager)
   {
     disconnect(m_conToolManager_toolAdded);
 
-    if (layerCacheManager->initialLayerLoadComplete())
+    if (m_layerCacheManager->initialLayerLoadComplete())
     {
       onLayerCacheManager_initialLayerLoadCompleted();
       return;
     }
 
-    connect(layerCacheManager, &LayerCacheManager::initialLayerLoadCompleted, this,
+    connect(m_layerCacheManager, &LayerCacheManager::initialLayerLoadCompleted, this,
             &AlertConditionsController::onLayerCacheManager_initialLayerLoadCompleted);
   }
 }
@@ -1113,6 +1117,11 @@ QFuture<bool> AlertConditionsController::addConditionFromJson(const QJsonObject&
  */
 void AlertConditionsController::addStoredConditions()
 {
+  if (!m_layerCacheManagerInitialLayerLoadCompleted)
+  {
+    return;
+  }
+
   // block signals while we are adding each stored condition
   this->blockSignals(true);
   static bool alreadyAddingStoredConditions = false;

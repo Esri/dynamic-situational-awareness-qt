@@ -63,6 +63,7 @@
 #include "GraphicsOverlayAlertTarget.h"
 #include "GraphicsOverlaysResultsManager.h"
 #include "IdentifyController.h"
+#include "LayerCacheManager.h"
 #include "LayerResultsManager.h"
 #include "LocationAlertSource.h"
 #include "LocationAlertTarget.h"
@@ -122,6 +123,14 @@ AlertConditionsController::AlertConditionsController(QObject* parent /* = nullpt
   onGeoviewChanged();
 
   ToolManager::instance().addTool(this);
+
+  m_layerCacheManager = ToolManager::instance().tool<LayerCacheManager>();
+  if (!m_layerCacheManager)
+  {
+    m_conToolManager_toolAdded = connect(&ToolManager::instance(), &ToolManager::toolAdded, this, &AlertConditionsController::onToolManager_toolAdded);
+    return;
+  }
+  onToolManager_toolAdded();
 }
 
 /*!
@@ -617,6 +626,9 @@ void AlertConditionsController::onGeoviewChanged()
  */
 void AlertConditionsController::onLayersChanged()
 {
+  if (!m_layerCacheManagerInitialLayerLoadCompleted)
+    return;
+
   if (GeoView* geoView = ToolResourceProvider::instance()->geoView(); !geoView)
   {
     setTargetNames({});
@@ -779,14 +791,27 @@ void AlertConditionsController::onMouseClicked(QMouseEvent &event)
     {
       if (operationalLayer->name() == selectedTargetName)
       {
-        geoView->identifyLayerAsync(operationalLayer, event.position(), m_tolerance,
-                                    false, 1, this).then(this, [this, selectedTargetName](IdentifyLayerResult* result)
+        geoView->identifyLayerAsync(operationalLayer, event.position(), m_tolerance, false, 1, this)
+          .then(this, [this, selectedTargetName](IdentifyLayerResult* result)
         {
           const auto resultsManager = std::unique_ptr<IdentifyLayerResult>(result);
           if (const auto pickedElementId = getPickedElementId(resultsManager->geoElements()); pickedElementId.has_value())
           {
             emit pickedElement(selectedTargetName, pickedElementId.value());
             return;
+          }
+
+          QList<IdentifyLayerResult*> sublayerResults = resultsManager->sublayerResults();
+          for (IdentifyLayerResult* sublayerResult : sublayerResults)
+          {
+            if (const QList<GeoElement*> sublayerGeoElements = sublayerResult->geoElements(); !sublayerGeoElements.empty())
+            {
+              if (const auto pickedElementId = getPickedElementId(sublayerGeoElements); pickedElementId.has_value())
+              {
+                emit pickedElement(selectedTargetName, pickedElementId.value());
+                return;
+              }
+            }
           }
           emit pickedElement(selectedTargetName, -1);
         });
@@ -891,6 +916,31 @@ void AlertConditionsController::onConditionsChanged()
     allConditionsJson.append(unadded);
 
   emit propertyChanged(AlertConstants::ALERT_CONDITIONS_PROPERTYNAME, allConditionsJson.toVariantList());
+}
+
+void AlertConditionsController::onLayerCacheManager_initialLayerLoadCompleted()
+{
+  m_layerCacheManagerInitialLayerLoadCompleted = true;
+
+  onLayersChanged();
+}
+
+void AlertConditionsController::onToolManager_toolAdded()
+{
+  m_layerCacheManager = ToolManager::instance().tool<LayerCacheManager>();
+  if (m_layerCacheManager)
+  {
+    disconnect(m_conToolManager_toolAdded);
+
+    if (m_layerCacheManager->initialLayerLoadComplete())
+    {
+      onLayerCacheManager_initialLayerLoadCompleted();
+      return;
+    }
+
+    connect(m_layerCacheManager, &LayerCacheManager::initialLayerLoadCompleted, this,
+            &AlertConditionsController::onLayerCacheManager_initialLayerLoadCompleted);
+  }
 }
 
 /*!
@@ -1067,8 +1117,25 @@ QFuture<bool> AlertConditionsController::addConditionFromJson(const QJsonObject&
  */
 void AlertConditionsController::addStoredConditions()
 {
+  if (!m_layerCacheManagerInitialLayerLoadCompleted)
+  {
+    return;
+  }
+
   // block signals while we are adding each stored condition
   this->blockSignals(true);
+  static bool needToRetry = false;
+  static bool alreadyAddingStoredConditions = false;
+  if (alreadyAddingStoredConditions)
+  {
+    // if/when a layer completes loading and a query for a condition was in progress
+    // the whenAll handler needs to retry the stored conditions again since some
+    // targets may not have been available
+    needToRetry = true;
+    return;
+  }
+
+  alreadyAddingStoredConditions = true;
   QList<QFuture<bool>> addStoredConditionFutures;
   for (auto it = m_storedConditions.rbegin(); it != m_storedConditions.rend(); it++)
   {
@@ -1080,6 +1147,7 @@ void AlertConditionsController::addStoredConditions()
   if (addStoredConditionFutures.count() == 0)
   {
     this->blockSignals(false);
+    alreadyAddingStoredConditions = false;
     return;
   }
 
@@ -1097,7 +1165,15 @@ void AlertConditionsController::addStoredConditions()
 
     // emit once for all conditions (including stored)
     this->blockSignals(false);
+    alreadyAddingStoredConditions = false;
     onConditionsChanged();
+
+    if (needToRetry)
+    {
+      needToRetry = false;
+      this->addStoredConditions();
+    }
+
   });
 }
 

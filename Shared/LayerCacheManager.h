@@ -54,9 +54,12 @@ public:
   void addElevation(const QVariantMap& properties);
   void addLayers(const QVariantMap& properties);
 
+  bool initialLayerLoadComplete() const;
+
 signals:
   void layerJsonChanged();
   void jsonToLayerCompleted(Esri::ArcGISRuntime::Layer* layer);
+  void initialLayerLoadCompleted();
 
 private slots:
   void onLayerListChanged();
@@ -76,6 +79,7 @@ private:
   QJsonArray m_layers;
   QJsonArray m_inputLayerJsonArray;
   bool m_initialLoadCompleted = false;
+  bool m_initialLayerLoadComplete = false;
   AddLocalDataController* m_localDataController = nullptr;
   Esri::ArcGISRuntime::Scene* m_scene = nullptr;
   QHash<qsizetype, Esri::ArcGISRuntime::Layer*> m_initialLayerCache;

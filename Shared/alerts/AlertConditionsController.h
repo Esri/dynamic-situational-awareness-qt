@@ -50,6 +50,7 @@ class AlertCondition;
 class AlertConditionData;
 class AlertConditionListModel;
 class AlertTarget;
+class LayerCacheManager;
 class LocationAlertSource;
 class LocationAlertTarget;
 class MessagesOverlay;
@@ -106,6 +107,8 @@ private slots:
   void onMouseClicked(QMouseEvent& event);
   void handleNewAlertConditionData(AlertConditionData* newConditionData);
   void onConditionsChanged();
+  void onLayerCacheManager_initialLayerLoadCompleted();
+  void onToolManager_toolAdded();
 
 private:
   void setTargetNames(const QStringList& targetNames);
@@ -150,6 +153,10 @@ private:
 
   QMetaObject::Connection m_mouseClickConnection;
   int m_selectedTargetNameIndex = -1;
+
+  LayerCacheManager* m_layerCacheManager = nullptr;
+  QMetaObject::Connection m_conToolManager_toolAdded;
+  bool m_layerCacheManagerInitialLayerLoadCompleted = false;
 };
 
 } // Dsa

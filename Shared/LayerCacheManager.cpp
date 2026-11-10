@@ -372,6 +372,7 @@ void LayerCacheManager::addLayers(const QVariantMap& properties)
   {
     m_initialLayerLoadComplete = true;
     emit initialLayerLoadCompleted();
+    return;
   }
   m_initialLayerLoadComplete = false;
 

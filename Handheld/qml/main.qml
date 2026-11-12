@@ -17,6 +17,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Material
+import QtQuick.Layouts
 import QtQuick.Window
 import QtQml.Models
 import Esri.ArcGISRuntime.OpenSourceApps.DSA
@@ -232,6 +233,131 @@ Handheld {
             onCoordinatesSelected: mapToolRow.selectCoordinateTool();
         }
 
+        Rectangle {
+            property bool expanded: true
+            id: identifyResultsContainer
+            anchors {
+                top: sceneView.top
+            }
+            width: sceneView.width
+            height: expanded ? sceneView.height : popupHeader.height
+            visible: false
+            onVisibleChanged: {
+                expanded = visible
+            }
+
+            Rectangle {
+                id: popupHeader
+
+                anchors {
+                    top: parent.top
+                }
+                width: parent.width
+                height: popupHeaderControls.implicitHeight
+
+                color: Material.backgroundColor
+
+                RowLayout {
+                    id: popupHeaderControls
+                    anchors {
+                        horizontalCenter: parent.horizontalCenter
+                    }
+
+                    ToolIcon {
+                        iconSource: identifyResultsContainer.expanded ? DsaResources.iconRemove : DsaResources.iconAdd
+                        onToolSelected: {
+                            identifyResultsContainer.expanded = !identifyResultsContainer.expanded
+                        }
+                    }
+
+                    Label {
+                        text: "Identify Results"
+                    }
+
+                    ToolIcon {
+                        iconSource: DsaResources.iconClose
+                        onToolSelected: {
+                            identifyResultsContainer.visible = false;
+                            identifyController.clearPopups();
+                        }
+                    }
+                }
+            }
+
+            Rectangle {
+
+                visible: identifyResultsContainer.expanded
+
+                anchors {
+                    top: popupHeader.bottom
+                    bottom: parent.bottom
+                }
+                width: parent.width
+
+                Toolkit.PopupView {
+                    id: identifyResults
+
+                    anchors {
+                        top: parent.top
+                        bottom: popupFooter.top
+                    }
+                    width: parent.width
+
+                    closeCallback: null
+                    onPopupChanged: {
+                        if (identifyResults.popup) {
+                            identifyResultsContainer.expanded = true;
+                        }
+                    }
+                }
+
+                Rectangle {
+                    id: popupFooter
+                    height: lblPlaceHolder.implicitHeight
+                    color: Material.backgroundColor
+                    anchors {
+                        bottom: parent.bottom
+                    }
+                    width: parent.width
+
+                    ToolIcon {
+                        id: btnPrev
+                        visible: identifyController.canPrev
+                        iconSource: DsaResources.icon2d
+                        onToolSelected: {
+                            identifyController.prevPopup();
+                        }
+                        anchors {
+                            right: lblPlaceHolder.left
+                        }
+                        height: lblPlaceHolder.height
+                    }
+
+                    Label {
+                        id: lblPlaceHolder
+                        text: identifyController.resultPositionLabel
+                        anchors {
+                            verticalCenter: parent.verticalCenter
+                            horizontalCenter: parent.horizontalCenter
+                        }
+                    }
+
+                    ToolIcon {
+                        id: btnNext
+                        visible: identifyController.canNext
+                        iconSource: DsaResources.icon3d
+                        onToolSelected: {
+                            identifyController.nextPopup();
+                        }
+                        anchors {
+                            left: lblPlaceHolder.right
+                        }
+                        height: lblPlaceHolder.height
+                    }
+                }
+            }
+        }
+
         MessageFeeds {
             id: messageFeedsTool
             anchors {
@@ -435,60 +561,6 @@ Handheld {
                     visible = false;
                 else
                     visible = true;
-            }
-        }
-
-        Rectangle {
-            id: identifyResultsContainer
-            anchors {
-                left: sceneView.left
-                top: sceneView.top
-                right: sceneView.right
-                bottom: sceneView.attributionTop
-            }
-            visible: false
-
-            Toolkit.PopupView {
-                id: identifyResults
-                anchors.fill: parent
-
-                closeCallback: () => {
-                    identifyResultsContainer.visible = false;
-                    identifyController.clearPopups();
-                }
-            }
-
-            Rectangle {
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                    bottom: parent.bottom
-                    margins: 5
-                }
-
-                Button {
-                    text: "Back"
-                    visible: identifyController.canPrev
-                    anchors {
-                        left: parent.left
-                        bottom: parent.bottom
-                    }
-                    onClicked: {
-                        identifyController.prevPopup();
-                    }
-                }
-
-                Button {
-                    text: "Next"
-                    visible: identifyController.canNext
-                    anchors {
-                        right: parent.right
-                        bottom: parent.bottom
-                    }
-                    onClicked: {
-                        identifyController.nextPopup();
-                    }
-                }
             }
         }
 

@@ -50,6 +50,8 @@ class IdentifyController : public AbstractTool
   Q_PROPERTY(Esri::ArcGISRuntime::Popup* popup READ popup NOTIFY popupChanged)
   Q_PROPERTY(bool canNext READ canNext NOTIFY popupChanged)
   Q_PROPERTY(bool canPrev READ canPrev NOTIFY popupChanged)
+  Q_PROPERTY(QString resultPositionLabel READ resultPositionLabel NOTIFY popupChanged)
+  Q_PROPERTY(int numberOfResults READ numberOfResults NOTIFY popupChanged)
 
 public:
 
@@ -71,6 +73,8 @@ private:
   Esri::ArcGISRuntime::Popup* popup() const;
   bool canNext() const;
   bool canPrev() const;
+  QString resultPositionLabel() const;
+  int numberOfResults() const;
   Esri::ArcGISRuntime::PopupDefinition* getPopupDefinitionForUrl(const QString& url, const QString& group = "");
 
   double m_tolerance = 5.0;

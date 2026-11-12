@@ -17,6 +17,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Material
+import QtQuick.Layouts
 import QtQuick.Window
 import QtQml.Models
 import Esri.ArcGISRuntime.OpenSourceApps.DSA
@@ -133,6 +134,7 @@ Vehicle {
 
         onMousePressed: followHud.stopFollowing();
 
+
         DistressButton {
             anchors {
                 top: parent.top
@@ -242,6 +244,179 @@ Vehicle {
 
             onSettingsClicked: optionsTool.visible = true;
             onAboutClicked: aboutTool.visible = true;
+        }
+
+        Rectangle {
+            property bool expanded: false
+            clip: true
+            id: identifyResultsContainer
+            anchors {
+                top: sceneView.top
+                left: categoryToolbar.right
+                margins: 10
+            }
+            height: expanded ? (sceneView.height - (10 + sceneView.attributionRect.height + (coordinateConversion.height * (coordinateConversion.visible ? 1 : 0)))) : 0
+            width: expanded ? identifyResults.implicitWidth : 0
+            visible: identifyController.popup && expanded
+
+            Behavior on width {
+                NumberAnimation { duration: 200 }
+            }
+            Behavior on height {
+                NumberAnimation { duration: 200 }
+            }
+            Behavior on visible {
+                NumberAnimation { duration: 200 }
+            }
+
+            Rectangle {
+                id: popupHeader
+
+                anchors {
+                    top: parent.top
+                }
+                width: parent.width
+                height: btnPopupClose.implicitHeight
+
+                color: Material.backgroundColor
+
+                ToolIcon {
+                    iconSource: DsaResources.iconRemove
+                    onToolSelected: {
+                        identifyResultsContainer.expanded = false
+                    }
+                    anchors {
+                        right: lblResultsHeader.left
+                        verticalCenter: parent.verticalCenter
+                    }
+                }
+
+                Label {
+                    id: lblResultsHeader
+                    text: "Identify Results"
+                    anchors {
+                        horizontalCenter: parent.horizontalCenter
+                        verticalCenter: parent.verticalCenter
+                    }
+                }
+
+                ToolIcon {
+                    id: btnPopupClose
+                    iconSource: DsaResources.iconClose
+                    onToolSelected: {
+                        identifyResultsContainer.expanded = false;
+                        identifyController.clearPopups();
+                    }
+                    anchors {
+                        left: lblResultsHeader.right
+                        verticalCenter: parent.verticalCenter
+                    }
+                }
+            }
+
+            Rectangle {
+
+                anchors {
+                    top: popupHeader.bottom
+                    bottom: parent.bottom
+                }
+                width: parent.width
+                visible: parent.visible
+
+                Toolkit.PopupView {
+                    id: identifyResults
+
+                    anchors {
+                        top: parent.top
+                        bottom: popupFooter.top
+                    }
+                    width: parent.width
+
+                    closeCallback: null
+                }
+
+                Rectangle {
+                    id: popupFooter
+                    height: btnPrev.implicitHeight
+                    color: Material.backgroundColor
+                    anchors {
+                        bottom: parent.bottom
+                    }
+                    width: parent.width
+
+                    Button {
+                        id: btnPrev
+                        visible: identifyController.canPrev
+                        text: "Previous"
+                        onClicked: {
+                            identifyController.prevPopup();
+                        }
+                        anchors {
+                            right: lblResultPosition.left
+                        }
+                    }
+
+                    Label {
+                        id: lblResultPosition
+                        text: identifyController.resultPositionLabel
+                        anchors {
+                            horizontalCenter: parent.horizontalCenter
+                            verticalCenter: parent.verticalCenter
+                        }
+                    }
+
+                    Button {
+                        id: btnNext
+                        visible: identifyController.canNext
+                        text: "Next"
+                        onClicked: {
+                            identifyController.nextPopup();
+                        }
+                        anchors {
+                            left: lblResultPosition.right
+                        }
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            id: identifyMinimized
+            anchors {
+                margins: 5
+                top: sceneView.top
+                left: categoryToolbar.right
+            }
+            visible: identifyResults.popup && !identifyResultsContainer.expanded
+            color: Material.backgroundColor
+            height: identifyMinimizedIcon.width + 10
+            width: identifyMinimizedIcon.width + identifyMinimizedResultCountLabel.width + 10
+            radius: 3
+            Behavior on visible {
+                NumberAnimation { duration: 200 }
+            }
+
+            ToolIcon {
+                id: identifyMinimizedIcon
+                iconSource: DsaResources.iconAlertLow
+                onToolSelected: {
+                    identifyResultsContainer.expanded = true
+                }
+            }
+
+            Label {
+                id: identifyMinimizedResultCountLabel
+                color: Material.accentColor
+                text: identifyController.numberOfResults
+                font {
+                    bold: true
+                }
+
+                anchors {
+                    left: identifyMinimizedIcon.right
+                    top: identifyMinimizedIcon.top
+                }
+            }
         }
 
         MessageFeeds {
@@ -430,61 +605,6 @@ Vehicle {
             }
         }
 
-        Rectangle {
-            id: identifyResultsContainer
-            width: identifyResults.width
-            anchors {
-                top: sceneView.top
-                right: sceneView.right
-                bottom: sceneView.attributionTop
-            }
-            visible: false
-
-            Toolkit.PopupView {
-                id: identifyResults
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-
-                closeCallback: () => {
-                    identifyResultsContainer.visible = false;
-                    identifyController.clearPopups();
-                }
-            }
-
-            Rectangle {
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                    bottom: parent.bottom
-                    margins: 5
-                }
-
-                Button {
-                    text: "Back"
-                    visible: identifyController.canPrev
-                    anchors {
-                        left: parent.left
-                        bottom: parent.bottom
-                    }
-                    onClicked: {
-                        identifyController.prevPopup();
-                    }
-                }
-
-                Button {
-                    text: "Next"
-                    visible: identifyController.canNext
-                    anchors {
-                        right: parent.right
-                        bottom: parent.bottom
-                    }
-                    onClicked: {
-                        identifyController.nextPopup();
-                    }
-                }
-            }
-        }
-
         Drawer {
             id: drawer
             width: 272 * scaleFactor
@@ -539,7 +659,7 @@ Vehicle {
         onPopupChanged: {
             if (popup) {
                 identifyResults.popup = popup;
-                identifyResultsContainer.visible = true;
+                identifyResultsContainer.expanded = true;
             }
         }
     }

@@ -229,6 +229,21 @@ bool IdentifyController::canPrev() const
   return m_currentPopupIndex > 0;
 }
 
+QString IdentifyController::resultPositionLabel() const
+{
+  if (m_currentPopupIndex < 0)
+  {
+    return {};
+  }
+
+  return QString{"%1 of %2"}.arg(m_currentPopupIndex + 1).arg(m_popups.size());
+}
+
+int IdentifyController::numberOfResults() const
+{
+  return m_popups.size();
+}
+
 PopupDefinition* IdentifyController::getPopupDefinitionForUrl(const QString& url, const QString& group)
 {
   if (m_popupDefinitions.find(url) == m_popupDefinitions.cend() ||

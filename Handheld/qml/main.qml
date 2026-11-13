@@ -235,10 +235,12 @@ Handheld {
 
         Rectangle {
             property bool expanded: true
+            property int imageDimension: 25 * scaleFactor
             id: identifyResultsContainer
             anchors {
                 top: sceneView.top
             }
+            clip: true
             width: sceneView.width
             height: expanded ? sceneView.height : popupHeader.height
             visible: false
@@ -246,39 +248,81 @@ Handheld {
                 expanded = visible
             }
 
+            Behavior on height {
+                NumberAnimation { duration: 100 }
+            }
+
             Rectangle {
                 id: popupHeader
 
                 anchors {
+                    left: parent.left
+                    right: parent.right
                     top: parent.top
                 }
-                width: parent.width
-                height: popupHeaderControls.implicitHeight
 
-                color: Material.backgroundColor
+                height: btnPopupHeaderExpand.height
 
-                RowLayout {
-                    id: popupHeaderControls
+                color: Material.primaryColor
+
+                Rectangle {
                     anchors {
-                        horizontalCenter: parent.horizontalCenter
+                        left: parent.left
+                        right: parent.right
                     }
 
-                    ToolIcon {
-                        iconSource: identifyResultsContainer.expanded ? DsaResources.iconRemove : DsaResources.iconAdd
-                        onToolSelected: {
-                            identifyResultsContainer.expanded = !identifyResultsContainer.expanded
+                    Image {
+                        id: btnPopupHeaderExpand
+                        source: DsaResources.iconBack
+                        rotation: identifyResultsContainer.expanded ? 270 : 180
+                        height: identifyResultsContainer.imageDimension
+                        width: height
+                        anchors {
+                            left: parent.left
+                        }
+
+                        Behavior on rotation {
+                            NumberAnimation { duration: 100 }
+                        }
+
+                        MouseArea {
+                            anchors {
+                                fill: parent
+                            }
+
+                            onClicked: {
+                                identifyResultsContainer.expanded = !identifyResultsContainer.expanded
+                            }
                         }
                     }
 
                     Label {
+                        id: lblPopupHeader
                         text: "Identify Results"
+                        anchors {
+                            horizontalCenter: parent.horizontalCenter
+                            verticalCenter: btnPopupHeaderExpand.verticalCenter
+                        }
                     }
 
-                    ToolIcon {
-                        iconSource: DsaResources.iconClose
-                        onToolSelected: {
-                            identifyResultsContainer.visible = false;
-                            identifyController.clearPopups();
+                    Image {
+                        source: DsaResources.iconClose
+                        height: identifyResultsContainer.imageDimension
+                        width: height
+                        anchors {
+                            right: parent.right
+                        }
+
+                        MouseArea {
+                            anchors {
+                                fill: parent
+                            }
+
+                            onClicked: {
+
+                                identifyResultsContainer.visible = false;
+                                identifyController.clearPopups();
+                            }
                         }
                     }
                 }
@@ -311,48 +355,76 @@ Handheld {
                     }
                 }
 
+
                 Rectangle {
                     id: popupFooter
-                    height: lblPlaceHolder.implicitHeight
-                    color: Material.backgroundColor
                     anchors {
                         bottom: parent.bottom
+                        horizontalCenter: parent.horizontalCenter
                     }
                     width: parent.width
+                    height: btnPrev.height
+                    color: Material.primaryColor
 
-                    ToolIcon {
+                    Image {
                         id: btnPrev
                         visible: identifyController.canPrev
-                        iconSource: DsaResources.icon2d
-                        onToolSelected: {
-                            identifyController.prevPopup();
-                        }
+                        source: DsaResources.iconBack
+                        height: identifyResultsContainer.imageDimension
+                        width: height
                         anchors {
-                            right: lblPlaceHolder.left
+                            left: parent.left
                         }
-                        height: lblPlaceHolder.height
+
+                        MouseArea {
+                            anchors {
+                                fill: parent
+                            }
+
+                            onClicked: {
+                                identifyController.prevPopup();
+                            }
+                        }
+                    }
+
+                    Image {
+                        id: imgResultPosition
+                        height: identifyResultsContainer.imageDimension
+                        width: height
+                        source: DsaResources.iconListView
+                        anchors {
+                            right: lblResultPosition.left
+                        }
                     }
 
                     Label {
-                        id: lblPlaceHolder
+                        id: lblResultPosition
                         text: identifyController.resultPositionLabel
                         anchors {
-                            verticalCenter: parent.verticalCenter
                             horizontalCenter: parent.horizontalCenter
+                            verticalCenter: parent.verticalCenter
                         }
                     }
 
-                    ToolIcon {
+                    Image {
                         id: btnNext
                         visible: identifyController.canNext
-                        iconSource: DsaResources.icon3d
-                        onToolSelected: {
-                            identifyController.nextPopup();
-                        }
+                        source: DsaResources.iconBack
+                        height: identifyResultsContainer.imageDimension
+                        width: height
+                        rotation: 180
                         anchors {
-                            left: lblPlaceHolder.right
+                            right: parent.right
                         }
-                        height: lblPlaceHolder.height
+
+                        MouseArea {
+                            onClicked: {
+                                identifyController.nextPopup();
+                            }
+                            anchors {
+                                fill: parent
+                            }
+                        }
                     }
                 }
             }

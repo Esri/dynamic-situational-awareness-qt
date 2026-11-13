@@ -247,27 +247,15 @@ Vehicle {
         }
 
         Rectangle {
-            property bool expanded: false
-            clip: true
+            property int imageDimension: 25
             id: identifyResultsContainer
             anchors {
                 top: sceneView.top
-                left: categoryToolbar.right
-                margins: 10
+                right: sceneView.right
+                bottom: sceneView.attributionTop
             }
-            height: expanded ? (sceneView.height - (10 + sceneView.attributionRect.height + (coordinateConversion.height * (coordinateConversion.visible ? 1 : 0)))) : 0
-            width: expanded ? identifyResults.implicitWidth : 0
-            visible: identifyController.popup && expanded
-
-            Behavior on width {
-                NumberAnimation { duration: 200 }
-            }
-            Behavior on height {
-                NumberAnimation { duration: 200 }
-            }
-            Behavior on visible {
-                NumberAnimation { duration: 200 }
-            }
+            width: drawer.width
+            visible: false
 
             Rectangle {
                 id: popupHeader
@@ -276,20 +264,9 @@ Vehicle {
                     top: parent.top
                 }
                 width: parent.width
-                height: btnPopupClose.implicitHeight
+                height: btnPopupClose.height
 
                 color: Material.backgroundColor
-
-                ToolIcon {
-                    iconSource: DsaResources.iconRemove
-                    onToolSelected: {
-                        identifyResultsContainer.expanded = false
-                    }
-                    anchors {
-                        right: lblResultsHeader.left
-                        verticalCenter: parent.verticalCenter
-                    }
-                }
 
                 Label {
                     id: lblResultsHeader
@@ -300,121 +277,122 @@ Vehicle {
                     }
                 }
 
-                ToolIcon {
+                Image {
                     id: btnPopupClose
-                    iconSource: DsaResources.iconClose
-                    onToolSelected: {
-                        identifyResultsContainer.expanded = false;
-                        identifyController.clearPopups();
-                    }
+                    source: DsaResources.iconClose
+                    height: identifyResultsContainer.imageDimension
+                    width: height
                     anchors {
                         left: lblResultsHeader.right
-                        verticalCenter: parent.verticalCenter
+                    }
+
+                    MouseArea {
+                        anchors {
+                            fill: parent
+                        }
+
+                        onClicked: {
+                            identifyResultsContainer.visible = false;
+                            identifyController.clearPopups();
+                        }
                     }
                 }
             }
 
-            Rectangle {
+            Toolkit.PopupView {
+                id: identifyResults
 
                 anchors {
                     top: popupHeader.bottom
+                    bottom: popupFooter.top
+                }
+
+                width: parent.width
+
+                closeCallback: null
+            }
+
+            Rectangle {
+                id: popupFooter
+                anchors {
                     bottom: parent.bottom
+                    horizontalCenter: parent.horizontalCenter
                 }
                 width: parent.width
-                visible: parent.visible
+                height: btnPrev.height
+                color: Material.backgroundColor
 
-                Toolkit.PopupView {
-                    id: identifyResults
-
+                Image {
+                    id: btnPrev
+                    visible: identifyController.canPrev
+                    source: DsaResources.iconBack
+                    height: identifyResultsContainer.imageDimension
+                    width: height
                     anchors {
-                        top: parent.top
-                        bottom: popupFooter.top
+                        left: parent.left
+                        leftMargin: 10
+                        topMargin: 10
+                        bottomMargin: 10
                     }
-                    width: parent.width
 
-                    closeCallback: null
-                }
+                    MouseArea {
+                        anchors {
+                            fill: parent
+                        }
 
-                Rectangle {
-                    id: popupFooter
-                    height: btnPrev.implicitHeight
-                    color: Material.backgroundColor
-                    anchors {
-                        bottom: parent.bottom
-                    }
-                    width: parent.width
-
-                    Button {
-                        id: btnPrev
-                        visible: identifyController.canPrev
-                        text: "Previous"
                         onClicked: {
                             identifyController.prevPopup();
                         }
-                        anchors {
-                            right: lblResultPosition.left
-                        }
+                    }
+                }
+
+                Image {
+                    id: imgResultPosition
+                    height: identifyResultsContainer.imageDimension
+                    width: height
+                    source: DsaResources.iconListView
+                    anchors {
+                        right: lblResultPosition.left
+                        leftMargin: 10
+                        topMargin: 10
+                        bottomMargin: 10
+                    }
+                }
+
+                Label {
+                    id: lblResultPosition
+                    text: identifyController.resultPositionLabel
+                    anchors {
+                        horizontalCenter: parent.horizontalCenter
+                        verticalCenter: parent.verticalCenter
+                        leftMargin: 10
+                        topMargin: 10
+                        bottomMargin: 10
+                    }
+                }
+
+                Image {
+                    id: btnNext
+                    visible: identifyController.canNext
+                    source: DsaResources.iconBack
+                    height: identifyResultsContainer.imageDimension
+                    width: height
+                    rotation: 180
+                    anchors {
+                        right: parent.right
+                        rightMargin: 10
+                        topMargin: 10
+                        bottomMargin: 10
                     }
 
-                    Label {
-                        id: lblResultPosition
-                        text: identifyController.resultPositionLabel
-                        anchors {
-                            horizontalCenter: parent.horizontalCenter
-                            verticalCenter: parent.verticalCenter
-                        }
-                    }
-
-                    Button {
-                        id: btnNext
-                        visible: identifyController.canNext
-                        text: "Next"
+                    MouseArea {
                         onClicked: {
                             identifyController.nextPopup();
                         }
                         anchors {
-                            left: lblResultPosition.right
+                            fill: parent
                         }
                     }
-                }
-            }
-        }
-
-        Rectangle {
-            id: identifyMinimized
-            anchors {
-                margins: 5
-                top: sceneView.top
-                left: categoryToolbar.right
-            }
-            visible: identifyResults.popup && !identifyResultsContainer.expanded
-            color: Material.backgroundColor
-            height: identifyMinimizedIcon.width + 10
-            width: identifyMinimizedIcon.width + identifyMinimizedResultCountLabel.width + 10
-            radius: 3
-            Behavior on visible {
-                NumberAnimation { duration: 200 }
-            }
-
-            ToolIcon {
-                id: identifyMinimizedIcon
-                iconSource: DsaResources.iconAlertLow
-                onToolSelected: {
-                    identifyResultsContainer.expanded = true
-                }
-            }
-
-            Label {
-                id: identifyMinimizedResultCountLabel
-                color: Material.accentColor
-                text: identifyController.numberOfResults
-                font {
-                    bold: true
-                }
-
-                anchors {
-                    left: identifyMinimizedIcon.right
-                    top: identifyMinimizedIcon.top
                 }
             }
         }
@@ -659,7 +637,7 @@ Vehicle {
         onPopupChanged: {
             if (popup) {
                 identifyResults.popup = popup;
-                identifyResultsContainer.expanded = true;
+                identifyResultsContainer.visible = true;
             }
         }
     }

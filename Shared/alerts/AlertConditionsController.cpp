@@ -1152,14 +1152,18 @@ void AlertConditionsController::addStoredConditions()
   }
 
   // call the completion handler for all adds
-  QtFuture::whenAll(addStoredConditionFutures.rbegin(), addStoredConditionFutures.rend()).then(this, [this](const QList<QFuture<bool>> addStoredConditions)
+  QtFuture::whenAll(addStoredConditionFutures.rbegin(), addStoredConditionFutures.rend())
+    .then(this, [this](const QList<QFuture<bool>>& addStoredConditionsResults)
   {
     // store the index of any condition that was successfully added
-    int currentConditionId = addStoredConditions.size() - 1;
-    for (auto it = addStoredConditions.rbegin(); it != addStoredConditions.rend(); it++)
+    qsizetype currentConditionId = addStoredConditionsResults.size() - 1;
+    for (auto it = addStoredConditionsResults.rbegin(); it != addStoredConditionsResults.rend(); it++)
     {
       if (it->result())
+      {
         m_storedConditions.removeAt(currentConditionId);
+      }
+
       currentConditionId--;
     }
 
@@ -1171,9 +1175,8 @@ void AlertConditionsController::addStoredConditions()
     if (needToRetry)
     {
       needToRetry = false;
-      this->addStoredConditions();
+      addStoredConditions();
     }
-
   });
 }
 

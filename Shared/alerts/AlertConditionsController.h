@@ -107,8 +107,8 @@ private slots:
   void onMouseClicked(QMouseEvent& event);
   void handleNewAlertConditionData(AlertConditionData* newConditionData);
   void onConditionsChanged();
-  void onLayerCacheManager_initialLayerLoadCompleted();
-  void onToolManager_toolAdded();
+  void onInitialLayerLoadCompleted();
+  void onToolAdded();
 
 private:
   void setTargetNames(const QStringList& targetNames);

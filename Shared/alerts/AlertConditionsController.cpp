@@ -127,10 +127,10 @@ AlertConditionsController::AlertConditionsController(QObject* parent /* = nullpt
   m_layerCacheManager = ToolManager::instance().tool<LayerCacheManager>();
   if (!m_layerCacheManager)
   {
-    m_conToolManager_toolAdded = connect(&ToolManager::instance(), &ToolManager::toolAdded, this, &AlertConditionsController::onToolManager_toolAdded);
+    m_conToolManager_toolAdded = connect(&ToolManager::instance(), &ToolManager::toolAdded, this, &AlertConditionsController::onToolAdded);
     return;
   }
-  onToolManager_toolAdded();
+  onToolAdded();
 }
 
 /*!
@@ -918,14 +918,14 @@ void AlertConditionsController::onConditionsChanged()
   emit propertyChanged(AlertConstants::ALERT_CONDITIONS_PROPERTYNAME, allConditionsJson.toVariantList());
 }
 
-void AlertConditionsController::onLayerCacheManager_initialLayerLoadCompleted()
+void AlertConditionsController::onInitialLayerLoadCompleted()
 {
   m_layerCacheManagerInitialLayerLoadCompleted = true;
 
   onLayersChanged();
 }
 
-void AlertConditionsController::onToolManager_toolAdded()
+void AlertConditionsController::onToolAdded()
 {
   m_layerCacheManager = ToolManager::instance().tool<LayerCacheManager>();
   if (m_layerCacheManager)
@@ -934,12 +934,12 @@ void AlertConditionsController::onToolManager_toolAdded()
 
     if (m_layerCacheManager->initialLayerLoadComplete())
     {
-      onLayerCacheManager_initialLayerLoadCompleted();
+      onInitialLayerLoadCompleted();
       return;
     }
 
     connect(m_layerCacheManager, &LayerCacheManager::initialLayerLoadCompleted, this,
-            &AlertConditionsController::onLayerCacheManager_initialLayerLoadCompleted);
+            &AlertConditionsController::onInitialLayerLoadCompleted);
   }
 }
 

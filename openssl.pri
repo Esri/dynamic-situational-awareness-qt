@@ -17,7 +17,7 @@
 android {
     SSL_PATH_RESOLVED = $$(SSL_PATH)
     if (isEmpty(SSL_PATH_RESOLVED)) {
-        error("ssl path must be defined for Android builds")
+        error("SSL_PATH must be defined for Android builds")
     }
 
     !contains(QT.network_private.enabled_features, openssl-linked) {

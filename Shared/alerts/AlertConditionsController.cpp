@@ -127,7 +127,7 @@ AlertConditionsController::AlertConditionsController(QObject* parent /* = nullpt
   m_layerCacheManager = ToolManager::instance().tool<LayerCacheManager>();
   if (!m_layerCacheManager)
   {
-    m_conToolManager_toolAdded = connect(&ToolManager::instance(), &ToolManager::toolAdded, this, &AlertConditionsController::onToolAdded);
+    m_onToolAddedConnection = connect(&ToolManager::instance(), &ToolManager::toolAdded, this, &AlertConditionsController::onToolAdded);
     return;
   }
   onToolAdded();
@@ -930,7 +930,7 @@ void AlertConditionsController::onToolAdded()
   m_layerCacheManager = ToolManager::instance().tool<LayerCacheManager>();
   if (m_layerCacheManager)
   {
-    disconnect(m_conToolManager_toolAdded);
+    disconnect(m_onToolAddedConnection);
 
     if (m_layerCacheManager->initialLayerLoadComplete())
     {
@@ -1124,18 +1124,16 @@ void AlertConditionsController::addStoredConditions()
 
   // block signals while we are adding each stored condition
   this->blockSignals(true);
-  static bool needToRetry = false;
-  static bool alreadyAddingStoredConditions = false;
-  if (alreadyAddingStoredConditions)
+  if (m_alreadyAddingStoredConditions)
   {
     // if/when a layer completes loading and a query for a condition was in progress
     // the whenAll handler needs to retry the stored conditions again since some
     // targets may not have been available
-    needToRetry = true;
+    m_needToRetry = true;
     return;
   }
 
-  alreadyAddingStoredConditions = true;
+  m_alreadyAddingStoredConditions = true;
   QList<QFuture<bool>> addStoredConditionFutures;
   for (auto it = m_storedConditions.rbegin(); it != m_storedConditions.rend(); it++)
   {
@@ -1147,7 +1145,7 @@ void AlertConditionsController::addStoredConditions()
   if (addStoredConditionFutures.count() == 0)
   {
     this->blockSignals(false);
-    alreadyAddingStoredConditions = false;
+    m_alreadyAddingStoredConditions = false;
     return;
   }
 
@@ -1169,12 +1167,12 @@ void AlertConditionsController::addStoredConditions()
 
     // emit once for all conditions (including stored)
     this->blockSignals(false);
-    alreadyAddingStoredConditions = false;
+    m_alreadyAddingStoredConditions = false;
     onConditionsChanged();
 
-    if (needToRetry)
+    if (m_needToRetry)
     {
-      needToRetry = false;
+      m_needToRetry = false;
       addStoredConditions();
     }
   });

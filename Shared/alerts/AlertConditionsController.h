@@ -155,8 +155,10 @@ private:
   int m_selectedTargetNameIndex = -1;
 
   LayerCacheManager* m_layerCacheManager = nullptr;
-  QMetaObject::Connection m_conToolManager_toolAdded;
+  QMetaObject::Connection m_onToolAddedConnection;
   bool m_layerCacheManagerInitialLayerLoadCompleted = false;
+  bool m_needToRetry = false;
+  bool m_alreadyAddingStoredConditions = false;
 };
 
 } // Dsa

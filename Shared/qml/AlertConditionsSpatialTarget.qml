@@ -105,7 +105,7 @@ Item {
 
             OverlayButton {
                 id: pickButton
-                enabled: singleFeatureRb.checked
+                enabled: singleFeatureRb.checked && targetCB.currentIndex !== -1
                 selected: toolController.pickMode
                 iconUrl: DsaResources.iconTouch
                 opacity: enabled ? 1.0 : 0.8

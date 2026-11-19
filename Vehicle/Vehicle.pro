@@ -88,6 +88,8 @@ ios {
 
 android {
     include (Android/Android.pri)
+
+    include ($$PWD/../ssl.pri)
 }
 
 DISTFILES += \

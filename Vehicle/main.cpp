@@ -100,10 +100,10 @@ QObject* dsaResourcesProvider(QQmlEngine* engine, QJSEngine* scriptEngine);
 
 int main(int argc, char *argv[])
 {
-#if defined(Q_OS_ANDROID)
+#ifdef Q_OS_ANDROID
   if (!QSslSocket::supportsSsl())
   {
-    qCritical() << "OpenSSL libraries not found";
+    qCritical() << "SSL libraries not found";
     std::abort();
   }
 #endif

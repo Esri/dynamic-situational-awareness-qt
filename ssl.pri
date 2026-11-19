@@ -20,13 +20,7 @@ android {
         error("When building for Android, you must set the SSL_PATH variable to a folder containing SSL libraries.")
     }
 
-    if (versionAtLeast(QT_VERSION, 6.5.0)) {
-        ANDROID_EXTRA_LIBS += \
-            $$(SSL_PATH)/libcrypto_3.so \
-            $$(SSL_PATH)/libssl_3.so
-    } else {
-        ANDROID_EXTRA_LIBS += \
-            $$(SSL_PATH)/libcrypto_1_1.so \
-            $$(SSL_PATH)/libssl_1_1.so
-    }
+    ANDROID_EXTRA_LIBS += \
+        $$(SSL_PATH)/libcrypto_3.so \
+        $$(SSL_PATH)/libssl_3.so
 }
